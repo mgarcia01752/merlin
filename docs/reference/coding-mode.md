@@ -96,5 +96,8 @@ the same fraction of whole frames passes.
 
 Gross useful-symbol capacity is `sum(data bits/symbol) * spacing_hz`. It excludes
 cyclic prefix, FEC, pilot/PLC/excluded carriers, MAC and other PHY overhead. It is
-not measured or net service throughput. DOCSIS3.1 candidates are capped at13bits
-(8192-QAM); role preservation and modulation caps are checked independently.
+not measured or net service throughput. Downstream candidate analysis covers the pinned data orders through14bits
+(16384-QAM). The8K/16K orders are optional device capabilities in PHY3.1 I20
+section7.5.5.1, not a DOCSIS4.0-only extension. A user cap can constrain a device
+profile; the default analytical cap is14bits. Role preservation and modulation
+caps are checked independently. See [coverage](ofdm-support.md).

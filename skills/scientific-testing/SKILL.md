@@ -5,8 +5,6 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
 
 # Scientific testing
 
-Ported from PNM Viewer Toolkit's pnm-testing skill on 2026-11-08.
-
 - Keep separate integration tests for codec boundaries, normative parameter
   arithmetic, QAM/LLR conventions, temporal evaluation and document/CLI behavior.
 - Use independent expected values and external vectors when available.
@@ -20,7 +18,7 @@ Ported from PNM Viewer Toolkit's pnm-testing skill on 2026-11-08.
 - Check invalid schemas, input/work limits, cancellation and partial results.
   Saved results are historical claims; re-evaluate against source measurements.
 - Use synthetic sanitized inputs for unit tests. PNM parser fixtures stay in
-  PNM Viewer; the toolkit consumes decoded typed frames, never PyPNM services.
+  the capture adapter; the toolkit consumes decoded typed frames, never services.
 - Preserve deterministic seeds. Do not assert elapsed-time equality. Explain
   numerical tolerances and zero-failure confidence bounds.
 

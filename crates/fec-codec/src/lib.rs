@@ -2,7 +2,9 @@
  * Copyright 2026 PNM Viewer contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-//! Replaceable codec primitives. No Qt, transport, captures or receiver policy.
+//! Pure Rust codec primitives, independent of transport and receiver policy.
+#![forbid(unsafe_code)]
+mod bch;
 use ldpc_toolbox::{
     codes::dvbs2::Code,
     decoder::{
@@ -22,21 +24,6 @@ pub const BCH_INPUT_BITS: usize = 14_232;
 pub const LDPC_INPUT_BITS: usize = 14_400;
 /// LDPC transmitted codeword length for the selected coding mode.
 pub const LDPC_CODEWORD_BITS: usize = 16_200;
-
-#[cxx::bridge(namespace = "pnm_fec")]
-mod ffi {
-    struct BchDecoded {
-        codeword: Vec<u8>,
-        corrected: u32,
-        success: bool,
-    }
-    // Native codec boundary only; reusable PNM core continues forbidding unsafe.
-    unsafe extern "C++" {
-        include!("fec-codec/native/bch.hpp");
-        fn bch_encode(message: &[u8]) -> Result<Vec<u8>>;
-        fn bch_decode(codeword: &[u8]) -> Result<BchDecoded>;
-    }
-}
 
 /// Complete corrected BCH word, with decoder status separate from truth BER.
 pub struct BchResult {
@@ -58,10 +45,10 @@ fn binary_bits(bits: &[u8], expected: usize) -> Result<(), String> {
 /// # Returns
 /// 14400 bits; input bytes are never modified.
 /// # Errors
-/// Rejects invalid lengths/bits or native codec failures.
+/// Rejects invalid lengths/bits or codec setup failures.
 pub fn encode_bch(message: &[u8]) -> Result<Vec<u8>, String> {
     binary_bits(message, BCH_INPUT_BITS)?;
-    ffi::bch_encode(message).map_err(|error| error.to_string())
+    bch::encode(message)
 }
 
 /// Corrects at most12 errors in the selected shortened BCH word.
@@ -70,15 +57,10 @@ pub fn encode_bch(message: &[u8]) -> Result<Vec<u8>, String> {
 /// # Returns
 /// Complete word and bounded-distance status; success is not a truth oracle.
 /// # Errors
-/// Rejects invalid inputs or native codec failures. Decoder failure is a result.
+/// Rejects invalid inputs or codec setup failures. Decoder failure is a result.
 pub fn decode_bch(codeword: &[u8]) -> Result<BchResult, String> {
     binary_bits(codeword, LDPC_INPUT_BITS)?;
-    let decoded = ffi::bch_decode(codeword).map_err(|error| error.to_string())?;
-    Ok(BchResult {
-        codeword: decoded.codeword,
-        corrected_bits: decoded.corrected,
-        success: decoded.success,
-    })
+    bch::decode(codeword)
 }
 
 /// Reused LDPC encoder/decoder; construction occurs once per simulation job.

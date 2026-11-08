@@ -33,3 +33,5 @@ pub mod units {
     /// Quarter-dB encoded steps per decibel.
     pub const QUARTER_DB_PER_DB: f64 = 4.0;
 }
+
+pub mod ofdm_modulation;

@@ -201,12 +201,6 @@ impl CandidateProfile {
             source.validate()?;
         }
         for assignment in &self.assignments {
-            if self.protocol == ProtocolScope::Docsis31
-                && assignment.carrier_type == CarrierType::Data
-                && assignment.bit_loading.is_some_and(|bits| bits > 13)
-            {
-                return Err(invalid("DOCSIS3.1 data assignments cannot exceed8192-QAM."));
-            }
             let valid = match assignment.carrier_type {
                 CarrierType::Data => assignment
                     .bit_loading

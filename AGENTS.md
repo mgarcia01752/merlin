@@ -1,21 +1,33 @@
 # DOCSIS OFDM FEC Toolkit
 
-This repository owns offline OFDM profile science and real-codec experiments.
-PNM Viewer Toolkit is a consumer. Keep dependencies one-way:
-PNM Viewer -> docsis-ofdm-fec -> fec-codec. No Qt or PNM parser dependency here.
+DOFT is short for DOCSIS OFDM FEC Toolkit. It is a standalone DOCSIS scientific
+library and CLI. Work exclusively in this repository unless scope is changed.
+
+Focus on downstream OFDM first. OFDMA is deferred. Two scientific modes are the
+ideal/reference experiment and measurement-driven analysis using RxMER, downstream
+channel estimates and an applied modulation profile. Support is developed against
+pinned DOCSIS3.1/4.0 evidence up to16384-QAM; do not equate a recognized order with
+an implemented full coding chain or assume an optional modem capability.
+
+A future optional Qt component is presentation only. Build scientific functionality
+first; there is no UI implementation or Python binding in the current scope.
+Dependencies point from CLI/future adapters to docsis-ofdm-fec to fec-codec.
 
 Apply skills/coding-style, skills/scientific-testing, and the applicable versioned
-PHY skill. Keep canonical skills under skills/ with relative discovery links
+PHY skill. Apply skills/public-api to public models and operations and
+skills/docsis-signal-processing to scientific changes. Keep canonical skills under skills/ with relative discovery links
 under .agents/skills/ and .claude/skills/.
 
-- Rust owns analysis and orchestration. Isolate native C++ in fec-codec's CXX
-  boundary. Keep the scientific Rust library free of unsafe code.
+- All signal processing, channel models, modulation/demapping, FEC and scientific
+  orchestration are 100% Rust, including dependencies providing those algorithms.
+  Do not add C/C++ DSP/codec implementations, native FFI or Python calculations.
+  Keep scientific crates free of unsafe code. Development tooling may use Python.
 - Reusable code and tools are Apache-2.0. Preserve copied copyrights and third
-  party licenses, including the pinned MIT AFF3CT BCH kernel and ldpc-toolbox.
+  party licenses, including the Rust-adapted MIT BCH implementation and ldpc-toolbox.
 - Follow meaningful domain aliases, descriptive variables/lifetimes and multiline
   public API documentation. New implementations belong in focused modules.
 - Preserve exact source grids, nulls, excluded carriers, hashes and timestamps.
-  Consumers retain original capture bytes; do not duplicate PNM parsers here.
+  Applications retain original capture bytes; decoded input contracts preserve provenance.
 - Keep measured observations, analytical screening and simulated FEC outcomes
   distinct. Do not claim a DOCSIS receiver from a generic coding experiment.
 - Record pinned normative evidence. Never infer missing shortening, interleaving,

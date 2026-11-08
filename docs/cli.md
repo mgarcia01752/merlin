@@ -1,7 +1,7 @@
 # CLI
 
-The CLI accepts decoded JSON, not binary PNM files. PNM Viewer will decode
-captures and call the same Rust API. Run `ofdm-fec --help` for options.
+The CLI accepts decoded scientific scenarios as JSON and calls the public Rust
+API. Binary capture adapters are separate from the scientific engine. Run `ofdm-fec --help` for options.
 Outputs must be new files; existing destinations are never replaced.
 
 ## Seeded baseline

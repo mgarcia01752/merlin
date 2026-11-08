@@ -5,11 +5,9 @@ description: Apply DOCSIS OFDM FEC Toolkit coding conventions when writing, modi
 
 # DOCSIS OFDM FEC Toolkit coding style
 
-Ported from PNM Viewer Toolkit coding-style on 2026-11-08.
-Originally adapted from OSCAR-UI on 2026-11-03.
-Source checkout HEAD: `4dfe461eab736a71a7dd35e71491fd83f74c4eb3` (working-tree skill reviewed).
-Retain its documentation and readability conventions; Rust/native-codec ownership and
-Local PHY evidence and native-codec ownership replace the desktop-specific rules.
+Use documented public Rust APIs, meaningful domain types and pinned local PHY evidence.
+All signal processing and FEC algorithms are Rust. Do not introduce native DSP
+or codec libraries through FFI. An optional future Qt layer only presents results.
 
 ## Member and module order
 
@@ -156,8 +154,8 @@ Centralize definitions only when semantics actually match. Mathematical zeroes
 and tiny obvious loop origins need no artificial constants.
 
 Use focused snake_case Rust modules and UpperCamelCase types. Scientific code
-must not depend on Qt, a transport or application state. Keep unsafe/native code
-inside the isolated codec boundary and preserve upstream notices.
+must not depend on Qt, a transport or application state. Scientific crates forbid
+unsafe code; keep codecs and DSP in Rust and preserve upstream notices.
 
 ## JSON contracts and calculation ownership
 
@@ -176,8 +174,8 @@ exported JSON or recomputing them for chips/tables.
 
 ## Consumer boundaries
 
-The viewer owns Qt presentation and raw PNM source files. This toolkit owns
-scientific computation and typed results. Keep library inputs independent of
+Optional future presentation and Python adapters consume the same public Rust API.
+The toolkit owns scientific computation and typed results. Keep library inputs independent of
 QML, GUI controls, filesystem paths and HTTP. Preserve bounded work, cancellation
 and partial-result semantics when refactoring.
 
@@ -201,7 +199,7 @@ Rust, JavaScript and TypeScript:
  */
 ```
 
-Preserve copied PNM Viewer copyrights and all third-party notices. Use the actual
+Preserve original copyrights and all third-party notices. Use the actual
 creation year for new files. Place the banner before module docs,
 attributes or imports. Use the file language's valid comment syntax (for example,
 CSS supports the same multiline block banner).

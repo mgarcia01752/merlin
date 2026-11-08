@@ -5,7 +5,6 @@ description: Prepare commits and guarded pushes for DOCSIS OFDM FEC Toolkit usin
 
 # Git workflow
 
-Ported from PNM Viewer Toolkit and OSCAR-UI helper conventions.
 Before a commit message, inspect git status --short, git diff --stat, git diff,
 staged changes and every untracked file. git-save stages all non-ignored files.
 Preserve private inputs under ignored development/ and never stage Cargo caches.

@@ -25,7 +25,7 @@ Loaded protected roles must be reverified against supplied captured profiles
 through `verify_captured_roles`; saved results must be recalculated. Neither
 successful JSON parsing nor a supplied hash proves the source file's authenticity.
 The standalone CLI does not retain raw binary files because it receives decoded
-inputs; PNM Viewer owns those bytes and format validation.
+inputs; a capture-loading application owns original bytes and format validation.
 
 Simulation JSON records named stages, seed, settings, source, selected carrier
 offsets, trial counts, correction/failure/iteration statistics, confidence bounds,

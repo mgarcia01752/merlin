@@ -1,52 +1,63 @@
-# Architecture
+# DOFT architecture
 
-DOCSIS OFDM FEC Toolkit is an offline scientific dependency of PNM Viewer Toolkit.
-It has no Qt dependency, PNM binary parser, modem control or network service.
+DOFT is a standalone DOCSIS scientific toolkit with a Rust library and CLI.
+Downstream OFDM is the current focus. OFDMA is deferred. All signal processing,
+channel modeling, modulation, soft demapping and FEC are implemented in Rust.
 
 ```text
-PNM Viewer Toolkit                         This repository
-  PNM parsers / source bytes ──typed──> docsis-ofdm-fec (crates/ofdm)
-  collection scanner                    types/       domain aliases and roles
-  Qt views and background jobs          math/        targets, OFDM rate, QAM
-  session/persistence adapters          profile/     models, association,
-                                             evaluation, documents, simulation
-                                                    │
-                                                    v
-                                              fec-codec
-                                               Rust LDPC / CXX BCH
-
-                                      ofdm-fec CLI -> same public library
+ofdm-fec CLI                 Future optional adapters
+                             Python bindings / Qt presentation
+          \                       /
+           docsis-ofdm-fec (crates/ofdm)
+             types/       identities, units, carrier roles and modulation support
+             math/        targets, OFDM rates and constellation references
+             profile/     scenarios, association, candidates, evaluation,
+                          documents and simulation
+                         |
+                    fec-codec
+                    Rust LDPC + Rust BCH
 ```
 
-`fec-codec` owns a replaceable low-level encoder/decoder boundary. Its Rust API
-validates bit lengths and values before native entry. LDPC uses the pinned
-ldpc-toolbox matrix and layered decoder. The native BCH kernel is a bounded
-adaptation of AFF3CT, without its simulation framework or Qt.
+The scientific crates forbid unsafe code and have no Qt, Python-runtime or native
+codec dependency. Python remains useful for development/release tooling only.
+The optional future Python and Qt adapters call the same public scientific API;
+scientific functionality takes priority over either adapter.
 
-`docsis-ofdm-fec` owns original grid identity, provenance metadata, individual
-RxMER frames, optional captured profiles/channel observations, candidates,
-analytical temporal evaluation and simulations. No IO or GUI types appear in its
-public models. Its Rust source forbids unsafe code. Consumers retain the original
-capture bytes; source hashes in a decoded document are metadata, not proof that
-the toolkit authenticated those bytes.
+Two simulation modes are planned:
 
-The `simulation` Cargo feature is on by default. Disabling default features leaves
-analytical profile functionality without native codecs. PNM-only decoding in the
-viewer need not depend on this toolkit.
+- **Ideal/reference:** known symbols and channel, noiseless baseline or controlled
+  AWGN; actual FEC outcomes establish reference behavior.
+- **Measurement-driven:** exact-grid RxMER, downstream channel estimates and an
+  applied modulation profile describe the supplied OFDM conditions. RxMER-based
+  residual AWGN is implemented for the initial coding experiment. The complete
+  channel-estimate-driven model remains pending. Establish measurement reference
+  points before combining them; do not count equalized impairment twice.
 
-The CLI is a bounded JSON adapter with cancellation and safe new-file output.
-It uses the same algorithms that a future viewer adapter will call. Work limits
-are policy, not invented DOCSIS format constraints. See [documents](reference/documents.md).
+Typed source inputs retain identity, units, timestamps, original grid positions,
+missing readings, exclusions and provenance. Applications that decode binary
+capture files retain original bytes and compute source hashes. A supplied JSON
+hash is metadata, not authentication. No silent interpolation or resampling occurs.
 
-Scientific results retain their meaning across transports: measured MER is an
-observation; target compliance is an analytical estimate; decoder trials are
-simulated outcomes. The toolkit never turns thresholds into measured FEC counters.
+Scientific results distinguish measured observations, analytical target screening
+and simulated decoder outcomes. Individual frames and worst intervals remain
+visible; an average curve must not hide transient impairments. MER-derived noise
+averages linear error powers rather than arithmetic dB values.
 
-Profiles are local hypotheses. Range edits preserve special and unknown roles.
-Captured roles must be rechecked against supplied source profiles before a loaded
-candidate is trusted. A saved result is historical; evaluation recalculates it.
-The internal candidate schema is not a vendor PMA or CMTS configuration format.
+`fec-codec` provides safe Rust encoder/decoder APIs. LDPC reuses the pinned
+ldpc-toolbox matrix/decoder; BCH uses a bounded Rust implementation with documented
+algorithm provenance and retained licensing. A coding round trip does not prove
+DOCSIS interoperability. See [coding evidence](reference/coding-mode.md).
 
-The extracted Qt prototype is preserved under ignored
-`development/migration/pnm-viewer-prototype/`. It is reference material, not a
-second desktop application or a shipped toolkit component.
+`docsis-ofdm-fec` owns shared scenario and candidate models, exact association,
+analytical evaluation, simulation settings/results and document validation. Its
+optional `simulation` feature allows analysis-only builds without codecs.
+The CLI owns bounded file I/O, cancellation signals and safe new-file output.
+
+Candidate edits preserve verified pilot, PLC and excluded roles. Saved result
+claims are recalculated against supplied observations, and captured roles are
+reverified. Internal candidate JSON does not deploy or activate a profile.
+
+The downstream modulation target covers the pinned DOCSIS3.1/4.0 FDD definitions
+through16384-QAM, while implementation status remains explicit per mode. Device
+support requirements and implemented scientific capabilities are separate.
+See [modulation coverage](reference/ofdm-support.md) and [public API](reference/public-api.md).

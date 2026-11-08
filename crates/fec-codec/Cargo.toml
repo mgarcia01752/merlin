@@ -3,13 +3,9 @@ name = "fec-codec"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.85"
-license = "Apache-2.0"
+license = "Apache-2.0 AND MIT"
 
 [dependencies]
-cxx = "=1.0.158"
 ldpc-toolbox = "=0.10.1"
 ndarray = "=0.16.1"
 num-traits = "=0.2.19"
-
-[build-dependencies]
-cxx-build = "=1.0.158"

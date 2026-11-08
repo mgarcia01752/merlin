@@ -5,11 +5,7 @@
 //! Explicit MER target policies; none guarantees error-free receiver operation.
 use crate::{
     math::shannon::minimum_snr_db,
-    types::{
-        modulation::{CarrierType, ModulationAssignment},
-        units::QUARTER_DB_PER_DB,
-        BitsPerSymbol,
-    },
+    types::{ofdm_modulation::OfdmModulation, units::QUARTER_DB_PER_DB, BitsPerSymbol},
 };
 use serde::{Deserialize, Serialize};
 
@@ -107,12 +103,11 @@ impl BitLoadingModel {
         })
     }
 }
-/// Checks the shared assignment registry instead of duplicating a QAM allowlist.
+/// Checks the DOCSIS downstream data registry, excluding pilot/NCP/PLC roles.
 /// # Arguments
 /// * `bits` - Assignment code whose encoded value equals data bits per symbol.
 /// # Returns
-/// True for a known positive Data assignment no larger than the registry maximum.
+/// True for data orders4,6..14; zero, pilot and NCP assignments are not data.
 pub fn is_data_bit_loading(bits: BitsPerSymbol) -> bool {
-    let assignment = ModulationAssignment::from_code(bits);
-    assignment.carrier_type == CarrierType::Data && assignment.bit_loading == Some(bits)
+    OfdmModulation::from_bits(bits).is_some()
 }

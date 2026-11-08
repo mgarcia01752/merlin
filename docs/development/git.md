@@ -1,7 +1,6 @@
 # Git and versioning
 
-These helpers are ported from PNM Viewer Toolkit, using the same workflow as
-OSCAR-UI. They resolve paths from their own locations, not the calling directory.
+The helpers resolve paths from their own locations, not the calling directory.
 They do not publish GitHub Releases or configure an origin remote.
 
 VERSION is the source of truth. `python3 tools/release/versions.py` checks the
@@ -39,7 +38,7 @@ Feature branches must be reviewed and merged locally before using this helper.
 The validation gate includes version consistency, Python helper tests, Bash
 syntax/ShellCheck, rustfmt, Clippy, all workspace tests, analysis-only tests,
 a release CLI build and an actual seeded simulation smoke run. It installs
-nothing. Python3, ShellCheck, the pinned Rust toolchain and C++17 are prerequisites.
+nothing. Python3, ShellCheck, and the pinned Rust toolchain are prerequisites.
 A missing check is a failure; there is no validation-skip option.
 
 ## Local bump preview

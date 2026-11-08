@@ -1,6 +1,6 @@
 # Development
 
-Use Rust1.85.1, Cargo, rustfmt, Clippy and a C++17 compiler. Linux was validated
+Use Rust 1.85.1, Cargo, rustfmt and Clippy. Linux was validated
 locally; macOS and Windows runtime/build validation remains outstanding.
 
 ```bash
@@ -14,23 +14,23 @@ locally; macOS and Windows runtime/build validation remains outstanding.
 A globally available Cargo works with rust-toolchain.toml. Alternatively, a
 project-local Rust installation can live under ignored local/cargo and local/rustup.
 No script in this checkout installs system packages or changes shell profiles.
-On the current VM those two paths reference the existing PNM Viewer development
-toolchain/cache; build outputs remain in this repository's target/.
+Project-local toolchain/cache links can reuse an existing development installation;
+build outputs remain in this repository's target/.
 
 For an independent local toolchain, use rustup with CARGO_HOME and RUSTUP_HOME
 pointing at this checkout's local directories, `--no-modify-path` and toolchain
-1.85.1. Do not replace the current cache links while they are in use. Downloading
-Rust is distinct from installing host C++ compiler prerequisites.
+1.85.1. Do not replace cache links while they are in use. Local Rust setup
+does not change globally managed executables.
 
 Cargo.lock pins the dependency graph. ldpc-toolbox0.10.1 was selected because
 newer inspected releases use Rust APIs unavailable on the pinned toolchain.
-The CXX toolchain is pinned to1.0.158. Native BCH source is vendored with its
-upstream MIT notice and revision; no build-time upstream checkout occurs.
+BCH encoding and decoding are implemented in safe Rust. Upstream algorithm
+provenance and the retained MIT notice are described in NOTICE. No native codec
+build script, CXX bridge or C++ source is included in the build.
 
 Private normative PDFs, evidence and migration snapshots live in ignored
 `development/`. They are not present in a fresh clone. The specification skills
 include versioned lookup extracts; diagrams still require the original PDF.
 
-The initial branch is feature/ds-profile-fec-lab in the new repository, which had
-no commits when migration began. PNM Viewer source baseline was
-5fbd5561f3e06b73486546b5ffa520279080a5eb. No commit or push was performed.
+The implementation branch is feature/ds-profile-fec-lab. Git operations use the
+local helpers described in [Git and versioning](git.md).

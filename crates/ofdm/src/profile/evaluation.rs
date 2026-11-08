@@ -42,7 +42,7 @@ impl Default for EvaluationSettings {
         Self {
             model: BitLoadingModel::OssiCandidateDefaults,
             margin_db: 0.0,
-            max_bit_loading: 13,
+            max_bit_loading: crate::types::ofdm_modulation::MAX_OFDM_BITS_PER_SYMBOL,
             strategy: CandidateStrategy::Conservative,
             lower_percentile: 0.05,
             allowed_weak_fraction: 0.05,

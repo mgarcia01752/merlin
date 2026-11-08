@@ -71,3 +71,42 @@ fn codec_rejects_invalid_inputs_and_bounded_work() {
         .decode(&vec![f64::NAN; LDPC_CODEWORD_BITS], 20)
         .is_err());
 }
+#[test]
+fn bch_rust_corrects_multiple_patterns_including_shortened_word_edges() {
+    let encoded = encode_bch(&message()).unwrap();
+    for count in [1, 6, 12] {
+        for seed in 0..12 {
+            let mut damaged = encoded.clone();
+            for ordinal in 0..count {
+                // Odd stride353 is coprime to14400: positions cannot collide.
+                let position = (seed * 1199 + ordinal * 353) % 14400;
+                damaged[position] ^= 1;
+            }
+            let decoded = decode_bch(&damaged).unwrap();
+            assert!(decoded.success, "count={count}, seed={seed}");
+            assert_eq!(decoded.corrected_bits, count as u32);
+            assert_eq!(decoded.codeword, encoded);
+        }
+    }
+}
+#[test]
+fn bch_rejects_dense_error_patterns_without_modifying_received_bits() {
+    let mut random_state = 0x5a91_e4d3u32;
+    for _ in 0..24 {
+        let word: Vec<u8> = (0..14400)
+            .map(|_| {
+                random_state ^= random_state << 13;
+                random_state ^= random_state >> 17;
+                random_state ^= random_state << 5;
+                (random_state >> 31) as u8
+            })
+            .collect();
+        let decoded = decode_bch(&word).unwrap();
+        assert!(!decoded.success);
+        assert_eq!(decoded.corrected_bits, 0);
+        assert_eq!(decoded.codeword, word);
+    }
+    let mut nonbinary = vec![0; 14400];
+    nonbinary[14399] = 2;
+    assert!(decode_bch(&nonbinary).is_err());
+}

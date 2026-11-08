@@ -5,7 +5,6 @@ description: Prepare DOCSIS OFDM FEC Toolkit three-component version bumps, rele
 
 # Toolkit release workflow
 
-Ported from PNM Viewer Toolkit's pnm-viewer-release skill on 2026-11-08.
 Read docs/development/git.md, VERSION and the local helpers before commands.
 VERSION is canonical; tools/release/versions.py checks every local manifest and
 Cargo.lock. Do not edit package versions independently or adopt four-part versions.
@@ -33,5 +32,5 @@ cd /home/dev01/Projects/DOCSIS-OFDM-FEC-Toolkit &&
 unless explicitly asked to execute. Adding release tooling is not authorization
 to release. This repository currently has no automated publication/installer
 workflow; a successful tag push does not itself create a GitHub Release.
-Do not copy the viewer's MSI/DMG/DEB or Qt packaging requirements into this library.
+Future GUI installers and Python packaging need their own explicitly scoped work.
 Report native platform and interoperability evidence separately from tag creation.
