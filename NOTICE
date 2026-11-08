@@ -1,0 +1,21 @@
+DOCSIS OFDM FEC Toolkit
+
+Scientific profile models, policies and initial codec adapter were extracted from
+uncommitted PNM Viewer Toolkit work based on commit
+5fbd5561f3e06b73486546b5ffa520279080a5eb. Copied Apache-2.0 source retains its
+original PNM Viewer contributor copyright notices.
+
+fec-codec uses ldpc-toolbox 0.10.1 (MIT OR Apache-2.0), corresponding to upstream
+release commit 62b02cef2df8c6a3b74843d5b4d1947715fbf78d.
+https://github.com/daniestevez/ldpc-toolbox
+
+The BCH native adapter includes a modified AFF3CT decoding kernel from revision
+0e8ecda8191cec97a6fe86a56de0d957b63b3b04, under the MIT license.
+Its full notice is crates/fec-codec/native/AFF3CT-LICENSE. Local adaptations
+bound ELP storage to correction capacity, remove framework orchestration, adapt
+MSB-first wire order and verify final syndromes. Retain that license with any
+binary distribution. See docs/reference/coding-mode.md for parameter evidence.
+https://github.com/aff3ct/aff3ct
+
+Specification documents retain their respective owners' rights. Private PDFs
+and the migration prototype are development inputs, not distributable assets.

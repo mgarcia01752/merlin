@@ -1,0 +1,6 @@
+interface:
+  display_name: "DOCSIS 3.1 PHY I20"
+  short_description: "Look up DOCSIS 3.1 PHY I20 requirements"
+  default_prompt: "Use $docsis-phy-3-1-i20 to answer this question from CM-SP-PHYv3.1-I20-230419, citing the exact section and PDF page and preserving normative force."
+policy:
+  allow_implicit_invocation: true

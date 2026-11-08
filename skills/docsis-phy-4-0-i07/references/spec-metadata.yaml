@@ -1,0 +1,15 @@
+spec_family: DOCSIS 4.0
+specification: Physical Layer Specification
+document_control_number: CM-SP-PHYv4.0-I07-250627
+issue: I07
+issue_slug: i07
+publication_date: 2025-06-27
+status: Issued
+pdf_page_count: 161
+source_pdf: CM-SP-PHYv4.0-I07-250627.pdf
+canonical_skill_name: docsis-phy-4-0-i07
+extraction:
+  format: layout-preserving UTF-8 text
+  page_marker: "<!-- PDF_PAGE: N -->"
+  authority: "The PDF is authoritative; extracted text is a lookup representation only."
+  caution: "Verify the PDF for ambiguous tables, formulas, figures, symbols, subscripts, spectra, equations, and layout-sensitive values."

@@ -1,0 +1,6 @@
+interface:
+  display_name: "DOCSIS 4.0 PHY I07"
+  short_description: "Look up DOCSIS 4.0 PHY I07 requirements"
+  default_prompt: "Use $docsis-phy-4-0-i07 to answer from CM-SP-PHYv4.0-I07-250627, preserving normative force and citing the exact section and PDF page."
+policy:
+  allow_implicit_invocation: true

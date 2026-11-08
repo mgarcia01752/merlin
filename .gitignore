@@ -1,0 +1,6 @@
+/target/
+/local/
+/development/
+*.pdf
+__pycache__/
+*.pyc

@@ -1,0 +1,8 @@
+{
+  "seed": 1,
+  "codewords": 10,
+  "max_iterations": 30,
+  "max_runtime_ms": 10000,
+  "awgn_mer_db": 25.0,
+  "noiseless": false
+}

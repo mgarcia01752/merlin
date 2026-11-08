@@ -1,0 +1,79 @@
+# Git and versioning
+
+These helpers are ported from PNM Viewer Toolkit, using the same workflow as
+OSCAR-UI. They resolve paths from their own locations, not the calling directory.
+They do not publish GitHub Releases or configure an origin remote.
+
+VERSION is the source of truth. `python3 tools/release/versions.py` checks the
+three local Cargo manifests and Cargo.lock. Versions are MAJOR.MINOR.PATCH;
+release tags are vMAJOR.MINOR.PATCH. The initial version is0.1.0.
+
+## Save
+
+Review tracked, staged and untracked content first. The helper stages all
+non-ignored changes, including new files. Private development evidence, PDFs,
+local toolchains and target/ remain ignored.
+
+```bash
+cd /home/dev01/Projects/DOCSIS-OFDM-FEC-Toolkit &&
+tools/git/git-save.sh --commit-msg "Feature: Describe the complete change
+- Describe the implementation
+- Tests: Record actual validation"
+```
+
+Save creates a local commit only. It does not push or bump a version. Initial
+commits work in a new repository once Git author identity is configured.
+
+## Push
+
+```bash
+cd /home/dev01/Projects/DOCSIS-OFDM-FEC-Toolkit &&
+tools/git/git-push.sh
+```
+
+Plain push requires clean main/master, a configured origin and a local branch
+that is not behind or diverged. It runs `scripts/check-before-push.sh`, rechecks
+that branch/commit/tree are unchanged and pushes only that tested branch object.
+Feature branches must be reviewed and merged locally before using this helper.
+
+The validation gate includes version consistency, Python helper tests, Bash
+syntax/ShellCheck, rustfmt, Clippy, all workspace tests, analysis-only tests,
+a release CLI build and an actual seeded simulation smoke run. It installs
+nothing. Python3, ShellCheck, the pinned Rust toolchain and C++17 are prerequisites.
+A missing check is a failure; there is no validation-skip option.
+
+## Local bump preview
+
+```bash
+cd /home/dev01/Projects/DOCSIS-OFDM-FEC-Toolkit &&
+tools/bump-version.sh --bump patch --dry-run
+```
+
+Without --dry-run, only VERSION and local Cargo version metadata change. No
+Git commit, tag or push occurs. Major resets minor/patch; minor resets patch.
+
+## Combined release push
+
+After saving and merging reviewed work to master:
+
+```bash
+cd /home/dev01/Projects/DOCSIS-OFDM-FEC-Toolkit &&
+tools/git/git-push.sh --tag-patch
+```
+
+Use --tag-minor or --tag-major for those components. Release modes require clean
+master and consistent committed metadata. They inspect origin, reject collisions,
+bump, validate the candidate, commit only version files, annotate the tag and
+atomically push master plus that tag. They never force-push or overwrite a tag.
+Add --dry-run to preview without a bump/build/commit/tag/push; it still reads origin.
+
+A clean HEAD already published under its current tag is a no-op. Explicit --force
+with a bump mode permits another release for a rebuild/test, while retaining all
+checks. It is not Git force-push and does not bypass unpublished release recovery.
+
+If a release upload fails, local state is retained. Inspect it and retry the same
+tag with `tools/git/git-push.sh --tag vMAJOR.MINOR.PATCH`; do not bump again blindly.
+Version edits or commits made before a failed check are never reset automatically.
+
+No release workflow exists yet in this new repository. Pushing a tag alone does
+not build installers, publish assets or establish DOCSIS interoperability.

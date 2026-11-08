@@ -1,0 +1,10 @@
+{
+  "model": "ossi_candidate_defaults",
+  "margin_db": 0.0,
+  "max_bit_loading": 4,
+  "strategy": "conservative",
+  "lower_percentile": 0.05,
+  "allowed_weak_fraction": 0.05,
+  "assume_unknown_data_roles": false,
+  "time_tolerance_seconds": 0
+}

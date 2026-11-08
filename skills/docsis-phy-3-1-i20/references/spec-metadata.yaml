@@ -1,0 +1,15 @@
+spec_family: DOCSIS 3.1
+specification: Physical Layer Specification
+document_control_number: CM-SP-PHYv3.1-I20-230419
+issue: I20
+issue_slug: i20
+publication_date: 2023-04-19
+status: Issued
+pdf_page_count: 224
+source_pdf: CM-SP-PHYv3.1-I20-230419.pdf
+canonical_skill_name: docsis-phy-3-1-i20
+extraction:
+  format: layout-preserving UTF-8 text
+  page_marker: "<!-- PDF_PAGE: N -->"
+  authority: "The PDF is authoritative; extracted text is a lookup representation only."
+  caution: "Verify the PDF for ambiguous tables, equations, figures, symbols, subscripts, superscripts, or layout-sensitive values."

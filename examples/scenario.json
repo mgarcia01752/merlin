@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "protocol": "docsis31",
+  "frames": [
+    {
+      "key": {
+        "mac_address": [
+          0,
+          202,
+          0,
+          0,
+          0,
+          1
+        ],
+        "channel_id": 1,
+        "grid": {
+          "zero_frequency_hz": 600000000,
+          "first_subcarrier_index": 100,
+          "spacing_hz": 25000,
+          "sample_count": 4
+        }
+      },
+      "source": {
+        "name": "synthetic-rxmer-100",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000001",
+        "byte_length": 0,
+        "capture_time": 100,
+        "file_kind": "synthetic_rxmer",
+        "format_major": 1,
+        "format_minor": 0
+      },
+      "capture_time": 100,
+      "mer_db": [
+        35.0,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "key": {
+        "mac_address": [
+          0,
+          202,
+          0,
+          0,
+          0,
+          1
+        ],
+        "channel_id": 1,
+        "grid": {
+          "zero_frequency_hz": 600000000,
+          "first_subcarrier_index": 100,
+          "spacing_hz": 25000,
+          "sample_count": 4
+        }
+      },
+      "source": {
+        "name": "synthetic-rxmer-101",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000002",
+        "byte_length": 0,
+        "capture_time": 101,
+        "file_kind": "synthetic_rxmer",
+        "format_major": 1,
+        "format_minor": 0
+      },
+      "capture_time": 101,
+      "mer_db": [
+        20.0,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "key": {
+        "mac_address": [
+          0,
+          202,
+          0,
+          0,
+          0,
+          1
+        ],
+        "channel_id": 1,
+        "grid": {
+          "zero_frequency_hz": 600000000,
+          "first_subcarrier_index": 100,
+          "spacing_hz": 25000,
+          "sample_count": 4
+        }
+      },
+      "source": {
+        "name": "synthetic-rxmer-102",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000003",
+        "byte_length": 0,
+        "capture_time": 102,
+        "file_kind": "synthetic_rxmer",
+        "format_major": 1,
+        "format_minor": 0
+      },
+      "capture_time": 102,
+      "mer_db": [
+        28.0,
+        null,
+        null,
+        null
+      ]
+    }
+  ],
+  "profiles": [
+    {
+      "key": {
+        "mac_address": [
+          0,
+          202,
+          0,
+          0,
+          0,
+          1
+        ],
+        "channel_id": 1,
+        "grid": {
+          "zero_frequency_hz": 600000000,
+          "first_subcarrier_index": 100,
+          "spacing_hz": 25000,
+          "sample_count": 4
+        }
+      },
+      "source": {
+        "name": "synthetic-profile-100",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000004",
+        "byte_length": 0,
+        "capture_time": 100,
+        "file_kind": "synthetic_profile",
+        "format_major": 1,
+        "format_minor": 0
+      },
+      "capture_time": 100,
+      "profile_id": 3,
+      "assignments": [
+        {
+          "carrier_type": "data",
+          "bit_loading": 4,
+          "origin": "captured"
+        },
+        {
+          "carrier_type": "continuous_pilot",
+          "bit_loading": 1,
+          "origin": "captured"
+        },
+        {
+          "carrier_type": "plc",
+          "bit_loading": 4,
+          "origin": "captured"
+        },
+        {
+          "carrier_type": "exclusion",
+          "bit_loading": null,
+          "origin": "captured"
+        }
+      ]
+    }
+  ],
+  "channels": []
+}

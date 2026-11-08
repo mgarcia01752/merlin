@@ -1,0 +1,19 @@
+[package]
+name = "ofdm-fec-cli"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+
+[[bin]]
+name = "ofdm-fec"
+path = "src/main.rs"
+
+[dependencies]
+docsis-ofdm-fec = { path = "../ofdm" }
+serde = { version = "=1.0.228", features = ["derive"] }
+serde_json = "=1.0.145"
+ctrlc = "=3.5.2"
+
+[dev-dependencies]
+tempfile = "=3.23.0"
