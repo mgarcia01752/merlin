@@ -3,8 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Exact spatial compatibility and explicit, noninterpolating capture-time matching.
-use super::{invalid, model::ScenarioKey, LabError};
 use crate::types::CaptureTime;
+use crate::{
+    error::{invalid, LabError},
+    scenario::grid::ScenarioKey,
+};
 use serde::Serialize;
 
 /// A time association never claims simultaneity unless the timestamp is identical.

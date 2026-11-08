@@ -21,6 +21,15 @@ full coding simulations for higher orders remain pending. Full DOCSIS
 framing/placement and interoperability validation are
 pending. See [coding scope and equations](docs/reference/coding-mode.md).
 
+The isolated codec loop is available before involving modulation or a channel:
+
+See the [FEC codec user guide](docs/user/fec-codec.md) for the encode/decode flow,
+public API example and mathematical explanation.
+
+```bash
+./scripts/cargo-local.sh run -p fec-codec --example codec_loop --locked
+```
+
 ```bash
 ./scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- \
   simulate --input examples/awgn.json --output awgn-result.json

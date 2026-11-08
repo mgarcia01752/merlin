@@ -6,6 +6,7 @@ locally; macOS and Windows runtime/build validation remains outstanding.
 ```bash
 ./scripts/cargo-local.sh fmt --all -- --check
 ./scripts/cargo-local.sh test --workspace --locked
+./scripts/cargo-local.sh run -p fec-codec --example codec_loop --locked
 ./scripts/cargo-local.sh clippy --workspace --all-targets --locked -- -D warnings
 ./scripts/cargo-local.sh test -p docsis-ofdm-fec --no-default-features --locked
 ./scripts/cargo-local.sh build -p ofdm-fec-cli --release --locked

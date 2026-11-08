@@ -1,5 +1,8 @@
 # Coding experiment and scientific conventions
 
+For the isolated BCH/LDPC loop, see the [FEC codec user guide](../user/fec-codec.md),
+including its flow diagram and LaTeX encoding/decoding equations.
+
 ## Evidence and scope
 
 The first experiment uses DOCSIS3.1 downstream short LDPC N=16200, K=14400,

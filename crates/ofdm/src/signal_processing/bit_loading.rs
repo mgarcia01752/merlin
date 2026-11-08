@@ -4,7 +4,7 @@
  */
 //! Explicit MER target policies; none guarantees error-free receiver operation.
 use crate::{
-    math::shannon::minimum_snr_db,
+    signal_processing::shannon::minimum_snr_db,
     types::{ofdm_modulation::OfdmModulation, units::QUARTER_DB_PER_DB, BitsPerSymbol},
 };
 use serde::{Deserialize, Serialize};

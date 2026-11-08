@@ -5,17 +5,32 @@ Downstream OFDM is the current focus. OFDMA is deferred. All signal processing,
 channel modeling, modulation, soft demapping and FEC are implemented in Rust.
 
 ```text
-ofdm-fec CLI                 Future optional adapters
-                             Python bindings / Qt presentation
-          \                       /
-           docsis-ofdm-fec (crates/ofdm)
-             types/       identities, units, carrier roles and modulation support
-             math/        targets, OFDM rates and constellation references
-             profile/     scenarios, association, candidates, evaluation,
-                          documents and simulation
-                         |
-                    fec-codec
-                    Rust LDPC + Rust BCH
+crates/
+├── fec-codec/src/
+│   ├── lib.rs                 Public exports and shared input validation
+│   ├── parameters.rs          Supported coding dimensions
+│   ├── bch.rs                 BCH encoding and decoding
+│   ├── ldpc.rs                LDPC encoding and decoding
+│   └── concatenated.rs        BCH→LDPC; reverse decoding and payload comparison
+├── ofdm/src/
+│   ├── lib.rs                 Module wiring and compatibility exports
+│   ├── error.rs               Shared scientific diagnostics
+│   ├── types/                 Domain aliases, units and carrier roles
+│   ├── signal_processing/
+│   │   ├── modulation/        QAM references, bit ordering and soft demapping
+│   │   └── noise/             Residual powers and controlled AWGN
+│   ├── simulation/
+│   │   ├── source/            Current seeded source; PRBS remains unimplemented
+│   │   ├── config.rs          Receiver and work limits
+│   │   ├── runner.rs          Connect stages; own cancellation and progress
+│   │   └── results.rs         Stage comparisons, counters and confidence bounds
+│   ├── scenario/              Grids, observations, association and input documents
+│   └── profile/               Candidates, role protection and analytical evaluation
+└── cli/src/
+    ├── main.rs                Startup, signals and process exit
+    ├── arguments.rs           CLI syntax
+    ├── commands/              Focused simulate/evaluate adapters
+    └── json_io.rs             Bounded file input and safe new-file output
 ```
 
 The scientific crates forbid unsafe code and have no Qt, Python-runtime or native
@@ -61,3 +76,18 @@ The downstream modulation target covers the pinned DOCSIS3.1/4.0 FDD definitions
 through16384-QAM, while implementation status remains explicit per mode. Device
 support requirements and implemented scientific capabilities are separate.
 See [modulation coverage](reference/ofdm-support.md) and [public API](reference/public-api.md).
+
+The isolated codec loop lives in `fec_codec::concatenated`. It can encode, reverse
+decode and compare a payload without QAM, noise, profiles or a scenario. See
+[the codec-loop example](../crates/fec-codec/examples/codec_loop.rs).
+Source generation remains separate; no PRBS polynomial has been introduced.
+The [FEC codec user guide](user/fec-codec.md) shows the current flow, block
+dimensions and encoding/decoding equations.
+
+A simulation runner coordinates stages but does not implement their algorithms.
+Its source and AWGN operations share the same job RNG stream to preserve seeded
+draw order. Result reporting owns truth comparisons and confidence calculations.
+
+Existing `math::*`, `profile::model`, `profile::association`, `profile::simulation`
+and `profile::document::ScenarioDocument` imports remain available through
+re-exports. Each type and algorithm has one implementation at its canonical path.

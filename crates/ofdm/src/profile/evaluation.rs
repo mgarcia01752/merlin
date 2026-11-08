@@ -3,7 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Fast analytical screening, explicitly separate from simulated FEC reliability.
-use super::{invalid, model::*, LabError};
+use super::candidate::*;
+use crate::{
+    error::{invalid, LabError},
+    scenario::{RxMerFrame, ScenarioKey},
+    types::ProtocolScope,
+};
 use crate::{
     math::{bit_loading::BitLoadingModel, ofdm},
     types::{modulation::CarrierType, BitRateBps, BitsPerSymbol, CaptureTime},
@@ -374,20 +379,4 @@ pub fn evaluate(
     })
 }
 
-/// Computes equivalent residual-noise MER by averaging linear error powers.
-/// # Arguments
-/// * `values_db` - Finite per-observation MER values at the same reference point.
-/// # Returns
-/// Equivalent MER in dB, or None for empty/nonfinite/extreme numeric inputs.
-pub fn equivalent_noise_mer(values_db: &[f64]) -> Option<f64> {
-    if values_db.is_empty() || values_db.iter().any(|value| !value.is_finite()) {
-        return None;
-    }
-    let noise_power = values_db
-        .iter()
-        .map(|mer| 10.0_f64.powf(-mer / 10.0))
-        .sum::<f64>()
-        / values_db.len() as f64;
-    let mer = -10.0 * noise_power.log10();
-    mer.is_finite().then_some(mer)
-}
+pub use crate::signal_processing::noise::equivalent_noise_mer;

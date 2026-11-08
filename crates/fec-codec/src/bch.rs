@@ -1,7 +1,8 @@
 /*
  * Copyright (c) 2017-2026 aff3ct
+ * Copyright 2026 PNM Viewer contributors
  * Copyright 2026 DOCSIS OFDM FEC Toolkit contributors
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: Apache-2.0 AND MIT
  *
  * Rust replacement for the bounded AFF3CT-derived BCH adapter. Retains the
  * upstream notice in crates/fec-codec/LICENSE-MIT. Implements binary-field
@@ -9,8 +10,18 @@
  * Parameters: ETSI EN302769 V1.2.1 Tables3(b)/4(b), referenced by PHY I20.
  */
 //! Shortened BCH(14400,14232), bounded-distance correction of up to12 errors.
-use super::{BchResult, BCH_INPUT_BITS, LDPC_INPUT_BITS};
+use crate::{
+    binary_bits,
+    parameters::{BCH_INPUT_BITS, LDPC_INPUT_BITS},
+};
 use std::sync::OnceLock;
+
+/// Complete corrected BCH word, with decoder status separate from truth BER.
+pub struct BchResult {
+    pub codeword: Vec<u8>,
+    pub corrected_bits: u32,
+    pub success: bool,
+}
 
 type FieldElement = u16;
 const BCH_FIELD_BITS: usize = 14;
@@ -150,14 +161,15 @@ fn kernel() -> Result<&'static BchKernel, String> {
         .as_ref()
         .map_err(Clone::clone)
 }
-/// Encodes a previously validated binary payload in systematic MSB-first order.
+/// Encodes a binary payload in systematic MSB-first order.
 /// # Arguments
-/// * `message` - Exactly14232 validated binary bits.
+/// * `message` - Exactly14232 binary bits.
 /// # Returns
 /// The unchanged information bits followed by168BCH parity bits.
 /// # Errors
-/// Reports invalid internal field/generator parameters.
-pub(super) fn encode(message: &[u8]) -> Result<Vec<u8>, String> {
+/// Rejects invalid bit lengths/values and internal field/generator parameters.
+pub fn encode_bch(message: &[u8]) -> Result<Vec<u8>, String> {
+    binary_bits(message, BCH_INPUT_BITS)?;
     let kernel = kernel()?;
     let mut remainder = [0; BCH_PARITY_BITS];
     for bit in message {
@@ -172,14 +184,15 @@ pub(super) fn encode(message: &[u8]) -> Result<Vec<u8>, String> {
     result.extend(remainder.iter().rev());
     Ok(result)
 }
-/// Decodes a previously validated word; failures retain the original decisions.
+/// Decodes a binary word; failures retain the original decisions.
 /// # Arguments
-/// * `codeword` - Exactly14400 validated binary bits in MSB-first wire order.
+/// * `codeword` - Exactly14400 binary bits in MSB-first wire order.
 /// # Returns
 /// Complete corrected word, correction count and post-syndrome-checked status.
 /// # Errors
-/// Reports invalid internal field/generator parameters.
-pub(super) fn decode(codeword: &[u8]) -> Result<BchResult, String> {
+/// Rejects invalid bit lengths/values and internal field/generator parameters.
+pub fn decode_bch(codeword: &[u8]) -> Result<BchResult, String> {
+    binary_bits(codeword, LDPC_INPUT_BITS)?;
     let kernel = kernel()?;
     let failure = || BchResult {
         codeword: codeword.to_vec(),

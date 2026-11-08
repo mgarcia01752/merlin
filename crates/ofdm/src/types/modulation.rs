@@ -4,7 +4,7 @@
  */
 //! Shared OFDM assignments from CM-OSSI 3.1 I27 / 4.0 I13, D.2.1.7.
 use super::{BitsPerSymbol, ModulationOrder};
-use crate::math::shannon::{minimum_snr_db, ShannonSnrDb};
+use crate::signal_processing::shannon::{minimum_snr_db, ShannonSnrDb};
 use serde::{Deserialize, Serialize};
 
 const BPSK_BITS_PER_SYMBOL: BitsPerSymbol = 1;

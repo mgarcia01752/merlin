@@ -69,3 +69,15 @@ validate the bumped candidate, commit version files, annotate and atomically pus
 No validation bypass or Git force-push. --force permits a fresh release only
 from an already published clean HEAD. --tag retries without another bump.
 No automatic GitHub publication or installer workflow is configured yet.
+
+## Source module ownership
+
+Keep fec-codec split into parameters, BCH, LDPC and concatenated codec modules.
+The concatenated path must be usable without modulation, noise or capture models.
+In ofdm, scenario owns observations/grids/association; profile owns hypotheses
+and evaluation; signal_processing owns numerical algorithms; simulation owns
+source generation, job orchestration and results. Keep CLI main focused on
+startup, with arguments, commands and bounded JSON I/O in separate modules.
+Preserve existing public imports with re-exports rather than duplicate logic.
+See docs/architecture.md. PRBS is a later source implementation, not a label for
+the existing seeded random generator.

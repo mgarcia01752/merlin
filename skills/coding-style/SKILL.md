@@ -9,6 +9,15 @@ Use documented public Rust APIs, meaningful domain types and pinned local PHY ev
 All signal processing and FEC algorithms are Rust. Do not introduce native DSP
 or codec libraries through FFI. An optional future Qt layer only presents results.
 
+## Source responsibility boundaries
+
+Follow docs/architecture.md: codec modules own encoding/decoding; scenario owns
+observations and association; profile owns candidate evaluation; signal_processing
+owns numerical algorithms; simulation owns source, lifecycle and results. Keep
+CLI startup, argument parsing, commands and JSON I/O separate. Keep root modules
+focused on wiring and exports. Preserve established imports through re-exports
+when moving an API; do not keep duplicate implementations or empty placeholders.
+
 ## Member and module order
 
 Place constants and type declarations before implementation blocks. Within an

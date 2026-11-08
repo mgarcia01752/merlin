@@ -40,3 +40,12 @@ pub fn reference_for_order(order: usize) -> Option<&'static QamReference> {
         _ => None,
     }
 }
+
+/// Maps a four-bit MSB-first label using the embedded normalized reference table.
+/// # Arguments
+/// * `label` - Integer label in0..16; table lineage is recorded in the resources.
+/// # Returns
+/// Unit-average-power I/Q, or None for an invalid label.
+pub fn map_qam16(label: usize) -> Option<[f64; 2]> {
+    reference_for_order(16)?.iq.get(label).copied()
+}
