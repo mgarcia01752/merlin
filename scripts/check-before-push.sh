@@ -47,7 +47,7 @@ PY_CHANNEL
 "${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- import-pnm \
   --input examples/measurements/single-channel/import.json --output "${SMOKE_DIRECTORY}/scenario.json"
 "${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- channel \
-  --input examples/measurements/single-channel/channel-measured.json \
+  --input examples/measurements/single-channel/channel-constellation.json \
   --scenario "${SMOKE_DIRECTORY}/scenario.json" --output "${SMOKE_DIRECTORY}/measured.json"
 "${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- channel \
   --input examples/channel-awgn.json --output "${SMOKE_DIRECTORY}/waveform-awgn.json"
@@ -61,6 +61,10 @@ for path in sys.argv[1:]:
     assert result["summary"]["comparison"]["bit_errors"] == 0
     assert result["summary"]["measured_mer_db"] is not None
     assert result["summary"]["payload_mean_ldpc_iterations"] is not None
+    if "constellation" in result:
+        assert result["constellation"]["status"] == "complete"
+        assert result["constellation"]["collected_pairs"] == 8192
+        assert len(result["constellation"]["pairs"]) == 8192
 PY_IMPAIRMENTS
 python3 tools/release/versions.py
 echo 'All local pre-push checks passed.'

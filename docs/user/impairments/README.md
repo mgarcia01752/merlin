@@ -21,6 +21,7 @@ flowchart LR
 | Current decoder JSON adaptation | [PNM import](pnm-import.md) |
 | Carrier-wise residual synthesis and LLR calibration | [RxMER residuals](rxmer.md) |
 | Supplied response H and known-reference compensation | [Channel response](channel-response.md) |
+| Paired payload constellation before/after compensation | [Paired constellation](paired-constellation.md) |
 | CLI experiments and protected LTE sweep | [Running experiments](experiments.md) |
 
 Current waveform payloads remain uniform256-QAM. Imported higher/mixed orders

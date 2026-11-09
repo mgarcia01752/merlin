@@ -16,6 +16,7 @@ use std::time::Duration;
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ChannelDocument {
+    pub constellation: Option<super::constellation::ConstellationSelection>,
     #[serde(default)]
     pub impairments: crate::signal_processing::channel::impairments::ChannelImpairments,
     pub measurement: Option<super::measurement::MeasurementSelection>,
@@ -80,6 +81,7 @@ impl ChannelDocument {
             return Err(invalid("Unsupported channel request schema version."));
         }
         let mut settings = ChannelRunSettings {
+            constellation: self.constellation.clone(),
             impairments: self.impairments.clone(),
             transmission: self.transmission.clone(),
             layout: self.layout.clone(),

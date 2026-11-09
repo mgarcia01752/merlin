@@ -92,6 +92,13 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
   partial columns and dummy padding, PLC-aligned pilot references, startup/drain
   and source-symbol phase at inverse randomizer resets. Never count None history
   as a zero sample or recovered payload. Keep bit and cell interleavers distinct.
+- For paired pre/post-equalization constellation capture, classify payload from
+  received NCP spans rather than TX labels. Preserve same-cell physical/source
+  coordinates through the shared inverse interleaver, retain FEC-failed payloads,
+  exclude control/pilots/filler and verify receive-time ordering, finite pending
+  storage and honest partial counts. Collection/removal/exhaustion must preserve
+  noise/source draws and decoder outcomes. Compare direct Rust and CLI data through
+  the same JSON parse boundary; do not round scientific samples to hide differences.
 - Verify missing/excluded samples, exact grids, explicit time tolerances,
   protected roles, capacity overheads and intermittent impairments.
 - Check invalid schemas, input/work limits, cancellation and partial results.

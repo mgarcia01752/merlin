@@ -114,6 +114,38 @@ An offline Rust fixture exporter preserves the original RxMER PNM header and
 encodes exactly representable scenario readings for external viewing. It does
 not change the decoded-JSON production input contract.
 
+## Paired pre/post equalization constellation
+
+**CONST-01..05** add bounded paired observations using the supplied-response
+path before independent pilot estimation. Standard DS channel-estimation PNM
+supplies H; the channel applies H and RX applies1/H. No correction-coefficient
+input mode is inferred or added.
+
+`simulation/channel/constellation/` separates selection, typed results and bounded
+collection. The collector pairs `ReceivedSymbol.bins` and `equalized` at the same
+physical bin/time, then carries diagnostic coordinates through an independent
+instance of the existing receive interleaver. Actual received NCP payload ranks
+select eligible points and the existing source window excludes acquisition,
+filler and outside-observation cells. Failed payload codewords remain eligible.
+No transmitter truth is passed into classification, equalization or decoding.
+
+The default target is8192 total QAM pairs for a supported profile/carrier interval.
+A bounded NI*M reorder map delays emission until receive-time order is known;
+neither inverse history nor result storage grows with run duration. Collection
+stops at its requested cap, with explicit partial/unavailable status when too few
+points exist. Confirmed pairs survive cancellation and terminal stage/probe
+failure. FEC results and RNG streams remain independent of capture settings.
+
+`ChannelRun` exposes borrowed and owned partial capture access. `run_channel`
+returns the same typed result through optional `constellation` JSON, reusing the
+existing channel command and16MiB output policy. Default requests omit the new
+result/settings field when collection is disabled. Existing raw/equalized generic
+probe stages remain separate and available. No new noise/QAM/equalizer math or
+Qt UI is introduced. See the [accepted plan](development/features/paired-constellation/plan.md),
+[implementation](development/features/paired-constellation/implementation.md) and
+[user guide](user/impairments/paired-constellation.md). MODEL-05 and WAVE-RX-05
+remain open for independently estimated/nonideal reception.
+
 ## Modules and stage boundaries
 
 **Each distinct algorithm stage has a focused module and a directly testable typed

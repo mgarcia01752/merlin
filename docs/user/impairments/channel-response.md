@@ -38,3 +38,25 @@ channel-memory leakage, ISI/ICI, unknown timing or multipath exceeding the cycli
 prefix. Blind estimation and nonideal equalization remain open in MODEL-05 and
 WAVE-RX-05. Constant complex and actual frequency-varying captured responses are
 tested without claiming those broader receiver capabilities.
+
+## Paired constellation observation
+
+The [paired-constellation collector](paired-constellation.md) retains the same
+payload cells before and after this equalizer, with a default target of8192
+pairs. Existing raw FFT and equalized boundaries feed an independent diagnostic
+inverse interleaver; received NCP ranks select payload samples for bounded
+Rust/API/CLI export. This uses supplied H and its reciprocal, without estimating
+H from pilots or changing the channel/decoder computations.
+
+If coefficients explicitly represented correction C instead of response H,
+channel reconstruction would use1/C and RX would use C. For C=I+jQ:
+
+\[
+ C^{-1}=\frac{I-jQ}{I^2+Q^2}.
+\]
+
+The current standard PNM input represents H. Its meaning is not inferred from
+a filename or changed to match a diagram. The generated constellation is
+measurement-conditioned: measured H shape plus synthetic residuals consistent
+with RxMER, not the original field-noise realization. Preserve matching grids,
+source epochs and explicit tolerance for nonsimultaneous captures.

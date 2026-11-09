@@ -4,6 +4,7 @@
  */
 //! Duration-planned single-channel orchestration; DSP remains in stage modules.
 pub mod config;
+pub mod constellation;
 mod impairment;
 pub(crate) mod link;
 pub mod measurement;

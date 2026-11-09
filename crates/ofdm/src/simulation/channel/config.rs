@@ -26,6 +26,9 @@ pub(crate) const MAX_COMPLETION_SYMBOLS: u64 = 4096;
 /// Independent settings snapshot; callers may edit it before creating a session.
 #[derive(Clone, serde::Serialize)]
 pub struct ChannelRunSettings {
+    /// Optional bounded payload-only raw/corrected constellation observations.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub constellation: Option<super::constellation::ConstellationSelection>,
     /// Exclusive injected residual source and optional supplied relative response H.
     pub impairments: crate::signal_processing::channel::impairments::ChannelImpairments,
     pub transmission: TransmissionSettings,
@@ -51,6 +54,7 @@ impl ChannelRunSettings {
     /// Editable settings; validation occurs before any session processing.
     pub fn new(transmission: TransmissionSettings, layout: CarrierLayoutSettings) -> Self {
         Self {
+            constellation: None,
             impairments: Default::default(),
             transmission,
             layout,
@@ -81,6 +85,9 @@ impl ChannelRunSettings {
         let timing = self.transmission.duration_timing(self.duration)?;
         Prbs15::new(self.prbs_seed)?;
         let layout = CarrierLayout::new(&self.transmission, &self.layout)?;
+        if let Some(selection) = &self.constellation {
+            selection.validate(&layout)?;
+        }
         self.impairments
             .plan(&self.transmission, &layout, self.llr_variance)?;
         // Reserve representable absolute identities for bounded acquisition/completion/drain.

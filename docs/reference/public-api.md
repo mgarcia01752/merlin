@@ -96,3 +96,15 @@ Independent [bit-processing stages](../user/bit-processing/README.md) expose dir
 intermediate arrays without requiring observers. Underlying analysis-only DSP
 remains available without codec-backed simulation. See the
 [checklist](../development/checklist.md) for still-proposed producers and modes.
+
+## Paired receive constellation
+
+`simulation::channel::constellation` exposes `ConstellationSelection`,
+`ConstellationPair`, `ConstellationResult`, `ConstellationStatus` and count limits.
+Set `ChannelRunSettings.constellation` before constructing a run. The stepper's
+`constellation()` borrows committed observations; `take_constellation()` returns
+confirmed partial/final pairs and disables further diagnostic retention only.
+`ChannelJobResult.constellation` contains the same owned result on every job
+termination status when requested. No Python/Qt types or file paths enter the
+scientific API. See the [component guide](../user/impairments/paired-constellation.md)
+for coordinate meaning, finite bounds and reference scaling.

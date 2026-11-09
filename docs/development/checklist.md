@@ -481,6 +481,33 @@ and [the later impairment reference](impairment-reference.md).
     fixture for CLI error-boundary sweeps, keeping the PLC neighborhood unchanged.
   - [x] Export baseline and12/11/10/9dB binary PNM demos, preserving original
     headers and verifying all readings through the external decoder.
+
+## Paired constellation before and after equalization
+
+**Completed group: CONST-01 through CONST-05.** Uses supplied H and
+matching 1/H first; independent pilot estimation remains under MODEL-05/WAVE-RX-05.
+The [feature plan](features/paired-constellation/plan.md) defines confirmed reuse,
+profile/coordinate selection, reference planes, bounded collection and tests.
+The [user design](../user/impairments/paired-constellation.md) explains the result.
+
+- [x] **CONST-01** Define typed selection and payload-only coordinate attribution
+  through interleaving/NCP; default to8192 total QAM pairs for a supported profile.
+- [x] **CONST-02** Collect matched raw FFT/equalized I/Q with finite storage,
+  exact carrier/time metadata, shared scaling and honest partial/exhausted status.
+- [x] **CONST-03** Expose one Rust result through the public API and opt-in channel
+  CLI JSON; preserve existing input contracts and no-clobber/output limits.
+- [x] **CONST-04** Verify H/inverse reference planes, payload eligibility including
+  failed words, startup/drain handling and unchanged scientific/RNG outcomes.
+- [x] **CONST-05** Provide a reproducible8192-pair demo, user instructions and
+  actual validation evidence; update design/status after implementation.
+
+Implementation and Linux validation are recorded in the
+[component record](features/paired-constellation/implementation.md). The full gate
+passed, including release-mode measured capture with8192 pairs. Independent
+estimation and nonideal timing remain unfinished below.
+
+## Remaining receiver and measurement work
+
 - [ ] **MODEL-05** Applied downstream channel-estimate model and receiver estimation/
   equalization with no double counting of post-equalization RxMER noise.
   - [x] Apply supplied channel response H and independent known-reference1/H;

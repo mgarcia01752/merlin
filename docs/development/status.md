@@ -23,6 +23,7 @@ feature records and defines the ignored local evidence/output location.
 | Run infrastructure | Continuous PRBS15; configurable duration; acquisition, observation, completion and drain; source-window accounting, cancellation and partial results | [Channel runner](../user/channel-runner/README.md) |
 | Observability | Typed stage boundaries, bounded probes/JSONL, standard Rust logging and real decoder statistics | [Probe export](../user/simulation/probe-export.md), [logging](logging.md) |
 | Measurement experiments | Current decoded-JSON import, per-carrier Gaussian residuals, sample AWGN, supplied response H and known-reference equalization | [Measurements](../user/measurement-inputs/README.md), [impairments](../user/impairments/README.md) |
+| Paired constellation | Same-cell raw/equalized I/Q, payload-only receiver attribution, bounded retention, partial results and shared Rust/CLI export | [Guide and actual plot](../user/impairments/paired-constellation.md) |
 | Error-boundary demos | Protected-PLC RxMER stress sweep, observed payload bit errors and exact binary PNM representations of the tested inputs | [Experiments](../user/impairments/experiments.md), [binary demos](../../examples/measurements/rxmer-fec-stress/README.md) |
 
 The isolated coding experiment and complete waveform runner have different
@@ -41,6 +42,19 @@ case had 483 post-FEC errors. At 9 dB all 254 payload words reached the
 These are reproducible short-run observations, not a universal DOCSIS RxMER or
 percentage-of-carriers failure threshold. The wider stress band is synthetic,
 not a single LTE carrier. See the experiment guide for the complete results.
+
+## Current observation milestone
+
+**CONST-01..05: paired constellation capture before and after equalization.**
+Supplied H and1/H compensation now expose8192 matched payload QAM observations
+by default through a bounded Rust collector, direct API and opt-in channel CLI
+JSON. The measured demonstration and11dB stress case each exported8192 pairs;
+the stress case retained483 errors with the earlier scientific summary unchanged.
+See the [implementation record](features/paired-constellation/implementation.md).
+
+The next remaining receiver work is independent estimation/nonideal timing under
+MODEL-05 and WAVE-RX-05. Mixed profiles and temporal measurement transitions remain
+MODEL-06; those parent items are not completed by constellation observation.
 
 ## Work still open
 

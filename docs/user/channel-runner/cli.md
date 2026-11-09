@@ -52,6 +52,7 @@ The output has its own schema-version1 result contract:
 | `summary` | Actual FEC/PRBS totals, decoder histogram, source-window accounting, intervals and sample identities. |
 | `retained_words`, `omitted_word_details` | Bounded per-word details and explicit retention omissions. |
 | `unrecovered_generated_payloads` | Admitted source words without recovered comparisons at termination. |
+| `constellation` | Optional bounded paired raw/equalized payload I/Q, selection, coordinates and capture status. Omitted when disabled. |
 | `probe_stats` | Event/element counts and callback failures. |
 | `elapsed_ms` | Host elapsed time; excluded from deterministic scientific equality tests. |
 
@@ -69,3 +70,13 @@ The pre-push gate runs a release-mode channel/probe smoke check alongside the
 older coding CLI check. Its integration tests verify shared calculations, schema
 validation, partial behavior and non-overwriting destinations. No GUI, device
 capture, network service or additional OS package is required.
+
+## Paired constellation export
+
+Add an optional `constellation` object to the channel request. `{}` selects8192
+payload QAM pairs from profile0; `requested_pairs`, `profile_id`, `start_hz` and
+`stop_hz` can select a bounded count and inclusive carrier-center interval.
+It is independent of generic probes and needs no new command-line flag.
+See the [paired capture guide](../impairments/paired-constellation.md) for complete
+requests, schema, actual measured demonstration and partial-result semantics.
+The CLI applies the existing16MiB result limit before creating the destination.

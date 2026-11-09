@@ -45,3 +45,12 @@ the library receives borrowed bytes. Channel requests optionally include
 `measurement` selection paired with `--scenario`. Outputs retain the resolved
 settings, actual diagnostic MER, BER, LDPC iteration histogram/mean and decoder
 failure counts. See [experiments](../user/impairments/experiments.md).
+
+## Optional paired constellation output
+
+Channel schema1 requests may opt in with `constellation`; a missing/null value
+keeps the previous disabled behavior. The result omits `constellation` when
+disabled and otherwise serializes the shared Rust paired-result schema1.
+Selection/count/status and per-pair raw/corrected I/Q plus physical/source
+coordinates are documented in the [paired-constellation guide](../user/impairments/paired-constellation.md).
+This is an optional channel-analysis output, not a change to decoded PNM JSON.

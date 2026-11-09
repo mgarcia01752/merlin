@@ -94,3 +94,13 @@ Keep `Cargo.lock`, shared build configuration, QAM resources and intentional PNM
 `crates/ofdm/build/` contains maintained Rust build-helper source and must remain
 tracked. Use root `build/`, an app's `build/`, or `cmake-build-*` for native build
 trees; use root `dist/` or `artifacts/` for release staging.
+
+## Optional constellation documentation plot
+
+The simulator and paired collector require only the Rust dependencies already
+in Cargo.lock. The optional presentation-only plot helper uses Matplotlib3.10.8
+in ignored `local/doc-plots/`; no system installation is required. See the
+[paired constellation guide](../user/impairments/paired-constellation.md#reproduce-the-documentation-plot)
+for isolated setup and rendering commands. All DSP, impairment generation and
+scientific results still come from Rust. The release gate now also checks8192
+paired samples in its existing measured channel smoke run.

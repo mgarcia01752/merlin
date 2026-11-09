@@ -1,7 +1,8 @@
 # Feature development records
 
-These project-authored plans, design investigations and validation reports were
-moved from the former root development workspace. They describe the state at the
+This index includes ongoing feature plans and historical design/validation
+records moved from the former root workspace. The [paired constellation](paired-constellation/implementation.md) group
+implements CONST-01 through CONST-05 using supplied H/reciprocal correction. Historical records describe the state at the
 time each task was performed. Earlier statements about pending stages are
 historical; consult the [current checklist](../checklist.md),
 [status](../status.md) and [canonical architecture](../../architecture.md).
@@ -25,6 +26,7 @@ from a fresh clone and are deliberately not Markdown link targets.
 | impairment group | [plan](impairment-group/plan.md) · [validation](impairment-group/validation.md) |
 | lte ingress | [plan](lte-ingress/plan.md) · [validation](lte-ingress/validation.md) |
 | ncp codec | [architecture](ncp-codec/architecture.md) |
+| paired constellation | [plan](paired-constellation/plan.md) · [implementation](paired-constellation/implementation.md) |
 | payload transport | [plan](payload-transport/plan.md) · [validation](payload-transport/validation.md) |
 | pilot plc signals | [architecture](pilot-plc-signals/architecture.md) |
 | plc block interleaving | [architecture](plc-block-interleaving/architecture.md) |

@@ -27,6 +27,7 @@ use fec_codec::parameters::BCH_INPUT_BITS;
 /// Owns independent TX/RX, PLC, source and truth state; never stores a whole waveform.
 /// Calls are sequential through exclusive borrowing; stopping calls pauses host work.
 pub struct ChannelRun {
+    constellation: Option<super::constellation::ConstellationCollector>,
     settings: ChannelRunSettings,
     link: WaveformLink,
     transmitter: Option<PayloadTransmitter>,
@@ -62,6 +63,10 @@ impl ChannelRun {
             timing.complete_symbols
         );
         Ok(Self {
+            constellation: settings
+                .constellation
+                .as_ref()
+                .map(super::constellation::ConstellationCollector::new),
             settings: settings.clone(),
             link,
             transmitter: None,
@@ -118,6 +123,25 @@ impl ChannelRun {
     /// Completed results so far. A non-Finished phase is not a completed duration run.
     pub fn summary(&self) -> &ChannelSummary {
         &self.summary
+    }
+
+    /// Borrows finite paired receive observations without advancing any scientific state.
+    /// # Returns
+    /// None when disabled; otherwise committed pairs, including partial/unavailable status.
+    pub fn constellation(&self) -> Option<&super::constellation::ConstellationResult> {
+        self.constellation
+            .as_ref()
+            .map(|collector| collector.result())
+    }
+
+    /// Stops diagnostic collection and returns confirmed paired samples in receive order.
+    /// # Returns
+    /// Optional owned bounded result, flushing classified pending pairs on partial jobs.
+    /// Scientific stepping remains usable and does not depend on this operation.
+    pub fn take_constellation(&mut self) -> Option<super::constellation::ConstellationResult> {
+        self.constellation
+            .take()
+            .map(|collector| collector.finish())
     }
 
     /// Processes at most one complete OFDM period, or the final window-tail operation.
@@ -328,6 +352,13 @@ impl ChannelRun {
                 ncp_modulation: received.ncp_modulation(),
             });
             self.receiver = Some(PayloadReceiver::new(self.link.state(), self.next_symbol)?);
+            if let Some(collector) = &mut self.constellation {
+                collector.start(
+                    received,
+                    self.next_symbol,
+                    self.summary.timing.complete_symbols,
+                )?;
+            }
             self.transmitter = Some(PayloadTransmitter::new(
                 &self.settings.transmission,
                 &self.settings.layout,
@@ -474,6 +505,9 @@ impl ChannelRun {
             }
         } else {
             self.summary.rx_warmup_symbols += 1;
+        }
+        if let Some(collector) = &mut self.constellation {
+            collector.observe(&received, &decoded)?;
         }
         let grid = self
             .grid

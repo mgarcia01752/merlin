@@ -30,6 +30,7 @@ with a known-reference receiver; external DOCSIS interoperability is not establi
 | Continuous runs | PRBS15, configurable duration, startup/drain accounting, cancellation and partial results |
 | Impairments | Seeded sample AWGN or per-carrier RxMER residuals; optional supplied channel response and known equalization |
 | Measurements | Current `pnm-decode` JSON import for RxMER, channel estimation and modulation profiles; fixed uniform 256-QAM runs |
+| Paired constellation | Bounded raw/corrected payload I/Q pairs with exact carrier/time coordinates and CLI JSON |
 | Results | Recovered-payload BER, codeword failures, actual LDPC iterations, BCH corrections and bounded stage probes |
 | Modulation coverage | Mapping/soft demapping through 16384-QAM; full waveform coding currently uniform 256-QAM |
 
@@ -74,6 +75,7 @@ scripts/cargo-local.sh run -p fec-codec --example codec_loop --locked
 
 - [PNM input guide](docs/user/measurement-inputs/README.md): import the three decoded capture types; binary decoding stays external.
 - [Impairment experiments](docs/user/impairments/experiments.md): reproduce the RxMER sweeps and inspect FEC outcomes.
+- [Paired constellations](docs/user/impairments/paired-constellation.md): export matched payload I/Q before and after equalization; includes an actual measured-response plot.
 - [Binary RxMER demos](examples/measurements/rxmer-fec-stress/README.md): baseline plus 12, 11, 10 and 9 dB stress cases for external viewing.
 
 ## Documentation

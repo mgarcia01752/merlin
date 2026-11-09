@@ -72,6 +72,8 @@ pub struct ChannelProgress {
 /// Shared typed result for complete and partial runs; no calculations belong in adapters.
 #[derive(Serialize)]
 pub struct ChannelJobResult {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub constellation: Option<super::constellation::ConstellationResult>,
     pub schema_version: u16,
     pub status: ChannelJobStatus,
     pub elapsed_ms: u64,
@@ -174,7 +176,9 @@ fn run_with_clock(
             .recovered_payloads
             .saturating_sub(retained_words.len() as u64),
     );
+    let constellation = session.take_constellation();
     Ok(ChannelJobResult {
+        constellation,
         schema_version: 1,
         status,
         elapsed_ms: elapsed(),
