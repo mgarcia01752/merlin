@@ -158,6 +158,7 @@ CM-SP-PHYv3.1-I20-230419 defines:
 Verified256-QAM bit processing, a [stateful symbol packer](symbol-packing.md)
 and [NCP encoding/decoding](ncp.md) are now available separately.
 [Cell interleaving](cell-interleaving.md) and the inverse pilot reference are
-implemented as well. Three major stages remain: pilot/PLC signal generation; IFFT,
+implemented as well. Separate [pilot generators](pilot-signals.md) now provide
+signs and power. Major remaining stages are PLC and physical-bin assembly; IFFT,
 prefix/windowing and inverse receiver; and full one-second noiseless integration.
 The timing and packing tests do not establish full channel recovery.

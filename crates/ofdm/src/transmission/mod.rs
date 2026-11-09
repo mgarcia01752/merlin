@@ -6,6 +6,7 @@
 pub mod layout;
 pub mod ncp;
 pub mod packing;
+pub mod plc;
 pub mod settings;
 pub mod timing;
 pub use settings::{SubcarrierSpacing, TransmissionSettings};

@@ -155,8 +155,9 @@ matched-pair delay removed to select the proper 128-symbol segment. Phase zero
 uses the existing convention: first symbol following the PLC preamble.
 
 The reference transports **placeholders**. Actual scattered-pilot BPSK signs and
-boost are applied after interleaving in a later stage. Continuous-pilot generation
-and PLC content are also still pending. The caller supplies the existing layout's
+boost are available from the separate [pilot generators](pilot-signals.md); full
+physical-bin insertion after interleaving remains TODO. Additional continuous-pilot
+placement and PLC content are also still pending. The caller supplies the existing layout's
 additional continuous pilots; the reference does not certify their generation.
 
 ## Startup, drain and verification
@@ -186,7 +187,8 @@ The test uses a 24 MHz geometry with explicit synthetic additional pilot positio
 and transports pilot placeholders, not actual pilot signals. External DOCSIS
 interoperability and full waveform validation remain outstanding.
 
-Three major stages remain: pilot/PLC signal generation; IFFT, prefix/windowing
+Pilot signals are available separately. Major remaining stages are PLC and
+physical-bin assembly; IFFT, prefix/windowing
 and inverse receiver; and a streamed one-second noiseless integration.
 
 Evidence: CM-SP-PHYv3.1-I20-230419 section 7.5.6.1–3, Figures 55–58,

@@ -105,7 +105,8 @@ A second integration test now uses real [NCP encoding and receiver discovery](nc
 instead of diagnostic boundaries. A third test includes cell interleaving and
 the physical pilot reference. Three major stages remain:
 
-1. Continuous/scattered pilot and PLC signal generation.
+1. PLC signal generation and physical-bin assembly; separate
+   [continuous/scattered pilot generators](pilot-signals.md) are implemented.
 2. IFFT, cyclic prefix, windowing and the inverse receiver.
 3. Streamed one-second noiseless integration with warm-up and drain.
 

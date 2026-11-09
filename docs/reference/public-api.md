@@ -12,9 +12,14 @@ component will adapt inputs and results without duplicating scientific logic.
 | `transmission::layout::ncp::select_ncp_cells` | Eligible NCP cells in the pre-interleaving domain |
 | `transmission::packing::{SymbolPacker, PackingSettings, PackedSymbol}` | Stateful256-QAM queue, symbol plans and NCP capacity reservations |
 | `transmission::ncp::{NcpMessage, NcpFieldCodec}` | Control serialization, encoded fields and CRC-accepted receiver pointers |
+| `transmission::plc::{PlcFrameGeometry, ExtendedTimestamp, MessageChannelBlock, PlcInformationBlock}` | Fixed dimensions, validated timestamp/MC bytes and MSB-first FEC inputs; analysis-only compatible |
+| `transmission::plc::{TimestampMessageBlock, PlcMessageFrame}` | CRC-backed TS+MC frame construction/parsing with the simulation feature; no PLC parity generation yet |
 | `fec_codec::{ncp::NcpFecCodec, crc::crc24d}` | Separate NCP control LDPC and CRC-24-D |
 | `signal_processing::interleaving::{InterleaverSettings, SymbolInterleaver}` | Bounded cell time/frequency TX/RX streams and explicit startup/drain |
 | `signal_processing::interleaving::{FrequencyInterleaver, TimeInterleaver}` | Independent permutation and generic convolutional delay operations |
+| `signal_processing::pilots::{PilotSequence, PilotPower, generate_continuous, generate_scattered}` | Independent pilot sequence, normalization and physical-bin signals; analysis-only compatible |
+| `simulation::pilots::{PilotGenerator, PilotStageResult}` | Thin pilot composition and optional observation of completed results |
+| `simulation::test_points` | Typed borrowed pilot events, observer, finite selection and budgets |
 | `transmission::layout::PilotReference` | Physical-bin association and pre-interleaving pilot masks |
 | `scenario::{grid, observation}` | Exact identity, source provenance and full-resolution observations |
 | `scenario::association` | Explicit-tolerance timestamp association |
@@ -49,8 +54,10 @@ No Python dependency, binding package or stable C ABI is introduced now.
 See the [public-api skill](../../skills/public-api/SKILL.md) for API development
 requirements and [JSON contracts](documents.md) for the existing serialization.
 
-Existing typed operation outputs can be consumed directly. The planned common
-stage-observer/test-point contract is specified in the
-[architecture](../architecture.md#test-points-and-data-access), with remaining work
-tracked in the [implementation checklist](../development/checklist.md).
-It is not an implemented export/observer API yet.
+Existing typed operation outputs can be consumed directly. The common observer
+currently registers four pilot stages; it is available with the `simulation`
+feature. The underlying DSP pilot APIs work without default features. Other
+producers and CLI/file export remain on the
+[implementation checklist](../development/checklist.md). See
+[pilot signals](../user/pilot-signals.md) for callback lifetimes and limits and the
+[architecture](../architecture.md#test-points-and-data-access) for future stages.

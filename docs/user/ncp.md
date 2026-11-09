@@ -168,7 +168,8 @@ not packer codeword IDs, offsets or reservation counts. Its pilot mask and small
 interleaver domain are synthetic; this is not external DOCSIS interoperability
 or full RF-channel validation.
 
-Three major stages remain: pilot/PLC signal generation;
+Separate [pilot generators](pilot-signals.md) are now implemented. Major
+remaining stages are PLC and physical-bin assembly;
 IFFT/prefix/windowing and inverse receiver;
 and streamed one-second noiseless integration with warm-up and drain.
 

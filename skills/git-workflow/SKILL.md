@@ -9,6 +9,14 @@ Before a commit message, inspect git status --short, git diff --stat, git diff,
 staged changes and every untracked file. git-save stages all non-ignored files.
 Preserve private inputs under ignored development/ and never stage Cargo caches.
 
+At feature completion and whenever the user asks for commit-msg, review
+`docs/architecture.md` and `docs/development/checklist.md` against the complete
+pending change scope. Update affected ownership, contracts, status and next steps
+before supplying the command. Check items only when implementation and supporting
+validation are complete; record partial progress without checking combined items
+early. If no architecture or checklist change is needed, leave them unchanged.
+Inspect the final diff again so the message includes any documentation updates.
+
 Use tools/git/git-save.sh --commit-msg with one double-quoted multiline argument.
 Use Feature:, BugFix: or Documentation:, imperative summary and - detail lines,
 including - Tests:. Keep every message line at most60characters.

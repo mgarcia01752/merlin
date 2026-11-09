@@ -5,9 +5,11 @@
 //! Bounded source-to-results simulation jobs.
 pub mod coding_loop;
 pub mod config;
+pub mod pilots;
 pub mod results;
 pub mod runner;
 pub mod source;
+pub mod test_points;
 pub use config::{SimulationSettings, CODING_MODE};
 pub use results::{SimulationProgress, SimulationResult};
 pub use runner::simulate;

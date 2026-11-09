@@ -31,3 +31,11 @@ required-features = ["simulation"]
 [[example]]
 name = "ncp_field"
 required-features = ["simulation"]
+
+[[example]]
+name = "pilot_signals"
+required-features = ["simulation"]
+
+[[example]]
+name = "plc_messages"
+required-features = ["simulation"]

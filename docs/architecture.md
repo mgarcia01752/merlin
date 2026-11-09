@@ -8,6 +8,9 @@ notes live under ignored `development/`.
 
 Status describes the **current source checkout**, including work awaiting commit.
 It does not imply a published release or external DOCSIS interoperability.
+Review this document and the checklist at feature completion and each commit-message
+request. Update affected design/status before supplying the command; partial work
+remains unchecked until its implementation and validation are complete.
 
 ## Purpose and scope
 
@@ -69,14 +72,18 @@ crates/
 │   │   ├── timing.rs          Integer sample-clock schedules
 │   │   ├── layout/            Physical roles and inverse pilot reference
 │   │   ├── packing/           Bounded codeword queue and symbol plans
-│   │   └── ncp/               Messages, control mapping and field CRC acceptance
+│   │   ├── ncp/               Messages, control mapping and field CRC acceptance
+│   │   └── plc/               Geometry, timestamp/MC blocks, frames and FEC inputs
 │   ├── signal_processing/
 │   │   ├── modulation/        QAM, LLRs, bit processing and cell randomization
 │   │   ├── interleaving/      Separate time, frequency and composition modules
+│   │   ├── pilots/            Shared sequence, power and separate CP/SP signals
 │   │   ├── noise/             AWGN and measured residual-noise processing
 │   │   └── ...                Analytical bit-loading/capacity helpers
 │   ├── simulation/
 │   │   ├── source/            Seeded source; PRBS remains TODO
+│   │   ├── pilots/            Typed stage composition and optional observation
+│   │   ├── test_points/       Borrowed events, selection and finite dispatch budgets
 │   │   ├── coding_loop/       Independent 256-QAM codeword trials
 │   │   ├── runner.rs          Existing 16-QAM trial orchestration
 │   │   ├── config.rs          Work limits and receiver policy
@@ -126,7 +133,7 @@ flowchart TB
     SOURCE -->|"Independent truth"| TRUTH
     NCPRX -.-> SLICER["Optional hard slicer · profile-selected data I/Q"]
     classDef planned stroke-dasharray: 5 5;
-    class CELLS,PILOTS,PLC,FRAME,IFFT,CP,WINDOW,CHANNEL,TIMING,FFT,EQ,SLICER planned;
+    class CELLS,PLC,FRAME,IFFT,CP,WINDOW,CHANNEL,TIMING,FFT,EQ,SLICER planned;
 ```
 
 The NCP and payload receiver paths use the appropriate separate demapping
@@ -143,11 +150,11 @@ modules before it is advertised as a standalone channel-run API.
 
 ## Test points and data access
 
-Existing APIs expose useful intermediate arrays and results. A **common selectable
-test-point observer/export interface is planned, not implemented**. The names below
-are proposed stable stage identifiers for that interface. “Direct” means callers
-can already obtain that data from an existing operation; it does not mean the
-common observer exists.
+Existing APIs expose useful intermediate arrays and results. The common typed,
+bounded observer is implemented for **four pilot stages**. Other stage IDs below
+remain proposed; their direct outputs are not yet wired to that observer. CLI/file
+export and whole-run cancellation policy remain TODO. “Direct” means a caller can
+obtain data through an existing stage API.
 
 | Test point | Owner / data | Access now |
 | --- | --- | --- |
@@ -160,8 +167,9 @@ common observer exists.
 | `tx.randomizer.cells` | Randomized labels and diagnostic LFSR state | Direct per-cell output/state |
 | `tx.qam.iq` | Normalized I/Q with modulation and reference plane | Direct mapper output |
 | `tx.time.cells`, `tx.frequency.cells` | Each cell-interleaver output with startup markers | Direct separate APIs |
-| `tx.pilots.sequence`, `tx.pilots.continuous`, `tx.pilots.scattered`, `tx.pilots.power` | Separate sequence, signals, boost and physical locations | Locations/reference direct; values TODO |
-| `tx.plc.message`, `tx.plc.coded`, `tx.plc.interleaved`, `tx.plc.randomized`, `tx.plc.preamble`, `tx.plc.iq` | Separate PLC message, coding, block-interleaving, randomization, preamble and mapping outputs | TODO |
+| `tx.pilots.sequence`, `tx.pilots.continuous`, `tx.pilots.scattered`, `tx.pilots.power` | Separate sequence, signals, boost and physical locations | Direct values and bounded observer |
+| `tx.plc.message` | `transmission::plc`; TS+MC information bytes and288-bit inputs | Direct bounded APIs; observer and OCD/DPD packet construction TODO |
+| `tx.plc.coded`, `tx.plc.interleaved`, `tx.plc.randomized`, `tx.plc.preamble`, `tx.plc.iq` | Separate PLC coding, interleaving, randomization, preamble and mapping outputs | TODO |
 | `tx.frame.bins` | Full physical frequency grid, roles and zero/excluded bins | TODO production assembler |
 | `tx.ifft.samples`, `tx.cp.samples`, `tx.window.samples`, `tx.overlap_add.samples` | Separate waveform stages and sample indices | TODO |
 | `channel.input`, `channel.output` | Channel-plane I/Q and applied impairment configuration | TODO waveform path; cell AWGN exists |
@@ -175,7 +183,10 @@ common observer exists.
 | `rx.bch.payload` | Recovered bits, status and corrected-bit count | Direct |
 | `result.truth` | Actual bit/codeword comparisons and trial counters | Direct codec/trial results; channel-run aggregate TODO |
 
-The planned test-point contract must provide:
+The implemented pilot contract provides borrowed bit arrays, sparse pilot records
+and a power record, with explicit metadata and finite selection budgets. See the
+[pilot guide](user/pilot-signals.md) for the executable example and exact behavior.
+The broader contract, including future producers, must provide:
 
 - Stage ID, direction and run/configuration identity; codeword/profile identity
   where known. Receiver identities must come from decoded signaling/session state,
@@ -196,6 +207,13 @@ Native typed stage calls remain usable without observers. JSON is an export
 adapter, not the only way to get data. Probe failures and cancellation need an
 explicit runner policy that preserves already completed scientific results.
 
+The PLC message boundary now exposes a typed extended timestamp, timestamp block,
+message-channel block, complete TS+MC information frame and36-byte FEC inputs.
+An idle frame is valid at that boundary but does not carry channel-acquisition
+configuration. MAC OCD/DPD packets and repetition scheduling remain separate work;
+PLC FEC and signal stages are not implemented. See the
+[PLC message guide](user/plc-messages.md) and [evidence](reference/plc-evidence.md).
+
 ## Planned module ownership
 
 These paths are the accepted direction for upcoming work, not existing files or
@@ -205,9 +223,9 @@ before implementation if source analysis shows a better existing owner.
 | Planned path under `crates/ofdm/src/` | Responsibility |
 | --- | --- |
 | `signal_processing/modulation/interleaving/{parity,twist,demultiplexing}.rs` | Separate intermediate and inverse boundaries behind the existing facade |
-| `signal_processing/pilots/{sequence,continuous,scattered,power}.rs` | Pilot sequence, separate signal generation and amplitude/boost |
 | `transmission/layout/additional_pilots.rs` | Specification-based additional continuous-pilot placement |
-| `transmission/plc/{message,coding,block_interleaving,randomization,preamble,mapping}.rs` | PLC stages and distinct state; invoke verified codec primitives |
+| `transmission/plc/{descriptors,mac_packets,scheduling}.rs` | Fixed-setting OCD/DPD packets, packet CRCs, segmentation and repetition; current message layer transports opaque segments |
+| `transmission/plc/{coding,block_interleaving,randomization,preamble,mapping}.rs` | Remaining PLC signal stages and distinct state; invoke verified codec primitives |
 | `transmission/symbols/assembly.rs` | Typed data/NCP/filler composition before randomization/mapping |
 | `transmission/frame/assembly.rs` | Reduced-to-physical grid assembly and protected-role insertion |
 | `signal_processing/waveform/{ifft,fft,cyclic_prefix,windowing,overlap_add}.rs` | Separate waveform transforms and inverse operations |
@@ -215,7 +233,6 @@ before implementation if source analysis shows a better existing owner.
 | `signal_processing/receiver/{timing,estimation,equalization}.rs` | Known-reference first, then independently verified estimation/acquisition |
 | `signal_processing/modulation/slicing.rs` | Diagnostic hard decisions; keep soft demapping for LDPC |
 | `simulation/channel/{transmitter,receiver,runner,results}.rs` | Thin stateful orchestration and completed-result accounting |
-| `simulation/test_points/{model,observer}.rs` | Shared typed observation contract and bounded dispatch |
 | `simulation/source/prbs.rs` | Explicit PRBS polynomial, seed, continuity and comparison |
 
 If PLC needs a new coding algorithm, its reusable primitive belongs in
@@ -251,6 +268,8 @@ exist, but native installers and multi-OS release automation do not yet exist.
 - [FEC codec](user/fec-codec.md), [coding evidence](reference/coding-mode.md)
 - [QAM mapping](user/qam-mapping.md), [256-QAM bit/coding loop](user/qam256-coding-loop.md)
 - [Randomizer](user/cell-randomizer.md), [symbol packing](user/symbol-packing.md), [NCP](user/ncp.md)
+- [PLC message blocks](user/plc-messages.md), [PLC evidence](reference/plc-evidence.md)
+- [Pilot signals and test points](user/pilot-signals.md)
 - [Physical layout](user/carrier-layout.md), [cell interleaving](user/cell-interleaving.md)
 - [Transmission setup and timing](user/transmission.md), [public APIs](reference/public-api.md)
 - [JSON contracts](reference/documents.md), [build/test](development/build.md), [Git/releases](development/git.md)

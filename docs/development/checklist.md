@@ -3,6 +3,8 @@
 This is the official progress and TODO list for DOCSIS OFDM Channel Sim. Read it
 with the [architecture](../architecture.md). Update both when adding a stage,
 changing ownership, exposing a test point or extending scientific support.
+Review both at feature completion and before supplying each commit message;
+update affected sections and retain unchecked status for partial work.
 
 Checked means present in the current checkout with supporting validation; it does
 not mean committed, released or externally interoperable. Unchecked means work
@@ -14,15 +16,18 @@ by a broad “implemented” claim.
 - [x] **ARCH-01** Maintain one canonical architecture and this checklist.
 - [x] **ARCH-02** Separate codec, DSP, transmission, simulation and adapter ownership.
 - [x] **ARCH-03** Record stage test-point IDs, metadata and bounded observation design.
-- [ ] **ARCH-04** Implement the common typed test-point model and opt-in observer.
+- [x] **ARCH-04** Implement the common typed test-point model and opt-in observer.
 - [ ] **ARCH-05** Implement bounded stage/range selection and export through an adapter.
 - [ ] **ARCH-06** Prove probes do not change RNG draws, state, outputs or decisions.
 - [ ] **ARCH-07** Expose parity, twist and demultiplexing as separately callable stages,
   including reverse boundaries, while preserving the existing bit-processing API.
 
 Every new algorithm gets a focused module, typed output and independent tests.
-Stateful stages own their state; runners only connect stages. Existing direct
-stage outputs remain usable independently of the future common observer.
+Stateful stages own their state; runners only connect stages. Direct stage outputs
+remain usable independently of the observer. ARCH-04 currently registers the four
+pilot stages only. ARCH-05 has bounded stage/element/symbol selection; adapter
+export remains TODO. Pilot observation invariance is tested; ARCH-06 still needs
+coverage of stateful/RNG-driven stages as their producers are added.
 
 ## Existing scientific foundation
 
@@ -79,24 +84,29 @@ These checked items establish cell transport, not an RF waveform. Guides:
 ## Next implementation: pilot and PLC signals
 
 Start here before moving to IFFT. Develop each component separately and keep its
-input, output, phase and normalization available for tests. The first code change
-should establish the stage-result/test-point types needed by these components;
-it must not introduce a single combined pilot/PLC implementation.
+input, output, phase and normalization available for tests. Typed pilot results
+and bounded test points are now implemented in separate modules. The [pilot guide](../user/pilot-signals.md) records the verified sequence,
+scaling and example. The [PLC message guide](../user/plc-messages.md) now covers
+the timestamp/MC framing and FEC-input boundary. Next is PLC coding (NEXT-08);
+fixed-setting acquisition descriptor packets remain part of NEXT-07.
 
 - [ ] **NEXT-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
   phase and exact section/page evidence. Check PHY4.0 delegation where applicable.
-- [ ] **NEXT-02** Define typed pilot sequence/value and PLC stage results, with
+- [x] **NEXT-02** Define typed pilot sequence/value and PLC stage results, with
   shared test-point metadata and bounded optional observation.
-- [ ] **NEXT-03** Implement shared pilot sequence logic in its own module and
+- [x] **NEXT-03** Implement shared pilot sequence logic in its own module and
   verify independent sequence/phase vectors.
-- [ ] **NEXT-04** Implement continuous-pilot signal generation separately from
+- [x] **NEXT-04** Implement continuous-pilot signal generation separately from
   additional-pilot placement; expose signs, I/Q, boost and locations.
-- [ ] **NEXT-05** Implement scattered-pilot signal generation separately, using
+- [x] **NEXT-05** Implement scattered-pilot signal generation separately, using
   the existing physical pattern and correct PLC-aligned phase after interleaving.
-- [ ] **NEXT-06** Implement shared pilot power/boost conversion with explicit
+- [x] **NEXT-06** Implement shared pilot power/boost conversion with explicit
   reference energy; test signs, levels and collisions with protected roles.
-- [ ] **NEXT-07** Define and validate fixed-setting PLC message bytes separately.
+- [x] **NEXT-07A** Implement validated timestamp/MC message blocks, exact frame
+  capacity and consecutive MSB-first36-byte/288-bit FEC inputs.
+- [ ] **NEXT-07** Complete fixed-setting PLC acquisition messages: OCD, Profile A
+  and NCP DPD MAC packets, packet CRCs, segmentation and repetition scheduling.
 - [ ] **NEXT-08** Implement verified PLC coding as a separate stage; reuse a codec
   only where the PHY parameters match, otherwise add a focused Rust primitive.
 - [ ] **NEXT-09** Implement PLC block interleaving in its own module with
@@ -111,6 +121,15 @@ it must not introduce a single combined pilot/PLC implementation.
   and complete physical frequency bins; test with observation on and off.
 - [ ] **NEXT-15** Add module tests, a bounded example, integration tests and a user
   guide with equations/diagram. Mark this stage complete only after these pass.
+
+Pilot evidence for NEXT-01 is verified against PHY3.1 I20 §7.5.15.3–4, PDF171,
+and PHY4.0 FDD delegation. PLC frame/message/bit-order requirements are verified
+and recorded in [PLC evidence](../reference/plc-evidence.md); exact remaining
+coding/interleaving/randomization/preamble vectors for NEXT-01 are still pending.
+NEXT-02 now has pilot results, shared metadata and typed PLC message/FEC-input
+results; later PLC algorithms will add their own result types. NEXT-14/15 have
+pilot probes plus pilot/message tests, examples and guides; PLC observer producers,
+remaining signal stages and full-frame integration keep those items unchecked.
 
 Planned paths and test-point IDs are in the architecture. Resolve any missing
 normative behavior in `development/pilot-plc-signals/` before implementing it.

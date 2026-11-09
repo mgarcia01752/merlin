@@ -8,4 +8,5 @@ pub mod interleaving;
 pub mod modulation;
 pub mod noise;
 pub mod ofdm;
+pub mod pilots;
 pub mod shannon;

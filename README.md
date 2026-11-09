@@ -29,7 +29,11 @@ across symbols and reserves NCP/CRC space. The [NCP codec](docs/user/ncp.md)
 provides control LDPC, CRC and received codeword-start discovery.
 [Cell interleaving](docs/user/cell-interleaving.md) now provides persistent time
 delays, frequency permutations and the inverse physical pilot reference.
-Full DOCSIS framing/placement and
+Separate [pilot generators and bounded test points](docs/user/pilot-signals.md)
+provide physical-bin BPSK signs and explicit amplitude scaling.
+[PLC message blocks](docs/user/plc-messages.md) now provide timestamp/MC frames and
+ordered FEC inputs. Acquisition descriptors, PLC encoding/signal generation,
+full DOCSIS framing/placement and
 interoperability validation remain pending. See
 [coding scope and equations](docs/reference/coding-mode.md).
 
