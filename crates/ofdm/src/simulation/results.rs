@@ -12,7 +12,7 @@ use fec_codec::{
 use serde::{Deserialize, Serialize};
 // Exported interpretation is part of the stable result contract.
 const SIMULATION_ASSUMPTIONS:[&str;6]=[
-"Coding-block input is post-randomizer; MAC/NCP/PLC framing and waveform generation are outside this boundary.",
+"Cell-word randomization is bypassed in this coding experiment; MAC/NCP/PLC framing and waveform generation are outside this boundary.",
             "Unit-average symbol energy; complex residual noise power=10^(-MER/10), real-component variance is half that power.",
             "Max-log LLR=ln(P0/P1), positive favors0; clip magnitude100; horizontal layered sum-product decoding.",
             "Sequential cycling through selected observed data carriers; no claimed DOCSIS frequency/time-interleaver placement.",

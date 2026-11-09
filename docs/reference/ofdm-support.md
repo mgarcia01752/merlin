@@ -1,6 +1,6 @@
 # Downstream OFDM scope and modulation coverage
 
-DOFT is DOCSIS-focused. Build the downstream OFDM engine first; OFDMA is deferred.
+DOCSIS OFDM Channel Sim is DOCSIS-focused. Build the downstream OFDM engine first; OFDMA is deferred.
 The product target is profile evaluation and real FEC simulation across the data
 constellations allowed by the pinned DOCSIS3.1/4.0 downstream definitions.
 
@@ -13,18 +13,18 @@ mandatory and optional endpoint modulation support below. The maximum listed
 is **16384-QAM (16K-QAM), carrying14bits per symbol**. Both8192-QAM and16384-QAM
 are optional for CM/CMTS; they already appear in the DOCSIS3.1 baseline.
 
-| Data constellation | Bits/symbol | Pinned CM/CMTS requirement | Profile analysis | Full coding simulation |
-| --- | ---: | --- | --- | --- |
-| 16-QAM | 4 | Required | Implemented | Initial experimental mode |
-| 64-QAM | 6 | Required | Implemented | Pending |
-| 128-QAM | 7 | Required | Implemented | Pending |
-| 256-QAM | 8 | Required | Implemented | Pending |
-| 512-QAM | 9 | Required | Implemented | Pending |
-| 1024-QAM | 10 | Required | Implemented | Pending |
-| 2048-QAM | 11 | Required | Implemented | Pending |
-| 4096-QAM | 12 | Required | Implemented | Pending |
-| 8192-QAM | 13 | Optional | Implemented | Pending |
-| 16384-QAM | 14 | Optional | Implemented | Pending |
+| Data constellation | Bits/symbol | Pinned CM/CMTS requirement | Profile analysis | Mapping/soft demapping | Full coding simulation |
+| --- | ---: | --- | --- | --- | --- |
+| 16-QAM | 4 | Required | Implemented | Experimental | Initial experimental mode |
+| 64-QAM | 6 | Required | Implemented | Experimental | Pending |
+| 128-QAM | 7 | Required | Implemented | Experimental | Pending |
+| 256-QAM | 8 | Required | Implemented | Experimental | Pending |
+| 512-QAM | 9 | Required | Implemented | Experimental | Pending |
+| 1024-QAM | 10 | Required | Implemented | Experimental | Pending |
+| 2048-QAM | 11 | Required | Implemented | Experimental | Pending |
+| 4096-QAM | 12 | Required | Implemented | Experimental | Pending |
+| 8192-QAM | 13 | Optional | Implemented | Experimental | Pending |
+| 16384-QAM | 14 | Optional | Implemented | Experimental | Pending |
 
 “Profile analysis” means role-preserving assignment handling, named analytical
 MER targets and capacity accounting; it is not a verified mapper or decoder
@@ -32,13 +32,17 @@ simulation for that order. The typed `OfdmModulation` registry exposes this
 separation. The default analytical cap is14; applications may choose a lower
 cap for specific device capabilities. Pilot, PLC, NCP and zero-loaded roles are
 separate from data modulation; recognizing a role does not make it user data.
+Shared [mapping and reference max-log demapping](../user/qam-mapping.md) now use
+embedded label-ordered resources through16K-QAM. Mapping is marked experimental
+independently of complete coding-mode availability.
 
 ## Coding work still required
 
-For each pending order, verify and test normative constellation labels,
-normalization, soft demapping, column twists, demultiplexing, pad bits,
-shortening and codeword placement. Non-square orders need their actual mappings,
-not a generic square-QAM approximation. High-order scrambling and bit ordering
+For each pending coding order, verify column twists, demultiplexing, pad bits,
+shortening and codeword placement. Extend independent high-order label vectors
+and decoder validation beyond current diagram anchors and reference-table checks.
+Non-square orders use their actual resources, not a square-QAM approximation.
+High-order scrambling and bit ordering
 must follow the pinned source. Mixed profiles require verified per-carrier
 placement before claiming a complete mixed-modulation FEC chain.
 

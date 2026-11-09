@@ -24,7 +24,10 @@ Normative parameter sources:
   retains a separate FDD protocol enum, but measured detailed simulation is
   restricted to the first DOCSIS3.1 experiment. FDX is unsupported.
 
-The first chain starts at **post-randomizer BCH input**. MAC framing, NCP/PLC,
+The first chain starts at **binary BCH input** and bypasses cell-word
+randomization. The standalone [data/NCP randomizer](../user/cell-randomizer.md)
+belongs after FEC and bit processing and is not yet integrated into this CLI mode.
+MAC framing, NCP/PLC,
 frequency/time-interleaver codeword placement, pilots in a physical waveform,
 FFT/IFFT processing and a complete RF receiver are outside its boundary.
 Data symbols cycle sequentially through selected data-carrier noise models.

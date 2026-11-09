@@ -1,11 +1,11 @@
 ---
 name: docsis-signal-processing
-description: Implement or review DOFT DOCSIS OFDM signal-processing and FEC behavior using local pinned PHY evidence, Rust-only algorithms and explicit scientific support states. OFDMA work is deferred unless requested.
+description: Implement or review DOCSIS OFDM Channel Sim signal-processing and FEC behavior using local pinned PHY evidence, Rust-only algorithms and explicit scientific support states. OFDMA work is deferred unless requested.
 ---
 
-# DOFT scientific scope
+# DOCSIS OFDM Channel Sim scientific scope
 
-- DOFT is standalone and DOCSIS-centric. Prioritize downstream OFDM functionality.
+- DOCSIS OFDM Channel Sim is standalone and DOCSIS-centric. Prioritize downstream OFDM functionality.
   OFDMA is a later scope. Optional Qt presentation and Python bindings are deferred.
 - All DSP, channel models, constellation mapping/demapping, FEC and scientific
   orchestration must be Rust. This includes algorithm dependencies. Do not use

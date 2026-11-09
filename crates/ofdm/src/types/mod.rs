@@ -28,6 +28,9 @@ pub type BitRateBps = u64;
 pub type BitCount = u64;
 /// Carrier count used by compressed-profile analysis, independent of CPU width.
 pub type CarrierCount = u64;
+/// Downstream PLC-frame length; also synchronizes scattered pilots and randomization.
+/// PHY I20 sections7.5.5.3,7.5.13.2 and7.5.15.1.
+pub const PLC_FRAME_SYMBOLS: u64 = 128;
 pub mod modulation;
 pub mod units {
     /// Quarter-dB encoded steps per decibel.

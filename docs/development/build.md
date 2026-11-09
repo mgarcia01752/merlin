@@ -29,6 +29,10 @@ BCH encoding and decoding are implemented in safe Rust. Upstream algorithm
 provenance and the retained MIT notice are described in NOTICE. No native codec
 build script, CXX bridge or C++ source is included in the build.
 
+A Rust-only build helper under `crates/ofdm/build/` validates and embeds the
+preserved QAM resources. It introduces no additional packages or native build
+dependencies. See [QAM resources and runtime behavior](../user/qam-mapping.md).
+
 Private normative PDFs, evidence and migration snapshots live in ignored
 `development/`. They are not present in a fresh clone. The specification skills
 include versioned lookup extracts; diagrams still require the original PDF.

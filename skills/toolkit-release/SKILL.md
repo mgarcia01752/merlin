@@ -1,6 +1,6 @@
 ---
 name: toolkit-release
-description: Prepare DOCSIS OFDM FEC Toolkit three-component version bumps, release tags and guarded push commands. Use only for this repository's version and release workflow.
+description: Prepare DOCSIS OFDM Channel Sim three-component version bumps, release tags and guarded push commands. Use only for this repository's version and release workflow.
 ---
 
 # Toolkit release workflow
@@ -28,7 +28,7 @@ candidate/commit/tag before recovery. Never move or overwrite public tags.
 build, commit, create tags or push.
 
 Supply copy/paste commands beginning with
-cd /home/dev01/Projects/DOCSIS-OFDM-FEC-Toolkit &&
+cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
 unless explicitly asked to execute. Adding release tooling is not authorization
 to release. This repository currently has no automated publication/installer
 workflow; a successful tag push does not itself create a GitHub Release.

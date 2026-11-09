@@ -1,4 +1,4 @@
-DOCSIS OFDM FEC Toolkit
+DOCSIS OFDM Channel Sim
 
 Scientific profile models, policies and initial codec adapter were extracted from
 uncommitted PNM Viewer Toolkit work based on commit
@@ -20,3 +20,9 @@ https://github.com/aff3ct/aff3ct
 
 Specification documents retain their respective owners' rights. Private PDFs
 and the migration prototype are development inputs, not distributable assets.
+
+QAM reference tables are copied from PNM Viewer Toolkit's preserved PyPNM
+resources. Acknowledgment: PyPNM - Proactive Network Maintenance Toolkit.
+Retain crates/ofdm/resources/qam-table/LICENSE and NOTICE when distributing
+these resources or their embedded references. Source hashes and revisions are
+recorded in crates/ofdm/resources/qam-table/provenance.json.

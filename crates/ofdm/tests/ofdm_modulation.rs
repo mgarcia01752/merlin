@@ -21,6 +21,7 @@ fn data_registry_covers_optional_16k_without_claiming_simulation() {
     let expected = [16, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384];
     assert_eq!(OFDM_DATA_MODULATIONS.map(|entry| entry.order), expected);
     for entry in OFDM_DATA_MODULATIONS {
+        assert_eq!(entry.mapping, ImplementationState::ImplementedExperimental);
         assert_eq!(entry.order, 1u16 << entry.bits_per_symbol);
         assert!(is_data_bit_loading(entry.bits_per_symbol));
         assert_eq!(

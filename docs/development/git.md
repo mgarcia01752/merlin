@@ -14,7 +14,7 @@ non-ignored changes, including new files. Private development evidence, PDFs,
 local toolchains and target/ remain ignored.
 
 ```bash
-cd /home/dev01/Projects/DOCSIS-OFDM-FEC-Toolkit &&
+cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
 tools/git/git-save.sh --commit-msg "Feature: Describe the complete change
 - Describe the implementation
 - Tests: Record actual validation"
@@ -26,7 +26,7 @@ commits work in a new repository once Git author identity is configured.
 ## Push
 
 ```bash
-cd /home/dev01/Projects/DOCSIS-OFDM-FEC-Toolkit &&
+cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
 tools/git/git-push.sh
 ```
 
@@ -44,7 +44,7 @@ A missing check is a failure; there is no validation-skip option.
 ## Local bump preview
 
 ```bash
-cd /home/dev01/Projects/DOCSIS-OFDM-FEC-Toolkit &&
+cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
 tools/bump-version.sh --bump patch --dry-run
 ```
 
@@ -56,7 +56,7 @@ Git commit, tag or push occurs. Major resets minor/patch; minor resets patch.
 After saving and merging reviewed work to master:
 
 ```bash
-cd /home/dev01/Projects/DOCSIS-OFDM-FEC-Toolkit &&
+cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
 tools/git/git-push.sh --tag-patch
 ```
 

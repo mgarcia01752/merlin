@@ -1,10 +1,11 @@
-# DOCSIS OFDM FEC Toolkit (DOFT)
+# DOCSIS OFDM Channel Sim
 
 Offline Rust libraries and a CLI for downstream profile analysis and experimental
 LDPC/BCH simulation. **Under development.**
 
-DOFT is standalone: a public Rust library and an independent CLI. All scientific
-processing, including FEC, is Rust. Focus is downstream OFDM; OFDMA comes later.
+DOCSIS OFDM Channel Sim provides a standalone public Rust library and CLI.
+All scientific processing, including FEC, is Rust. Focus is downstream OFDM;
+OFDMA comes later.
 A Qt presentation component and Python bindings are deferred until the scientific
 functionality is established.
 
@@ -17,9 +18,13 @@ functionality is established.
 
 The first coding experiment uses short16200-bit LDPC, rate8/9, BCH14232/14400 and
 uniform16-QAM. Profile analysis recognizes data constellations through16384-QAM;
-full coding simulations for higher orders remain pending. Full DOCSIS
-framing/placement and interoperability validation are
-pending. See [coding scope and equations](docs/reference/coding-mode.md).
+full coding simulations for higher orders remain pending. Label-ordered mapping
+and reference soft demapping are available through16K-QAM;
+see [QAM mapping](docs/user/qam-mapping.md). A standalone
+[data/NCP randomizer](docs/user/cell-randomizer.md) supports the same data orders.
+Full DOCSIS framing/placement and
+interoperability validation remain pending. See
+[coding scope and equations](docs/reference/coding-mode.md).
 
 The isolated codec loop is available before involving modulation or a channel:
 
@@ -43,6 +48,7 @@ project-local toolchain when present and installs nothing.
 [CLI examples](docs/cli.md) ·
 [Architecture](docs/architecture.md) ·
 [Public API](docs/reference/public-api.md) ·
+[Transmission setup](docs/user/transmission.md) ·
 [Modulation coverage](docs/reference/ofdm-support.md) ·
 [JSON contracts](docs/reference/documents.md)
 

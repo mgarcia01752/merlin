@@ -1,6 +1,6 @@
 ---
 name: scientific-testing
-description: Add or review codec, DSP, profile evaluation and interoperability tests in DOCSIS OFDM FEC Toolkit. Use for scientific changes and input-format contracts.
+description: Add or review codec, DSP, profile evaluation and interoperability tests in DOCSIS OFDM Channel Sim. Use for scientific changes and input-format contracts.
 ---
 
 # Scientific testing
@@ -13,6 +13,9 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
   produced interoperability vectors. Record exact document issue, page and table.
 - Cover BCH correction boundaries and demonstrated failures, LDPC syndromes,
   convergence/failure, bit permutations, QAM labels, energy and LLR signs/scaling.
+- Verify constellation labels independently of imported point geometry, including
+  BPSK/QPSK control labels. Test published randomizer states, mask-bit ordering,
+  pilot/zero-loaded clocking, symbol resets and soft inverse sign conventions.
 - Verify missing/excluded samples, exact grids, explicit time tolerances,
   protected roles, capacity overheads and intermittent impairments.
 - Check invalid schemas, input/work limits, cancellation and partial results.

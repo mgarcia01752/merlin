@@ -1,6 +1,6 @@
-# DOFT architecture
+# DOCSIS OFDM Channel Sim architecture
 
-DOFT is a standalone DOCSIS scientific toolkit with a Rust library and CLI.
+DOCSIS OFDM Channel Sim is a standalone DOCSIS scientific toolkit with a Rust library and CLI.
 Downstream OFDM is the current focus. OFDMA is deferred. All signal processing,
 channel modeling, modulation, soft demapping and FEC are implemented in Rust.
 
@@ -16,8 +16,10 @@ crates/
 │   ├── lib.rs                 Module wiring and compatibility exports
 │   ├── error.rs               Shared scientific diagnostics
 │   ├── types/                 Domain aliases, units and carrier roles
+│   ├── transmission/          Fixed channel numerology and one-second timing
+│   │   └── layout/            Physical pilot/PLC roles and separate NCP eligibility
 │   ├── signal_processing/
-│   │   ├── modulation/        QAM references, bit ordering and soft demapping
+│   │   ├── modulation/        Embedded QAM through16K, bit ordering and soft demapping
 │   │   └── noise/             Residual powers and controlled AWGN
 │   ├── simulation/
 │   │   ├── source/            Current seeded source; PRBS remains unimplemented
@@ -91,3 +93,27 @@ draw order. Result reporting owns truth comparisons and confidence calculations.
 Existing `math::*`, `profile::model`, `profile::association`, `profile::simulation`
 and `profile::document::ScenarioDocument` imports remain available through
 re-exports. Each type and algorithm has one implementation at its canonical path.
+
+`transmission` validates fixed single-channel setup and calculates integer
+sample-clock timing independently of the simulation feature. The channel runner,
+waveform and interleavers remain pending. See
+[transmission settings and lifecycle](user/transmission.md).
+
+`transmission::layout` owns immutable physical-bin geometry and128-symbol
+scattered-pilot progression. NCP eligibility uses a separate pre-interleaving
+domain; physical-bin indices cannot substitute for inverse interleaver mapping.
+Additional-pilot generation and full placement compliance remain pending. See
+[carrier-layout scope and equations](user/carrier-layout.md).
+
+QAM resources under `crates/ofdm/resources/qam-table` retain PyPNM provenance.
+The Rust build helper compiles label-ordered normalized references into static
+arrays. Shared mapping and max-log demapping cover all downstream data orders
+through16K-QAM; the full coding CLI remains16-QAM only. See
+[mapping, scaling and evidence](user/qam-mapping.md).
+
+`signal_processing::modulation::randomization` owns the data/NCP GF(2^12) LFSR
+and cell-mask processing. It retains state across codewords, resets on explicit
+128-symbol boundaries and reverses soft-bit randomization with LLR sign flips.
+The packer must supply synchronized pre-interleaving cell order; no existing
+simulation mode is silently changed. PLC has separate pending state/timing rules.
+See [randomizer equations and lifecycle](user/cell-randomizer.md).

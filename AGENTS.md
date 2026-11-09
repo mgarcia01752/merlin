@@ -1,6 +1,6 @@
-# DOCSIS OFDM FEC Toolkit
+# DOCSIS OFDM Channel Sim
 
-DOFT is short for DOCSIS OFDM FEC Toolkit. It is a standalone DOCSIS scientific
+DOCSIS OFDM Channel Sim is a standalone DOCSIS scientific
 library and CLI. Work exclusively in this repository unless scope is changed.
 
 Focus on downstream OFDM first. OFDMA is deferred. Two scientific modes are the
@@ -61,7 +61,7 @@ Use tools/git/git-save.sh --commit-msg and tools/git/git-push.sh. Inspect all
 tracked/staged/untracked changes before writing a message. Format Feature:,
 BugFix: or Documentation:, followed by - detail lines and - Tests:, at most60
 characters per message line. Supply commands unless asked to execute.
-Begin Git command blocks with cd /home/dev01/Projects/DOCSIS-OFDM-FEC-Toolkit &&.
+Begin Git command blocks with cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&.
 
 VERSION is canonical. tools/bump-version.sh synchronizes every local package and
 Cargo.lock. Combined --tag-patch/--tag-minor/--tag-major modes require clean master,

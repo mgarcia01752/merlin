@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Prepare commits and guarded pushes for DOCSIS OFDM FEC Toolkit using its local helpers, including change inspection and the required pre-push validation gate.
+description: Prepare commits and guarded pushes for DOCSIS OFDM Channel Sim using its local helpers, including change inspection and the required pre-push validation gate.
 ---
 
 # Git workflow
@@ -13,7 +13,7 @@ Use tools/git/git-save.sh --commit-msg with one double-quoted multiline argument
 Use Feature:, BugFix: or Documentation:, imperative summary and - detail lines,
 including - Tests:. Keep every message line at most60characters.
 Provide a command unless the user explicitly authorizes execution; start command
-blocks with cd /home/dev01/Projects/DOCSIS-OFDM-FEC-Toolkit &&.
+blocks with cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&.
 
 Use tools/git/git-push.sh for pushes. Plain push requires clean main/master,
 origin, nondiverged ancestry and successful scripts/check-before-push.sh.

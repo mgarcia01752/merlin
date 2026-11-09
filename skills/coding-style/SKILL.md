@@ -1,9 +1,9 @@
 ---
 name: coding-style
-description: Apply DOCSIS OFDM FEC Toolkit coding conventions when writing, modifying, or reviewing project-owned code, including SPDX headers, full public-function documentation banners, multiline branches and focused Rust scientific modules.
+description: Apply DOCSIS OFDM Channel Sim coding conventions when writing, modifying, or reviewing project-owned code, including SPDX headers, full public-function documentation banners, multiline branches and focused Rust scientific modules.
 ---
 
-# DOCSIS OFDM FEC Toolkit coding style
+# DOCSIS OFDM Channel Sim coding style
 
 Use documented public Rust APIs, meaningful domain types and pinned local PHY evidence.
 All signal processing and FEC algorithms are Rust. Do not introduce native DSP
@@ -203,7 +203,7 @@ Rust, JavaScript and TypeScript:
 
 ```rust
 /*
- * Copyright 2026 DOCSIS OFDM FEC Toolkit contributors
+ * Copyright 2026 DOCSIS OFDM Channel Sim contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 ```
@@ -218,7 +218,7 @@ Shell/Python executable scripts retain the shebang on the first line:
 ```bash
 #!/usr/bin/env bash
 #
-# Copyright 2026 DOCSIS OFDM FEC Toolkit contributors
+# Copyright 2026 DOCSIS OFDM Channel Sim contributors
 # SPDX-License-Identifier: Apache-2.0
 #
 ```

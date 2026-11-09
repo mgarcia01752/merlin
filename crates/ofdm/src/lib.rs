@@ -10,6 +10,7 @@ pub mod scenario;
 pub mod signal_processing;
 #[cfg(feature = "simulation")]
 pub mod simulation;
+pub mod transmission;
 pub mod types;
 pub use error::LabError;
 

@@ -60,7 +60,7 @@ const fn modulation(
         order: 1 << bits,
         bits_per_symbol: bits,
         device_support,
-        mapping: state,
+        mapping: ImplementationState::ImplementedExperimental,
         coding_simulation: state,
     }
 }

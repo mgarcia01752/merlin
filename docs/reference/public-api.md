@@ -1,17 +1,23 @@
 # Public API
 
-DOFT's scientific entry points are public Rust APIs. The standalone CLI calls
+DOCSIS OFDM Channel Sim's scientific entry points are public Rust APIs. The standalone CLI calls
 those same functions. Future Python bindings and an optional Qt presentation
 component will adapt inputs and results without duplicating scientific logic.
 
 | Public module | Responsibility |
 | --- | --- |
+| `transmission::{TransmissionSettings, SubcarrierSpacing}` | Fixed single-channel numerology and PHY validation |
+| `transmission::TransmissionTiming` | Whole-symbol accounting for one simulated second |
+| `transmission::layout::{CarrierLayout, CarrierLayoutSettings}` | Immutable physical bin roles and per-symbol scattered pilots |
+| `transmission::layout::ncp::select_ncp_cells` | Eligible NCP cells in the pre-interleaving domain |
 | `scenario::{grid, observation}` | Exact identity, source provenance and full-resolution observations |
 | `scenario::association` | Explicit-tolerance timestamp association |
 | `scenario::document` | Versioned decoded scenario inputs |
 | `profile::candidate` | Captured assignments and editable hypotheses |
 | `profile::{evaluation, document}` | Temporal screening, candidate documents and role verification |
 | `signal_processing::{modulation, noise}` | QAM, soft demapping and residual-noise models |
+| `signal_processing::modulation::{map_symbol, qam_llrs}` | Shared label-ordered mapping and reference soft demapping through16K-QAM |
+| `signal_processing::modulation::randomization::CellRandomizer` | Stateful data/NCP cell randomization and soft-bit inverse through16K-QAM |
 | `simulation::{config, runner, results, source}` | Bounded trial orchestration and reproducible source state |
 | `types::ofdm_modulation` | Normative constellation registry and implementation status |
 | `fec_codec::{parameters, bch, ldpc}` | Mode dimensions and individual codecs |

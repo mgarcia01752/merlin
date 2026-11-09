@@ -3,7 +3,7 @@
 # Copyright 2026 PNM Viewer contributors
 # SPDX-License-Identifier: Apache-2.0
 #
-"""Validate, version, tag and atomically push a DOCSIS OFDM FEC Toolkit release."""
+"""Validate, version, tag and atomically push a DOCSIS OFDM Channel Sim release."""
 import argparse
 from pathlib import Path
 import shlex
@@ -111,11 +111,11 @@ def release(part, existing_tag, dry_run, force=False):
             raise RuntimeError(f'HEAD is already tagged v{current}; use git-push.sh --tag v{current} instead of bumping again')
         if local_tag.returncode == 0 or tag_ref in refs:
             raise RuntimeError(f'Tag {tag} already exists; never move a release tag')
-        if (git('log', '-1', '--format=%s').stdout.strip() == f'Feature: Release DOCSIS OFDM FEC Toolkit v{current}'
+        if (git('log', '-1', '--format=%s').stdout.strip() == f'Feature: Release DOCSIS OFDM Channel Sim v{current}'
                 and not (force and published_head)):
             raise RuntimeError(f'HEAD is a release commit without its tag; review and create v{current}, then use --tag v{current}')
     ensure_checkout(starting_commit)
-    print(f'DOCSIS OFDM FEC Toolkit {current} -> {version}; master; tag {tag}', flush=True)
+    print(f'DOCSIS OFDM Channel Sim {current} -> {version}; master; tag {tag}', flush=True)
     if dry_run:
         print('Dry run: no bump, checks, commit, tag or push performed')
         return
@@ -139,13 +139,13 @@ def release(part, existing_tag, dry_run, force=False):
     if not existing_tag:
         git('add', '--', *changes)
         candidate_tree = git('write-tree').stdout.strip()
-        git('commit', '-m', f'Feature: Release DOCSIS OFDM FEC Toolkit {tag}')
+        git('commit', '-m', f'Feature: Release DOCSIS OFDM Channel Sim {tag}')
         release_commit = git('rev-parse', 'HEAD').stdout.strip()
         ensure_checkout(release_commit)
         if (git('rev-parse', 'HEAD^{tree}').stdout.strip() != candidate_tree
                 or git('rev-parse', 'HEAD^').stdout.strip() != starting_commit):
             raise RuntimeError('Release commit differs from the validated candidate; no tag or push performed')
-        git('tag', '-a', tag, release_commit, '-m', f'DOCSIS OFDM FEC Toolkit {version}')
+        git('tag', '-a', tag, release_commit, '-m', f'DOCSIS OFDM Channel Sim {version}')
         tag_object = git('rev-parse', tag_ref).stdout.strip()
     else:
         release_commit = starting_commit
