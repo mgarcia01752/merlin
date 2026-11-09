@@ -47,6 +47,20 @@
       "synthetic": true,
       "operation": "Subtract 12 dB from non-null readings at offsets [3366, 4114)",
       "sha256": "ed21a363875d68e55202fe91750c330e7a00774d0b930b2f1ef56a64b63fdc37"
+    },
+    {
+      "decoded_json": "rxmer-lte-downlink.json",
+      "base": "rxmer.json",
+      "synthetic": true,
+      "operation": "Combine baseline residual error with LTE-inspired interference power in linear units",
+      "model_sidecar": "lte-ingress-model.json",
+      "sha256": "223354d618b796d0f6555a4c24ca82e33c0652599e365915469a8cec13ca84a1"
+    }
+  ],
+  "model_sidecars": [
+    {
+      "name": "lte-ingress-model.json",
+      "sha256": "6360b265922d41bf3ddd5c4b1801b2eb588bf1bc84e022d436f5b3c630e14a0d"
     }
   ]
 }

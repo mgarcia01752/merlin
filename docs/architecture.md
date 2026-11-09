@@ -77,6 +77,15 @@ locally under ignored development storage. The three demo captures share a spati
 grid but have different timestamps; they are not contemporaneous observations.
 Fixture preparation does not implement INPUT-01 or MODEL-06.
 
+The [LTE ingress approximation](user/measurement-inputs/lte-ingress.md) is a shared
+Rust frequency-domain residual-power helper under `signal_processing::noise`.
+Fixture preparation checks exact spatial alignment and emits a synthetic RxMER
+document plus settings/alignment sidecar. It does not synthesize an LTE waveform.
+The intended measurement-driven mode starts noiseless and uses RxMER as its total
+residual-error budget; no extra thermal/system floor is enabled. Derived LTE MER
+already includes baseline plus added interference and must be applied once, not
+combined with a second baseline or LTE injection in the later waveform model.
+
 ## Modules and stage boundaries
 
 **Each distinct algorithm stage has a focused module and a directly testable typed

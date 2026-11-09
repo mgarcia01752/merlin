@@ -15,11 +15,13 @@ documents. Do not pass them directly to `ofdm-fec channel` or `--scenario`.
 | [modulation_profile.json](modulation_profile.json) | Unchanged captured profiles; select a profile explicitly later |
 | [rxmer-reduced-6db.json](rxmer-reduced-6db.json) | Synthetic: subtract 6 dB from each available reading |
 | [rxmer-center-notch-12db.json](rxmer-center-notch-12db.json) | Synthetic: subtract 12 dB within the middle 10% of array positions |
+| [rxmer-lte-downlink.json](rxmer-lte-downlink.json) | Synthetic LTE-inspired ingress at737.5MHz using linear-power combination |
+| [lte-ingress-model.json](lte-ingress-model.json) | LTE settings, alignment precheck and separate original timestamps |
 
 All three captures use modem `00:ca:00:00:00:01`, channel 34, zero frequency
 631100000 Hz, first index 356 and spacing 25000 Hz. RxMER and coefficients have
 7480 entries: centers run from 640000000 to 826975000 Hz. Profile assignments
-must still be expanded and checked by the future importer. Shared headers alone
+must still be expanded and semantically checked by the future importer. Shared headers alone
 do not prove role/assignment compatibility with a simulation mode.
 
 Capture epochs differ: RxMER 1380970, channel estimate 1391100, profile 1466967.
@@ -40,6 +42,10 @@ These MER edits do not introduce a temporal/burst model or guarantee FEC failure
 All fixture transformations run in Rust. From the repository root, choose an
 existing empty output directory; the generator refuses existing destinations:
 
+The input directory must also contain `channel_estimation.json` and
+`modulation_profile.json`. Exact identity/grid and profile run-length counts are
+checked before any output is written. Mismatches are rejected, never relabeled.
+
 ```bash
 mkdir -p development/pnm-measurement-inputs/regenerated
 scripts/cargo-local.sh run -p docsis-ofdm-fec --example prepare_rxmer_variants --locked -- \
@@ -47,10 +53,14 @@ scripts/cargo-local.sh run -p docsis-ofdm-fec --example prepare_rxmer_variants -
   development/pnm-measurement-inputs/regenerated
 ```
 
-Compare regenerated files with the linked snapshots. Each reduction is
-\(M'_k=M_k-\Delta_k\) in dB. When a residual-noise model is implemented, it must
-explicitly establish its reference plane; this preparation step adds no waveform
-noise and computes no simulated decoder outcomes.
+Compare regenerated files with the linked snapshots. The original reduction
+fixtures use \(M'_k=M_k-\Delta_k\) in dB. The new
+[LTE approximation](../../../docs/user/measurement-inputs/lte-ingress.md) combines
+existing residual power and added interference before converting back to MER.
+It uses a10MHz envelope,9MHz flat core and−30dB core interference/signal power.
+No separate thermal floor is added; the resulting MER is applied only once in
+future simulation integration. This preparation adds no waveform noise and
+computes no decoder outcomes. The rectangular notch remains a separate test case.
 
 Original sanitized binaries are retained locally under ignored
 `development/pnm-measurement-inputs/originals/`. To decode a binary again with

@@ -3,17 +3,29 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Offline Rust fixture preparation; not a PNM parser or simulation importer.
-use serde_json::Value;
+mod alignment;
+use docsis_ofdm_fec::{
+    scenario::grid::FrequencyGrid,
+    signal_processing::noise::lte_ingress::{
+        LteDownlinkIngress, CHANNEL_BANDWIDTH_HZ, FLAT_CORE_BANDWIDTH_HZ,
+    },
+};
+use serde_json::{json, Value};
 use std::{error::Error, fs::OpenOptions, io::Write, path::Path};
 
 const FULL_BAND_REDUCTION_DB: f64 = 6.0;
 const NOTCH_REDUCTION_DB: f64 = 12.0;
 const INPUT_LIMIT_BYTES: u64 = 16 * 1024 * 1024;
+const LTE_MODEL: LteDownlinkIngress = LteDownlinkIngress {
+    center_frequency_hz: 737_500_000,
+    interference_to_signal_db: -30.0,
+};
 
 #[derive(Clone, Copy)]
 enum Variant {
     FullBand,
     CenterNotch,
+    LteDownlink,
 }
 
 // Preserve the decoder document shape, metadata, nulls and original sample order.
@@ -21,6 +33,36 @@ enum Variant {
 fn variant_document(original: &Value, variant: Variant) -> Result<Value, String> {
     if original.get("value_units").and_then(Value::as_str) != Some("dB") {
         return Err("Expected RxMER readings in dB.".into());
+    }
+    if matches!(variant, Variant::LteDownlink) {
+        let count = original["values"]
+            .as_array()
+            .ok_or("Missing RxMER values.")?
+            .len();
+        let field = |name| {
+            original[name]
+                .as_u64()
+                .and_then(|value| u32::try_from(value).ok())
+                .ok_or("Missing frequency header.")
+        };
+        let grid = FrequencyGrid {
+            zero_frequency_hz: field("subcarrier_zero_frequency")?,
+            first_subcarrier_index: u16::try_from(field("first_active_subcarrier_index")?)
+                .map_err(|error| error.to_string())?,
+            spacing_hz: field("subcarrier_spacing")?,
+            sample_count: count,
+        };
+        if original["data_length"].as_u64() != Some(count as u64) {
+            return Err("RxMER sample count differs from data_length.".into());
+        }
+        let readings: Vec<Option<f64>> = serde_json::from_value(original["values"].clone())
+            .map_err(|error| error.to_string())?;
+        let result = LTE_MODEL
+            .apply(&grid, &readings)
+            .map_err(|error| error.to_string())?;
+        let mut derived = original.clone();
+        derived["values"] = json!(result.mer_db);
+        return Ok(derived);
     }
     let mut derived = original.clone();
     let values = derived
@@ -47,10 +89,18 @@ fn variant_document(original: &Value, variant: Variant) -> Result<Value, String>
                 NOTCH_REDUCTION_DB
             }
             Variant::CenterNotch => 0.0,
+            Variant::LteDownlink => unreachable!("LTE fixture handled by shared Rust model"),
         };
         *sample = Value::from(original_mer_db - reduction_db);
     }
     Ok(derived)
+}
+
+fn read_document(path: &Path) -> Result<Value, Box<dyn Error>> {
+    if std::fs::metadata(path)?.len() > INPUT_LIMIT_BYTES {
+        return Err("Measurement fixture exceeds the 16 MiB preparation limit.".into());
+    }
+    Ok(serde_json::from_slice(&std::fs::read(path)?)?)
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -59,20 +109,36 @@ fn main() -> Result<(), Box<dyn Error>> {
         return Err("Usage: prepare_rxmer_variants BASE_RXMER_JSON OUTPUT_DIRECTORY".into());
     }
     let input_path = Path::new(&arguments[0]);
-    if std::fs::metadata(input_path)?.len() > INPUT_LIMIT_BYTES {
-        return Err("RxMER fixture exceeds the 16 MiB preparation limit.".into());
-    }
-    let original: Value = serde_json::from_slice(&std::fs::read(input_path)?)?;
+    let original = read_document(input_path)?;
+    let source_directory = input_path.parent().ok_or("Missing fixture directory.")?;
+    let channel = read_document(&source_directory.join("channel_estimation.json"))?;
+    let profile = read_document(&source_directory.join("modulation_profile.json"))?;
+    let alignment = alignment::validate(&original, &channel, &profile)?;
     let variants = [
         ("rxmer-reduced-6db.json", Variant::FullBand),
         ("rxmer-center-notch-12db.json", Variant::CenterNotch),
+        ("rxmer-lte-downlink.json", Variant::LteDownlink),
     ];
-    // Validate both documents before creating output files. Never replace a file.
-    let documents = variants
+    // Validate all documents and destinations before creating output. Never replace a file.
+    let mut documents = variants
         .iter()
         .map(|(_, variant)| variant_document(&original, *variant))
         .collect::<Result<Vec<_>, _>>()?;
-    for ((filename, _), document) in variants.iter().zip(documents) {
+    documents.push(json!({"schema_version":1,"synthetic":true,"model":"lte_downlink_ingress_approximation",
+        "settings":LTE_MODEL,"channel_bandwidth_hz":CHANNEL_BANDWIDTH_HZ,"flat_core_bandwidth_hz":FLAT_CORE_BANDWIDTH_HZ,
+        "edge_shape":"cosine_power_shoulders","reference_plane":"normalized_equalized_residual_power",
+        "additional_thermal_noise":false,"apply_resulting_rxmer_once":true,"alignment":alignment}));
+    let filenames: Vec<_> = variants
+        .iter()
+        .map(|(name, _)| *name)
+        .chain(["lte-ingress-model.json"])
+        .collect();
+    for filename in &filenames {
+        if Path::new(&arguments[1]).join(filename).exists() {
+            return Err(format!("Output already exists: {filename}").into());
+        }
+    }
+    for (filename, document) in filenames.iter().zip(documents) {
         let output_path = Path::new(&arguments[1]).join(filename);
         let mut output = OpenOptions::new()
             .write(true)

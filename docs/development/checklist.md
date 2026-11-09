@@ -451,6 +451,10 @@ and [the later impairment reference](impairment-reference.md).
   - [x] Prepare three current decoded single-capture fixtures with provenance,
     original local binaries and reproducible Rust-generated RxMER alternatives.
     Document timestamp differences and retain the parent importer TODO.
+  - [x] Add a Rust LTE-inspired10MHz downlink fixture with linear residual-power
+    combination, exact identity/grid/coverage rejection and an alignment sidecar.
+    Keep the rectangular notch and record no additional thermal floor/apply-once
+    policy. This does not implement waveform impairments or close MODEL-04/06.
 - [ ] **INPUT-02** Later: formalize the decoded-JSON compatibility contract with
   schema versions, verified PNM Viewer Toolkit versions, compatibility fixtures
   and explicit rejection of unsupported revisions. Begin INPUT-01 with the current

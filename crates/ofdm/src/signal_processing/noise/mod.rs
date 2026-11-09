@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Residual-power interpretation and controlled Gaussian noise.
+pub mod lte_ingress;
 mod residual;
 pub use residual::equivalent_noise_mer;
 #[cfg(feature = "simulation")]

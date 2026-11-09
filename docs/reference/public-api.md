@@ -55,6 +55,7 @@ component will adapt inputs and results without duplicating scientific logic.
 | `profile::candidate` | Captured assignments and editable hypotheses |
 | `profile::{evaluation, document}` | Temporal screening, candidate documents and role verification |
 | `signal_processing::{modulation, noise}` | QAM, soft demapping and residual-noise models |
+| `signal_processing::noise::lte_ingress::{LteDownlinkIngress, IngressResult}` | Fixed10MHz Band12 frequency-envelope approximation; combines existing residual and added interference power, preserves nulls and exposes per-carrier added ratios; no waveform or thermal floor |
 | `signal_processing::modulation::{map_symbol, qam_llrs}` | Shared label-ordered mapping and reference soft demapping through16K-QAM |
 | `signal_processing::modulation::randomization::CellRandomizer` | Stateful data/NCP cell randomization and soft-bit inverse through16K-QAM |
 | `signal_processing::modulation::interleaving::BitInterleaver` | Short8/9 parity/twist/demux and soft inverse for16and256-QAM |

@@ -1,0 +1,34 @@
+{
+  "additional_thermal_noise": false,
+  "alignment": {
+    "capture_times": {
+      "channel_estimation": 1391100,
+      "modulation_profile": 1466967,
+      "rxmer": 1380970
+    },
+    "channel_id": 34,
+    "first_carrier_center_hz": 640000000,
+    "grid": {
+      "first_subcarrier_index": 356,
+      "sample_count": 7480,
+      "spacing_hz": 25000,
+      "zero_frequency_hz": 631100000
+    },
+    "last_carrier_center_hz": 826975000,
+    "mac_address": "00:ca:00:00:00:01",
+    "policy": "exact_identity_and_grid_for_fixture_preparation_only",
+    "simultaneous": false
+  },
+  "apply_resulting_rxmer_once": true,
+  "channel_bandwidth_hz": 10000000,
+  "edge_shape": "cosine_power_shoulders",
+  "flat_core_bandwidth_hz": 9000000,
+  "model": "lte_downlink_ingress_approximation",
+  "reference_plane": "normalized_equalized_residual_power",
+  "schema_version": 1,
+  "settings": {
+    "center_frequency_hz": 737500000,
+    "interference_to_signal_db": -30.0
+  },
+  "synthetic": true
+}
