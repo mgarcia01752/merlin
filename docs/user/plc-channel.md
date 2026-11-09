@@ -191,3 +191,6 @@ added only after packet data ends, never inside an unfinished packet.
 The separate [waveform example](waveform/reference-experiment.md) now verifies
 this PLC path over actual time samples. The PLC-only example above remains
 a frequency-domain experiment.
+
+See the [measured-CE noiseless constellation demonstration](impairments/pilot-plc-constellation.md)
+for actual before/after receiver scatter plots and a reproducible Rust example.

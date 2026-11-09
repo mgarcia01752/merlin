@@ -170,3 +170,6 @@ Normative evidence: CM-SP-PHYv3.1-I20-230419 §7.5.15.3–4, Figure84, PDF171;
 CM-SP-PHYv4.0-I07-250627 §7.3.5.15 delegates FDD pilot behavior to PHY3.1.
 This does not establish FDX support. See the [architecture](../architecture.md)
 and [implementation checklist](../development/checklist.md).
+
+See the [measured-CE noiseless constellation demonstration](impairments/pilot-plc-constellation.md)
+for actual before/after receiver scatter plots and a reproducible Rust example.

@@ -28,6 +28,7 @@ from a fresh clone and are deliberately not Markdown link targets.
 | ncp codec | [architecture](ncp-codec/architecture.md) |
 | paired constellation | [plan](paired-constellation/plan.md) · [implementation](paired-constellation/implementation.md) |
 | payload transport | [plan](payload-transport/plan.md) · [validation](payload-transport/validation.md) |
+| pilot channel estimation (planned next) | [plan](pilot-channel-estimation/plan.md) |
 | pilot plc signals | [architecture](pilot-plc-signals/architecture.md) |
 | plc block interleaving | [architecture](plc-block-interleaving/architecture.md) |
 | plc completion | [plan](plc-completion/plan.md) · [validation](plc-completion/validation.md) |

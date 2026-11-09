@@ -513,6 +513,25 @@ estimation and nonideal timing remain unfinished below.
   - [x] Apply supplied channel response H and independent known-reference1/H;
     verify complex gain and captured frequency response without duplicate residuals.
   - [ ] Independently estimate channel/timing and validate nonideal equalization.
+
+  - [ ] **EST-01** Build receiver-owned known pilot references and per-pilot H-hat
+    estimates, starting noiseless with explicit known timing/phase.
+  - [ ] **EST-02** Interpolate estimates across data/PLC carriers and apply1/H-hat
+    independently of supplied H; test startup, coverage and near-zero policies.
+  - [ ] **EST-03** Add bounded separate continuous/scattered-pilot pre/post I/Q
+    analyzers with sign/boost/phase metadata and in-fit/held-out interpretation.
+  - [ ] **EST-04** Add bounded separate PLC16-QAM and BPSK-preamble analyzers,
+    observable during acquisition and retained on failed control/FEC outcomes.
+  - [ ] **EST-05** Validate reference-versus-estimated reception, noisy/noiseless
+    behavior and independent errors/iterations, plus observation invariance.
+  - [ ] **EST-06** Export shared Rust/CLI results and actual pilot/PLC plots;
+    update user guides and pass the full gate for the implemented scope.
+
+The next MODEL-05 group is detailed in the
+[pilot-estimation and analyzer plan](features/pilot-channel-estimation/plan.md).
+Independent unknown-timing acquisition stays under WAVE-RX-05. Existing generic
+pilot/PLC probes do not mean the paired analyzers or estimator are implemented.
+
 - [ ] **MODEL-06** Measurement-driven channel runs using the applied modulation
   profile, missing-carrier policy, temporal frames and actual FEC outcomes.
   - [x] Select one captured frame/profile/response with explicit epoch tolerance,
@@ -548,3 +567,10 @@ estimation and nonideal timing remain unfinished below.
 The previously described “three major stages remaining” refers to the first
 noiseless waveform milestone: pilots/PLC, waveform TX/RX, then one-second
 integration. It does not mean all the broader product items above are complete.
+
+### Pilot/PLC supplied-H reference evidence
+
+- [x] Provide a [noiseless measured-H demonstration](../user/impairments/pilot-plc-constellation.md)
+  with separate continuous/scattered-pilot, PLC-data and preamble plots using
+  existing probes; verify modulation geometry and Y=HZ in Rust. This does not
+  complete EST-01..06 or add a production analyzer contract.

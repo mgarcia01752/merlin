@@ -146,6 +146,26 @@ Qt UI is introduced. See the [accepted plan](development/features/paired-constel
 [user guide](user/impairments/paired-constellation.md). MODEL-05 and WAVE-RX-05
 remain open for independently estimated/nonideal reception.
 
+## Next MODEL-05 group: pilot estimation and pilot/PLC analyzers
+
+**EST-01..06 are planned.** Add receiver-owned pilot references and H-hat
+estimation with tested data/PLC interpolation, then use1/H-hat for correction.
+Keep the supplied-H path as a separate baseline. Start noiseless with explicit
+known timing/phase; unknown-timing acquisition remains WAVE-RX-05.
+
+Extend bounded paired observation to continuous pilots, scattered pilots,
+PLC16-QAM data and BPSK PLC preamble as separate streams. Retain actual sign,
+boost, physical coordinates and frame phase rather than combining different
+modulations/scales into one cloud. Pilot/PLC capture must work during acquisition
+and preserve failed-frame observations; it cannot depend on payload readiness.
+Each requested stream needs a finite count and a combined export/memory budget.
+
+Existing pilot/PLC extraction, sequences and raw/equalized generic probes are
+reuse points, not an implemented estimator/analyzer. Avoid circular PLC bootstrap
+and in-fit pilot validation; independently verify interpolation and post-estimate
+LLR calibration. Math stays in Rust; CLI/future Qt present the same typed results.
+See the [accepted feature scope](development/features/pilot-channel-estimation/plan.md).
+
 ## Modules and stage boundaries
 
 **Each distinct algorithm stage has a focused module and a directly testable typed
@@ -600,3 +620,8 @@ exist, but native installers and multi-OS release automation do not yet exist.
 Pinned scientific sources and section/page evidence are recorded in those guides.
 Use local versioned PHY sources before adding pilot/PLC details. Update this
 architecture and the [checklist](development/checklist.md) together as stages change.
+
+The [pilot/PLC reference demonstration](user/impairments/pilot-plc-constellation.md)
+uses an example-owned observer over existing RX FFT/equalized probes. It keeps
+the four signal classes separate during acquisition; production EST analyzer
+contracts and pilot-derived H estimation remain planned.

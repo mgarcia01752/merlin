@@ -53,7 +53,10 @@ the stress case retained483 errors with the earlier scientific summary unchanged
 See the [implementation record](features/paired-constellation/implementation.md).
 
 The next remaining receiver work is independent estimation/nonideal timing under
-MODEL-05 and WAVE-RX-05. Mixed profiles and temporal measurement transitions remain
+MODEL-05 and WAVE-RX-05. The next planned EST-01..06 group also includes separate
+continuous/scattered-pilot, PLC16-QAM and BPSK-preamble analyzers before/after
+correction; see its [feature plan](features/pilot-channel-estimation/plan.md).
+These analyzers are not yet implemented. Mixed profiles and temporal measurement transitions remain
 MODEL-06; those parent items are not completed by constellation observation.
 
 ## Work still open

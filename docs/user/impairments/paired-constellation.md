@@ -221,3 +221,26 @@ also exported8192 measured pairs; a11dB stress case retained483 payload errors
 with its entire scientific summary unchanged from the earlier no-collector run.
 See the [implementation record](../../development/features/paired-constellation/implementation.md)
 for ownership, ordering bounds and validation scope. No Qt scatter UI is included.
+
+## Planned pilot and PLC analyzers
+
+The next [MODEL-05 feature](../../development/features/pilot-channel-estimation/plan.md)
+adds pilot-based channel estimation and paired analyzer streams for:
+
+- Continuous pilots: BPSK, preserving actual pilot sign and power boost.
+- Scattered pilots: BPSK, preserving their changing locations and symbol phase.
+- PLC data:16-QAM, separate from its preamble and payload/NCP.
+- PLC preamble: BPSK, with its own frame-phase classification.
+
+Each view will show matched raw and corrected points with explicit supplied-H
+or estimated-H correction, its own bounded count/status and shared display
+reference. Pilot/PLC views must be available during acquisition and retain failed
+frames. They will not be filtered through the payload-only collector. The first
+estimator experiment will use no added noise and known timing; controlled noise
+comes next. These are planned extensions; existing generic pilot/PLC probes do
+not yet provide the new paired analyzers.
+
+A separate [noiseless pilot/PLC demonstration](pilot-plc-constellation.md) now
+uses the existing generic probes to provide actual paired figures. It is a
+supplied-H reference example, not the planned pilot-derived estimator or new
+production analyzer contract.
