@@ -21,14 +21,15 @@ Payload bits: 14232 · bit errors: 0
 
 The example exits successfully only when both decoders report success and the
 recovered payload has zero mismatches. It generates a deterministic binary test
-pattern. A defined PRBS generator is planned; neither this pattern nor the full
-simulation's seeded random source is currently a PRBS implementation.
+pattern. This isolated codec example remains independent of the separate
+[PRBS15 source and verifier](simulation/prbs.md), now used in the payload
+waveform example. Neither this pattern nor the seeded ChaCha8 source is PRBS.
 
 ## Encode, decode and compare
 
 ```mermaid
 flowchart LR
-    SOURCE["Binary test payload<br/>14,232 bits; PRBS planned"]
+    SOURCE["Binary test payload<br/>14,232 bits; deterministic pattern"]
     BCHENC["BCH encoder<br/>Add 168 parity bits"]
     LDPCENC["LDPC encoder<br/>Add 1,800 parity bits"]
     SOFT["Noiseless soft inputs<br/>0 → +20; 1 → −20"]

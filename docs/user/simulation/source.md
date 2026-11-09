@@ -27,10 +27,11 @@ noise was injected. Resetting the seed for every codeword would produce a differ
 experiment from the current continuous source stream. Observing results must not
 consume random draws.
 
-The current generator uses seeded ChaCha8 output. It is **not a PRBS generator**.
-A PRBS implementation needs its own polynomial, initial state, bit order and
-continuity tests; it remains on the checklist. This module also does not build
-DOCSIS MAC traffic or PLC descriptors. Those have different ownership.
+The existing generator uses seeded ChaCha8 output. It is **not a PRBS generator**.
+The separate [continuous PRBS15 source and verifier](prbs.md) now define their own
+polynomial, seed, bit order, bounded chunks and continuous comparison state.
+The actual payload waveform example selects PRBS explicitly; existing seeded APIs
+retain their behavior. Neither source builds DOCSIS MAC traffic or PLC descriptors.
 
 See [coding loop](coding-loop.md) for independent codeword verification and
 [runner](runner.md) for the bounded trial lifecycle.

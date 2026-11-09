@@ -171,7 +171,8 @@ or full RF-channel validation.
 The separate [production payload transport](payload-transport/README.md) now
 connects this codec to actual continuous TX/RX and sample-domain recovery using
 PLC-derived configuration. The isolated NCP example remains unchanged. Dynamic
-activation, PRBS and the configurable-duration runner remain later work.
+activation and the configurable-duration runner remain later work.
+The payload waveform example now uses the separate [PRBS15 source](simulation/prbs.md).
 
 Evidence: CM-SP-PHYv3.1-I20-230419 §7.4.3.2, PDF56; Table19, PDF91;
 §7.5.14.1–5 and Figures71–79, PDF159–164; §8.3.4.1–3 and Figure92/Table53,

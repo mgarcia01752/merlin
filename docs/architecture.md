@@ -33,7 +33,8 @@ Build a standalone, DOCSIS-focused Rust scientific engine with two modes:
 The full one-second waveform runner and measurement-driven waveform model are
 not implemented. The existing CLI runs the earlier 16-QAM coding experiment;
 256-QAM packing/interleaving integration is currently exercised by library APIs,
-examples and tests. The seeded source is implemented; PRBS is still TODO.
+examples and tests. Separate seeded and PRBS15 sources are implemented with
+independent continuous PRBS verification; see the [PRBS design](user/simulation/prbs.md).
 
 Downstream mapping and reference soft demapping cover constellations through
 16384-QAM. Complete coding support must be tracked separately for each order;
@@ -95,7 +96,7 @@ crates/
 │   │   ├── noise/             AWGN and measured residual-noise processing
 │   │   └── ...                Analytical bit-loading/capacity helpers
 │   ├── simulation/
-│   │   ├── source/            Seeded source; PRBS remains TODO
+│   │   ├── source/            Seeded and PRBS15 sources; independent verification
 │   │   ├── pilots/            Typed stage composition and optional observation
 │   │   ├── plc/               PLC composition, acquisition and optional observation
 │   │   ├── waveform/          Separate TX/RX, bounded reference experiment and probes
@@ -128,7 +129,7 @@ waveform runner already connects every box.
 
 ```mermaid
 flowchart TB
-    SOURCE["Source payload · seeded now, PRBS TODO"] --> BCH["BCH encoding"]
+    SOURCE["Source payload · seeded or continuous PRBS15"] --> BCH["BCH encoding"]
     BCH --> LDPC["LDPC encoding"] --> BITS["Parity → twist → demultiplexing"]
     BITS --> PACK["Codeword packing"]
     PACK --> NCP["NCP messages → CRC → control FEC"]
@@ -176,7 +177,7 @@ obtain data through an existing stage API.
 
 | Test point | Owner / data | Access now |
 | --- | --- | --- |
-| `source.payload` | `simulation::source`; source bits and seed/source identity | Direct seeded output; PRBS TODO |
+| `source.payload` | `simulation::source`; source bits and seed/source identity | Direct seeded/PRBS output and absolute bit position |
 | `tx.bch.word` | `fec_codec::bch`; BCH data plus parity | Direct |
 | `tx.ldpc.word` | `fec_codec::ldpc`; systematic word plus parity | Direct |
 | `tx.bits.parity`, `tx.bits.twist`, `tx.bits.demux` | Separate bit-processing stages; bit positions and cell labels | Final labels/permutation direct; named intermediate arrays TODO |
@@ -364,9 +365,14 @@ maximum depth with reset-crossing words and drain completion.
 
 See the [per-subsystem design](user/payload-transport/README.md) and
 [evidence](reference/payload-transport-evidence.md). This completes CELL-02 and
-WAVE-RX-06 for the supported subset. The next priority is SRC-02/SRC-03 PRBS,
-then a configurable-duration runner with an initial one-second default. Existing
-streams carry64-bit state across arbitrary calls; no per-second reset is added.
+WAVE-RX-06 for the supported subset. SRC-02/SRC-03 now add an explicit PRBS15
+source and independent recovered-stream verifier. The waveform example uses
+continuous PRBS across codewords, the sequence period and PHY reset; no source
+truth enters receive decoding. Literal recurrence vectors and a complete-period
+check are mathematical evidence, not external DOCSIS interoperability vectors.
+The next priority is the configurable-duration RUN group with an initial
+one-second default. Existing streams carry64-bit state across arbitrary calls;
+no per-second reset is added.
 
 ## Planned module ownership
 
@@ -381,7 +387,6 @@ before implementation if source analysis shows a better existing owner.
 | `signal_processing/receiver/estimation.rs` | WAVE-RX: independently verified nonideal synchronization/channel estimation beyond the existing known-reference receiver |
 | `signal_processing/modulation/slicing.rs` | Diagnostic hard decisions; keep soft demapping for LDPC |
 | `simulation/channel/{transmitter,receiver,runner,results}.rs` | Thin stateful orchestration and completed-result accounting |
-| `simulation/source/prbs.rs` | Explicit PRBS polynomial, seed, continuity and comparison |
 
 If PLC needs a new coding algorithm, its reusable primitive belongs in
 `fec-codec`, selected only after local PHY verification. Do not assume payload or

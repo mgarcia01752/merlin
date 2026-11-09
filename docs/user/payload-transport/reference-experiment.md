@@ -15,7 +15,7 @@ payload session starts at the next128-symbol boundary.
 flowchart TB
     ACQ["Actual PLC waveform acquisition"] --> GATE["Ready received configuration"]
     GATE --> RX["Construct independent payload RX"]
-    SOURCE["Seeded binary payloads"] --> TX["Actual BCH/LDPC, packing, NCP and cell TX"]
+    SOURCE["Continuous PRBS15 payloads"] --> TX["Actual BCH/LDPC, packing, NCP and cell TX"]
     TX --> WAVE["Pilots/PLC and windowed waveform samples"] --> RX
     RX --> DECODE["Received NCP → payload LDPC/BCH"]
     SOURCE -->|"Truth supplied only after decoding"| COMPARE["Actual bit comparison"]
@@ -42,4 +42,8 @@ This is a reproducible short proof of production transport modules, not the
 configurable-duration job runner. Streams themselves use continuous64-bit symbol
 identities without per-second resets; a later runner will choose duration,
 initially one second, with cancellation, progress and partial-result accounting.
-The source remains deterministic seeded data; it is not labeled PRBS.
+The example now selects [PRBS15](../simulation/prbs.md), seed `0x7fff`, explicitly.
+JSON includes the source kind/seed and independent `prbs_comparison` totals.
+The legacy `run_payload_waveform` API still uses `experiment.seed` for ChaCha8;
+`run_payload_waveform_with_source` takes an explicit source and ignores that
+legacy seed. Truth streams are never receiver inputs.

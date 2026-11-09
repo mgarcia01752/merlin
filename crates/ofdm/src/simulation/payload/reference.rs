@@ -11,7 +11,7 @@ use crate::{
     error::invalid,
     signal_processing::waveform::samples::MAX_BLOCK_SAMPLES,
     simulation::{
-        source::SeededSource,
+        source::{Prbs15, PrbsComparison, PrbsSeed, PrbsVerifier, SeededSource, SimulationSeed},
         test_points::{CellProbeGrid, ProbeObserver, RunPhase, TestPointProbe},
     },
     transmission::{layout::CarrierLayoutSettings, packing::NcpModulation, TransmissionSettings},
@@ -23,6 +23,13 @@ use serde::Serialize;
 const MAX_SOURCE_SYMBOLS: u16 = 512;
 const MAX_REFERENCE_PAYLOADS: usize = 16;
 const MAX_ACQUISITION_FRAMES: u64 = 8;
+/// Explicit test-source policy; neither choice changes PHY scrambling.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum PayloadSource {
+    Seeded { seed: SimulationSeed },
+    Prbs15 { seed: PrbsSeed },
+}
 /// Fixed bounded reference workload; source-symbol count is not a duration reset.
 pub struct PayloadWaveformExperiment {
     pub settings: TransmissionSettings,
@@ -50,6 +57,9 @@ pub struct PayloadWordComparison {
 /// Compact measurements from real control/payload decoding through waveform samples.
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct PayloadWaveformResult {
+    pub source: PayloadSource,
+    /// Independent continuous PRBS comparison, absent for seeded-random trials.
+    pub prbs_comparison: Option<PrbsComparison>,
     pub spacing_hz: u32,
     pub ncp_order: u16,
     pub payload_origin_symbol: u64,
@@ -82,6 +92,35 @@ pub fn run_payload_waveform(
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
 ) -> Result<PayloadWaveformResult, LabError> {
+    run_payload_waveform_with_source(
+        experiment,
+        PayloadSource::Seeded {
+            seed: experiment.seed,
+        },
+        probe,
+        observer,
+    )
+}
+
+/// Runs actual payload recovery with an explicitly selected experiment source.
+///
+/// # Arguments
+/// * `experiment` - Bounded timing/layout/schedule; its legacy seed is ignored here.
+/// * `source` - Seeded-random or continuous PRBS15 with an explicit validated seed.
+/// * `probe` - Finite optional stage selector, independent of source generation.
+/// * `observer` - Read-only sink invoked after scientific stage computation.
+/// # Returns
+/// Actual recovery results, source provenance and independent PRBS comparison
+/// when selected. PRBS is checked after decoding and is never receive input.
+/// # Errors
+/// Rejects invalid sources/schedules, unsupported settings, insufficient recovery,
+/// control/session failures or observer errors. No duration-runner behavior is added.
+pub fn run_payload_waveform_with_source(
+    experiment: &PayloadWaveformExperiment,
+    source: PayloadSource,
+    probe: &mut TestPointProbe,
+    observer: &mut impl ProbeObserver,
+) -> Result<PayloadWaveformResult, LabError> {
     if !(1..=MAX_SOURCE_SYMBOLS).contains(&experiment.source_symbols)
         || experiment.payload_at_symbols.is_empty()
         || experiment.payload_at_symbols.len() > MAX_REFERENCE_PAYLOADS
@@ -99,6 +138,28 @@ pub fn run_payload_waveform(
             "Invalid bounded payload waveform schedule or receive chunk size.",
         ));
     }
+    let mut verifier = match source {
+        PayloadSource::Prbs15 { seed } => Some(PrbsVerifier::new(seed)?),
+        PayloadSource::Seeded { .. } => None,
+    };
+    let payloads: Vec<_> = match source {
+        PayloadSource::Seeded { seed } => {
+            let mut generator = SeededSource::new(seed);
+            experiment
+                .payload_at_symbols
+                .iter()
+                .map(|_| generator.next_payload())
+                .collect()
+        }
+        PayloadSource::Prbs15 { seed } => {
+            let mut generator = Prbs15::new(seed)?;
+            experiment
+                .payload_at_symbols
+                .iter()
+                .map(|_| generator.next_payload())
+                .collect::<Result<_, _>>()?
+        }
+    };
     let mut link = WaveformLink::new(
         &experiment.settings,
         &experiment.layout,
@@ -136,13 +197,9 @@ pub fn run_payload_waveform(
         experiment.ncp_modulation,
         origin,
     )?;
-    let mut source = SeededSource::new(experiment.seed);
-    let payloads: Vec<_> = experiment
-        .payload_at_symbols
-        .iter()
-        .map(|_| source.next_payload())
-        .collect();
     let mut result = PayloadWaveformResult {
+        source,
+        prbs_comparison: None,
         spacing_hz: experiment.settings.subcarrier_spacing.frequency_hz(),
         ncp_order: experiment.ncp_modulation.order(),
         payload_origin_symbol: origin,
@@ -187,7 +244,7 @@ pub fn run_payload_waveform(
             50,
         )?;
         observation::observe_receive(&decoded, grid, &context, probe, observer)?;
-        record(&mut result, &decoded, &payloads)?;
+        record(&mut result, &decoded, &payloads, &mut verifier)?;
     }
     while let Some(transmitted) = transmitter.drain()? {
         result.drain_symbols += 1;
@@ -208,11 +265,12 @@ pub fn run_payload_waveform(
             50,
         )?;
         observation::observe_receive(&decoded, grid, &context, probe, observer)?;
-        record(&mut result, &decoded, &payloads)?;
+        record(&mut result, &decoded, &payloads, &mut verifier)?;
     }
     result.pending_payload_bits = receiver.pending_bits();
     result.waveform_remainder_samples = link.finish(probe, observer)?;
     result.link = link.stats;
+    result.prbs_comparison = verifier.map(|verifier| verifier.totals().clone());
     if result.received_payloads.len() != result.source_payloads || result.pending_payload_bits != 0
     {
         return Err(invalid(
@@ -225,6 +283,7 @@ fn record(
     result: &mut PayloadWaveformResult,
     received: &PayloadReceiveSymbol,
     payloads: &[Vec<u8>],
+    verifier: &mut Option<PrbsVerifier>,
 ) -> Result<(), LabError> {
     let Some(decoded) = &received.decoded else {
         result.warmup_symbols += 1;
@@ -244,6 +303,9 @@ fn record(
             .get(result.received_payloads.len())
             .ok_or_else(|| invalid("Receiver produced more words than source truth."))?;
         let comparison = compare_payload(original, &word.decoded).map_err(invalid)?;
+        if let Some(verifier) = verifier {
+            verifier.compare(&word.decoded.bch.codeword[..comparison.bits_tested])?;
+        }
         result.payload_bit_errors += comparison.bit_errors;
         result.received_payloads.push(PayloadWordComparison {
             receive_sequence: word.receive_sequence,

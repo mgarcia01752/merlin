@@ -44,7 +44,8 @@ in a DPD.
 Streams retain state across calls and are independent of simulation duration.
 They do not reset at one-second boundaries or codeword boundaries. The later
 runner will select a configurable observation duration, initially one simulated
-second; the existing bounded demonstration is deliberately shorter. PRBS, that
+second; the existing bounded demonstration is deliberately shorter and now uses
+the separate [PRBS15 source and verifier](../simulation/prbs.md). The duration
 runner, blind acquisition and nonideal channel operation remain separate work.
 See [architecture](../../architecture.md), [checklist](../../development/checklist.md)
 and [source evidence](../../reference/payload-transport-evidence.md).

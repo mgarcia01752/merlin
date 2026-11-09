@@ -5,7 +5,9 @@
 //! Actual PLC configuration, data/NCP transport and payload recovery through waveform samples.
 use docsis_ofdm_fec::{
     simulation::{
-        payload::reference::{run_payload_waveform, PayloadWaveformExperiment},
+        payload::reference::{
+            run_payload_waveform_with_source, PayloadSource, PayloadWaveformExperiment,
+        },
         test_points::{ProbeEvent, ProbeObserver, TestPointProbe},
     },
     transmission::{
@@ -63,8 +65,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             seed: 123,
             receive_block_samples: 137,
         };
-        results.push(run_payload_waveform(
+        results.push(run_payload_waveform_with_source(
             &experiment,
+            PayloadSource::Prbs15 { seed: 0x7fff },
             &mut TestPointProbe::disabled(),
             &mut UnusedObserver,
         )?);

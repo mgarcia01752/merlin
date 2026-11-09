@@ -52,6 +52,8 @@ component will adapt inputs and results without duplicating scientific logic.
 | `signal_processing::modulation::randomization::CellRandomizer` | Stateful data/NCP cell randomization and soft-bit inverse through16K-QAM |
 | `signal_processing::modulation::interleaving::BitInterleaver` | Short8/9 parity/twist/demux and soft inverse for16and256-QAM |
 | `simulation::coding_loop::NoiselessQam256Codec` | Independent noiseless codeword trials with per-word decoder iterations |
+| `simulation::source::{Prbs15,PrbsVerifier,PrbsComparison}` | Explicit PRBS15 state, bounded chunks, absolute bit identity and independent recovered-stream comparison |
+| `simulation::payload::reference::{PayloadSource,run_payload_waveform_with_source}` | Explicit seeded/PRBS source selection and shared waveform verifier with post-decode source comparison |
 | `simulation::{config, runner, results, source}` | Bounded trial orchestration and reproducible source state |
 | `types::ofdm_modulation` | Normative constellation registry and implementation status |
 | `fec_codec::{parameters, bch, ldpc}` | Mode dimensions and individual codecs |

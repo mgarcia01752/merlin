@@ -214,7 +214,8 @@ and [NCP encoding/decoding](ncp.md) are now available separately.
 [Cell interleaving](cell-interleaving.md) and the inverse pilot reference are
 implemented as well. Separate [pilot generators](pilot-signals.md) now provide
 signs and power. PLC/physical-bin assembly and bounded noiseless TX/RX waveform integration
-are now available. Production fixed-profile data/NCP transport is also implemented. Remaining
-stages include PRBS, nonideal acquisition and the configurable-duration runner
+are now available. Production fixed-profile data/NCP transport and a separate
+[PRBS15 source/verifier](simulation/prbs.md) are implemented. Remaining
+stages include nonideal acquisition and the configurable-duration runner
 with an initial one-second default.
 The timing and packing tests do not establish full channel recovery.

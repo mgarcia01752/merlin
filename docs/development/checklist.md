@@ -44,8 +44,11 @@ coverage of stateful/RNG-driven stages as their producers are added.
 Guide: [Source design](../user/simulation/source.md).
 
 - [x] **SRC-01** Deterministic seeded payload source, separate from codecs.
-- [ ] **SRC-02** PRBS source with explicit polynomial, seed, ordering and continuity.
-- [ ] **SRC-03** Independent PRBS vectors and recovered-stream comparison.
+- [x] **SRC-02** PRBS source with explicit polynomial, seed, ordering and continuity.
+- [x] **SRC-03** Independent PRBS recurrence vectors, full-period tests and
+  recovered-stream comparison through actual waveform samples at both spacings.
+  [PRBS design](../user/simulation/prbs.md) records seed/bit order, bounds and
+  the distinction between mathematical and external interoperability evidence.
 
 ## Forward error correction
 
@@ -138,8 +141,9 @@ packets, repetition/segmentation, preamble, mapping, physical-bin assembly and
 bounded observations. **RX-CONFIG-01** now builds receiver-owned configuration
 from those decoded messages. The first waveform TX/channel/RX milestone is now
 implemented below. **CELL-02 / WAVE-RX-06** now add actual fixed256-QAM
-payload/NCP waveform transport. The next priority is **SRC-02 / SRC-03: PRBS**
-with independent vectors, followed by the configurable-duration RUN group.
+payload/NCP waveform transport. **SRC-02 / SRC-03: PRBS** are now complete,
+with independent recurrence vectors and actual recovered-stream comparison.
+The next priority is the configurable-duration **RUN group**.
 
 - [x] **PLC-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
