@@ -195,22 +195,56 @@ Do not create empty source files merely to make the planned tree appear complete
 Recovered messages and parsed TLVs exist; applying them to a full receiver is
 not implemented. See [PLC simulation design](../user/simulation/plc.md).
 
-## Waveform transmitter and receiver
+## Waveform transforms
+
+These waveform components remain planned; links describe their intended design.
+
+Design: [Planned transmission and receiver flow](../architecture.md#transmission-and-receiver-flow).
 
 - [ ] **WAVE-01** Separate IFFT and FFT modules with explicit bin ordering,
   normalization, sample-clock units and independent impulse/tone vectors.
+
+## Cyclic-prefix processing
+
+Design: [Fixed prefix settings and timing](../user/transmission.md).
+
 - [ ] **WAVE-02** Separate cyclic-prefix insertion/removal with boundary tests.
+
+## Transmit windowing and overlap-add
+
+Design: [Planned waveform stage ownership](../architecture.md#planned-module-ownership).
+
 - [ ] **WAVE-03** Separate windowing and stateful overlap-add, checking symbol
   cadence, taper lengths, energy and continuity at block boundaries.
+
+## Reference waveform channel
+
+Design: [Reference channel scope](../user/transmission.md).
+
 - [ ] **WAVE-04** Reference/noiseless channel module with explicit input/output plane.
+
+## Waveform receiver
+
+Design: [Planned receive flow](../architecture.md#transmission-and-receiver-flow).
+
 - [ ] **RX-01** Reference timing/framing, CP removal and FFT recovery.
 - [ ] **RX-02** Pilot/PLC extraction and known-reference equalization first.
 - [ ] **RX-03** Independently verified synchronization/channel estimation for
   nonideal operation; no claim of blind acquisition from a known-reference test.
 - [ ] **RX-04** Connect physical data extraction, inverse cell interleaving,
   source-phase inverse randomization, NCP discovery and data decoding in production.
+
+## Waveform stage observations
+
+Design: [Observation design](../user/simulation/test-points.md).
+
 - [ ] **WAVE-05** Test points at each waveform and receive boundary, with finite
   block/range limits and direct library access.
+
+## Noiseless waveform integration
+
+Design: [Full-channel design and remaining integration](../architecture.md#transmission-and-receiver-flow).
+
 - [ ] **WAVE-06** Zero-error noiseless waveform integration with real pilot/PLC signals.
 
 ## One-second reference run
