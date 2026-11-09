@@ -157,7 +157,8 @@ from those decoded messages. The first waveform TX/channel/RX milestone is now
 implemented below. **CELL-02 / WAVE-RX-06** now add actual fixed256-QAM
 payload/NCP waveform transport. **SRC-02 / SRC-03: PRBS** are now complete,
 with independent recurrence vectors and actual recovered-stream comparison.
-The next priority is the configurable-duration **RUN group**.
+The RUN group now supplies duration stepping and zero-error recovery;
+its next priority is **RUN-04** window-specific payload accounting.
 
 - [x] **PLC-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
@@ -382,38 +383,52 @@ RUN work, not an inference from either bounded example. [Evidence](../reference/
 
 ## Configurable-duration reference run
 
-- [ ] **RUN-01** Separate transmitter, receiver and runner modules; avoid moving
+Design: [Channel runner](../user/channel-runner/README.md),
+[timing](../user/channel-runner/timing.md), [session](../user/channel-runner/session.md)
+and [results](../user/channel-runner/results.md). RUN-01/02/03/05 are implemented;
+next is RUN-04 observation-window payload accounting, followed by RUN-06/07/08
+job control and CLI delivery.
+
+- [x] **RUN-01** Separate transmitter, receiver and runner modules; avoid moving
   numerical algorithms into a large orchestration function.
   - [x] Separate reusable payload/waveform TX and RX state owners; compose them
     in the bounded reference verifier without duplicating stage mathematics.
-  - [ ] Add the duration-runner owner and lifecycle around those existing stages.
-- [ ] **RUN-02** Stream a user-configured duration of one fixed channel, initially
+  - [x] Add the symbol-stepping duration-runner owner around those existing stages.
+- [x] **RUN-02** Stream a user-configured duration of one fixed channel, initially
   defaulting to one simulated second. Use checked64-bit sample accounting and
   bounded buffers for longer runs; never reset stage state at second boundaries.
-  Keep warm-up, observation and drain intervals separate. The current
-  one_second_timing helper remains fixed until extended under this item.
-- [ ] **RUN-03** Preserve partial codewords, interleaver history, PLC phase and
+  Keep acquisition, observation, queue completion, cell drain and final tail
+  separate. `duration_timing`/`sample_timing` now provide64-bit plans; the legacy
+  one-second helper delegates to them without changing its result contract.
+- [x] **RUN-03** Preserve partial codewords, interleaver history, PLC phase and
   sequence state across buffer boundaries; no per-codeword state resets.
   - [x] Verify these stateful foundations in payload/waveform/PLC tests and
     continuous PRBS chunk, codeword and period tests.
-  - [ ] Verify their joint lifecycle in the duration runner, including longer
+  - [x] Verify their joint lifecycle in the duration runner, including longer
     intervals and observation boundaries without reseeding or phase resets.
 - [ ] **RUN-04** Use source-symbol/sample identities for comparison and report
   complete, incomplete and excluded warm-up/drain payloads separately.
-- [ ] **RUN-05** Zero noiseless payload errors with actual NCP discovery; retain
+- [x] **RUN-05** Zero noiseless payload errors with actual NCP discovery; retain
   LDPC iterations, BCH outcomes, codeword errors and the number of compared bits.
   - [x] Recover four real payloads through waveform samples at both spacings;
     compare56928 PRBS bits per spacing with zero errors and retain decoder results.
-  - [ ] Establish the same accounting for completed/incomplete duration-runner
-    outcomes, rather than inferring it from the short reference experiment.
+  - [x] Retain per-step received comparisons, genuine iterations/BCH flags and
+    bounded cumulative totals in duration runs. A1.01-second50kHz release run
+    recovered8950 words/127376400 bits with zero payload or PLC errors.
+    Observation-window incomplete/excluded classification remains RUN-04.
 - [ ] **RUN-06** Bound memory/runtime/probe output, support cancellation and retain
   completed scientific results, including an explicit partial status.
+  - [x] Keep waveform/queue/history storage bounded independently of duration;
+    expose completed step results and close failed sessions explicitly.
+  - [ ] Add formal cancellation, wall-clock budgets and partial-job results.
 - [ ] **RUN-07** Expose the channel runner through one public Rust API and a thin
   CLI command with shared typed JSON results; preserve the earlier coding mode.
+  - [x] Expose `ChannelRun`, settings, duration plans and typed step/summary JSON.
+  - [ ] Add the duration-channel CLI facade alongside the older coding commands.
 - [ ] **RUN-08** Provide a reproducible PRBS-based example, math, assumptions and
   CLI/user documentation for the duration-based path and its initial one-second default.
-  - [x] Provide the bounded PRBS waveform example and source/transport design
-    guides with Mermaid, recurrence and comparison math.
+  - [x] Provide bounded and duration-based PRBS waveform examples and
+    per-component guides with Mermaid, timing, recurrence and comparison math.
   - [ ] Provide duration-based CLI examples and documentation once that path exists.
 
 ## Impairments and measurement-driven operation

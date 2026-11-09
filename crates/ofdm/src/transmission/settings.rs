@@ -2,7 +2,7 @@
  * Copyright 2026 DOCSIS OFDM FEC Toolkit contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-//! PHY I20 Tables38–40 and section7.5.6.1; no waveform generation yet.
+//! PHY I20 Tables38–40 and section7.5.6.1; fixed per-session numerology.
 use crate::{error::invalid, types::FrequencyHz, LabError};
 use serde::{Deserialize, Serialize};
 

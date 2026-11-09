@@ -40,8 +40,9 @@ finite LLRs but adds no channel noise.
 
 This is a reproducible short proof of production transport modules, not the
 configurable-duration job runner. Streams themselves use continuous64-bit symbol
-identities without per-second resets; a later runner will choose duration,
-initially one second, with cancellation, progress and partial-result accounting.
+identities without per-second resets. The separate [channel stepper](../channel-runner/README.md)
+now selects duration, initially one second. Its cancellable job/CLI facade,
+progress and observation-window partial-result accounting remain later work.
 The example now selects [PRBS15](../simulation/prbs.md), seed `0x7fff`, explicitly.
 JSON includes the source kind/seed and independent `prbs_comparison` totals.
 The legacy `run_payload_waveform` API still uses `experiment.seed` for ChaCha8;

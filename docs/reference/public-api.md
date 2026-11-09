@@ -7,7 +7,8 @@ component will adapt inputs and results without duplicating scientific logic.
 | Public module | Responsibility |
 | --- | --- |
 | `transmission::{TransmissionSettings, SubcarrierSpacing}` | Fixed single-channel numerology and PHY validation |
-| `transmission::TransmissionTiming` | Whole-symbol accounting for one simulated second |
+| `transmission::{TransmissionTiming,DurationTiming}` | Legacy one-second schedule and checked64-bit duration/sample-clock planning |
+| `simulation::channel::{ChannelRun,ChannelRunSettings,ChannelSummary,ChannelStep}` | Frozen duration session, one-symbol stepping, independent PRBS comparison and bounded typed outcomes; CLI job lifecycle remains pending |
 | `transmission::layout::{CarrierLayout, CarrierLayoutSettings}` | Immutable physical bin roles and per-symbol scattered pilots |
 | `transmission::layout::ncp::select_ncp_cells` | Eligible NCP cells in the pre-interleaving domain |
 | `transmission::packing::{SymbolPacker, PackingSettings, PackedSymbol}` | Stateful256-QAM queue, symbol plans and NCP capacity reservations |

@@ -22,8 +22,9 @@ mutable codec, interleaver or randomizer state.
 Scientific results are computed before observation. Disabling observations,
 exhausting a budget or failing a callback must not change those completed values.
 Callback failures still consume the dispatch budget and are reported to the caller;
-they are not silently retried. The later whole-run runner will need its own policy
-for whether an observation failure ends a job or merely stops collecting views.
+they are not silently retried. The channel stepper ends a failed session on
+observer error and retains completed summary comparisons. Disabled/exhausted
+probes do not end a session. Formal job-level partial status remains RUN-06.
 
 Windows retain original element offsets and total source size. PLC windows also
 retain the full local grid; physical-bin windows retain spacing and frequency

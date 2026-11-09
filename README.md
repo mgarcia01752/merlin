@@ -40,8 +40,10 @@ channel/profile settings from received descriptors behind a readiness gate.
 signals through time samples, with bounded test points and a noiseless example.
 [Actual payload/NCP transport](docs/user/payload-transport/README.md) now uses
 received PLC configuration, continuous state and real LDPC/BCH recovery over samples.
-The configurable-duration runner, nonideal acquisition and external interoperability
-validation remain pending. See
+The [duration-based channel stepper](docs/user/channel-runner/README.md) now
+streams continuous PRBS through actual waveform TX/RX, with separate acquisition,
+observation, completion and drain. The cancellable channel CLI, nonideal acquisition
+and external interoperability validation remain pending. See
 [coding scope and equations](docs/reference/coding-mode.md).
 
 [Simulation design guides](docs/user/simulation/README.md) explain each simulation

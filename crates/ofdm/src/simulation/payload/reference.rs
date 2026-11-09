@@ -3,14 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Bounded payload waveform proof; duration-independent stage APIs remain separate from this verifier.
-pub use super::link::LinkStats;
-use super::{
-    link::WaveformLink, observation, PayloadReceiveSymbol, PayloadReceiver, PayloadTransmitter,
-};
+use super::{observation, PayloadReceiveSymbol, PayloadReceiver, PayloadTransmitter};
+pub use crate::simulation::channel::link::LinkStats;
 use crate::{
     error::invalid,
     signal_processing::waveform::samples::MAX_BLOCK_SAMPLES,
     simulation::{
+        channel::link::WaveformLink,
         source::{Prbs15, PrbsComparison, PrbsSeed, PrbsVerifier, SeededSource, SimulationSeed},
         test_points::{CellProbeGrid, ProbeObserver, RunPhase, TestPointProbe},
     },

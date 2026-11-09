@@ -111,5 +111,7 @@ still produces seeded trials and a null PRBS comparison.
 ./scripts/cargo-local.sh run -p docsis-ofdm-fec --example payload_waveform --locked
 ```
 
-This remains a bounded reference experiment, not a configurable-duration runner.
+This particular example remains bounded. The separate
+[duration-based channel stepper](../channel-runner/README.md) now reuses the same
+continuous PRBS generator and verifier without retaining original payload history.
 See [source ownership](source.md) and [architecture](../../architecture.md).

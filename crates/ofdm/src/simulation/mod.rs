@@ -24,3 +24,5 @@ pub use crate::signal_processing::{
 pub mod waveform;
 
 pub mod payload;
+
+pub mod channel;

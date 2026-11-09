@@ -24,14 +24,15 @@ Build a standalone, DOCSIS-focused Rust scientific engine with two modes:
 - **Ideal/reference:** known payload, fixed single downstream OFDM channel up to
   192 MHz, initially uniform 256-QAM, noiseless recovery first, then controlled
   impairments. The initial observation default is one second, with configurable longer
-  durations and separate warm-up/drain in the planned runner.
+  durations and separate acquisition, completion and drain in the channel stepper.
 - **Measurement-driven:** condition a simulation on supplied RxMER, downstream
   channel estimates and an applied modulation profile. Preserve exact grids,
   missing readings, timestamps and provenance. Establish reference planes before
   combining impairments so measured residual noise is not counted twice.
 
-The full one-second waveform runner and measurement-driven waveform model are
-not implemented. The existing CLI runs the earlier 16-QAM coding experiment;
+The configurable-duration noiseless waveform stepper is implemented; the
+measurement-driven waveform model and cancellable channel CLI job are not.
+The existing CLI runs the earlier 16-QAM coding experiment;
 256-QAM packing/interleaving integration is currently exercised by library APIs,
 examples and tests. Separate seeded and PRBS15 sources are implemented with
 independent continuous PRBS verification; see the [PRBS design](user/simulation/prbs.md).
@@ -57,8 +58,9 @@ classes. Orchestrators connect components without hiding their intermediate data
 or implementing a second copy of their mathematics.
 
 The [unchecked-item review](development/checklist-review.md) distinguishes
-completed component foundations from unfinished adapter, duration-runner and
-expanded PHY requirements. Checked substeps do not close their parent requirement.
+completed component foundations from unfinished adapter, job/CLI lifecycle and
+expanded PHY requirements. It predates the duration-stepper completion below.
+Checked substeps do not close their parent requirement.
 
 Existing composite stages that do not expose all intermediate results are tracked
 as gaps in the checklist. In particular, parity interleaving, column twisting and
@@ -104,7 +106,8 @@ crates/
 │   │   ├── pilots/            Typed stage composition and optional observation
 │   │   ├── plc/               PLC composition, acquisition and optional observation
 │   │   ├── waveform/          Separate TX/RX, bounded reference experiment and probes
-│   │   ├── payload/           Continuous payload TX/RX, probes and actual waveform proof
+│   │   ├── payload/           Continuous payload TX/RX, probes and bounded waveform proof
+│   │   ├── channel/           Frozen duration settings, shared link, stepper and bounded totals
 │   │   ├── test_points/       Borrowed events, selection and finite dispatch budgets
 │   │   ├── coding_loop/       Independent 256-QAM codeword trials
 │   │   ├── runner.rs          Existing 16-QAM trial orchestration
@@ -128,8 +131,8 @@ each calculation retains one canonical implementation.
 ## Transmission and receiver flow
 
 The diagram describes the target channel path. Dashed-border boxes are planned
-components. A solid box means the algorithm/API exists, not that a complete
-waveform runner already connects every box.
+components. The fixed256-QAM noiseless channel stepper now connects the solid path;
+nonideal operation and the optional hard slicer remain separate work.
 
 ```mermaid
 flowchart TB
@@ -168,8 +171,8 @@ and estimated-channel operation are separate milestones, not implied by that mod
 
 Current integration tests already connect real payload/NCP coding, randomization,
 QAM, cell interleaving, inverse pilot references and received pointer discovery.
-The assembly/receive orchestration in those tests must become reusable production
-modules before it is advertised as a standalone channel-run API.
+The reusable payload TX/RX owners now feed a duration-planned channel stepper;
+scientific algorithms remain in their existing component modules.
 
 ## Test points and data access
 
@@ -214,7 +217,7 @@ obtain data through an existing stage API.
 | `tx.payload.ldpc`, `tx.payload.labels` | Actual enqueue-stage coding/label outputs | Bounded TX observer; queue ID is diagnostic, placement time unknown |
 | `tx.cells.mapped`, `tx.cells.interleaved`, `rx.cells.restored` | Typed cells preserving pilots and unavailable history | Production stream owners and bounded directional observer |
 | `rx.payload.bits` | Actual recovered BCH payload, independent of source truth | Production collector and bounded RX observer |
-| `result.truth` | Actual bit/codeword comparisons and trial counters | Bounded actual payload-waveform summary implemented; duration-run aggregate remains RUN work |
+| `result.truth` | Actual bit/codeword comparisons and trial counters | Bounded payload-waveform proof plus duration-step results, PRBS totals and fixed iteration histogram; window classification remains RUN-04 |
 
 The implemented contract provides borrowed bit/label arrays, sparse pilot records
 and a power record, with explicit metadata and finite selection budgets. See the
@@ -321,8 +324,8 @@ payload/NCP. Tests cover both spacings with a192MHz configured cap, a wide
 active envelope and internal exclusions; the example uses a24MHz envelope.
 Neither establishes external interoperability or a one-second payload experiment.
 CELL-02/WAVE-RX-06 now add the separate actual payload waveform path described
-below. Nonideal acquisition (WAVE-RX-05) and the full duration-based RUN group
-remain unchecked.
+below. The duration stepper is implemented separately; nonideal acquisition
+(WAVE-RX-05), observation-window accounting and job/CLI lifecycle remain open.
 
 See the [per-subsystem guides](user/waveform/README.md) and
 [pinned waveform evidence](reference/waveform-evidence.md).
@@ -374,9 +377,36 @@ source and independent recovered-stream verifier. The waveform example uses
 continuous PRBS across codewords, the sequence period and PHY reset; no source
 truth enters receive decoding. Literal recurrence vectors and a complete-period
 check are mathematical evidence, not external DOCSIS interoperability vectors.
-The next priority is the configurable-duration RUN group with an initial
-one-second default. Existing streams carry64-bit state across arbitrary calls;
-no per-second reset is added.
+
+## Configurable-duration channel stepping
+
+`simulation/channel/` now owns frozen settings, checked64-bit duration plans,
+shared actual waveform/PLC link composition, a one-symbol-at-a-time runner and
+bounded cumulative/per-step results. It reuses existing payload/waveform TX/RX
+owners, rather than duplicating them in channel wrapper modules. The old bounded
+payload verifier shares the same link and preserves its public import paths.
+
+The initial observation default is one second, configurable up to an application
+limit of one hour. Only complete source-symbol periods are scheduled; unused
+trailing ticks stay explicit. Acquisition, source observation, queued-word
+completion, cell-interleaver drain and the final window tail are separate. PRBS,
+partial codewords, PLC phase, randomizers and waveform overlap persist across calls
+and second boundaries. Existing bounded test points remain available.
+
+The runner offers PRBS payloads to an eight-word queue, stops generating at the
+observation boundary, completes queued words, then drains. Per-step decoded words
+carry actual iteration counts/BCH flags and independent PRBS comparisons. Summary
+storage does not grow with duration: PLC iteration records are consumed per frame,
+payload iterations use a101-bin histogram, and samples/words are not retained as
+whole-run history. Failed sessions close explicitly; zero BER is unavailable
+until actual bits have been compared. A1.01-second50kHz release experiment recovered
+8950 words/127376400 payload bits with zero payload or PLC errors.
+
+This completes RUN-01/02/03/05 for the current fixed-profile noiseless scope.
+Next is RUN-04 window-specific complete/incomplete/excluded payload accounting.
+Formal cancellation/runtime-budget/partial-job semantics and the CLI facade remain
+RUN-06/07/08; a caller pausing between steps does not establish those features.
+See the [component guides](user/channel-runner/README.md) and example `channel_run`.
 
 ## Planned module ownership
 
@@ -390,7 +420,6 @@ before implementation if source analysis shows a better existing owner.
 | `transmission/layout/additional_pilots.rs` | Specification-based additional continuous-pilot placement |
 | `signal_processing/receiver/estimation.rs` | WAVE-RX: independently verified nonideal synchronization/channel estimation beyond the existing known-reference receiver |
 | `signal_processing/modulation/slicing.rs` | Diagnostic hard decisions; keep soft demapping for LDPC |
-| `simulation/channel/{transmitter,receiver,runner,results}.rs` | Thin stateful orchestration and completed-result accounting |
 
 If PLC needs a new coding algorithm, its reusable primitive belongs in
 `fec-codec`, selected only after local PHY verification. Do not assume payload or
@@ -423,8 +452,9 @@ randomizer states separate. The cell-interleaver pair adds M-1 symbols of delay;
 None history is not transmitted payload; the physical reference uses explicit
 recorded startup/drain replacements. Warm-up, configurable observation duration
 (initially one second) and drain need separate accounting, including complete
-versus unfinished words. The existing one_second_timing helper is still fixed;
-its duration-generalized replacement belongs to RUN-02.
+versus unfinished observation-window words (RUN-04). The existing
+`one_second_timing` helper now delegates to general duration/sample planning,
+while preserving its original32-bit result shape. New plans use64-bit counts.
 
 Bound files, buffers, observations, work and decoder iterations. Preserve
 completed results on cancellation. Keep decoder success, truth errors, measured

@@ -168,8 +168,8 @@ Cold transmitter history contains `None`. After M-1 symbols every transmitter
 branch has sufficient history; a matched receiver returns all original input
 cells after the same M-1-symbol pair delay. Continue the pair with M-1 all-None
 symbols to drain a finite input stream. Do not count those markers as payload.
-A future continuous waveform runner must establish valid channel startup/filler
-signals and separate warm-up from its one-second observation.
+The [channel stepper](channel-runner/README.md) now uses explicit startup/filler
+signals and separates acquisition, source observation, completion and cell drain.
 
 The receiver must use the recovered **source-symbol index** for inverse cell
 randomization, rather than its later channel-output index. Otherwise LFSR reset
@@ -193,8 +193,8 @@ The separate [production payload transport](payload-transport/README.md) now
 uses these verified algorithms with actual pilot/PLC signals and waveform
 samples. Its received configuration, source/channel coordinates and explicit
 startup/drain are documented per subsystem. A separate
-[PRBS15 source/verifier](simulation/prbs.md) is now implemented. Nonideal acquisition and
-configurable-duration orchestration remain later work.
+[PRBS15 source/verifier](simulation/prbs.md) and duration-based stepping are
+implemented. Nonideal acquisition and cancellable channel jobs remain later work.
 
 Evidence: CM-SP-PHYv3.1-I20-230419 section 7.5.6.1–3, Figures 55–58,
 PDF129–133; Appendix I sample code, PDF211–212 (informative). The original local

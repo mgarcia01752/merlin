@@ -52,9 +52,10 @@ of its real message/FEC/QAM receive path:
 It reports the configuration learned by the receiver, together with received
 descriptors, actual decoder iterations and information-bit comparisons. The separate [waveform path](../waveform/README.md) now adds IFFT, windowed
 sample transfer and matched FFT recovery. The [fixed payload receiver](../payload-transport/receiver.md) now consumes the
-received snapshot and checks the live gate. Duration-based job orchestration
-remains a later stage. The readiness gate is available to those
-future consumers; existing standalone codec functions remain independently usable.
+received snapshot and checks the live gate. The
+[channel stepper](../channel-runner/README.md) now acquires through this gate
+and freezes independent payload settings. The cancellable job/CLI facade remains
+a later stage; existing standalone codec functions remain independently usable.
 
 See [architecture](../../architecture.md), [checklist](../../development/checklist.md)
 and [source evidence](../../reference/plc-evidence.md). These pages explain design;

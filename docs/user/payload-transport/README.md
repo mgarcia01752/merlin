@@ -42,10 +42,10 @@ is supported and carries BPSK filler; this is distinct from static zero loading
 in a DPD.
 
 Streams retain state across calls and are independent of simulation duration.
-They do not reset at one-second boundaries or codeword boundaries. The later
-runner will select a configurable observation duration, initially one simulated
-second; the existing bounded demonstration is deliberately shorter and now uses
-the separate [PRBS15 source and verifier](../simulation/prbs.md). The duration
-runner, blind acquisition and nonideal channel operation remain separate work.
+They do not reset at one-second boundaries or codeword boundaries. The new
+[channel stepper](../channel-runner/README.md) selects a configurable observation
+duration, initially one second; the original bounded demonstration remains
+shorter. Both use the separate [PRBS15 source/verifier](../simulation/prbs.md).
+Job cancellation/CLI, blind acquisition and nonideal operation remain later work.
 See [architecture](../../architecture.md), [checklist](../../development/checklist.md)
 and [source evidence](../../reference/payload-transport-evidence.md).

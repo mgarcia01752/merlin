@@ -13,6 +13,7 @@ Start with the component you want to understand:
 | `pilots/` | [Pilot signals](pilots.md) | Compose continuous/scattered reference signals for a physical symbol |
 | `plc/` | [PLC transmission and reception](plc.md) | Recover actual PLC messages and build receiver-owned configuration |
 | `waveform/` | [Waveform TX/channel/RX](../waveform/README.md) | Separate sample-domain stages, known-reference receive and bounded actual PLC verification |
+| `channel/` | [Duration-based channel](../channel-runner/README.md) | Frozen duration plan, shared actual waveform link, bounded step/summary outcomes |
 | `payload/` | [Actual payload/NCP transport](../payload-transport/README.md) | Continuous TX/RX, received configuration, bounded recovery and waveform proof |
 | `test_points/` | [Stage observations](test-points.md) | Inspect selected intermediate data without changing the experiment |
 | `config.rs`, `runner.rs`, `results.rs` | [Experiment runner](runner.md) | Validate limits, run the existing16-QAM trials and collect outcomes |
@@ -31,7 +32,7 @@ flowchart TB
     PLC["plc: configuration packets and PLC signals"] --> GRID
     CELLS["payload: actual encoded data/NCP transport"] --> GRID
     GRID --> WAVE["Waveform TX → unity channel → matched RX"]
-    WAVE -.-> FUTURE["Planned: configurable-duration payload runner"]
+    WAVE --> CHANNEL["channel: duration-based stepping and PRBS recovery"]
     PILOTS -.-> POINTS["test_points: available producers only"]
     PLC -.-> POINTS
     GRID -.-> POINTS
@@ -42,8 +43,8 @@ the pilot/PLC physical grid; these paths currently meet in dedicated examples
 and tests. Its progress notifications are separate from common stage observations;
 common producers cover pilots, PLC, physical bins, waveform TX/RX and actual
 payload/NCP boundaries.
-The bounded waveform reference experiment is implemented; the full one-second
-payload runner remains planned. The separate payload verifier additionally
+The bounded waveform reference experiment and separate configurable-duration
+payload stepper are implemented. Channel job cancellation and CLI delivery remain planned. The separate payload verifier additionally
 recovers actual encoded data/NCP using PLC-derived settings. The root experiment's source
 and the independent coding loop are not one continuous OFDM transmission.
 

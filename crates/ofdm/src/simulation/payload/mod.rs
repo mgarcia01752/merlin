@@ -11,5 +11,4 @@ pub use transmitter::{
     EncodedPayload, PayloadChannelSymbol, PayloadTransmitSymbol, PayloadTransmitter,
 };
 
-mod link;
 pub mod reference;

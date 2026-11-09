@@ -5,18 +5,19 @@ connection. Select configuration before the run and hold it constant throughout.
 Channel bonding and dynamic CMTS reconfiguration are outside this scope.
 
 The public Rust `transmission` module currently validates numerology and calculates
-a one-second schedule. [Carrier layout](carrier-layout.md) now validates physical
+integer duration/sample-clock schedules with a one-second default. [Carrier layout](carrier-layout.md) now validates physical
 bin geometry and generates scattered-pilot roles. [QAM mapping](qam-mapping.md)
 and reference soft demapping are available through16K-QAM. The
 [fixed PLC signal path](plc-channel.md) now includes acquisition messages and
 physical-bin assembly. [Waveform TX and matched RX](waveform/README.md) now carry
 those signals through actual time samples; the separate [payload transport](payload-transport/README.md) now adds actual
-encoded data/NCP recovery. Duration-based job orchestration remains pending.
+encoded data/NCP recovery. The [channel stepper](channel-runner/README.md) now
+adds continuous duration-based orchestration; the cancellable CLI job remains pending.
 [Cell time/frequency interleaving](cell-interleaving.md) and its inverse receiver
 are now available with a correctly phased pilot reference.
 [Data/NCP randomization](cell-randomizer.md) is now available as a standalone
 stateful API. [PLC randomization](plc-randomization.md) now has independent
-known-phase state and a soft inverse; channel-runner integration remains pending.
+known-phase state and a soft inverse, now reused by the channel stepper.
 The [256-QAM coding loop](qam256-coding-loop.md) connects bit processing,
 randomization and reverse decoding as independent codeword trials.
 A [stateful symbol packer](symbol-packing.md) now carries256-QAM codewords
@@ -28,9 +29,9 @@ separate16-QAM coding experiment.
 
 ## Transmission flow
 
-Solid connections below show implemented configuration and timing. Dashed
-connections show the planned channel path. Warm-up and drain are outside the
-one-second observation interval.
+Solid connections below show the implemented fixed-profile reference path.
+Acquisition, queued-word completion and drain are outside the configurable
+source-observation interval, which initially defaults to one second.
 
 ```mermaid
 flowchart TD
@@ -51,21 +52,21 @@ flowchart TD
     INVERSE["Frequency then time de-interleaving<br/>Soft demapping · inverse bit processing"]
     DECODE["LDPC then BCH decoding"]
     COMPARE["Compare complete recovered payloads<br/>Count actual bit errors"]
-    LIFECYCLE["Warm-up → one-second observation → drain<br/>Continuous symbol index and PLC phase<br/>Keep filler and pending data separate"]
+    LIFECYCLE["Acquisition → observation → completion → drain<br/>Continuous symbol index and PLC phase<br/>Keep filler and pending data separate"]
 
     CONFIG --> VALIDATE --> CLOCK
     VALIDATE --> LAYOUT
-    LAYOUT -.-> GRID
-    CLOCK -.-> LIFECYCLE
-    LIFECYCLE -.-> SOURCE
-    SOURCE -.-> FEC -.-> BITS -.-> QAM
-    QAM -.-> TIME -.-> FREQ -.-> GRID -.-> TX
-    TX -.-> CHANNEL -.-> RX -.-> INVERSE -.-> DECODE -.-> COMPARE
-    SOURCE -.->|"Retain original payload truth"| COMPARE
+    LAYOUT --> GRID
+    CLOCK --> LIFECYCLE
+    LIFECYCLE --> SOURCE
+    SOURCE --> FEC --> BITS --> QAM
+    QAM --> TIME --> FREQ --> GRID --> TX
+    TX --> CHANNEL --> RX --> INVERSE --> DECODE --> COMPARE
+    SOURCE -->|"Independent post-decode PRBS truth"| COMPARE
 ```
 
-Freezing a validated snapshot is a requirement for the upcoming runner; the
-current settings API validates values but does not create or execute that runner.
+The channel stepper validates and freezes its snapshot at construction;
+editing the original settings does not reconfigure an existing session.
 
 ## Configuration selected before each run
 
@@ -136,8 +137,8 @@ The [waveform checklist](../development/checklist.md#waveform-direction-and-comp
 tracks `WAVE-TX` transmission, `WAVE-CH` channel, `WAVE-RX` reception and `WAVE-QA`
 validation separately. The initial noiseless TX/RX waveform operations are now implemented, with
 [per-subsystem guides](waveform/README.md), probes and actual PLC recovery.
-Settings validation and one-second scheduling are separate from the still-planned
-continuous one-second payload runner.
+The separate [duration runner](channel-runner/README.md) now composes these
+stages; settings validation and timing calculations remain reusable independently.
 
 ## One-second timing
 
@@ -156,9 +157,10 @@ S=\left\lfloor\frac{F_s}{N+N_{CP}}\right\rfloor,\qquad
 R=F_s-S(N+N_{CP}).
 $$
 
-The existing timing helper covers exactly one second. The future runner will
-accept a configurable duration with one second as its initial default, retaining
-stream state across longer observations.
+The legacy timing helper covers exactly one second and now delegates to
+64-bit duration/sample planning. The channel stepper accepts a configurable
+duration with one second as its initial default, retaining state throughout.
+See [duration arithmetic and rounding](channel-runner/timing.md).
 
 The default gives **23,529 complete symbol periods**, each **42.5µs**, and
 **3,584 unused sample ticks (17.5µs)**. Observation is exactly one second; only
@@ -216,6 +218,6 @@ implemented as well. Separate [pilot generators](pilot-signals.md) now provide
 signs and power. PLC/physical-bin assembly and bounded noiseless TX/RX waveform integration
 are now available. Production fixed-profile data/NCP transport and a separate
 [PRBS15 source/verifier](simulation/prbs.md) are implemented. Remaining
-stages include nonideal acquisition and the configurable-duration runner
-with an initial one-second default.
+stages include nonideal acquisition, observation-window accounting and the
+cancellable channel CLI. Duration-based stepping is now implemented.
 The timing and packing tests do not establish full channel recovery.

@@ -11,7 +11,7 @@ pub mod plc;
 pub mod settings;
 pub mod timing;
 pub use settings::{SubcarrierSpacing, TransmissionSettings};
-pub use timing::TransmissionTiming;
+pub use timing::{DurationTiming, TransmissionTiming};
 
 #[cfg(feature = "simulation")]
 pub mod symbols;

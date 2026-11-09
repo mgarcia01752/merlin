@@ -2,7 +2,7 @@
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-//! Bounded reference-only orchestration of existing physical/waveform/PLC stages.
+//! Shared known-reference orchestration of existing physical/waveform/PLC stages.
 use crate::{
     error::invalid,
     signal_processing::{
@@ -46,7 +46,7 @@ pub struct LinkStats {
     pub plc_ldpc_iterations: Vec<usize>,
     pub preambles_match: bool,
 }
-pub(super) struct WaveformLink {
+pub(crate) struct WaveformLink {
     geometry: WaveformGeometry,
     layout: CarrierLayout,
     tx: WaveformTransmitter,
@@ -70,7 +70,7 @@ impl WaveformLink {
     /// Fresh waveform/PLC streams with no sample history or configured payload receiver.
     /// # Errors
     /// Propagates configuration and stage initialization failures.
-    pub(super) fn new(
+    pub(crate) fn new(
         settings: &TransmissionSettings,
         raw: &CarrierLayoutSettings,
         ncp: NcpModulation,
@@ -137,7 +137,7 @@ impl WaveformLink {
     /// Borrows the actual PLC acquisition gate after received frame processing.
     /// # Returns
     /// Immutable live state; ready snapshots originate only in decoded management packets.
-    pub(super) fn state(&self) -> &ReceiverConfigurationState {
+    pub(crate) fn state(&self) -> &ReceiverConfigurationState {
         self.plc_rx.configuration()
     }
     /// Copies run metadata for post-computation observations.
@@ -145,7 +145,7 @@ impl WaveformLink {
     /// * `phase` - Explicit acquisition/warm-up, observation or drain interval.
     /// # Returns
     /// Caller-owned context without stage-specific source/word identities.
-    pub(super) fn context(&self, phase: RunPhase) -> ProbeContext {
+    pub(crate) fn context(&self, phase: RunPhase) -> ProbeContext {
         let mut context = self.context.clone();
         context.phase = phase;
         context
@@ -155,7 +155,7 @@ impl WaveformLink {
     /// * `index` - Absolute PLC-aligned channel symbol phase.
     /// # Returns
     /// Unity BPSK data-plane filler and empty scattered positions; never payload truth.
-    pub(super) fn acquisition_cells(&self, index: u64) -> Vec<Option<IqPair>> {
+    pub(crate) fn acquisition_cells(&self, index: u64) -> Vec<Option<IqPair>> {
         self.layout
             .symbol_roles(index)
             .iter()
@@ -177,7 +177,7 @@ impl WaveformLink {
     /// One received symbol; PLC frame completion also updates the independent gate/statistics.
     /// # Errors
     /// Propagates stage, control transport/admission or observer failure; verifier stops on error.
-    pub(super) fn transfer(
+    pub(crate) fn transfer(
         &mut self,
         index: u64,
         reduced: &[Option<IqPair>],
@@ -187,7 +187,9 @@ impl WaveformLink {
     ) -> Result<ReceivedSymbol, LabError> {
         if index % PLC_FRAME_SYMBOLS == 0 {
             let timestamp = ExtendedTimestamp::from_sample_ticks(
-                index * self.geometry.stride_samples() as u64,
+                index
+                    .checked_mul(self.geometry.stride_samples() as u64)
+                    .ok_or_else(|| invalid("PLC sample timestamp overflow."))?,
                 0,
             )?;
             self.frame = Some(generate_frame(
@@ -314,7 +316,7 @@ impl WaveformLink {
     /// Explicit incomplete RX sample remainder, normally the selected roll-off length.
     /// # Errors
     /// Propagates stage/callback failure or an unexpected extra recovered period.
-    pub(super) fn finish(
+    pub(crate) fn finish(
         &mut self,
         probe: &mut TestPointProbe,
         observer: &mut impl ProbeObserver,
