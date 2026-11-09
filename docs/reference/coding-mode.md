@@ -1,5 +1,9 @@
 # Coding experiment and scientific conventions
 
+This page describes the existing general16-QAM simulation job. A separate
+[256-QAM noiseless cell loop](../user/qam256-coding-loop.md) now connects its
+bit-processing/randomizer stages and reports per-word LDPC iterations.
+
 For the isolated BCH/LDPC loop, see the [FEC codec user guide](../user/fec-codec.md),
 including its flow diagram and LaTeX encoding/decoding equations.
 

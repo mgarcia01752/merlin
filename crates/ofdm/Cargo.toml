@@ -19,3 +19,7 @@ rand_distr = { version = "=0.5.1", optional = true }
 
 [dev-dependencies]
 serde_json = "=1.0.145"
+
+[[example]]
+name = "qam256_codec_loop"
+required-features = ["simulation"]

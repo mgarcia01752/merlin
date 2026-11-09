@@ -11,6 +11,8 @@ and reference soft demapping are available through16K-QAM. Waveform generation,
 full control-cell packing and time/frequency interleaving are pending.
 [Data/NCP randomization](cell-randomizer.md) is now available as a standalone
 stateful API; PLC randomization and channel-runner integration remain pending.
+The [256-QAM coding loop](qam256-coding-loop.md) connects bit processing,
+randomization and reverse decoding as independent codeword trials.
 The existing CLI remains the separate16-QAM coding experiment.
 
 ## Transmission flow

@@ -22,6 +22,7 @@ crates/
 │   │   ├── modulation/        Embedded QAM through16K, bit ordering and soft demapping
 │   │   └── noise/             Residual powers and controlled AWGN
 │   ├── simulation/
+│   │   ├── coding_loop/       Independent256-QAM cell trials and decoder metrics
 │   │   ├── source/            Current seeded source; PRBS remains unimplemented
 │   │   ├── config.rs          Receiver and work limits
 │   │   ├── runner.rs          Connect stages; own cancellation and progress
@@ -117,3 +118,10 @@ and cell-mask processing. It retains state across codewords, resets on explicit
 The packer must supply synchronized pre-interleaving cell order; no existing
 simulation mode is silently changed. PLC has separate pending state/timing rules.
 See [randomizer equations and lifecycle](user/cell-randomizer.md).
+
+`modulation::interleaving` separates pinned coding parameters from reusable
+permutation/label/soft-inverse operations.16and256-QAM are enabled; other orders
+remain unsupported in bit processing even when their mapper exists.
+`simulation::coding_loop` connects the256-QAM stages for one independent codeword
+per call and exports actual LDPC iterations. It does not implement continuous
+OFDM packing or channel timing. See [coding-loop flow](user/qam256-coding-loop.md).

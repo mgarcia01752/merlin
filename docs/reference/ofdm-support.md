@@ -13,7 +13,7 @@ mandatory and optional endpoint modulation support below. The maximum listed
 is **16384-QAM (16K-QAM), carrying14bits per symbol**. Both8192-QAM and16384-QAM
 are optional for CM/CMTS; they already appear in the DOCSIS3.1 baseline.
 
-| Data constellation | Bits/symbol | Pinned CM/CMTS requirement | Profile analysis | Mapping/soft demapping | Full coding simulation |
+| Data constellation | Bits/symbol | Pinned CM/CMTS requirement | Profile analysis | Mapping/soft demapping | CLI simulation job |
 | --- | ---: | --- | --- | --- | --- |
 | 16-QAM | 4 | Required | Implemented | Experimental | Initial experimental mode |
 | 64-QAM | 6 | Required | Implemented | Experimental | Pending |
@@ -36,9 +36,16 @@ Shared [mapping and reference max-log demapping](../user/qam-mapping.md) now use
 embedded label-ordered resources through16K-QAM. Mapping is marked experimental
 independently of complete coding-mode availability.
 
+A separate [noiseless256-QAM cell loop](../user/qam256-coding-loop.md) now covers
+BCH/LDPC, parity/twist/demultiplexing, randomization and soft inverse processing.
+It reports iterations per codeword but does not yet have physical symbol packing
+or integration into the general CLI simulation job. That is why256-QAM remains
+pending in the final column and in the registry's `coding_simulation` field.
+
 ## Coding work still required
 
-For each pending coding order, verify column twists, demultiplexing, pad bits,
+Bit processing is implemented for uniform non-shortened short8/9 modes16and256.
+For the other coding orders, verify column twists, demultiplexing, pad bits,
 shortening and codeword placement. Extend independent high-order label vectors
 and decoder validation beyond current diagram anchors and reference-table checks.
 Non-square orders use their actual resources, not a square-QAM approximation.

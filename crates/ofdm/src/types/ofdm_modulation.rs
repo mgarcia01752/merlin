@@ -30,6 +30,8 @@ pub struct OfdmModulation {
     pub bits_per_symbol: BitsPerSymbol,
     pub device_support: DeviceSupportRequirement,
     pub mapping: ImplementationState,
+    /// Availability in the existing general simulation job; standalone cell-loop
+    /// experiments may be exposed separately before integration into that job.
     pub coding_simulation: ImplementationState,
 }
 /// Maximum downstream data constellation in the pinned baseline and D4.0 FDD reuse.

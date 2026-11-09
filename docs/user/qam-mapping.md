@@ -82,6 +82,11 @@ symbol packing before enabling a full coding mode. High-order mapping availabili
 does not imply completed channel simulation. No256-QAM CLI mode, IFFT or actual
 NCP message generation is enabled by this change.
 
+The subsequent [256-QAM cell-loop implementation](qam256-coding-loop.md) now adds
+its short8/9 bit processing and randomized noiseless recovery as a standalone API
+and JSON example. The general CLI simulation job and physical channel stages
+remain separate.
+
 ## Evidence and validation
 
 Local CM-SP-PHYv3.1-I20-230419 AnnexA, PDF197–206, defines labeling and scaling.

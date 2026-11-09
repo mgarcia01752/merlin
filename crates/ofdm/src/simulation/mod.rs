@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Bounded source-to-results simulation jobs.
+pub mod coding_loop;
 pub mod config;
 pub mod results;
 pub mod runner;

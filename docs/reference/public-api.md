@@ -18,6 +18,8 @@ component will adapt inputs and results without duplicating scientific logic.
 | `signal_processing::{modulation, noise}` | QAM, soft demapping and residual-noise models |
 | `signal_processing::modulation::{map_symbol, qam_llrs}` | Shared label-ordered mapping and reference soft demapping through16K-QAM |
 | `signal_processing::modulation::randomization::CellRandomizer` | Stateful data/NCP cell randomization and soft-bit inverse through16K-QAM |
+| `signal_processing::modulation::interleaving::BitInterleaver` | Short8/9 parity/twist/demux and soft inverse for16and256-QAM |
+| `simulation::coding_loop::NoiselessQam256Codec` | Independent noiseless codeword trials with per-word decoder iterations |
 | `simulation::{config, runner, results, source}` | Bounded trial orchestration and reproducible source state |
 | `types::ofdm_modulation` | Normative constellation registry and implementation status |
 | `fec_codec::{parameters, bch, ldpc}` | Mode dimensions and individual codecs |
