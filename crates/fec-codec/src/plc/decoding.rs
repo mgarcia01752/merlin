@@ -26,6 +26,7 @@ impl PlcFecCodec {
         max_iterations: usize,
     ) -> Result<PlcBlockResult, String> {
         if !(1..=MAX_PLC_ITERATIONS).contains(&max_iterations) {
+            log::debug!("plc-ldpc-iterations-rejected max-iterations={max_iterations}");
             return Err("PLC decoder iterations must be1..100.".into());
         }
         let mother = restore_llrs(llrs)?;
@@ -38,6 +39,12 @@ impl PlcFecCodec {
             .try_into()
             .map_err(|_| "Unexpected PLC mother decoder output size.".to_string())?;
         let success = converged && self.valid_syndrome(&mother_codeword);
+        if !success {
+            log::debug!(
+                "plc-ldpc-not-converged iterations={} max-iterations={max_iterations}",
+                decoded.iterations
+            );
+        }
         Ok(PlcBlockResult {
             information: std::array::from_fn(|index| mother_codeword[index]),
             mother_codeword,

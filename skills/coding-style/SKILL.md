@@ -205,6 +205,36 @@ The toolkit owns scientific computation and typed results. Keep library inputs i
 QML, GUI controls, filesystem paths and HTTP. Preserve bounded work, cancellation
 and partial-result semantics when refactoring.
 
+## Rust logging and error ownership
+
+Use the standard `log` facade in scientific libraries; the executable owns backend
+initialization. The CLI uses `env_logger` under `src/logging/`, with stderr output,
+default info and `RUST_LOG` module/level filters. Share the pinned facade through
+workspace dependencies. Libraries must not install/replace a global logger, read
+logging environment variables, create log files or force a consumer's log level.
+
+- Log terminal command failures once at the application boundary using `error!`.
+  Preserve returned errors and nonzero exit status even when logs are disabled.
+  Log a separately suppressed failure, such as failed output cleanup, at its owner.
+  Do not log-and-propagate the same error as error at every layer or log inside
+  generic error constructors. Add scalar context where the operation is known.
+- Use warn for degraded/partial operation such as runtime-budget exhaustion; info
+  for command/run lifecycle; debug for input/CRC rejection, expected decoder
+  non-convergence and optional per-codeword progress. Scientific failure counts
+  stay in typed results; normal noisy-trial failures are not application errors.
+- Keep messages concise with action and named scalar fields/units. Do not print
+  arrays, LLRs, frame bytes, source captures, MAC addresses, credentials or full
+  scenario/provenance objects. Do not add info/warn records in inner DSP loops.
+- Reserve stdout for help/version or intentional data output. Do not use println
+  or eprintln for diagnostics except the CLI's pre-logger initialization fallback.
+  Keep progress callbacks and typed test points independent of diagnostic logs.
+- Never change RNG draws, stage state, acceptance decisions or scientific results
+  based on enabled log levels. Test filtering, stderr/error ownership, unchanged
+  outputs and no-clobber behavior. Compare scientific values separately from
+  wall-clock elapsed time; logging can affect runtime-budget completion.
+
+See docs/development/logging.md for usage and current instrumentation scope.
+
 ## SPDX headers
 
 Add the full copyright/SPDX file banner below to new project-owned source and

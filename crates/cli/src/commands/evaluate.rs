@@ -78,5 +78,7 @@ pub(crate) fn run(arguments: Arguments, cancel: &AtomicBool) -> Result<(), Strin
         evaluate(&document.candidate, &frames, &document.settings, cancel)
             .map_err(|error| error.to_string())?,
     );
-    write_json(&document, &arguments.output)
+    write_json(&document, &arguments.output)?;
+    log::info!("evaluation-complete frames={}", frames.len());
+    Ok(())
 }

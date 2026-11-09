@@ -58,6 +58,7 @@ project-local toolchain when present and installs nothing.
 
 [Build and test](docs/development/build.md) ·
 [Git and releases](docs/development/git.md) ·
+[Logging](docs/development/logging.md) ·
 [CLI examples](docs/cli.md) ·
 [Architecture](docs/architecture.md) ·
 [Implementation checklist](docs/development/checklist.md) ·

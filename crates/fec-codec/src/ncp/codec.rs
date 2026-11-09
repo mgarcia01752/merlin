@@ -80,6 +80,10 @@ impl NcpFecCodec {
             || llrs.iter().any(|value| !value.is_finite())
             || !(1..=100).contains(&max_iterations)
         {
+            log::debug!(
+                "ncp-ldpc-input-rejected llrs={} max-iterations={max_iterations}",
+                llrs.len()
+            );
             return Err("Expected48 finite NCP LLRs and1..100 iterations.".into());
         }
         let mut mother = [0.0; MOTHER_CODEWORD_BITS];
@@ -99,6 +103,12 @@ impl NcpFecCodec {
             && decoded.codeword[NCP_INFORMATION_BITS..MOTHER_INFORMATION_BITS]
                 .iter()
                 .all(|bit| *bit == 0);
+        if !success {
+            log::debug!(
+                "ncp-ldpc-not-converged iterations={} max-iterations={max_iterations}",
+                decoded.iterations
+            );
+        }
         Ok(NcpBlockResult {
             payload,
             iterations: decoded.iterations,

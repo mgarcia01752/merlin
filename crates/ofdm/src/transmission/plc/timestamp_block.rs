@@ -40,6 +40,7 @@ impl TimestampMessageBlock {
             ));
         }
         if bytes[CRC_OFFSET..] != crc24d(&bytes[..CRC_OFFSET]) {
+            log::debug!("plc-timestamp-crc-mismatch");
             return Err(LabError::new(
                 "PlcTimestampCrcMismatch",
                 "PLC timestamp CRC-24-D mismatch.",

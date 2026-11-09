@@ -16,6 +16,7 @@ use std::sync::atomic::AtomicBool;
 /// # Errors
 /// Reports input, scientific-validation, cancellation and output failures.
 pub(crate) fn run(arguments: Arguments, cancel: &AtomicBool) -> Result<(), String> {
+    log::info!("command-start command={}", arguments.command);
     match arguments.command.as_str() {
         "simulate" => simulate::run(arguments, cancel),
         "evaluate" => evaluate::run(arguments, cancel),

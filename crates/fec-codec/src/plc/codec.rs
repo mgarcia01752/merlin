@@ -53,6 +53,9 @@ impl PlcFecCodec {
         let matrix = mother_matrix();
         let encoder = Encoder::from_h(&matrix).map_err(|error| error.to_string())?;
         let decoder = DecoderImplementation::HLPhif64.build_decoder(matrix.clone());
+        log::debug!(
+            "plc-codec-ready information-bits={PLC_INFORMATION_BITS} mother-bits={PLC_MOTHER_BITS}"
+        );
         Ok(Self {
             encoder,
             decoder,

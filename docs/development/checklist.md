@@ -197,6 +197,9 @@ Do not create empty source files merely to make the planned tree appear complete
   release CLI build and smoke validation in the existing pre-push gate.
 - [x] **QA-03** Deterministic scientific tests with pinned source evidence and
   independent fixed vectors where available.
+- [x] **QA-08** Add standard Rust facade and CLI-owned stderr logging, explicit
+  levels/error ownership and tests for filters, clean data output and scientific
+  invariance; document the current instrumentation scope.
 - [ ] **QA-04** Extend the gate as new channel commands/test-point exports are added.
 - [ ] **QA-05** Independent external interoperability vectors for full channel stages.
 - [ ] **QA-06** Windows/macOS build/runtime validation and CI; Linux checks alone

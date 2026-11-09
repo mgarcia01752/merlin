@@ -163,6 +163,8 @@ impl TestPointProbe {
         if self.stats.dispatched_events >= config.max_events
             || count > config.max_total_elements - self.stats.dispatched_elements
         {
+            log::debug!("probe-budget-exhausted stage={stage:?} dispatched-events={} dispatched-elements={}",
+                self.stats.dispatched_events, self.stats.dispatched_elements);
             return Ok(ProbeOutcome::BudgetExhausted);
         }
         let selected = data.window(start, end);
@@ -182,6 +184,10 @@ impl TestPointProbe {
         self.stats.dispatched_elements += count;
         if let Err(error) = observer.observe(&event) {
             self.stats.callback_errors += 1;
+            log::debug!(
+                "probe-callback-failed stage={stage:?} error-code={}",
+                error.code
+            );
             return Err(error);
         }
         Ok(ProbeOutcome::Dispatched { elements: count })

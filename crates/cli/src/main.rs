@@ -6,6 +6,7 @@
 mod arguments;
 mod commands;
 mod json_io;
+mod logging;
 use std::sync::{
     atomic::{AtomicBool, Ordering},
     Arc,
@@ -14,6 +15,11 @@ use std::sync::{
 ///
 /// Errors go to stderr and return status1; Ctrl-C requests bounded cancellation.
 fn main() {
+    if let Err(error) = logging::initialize() {
+        // The backend is unavailable here; this is the only bootstrap fallback.
+        eprintln!("ERROR: logging-initialization-failed error={error}");
+        std::process::exit(1);
+    }
     let result = (|| {
         let Some(arguments) = arguments::parse()? else {
             return Ok(());
@@ -25,7 +31,7 @@ fn main() {
         commands::run(arguments, &cancel)
     })();
     if let Err(error) = result {
-        eprintln!("ERROR: {error}");
+        log::error!("command-failed error={error}");
         std::process::exit(1);
     }
 }

@@ -11,6 +11,7 @@ default = ["simulation"]
 simulation = ["dep:fec-codec", "dep:rand", "dep:rand_chacha", "dep:rand_distr"]
 
 [dependencies]
+log.workspace = true
 serde = { version = "=1.0.228", features = ["derive"] }
 fec-codec = { path = "../fec-codec", optional = true }
 rand = { version = "=0.9.2", optional = true }

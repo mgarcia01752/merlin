@@ -4,6 +4,13 @@ The CLI accepts decoded scientific scenarios as JSON and calls the public Rust
 API. Binary capture adapters are separate from the scientific engine. Run `ofdm-fec --help` for options.
 Outputs must be new files; existing destinations are never replaced.
 
+## Diagnostic logging
+
+Logs go to stderr at info level by default. Set `RUST_LOG=debug` for progress and
+stage diagnostics or `RUST_LOG=off` for silence. JSON results and exit status are
+independent of the filter. See [logging](development/logging.md) for module filters,
+log capture and severity/error ownership.
+
 ## Seeded baseline
 
 ```bash

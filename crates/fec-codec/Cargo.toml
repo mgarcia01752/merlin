@@ -6,6 +6,7 @@ rust-version = "1.85"
 license = "Apache-2.0 AND MIT"
 
 [dependencies]
+log.workspace = true
 ldpc-toolbox = "=0.10.1"
 ndarray = "=0.16.1"
 num-traits = "=0.2.19"

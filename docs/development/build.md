@@ -46,3 +46,7 @@ include versioned lookup extracts; diagrams still require the original PDF.
 
 The implementation branch is feature/ds-profile-fec-lab. Git operations use the
 local helpers described in [Git and versioning](git.md).
+
+Standard logging dependencies are pinned in Cargo.lock and downloaded by Cargo;
+no operating-system packages or separate installation step are required.
+See [logging configuration](logging.md).

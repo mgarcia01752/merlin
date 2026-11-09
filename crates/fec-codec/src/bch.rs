@@ -194,10 +194,13 @@ pub fn encode_bch(message: &[u8]) -> Result<Vec<u8>, String> {
 pub fn decode_bch(codeword: &[u8]) -> Result<BchResult, String> {
     binary_bits(codeword, LDPC_INPUT_BITS)?;
     let kernel = kernel()?;
-    let failure = || BchResult {
-        codeword: codeword.to_vec(),
-        corrected_bits: 0,
-        success: false,
+    let failure = || {
+        log::debug!("payload-bch-not-correctable information-bits={BCH_INPUT_BITS}");
+        BchResult {
+            codeword: codeword.to_vec(),
+            corrected_bits: 0,
+            success: false,
+        }
     };
     let syndromes = kernel.syndromes(codeword);
     if syndromes.iter().all(|syndrome| *syndrome == 0) {

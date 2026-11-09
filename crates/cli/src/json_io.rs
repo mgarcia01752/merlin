@@ -18,7 +18,8 @@ const MAX_JSON_BYTES: u64 = 16 * 1024 * 1024;
 pub(crate) fn read_json<Document: serde::de::DeserializeOwned>(
     path: &Path,
 ) -> Result<Document, String> {
-    let file = std::fs::File::open(path).map_err(|error| error.to_string())?;
+    let file =
+        std::fs::File::open(path).map_err(|error| format!("json-input-open-failed: {error}"))?;
     let mut bytes = vec![];
     file.take(MAX_JSON_BYTES + 1)
         .read_to_end(&mut bytes)
@@ -60,8 +61,10 @@ pub(crate) fn write_json(document: &impl serde::Serialize, path: &Path) -> Resul
         .map_err(|error| error.to_string())?;
     if let Err(error) = file.write_all(&bytes.0).and_then(|()| file.sync_all()) {
         drop(file);
-        let _ = std::fs::remove_file(path);
-        return Err(error.to_string());
+        if let Err(cleanup_error) = std::fs::remove_file(path) {
+            log::error!("json-output-cleanup-failed error={cleanup_error}");
+        }
+        return Err(format!("json-output-write-failed: {error}"));
     }
     Ok(())
 }

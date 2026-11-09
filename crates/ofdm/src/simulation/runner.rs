@@ -44,6 +44,12 @@ pub fn simulate(
     cancel: &AtomicBool,
     mut progress: impl FnMut(SimulationProgress),
 ) -> Result<SimulationResult, LabError> {
+    log::debug!(
+        "simulation-start requested-codewords={} max-iterations={} max-runtime-ms={}",
+        settings.codewords,
+        settings.max_iterations,
+        settings.max_runtime_ms
+    );
     settings.validate()?;
     let (noise_powers, selected_carrier_offsets) = noise_model(settings.awgn_mer_db, measured)?;
     let order = transmit_bit_order();
@@ -57,10 +63,19 @@ pub fn simulate(
     );
     for _ in 0..settings.codewords {
         if cancel.load(Ordering::Relaxed) {
+            log::info!(
+                "simulation-cancelled completed-codewords={}",
+                result.completed_codewords
+            );
             result.status = "cancelled".into();
             break;
         }
         if started.elapsed().as_millis() >= u128::from(settings.max_runtime_ms) {
+            log::warn!(
+                "simulation-runtime-limit completed-codewords={} max-runtime-ms={}",
+                result.completed_codewords,
+                settings.max_runtime_ms
+            );
             result.status = "runtime_limit".into();
             break;
         }
@@ -93,5 +108,11 @@ pub fn simulate(
         });
     }
     result.finish(started.elapsed().as_millis() as u64);
+    log::debug!(
+        "simulation-finished status={} completed-codewords={} payload-bit-errors={}",
+        result.status,
+        result.completed_codewords,
+        result.post_bch_payload_bit_errors
+    );
     Ok(result)
 }

@@ -87,12 +87,22 @@ impl LdpcCodec {
             || llrs.iter().any(|value| !value.is_finite())
             || !(1..=100).contains(&max_iterations)
         {
+            log::debug!(
+                "payload-ldpc-input-rejected llrs={} max-iterations={max_iterations}",
+                llrs.len()
+            );
             return Err("Invalid LDPC LLRs or iteration limit.".into());
         }
         let (success, output) = match self.decoder.decode(llrs, max_iterations) {
             Ok(output) => (true, output),
             Err(output) => (false, output),
         };
+        if !success {
+            log::debug!(
+                "payload-ldpc-not-converged iterations={} max-iterations={max_iterations}",
+                output.iterations
+            );
+        }
         Ok(LdpcResult {
             codeword: output.codeword,
             iterations: output.iterations,

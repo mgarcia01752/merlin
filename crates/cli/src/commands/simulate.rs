@@ -55,11 +55,17 @@ pub(crate) fn run(arguments: Arguments, cancel: &AtomicBool) -> Result<(), Strin
         _ => None,
     };
     let result = simulate(&settings, measured.as_ref(), cancel, |progress| {
-        eprintln!(
-            "Codewords {}/{} · {} ms",
-            progress.completed_codewords, progress.requested_codewords, progress.elapsed_ms
+        log::debug!(
+            "simulation-progress completed-codewords={} requested-codewords={} elapsed-ms={}",
+            progress.completed_codewords,
+            progress.requested_codewords,
+            progress.elapsed_ms
         )
     })
     .map_err(|error| error.to_string())?;
-    write_json(&result, &arguments.output)
+    write_json(&result, &arguments.output)?;
+    log::info!("simulation-complete status={} completed-codewords={} requested-codewords={} ldpc-failures={} bch-failures={}",
+        result.status, result.completed_codewords, settings.codewords,
+        result.ldpc_detected_failures, result.bch_detected_failures);
+    Ok(())
 }

@@ -1,3 +1,6 @@
 [workspace]
 members = ["crates/ofdm", "crates/fec-codec", "crates/cli"]
 resolver = "2"
+
+[workspace.dependencies]
+log = "=0.4.35"

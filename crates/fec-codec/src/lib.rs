@@ -19,6 +19,10 @@ pub use parameters::{BCH_INPUT_BITS, LDPC_CODEWORD_BITS, LDPC_INPUT_BITS};
 
 fn binary_bits(bits: &[u8], expected: usize) -> Result<(), String> {
     if bits.len() != expected || bits.iter().any(|bit| *bit > 1) {
+        log::debug!(
+            "binary-input-rejected expected-bits={expected} actual-bits={}",
+            bits.len()
+        );
         return Err(format!("Expected exactly {expected} binary bits."));
     }
     Ok(())

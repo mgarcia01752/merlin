@@ -95,6 +95,7 @@ crates/
     ├── main.rs                Startup and exit
     ├── arguments.rs           CLI syntax
     ├── commands/              Thin operation adapters
+    ├── logging/               CLI-only stderr backend and RUST_LOG setup
     └── json_io.rs             Bounded input and safe new-file exports
 ```
 
@@ -249,6 +250,20 @@ have one owner; do not copy an LFSR into every consumer.
 The hard slicer is diagnostic: nearest constellation point with an explicit tie
 policy, symbol-error counts and data for EVM inspection. It must not silently
 replace soft LLR inputs to LDPC. Its implementation remains on the checklist.
+
+## Diagnostic logging
+
+Scientific crates use the shared `log` facade; only the CLI installs `env_logger`.
+The backend defaults to info on stderr and accepts `RUST_LOG` filters. Libraries
+keep logger ownership with the caller. Error records belong at the terminal
+application boundary, with separately suppressed failures recorded by their owner.
+Expected decoder failures/input rejection are debug diagnostics; scientific
+outcomes remain typed results. No sample/capture arrays or MACs are logged.
+
+The current retrofit covers command/JSON failure handling, simulation lifecycle,
+BCH and payload/NCP/PLC LDPC outcomes, timestamp CRC rejection and observer
+failures/budgets. Logs are separate from typed test points and cannot control
+scientific decisions or RNG draws. See [logging](development/logging.md).
 
 ## Lifecycle, validation and future interfaces
 

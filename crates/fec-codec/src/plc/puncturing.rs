@@ -29,6 +29,10 @@ pub fn puncture(mother: &[u8]) -> Result<[u8; PLC_CODEWORD_BITS], String> {
 /// Rejects wrong length or nonfinite inputs before restoration.
 pub fn restore_llrs(llrs: &[f64]) -> Result<[f64; PLC_MOTHER_BITS], String> {
     if llrs.len() != PLC_CODEWORD_BITS || llrs.iter().any(|value| !value.is_finite()) {
+        log::debug!(
+            "plc-llrs-rejected expected-llrs={PLC_CODEWORD_BITS} actual-llrs={}",
+            llrs.len()
+        );
         return Err("Expected384 finite PLC LLR values.".into());
     }
     let mut mother = [0.0; PLC_MOTHER_BITS];
