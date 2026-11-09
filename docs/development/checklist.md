@@ -68,6 +68,14 @@ Guide: [Source design](../user/simulation/source.md).
   [PRBS design](../user/simulation/prbs.md) records seed/bit order, bounds and
   the distinction between mathematical and external interoperability evidence.
 
+- [ ] **SRC-04** Add a bounded exact-byte text source beside PRBS15, with an
+  explicit bit order and cursor; preserve PRBS/noise behavior.
+- [ ] **SRC-05** Define send-once EOF, final-codeword padding and meaningful-length
+  accounting; independently compare recovered file bits and exclude padding.
+- [ ] **SRC-06** Expose source selection through shared Rust/CLI configuration;
+  test byte preservation, empty/oversized inputs, EOF, truncation and cancellation.
+  See the [source/workspace plan](features/visual-workspace/plan.md).
+
 ## Forward error correction
 
 Guide: [FEC codec](../user/fec-codec.md).
@@ -559,7 +567,16 @@ pilot/PLC probes do not mean the paired analyzers or estimator are implemented.
 - [ ] **QA-07** Native packaging and release automation after core functionality.
 - [ ] **API-01** Python bindings as a separate optional adapter, preserving the same
   scientific engine, buffer lifetimes and observation contracts.
-- [ ] **UI-01** Qt presentation after the core API is established; no duplicated DSP.
+- [ ] **UI-01** Build the planned Qt system workspace after core APIs exist:
+  clickable source/TX/channel/RX blocks with purpose, settings and stage details.
+- [ ] **UI-02** Add a role-based file panel and OS file picker; validate inputs
+  before applying them to a new run, with PRBS15/text source selection.
+- [ ] **UI-03** Present separate LDPC, BER, payload pre/post-CE, continuous/scattered
+  pilot and PLC-data/preamble analyzers with shared bounded Rust results.
+- [ ] **UI-04** Validate responsive jobs, cancellation, observation invariance and
+  dark/light readability; add user guides and actual workspace screenshots.
+  See the [starting diagram and interaction plan](features/visual-workspace/plan.md).
+  All scientific computation stays in Rust; the UI remains unimplemented.
 - [ ] **LATER-01** OFDMA architecture and implementation after downstream scope.
 - [ ] **LATER-02** Channel bonding/multi-channel simulation or FDX-specific behavior
   only under a separate explicit design and validation scope.

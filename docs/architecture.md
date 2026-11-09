@@ -60,6 +60,29 @@ presentation component and Python bindings consume the public Rust APIs;
 neither owns scientific calculations. There is no UI or binding implementation
 in this stage, and no device capture/control or network-service dependency.
 
+## Planned visual system workspace and payload selection
+
+The future Qt workspace starts from the user's system diagram: clickable
+**Source → Transmitter → Channel simulator → Receiver** blocks, a files/input
+panel, and separate LDPC, BER, payload pre/post-CE, pilot and PLC analyzers.
+Each block opens its purpose, settings, status and available stage observations;
+analyzers consume bounded existing/new Rust contracts without changing the run.
+The [workspace plan and diagram](development/features/visual-workspace/plan.md)
+record this starting layout and ownership. This is planned; no Qt UI exists yet.
+
+Plan a source choice of **PRBS15 or user-supplied text-file bytes**. The Rust source
+will preserve exact bytes, explicit bit order, meaningful lengths and independent
+recovered-data comparison. Proposed initial EOF policy is send-once with explicit
+final-codeword padding excluded from BER/output; truncated runs remain partial.
+Source/CLI integration must precede its Qt control; current PRBS behavior is
+unchanged. SRC-04..06 track this unimplemented extension.
+
+The file panel associates inputs with their processing stages. Measurement files
+continue through the current decoded-PNM JSON importer; listing multiple RxMER
+files does not implement temporal transitions. Supplied CE provides H to the
+channel and1/H to reference RX correction. The expected-data connection to BER is
+a verification path, not receiver feedback into the source.
+
 ## PNM measurement input direction
 
 Use the current `pnm-decode` JSON output from PNM Viewer Toolkit as the starting
