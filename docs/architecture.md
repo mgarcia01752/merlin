@@ -71,6 +71,12 @@ deferred under INPUT-02 in the [checklist](development/checklist.md). Existing
 scenario validation for grids, missing readings, timestamps and provenance
 continues to apply.
 
+The [PNM input guide](user/measurement-inputs/README.md) links current decoder
+fixtures and Rust-generated RxMER alternatives. The sanitized originals are kept
+locally under ignored development storage. The three demo captures share a spatial
+grid but have different timestamps; they are not contemporaneous observations.
+Fixture preparation does not implement INPUT-01 or MODEL-06.
+
 ## Modules and stage boundaries
 
 **Each distinct algorithm stage has a focused module and a directly testable typed

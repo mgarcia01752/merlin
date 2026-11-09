@@ -49,6 +49,8 @@ external interoperability validation remain pending. See
 
 [Simulation design guides](docs/user/simulation/README.md) explain each simulation
 component with its own data-flow diagram and current implementation scope.
+The [PNM input guide](docs/user/measurement-inputs/README.md) links the decoded
+three-capture demo and synthetic RxMER variants for the planned importer.
 
 The isolated codec loop is available before involving modulation or a channel:
 

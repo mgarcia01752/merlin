@@ -1,0 +1,52 @@
+{
+  "purpose": "Sanitized demo captures; not a synchronized measurement set",
+  "upstream_repository": "https://github.com/PyPNMApps/PNM-Viewer-Toolkit",
+  "upstream_commit": "5fbd5561f3e06b73486546b5ffa520279080a5eb",
+  "decoder_version": "pnm-decode 0.3.6",
+  "sources": [
+    {
+      "binary_name": "rxmer.bin",
+      "upstream_path": "tests/fixtures/pypnm/tests/files/rxmer.bin",
+      "binary_sha256": "864ba70b0361bd8b4912b55f55e8db72dd7b319b478ce1988103979e0b19c98e",
+      "binary_bytes": 7508,
+      "decoded_json": "rxmer.json",
+      "decoded_sha256": "372138157a91c6eddb7f36b3d071ca68e72b2a2a07708443acfa71ca99884f75",
+      "capture_time": 1380970
+    },
+    {
+      "binary_name": "channel_estimation.bin",
+      "upstream_path": "tests/fixtures/pypnm/tests/files/channel_estimation.bin",
+      "binary_sha256": "e06997c3fcc35456ebbec5d03933814f3aebb1e412afe68989850e8c506103e5",
+      "binary_bytes": 29948,
+      "decoded_json": "channel_estimation.json",
+      "decoded_sha256": "f6542b2d1a41904e742f8660e68b53340468d7499cb6857ae4d7cd0f78480f82",
+      "capture_time": 1391100
+    },
+    {
+      "binary_name": "modulation_profile.bin",
+      "upstream_path": "tests/fixtures/pypnm/tests/files/modulation_profile.bin",
+      "binary_sha256": "bfefd266de98685fe158630c5f98c4a7a57cb22feb55bcdd92012c06135c824a",
+      "binary_bytes": 1881,
+      "decoded_json": "modulation_profile.json",
+      "decoded_sha256": "3ffcff04f7a720b5941d9950883062930170c54f2516539b14238e1869f21f3e",
+      "capture_time": 1466967
+    }
+  ],
+  "decoder_executable_sha256": "88d41125ec8e1a9d17258b9599d962d0b40540504841a445a436d30eb94761ce",
+  "variants": [
+    {
+      "decoded_json": "rxmer-reduced-6db.json",
+      "base": "rxmer.json",
+      "synthetic": true,
+      "operation": "Subtract 6 dB from every non-null reading",
+      "sha256": "9a7d80eb6cd99a214a3715626a31684deb2385b28e0c5b3a8ffad12424b179d2"
+    },
+    {
+      "decoded_json": "rxmer-center-notch-12db.json",
+      "base": "rxmer.json",
+      "synthetic": true,
+      "operation": "Subtract 12 dB from non-null readings at offsets [3366, 4114)",
+      "sha256": "ed21a363875d68e55202fe91750c330e7a00774d0b930b2f1ef56a64b63fdc37"
+    }
+  ]
+}

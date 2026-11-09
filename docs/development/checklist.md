@@ -448,6 +448,9 @@ and [the later impairment reference](impairment-reference.md).
   Keep binary decoding external and direct Rust API inputs available; preserve
   source grids, nulls, timestamps and provenance. The CLI currently requires this
   repository's scenario JSON, not raw decoder output.
+  - [x] Prepare three current decoded single-capture fixtures with provenance,
+    original local binaries and reproducible Rust-generated RxMER alternatives.
+    Document timestamp differences and retain the parent importer TODO.
 - [ ] **INPUT-02** Later: formalize the decoded-JSON compatibility contract with
   schema versions, verified PNM Viewer Toolkit versions, compatibility fixtures
   and explicit rejection of unsupported revisions. Begin INPUT-01 with the current

@@ -66,3 +66,8 @@ required-features = ["simulation"]
 [[example]]
 name = "channel_run"
 required-features = ["simulation"]
+
+[[example]]
+name = "prepare_rxmer_variants"
+path = "examples/measurement_fixtures/main.rs"
+required-features = ["simulation"]
