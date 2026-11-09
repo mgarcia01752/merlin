@@ -7,6 +7,9 @@ use crate::{error::invalid, types::ProfileId, LabError};
 use serde::Serialize;
 /// Wire pointer rank including the NULL sentinel; not a physical FFT-bin index.
 pub type NcpStartPointer = u16;
+/// Maximum active codeword starts in one8K symbol or two consecutive4K symbols.
+/// PHY I20 section8.3.4.3; terminal Z/NULL is not an active start.
+pub const MAX_CODEWORD_STARTS: usize = 10;
 /// Reserved13-bit pointer value indicating no codeword start.
 pub const NULL_POINTER: NcpStartPointer = 0x1fff;
 /// Unencoded three-byte NCP message. Flags describe wire fields, not CMTS control.
@@ -78,7 +81,7 @@ impl NcpMessage {
 }
 
 #[cfg(feature = "simulation")]
-pub(super) const MAX_MESSAGES: usize = 11;
+pub(super) const MAX_MESSAGES: usize = MAX_CODEWORD_STARTS + 1;
 /// Validates one symbol's message order independently of FEC and profile state.
 ///
 /// # Arguments
@@ -117,7 +120,7 @@ pub(super) fn validate_chain(messages: &[NcpMessage]) -> Result<(), LabError> {
             active += 1;
         }
     }
-    if active > 10 {
+    if active > MAX_CODEWORD_STARTS {
         return Err(invalid("At most10 active NCP starts per symbol."));
     }
     Ok(())

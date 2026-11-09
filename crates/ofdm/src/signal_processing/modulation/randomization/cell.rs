@@ -19,7 +19,9 @@ use crate::{
 /// Call begin_symbol once per consecutive pre-interleaving symbol; phase0 is the
 /// first symbol after PLC preamble. No codeword boundary resets occur. Inputs
 /// remain unchanged; invalid calls leave all state unchanged. Each independent
-/// transmitter/receiver stream owns its own instance. PLC uses a separate design.
+/// transmitter/receiver stream owns its own instance. Cloning copies its current
+/// checkpoint for atomic candidate processing; it does not resynchronize a stream. PLC uses a separate design.
+#[derive(Clone)]
 pub struct CellRandomizer {
     lfsr: Lfsr,
     symbol_index: Option<u64>,

@@ -10,7 +10,8 @@ bin geometry and generates scattered-pilot roles. [QAM mapping](qam-mapping.md)
 and reference soft demapping are available through16K-QAM. The
 [fixed PLC signal path](plc-channel.md) now includes acquisition messages and
 physical-bin assembly. [Waveform TX and matched RX](waveform/README.md) now carry
-those signals through actual time samples; full payload orchestration remains pending.
+those signals through actual time samples; the separate [payload transport](payload-transport/README.md) now adds actual
+encoded data/NCP recovery. Duration-based job orchestration remains pending.
 [Cell time/frequency interleaving](cell-interleaving.md) and its inverse receiver
 are now available with a correctly phased pilot reference.
 [Data/NCP randomization](cell-randomizer.md) is now available as a standalone
@@ -21,7 +22,8 @@ randomization and reverse decoding as independent codeword trials.
 A [stateful symbol packer](symbol-packing.md) now carries256-QAM codewords
 across pre-interleaving plans with NCP reservations. The [NCP codec](ncp.md)
 now provides actual control FEC, CRC and receiver boundary discovery.
-Production payload/NCP waveform integration remains pending. The existing CLI remains the
+Production fixed-profile payload/NCP waveform transport is now available
+separately. The existing CLI remains the
 separate16-QAM coding experiment.
 
 ## Transmission flow
@@ -91,7 +93,8 @@ continuous/scattered pilots and NCP allocation. Do not assign all192MHz/spacing
 carriers to payload. Physical layout inputs are now explicit; NCP transport still
 uses the [packer](symbol-packing.md) and [cell interleavers](cell-interleaving.md);
 bounded pilot/PLC waveform generation and reception are implemented separately;
-full payload/NCP waveform transport remains pending.
+actual fixed-profile payload/NCP waveform transport is implemented in the
+separate [payload guide](payload-transport/README.md).
 
 ## Configurable prefix, constant per run
 
@@ -153,6 +156,10 @@ S=\left\lfloor\frac{F_s}{N+N_{CP}}\right\rfloor,\qquad
 R=F_s-S(N+N_{CP}).
 $$
 
+The existing timing helper covers exactly one second. The future runner will
+accept a configurable duration with one second as its initial default, retaining
+stream state across longer observations.
+
 The default gives **23,529 complete symbol periods**, each **42.5µs**, and
 **3,584 unused sample ticks (17.5µs)**. Observation is exactly one second; only
 whole symbol periods within it are scheduled. This is simulated time, independent
@@ -207,6 +214,7 @@ and [NCP encoding/decoding](ncp.md) are now available separately.
 [Cell interleaving](cell-interleaving.md) and the inverse pilot reference are
 implemented as well. Separate [pilot generators](pilot-signals.md) now provide
 signs and power. PLC/physical-bin assembly and bounded noiseless TX/RX waveform integration
-are now available. Remaining stages include production data/NCP waveform
-orchestration, nonideal acquisition and the full one-second noiseless runner.
+are now available. Production fixed-profile data/NCP transport is also implemented. Remaining
+stages include PRBS, nonideal acquisition and the configurable-duration runner
+with an initial one-second default.
 The timing and packing tests do not establish full channel recovery.

@@ -1,8 +1,8 @@
 # Simulation design guide
 
-The five folders under `crates/ofdm/src/simulation/` organize distinct parts of
+The component folders under `crates/ofdm/src/simulation/` organize distinct parts of
 an experiment. They are modules with different responsibilities, rather than
-five copies of the simulator. Root files coordinate the existing CLI experiment.
+copies of the simulator. Root files coordinate the existing CLI experiment.
 
 Start with the component you want to understand:
 
@@ -13,6 +13,7 @@ Start with the component you want to understand:
 | `pilots/` | [Pilot signals](pilots.md) | Compose continuous/scattered reference signals for a physical symbol |
 | `plc/` | [PLC transmission and reception](plc.md) | Recover actual PLC messages and build receiver-owned configuration |
 | `waveform/` | [Waveform TX/channel/RX](../waveform/README.md) | Separate sample-domain stages, known-reference receive and bounded actual PLC verification |
+| `payload/` | [Actual payload/NCP transport](../payload-transport/README.md) | Continuous TX/RX, received configuration, bounded recovery and waveform proof |
 | `test_points/` | [Stage observations](test-points.md) | Inspect selected intermediate data without changing the experiment |
 | `config.rs`, `runner.rs`, `results.rs` | [Experiment runner](runner.md) | Validate limits, run the existing16-QAM trials and collect outcomes |
 
@@ -28,9 +29,9 @@ flowchart TB
     LOOP --> RESULTS
     PILOTS["pilots: continuous/scattered signals"] --> GRID["Physical frequency grid"]
     PLC["plc: configuration packets and PLC signals"] --> GRID
-    CELLS["Supplied interleaved data/NCP cells"] --> GRID
+    CELLS["payload: actual encoded data/NCP transport"] --> GRID
     GRID --> WAVE["Waveform TX → unity channel → matched RX"]
-    WAVE -.-> RUN["Planned: full one-second payload runner"]
+    WAVE -.-> FUTURE["Planned: configurable-duration payload runner"]
     PILOTS -.-> POINTS["test_points: available producers only"]
     PLC -.-> POINTS
     GRID -.-> POINTS
@@ -39,9 +40,11 @@ flowchart TB
 The solid arrows describe implemented paths. The root runner does not yet use
 the pilot/PLC physical grid; these paths currently meet in dedicated examples
 and tests. Its progress notifications are separate from common stage observations;
-common producers are implemented for pilots, PLC transmit stages and physical bins.
+common producers cover pilots, PLC, physical bins, waveform TX/RX and actual
+payload/NCP boundaries.
 The bounded waveform reference experiment is implemented; the full one-second
-payload runner remains planned. The root experiment's source
+payload runner remains planned. The separate payload verifier additionally
+recovers actual encoded data/NCP using PLC-derived settings. The root experiment's source
 and the independent coding loop are not one continuous OFDM transmission.
 
 For the complete planned system, use the [architecture](../../architecture.md)

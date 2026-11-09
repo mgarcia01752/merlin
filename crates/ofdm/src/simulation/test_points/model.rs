@@ -69,6 +69,26 @@ pub enum TestPointId {
     RxPilots,
     #[serde(rename = "rx.reduced.iq")]
     RxReduced,
+    #[serde(rename = "tx.payload.ldpc")]
+    PayloadCoded,
+    #[serde(rename = "tx.payload.labels")]
+    PayloadLabels,
+    #[serde(rename = "tx.cells.mapped")]
+    PayloadMapped,
+    #[serde(rename = "tx.cells.interleaved")]
+    PayloadInterleaved,
+    #[serde(rename = "rx.cells.restored")]
+    PayloadRestored,
+    #[serde(rename = "rx.ncp.llrs")]
+    NcpSoft,
+    #[serde(rename = "rx.ncp.accepted")]
+    NcpAccepted,
+    #[serde(rename = "rx.data.llrs")]
+    DataSoft,
+    #[serde(rename = "rx.bits.inverse")]
+    PayloadLdpcInput,
+    #[serde(rename = "rx.payload.bits")]
+    PayloadDecoded,
 }
 impl TestPointId {
     /// Returns the direction registered for this stage.
@@ -92,7 +112,11 @@ impl TestPointId {
             | Self::TxPrefix
             | Self::TxWindow
             | Self::TxOverlap
-            | Self::ChannelInput => SignalDirection::Transmit,
+            | Self::ChannelInput
+            | Self::PayloadCoded
+            | Self::PayloadLabels
+            | Self::PayloadMapped
+            | Self::PayloadInterleaved => SignalDirection::Transmit,
             Self::ChannelOutput
             | Self::RxFramed
             | Self::RxUseful
@@ -100,7 +124,13 @@ impl TestPointId {
             | Self::RxEqualized
             | Self::RxPlc
             | Self::RxPilots
-            | Self::RxReduced => SignalDirection::Receive,
+            | Self::RxReduced
+            | Self::PayloadRestored
+            | Self::NcpSoft
+            | Self::NcpAccepted
+            | Self::DataSoft
+            | Self::PayloadLdpcInput
+            | Self::PayloadDecoded => SignalDirection::Receive,
         }
     }
 }
@@ -127,10 +157,12 @@ pub enum SignalDomain {
     ReducedCarrier,
     CodewordBit,
     MessageByte,
+    ControlMessage,
     CodewordCell,
     PlcCell,
     TimeSample,
     Parameter,
+    CellBit,
 }
 /// Explicit amplitude reference, never an inferred absolute RF power level.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize)]
@@ -148,6 +180,7 @@ pub enum ProbeUnits {
     NormalizedIq,
     TypedRecord,
     QamLabel,
+    LogLikelihood,
 }
 /// Full PLC block geometry; event element_start/shape identify a selected flat window.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -201,6 +234,13 @@ pub struct WaveformProbeGrid {
     pub geometry: crate::signal_processing::waveform::WaveformGeometry,
     pub sample_rate_hz: crate::types::FrequencyHz,
 }
+/// Complete cell-domain geometry and explicit synchronized-session origin.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+pub struct CellProbeGrid {
+    pub settings: crate::signal_processing::interleaving::InterleaverSettings,
+    pub origin_symbol: u64,
+    pub ncp_modulation: crate::transmission::packing::NcpModulation,
+}
 /// Caller-assigned run/config identities and optional stage-specific time metadata.
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct ProbeContext {
@@ -218,6 +258,7 @@ pub struct ProbeContext {
     pub plc_grid: Option<PlcProbeGrid>,
     pub physical_grid: Option<PhysicalProbeGrid>,
     pub waveform_grid: Option<WaveformProbeGrid>,
+    pub cell_grid: Option<CellProbeGrid>,
 }
 impl ProbeContext {
     /// Creates run metadata with explicitly unknown time/profile fields.
@@ -251,6 +292,7 @@ impl ProbeContext {
             plc_grid: None,
             physical_grid: None,
             waveform_grid: None,
+            cell_grid: None,
         };
         result.validate()?;
         Ok(result)
@@ -281,6 +323,15 @@ impl ProbeContext {
         }) {
             return Err(invalid("Waveform probes require the fixed sample clock."));
         }
+        if self
+            .cell_grid
+            .as_ref()
+            .is_some_and(|grid| grid.origin_symbol % PLC_FRAME_SYMBOLS != 0)
+        {
+            return Err(invalid(
+                "Cell probe session origin must align with PLC phase0.",
+            ));
+        }
         Ok(())
     }
 }
@@ -296,6 +347,12 @@ pub enum ProbeData<'event> {
     Iq(&'event [IqPair]),
     OptionalIq(&'event [Option<IqPair>]),
     ReceivedPilots(&'event [crate::signal_processing::receiver::extraction::ReceivedPilot]),
+    QamLabels(&'event [crate::signal_processing::modulation::SymbolLabel]),
+    TransportCells(&'event [Option<crate::transmission::symbols::TransportCell>]),
+    NcpSoft(&'event [crate::signal_processing::receiver::payload::SoftNcpCell]),
+    DataSoft(&'event [crate::signal_processing::receiver::payload::SoftDataCell]),
+    NcpMessages(&'event [crate::transmission::ncp::NcpMessage]),
+    Llrs(&'event [f64]),
 }
 impl ProbeData<'_> {
     /// Returns the number of selectable values, counting a power record as one.
@@ -304,6 +361,12 @@ impl ProbeData<'_> {
     pub fn len(self) -> usize {
         match self {
             Self::Bits(data) => data.len(),
+            Self::Llrs(data) => data.len(),
+            Self::NcpMessages(data) => data.len(),
+            Self::DataSoft(data) => data.len(),
+            Self::NcpSoft(data) => data.len(),
+            Self::TransportCells(data) => data.len(),
+            Self::QamLabels(data) => data.len(),
             Self::Pilots(data) => data.len(),
             Self::ReceivedPilots(data) => data.len(),
             Self::Power(_) => 1,
@@ -325,6 +388,10 @@ impl ProbeData<'_> {
     pub(super) fn units(self) -> ProbeUnits {
         match self {
             Self::Bits(_) => ProbeUnits::Binary,
+            Self::QamLabels(_) => ProbeUnits::QamLabel,
+            Self::TransportCells(_) => ProbeUnits::NormalizedIq,
+            Self::NcpSoft(_) | Self::DataSoft(_) | Self::NcpMessages(_) => ProbeUnits::TypedRecord,
+            Self::Llrs(_) => ProbeUnits::LogLikelihood,
             Self::Pilots(_) | Self::ReceivedPilots(_) => ProbeUnits::NormalizedIq,
             Self::Power(_) => ProbeUnits::TypedRecord,
             Self::Labels(_) => ProbeUnits::QamLabel,
@@ -341,6 +408,12 @@ impl ProbeData<'_> {
     pub(super) fn window(self, start: usize, end: usize) -> Self {
         match self {
             Self::Bits(data) => Self::Bits(&data[start..end]),
+            Self::Llrs(data) => Self::Llrs(&data[start..end]),
+            Self::NcpMessages(data) => Self::NcpMessages(&data[start..end]),
+            Self::DataSoft(data) => Self::DataSoft(&data[start..end]),
+            Self::NcpSoft(data) => Self::NcpSoft(&data[start..end]),
+            Self::TransportCells(data) => Self::TransportCells(&data[start..end]),
+            Self::QamLabels(data) => Self::QamLabels(&data[start..end]),
             Self::Pilots(data) => Self::Pilots(&data[start..end]),
             Self::ReceivedPilots(data) => Self::ReceivedPilots(&data[start..end]),
             Self::Power(data) => Self::Power(data),

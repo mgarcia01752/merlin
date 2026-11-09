@@ -312,6 +312,56 @@ fn validate_data(
                 && context.physical_grid.is_some()
                 && iq.iter().flatten().flatten().all(|value| value.is_finite())
         }
+        (
+            TestPointId::PayloadCoded | TestPointId::PayloadDecoded,
+            SignalDomain::CodewordBit,
+            ProbeData::Bits(bits),
+        ) => context.cell_grid.is_some() && bits.iter().all(|bit| *bit <= 1),
+        (TestPointId::PayloadLabels, SignalDomain::CodewordCell, ProbeData::QamLabels(labels)) => {
+            context.cell_grid.is_some() && labels.iter().all(|label| *label < 256)
+        }
+        (
+            TestPointId::PayloadMapped
+            | TestPointId::PayloadInterleaved
+            | TestPointId::PayloadRestored,
+            SignalDomain::ReducedCarrier,
+            ProbeData::TransportCells(cells),
+        ) => {
+            context.cell_grid.is_some()
+                && cells.iter().flatten().all(|cell| match cell {
+                    crate::transmission::symbols::TransportCell::PilotPlaceholder => true,
+                    crate::transmission::symbols::TransportCell::Sample(point) => {
+                        point.iter().all(|value| value.is_finite())
+                    }
+                })
+        }
+        (TestPointId::NcpSoft, SignalDomain::CellBit, ProbeData::NcpSoft(cells)) => {
+            context.cell_grid.as_ref().is_some_and(|grid| {
+                cells.iter().all(|cell| {
+                    cell.data_position < grid.settings.cells()
+                        && cell.llrs.len() == grid.ncp_modulation.order().ilog2() as usize
+                        && cell.llrs.iter().all(|value| value.is_finite())
+                })
+            })
+        }
+        (TestPointId::DataSoft, SignalDomain::CellBit, ProbeData::DataSoft(cells)) => {
+            context.cell_grid.as_ref().is_some_and(|grid| {
+                cells.iter().all(|cell| {
+                    cell.data_position < grid.settings.cells()
+                        && cell.llrs.iter().all(|value| value.is_finite())
+                })
+            })
+        }
+        (
+            TestPointId::NcpAccepted,
+            SignalDomain::ControlMessage,
+            ProbeData::NcpMessages(messages),
+        ) => {
+            context.cell_grid.is_some() && messages.iter().all(|message| message.to_bytes().is_ok())
+        }
+        (TestPointId::PayloadLdpcInput, SignalDomain::CodewordBit, ProbeData::Llrs(llrs)) => {
+            context.cell_grid.is_some() && llrs.iter().all(|value| value.is_finite())
+        }
         _ => false,
     };
     if !valid {

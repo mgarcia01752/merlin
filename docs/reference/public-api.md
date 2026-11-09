@@ -27,6 +27,10 @@ component will adapt inputs and results without duplicating scientific logic.
 | `signal_processing::channel::reference::NoiselessChannel` | Unity sample transfer with preserved indices and explicit TX/RX planes |
 | `simulation::waveform::{WaveformTransmitter,WaveformReceiver}` | Separate state owners and directly inspectable bounded TX/RX results |
 | `simulation::waveform::{observation,reference}` | Thirteen bounded stage producers and shared short actual-PLC waveform verifier; no one-second payload-run claim |
+| `transmission::symbols::{assemble_packed,TransportCell}` | Actual randomized data/NCP/BPSK assembly; diagnostic TX identities excluded from transported values |
+| `signal_processing::receiver::payload` | Received-profile checks, independent control hypotheses, bounded collector and source decoder; simulation feature required |
+| `simulation::payload::{PayloadTransmitter,PayloadReceiver}` | Continuous fixed-profile state owners; live acquired readiness, source/channel indices and explicit startup/drain |
+| `simulation::payload::{observation,reference}` | Ten bounded TX/RX producers and actual encoded-payload waveform verifier with post-decode truth comparison |
 | `simulation::plc::observation` | Bounded PLC and physical frequency-grid observations |
 | `simulation::plc::PlcInterleavingStages` | Immutable coded/interleaved stage outputs and bounded optional label observations |
 | `fec_codec::plc::{PlcFecCodec, PlcBlockResult, puncturing}` | Separate PLC mother/punctured LDPC, restored LLRs and actual decoder iterations |

@@ -133,6 +133,6 @@ carrier, including the final carrier before the next symbol; it must not use thi
 data/NCP instance. PLC preamble randomization is prohibited. No actual NCP message
 is created by this API; the separate [NCP codec](ncp.md) creates messages.
 The existing16-QAM CLI experiment remains at its earlier
-coding boundary; this module is tested independently and is not yet wired into
-a full256-QAM channel. See [transmission scope](transmission.md) and
+coding boundary. The separate [payload transport](payload-transport/README.md)
+now wires this module into fixed256-QAM TX/RX with actual waveform recovery. See [transmission scope](transmission.md) and
 [QAM mapping](qam-mapping.md).

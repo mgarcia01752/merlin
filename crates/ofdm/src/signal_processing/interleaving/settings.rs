@@ -11,7 +11,7 @@ pub enum InterleaverDirection {
     Receive,
 }
 /// Immutable validated settings; no physical PLC/CP/excluded bins in this domain.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
 pub struct InterleaverSettings {
     spacing: SubcarrierSpacing,
     cells: usize,

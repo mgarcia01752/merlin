@@ -20,7 +20,7 @@ const CONTINUOUS_PILOT: u8 = 1;
 const EXCLUDED: u8 = 16;
 const PLC: u8 = 20;
 /// Receiver-owned physical settings reconstructed solely from received OCD TLVs.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct ReceivedChannel {
     transmission: TransmissionSettings,
     layout: CarrierLayoutSettings,

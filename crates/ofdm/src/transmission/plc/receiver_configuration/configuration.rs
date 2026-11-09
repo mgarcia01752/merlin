@@ -17,7 +17,7 @@ use crate::{
 };
 use serde::Serialize;
 /// Validated fixed receiver configuration. Construction is private to the admission gate.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct ReceiverConfiguration {
     channel_id: ChannelId,
     source_mac: MacAddress,

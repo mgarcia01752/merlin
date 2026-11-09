@@ -19,13 +19,13 @@ pub type DataPosition = u16;
 /// Fixed cell count of the currently supported short8/9 uniform256-QAM word.
 pub const QAM256_CODEWORD_CELLS: usize = 2025;
 pub(super) const MAX_QUEUED_CODEWORDS: usize = 16;
-pub(super) const MAX_ACTIVE_STARTS: usize = 10;
-pub(super) const MAX_NCP_ENTRIES: usize = 11;
+pub(super) use crate::transmission::ncp::message::MAX_CODEWORD_STARTS as MAX_ACTIVE_STARTS;
+pub(super) const MAX_NCP_ENTRIES: usize = MAX_ACTIVE_STARTS + 1;
 const NCP_ENCODED_BITS: usize = 48;
 const MAX_PROFILE_ID: ProfileId = 15;
 
 /// Uniform positive-bit-loaded NCP profile; no zero-loaded NCP cells in this mode.
-#[derive(Debug, Clone, Copy, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum NcpModulation {
     Qpsk,

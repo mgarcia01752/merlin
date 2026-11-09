@@ -35,7 +35,7 @@ Every new algorithm gets a focused module, typed output and independent tests.
 Stateful stages own their state; runners only connect stages. Direct stage outputs
 remain usable independently of the observer. ARCH-04 currently registers the four
 pilot stages, seven PLC stages, physical bins and thirteen waveform TX/channel/RX
-boundaries. ARCH-05 has bounded stage/element/symbol selection; adapter export
+boundaries plus ten payload/NCP TX/RX producers. ARCH-05 has bounded stage/element/symbol selection; adapter export
 remains TODO. Pilot/PLC/waveform observation invariance is tested; ARCH-06 still needs
 coverage of stateful/RNG-driven stages as their producers are added.
 
@@ -112,10 +112,13 @@ Guide: [NCP signaling](../user/ncp.md).
 - [x] **INT-03** Physical pilot-reference alignment over the complete128-symbol cycle.
 - [x] **CELL-01** Integration tests recovering real NCP and payloads at both spacings,
   maximum time depth and the randomizer reset, with zero payload bit errors.
-- [ ] **CELL-02** Promote test-only data/NCP/filler assembly and receive orchestration
+- [x] **CELL-02** Promote test-only data/NCP/filler assembly and receive orchestration
   into reusable production modules with selected test points.
 
-These checked items establish cell transport, not an RF waveform. Guides:
+CELL-02 now supplies reusable assembly, TX/RX stream owners, received-configuration
+checks, NCP hypotheses and bounded payload collection. Its
+[actual payload waveform proof](../user/payload-transport/reference-experiment.md)
+adds sample-domain recovery; the earlier CELL-01 fixture remains a cell-only test. Guides:
 [transmission](../user/transmission.md), [layout](../user/carrier-layout.md),
 [cell interleaving](../user/cell-interleaving.md).
 
@@ -134,8 +137,9 @@ The [complete fixed PLC path](../user/plc-channel.md) now includes acquisition
 packets, repetition/segmentation, preamble, mapping, physical-bin assembly and
 bounded observations. **RX-CONFIG-01** now builds receiver-owned configuration
 from those decoded messages. The first waveform TX/channel/RX milestone is now
-implemented below. The next noiseless integration priority is **CELL-02** and
-**WAVE-RX-06**, preparing production data/NCP transport for the RUN group.
+implemented below. **CELL-02 / WAVE-RX-06** now add actual fixed256-QAM
+payload/NCP waveform transport. The next priority is **SRC-02 / SRC-03: PRBS**
+with independent vectors, followed by the configurable-duration RUN group.
 
 - [x] **PLC-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
@@ -202,8 +206,8 @@ received settings and expose a complete immutable snapshot behind a readiness
 gate. The acquisition composition receives actual PLC I/Q and messages; consumers
 can build physical/pilot/interleaver settings from received data alone. Tests cover
 all descriptor orders, independent counters, missing/corrupt/conflicting input,
-profile precedence and multi-frame transport. Dynamic activation and full data/NCP
-receive orchestration remain under NCP-03/WAVE-RX-06. See the
+profile precedence and multi-frame transport. Fixed payload recovery now consumes
+these settings under WAVE-RX-06; dynamic activation remains NCP-03. See the
 [receiver configuration design](../user/receiver-configuration/README.md).
 
 ## Waveform direction and completion scope
@@ -228,9 +232,9 @@ The first noiseless milestone now includes TX stages, their matched RX
 primitives, the unity channel, known-reference framing/extraction, bounded
 observations and actual PLC waveform integration. Each completed item links
 to its subsystem guide in the [waveform index](../user/waveform/README.md).
-Nonideal synchronization (WAVE-RX-05) and complete production data/NCP recovery
-(WAVE-RX-06) remain explicit later work; the initial milestone must not claim
-these are complete. The one-second runner has its own RUN group below.
+Nonideal synchronization (WAVE-RX-05) remains later work. WAVE-RX-06 now
+implements production transport for the explicitly supported fixed256-QAM
+subset; it does not imply dynamic or every-order payload support. The one-second runner has its own RUN group below.
 
 ## Waveform transmitter: IFFT
 
@@ -313,14 +317,22 @@ Design: [RX extraction](../user/waveform/rx-extraction.md) and [equalization](..
 
 ## Waveform receiver: nonideal acquisition and payload recovery
 
-Design: [Planned receive flow](../architecture.md#transmission-and-receiver-flow).
+Design: [Known-reference waveform](../user/waveform/README.md) and
+[fixed payload transport](../user/payload-transport/README.md).
 
 - [ ] **WAVE-RX-05** Independently verify synchronization/channel estimation for
   nonideal operation. This extends the known-reference receiver; it must not be
   marked complete from noiseless tests with supplied timing/channel knowledge.
-- [ ] **WAVE-RX-06** Connect physical data extraction, inverse cell interleaving,
+- [x] **WAVE-RX-06** Connect physical data extraction, inverse cell interleaving,
   source-phase inverse randomization, NCP discovery and data decoding in production.
   Use received configuration; preserve the separate control/payload codec paths.
+  Fixed uniform256-QAM ProfileA and positive uniform QPSK/16-QAM/64-QAM NCP
+  now have live readiness checks, source/channel identities, explicit startup
+  filler and M-1 drain, terminal rejection diagnostics and ten bounded test points.
+  Tests include actual PLC acquisition then real sample-domain payload recovery
+  at both spacings, all three NCP orders in cell transport, reset-crossing words,
+  CRC/profile/continuation errors and observer invariance. Dynamic switching,
+  mixed/zero DPD loading and blind acquisition remain outside this fixed subset.
 
 ## Waveform validation: observations
 
@@ -346,15 +358,19 @@ partial/offset stream framing, rejection invariance and actual two-frame PLC
 recovery. Integration exercises a192MHz configured cap and wide active grid
 with synthetic exclusions, complete FFT-bin comparisons, actual decoder
 iterations, zero information-bit errors and observation invariance. This is
-reference PLC/pilot verification; full payload/NCP recovery and one-second
-lifecycle are not checked by those results. [Evidence](../reference/waveform-evidence.md).
+reference PLC/pilot verification. The separate CELL-02/WAVE-RX-06 proof adds
+actual encoded payload/NCP recovery; configurable-duration lifecycle remains
+RUN work, not an inference from either bounded example. [Evidence](../reference/waveform-evidence.md).
 
-## One-second reference run
+## Configurable-duration reference run
 
 - [ ] **RUN-01** Separate transmitter, receiver and runner modules; avoid moving
   numerical algorithms into a large orchestration function.
-- [ ] **RUN-02** Stream one second of a single fixed channel using integer sample
-  timing, with separate warm-up, observation and drain intervals.
+- [ ] **RUN-02** Stream a user-configured duration of one fixed channel, initially
+  defaulting to one simulated second. Use checked64-bit sample accounting and
+  bounded buffers for longer runs; never reset stage state at second boundaries.
+  Keep warm-up, observation and drain intervals separate. The current
+  one_second_timing helper remains fixed until extended under this item.
 - [ ] **RUN-03** Preserve partial codewords, interleaver history, PLC phase and
   sequence state across buffer boundaries; no per-codeword state resets.
 - [ ] **RUN-04** Use source-symbol/sample identities for comparison and report
@@ -366,7 +382,7 @@ lifecycle are not checked by those results. [Evidence](../reference/waveform-evi
 - [ ] **RUN-07** Expose the channel runner through one public Rust API and a thin
   CLI command with shared typed JSON results; preserve the earlier coding mode.
 - [ ] **RUN-08** Provide a reproducible PRBS-based example, math, assumptions and
-  CLI/user documentation for the actual one-second path.
+  CLI/user documentation for the duration-based path and its initial one-second default.
 
 ## Impairments and measurement-driven operation
 

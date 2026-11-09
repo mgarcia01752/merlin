@@ -14,7 +14,7 @@ use serde::Serialize;
 const ASSIGNMENT_TLV: u8 = 5;
 const DEFAULT_FLAG: u8 = 0x20;
 /// Effective received physical-bin loading. Protected OCD bins remain None.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct ReceivedProfile {
     profile_id: ProfileId,
     change_count: u8,

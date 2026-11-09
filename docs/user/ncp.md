@@ -168,10 +168,10 @@ not packer codeword IDs, offsets or reservation counts. Its pilot mask and small
 interleaver domain are synthetic; this is not external DOCSIS interoperability
 or full RF-channel validation.
 
-Separate [pilot generators](pilot-signals.md) are now implemented. Major
-remaining stages are PLC and physical-bin assembly;
-IFFT/prefix/windowing and inverse receiver;
-and streamed one-second noiseless integration with warm-up and drain.
+The separate [production payload transport](payload-transport/README.md) now
+connects this codec to actual continuous TX/RX and sample-domain recovery using
+PLC-derived configuration. The isolated NCP example remains unchanged. Dynamic
+activation, PRBS and the configurable-duration runner remain later work.
 
 Evidence: CM-SP-PHYv3.1-I20-230419 §7.4.3.2, PDF56; Table19, PDF91;
 §7.5.14.1–5 and Figures71–79, PDF159–164; §8.3.4.1–3 and Figure92/Table53,

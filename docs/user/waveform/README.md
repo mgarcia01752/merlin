@@ -44,8 +44,8 @@ The initial receiver uses explicit known timing, layout, amplitude reference and
 unity channel response. It does not discover these through blind acquisition.
 Actual PLC messages recovered from samples feed the existing descriptor admission
 and readiness owner. Data bins in the bounded example are deterministic 256-QAM
-reference cells; they are not a complete encoded payload/NCP experiment. Nonideal
-synchronization, production data/NCP composition and the one-second runner remain
-separate unchecked work in the [checklist](../../development/checklist.md).
+reference cells; the separate [payload waveform experiment](../payload-transport/reference-experiment.md)
+now carries actual encoded payload/NCP using acquired PLC configuration. Nonideal
+synchronization and the configurable-duration runner remain unchecked in the [checklist](../../development/checklist.md).
 
 Authority and implementation mapping: [waveform evidence](../../reference/waveform-evidence.md).

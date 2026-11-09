@@ -64,6 +64,16 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
   deterministic reference data cells do not establish encoded payload/NCP transport.
   Keep known-reference timing/equalization distinct from blind acquisition and
   future full-channel production-runner validation.
+- For production payload/NCP transport, acquire receiver settings through the
+  live PLC gate rather than TX plans. Exercise both spacings, all supported NCP
+  orders, maximum depth, reset-crossing words and words completed during drain.
+  Verify fixed-profile rejection, valid-FEC wrong-CRC, orphan continuation,
+  premature start/filler, queue bounds and retained pending/complete outcomes.
+  Transport samples and pilot roles only; TX codeword IDs, reservation lengths
+  and source bits must not become hidden RX input. Document explicit startup
+  filler and source/channel origins. Prove failed/exhausted probes preserve
+  actual future recovery, and retain received soft-cell rank metadata. Long-run
+  duration must not introduce per-second resets or unbounded waveform buffers.
 - For cell interleavers, verify exact index/delay vectors, all supported depths,
   partial columns and dummy padding, PLC-aligned pilot references, startup/drain
   and source-symbol phase at inverse randomizer resets. Never count None history

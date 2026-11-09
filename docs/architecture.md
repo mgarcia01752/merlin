@@ -23,7 +23,8 @@ Build a standalone, DOCSIS-focused Rust scientific engine with two modes:
 
 - **Ideal/reference:** known payload, fixed single downstream OFDM channel up to
   192 MHz, initially uniform 256-QAM, noiseless recovery first, then controlled
-  impairments. The target observation is one second, with separate warm-up/drain.
+  impairments. The initial observation default is one second, with configurable longer
+  durations and separate warm-up/drain in the planned runner.
 - **Measurement-driven:** condition a simulation on supplied RxMER, downstream
   channel estimates and an applied modulation profile. Preserve exact grids,
   missing readings, timestamps and provenance. Establish reference planes before
@@ -79,6 +80,7 @@ crates/
 │   │   ├── layout/            Physical roles and inverse pilot reference
 │   │   ├── frame/             Protected physical frequency-bin assembly
 │   │   ├── packing/           Bounded codeword queue and symbol plans
+│   │   ├── symbols/           Actual NCP/data/filler assembly and typed cell values
 │   │   ├── ncp/               Messages, control mapping and field CRC acceptance
 │   │   └── plc/               Acquisition/messages, coding, interleaving, masks and signals
 │   │       └── receiver_configuration/  Received channel/profiles, collection and readiness
@@ -88,6 +90,7 @@ crates/
 │   │   ├── pilots/            Shared sequence, power and separate CP/SP signals
 │   │   ├── waveform/          TX IFFT/prefix/window/overlap and RX FFT/prefix primitives
 │   │   ├── receiver/          Known timing, reference equalization and extraction
+│   │   │   └── payload/       Acquired configuration, NCP hypotheses and bounded word recovery
 │   │   ├── channel/           Unity time-domain reference transfer
 │   │   ├── noise/             AWGN and measured residual-noise processing
 │   │   └── ...                Analytical bit-loading/capacity helpers
@@ -96,6 +99,7 @@ crates/
 │   │   ├── pilots/            Typed stage composition and optional observation
 │   │   ├── plc/               PLC composition, acquisition and optional observation
 │   │   ├── waveform/          Separate TX/RX, bounded reference experiment and probes
+│   │   ├── payload/           Continuous payload TX/RX, probes and actual waveform proof
 │   │   ├── test_points/       Borrowed events, selection and finite dispatch budgets
 │   │   ├── coding_loop/       Independent 256-QAM codeword trials
 │   │   ├── runner.rs          Existing 16-QAM trial orchestration
@@ -147,7 +151,7 @@ flowchart TB
     SOURCE -->|"Independent truth"| TRUTH
     NCPRX -.-> SLICER["Optional hard slicer · profile-selected data I/Q"]
     classDef planned stroke-dasharray: 5 5;
-    class CELLS,SLICER planned;
+    class SLICER planned;
 ```
 
 The NCP and payload receiver paths use the appropriate separate demapping
@@ -196,13 +200,16 @@ obtain data through an existing stage API.
 | `rx.plc.iq`, `rx.pilots.iq`, `rx.reduced.iq` | RX separated protected roles and data/scattered domain | Direct results and bounded observer; sparse pilots retain physical bins |
 | `rx.timing`, `rx.channel.estimate` | Future estimated timing/channel state, distinct from supplied reference | TODO nonideal acquisition; not inferred from known-reference tests |
 | `rx.frequency.cells`, `rx.time.cells` | Separate inverse cell-interleaver outputs and source phase | Direct |
-| `rx.ncp.llrs`, `rx.ncp.accepted` | NCP soft inputs, accepted pointers and block iterations | Direct primitives; orchestration currently in tests |
-| `rx.data.llrs`, `rx.descrambler.llrs` | Data likelihoods before/after sign inversion | Direct primitives |
+| `rx.ncp.llrs`, `rx.ncp.accepted` | Actual soft records, CRC-accepted messages and direct block iterations | Production source decoder and bounded observer |
+| `rx.data.llrs`, `rx.descrambler.llrs` | Data likelihoods after/before sign inversion | Post-inverse soft records have production observer; raw demapper remains direct |
 | `rx.slicer.decisions` | Nearest label/reference point and distance/error vector | TODO hard slicer |
-| `rx.bits.inverse` | LLRs restored to codeword order | Direct final inverse; individual reverse stages TODO |
+| `rx.bits.inverse` | Complete word LLRs restored to codeword order | Production collector and bounded observer; individual bit-processing substeps remain TODO |
 | `rx.ldpc.bits` | Decisions, parity success and actual iteration count | Direct |
 | `rx.bch.payload` | Recovered bits, status and corrected-bit count | Direct |
-| `result.truth` | Actual bit/codeword comparisons and trial counters | Direct codec/trial results; channel-run aggregate TODO |
+| `tx.payload.ldpc`, `tx.payload.labels` | Actual enqueue-stage coding/label outputs | Bounded TX observer; queue ID is diagnostic, placement time unknown |
+| `tx.cells.mapped`, `tx.cells.interleaved`, `rx.cells.restored` | Typed cells preserving pilots and unavailable history | Production stream owners and bounded directional observer |
+| `rx.payload.bits` | Actual recovered BCH payload, independent of source truth | Production collector and bounded RX observer |
+| `result.truth` | Actual bit/codeword comparisons and trial counters | Bounded actual payload-waveform summary implemented; duration-run aggregate remains RUN work |
 
 The implemented contract provides borrowed bit/label arrays, sparse pilot records
 and a power record, with explicit metadata and finite selection budgets. See the
@@ -271,8 +278,8 @@ The [PLC channel guide](user/plc-channel.md) includes the complete flow, math,
 reproducible example, supported fixed subset and verification scope. Individual
 [coding](user/plc-coding.md), [message](user/plc-messages.md),
 [interleaving](user/plc-interleaving.md) and [randomization](user/plc-randomization.md)
-guides remain focused stage references. External interoperability and full
-production data/NCP orchestration remain pending. The separate waveform path
+guides remain focused stage references. External interoperability remains pending;
+production fixed-profile data/NCP transport is implemented separately below. The separate waveform path
 now carries these PLC/pilot signals through actual time-domain samples with
 known-reference reception; see [waveform design](user/waveform/README.md).
 
@@ -308,10 +315,9 @@ Its data plane contains deterministic256-QAM reference cells, not encoded
 payload/NCP. Tests cover both spacings with a192MHz configured cap, a wide
 active envelope and internal exclusions; the example uses a24MHz envelope.
 Neither establishes external interoperability or a one-second payload experiment.
-Nonideal acquisition (WAVE-RX-05), production data/NCP receive orchestration
-(WAVE-RX-06/CELL-02) and the full RUN group remain unchecked. The next noiseless
-integration priority is production data/NCP composition before the one-second
-runner, while keeping nonideal acquisition separate.
+CELL-02/WAVE-RX-06 now add the separate actual payload waveform path described
+below. Nonideal acquisition (WAVE-RX-05) and the full duration-based RUN group
+remain unchecked.
 
 See the [per-subsystem guides](user/waveform/README.md) and
 [pinned waveform evidence](reference/waveform-evidence.md).
@@ -323,6 +329,45 @@ received signaling after the explicit known-phase PLC bootstrap. A setting
 change starts a new configured run/session in this fixed-session model. See
 [the prefix explanation](user/transmission.md#configurable-prefix-constant-per-run).
 
+## Production fixed-profile payload transport
+
+`transmission/symbols/assembly.rs` encodes the existing packer plan's real NCP
+messages/CRC/FEC and maps continuously randomized data, NCP and BPSK filler.
+Typed cells carry samples/pilot placeholders only; outer None retains unavailable
+interleaver history. TX diagnostic IDs and reservation offsets never enter RX.
+`simulation/payload/transmitter.rs` owns separate coding, packing, assembly and
+cell-interleaving state, with a bounded queue and explicit M-1 drain.
+
+`signal_processing/receiver/payload/` separates acquired-configuration support
+checks, NCP hypotheses, the bounded pending-word collector and source decoder.
+`simulation/payload/receiver.rs` checks the live PLC gate and immutable snapshot
+on every call, inverse-interleaves actual received samples and reconstructs the
+source index from known matched-pair delay. The source decoder uses CRC-accepted
+NCP spans, independent soft hypotheses and actual LDPC/BCH results. Bad control
+closes recovery without clearing pending history or caller-owned completed words.
+
+Support is fixed uniform256-QAM ProfileA and uniform positive QPSK/16-QAM/64-QAM
+NCP. Mixed/zero DPD loading, odd selection, activation updates and tagging fail
+explicitly; dynamic switching remains NCP-03. Descriptor counts remain independent.
+The synchronized payload origin is a128-symbol boundary after PLC acquisition.
+TX deliberately emits recorded BPSK replacements for unavailable startup/drain
+history; RX suppresses only the configured M-1 warm-up, using no TX validity list.
+
+Ten bounded producers expose coding, mapped/interleaved/restored cells, accepted
+control, soft records and recovered payload. Source/channel coordinates and
+original data-position ranks stay explicit. The bounded
+`simulation/payload/reference.rs` proof acquires PLC through samples, configures
+independent payload RX, streams actual encoded payload/NCP through the waveform,
+and compares recovered words only after decoding. All three NCP orders have cell
+transport tests; both spacings additionally have actual sample-domain proof at
+maximum depth with reset-crossing words and drain completion.
+
+See the [per-subsystem design](user/payload-transport/README.md) and
+[evidence](reference/payload-transport-evidence.md). This completes CELL-02 and
+WAVE-RX-06 for the supported subset. The next priority is SRC-02/SRC-03 PRBS,
+then a configurable-duration runner with an initial one-second default. Existing
+streams carry64-bit state across arbitrary calls; no per-second reset is added.
+
 ## Planned module ownership
 
 These paths are the accepted direction for upcoming work, not existing files or
@@ -333,7 +378,6 @@ before implementation if source analysis shows a better existing owner.
 | --- | --- |
 | `signal_processing/modulation/interleaving/{parity,twist,demultiplexing}.rs` | Separate intermediate and inverse boundaries behind the existing facade |
 | `transmission/layout/additional_pilots.rs` | Specification-based additional continuous-pilot placement |
-| `transmission/symbols/assembly.rs` | Typed data/NCP/filler composition before randomization/mapping |
 | `signal_processing/receiver/estimation.rs` | WAVE-RX: independently verified nonideal synchronization/channel estimation beyond the existing known-reference receiver |
 | `signal_processing/modulation/slicing.rs` | Diagnostic hard decisions; keep soft demapping for LDPC |
 | `simulation/channel/{transmitter,receiver,runner,results}.rs` | Thin stateful orchestration and completed-result accounting |
@@ -367,8 +411,11 @@ scientific decisions or RNG draws. See [logging](development/logging.md).
 Freeze numerology, layout and profile before each run. Carry partial codewords,
 interleaver buffers and sequence phase across calls. Keep PLC and data/NCP
 randomizer states separate. The cell-interleaver pair adds M-1 symbols of delay;
-None history is not transmitted payload. Warm-up, one-second observation and
-drain need separate accounting, including complete versus unfinished words.
+None history is not transmitted payload; the physical reference uses explicit
+recorded startup/drain replacements. Warm-up, configurable observation duration
+(initially one second) and drain need separate accounting, including complete
+versus unfinished words. The existing one_second_timing helper is still fixed;
+its duration-generalized replacement belongs to RUN-02.
 
 Bound files, buffers, observations, work and decoder iterations. Preserve
 completed results on cancellation. Keep decoder success, truth errors, measured

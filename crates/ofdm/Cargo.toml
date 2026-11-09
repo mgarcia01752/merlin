@@ -56,3 +56,7 @@ required-features = ["simulation"]
 [[example]]
 name = "waveform_channel"
 required-features = ["simulation"]
+
+[[example]]
+name = "payload_waveform"
+required-features = ["simulation"]

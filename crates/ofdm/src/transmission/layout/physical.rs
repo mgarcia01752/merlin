@@ -35,7 +35,7 @@ pub enum PhysicalCarrierRole {
 ///
 /// Geometry and collisions are validated. Additional-pilot generation and full
 /// spectral/PLC-message compliance are not certified by this representation.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct CarrierLayoutSettings {
     /// Absolute frequency of PHY bin0, not an FFT-library array convention.

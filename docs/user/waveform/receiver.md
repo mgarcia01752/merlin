@@ -21,4 +21,5 @@ samples, raw bins, normalized bins and extracted domains. If later numerical
 processing fails, framing has already advanced; start a new RX session rather
 than retrying the same sample block as though it were unconsumed. Completed
 results remain independently usable when a later observation callback fails.
-Full production payload/NCP orchestration remains WAVE-RX-06.
+The separate [payload receiver](../payload-transport/receiver.md) now consumes
+these actual reduced cells under WAVE-RX-06, using the received PLC gate.

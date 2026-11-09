@@ -45,3 +45,7 @@ pilot positions are explicitly supplied as in earlier fixtures. External modem
 interoperability, encoded payload/NCP waveform delivery, a full 192MHz payload
 run, blind acquisition, impairments and one-second lifecycle remain separate
 checklist work; successful PLC recovery does not establish those behaviors.
+
+The separate [actual payload experiment](../payload-transport/reference-experiment.md)
+now adds encoded data/NCP transport through the same waveform stages. The
+original waveform-only example above deliberately retains its reference-data scope.

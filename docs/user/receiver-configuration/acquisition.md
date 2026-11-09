@@ -42,5 +42,6 @@ Integration tests send real descriptors over multiple coded/QAM PLC frames,
 observe Waiting then Ready, and construct physical/pilot/interleaver consumers
 from received configuration alone. See [the overview example](README.md) and
 [the full PLC guide](../plc-channel.md). The separate [waveform experiment](../waveform/reference-experiment.md) now
-feeds actual sample-recovered PLC cells into this component. The complete
-payload runner remains later work.
+feeds actual sample-recovered PLC cells into this component. The [payload waveform proof](../payload-transport/reference-experiment.md)
+now derives its payload receiver from this gate; the configurable-duration job
+runner remains later work.

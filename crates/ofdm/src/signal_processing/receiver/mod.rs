@@ -6,3 +6,6 @@
 pub mod equalization;
 pub mod extraction;
 pub mod timing;
+
+#[cfg(feature = "simulation")]
+pub mod payload;

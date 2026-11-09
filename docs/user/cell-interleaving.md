@@ -189,9 +189,11 @@ The test uses a 24 MHz geometry with explicit synthetic additional pilot positio
 and transports pilot placeholders, not actual pilot signals. External DOCSIS
 interoperability and full waveform validation remain outstanding.
 
-Pilot signals are available separately. Major remaining stages are PLC and
-physical-bin assembly; IFFT, prefix/windowing
-and inverse receiver; and a streamed one-second noiseless integration.
+The separate [production payload transport](payload-transport/README.md) now
+uses these verified algorithms with actual pilot/PLC signals and waveform
+samples. Its received configuration, source/channel coordinates and explicit
+startup/drain are documented per subsystem. PRBS, nonideal acquisition and
+configurable-duration orchestration remain later work.
 
 Evidence: CM-SP-PHYv3.1-I20-230419 section 7.5.6.1–3, Figures 55–58,
 PDF129–133; Appendix I sample code, PDF211–212 (informative). The original local

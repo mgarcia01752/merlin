@@ -6,8 +6,9 @@
 mod model;
 mod observer;
 pub use model::{
-    PhysicalProbeGrid, PlcProbeGrid, ProbeContext, ProbeData, ProbeEvent, ProbeUnits, RunPhase,
-    SignalDirection, SignalDomain, SignalReference, TestPointId, WaveformProbeGrid,
+    CellProbeGrid, PhysicalProbeGrid, PlcProbeGrid, ProbeContext, ProbeData, ProbeEvent,
+    ProbeUnits, RunPhase, SignalDirection, SignalDomain, SignalReference, TestPointId,
+    WaveformProbeGrid,
 };
 pub use observer::{
     ProbeConfig, ProbeObserver, ProbeOutcome, ProbeSelection, ProbeStats, TestPointProbe,
