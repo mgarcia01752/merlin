@@ -110,12 +110,13 @@ demultiplexer: its permutation differs and it splits each row into two cells.
 
 ## Public Rust APIs
 
-`BitInterleaver::new(order)` supports short8/9 uniform16or256-QAM. It owns an
-immutable permutation. `encode_labels` accepts16200 binary values and returns4050
-or2025 labels. `decode_llrs` reverses the permutation on16200 finite cell-order
-LLRs while preserving signs/magnitudes. Unsupported coding orders return
-`UnsupportedCodingMode` until padding/demultiplexing rules are verified. Their
-[QAM references](qam-mapping.md) remain independently available.
+`BitInterleaver::new(order)` now supports all ten full uniform downstream orders. It owns an
+immutable permutation. For16/256-QAM, `encode_labels` accepts16200 binary values
+and returns4050/2025 labels respectively; `decode_llrs` accepts16200 finite
+cell-order LLRs while preserving signs/magnitudes. Other full orders use their selected
+padded output-bit count; inverse processing returns16200 retained values. See
+[uniform geometry](qam-processing/uniform.md). Unsupported data orders still
+return `UnsupportedCodingMode`, and the [QAM references](qam-mapping.md) remain shared.
 
 `simulation::coding_loop::NoiselessQam256Codec` owns reusable setup. Call
 `run_block(payload, max_iterations)` with14232 binary bits and an iteration cap

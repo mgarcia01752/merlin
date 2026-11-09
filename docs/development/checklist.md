@@ -103,8 +103,8 @@ Guide: [FEC codec](../user/fec-codec.md).
     recovery, correction/failure boundaries and full-mode compatibility.
   See the [task design](features/fec-shortening/design.md),
   [validation](features/fec-shortening/validation.md) and
-  [component guides](../user/fec-shortening/README.md). Shortened bit processing,
-  QAM/NCP placement and waveform integration remain unchecked under QAM-03.
+  [component guides](../user/fec-shortening/README.md). QAM-03 now connects
+  explicit shortened words through bit processing, received NCP boundaries and waveform.
 
 ## Codeword bit processing
 
@@ -119,15 +119,25 @@ Guide: [Bit-processing flow](../user/qam256-coding-loop.md).
 Guide: [QAM mapping](../user/qam-mapping.md).
 
 - [x] **QAM-01** Embedded label-ordered mapping and max-log LLRs through16384-QAM.
-- [ ] **QAM-02** Standalone hard slicer with deterministic ties, nearest label,
+- [x] **QAM-02** Standalone hard slicer with deterministic ties, nearest label,
   reference I/Q and error/distance output; keep LDPC soft inputs unchanged.
-- [ ] **QAM-03** Complete coding/placement support beyond uniform16/256-QAM,
+- [x] **QAM-03** Complete coding/placement support beyond uniform16/256-QAM,
   including verified per-order padding, shortening and non-square rules.
+  - [x] Implement all full uniform orders through16384-QAM from pinned tables.
+  - [x] Implement shortened24-column holes, soft inverse and final-cell grouping.
+  - [x] Discover shortened lengths from received NCP boundaries with odd-byte admission.
+  - [x] Validate uniform and explicit shortened words through live PLC/NCP and waveform
+    at both spacings, retaining actual failed decisions and original-length test points.
+  See the [task design](features/qam-completion/design.md) and
+  [component guides](../user/qam-processing/README.md). General SRC/file jobs retain
+  full-word EOF padding; shortened traffic is an explicit API/reference experiment.
 - [ ] **QAM-04** Mixed per-carrier data profiles and independent high-order
   interoperability vectors; mapper availability alone does not satisfy this item.
   - [x] Implement frozen mixed ProfileA transport, variable-width cells, zero loading
     and final-cell padding through actual PLC/NCP/waveform/FEC at both spacings.
   - [ ] Validate independent external high-order interoperability vectors.
+    Deferred at the user's request. [Required vector bundle and acceptance plan](features/qam-completion/external-vectors.md).
+    Existing local specification-derived matrices/round trips do not close this item.
 
 ## Data and NCP randomization
 

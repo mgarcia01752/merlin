@@ -41,6 +41,7 @@ from a fresh clone and are deliberately not Markdown link targets.
 | prbs source | [plan](prbs-source/plan.md) · [validation](prbs-source/validation.md) |
 | project architecture | [plan](project-architecture/plan.md) |
 | project rename | [notes](project-rename/notes.md) |
+| qam completion | [QAM-02/03 design](qam-completion/design.md) · [validation](qam-completion/validation.md) · [QAM-04 evidence needed](qam-completion/external-vectors.md) |
 | qam mapping | [architecture](qam-mapping/architecture.md) |
 | qam256 coding loop | [architecture](qam256-coding-loop/architecture.md) |
 | receiver configuration | [plan](receiver-configuration/plan.md) · [validation](receiver-configuration/validation.md) |

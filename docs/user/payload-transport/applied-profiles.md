@@ -1,11 +1,11 @@
 # Applied data profiles and mixed-modulation transport
 
-The waveform path supports frozen ProfileA ID0 with uniform16/256-QAM or a
-mixed profile using data bit counts0,4,6..14, including16K-QAM. Protected bins
-remain governed by the physical map. Uniform higher-order modes still need their
-own verified bit-interleaver rules and reject explicitly; they are not silently
-processed as mixed profiles. Shortened codewords and dynamic profile activation
-are separate unsupported modes.
+The waveform path supports frozen ProfileA ID0 with all ten uniform data orders
+through16384-QAM or mixed bit counts0,4,6..14. Protected bins remain governed by
+the physical map. Uniform modes use their own verified tables/padding rather
+than being processed as mixed profiles. Explicit shortened words now have a
+separate [API/reference waveform path](../qam-processing/waveform.md); general
+file/PRBS jobs keep their full-word policy. Dynamic profile activation is unsupported.
 
 ```mermaid
 flowchart LR

@@ -219,4 +219,5 @@ The separate [shortening component guides](fec-shortening/README.md) explain
 FEC-03: variable original length, six-stage encoding, known-zero RX restoration,
 actual decoder outcomes and direct test points. This reuses the same16200-bit
 rate8/9 mother code. It does not add unsupported64800-bit downstream frames,
-change the legacy constructors above, or enable shortened waveform transport.
+change the legacy constructors above. QAM-03 now adds an explicit
+[shortened waveform reference](qam-processing/waveform.md) around these stages.

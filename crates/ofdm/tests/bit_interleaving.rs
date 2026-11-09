@@ -73,7 +73,7 @@ fn supported_permutations_are_bijective_and_inverse_preserves_soft_values() {
 
 #[test]
 fn unsupported_modes_and_invalid_words_are_rejected_without_input_changes() {
-    for order in [0, 4, 64, 128, 512, 1024, 2048, 4096, 8192, 16384] {
+    for order in [0, 4, 8, 32] {
         assert!(BitInterleaver::new(order).is_err());
     }
     let processing = BitInterleaver::new(256).unwrap();

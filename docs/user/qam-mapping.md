@@ -77,15 +77,13 @@ a correctness reference; streaming high-order performance optimization remains
 separate from mapping correctness.
 
 The full coding CLI still runs the original short8/9 uniform16-QAM experiment.
-Other orders require their verified bit interleavers/demultiplexers, padding and
-symbol packing before enabling a full coding mode. High-order mapping availability
-does not imply completed channel simulation. No256-QAM CLI mode, IFFT or actual
-NCP message generation is enabled by this change.
-
-The subsequent [256-QAM cell-loop implementation](qam256-coding-loop.md) now adds
-its short8/9 bit processing and randomized noiseless recovery as a standalone API
-and JSON example. The general CLI simulation job and physical channel stages
-remain separate.
+All ten downstream orders now have their full uniform bit-interleaver and
+padding rules, with actual soft/FEC and waveform transport tests under QAM-03.
+See [QAM processing](qam-processing/README.md). Explicit shortened words use the
+separate24-column path and received-boundary length discovery. The original
+[256-QAM independent cell loop](qam256-coding-loop.md) remains available; the
+general CLI `simulate` selector is still the original16-QAM coding experiment.
+Full external interoperability evidence remains deferred under QAM-04.
 
 ## Evidence and validation
 

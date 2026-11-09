@@ -27,6 +27,7 @@ pub struct PayloadSymbolDecoder {
     ncp_randomizer: CellRandomizer,
     data_randomizer: CellRandomizer,
     collector: PayloadCollector,
+    variable_collector: Option<super::variable::VariablePayloadCollector>,
     previous_starts: usize,
     closed: bool,
 }
@@ -75,10 +76,25 @@ impl PayloadSymbolDecoder {
             ncp_randomizer: CellRandomizer::new(),
             data_randomizer: CellRandomizer::new(),
             collector: PayloadCollector::with_bit_loading(&bit_loading)?,
+            variable_collector: None,
             bit_loading,
             previous_starts: 0,
             closed: false,
         })
+    }
+    /// Enables independently received-boundary discovery for shortened/full words.
+    /// # Returns
+    /// This empty decoder with bounded variable-length collection enabled.
+    /// # Errors
+    /// Rejects an already advanced decoder or codec setup failure.
+    pub fn enable_shortened_words(mut self) -> Result<Self, SimulationError> {
+        if self.next_local != 0 {
+            return Err(invalid("Enable shortening before receiving any symbols."));
+        }
+        self.variable_collector = Some(super::variable::VariablePayloadCollector::new(
+            &self.bit_loading,
+        )?);
+        Ok(self)
     }
     /// Reports whether a terminal control/collection failure requires a new session.
     /// # Returns
@@ -90,7 +106,10 @@ impl PayloadSymbolDecoder {
     /// # Returns
     /// Bounded pending length; incomplete words are not counted as decoded payload.
     pub fn pending_bits(&self) -> usize {
-        self.collector.pending_bits()
+        self.variable_collector.as_ref().map_or_else(
+            || self.collector.pending_bits(),
+            |collector| collector.pending_bits(),
+        )
     }
     /// Recovers one inverse-interleaved source symbol using only received cells and roles.
     /// # Arguments
@@ -196,7 +215,10 @@ impl PayloadSymbolDecoder {
             ncp_soft: Vec::new(),
             data_soft: Vec::new(),
             recovered: Vec::new(),
-            pending_payload_bits: self.collector.pending_bits(),
+            pending_payload_bits: self.variable_collector.as_ref().map_or_else(
+                || self.collector.pending_bits(),
+                |collector| collector.pending_bits(),
+            ),
             error: None,
         };
         let mut control_randomizer = self.ncp_randomizer.clone();
@@ -294,10 +316,13 @@ impl PayloadSymbolDecoder {
                         .get(span.start..span.end_exclusive)
                         .ok_or_else(|| invalid("Received data span has no matching soft cells."))?
                 };
-                if let Some(word) =
+                let completed = if let Some(collector) = &mut self.variable_collector {
+                    collector.accept_span(span, soft, source_symbol, max_iterations)?
+                } else {
                     self.collector
                         .accept_span(span, soft, source_symbol, max_iterations)?
-                {
+                };
+                if let Some(word) = completed {
                     result.recovered.push(word);
                 }
             }
@@ -317,7 +342,10 @@ impl PayloadSymbolDecoder {
             self.data_randomizer = data_randomizer;
             self.next_local = next_local;
         }
-        result.pending_payload_bits = self.collector.pending_bits();
+        result.pending_payload_bits = self.variable_collector.as_ref().map_or_else(
+            || self.collector.pending_bits(),
+            |collector| collector.pending_bits(),
+        );
         Ok(result)
     }
 }

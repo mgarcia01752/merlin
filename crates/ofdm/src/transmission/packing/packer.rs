@@ -21,13 +21,14 @@ pub(super) struct QueuedWord {
     pub offset: usize,
 }
 
-/// Stateful bounded uniform256-QAM packer, independent of FEC and waveform code.
+/// Stateful bounded label/coded-bit packer, independent of FEC and waveform code.
 ///
 /// Inputs are already bit-processed labels; output cells are not yet randomized.
 /// Owns labels, carries partial words across symbols and never resets a randomizer.
 pub struct SymbolPacker {
     settings: PackingSettings,
     bit_loading: Option<Vec<u8>>,
+    coded_bits: usize,
     queue: VecDeque<QueuedWord>,
     next_word_id: CodewordId,
     next_symbol: u64,
@@ -46,6 +47,7 @@ impl SymbolPacker {
         Ok(Self {
             settings,
             bit_loading: None,
+            coded_bits: super::model::QAM256_CODEWORD_CELLS * 8,
             queue: VecDeque::new(),
             next_word_id: 0,
             next_symbol: 0,
@@ -69,16 +71,18 @@ impl SymbolPacker {
         if bit_loading.len() != settings.interleaver_cells {
             return Err(invalid("Profile does not match packer NI."));
         }
-        crate::signal_processing::modulation::interleaving::mixed::PayloadBitOrder::new(
-            &bit_loading,
-        )?;
+        let bit_order =
+            crate::signal_processing::modulation::interleaving::mixed::PayloadBitOrder::new(
+                &bit_loading,
+            )?;
         let mut packer = Self::new(settings)?;
+        packer.coded_bits = bit_order.permutation().len();
         packer.bit_loading = Some(bit_loading);
         Ok(packer)
     }
     /// Queues an encoded, bit-interleaved full word for variable-width grouping.
     /// # Arguments
-    /// * `bits` - Exactly16200 binary values; final-cell padding is added during packing.
+    /// * `bits` - Exactly the selected coded/padded bit count of binary values; final-cell padding is added during packing.
     /// # Returns
     /// Diagnostic identity; input bits do not enter the receiver as truth.
     /// # Errors
@@ -86,13 +90,47 @@ impl SymbolPacker {
     #[cfg(feature = "simulation")]
     pub fn enqueue_bits(&mut self, bits: Vec<u8>) -> Result<CodewordId, SimulationError> {
         if self.bit_loading.is_none()
-            || bits.len() != fec_codec::parameters::LDPC_CODEWORD_BITS
+            || bits.len() != self.coded_bits
             || bits.iter().any(|bit| *bit > 1)
             || self.queue.len() >= MAX_QUEUED_CODEWORDS
         {
             return Err(invalid(
-                "Expected one binary16200-bit word in variable-width mode.",
+                "Expected one correctly sized binary coded word in variable-width mode.",
             ));
+        }
+        let next = self
+            .next_word_id
+            .checked_add(1)
+            .ok_or_else(|| invalid("Codeword IDs exhausted."))?;
+        let id = self.next_word_id;
+        self.queue.push_back(QueuedWord {
+            id,
+            labels: bits.into_iter().map(u16::from).collect(),
+            offset: 0,
+        });
+        self.next_word_id = next;
+        Ok(id)
+    }
+    /// Queues an already bit-processed shortened word for sequential profile grouping.
+    /// # Arguments
+    /// * `bits` - Binary K+1968 mapper-order bits, with no final-cell padding yet.
+    /// # Returns
+    /// Job-local diagnostic ID; no length is passed through the channel to RX.
+    /// # Errors
+    /// Rejects non-bit mode, invalid byte length, nonbinary data, full queue or exhausted IDs.
+    #[cfg(feature = "simulation")]
+    pub fn enqueue_shortened_bits(&mut self, bits: Vec<u8>) -> Result<CodewordId, SimulationError> {
+        let payload = bits
+            .len()
+            .checked_sub(fec_codec::parameters::PAYLOAD_PARITY_BITS)
+            .ok_or_else(|| invalid("Shortened word is shorter than parity."))?;
+        let geometry = fec_codec::shortening::Shortening::new(payload).map_err(invalid)?;
+        super::shortening::validate_shortened_transport(geometry)?;
+        if self.bit_loading.is_none()
+            || bits.iter().any(|bit| *bit > 1)
+            || self.queue.len() >= MAX_QUEUED_CODEWORDS
+        {
+            return Err(invalid("Invalid shortened bit queue input or queue full."));
         }
         let next = self
             .next_word_id

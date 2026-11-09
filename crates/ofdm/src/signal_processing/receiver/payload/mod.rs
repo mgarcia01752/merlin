@@ -10,3 +10,5 @@ pub mod decoder;
 pub mod model;
 pub use decoder::PayloadSymbolDecoder;
 pub use model::{PayloadSymbolResult, RecoveredPayload, SoftDataCell, SoftNcpCell};
+
+pub mod variable;

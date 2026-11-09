@@ -25,6 +25,8 @@ shellcheck "${SHELL_SCRIPTS[@]}"
 "${SCRIPT_DIR}/cargo-local.sh" build -p ofdm-fec-cli --release --locked
 SMOKE_DIRECTORY="$(mktemp -d)"
 trap 'rm -rf -- "${SMOKE_DIRECTORY}"' EXIT
+"${SCRIPT_DIR}/cargo-local.sh" run -p docsis-ofdm-fec --example shortened_waveform --release --locked --quiet > "${SMOKE_DIRECTORY}/shortened-waveform.json"
+python3 -m json.tool "${SMOKE_DIRECTORY}/shortened-waveform.json" >/dev/null
 "${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- --version
 "${SCRIPT_DIR}/cargo-local.sh" run -p fec-codec --example shortened_codec_loop --release --locked --quiet -- 6136
 "${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- simulate \

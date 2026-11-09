@@ -18,8 +18,8 @@ use parameters::Parameters;
 
 /// Immutable short8/9 uniform-modulation bit permutation, reusable across words.
 ///
-/// Owned state has no symbol/channel timing.16and256-QAM are supported; other
-/// mapped orders still need their separately verified coding-bit rules.
+/// Owned state has no symbol/channel timing. All downstream data orders through16384-QAM
+/// use their pinned full-word rules.
 pub struct BitInterleaver {
     bits_per_cell: usize,
     output_to_codeword: Vec<usize>,
@@ -27,7 +27,7 @@ pub struct BitInterleaver {
 impl BitInterleaver {
     /// Builds a pinned16200-bit parity/twist/demultiplexer permutation.
     /// # Arguments
-    /// * `order` - Uniform data constellation16or256; no shortening/mixed loading.
+    /// * `order` - Supported uniform data order through16384; no shortening/mixed loading.
     /// # Returns
     /// Reusable mapping from MSB-first cell bits back to original codeword indices.
     /// # Errors
@@ -42,7 +42,7 @@ impl BitInterleaver {
 
     /// Borrows the full output-bit→original-codeword-bit permutation.
     /// # Returns
-    /// Read-only16200-element bijection in MSB-first cell-bit order.
+    /// MSB-first bit indices; entries >=16200 identify appended zero-pad coordinates.
     pub fn output_to_codeword(&self) -> &[usize] {
         &self.output_to_codeword
     }
@@ -51,7 +51,7 @@ impl BitInterleaver {
     /// # Arguments
     /// * `codeword` - Exactly16200 binary bytes, one0or1 per bit.
     /// # Returns
-    /// MSB-first labels:4050for16-QAM or2025for256-QAM; no padding for these modes.
+    /// MSB-first labels, including PHY-specified zero extension for applicable orders.
     /// # Errors
     /// Rejects wrong length or nonbinary values before creating labels.
     pub fn encode_labels(&self, codeword: &[u8]) -> Result<Vec<SymbolLabel>, SimulationError> {
@@ -63,7 +63,7 @@ impl BitInterleaver {
             .chunks_exact(self.bits_per_cell)
             .map(|indices| {
                 indices.iter().fold(0, |label, index| {
-                    (label << 1) | SymbolLabel::from(codeword[*index])
+                    (label << 1) | SymbolLabel::from(codeword.get(*index).copied().unwrap_or(0))
                 })
             })
             .collect())
@@ -71,19 +71,24 @@ impl BitInterleaver {
 
     /// Reverses cell demultiplexing, column twists and parity interleaving on LLRs.
     /// # Arguments
-    /// * `cell_llrs` - Exactly16200 finite MSB-first LLRs, after inverse randomization.
+    /// * `cell_llrs` - Exactly the padded output-bit count of finite MSB-first LLRs, after inverse randomization.
     /// # Returns
     /// Owned codeword-order LLRs with signs/magnitudes preserved, ready for LDPC.
     /// # Errors
     /// Rejects wrong length or nonfinite values; input remains unchanged.
     pub fn decode_llrs(&self, cell_llrs: &[f64]) -> Result<Vec<f64>, SimulationError> {
-        if cell_llrs.len() != LDPC_CODEWORD_BITS || cell_llrs.iter().any(|value| !value.is_finite())
+        if cell_llrs.len() != self.output_to_codeword.len()
+            || cell_llrs.iter().any(|value| !value.is_finite())
         {
-            return Err(invalid("Expected16200 finite cell-order LLRs."));
+            return Err(invalid(
+                "Expected finite LLRs matching the padded uniform bit count.",
+            ));
         }
         let mut codeword_llrs = vec![0.0; LDPC_CODEWORD_BITS];
         for (llr, original) in cell_llrs.iter().zip(&self.output_to_codeword) {
-            codeword_llrs[*original] = *llr;
+            if *original < LDPC_CODEWORD_BITS {
+                codeword_llrs[*original] = *llr;
+            }
         }
         Ok(codeword_llrs)
     }
@@ -97,7 +102,8 @@ pub fn transmit_bit_order() -> Vec<usize> {
 }
 
 fn build_permutation(parameters: &Parameters) -> Vec<usize> {
-    let parity = parity::permutation();
+    let mut parity = parity::permutation();
+    parity.extend(LDPC_CODEWORD_BITS..parameters.rows * parameters.twists.len());
     let twist = twist::for_parameters(parameters);
     demultiplexing::for_parameters(parameters)
         .into_iter()
@@ -106,3 +112,5 @@ fn build_permutation(parameters: &Parameters) -> Vec<usize> {
 }
 
 pub mod mixed;
+
+pub mod shortened;

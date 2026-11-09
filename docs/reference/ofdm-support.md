@@ -40,22 +40,31 @@ A separate [noiseless256-QAM cell loop](../user/qam256-coding-loop.md) now cover
 BCH/LDPC, parity/twist/demultiplexing, randomization and soft inverse processing.
 It reports iterations per codeword but does not yet have physical symbol packing
 or integration into the general CLI `simulate` coding-mode selector. The separate
-[channel CLI](../user/channel-runner/cli.md) now implements uniform16/256 and
+[channel CLI](../user/channel-runner/cli.md) now implements all ten uniform orders and
 non-shortened mixed-profile waveform transport. The final column and registry still describe the older generic
 `simulate` selector, not the channel command.
 
-## Coding work still required
+## Implemented coding and remaining evidence
 
-Bit processing is implemented for uniform non-shortened short8/9 modes16and256.
-For the other coding orders, verify column twists, demultiplexing, pad bits,
-shortening and codeword placement. Extend independent high-order label vectors
-and decoder validation beyond current diagram anchors and reference-table checks.
-Non-square orders use their actual resources, not a square-QAM approximation.
-High-order scrambling and bit ordering
-must follow the pinned source. The [mixed-profile waveform path](../user/payload-transport/applied-profiles.md)
-now implements24-column bit processing, inverse-frequency loading, variable-width
-cells and final padding through actual FEC. Independent external high-order
-interoperability vectors remain pending; this does not complete QAM-04.
+QAM-02 provides diagnostic hard decisions without replacing soft LDPC inputs.
+QAM-03 implements all ten full uniform short8/9 coding orders, including their
+per-order twists/demultiplexing and explicit padding. Non-square modes retain
+their actual resources. The channel command supports those frozen uniform
+profiles and the existing mixed path. The old general `simulate` selector and
+its capability field remain explicitly16-QAM-only.
+
+The [QAM processing guides](../user/qam-processing/README.md) explain exact stages,
+padding coordinates, shortened matrix holes and bounded received-length discovery.
+Explicit shortened transport is available through public Rust APIs and the
+`shortened_waveform` JSON example. General PRBS/file channel jobs keep full-word
+EOF padding. There is no automatic MAC framing or new generic shortening option.
+
+The [mixed-profile path](../user/payload-transport/applied-profiles.md) uses its
+own24-column rule, inverse-frequency loading and sequential cell grouping.
+QAM-04 external high-order interoperability vectors remain deferred at the user's
+request. Their [required contents and acceptance plan](../development/features/qam-completion/external-vectors.md)
+are documented. Our independent table arithmetic and actual FEC/waveform tests
+do not substitute for externally generated output vectors.
 
 DOCSIS4.0 FDX and FDD remain distinct applicability scopes. This table follows
 I07's FDD delegation; it does not establish FDX sounding, echo cancellation or
@@ -70,6 +79,7 @@ FDX/FDD downstream FEC to that definition. FEC-03 now implements true shortened
 codec boundaries, retaining168 BCH and1800 LDPC parity bits for transmitted
 length K+1968. See [FEC shortening](../user/fec-shortening/README.md).
 
-This does not complete the bit-interleaving/QAM/NCP/waveform work tracked in
-QAM-03. The current channel still explicitly rejects shortened transport, and
-SRC file EOF uses its documented full-information-word padding policy.
+QAM-03 connects this codec to explicit bit-interleaving/QAM/NCP/waveform
+transport. Pointer-based shortening imposes its separate odd-byte wire-size
+admission rule. SRC file EOF still uses its documented full-information-word
+padding policy. No64800-bit downstream mother mode is introduced.

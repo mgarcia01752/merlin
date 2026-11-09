@@ -155,7 +155,7 @@ fn collector_rejects_orphan_continuation_premature_start_and_filler() {
     assert_eq!(collector.pending_bits(), 8);
 }
 #[test]
-fn unsupported_uniform_data_or_zero_ncp_profile_is_rejected_at_construction() {
+fn uniform64_is_admitted_while_zero_ncp_is_rejected_at_construction() {
     let spacing = SubcarrierSpacing::Khz25;
     let (settings, raw) = acquisition_support::acquisition_setup(spacing, false);
     let layout = CarrierLayout::new(&settings, &raw).unwrap();
@@ -186,6 +186,10 @@ fn unsupported_uniform_data_or_zero_ncp_profile_is_rejected_at_construction() {
             state.accept_packet(&packet).unwrap();
         }
         assert!(state.require_ready().is_ok());
-        assert!(PayloadReceiver::new(&state, 0).is_err());
+        if target == 1 {
+            assert!(PayloadReceiver::new(&state, 0).is_ok());
+        } else {
+            assert!(PayloadReceiver::new(&state, 0).is_err());
+        }
     }
 }

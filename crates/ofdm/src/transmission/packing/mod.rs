@@ -11,3 +11,6 @@ pub use model::{
     PackingSettings, PackingSummary,
 };
 pub use packer::SymbolPacker;
+
+#[cfg(feature = "simulation")]
+pub mod shortening;

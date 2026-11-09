@@ -17,7 +17,7 @@ path; full CMTS MAC services and multi-channel operation are outside that scope.
 
 ## Where development stands
 
-The waveform engine supports uniform16/256-QAM and frozen mixed ProfileA loading,
+The waveform engine supports all ten uniform data orders through16384-QAM and frozen mixed ProfileA loading,
 with continuous runs, pilot-derived channel correction and explicit measurement
 epochs. Experiments demonstrate both error-free recovery and post-FEC bit errors
 as RxMER worsens. External DOCSIS interoperability is not established.
@@ -32,7 +32,7 @@ as RxMER worsens. External DOCSIS interoperability is not established.
 | Measurements | Current `pnm-decode` JSON import for RxMER, channel estimation and modulation profiles; explicit temporal epochs and frozen applied mixed profiles |
 | Paired constellation | Bounded raw/corrected payload I/Q pairs with exact carrier/time coordinates and CLI JSON |
 | Results | Recovered-payload BER, codeword failures, actual LDPC iterations, BCH corrections and bounded stage probes |
-| Modulation coverage | Mapping/soft demapping through 16384-QAM; uniform16/256 and non-shortened mixed-profile waveform coding |
+| Modulation coverage | Mapping, hard/soft decisions and full uniform coding through16384-QAM; mixed profiles and explicit shortened waveform reference |
 
 Use the [development workspace](docs/development/README.md) for ongoing work
 and linked feature records. See the [development status](docs/development/status.md) for completed milestones,
@@ -87,6 +87,7 @@ scripts/cargo-local.sh run -p fec-codec --example codec_loop --locked
 [Other CLI experiments](docs/cli.md) ·
 [FEC codec and equations](docs/user/fec-codec.md) ·
 [Codeword shortening](docs/user/fec-shortening/README.md) ·
+[QAM processing and decisions](docs/user/qam-processing/README.md) ·
 [Transmission settings](docs/user/transmission.md) ·
 [Modulation support](docs/reference/ofdm-support.md) ·
 [Public Rust API](docs/reference/public-api.md) ·
@@ -95,9 +96,11 @@ scripts/cargo-local.sh run -p fec-codec --example codec_loop --locked
 [Logging](docs/development/logging.md) ·
 [Git and releases](docs/development/git.md)
 
-OFDMA, mixed-profile waveform coding, blind/nonideal receiver estimation, Python
+OFDMA, dynamic profile activation, broader blind receiver acquisition, Python
 bindings, a Qt interface and native installers remain future work. Current runtime
 validation is Linux; Windows/macOS and external interoperability remain open.
+The [QAM-04 external-vector requirements](docs/development/features/qam-completion/external-vectors.md)
+record the deferred evidence needed to validate interoperability.
 
 Apache-2.0 project code, with MIT/Apache dependencies and a Rust-adapted MIT BCH
 implementation. See [LICENSE](LICENSE), [NOTICE](NOTICE) and the

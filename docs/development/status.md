@@ -68,8 +68,8 @@ known timing/PLC phase. No full blind modem-acquisition claim is made.
 | --- | --- | --- |
 | Receiver realism | Full blind carrier/numerology/PLC-phase acquisition and broader estimator uncertainty models; current pilot/CP subset is implemented | WAVE-RX-05 |
 | Measurement evolution | Future explicit correlated/burst models and dynamic profile activation; piecewise independent Gaussian epochs and frozen mixed profiles are implemented | NCP-03, future model extensions |
-| Coding and profiles | Shortened waveform integration, unverified uniform higher-order coding and external mixed-profile vectors; dynamic profile activation | QAM-03/04, NCP-03 |
-| Diagnostic and layout tools | Standalone hard slicer; specification-based additional continuous-pilot placement | QAM-02, LAYOUT-03 |
+| Coding and profiles | External high-order/mixed interoperability vectors (deferred with documented requirements); dynamic profile activation | QAM-04, NCP-03 |
+| Layout tools | Specification-based additional continuous-pilot placement | LAYOUT-03 |
 | Input compatibility | Formal decoded-JSON compatibility/version contract; current JSON import is already implemented | INPUT-02 |
 | Independent validation | External full-channel interoperability vectors and Windows/macOS build/runtime CI | QA-05, QA-06 |
 | Product interfaces | Native packaging/release automation, optional Python bindings and Qt presentation | QA-07, API-01, UI-01 |
@@ -112,6 +112,16 @@ FEC-03 adds variable-length shortened coding around the existing downstream
 short16200-bit rate8/9 mother code, retaining all BCH/LDPC parity. Independent
 coordinate/parity tests, actual iterative correction, failure decisions and full
 mode compatibility are covered. See the [design](features/fec-shortening/design.md)
-and [component guides](../user/fec-shortening/README.md). Shortened interleaving,
-QAM/NCP placement and waveform admission remain QAM-03; no64800-bit mode or
-change to the SRC file-padding policy is introduced.
+and [component guides](../user/fec-shortening/README.md). QAM-03 now adds shortened
+interleaving, received-boundary length discovery and explicit waveform transport;
+no64800-bit mode or change to the SRC file-padding policy is introduced.
+
+## QAM decisions and coding milestone
+
+QAM-02 adds the diagnostic hard slicer while preserving soft LDPC inputs. QAM-03
+implements full uniform rules through16384-QAM, exact padding/soft inversion and
+explicit shortened transport through live PLC/NCP and waveform samples. See the
+[design](features/qam-completion/design.md), [validation](features/qam-completion/validation.md)
+and [component guides](../user/qam-processing/README.md). QAM-04 stays unchecked:
+externally produced interoperability evidence is deferred with a
+[required vector manifest and acceptance plan](features/qam-completion/external-vectors.md).

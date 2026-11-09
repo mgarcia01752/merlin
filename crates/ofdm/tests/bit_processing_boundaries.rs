@@ -59,6 +59,6 @@ fn boundary_inputs_are_validated_without_changing_input() {
     assert!(parity::transmit(&[0]).is_err());
     assert!(parity::transmit(&vec![2; 16200]).is_err());
     assert!(parity::receive_llrs(&vec![f64::NAN; 16200]).is_err());
-    assert!(twist::transmit(64, &vec![0; 16200]).is_err());
-    assert!(demultiplexing::receive_llrs(16384, &vec![0.0; 16200]).is_err());
+    assert!(twist::transmit(32, &vec![0; 16200]).is_err());
+    assert!(demultiplexing::receive_llrs(32, &vec![0.0; 16200]).is_err());
 }

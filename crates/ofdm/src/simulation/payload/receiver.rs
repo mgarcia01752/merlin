@@ -78,6 +78,22 @@ impl PayloadReceiver {
             decoder: PayloadSymbolDecoder::with_bit_loading(settings, origin, bit_loading)?,
         })
     }
+    /// Creates an opt-in full/shortened receiver from independently received descriptors.
+    /// # Arguments
+    /// * `state` - Ready live PLC configuration, including acquired data loading.
+    /// * `origin` - PLC-aligned source/channel origin.
+    /// # Returns
+    /// Receiver which waits for NCP start/filler boundaries to classify word length.
+    /// # Errors
+    /// Propagates configuration, geometry, origin or codec setup failure.
+    pub fn with_shortened_words(
+        state: &ReceiverConfigurationState,
+        origin: u64,
+    ) -> Result<Self, SimulationError> {
+        let mut receiver = Self::new(state, origin)?;
+        receiver.decoder = receiver.decoder.enable_shortened_words()?;
+        Ok(receiver)
+    }
     /// Receives extracted physical reduced cells and reverses the continuous cell path.
     /// # Arguments
     /// * `state` - Live PLC gate; must stay Ready with the same immutable snapshot.

@@ -11,14 +11,7 @@ const PARITY_GROUPS: usize = (LDPC_CODEWORD_BITS - LDPC_INPUT_BITS) / PARITY_GRO
 /// # Returns
 /// A16200-element bijection; systematic bits are unchanged.
 pub fn permutation() -> Vec<usize> {
-    let mut order: Vec<_> = (0..LDPC_CODEWORD_BITS).collect();
-    for group in 0..PARITY_GROUPS {
-        for offset in 0..PARITY_GROUP_BITS {
-            order[LDPC_INPUT_BITS + PARITY_GROUP_BITS * group + offset] =
-                LDPC_INPUT_BITS + PARITY_GROUPS * offset + group;
-        }
-    }
-    order
+    with_systematic_bits(LDPC_INPUT_BITS)
 }
 /// Applies this stage alone without changing the supplied bits.
 /// # Arguments
@@ -39,4 +32,20 @@ pub fn transmit(bits: &[u8]) -> Result<Vec<u8>, SimulationError> {
 /// Rejects unsupported mode, wrong length or nonfinite data.
 pub fn receive_llrs(llrs: &[f64]) -> Result<Vec<f64>, SimulationError> {
     super::boundary::receive(llrs, &permutation())
+}
+
+/// Builds parity coordinates with a validated full or shortened systematic prefix.
+/// # Arguments
+/// * `systematic_bits` - Validated information-plus-BCH length from the owning codec.
+/// # Returns
+/// Systematic identity followed by the shared1800-bit parity permutation.
+pub(super) fn with_systematic_bits(systematic_bits: usize) -> Vec<usize> {
+    let mut order: Vec<_> = (0..systematic_bits + PARITY_GROUP_BITS * PARITY_GROUPS).collect();
+    for group in 0..PARITY_GROUPS {
+        for offset in 0..PARITY_GROUP_BITS {
+            order[systematic_bits + PARITY_GROUP_BITS * group + offset] =
+                systematic_bits + PARITY_GROUPS * offset + group;
+        }
+    }
+    order
 }

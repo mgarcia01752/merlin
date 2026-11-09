@@ -61,7 +61,7 @@ component will adapt inputs and results without duplicating scientific logic.
 | `signal_processing::noise::lte_ingress::{LteDownlinkIngress, IngressResult}` | Fixed10MHz Band12 frequency-envelope approximation; combines existing residual and added interference power, preserves nulls and exposes per-carrier added ratios; no waveform or thermal floor |
 | `signal_processing::modulation::{map_symbol, qam_llrs}` | Shared label-ordered mapping and reference soft demapping through16K-QAM |
 | `signal_processing::modulation::randomization::CellRandomizer` | Stateful data/NCP cell randomization and soft-bit inverse through16K-QAM |
-| `signal_processing::modulation::interleaving::BitInterleaver` | Short8/9 parity/twist/demux and soft inverse for16and256-QAM |
+| `signal_processing::modulation::interleaving::BitInterleaver` | Short8/9 full uniform parity/twist/demux and soft inverse through16384-QAM |
 | `simulation::coding_loop::NoiselessQam256Codec` | Independent noiseless codeword trials with per-word decoder iterations |
 | `simulation::source::{Prbs15,PrbsVerifier,PrbsComparison}` | Explicit PRBS15 state, bounded chunks, absolute bit identity and independent recovered-stream comparison |
 | `simulation::payload::reference::{PayloadSource,run_payload_waveform_with_source}` | Explicit seeded/PRBS source selection and shared waveform verifier with post-decode source comparison |
@@ -177,4 +177,33 @@ Existing full-block APIs remain unchanged. Finite RX saturation is explicit in
 `shortening::decoding::SHORTENED_ZERO_LLR_MAGNITUDE`. No filesystem, Qt or Python
 type enters these interfaces. See the [component guides](../user/fec-shortening/README.md)
 and [FEC-03 design](../development/features/fec-shortening/design.md) for source
-applicability, equations, test-point shapes and pending waveform integration.
+applicability, equations and test-point shapes. QAM-03 integration is described below.
+
+## QAM decisions and variable word transport
+
+`signal_processing::modulation::slice_symbol` returns `HardDecision` containing
+label, reference I/Q, received-minus-reference error and squared distance. Exact
+computed ties choose the lowest label. It does not replace soft demapping.
+
+`interleaving::BitInterleaver` accepts all ten downstream data orders. Its output
+indices include appended-zero positions >=16200 where required; encode accepts
+16200 mother bits, while reverse accepts the selected padded count and returns
+16200 mother likelihoods. Direct twist/demux stages accept that padded size.
+`interleaving::shortened::ShortenedBitOrder` takes checked `Shortening` geometry
+and exposes K+1968-coordinate ordering/inverse, with unused matrix holes omitted.
+
+`transmission::packing::shortening` exposes odd-byte transport validation and
+received-span payload-length discovery. `SymbolPacker::enqueue_shortened_bits`
+accepts a validated already-ordered shortened word in profile-aware mode.
+`PayloadTransmitter::enqueue_shortened` provides actual FEC and ordered-bit test
+points. `PayloadReceiver::with_shortened_words` enables received-boundary length
+discovery from live acquired descriptors. `VariablePayloadCollector` is the
+independently callable bounded receive stage; `RecoveredPayload::payload()`
+borrows original-length decisions, with `shortening` and known-zero consistency
+retained separately from the actual LDPC/BCH stage outcomes.
+
+`simulation::payload::shortened::run_shortened_waveform` accepts explicit settings,
+layout, physical loading and1..16 original words, plus bounded waveform probes.
+It returns serializable per-word actual outcomes and independent error counts.
+See [component guides](../user/qam-processing/README.md) for lifecycle, math and
+bounds. No new general channel request schema or Python/Qt dependency is added.

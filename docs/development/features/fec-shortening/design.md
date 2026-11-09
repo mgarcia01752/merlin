@@ -81,3 +81,8 @@ mode for a partial SRC file. External full-channel interoperability remains QA-0
 
 See the [validation record](validation.md) for independent test evidence and
 current host/scope boundaries.
+
+Current integration note: QAM-03 has since connected explicit shortened words
+through bit processing, received NCP length discovery and waveform samples. See
+the [QAM-02/03 design](../qam-completion/design.md); the codec results above remain
+the FEC-03 milestone's validation record.

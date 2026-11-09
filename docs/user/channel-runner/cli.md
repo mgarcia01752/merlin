@@ -95,7 +95,9 @@ and `tx.payload.interleaved_bits` are new bounded JSONL test-point IDs.
 
 Optional `data_bit_loading` supplies a full physical-FFT ProfileA array. Imported
 measurements fill it from captured assignments. See [applied profiles](../payload-transport/applied-profiles.md)
-for uniform/mixed coding limits and last-cell padding.
+for all ten full uniform data orders, mixed coding and last-cell padding.
+Explicit shortened traffic is available separately through the Rust
+[reference example](../qam-processing/waveform.md); this command retains full-word traffic.
 `measurement.transitions` selects later frames explicitly, or direct requests
 can supply `impairment_timeline`; see [measurement epochs](../impairments/measurement-timeline.md).
 Measurement selection defaults to RxMER noise; `use_rxmer_noise=false` provides

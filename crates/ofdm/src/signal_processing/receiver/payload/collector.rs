@@ -8,7 +8,7 @@ use crate::{
     error::invalid, signal_processing::modulation::interleaving::mixed::PayloadBitOrder,
     transmission::ncp::NcpDataSpan, SimulationError,
 };
-use fec_codec::{concatenated::ConcatenatedCodec, parameters::LDPC_CODEWORD_BITS};
+use fec_codec::concatenated::ConcatenatedCodec;
 /// At most one pending word; completed results are returned to the caller, never retained in history.
 pub struct PayloadCollector {
     codec: ConcatenatedCodec,
@@ -46,7 +46,7 @@ impl PayloadCollector {
     }
     /// Reports incomplete received coded bits.
     /// # Returns
-    /// Zero to16200; these bits are never counted as a recovered payload.
+    /// Zero to the selected padded bit count (at most16212); incomplete bits are not payload.
     pub fn pending_bits(&self) -> usize {
         self.pending.len()
     }
@@ -120,11 +120,12 @@ impl PayloadCollector {
                 "Received continuation has no accepted codeword start.",
             ));
         }
+        let coded_bits = self.bits.permutation().len();
         let added: usize = cells.iter().map(|cell| cell.llrs.len()).sum();
         let total = self.pending.len() + added;
-        if total > LDPC_CODEWORD_BITS
+        if total > coded_bits
             && (cells.is_empty()
-                || total - cells.last().map_or(0, |cell| cell.llrs.len()) >= LDPC_CODEWORD_BITS)
+                || total - cells.last().map_or(0, |cell| cell.llrs.len()) >= coded_bits)
         {
             return Err(invalid(
                 "Received interval exceeds one codeword plus its final-cell padding.",
@@ -133,14 +134,14 @@ impl PayloadCollector {
         if span.starts_codeword {
             self.first_source = Some(source_symbol);
         }
-        let remaining = LDPC_CODEWORD_BITS - self.pending.len();
+        let remaining = coded_bits - self.pending.len();
         self.pending.extend(
             cells
                 .iter()
                 .flat_map(|cell| cell.llrs.iter().copied())
                 .take(remaining),
         );
-        if self.pending.len() != LDPC_CODEWORD_BITS {
+        if self.pending.len() != coded_bits {
             return Ok(None);
         }
         let next_sequence = self
@@ -164,6 +165,8 @@ impl PayloadCollector {
             cell_llrs: std::mem::take(&mut self.pending),
             ldpc_llrs,
             decoded,
+            shortening: None,
+            known_zeros_consistent: true,
         };
         self.next_sequence = next_sequence;
         Ok(Some(result))

@@ -52,3 +52,8 @@ Local-only generated logs and the rendered reference page belong under
 `docs/development/local/fec-shortening/`; private PDF/image evidence is not shipped.
 Validation is on the local Linux host/toolchain; no new Windows/macOS or external
 DOCSIS interoperability claim is made. QAM-03/QA-05 remain separate.
+
+Current integration note: QAM-03 has since connected explicit shortened words
+through bit processing, received NCP length discovery and waveform samples. See
+the [QAM-02/03 design](../qam-completion/design.md); the codec results above remain
+the FEC-03 milestone's validation record.

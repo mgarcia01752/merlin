@@ -8,7 +8,10 @@ pub mod receiver;
 pub mod transmitter;
 pub use receiver::{PayloadReceiveSymbol, PayloadReceiver};
 pub use transmitter::{
-    EncodedPayload, PayloadChannelSymbol, PayloadTransmitSymbol, PayloadTransmitter,
+    EncodedPayload, EncodedShortenedPayload, PayloadChannelSymbol, PayloadTransmitSymbol,
+    PayloadTransmitter,
 };
 
 pub mod reference;
+
+pub mod shortened;

@@ -25,7 +25,7 @@ flowchart LR
 | Cancellation, budgets and partial jobs | [Job lifecycle](job.md) |
 | Standalone command and shared JSON | [CLI](cli.md) |
 
-The current path is uniform256-QAM ProfileA, short rate8/9 payload FEC, one
+The default path is uniform256-QAM ProfileA, short rate8/9 payload FEC, one
 fixed channel and a noiseless unity connection by default. Optional
 [waveform impairments](../impairments/README.md) add sample AWGN or selected RxMER
 residuals plus supplied channel response. NCP uses the selected supported
@@ -58,3 +58,8 @@ See [architecture](../../architecture.md) and [checklist](../../development/chec
 
 Finite [text/binary file traffic](../simulation/file-source/README.md) shares this
 channel path, with optional PRBS15 fill and separate original-file recovery.
+
+An explicit applied profile admits all ten full uniform data orders through16384-QAM
+and frozen mixed loading. [QAM component guides](../qam-processing/README.md) explain
+per-order padding and the separate explicit shortened-waveform reference. General
+file/PRBS jobs keep full-word EOF padding.

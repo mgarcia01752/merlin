@@ -26,7 +26,7 @@ flowchart LR
 | Explicit temporal measurement epochs | [Measurement playback](measurement-timeline.md) |
 | CLI experiments and protected LTE sweep | [Running experiments](experiments.md) |
 
-Current waveform support includes uniform16/256 and frozen non-shortened mixed
+Current waveform support includes all ten uniform data orders and frozen non-shortened mixed
 ProfileA loading through actual FEC. See the [applied-profile design](../payload-transport/applied-profiles.md).
 Supplied H and pilot-estimated correction are separate modes. Channel H uses a
 synchronized per-symbol diagonal model, not a general linear multipath filter.

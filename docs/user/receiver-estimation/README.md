@@ -37,7 +37,7 @@ The CLI runner retains explicit sample timing and PLC phase. The separate timing
 API can search an unknown bounded sample offset with known numerology/PLC phase.
 It does not discover arbitrary carrier frequency, numerology or PLC frame phase;
 full blind acquisition remains WAVE-RX-05. The frozen applied profile remains
-ProfileA ID0, with uniform16/256 or supported mixed bit loading.
+ProfileA ID0, with all ten uniform data orders or supported mixed bit loading.
 
 Run the tracked bounded example:
 

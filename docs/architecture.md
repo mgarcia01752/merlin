@@ -40,7 +40,7 @@ Build a standalone, DOCSIS-focused Rust simulation core with two modes:
 
 The configurable-duration waveform stepper supports noiseless, seeded sample
 AWGN and per-carrier RxMER residuals with optional supplied diagonal response H.
-The measurement path admits captured ProfileA ID0 with uniform16/256 or verified
+The measurement path admits captured ProfileA ID0 with uniform data orders through16384-QAM or verified
 non-shortened mixed loading, and explicit same-grid temporal measurement epochs.
 Pilot-derived receiver correction is selectable alongside supplied-H reception. The channel job and CLI expose
 cancellation, runtime limits, partial results and versioned probe export.
@@ -52,7 +52,7 @@ see the [PRBS design](user/simulation/prbs.md) and [file-source guide](user/simu
 
 Downstream mapping and reference soft demapping cover constellations through
 16384-QAM. Complete coding support must be tracked separately for each order;
-current short8/9 bit processing supports uniform 16/256-QAM. See
+current short8/9 bit processing supports all ten downstream data orders. See
 [modulation coverage](reference/ofdm-support.md). DOCSIS4.0 FDD delegation does
 not establish FDX behavior. OFDMA is a later scope.
 
@@ -86,10 +86,42 @@ failed decisions and actual statuses remain available for independent truth BER.
 
 The [task design](development/features/fec-shortening/design.md) and
 [component guides](user/fec-shortening/README.md) document diagrams, equations,
-module contracts and validation. Shortened bit interleaving, cell packing,
-received length/signaling and waveform admission remain QAM-03. The file source
-still uses its full-word padding policy; this codec extension does not silently
-change channel operation or the measurement JSON contract.
+module contracts and validation. QAM-03 now connects explicit shortened words through
+bit interleaving, cell packing, received NCP length discovery and waveform samples.
+The file source still uses its full-word padding policy; no automatic EOF shortening
+or measurement-JSON contract change is introduced.
+
+## QAM coding and diagnostic decisions (QAM-02/03)
+
+`signal_processing/modulation/slicing/` owns the standalone nearest-symbol decision.
+It returns label/reference/error/squared distance, chooses the lowest label on exact
+computed ties and never replaces soft LDPC input. Results are direct API values;
+registered slicer JSONL producers remain separate instrumentation work.
+
+Full uniform bit processing uses PHY I20 Tables24–37 and ETSI EN302769 V1.2.1
+Table10(a), including explicit5/3/11/12-bit extensions for128/2048/8192/16384-QAM.
+Permutation indices >=16200 expose these known padding positions. RX removes them
+after inverse routing, retaining all actual mother-code likelihoods. Full uniform
+profile packing/collection now uses the selected padded count rather than16200
+for every constellation.
+
+`modulation/interleaving/shortened.rs` owns24-column shortened ordering and skipped
+unused holes; parity ordering is shared with the full mother path. The profile-aware
+TX explicitly accepts valid odd-byte shortened words. `packing/shortening.rs` owns
+transport admission and the received-span length rule from PHY I20 §8.3.2 PDF178–179.
+The opt-in `receiver/payload/variable.rs` waits for CRC-accepted received start/filler
+boundaries and classifies full/shortened words without TX sizes or identities.
+It retains at most16213 soft values; incomplete history/EOF is not completion.
+Original-length decisions, mother stages, actual statuses and consistency are exposed.
+
+`simulation/payload/shortened/` composes these owners through actual PLC acquisition,
+NCP, interleavers and waveform samples in a bounded reference experiment. It accepts
+explicit original words, supplies a real following filler boundary, then drains.
+It adds no noise, MAC framing, automatic file shortening or new general channel schema.
+See [component guides](user/qam-processing/README.md) and the
+[task design](development/features/qam-completion/design.md). QAM-04 external
+interoperability is [deferred](development/features/qam-completion/external-vectors.md)
+at the user's request; local round trips and transcribed tables are separate evidence.
 
 ## Planned visual system workspace and payload selection
 
@@ -318,9 +350,10 @@ mapping. `modulation/interleaving/mixed.rs` owns non-shortened24-column mixed bi
 processing; the packer groups coded bits using per-source-rank loading and explicit
 last-cell padding. Actual PLC DPDs deliver the frozen applied ProfileA to RX.
 The receiver demaps variable-width soft cells and removes only final-cell padding
-before actual LDPC/BCH recovery. Uniform16/256 and mixed0,4,6..14-bit profiles are
-supported; unverified uniform higher-order coding, shortened waveform transport and dynamic profile
-activation reject explicitly rather than substituting mixed rules.
+before actual LDPC/BCH recovery. All ten uniform data orders and mixed0,4,6..14-bit
+profiles are supported. Shortened words use the separate explicit API/reference
+path described above. Dynamic profile activation rejects explicitly; uniform
+modes always select their own rules rather than substituting mixed processing.
 
 The temporal model is piecewise-constant variance with conditionally independent
 Gaussian residuals. RxMER alone supplies no burst correlation or event timing.
@@ -344,8 +377,8 @@ Checked substeps do not close their parent requirement.
 
 Parity interleaving, column twisting and cell demultiplexing now expose separate
 forward/soft-inverse APIs and direct intermediate arrays. The existing facade
-composes their shared mapping owners. Supported coding modes remain uniform
-16/256-QAM short8/9; splitting stages does not expand that scientific support.
+composes their shared mapping owners. QAM-03 extends this foundation to all ten
+uniform short8/9 data orders, including explicit padding and its reverse boundary.
 
 Current source ownership:
 
@@ -413,7 +446,7 @@ each calculation retains one canonical implementation.
 
 The diagram describes the target channel path. Dashed-border boxes are planned
 components. The fixed256-QAM noiseless channel stepper now connects the solid path;
-nonideal operation and the optional hard slicer remain separate work.
+nonideal operation remains separate work. The diagnostic hard slicer is now a standalone API.
 
 ```mermaid
 flowchart TB
@@ -492,7 +525,7 @@ obtain data through an existing stage API.
 | `rx.frequency.cells`, `rx.time.cells` | Separate inverse cell-interleaver outputs and source phase | Direct |
 | `rx.ncp.llrs`, `rx.ncp.accepted` | Actual soft records, CRC-accepted messages and direct block iterations | Production source decoder and bounded observer |
 | `rx.data.llrs`, `rx.descrambler.llrs` | Data likelihoods after/before sign inversion | Post-inverse soft records have production observer; raw demapper remains direct |
-| `rx.slicer.decisions` | Nearest label/reference point and distance/error vector | TODO hard slicer |
+| `rx.slicer.decisions` | Nearest label/reference point and distance/error vector | Direct slicing API implemented; registered stream pending |
 | `rx.bits.inverse` | Complete word LLRs restored to codeword order | Production collector and bounded observer; independent inverse bit-stage APIs available directly |
 | `rx.ldpc.bits` | Decisions, parity success and actual iteration count | Direct |
 | `rx.bch.payload` | Recovered bits, status and corrected-bit count | Direct |
@@ -637,7 +670,7 @@ source index from known matched-pair delay. The source decoder uses CRC-accepted
 NCP spans, independent soft hypotheses and actual LDPC/BCH results. Bad control
 closes recovery without clearing pending history or caller-owned completed words.
 
-Support is frozen ProfileA ID0 with uniform16/256 or verified mixed loading,
+Support is frozen ProfileA ID0 with all ten uniform orders or verified mixed loading,
 including zero-loaded carriers, and uniform positive QPSK/16-QAM/64-QAM NCP.
 Odd selection, activation updates and tagging fail explicitly; dynamic switching
 remains NCP-03. See the applied-profile design for non-shortened coding bounds. Descriptor counts remain independent.
@@ -723,7 +756,6 @@ before implementation if source analysis shows a better existing owner.
 | --- | --- |
 | `transmission/layout/additional_pilots.rs` | Specification-based additional continuous-pilot placement |
 | `signal_processing/receiver/estimation.rs` | WAVE-RX: independently verified nonideal synchronization/channel estimation beyond the existing known-reference receiver |
-| `signal_processing/modulation/slicing.rs` | Diagnostic hard decisions; keep soft demapping for LDPC |
 
 If PLC needs a new coding algorithm, its reusable primitive belongs in
 `fec-codec`, selected only after local PHY verification. Do not assume payload or
@@ -732,7 +764,8 @@ have one owner; do not copy an LFSR into every consumer.
 
 The hard slicer is diagnostic: nearest constellation point with an explicit tie
 policy, symbol-error counts and data for EVM inspection. It must not silently
-replace soft LLR inputs to LDPC. Its implementation remains on the checklist.
+replace soft LLR inputs to LDPC. Its standalone implementation is complete under QAM-02;
+observer registration remains distinct from the direct decision API.
 
 ## Diagnostic logging
 

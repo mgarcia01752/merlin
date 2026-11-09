@@ -29,6 +29,12 @@ pub struct EncodedPayload {
     /// Actual profile-aware bit-interleaver output; grouping happens during packing.
     pub profile_coded_bits: Option<Vec<u8>>,
 }
+/// Caller-owned shortened TX test points; never receiver inputs.
+pub struct EncodedShortenedPayload {
+    pub codeword_id: CodewordId,
+    pub encoded: fec_codec::shortening::EncodedShortenedBlock,
+    pub profile_coded_bits: Vec<u8>,
+}
 /// One physical-time reduced grid. Missing branch history is explicitly accounted for.
 pub struct PayloadChannelSymbol {
     pub channel_symbol_index: u64,
@@ -170,6 +176,41 @@ impl PayloadTransmitter {
             codeword_id,
             encoded,
             labels,
+            profile_coded_bits,
+        })
+    }
+    /// Encodes an explicit shortened information word in a profile-aware session.
+    /// # Arguments
+    /// * `payload` - Binary information bits with an odd transmitted byte count;
+    ///   caller supplies any header/stuffing. No automatic file EOF conversion occurs.
+    /// # Returns
+    /// Queue ID and all FEC/bit-processing test points; final-cell padding is added later.
+    /// # Errors
+    /// Rejects legacy label mode, invalid shortening/bytes, drain or full queue.
+    pub fn enqueue_shortened(
+        &mut self,
+        payload: &[u8],
+    ) -> Result<EncodedShortenedPayload, SimulationError> {
+        if self.profile_bits.is_none() || self.drain_remaining.is_some() {
+            return Err(invalid(
+                "Shortened words require an open profile-aware transmitter.",
+            ));
+        }
+        let geometry = fec_codec::shortening::Shortening::new(payload.len()).map_err(invalid)?;
+        crate::transmission::packing::shortening::validate_shortened_transport(geometry)?;
+        let codec = fec_codec::shortening::ShortenedCodec::new(geometry).map_err(invalid)?;
+        let encoded = codec.encode(payload).map_err(invalid)?;
+        let order =
+            crate::signal_processing::modulation::interleaving::shortened::ShortenedBitOrder::new(
+                geometry,
+            )?;
+        let profile_coded_bits = order.encode(&encoded.transmitted)?;
+        let codeword_id = self
+            .packer
+            .enqueue_shortened_bits(profile_coded_bits.clone())?;
+        Ok(EncodedShortenedPayload {
+            codeword_id,
+            encoded,
             profile_coded_bits,
         })
     }

@@ -45,7 +45,7 @@ fn mixed_twist_matches_independent_transcribed_matrix_and_bijection() {
     assert_eq!(unique, (0..16200).collect::<Vec<_>>());
     assert!(PayloadBitOrder::new(&[0, 0]).is_err());
     assert!(PayloadBitOrder::new(&[5, 8]).is_err());
-    assert!(PayloadBitOrder::new(&[6]).is_err()); // never substitute mixed rules for uniform64
+    assert!(PayloadBitOrder::new(&[6]).is_ok()); // uniform64 uses its own verified rules
 }
 #[test]
 fn waveform_supports_uniform16_and_mixed_with_zero_loading_and_16k() {

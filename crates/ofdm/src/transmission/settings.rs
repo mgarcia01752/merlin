@@ -73,7 +73,8 @@ impl SubcarrierSpacing {
 /// Fixed setup for one downstream channel; consumers validate and freeze per run.
 ///
 /// This defines numerology, not a complete carrier map or operational CMTS.
-/// Data modulation is currently fixed to256-QAM; pilot/control roles are separate.
+/// Data loading belongs to a separate profile; the default is256-QAM.
+/// Pilot/control roles are separate.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct TransmissionSettings {

@@ -36,10 +36,10 @@ flowchart TB
 | Actual sample-domain demonstration | [Reference experiment](reference-experiment.md) |
 
 Current support is short8/9 concatenated coding, frozen ProfileA ID0 with
-uniform16/256-QAM or verified mixed loading, and uniform positive QPSK/16-QAM/64-QAM
+all ten uniform data orders or verified mixed loading, and uniform positive QPSK/16-QAM/64-QAM
 NCP. Mixed and zero-loaded DPD positions are supported as described in the
 applied-profile guide. Dynamic switching, other profile selectors, odd selection,
-OPT tagging, shortening and unverified uniform higher-order coding reject
+OPT tagging and unsupported data orders reject
 explicitly. Z-marked unused data fields remain BPSK filler, distinct from a
 zero-loaded position within an active codeword.
 
@@ -52,3 +52,7 @@ The [job/CLI wrapper](../channel-runner/cli.md) adds cancellation, source-window
 metrics and partial results. Pilot-derived reception is now available; full blind acquisition remains later work.
 See [architecture](../../architecture.md), [checklist](../../development/checklist.md)
 and [source evidence](../../reference/payload-transport-evidence.md).
+
+For explicit shortened words and received-boundary length discovery, see the
+[QAM transport component guides](../qam-processing/README.md). General channel
+PRBS/file jobs retain their established full-word EOF policy.

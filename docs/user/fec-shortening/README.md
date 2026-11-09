@@ -56,10 +56,11 @@ introduce errors and verify actual iterative correction and non-convergence.
 
 ## Integration boundary
 
-The public Rust `fec_codec::shortening` module supports the codec boundary now.
-The channel CLI and file source still use full16200-bit words. They do not
-silently select shortening at file EOF. Shortened bit interleaving, QAM cell
-packing and received length/signaling must be connected and tested under QAM-03.
-Direct intermediate vectors are available now; no new channel JSONL stage IDs or
-shortened waveform result contract is claimed. See the [API reference](../../reference/public-api.md)
-for entry points and the [checklist](../../development/checklist.md) for scope.
+The public Rust `fec_codec::shortening` module owns the independent codec.
+QAM-03 now connects explicit shortened words to24-column bit ordering, grouping,
+received-pointer length discovery and the [shortened waveform reference](../qam-processing/waveform.md).
+The general channel CLI/file source still use full words and never silently select
+shortening at file EOF. Direct intermediate vectors and the reference's typed/JSON
+results are available; no new general channel schema or JSONL stage IDs are added.
+See the [API reference](../../reference/public-api.md) and
+[checklist](../../development/checklist.md) for scope.

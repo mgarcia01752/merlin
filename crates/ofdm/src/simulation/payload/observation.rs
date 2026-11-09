@@ -178,12 +178,7 @@ pub fn observe_receive(
                 ProbeData::Llrs(&word.ldpc_llrs),
                 observer,
             )?);
-            let payload = word
-                .decoded
-                .bch
-                .codeword
-                .get(..fec_codec::parameters::BCH_INPUT_BITS)
-                .ok_or_else(|| invalid("Malformed retained BCH result."))?;
+            let payload = word.payload()?;
             outcomes.push(probe.emit(
                 TestPointId::PayloadDecoded,
                 &context,

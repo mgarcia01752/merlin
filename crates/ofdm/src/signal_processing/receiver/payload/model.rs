@@ -26,6 +26,9 @@ pub struct RecoveredPayload {
     pub cell_llrs: Vec<f64>,
     pub ldpc_llrs: Vec<f64>,
     pub decoded: DecodedBlock,
+    /// Present for opt-in boundary-discovered transport, including its full-word case.
+    pub shortening: Option<fec_codec::shortening::Shortening>,
+    pub known_zeros_consistent: bool,
 }
 /// Completed source-symbol processing, including a terminal rejection diagnostic.
 pub struct PayloadSymbolResult {
@@ -37,4 +40,22 @@ pub struct PayloadSymbolResult {
     pub recovered: Vec<RecoveredPayload>,
     pub pending_payload_bits: usize,
     pub error: Option<SimulationError>,
+}
+
+impl RecoveredPayload {
+    /// Borrows original-length payload decisions, including failures, without parity.
+    /// # Returns
+    /// K received information bits; default legacy words retain14232-bit behavior.
+    /// # Errors
+    /// Rejects caller-replaced malformed public BCH decision storage.
+    pub fn payload(&self) -> Result<&[u8], SimulationError> {
+        let omitted = self
+            .shortening
+            .map_or(0, |geometry| geometry.omitted_bits());
+        self.decoded
+            .bch
+            .codeword
+            .get(omitted..fec_codec::parameters::BCH_INPUT_BITS)
+            .ok_or_else(|| crate::error::invalid("Malformed retained BCH payload decisions."))
+    }
 }

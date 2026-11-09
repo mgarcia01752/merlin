@@ -2,7 +2,8 @@
 
 The receiver accepts **transmitted-coordinate LLRs after inverse bit processing**.
 Geometry K is explicit at this codec boundary; waveform length discovery/signaling
-must provide it independently when QAM-03 integrates shortened transport.
+uses the separate [received-pointer length rule](../qam-processing/receiver.md)
+when QAM-03 integrates explicit shortened transport.
 
 ```mermaid
 flowchart LR

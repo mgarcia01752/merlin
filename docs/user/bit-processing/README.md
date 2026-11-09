@@ -23,9 +23,11 @@ the existing composed observer boundaries are unchanged.
 | Twists | [Column rotation](twist.md) |
 | Demultiplexing | [Cell-bit ordering](demultiplexing.md) |
 
-Support remains unshortened short8/9 uniform16/256-QAM. Splitting the boundaries
-does not implement other coding modes, mixed profiles or non-square placement.
-Existing pinned evidence in [the coding-loop guide](../qam256-coding-loop.md)
-remains authoritative for tables/order. This refactor preserves those tables;
-new tests add independent stage-index anchors, composition compatibility, inverse
-soft-value preservation and malformed-input rejection.
+QAM-03 now extends full uniform short8/9 processing through16384-QAM using each
+order's pinned table. Some orders need zero extension after parity and before
+twisting; direct twist/demux inputs then use the padded count. Their inverse
+returns the padded count, so discard extension positions before inverse parity.
+The facade owns that composition. See [uniform ordering](../qam-processing/uniform.md)
+and the separate [shortened24-column stage](../qam-processing/shortened.md).
+Independent matrices, original16/256 index anchors and soft-value preservation
+checks distinguish table correctness from invertibility alone.

@@ -64,7 +64,7 @@ pub struct PackingSettings {
 impl PackingSettings {
     /// Validates bounded NI and space for the minimum NCP plusCRC reservation.
     /// # Returns
-    /// Unit for supported uniform256-QAM packing geometry.
+    /// Unit for bounded NI and a supported profile identity.
     /// # Errors
     /// Rejects invalid profile width or NI outside spacing-specific PHY limits.
     pub fn validate(&self) -> Result<(), SimulationError> {
