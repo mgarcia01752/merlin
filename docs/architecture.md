@@ -64,6 +64,7 @@ crates/
 │   ├── concatenated.rs        Composition and independent payload comparison
 │   ├── crc.rs                 CRC-24-D
 │   ├── ncp/                   NCP mother matrix, shortening/puncturing and decoder
+│   ├── plc/                   Separate PLC matrix, encoding, puncturing and decoding
 │   └── parameters.rs          Verified coding dimensions
 ├── ofdm/src/
 │   ├── types/                 Shared identities, units and modulation registry
@@ -73,7 +74,7 @@ crates/
 │   │   ├── layout/            Physical roles and inverse pilot reference
 │   │   ├── packing/           Bounded codeword queue and symbol plans
 │   │   ├── ncp/               Messages, control mapping and field CRC acceptance
-│   │   └── plc/               Geometry, timestamp/MC blocks, frames and FEC inputs
+│   │   └── plc/               Message frames/FEC inputs and thin PLC codec adapter
 │   ├── signal_processing/
 │   │   ├── modulation/        QAM, LLRs, bit processing and cell randomization
 │   │   ├── interleaving/      Separate time, frequency and composition modules
@@ -169,7 +170,9 @@ obtain data through an existing stage API.
 | `tx.time.cells`, `tx.frequency.cells` | Each cell-interleaver output with startup markers | Direct separate APIs |
 | `tx.pilots.sequence`, `tx.pilots.continuous`, `tx.pilots.scattered`, `tx.pilots.power` | Separate sequence, signals, boost and physical locations | Direct values and bounded observer |
 | `tx.plc.message` | `transmission::plc`; TS+MC information bytes and288-bit inputs | Direct bounded APIs; observer and OCD/DPD packet construction TODO |
-| `tx.plc.coded`, `tx.plc.interleaved`, `tx.plc.randomized`, `tx.plc.preamble`, `tx.plc.iq` | Separate PLC coding, interleaving, randomization, preamble and mapping outputs | TODO |
+| `tx.plc.coded` | `fec_codec::plc` and thin `transmission::plc::coding`; mother/transmitted bits | Direct arrays; common observer TODO |
+| `rx.plc.llrs`, `rx.plc.decoded` | Restored mother LLRs and soft decisions with iterations/parity | Direct APIs; common observer TODO |
+| `tx.plc.interleaved`, `tx.plc.randomized`, `tx.plc.preamble`, `tx.plc.iq` | Separate PLC interleaving, randomization, preamble and mapping outputs | TODO |
 | `tx.frame.bins` | Full physical frequency grid, roles and zero/excluded bins | TODO production assembler |
 | `tx.ifft.samples`, `tx.cp.samples`, `tx.window.samples`, `tx.overlap_add.samples` | Separate waveform stages and sample indices | TODO |
 | `channel.input`, `channel.output` | Channel-plane I/Q and applied impairment configuration | TODO waveform path; cell AWGN exists |
@@ -210,8 +213,11 @@ explicit runner policy that preserves already completed scientific results.
 The PLC message boundary now exposes a typed extended timestamp, timestamp block,
 message-channel block, complete TS+MC information frame and36-byte FEC inputs.
 An idle frame is valid at that boundary but does not carry channel-acquisition
-configuration. MAC OCD/DPD packets and repetition scheduling remain separate work;
-PLC FEC and signal stages are not implemented. See the
+configuration. MAC OCD/DPD packets and repetition scheduling remain separate work.
+The separate PLC LDPC primitive and typed adapter now recover message inputs
+with actual iterations and parity status. PLC interleaving and signal stages
+remain pending. See the
+[PLC coding guide](user/plc-coding.md),
 [PLC message guide](user/plc-messages.md) and [evidence](reference/plc-evidence.md).
 
 ## Planned module ownership
@@ -225,7 +231,7 @@ before implementation if source analysis shows a better existing owner.
 | `signal_processing/modulation/interleaving/{parity,twist,demultiplexing}.rs` | Separate intermediate and inverse boundaries behind the existing facade |
 | `transmission/layout/additional_pilots.rs` | Specification-based additional continuous-pilot placement |
 | `transmission/plc/{descriptors,mac_packets,scheduling}.rs` | Fixed-setting OCD/DPD packets, packet CRCs, segmentation and repetition; current message layer transports opaque segments |
-| `transmission/plc/{coding,block_interleaving,randomization,preamble,mapping}.rs` | Remaining PLC signal stages and distinct state; invoke verified codec primitives |
+| `transmission/plc/{block_interleaving,randomization,preamble,mapping}.rs` | Remaining PLC signal stages and distinct state; invoke verified codec primitives |
 | `transmission/symbols/assembly.rs` | Typed data/NCP/filler composition before randomization/mapping |
 | `transmission/frame/assembly.rs` | Reduced-to-physical grid assembly and protected-role insertion |
 | `signal_processing/waveform/{ifft,fft,cyclic_prefix,windowing,overlap_add}.rs` | Separate waveform transforms and inverse operations |
@@ -268,6 +274,7 @@ exist, but native installers and multi-OS release automation do not yet exist.
 - [FEC codec](user/fec-codec.md), [coding evidence](reference/coding-mode.md)
 - [QAM mapping](user/qam-mapping.md), [256-QAM bit/coding loop](user/qam256-coding-loop.md)
 - [Randomizer](user/cell-randomizer.md), [symbol packing](user/symbol-packing.md), [NCP](user/ncp.md)
+- [PLC LDPC coding](user/plc-coding.md)
 - [PLC message blocks](user/plc-messages.md), [PLC evidence](reference/plc-evidence.md)
 - [Pilot signals and test points](user/pilot-signals.md)
 - [Physical layout](user/carrier-layout.md), [cell interleaving](user/cell-interleaving.md)

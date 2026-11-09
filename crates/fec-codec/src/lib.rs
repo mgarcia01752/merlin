@@ -10,6 +10,7 @@ pub mod crc;
 pub mod ldpc;
 pub mod ncp;
 pub mod parameters;
+pub mod plc;
 
 // Retain established root imports while implementation lives with each codec.
 pub use bch::{decode_bch, encode_bch, BchResult};

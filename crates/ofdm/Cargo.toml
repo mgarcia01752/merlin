@@ -39,3 +39,7 @@ required-features = ["simulation"]
 [[example]]
 name = "plc_messages"
 required-features = ["simulation"]
+
+[[example]]
+name = "plc_codec_loop"
+required-features = ["simulation"]

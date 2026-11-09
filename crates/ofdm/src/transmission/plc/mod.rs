@@ -4,6 +4,8 @@
  */
 //! PLC message boundaries; waveform and acquisition descriptors are separate stages.
 #[cfg(feature = "simulation")]
+pub mod coding;
+#[cfg(feature = "simulation")]
 pub mod frame;
 pub mod geometry;
 pub mod information;
@@ -19,3 +21,6 @@ pub use message_channel::MessageChannelBlock;
 pub use timestamp::ExtendedTimestamp;
 #[cfg(feature = "simulation")]
 pub use timestamp_block::TimestampMessageBlock;
+
+#[cfg(feature = "simulation")]
+pub use coding::{DecodedPlcBlock, EncodedPlcBlock, PlcBlockCodec};

@@ -10,8 +10,9 @@ Each operation is a separate Rust module under `transmission::plc`.
 ```
 
 This prints a synthetic timestamp, idle message-channel payload, frame dimensions,
-36-byte information blocks and the first block's 288 bits as JSON. It generates
-no LDPC parity, PLC preamble or waveform. The timestamp is supplied explicitly;
+36-byte information blocks and the first block's 288 bits as JSON. This message-only example generates
+no LDPC parity, PLC preamble or waveform. The separate
+[PLC coding example](plc-coding.md) now supplies the encoder/decoder stage. The timestamp is supplied explicitly;
 the example does not read the host clock.
 
 ```mermaid
@@ -24,7 +25,7 @@ flowchart LR
     FRAME --> BYTES["360 or 720 message bytes"]
     BYTES --> BLOCKS["Consecutive 36-byte information blocks"]
     BLOCKS --> BITS["288 MSB-first bits per block"]
-    BITS -.-> FEC["PLC LDPC encoder · next stage"]
+    BITS -.-> FEC["PLC LDPC encoder · separate module"]
 ```
 
 ## Frame dimensions
@@ -32,15 +33,15 @@ flowchart LR
 A PLC frame has eight preamble symbols and 120 data symbols. The information
 payload excludes the preamble and FEC redundancy:
 
-| Spacing | FFT | PLC carriers | Data symbols/codeword | Codewords/frame | Information bytes/frame | Future encoded bytes/frame |
+| Spacing | FFT | PLC carriers | Data symbols/codeword | Codewords/frame | Information bytes/frame | Encoded bytes/frame |
 | --- | --- | --- | --- | --- | --- | --- |
 | 25 kHz | 8192 | 16 | 6 | 20 | 720 | 960 |
 | 50 kHz | 4096 | 8 | 12 | 10 | 360 | 480 |
 
 `PlcFrameGeometry` derives these dimensions from spacing. The encoded-byte count
 is a dimension of the specified code, not evidence that parity has been generated.
-The future PLC encoder is the punctured (384,288) code derived from the (480,288)
-mother code; payload and NCP encoders are different codes.
+The separate [PLC encoder](plc-coding.md) implements the punctured (384,288) code
+derived from the (480,288) mother code; payload and NCP encoders are different codes.
 
 ## Timestamp and message channel
 
@@ -125,6 +126,6 @@ interoperability vectors.
 The idle frame establishes a real message-block and FEC-input boundary. It does
 not advertise a channel configuration to a modem. Fixed-setting OCD, Profile A
 and NCP DPD MAC packets, packet CRCs, segmentation and repetition scheduling remain
-TODO. PLC FEC, block interleaving, randomization, preamble, mapping and physical-bin
-assembly also remain separate stages. See [evidence](../reference/plc-evidence.md),
+TODO. PLC FEC is now implemented separately. Block interleaving, randomization,
+preamble, mapping and physical-bin assembly also remain separate stages. See [evidence](../reference/plc-evidence.md),
 [architecture](../architecture.md) and [checklist](../development/checklist.md).
