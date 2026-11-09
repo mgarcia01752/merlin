@@ -16,7 +16,7 @@ use crate::{
         SubcarrierSpacing,
     },
     types::ProfileId,
-    LabError,
+    SimulationError,
 };
 use fec_codec::{crc::crc24d, ncp::NcpFecCodec};
 use serde::Serialize;
@@ -57,7 +57,7 @@ impl DecodedNcpField {
     /// This does not infer codeword length, prior profile state or payload IDs.
     /// # Errors
     /// Rejects inconsistent chains, oversized domains or pointers outside data.
-    pub fn data_spans(&self, data_positions: usize) -> Result<Vec<NcpDataSpan>, LabError> {
+    pub fn data_spans(&self, data_positions: usize) -> Result<Vec<NcpDataSpan>, SimulationError> {
         validate_chain(&self.messages)?;
         if data_positions > SubcarrierSpacing::Khz25.max_interleaver_cells() {
             return Err(invalid(
@@ -125,9 +125,10 @@ impl NcpFieldCodec {
     /// Reusable codec whose decoder scratch state is owned by this instance.
     /// # Errors
     /// Reports invalid mother-code setup with a stable scientific error category.
-    pub fn new() -> Result<Self, LabError> {
+    pub fn new() -> Result<Self, SimulationError> {
         Ok(Self {
-            fec: NcpFecCodec::new().map_err(|message| LabError::new("NcpCodecSetup", message))?,
+            fec: NcpFecCodec::new()
+                .map_err(|message| SimulationError::new("NcpCodecSetup", message))?,
         })
     }
     /// Encodes a bounded validated chain and its separate CRC block.
@@ -143,7 +144,7 @@ impl NcpFieldCodec {
         &self,
         messages: &[NcpMessage],
         modulation: NcpModulation,
-    ) -> Result<EncodedNcpField, LabError> {
+    ) -> Result<EncodedNcpField, SimulationError> {
         validate_chain(messages)?;
         let mut bytes = Vec::new();
         let mut labels = Vec::new();
@@ -168,7 +169,7 @@ impl NcpFieldCodec {
     /// IDs are deliberately discarded and do not become transmitted fields.
     /// # Errors
     /// Rejects invalid meanings or mismatched/duplicate reserved positions.
-    pub fn encode_packed(&self, symbol: &PackedSymbol) -> Result<EncodedNcpField, LabError> {
+    pub fn encode_packed(&self, symbol: &PackedSymbol) -> Result<EncodedNcpField, SimulationError> {
         if symbol.ncp_entries.is_empty()
             || symbol.ncp_entries.len() > MAX_MESSAGES
             || symbol.cells.len() > SubcarrierSpacing::Khz25.max_interleaver_cells()
@@ -258,7 +259,7 @@ impl NcpFieldCodec {
         cells: &[Vec<f64>],
         modulation: NcpModulation,
         max_iterations: usize,
-    ) -> Result<DecodedNcpField, LabError> {
+    ) -> Result<DecodedNcpField, SimulationError> {
         if cells.len() > SubcarrierSpacing::Khz25.max_interleaver_cells()
             || !(1..=100).contains(&max_iterations)
         {
@@ -272,13 +273,13 @@ impl NcpFieldCodec {
         for _ in 0..=MAX_MESSAGES {
             let block = cells
                 .get(consumed..consumed + block_cells)
-                .ok_or_else(|| LabError::new("NcpTruncated", "Missing NCP or CRC block."))?;
+                .ok_or_else(|| SimulationError::new("NcpTruncated", "Missing NCP or CRC block."))?;
             let decoded = self
                 .fec
                 .decode(&llrs_from_cells(block, modulation)?, max_iterations)
-                .map_err(|message| LabError::new("NcpDecodeInput", message))?;
+                .map_err(|message| SimulationError::new("NcpDecodeInput", message))?;
             if !decoded.success {
-                return Err(LabError::new(
+                return Err(SimulationError::new(
                     "NcpFecFailure",
                     "NCP block did not converge to a valid shortened codeword.",
                 ));
@@ -290,7 +291,7 @@ impl NcpFieldCodec {
                 .is_some_and(|message: &NcpMessage| message.last)
             {
                 if decoded.payload != crc24d(&bytes) {
-                    return Err(LabError::new(
+                    return Err(SimulationError::new(
                         "NcpCrcMismatch",
                         "Reject entire NCP field: CRC-24-D mismatch.",
                     ));

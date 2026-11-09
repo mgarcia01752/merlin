@@ -13,7 +13,7 @@ use crate::{
         symbols::TransportCell,
     },
     types::{IqPair, SubcarrierIdx},
-    LabError,
+    SimulationError,
 };
 use std::collections::BTreeMap;
 #[derive(Clone)]
@@ -74,7 +74,7 @@ impl ConstellationCollector {
         snapshot: &ReceiverConfiguration,
         origin: u64,
         source_symbols: u64,
-    ) -> Result<(), LabError> {
+    ) -> Result<(), SimulationError> {
         let layout = snapshot.channel().physical_layout()?;
         self.result.selection.validate(&layout)?;
         let settings = snapshot.interleaver_settings()?;
@@ -102,7 +102,7 @@ impl ConstellationCollector {
         &mut self,
         waveform: &ReceivedSymbol,
         payload: &PayloadReceiveSymbol,
-    ) -> Result<(), LabError> {
+    ) -> Result<(), SimulationError> {
         if self.result.status == ConstellationStatus::Complete {
             return Ok(());
         }

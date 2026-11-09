@@ -11,7 +11,7 @@ use crate::{
     error::invalid,
     signal_processing::modulation::SymbolLabel,
     transmission::{layout::ncp::PreInterleavingRole, SubcarrierSpacing},
-    LabError,
+    SimulationError,
 };
 use std::collections::VecDeque;
 
@@ -41,7 +41,7 @@ impl SymbolPacker {
     /// Empty bounded queue starting at symbol0 and codeword ID0.
     /// # Errors
     /// Rejects invalid settings before allocating queued codewords.
-    pub fn new(settings: PackingSettings) -> Result<Self, LabError> {
+    pub fn new(settings: PackingSettings) -> Result<Self, SimulationError> {
         settings.validate()?;
         Ok(Self {
             settings,
@@ -65,7 +65,7 @@ impl SymbolPacker {
     pub fn with_bit_loading(
         settings: PackingSettings,
         bit_loading: Vec<u8>,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         if bit_loading.len() != settings.interleaver_cells {
             return Err(invalid("Profile does not match packer NI."));
         }
@@ -84,7 +84,7 @@ impl SymbolPacker {
     /// # Errors
     /// Rejects non-bit mode, malformed bits, queue limit or exhausted IDs atomically.
     #[cfg(feature = "simulation")]
-    pub fn enqueue_bits(&mut self, bits: Vec<u8>) -> Result<CodewordId, LabError> {
+    pub fn enqueue_bits(&mut self, bits: Vec<u8>) -> Result<CodewordId, SimulationError> {
         if self.bit_loading.is_none()
             || bits.len() != fec_codec::parameters::LDPC_CODEWORD_BITS
             || bits.iter().any(|bit| *bit > 1)
@@ -115,7 +115,7 @@ impl SymbolPacker {
     /// Monotonic job-local identity, not a wire pointer or profile ID.
     /// # Errors
     /// Rejects invalid labels, full queue or exhausted IDs without changing state.
-    pub fn enqueue(&mut self, labels: Vec<SymbolLabel>) -> Result<CodewordId, LabError> {
+    pub fn enqueue(&mut self, labels: Vec<SymbolLabel>) -> Result<CodewordId, SimulationError> {
         if self.bit_loading.is_some()
             || self.queue.len() >= MAX_QUEUED_CODEWORDS
             || labels.len() != QAM256_CODEWORD_CELLS
@@ -153,7 +153,10 @@ impl SymbolPacker {
     /// Empty input queues produce tagged zero-loaded filler, not fake payload.
     /// # Errors
     /// Rejects invalid roles/capacity or exhausted symbol indices atomically.
-    pub fn pack_symbol(&mut self, roles: &[PreInterleavingRole]) -> Result<PackedSymbol, LabError> {
+    pub fn pack_symbol(
+        &mut self,
+        roles: &[PreInterleavingRole],
+    ) -> Result<PackedSymbol, SimulationError> {
         let next = self
             .next_symbol
             .checked_add(1)

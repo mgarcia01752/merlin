@@ -19,12 +19,12 @@ use docsis_ofdm_fec::{
         layout::{CarrierLayout, PhysicalCarrierRole},
         SubcarrierSpacing,
     },
-    LabError,
+    SimulationError,
 };
 struct FailingSink;
 impl ProbeObserver for FailingSink {
-    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), LabError> {
-        Err(LabError::new(
+    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
+        Err(SimulationError::new(
             "TestObserverFailure",
             "Deliberate observer rejection.",
         ))

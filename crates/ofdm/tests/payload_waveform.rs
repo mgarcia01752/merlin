@@ -14,11 +14,11 @@ use docsis_ofdm_fec::{
         test_points::{ProbeEvent, ProbeObserver, TestPointProbe},
     },
     transmission::{packing::NcpModulation, SubcarrierSpacing},
-    LabError,
+    SimulationError,
 };
 struct NoObserver;
 impl ProbeObserver for NoObserver {
-    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), LabError> {
+    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
         panic!("disabled observer called");
     }
 }

@@ -4,7 +4,7 @@
  */
 //! Frequency-domain Band12 ingress approximation; no LTE or DOCSIS waveform synthesis.
 use crate::{
-    error::{invalid, LabError},
+    error::{invalid, SimulationError},
     scenario::grid::FrequencyGrid,
     types::FrequencyHz,
 };
@@ -57,7 +57,7 @@ impl LteDownlinkIngress {
         &self,
         grid: &FrequencyGrid,
         mer_db: &[Option<f64>],
-    ) -> Result<IngressResult, LabError> {
+    ) -> Result<IngressResult, SimulationError> {
         self.apply_resource_blocks(grid, mer_db, 50, &[])
     }
     /// Applies a centered partial-load LTE-inspired envelope outside protected frequency ranges.
@@ -77,7 +77,7 @@ impl LteDownlinkIngress {
         mer_db: &[Option<f64>],
         resource_blocks: u8,
         protected: &[std::ops::Range<FrequencyHz>],
-    ) -> Result<IngressResult, LabError> {
+    ) -> Result<IngressResult, SimulationError> {
         if !(1..=50).contains(&resource_blocks) {
             return Err(invalid("LTE loading must be1..50 resource blocks."));
         }

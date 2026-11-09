@@ -4,7 +4,7 @@
  */
 //! Captured assignments and editable profile hypotheses with protected roles.
 use crate::{
-    error::{invalid, LabError},
+    error::{invalid, SimulationError},
     scenario::{ScenarioKey, SourceProvenance},
     types::{modulation::CarrierType, BitsPerSymbol, CaptureTime, ProfileId, ProtocolScope},
 };
@@ -55,7 +55,7 @@ impl CandidateProfile {
     /// Unit for a supported, bounded candidate with valid data modulations.
     /// # Errors
     /// Rejects schema drift, malformed assignments/provenance or resource limits.
-    pub fn validate(&self) -> Result<(), LabError> {
+    pub fn validate(&self) -> Result<(), SimulationError> {
         self.key.grid.validate()?;
         if self.schema_version != CANDIDATE_SCHEMA_VERSION
             || self.name.is_empty()
@@ -101,7 +101,7 @@ impl CandidateProfile {
         first: usize,
         count: usize,
         bits: Option<BitsPerSymbol>,
-    ) -> Result<usize, LabError> {
+    ) -> Result<usize, SimulationError> {
         self.validate()?;
         let end = first
             .checked_add(count)

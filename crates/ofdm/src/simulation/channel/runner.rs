@@ -19,7 +19,7 @@ use crate::{
         test_points::{CellProbeGrid, ProbeObserver, RunPhase, TestPointProbe},
     },
     types::PLC_FRAME_SYMBOLS,
-    LabError,
+    SimulationError,
 };
 use fec_codec::parameters::BCH_INPUT_BITS;
 
@@ -48,7 +48,7 @@ impl ChannelRun {
     /// Unstarted acquisition state with a finite duration plan and empty comparisons.
     /// # Errors
     /// Rejects invalid geometry, work limits, duration, source or codec setup.
-    pub fn new(settings: &ChannelRunSettings) -> Result<Self, LabError> {
+    pub fn new(settings: &ChannelRunSettings) -> Result<Self, SimulationError> {
         let timing = settings.validate()?;
         let mut link = WaveformLink::new(
             &settings.transmission,
@@ -201,9 +201,9 @@ impl ChannelRun {
         &mut self,
         probe: &mut TestPointProbe,
         observer: &mut impl ProbeObserver,
-    ) -> Result<Option<ChannelStep>, LabError> {
+    ) -> Result<Option<ChannelStep>, SimulationError> {
         if self.summary.phase == ChannelPhase::Failed {
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "ChannelSessionClosed",
                 "Start a new session after channel failure.",
             ));
@@ -242,7 +242,7 @@ impl ChannelRun {
         &mut self,
         probe: &mut TestPointProbe,
         observer: &mut impl ProbeObserver,
-    ) -> Result<Option<ChannelStep>, LabError> {
+    ) -> Result<Option<ChannelStep>, SimulationError> {
         loop {
             match self.summary.phase {
                 ChannelPhase::Acquisition => return self.acquire(probe, observer).map(Some),
@@ -372,9 +372,9 @@ impl ChannelRun {
         &mut self,
         probe: &mut TestPointProbe,
         observer: &mut impl ProbeObserver,
-    ) -> Result<ChannelStep, LabError> {
+    ) -> Result<ChannelStep, SimulationError> {
         if self.next_symbol >= MAX_ACQUISITION_SYMBOLS {
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "ReceiverNotReady",
                 "PLC acquisition exceeded the frame budget.",
             ));
@@ -436,7 +436,7 @@ impl ChannelRun {
         phase: ChannelPhase,
         probe: &mut TestPointProbe,
         observer: &mut impl ProbeObserver,
-    ) -> Result<ChannelStep, LabError> {
+    ) -> Result<ChannelStep, SimulationError> {
         let interval = if phase == ChannelPhase::Observation {
             RunPhase::Observation
         } else {

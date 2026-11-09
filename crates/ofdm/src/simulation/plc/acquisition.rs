@@ -13,7 +13,7 @@ use crate::{
         SubcarrierSpacing,
     },
     types::IqPair,
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 /// One packet admission outcome; rejection does not erase completed FEC diagnostics.
@@ -23,14 +23,14 @@ pub struct DescriptorAdmission {
     pub packet: crate::transmission::plc::mac_packets::ManagementPacket,
     pub message_type: u8,
     pub status: ReceiverConfigurationStatus,
-    pub error: Option<LabError>,
+    pub error: Option<SimulationError>,
 }
 /// Completed receive result with separate decode, transport and admission diagnostics.
 #[derive(Debug, Serialize)]
 pub struct PlcAcquisitionResult {
     pub frame: ReceivedPlcFrame,
     pub admissions: Vec<DescriptorAdmission>,
-    pub transport_error: Option<LabError>,
+    pub transport_error: Option<SimulationError>,
     pub configuration_status: ReceiverConfigurationStatus,
 }
 /// Owns the three independent receive subsystems without any transmitter objects.
@@ -47,7 +47,7 @@ impl PlcAcquisitionReceiver {
     /// Independent FEC, reassembly and configuration state; no TX profile/layout input.
     /// # Errors
     /// Propagates codec initialization failure.
-    pub fn new(bootstrap_spacing: SubcarrierSpacing) -> Result<Self, LabError> {
+    pub fn new(bootstrap_spacing: SubcarrierSpacing) -> Result<Self, SimulationError> {
         Ok(Self {
             frame_receiver: PlcFrameReceiver::new(bootstrap_spacing)?,
             reassembler: PlcMessageReassembler::new(),
@@ -76,7 +76,7 @@ impl PlcAcquisitionReceiver {
         iq: &[IqPair],
         noise_power: f64,
         max_iterations: usize,
-    ) -> Result<PlcAcquisitionResult, LabError> {
+    ) -> Result<PlcAcquisitionResult, SimulationError> {
         let frame = match self.frame_receiver.decode(iq, noise_power, max_iterations) {
             Ok(frame) => frame,
             Err(error) => {

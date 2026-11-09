@@ -9,7 +9,7 @@ use super::{
     source::SeededSource,
 };
 use crate::{
-    error::{invalid, LabError},
+    error::{invalid, SimulationError},
     signal_processing::{
         modulation::{
             interleaving::transmit_bit_order, map_qam16, qam16_llrs, QAM16_BITS_PER_SYMBOL,
@@ -43,7 +43,7 @@ pub fn simulate(
     measured: Option<&MeasuredNoise<'_>>,
     cancel: &AtomicBool,
     progress: impl FnMut(SimulationProgress),
-) -> Result<SimulationResult, LabError> {
+) -> Result<SimulationResult, SimulationError> {
     simulate_with_probes(
         settings,
         measured,
@@ -72,7 +72,7 @@ pub fn simulate_with_probes(
     mut progress: impl FnMut(SimulationProgress),
     probe: &mut super::test_points::TestPointProbe,
     observer: &mut impl super::test_points::ProbeObserver,
-) -> Result<SimulationResult, LabError> {
+) -> Result<SimulationResult, SimulationError> {
     log::debug!(
         "simulation-start requested-codewords={} max-iterations={} max-runtime-ms={}",
         settings.codewords,

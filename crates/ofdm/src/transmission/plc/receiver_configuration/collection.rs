@@ -10,7 +10,7 @@ use crate::{
         mac_packets::ManagementPacket,
     },
     types::{ChannelId, MacAddress},
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 /// Required components still absent; missing does not mean zero/default configuration.
@@ -52,7 +52,7 @@ impl DescriptorCollection {
     /// # Errors
     /// Rejects semantic parse errors, source/channel mismatch or changed role content.
     /// Callers use a candidate copy to preserve all previous state on later failure.
-    pub(super) fn admit(&mut self, packet: &ManagementPacket) -> Result<bool, LabError> {
+    pub(super) fn admit(&mut self, packet: &ManagementPacket) -> Result<bool, SimulationError> {
         let parsed = descriptors::parse(packet)?;
         let identity = (parsed.channel_id, packet.source_address());
         if self.identity.is_some_and(|expected| expected != identity) {
@@ -70,7 +70,7 @@ impl DescriptorCollection {
             if previous.packet == *packet {
                 return Ok(false);
             }
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "ReceiverSessionResetRequired",
                 "Changed descriptor content requires a new fixed acquisition session.",
             ));

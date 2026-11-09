@@ -6,7 +6,7 @@
 use crate::{
     error::invalid,
     signal_processing::waveform::{SampleBlock, WaveformGeometry},
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 /// Observed symbol boundary and normalized prefix/tail correlation.
@@ -31,7 +31,7 @@ pub fn estimate_symbol_boundary(
     input: &SampleBlock,
     max_offset_samples: usize,
     minimum_correlation: f64,
-) -> Result<TimingEstimate, LabError> {
+) -> Result<TimingEstimate, SimulationError> {
     if max_offset_samples > geometry.stride_samples()
         || !minimum_correlation.is_finite()
         || !(0.0..=1.0).contains(&minimum_correlation)

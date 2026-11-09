@@ -4,7 +4,8 @@
  */
 //! Supplied known-reference response compensation; no estimated channel is implied.
 use crate::{
-    error::invalid, signal_processing::waveform::samples::validate_samples, types::IqPair, LabError,
+    error::invalid, signal_processing::waveform::samples::validate_samples, types::IqPair,
+    SimulationError,
 };
 /// Frozen reference response normalized with the caller's per-subcarrier RMS.
 pub struct KnownReferenceEqualizer {
@@ -19,7 +20,7 @@ impl KnownReferenceEqualizer {
     /// Receiver-owned inverse coefficients; unity response is the noiseless reference.
     /// # Errors
     /// Rejects unsupported FFT size, zero/nonfinite gains or nonrepresentable inverse.
-    pub fn new(response: &[IqPair], reference_rms: f64) -> Result<Self, LabError> {
+    pub fn new(response: &[IqPair], reference_rms: f64) -> Result<Self, SimulationError> {
         if ![4096, 8192].contains(&response.len())
             || !reference_rms.is_finite()
             || reference_rms <= 0.0
@@ -59,7 +60,7 @@ impl KnownReferenceEqualizer {
     /// Normalized bins; pilot amplitude boost remains present for extraction checks.
     /// # Errors
     /// Rejects shape/numeric errors or overflowing products.
-    pub fn apply(&self, bins: &[IqPair]) -> Result<Vec<IqPair>, LabError> {
+    pub fn apply(&self, bins: &[IqPair]) -> Result<Vec<IqPair>, SimulationError> {
         validate_samples(bins, self.inverse.len())?;
         let output: Vec<_> = bins
             .iter()

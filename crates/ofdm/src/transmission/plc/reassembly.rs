@@ -10,7 +10,7 @@ use super::{
     },
     MessageChannelBlock,
 };
-use crate::{error::invalid, LabError};
+use crate::{error::invalid, SimulationError};
 /// Receiver-owned incomplete MAC frame, bounded to2006 bytes.
 #[derive(Debug, Clone, Default)]
 pub struct PlcMessageReassembler {
@@ -38,7 +38,10 @@ impl PlcMessageReassembler {
     /// # Errors
     /// Rejects invalid lengths/checksums, missing starts, inconsistent pointers or
     /// unexpected nonidle tails; original pending history is retained on rejection.
-    pub fn push(&mut self, block: &MessageChannelBlock) -> Result<Vec<ManagementPacket>, LabError> {
+    pub fn push(
+        &mut self,
+        block: &MessageChannelBlock,
+    ) -> Result<Vec<ManagementPacket>, SimulationError> {
         let mut candidate = self.clone();
         let mut output = Vec::new();
         if let Some(pointer) = block.packet_start_pointer() {
@@ -63,7 +66,7 @@ impl PlcMessageReassembler {
         mut bytes: &[u8],
         allow_starts: bool,
         output: &mut Vec<ManagementPacket>,
-    ) -> Result<(), LabError> {
+    ) -> Result<(), SimulationError> {
         while !bytes.is_empty() {
             if self.partial.is_empty() {
                 if bytes[0] == 0xff {

@@ -7,7 +7,7 @@ use super::{ChannelRun, ChannelRunSettings, ChannelSummary, ChannelWordResult};
 use crate::{
     error::invalid,
     simulation::test_points::{ProbeObserver, ProbeStats, TestPointProbe},
-    LabError,
+    SimulationError,
 };
 use serde::{Deserialize, Serialize};
 use std::{
@@ -42,7 +42,7 @@ impl ChannelJobLimits {
     /// Unit for a supported runtime and memory budget; zero retained words is valid.
     /// # Errors
     /// Rejects zero/excess runtime or more than MAX_RETAINED_WORDS details.
-    pub fn validate(&self) -> Result<(), LabError> {
+    pub fn validate(&self) -> Result<(), SimulationError> {
         if !(1..=MAX_JOB_RUNTIME_MS).contains(&self.max_runtime_ms)
             || self.max_retained_words > MAX_RETAINED_WORDS
         {
@@ -89,7 +89,7 @@ pub struct ChannelJobResult {
     pub omitted_word_details: u64,
     pub unrecovered_generated_payloads: u64,
     pub probe_stats: ProbeStats,
-    pub error: Option<LabError>,
+    pub error: Option<SimulationError>,
 }
 /// Runs the noiseless channel with cooperative cancellation and finite host/output budgets.
 /// # Arguments
@@ -112,7 +112,7 @@ pub fn run_channel(
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
     progress: impl FnMut(ChannelProgress),
-) -> Result<ChannelJobResult, LabError> {
+) -> Result<ChannelJobResult, SimulationError> {
     let started = Instant::now();
     run_with_clock(settings, limits, cancel, probe, observer, progress, || {
         started.elapsed().as_millis().min(u128::from(u64::MAX)) as u64
@@ -126,7 +126,7 @@ fn run_with_clock(
     observer: &mut impl ProbeObserver,
     mut progress: impl FnMut(ChannelProgress),
     mut elapsed: impl FnMut() -> u64,
-) -> Result<ChannelJobResult, LabError> {
+) -> Result<ChannelJobResult, SimulationError> {
     limits.validate()?;
     let mut session = ChannelRun::new(settings)?;
     let mut retained_words = Vec::new();

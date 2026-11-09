@@ -4,7 +4,7 @@
  */
 //! PHY I20 section7.5.6.2/Figures56–58, PDF130–132.
 use super::InterleaverSettings;
-use crate::{error::invalid, transmission::SubcarrierSpacing, LabError};
+use crate::{error::invalid, transmission::SubcarrierSpacing, SimulationError};
 const ROW_BITS: u32 = 7;
 const ROW_COUNT: usize = 1 << ROW_BITS;
 const ROTATION_SEED: usize = 17;
@@ -22,7 +22,7 @@ impl FrequencyInterleaver {
     /// Owned permutation and exact inverse, computed once per configuration.
     /// # Errors
     /// Rejects invalid NI or an internally inconsistent permutation.
-    pub fn new(spacing: SubcarrierSpacing, cells: usize) -> Result<Self, LabError> {
+    pub fn new(spacing: SubcarrierSpacing, cells: usize) -> Result<Self, SimulationError> {
         InterleaverSettings::new(spacing, cells, 1)?;
         let columns = cells.div_ceil(ROW_COUNT);
         let last_size = cells - ROW_COUNT * (columns - 1);
@@ -93,7 +93,7 @@ impl FrequencyInterleaver {
     pub fn interleave<CellValue: Clone>(
         &self,
         input: &[CellValue],
-    ) -> Result<Vec<CellValue>, LabError> {
+    ) -> Result<Vec<CellValue>, SimulationError> {
         reorder(input, &self.output_to_input)
     }
     /// Reverses frequency interleaving without changing its borrowed input.
@@ -106,7 +106,7 @@ impl FrequencyInterleaver {
     pub fn deinterleave<CellValue: Clone>(
         &self,
         input: &[CellValue],
-    ) -> Result<Vec<CellValue>, LabError> {
+    ) -> Result<Vec<CellValue>, SimulationError> {
         reorder(input, &self.input_to_output)
     }
 }
@@ -119,7 +119,7 @@ fn reverse_bits(value: usize, width: u32) -> usize {
 fn reorder<CellValue: Clone>(
     input: &[CellValue],
     map: &[usize],
-) -> Result<Vec<CellValue>, LabError> {
+) -> Result<Vec<CellValue>, SimulationError> {
     if input.len() != map.len() {
         return Err(invalid("Frequency interleaver length mismatch."));
     }

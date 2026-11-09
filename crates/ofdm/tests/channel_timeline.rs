@@ -142,7 +142,7 @@ fn changed_response_is_applied_at_exact_physical_observation_boundary() {
         simulation::test_points::{
             ProbeConfig, ProbeData, ProbeEvent, ProbeObserver, ProbeSelection, TestPointId,
         },
-        LabError,
+        SimulationError,
     };
     struct Samples(Vec<(u64, [f64; 2])>);
     impl ProbeObserver for Samples {
@@ -153,18 +153,17 @@ fn changed_response_is_applied_at_exact_physical_observation_boundary() {
         /// Unit after retaining one physical pilot sample.
         /// # Errors
         /// Rejects missing physical-symbol metadata or a mismatched event domain.
-        fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), LabError> {
+        fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
             if let ProbeData::Iq(points) = event.data {
                 self.0.push((
-                    event
-                        .context
-                        .channel_symbol_index
-                        .ok_or_else(|| LabError::new("MissingSymbol", "Missing physical symbol"))?,
+                    event.context.channel_symbol_index.ok_or_else(|| {
+                        SimulationError::new("MissingSymbol", "Missing physical symbol")
+                    })?,
                     points[0],
                 ));
                 Ok(())
             } else {
-                Err(LabError::new("WrongDomain", "Expected FFT I/Q"))
+                Err(SimulationError::new("WrongDomain", "Expected FFT I/Q"))
             }
         }
     }

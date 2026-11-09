@@ -8,7 +8,7 @@ use crate::{
     error::invalid,
     transmission::{layout::PhysicalCarrierRole, plc::descriptors::ParsedDescriptor},
     types::{BitsPerSymbol, ProfileId},
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 const ASSIGNMENT_TLV: u8 = 5;
@@ -53,7 +53,7 @@ impl ReceivedProfile {
 pub(super) fn build(
     descriptor: &ParsedDescriptor,
     channel: &ReceivedChannel,
-) -> Result<ReceivedProfile, LabError> {
+) -> Result<ReceivedProfile, SimulationError> {
     let profile_id = descriptor
         .profile_id
         .ok_or_else(|| invalid("Expected a received DPD profile."))?;

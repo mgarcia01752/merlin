@@ -4,7 +4,7 @@
  */
 //! TX prefix insertion and RX removal are distinct pure operations on fixed geometry.
 use super::{samples::validate_samples, WaveformGeometry};
-use crate::{types::IqPair, LabError};
+use crate::{types::IqPair, SimulationError};
 /// Prepends the selected trailing useful samples without modifying the input.
 /// # Arguments
 /// * `geometry` - Validated per-run prefix/FFT selection.
@@ -13,7 +13,10 @@ use crate::{types::IqPair, LabError};
 /// N+CP samples: trailing CP values followed by the complete useful symbol.
 /// # Errors
 /// Rejects wrong input length or nonfinite samples before producing output.
-pub fn insert(geometry: &WaveformGeometry, useful: &[IqPair]) -> Result<Vec<IqPair>, LabError> {
+pub fn insert(
+    geometry: &WaveformGeometry,
+    useful: &[IqPair],
+) -> Result<Vec<IqPair>, SimulationError> {
     validate_samples(useful, geometry.fft_samples())?;
     let mut output = Vec::with_capacity(geometry.stride_samples());
     output.extend_from_slice(&useful[useful.len() - geometry.prefix_samples()..]);
@@ -31,7 +34,7 @@ pub fn insert(geometry: &WaveformGeometry, useful: &[IqPair]) -> Result<Vec<IqPa
 pub fn remove<'samples>(
     geometry: &WaveformGeometry,
     framed: &'samples [IqPair],
-) -> Result<&'samples [IqPair], LabError> {
+) -> Result<&'samples [IqPair], SimulationError> {
     validate_samples(framed, geometry.stride_samples())?;
     Ok(&framed[geometry.prefix_samples()..])
 }

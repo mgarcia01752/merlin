@@ -11,7 +11,7 @@ use crate::{
     },
     transmission::frame::PhysicalFrequencySymbol,
     types::IqPair,
-    LabError,
+    SimulationError,
 };
 /// Completed separately inspectable TX stages for one bounded symbol operation.
 pub struct TransmittedSymbol {
@@ -57,7 +57,7 @@ impl WaveformTransmitter {
     pub fn transmit(
         &mut self,
         symbol: &PhysicalFrequencySymbol,
-    ) -> Result<TransmittedSymbol, LabError> {
+    ) -> Result<TransmittedSymbol, SimulationError> {
         if symbol.bins.len() != self.geometry.fft_samples()
             || symbol.symbol_index != self.next_symbol
             || symbol.spacing != self.geometry.settings().subcarrier_spacing
@@ -96,7 +96,7 @@ impl WaveformTransmitter {
     /// RP samples once; repeated calls produce an empty terminal block.
     /// # Errors
     /// Propagates checked sample-clock overflow without consuming the tail.
-    pub fn finish(&mut self) -> Result<SampleBlock, LabError> {
+    pub fn finish(&mut self) -> Result<SampleBlock, SimulationError> {
         self.overlap.finish()
     }
 }

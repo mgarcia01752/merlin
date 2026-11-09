@@ -7,7 +7,7 @@ use super::{
     candidate::*,
     evaluation::{EvaluationReport, EvaluationSettings},
 };
-use crate::error::{invalid, LabError};
+use crate::error::{invalid, SimulationError};
 use serde::{Deserialize, Serialize};
 // Preserve the established document import without duplicating the scenario model.
 pub use crate::scenario::document::ScenarioDocument;
@@ -27,7 +27,7 @@ impl CandidateDocument {
     /// Unit for the supported schema and numeric settings.
     /// # Errors
     /// Rejects incompatible schemas and malformed profile content.
-    pub fn validate(&self) -> Result<(), LabError> {
+    pub fn validate(&self) -> Result<(), SimulationError> {
         if self.schema_version != 1 || self.document_kind != "docsis_ofdm_fec_candidate" {
             return Err(invalid("Unsupported candidate document schema."));
         }
@@ -48,7 +48,7 @@ impl CandidateDocument {
 pub fn verify_captured_roles(
     candidate: &mut CandidateProfile,
     scenario: &ScenarioDocument,
-) -> Result<(), LabError> {
+) -> Result<(), SimulationError> {
     candidate.validate()?;
     scenario.validate()?;
     candidate.roles_verified = false;

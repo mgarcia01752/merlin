@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! MULPI I25 §7.1.5:55 coarse bits, modulo20 sample counter and4 phase bits.
-use crate::{error::invalid, LabError};
+use crate::{error::invalid, SimulationError};
 use serde::Serialize;
 const SAMPLE_TICKS_PER_COARSE_TICK: u64 = 20;
 const FRACTIONAL_PHASE_BITS: u32 = 4;
@@ -34,7 +34,7 @@ impl ExtendedTimestamp {
         coarse_ticks: u64,
         sample_phase: u8,
         fractional_phase: u8,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         if coarse_ticks > MAX_COARSE_TICKS
             || u64::from(sample_phase) >= SAMPLE_TICKS_PER_COARSE_TICK
             || fractional_phase >= (1 << FRACTIONAL_PHASE_BITS)
@@ -55,7 +55,10 @@ impl ExtendedTimestamp {
     /// Validated timestamp after modulo20 division.
     /// # Errors
     /// Rejects values outside the64-bit wire representation or phase0..15.
-    pub fn from_sample_ticks(sample_ticks: u64, fractional_phase: u8) -> Result<Self, LabError> {
+    pub fn from_sample_ticks(
+        sample_ticks: u64,
+        fractional_phase: u8,
+    ) -> Result<Self, SimulationError> {
         Self::new(
             sample_ticks / SAMPLE_TICKS_PER_COARSE_TICK,
             (sample_ticks % SAMPLE_TICKS_PER_COARSE_TICK) as u8,
@@ -75,7 +78,7 @@ impl ExtendedTimestamp {
     /// New timestamp with proper modulo20 carry.
     /// # Errors
     /// Rejects arithmetic or wire-range overflow; never silently wraps the epoch.
-    pub fn advance_samples(self, samples: u64) -> Result<Self, LabError> {
+    pub fn advance_samples(self, samples: u64) -> Result<Self, SimulationError> {
         let ticks = self
             .sample_ticks()
             .checked_add(samples)
@@ -98,7 +101,7 @@ impl ExtendedTimestamp {
     /// Owned validated fields; input stays unchanged.
     /// # Errors
     /// Rejects sample-phase encodings20..31.
-    pub fn from_bytes(bytes: &[u8; 8]) -> Result<Self, LabError> {
+    pub fn from_bytes(bytes: &[u8; 8]) -> Result<Self, SimulationError> {
         let encoded = u64::from_be_bytes(*bytes);
         Self::new(
             encoded >> COARSE_SHIFT,

@@ -2,17 +2,17 @@
  * Copyright 2026 PNM Viewer contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-//! Shared scientific diagnostics, independent of a particular feature.
+//! Shared simulation diagnostics, independent of a particular feature.
 use serde::Serialize;
 
 /// Domain failure independent of filesystem, Qt and transport diagnostics.
 #[derive(Debug, Clone, Serialize)]
-pub struct LabError {
+pub struct SimulationError {
     pub code: &'static str,
     pub message: String,
 }
-impl LabError {
-    /// Creates a structured laboratory diagnostic.
+impl SimulationError {
+    /// Creates a structured simulation diagnostic.
     /// # Arguments
     /// * `code` - Stable error category.
     /// * `message` - Domain-specific explanation, without secret data.
@@ -25,7 +25,7 @@ impl LabError {
         }
     }
 }
-impl std::fmt::Display for LabError {
+impl std::fmt::Display for SimulationError {
     /// Writes the domain explanation without formatting measurement payloads.
     /// # Arguments
     /// * `formatter` - Destination.
@@ -35,13 +35,13 @@ impl std::fmt::Display for LabError {
         formatter.write_str(&self.message)
     }
 }
-impl std::error::Error for LabError {}
+impl std::error::Error for SimulationError {}
 
 /// Creates an invalid scientific-input diagnostic without transport coupling.
 /// # Arguments
 /// * `message` - Caller-visible validation explanation.
 /// # Returns
 /// Owned error with the established InvalidLabInput category.
-pub(crate) fn invalid(message: impl Into<String>) -> LabError {
-    LabError::new("InvalidLabInput", message)
+pub(crate) fn invalid(message: impl Into<String>) -> SimulationError {
+    SimulationError::new("InvalidLabInput", message)
 }

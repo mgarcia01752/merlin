@@ -14,7 +14,7 @@ use docsis_ofdm_fec::{
         layout::CarrierLayoutSettings, packing::NcpModulation, SubcarrierSpacing,
         TransmissionSettings,
     },
-    LabError,
+    SimulationError,
 };
 struct UnusedObserver;
 impl ProbeObserver for UnusedObserver {
@@ -23,7 +23,7 @@ impl ProbeObserver for UnusedObserver {
     /// * `_event` - Read-only bounded observation if enabled by a consumer.
     /// # Returns
     /// Unit without introducing console output inside DSP.
-    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), LabError> {
+    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
         Ok(())
     }
 }

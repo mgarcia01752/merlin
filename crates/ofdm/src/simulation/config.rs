@@ -4,7 +4,7 @@
  */
 //! Validated scientific work and receiver settings.
 use super::source::SimulationSeed;
-use crate::error::{invalid, LabError};
+use crate::error::{invalid, SimulationError};
 use serde::{Deserialize, Serialize};
 /// The verified coding tables define this bounded experiment; full PHY placement is outside its scope.
 pub const CODING_MODE: &str = "ds_short_8_9_16qam_coding_experiment";
@@ -40,7 +40,7 @@ impl SimulationSettings {
     /// Unit for a finite, bounded experiment.
     /// # Errors
     /// Rejects nonfinite RF inputs and excessive trial/runtime/iteration requests.
-    pub fn validate(&self) -> Result<(), LabError> {
+    pub fn validate(&self) -> Result<(), SimulationError> {
         if !(1..=512).contains(&self.codewords)
             || !(1..=100).contains(&self.max_iterations)
             || !(1..=300_000).contains(&self.max_runtime_ms)

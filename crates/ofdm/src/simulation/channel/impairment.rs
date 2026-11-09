@@ -13,7 +13,7 @@ use crate::{
     },
     simulation::waveform::WaveformTransmitter,
     transmission::{frame::PhysicalFrequencySymbol, layout::CarrierLayout},
-    LabError,
+    SimulationError,
 };
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -40,7 +40,7 @@ impl ImpairedChannel {
         layout: &CarrierLayout,
         settings: &ChannelImpairments,
         variance: f64,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         let plan = settings.plan(geometry.settings(), layout, variance)?;
         let sample_power = match settings.noise {
             NoiseModel::Awgn { sample_power } => sample_power,
@@ -80,7 +80,7 @@ impl ImpairedChannel {
         &mut self,
         physical: &PhysicalFrequencySymbol,
         original: &SampleBlock,
-    ) -> Result<SampleBlock, LabError> {
+    ) -> Result<SampleBlock, SimulationError> {
         if let Some(synthesis) = &mut self.synthesis {
             let mut altered = physical.clone();
             altered.bins = self
@@ -97,7 +97,10 @@ impl ImpairedChannel {
     /// Matching independently synthesized or sample-noised tail.
     /// # Errors
     /// Propagates sample/clock/synthesis failures; no retry transaction is implied.
-    pub(super) fn finish(&mut self, original: &SampleBlock) -> Result<SampleBlock, LabError> {
+    pub(super) fn finish(
+        &mut self,
+        original: &SampleBlock,
+    ) -> Result<SampleBlock, SimulationError> {
         if let Some(synthesis) = &mut self.synthesis {
             synthesis.finish()
         } else {

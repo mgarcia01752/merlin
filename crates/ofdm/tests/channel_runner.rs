@@ -13,12 +13,12 @@ use docsis_ofdm_fec::{
         },
     },
     transmission::SubcarrierSpacing,
-    LabError,
+    SimulationError,
 };
 use std::time::Duration;
 struct Unused;
 impl ProbeObserver for Unused {
-    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), LabError> {
+    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
         panic!("disabled observer called");
     }
 }
@@ -149,8 +149,8 @@ fn invalid_configuration_rejects_before_processing_and_long_plan_is_bounded() {
 fn observer_failure_closes_session_without_claiming_finished_or_zero_ber() {
     struct Failure;
     impl ProbeObserver for Failure {
-        fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), LabError> {
-            Err(LabError::new(
+        fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
+            Err(SimulationError::new(
                 "TestObserverFailure",
                 "Injected observer failure.",
             ))

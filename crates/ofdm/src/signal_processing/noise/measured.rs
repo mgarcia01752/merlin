@@ -4,7 +4,7 @@
  */
 //! Residual-noise selection without interpolation or channel-gain double counting.
 use crate::{
-    error::{invalid, LabError},
+    error::{invalid, SimulationError},
     profile::candidate::CandidateProfile,
     scenario::RxMerFrame,
     types::{modulation::CarrierType, ProtocolScope},
@@ -27,12 +27,12 @@ pub struct MeasuredNoise<'capture> {
 pub(crate) fn noise_model(
     awgn_mer_db: f64,
     measured: Option<&MeasuredNoise<'_>>,
-) -> Result<(Vec<f64>, Vec<usize>), LabError> {
+) -> Result<(Vec<f64>, Vec<usize>), SimulationError> {
     let Some(measured) = measured else {
         return Ok((vec![10.0_f64.powf(-awgn_mer_db / 10.0)], vec![]));
     };
     if measured.candidate.protocol != ProtocolScope::Docsis31 {
-        return Err(LabError::new("UnsupportedCodingMode", "The first coding experiment is scoped to DOCSIS3.1; DOCSIS4.0 placement is not verified."));
+        return Err(SimulationError::new("UnsupportedCodingMode", "The first coding experiment is scoped to DOCSIS3.1; DOCSIS4.0 placement is not verified."));
     }
     measured.frame.validate()?;
     measured.candidate.validate()?;
@@ -51,7 +51,7 @@ pub(crate) fn noise_model(
         match assignment.carrier_type {
             CarrierType::Data => {
                 if assignment.bit_loading != Some(4) {
-                    return Err(LabError::new(
+                    return Err(SimulationError::new(
                         "UnsupportedCodingMode",
                         "This coding slice supports uniform16-QAM data assignments only.",
                     ));

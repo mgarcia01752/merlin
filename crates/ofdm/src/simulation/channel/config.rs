@@ -12,7 +12,7 @@ use crate::{
         packing::NcpModulation,
         DurationTiming, TransmissionSettings,
     },
-    LabError,
+    SimulationError,
 };
 use std::time::Duration;
 /// Application work bound, not a DOCSIS transmission-duration limit.
@@ -81,7 +81,7 @@ impl ChannelRunSettings {
     /// # Errors
     /// Rejects invalid settings, less than one symbol, duration above one hour,
     /// invalid PRBS seed/LLRs/iterations or unsupported sample block sizes.
-    pub fn validate(&self) -> Result<DurationTiming, LabError> {
+    pub fn validate(&self) -> Result<DurationTiming, SimulationError> {
         if self.duration > Duration::from_secs(MAX_CHANNEL_DURATION_SECONDS)
             || !self.llr_variance.is_finite()
             || self.llr_variance <= 0.0

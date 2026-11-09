@@ -11,7 +11,7 @@ use crate::{
     error::invalid,
     transmission::{settings::SAMPLE_RATE_HZ, TransmissionSettings},
     types::PLC_FRAME_SYMBOLS,
-    LabError,
+    SimulationError,
 };
 /// AnnexB default200ms repetition period measured in204.8MHz sample ticks.
 pub const DESCRIPTOR_REPEAT_SAMPLES: u64 = SAMPLE_RATE_HZ as u64 / 5;
@@ -44,7 +44,7 @@ impl PlcMessageScheduler {
     pub fn new(
         settings: &TransmissionSettings,
         descriptors: &FixedPlcDescriptors,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         if settings != descriptors.settings() {
             return Err(invalid(
                 "PLC scheduler settings differ from its frozen descriptors.",
@@ -88,7 +88,7 @@ impl PlcMessageScheduler {
     /// Exact-capacity MC with continuation/new-start pointer and0xff idle fill.
     /// # Errors
     /// Rejects counter overflow or unexpected segment validation without advancing.
-    pub fn next_block(&mut self) -> Result<ScheduledMessageChannel, LabError> {
+    pub fn next_block(&mut self) -> Result<ScheduledMessageChannel, SimulationError> {
         let mut candidate = self.clone();
         let following = candidate
             .frame_index

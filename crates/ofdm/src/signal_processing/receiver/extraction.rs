@@ -7,7 +7,7 @@ use crate::{
     signal_processing::waveform::samples::validate_samples,
     transmission::layout::{CarrierLayout, PhysicalCarrierRole},
     types::{IqPair, SubcarrierIdx},
-    LabError,
+    SimulationError,
 };
 /// Received pilot with its physical frequency-bin identity and role.
 #[derive(Debug, Clone, serde::Serialize)]
@@ -37,7 +37,7 @@ pub fn extract(
     layout: &CarrierLayout,
     symbol_index: u64,
     bins: &[IqPair],
-) -> Result<ExtractedSignals, LabError> {
+) -> Result<ExtractedSignals, SimulationError> {
     let roles = layout.symbol_roles(symbol_index);
     validate_samples(bins, roles.len())?;
     let mut output = ExtractedSignals {

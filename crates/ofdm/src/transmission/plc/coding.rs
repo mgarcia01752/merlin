@@ -7,7 +7,7 @@ use super::{
     geometry::{PLC_CODEWORD_BYTES, PLC_INFORMATION_BITS},
     PlcInformationBlock,
 };
-use crate::LabError;
+use crate::SimulationError;
 use fec_codec::plc::{puncturing::puncture, PlcFecCodec};
 use serde::Serialize;
 // Message geometry must remain consistent with the separate codec definition.
@@ -37,9 +37,10 @@ impl PlcBlockCodec {
     /// Job-owned codec with no payload/NCP shortening or shared decoder state.
     /// # Errors
     /// Returns PlcCodecSetup on matrix/encoder setup failure.
-    pub fn new() -> Result<Self, LabError> {
+    pub fn new() -> Result<Self, SimulationError> {
         Ok(Self {
-            codec: PlcFecCodec::new().map_err(|error| LabError::new("PlcCodecSetup", error))?,
+            codec: PlcFecCodec::new()
+                .map_err(|error| SimulationError::new("PlcCodecSetup", error))?,
         })
     }
     /// Encodes one typed information block without changing it.
@@ -49,13 +50,16 @@ impl PlcBlockCodec {
     ///480 mother bits and384 transmitted bits, each independently inspectable.
     /// # Errors
     /// Returns PlcEncodeFailure if the underlying stage rejects its inputs.
-    pub fn encode(&self, information: &PlcInformationBlock) -> Result<EncodedPlcBlock, LabError> {
+    pub fn encode(
+        &self,
+        information: &PlcInformationBlock,
+    ) -> Result<EncodedPlcBlock, SimulationError> {
         let mother = self
             .codec
             .encode_mother(&information.bits())
-            .map_err(|error| LabError::new("PlcEncodeFailure", error))?;
+            .map_err(|error| SimulationError::new("PlcEncodeFailure", error))?;
         let transmitted =
-            puncture(&mother).map_err(|error| LabError::new("PlcEncodeFailure", error))?;
+            puncture(&mother).map_err(|error| SimulationError::new("PlcEncodeFailure", error))?;
         Ok(EncodedPlcBlock {
             mother_bits: mother.to_vec(),
             transmitted_bits: transmitted.to_vec(),
@@ -74,11 +78,11 @@ impl PlcBlockCodec {
         &mut self,
         llrs: &[f64],
         max_iterations: usize,
-    ) -> Result<DecodedPlcBlock, LabError> {
+    ) -> Result<DecodedPlcBlock, SimulationError> {
         let decoded = self
             .codec
             .decode(llrs, max_iterations)
-            .map_err(|error| LabError::new("PlcDecodeFailure", error))?;
+            .map_err(|error| SimulationError::new("PlcDecodeFailure", error))?;
         Ok(DecodedPlcBlock {
             information: PlcInformationBlock::from_bytes(&decoded.information_bytes())?,
             mother_decisions: decoded.mother_codeword.to_vec(),

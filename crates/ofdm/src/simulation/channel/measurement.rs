@@ -10,7 +10,7 @@ use crate::{
     signal_processing::channel::impairments::{offset, ChannelImpairments, NoiseModel},
     transmission::layout::{CarrierLayout, PhysicalCarrierRole},
     types::modulation::CarrierType,
-    LabError,
+    SimulationError,
 };
 use serde::Deserialize;
 
@@ -25,7 +25,7 @@ use serde::Deserialize;
 pub fn captured_layout(
     profile: &crate::profile::candidate::CapturedProfile,
     transmission: &crate::transmission::TransmissionSettings,
-) -> Result<crate::transmission::layout::CarrierLayoutSettings, LabError> {
+) -> Result<crate::transmission::layout::CarrierLayoutSettings, SimulationError> {
     let grid = &profile.key.grid;
     grid.validate()?;
     if grid.spacing_hz != transmission.subcarrier_spacing.frequency_hz()
@@ -121,7 +121,7 @@ impl MeasurementSelection {
         &self,
         scenario: &ScenarioDocument,
         settings: &mut ChannelRunSettings,
-    ) -> Result<(), LabError> {
+    ) -> Result<(), SimulationError> {
         scenario.validate()?;
         if self.transitions.len() > 4096 {
             return Err(invalid("Too many imported measurement transitions."));
@@ -132,9 +132,9 @@ impl MeasurementSelection {
         &self,
         scenario: &ScenarioDocument,
         settings: &mut ChannelRunSettings,
-    ) -> Result<(), LabError> {
+    ) -> Result<(), SimulationError> {
         if self.profile_id != 0 {
-            return Err(LabError::new("UnsupportedMeasuredProfile","Live payload transport currently requires ProfileA ID0; other profile selectors are unsupported."));
+            return Err(SimulationError::new("UnsupportedMeasuredProfile","Live payload transport currently requires ProfileA ID0; other profile selectors are unsupported."));
         }
 
         if !matches!(settings.impairments.noise, NoiseModel::Noiseless)
@@ -196,7 +196,7 @@ impl MeasurementSelection {
                 _ => unreachable!(),
             };
             if (assignment.carrier_type, assignment.bit_loading) != expected {
-                return Err(LabError::new("UnsupportedMeasuredProfile","Captured protected assignments differ from the configured data/pilot/PLC layout."));
+                return Err(SimulationError::new("UnsupportedMeasuredProfile","Captured protected assignments differ from the configured data/pilot/PLC layout."));
             }
         }
         let response = if let Some(index) = self.channel_index {

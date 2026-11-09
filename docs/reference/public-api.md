@@ -137,3 +137,11 @@ static experiment while preserving source association. Source/profile/cell state
 is independent of these measurement updates. Library callers never need paths,
 Qt objects or a Python runtime. See the [profile](../user/payload-transport/applied-profiles.md)
 and [timeline](../user/impairments/measurement-timeline.md) guides.
+
+## Shared simulation errors
+
+`SimulationError` is the simulation core's shared Rust error type, re-exported
+from the crate root. It contains a stable `code` and a readable `message`,
+implements Rust's standard error/display traits, and serializes those same
+fields for adapters. The type rename does not change existing JSON error codes;
+`InvalidLabInput` remains the established invalid-input category.

@@ -4,7 +4,7 @@
  */
 //! Safe Rust radix-2 butterfly engine; public direction wrappers own PHY conventions.
 use super::samples::validate_samples;
-use crate::{transmission::SubcarrierSpacing, types::IqPair, LabError};
+use crate::{transmission::SubcarrierSpacing, types::IqPair, SimulationError};
 use std::f64::consts::TAU;
 pub(super) struct TransformPlan {
     order: Vec<usize>,
@@ -39,7 +39,11 @@ impl TransformPlan {
     /// Owned transform output without mutating the source or plan.
     /// # Errors
     /// Rejects wrong length, nonfinite data and nonfinite numerical output.
-    pub(super) fn apply(&self, input: &[IqPair], inverse: bool) -> Result<Vec<IqPair>, LabError> {
+    pub(super) fn apply(
+        &self,
+        input: &[IqPair],
+        inverse: bool,
+    ) -> Result<Vec<IqPair>, SimulationError> {
         let length = self.order.len();
         validate_samples(input, length)?;
         let mut output: Vec<_> = self

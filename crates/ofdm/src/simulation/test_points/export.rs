@@ -4,7 +4,7 @@
  */
 //! Bounded versioned JSONL adapter for already-selected typed observations.
 use super::{ProbeEvent, ProbeObserver};
-use crate::{error::invalid, LabError};
+use crate::{error::invalid, SimulationError};
 use std::io::Write;
 /// Application bound on one selected serialized event, including metadata.
 pub const MAX_EXPORT_RECORD_BYTES: usize = 1_048_576;
@@ -26,7 +26,7 @@ impl<Writer: Write> JsonlProbeExporter<Writer> {
     /// Empty adapter; each accepted event has a versioned JSON envelope and newline.
     /// # Errors
     /// Rejects invalid budgets before touching the writer.
-    pub fn new(writer: Writer, max_bytes: u64) -> Result<Self, LabError> {
+    pub fn new(writer: Writer, max_bytes: u64) -> Result<Self, SimulationError> {
         if !(1..=MAX_EXPORT_BYTES).contains(&max_bytes) {
             return Err(invalid("Invalid probe export byte budget."));
         }
@@ -48,9 +48,9 @@ impl<Writer: Write> JsonlProbeExporter<Writer> {
     /// The original writer after a successful flush.
     /// # Errors
     /// Reports terminal export/flush failures; failed streams cannot be resumed.
-    pub fn finish(mut self) -> Result<Writer, LabError> {
+    pub fn finish(mut self) -> Result<Writer, SimulationError> {
         if self.failed {
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "ProbeExportClosed",
                 "Probe export failed; inspect its partial prefix.",
             ));
@@ -84,8 +84,8 @@ impl Write for RecordBuffer {
         Ok(())
     }
 }
-fn export_io(error: std::io::Error) -> LabError {
-    LabError::new("ProbeExportIo", format!("Probe output failed: {error}"))
+fn export_io(error: std::io::Error) -> SimulationError {
+    SimulationError::new("ProbeExportIo", format!("Probe output failed: {error}"))
 }
 impl<Writer: Write> ProbeObserver for JsonlProbeExporter<Writer> {
     /// Serializes one selected immutable event without changing scientific values.
@@ -96,9 +96,9 @@ impl<Writer: Write> ProbeObserver for JsonlProbeExporter<Writer> {
     /// # Errors
     /// Rejects terminal state, record/stream byte limits or I/O failure. Limit failures
     /// occur before writer mutation; I/O failure may leave a partial final record.
-    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), LabError> {
+    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
         if self.failed {
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "ProbeExportClosed",
                 "Probe export is closed after failure.",
             ));
@@ -118,7 +118,7 @@ impl<Writer: Write> ProbeObserver for JsonlProbeExporter<Writer> {
         );
         if encoded.is_err() || bytes.0.len() as u64 + 1 > self.max_bytes - self.bytes_written {
             self.failed = true;
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "ProbeExportLimit",
                 "Probe export record or stream byte limit exceeded.",
             ));

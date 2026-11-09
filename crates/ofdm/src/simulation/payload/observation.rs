@@ -10,7 +10,7 @@ use crate::{
         CellProbeGrid, ProbeContext, ProbeData, ProbeObserver, ProbeOutcome, SignalDomain,
         TestPointId, TestPointProbe,
     },
-    LabError,
+    SimulationError,
 };
 /// Observes completed TX coding outputs after a successful bounded enqueue.
 /// # Arguments
@@ -29,7 +29,7 @@ pub fn observe_encoded(
     context: &ProbeContext,
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
-) -> Result<Vec<ProbeOutcome>, LabError> {
+) -> Result<Vec<ProbeOutcome>, SimulationError> {
     let mut context = cell_context(grid, context)?;
     context.codeword_index = Some(encoded.codeword_id);
     context.source_symbol_index = None;
@@ -78,7 +78,7 @@ pub fn observe_transmit(
     context: &ProbeContext,
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
-) -> Result<Vec<ProbeOutcome>, LabError> {
+) -> Result<Vec<ProbeOutcome>, SimulationError> {
     if symbol.assembled.cells.len() != grid.settings.cells()
         || symbol.channel.cells.len() != grid.settings.cells()
         || grid
@@ -128,7 +128,7 @@ pub fn observe_receive(
     context: &ProbeContext,
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
-) -> Result<Vec<ProbeOutcome>, LabError> {
+) -> Result<Vec<ProbeOutcome>, SimulationError> {
     if symbol.restored.len() != grid.settings.cells() {
         return Err(invalid("Payload RX probe NI mismatch."));
     }
@@ -195,7 +195,10 @@ pub fn observe_receive(
     }
     Ok(outcomes)
 }
-fn cell_context(grid: CellProbeGrid, context: &ProbeContext) -> Result<ProbeContext, LabError> {
+fn cell_context(
+    grid: CellProbeGrid,
+    context: &ProbeContext,
+) -> Result<ProbeContext, SimulationError> {
     context.validate()?;
     let mut context = context.clone();
     context.cell_grid = Some(grid);

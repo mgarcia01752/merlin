@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Bounded contiguous sample blocks with an absolute sample-clock origin.
-use crate::{error::invalid, types::IqPair, LabError};
+use crate::{error::invalid, types::IqPair, SimulationError};
 /// Application bound per public sample block; long streams use repeated blocks.
 pub const MAX_BLOCK_SAMPLES: usize = 65_536;
 /// Complex envelope samples at the fixed 204.8 MHz sample clock, without RF units.
@@ -21,7 +21,7 @@ impl SampleBlock {
     /// Owned data with its original sample identity, usable across block boundaries.
     /// # Errors
     /// Rejects nonfinite data, excess length or an overflowing exclusive sample end.
-    pub fn new(start_index: u64, samples: Vec<IqPair>) -> Result<Self, LabError> {
+    pub fn new(start_index: u64, samples: Vec<IqPair>) -> Result<Self, SimulationError> {
         validate_samples(&samples, samples.len())?;
         if samples.len() > MAX_BLOCK_SAMPLES
             || start_index.checked_add(samples.len() as u64).is_none()
@@ -62,7 +62,7 @@ impl SampleBlock {
 /// Unit when length and all components are finite.
 /// # Errors
 /// Rejects unexpected size or nonfinite I/Q.
-pub(crate) fn validate_samples(samples: &[IqPair], expected: usize) -> Result<(), LabError> {
+pub(crate) fn validate_samples(samples: &[IqPair], expected: usize) -> Result<(), SimulationError> {
     if samples.len() != expected || samples.iter().flatten().any(|value| !value.is_finite()) {
         return Err(invalid(
             "Waveform input has invalid length or nonfinite I/Q.",

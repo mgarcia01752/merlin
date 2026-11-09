@@ -9,7 +9,7 @@ use crate::{
         interleaving::BitInterleaver, map_symbol, qam_llrs, randomization::CellRandomizer,
     },
     types::ofdm_modulation::ConstellationOrder,
-    LabError,
+    SimulationError,
 };
 use fec_codec::{
     concatenated::{compare_payload, ConcatenatedCodec},
@@ -59,7 +59,7 @@ impl NoiselessQam256Codec {
     /// Job-owned codec state and immutable256-QAM bit permutation.
     /// # Errors
     /// Reports codec setup failures or an unavailable bit-processing mode.
-    pub fn new() -> Result<Self, LabError> {
+    pub fn new() -> Result<Self, SimulationError> {
         Ok(Self {
             codec: ConcatenatedCodec::new().map_err(invalid)?,
             interleaver: BitInterleaver::new(CONSTELLATION_ORDER)?,
@@ -80,7 +80,7 @@ impl NoiselessQam256Codec {
         &mut self,
         payload: &[u8],
         max_iterations: usize,
-    ) -> Result<Qam256BlockResult, LabError> {
+    ) -> Result<Qam256BlockResult, SimulationError> {
         if !(1..=100).contains(&max_iterations) {
             return Err(invalid("LDPC iteration cap must be1..100."));
         }

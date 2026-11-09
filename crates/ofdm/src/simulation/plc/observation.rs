@@ -12,7 +12,7 @@ use crate::{
     },
     transmission::frame::PhysicalFrequencySymbol,
     types::PLC_FRAME_SYMBOLS,
-    LabError,
+    SimulationError,
 };
 impl PlcFrameSignals {
     /// Emits selected PLC stage windows after the complete frame has been generated.
@@ -31,7 +31,7 @@ impl PlcFrameSignals {
         context: &ProbeContext,
         probe: &mut TestPointProbe,
         observer: &mut impl ProbeObserver,
-    ) -> Result<Vec<ProbeOutcome>, LabError> {
+    ) -> Result<Vec<ProbeOutcome>, SimulationError> {
         context.validate()?;
         let start = self
             .frame_index
@@ -125,7 +125,7 @@ pub fn observe_frequency_symbol(
     context: &ProbeContext,
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
-) -> Result<ProbeOutcome, LabError> {
+) -> Result<ProbeOutcome, SimulationError> {
     context.validate()?;
     if context.channel_symbol_index != Some(symbol.symbol_index)
         || context.plc_phase != Some((symbol.symbol_index % PLC_FRAME_SYMBOLS) as u8)

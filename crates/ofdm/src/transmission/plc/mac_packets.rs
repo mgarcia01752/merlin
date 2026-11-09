@@ -4,7 +4,7 @@
  */
 //! Bounded single-part acquisition MAC packets, MULPI I25 §6.2.3.2/6.4.1.
 use super::checksums::{header_crc, message_crc};
-use crate::{error::invalid, types::MacAddress, LabError};
+use crate::{error::invalid, types::MacAddress, SimulationError};
 use serde::Serialize;
 /// Management PDU maximum, including DA/SA and FCS; no extended header supported.
 pub const MAX_MANAGEMENT_PDU_BYTES: usize = 2000;
@@ -37,7 +37,7 @@ impl ManagementPacket {
     /// Owned complete frame; no extended header, secrets or host identity are added.
     /// # Errors
     /// Rejects unsupported type, invalid source or oversized/empty descriptor.
-    pub fn new(source: MacAddress, message_type: u8, body: &[u8]) -> Result<Self, LabError> {
+    pub fn new(source: MacAddress, message_type: u8, body: &[u8]) -> Result<Self, SimulationError> {
         if ![OCD_MESSAGE_TYPE, DPD_MESSAGE_TYPE].contains(&message_type)
             || source[0] & 1 != 0
             || source == [0; 6]
@@ -68,7 +68,7 @@ impl ManagementPacket {
     /// Owned CRC-validated single-part OCD/DPD packet; TLVs are parsed separately.
     /// # Errors
     /// Rejects size/length mismatch, HCS/FCS, header/type/version/address or multipart.
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self, LabError> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, SimulationError> {
         if bytes.len() < MAC_HEADER_BYTES + MANAGEMENT_HEADER_BYTES + FCS_BYTES + 1
             || bytes.len() > MAC_HEADER_BYTES + MAX_MANAGEMENT_PDU_BYTES
             || bytes[0..2] != [MANAGEMENT_FC, 0]

@@ -7,7 +7,7 @@ use super::{
     geometry::TIMESTAMP_BLOCK_BYTES, ExtendedTimestamp, MessageChannelBlock, PlcFrameGeometry,
     PlcInformationBlock, TimestampMessageBlock,
 };
-use crate::{error::invalid, transmission::SubcarrierSpacing, LabError};
+use crate::{error::invalid, transmission::SubcarrierSpacing, SimulationError};
 use serde::Serialize;
 /// A full unencoded PLC information frame with exactly one TS followed by one MC.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -30,7 +30,7 @@ impl PlcMessageFrame {
         spacing: SubcarrierSpacing,
         timestamp: ExtendedTimestamp,
         message_channel: MessageChannelBlock,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         let capacity = PlcFrameGeometry::new(spacing).payload_bytes;
         if TIMESTAMP_BLOCK_BYTES + message_channel.encoded_len() != capacity {
             return Err(invalid(
@@ -54,7 +54,7 @@ impl PlcMessageFrame {
     pub fn idle(
         spacing: SubcarrierSpacing,
         timestamp: ExtendedTimestamp,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         let channel = MessageChannelBlock::idle(
             PlcFrameGeometry::new(spacing).payload_bytes - TIMESTAMP_BLOCK_BYTES,
         )?;
@@ -94,7 +94,7 @@ impl PlcMessageFrame {
     /// Ten or twenty owned36-byte information blocks. MB boundaries do not reset FEC.
     /// # Errors
     /// Propagates unexpected information-block validation failures.
-    pub fn information_blocks(&self) -> Result<Vec<PlcInformationBlock>, LabError> {
+    pub fn information_blocks(&self) -> Result<Vec<PlcInformationBlock>, SimulationError> {
         self.to_bytes()
             .chunks_exact(super::geometry::PLC_INFORMATION_BYTES)
             .map(PlcInformationBlock::from_bytes)
@@ -109,7 +109,7 @@ impl PlcMessageFrame {
     /// # Errors
     /// Rejects size, timestamp/CRC errors, unsupported intervening blocks,
     /// reserved MC fields or invalid pointers. Does not validate MAC packet content.
-    pub fn from_bytes(spacing: SubcarrierSpacing, bytes: &[u8]) -> Result<Self, LabError> {
+    pub fn from_bytes(spacing: SubcarrierSpacing, bytes: &[u8]) -> Result<Self, SimulationError> {
         if bytes.len() != PlcFrameGeometry::new(spacing).payload_bytes {
             return Err(invalid(
                 "PLC information payload length does not match spacing.",

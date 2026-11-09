@@ -4,7 +4,7 @@
  */
 //! Opt-in bounded observation; no filesystem output or scientific state ownership.
 use super::{ProbeContext, ProbeData, ProbeEvent, SignalDomain, TestPointId};
-use crate::{error::invalid, LabError};
+use crate::{error::invalid, SimulationError};
 use serde::Serialize;
 use std::{collections::BTreeSet, ops::Range};
 const MAX_SELECTIONS: usize = 32;
@@ -55,7 +55,7 @@ pub trait ProbeObserver {
     /// Unit after consuming the event or explicitly copying desired data.
     /// # Errors
     /// Returns a caller-defined observer failure; dispatch budget is still consumed.
-    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), LabError>;
+    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), SimulationError>;
 }
 /// Job-owned selector and finite budgets; independent of DSP and RNG state.
 pub struct TestPointProbe {
@@ -80,7 +80,7 @@ impl TestPointProbe {
     /// Owned selector with empty dispatch counters. No output buffers are retained.
     /// # Errors
     /// Rejects duplicates, empty/oversized windows or invalid application limits.
-    pub fn new(config: ProbeConfig) -> Result<Self, LabError> {
+    pub fn new(config: ProbeConfig) -> Result<Self, SimulationError> {
         if config.selections.is_empty()
             || config.selections.len() > MAX_SELECTIONS
             || !(1..=MAX_EVENTS).contains(&config.max_events)
@@ -140,7 +140,7 @@ impl TestPointProbe {
         domain: SignalDomain,
         data: ProbeData<'_>,
         observer: &mut impl ProbeObserver,
-    ) -> Result<ProbeOutcome, LabError> {
+    ) -> Result<ProbeOutcome, SimulationError> {
         let Some(config) = &self.config else {
             return Ok(ProbeOutcome::Disabled);
         };
@@ -211,7 +211,7 @@ fn validate_data(
     context: &ProbeContext,
     domain: SignalDomain,
     data: ProbeData<'_>,
-) -> Result<(), LabError> {
+) -> Result<(), SimulationError> {
     use super::SignalReference;
     let valid = match (stage, domain, data) {
         (TestPointId::SourcePayload, SignalDomain::CodewordBit, ProbeData::Bits(bits)) => {

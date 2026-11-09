@@ -4,7 +4,7 @@
  */
 //! MULPI I25 §6.5.2/Table75: timestamp block header0x10 and CRC-24-D.
 use super::{geometry::TIMESTAMP_BLOCK_BYTES, ExtendedTimestamp};
-use crate::{error::invalid, LabError};
+use crate::{error::invalid, SimulationError};
 use fec_codec::crc::crc24d;
 use serde::Serialize;
 const TIMESTAMP_HEADER: u8 = 0x10;
@@ -33,7 +33,7 @@ impl TimestampMessageBlock {
     /// Owned timestamp with validated modulo20 fields.
     /// # Errors
     /// Rejects wrong size/type, nonzero reserved bits, CRC corruption or bad time.
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self, LabError> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, SimulationError> {
         if bytes.len() != TIMESTAMP_BLOCK_BYTES || bytes[0] != TIMESTAMP_HEADER {
             return Err(invalid(
                 "Expected a12-byte timestamp block with reserved bits zero.",
@@ -41,7 +41,7 @@ impl TimestampMessageBlock {
         }
         if bytes[CRC_OFFSET..] != crc24d(&bytes[..CRC_OFFSET]) {
             log::debug!("plc-timestamp-crc-mismatch");
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "PlcTimestampCrcMismatch",
                 "PLC timestamp CRC-24-D mismatch.",
             ));

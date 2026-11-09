@@ -8,7 +8,7 @@ use crate::{
     error::invalid,
     simulation::{source::PrbsSeed, test_points::ProbeConfig},
     transmission::{layout::CarrierLayoutSettings, packing::NcpModulation, TransmissionSettings},
-    LabError,
+    SimulationError,
 };
 use serde::Deserialize;
 use std::time::Duration;
@@ -69,7 +69,7 @@ impl ChannelDocument {
     /// A settings snapshot using the shared timing/configuration checks.
     /// # Errors
     /// Rejects unsupported schema version or invalid channel settings.
-    pub fn settings(&self) -> Result<ChannelRunSettings, LabError> {
+    pub fn settings(&self) -> Result<ChannelRunSettings, SimulationError> {
         self.settings_with_scenario(None)
     }
     /// Resolves optional explicit measurement selection through the same scientific validation.
@@ -82,7 +82,7 @@ impl ChannelDocument {
     pub fn settings_with_scenario(
         &self,
         scenario: Option<&crate::scenario::document::ScenarioDocument>,
-    ) -> Result<ChannelRunSettings, LabError> {
+    ) -> Result<ChannelRunSettings, SimulationError> {
         if self.schema_version != 1 {
             return Err(invalid("Unsupported channel request schema version."));
         }

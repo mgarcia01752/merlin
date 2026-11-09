@@ -8,7 +8,7 @@ use crate::{
     signal_processing::modulation::{qam_llrs, randomization::CellRandomizer},
     transmission::packing::NcpModulation,
     types::IqPair,
-    LabError,
+    SimulationError,
 };
 /// Soft-demaps all eligible cells under the known NCP profile and reverses field order.
 /// # Arguments
@@ -25,7 +25,7 @@ pub fn hypotheses(
     modulation: NcpModulation,
     variance: f64,
     randomizer: &mut CellRandomizer,
-) -> Result<Vec<SoftNcpCell>, LabError> {
+) -> Result<Vec<SoftNcpCell>, SimulationError> {
     hypotheses_with_variances(
         points,
         modulation,
@@ -48,7 +48,7 @@ pub fn hypotheses_with_variances(
     modulation: NcpModulation,
     variances: &[f64],
     randomizer: &mut CellRandomizer,
-) -> Result<Vec<SoftNcpCell>, LabError> {
+) -> Result<Vec<SoftNcpCell>, SimulationError> {
     if points.len() > crate::transmission::SubcarrierSpacing::Khz25.max_interleaver_cells()
         || points.iter().flatten().any(|value| !value.is_finite())
         || variances.len() != points.len()

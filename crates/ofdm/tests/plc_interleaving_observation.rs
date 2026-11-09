@@ -13,7 +13,7 @@ use docsis_ofdm_fec::{
         },
     },
     transmission::SubcarrierSpacing,
-    LabError,
+    SimulationError,
 };
 #[derive(Default)]
 struct Sink {
@@ -28,10 +28,10 @@ impl ProbeObserver for Sink {
     /// Unit after copying; no scientific state is exposed mutably.
     /// # Errors
     /// Returns TestObserverFailure when requested by this test.
-    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), LabError> {
+    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
         self.events.push(serde_json::to_value(event).unwrap());
         if self.fail {
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "TestObserverFailure",
                 "Injected observer error.",
             ));

@@ -4,7 +4,7 @@
  */
 //! MULPI I25 §6.5.4/Table77: bounded MC bytes and optional packet start pointer.
 use super::geometry::MAX_MESSAGE_CHANNEL_BYTES;
-use crate::{error::invalid, LabError};
+use crate::{error::invalid, SimulationError};
 use serde::Serialize;
 const MESSAGE_CHANNEL_HEADER: u8 = 0x30;
 const POINTER_PRESENT: u8 = 1;
@@ -26,7 +26,7 @@ impl MessageChannelBlock {
     /// # Errors
     /// Rejects blocks over708 bytes and pointers outside the actual segment.
     /// Pointer bounds are a strict laboratory policy, not MAC packet validation.
-    pub fn new(segment: &[u8], packet_start_pointer: Option<u16>) -> Result<Self, LabError> {
+    pub fn new(segment: &[u8], packet_start_pointer: Option<u16>) -> Result<Self, SimulationError> {
         let header_bytes = 1 + usize::from(packet_start_pointer.is_some()) * 2;
         if segment.len() > MAX_MESSAGE_CHANNEL_BYTES - header_bytes
             || packet_start_pointer.is_some_and(|offset| usize::from(offset) >= segment.len())
@@ -47,7 +47,7 @@ impl MessageChannelBlock {
     /// Owned header0x30 followed by0xff bytes; no packet start pointer.
     /// # Errors
     /// Rejects sizes outside1..708 before allocating.
-    pub fn idle(block_bytes: usize) -> Result<Self, LabError> {
+    pub fn idle(block_bytes: usize) -> Result<Self, SimulationError> {
         if !(1..=MAX_MESSAGE_CHANNEL_BYTES).contains(&block_bytes) {
             return Err(invalid("Idle PLC message channel requires1..708 bytes."));
         }
@@ -91,12 +91,12 @@ impl MessageChannelBlock {
     /// # Errors
     /// Rejects empty/oversized blocks, wrong type, reserved bits, truncated pointer
     /// or a pointer outside the segment. Does not validate embedded packet CRCs.
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self, LabError> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, SimulationError> {
         if bytes.is_empty() || bytes.len() > MAX_MESSAGE_CHANNEL_BYTES {
             return Err(invalid("Invalid PLC message-channel length."));
         }
         if bytes[0] & !POINTER_PRESENT != MESSAGE_CHANNEL_HEADER {
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "UnsupportedPlcMessageBlock",
                 "Expected an MC block with reserved bits zero.",
             ));

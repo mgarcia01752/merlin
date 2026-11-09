@@ -8,7 +8,7 @@ use super::{
     nibbles::{PlcCodewordNibbles, PlcNibble},
     PlcFrameGeometry,
 };
-use crate::{error::invalid, transmission::SubcarrierSpacing, LabError};
+use crate::{error::invalid, transmission::SubcarrierSpacing, SimulationError};
 use serde::Serialize;
 ///96 labels in time-major order, lowest local PLC carrier first within each symbol.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -25,7 +25,10 @@ impl InterleavedPlcBlock {
     /// Owned validated block; no bits are inferred for missing symbols.
     /// # Errors
     /// Rejects invalid count or labels before copying.
-    pub fn from_values(spacing: SubcarrierSpacing, values: &[PlcNibble]) -> Result<Self, LabError> {
+    pub fn from_values(
+        spacing: SubcarrierSpacing,
+        values: &[PlcNibble],
+    ) -> Result<Self, SimulationError> {
         let checked = PlcCodewordNibbles::from_values(values)?;
         Ok(Self {
             spacing,
@@ -89,7 +92,9 @@ pub fn interleave(spacing: SubcarrierSpacing, coded: &PlcCodewordNibbles) -> Int
 /// Owned original labels; no signal scaling or decoder acceptance is implied.
 /// # Errors
 /// Propagates unexpected restored label-validation failures.
-pub fn deinterleave(interleaved: &InterleavedPlcBlock) -> Result<PlcCodewordNibbles, LabError> {
+pub fn deinterleave(
+    interleaved: &InterleavedPlcBlock,
+) -> Result<PlcCodewordNibbles, SimulationError> {
     let mut values = [0; PLC_CODEWORD_NIBBLES];
     for (output, source) in source_indices(interleaved.spacing).iter().enumerate() {
         values[*source] = interleaved.values[output];
@@ -109,7 +114,7 @@ pub fn deinterleave(interleaved: &InterleavedPlcBlock) -> Result<PlcCodewordNibb
 pub fn deinterleave_llrs(
     spacing: SubcarrierSpacing,
     llrs: &[f64],
-) -> Result<[f64; PLC_CODEWORD_BITS], LabError> {
+) -> Result<[f64; PLC_CODEWORD_BITS], SimulationError> {
     if llrs.len() != PLC_CODEWORD_BITS || llrs.iter().any(|value| !value.is_finite()) {
         log::debug!("plc-interleaver-llrs-rejected actual-llrs={}", llrs.len());
         return Err(invalid("PLC inverse requires384 finite bit likelihoods."));

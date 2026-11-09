@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Whole-codeword accounting in source time, independent of delayed receive arrival.
-use crate::{error::invalid, transmission::DurationTiming, LabError};
+use crate::{error::invalid, transmission::DurationTiming, SimulationError};
 use serde::Serialize;
 /// Half-open source-symbol and sample observation coordinates, not host time.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -33,7 +33,7 @@ impl ObservationWindow {
     /// Immutable window; unused trailing ticks remain in the sample denominator.
     /// # Errors
     /// Rejects zero/inconsistent timing or absolute symbol/sample overflow.
-    pub fn new(origin: u64, timing: DurationTiming) -> Result<Self, LabError> {
+    pub fn new(origin: u64, timing: DurationTiming) -> Result<Self, SimulationError> {
         let stride = u64::from(timing.symbol_period_samples);
         if stride == 0
             || timing.complete_symbols == 0
@@ -67,7 +67,7 @@ impl ObservationWindow {
     /// Whole-word placement; receiver arrival during drain does not change membership.
     /// # Errors
     /// Rejects reversed spans or an unrepresentable exclusive sample end.
-    pub fn classify(&self, first: u64, last: u64) -> Result<WordPlacement, LabError> {
+    pub fn classify(&self, first: u64, last: u64) -> Result<WordPlacement, SimulationError> {
         if self.symbol_period_samples == 0
             || self.first_source_symbol >= self.end_source_symbol
             || first > last

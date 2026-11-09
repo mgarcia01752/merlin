@@ -15,7 +15,7 @@ use crate::{
         symbols::TransportCell,
     },
     types::IqPair,
-    LabError,
+    SimulationError,
 };
 /// Actual inverse-interleaver and source-decoder output at one received channel step.
 pub struct PayloadReceiveSymbol {
@@ -47,7 +47,7 @@ impl PayloadReceiver {
     /// Owned snapshot, independent role map, inverse interleaver and control/payload decoders.
     /// # Errors
     /// Rejects missing/rejected configuration, unsupported loading, origin or codec setup.
-    pub fn new(state: &ReceiverConfigurationState, origin: u64) -> Result<Self, LabError> {
+    pub fn new(state: &ReceiverConfigurationState, origin: u64) -> Result<Self, SimulationError> {
         configuration::validate_origin(origin)?;
         let snapshot = state.require_ready()?.clone();
         let settings = configuration::packing_settings(&snapshot)?;
@@ -98,7 +98,7 @@ impl PayloadReceiver {
         reduced: &[Option<IqPair>],
         variance: f64,
         max_iterations: usize,
-    ) -> Result<PayloadReceiveSymbol, LabError> {
+    ) -> Result<PayloadReceiveSymbol, SimulationError> {
         let variances = vec![variance; self.layout.static_roles().len()];
         self.receive_with_variances(state, channel_symbol, reduced, &variances, max_iterations)
     }
@@ -120,14 +120,14 @@ impl PayloadReceiver {
         reduced: &[Option<IqPair>],
         variances: &[f64],
         max_iterations: usize,
-    ) -> Result<PayloadReceiveSymbol, LabError> {
+    ) -> Result<PayloadReceiveSymbol, SimulationError> {
         if state.require_ready()? != &self.snapshot {
             return Err(invalid(
                 "Acquired payload configuration changed; start a new session.",
             ));
         }
         if self.decoder.is_closed() {
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "PayloadSessionClosed",
                 "Start a new payload session after control rejection.",
             ));

@@ -4,7 +4,7 @@
  */
 //! Integer sample-clock schedule; roll-off overlaps instead of extending cadence.
 use super::{settings::SAMPLE_RATE_HZ, TransmissionSettings};
-use crate::{error::invalid, LabError};
+use crate::{error::invalid, SimulationError};
 use serde::Serialize;
 use std::time::Duration;
 
@@ -48,7 +48,7 @@ impl TransmissionSettings {
     /// Checked64-bit sample/symbol accounting. Roll-off overlaps and adds no cadence.
     /// # Errors
     /// Rejects invalid numerology, less than one complete symbol or sample overflow.
-    pub fn duration_timing(&self, duration: Duration) -> Result<DurationTiming, LabError> {
+    pub fn duration_timing(&self, duration: Duration) -> Result<DurationTiming, SimulationError> {
         let ticks = duration
             .as_nanos()
             .checked_mul(u128::from(SAMPLE_RATE_HZ))
@@ -67,7 +67,10 @@ impl TransmissionSettings {
     /// Whole source symbols and unused trailing ticks, without warm-up/drain.
     /// # Errors
     /// Rejects invalid settings or an interval shorter than one complete symbol.
-    pub fn sample_timing(&self, observation_samples: u64) -> Result<DurationTiming, LabError> {
+    pub fn sample_timing(
+        &self,
+        observation_samples: u64,
+    ) -> Result<DurationTiming, SimulationError> {
         self.validate()?;
         let fft_samples = self.subcarrier_spacing.fft_samples();
         let symbol_period_samples = fft_samples + u32::from(self.cyclic_prefix_samples);
@@ -92,7 +95,7 @@ impl TransmissionSettings {
     /// Whole symbols wholly inside one second, plus unused sample-clock ticks.
     /// # Errors
     /// Rejects invalid transmission settings before calculating timing.
-    pub fn one_second_timing(&self) -> Result<TransmissionTiming, LabError> {
+    pub fn one_second_timing(&self) -> Result<TransmissionTiming, SimulationError> {
         let timing = self.duration_timing(Duration::from_secs(1))?;
         Ok(TransmissionTiming {
             sample_rate_hz: timing.sample_rate_hz,

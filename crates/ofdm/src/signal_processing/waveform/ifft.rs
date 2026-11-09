@@ -4,7 +4,7 @@
  */
 //! TX: physical frequency bins to useful time samples, centered unitary PHY convention.
 use super::transform::TransformPlan;
-use crate::{transmission::SubcarrierSpacing, types::IqPair, LabError};
+use crate::{transmission::SubcarrierSpacing, types::IqPair, SimulationError};
 /// Reusable fixed-size IFFT plan, with one private safe Rust butterfly implementation.
 pub struct InverseTransform {
     plan: TransformPlan,
@@ -27,7 +27,7 @@ impl InverseTransform {
     /// Owned time samples with 1/sqrt(N) scaling; discrete energy is preserved.
     /// # Errors
     /// Rejects wrong length, nonfinite input or numerical overflow in the transform.
-    pub fn apply(&self, input: &[IqPair]) -> Result<Vec<IqPair>, LabError> {
+    pub fn apply(&self, input: &[IqPair]) -> Result<Vec<IqPair>, SimulationError> {
         self.plan.apply(input, true)
     }
 }

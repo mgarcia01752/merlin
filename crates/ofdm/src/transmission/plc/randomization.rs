@@ -12,7 +12,7 @@ use crate::{
     signal_processing::modulation::randomization::{Lfsr, RandomizerState},
     transmission::SubcarrierSpacing,
     types::PLC_FRAME_SYMBOLS,
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 
@@ -109,7 +109,10 @@ impl PlcRandomizer {
     /// calls advance one codeword, skipping preamble slots after120 data symbols.
     /// # Errors
     /// Rejects spacing mismatch or channel-index overflow without changing state.
-    pub fn apply(&mut self, block: &InterleavedPlcBlock) -> Result<RandomizedPlcBlock, LabError> {
+    pub fn apply(
+        &mut self,
+        block: &InterleavedPlcBlock,
+    ) -> Result<RandomizedPlcBlock, SimulationError> {
         if block.spacing() != self.spacing {
             log::debug!("plc-randomizer-rejected reason=spacing-mismatch");
             return Err(invalid("PLC block spacing must match its randomizer."));
@@ -146,7 +149,10 @@ impl PlcRandomizer {
     /// inverse interleaving. Advances exactly like apply; no hard decisions made.
     /// # Errors
     /// Rejects wrong length, nonfinite input or index overflow without advancing.
-    pub fn descramble_llrs(&mut self, llrs: &[f64]) -> Result<DescrambledPlcBlock, LabError> {
+    pub fn descramble_llrs(
+        &mut self,
+        llrs: &[f64],
+    ) -> Result<DescrambledPlcBlock, SimulationError> {
         if llrs.len() != PLC_CODEWORD_BITS || llrs.iter().any(|value| !value.is_finite()) {
             log::debug!("plc-descrambler-rejected actual-llrs={}", llrs.len());
             return Err(invalid(
@@ -180,7 +186,7 @@ impl PlcRandomizer {
         Ok(output)
     }
 
-    fn prepare(&self) -> Result<(Lfsr, u64), LabError> {
+    fn prepare(&self) -> Result<(Lfsr, u64), SimulationError> {
         let symbols = PlcFrameGeometry::new(self.spacing).data_symbols_per_codeword as u64;
         let next = self
             .next_symbol_index

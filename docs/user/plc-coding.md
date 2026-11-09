@@ -117,7 +117,7 @@ The primitive keeps matrix, setup, encoding, decoding and puncturing in separate
 modules. Setup is reused per job. Inputs are borrowed and unchanged; outputs own
 fixed-size arrays or bounded vectors. There is no filesystem, GUI or transport
 dependency in the codec. The message adapter uses the `simulation` feature and
-maps primitive errors to structured `LabError` categories.
+maps primitive errors to structured `SimulationError` categories.
 
 Direct arrays provide test points at the mother, transmitted, restored LLR and
 receive-decision boundaries. The [full PLC producer](plc-channel.md) now emits

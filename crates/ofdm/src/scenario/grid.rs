@@ -4,7 +4,7 @@
  */
 //! Original carrier grid and exact spatial scenario identity.
 use crate::{
-    error::{invalid, LabError},
+    error::{invalid, SimulationError},
     types::{ChannelId, FrequencyHz, MacAddress, SubcarrierIdx},
 };
 use serde::{Deserialize, Serialize};
@@ -25,7 +25,7 @@ impl FrequencyGrid {
     /// Unit on success.
     /// # Errors
     /// Rejects empty/oversized, zero-spacing and overflowing frequency grids.
-    pub fn validate(&self) -> Result<(), LabError> {
+    pub fn validate(&self) -> Result<(), SimulationError> {
         if self.sample_count == 0 || self.sample_count > MAX_LAB_CARRIERS || self.spacing_hz == 0 {
             return Err(invalid(
                 "A bounded nonempty positive-spacing grid is required.",
@@ -41,7 +41,7 @@ impl FrequencyGrid {
     /// Frequency in the repository's u32 Hz domain.
     /// # Errors
     /// Rejects out-of-range positions and checked-arithmetic overflow.
-    pub fn frequency(&self, offset: usize) -> Result<FrequencyHz, LabError> {
+    pub fn frequency(&self, offset: usize) -> Result<FrequencyHz, SimulationError> {
         if offset >= self.sample_count {
             return Err(invalid("Carrier offset is outside the source grid."));
         }

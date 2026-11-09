@@ -11,7 +11,7 @@ use crate::{
     error::invalid,
     signal_processing::pilots::{PilotPower, PilotValue},
     types::{IqPair, ProfileId, PLC_FRAME_SYMBOLS},
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 const MAX_PROBE_ID_BYTES: usize = 128;
@@ -211,7 +211,10 @@ impl PlcProbeGrid {
     /// Immutable full-grid coordinates for preamble, codeword or frame observations.
     /// # Errors
     /// Rejects empty or greater-than-frame grids.
-    pub fn for_symbols(spacing: SubcarrierSpacing, symbols: usize) -> Result<Self, LabError> {
+    pub fn for_symbols(
+        spacing: SubcarrierSpacing,
+        symbols: usize,
+    ) -> Result<Self, SimulationError> {
         if !(1..=PLC_FRAME_SYMBOLS as usize).contains(&symbols) {
             return Err(invalid("PLC observation grid requires1..128 symbols."));
         }
@@ -283,7 +286,11 @@ impl ProbeContext {
     /// Owned metadata, initially without an I/Q normalization reference.
     /// # Errors
     /// Rejects empty or oversized identifiers.
-    pub fn new(run_id: &str, configuration_id: &str, phase: RunPhase) -> Result<Self, LabError> {
+    pub fn new(
+        run_id: &str,
+        configuration_id: &str,
+        phase: RunPhase,
+    ) -> Result<Self, SimulationError> {
         if run_id.is_empty()
             || run_id.len() > MAX_PROBE_ID_BYTES
             || configuration_id.is_empty()
@@ -315,7 +322,7 @@ impl ProbeContext {
     /// Unit for bounded identifiers, valid PLC phase and finite RMS reference.
     /// # Errors
     /// Rejects invalid identifiers, phase or amplitude reference.
-    pub(in crate::simulation) fn validate(&self) -> Result<(), LabError> {
+    pub(in crate::simulation) fn validate(&self) -> Result<(), SimulationError> {
         if self.run_id.is_empty()
             || self.run_id.len() > MAX_PROBE_ID_BYTES
             || self.configuration_id.is_empty()

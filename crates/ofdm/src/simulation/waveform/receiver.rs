@@ -15,7 +15,7 @@ use crate::{
     },
     transmission::layout::{CarrierLayout, CarrierLayoutSettings},
     types::IqPair,
-    LabError,
+    SimulationError,
 };
 /// Completed RX boundaries; no transmitter truth or source object is retained.
 pub struct ReceivedSymbol {
@@ -61,7 +61,7 @@ impl WaveformReceiver {
         geometry: &WaveformGeometry,
         layout: &CarrierLayoutSettings,
         reference: ReceiveReference,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         if reference.channel_response.len() != geometry.fft_samples() {
             return Err(crate::error::invalid(
                 "RX response size does not match FFT geometry.",
@@ -104,7 +104,7 @@ impl WaveformReceiver {
         first_symbol_sample: u64,
         first_symbol_index: u64,
         reference_rms: f64,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         let mut receiver = Self::new(
             geometry,
             layout,
@@ -148,7 +148,7 @@ impl WaveformReceiver {
             crate::signal_processing::receiver::channel_estimation::timing::TimingEstimate,
             Vec<ReceivedSymbol>,
         ),
-        LabError,
+        SimulationError,
     > {
         let timing=crate::signal_processing::receiver::channel_estimation::timing::estimate_symbol_boundary(geometry,input,max_offset_samples,minimum_correlation)?;
         let mut receiver = Self::from_pilots(
@@ -169,7 +169,7 @@ impl WaveformReceiver {
     /// Unit after atomically replacing reference coefficients.
     /// # Errors
     /// Rejects invalid gains or use in pilot-estimated mode, where H must not enter RX.
-    pub fn set_reference_response(&mut self, response: &[IqPair]) -> Result<(), LabError> {
+    pub fn set_reference_response(&mut self, response: &[IqPair]) -> Result<(), SimulationError> {
         if self.estimator.is_some() {
             return Err(crate::error::invalid(
                 "Supplied H cannot update a pilot-estimated receiver.",
@@ -186,7 +186,7 @@ impl WaveformReceiver {
     /// # Errors
     /// Rejects stream discontinuity or downstream numerical failure. Framing is advanced
     /// once complete periods are accepted; after numerical failure start a new RX session.
-    pub fn receive(&mut self, input: &SampleBlock) -> Result<Vec<ReceivedSymbol>, LabError> {
+    pub fn receive(&mut self, input: &SampleBlock) -> Result<Vec<ReceivedSymbol>, SimulationError> {
         let mut output = Vec::new();
         for frame in self.framer.push(input)? {
             let useful = cyclic_prefix::remove(&self.geometry, frame.period.samples())?.to_vec();

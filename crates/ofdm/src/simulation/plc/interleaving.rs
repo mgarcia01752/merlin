@@ -17,7 +17,7 @@ use crate::{
         SubcarrierSpacing,
     },
     types::PLC_FRAME_SYMBOLS,
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 /// Bounded immutable stage results for one codeword at a known post-preamble phase.
@@ -42,7 +42,7 @@ impl PlcInterleavingStages {
         spacing: SubcarrierSpacing,
         first_symbol_index: u64,
         bits: &[u8],
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         let phase = (first_symbol_index % PLC_FRAME_SYMBOLS) as usize;
         let geometry = PlcFrameGeometry::new(spacing);
         if phase >= PLC_DATA_SYMBOLS || phase % geometry.data_symbols_per_codeword != 0 {
@@ -87,7 +87,7 @@ impl PlcInterleavingStages {
         context: &ProbeContext,
         probe: &mut TestPointProbe,
         observer: &mut impl ProbeObserver,
-    ) -> Result<[ProbeOutcome; 2], LabError> {
+    ) -> Result<[ProbeOutcome; 2], SimulationError> {
         context.validate()?;
         if context.channel_symbol_index != Some(self.first_symbol_index)
             || context.plc_phase != Some((self.first_symbol_index % PLC_FRAME_SYMBOLS) as u8)

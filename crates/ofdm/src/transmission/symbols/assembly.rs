@@ -11,7 +11,7 @@ use crate::{
         ncp::NcpFieldCodec,
         packing::{PackedCell, PackedSymbol},
     },
-    LabError,
+    SimulationError,
 };
 /// Encodes control signaling and maps one source symbol without publishing diagnostic IDs.
 /// # Arguments
@@ -28,7 +28,7 @@ pub fn assemble_packed(
     symbol: &PackedSymbol,
     control: &NcpFieldCodec,
     randomizer: &mut CellRandomizer,
-) -> Result<AssembledSymbol, LabError> {
+) -> Result<AssembledSymbol, SimulationError> {
     let field = control.encode_packed(symbol)?;
     if symbol
         .cells

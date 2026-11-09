@@ -32,15 +32,18 @@ mod tests {
                 SignalReference, TestPointId, TestPointProbe,
             },
         },
-        LabError,
+        SimulationError,
     };
     use rand::SeedableRng;
     #[test]
     fn rejected_noise_observation_does_not_change_future_gaussian_draws() {
         struct Failure;
         impl ProbeObserver for Failure {
-            fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), LabError> {
-                Err(LabError::new("TestFailure", "Injected callback failure."))
+            fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
+                Err(SimulationError::new(
+                    "TestFailure",
+                    "Injected callback failure.",
+                ))
             }
         }
         let mut actual = rand_chacha::ChaCha8Rng::seed_from_u64(91);

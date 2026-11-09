@@ -15,7 +15,7 @@ use docsis_ofdm_fec::{
         plc::{ExtendedTimestamp, PlcBlockCodec, PlcMessageFrame},
         SubcarrierSpacing,
     },
-    LabError,
+    SimulationError,
 };
 #[derive(Default)]
 struct Sink {
@@ -29,11 +29,11 @@ impl ProbeObserver for Sink {
     /// Unit after copying; probe budgets cap output volume.
     /// # Errors
     /// Propagates JSON serialization errors without changing stage outputs.
-    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), LabError> {
-        self.events.push(
-            serde_json::to_value(event)
-                .map_err(|error| LabError::new("ExampleSerialization", error.to_string()))?,
-        );
+    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
+        self.events
+            .push(serde_json::to_value(event).map_err(|error| {
+                SimulationError::new("ExampleSerialization", error.to_string())
+            })?);
         Ok(())
     }
 }

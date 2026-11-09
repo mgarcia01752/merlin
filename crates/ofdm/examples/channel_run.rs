@@ -9,7 +9,7 @@ use docsis_ofdm_fec::{
         test_points::{ProbeEvent, ProbeObserver, TestPointProbe},
     },
     transmission::{layout::CarrierLayoutSettings, SubcarrierSpacing, TransmissionSettings},
-    LabError,
+    SimulationError,
 };
 use std::time::Duration;
 struct UnusedObserver;
@@ -19,7 +19,7 @@ impl ProbeObserver for UnusedObserver {
     /// * `_event` - Immutable optional stage event.
     /// # Returns
     /// Unit; diagnostics and scientific output remain separate.
-    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), LabError> {
+    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
         Ok(())
     }
 }

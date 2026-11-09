@@ -12,7 +12,7 @@ use crate::{
         SubcarrierSpacing, TransmissionSettings,
     },
     types::{ChannelId, MacAddress},
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 const ASSIGNMENT_TLV: u8 = 5;
@@ -51,7 +51,7 @@ impl FixedPlcDescriptors {
         settings: &TransmissionSettings,
         layout: &CarrierLayout,
         identity: DescriptorIdentity,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         Self::with_data_loading(settings, layout, identity, None)
     }
     /// Builds live acquisition packets for an optional applied data profile.
@@ -69,7 +69,7 @@ impl FixedPlcDescriptors {
         layout: &CarrierLayout,
         identity: DescriptorIdentity,
         data_loading: Option<&[u8]>,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         if let Some(physical) = data_loading {
             crate::transmission::layout::bit_loading::source_bit_loading(layout, physical)?;
         }
@@ -225,7 +225,7 @@ pub struct ParsedDescriptor {
 /// Typed received identity, explicit profile(None for OCD) and preserved TLVs.
 /// # Errors
 /// Rejects malformed/truncated TLVs, missing mandatory fields or unsupported forms.
-pub fn parse(packet: &ManagementPacket) -> Result<ParsedDescriptor, LabError> {
+pub fn parse(packet: &ManagementPacket) -> Result<ParsedDescriptor, SimulationError> {
     let body = packet.body();
     let fixed = if packet.message_type() == OCD_MESSAGE_TYPE {
         2

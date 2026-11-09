@@ -4,7 +4,7 @@
  */
 //! Symbol-stream convolutional delays, including conceptual end-of-symbol dummies.
 use super::{InterleaverDirection, InterleaverSettings};
-use crate::{error::invalid, LabError};
+use crate::{error::invalid, SimulationError};
 use std::collections::VecDeque;
 /// Bounded generic convolutional delay lines; None marks startup/drain, never zero.
 pub struct TimeInterleaver<CellValue> {
@@ -51,7 +51,7 @@ impl<CellValue: Clone> TimeInterleaver<CellValue> {
         &mut self,
         symbol_index: u64,
         input: &[Option<CellValue>],
-    ) -> Result<Vec<Option<CellValue>>, LabError> {
+    ) -> Result<Vec<Option<CellValue>>, SimulationError> {
         let next = symbol_index
             .checked_add(1)
             .ok_or_else(|| invalid("Interleaver symbol index exhausted."))?;

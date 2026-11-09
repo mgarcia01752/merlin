@@ -15,7 +15,7 @@ use crate::{
         SubcarrierSpacing,
     },
     types::{IqPair, PLC_FRAME_SYMBOLS},
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 /// All codeword decisions plus independent message validation, including failures.
@@ -25,7 +25,7 @@ pub struct ReceivedPlcFrame {
     pub blocks: Vec<DecodedPlcBlock>,
     /// Present only when every LDPC word converged and message parsing/TS CRC passed.
     pub message: Option<PlcMessageFrame>,
-    pub message_error: Option<LabError>,
+    pub message_error: Option<SimulationError>,
 }
 /// Job-owned reusable decoder; known frame boundaries are explicit caller knowledge.
 pub struct PlcFrameReceiver {
@@ -40,7 +40,7 @@ impl PlcFrameReceiver {
     /// Receiver with reusable codec; mask state is reset at each explicit frame start.
     /// # Errors
     /// Propagates codec setup failures.
-    pub fn new(spacing: SubcarrierSpacing) -> Result<Self, LabError> {
+    pub fn new(spacing: SubcarrierSpacing) -> Result<Self, SimulationError> {
         Ok(Self {
             spacing,
             codec: PlcBlockCodec::new()?,
@@ -62,7 +62,7 @@ impl PlcFrameReceiver {
         iq: &[IqPair],
         noise_power: f64,
         max_iterations: usize,
-    ) -> Result<ReceivedPlcFrame, LabError> {
+    ) -> Result<ReceivedPlcFrame, SimulationError> {
         let geometry = PlcFrameGeometry::new(self.spacing);
         if iq.len() != PLC_FRAME_SYMBOLS as usize * geometry.plc_subcarriers
             || iq.iter().flatten().any(|value| !value.is_finite())
@@ -92,7 +92,7 @@ impl PlcFrameReceiver {
         let message_result = if blocks.iter().all(|block| block.success) {
             PlcMessageFrame::from_bytes(self.spacing, &bytes)
         } else {
-            Err(LabError::new(
+            Err(SimulationError::new(
                 "PlcFrameDecodeFailure",
                 "At least one PLC LDPC word did not converge.",
             ))

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! PHY I20 section7.5.14.4: NCP selection before time/frequency interleaving.
-use crate::{error::invalid, LabError};
+use crate::{error::invalid, SimulationError};
 
 const MAX_INTERLEAVER_CELLS: usize = 8192;
 /// Cell eligibility in increasing pre-interleaving order, never physical FFT bins.
@@ -26,7 +26,7 @@ pub enum PreInterleavingRole {
 pub fn select_ncp_cells(
     roles: &[PreInterleavingRole],
     count: usize,
-) -> Result<Vec<usize>, LabError> {
+) -> Result<Vec<usize>, SimulationError> {
     if roles.len() > MAX_INTERLEAVER_CELLS || count > roles.len() {
         return Err(invalid(
             "NCP request exceeds the supported interleaver domain.",

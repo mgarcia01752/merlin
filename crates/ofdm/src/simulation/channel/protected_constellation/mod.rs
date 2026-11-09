@@ -11,7 +11,7 @@ use crate::{
         plc::geometry::PLC_DATA_SYMBOLS,
     },
     types::{FrequencyHz, IqPair, SubcarrierIdx, PLC_FRAME_SYMBOLS},
-    LabError,
+    SimulationError,
 };
 use serde::{Deserialize, Serialize};
 /// Combined cap is four streams times this per-stream cap; adapters also bound bytes.
@@ -42,7 +42,7 @@ impl ProtectedCaptureSelection {
     /// Unit for four bounded streams and a finite physical-symbol window.
     /// # Errors
     /// Rejects zero/excess counts, reversed windows and windows above one million symbols.
-    pub fn validate(&self) -> Result<(), LabError> {
+    pub fn validate(&self) -> Result<(), SimulationError> {
         if !(1..=MAX_PAIRS_PER_STREAM).contains(&self.pairs_per_stream)
             || self.first_channel_symbol >= self.end_channel_symbol_exclusive
             || self.end_channel_symbol_exclusive - self.first_channel_symbol > 1_000_000
@@ -99,7 +99,7 @@ impl ProtectedConstellation {
     pub fn new(
         selection: ProtectedCaptureSelection,
         receiver_mode: crate::signal_processing::receiver::channel_estimation::ReceiverMode,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         selection.validate()?;
         let stream = |modulation| ProtectedStream {
             modulation,
@@ -130,7 +130,7 @@ impl ProtectedConstellation {
         &mut self,
         received: &ReceivedSymbol,
         layout: &CarrierLayout,
-    ) -> Result<(), LabError> {
+    ) -> Result<(), SimulationError> {
         let size = layout.static_roles().len();
         if received.bins.len() != size
             || received.equalized.len() != size

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Shared fixed-word validation and permutation application.
-use crate::{error::invalid, LabError};
+use crate::{error::invalid, SimulationError};
 use fec_codec::parameters::LDPC_CODEWORD_BITS;
 /// Applies a trusted stage permutation after validating caller-owned binary input.
 /// # Arguments
@@ -13,7 +13,7 @@ use fec_codec::parameters::LDPC_CODEWORD_BITS;
 /// Owned permuted bits; inputs stay unchanged.
 /// # Errors
 /// Rejects malformed length or nonbinary input before indexing the trusted map.
-pub(super) fn transmit(input: &[u8], order: &[usize]) -> Result<Vec<u8>, LabError> {
+pub(super) fn transmit(input: &[u8], order: &[usize]) -> Result<Vec<u8>, SimulationError> {
     if input.len() != LDPC_CODEWORD_BITS || input.iter().any(|bit| *bit > 1) {
         return Err(invalid(
             "Expected16200 binary bits at interleaver boundary.",
@@ -29,7 +29,7 @@ pub(super) fn transmit(input: &[u8], order: &[usize]) -> Result<Vec<u8>, LabErro
 /// Owned input-order likelihoods, preserving every sign and magnitude.
 /// # Errors
 /// Rejects malformed length or nonfinite likelihoods before permutation.
-pub(super) fn receive(input: &[f64], order: &[usize]) -> Result<Vec<f64>, LabError> {
+pub(super) fn receive(input: &[f64], order: &[usize]) -> Result<Vec<f64>, SimulationError> {
     if input.len() != LDPC_CODEWORD_BITS || input.iter().any(|value| !value.is_finite()) {
         return Err(invalid(
             "Expected16200 finite LLRs at interleaver boundary.",

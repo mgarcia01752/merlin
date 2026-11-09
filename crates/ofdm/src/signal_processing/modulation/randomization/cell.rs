@@ -11,7 +11,7 @@ use crate::{
         ofdm_modulation::{ConstellationOrder, OFDM_DATA_MODULATIONS},
         PLC_FRAME_SYMBOLS,
     },
-    LabError,
+    SimulationError,
 };
 
 /// Persistent data/NCP randomizer or receiver inverse, with private sequence state.
@@ -51,13 +51,13 @@ impl CellRandomizer {
     /// Unit with an active symbol, even if its first cell is a pilot placeholder.
     /// # Errors
     /// Rejects repeated, skipped or out-of-order symbols before changing state.
-    pub fn begin_symbol(&mut self, index: u64) -> Result<(), LabError> {
+    pub fn begin_symbol(&mut self, index: u64) -> Result<(), SimulationError> {
         let expected = match self.symbol_index {
             None => Some(0),
             Some(previous) => previous.checked_add(1),
         };
         if expected != Some(index) {
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "InvalidRandomizerSequence",
                 "Begin consecutive symbols starting at the post-preamble phase0.",
             ));
@@ -89,7 +89,7 @@ impl CellRandomizer {
         &mut self,
         order: ConstellationOrder,
         label: SymbolLabel,
-    ) -> Result<SymbolLabel, LabError> {
+    ) -> Result<SymbolLabel, SimulationError> {
         let bits = data_bits(order)?;
         self.apply_label(order, label, bits)
     }
@@ -106,7 +106,7 @@ impl CellRandomizer {
         &mut self,
         order: ConstellationOrder,
         label: SymbolLabel,
-    ) -> Result<SymbolLabel, LabError> {
+    ) -> Result<SymbolLabel, SimulationError> {
         let bits = ncp_bits(order)?;
         self.apply_label(order, label, bits)
     }
@@ -124,7 +124,7 @@ impl CellRandomizer {
         &mut self,
         order: ConstellationOrder,
         llrs: &[f64],
-    ) -> Result<Vec<f64>, LabError> {
+    ) -> Result<Vec<f64>, SimulationError> {
         self.apply_llrs(data_bits(order)?, llrs)
     }
 
@@ -140,7 +140,7 @@ impl CellRandomizer {
         &mut self,
         order: ConstellationOrder,
         llrs: &[f64],
-    ) -> Result<Vec<f64>, LabError> {
+    ) -> Result<Vec<f64>, SimulationError> {
         self.apply_llrs(ncp_bits(order)?, llrs)
     }
 
@@ -150,7 +150,7 @@ impl CellRandomizer {
     /// Receiver streams call this too to preserve synchronization and discard it.
     /// # Errors
     /// Rejects an inactive stream without advancing it.
-    pub fn zero_loaded_bpsk(&mut self) -> Result<SymbolLabel, LabError> {
+    pub fn zero_loaded_bpsk(&mut self) -> Result<SymbolLabel, SimulationError> {
         self.require_symbol()?;
         let label = self.lfsr.mask(1);
         self.lfsr.clock();
@@ -163,13 +163,13 @@ impl CellRandomizer {
     /// this data/NCP cell stream and must not be passed as data.
     /// # Errors
     /// Rejects an inactive stream.
-    pub fn skip_scattered_pilot(&mut self) -> Result<(), LabError> {
+    pub fn skip_scattered_pilot(&mut self) -> Result<(), SimulationError> {
         self.require_symbol()
     }
 
-    fn require_symbol(&self) -> Result<(), LabError> {
+    fn require_symbol(&self) -> Result<(), SimulationError> {
         if self.symbol_index.is_none() {
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "RandomizerNotSynchronized",
                 "Call begin_symbol(0) before processing cells.",
             ));
@@ -181,7 +181,7 @@ impl CellRandomizer {
         order: ConstellationOrder,
         label: SymbolLabel,
         bits: usize,
-    ) -> Result<SymbolLabel, LabError> {
+    ) -> Result<SymbolLabel, SimulationError> {
         self.require_symbol()?;
         if label >= order {
             return Err(invalid("Cell label exceeds constellation order."));
@@ -190,7 +190,7 @@ impl CellRandomizer {
         self.lfsr.clock();
         Ok(output)
     }
-    fn apply_llrs(&mut self, bits: usize, llrs: &[f64]) -> Result<Vec<f64>, LabError> {
+    fn apply_llrs(&mut self, bits: usize, llrs: &[f64]) -> Result<Vec<f64>, SimulationError> {
         self.require_symbol()?;
         if llrs.len() != bits || llrs.iter().any(|value| !value.is_finite()) {
             return Err(invalid("Finite LLRs matching the cell width are required."));
@@ -211,24 +211,24 @@ impl CellRandomizer {
         Ok(output)
     }
 }
-fn data_bits(order: ConstellationOrder) -> Result<usize, LabError> {
+fn data_bits(order: ConstellationOrder) -> Result<usize, SimulationError> {
     OFDM_DATA_MODULATIONS
         .iter()
         .find(|entry| entry.order == order)
         .map(|entry| usize::from(entry.bits_per_symbol))
         .ok_or_else(|| {
-            LabError::new(
+            SimulationError::new(
                 "UnsupportedModulation",
                 "Unsupported downstream data randomization order.",
             )
         })
 }
-fn ncp_bits(order: ConstellationOrder) -> Result<usize, LabError> {
+fn ncp_bits(order: ConstellationOrder) -> Result<usize, SimulationError> {
     match order {
         4 => Ok(2),
         16 => Ok(4),
         64 => Ok(6),
-        _ => Err(LabError::new(
+        _ => Err(SimulationError::new(
             "UnsupportedModulation",
             "NCP randomization requires QPSK,16-QAM or64-QAM.",
         )),

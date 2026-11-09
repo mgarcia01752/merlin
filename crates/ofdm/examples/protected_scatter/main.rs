@@ -18,7 +18,7 @@ use docsis_ofdm_fec::{
         plc::{geometry::PLC_DATA_SYMBOLS, PlcFrameGeometry},
     },
     types::{FrequencyHz, IqPair, SubcarrierIdx, PLC_FRAME_SYMBOLS},
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 use std::{
@@ -51,7 +51,7 @@ impl ProbeObserver for Collector {
     /// Unit after retaining only the four protected-signal classes.
     /// # Errors
     /// Rejects unmatched windows, missing coordinates or invalid noiseless symbols.
-    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), LabError> {
+    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
         let ProbeData::Iq(points) = event.data else {
             return Err(failure("Expected receiver I/Q window."));
         };
@@ -116,10 +116,10 @@ impl ProbeObserver for Collector {
         Ok(())
     }
 }
-fn failure(message: &str) -> LabError {
-    LabError::new("InvalidProtectedScatter", message)
+fn failure(message: &str) -> SimulationError {
+    SimulationError::new("InvalidProtectedScatter", message)
 }
-fn validate_symbol(stream: &str, point: IqPair) -> Result<(), LabError> {
+fn validate_symbol(stream: &str, point: IqPair) -> Result<(), SimulationError> {
     let valid = if stream == "plc_data" {
         point.iter().all(|component| {
             let scaled = component.abs() * 10_f64.sqrt();

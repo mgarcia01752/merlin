@@ -14,7 +14,7 @@ use docsis_ofdm_fec::{
         },
     },
     transmission::SubcarrierSpacing,
-    LabError,
+    SimulationError,
 };
 use std::{
     sync::atomic::{AtomicBool, Ordering},
@@ -131,8 +131,8 @@ fn pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits() {
 fn failed_sink_preserves_science_completed_before_the_callback() {
     struct Failure;
     impl ProbeObserver for Failure {
-        fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), LabError> {
-            Err(LabError::new("TestSink", "Injected failure."))
+        fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
+            Err(SimulationError::new("TestSink", "Injected failure."))
         }
     }
     let mut probe = TestPointProbe::new(ProbeConfig {

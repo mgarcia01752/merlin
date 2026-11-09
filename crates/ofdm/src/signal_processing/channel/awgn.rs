@@ -6,7 +6,7 @@
 use crate::{
     error::invalid,
     signal_processing::{noise::awgn::add_awgn, waveform::SampleBlock},
-    LabError,
+    SimulationError,
 };
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -27,7 +27,7 @@ impl SampleAwgn {
     /// Independent bounded-memory channel state.
     /// # Errors
     /// Rejects negative, nonfinite or excessive normalized noise power.
-    pub fn new(power: f64, seed: u64, first_sample: u64) -> Result<Self, LabError> {
+    pub fn new(power: f64, seed: u64, first_sample: u64) -> Result<Self, SimulationError> {
         if !power.is_finite() || !(0.0..=super::MAX_NORMALIZED_NOISE_POWER).contains(&power) {
             return Err(invalid("Invalid sample AWGN power."));
         }
@@ -44,7 +44,7 @@ impl SampleAwgn {
     /// Owned noisy samples; chunk boundaries do not change the random sequence.
     /// # Errors
     /// Rejects discontinuity or numeric overflow without committing RNG/clock state.
-    pub fn transfer(&mut self, input: &SampleBlock) -> Result<SampleBlock, LabError> {
+    pub fn transfer(&mut self, input: &SampleBlock) -> Result<SampleBlock, SimulationError> {
         if input.start_index() != self.next_sample {
             return Err(invalid("AWGN sample stream is discontinuous."));
         }

@@ -4,7 +4,7 @@
  */
 //! PHY I20 Figure65: MSB-first grouping before the separate PLC permutation.
 use super::geometry::{PLC_BITS_PER_CELL, PLC_CODEWORD_BITS, PLC_CODEWORD_NIBBLES};
-use crate::{error::invalid, LabError};
+use crate::{error::invalid, SimulationError};
 use serde::Serialize;
 /// Four-bit PLC constellation label; validated containers restrict values to0..15.
 pub type PlcNibble = u8;
@@ -21,7 +21,7 @@ impl PlcCodewordNibbles {
     /// Owned96-label block; first bit of each group is its label MSB.
     /// # Errors
     /// Rejects incorrect size or nonbinary input before constructing output.
-    pub fn from_bits(bits: &[u8]) -> Result<Self, LabError> {
+    pub fn from_bits(bits: &[u8]) -> Result<Self, SimulationError> {
         if bits.len() != PLC_CODEWORD_BITS || bits.iter().any(|bit| *bit > 1) {
             log::debug!("plc-nibble-bits-rejected actual-bits={}", bits.len());
             return Err(invalid("PLC nibble grouping requires384 binary bits."));
@@ -39,7 +39,7 @@ impl PlcCodewordNibbles {
     /// Owned codeword labels; source remains unchanged.
     /// # Errors
     /// Rejects invalid count or labels before copying.
-    pub fn from_values(values: &[PlcNibble]) -> Result<Self, LabError> {
+    pub fn from_values(values: &[PlcNibble]) -> Result<Self, SimulationError> {
         if values.len() != PLC_CODEWORD_NIBBLES
             || values.iter().any(|value| *value >= 1 << PLC_BITS_PER_CELL)
         {

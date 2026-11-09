@@ -19,7 +19,7 @@ use docsis_ofdm_fec::{
         plc::{ExtendedTimestamp, PlcMessageFrame},
         SubcarrierSpacing,
     },
-    LabError,
+    SimulationError,
 };
 #[derive(Default)]
 struct Sink {
@@ -34,9 +34,12 @@ impl ProbeObserver for Sink {
     /// Unit after one copy.
     /// # Errors
     /// Returns the deliberately injected callback error when requested.
-    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), LabError> {
+    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
         if self.fail {
-            return Err(LabError::new("TestObserver", "Injected sink failure."));
+            return Err(SimulationError::new(
+                "TestObserver",
+                "Injected sink failure.",
+            ));
         }
         self.events.push(serde_json::to_value(event).unwrap());
         Ok(())

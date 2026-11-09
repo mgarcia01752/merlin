@@ -15,7 +15,7 @@ use docsis_ofdm_fec::{
         layout::{CarrierLayout, CarrierLayoutSettings},
         TransmissionSettings,
     },
-    LabError,
+    SimulationError,
 };
 struct JsonSink {
     events: Vec<serde_json::Value>,
@@ -28,11 +28,11 @@ impl ProbeObserver for JsonSink {
     /// Unit after serializing the event; the probe limits the number and size.
     /// # Errors
     /// Reports serialization failure without changing completed pilot results.
-    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), LabError> {
-        self.events.push(
-            serde_json::to_value(event)
-                .map_err(|error| LabError::new("ExampleSerialization", error.to_string()))?,
-        );
+    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
+        self.events
+            .push(serde_json::to_value(event).map_err(|error| {
+                SimulationError::new("ExampleSerialization", error.to_string())
+            })?);
         Ok(())
     }
 }

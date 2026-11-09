@@ -9,7 +9,7 @@ use docsis_ofdm_fec::{
         waveform::reference::{run_reference_waveform, ReferenceExperiment},
     },
     transmission::{layout::CarrierLayoutSettings, SubcarrierSpacing, TransmissionSettings},
-    LabError,
+    SimulationError,
 };
 struct UnusedObserver;
 impl ProbeObserver for UnusedObserver {
@@ -18,7 +18,7 @@ impl ProbeObserver for UnusedObserver {
     /// * `_event` - Unused bounded event if observation is enabled by a caller.
     /// # Returns
     /// Unit without printing inside scientific processing.
-    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), LabError> {
+    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
         Ok(())
     }
 }

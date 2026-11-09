@@ -8,7 +8,7 @@ use crate::{
     signal_processing::modulation::SymbolLabel,
     transmission::SubcarrierSpacing,
     types::{ofdm_modulation::ConstellationOrder, ProfileId},
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 
@@ -67,7 +67,7 @@ impl PackingSettings {
     /// Unit for supported uniform256-QAM packing geometry.
     /// # Errors
     /// Rejects invalid profile width or NI outside spacing-specific PHY limits.
-    pub fn validate(&self) -> Result<(), LabError> {
+    pub fn validate(&self) -> Result<(), SimulationError> {
         let maximum = self.subcarrier_spacing.max_interleaver_cells();
         if self.interleaver_cells > maximum
             || self.interleaver_cells < 2 * self.ncp_modulation.cells_per_block()

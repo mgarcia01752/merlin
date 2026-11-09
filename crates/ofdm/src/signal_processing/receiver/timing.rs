@@ -7,7 +7,7 @@ use crate::{
     error::invalid,
     signal_processing::waveform::{SampleBlock, WaveformGeometry},
     types::IqPair,
-    LabError,
+    SimulationError,
 };
 /// One complete received symbol period, before prefix removal.
 #[derive(Debug, Clone)]
@@ -39,7 +39,7 @@ impl SymbolFramer {
         first_input: u64,
         first_symbol_start: u64,
         first_symbol: u64,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         if first_symbol_start < first_input {
             return Err(invalid("RX symbol boundary precedes stream start."));
         }
@@ -58,7 +58,7 @@ impl SymbolFramer {
     /// At most sixteen complete periods per maximum-size input; partial data stays private.
     /// # Errors
     /// Rejects discontinuity/index overflow atomically; no missing samples are invented.
-    pub fn push(&mut self, input: &SampleBlock) -> Result<Vec<FramedSymbol>, LabError> {
+    pub fn push(&mut self, input: &SampleBlock) -> Result<Vec<FramedSymbol>, SimulationError> {
         if input.start_index() != self.next_input {
             return Err(invalid("RX sample stream is discontinuous."));
         }

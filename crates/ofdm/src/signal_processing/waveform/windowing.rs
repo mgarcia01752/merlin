@@ -4,7 +4,7 @@
  */
 //! PHY I20 section7.4.10.1 cyclic suffix and half-sample Tukey taper, delegated by7.5.8.1.
 use super::{samples::validate_samples, WaveformGeometry};
-use crate::{types::IqPair, LabError};
+use crate::{types::IqPair, SimulationError};
 use std::f64::consts::PI;
 /// Frozen TX extension/window coefficients, independently inspectable for verification.
 pub struct TransmitWindow {
@@ -43,7 +43,7 @@ impl TransmitWindow {
     /// N+CP+RP windowed samples, before overlap-add; original input remains unchanged.
     /// # Errors
     /// Rejects wrong size or nonfinite samples before extension.
-    pub fn apply(&self, prefixed: &[IqPair]) -> Result<Vec<IqPair>, LabError> {
+    pub fn apply(&self, prefixed: &[IqPair]) -> Result<Vec<IqPair>, SimulationError> {
         validate_samples(prefixed, self.geometry.stride_samples())?;
         let mut extended = prefixed.to_vec();
         extended.extend_from_slice(

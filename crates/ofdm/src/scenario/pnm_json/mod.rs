@@ -9,7 +9,7 @@ use crate::{
     profile::candidate::{AssignmentOrigin, CapturedProfile, CarrierAssignment},
     scenario::{document::ScenarioDocument, ChannelFrame, RxMerFrame, SourceProvenance},
     types::{modulation::ModulationAssignment, ProtocolScope},
-    LabError,
+    SimulationError,
 };
 use decoded::{Channel, ProfileDocument, Rxmer};
 use sha2::{Digest, Sha256};
@@ -43,7 +43,7 @@ pub fn import(
     profiles: JsonCapture<'_>,
     protocol: ProtocolScope,
     tolerance_seconds: u32,
-) -> Result<ScenarioDocument, LabError> {
+) -> Result<ScenarioDocument, SimulationError> {
     let readings: Rxmer = parse(&rxmer)?;
     let response: Channel = parse(&channel)?;
     let captured: ProfileDocument = parse(&profiles)?;
@@ -155,7 +155,9 @@ pub fn import(
     Ok(scenario)
 }
 
-fn parse<Model: serde::de::DeserializeOwned>(source: &JsonCapture<'_>) -> Result<Model, LabError> {
+fn parse<Model: serde::de::DeserializeOwned>(
+    source: &JsonCapture<'_>,
+) -> Result<Model, SimulationError> {
     if source.bytes.len() > 16 * 1024 * 1024 {
         return Err(invalid("Decoded capture exceeds16MiB."));
     }

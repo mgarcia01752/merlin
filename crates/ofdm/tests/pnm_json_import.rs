@@ -26,7 +26,8 @@ fn decode(
     channel: &[u8],
     profile: &[u8],
     tolerance: u32,
-) -> Result<docsis_ofdm_fec::scenario::document::ScenarioDocument, docsis_ofdm_fec::LabError> {
+) -> Result<docsis_ofdm_fec::scenario::document::ScenarioDocument, docsis_ofdm_fec::SimulationError>
+{
     import(
         JsonCapture {
             name: "rxmer.json",

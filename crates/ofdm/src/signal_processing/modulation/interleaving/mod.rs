@@ -11,7 +11,7 @@ pub mod parity;
 pub mod twist;
 use crate::{
     error::invalid, signal_processing::modulation::qam::SymbolLabel,
-    types::ofdm_modulation::ConstellationOrder, LabError,
+    types::ofdm_modulation::ConstellationOrder, SimulationError,
 };
 use fec_codec::parameters::LDPC_CODEWORD_BITS;
 use parameters::Parameters;
@@ -32,7 +32,7 @@ impl BitInterleaver {
     /// Reusable mapping from MSB-first cell bits back to original codeword indices.
     /// # Errors
     /// Returns UnsupportedCodingMode for other orders; never substitutes a mode.
-    pub fn new(order: ConstellationOrder) -> Result<Self, LabError> {
+    pub fn new(order: ConstellationOrder) -> Result<Self, SimulationError> {
         let parameters = parameters::require(order)?;
         Ok(Self {
             bits_per_cell: parameters.bits_per_cell,
@@ -54,7 +54,7 @@ impl BitInterleaver {
     /// MSB-first labels:4050for16-QAM or2025for256-QAM; no padding for these modes.
     /// # Errors
     /// Rejects wrong length or nonbinary values before creating labels.
-    pub fn encode_labels(&self, codeword: &[u8]) -> Result<Vec<SymbolLabel>, LabError> {
+    pub fn encode_labels(&self, codeword: &[u8]) -> Result<Vec<SymbolLabel>, SimulationError> {
         if codeword.len() != LDPC_CODEWORD_BITS || codeword.iter().any(|bit| *bit > 1) {
             return Err(invalid("Expected16200 binary LDPC bits."));
         }
@@ -76,7 +76,7 @@ impl BitInterleaver {
     /// Owned codeword-order LLRs with signs/magnitudes preserved, ready for LDPC.
     /// # Errors
     /// Rejects wrong length or nonfinite values; input remains unchanged.
-    pub fn decode_llrs(&self, cell_llrs: &[f64]) -> Result<Vec<f64>, LabError> {
+    pub fn decode_llrs(&self, cell_llrs: &[f64]) -> Result<Vec<f64>, SimulationError> {
         if cell_llrs.len() != LDPC_CODEWORD_BITS || cell_llrs.iter().any(|value| !value.is_finite())
         {
             return Err(invalid("Expected16200 finite cell-order LLRs."));

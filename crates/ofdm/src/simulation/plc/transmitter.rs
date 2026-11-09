@@ -17,7 +17,7 @@ use crate::{
         SubcarrierSpacing,
     },
     types::{IqPair, PLC_FRAME_SYMBOLS},
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 /// Completed scientific boundaries for one PLC codeword, before optional observation.
@@ -77,7 +77,7 @@ impl PlcFrameSignals {
 pub fn generate_frame(
     message: PlcMessageFrame,
     frame_index: u64,
-) -> Result<PlcFrameSignals, LabError> {
+) -> Result<PlcFrameSignals, SimulationError> {
     let start = frame_index
         .checked_mul(PLC_FRAME_SYMBOLS)
         .and_then(|index| index.checked_add(PLC_FRAME_SYMBOLS - 1))

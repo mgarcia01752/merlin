@@ -16,7 +16,7 @@ use docsis_ofdm_fec::{
         SimulationSettings,
     },
     transmission::TransmissionSettings,
-    LabError,
+    SimulationError,
 };
 use std::{io::Write, sync::atomic::AtomicBool};
 fn probes(budget: usize) -> TestPointProbe {
@@ -118,8 +118,8 @@ fn seeded_source_and_existing_awgn_draws_are_unchanged_by_enabled_and_exhausted_
 fn callback_and_export_failures_do_not_change_future_source_draws() {
     struct Failure;
     impl ProbeObserver for Failure {
-        fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), LabError> {
-            Err(LabError::new("TestFailure", "Injected failure."))
+        fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
+            Err(SimulationError::new("TestFailure", "Injected failure."))
         }
     }
     let mut source = SeededSource::new(99);

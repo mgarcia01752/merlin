@@ -5,7 +5,7 @@
 //! PHY I20 section7.5.14.3, PDF162–163: reverse each retained-coordinate group.
 use crate::{
     error::invalid, signal_processing::modulation::SymbolLabel,
-    transmission::packing::NcpModulation, LabError,
+    transmission::packing::NcpModulation, SimulationError,
 };
 use fec_codec::ncp::NCP_CODEWORD_BITS;
 
@@ -20,7 +20,7 @@ use fec_codec::ncp::NCP_CODEWORD_BITS;
 pub fn labels_from_bits(
     bits: &[u8],
     modulation: NcpModulation,
-) -> Result<Vec<SymbolLabel>, LabError> {
+) -> Result<Vec<SymbolLabel>, SimulationError> {
     if bits.len() != NCP_CODEWORD_BITS || bits.iter().any(|bit| *bit > 1) {
         return Err(invalid("Expected48 binary NCP bits."));
     }
@@ -46,7 +46,7 @@ pub fn labels_from_bits(
 pub fn llrs_from_cells(
     cells: &[Vec<f64>],
     modulation: NcpModulation,
-) -> Result<Vec<f64>, LabError> {
+) -> Result<Vec<f64>, SimulationError> {
     let width = modulation.order().ilog2() as usize;
     if cells.len() != modulation.cells_per_block()
         || cells

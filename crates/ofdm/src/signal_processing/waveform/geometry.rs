@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Validated immutable numerology shared by independently owned TX and RX stages.
-use crate::{transmission::TransmissionSettings, LabError};
+use crate::{transmission::TransmissionSettings, SimulationError};
 /// Per-run snapshot; changing prefix or roll-off requires constructing new stages.
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
 pub struct WaveformGeometry {
@@ -17,7 +17,7 @@ impl WaveformGeometry {
     /// Owned immutable snapshot; later caller edits cannot change active stage geometry.
     /// # Errors
     /// Rejects settings unsupported by the existing transmission validator.
-    pub fn new(settings: &TransmissionSettings) -> Result<Self, LabError> {
+    pub fn new(settings: &TransmissionSettings) -> Result<Self, SimulationError> {
         settings.validate()?;
         Ok(Self {
             settings: settings.clone(),

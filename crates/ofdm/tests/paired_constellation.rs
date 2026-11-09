@@ -330,12 +330,12 @@ fn failed_probe_export_retains_already_classified_pairs_and_scientific_totals() 
         simulation::test_points::{
             ProbeConfig, ProbeEvent, ProbeObserver, ProbeSelection, TestPointId,
         },
-        LabError,
+        SimulationError,
     };
     struct FailedExport;
     impl ProbeObserver for FailedExport {
-        fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), LabError> {
-            Err(LabError::new(
+        fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
+            Err(SimulationError::new(
                 "TestSink",
                 "Injected paired-run export failure.",
             ))

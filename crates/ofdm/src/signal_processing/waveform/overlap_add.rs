@@ -4,7 +4,7 @@
  */
 //! Stateful TX symbol overlap; only the RP tail is retained between calls.
 use super::{samples::validate_samples, SampleBlock, WaveformGeometry};
-use crate::{error::invalid, types::IqPair, LabError};
+use crate::{error::invalid, types::IqPair, SimulationError};
 /// Fixed-session TX overlap-add with explicit stream start, terminal drain and reset.
 pub struct OverlapAdd {
     geometry: WaveformGeometry,
@@ -34,7 +34,7 @@ impl OverlapAdd {
     /// One N+CP-sample block; retains only the final RP values for the next symbol.
     /// # Errors
     /// Rejects invalid size/numbers, overflow or use after finish without changing state.
-    pub fn push(&mut self, windowed: &[IqPair]) -> Result<SampleBlock, LabError> {
+    pub fn push(&mut self, windowed: &[IqPair]) -> Result<SampleBlock, SimulationError> {
         validate_samples(windowed, self.geometry.extended_samples())?;
         if self.finished {
             return Err(invalid(
@@ -57,7 +57,7 @@ impl OverlapAdd {
     /// A short drain block; repeated calls return an empty block at the same end tick.
     /// # Errors
     /// Rejects sample-index overflow without consuming the retained tail.
-    pub fn finish(&mut self) -> Result<SampleBlock, LabError> {
+    pub fn finish(&mut self) -> Result<SampleBlock, SimulationError> {
         let output = SampleBlock::new(self.next_sample, self.tail.clone())?;
         self.tail.clear();
         self.next_sample = output.end_index();

@@ -9,7 +9,7 @@ use crate::{
         TestPointProbe,
     },
     types::IqPair,
-    LabError,
+    SimulationError,
 };
 /// Observes already-generated binary data without accessing generator state.
 /// # Arguments
@@ -26,7 +26,7 @@ pub fn source_payload(
     context: &ProbeContext,
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
-) -> Result<ProbeOutcome, LabError> {
+) -> Result<ProbeOutcome, SimulationError> {
     probe.emit(
         TestPointId::SourcePayload,
         context,
@@ -50,7 +50,7 @@ pub fn noise_output(
     context: &ProbeContext,
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
-) -> Result<ProbeOutcome, LabError> {
+) -> Result<ProbeOutcome, SimulationError> {
     probe.emit(
         TestPointId::LegacyNoiseOutput,
         context,

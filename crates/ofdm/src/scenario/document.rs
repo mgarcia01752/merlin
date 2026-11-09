@@ -4,7 +4,7 @@
  */
 //! Versioned decoded scenario input and bounded observation validation.
 use crate::{
-    error::{invalid, LabError},
+    error::{invalid, SimulationError},
     profile::candidate::{CandidateProfile, CapturedProfile},
     scenario::{ChannelFrame, RxMerFrame},
     types::ProtocolScope,
@@ -28,7 +28,7 @@ impl ScenarioDocument {
     /// Unit when all arrays are finite and bounded.
     /// # Errors
     /// Rejects schema drift, excessive work and malformed grids or timestamps.
-    pub fn validate(&self) -> Result<(), LabError> {
+    pub fn validate(&self) -> Result<(), SimulationError> {
         let samples = self
             .frames
             .iter()

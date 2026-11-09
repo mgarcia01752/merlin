@@ -1,11 +1,11 @@
 ---
 name: public-api
-description: Design and review DOCSIS OFDM Channel Sim public Rust APIs so standalone tools and future Python bindings can share the same scientific engine. Use when adding or changing public scientific models, operations, errors or job interfaces.
+description: Design and review DOCSIS OFDM Channel Sim public Rust APIs so standalone tools and future Python bindings can share the same simulation core. Use when adding or changing public scientific models, operations, errors or job interfaces.
 ---
 
 # Public scientific API
 
-DOCSIS OFDM Channel Sim owns a standalone Rust scientific engine. A future Python package and optional
+DOCSIS OFDM Channel Sim owns a standalone Rust simulation core. A future Python package and optional
 Qt interface must call the same algorithms. Implement functionality first; Python
 bindings, packaging and UI work are deferred until explicitly requested.
 

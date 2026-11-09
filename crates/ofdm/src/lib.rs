@@ -2,7 +2,7 @@
  * Copyright 2026 DOCSIS OFDM FEC Toolkit contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-//! Standalone Rust scientific engine with focused domain and processing modules.
+//! Standalone Rust simulation core with focused domain and processing modules.
 #![forbid(unsafe_code)]
 pub mod error;
 pub mod profile;
@@ -12,7 +12,7 @@ pub mod signal_processing;
 pub mod simulation;
 pub mod transmission;
 pub mod types;
-pub use error::LabError;
+pub use error::SimulationError;
 
 /// Compatibility paths; numerical implementations live in signal_processing.
 pub mod math {

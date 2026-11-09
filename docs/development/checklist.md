@@ -572,23 +572,49 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 ## Tooling, validation and later interfaces
 
+### Project-local tooling
+
 - [x] **QA-01** Project-local Cargo wrapper, version source and Git/release helpers.
+
+### Local validation and scientific regression
+
 - [x] **QA-02** Formatting, warnings-denied Clippy, workspace and analysis-only tests,
   release CLI build and smoke validation in the existing pre-push gate.
 - [x] **QA-03** Deterministic scientific tests with pinned source evidence and
   independent fixed vectors where available.
+
+### Rust logging and diagnostics
+
 - [x] **QA-08** Add standard Rust facade and CLI-owned stderr logging, explicit
   levels/error ownership and tests for filters, clean data output and scientific
   invariance; document the current instrumentation scope.
+
+### CLI and test-point validation
+
 - [x] **QA-04** Extend the gate as new channel commands/test-point exports are added.
   Release-mode channel/JSONL smoke validation and actual CLI no-clobber/schema tests
   now accompany the existing coding CLI checks.
+
+### External interoperability validation
+
 - [ ] **QA-05** Independent external interoperability vectors for full channel stages.
+
+### Cross-platform builds and runtime
+
 - [ ] **QA-06** Windows/macOS build/runtime validation and CI; Linux checks alone
   do not establish cross-platform runtime support.
+
+### Native packaging and release automation
+
 - [ ] **QA-07** Native packaging and release automation after core functionality.
+
+### Optional Python adapter
+
 - [ ] **API-01** Python bindings as a separate optional adapter, preserving the same
-  scientific engine, buffer lifetimes and observation contracts.
+  simulation core, buffer lifetimes and observation contracts.
+
+### Qt system workspace
+
 - [ ] **UI-01** Build the planned Qt system workspace after core APIs exist:
   clickable source/TX/channel/RX blocks with purpose, settings and stage details.
 - [ ] **UI-02** Add a role-based file panel and OS file picker; validate inputs
@@ -599,6 +625,9 @@ See the [implementation record](features/pilot-channel-estimation/implementation
   dark/light readability; add user guides and actual workspace screenshots.
   See the [starting diagram and interaction plan](features/visual-workspace/plan.md).
   All scientific computation stays in Rust; the UI remains unimplemented.
+
+### Future DOCSIS scope
+
 - [ ] **LATER-01** OFDMA architecture and implementation after downstream scope.
 - [ ] **LATER-02** Channel bonding/multi-channel simulation or FDX-specific behavior
   only under a separate explicit design and validation scope.

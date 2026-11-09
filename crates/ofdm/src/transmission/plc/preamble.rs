@@ -8,7 +8,7 @@ use crate::{
     error::invalid,
     transmission::SubcarrierSpacing,
     types::{IqPair, PLC_FRAME_SYMBOLS},
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 const ROWS_4K: [u8; 8] = [
@@ -37,7 +37,7 @@ pub struct PlcPreambleSymbol {
 pub fn generate(
     spacing: SubcarrierSpacing,
     symbol_index: u64,
-) -> Result<PlcPreambleSymbol, LabError> {
+) -> Result<PlcPreambleSymbol, SimulationError> {
     let phase = (symbol_index % PLC_FRAME_SYMBOLS) as usize;
     if phase < PLC_DATA_SYMBOLS {
         return Err(invalid("PLC preamble requires channel phase120..127."));

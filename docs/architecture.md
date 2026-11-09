@@ -27,7 +27,7 @@ DOCSIS OFDM Simulation Toolkit. Its transmitter models a CMTS-like single-channe
 downstream PHY path, paired with a simulated channel and receiver. Full CMTS MAC
 services and multi-channel operation are outside the current scope.
 
-Build a standalone, DOCSIS-focused Rust scientific engine with two modes:
+Build a standalone, DOCSIS-focused Rust simulation core with two modes:
 
 - **Ideal/reference:** known payload, fixed single downstream OFDM channel up to
   192 MHz, initially uniform 256-QAM, noiseless recovery first, then controlled
@@ -653,6 +653,10 @@ The current retrofit covers command/JSON failure handling, simulation lifecycle,
 BCH and payload/NCP/PLC LDPC outcomes, timestamp CRC rejection and observer
 failures/budgets. Logs are separate from typed test points and cannot control
 scientific decisions or RNG draws. See [logging](development/logging.md).
+
+The simulation core exposes `SimulationError` for domain failures, with stable
+`code` and readable `message` fields. CLI and future adapters translate this
+shared type; renaming it does not change serialized error categories.
 
 ## Lifecycle, validation and future interfaces
 

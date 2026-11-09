@@ -4,7 +4,7 @@
  */
 //! Ordered TX/RX composition, independent of payload types and FEC.
 use super::{FrequencyInterleaver, InterleaverDirection, InterleaverSettings, TimeInterleaver};
-use crate::LabError;
+use crate::SimulationError;
 /// One stream's ordered time/frequency state; instantiate separate TX and RX objects.
 pub struct SymbolInterleaver<CellValue> {
     direction: InterleaverDirection,
@@ -23,7 +23,7 @@ impl<CellValue: Clone> SymbolInterleaver<CellValue> {
     pub fn new(
         settings: InterleaverSettings,
         direction: InterleaverDirection,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         Ok(Self {
             direction,
             time: TimeInterleaver::new(settings, direction),
@@ -42,7 +42,7 @@ impl<CellValue: Clone> SymbolInterleaver<CellValue> {
         &mut self,
         symbol_index: u64,
         input: &[Option<CellValue>],
-    ) -> Result<Vec<Option<CellValue>>, LabError> {
+    ) -> Result<Vec<Option<CellValue>>, SimulationError> {
         match self.direction {
             InterleaverDirection::Transmit => self
                 .frequency

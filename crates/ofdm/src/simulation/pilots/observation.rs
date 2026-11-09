@@ -11,7 +11,7 @@ use crate::{
         TestPointId, TestPointProbe,
     },
     types::PLC_FRAME_SYMBOLS,
-    LabError,
+    SimulationError,
 };
 impl PilotGenerator {
     /// Observes already generated results without modifying them or the generator.
@@ -32,7 +32,7 @@ impl PilotGenerator {
         context: &ProbeContext,
         probe: &mut TestPointProbe,
         observer: &mut impl ProbeObserver,
-    ) -> Result<[ProbeOutcome; 4], LabError> {
+    ) -> Result<[ProbeOutcome; 4], SimulationError> {
         if result.spacing != self.sequence().spacing()
             || context.channel_symbol_index != Some(result.symbol_index)
             || context.plc_phase != Some((result.symbol_index % PLC_FRAME_SYMBOLS) as u8)

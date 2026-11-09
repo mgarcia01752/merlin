@@ -2,7 +2,7 @@
 
 *Modulation, Encoding, Reception, Link Impairments & Noise*
 
-**Under development — standalone Rust scientific engine and CLI.**
+**Under development — standalone Rust simulation core and CLI.**
 
 Simulate a single downstream DOCSIS OFDM channel, recover its payload through
 actual BCH/LDPC decoding, and measure how impairments affect bit errors and decoder

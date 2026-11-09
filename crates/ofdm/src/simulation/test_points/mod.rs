@@ -25,7 +25,7 @@ impl ProbeObserver for NoopObserver {
     /// * `_event` - Optional read-only selected event.
     /// # Returns
     /// Unit; observation is deliberately discarded.
-    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), crate::LabError> {
+    fn observe(&mut self, _event: &ProbeEvent<'_>) -> Result<(), crate::SimulationError> {
         Ok(())
     }
 }

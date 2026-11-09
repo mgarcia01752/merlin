@@ -5,7 +5,7 @@
 //! Exact spatial compatibility and explicit, noninterpolating capture-time matching.
 use crate::types::CaptureTime;
 use crate::{
-    error::{invalid, LabError},
+    error::{invalid, SimulationError},
     scenario::grid::ScenarioKey,
 };
 use serde::Serialize;
@@ -33,7 +33,7 @@ pub fn match_time(
     epoch: CaptureTime,
     observations: &[(&ScenarioKey, CaptureTime)],
     tolerance_seconds: u32,
-) -> Result<Option<TimeAssociation>, LabError> {
+) -> Result<Option<TimeAssociation>, SimulationError> {
     key.grid.validate()?;
     let mut best: Option<(usize, u32, i64)> = None;
     let mut ambiguous = false;

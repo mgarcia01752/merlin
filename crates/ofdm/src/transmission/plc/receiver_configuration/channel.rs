@@ -12,7 +12,7 @@ use crate::{
         SubcarrierSpacing, TransmissionSettings,
     },
     types::FrequencyHz,
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 const ASSIGNMENT_TLV: u8 = 5;
@@ -45,7 +45,7 @@ impl ReceivedChannel {
     /// Owned immutable layout with phase-dependent pilot roles available.
     /// # Errors
     /// Propagates physical validation failures; fields cannot be edited through this model.
-    pub fn physical_layout(&self) -> Result<CarrierLayout, LabError> {
+    pub fn physical_layout(&self) -> Result<CarrierLayout, SimulationError> {
         CarrierLayout::new(&self.transmission, &self.layout)
     }
     /// Reports whether the received OCD advertises primary capability.
@@ -70,7 +70,7 @@ impl ReceivedChannel {
 /// Validated channel settings and assignments without any transmitter object.
 /// # Errors
 /// Rejects semantic parameters, protected-role conflicts or invalid physical geometry.
-pub(crate) fn decode(tlvs: &[DescriptorTlv]) -> Result<ReceivedChannel, LabError> {
+pub(crate) fn decode(tlvs: &[DescriptorTlv]) -> Result<ReceivedChannel, SimulationError> {
     let value = |kind| {
         tlvs.iter()
             .find(|tlv| tlv.kind == kind)

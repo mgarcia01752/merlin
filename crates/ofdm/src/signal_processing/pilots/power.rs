@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! PHY I20 section7.5.15.4: amplitude2x other-subcarrier RMS, power4x.
-use crate::{error::invalid, types::IqPair, LabError};
+use crate::{error::invalid, types::IqPair, SimulationError};
 use serde::Serialize;
 const PILOT_AMPLITUDE_RATIO: f64 = 2.0;
 /// Validated pilot scale in the same I/Q units as the supplied reference RMS.
@@ -24,7 +24,7 @@ impl PilotPower {
     /// Owned scaling metadata; this does not estimate RMS from a physical frame.
     /// # Errors
     /// Rejects invalid values or squared amplitudes that overflow/underflow to zero.
-    pub fn new(reference_rms: f64) -> Result<Self, LabError> {
+    pub fn new(reference_rms: f64) -> Result<Self, SimulationError> {
         let pilot_amplitude = PILOT_AMPLITUDE_RATIO * reference_rms;
         let reference_power = reference_rms * reference_rms;
         let pilot_power = pilot_amplitude * pilot_amplitude;
@@ -64,7 +64,7 @@ impl PilotPower {
     /// Owned scaled I/Q, with the same sign and phase.
     /// # Errors
     /// Rejects nonfinite input or overflowing scaled coordinates.
-    pub fn scale(self, iq: IqPair) -> Result<IqPair, LabError> {
+    pub fn scale(self, iq: IqPair) -> Result<IqPair, SimulationError> {
         let scaled = iq.map(|value| value * self.pilot_amplitude);
         if iq
             .iter()

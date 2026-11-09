@@ -9,7 +9,7 @@ use crate::{
         generate_continuous, generate_scattered, PilotPower, PilotSequence,
     },
     transmission::{layout::CarrierLayout, SubcarrierSpacing},
-    LabError,
+    SimulationError,
 };
 /// Reuses the immutable physical-bin sequence; no RNG, codec or mutable pilot state.
 pub struct PilotGenerator {
@@ -46,7 +46,7 @@ impl PilotGenerator {
         layout: &CarrierLayout,
         symbol_index: u64,
         reference_rms: f64,
-    ) -> Result<PilotStageResult, LabError> {
+    ) -> Result<PilotStageResult, SimulationError> {
         let power = PilotPower::new(reference_rms)?;
         Ok(PilotStageResult {
             symbol_index,

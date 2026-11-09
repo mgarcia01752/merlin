@@ -7,7 +7,7 @@ use crate::{
     error::invalid,
     transmission::{SubcarrierSpacing, TransmissionSettings},
     types::{FrequencyHz, SubcarrierIdx},
-    LabError,
+    SimulationError,
 };
 use serde::{Deserialize, Serialize};
 
@@ -71,7 +71,7 @@ impl CarrierLayout {
     pub fn new(
         transmission: &TransmissionSettings,
         layout: &CarrierLayoutSettings,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         transmission.validate()?;
         let spacing = transmission.subcarrier_spacing;
         let fft_size = spacing.fft_samples() as usize;
@@ -169,7 +169,7 @@ impl CarrierLayout {
     /// Half-open physical interval including the PLC and its mandatory nearby pilots.
     /// # Errors
     /// Rejects missing PLC state or unrepresentable frequency arithmetic.
-    pub fn plc_neighborhood_hz(&self) -> Result<std::ops::Range<FrequencyHz>, LabError> {
+    pub fn plc_neighborhood_hz(&self) -> Result<std::ops::Range<FrequencyHz>, SimulationError> {
         let first = self
             .static_roles
             .iter()
@@ -242,7 +242,7 @@ impl CarrierLayout {
 pub fn predefined_pilots(
     spacing: SubcarrierSpacing,
     plc_first: SubcarrierIdx,
-) -> Result<Vec<SubcarrierIdx>, LabError> {
+) -> Result<Vec<SubcarrierIdx>, SimulationError> {
     let (width, distances): (u16, [u16; 4]) = match spacing {
         SubcarrierSpacing::Khz25 => (16, [30, 48, 70, 94]),
         SubcarrierSpacing::Khz50 => (8, [15, 24, 35, 47]),

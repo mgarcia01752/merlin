@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! PHY I20 Tables38–40 and section7.5.6.1; fixed per-session numerology.
-use crate::{error::invalid, types::FrequencyHz, LabError};
+use crate::{error::invalid, types::FrequencyHz, SimulationError};
 use serde::{Deserialize, Serialize};
 
 /// Fixed downstream sample clock, in samples per second (PHY I20 section7.5.7).
@@ -106,7 +106,7 @@ impl TransmissionSettings {
     /// Unit for a supported configuration; zero roll-off is evaluation-only.
     /// # Errors
     /// Rejects unsupported bandwidth, prefix, roll-off or interleaver depth.
-    pub fn validate(&self) -> Result<(), LabError> {
+    pub fn validate(&self) -> Result<(), SimulationError> {
         if !(MIN_CHANNEL_BANDWIDTH_HZ..=MAX_CHANNEL_BANDWIDTH_HZ)
             .contains(&self.occupied_bandwidth_hz)
             || self.occupied_bandwidth_hz % CHANNEL_BANDWIDTH_STEP_HZ != 0

@@ -8,7 +8,7 @@ use docsis_ofdm_fec::{
         ProbeConfig, ProbeContext, ProbeData, ProbeEvent, ProbeObserver, ProbeOutcome,
         ProbeSelection, RunPhase, SignalDomain, SignalReference, TestPointId, TestPointProbe,
     },
-    LabError,
+    SimulationError,
 };
 #[derive(Default)]
 struct Sink {
@@ -23,10 +23,10 @@ impl ProbeObserver for Sink {
     /// Unit when the test sink accepts the copied event.
     /// # Errors
     /// Returns TestObserverFailure when failure injection is enabled.
-    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), LabError> {
+    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
         self.events.push(serde_json::to_value(event).unwrap());
         if self.fail {
-            Err(LabError::new(
+            Err(SimulationError::new(
                 "TestObserverFailure",
                 "Selected sink failed.",
             ))

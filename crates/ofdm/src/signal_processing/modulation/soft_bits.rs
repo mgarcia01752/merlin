@@ -11,7 +11,7 @@ use super::{
 use crate::{
     error::invalid,
     types::{ofdm_modulation::ConstellationOrder, IqPair},
-    LabError,
+    SimulationError,
 };
 const LLR_LIMIT: f64 = 100.0;
 const MAX_REFERENCE_BITS: usize = crate::types::ofdm_modulation::MAX_OFDM_BITS_PER_SYMBOL as usize;
@@ -29,9 +29,10 @@ pub fn qam_llrs(
     order: ConstellationOrder,
     received: IqPair,
     noise_power: f64,
-) -> Result<Vec<f64>, LabError> {
-    let reference = reference_for_order(usize::from(order))
-        .ok_or_else(|| LabError::new("UnsupportedModulation", "Unsupported QAM constellation."))?;
+) -> Result<Vec<f64>, SimulationError> {
+    let reference = reference_for_order(usize::from(order)).ok_or_else(|| {
+        SimulationError::new("UnsupportedModulation", "Unsupported QAM constellation.")
+    })?;
     let mut output = vec![0.0; usize::from(reference.bit_loading)];
     demap_into(reference, received, noise_power, &mut output)?;
     Ok(output)
@@ -45,7 +46,7 @@ pub fn qam_llrs(
 /// Four MSB-first natural-log likelihoods; positive favors0, clipped to±100.
 /// # Errors
 /// Rejects invalid symbols, complex noise power or overflowing distance metrics.
-pub fn qam16_llrs(received: IqPair, noise_power: f64) -> Result<[f64; 4], LabError> {
+pub fn qam16_llrs(received: IqPair, noise_power: f64) -> Result<[f64; 4], SimulationError> {
     let reference = reference_for_order(16).ok_or_else(|| invalid("Missing16-QAM reference."))?;
     let mut output = [0.0; QAM16_BITS_PER_SYMBOL];
     demap_into(reference, received, noise_power, &mut output)?;
@@ -58,7 +59,7 @@ fn demap_into(
     received: IqPair,
     noise_power: f64,
     output: &mut [f64],
-) -> Result<(), LabError> {
+) -> Result<(), SimulationError> {
     if received.iter().any(|value| !value.is_finite())
         || !noise_power.is_finite()
         || noise_power <= 0.0

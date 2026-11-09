@@ -7,7 +7,7 @@ use super::{model::select_values, PilotPower, PilotSequence, PilotValue};
 use crate::{
     error::invalid,
     transmission::layout::{CarrierLayout, PhysicalCarrierRole},
-    LabError,
+    SimulationError,
 };
 /// Generates continuous BPSK pilot values without moving or generating locations.
 /// # Arguments
@@ -23,7 +23,7 @@ pub fn generate_continuous(
     layout: &CarrierLayout,
     sequence: &PilotSequence,
     power: PilotPower,
-) -> Result<Vec<PilotValue>, LabError> {
+) -> Result<Vec<PilotValue>, SimulationError> {
     if layout.subcarrier_spacing() != sequence.spacing() {
         return Err(invalid(
             "Continuous pilot layout/sequence numerology mismatch.",

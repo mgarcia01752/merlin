@@ -11,7 +11,7 @@ use crate::{
     signal_processing::pilots::{PilotPower, PilotSequence},
     transmission::layout::{CarrierLayout, PhysicalCarrierRole},
     types::{IqPair, PLC_FRAME_SYMBOLS},
-    LabError,
+    SimulationError,
 };
 /// RX-only history; stores at most one latest observation per FFT bin.
 pub struct PilotChannelEstimator {
@@ -32,7 +32,7 @@ impl PilotChannelEstimator {
     /// Empty bounded history, with no supplied channel or TX truth.
     /// # Errors
     /// Rejects invalid RMS/reference power.
-    pub fn new(layout: CarrierLayout, reference_rms: f64) -> Result<Self, LabError> {
+    pub fn new(layout: CarrierLayout, reference_rms: f64) -> Result<Self, SimulationError> {
         let sequence = PilotSequence::new(layout.subcarrier_spacing());
         let size = layout.static_roles().len();
         Ok(Self {
@@ -55,7 +55,11 @@ impl PilotChannelEstimator {
     /// # Errors
     /// Rejects shape, numeric/sequence errors or near-zero estimates atomically.
     /// Invalid calls leave history and counters unchanged.
-    pub fn estimate(&mut self, symbol: u64, bins: &[IqPair]) -> Result<ChannelEstimate, LabError> {
+    pub fn estimate(
+        &mut self,
+        symbol: u64,
+        bins: &[IqPair],
+    ) -> Result<ChannelEstimate, SimulationError> {
         if bins.len() != self.history.len()
             || self.next.is_some_and(|next| next != symbol)
             || bins.iter().flatten().any(|value| !value.is_finite())

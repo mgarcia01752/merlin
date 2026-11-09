@@ -11,7 +11,7 @@ use crate::{
         PlcProbeGrid, ProbeContext, ProbeData, ProbeObserver, ProbeOutcome, SignalDomain,
         TestPointId, TestPointProbe, WaveformProbeGrid,
     },
-    LabError,
+    SimulationError,
 };
 /// Emits TX transform, prefix, window and overlap boundaries after successful processing.
 /// # Arguments
@@ -30,7 +30,7 @@ pub fn observe_transmit(
     context: &ProbeContext,
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
-) -> Result<Vec<ProbeOutcome>, LabError> {
+) -> Result<Vec<ProbeOutcome>, SimulationError> {
     if symbol.useful.len() != geometry.fft_samples()
         || symbol.prefixed.len() != geometry.stride_samples()
         || symbol.windowed.len() != geometry.extended_samples()
@@ -86,7 +86,7 @@ pub fn observe_receive(
     context: &ProbeContext,
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
-) -> Result<Vec<ProbeOutcome>, LabError> {
+) -> Result<Vec<ProbeOutcome>, SimulationError> {
     if symbol.period.samples().len() != geometry.stride_samples()
         || symbol.useful.len() != geometry.fft_samples()
         || symbol.bins.len() != geometry.fft_samples()
@@ -182,7 +182,7 @@ pub fn observe_channel(
     context: &ProbeContext,
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
-) -> Result<ProbeOutcome, LabError> {
+) -> Result<ProbeOutcome, SimulationError> {
     let mut context = waveform_context(geometry, context, None)?;
     context.sample_start_index = Some(block.start_index());
     let stage = if receive_plane {
@@ -202,7 +202,7 @@ fn waveform_context(
     geometry: &WaveformGeometry,
     context: &ProbeContext,
     symbol: Option<u64>,
-) -> Result<ProbeContext, LabError> {
+) -> Result<ProbeContext, SimulationError> {
     context.validate()?;
     if symbol.is_some_and(|index| {
         context.channel_symbol_index != Some(index)

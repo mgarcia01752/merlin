@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Explicit PRBS15 experiment source; unrelated to the PHY cell randomizer.
-use crate::{error::invalid, LabError};
+use crate::{error::invalid, SimulationError};
 use fec_codec::parameters::BCH_INPUT_BITS;
 use serde::Serialize;
 
@@ -34,7 +34,7 @@ impl Prbs15 {
     /// Independent state at absolute bit position zero.
     /// # Errors
     /// Rejects zero and seeds with bits outside the 15-bit register.
-    pub fn new(seed: PrbsSeed) -> Result<Self, LabError> {
+    pub fn new(seed: PrbsSeed) -> Result<Self, SimulationError> {
         if seed == 0 || seed > PRBS15_PERIOD {
             return Err(invalid("PRBS15 requires a nonzero 15-bit seed."));
         }
@@ -60,7 +60,7 @@ impl Prbs15 {
     /// Binary bits in transmission order; zero count leaves state unchanged.
     /// # Errors
     /// Rejects excessive work or absolute-position overflow before advancing state.
-    pub fn generate(&mut self, count: usize) -> Result<Vec<u8>, LabError> {
+    pub fn generate(&mut self, count: usize) -> Result<Vec<u8>, SimulationError> {
         self.checked_end(count)?;
         Ok((0..count).map(|_| self.next_bit()).collect())
     }
@@ -71,11 +71,11 @@ impl Prbs15 {
     /// Exactly BCH_INPUT_BITS bits continuing from the previous call.
     /// # Errors
     /// Rejects absolute-position overflow without advancing state.
-    pub fn next_payload(&mut self) -> Result<Vec<u8>, LabError> {
+    pub fn next_payload(&mut self) -> Result<Vec<u8>, SimulationError> {
         self.generate(BCH_INPUT_BITS)
     }
 
-    fn checked_end(&self, count: usize) -> Result<SourceBitIndex, LabError> {
+    fn checked_end(&self, count: usize) -> Result<SourceBitIndex, SimulationError> {
         if count > MAX_PRBS_CHUNK_BITS {
             return Err(invalid("PRBS chunk exceeds the configured work bound."));
         }
@@ -117,7 +117,7 @@ impl PrbsVerifier {
     /// Empty comparison history with independently owned PRBS state.
     /// # Errors
     /// Rejects invalid PRBS15 seeds.
-    pub fn new(seed: PrbsSeed) -> Result<Self, LabError> {
+    pub fn new(seed: PrbsSeed) -> Result<Self, SimulationError> {
         Ok(Self {
             expected: Prbs15::new(seed)?,
             totals: PrbsComparison {
@@ -140,7 +140,7 @@ impl PrbsVerifier {
     /// Rejects nonbinary decisions, excessive work or position overflow before
     /// changing state. Missing, duplicate or reordered data must be handled by
     /// the caller; this verifier performs no blind PRBS phase acquisition.
-    pub fn compare(&mut self, recovered: &[u8]) -> Result<PrbsComparison, LabError> {
+    pub fn compare(&mut self, recovered: &[u8]) -> Result<PrbsComparison, SimulationError> {
         self.expected.checked_end(recovered.len())?;
         if recovered.iter().any(|bit| *bit > 1) {
             return Err(invalid(

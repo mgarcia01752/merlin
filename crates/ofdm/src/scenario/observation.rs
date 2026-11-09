@@ -5,7 +5,7 @@
 //! Immutable full-resolution measurement observations and source metadata.
 use super::grid::ScenarioKey;
 use crate::{
-    error::{invalid, LabError},
+    error::{invalid, SimulationError},
     types::{CaptureTime, IqPair},
 };
 use serde::{Deserialize, Serialize};
@@ -27,7 +27,7 @@ impl SourceProvenance {
     /// Unit for a bounded name, hexadecimal SHA-256 and file kind.
     /// # Errors
     /// Rejects malformed hashes, excessive names and impossible source sizes.
-    pub fn validate(&self) -> Result<(), LabError> {
+    pub fn validate(&self) -> Result<(), SimulationError> {
         if self.name.is_empty()
             || self.name.len() > 4096
             || self.sha256.len() != 64
@@ -56,7 +56,7 @@ impl RxMerFrame {
     /// Unit for a valid measured frame; null readings remain null.
     /// # Errors
     /// Rejects inconsistent length, time identity or nonfinite present values.
-    pub fn validate(&self) -> Result<(), LabError> {
+    pub fn validate(&self) -> Result<(), SimulationError> {
         self.key.grid.validate()?;
         self.source.validate()?;
         if self.mer_db.len() != self.key.grid.sample_count

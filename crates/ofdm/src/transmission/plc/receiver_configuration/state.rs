@@ -9,7 +9,7 @@ use super::{
 };
 use crate::{
     transmission::{plc::mac_packets::ManagementPacket, SubcarrierSpacing},
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 /// Current admission/readiness state; a rejection closes the data gate.
@@ -26,7 +26,7 @@ pub struct ReceiverConfigurationState {
     collection: DescriptorCollection,
     status: ReceiverConfigurationStatus,
     last_valid: Option<ReceiverConfiguration>,
-    last_rejection: Option<LabError>,
+    last_rejection: Option<SimulationError>,
 }
 impl ReceiverConfigurationState {
     /// Starts acquisition with PLC bootstrap geometry and no data-plane settings.
@@ -65,7 +65,7 @@ impl ReceiverConfigurationState {
     /// Borrows the last admission/transport rejection without changing state.
     /// # Returns
     /// Diagnostic until a subsequent valid packet restores Waiting/Ready or reset occurs.
-    pub fn last_rejection(&self) -> Option<&LabError> {
+    pub fn last_rejection(&self) -> Option<&SimulationError> {
         self.last_rejection.as_ref()
     }
     /// Gates data/NCP configuration on successful acquisition/admission.
@@ -73,13 +73,13 @@ impl ReceiverConfigurationState {
     /// Immutable complete configuration only in Ready state.
     /// # Errors
     /// Returns ReceiverNotReady for missing or rejected input, preserving history.
-    pub fn require_ready(&self) -> Result<&ReceiverConfiguration, LabError> {
+    pub fn require_ready(&self) -> Result<&ReceiverConfiguration, SimulationError> {
         if self.status == ReceiverConfigurationStatus::Ready {
             if let Some(configuration) = &self.last_valid {
                 return Ok(configuration);
             }
         }
-        Err(LabError::new(
+        Err(SimulationError::new(
             "ReceiverNotReady",
             "Data/NCP recovery requires a ready received PLC configuration.",
         ))
@@ -96,7 +96,7 @@ impl ReceiverConfigurationState {
     pub fn accept_packet(
         &mut self,
         packet: &ManagementPacket,
-    ) -> Result<ReceiverConfigurationStatus, LabError> {
+    ) -> Result<ReceiverConfigurationStatus, SimulationError> {
         let result = self.admit(packet);
         if let Err(error) = &result {
             self.reject(error.clone());
@@ -110,7 +110,10 @@ impl ReceiverConfigurationState {
     /// Same admission/readiness outcome as accept_packet after CRC validation.
     /// # Errors
     /// Reports packet CRC/format or configuration failures, preserving accepted history.
-    pub fn accept_bytes(&mut self, bytes: &[u8]) -> Result<ReceiverConfigurationStatus, LabError> {
+    pub fn accept_bytes(
+        &mut self,
+        bytes: &[u8],
+    ) -> Result<ReceiverConfigurationStatus, SimulationError> {
         match ManagementPacket::from_bytes(bytes) {
             Ok(packet) => self.accept_packet(&packet),
             Err(error) => {
@@ -133,7 +136,7 @@ impl ReceiverConfigurationState {
     /// * `error` - Typed received failure, without capture arrays.
     /// # Returns
     /// Unit with Rejected state and a closed gate; last valid configuration remains readable.
-    pub(crate) fn reject(&mut self, error: LabError) {
+    pub(crate) fn reject(&mut self, error: SimulationError) {
         log::debug!("receiver-configuration-rejected error-code={}", error.code);
         self.last_rejection = Some(error);
         self.status = ReceiverConfigurationStatus::Rejected;
@@ -141,7 +144,7 @@ impl ReceiverConfigurationState {
     fn admit(
         &mut self,
         packet: &ManagementPacket,
-    ) -> Result<ReceiverConfigurationStatus, LabError> {
+    ) -> Result<ReceiverConfigurationStatus, SimulationError> {
         let mut candidate = self.collection.clone();
         let added = candidate.admit(packet)?;
         let missing = candidate.missing();

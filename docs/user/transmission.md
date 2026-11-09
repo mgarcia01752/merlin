@@ -174,7 +174,7 @@ use docsis_ofdm_fec::transmission::TransmissionSettings;
 let settings = TransmissionSettings::default();
 let schedule = settings.one_second_timing()?;
 assert_eq!(schedule.complete_symbols, 23_529);
-# Ok::<(), docsis_ofdm_fec::LabError>(())
+# Ok::<(), docsis_ofdm_fec::SimulationError>(())
 ```
 
 ## Interleaver lifecycle and upcoming waveform runner

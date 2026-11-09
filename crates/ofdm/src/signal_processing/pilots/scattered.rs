@@ -7,7 +7,7 @@ use super::{model::select_values, PilotPower, PilotSequence, PilotValue};
 use crate::{
     error::invalid,
     transmission::layout::{CarrierLayout, PhysicalCarrierRole},
-    LabError,
+    SimulationError,
 };
 /// Generates phase-aligned scattered-pilot BPSK values on the physical grid.
 /// # Arguments
@@ -25,7 +25,7 @@ pub fn generate_scattered(
     sequence: &PilotSequence,
     power: PilotPower,
     symbol_index: u64,
-) -> Result<Vec<PilotValue>, LabError> {
+) -> Result<Vec<PilotValue>, SimulationError> {
     if layout.subcarrier_spacing() != sequence.spacing() {
         return Err(invalid(
             "Scattered pilot layout/sequence numerology mismatch.",

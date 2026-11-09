@@ -17,7 +17,7 @@ use crate::{
         TransmissionSettings,
     },
     types::IqPair,
-    LabError,
+    SimulationError,
 };
 use fec_codec::concatenated::{ConcatenatedCodec, EncodedBlock};
 /// Complete TX coding boundaries, retained for caller-owned probes/truth only.
@@ -76,7 +76,7 @@ impl PayloadTransmitter {
         layout: &CarrierLayoutSettings,
         ncp: NcpModulation,
         origin: u64,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         crate::signal_processing::receiver::payload::configuration::validate_origin(origin)?;
         let layout = CarrierLayout::new(settings, layout)?;
         let reference = PilotReference::new(&layout, usize::from(settings.time_interleaver_depth))?;
@@ -120,7 +120,7 @@ impl PayloadTransmitter {
         ncp: NcpModulation,
         origin: u64,
         physical_loading: &[u8],
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         let mut transmitter = Self::new(settings, layout, ncp, origin)?;
         let loading = crate::transmission::layout::bit_loading::source_bit_loading(
             &transmitter.layout,
@@ -149,7 +149,7 @@ impl PayloadTransmitter {
     /// Diagnostic queue identity plus BCH/LDPC/label stage outputs for direct inspection.
     /// # Errors
     /// Rejects invalid payload, full queue or use after drain began; existing queue is preserved.
-    pub fn enqueue(&mut self, payload: &[u8]) -> Result<EncodedPayload, LabError> {
+    pub fn enqueue(&mut self, payload: &[u8]) -> Result<EncodedPayload, SimulationError> {
         if self.drain_remaining.is_some() {
             return Err(invalid("Cannot enqueue after payload drain begins."));
         }
@@ -185,7 +185,7 @@ impl PayloadTransmitter {
     /// # Errors
     /// Propagates internal stage failures; after a post-packing failure start a new session.
     /// No input truth, codeword ID or NCP reservation marker enters the channel cells.
-    pub fn transmit(&mut self) -> Result<PayloadTransmitSymbol, LabError> {
+    pub fn transmit(&mut self) -> Result<PayloadTransmitSymbol, SimulationError> {
         if self.drain_remaining.is_some() {
             return Err(invalid("Payload source is closed for drain."));
         }
@@ -218,7 +218,7 @@ impl PayloadTransmitter {
     /// Source randomizers/packer are not clocked with fabricated drain payload.
     /// # Errors
     /// Rejects pending queue or index overflow; never discards queued source words.
-    pub fn drain(&mut self) -> Result<Option<PayloadChannelSymbol>, LabError> {
+    pub fn drain(&mut self) -> Result<Option<PayloadChannelSymbol>, SimulationError> {
         if self.packer.queued_codewords() != 0 {
             return Err(invalid("Place all queued payload cells before drain."));
         }
@@ -252,7 +252,7 @@ impl PayloadTransmitter {
     fn materialize(
         &self,
         cells: Vec<Option<TransportCell>>,
-    ) -> Result<PayloadChannelSymbol, LabError> {
+    ) -> Result<PayloadChannelSymbol, SimulationError> {
         let channel_symbol_index = self.origin + self.next_local;
         let roles = self.layout.symbol_roles(channel_symbol_index);
         let mut reduced = Vec::with_capacity(cells.len());

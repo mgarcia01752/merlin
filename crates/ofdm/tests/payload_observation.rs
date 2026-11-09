@@ -16,7 +16,7 @@ use docsis_ofdm_fec::{
         },
     },
     transmission::{packing::NcpModulation, SubcarrierSpacing},
-    LabError,
+    SimulationError,
 };
 use std::collections::BTreeSet;
 struct Sink {
@@ -24,12 +24,12 @@ struct Sink {
     stages: BTreeSet<TestPointId>,
 }
 impl ProbeObserver for Sink {
-    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), LabError> {
+    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
         self.stages.insert(event.stage);
         assert!(event.shape[0] <= 2);
         assert!(event.context.cell_grid.is_some());
         if self.fail {
-            Err(LabError::new(
+            Err(SimulationError::new(
                 "TestObserverFailure",
                 "Deliberate callback rejection.",
             ))

@@ -4,7 +4,7 @@
  */
 //! PHY I20 sections7.5.4.3.2 and7.5.5.2.2, PDF117/122–123: non-shortened mixed words.
 use super::{parity, BitInterleaver};
-use crate::{error::invalid, LabError};
+use crate::{error::invalid, SimulationError};
 use fec_codec::parameters::LDPC_CODEWORD_BITS;
 const MIXED_COLUMNS: usize = 24;
 const MIXED_ROWS: usize = LDPC_CODEWORD_BITS / MIXED_COLUMNS;
@@ -25,7 +25,7 @@ impl PayloadBitOrder {
     /// Full16200-bit permutation; uniform unsupported orders are never substituted.
     /// # Errors
     /// Rejects invalid/all-zero loading or unsupported uniform coding modes.
-    pub fn new(loading: &[u8]) -> Result<Self, LabError> {
+    pub fn new(loading: &[u8]) -> Result<Self, SimulationError> {
         if loading.is_empty() || loading.iter().any(|bits| !matches!(bits, 0 | 4 | 6..=14)) {
             return Err(invalid("Invalid data bit loading."));
         }
@@ -64,7 +64,7 @@ impl PayloadBitOrder {
     /// Owned ordered bits, with no final-cell padding yet.
     /// # Errors
     /// Rejects malformed binary input before indexing.
-    pub fn encode(&self, bits: &[u8]) -> Result<Vec<u8>, LabError> {
+    pub fn encode(&self, bits: &[u8]) -> Result<Vec<u8>, SimulationError> {
         super::boundary::transmit(bits, &self.output_to_codeword)
     }
     /// Reverses grouping-order LLRs to LDPC codeword order.
@@ -74,7 +74,7 @@ impl PayloadBitOrder {
     /// Original codeword-order likelihoods without changing signs/magnitudes.
     /// # Errors
     /// Rejects incorrect length or nonfinite values.
-    pub fn decode(&self, llrs: &[f64]) -> Result<Vec<f64>, LabError> {
+    pub fn decode(&self, llrs: &[f64]) -> Result<Vec<f64>, SimulationError> {
         super::boundary::receive(llrs, &self.output_to_codeword)
     }
 }

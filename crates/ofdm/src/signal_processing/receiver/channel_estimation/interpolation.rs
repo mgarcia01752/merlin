@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Engineering interpolation: remove observed adjacent-bin phase slope, then interpolate I/Q.
-use crate::{error::invalid, types::IqPair, LabError};
+use crate::{error::invalid, types::IqPair, SimulationError};
 pub(super) const MIN_RESPONSE_POWER: f64 = 1e-12;
 fn rotate(point: IqPair, phase: f64) -> IqPair {
     let (sine, cosine) = phase.sin_cos();
@@ -15,7 +15,7 @@ fn rotate(point: IqPair, phase: f64) -> IqPair {
 pub(super) fn interpolate(
     nodes: &[(usize, IqPair)],
     size: usize,
-) -> Result<(Vec<IqPair>, f64), LabError> {
+) -> Result<(Vec<IqPair>, f64), SimulationError> {
     if nodes.len() < 2 {
         return Err(invalid(
             "CH-EST-RX requires at least two usable pilot observations.",

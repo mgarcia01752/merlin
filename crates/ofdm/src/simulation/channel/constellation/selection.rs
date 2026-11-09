@@ -10,7 +10,7 @@ use crate::{
         symbols::PAYLOAD_PROFILE_ID,
     },
     types::{FrequencyHz, ProfileId},
-    LabError,
+    SimulationError,
 };
 use serde::{Deserialize, Serialize};
 /// Default number of actual paired QAM observations, not full OFDM symbols.
@@ -47,7 +47,7 @@ impl ConstellationSelection {
     /// Unit for a finite selection containing at least one static data carrier.
     /// # Errors
     /// Rejects unsupported profiles, invalid counts, partial/reversed/outside bounds or no data.
-    pub fn validate(&self, layout: &CarrierLayout) -> Result<(), LabError> {
+    pub fn validate(&self, layout: &CarrierLayout) -> Result<(), SimulationError> {
         if !(1..=MAX_CONSTELLATION_PAIRS).contains(&self.requested_pairs)
             || self.profile_id != PAYLOAD_PROFILE_ID
         {

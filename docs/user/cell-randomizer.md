@@ -105,7 +105,7 @@ let original_soft_bits = receiver.descramble_data_llrs(256, &llrs)?;
 let recovered = original_soft_bits.iter()
     .fold(0u16, |label, value| (label << 1) | u16::from(*value < 0.0));
 assert_eq!(recovered, 0x35);
-# Ok::<(), docsis_ofdm_fec::LabError>(())
+# Ok::<(), docsis_ofdm_fec::SimulationError>(())
 ```
 
 ## Evidence, tests and integration boundary

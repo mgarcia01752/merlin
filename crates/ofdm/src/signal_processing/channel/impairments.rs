@@ -12,7 +12,7 @@ use crate::{
         TransmissionSettings,
     },
     types::IqPair,
-    LabError,
+    SimulationError,
 };
 use serde::{Deserialize, Serialize};
 
@@ -61,7 +61,7 @@ impl ImpairmentPlan {
         bins: &[Option<IqPair>],
         roles: &[PhysicalCarrierRole],
         rng: &mut impl rand::Rng,
-    ) -> Result<Vec<Option<IqPair>>, LabError> {
+    ) -> Result<Vec<Option<IqPair>>, SimulationError> {
         let count = self.response.len();
         if bins.len() != count
             || roles.len() != count
@@ -123,7 +123,7 @@ impl ChannelImpairments {
         settings: &TransmissionSettings,
         layout: &CarrierLayout,
         reference_variance: f64,
-    ) -> Result<ImpairmentPlan, LabError> {
+    ) -> Result<ImpairmentPlan, SimulationError> {
         if !reference_variance.is_finite() || reference_variance <= 0.0 {
             return Err(invalid("Invalid LLR reference variance."));
         }
@@ -211,7 +211,7 @@ pub(crate) fn offset(
     grid: &crate::scenario::FrequencyGrid,
     frequency: u32,
     spacing: u32,
-) -> Result<usize, LabError> {
+) -> Result<usize, SimulationError> {
     let start = grid.frequency(0)?;
     let delta = frequency
         .checked_sub(start)

@@ -7,7 +7,7 @@ pub mod candidate;
 pub mod document;
 pub mod evaluation;
 
-pub use crate::error::LabError;
+pub use crate::error::SimulationError;
 pub use crate::scenario::association;
 #[cfg(feature = "simulation")]
 pub use crate::simulation;

@@ -7,7 +7,7 @@ use crate::{
     error::invalid,
     signal_processing::interleaving::FrequencyInterleaver,
     transmission::layout::{CarrierLayout, PhysicalCarrierRole},
-    LabError,
+    SimulationError,
 };
 /// Converts a full transmitted-frequency profile into pre-interleaving NI order.
 /// # Arguments
@@ -20,7 +20,7 @@ use crate::{
 pub fn source_bit_loading(
     layout: &CarrierLayout,
     physical_loading: &[u8],
-) -> Result<Vec<u8>, LabError> {
+) -> Result<Vec<u8>, SimulationError> {
     if physical_loading.len() != layout.static_roles().len() {
         return Err(invalid(
             "Data profile must cover the full physical FFT grid.",

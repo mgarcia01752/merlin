@@ -5,7 +5,7 @@
 //! Fast analytical screening, explicitly separate from simulated FEC reliability.
 use super::candidate::*;
 use crate::{
-    error::{invalid, LabError},
+    error::{invalid, SimulationError},
     scenario::{RxMerFrame, ScenarioKey},
     types::ProtocolScope,
 };
@@ -62,7 +62,7 @@ impl EvaluationSettings {
     /// Unit for supported settings.
     /// # Errors
     /// Rejects nonfinite/out-of-range margins, quantiles and modulation caps.
-    pub fn validate(&self) -> Result<(), LabError> {
+    pub fn validate(&self) -> Result<(), SimulationError> {
         if !self.margin_db.is_finite()
             || !(0.0..=60.0).contains(&self.margin_db)
             || !self.lower_percentile.is_finite()
@@ -109,13 +109,16 @@ pub struct EvaluationReport {
     pub limitations: Vec<String>,
 }
 
-fn check_cancel(cancel: &AtomicBool) -> Result<(), LabError> {
+fn check_cancel(cancel: &AtomicBool) -> Result<(), SimulationError> {
     if cancel.load(Ordering::Relaxed) {
-        return Err(LabError::new("Cancelled", "Laboratory analysis cancelled."));
+        return Err(SimulationError::new(
+            "Cancelled",
+            "Laboratory analysis cancelled.",
+        ));
     }
     Ok(())
 }
-fn validate_frames(frames: &[&RxMerFrame], key: &ScenarioKey) -> Result<(), LabError> {
+fn validate_frames(frames: &[&RxMerFrame], key: &ScenarioKey) -> Result<(), SimulationError> {
     if frames.is_empty()
         || frames.len() > 4096
         || frames
@@ -155,7 +158,7 @@ pub fn generate_candidate(
     settings: &EvaluationSettings,
     protocol: ProtocolScope,
     cancel: &AtomicBool,
-) -> Result<CandidateProfile, LabError> {
+) -> Result<CandidateProfile, SimulationError> {
     settings.validate()?;
     let first = frames
         .first()
@@ -247,7 +250,7 @@ pub fn evaluate(
     frames: &[&RxMerFrame],
     settings: &EvaluationSettings,
     cancel: &AtomicBool,
-) -> Result<EvaluationReport, LabError> {
+) -> Result<EvaluationReport, SimulationError> {
     candidate.validate()?;
     settings.validate()?;
     validate_frames(frames, &candidate.key)?;

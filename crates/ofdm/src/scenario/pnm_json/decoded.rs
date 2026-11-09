@@ -7,7 +7,7 @@ use crate::{
     error::invalid,
     scenario::{FrequencyGrid, ScenarioKey},
     types::{modulation::CarrierType, IqPair},
-    LabError,
+    SimulationError,
 };
 use serde::Deserialize;
 
@@ -27,7 +27,7 @@ impl Header {
     /// Unit for supported prefix, type and1.0 file format.
     /// # Errors
     /// Rejects unsupported identities or revisions without guessing fields.
-    pub(super) fn check(&self, kind: u8) -> Result<(), LabError> {
+    pub(super) fn check(&self, kind: u8) -> Result<(), SimulationError> {
         if !["PNN", "PNM"].contains(&self.file_type.as_str())
             || self.file_type_version != kind
             || self.major_version != 1
@@ -54,7 +54,7 @@ impl Grid {
     /// Owned exact device/channel/grid identity.
     /// # Errors
     /// Rejects malformed MAC octets, count, spacing or frequency overflow.
-    pub(super) fn key(&self, count: usize) -> Result<ScenarioKey, LabError> {
+    pub(super) fn key(&self, count: usize) -> Result<ScenarioKey, SimulationError> {
         let octets = self
             .mac_address
             .split(':')

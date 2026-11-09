@@ -30,7 +30,7 @@ use crate::{
         TransmissionSettings,
     },
     types::PLC_FRAME_SYMBOLS,
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 /// Caller-supplied bounded reference experiment, with known timing and unity channel.
@@ -80,7 +80,7 @@ pub fn run_reference_waveform(
     experiment: &ReferenceExperiment,
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
-) -> Result<ReferenceWaveformResult, LabError> {
+) -> Result<ReferenceWaveformResult, SimulationError> {
     if !(1..=2).contains(&experiment.frames)
         || !(1..=MAX_BLOCK_SAMPLES).contains(&experiment.receive_block_samples)
     {

@@ -8,7 +8,7 @@ use crate::{
     error::invalid,
     signal_processing::interleaving::{FrequencyInterleaver, InterleaverSettings},
     types::{SubcarrierIdx, PLC_FRAME_SYMBOLS},
-    LabError,
+    SimulationError,
 };
 
 /// Fixed association of physical bins and correctly phased pre-interleaving pilots.
@@ -27,7 +27,7 @@ impl PilotReference {
     /// is the first symbol after the PLC preamble. No pilot BPSK values are generated.
     /// # Errors
     /// Rejects invalid NI/depth or incompatible physical roles/permutation.
-    pub fn new(layout: &CarrierLayout, depth: usize) -> Result<Self, LabError> {
+    pub fn new(layout: &CarrierLayout, depth: usize) -> Result<Self, SimulationError> {
         let first = layout.symbol_roles(0);
         let mut physical_bins = Vec::new();
         for (bin, role) in first.iter().enumerate() {

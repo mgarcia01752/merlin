@@ -15,7 +15,7 @@ use crate::{
         layout::ncp::PreInterleavingRole, ncp::NcpFieldCodec, packing::PackingSettings,
         symbols::TransportCell, SubcarrierSpacing,
     },
-    LabError,
+    SimulationError,
 };
 /// Persistent source-order receiver; a rejected control/collection result closes this session.
 pub struct PayloadSymbolDecoder {
@@ -39,7 +39,7 @@ impl PayloadSymbolDecoder {
     /// Empty pending history with separate control/data hypotheses and no TX truth input.
     /// # Errors
     /// Rejects geometry/origin or codec initialization failures.
-    pub fn new(settings: PackingSettings, origin: u64) -> Result<Self, LabError> {
+    pub fn new(settings: PackingSettings, origin: u64) -> Result<Self, SimulationError> {
         Self::with_bit_loading(settings, origin, vec![8; settings.interleaver_cells])
     }
     /// Starts source-order decoding with independently received pre-interleaving loading.
@@ -55,14 +55,14 @@ impl PayloadSymbolDecoder {
         settings: PackingSettings,
         origin: u64,
         bit_loading: Vec<u8>,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         settings.validate()?;
         if bit_loading.len() != settings.interleaver_cells {
             return Err(invalid("Payload profile does not match NI."));
         }
         super::configuration::validate_origin(origin)?;
         if settings.data_profile_id != crate::transmission::symbols::PAYLOAD_PROFILE_ID {
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "UnsupportedPayloadProfile",
                 "Only acquired ProfileA is supported.",
             ));
@@ -112,7 +112,7 @@ impl PayloadSymbolDecoder {
         roles: &[PreInterleavingRole],
         variance: f64,
         max_iterations: usize,
-    ) -> Result<PayloadSymbolResult, LabError> {
+    ) -> Result<PayloadSymbolResult, SimulationError> {
         self.receive_with_variances(
             source_symbol,
             cells,
@@ -139,9 +139,9 @@ impl PayloadSymbolDecoder {
         roles: &[PreInterleavingRole],
         variances: &[Option<f64>],
         max_iterations: usize,
-    ) -> Result<PayloadSymbolResult, LabError> {
+    ) -> Result<PayloadSymbolResult, SimulationError> {
         if self.closed {
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "PayloadSessionClosed",
                 "Start a new payload session after rejection.",
             ));
@@ -203,7 +203,7 @@ impl PayloadSymbolDecoder {
         control_randomizer.begin_symbol(self.next_local)?;
         let mut data_randomizer = self.data_randomizer.clone();
         data_randomizer.begin_symbol(self.next_local)?;
-        let decision = (|| -> Result<(), LabError> {
+        let decision = (|| -> Result<(), SimulationError> {
             result.ncp_soft = control::hypotheses_with_variances(
                 &points,
                 self.settings.ncp_modulation,
@@ -231,7 +231,7 @@ impl PayloadSymbolDecoder {
                     || message.ncp_profile_update
                     || message.tagged
             }) {
-                return Err(LabError::new(
+                return Err(SimulationError::new(
                     "UnsupportedProfileActivation",
                     "Fixed payload session does not support odd profiles, NCP updates or tagging.",
                 ));

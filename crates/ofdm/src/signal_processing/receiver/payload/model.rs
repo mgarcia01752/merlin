@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Actual received decisions and intermediate soft values, independent of TX truth.
-use crate::{transmission::ncp::DecodedNcpField, types::ProfileId, LabError};
+use crate::{transmission::ncp::DecodedNcpField, types::ProfileId, SimulationError};
 use fec_codec::concatenated::DecodedBlock;
 /// One control-hypothesis cell, preserving ascending data-position identity despite reversed field order.
 #[derive(Debug, Clone, serde::Serialize)]
@@ -36,5 +36,5 @@ pub struct PayloadSymbolResult {
     pub data_soft: Vec<SoftDataCell>,
     pub recovered: Vec<RecoveredPayload>,
     pub pending_payload_bits: usize,
-    pub error: Option<LabError>,
+    pub error: Option<SimulationError>,
 }

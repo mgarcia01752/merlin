@@ -30,7 +30,7 @@ use crate::{
         TransmissionSettings,
     },
     types::{IqPair, PLC_FRAME_SYMBOLS},
-    LabError,
+    SimulationError,
 };
 const REFERENCE_VARIANCE: f64 = 0.01;
 const REFERENCE_CHANNEL_ID: u8 = 7;
@@ -88,7 +88,7 @@ impl WaveformLink {
         impairments: &crate::signal_processing::channel::impairments::ChannelImpairments,
         variance: f64,
         data_loading: Option<&[u8]>,
-    ) -> Result<Self, LabError> {
+    ) -> Result<Self, SimulationError> {
         let geometry = WaveformGeometry::new(settings)?;
         let layout = CarrierLayout::new(settings, raw)?;
         let identity = match &impairments.noise {
@@ -175,7 +175,7 @@ impl WaveformLink {
     pub(crate) fn use_pilot_estimation(
         &mut self,
         raw: &CarrierLayoutSettings,
-    ) -> Result<(), LabError> {
+    ) -> Result<(), SimulationError> {
         self.rx = WaveformReceiver::from_pilots(&self.geometry, raw, 0, 0, 0, 1.0)?;
         Ok(())
     }
@@ -193,7 +193,7 @@ impl WaveformLink {
         impairments: &crate::signal_processing::channel::impairments::ChannelImpairments,
         variance: f64,
         mode: crate::signal_processing::receiver::channel_estimation::ReceiverMode,
-    ) -> Result<(), LabError> {
+    ) -> Result<(), SimulationError> {
         let plan = impairments.plan(self.geometry.settings(), &self.layout, variance)?;
         if mode
             == crate::signal_processing::receiver::channel_estimation::ReceiverMode::SuppliedChannel
@@ -254,7 +254,7 @@ impl WaveformLink {
         phase: RunPhase,
         probe: &mut TestPointProbe,
         observer: &mut impl ProbeObserver,
-    ) -> Result<ReceivedSymbol, LabError> {
+    ) -> Result<ReceivedSymbol, SimulationError> {
         if index % PLC_FRAME_SYMBOLS == 0 {
             self.raw_plc_frame.clear();
             let timestamp = ExtendedTimestamp::from_sample_ticks(
@@ -442,7 +442,7 @@ impl WaveformLink {
         &mut self,
         probe: &mut TestPointProbe,
         observer: &mut impl ProbeObserver,
-    ) -> Result<usize, LabError> {
+    ) -> Result<usize, SimulationError> {
         let tail = self.tx.finish()?;
         let context = self.context(RunPhase::Drain);
         observation::observe_channel(&tail, false, &self.geometry, &context, probe, observer)?;

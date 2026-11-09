@@ -105,7 +105,7 @@ let first = layout.symbol_roles(0);
 assert_eq!(first.len(), 8192);
 assert_eq!(first[3328], PhysicalCarrierRole::ScatteredPilot);
 assert_eq!(layout.symbol_roles(128), first);
-# Ok::<(), docsis_ofdm_fec::LabError>(())
+# Ok::<(), docsis_ofdm_fec::SimulationError>(())
 ```
 
 ## Evidence and tests

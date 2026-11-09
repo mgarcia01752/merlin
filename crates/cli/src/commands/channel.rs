@@ -100,7 +100,7 @@ pub(crate) fn run(arguments: Arguments, cancel: &AtomicBool) -> Result<(), Strin
             file.flush()
                 .and_then(|()| file.sync_all())
                 .map_err(|error| {
-                    docsis_ofdm_fec::LabError::new(
+                    docsis_ofdm_fec::SimulationError::new(
                         "ProbeExportIo",
                         format!("Probe output sync failed: {error}"),
                     )

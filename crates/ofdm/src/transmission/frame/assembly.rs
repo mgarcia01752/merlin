@@ -10,7 +10,7 @@ use crate::{
     },
     transmission::layout::{CarrierLayout, PhysicalCarrierRole},
     types::IqPair,
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 /// Full increasing-frequency PHY grid. None remains an unavailable history cell.
@@ -42,7 +42,7 @@ pub fn assemble(
     reduced: &[Option<IqPair>],
     plc: &[IqPair],
     reference_rms: f64,
-) -> Result<PhysicalFrequencySymbol, LabError> {
+) -> Result<PhysicalFrequencySymbol, SimulationError> {
     let roles = layout.symbol_roles(symbol_index);
     let reduced_count = roles
         .iter()
@@ -63,7 +63,7 @@ pub fn assemble(
         ));
     }
     let power = PilotPower::new(reference_rms)?;
-    let scale = |sample: IqPair| -> Result<IqPair, LabError> {
+    let scale = |sample: IqPair| -> Result<IqPair, SimulationError> {
         let scaled = sample.map(|value| value * reference_rms);
         if sample
             .iter()

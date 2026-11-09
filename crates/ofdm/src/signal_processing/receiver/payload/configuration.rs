@@ -7,7 +7,7 @@ use crate::{
     error::invalid,
     transmission::{packing::PackingSettings, plc::receiver_configuration::ReceiverConfiguration},
     types::PLC_FRAME_SYMBOLS,
-    LabError,
+    SimulationError,
 };
 /// Derives supported payload packing geometry without substituting missing/unsupported assignments.
 /// # Arguments
@@ -18,7 +18,7 @@ use crate::{
 /// Rejects unsupported data counts, zero/mixed NCP loading or unsupported identity.
 pub fn packing_settings(
     configuration: &ReceiverConfiguration,
-) -> Result<PackingSettings, LabError> {
+) -> Result<PackingSettings, SimulationError> {
     let data = configuration.profile_a();
     let ncp = configuration.ncp();
     let ncp_bits = configuration.ncp_modulation().order().ilog2() as u8;
@@ -29,7 +29,7 @@ pub fn packing_settings(
                 || ncp.bit_loading()[usize::from(*bin)] != Some(ncp_bits)
         })
     {
-        return Err(LabError::new(
+        return Err(SimulationError::new(
             "UnsupportedPayloadProfile",
             "Payload transport requires supported ProfileA and uniform positive NCP loading.",
         ));
@@ -50,7 +50,7 @@ pub fn packing_settings(
 /// Unit when source randomizer resets align with the physical128-symbol PLC cycle.
 /// # Errors
 /// Rejects a nonboundary origin; arbitrary midstream randomizer acquisition is not implemented.
-pub fn validate_origin(origin: u64) -> Result<(), LabError> {
+pub fn validate_origin(origin: u64) -> Result<(), SimulationError> {
     if origin % PLC_FRAME_SYMBOLS != 0 {
         return Err(invalid(
             "Payload session must start at a128-symbol PLC boundary.",

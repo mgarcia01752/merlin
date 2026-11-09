@@ -15,7 +15,7 @@ use crate::{
     },
     transmission::{layout::CarrierLayoutSettings, packing::NcpModulation, TransmissionSettings},
     types::PLC_FRAME_SYMBOLS,
-    LabError,
+    SimulationError,
 };
 use fec_codec::concatenated::compare_payload;
 use serde::Serialize;
@@ -90,7 +90,7 @@ pub fn run_payload_waveform(
     experiment: &PayloadWaveformExperiment,
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
-) -> Result<PayloadWaveformResult, LabError> {
+) -> Result<PayloadWaveformResult, SimulationError> {
     run_payload_waveform_with_source(
         experiment,
         PayloadSource::Seeded {
@@ -119,7 +119,7 @@ pub fn run_payload_waveform_with_source(
     source: PayloadSource,
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
-) -> Result<PayloadWaveformResult, LabError> {
+) -> Result<PayloadWaveformResult, SimulationError> {
     if !(1..=MAX_SOURCE_SYMBOLS).contains(&experiment.source_symbols)
         || experiment.payload_at_symbols.is_empty()
         || experiment.payload_at_symbols.len() > MAX_REFERENCE_PAYLOADS
@@ -181,7 +181,7 @@ pub fn run_payload_waveform_with_source(
         }
     }
     if origin == 0 {
-        return Err(LabError::new(
+        return Err(SimulationError::new(
             "ReceiverNotReady",
             "PLC acquisition did not finish within the reference frame budget.",
         ));
@@ -286,7 +286,7 @@ fn record(
     received: &PayloadReceiveSymbol,
     payloads: &[Vec<u8>],
     verifier: &mut Option<PrbsVerifier>,
-) -> Result<(), LabError> {
+) -> Result<(), SimulationError> {
     let Some(decoded) = &received.decoded else {
         result.warmup_symbols += 1;
         return Ok(());

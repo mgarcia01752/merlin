@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! PHY I20 Figure92/Table53, PDF180–181; bit6 of byte1 is U, not old reserved R.
-use crate::{error::invalid, types::ProfileId, LabError};
+use crate::{error::invalid, types::ProfileId, SimulationError};
 use serde::Serialize;
 /// Wire pointer rank including the NULL sentinel; not a physical FFT-bin index.
 pub type NcpStartPointer = u16;
@@ -31,7 +31,7 @@ impl NcpMessage {
     /// Bytes0..2 with reserved R=0, per the current Figure92 and Table53.
     /// # Errors
     /// Rejects profile IDs above15, pointers above13 bits and Z+NULL together.
-    pub fn to_bytes(&self) -> Result<[u8; 3], LabError> {
+    pub fn to_bytes(&self) -> Result<[u8; 3], SimulationError> {
         if self.profile_id > 15
             || self.pointer > NULL_POINTER
             || (self.zero_loaded && self.pointer == NULL_POINTER)
@@ -59,7 +59,7 @@ impl NcpMessage {
     /// Owned fields with no inferred modem state or dynamic profile scheduling.
     /// # Errors
     /// Rejects reserved R=1 or an invalid Z+NULL combination as a strict lab policy.
-    pub fn from_bytes(bytes: &[u8; 3]) -> Result<Self, LabError> {
+    pub fn from_bytes(bytes: &[u8; 3]) -> Result<Self, SimulationError> {
         if bytes[1] & 0x20 != 0 {
             return Err(invalid(
                 "Reserved NCP R bit must be zero in this experiment.",
@@ -92,7 +92,7 @@ pub(super) const MAX_MESSAGES: usize = MAX_CODEWORD_STARTS + 1;
 /// Rejects bad fields, nonterminal NULL/Z, misplaced L, inconsistent N/U or
 /// more than10 active starts. Rolling4K limits require external session state.
 #[cfg(feature = "simulation")]
-pub(super) fn validate_chain(messages: &[NcpMessage]) -> Result<(), LabError> {
+pub(super) fn validate_chain(messages: &[NcpMessage]) -> Result<(), SimulationError> {
     if messages.is_empty() || messages.len() > MAX_MESSAGES {
         return Err(invalid("NCP chain requires1..11 messages before its CRC."));
     }

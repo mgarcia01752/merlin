@@ -9,7 +9,7 @@ use crate::{
     signal_processing::modulation::map_symbol,
     transmission::layout::PhysicalCarrierRole,
     types::{IqPair, SubcarrierIdx},
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 /// One actual pilot signal at a physical FFT bin, in increasing-bin output order.
@@ -35,7 +35,7 @@ pub(super) fn select_values(
     kind: PhysicalCarrierRole,
     sequence: &PilotSequence,
     power: PilotPower,
-) -> Result<Vec<PilotValue>, LabError> {
+) -> Result<Vec<PilotValue>, SimulationError> {
     let mut output = Vec::new();
     for (index, role) in roles.iter().enumerate() {
         if *role == kind {

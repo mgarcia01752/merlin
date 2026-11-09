@@ -7,7 +7,7 @@
 use crate::{
     error::invalid,
     types::{ofdm_modulation::ConstellationOrder, BitsPerSymbol, IqPair},
-    LabError,
+    SimulationError,
 };
 
 /// Integer value of an MSB-first binary cell word;14bits covers16384-QAM.
@@ -51,9 +51,13 @@ pub fn reference_for_order(order: usize) -> Option<&'static QamReference> {
 /// Unit-average-energy [I,Q] without changing inputs or accessing resources.
 /// # Errors
 /// Reports unsupported orders and labels outside the selected constellation.
-pub fn map_symbol(order: ConstellationOrder, label: SymbolLabel) -> Result<IqPair, LabError> {
-    let reference = reference_for_order(usize::from(order))
-        .ok_or_else(|| LabError::new("UnsupportedModulation", "Unsupported QAM constellation."))?;
+pub fn map_symbol(
+    order: ConstellationOrder,
+    label: SymbolLabel,
+) -> Result<IqPair, SimulationError> {
+    let reference = reference_for_order(usize::from(order)).ok_or_else(|| {
+        SimulationError::new("UnsupportedModulation", "Unsupported QAM constellation.")
+    })?;
     reference
         .iq
         .get(usize::from(label))

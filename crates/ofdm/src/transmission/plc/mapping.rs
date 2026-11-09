@@ -8,7 +8,7 @@ use crate::{
     error::invalid,
     signal_processing::modulation::{map_symbol, qam16_llrs},
     types::IqPair,
-    LabError,
+    SimulationError,
 };
 /// Maps an immutable randomized PLC codeword using the shared normalized table.
 /// # Arguments
@@ -17,7 +17,7 @@ use crate::{
 ///96 unit-reference I/Q cells; integer16-QAM coordinates are scaled by1/sqrt(10).
 /// # Errors
 /// Propagates unsupported reference or invalid label errors.
-pub fn map(block: &RandomizedPlcBlock) -> Result<Vec<IqPair>, LabError> {
+pub fn map(block: &RandomizedPlcBlock) -> Result<Vec<IqPair>, SimulationError> {
     block
         .values()
         .iter()
@@ -32,7 +32,7 @@ pub fn map(block: &RandomizedPlcBlock) -> Result<Vec<IqPair>, LabError> {
 ///384 MSB-first LLRs, positive for bit0; shared demapper clips to±100.
 /// # Errors
 /// Rejects sample count, nonfinite samples or invalid noise variance.
-pub fn demap(iq: &[IqPair], noise_power: f64) -> Result<Vec<f64>, LabError> {
+pub fn demap(iq: &[IqPair], noise_power: f64) -> Result<Vec<f64>, SimulationError> {
     if iq.len() != PLC_CODEWORD_NIBBLES {
         return Err(invalid("PLC demapper requires exactly96 I/Q cells."));
     }

@@ -18,7 +18,7 @@ use docsis_ofdm_fec::signal_processing::modulation::{map_symbol, qam_llrs};
 let point = map_symbol(256, 0x35)?;
 let soft_bits = qam_llrs(256, point, 0.01)?;
 assert_eq!(soft_bits.len(), 8);
-# Ok::<(), docsis_ofdm_fec::LabError>(())
+# Ok::<(), docsis_ofdm_fec::SimulationError>(())
 ```
 
 `order` is the constellation size, not a PNM enum. `SymbolLabel` is a `u16` alias,

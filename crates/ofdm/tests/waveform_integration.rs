@@ -14,7 +14,7 @@ use docsis_ofdm_fec::{
         waveform::reference::{run_reference_waveform, ReferenceExperiment},
     },
     transmission::{plc::receiver_configuration::ReceiverConfigurationStatus, SubcarrierSpacing},
-    LabError,
+    SimulationError,
 };
 struct Sink {
     events: usize,
@@ -23,7 +23,7 @@ struct Sink {
     stages: std::collections::BTreeSet<TestPointId>,
 }
 impl ProbeObserver for Sink {
-    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), LabError> {
+    fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
         self.events += 1;
         self.stages.insert(event.stage);
         self.seen_tx |= event.direction == SignalDirection::Transmit;

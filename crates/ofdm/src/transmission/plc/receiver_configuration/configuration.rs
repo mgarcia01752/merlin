@@ -13,7 +13,7 @@ use crate::{
     signal_processing::interleaving::InterleaverSettings,
     transmission::{layout::PhysicalCarrierRole, packing::NcpModulation, SubcarrierSpacing},
     types::{ChannelId, MacAddress, SubcarrierIdx},
-    LabError,
+    SimulationError,
 };
 use serde::Serialize;
 /// Validated fixed receiver configuration. Construction is private to the admission gate.
@@ -82,7 +82,7 @@ impl ReceiverConfiguration {
     /// Validated spacing, reduced-domain length and received depth.
     /// # Errors
     /// Propagates bounds checks; no transmitter interleaver instance is borrowed.
-    pub fn interleaver_settings(&self) -> Result<InterleaverSettings, LabError> {
+    pub fn interleaver_settings(&self) -> Result<InterleaverSettings, SimulationError> {
         InterleaverSettings::new(
             self.channel.transmission().subcarrier_spacing,
             self.reduced_bins.len(),
@@ -102,7 +102,7 @@ impl ReceiverConfiguration {
 pub(super) fn try_build(
     collection: &DescriptorCollection,
     bootstrap_spacing: SubcarrierSpacing,
-) -> Result<Option<ReceiverConfiguration>, LabError> {
+) -> Result<Option<ReceiverConfiguration>, SimulationError> {
     let Some(ocd) = collection.ocd.as_ref() else {
         return Ok(None);
     };
@@ -151,7 +151,7 @@ pub(super) fn try_build(
         reduced_bins,
     }))
 }
-fn ncp_modulation(profile: &ReceivedProfile) -> Result<NcpModulation, LabError> {
+fn ncp_modulation(profile: &ReceivedProfile) -> Result<NcpModulation, SimulationError> {
     let mut uniform = None;
     for bits in profile
         .bit_loading()

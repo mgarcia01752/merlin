@@ -6,7 +6,7 @@
 use super::model::{RecoveredPayload, SoftDataCell};
 use crate::{
     error::invalid, signal_processing::modulation::interleaving::mixed::PayloadBitOrder,
-    transmission::ncp::NcpDataSpan, LabError,
+    transmission::ncp::NcpDataSpan, SimulationError,
 };
 use fec_codec::{concatenated::ConcatenatedCodec, parameters::LDPC_CODEWORD_BITS};
 /// At most one pending word; completed results are returned to the caller, never retained in history.
@@ -23,7 +23,7 @@ impl PayloadCollector {
     /// Independent codec and empty pending history; no source truth is accepted.
     /// # Errors
     /// Propagates codec/permutation setup failure.
-    pub fn new() -> Result<Self, LabError> {
+    pub fn new() -> Result<Self, SimulationError> {
         Ok(Self {
             codec: ConcatenatedCodec::new().map_err(invalid)?,
             bits: PayloadBitOrder::new(&[8])?,
@@ -39,7 +39,7 @@ impl PayloadCollector {
     /// Empty pending history and the corresponding uniform/mixed bit permutation.
     /// # Errors
     /// Rejects unsupported loading or codec initialization failures.
-    pub fn with_bit_loading(loading: &[u8]) -> Result<Self, LabError> {
+    pub fn with_bit_loading(loading: &[u8]) -> Result<Self, SimulationError> {
         let mut collector = Self::new()?;
         collector.bits = PayloadBitOrder::new(loading)?;
         Ok(collector)
@@ -67,7 +67,7 @@ impl PayloadCollector {
         cells: &[SoftDataCell],
         source_symbol: u64,
         max_iterations: usize,
-    ) -> Result<Option<RecoveredPayload>, LabError> {
+    ) -> Result<Option<RecoveredPayload>, SimulationError> {
         if span.end_exclusive
             > crate::transmission::SubcarrierSpacing::Khz25.max_interleaver_cells()
             || span.start >= span.end_exclusive
@@ -100,7 +100,7 @@ impl PayloadCollector {
                 .profile_id
                 .is_some_and(|profile| profile != crate::transmission::symbols::PAYLOAD_PROFILE_ID)
         {
-            return Err(LabError::new(
+            return Err(SimulationError::new(
                 "UnsupportedPayloadProfile",
                 "Continuation selects an unsupported profile.",
             ));
@@ -110,7 +110,7 @@ impl PayloadCollector {
                 return Err(invalid("New NCP start interrupts an incomplete codeword."));
             }
             if span.profile_id != Some(crate::transmission::symbols::PAYLOAD_PROFILE_ID) {
-                return Err(LabError::new(
+                return Err(SimulationError::new(
                     "UnsupportedPayloadProfile",
                     "Only fixed ProfileA is supported for payload decoding.",
                 ));

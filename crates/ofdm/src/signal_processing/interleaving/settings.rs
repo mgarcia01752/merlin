@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Validated reduced-domain geometry from PHY I20 section7.5.6, PDF129–130.
-use crate::{error::invalid, transmission::SubcarrierSpacing, LabError};
+use crate::{error::invalid, transmission::SubcarrierSpacing, SimulationError};
 /// Choice of transmitter delays or complementary receiver delays.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum InterleaverDirection {
@@ -27,7 +27,11 @@ impl InterleaverSettings {
     /// Owned immutable settings; small synthetic NI is allowed for algorithm tests.
     /// # Errors
     /// Rejects empty/oversized domains or unsupported depths.
-    pub fn new(spacing: SubcarrierSpacing, cells: usize, depth: usize) -> Result<Self, LabError> {
+    pub fn new(
+        spacing: SubcarrierSpacing,
+        cells: usize,
+        depth: usize,
+    ) -> Result<Self, SimulationError> {
         if cells == 0
             || cells > spacing.max_interleaver_cells()
             || depth == 0

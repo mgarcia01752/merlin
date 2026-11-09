@@ -10,7 +10,7 @@ use super::{
 use crate::{
     error::invalid,
     transmission::layout::ncp::{select_ncp_cells, PreInterleavingRole},
-    LabError,
+    SimulationError,
 };
 use std::collections::VecDeque;
 
@@ -39,7 +39,7 @@ pub(super) fn plan(
     queue: &VecDeque<QueuedWord>,
     start_budget: usize,
     bit_loading: Option<&[u8]>,
-) -> Result<Preview, LabError> {
+) -> Result<Preview, SimulationError> {
     if roles.len() != settings.interleaver_cells
         || roles.contains(&PreInterleavingRole::ZeroBitLoaded)
     {
