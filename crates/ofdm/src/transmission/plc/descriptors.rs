@@ -52,6 +52,27 @@ impl FixedPlcDescriptors {
         layout: &CarrierLayout,
         identity: DescriptorIdentity,
     ) -> Result<Self, LabError> {
+        Self::with_data_loading(settings, layout, identity, None)
+    }
+    /// Builds live acquisition packets for an optional applied data profile.
+    /// # Arguments
+    /// * `settings` - Fixed validated channel numerology.
+    /// * `layout` - Physical protected roles and FFT grid.
+    /// * `identity` - Channel/source/change count and uniform NCP loading.
+    /// * `data_loading` - Optional complete transmitted-frequency data bit counts.
+    /// # Returns
+    /// OCD, applied ProfileA DPD and NCP DPD; receiver obtains loading over PLC.
+    /// # Errors
+    /// Rejects malformed/unsupported loading, oversized packets or geometry.
+    pub fn with_data_loading(
+        settings: &TransmissionSettings,
+        layout: &CarrierLayout,
+        identity: DescriptorIdentity,
+        data_loading: Option<&[u8]>,
+    ) -> Result<Self, LabError> {
+        if let Some(physical) = data_loading {
+            crate::transmission::layout::bit_loading::source_bit_loading(layout, physical)?;
+        }
         settings.validate()?;
         if settings.subcarrier_spacing != layout.subcarrier_spacing()
             || ![2, 4, 6].contains(&identity.ncp_bits)
@@ -127,6 +148,26 @@ impl FixedPlcDescriptors {
             let mut dpd = vec![identity.channel_id, profile, identity.change_count];
             // Defaults cover all bins; OCD specific roles take precedence (MULPI6.4.41.1).
             push_range(&mut dpd, DEFAULT_ASSIGNMENT | bits, 0, roles.len() - 1);
+            if profile == 0 {
+                if let Some(loading) = data_loading {
+                    let mut first = 0;
+                    while first < roles.len() {
+                        let bits = loading[first];
+                        let mut end = first + 1;
+                        while end < roles.len()
+                            && loading[end] == bits
+                            && roles[end] == roles[first]
+                        {
+                            end += 1;
+                        }
+                        if roles[first] == PhysicalCarrierRole::Data && bits != 8 {
+                            push_range(&mut dpd, bits, first, end - 1);
+                        }
+                        first = end;
+                    }
+                }
+            }
+
             packets.push(ManagementPacket::new(
                 identity.source_mac,
                 DPD_MESSAGE_TYPE,

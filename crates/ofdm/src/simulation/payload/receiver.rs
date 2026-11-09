@@ -55,6 +55,15 @@ impl PayloadReceiver {
         let reference = PilotReference::new(&layout, snapshot.interleaver_settings()?.depth())?;
         let interleaver =
             SymbolInterleaver::new(reference.settings(), InterleaverDirection::Receive)?;
+        let physical: Vec<_> = snapshot
+            .profile_a()
+            .bit_loading()
+            .iter()
+            .map(|bits| bits.unwrap_or(0))
+            .collect();
+        let bit_loading =
+            crate::transmission::layout::bit_loading::source_bit_loading(&layout, &physical)?;
+
         Ok(Self {
             variance_interleaver: SymbolInterleaver::new(
                 reference.settings(),
@@ -66,7 +75,7 @@ impl PayloadReceiver {
             next_local: 0,
             reference,
             interleaver,
-            decoder: PayloadSymbolDecoder::new(settings, origin)?,
+            decoder: PayloadSymbolDecoder::with_bit_loading(settings, origin, bit_loading)?,
         })
     }
     /// Receives extracted physical reduced cells and reverses the continuous cell path.

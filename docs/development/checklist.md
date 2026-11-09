@@ -92,6 +92,8 @@ Guide: [FEC codec](../user/fec-codec.md).
 Guide: [Bit-processing flow](../user/qam256-coding-loop.md).
 
 - [x] **BITS-01** Uniform16/256-QAM parity/twist/demux and soft inverse.
+- [x] **BITS-02** Non-shortened mixed24-column parity/twist ordering, bypassed
+  demultiplexing and independently transcribed full-matrix permutation tests.
 
 ## QAM mapping and soft demapping
 
@@ -104,6 +106,9 @@ Guide: [QAM mapping](../user/qam-mapping.md).
   including verified per-order padding, shortening and non-square rules.
 - [ ] **QAM-04** Mixed per-carrier data profiles and independent high-order
   interoperability vectors; mapper availability alone does not satisfy this item.
+  - [x] Implement frozen mixed ProfileA transport, variable-width cells, zero loading
+    and final-cell padding through actual PLC/NCP/waveform/FEC at both spacings.
+  - [ ] Validate independent external high-order interoperability vectors.
 
 ## Data and NCP randomization
 
@@ -117,6 +122,8 @@ Guide: [Cell randomization](../user/cell-randomizer.md).
 Guide: [Symbol packing](../user/symbol-packing.md).
 
 - [x] **PACK-01** Bounded256-QAM queue, continuation, filler and NCP reservations.
+- [x] **PACK-02** Bounded coded-bit packing against inverse-frequency profiles,
+  variable-width mapping, zero loading and last-cell padding without TX IDs in RX.
 
 ## Next Codeword Pointer signaling
 
@@ -172,7 +179,8 @@ with independent recurrence vectors and actual recovered-stream comparison.
 The complete RUN group now includes source-window accounting, cancellation,
 partial jobs, CLI delivery and probe export. The subsequent MODEL-04/INPUT-01
 group now adds waveform impairments and fixed-profile measured operation;
-nonideal estimation and temporal/profile expansion remain under MODEL-05/06.
+MODEL-05/06/07 now add supported pilot estimation, temporal epochs and mixed
+profiles below; full blind acquisition remains WAVE-RX-05.
 
 - [x] **PLC-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
@@ -360,7 +368,7 @@ Design: [Known-reference waveform](../user/waveform/README.md) and
 - [x] **WAVE-RX-06** Connect physical data extraction, inverse cell interleaving,
   source-phase inverse randomization, NCP discovery and data decoding in production.
   Use received configuration; preserve the separate control/payload codec paths.
-  Fixed uniform256-QAM ProfileA and positive uniform QPSK/16-QAM/64-QAM NCP
+  The original fixed uniform256-QAM ProfileA and positive uniform QPSK/16-QAM/64-QAM NCP
   now have live readiness checks, source/channel identities, explicit startup
   filler and M-1 drain, terminal rejection diagnostics and ten bounded test points.
   Tests include actual PLC acquisition then real sample-domain payload recovery
@@ -493,7 +501,8 @@ and [the later impairment reference](impairment-reference.md).
 ## Paired constellation before and after equalization
 
 **Completed group: CONST-01 through CONST-05.** Uses supplied H and
-matching 1/H first; independent pilot estimation remains under MODEL-05/WAVE-RX-05.
+matching1/H first. MODEL-05 now adds independent pilot estimation; full blind
+acquisition remains WAVE-RX-05.
 The [feature plan](features/paired-constellation/plan.md) defines confirmed reuse,
 profile/coordinate selection, reference planes, bounded collection and tests.
 The [user design](../user/impairments/paired-constellation.md) explains the result.
@@ -516,37 +525,50 @@ estimation and nonideal timing remain unfinished below.
 
 ## Remaining receiver and measurement work
 
-- [ ] **MODEL-05** Applied downstream channel-estimate model and receiver estimation/
+Notation: **Channel Estimation (CH-EST)** is the function; **Receiver Channel
+Estimation (CH-EST-RX)** and **Transmitter Channel Estimation (CH-EST-TX)**
+include direction. Use these prefixes for their respective task IDs.
+
+- [x] **MODEL-05** Applied downstream channel-estimate model and receiver estimation/
   equalization with no double counting of post-equalization RxMER noise.
   - [x] Apply supplied channel response H and independent known-reference1/H;
     verify complex gain and captured frequency response without duplicate residuals.
-  - [ ] Independently estimate channel/timing and validate nonideal equalization.
+  - [x] Independently estimate H from pilots and validate noisy equalization;
+    provide bounded CP timing acquisition with known numerology/PLC phase.
+    Full blind acquisition remains WAVE-RX-05; the CLI retains known timing.
 
-  - [ ] **EST-01** Build receiver-owned known pilot references and per-pilot H-hat
+  - [x] **CH-EST-RX-01** Build receiver-owned known pilot references and per-pilot H-hat
     estimates, starting noiseless with explicit known timing/phase.
-  - [ ] **EST-02** Interpolate estimates across data/PLC carriers and apply1/H-hat
+  - [x] **CH-EST-RX-02** Interpolate estimates across data/PLC carriers and apply1/H-hat
     independently of supplied H; test startup, coverage and near-zero policies.
-  - [ ] **EST-03** Add bounded separate continuous/scattered-pilot pre/post I/Q
+  - [x] **CH-EST-RX-03** Add bounded separate continuous/scattered-pilot pre/post I/Q
     analyzers with sign/boost/phase metadata and in-fit/held-out interpretation.
-  - [ ] **EST-04** Add bounded separate PLC16-QAM and BPSK-preamble analyzers,
+  - [x] **CH-EST-RX-04** Add bounded separate PLC16-QAM and BPSK-preamble analyzers,
     observable during acquisition and retained on failed control/FEC outcomes.
-  - [ ] **EST-05** Validate reference-versus-estimated reception, noisy/noiseless
+  - [x] **CH-EST-RX-05** Validate reference-versus-estimated reception, noisy/noiseless
     behavior and independent errors/iterations, plus observation invariance.
-  - [ ] **EST-06** Export shared Rust/CLI results and actual pilot/PLC plots;
-    update user guides and pass the full gate for the implemented scope.
+  - [x] **CH-EST-RX-06** Export shared Rust/CLI results and actual pilot/PLC plots;
+    update per-subsystem user guides and pass the full gate for supported scope.
 
-The next MODEL-05 group is detailed in the
+The implemented MODEL-05 group is detailed in the
 [pilot-estimation and analyzer plan](features/pilot-channel-estimation/plan.md).
-Independent unknown-timing acquisition stays under WAVE-RX-05. Existing generic
-pilot/PLC probes do not mean the paired analyzers or estimator are implemented.
+Full blind acquisition stays under WAVE-RX-05. Bounded CP sample-offset search
+is implemented independently; CLI operation retains known timing/PLC phase.
+See the [implementation record](features/pilot-channel-estimation/implementation.md).
 
-- [ ] **MODEL-06** Measurement-driven channel runs using the applied modulation
+- [x] **MODEL-06** Measurement-driven channel runs using the applied modulation
   profile, missing-carrier policy, temporal frames and actual FEC outcomes.
   - [x] Select one captured frame/profile/response with explicit epoch tolerance,
     reject missing active samples and unsupported loading, and run real256-QAM FEC.
-  - [ ] Add temporal frame transitions and additional/mixed applied profile modes.
-- [ ] **MODEL-07** Validate any temporal/burst model independently; RxMER alone does
+  - [x] Add explicit same-grid temporal epochs and frozen uniform16/256/mixed
+    ProfileA modes through actual coding/waveform/FEC, including zero loading.
+    Other profile selectors and dynamic activation remain unsupported, under NCP-03.
+- [x] **MODEL-07** Validate any temporal/burst model independently; RxMER alone does
   not supply time correlation, impulse noise or modem implementation behavior.
+  - [x] State the piecewise-constant, independent Gaussian model; verify power/lag
+    statistics and unchanged RNG/FEC when an identical epoch is inserted.
+  - [x] Preserve original capture times and reject invalid/out-of-window/oversized
+    schedules before work; do not infer a burst process from RxMER.
 
 ## Tooling, validation and later interfaces
 
@@ -590,4 +612,5 @@ integration. It does not mean all the broader product items above are complete.
 - [x] Provide a [noiseless measured-H demonstration](../user/impairments/pilot-plc-constellation.md)
   with separate continuous/scattered-pilot, PLC-data and preamble plots using
   existing probes; verify modulation geometry and Y=HZ in Rust. This does not
-  complete EST-01..06 or add a production analyzer contract.
+  itself complete CH-EST-RX-01..06. The later shared collector/estimator is now
+  implemented and validated separately in the linked receiver implementation record.

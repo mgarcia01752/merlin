@@ -16,6 +16,12 @@ use std::time::Duration;
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ChannelDocument {
+    pub data_bit_loading: Option<Vec<u8>>,
+    #[serde(default)]
+    pub impairment_timeline: Vec<super::timeline::ImpairmentEpoch>,
+    pub protected_constellation: Option<super::protected_constellation::ProtectedCaptureSelection>,
+    #[serde(default)]
+    pub receiver_mode: crate::signal_processing::receiver::channel_estimation::ReceiverMode,
     pub constellation: Option<super::constellation::ConstellationSelection>,
     #[serde(default)]
     pub impairments: crate::signal_processing::channel::impairments::ChannelImpairments,
@@ -81,6 +87,10 @@ impl ChannelDocument {
             return Err(invalid("Unsupported channel request schema version."));
         }
         let mut settings = ChannelRunSettings {
+            data_bit_loading: self.data_bit_loading.clone(),
+            impairment_timeline: self.impairment_timeline.clone(),
+            receiver_mode: self.receiver_mode,
+            protected_constellation: self.protected_constellation.clone(),
             constellation: self.constellation.clone(),
             impairments: self.impairments.clone(),
             transmission: self.transmission.clone(),

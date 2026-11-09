@@ -40,12 +40,13 @@ Build a standalone, DOCSIS-focused Rust scientific engine with two modes:
 
 The configurable-duration waveform stepper supports noiseless, seeded sample
 AWGN and per-carrier RxMER residuals with optional supplied diagonal response H.
-The measurement path currently admits captured uniform256-QAM profiles only;
-temporal capture changes and nonideal estimation remain open. The channel job and CLI expose
+The measurement path admits captured ProfileA ID0 with uniform16/256 or verified
+non-shortened mixed loading, and explicit same-grid temporal measurement epochs.
+Pilot-derived receiver correction is selectable alongside supplied-H reception. The channel job and CLI expose
 cancellation, runtime limits, partial results and versioned probe export.
 The existing CLI also retains the earlier16-QAM coding experiment;
-256-QAM packing/interleaving integration is currently exercised by library APIs,
-examples and tests. Separate seeded and PRBS15 sources are implemented with
+Uniform/mixed packing/interleaving is exercised by the shared library, channel
+CLI, examples and tests. Separate seeded and PRBS15 sources are implemented with
 independent continuous PRBS verification; see the [PRBS design](user/simulation/prbs.md).
 
 Downstream mapping and reference soft demapping cover constellations through
@@ -79,7 +80,8 @@ unchanged. SRC-04..06 track this unimplemented extension.
 
 The file panel associates inputs with their processing stages. Measurement files
 continue through the current decoded-PNM JSON importer; listing multiple RxMER
-files does not implement temporal transitions. Supplied CE provides H to the
+files does not itself activate playback; explicit validated epoch schedules
+control temporal transitions. Supplied CE provides H to the
 channel and1/H to reference RX correction. The expected-data connection to BER is
 a verification path, not receiver feedback into the source.
 
@@ -97,7 +99,8 @@ The `import-pnm` CLI and shared `scenario::pnm_json` API implement this directio
 for the current range-scheme decoder output. The waveform command accepts the
 converted scenario with explicit source/profile/epoch selection. Raw decoder
 documents are inputs to import-pnm, not direct channel requests. Ideal/reference
-runs require no PNM captures. Broader temporal/mixed-profile operation remains MODEL-06.
+runs require no PNM captures. Explicit temporal epochs and frozen mixed ProfileA
+loading now use this same importer/engine; dynamic profile activation remains NCP-03.
 
 Start the importer against representative current decoder output. Formal schema
 versioning, a supported-toolkit-version table and compatibility enforcement are
@@ -166,28 +169,72 @@ result/settings field when collection is disabled. Existing raw/equalized generi
 probe stages remain separate and available. No new noise/QAM/equalizer math or
 Qt UI is introduced. See the [accepted plan](development/features/paired-constellation/plan.md),
 [implementation](development/features/paired-constellation/implementation.md) and
-[user guide](user/impairments/paired-constellation.md). MODEL-05 and WAVE-RX-05
-remain open for independently estimated/nonideal reception.
+[user guide](user/impairments/paired-constellation.md). MODEL-05 now adds the supported pilot-estimated receiver below; full blind
+acquisition remains WAVE-RX-05.
 
-## Next MODEL-05 group: pilot estimation and pilot/PLC analyzers
+## Receiver Channel Estimation (CH-EST-RX) and pilot/PLC analyzers
 
-**EST-01..06 are planned.** Add receiver-owned pilot references and H-hat
-estimation with tested data/PLC interpolation, then use1/H-hat for correction.
-Keep the supplied-H path as a separate baseline. Start noiseless with explicit
-known timing/phase; unknown-timing acquisition remains WAVE-RX-05.
+Channel Estimation (CH-EST) names the processing function; the RX or TX suffix
+identifies its direction. Receiver Channel Estimation (CH-EST-RX) estimates H
+from received pilots; CH-EST-TX is reserved for transmitter-side work.
 
-Extend bounded paired observation to continuous pilots, scattered pilots,
-PLC16-QAM data and BPSK PLC preamble as separate streams. Retain actual sign,
-boost, physical coordinates and frame phase rather than combining different
-modulations/scales into one cloud. Pilot/PLC capture must work during acquisition
-and preserve failed-frame observations; it cannot depend on payload readiness.
-Each requested stream needs a finite count and a combined export/memory budget.
+**CH-EST-RX-01..06 are implemented for the documented bootstrap scope.**
+`signal_processing/receiver/channel_estimation/` owns receiver-generated pilot
+references, per-pilot LS estimates, bounded128-symbol history, delay-aware complex
+interpolation and bounded cyclic-prefix timing search. It accepts received samples
+and independent references, never the simulated H. `receiver_mode=pilot_estimated`
+uses1/H-hat; omission preserves the supplied-H baseline.
 
-Existing pilot/PLC extraction, sequences and raw/equalized generic probes are
-reuse points, not an implemented estimator/analyzer. Avoid circular PLC bootstrap
-and in-fit pilot validation; independently verify interpolation and post-estimate
-LLR calibration. Math stays in Rust; CLI/future Qt present the same typed results.
-See the [accepted feature scope](development/features/pilot-channel-estimation/plan.md).
+The CLI keeps known sample timing/PLC phase. A separate public acquisition operation
+composes an observed CP boundary with pilot reception while retaining known
+numerology and PLC phase. Full blind numerology/carrier/PLC-phase acquisition stays
+WAVE-RX-05; neither API claims a production CM receiver.
+
+The first bounded raw PLC frame is corrected using the completed pilot pattern
+before FEC/admission. Independent source/receiver owners continue beyond startup.
+Raw noise calibration is converted through the actual applied inverse; it does
+not add noise or claim a complete posterior model of estimator uncertainty.
+History aging, edge/gap interpolation, near-zero rejection and prior pilot
+predictions are explicit. A ready flag is not a guarantee of estimate accuracy.
+
+`simulation/channel/protected_constellation/` owns opt-in separate continuous
+pilot, scattered pilot, PLC16-QAM and BPSK-preamble pairs, including acquisition
+and failed-frame observations. Targets/windows and combined retention are bounded;
+current-fit pilots are labeled separately from pre-update predictions. Public
+Rust access and the CLI expose identical scientific results. Existing payload
+capture reports each selected cell's actual modulation order and correction mode.
+`rx.channel_estimation.response` adds a dimensionless-gain test point; the final
+job carries the latest bounded receiver estimate, not unlimited FFT history.
+
+See the [subsystem user guides](user/receiver-estimation/README.md) and
+[implementation/validation record](development/features/pilot-channel-estimation/implementation.md).
+
+## Temporal measurements and applied profiles
+
+`simulation/channel/timeline.rs` owns explicit piecewise measurement epochs.
+Import resolves strictly increasing original timestamps to physical observation
+symbol boundaries with ceiling division; direct Rust requests can specify an
+explicit symbol schedule. All frames retain identity/grid/time/provenance and
+pass coverage checks before work. The channel replaces response/residual plans
+without resetting source, noise, interleaver or overlap state. Supplied-H RX updates
+its reference; estimated RX continues to observe pilots without receiving H.
+No layout or profile-activation change is allowed mid-run.
+
+`transmission/layout/bit_loading.rs` implements the normative Ci=P^-1(Bi) frequency
+mapping. `modulation/interleaving/mixed.rs` owns non-shortened24-column mixed bit
+processing; the packer groups coded bits using per-source-rank loading and explicit
+last-cell padding. Actual PLC DPDs deliver the frozen applied ProfileA to RX.
+The receiver demaps variable-width soft cells and removes only final-cell padding
+before actual LDPC/BCH recovery. Uniform16/256 and mixed0,4,6..14-bit profiles are
+supported; unverified uniform higher-order coding, shortening and dynamic profile
+activation reject explicitly rather than substituting mixed rules.
+
+The temporal model is piecewise-constant variance with conditionally independent
+Gaussian residuals. RxMER alone supplies no burst correlation or event timing.
+Power/lag tests and an identical-epoch RNG/FEC invariance test validate this model;
+a different future burst process requires separate explicit inputs and evidence.
+See [measurement playback](user/impairments/measurement-timeline.md) and
+[applied-profile design](user/payload-transport/applied-profiles.md).
 
 ## Modules and stage boundaries
 
@@ -496,9 +543,10 @@ source index from known matched-pair delay. The source decoder uses CRC-accepted
 NCP spans, independent soft hypotheses and actual LDPC/BCH results. Bad control
 closes recovery without clearing pending history or caller-owned completed words.
 
-Support is fixed uniform256-QAM ProfileA and uniform positive QPSK/16-QAM/64-QAM
-NCP. Mixed/zero DPD loading, odd selection, activation updates and tagging fail
-explicitly; dynamic switching remains NCP-03. Descriptor counts remain independent.
+Support is frozen ProfileA ID0 with uniform16/256 or verified mixed loading,
+including zero-loaded carriers, and uniform positive QPSK/16-QAM/64-QAM NCP.
+Odd selection, activation updates and tagging fail explicitly; dynamic switching
+remains NCP-03. See the applied-profile design for non-shortened coding bounds. Descriptor counts remain independent.
 The synchronized payload origin is a128-symbol boundary after PLC acquisition.
 TX deliberately emits recorded BPSK replacements for unavailable startup/drain
 history; RX suppresses only the configured M-1 warm-up, using no TX validity list.
@@ -563,8 +611,9 @@ ARCH-05/06/07 and QA-04 close this infrastructure milestone: maintained export,
 source/noise draw-invariance tests, separate bit-processing boundaries, and a
 release channel/probe smoke check in the pre-push gate. The subsequent impairment
 group adds controlled waveform noise, PNM JSON import, fixed-profile measured
-operation and supplied H compensation. Remaining work includes nonideal estimation
-and temporal/profile expansion under MODEL-05/06, using the
+operation and supplied H compensation. The supported MODEL-05/06/07 extension
+now adds pilot estimation, explicit epochs and mixed applied profiles; full blind
+acquisition and dynamic profile switching remain separate. The design follows the
 [user diagram reference](development/impairment-reference.md).
 See the [component guides](user/channel-runner/README.md),
 [channel CLI](user/channel-runner/cli.md), [export](user/simulation/probe-export.md)
@@ -646,5 +695,5 @@ architecture and the [checklist](development/checklist.md) together as stages ch
 
 The [pilot/PLC reference demonstration](user/impairments/pilot-plc-constellation.md)
 uses an example-owned observer over existing RX FFT/equalized probes. It keeps
-the four signal classes separate during acquisition; production EST analyzer
-contracts and pilot-derived H estimation remain planned.
+the four signal classes separate during acquisition. The newer CH-EST-RX shared
+collector and pilot-derived correction are documented in the receiver guides above.

@@ -152,6 +152,15 @@ pub fn observe_receive(
         )?);
         outcomes.push(probe.emit(stage, &context, domain, data, observer)?);
     }
+    if let Some(estimate) = &symbol.channel_estimate {
+        outcomes.push(probe.emit(
+            TestPointId::RxChannelEstimate,
+            &context,
+            SignalDomain::PhysicalFftBin,
+            ProbeData::Iq(&estimate.response),
+            observer,
+        )?);
+    }
     Ok(outcomes)
 }
 /// Emits one explicit channel-plane sample boundary, including standalone drain blocks.

@@ -128,7 +128,7 @@ fn unsupported_profile_activation_is_reported_after_crc_without_substitution() {
 fn collector_rejects_orphan_continuation_premature_start_and_filler() {
     let cells = vec![SoftDataCell {
         data_position: 0,
-        llrs: [10.0; 8],
+        llrs: vec![10.0; 8],
     }];
     let mut collector = PayloadCollector::new().unwrap();
     let mut span = NcpDataSpan {
@@ -155,7 +155,7 @@ fn collector_rejects_orphan_continuation_premature_start_and_filler() {
     assert_eq!(collector.pending_bits(), 8);
 }
 #[test]
-fn received_nonuniform_data_or_zero_ncp_profile_is_rejected_at_construction() {
+fn unsupported_uniform_data_or_zero_ncp_profile_is_rejected_at_construction() {
     let spacing = SubcarrierSpacing::Khz25;
     let (settings, raw) = acquisition_support::acquisition_setup(spacing, false);
     let layout = CarrierLayout::new(&settings, &raw).unwrap();

@@ -9,9 +9,8 @@ use crate::{
     signal_processing::interleaving::{InterleaverDirection, SymbolInterleaver},
     simulation::{payload::PayloadReceiveSymbol, waveform::ReceivedSymbol},
     transmission::{
-        layout::CarrierLayout,
-        plc::receiver_configuration::ReceiverConfiguration,
-        symbols::{TransportCell, PAYLOAD_ORDER},
+        layout::CarrierLayout, plc::receiver_configuration::ReceiverConfiguration,
+        symbols::TransportCell,
     },
     types::{IqPair, SubcarrierIdx},
     LabError,
@@ -43,7 +42,10 @@ impl ConstellationCollector {
     /// * `selection` - Prevalidated explicit opt-in configuration.
     /// # Returns
     /// Unavailable capture; no inverse stream or samples exist yet.
-    pub(crate) fn new(selection: &ConstellationSelection) -> Self {
+    pub(crate) fn new(
+        selection: &ConstellationSelection,
+        mode: crate::signal_processing::receiver::channel_estimation::ReceiverMode,
+    ) -> Self {
         Self {
             result: ConstellationResult {
                 schema_version: 1,
@@ -51,7 +53,7 @@ impl ConstellationCollector {
                 status: ConstellationStatus::Unavailable,
                 collected_pairs: 0,
                 reference: "raw_receiver_iq_shared_unit_rms_no_display_normalization",
-                channel_coefficients: "response_h_receiver_reciprocal",
+                channel_coefficients: if mode==crate::signal_processing::receiver::channel_estimation::ReceiverMode::PilotEstimated {"pilot_estimated_h_receiver_reciprocal"}else{"response_h_receiver_reciprocal"},
                 pairs: Vec::new(),
             },
             stream: None,
@@ -134,7 +136,11 @@ impl ConstellationCollector {
             .filter(|source| source.error.is_none())
         {
             if (stream.origin..stream.end_source).contains(&source.source_symbol_index) {
-                let mut selected = source.data_soft.iter().peekable();
+                let mut selected = source
+                    .data_soft
+                    .iter()
+                    .filter(|cell| !cell.llrs.is_empty())
+                    .peekable();
                 let mut data_position = 0;
                 for (cell, coordinate) in payload.restored.iter().zip(restored) {
                     if let Some(TransportCell::Sample(point)) = cell {
@@ -142,7 +148,12 @@ impl ConstellationCollector {
                             .peek()
                             .is_some_and(|selected| selected.data_position == data_position)
                         {
-                            selected.next();
+                            let modulation_order = 1u16
+                                << selected
+                                    .next()
+                                    .ok_or_else(|| invalid("Missing selected payload cell."))?
+                                    .llrs
+                                    .len();
                             let coordinate = coordinate.ok_or_else(|| {
                                 invalid("Missing constellation payload coordinate.")
                             })?;
@@ -165,7 +176,7 @@ impl ConstellationCollector {
                                         frequency_hz,
                                         data_position,
                                         profile_id: self.result.selection.profile_id,
-                                        modulation_order: PAYLOAD_ORDER,
+                                        modulation_order,
                                         before_equalization: coordinate.before,
                                         after_equalization: coordinate.after,
                                     },

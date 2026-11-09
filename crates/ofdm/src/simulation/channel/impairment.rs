@@ -59,6 +59,14 @@ impl ImpairedChannel {
             rng: ChaCha8Rng::seed_from_u64(settings.seed),
         })
     }
+    /// Replaces the validated frequency-domain plan while preserving noise and overlap history.
+    /// # Arguments
+    /// * `plan` - Same-grid next RxMER/channel-response epoch.
+    /// # Returns
+    /// Unit after replacing coefficients; no generator is reseeded.
+    pub(super) fn transition(&mut self, plan: ImpairmentPlan) {
+        self.plan = plan;
+    }
     /// Produces one physical channel-output sample block.
     /// # Arguments
     /// * `physical` - Complete physical symbol, used only for channel synthesis.

@@ -35,22 +35,31 @@ pub fn observe_encoded(
     context.source_symbol_index = None;
     context.channel_symbol_index = None;
     context.plc_phase = None;
-    Ok(vec![
-        probe.emit(
-            TestPointId::PayloadCoded,
+    let mut outcomes = vec![probe.emit(
+        TestPointId::PayloadCoded,
+        &context,
+        SignalDomain::CodewordBit,
+        ProbeData::Bits(&encoded.encoded.ldpc_codeword),
+        observer,
+    )?];
+    if let Some(bits) = &encoded.profile_coded_bits {
+        outcomes.push(probe.emit(
+            TestPointId::PayloadInterleavedBits,
             &context,
             SignalDomain::CodewordBit,
-            ProbeData::Bits(&encoded.encoded.ldpc_codeword),
+            ProbeData::Bits(bits),
             observer,
-        )?,
-        probe.emit(
+        )?);
+    } else {
+        outcomes.push(probe.emit(
             TestPointId::PayloadLabels,
             &context,
             SignalDomain::CodewordCell,
             ProbeData::QamLabels(&encoded.labels),
             observer,
-        )?,
-    ])
+        )?);
+    }
+    Ok(outcomes)
 }
 /// Observes source-mapped and channel-interleaved cells without hiding startup history.
 /// # Arguments

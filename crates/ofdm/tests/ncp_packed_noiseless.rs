@@ -67,6 +67,9 @@ fn ncp_discovers_four_codewords_across_symbols_and_randomizer_reset() {
             // Transmitter may use the plan; receiver below sees only I/Q and pilot mask.
             for cell in symbol.cells {
                 let point = match cell {
+                    PackedCell::BitData { .. } => {
+                        panic!("Legacy fixture selected variable-width mode")
+                    }
                     PackedCell::Data { label, .. } => {
                         map_symbol(256, transmitter.apply_data(256, label).unwrap()).unwrap()
                     }

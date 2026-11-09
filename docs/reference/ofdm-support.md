@@ -40,8 +40,8 @@ A separate [noiseless256-QAM cell loop](../user/qam256-coding-loop.md) now cover
 BCH/LDPC, parity/twist/demultiplexing, randomization and soft inverse processing.
 It reports iterations per codeword but does not yet have physical symbol packing
 or integration into the general CLI `simulate` coding-mode selector. The separate
-[channel CLI](../user/channel-runner/cli.md) now implements fixed256-QAM waveform
-transport. The final column and registry still describe the older generic
+[channel CLI](../user/channel-runner/cli.md) now implements uniform16/256 and
+non-shortened mixed-profile waveform transport. The final column and registry still describe the older generic
 `simulate` selector, not the channel command.
 
 ## Coding work still required
@@ -52,8 +52,10 @@ shortening and codeword placement. Extend independent high-order label vectors
 and decoder validation beyond current diagram anchors and reference-table checks.
 Non-square orders use their actual resources, not a square-QAM approximation.
 High-order scrambling and bit ordering
-must follow the pinned source. Mixed profiles require verified per-carrier
-placement before claiming a complete mixed-modulation FEC chain.
+must follow the pinned source. The [mixed-profile waveform path](../user/payload-transport/applied-profiles.md)
+now implements24-column bit processing, inverse-frequency loading, variable-width
+cells and final padding through actual FEC. Independent external high-order
+interoperability vectors remain pending; this does not complete QAM-04.
 
 DOCSIS4.0 FDX and FDD remain distinct applicability scopes. This table follows
 I07's FDD delegation; it does not establish FDX sounding, echo cancellation or

@@ -17,10 +17,10 @@ path; full CMTS MAC services and multi-channel operation are outside that scope.
 
 ## Where development stands
 
-The fixed **256-QAM waveform path** and continuous run infrastructure are
-implemented. Measurement-driven experiments now demonstrate both error-free
-recovery and post-FEC bit errors as RxMER worsens. This is a research prototype
-with a known-reference receiver; external DOCSIS interoperability is not established.
+The waveform engine supports uniform16/256-QAM and frozen mixed ProfileA loading,
+with continuous runs, pilot-derived channel correction and explicit measurement
+epochs. Experiments demonstrate both error-free recovery and post-FEC bit errors
+as RxMER worsens. External DOCSIS interoperability is not established.
 
 | Area | Current implementation |
 | --- | --- |
@@ -28,11 +28,11 @@ with a known-reference receiver; external DOCSIS interoperability is not establi
 | Coding and signaling | BCH + short rate-8/9 LDPC; data randomization; actual PLC/NCP signaling and received configuration |
 | Waveform TX/RX | Frequency/time interleaving, pilots, IFFT, prefix, windowing, sample transport and matched receiver |
 | Continuous runs | PRBS15, configurable duration, startup/drain accounting, cancellation and partial results |
-| Impairments | Seeded sample AWGN or per-carrier RxMER residuals; optional supplied channel response and known equalization |
-| Measurements | Current `pnm-decode` JSON import for RxMER, channel estimation and modulation profiles; fixed uniform 256-QAM runs |
+| Impairments | Seeded sample AWGN or per-carrier RxMER residuals; supplied channel response, reference or pilot-derived equalization |
+| Measurements | Current `pnm-decode` JSON import for RxMER, channel estimation and modulation profiles; explicit temporal epochs and frozen applied mixed profiles |
 | Paired constellation | Bounded raw/corrected payload I/Q pairs with exact carrier/time coordinates and CLI JSON |
 | Results | Recovered-payload BER, codeword failures, actual LDPC iterations, BCH corrections and bounded stage probes |
-| Modulation coverage | Mapping/soft demapping through 16384-QAM; full waveform coding currently uniform 256-QAM |
+| Modulation coverage | Mapping/soft demapping through 16384-QAM; uniform16/256 and non-shortened mixed-profile waveform coding |
 
 Use the [development workspace](docs/development/README.md) for ongoing work
 and linked feature records. See the [development status](docs/development/status.md) for completed milestones,
@@ -76,6 +76,8 @@ scripts/cargo-local.sh run -p fec-codec --example codec_loop --locked
 - [PNM input guide](docs/user/measurement-inputs/README.md): import the three decoded capture types; binary decoding stays external.
 - [Impairment experiments](docs/user/impairments/experiments.md): reproduce the RxMER sweeps and inspect FEC outcomes.
 - [Paired constellations](docs/user/impairments/paired-constellation.md): export matched payload I/Q before and after equalization; includes an actual measured-response plot.
+- [Receiver Channel Estimation (CH-EST-RX)](docs/user/receiver-estimation/README.md): independent pilot estimation, protected analyzers and bounded timing search.
+- [Temporal measurements](docs/user/impairments/measurement-timeline.md) and [mixed profiles](docs/user/payload-transport/applied-profiles.md): explicit playback and variable-width coding.
 - [Binary RxMER demos](examples/measurements/rxmer-fec-stress/README.md): baseline plus 12, 11, 10 and 9 dB stress cases for external viewing.
 
 ## Documentation

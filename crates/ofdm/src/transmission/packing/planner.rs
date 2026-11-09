@@ -26,7 +26,8 @@ pub(super) struct Preview {
 /// # Arguments
 /// * `settings` - Validated fixed geometry and uniform NCP profile.
 /// * `roles` - Per-symbol reduced-domain roles, never physical FFT-bin roles.
-/// * `queue` - Bounded complete/partial codewords owned by the packer.
+/// * `queue` - Bounded complete/partial labels or coded-bit words owned by the packer.
+/// * `bit_loading` - Optional NI source-rank bit counts for coded-bit grouping.
 /// * `start_budget` - Remaining active NCP starts allowed for this symbol.
 /// # Returns
 /// Cells and NCP meanings with an exact reservation and a commit consumption count.
@@ -37,6 +38,7 @@ pub(super) fn plan(
     roles: &[PreInterleavingRole],
     queue: &VecDeque<QueuedWord>,
     start_budget: usize,
+    bit_loading: Option<&[u8]>,
 ) -> Result<Preview, LabError> {
     if roles.len() != settings.interleaver_cells
         || roles.contains(&PreInterleavingRole::ZeroBitLoaded)
@@ -65,10 +67,14 @@ pub(super) fn plan(
         let mut consumed = 0;
         let mut starts = 0;
         let mut filler = false;
+        let mut started_word = None;
         for (rank, &slot) in eligible[..capacity].iter().enumerate() {
             let next = queue.get(word_index);
-            if let Some(word) = next.filter(|_| !filler && (offset != 0 || starts < start_budget)) {
-                if offset == 0 {
+            if let Some(word) = next.filter(|word| {
+                !filler && (offset != 0 || started_word == Some(word.id) || starts < start_budget)
+            }) {
+                if offset == 0 && started_word != Some(word.id) {
+                    started_word = Some(word.id);
                     entries.push(NcpPlanEntry::CodewordStart {
                         codeword_id: word.id,
                         profile_id: settings.data_profile_id,
@@ -76,13 +82,30 @@ pub(super) fn plan(
                     });
                     starts += 1;
                 }
-                cells[slot] = PackedCell::Data {
-                    codeword_id: word.id,
-                    codeword_cell: offset,
-                    label: word.labels[offset],
+                let taken = if let Some(loading) = bit_loading {
+                    let bits = usize::from(loading[slot]);
+                    let taken = bits.min(word.labels.len() - offset);
+                    let label = word.labels[offset..offset + taken]
+                        .iter()
+                        .fold(0, |label, bit| (label << 1) | *bit)
+                        << (bits - taken);
+                    cells[slot] = PackedCell::BitData {
+                        codeword_id: word.id,
+                        codeword_bit_offset: offset,
+                        label,
+                        order: if bits == 0 { 2 } else { 1u16 << bits },
+                    };
+                    taken
+                } else {
+                    cells[slot] = PackedCell::Data {
+                        codeword_id: word.id,
+                        codeword_cell: offset,
+                        label: word.labels[offset],
+                    };
+                    1
                 };
-                offset += 1;
-                consumed += 1;
+                offset += taken;
+                consumed += taken;
                 if offset == word.labels.len() {
                     word_index += 1;
                     offset = 0;

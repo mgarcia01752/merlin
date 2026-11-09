@@ -65,6 +65,8 @@ pub enum TestPointId {
     RxUseful,
     #[serde(rename = "rx.fft.bins")]
     RxFft,
+    #[serde(rename = "rx.channel_estimation.response")]
+    RxChannelEstimate,
     #[serde(rename = "rx.equalized.iq")]
     RxEqualized,
     #[serde(rename = "rx.plc.iq")]
@@ -75,6 +77,8 @@ pub enum TestPointId {
     RxReduced,
     #[serde(rename = "tx.payload.ldpc")]
     PayloadCoded,
+    #[serde(rename = "tx.payload.interleaved_bits")]
+    PayloadInterleavedBits,
     #[serde(rename = "tx.payload.labels")]
     PayloadLabels,
     #[serde(rename = "tx.cells.mapped")]
@@ -118,6 +122,7 @@ impl TestPointId {
             | Self::TxWindow
             | Self::TxOverlap
             | Self::ChannelInput
+            | Self::PayloadInterleavedBits
             | Self::PayloadCoded
             | Self::PayloadLabels
             | Self::PayloadMapped
@@ -126,6 +131,7 @@ impl TestPointId {
             | Self::ChannelOutput
             | Self::RxFramed
             | Self::RxUseful
+            | Self::RxChannelEstimate
             | Self::RxFft
             | Self::RxEqualized
             | Self::RxPlc
@@ -184,6 +190,7 @@ pub enum ProbeUnits {
     Binary,
     Octet,
     NormalizedIq,
+    DimensionlessGain,
     TypedRecord,
     QamLabel,
     LogLikelihood,

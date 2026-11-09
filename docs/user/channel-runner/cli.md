@@ -80,3 +80,29 @@ It is independent of generic probes and needs no new command-line flag.
 See the [paired capture guide](../impairments/paired-constellation.md) for complete
 requests, schema, actual measured demonstration and partial-result semantics.
 The CLI applies the existing16MiB result limit before creating the destination.
+
+## Receiver estimation and measurement extensions
+
+`receiver_mode` defaults to `supplied_channel`; select `pilot_estimated` for
+receiver-owned pilot references, bounded history and1/H-hat correction. The CLI
+keeps known timing/PLC phase. [Receiver design](../receiver-estimation/README.md)
+explains the separate CP timing API and remaining blind-acquisition limits.
+
+Optional `protected_constellation` selects four bounded pilot/PLC pair streams.
+Results include optional `channel_estimate` and `protected_constellation` shared
+Rust fields; no CLI-side calculations are added. `rx.channel_estimation.response`
+and `tx.payload.interleaved_bits` are new bounded JSONL test-point IDs.
+
+Optional `data_bit_loading` supplies a full physical-FFT ProfileA array. Imported
+measurements fill it from captured assignments. See [applied profiles](../payload-transport/applied-profiles.md)
+for uniform/mixed coding limits and last-cell padding.
+`measurement.transitions` selects later frames explicitly, or direct requests
+can supply `impairment_timeline`; see [measurement epochs](../impairments/measurement-timeline.md).
+Measurement selection defaults to RxMER noise; `use_rxmer_noise=false` provides
+a static CE-only experiment. Noiseless imported temporal transitions are not
+supported by the current RxMER timeline contract.
+
+Complete examples are [synthetic pilot reception](../../../examples/channel-pilot-estimated.json)
+and [measured CE-only pilot reception](../../../examples/measurements/single-channel/channel-pilot-estimated.json).
+The latter requires an imported scenario through `--scenario` as for other
+measurement-driven requests. All existing destination/input/output limits apply.

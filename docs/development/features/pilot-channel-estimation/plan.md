@@ -1,9 +1,15 @@
-# Pilot-based channel estimation with pilot and PLC analyzers
+# Receiver Channel Estimation (CH-EST-RX) with pilot and PLC analyzers
 
-**Planned; no new estimator or pilot/PLC paired analyzer is implemented.**
-This is the next receiver group under MODEL-05. It extends the completed
+**Accepted design, now implemented for the supported bootstrap scope.**
+See the [implementation record](implementation.md) for current behavior, evidence
+and limitations. Requirements below preserve the original plan; full blind
+acquisition and posterior estimator-uncertainty calibration are not claimed.
+This is the receiver group under MODEL-05. It extends the completed
 [payload-pair capture](../paired-constellation/implementation.md), rather than
 replacing that collector or claiming MODEL-05/WAVE-RX-05 are already complete.
+
+Channel Estimation (CH-EST) includes its direction in task IDs: CH-EST-RX
+for receiver processing; CH-EST-TX for transmitter-side work.
 
 ## Accepted scope
 
@@ -123,18 +129,18 @@ CLI or plotting helper. A Qt application is still deferred.
 
 ## Implementation group and validation
 
-1. **EST-01:** Receiver-owned pilot references and per-pilot response estimates;
+1. **CH-EST-RX-01:** Receiver-owned pilot references and per-pilot response estimates;
    known timing/phase, noiseless independent amplitude/phase anchors first.
-2. **EST-02:** Tested data/PLC-band interpolation and estimated equalizer mode;
+2. **CH-EST-RX-02:** Tested data/PLC-band interpolation and estimated equalizer mode;
    quantify coverage/startup and response error without supplied H as RX input.
-3. **EST-03:** Bounded separate continuous/scattered-pilot raw/corrected analyzers;
+3. **CH-EST-RX-03:** Bounded separate continuous/scattered-pilot raw/corrected analyzers;
    include boost, physical locations, source phase and in-fit/held-out meaning.
-4. **EST-04:** Bounded separate PLC16-QAM and BPSK-preamble paired analyzers,
+4. **CH-EST-RX-04:** Bounded separate PLC16-QAM and BPSK-preamble paired analyzers,
    including acquisition and failed frames without payload-readiness gating.
-5. **EST-05:** Noiseless and noisy comparisons with reference-H reception:
+5. **CH-EST-RX-05:** Noiseless and noisy comparisons with reference-H reception:
    estimation error, payload BER/LDPC iterations, PLC/control outcomes and collector
    invariance. Cover both spacings, pilot phase changes and explicit coverage gaps.
-6. **EST-06:** Shared public Rust API/CLI export, user guides, actual pre/post
+6. **CH-EST-RX-06:** Shared public Rust API/CLI export, user guides, actual pre/post
    plots per stream, reproduction commands and full validation gate.
 
 Before selecting interpolation, trace exact continuous/scattered-pilot frequency
@@ -143,7 +149,8 @@ not automatically prescribe a unique engineering estimator. Record the chosen
 method, extrapolation policy, frequency/time assumptions and independent numerical
 vectors. Treat known timing as the initial boundary, not completed blind acquisition.
 
-No implementation or scientific validation is claimed by this planning update.
+The original planning update made no implementation claim; the linked
+implementation record now documents the completed supported scope.
 
 ## Supplied-H demonstration evidence
 
@@ -156,7 +163,7 @@ Actual before/after figures are linked from the guide. The measured case retains
 1280/502/1920/128 pairs respectively and decodes one PLC frame with zero bit errors.
 
 This is an example-owned observer, not a new production collector or CLI schema.
-EST-01..06 remain unchecked: it does not implement pilot-derived estimation,
+That demonstration alone did not implement pilot-derived estimation,
 interpolation, independent held-out validation or the shared analyzer contract.
 
 Reference-demo validation:10 pilot/PLC/receiver/probe integration tests pass;

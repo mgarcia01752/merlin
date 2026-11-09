@@ -78,6 +78,8 @@ fn imports_real_current_decoder_shapes_hashes_and_exact_grid() {
         layout,
     );
     let mut selection = docsis_ofdm_fec::simulation::channel::measurement::MeasurementSelection {
+        use_rxmer_noise: true,
+        transitions: Vec::new(),
         frame_index: 0,
         profile_id: 3,
         channel_index: Some(0),
@@ -137,4 +139,51 @@ fn rejects_grid_encoding_coverage_drift_and_preserves_missing_readings() {
         90_000
     )
     .is_err());
+}
+
+#[test]
+fn captured_zero_loaded_bins_stay_in_the_interleaving_domain() {
+    use docsis_ofdm_fec::{
+        simulation::channel::{
+            measurement::{captured_layout, MeasurementSelection},
+            ChannelRunSettings,
+        },
+        transmission::TransmissionSettings,
+        types::modulation::CarrierType,
+    };
+    let mut scenario = decode(
+        &load("rxmer.json"),
+        &load("channel_estimation.json"),
+        &load("modulation_profile.json"),
+        90_000,
+    )
+    .unwrap();
+    let profile = scenario
+        .profiles
+        .iter_mut()
+        .find(|profile| profile.profile_id == 0)
+        .unwrap();
+    let offset = profile
+        .assignments
+        .iter()
+        .position(|assignment| assignment.carrier_type == CarrierType::Data)
+        .unwrap();
+    profile.assignments[offset].carrier_type = CarrierType::ZeroBitLoaded;
+    profile.assignments[offset].bit_loading = Some(0);
+    let physical = usize::from(profile.key.grid.first_subcarrier_index) + offset;
+    let layout = captured_layout(profile, &TransmissionSettings::default()).unwrap();
+    assert!(!layout.excluded_bins.contains(&(physical as u16)));
+    let mut settings = ChannelRunSettings::new(TransmissionSettings::default(), layout);
+    MeasurementSelection {
+        use_rxmer_noise: true,
+        transitions: Vec::new(),
+        frame_index: 0,
+        profile_id: 0,
+        channel_index: Some(0),
+        tolerance_seconds: 90_000,
+        noise_seed: 41,
+    }
+    .apply(&scenario, &mut settings)
+    .unwrap();
+    assert_eq!(settings.data_bit_loading.unwrap()[physical], 0);
 }

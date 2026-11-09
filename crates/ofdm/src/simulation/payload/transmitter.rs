@@ -24,7 +24,10 @@ use fec_codec::concatenated::{ConcatenatedCodec, EncodedBlock};
 pub struct EncodedPayload {
     pub codeword_id: CodewordId,
     pub encoded: EncodedBlock,
+    /// Legacy fixed256 labels; empty when profile_coded_bits supplies the grouping input.
     pub labels: Vec<crate::signal_processing::modulation::SymbolLabel>,
+    /// Actual profile-aware bit-interleaver output; grouping happens during packing.
+    pub profile_coded_bits: Option<Vec<u8>>,
 }
 /// One physical-time reduced grid. Missing branch history is explicitly accounted for.
 pub struct PayloadChannelSymbol {
@@ -41,7 +44,7 @@ pub struct PayloadTransmitSymbol {
     pub assembled: AssembledSymbol,
     pub channel: PayloadChannelSymbol,
 }
-/// Fixed256-QAM TX state; buffers remain bounded independently of simulation duration.
+/// Frozen-profile TX state; buffers remain bounded independently of simulation duration.
 pub struct PayloadTransmitter {
     origin: u64,
     next_local: u64,
@@ -50,6 +53,8 @@ pub struct PayloadTransmitter {
     reference: PilotReference,
     codec: ConcatenatedCodec,
     bits: BitInterleaver,
+    profile_bits:
+        Option<crate::signal_processing::modulation::interleaving::mixed::PayloadBitOrder>,
     packer: SymbolPacker,
     control: NcpFieldCodec,
     randomizer: CellRandomizer,
@@ -90,12 +95,52 @@ impl PayloadTransmitter {
             layout,
             reference,
             codec: ConcatenatedCodec::new().map_err(invalid)?,
+            profile_bits: None,
             bits: BitInterleaver::new(crate::transmission::symbols::PAYLOAD_ORDER)?,
             packer: SymbolPacker::new(packing)?,
             control: NcpFieldCodec::new()?,
             randomizer: CellRandomizer::new(),
             interleaver,
         })
+    }
+    /// Starts TX with a full transmitted-frequency data profile.
+    /// # Arguments
+    /// * `settings` - Fixed numerology and cell-interleaver depth.
+    /// * `layout` - Protected physical assignments.
+    /// * `ncp` - Uniform positive control modulation.
+    /// * `origin` - PLC-aligned source/channel origin.
+    /// * `physical_loading` - One data bit count per physical FFT bin.
+    /// # Returns
+    /// Independent profile-aware coding/packing stages with empty queues.
+    /// # Errors
+    /// Rejects malformed loading, unsupported uniform modes or stage setup failure.
+    pub fn with_profile(
+        settings: &TransmissionSettings,
+        layout: &CarrierLayoutSettings,
+        ncp: NcpModulation,
+        origin: u64,
+        physical_loading: &[u8],
+    ) -> Result<Self, LabError> {
+        let mut transmitter = Self::new(settings, layout, ncp, origin)?;
+        let loading = crate::transmission::layout::bit_loading::source_bit_loading(
+            &transmitter.layout,
+            physical_loading,
+        )?;
+        transmitter.profile_bits = Some(
+            crate::signal_processing::modulation::interleaving::mixed::PayloadBitOrder::new(
+                &loading,
+            )?,
+        );
+        transmitter.packer = SymbolPacker::with_bit_loading(
+            PackingSettings {
+                subcarrier_spacing: settings.subcarrier_spacing,
+                interleaver_cells: loading.len(),
+                ncp_modulation: ncp,
+                data_profile_id: crate::transmission::symbols::PAYLOAD_PROFILE_ID,
+            },
+            loading,
+        )?;
+        Ok(transmitter)
     }
     /// Encodes and queues one actual payload; no truth is passed to RX.
     /// # Arguments
@@ -109,12 +154,23 @@ impl PayloadTransmitter {
             return Err(invalid("Cannot enqueue after payload drain begins."));
         }
         let encoded = self.codec.encode(payload).map_err(invalid)?;
-        let labels = self.bits.encode_labels(&encoded.ldpc_codeword)?;
-        let codeword_id = self.packer.enqueue(labels.clone())?;
+        let profile_coded_bits = self
+            .profile_bits
+            .as_ref()
+            .map(|order| order.encode(&encoded.ldpc_codeword))
+            .transpose()?;
+        let (labels, codeword_id) = if let Some(bits) = &profile_coded_bits {
+            (Vec::new(), self.packer.enqueue_bits(bits.clone())?)
+        } else {
+            let labels = self.bits.encode_labels(&encoded.ldpc_codeword)?;
+            let identity = self.packer.enqueue(labels.clone())?;
+            (labels, identity)
+        };
         Ok(EncodedPayload {
             codeword_id,
             encoded,
             labels,
+            profile_coded_bits,
         })
     }
     /// Reports queued complete/partial words still awaiting transmission.

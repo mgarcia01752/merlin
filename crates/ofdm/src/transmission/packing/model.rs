@@ -100,6 +100,13 @@ pub enum NcpPlanEntry {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum PackedCell {
+    /// Variable-width profile cell; the last cell may contain explicit zero padding.
+    BitData {
+        codeword_id: CodewordId,
+        codeword_bit_offset: usize,
+        label: SymbolLabel,
+        order: u16,
+    },
     Data {
         codeword_id: CodewordId,
         codeword_cell: usize,
@@ -156,7 +163,7 @@ impl PackedSymbol {
         };
         for cell in &self.cells {
             match cell {
-                PackedCell::Data { .. } => result.data_cells += 1,
+                PackedCell::Data { .. } | PackedCell::BitData { .. } => result.data_cells += 1,
                 PackedCell::ScatteredPilotPlaceholder => result.scattered_pilot_placeholders += 1,
                 PackedCell::ZeroLoadedFiller => result.zero_loaded_filler_cells += 1,
                 PackedCell::NcpReserved { .. } => result.ncp_reserved_cells += 1,

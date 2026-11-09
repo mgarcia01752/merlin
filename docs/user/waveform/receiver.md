@@ -23,3 +23,8 @@ than retrying the same sample block as though it were unconsumed. Completed
 results remain independently usable when a later observation callback fails.
 The separate [payload receiver](../payload-transport/receiver.md) now consumes
 these actual reduced cells under WAVE-RX-06, using the received PLC gate.
+
+The [Receiver Channel Estimation (CH-EST-RX) subsystem](../receiver-estimation/README.md)
+now adds pilot-derived correction and a separate bounded CP timing-acquisition
+operation. The channel runner retains explicit timing/PLC phase; supplied-H
+reception remains selectable for independent comparison.

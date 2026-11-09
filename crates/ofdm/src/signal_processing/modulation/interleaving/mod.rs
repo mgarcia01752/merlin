@@ -104,3 +104,5 @@ fn build_permutation(parameters: &Parameters) -> Vec<usize> {
         .map(|position| parity[twist[position]])
         .collect()
 }
+
+pub mod mixed;

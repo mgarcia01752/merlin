@@ -14,7 +14,8 @@ flowchart TB
 ```
 
 Both hypotheses clock once for each eligible point and never clock a scattered
-placeholder. The data hypothesis processes actual payload under256-QAM; filler
+placeholder. The data hypothesis processes each actual payload cell using the acquired
+source-rank bit loading; zero-loaded cells clock BPSK without payload bits. Filler
 and NCP positions only advance its shared sequence. After each accepted symbol,
 the two register states must agree. This prevents NCP placement from silently
 changing future payload masks.

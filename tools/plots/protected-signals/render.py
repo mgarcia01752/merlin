@@ -22,6 +22,20 @@ def main():
     args = parser.parse_args()
     with args.result.open(encoding="utf-8") as source:
         result = json.load(source)
+    if "protected_constellation" in result:
+        capture = result["protected_constellation"]
+        streams = {name: capture[name]["pairs"] for name in
+                   ["continuous_pilots", "scattered_pilots", "plc_data", "plc_preamble"]}
+        estimated = capture["receiver_mode"] == "pilot_estimated"
+        noise = result["settings"]["impairments"]["noise"]["mode"]
+        title = "MERLIN · receiver constellation observations"
+    else:
+        streams = result["streams"]
+        estimated = False
+        noise = result["noise"]
+        title = "MERLIN · measured channel response"
+    correction = "1/H-hat" if estimated else "1/H"
+
     rows = ([('continuous_pilots', 'Continuous pilots · boosted BPSK'),
              ('scattered_pilots', 'Scattered pilots · boosted BPSK')]
             if args.group == 'pilots' else
@@ -29,10 +43,12 @@ def main():
     figure, axes = plt.subplots(2, 2, figsize=(12, 10), squeeze=False, sharex='row', sharey='row')
     figure.set_facecolor('#0b1422')
     for row_index, (stream, label) in enumerate(rows):
-        pairs = result['streams'][stream]
+        pairs = streams[stream]
+        if estimated and stream.endswith('pilots'):
+            label += ' · in-fit'
         for column, (field, stage, color) in enumerate([
                 ('before_equalization', 'Before correction', '#ffc15a'),
-                ('after_equalization', 'After correction · 1/H', '#36dfce')]):
+                ('after_equalization', f'After correction · {correction}', '#36dfce')]):
             axis = axes[row_index][column]
             points = [pair[field] for pair in pairs]
             axis.scatter([point[0] for point in points], [point[1] for point in points],
@@ -47,7 +63,9 @@ def main():
             axis.tick_params(colors='#b1c4db')
             for spine in axis.spines.values():
                 spine.set_color('#42556f')
-    figure.suptitle('MERLIN · measured channel response\nNoise disabled · supplied-H reference receiver',
+    receiver = 'pilot-estimated receiver' if estimated else 'supplied-H reference receiver'
+    noise_label = 'Noise disabled' if noise == 'noiseless' else f'Noise: {noise}'
+    figure.suptitle(f'{title}\n{noise_label} · {receiver}',
                     color='#edf5ff', fontsize=17)
     figure.text(0.5, 0.025, 'Same carrier/time pairs · shared axes per row · actual boost preserved',
                 ha='center', color='#b1c4db', fontsize=10)

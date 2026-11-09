@@ -31,6 +31,7 @@ flowchart TB
 | RX time-to-frequency transform | [FFT](rx-fft.md) |
 | RX supplied channel compensation | [Equalization](rx-equalization.md) |
 | RX protected-carrier separation | [Extraction](rx-extraction.md) |
+| Receiver Channel Estimation (CH-EST-RX) | [Pilot estimation / timing / analyzers](../receiver-estimation/README.md) |
 | RX composition | [Receiver](receiver.md) |
 | Bounded data inspection | [Test points](observations.md) |
 | Actual multi-symbol verification | [Reference experiment](reference-experiment.md) |

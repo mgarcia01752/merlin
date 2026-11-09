@@ -40,6 +40,9 @@ fn transmit(
         .into_iter()
         .map(|cell| {
             Some(match cell {
+                PackedCell::BitData { .. } => {
+                    panic!("Legacy fixture unexpectedly selected variable-width packing")
+                }
                 PackedCell::Data { label, .. } => Cell::Sample(
                     map_symbol(256, randomizer.apply_data(256, label).unwrap()).unwrap(),
                 ),

@@ -65,6 +65,12 @@ Name checklist IDs for their owning component/work area, such as PLC-01,
 WAVE-TX-01, WAVE-RX-01 or RX-CONFIG-01, with stable local numbering. Avoid temporary NEXT
 prefixes; completion or reprioritization does not rename an existing ID. Update
 all maintained references when an explicit ID rename is requested.
+Introduce the function as Channel Estimation (CH-EST) in the architecture,
+checklist and plans; expand Receiver Channel Estimation (CH-EST-RX) or
+Transmitter Channel Estimation (CH-EST-TX) at the directional work area.
+For channel-estimation work, use CH-EST-RX for receiver estimation and
+CH-EST-TX for transmitter-side estimation work. Include direction in checklist
+IDs, plan references and progress messages; avoid an ambiguous EST prefix.
 For waveform work, use WAVE-TX for transmission, WAVE-RX for reception,
 WAVE-CH for the connecting channel and WAVE-QA for cross-direction validation.
 Document direction, reference plane and configuration ownership in each guide

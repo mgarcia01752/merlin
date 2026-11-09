@@ -5,14 +5,14 @@
 //! Bounded cross-symbol codeword collection, driven only by received NCP spans.
 use super::model::{RecoveredPayload, SoftDataCell};
 use crate::{
-    error::invalid, signal_processing::modulation::interleaving::BitInterleaver,
+    error::invalid, signal_processing::modulation::interleaving::mixed::PayloadBitOrder,
     transmission::ncp::NcpDataSpan, LabError,
 };
 use fec_codec::{concatenated::ConcatenatedCodec, parameters::LDPC_CODEWORD_BITS};
 /// At most one pending word; completed results are returned to the caller, never retained in history.
 pub struct PayloadCollector {
     codec: ConcatenatedCodec,
-    bits: BitInterleaver,
+    bits: PayloadBitOrder,
     pending: Vec<f64>,
     first_source: Option<u64>,
     next_sequence: u64,
@@ -26,11 +26,23 @@ impl PayloadCollector {
     pub fn new() -> Result<Self, LabError> {
         Ok(Self {
             codec: ConcatenatedCodec::new().map_err(invalid)?,
-            bits: BitInterleaver::new(crate::transmission::symbols::PAYLOAD_ORDER)?,
+            bits: PayloadBitOrder::new(&[8])?,
             pending: Vec::new(),
             first_source: None,
             next_sequence: 0,
         })
+    }
+    /// Creates a collector using the coding rules of an independently received profile.
+    /// # Arguments
+    /// * `loading` - Valid source-rank data profile; zeros do not imply mixed loading.
+    /// # Returns
+    /// Empty pending history and the corresponding uniform/mixed bit permutation.
+    /// # Errors
+    /// Rejects unsupported loading or codec initialization failures.
+    pub fn with_bit_loading(loading: &[u8]) -> Result<Self, LabError> {
+        let mut collector = Self::new()?;
+        collector.bits = PayloadBitOrder::new(loading)?;
+        Ok(collector)
     }
     /// Reports incomplete received coded bits.
     /// # Returns
@@ -59,7 +71,7 @@ impl PayloadCollector {
         if span.end_exclusive
             > crate::transmission::SubcarrierSpacing::Khz25.max_interleaver_cells()
             || span.start >= span.end_exclusive
-            || cells.len() > LDPC_CODEWORD_BITS / crate::transmission::symbols::PAYLOAD_BITS
+            || cells.len() > crate::transmission::SubcarrierSpacing::Khz25.max_interleaver_cells()
             || !(1..=100).contains(&max_iterations)
         {
             return Err(invalid("Invalid received payload span or iteration limit."));
@@ -75,6 +87,7 @@ impl PayloadCollector {
         if cells.len() != span.end_exclusive - span.start
             || cells.iter().enumerate().any(|(offset, cell)| {
                 cell.data_position != span.start + offset
+                    || !matches!(cell.llrs.len(), 0 | 4 | 6..=14)
                     || cell.llrs.iter().any(|value| !value.is_finite())
             })
         {
@@ -107,17 +120,26 @@ impl PayloadCollector {
                 "Received continuation has no accepted codeword start.",
             ));
         }
-        if self.pending.len() + cells.len() * crate::transmission::symbols::PAYLOAD_BITS
-            > LDPC_CODEWORD_BITS
+        let added: usize = cells.iter().map(|cell| cell.llrs.len()).sum();
+        let total = self.pending.len() + added;
+        if total > LDPC_CODEWORD_BITS
+            && (cells.is_empty()
+                || total - cells.last().map_or(0, |cell| cell.llrs.len()) >= LDPC_CODEWORD_BITS)
         {
             return Err(invalid(
-                "Received interval exceeds the supported codeword length.",
+                "Received interval exceeds one codeword plus its final-cell padding.",
             ));
         }
         if span.starts_codeword {
             self.first_source = Some(source_symbol);
         }
-        self.pending.extend(cells.iter().flat_map(|cell| cell.llrs));
+        let remaining = LDPC_CODEWORD_BITS - self.pending.len();
+        self.pending.extend(
+            cells
+                .iter()
+                .flat_map(|cell| cell.llrs.iter().copied())
+                .take(remaining),
+        );
         if self.pending.len() != LDPC_CODEWORD_BITS {
             return Ok(None);
         }
@@ -125,7 +147,7 @@ impl PayloadCollector {
             .next_sequence
             .checked_add(1)
             .ok_or_else(|| invalid("Receive codeword sequence exhausted."))?;
-        let ldpc_llrs = self.bits.decode_llrs(&self.pending)?;
+        let ldpc_llrs = self.bits.decode(&self.pending)?;
         let decoded = self
             .codec
             .decode(&ldpc_llrs, max_iterations)

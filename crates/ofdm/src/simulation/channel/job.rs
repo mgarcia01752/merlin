@@ -73,6 +73,11 @@ pub struct ChannelProgress {
 #[derive(Serialize)]
 pub struct ChannelJobResult {
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub channel_estimate:
+        Option<crate::signal_processing::receiver::channel_estimation::ChannelEstimate>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub protected_constellation: Option<super::protected_constellation::ProtectedConstellation>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub constellation: Option<super::constellation::ConstellationResult>,
     pub schema_version: u16,
     pub status: ChannelJobStatus,
@@ -177,7 +182,10 @@ fn run_with_clock(
             .saturating_sub(retained_words.len() as u64),
     );
     let constellation = session.take_constellation();
+    let protected_constellation = session.take_protected_constellation();
     Ok(ChannelJobResult {
+        channel_estimate: session.channel_estimate().cloned(),
+        protected_constellation,
         constellation,
         schema_version: 1,
         status,

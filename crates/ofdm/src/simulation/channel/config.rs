@@ -26,6 +26,10 @@ pub(crate) const MAX_COMPLETION_SYMBOLS: u64 = 4096;
 /// Independent settings snapshot; callers may edit it before creating a session.
 #[derive(Clone, serde::Serialize)]
 pub struct ChannelRunSettings {
+    pub data_bit_loading: Option<Vec<u8>>,
+    pub impairment_timeline: Vec<super::timeline::ImpairmentEpoch>,
+    pub protected_constellation: Option<super::protected_constellation::ProtectedCaptureSelection>,
+    pub receiver_mode: crate::signal_processing::receiver::channel_estimation::ReceiverMode,
     /// Optional bounded payload-only raw/corrected constellation observations.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub constellation: Option<super::constellation::ConstellationSelection>,
@@ -54,6 +58,10 @@ impl ChannelRunSettings {
     /// Editable settings; validation occurs before any session processing.
     pub fn new(transmission: TransmissionSettings, layout: CarrierLayoutSettings) -> Self {
         Self {
+            data_bit_loading: None,
+            impairment_timeline: Vec::new(),
+            receiver_mode: Default::default(),
+            protected_constellation: None,
             constellation: None,
             impairments: Default::default(),
             transmission,
@@ -84,12 +92,92 @@ impl ChannelRunSettings {
         }
         let timing = self.transmission.duration_timing(self.duration)?;
         Prbs15::new(self.prbs_seed)?;
+        if let Some(selection) = &self.protected_constellation {
+            selection.validate()?;
+        }
         let layout = CarrierLayout::new(&self.transmission, &self.layout)?;
+        if let Some(physical) = &self.data_bit_loading {
+            let loading =
+                crate::transmission::layout::bit_loading::source_bit_loading(&layout, physical)?;
+            crate::signal_processing::modulation::interleaving::mixed::PayloadBitOrder::new(
+                &loading,
+            )?;
+        }
         if let Some(selection) = &self.constellation {
             selection.validate(&layout)?;
         }
         self.impairments
             .plan(&self.transmission, &layout, self.llr_variance)?;
+        let retained_samples = self
+            .impairment_timeline
+            .iter()
+            .try_fold(0usize, |total, epoch| {
+                let count = match &epoch.impairments.noise {
+                    crate::signal_processing::channel::impairments::NoiseModel::Rxmer { frame } => {
+                        frame.mer_db.len()
+                    }
+                    _ => 0,
+                };
+                total.checked_add(count)?.checked_add(
+                    epoch
+                        .impairments
+                        .response
+                        .as_ref()
+                        .map_or(0, |frame| frame.iq.len()),
+                )
+            });
+        if retained_samples.is_none_or(|count| count > 4_000_000) {
+            return Err(invalid(
+                "Measurement timeline exceeds the retained-sample budget.",
+            ));
+        }
+        if self.impairment_timeline.len() > 4096 {
+            return Err(invalid("Too many channel measurement epochs."));
+        }
+        let mut previous = 0;
+        let mut previous_capture = None;
+        for epoch in &self.impairment_timeline {
+            if epoch.first_observation_symbol <= previous
+                || epoch.first_observation_symbol >= timing.complete_symbols
+            {
+                return Err(invalid(
+                    "Measurement transitions must increase within the observation window.",
+                ));
+            }
+            if !matches!(
+                self.impairments.noise,
+                crate::signal_processing::channel::impairments::NoiseModel::Rxmer { .. }
+            ) || !matches!(
+                epoch.impairments.noise,
+                crate::signal_processing::channel::impairments::NoiseModel::Rxmer { .. }
+            ) || epoch.impairments.seed != self.impairments.seed
+            {
+                return Err(invalid(
+                    "Measurement timeline requires one continuous seeded RxMER noise stream.",
+                ));
+            }
+            let crate::signal_processing::channel::impairments::NoiseModel::Rxmer { frame: base } =
+                &self.impairments.noise
+            else {
+                unreachable!()
+            };
+            let crate::signal_processing::channel::impairments::NoiseModel::Rxmer { frame: next } =
+                &epoch.impairments.noise
+            else {
+                unreachable!()
+            };
+            if base.key != next.key
+                || next.capture_time != epoch.capture_time
+                || next.capture_time <= previous_capture.unwrap_or(base.capture_time)
+            {
+                return Err(invalid("Timeline identity/grid/epoch mismatch."));
+            }
+            epoch
+                .impairments
+                .plan(&self.transmission, &layout, self.llr_variance)?;
+            previous = epoch.first_observation_symbol;
+            previous_capture = Some(epoch.capture_time);
+        }
         // Reserve representable absolute identities for bounded acquisition/completion/drain.
         timing
             .complete_symbols

@@ -54,6 +54,9 @@ fn four_words_cross_symbols_and_128_phase_boundary_with_zero_payload_errors() {
         receiver.begin_symbol(symbol.symbol_index).unwrap();
         for cell in symbol.cells {
             match cell {
+                PackedCell::BitData { .. } => {
+                    panic!("Legacy fixture unexpectedly selected variable-width packing")
+                }
                 PackedCell::Data {
                     codeword_id,
                     codeword_cell,

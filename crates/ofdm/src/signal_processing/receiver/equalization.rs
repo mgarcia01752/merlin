@@ -43,6 +43,15 @@ impl KnownReferenceEqualizer {
         validate_samples(&inverse, response.len())?;
         Ok(Self { inverse })
     }
+    /// Reports inverse magnitude squared for calibrated raw-bin noise variance.
+    /// # Returns
+    /// One finite nonnegative power multiplier per physical bin.
+    pub fn inverse_gain_power(&self) -> Vec<f64> {
+        self.inverse
+            .iter()
+            .map(|gain| gain[0] * gain[0] + gain[1] * gain[1])
+            .collect()
+    }
     /// Removes the supplied channel response and bin amplitude scale.
     /// # Arguments
     /// * `bins` - N received physical bins after FFT, lowest frequency first.

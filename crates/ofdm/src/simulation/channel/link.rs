@@ -59,8 +59,13 @@ pub(crate) struct WaveformLink {
     frame: Option<PlcFrameSignals>,
     received_plc: Vec<IqPair>,
     block_samples: usize,
+    calibrated_variances: Vec<f64>,
+    raw_plc_frame: Vec<(usize, IqPair)>,
+    pub channel_estimate:
+        Option<crate::signal_processing::receiver::channel_estimation::ChannelEstimate>,
     context: ProbeContext,
     pub stats: LinkStats,
+    pub protected_constellation: Option<super::protected_constellation::ProtectedConstellation>,
 }
 impl WaveformLink {
     /// Creates reference-only stage owners without passing TX truth into any RX operation.
@@ -82,6 +87,7 @@ impl WaveformLink {
         block_samples: usize,
         impairments: &crate::signal_processing::channel::impairments::ChannelImpairments,
         variance: f64,
+        data_loading: Option<&[u8]>,
     ) -> Result<Self, LabError> {
         let geometry = WaveformGeometry::new(settings)?;
         let layout = CarrierLayout::new(settings, raw)?;
@@ -91,7 +97,7 @@ impl WaveformLink {
             }
             _ => impairments.response.as_ref().map(|response| &response.key),
         };
-        let descriptors = FixedPlcDescriptors::new(
+        let descriptors = FixedPlcDescriptors::with_data_loading(
             settings,
             &layout,
             DescriptorIdentity {
@@ -101,6 +107,7 @@ impl WaveformLink {
                 primary_capable: true,
                 ncp_bits: ncp.order().ilog2() as u8,
             },
+            data_loading,
         )?;
         let scheduler = PlcMessageScheduler::new(settings, &descriptors)?;
         let tx = WaveformTransmitter::new(&geometry, 0, 0);
@@ -127,7 +134,12 @@ impl WaveformLink {
             zero_frequency_hz: raw.zero_frequency_hz,
         });
         context.reference = SignalReference::OtherSubcarrierRms { rms: 1.0 };
+        let calibrated_variances = channel.plan.llr_variance.clone();
         Ok(Self {
+            protected_constellation: None,
+            calibrated_variances,
+            raw_plc_frame: Vec::new(),
+            channel_estimate: None,
             channel,
             geometry,
             layout,
@@ -152,6 +164,45 @@ impl WaveformLink {
                 preambles_match: true,
             },
         })
+    }
+    /// Selects receiver-owned pilot estimation before any sample is transferred.
+    /// # Arguments
+    /// * `raw` - Independent receiver bootstrap carrier assignments.
+    /// # Returns
+    /// Unit after replacing the unstarted reference receiver.
+    /// # Errors
+    /// Rejects receiver bootstrap settings; no channel response is supplied to RX.
+    pub(crate) fn use_pilot_estimation(
+        &mut self,
+        raw: &CarrierLayoutSettings,
+    ) -> Result<(), LabError> {
+        self.rx = WaveformReceiver::from_pilots(&self.geometry, raw, 0, 0, 0, 1.0)?;
+        Ok(())
+    }
+    /// Changes one physical measurement epoch without resetting waveform or RNG state.
+    /// # Arguments
+    /// * `impairments` - Validated same-grid measurement response/residual.
+    /// * `variance` - Positive noiseless demapper reference fallback.
+    /// * `mode` - Correction source; supplied H is never sent to estimated RX.
+    /// # Returns
+    /// Unit after replacing the channel plan and calibrated residuals.
+    /// # Errors
+    /// Rejects malformed measurement coverage or reference gains.
+    pub(crate) fn transition(
+        &mut self,
+        impairments: &crate::signal_processing::channel::impairments::ChannelImpairments,
+        variance: f64,
+        mode: crate::signal_processing::receiver::channel_estimation::ReceiverMode,
+    ) -> Result<(), LabError> {
+        let plan = impairments.plan(self.geometry.settings(), &self.layout, variance)?;
+        if mode
+            == crate::signal_processing::receiver::channel_estimation::ReceiverMode::SuppliedChannel
+        {
+            self.rx.set_reference_response(&plan.response)?;
+        }
+        self.calibrated_variances = plan.llr_variance.clone();
+        self.channel.transition(plan);
+        Ok(())
     }
     /// Borrows the actual PLC acquisition gate after received frame processing.
     /// # Returns
@@ -205,6 +256,7 @@ impl WaveformLink {
         observer: &mut impl ProbeObserver,
     ) -> Result<ReceivedSymbol, LabError> {
         if index % PLC_FRAME_SYMBOLS == 0 {
+            self.raw_plc_frame.clear();
             let timestamp = ExtendedTimestamp::from_sample_ticks(
                 index
                     .checked_mul(self.geometry.stride_samples() as u64)
@@ -271,6 +323,30 @@ impl WaveformLink {
         let received = completed
             .pop()
             .ok_or_else(|| invalid("Missing completed RX symbol."))?;
+        self.channel_estimate = received.channel_estimate.clone();
+        if received.channel_estimate.is_some() {
+            for (bin, role) in self.layout.static_roles().iter().enumerate() {
+                if *role == PhysicalCarrierRole::Plc {
+                    self.raw_plc_frame.push((bin, received.bins[bin]));
+                }
+            }
+            for (bin, calibrated) in self.calibrated_variances.iter_mut().enumerate() {
+                let gain = self.channel.plan.response[bin];
+                // Raw variance is a simulation calibration, not an H input to RX.
+                let raw =
+                    self.channel.plan.llr_variance[bin] * (gain[0] * gain[0] + gain[1] * gain[1]);
+                let effective = raw * received.inverse_gain_power[bin];
+                if !effective.is_finite() || effective <= 0.0 {
+                    return Err(invalid(
+                        "Estimated receiver noise calibration is not finite positive power.",
+                    ));
+                }
+                *calibrated = effective;
+            }
+        }
+        if let Some(capture) = &mut self.protected_constellation {
+            capture.observe(&received, &self.layout)?;
+        }
         observation::observe_receive(&received, &self.geometry, &context, probe, observer)?;
         for (bin, (sample, expected)) in received.equalized.iter().zip(&physical.bins).enumerate() {
             let expected = expected
@@ -291,6 +367,26 @@ impl WaveformLink {
         }
         self.received_plc.extend_from_slice(&received.signals.plc);
         if index % PLC_FRAME_SYMBOLS == PLC_FRAME_SYMBOLS - 1 {
+            if let Some(estimate) = &received.channel_estimate {
+                if !estimate.ready {
+                    self.received_plc.clear();
+                    return Ok(received);
+                }
+                // Bounded block acquisition: use the completed pilot pattern to
+                // correct this frame's retained raw PLC samples, without TX truth.
+                self.received_plc = self
+                    .raw_plc_frame
+                    .iter()
+                    .map(|(bin, point)| {
+                        let gain = estimate.response[*bin];
+                        let power = gain[0] * gain[0] + gain[1] * gain[1];
+                        [
+                            (point[0] * gain[0] + point[1] * gain[1]) / power,
+                            (point[1] * gain[0] - point[0] * gain[1]) / power,
+                        ]
+                    })
+                    .collect();
+            }
             let decision =
                 self.plc_rx
                     .receive_frame(&self.received_plc, self.plc_variance(), 50)?;
@@ -364,7 +460,7 @@ impl WaveformLink {
     /// # Returns
     /// Positive finite variances; receiver transports them with the received cells.
     pub(crate) fn variances(&self) -> &[f64] {
-        &self.channel.plan.llr_variance
+        &self.calibrated_variances
     }
     fn plc_variance(&self) -> f64 {
         let mut sum = 0.0;

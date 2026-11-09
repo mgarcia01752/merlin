@@ -13,9 +13,9 @@ use crate::{
 /// # Arguments
 /// * `configuration` - Complete snapshot obtained through the readiness gate.
 /// # Returns
-/// Uniform256-QAM ProfileA and positive uniform NCP geometry. Descriptor counts remain independent.
+/// Supported ProfileA and positive uniform NCP geometry; descriptor counts stay independent.
 /// # Errors
-/// Rejects zero/mixed data or NCP loading and unsupported profile identity.
+/// Rejects unsupported data counts, zero/mixed NCP loading or unsupported identity.
 pub fn packing_settings(
     configuration: &ReceiverConfiguration,
 ) -> Result<PackingSettings, LabError> {
@@ -24,13 +24,14 @@ pub fn packing_settings(
     let ncp_bits = configuration.ncp_modulation().order().ilog2() as u8;
     if data.profile_id() != crate::transmission::symbols::PAYLOAD_PROFILE_ID
         || configuration.reduced_bins().iter().any(|bin| {
-            data.bit_loading()[usize::from(*bin)] != Some(8)
+            !data.bit_loading()[usize::from(*bin)]
+                .is_some_and(|bits| matches!(bits, 0 | 4 | 6..=14))
                 || ncp.bit_loading()[usize::from(*bin)] != Some(ncp_bits)
         })
     {
         return Err(LabError::new(
             "UnsupportedPayloadProfile",
-            "Payload transport requires uniform256-QAM ProfileA and uniform positive NCP loading.",
+            "Payload transport requires supported ProfileA and uniform positive NCP loading.",
         ));
     }
     let settings = PackingSettings {

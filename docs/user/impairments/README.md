@@ -22,10 +22,13 @@ flowchart LR
 | Carrier-wise residual synthesis and LLR calibration | [RxMER residuals](rxmer.md) |
 | Supplied response H and known-reference compensation | [Channel response](channel-response.md) |
 | Paired payload constellation before/after compensation | [Paired constellation](paired-constellation.md) |
+| Receiver Channel Estimation (CH-EST-RX) | [Pilot estimation and analyzers](../receiver-estimation/README.md) |
+| Explicit temporal measurement epochs | [Measurement playback](measurement-timeline.md) |
 | CLI experiments and protected LTE sweep | [Running experiments](experiments.md) |
 
-Current waveform payloads remain uniform256-QAM. Imported higher/mixed orders
-are retained for analysis but rejected as applied waveform profiles. Channel H
-is applied through a synchronized per-symbol diagonal model, not a general
-linear multipath filter; blind synchronization/estimation remains unfinished.
-These limitations stay explicit under MODEL-05/06 and WAVE-RX-05.
+Current waveform support includes uniform16/256 and frozen non-shortened mixed
+ProfileA loading through actual FEC. See the [applied-profile design](../payload-transport/applied-profiles.md).
+Supplied H and pilot-estimated correction are separate modes. Channel H uses a
+synchronized per-symbol diagonal model, not a general linear multipath filter.
+Full blind acquisition remains WAVE-RX-05; conditional Gaussian playback does
+not imply a field burst/correlation model.

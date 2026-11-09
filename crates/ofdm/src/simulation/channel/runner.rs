@@ -36,6 +36,7 @@ pub struct ChannelRun {
     source: Prbs15,
     verifier: PrbsVerifier,
     next_symbol: u64,
+    next_impairment_epoch: usize,
     summary: ChannelSummary,
 }
 impl ChannelRun {
@@ -49,24 +50,39 @@ impl ChannelRun {
     /// Rejects invalid geometry, work limits, duration, source or codec setup.
     pub fn new(settings: &ChannelRunSettings) -> Result<Self, LabError> {
         let timing = settings.validate()?;
-        let link = WaveformLink::new(
+        let mut link = WaveformLink::new(
             &settings.transmission,
             &settings.layout,
             settings.ncp_modulation,
             settings.receive_block_samples,
             &settings.impairments,
             settings.llr_variance,
+            settings.data_bit_loading.as_deref(),
         )?;
+        if settings.receiver_mode
+            == crate::signal_processing::receiver::channel_estimation::ReceiverMode::PilotEstimated
+        {
+            link.use_pilot_estimation(&settings.layout)?;
+        }
+        link.protected_constellation = settings
+            .protected_constellation
+            .as_ref()
+            .map(|selection| {
+                super::protected_constellation::ProtectedConstellation::new(
+                    selection.clone(),
+                    settings.receiver_mode,
+                )
+            })
+            .transpose()?;
         log::info!(
             "channel-created observation-samples={} source-symbols={}",
             timing.observation_samples,
             timing.complete_symbols
         );
         Ok(Self {
-            constellation: settings
-                .constellation
-                .as_ref()
-                .map(super::constellation::ConstellationCollector::new),
+            constellation: settings.constellation.as_ref().map(|selection| {
+                super::constellation::ConstellationCollector::new(selection, settings.receiver_mode)
+            }),
             settings: settings.clone(),
             link,
             transmitter: None,
@@ -75,6 +91,7 @@ impl ChannelRun {
             source: Prbs15::new(settings.prbs_seed)?,
             verifier: PrbsVerifier::new(settings.prbs_seed)?,
             next_symbol: 0,
+            next_impairment_epoch: 0,
             summary: ChannelSummary {
                 measured_mer_db: None,
                 compared_data_carriers: 0,
@@ -144,6 +161,30 @@ impl ChannelRun {
             .map(|collector| collector.finish())
     }
 
+    /// Borrows the latest bounded receiver-derived channel estimate.
+    /// # Returns
+    /// None in supplied-H mode or before reception; otherwise the latest physical grid.
+    pub fn channel_estimate(
+        &self,
+    ) -> Option<&crate::signal_processing::receiver::channel_estimation::ChannelEstimate> {
+        self.link.channel_estimate.as_ref()
+    }
+    /// Borrows acquisition-safe bounded pilot and PLC receive observations.
+    /// # Returns
+    /// Optional shared result, including partial streams and failed-frame samples.
+    pub fn protected_constellation(
+        &self,
+    ) -> Option<&super::protected_constellation::ProtectedConstellation> {
+        self.link.protected_constellation.as_ref()
+    }
+    /// Stops protected diagnostic retention while leaving scientific state usable.
+    /// # Returns
+    /// Owned bounded capture, or None when disabled/already removed.
+    pub fn take_protected_constellation(
+        &mut self,
+    ) -> Option<super::protected_constellation::ProtectedConstellation> {
+        self.link.protected_constellation.take()
+    }
     /// Processes at most one complete OFDM period, or the final window-tail operation.
     ///
     /// # Arguments
@@ -359,12 +400,22 @@ impl ChannelRun {
                     self.summary.timing.complete_symbols,
                 )?;
             }
-            self.transmitter = Some(PayloadTransmitter::new(
-                &self.settings.transmission,
-                &self.settings.layout,
-                self.settings.ncp_modulation,
-                self.next_symbol,
-            )?);
+            self.transmitter = Some(if let Some(loading) = &self.settings.data_bit_loading {
+                PayloadTransmitter::with_profile(
+                    &self.settings.transmission,
+                    &self.settings.layout,
+                    self.settings.ncp_modulation,
+                    self.next_symbol,
+                    loading,
+                )?
+            } else {
+                PayloadTransmitter::new(
+                    &self.settings.transmission,
+                    &self.settings.layout,
+                    self.settings.ncp_modulation,
+                    self.next_symbol,
+                )?
+            });
             self.summary.window = Some(super::accounting::WindowTotals::new(
                 super::accounting::ObservationWindow::new(self.next_symbol, self.summary.timing)?,
             ));
@@ -391,6 +442,22 @@ impl ChannelRun {
         } else {
             RunPhase::Drain
         };
+        if phase == ChannelPhase::Observation {
+            if let Some(epoch) = self
+                .settings
+                .impairment_timeline
+                .get(self.next_impairment_epoch)
+            {
+                if epoch.first_observation_symbol == self.summary.observation_symbols {
+                    self.link.transition(
+                        &epoch.impairments,
+                        self.settings.llr_variance,
+                        self.settings.receiver_mode,
+                    )?;
+                    self.next_impairment_epoch += 1;
+                }
+            }
+        }
         let received = self.link.transfer(
             channel.channel_symbol_index,
             &channel.reduced,

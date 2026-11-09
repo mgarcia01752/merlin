@@ -11,11 +11,11 @@ pub struct SoftNcpCell {
     pub data_position: usize,
     pub llrs: Vec<f64>,
 }
-/// Actual payload cell after accepted NCP selection and inverse randomization.
+/// Actual payload cell after NCP selection/inverse randomization; zero loading has no LLRs.
 #[derive(Debug, Clone, serde::Serialize)]
 pub struct SoftDataCell {
     pub data_position: usize,
-    pub llrs: [f64; crate::transmission::symbols::PAYLOAD_BITS],
+    pub llrs: Vec<f64>,
 }
 /// Complete recovered short8/9 word with genuine decoder flags/iterations and no TX ID.
 pub struct RecoveredPayload {

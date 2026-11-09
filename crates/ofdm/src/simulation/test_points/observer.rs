@@ -177,7 +177,11 @@ impl TestPointProbe {
             direction: stage.direction(),
             context,
             domain,
-            units: data.units(),
+            units: if stage == TestPointId::RxChannelEstimate {
+                super::ProbeUnits::DimensionlessGain
+            } else {
+                data.units()
+            },
             element_start: start,
             total_elements: data.len(),
             shape: [count],
@@ -296,7 +300,7 @@ fn validate_data(
                 && iq.iter().flatten().all(|value| value.is_finite())
         }
         (
-            TestPointId::RxFft | TestPointId::RxEqualized,
+            TestPointId::RxFft | TestPointId::RxEqualized | TestPointId::RxChannelEstimate,
             SignalDomain::PhysicalFftBin,
             ProbeData::Iq(iq),
         ) => {
@@ -326,7 +330,9 @@ fn validate_data(
                 && iq.iter().flatten().flatten().all(|value| value.is_finite())
         }
         (
-            TestPointId::PayloadCoded | TestPointId::PayloadDecoded,
+            TestPointId::PayloadCoded
+            | TestPointId::PayloadDecoded
+            | TestPointId::PayloadInterleavedBits,
             SignalDomain::CodewordBit,
             ProbeData::Bits(bits),
         ) => context.cell_grid.is_some() && bits.iter().all(|bit| *bit <= 1),

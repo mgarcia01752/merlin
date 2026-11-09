@@ -42,6 +42,16 @@ pub fn assemble_packed(
     let mut cells = Vec::with_capacity(symbol.cells.len());
     for cell in &symbol.cells {
         cells.push(Some(match cell {
+            PackedCell::BitData { label, order, .. } => {
+                if *order == 2 {
+                    TransportCell::Sample(map_symbol(2, candidate.zero_loaded_bpsk()?)?)
+                } else {
+                    TransportCell::Sample(map_symbol(
+                        *order,
+                        candidate.apply_data(*order, *label)?,
+                    )?)
+                }
+            }
             PackedCell::Data { label, .. } => TransportCell::Sample(map_symbol(
                 crate::transmission::symbols::PAYLOAD_ORDER,
                 candidate.apply_data(crate::transmission::symbols::PAYLOAD_ORDER, *label)?,

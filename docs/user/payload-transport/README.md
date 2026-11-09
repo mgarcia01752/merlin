@@ -23,6 +23,7 @@ flowchart TB
 
 | Subsystem | Design guide |
 | --- | --- |
+| Applied uniform/mixed profiles | [Bit loading and coding](applied-profiles.md) |
 | Packed-symbol signal assembly | [Assembly](assembly.md) |
 | Continuous TX queue/interleaver/session | [Transmitter](transmitter.md) |
 | Received configuration and support checks | [Configuration](configuration.md) |
@@ -34,12 +35,13 @@ flowchart TB
 | Bounded stage inspection | [Test points](observations.md) |
 | Actual sample-domain demonstration | [Reference experiment](reference-experiment.md) |
 
-Current support is short8/9 concatenated coding, uniform256-QAM ProfileA,
-uniform positive QPSK/16-QAM/64-QAM NCP, and the fixed even selectors emitted by
-the packer. Dynamic switching, odd selection, OPT tagging, mixed loading and
-zero-loaded DPD positions are rejected explicitly. A Z-marked unused data field
-is supported and carries BPSK filler; this is distinct from static zero loading
-in a DPD.
+Current support is short8/9 concatenated coding, frozen ProfileA ID0 with
+uniform16/256-QAM or verified mixed loading, and uniform positive QPSK/16-QAM/64-QAM
+NCP. Mixed and zero-loaded DPD positions are supported as described in the
+applied-profile guide. Dynamic switching, other profile selectors, odd selection,
+OPT tagging, shortening and unverified uniform higher-order coding reject
+explicitly. Z-marked unused data fields remain BPSK filler, distinct from a
+zero-loaded position within an active codeword.
 
 Streams retain state across calls and are independent of simulation duration.
 They do not reset at one-second boundaries or codeword boundaries. The new
@@ -47,6 +49,6 @@ They do not reset at one-second boundaries or codeword boundaries. The new
 duration, initially one second; the original bounded demonstration remains
 shorter. Both use the separate [PRBS15 source/verifier](../simulation/prbs.md).
 The [job/CLI wrapper](../channel-runner/cli.md) adds cancellation, source-window
-metrics and partial results. Blind acquisition and nonideal operation remain later work.
+metrics and partial results. Pilot-derived reception is now available; full blind acquisition remains later work.
 See [architecture](../../architecture.md), [checklist](../../development/checklist.md)
 and [source evidence](../../reference/payload-transport-evidence.md).

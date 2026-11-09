@@ -52,20 +52,22 @@ JSON. The measured demonstration and11dB stress case each exported8192 pairs;
 the stress case retained483 errors with the earlier scientific summary unchanged.
 See the [implementation record](features/paired-constellation/implementation.md).
 
-The next remaining receiver work is independent estimation/nonideal timing under
-MODEL-05 and WAVE-RX-05. The next planned EST-01..06 group also includes separate
-continuous/scattered-pilot, PLC16-QAM and BPSK-preamble analyzers before/after
-correction; see its [feature plan](features/pilot-channel-estimation/plan.md).
-These analyzers are not yet implemented. Mixed profiles and temporal measurement transitions remain
-MODEL-06; those parent items are not completed by constellation observation.
+## Receiver and measurement milestone
+
+MODEL-05/06/07 now provide Receiver Channel Estimation (CH-EST-RX), bounded
+pilot/PLC analyzers, explicit measurement epochs and frozen applied mixed ProfileA
+transport. The [implementation record](features/pilot-channel-estimation/implementation.md)
+links tests and per-component guides. Pilot-mode RX receives no supplied H.
+Bounded CP sample-offset acquisition is separately available; the CLI retains
+known timing/PLC phase. No full blind modem-acquisition claim is made.
 
 ## Work still open
 
 | Work area | Remaining scope | Checklist IDs |
 | --- | --- | --- |
-| Receiver realism | Independent nonideal timing/channel estimation beyond supplied H and known-reference timing/equalization | WAVE-RX-05, MODEL-05 |
-| Measurement evolution | Temporal frame transitions, additional/mixed applied profiles, independently validated burst/correlation models | MODEL-06, MODEL-07 |
-| Coding and profiles | More FEC modes/shortening; full higher-order and mixed-profile coding; dynamic NCP/data profile activation | FEC-03, QAM-03/04, NCP-03 |
+| Receiver realism | Full blind carrier/numerology/PLC-phase acquisition and broader estimator uncertainty models; current pilot/CP subset is implemented | WAVE-RX-05 |
+| Measurement evolution | Future explicit correlated/burst models and dynamic profile activation; piecewise independent Gaussian epochs and frozen mixed profiles are implemented | NCP-03, future model extensions |
+| Coding and profiles | More FEC modes/shortening; unverified uniform higher-order coding and external mixed-profile vectors; dynamic NCP/data profile activation | FEC-03, QAM-03/04, NCP-03 |
 | Diagnostic and layout tools | Standalone hard slicer; specification-based additional continuous-pilot placement | QAM-02, LAYOUT-03 |
 | Input compatibility | Formal decoded-JSON compatibility/version contract; current JSON import is already implemented | INPUT-02 |
 | Independent validation | External full-channel interoperability vectors and Windows/macOS build/runtime CI | QA-05, QA-06 |
@@ -74,7 +76,7 @@ MODEL-06; those parent items are not completed by constellation observation.
 
 This table groups outstanding work; it does not reorder the official checklist
 or authorize implementation. Select the next task using its dependencies and
-current priority. Keep partially completed MODEL-05/06 unchecked.
+current priority. Keep broader partially complete coding/acquisition items unchecked.
 
 ## Validation and boundaries
 
@@ -82,7 +84,8 @@ The repository has a local pre-push gate for formatting, warnings-denied Clippy,
 workspace/analysis-only tests, release CLI builds and smoke checks. Recent fixture
 work additionally verified quarter-dB encoding, binary header matching,
 non-overwriting output and exact sample equality after external `pnm-decode`.
-This documentation review did not rerun the scientific test suite.
+The receiver/measurement completion run executes this full gate and actual
+measured-CE CLI experiments; see its implementation record for results.
 
 The measurement-driven receiver currently uses supplied channel response and
 known timing/equalization. RxMER contributes an explicit Gaussian residual model;

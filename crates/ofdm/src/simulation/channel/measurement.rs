@@ -71,10 +71,10 @@ pub fn captured_layout(
                 }
             }
             CarrierType::Exclusion => layout.excluded_bins.push(bin),
-            CarrierType::Data | CarrierType::Plc => {}
+            CarrierType::Data | CarrierType::ZeroBitLoaded | CarrierType::Plc => {}
             _ => {
                 return Err(invalid(
-                    "Captured layout includes unsupported zero/reserved/unknown roles.",
+                    "Captured layout includes unsupported reserved/unknown roles.",
                 ))
             }
         }
@@ -83,25 +83,39 @@ pub fn captured_layout(
     Ok(layout)
 }
 
+/// Explicit later captured frame/response; simulated timing follows original epochs.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MeasurementTransition {
+    pub frame_index: usize,
+    pub channel_index: Option<usize>,
+}
 /// Caller-selected sources; tolerance never rewrites capture epochs.
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct MeasurementSelection {
+    #[serde(default = "default_rxmer_noise")]
+    pub use_rxmer_noise: bool,
+    #[serde(default)]
+    pub transitions: Vec<MeasurementTransition>,
     pub frame_index: usize,
     pub profile_id: u8,
     pub channel_index: Option<usize>,
     pub tolerance_seconds: u32,
     pub noise_seed: u64,
 }
+fn default_rxmer_noise() -> bool {
+    true
+}
 impl MeasurementSelection {
-    /// Admits an imported scenario into the current uniform256-QAM waveform experiment.
+    /// Admits an imported ProfileA scenario and explicit later measurement epochs.
     /// # Arguments
     /// * `scenario` - Immutable original decoded observations.
-    /// * `settings` - Caller-owned geometry; only the explicit impairment setting is filled.
+    /// * `settings` - Caller-owned geometry; loading, impairments and timeline commit atomically.
     /// # Returns
     /// Unit after exact source association and protected-role/profile coverage checks.
     /// # Errors
-    /// Rejects unsupported/mixed loading, mismatched roles, ambiguous profiles,
+    /// Rejects unsupported coding modes, mismatched roles, ambiguous profiles,
     /// out-of-tolerance epochs, missing observations or additional injected noise.
     pub fn apply(
         &self,
@@ -109,6 +123,20 @@ impl MeasurementSelection {
         settings: &mut ChannelRunSettings,
     ) -> Result<(), LabError> {
         scenario.validate()?;
+        if self.transitions.len() > 4096 {
+            return Err(invalid("Too many imported measurement transitions."));
+        }
+        self.apply_validated(scenario, settings)
+    }
+    fn apply_validated(
+        &self,
+        scenario: &ScenarioDocument,
+        settings: &mut ChannelRunSettings,
+    ) -> Result<(), LabError> {
+        if self.profile_id != 0 {
+            return Err(LabError::new("UnsupportedMeasuredProfile","Live payload transport currently requires ProfileA ID0; other profile selectors are unsupported."));
+        }
+
         if !matches!(settings.impairments.noise, NoiseModel::Noiseless)
             || settings.impairments.response.is_some()
         {
@@ -135,6 +163,7 @@ impl MeasurementSelection {
             return Err(invalid("Profile epoch exceeds measurement tolerance."));
         }
         let layout = CarrierLayout::new(&settings.transmission, &settings.layout)?;
+        let mut physical_loading = vec![0; layout.static_roles().len()];
         for (bin, role) in layout.static_roles().iter().enumerate() {
             if *role == PhysicalCarrierRole::Excluded {
                 continue;
@@ -148,13 +177,26 @@ impl MeasurementSelection {
             )?;
             let assignment = &profile.assignments[position];
             let expected = match role {
-                PhysicalCarrierRole::Data => (CarrierType::Data, Some(8)),
+                PhysicalCarrierRole::Data => {
+                    let supported = match assignment.carrier_type {
+                        CarrierType::Data => assignment
+                            .bit_loading
+                            .is_some_and(|bits| matches!(bits, 4 | 6..=14)),
+                        CarrierType::ZeroBitLoaded => assignment.bit_loading == Some(0),
+                        _ => false,
+                    };
+                    if !supported {
+                        return Err(invalid("Unsupported captured data loading."));
+                    }
+                    physical_loading[bin] = assignment.bit_loading.unwrap_or(0);
+                    (assignment.carrier_type, assignment.bit_loading)
+                }
                 PhysicalCarrierRole::ContinuousPilot => (CarrierType::ContinuousPilot, Some(1)),
                 PhysicalCarrierRole::Plc => (CarrierType::Plc, Some(4)),
                 _ => unreachable!(),
             };
             if (assignment.carrier_type, assignment.bit_loading) != expected {
-                return Err(LabError::new("UnsupportedMeasuredProfile","Captured assignments differ from the configured uniform256-QAM/pilot/PLC layout."));
+                return Err(LabError::new("UnsupportedMeasuredProfile","Captured protected assignments differ from the configured data/pilot/PLC layout."));
             }
         }
         let response = if let Some(index) = self.channel_index {
@@ -175,13 +217,77 @@ impl MeasurementSelection {
         };
         let impairments = ChannelImpairments {
             seed: self.noise_seed,
-            noise: NoiseModel::Rxmer {
-                frame: frame.clone(),
+            noise: if self.use_rxmer_noise {
+                NoiseModel::Rxmer {
+                    frame: frame.clone(),
+                }
+            } else {
+                NoiseModel::Noiseless
             },
             response,
         };
         impairments.plan(&settings.transmission, &layout, settings.llr_variance)?;
-        settings.impairments = impairments;
+        let mut candidate = settings.clone();
+        candidate.data_bit_loading = Some(physical_loading);
+        candidate.impairments = impairments;
+        if !self.transitions.is_empty() && !candidate.impairment_timeline.is_empty() {
+            return Err(invalid(
+                "Select imported transitions or an explicit impairment timeline, not both.",
+            ));
+        }
+        let mut previous = frame.capture_time;
+        let mut retained_samples = 0usize;
+        for transition in &self.transitions {
+            let next_frame = scenario
+                .frames
+                .get(transition.frame_index)
+                .ok_or_else(|| invalid("Transition RxMER frame index is out of range."))?;
+            if next_frame.key != frame.key || next_frame.capture_time <= previous {
+                return Err(invalid(
+                    "Measurement frames must share an exact identity/grid and increase in epoch.",
+                ));
+            }
+            let selection = MeasurementSelection {
+                use_rxmer_noise: self.use_rxmer_noise,
+                transitions: Vec::new(),
+                frame_index: transition.frame_index,
+                profile_id: self.profile_id,
+                channel_index: transition.channel_index,
+                tolerance_seconds: self.tolerance_seconds,
+                noise_seed: self.noise_seed,
+            };
+            let mut next_settings = settings.clone();
+            next_settings.impairments = ChannelImpairments::default();
+            next_settings.impairment_timeline.clear();
+            selection.apply_validated(scenario, &mut next_settings)?;
+            retained_samples = retained_samples
+                .checked_add(next_frame.mer_db.len())
+                .and_then(|count| {
+                    count.checked_add(
+                        next_settings
+                            .impairments
+                            .response
+                            .as_ref()
+                            .map_or(0, |response| response.iq.len()),
+                    )
+                })
+                .filter(|count| *count <= 4_000_000)
+                .ok_or_else(|| invalid("Imported timeline exceeds retained-sample budget."))?;
+            let ticks = u64::from(next_frame.capture_time - frame.capture_time)
+                * u64::from(crate::transmission::settings::SAMPLE_RATE_HZ);
+            let period = u64::from(settings.transmission.subcarrier_spacing.fft_samples())
+                + u64::from(settings.transmission.cyclic_prefix_samples);
+            candidate
+                .impairment_timeline
+                .push(super::timeline::ImpairmentEpoch {
+                    first_observation_symbol: ticks.div_ceil(period),
+                    capture_time: next_frame.capture_time,
+                    impairments: next_settings.impairments,
+                });
+            previous = next_frame.capture_time;
+        }
+        candidate.validate()?;
+        *settings = candidate;
         Ok(())
     }
 }

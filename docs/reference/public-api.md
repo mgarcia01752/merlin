@@ -108,3 +108,32 @@ confirmed partial/final pairs and disables further diagnostic retention only.
 termination status when requested. No Python/Qt types or file paths enter the
 scientific API. See the [component guide](../user/impairments/paired-constellation.md)
 for coordinate meaning, finite bounds and reference scaling.
+
+## Receiver Channel Estimation (CH-EST-RX) and applied measurements
+
+`signal_processing::receiver::channel_estimation` exposes receiver mode, pilot LS
+observations, full bounded estimates and interpolation through `PilotChannelEstimator`.
+Its `timing` module exposes the bounded CP search; `WaveformReceiver::from_pilots`
+and `acquire_from_pilots` compose independent reception without supplied H.
+The latter still needs known numerology and PLC phase.
+
+`ChannelRunSettings.receiver_mode` selects supplied or pilot-estimated correction.
+The stepper's `channel_estimate()` borrows the latest estimate. The job/CLI carries
+the same optional owned `channel_estimate`. No observer is required to obtain it.
+`protected_constellation` configuration/results and borrowed/take operations
+provide four finite acquisition-safe receive-pair streams. See the
+[analyzer guide](../user/receiver-estimation/analyzers.md) for metadata and limits.
+
+`transmission::layout::bit_loading::source_bit_loading` implements Ci=P^-1(Bi).
+`PayloadBitOrder` exposes the uniform/mixed coded-bit permutation before cell
+grouping. Applied-profile TX/RX consume the same verified profile processing;
+`SoftDataCell.llrs` is now variable-length, including empty zero-loaded cells.
+The existing default constructors retain their uniform256 behavior.
+
+`simulation::channel::timeline::ImpairmentEpoch` schedules explicit physical
+measurement changes. Imported `MeasurementSelection.transitions` derives the
+schedule from original capture epochs; `use_rxmer_noise=false` selects a CE-only
+static experiment while preserving source association. Source/profile/cell state
+is independent of these measurement updates. Library callers never need paths,
+Qt objects or a Python runtime. See the [profile](../user/payload-transport/applied-profiles.md)
+and [timeline](../user/impairments/measurement-timeline.md) guides.

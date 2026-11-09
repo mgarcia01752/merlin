@@ -20,6 +20,7 @@ use crate::{
 /// Persistent source-order receiver; a rejected control/collection result closes this session.
 pub struct PayloadSymbolDecoder {
     settings: PackingSettings,
+    bit_loading: Vec<u8>,
     origin: u64,
     next_local: u64,
     control: NcpFieldCodec,
@@ -39,7 +40,26 @@ impl PayloadSymbolDecoder {
     /// # Errors
     /// Rejects geometry/origin or codec initialization failures.
     pub fn new(settings: PackingSettings, origin: u64) -> Result<Self, LabError> {
+        Self::with_bit_loading(settings, origin, vec![8; settings.interleaver_cells])
+    }
+    /// Starts source-order decoding with independently received pre-interleaving loading.
+    /// # Arguments
+    /// * `settings` - Acquired NI, uniform NCP and data profile identity.
+    /// * `origin` - Absolute source index at a128-symbol PLC boundary.
+    /// * `bit_loading` - Exactly NI source-rank bit counts, obtained via inverse frequency mapping.
+    /// # Returns
+    /// Independent soft demappers, randomizers and variable-width codeword collector.
+    /// # Errors
+    /// Rejects geometry, origin, unsupported loading or codec setup failures.
+    pub fn with_bit_loading(
+        settings: PackingSettings,
+        origin: u64,
+        bit_loading: Vec<u8>,
+    ) -> Result<Self, LabError> {
         settings.validate()?;
+        if bit_loading.len() != settings.interleaver_cells {
+            return Err(invalid("Payload profile does not match NI."));
+        }
         super::configuration::validate_origin(origin)?;
         if settings.data_profile_id != crate::transmission::symbols::PAYLOAD_PROFILE_ID {
             return Err(LabError::new(
@@ -54,7 +74,8 @@ impl PayloadSymbolDecoder {
             control: NcpFieldCodec::new()?,
             ncp_randomizer: CellRandomizer::new(),
             data_randomizer: CellRandomizer::new(),
-            collector: PayloadCollector::new()?,
+            collector: PayloadCollector::with_bit_loading(&bit_loading)?,
+            bit_loading,
             previous_starts: 0,
             closed: false,
         })
@@ -145,7 +166,8 @@ impl PayloadSymbolDecoder {
             .ok_or_else(|| invalid("Source symbol counter overflow."))?;
         let mut points = Vec::new();
         let mut point_variances = Vec::new();
-        for ((cell, role), variance) in cells.iter().zip(roles).zip(variances) {
+        let mut point_loading = Vec::new();
+        for (rank, ((cell, role), variance)) in cells.iter().zip(roles).zip(variances).enumerate() {
             match (cell, role) {
                 (
                     Some(TransportCell::PilotPlaceholder),
@@ -157,6 +179,7 @@ impl PayloadSymbolDecoder {
                     let variance = variance
                         .filter(|value| value.is_finite() && *value > 0.0)
                         .ok_or_else(|| invalid("Missing source-cell residual variance."))?;
+                    point_loading.push(self.bit_loading[rank]);
                     point_variances.push(variance);
                     points.push(*point)
                 }
@@ -240,17 +263,17 @@ impl PayloadSymbolDecoder {
             }
             for (data_position, (point, is_payload)) in points.iter().zip(payload).enumerate() {
                 if is_payload {
-                    let soft = data_randomizer.descramble_data_llrs(
-                        crate::transmission::symbols::PAYLOAD_ORDER,
-                        &qam_llrs(
-                            crate::transmission::symbols::PAYLOAD_ORDER,
-                            *point,
-                            point_variances[data_position],
-                        )?,
-                    )?;
-                    let llrs = soft
-                        .try_into()
-                        .map_err(|_| invalid("Expected eight payload soft bits per cell."))?;
+                    let bits = point_loading[data_position];
+                    let llrs = if bits == 0 {
+                        data_randomizer.zero_loaded_bpsk()?;
+                        Vec::new()
+                    } else {
+                        let order = 1u16 << bits;
+                        data_randomizer.descramble_data_llrs(
+                            order,
+                            &qam_llrs(order, *point, point_variances[data_position])?,
+                        )?
+                    };
                     result.data_soft.push(SoftDataCell {
                         data_position,
                         llrs,

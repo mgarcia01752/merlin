@@ -55,8 +55,9 @@ I,Q\in\{-3,-1,+1,+3\}.
 
 This is the supplied-H validation baseline, with known timing and PLC phase.
 The receiver does not yet estimate H from the pilots. The
-[planned estimator](../../development/features/pilot-channel-estimation/plan.md)
-will be checked against this baseline. These simulated constellations use a
+[receiver estimator](../../development/features/pilot-channel-estimation/plan.md)
+is checked against this baseline; see the
+[new receiver guides](../receiver-estimation/README.md) for implemented scope. These simulated constellations use a
 measured response; they are not recovered field I/Q recordings.
 
 ## Reproduce the Rust simulation

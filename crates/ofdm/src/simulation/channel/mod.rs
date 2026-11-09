@@ -19,3 +19,7 @@ pub mod accounting;
 pub mod job;
 pub use job::{run_channel, ChannelJobLimits, ChannelJobResult, ChannelJobStatus, ChannelProgress};
 pub mod document;
+
+pub mod protected_constellation;
+
+pub mod timeline;
