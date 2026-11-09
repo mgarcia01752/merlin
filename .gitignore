@@ -1,6 +1,67 @@
-/target/
+# Rust build outputs, including nested adapter workspaces.
+target/
+**/*.rs.bk
+*.profraw
+*.profdata
+/coverage/
+
+# Project-local toolchains, private development inputs and release staging.
 /local/
 /development/
+/dist/
+/artifacts/
+
+# Native executable/library outputs and debug symbols.
+*.exe
+*.dll
+*.so
+*.so.*
+*.dylib
+*.a
+*.lib
+*.o
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.dSYM/
+
+# Native installer outputs.
+*.deb
+*.rpm
+*.AppImage
+*.dmg
+*.pkg
+*.msi
+*.msix
+*.app/
+
+# Future Qt/CMake build outputs and per-user Qt Creator state.
+# Keep crates/ofdm/build/ tracked: it contains Rust build-helper source.
+/build/
+/apps/**/build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+compile_commands.json
+.qt/
+.rcc/
+.qmlcache/
+.qmake.stash
+.qmake.cache
+*.pro.user*
+*.qmlproject.user*
+CMakeLists.txt.user*
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+
+# Private specification PDFs and Python development-tool caches.
 *.pdf
 __pycache__/
 *.pyc
+
+# Keep Cargo.lock, source resources and intentional PNM .bin fixtures tracked.
+# Archives are not globally ignored: they may be intentional demo inputs.

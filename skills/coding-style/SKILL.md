@@ -303,6 +303,18 @@ Shell/Python executable scripts retain the shebang on the first line:
 ```
 
 Preserve existing copyright statements; do not invent authors, dates or ownership.
+
+For project-owned code and licensing notices, preserve the original copyright
+start year when work continues into a later calendar year. On modification,
+extend the notice through the current year: `Copyright 2026 Maurice Garcia`
+becomes `Copyright 2026-2027 Maurice Garcia` for work in 2027, then
+`Copyright 2026-2028 Maurice Garcia` for work in 2028. Apply the same rule to
+project contributor notices. New files start with their actual creation year.
+Do not replace the start year with the latest year or advance an end year before
+that year arrives. Apply this when modifying the affected file or updating the
+project's licensing notices; a January 1 rollover does not authorize changing
+unrelated files. Preserve third-party copyright dates and notices unchanged;
+record our later contributions separately where applicable.
 SPDX identifiers must agree with package licenses and applicable full license texts.
 A header does not replace required LICENSE/NOTICE files.
 

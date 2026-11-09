@@ -3,6 +3,8 @@
 This is the maintained architecture for this repository. The
 [implementation checklist](development/checklist.md) records completed work,
 remaining requirements and the next implementation step.
+The [development status](development/status.md) summarizes the current milestone,
+recent evidence and remaining product scope.
 The [simulation design index](user/simulation/README.md) links a separate
 Mermaid-based user guide for each simulation component. Detailed equations and
 examples live in the linked stage guides; private evidence and investigation
@@ -18,6 +20,11 @@ RX-CONFIG, rather than temporary NEXT labels. Local numbering identifies work;
 dependencies and current priority determine the next item to implement.
 
 ## Purpose and scope
+
+MERLIN (Modulation, Encoding, Reception, Link Impairments & Noise) is the
+DOCSIS OFDM Simulation Toolkit. Its transmitter models a CMTS-like single-channel
+downstream PHY path, paired with a simulated channel and receiver. Full CMTS MAC
+services and multi-channel operation are outside the current scope.
 
 Build a standalone, DOCSIS-focused Rust scientific engine with two modes:
 

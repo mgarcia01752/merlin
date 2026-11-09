@@ -1,7 +1,8 @@
 # Implementation checklist
 
 This is the official progress and TODO list for DOCSIS OFDM Channel Sim. Read it
-with the [architecture](../architecture.md). Update both when adding a stage,
+with the [architecture](../architecture.md) and the concise
+[development status](status.md). Update both when adding a stage,
 changing ownership, exposing a test point or extending scientific support.
 Review both at feature completion and before supplying each commit message;
 update affected sections and retain unchecked status for partial work.

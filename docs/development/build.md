@@ -79,3 +79,16 @@ CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 ./scrip
 This runs the same checks; it changes build metadata/cache size, not scientific
 algorithms. Normal development can keep debug information enabled. The repository's
 ignored `development/` stores private validation logs; it is not a runtime input.
+
+## Generated files and Git
+
+`.gitignore` excludes nested Cargo `target/` directories, profiling/coverage
+outputs, native executables/libraries/debug symbols and installer packages.
+Future Qt/CMake build outputs and Qt Creator per-user settings are excluded too;
+this does not introduce a Qt build or installer implementation.
+
+Keep `Cargo.lock`, shared build configuration, QAM resources and intentional PNM
+`.bin` demos in Git. PNM binaries are measurement fixtures, not compiled programs.
+`crates/ofdm/build/` contains maintained Rust build-helper source and must remain
+tracked. Use root `build/`, an app's `build/`, or `cmake-build-*` for native build
+trees; use root `dist/` or `artifacts/` for release staging.

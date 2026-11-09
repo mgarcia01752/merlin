@@ -1,86 +1,96 @@
-# DOCSIS OFDM Channel Sim
+# MERLIN — DOCSIS OFDM Simulation Toolkit
 
-Offline Rust libraries and a CLI for downstream profile analysis and experimental
-LDPC/BCH simulation. **Under development.**
+*Modulation, Encoding, Reception, Link Impairments & Noise*
 
-DOCSIS OFDM Channel Sim provides a standalone public Rust library and CLI.
-All scientific processing, including FEC, is Rust. Focus is downstream OFDM;
-OFDMA comes later.
-A Qt presentation component and Python bindings are deferred until the scientific
-functionality is established.
+**Under development — standalone Rust scientific engine and CLI.**
 
-- Actual BCH and LDPC encoding/decoding, seeded AWGN and measured per-carrier MER.
-- Named BER stages, codeword errors, iteration counts and confidence intervals.
-- Conservative and percentile candidate generation, protected carrier roles,
-  full-resolution temporal screening and gross useful-symbol capacity.
-- Exact device/channel/grid matching and explicit timestamp tolerance.
-- Versioned decoded-scenario and candidate JSON; no device control or deployment.
+Simulate a single downstream DOCSIS OFDM channel, recover its payload through
+actual BCH/LDPC decoding, and measure how impairments affect bit errors and decoder
+work. Run an ideal reference or use decoded RxMER, downstream channel estimates
+and an applied modulation profile. All signal processing and FEC run in Rust.
 
-The first coding experiment uses short16200-bit LDPC, rate8/9, BCH14232/14400 and
-uniform16-QAM. Profile analysis recognizes data constellations through16384-QAM;
-full coding simulations for higher orders remain pending. Label-ordered mapping
-and reference soft demapping are available through16K-QAM;
-see [QAM mapping](docs/user/qam-mapping.md). A standalone
-[data/NCP randomizer](docs/user/cell-randomizer.md) supports the same data orders.
-A [noiseless256-QAM coding loop](docs/user/qam256-coding-loop.md) now connects
-bit processing, randomization and FEC, reporting iterations for each codeword.
-A [stateful symbol packer](docs/user/symbol-packing.md) carries those codewords
-across symbols and reserves NCP/CRC space. The [NCP codec](docs/user/ncp.md)
-provides control LDPC, CRC and received codeword-start discovery.
-[Cell interleaving](docs/user/cell-interleaving.md) now provides persistent time
-delays, frequency permutations and the inverse physical pilot reference.
-Separate [pilot generators and bounded test points](docs/user/pilot-signals.md)
-provide physical-bin BPSK signs and explicit amplitude scaling.
-The [PLC channel path](docs/user/plc-channel.md) now includes fixed acquisition
-messages, FEC, interleaving, randomization, preamble, QAM and physical-bin assembly,
-with known-phase soft recovery and bounded stage observations.
-[Receiver configuration](docs/user/receiver-configuration/README.md) now derives
-channel/profile settings from received descriptors behind a readiness gate.
-[Waveform TX and matched RX](docs/user/waveform/README.md) now carry actual PLC/pilot
-signals through time samples, with bounded test points and a noiseless example.
-[Actual payload/NCP transport](docs/user/payload-transport/README.md) now uses
-received PLC configuration, continuous state and real LDPC/BCH recovery over samples.
-The [duration-based channel stepper](docs/user/channel-runner/README.md) now
-streams continuous PRBS through actual waveform TX/RX, with separate acquisition,
-observation, completion and drain. The [channel CLI](docs/user/channel-runner/cli.md) adds source-window throughput/BER,
-cancellation, partial results and bounded probe export. Nonideal acquisition and
-external interoperability validation remain pending. See
-[coding scope and equations](docs/reference/coding-mode.md).
+MERLIN models a **CMTS-like transmit path for a single downstream OFDM channel**,
+including profile-based modulation, FEC, PLC/NCP signaling, pilots and waveform
+generation. A simulated channel and receiver complete the experiment so you can
+measure payload recovery and decoder behavior. Its scope is the supported PHY
+path; full CMTS MAC services and multi-channel operation are outside that scope.
 
-[Simulation design guides](docs/user/simulation/README.md) explain each simulation
-component with its own data-flow diagram and current implementation scope.
-The [PNM input guide](docs/user/measurement-inputs/README.md) links the decoded
-three-capture demo and synthetic RxMER variants for the current JSON importer.
-The [waveform impairment guides](docs/user/impairments/README.md) cover sample AWGN,
-measured residuals, supplied channel response and protected LTE correction experiments.
+## Where development stands
 
-The isolated codec loop is available before involving modulation or a channel:
+The fixed **256-QAM waveform path** and continuous run infrastructure are
+implemented. Measurement-driven experiments now demonstrate both error-free
+recovery and post-FEC bit errors as RxMER worsens. This is a research prototype
+with a known-reference receiver; external DOCSIS interoperability is not established.
 
-See the [FEC codec user guide](docs/user/fec-codec.md) for the encode/decode flow,
-public API example and mathematical explanation.
+| Area | Current implementation |
+| --- | --- |
+| Transmission | Single channel up to 192 MHz; 25/50 kHz spacing; configurable prefix, roll-off and time interleaving |
+| Coding and signaling | BCH + short rate-8/9 LDPC; data randomization; actual PLC/NCP signaling and received configuration |
+| Waveform TX/RX | Frequency/time interleaving, pilots, IFFT, prefix, windowing, sample transport and matched receiver |
+| Continuous runs | PRBS15, configurable duration, startup/drain accounting, cancellation and partial results |
+| Impairments | Seeded sample AWGN or per-carrier RxMER residuals; optional supplied channel response and known equalization |
+| Measurements | Current `pnm-decode` JSON import for RxMER, channel estimation and modulation profiles; fixed uniform 256-QAM runs |
+| Results | Recovered-payload BER, codeword failures, actual LDPC iterations, BCH corrections and bounded stage probes |
+| Modulation coverage | Mapping/soft demapping through 16384-QAM; full waveform coding currently uniform 256-QAM |
 
-```bash
-./scripts/cargo-local.sh run -p fec-codec --example codec_loop --locked
+See the [development status](docs/development/status.md) for completed milestones,
+remaining work and validation limits. The [implementation checklist](docs/development/checklist.md)
+is the detailed source of progress; the [architecture](docs/architecture.md)
+describes component ownership.
+
+## Simulation flow
+
+```mermaid
+flowchart LR
+    PRBS["PRBS15 payload"] --> TX["TX: BCH/LDPC, QAM, interleaving, OFDM waveform"]
+    TX --> CHANNEL["Channel: noiseless, AWGN or RxMER residuals + optional H"]
+    CHANNEL --> RX["RX: OFDM, equalization, inverse interleaving, LDPC/BCH"]
+    RX --> RESULTS["Payload BER, codeword failures and LDPC iterations"]
+    PRBS -->|"Independent truth comparison after decoding"| RESULTS
 ```
 
+PLC/NCP signaling, pilots and receiver configuration are part of the implemented
+path. The [component guides](docs/user/simulation/README.md) explain each subsystem.
+
+## Try it locally
+
+Prerequisite: Rust 1.85.1. The Cargo wrapper uses an existing project-local
+toolchain when available and installs nothing. Run from the repository root,
+using a new output filename:
+
 ```bash
-./scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- \
-  simulate --input examples/awgn.json --output awgn-result.json
+scripts/cargo-local.sh run -p ofdm-fec-cli --release --locked -- channel \
+  --input examples/channel-awgn.json --output awgn-channel-result.json
 ```
 
-Build prerequisite: Rust1.85.1. The wrapper uses an existing
-project-local toolchain when present and installs nothing.
+For the isolated codec before involving QAM or a channel:
 
+```bash
+scripts/cargo-local.sh run -p fec-codec --example codec_loop --locked
+```
+
+## Measurements and demos
+
+- [PNM input guide](docs/user/measurement-inputs/README.md): import the three decoded capture types; binary decoding stays external.
+- [Impairment experiments](docs/user/impairments/experiments.md): reproduce the RxMER sweeps and inspect FEC outcomes.
+- [Binary RxMER demos](examples/measurements/rxmer-fec-stress/README.md): baseline plus 12, 11, 10 and 9 dB stress cases for external viewing.
+
+## Documentation
+
+[Channel CLI](docs/user/channel-runner/cli.md) ·
+[Other CLI experiments](docs/cli.md) ·
+[FEC codec and equations](docs/user/fec-codec.md) ·
+[Transmission settings](docs/user/transmission.md) ·
+[Modulation support](docs/reference/ofdm-support.md) ·
+[Public Rust API](docs/reference/public-api.md) ·
+[JSON contracts](docs/reference/documents.md) ·
 [Build and test](docs/development/build.md) ·
-[Git and releases](docs/development/git.md) ·
 [Logging](docs/development/logging.md) ·
-[CLI examples](docs/cli.md) ·
-[Architecture](docs/architecture.md) ·
-[Implementation checklist](docs/development/checklist.md) ·
-[Public API](docs/reference/public-api.md) ·
-[Transmission setup](docs/user/transmission.md) ·
-[Modulation coverage](docs/reference/ofdm-support.md) ·
-[JSON contracts](docs/reference/documents.md)
+[Git and releases](docs/development/git.md)
+
+OFDMA, mixed-profile waveform coding, blind/nonideal receiver estimation, Python
+bindings, a Qt interface and native installers remain future work. Current runtime
+validation is Linux; Windows/macOS and external interoperability remain open.
 
 Apache-2.0 project code, with MIT/Apache dependencies and a Rust-adapted MIT BCH
 implementation. See [LICENSE](LICENSE), [NOTICE](NOTICE) and the
