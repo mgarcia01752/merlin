@@ -1,6 +1,6 @@
 # Visual system workspace and selectable payload source
 
-**Planned design; no Qt workspace or text-file source is implemented.**
+**Planned design; no Qt workspace or text/binary file source is implemented.**
 The user's updated system sketch, including the OFDM transmission settings panel,
 is the starting layout, rather than a final screen
 specification. The application remains a standalone MERLIN simulator. Existing
@@ -17,12 +17,12 @@ experiment or enabling an unbounded diagnostic capture.
 ```mermaid
 flowchart LR
     subgraph FILES["Files / inputs"]
-        TEXT["Optional text payload"]
+        FILE["Optional text or binary payload file"]
         PROFILE["Applied modulation-profile PNM input"]
         MER["RxMER PNM input(s)"]
         CE["DS channel-estimation PNM input"]
     end
-    SRC["Source: PRBS15 or text-file bytes"]
+    SRC["Source: PRBS15 or text/binary file bytes"]
     SETTINGS["OFDM transmission settings: CP / roll-off / interleaver / pilots"]
     TX["Transmitter"]
     CH["Channel simulator"]
@@ -33,7 +33,7 @@ flowchart LR
     POST["QAM analyzer: post-CE"]
     PILOT["Pilot analyzer: continuous / scattered"]
     PLC["PLC analyzer: data / preamble"]
-    TEXT --> SRC
+    FILE --> SRC
     SRC --> TX
     SETTINGS --> TX
     SETTINGS -. "Matching RX bootstrap" .-> RX
@@ -65,7 +65,7 @@ do not silently modify a running transmitter or receiver.
 
 | Block | Proposed contents |
 | --- | --- |
-| Source | PRBS15 or text-file selection; seed or byte count; progress and EOF policy. |
+| Source | Click to edit PRBS15 or text/binary file selection; OS picker, seed, original/target sizes, optional append-PRBS15 fill, progress and EOF policy. |
 | OFDM transmission settings | Cyclic prefix, roll-off/windowing, time-interleaver depth and supported pilot configuration/scaling; show purpose and trade-offs, validate through Rust and apply to the next run. |
 | Transmitter | Applied transmission settings, profile, coding/mapping/interleaving and waveform stage breakdown. |
 | Channel simulator | Selected RxMER frame(s), supplied H, noise/reference mode, frequency grid and impairment settings. |
@@ -93,17 +93,18 @@ PNM describes the measurements' origin. The current supported input is decoded
 `pnm-decode` JSON through the shared Rust importer, or an already validated typed
 scenario. The workspace must not imply that native binary PNM parsing exists in
 this repo. Any future binary-file convenience must use an explicit decoder
-adapter. Text payload files are a separate data-source input, not PNM measurements.
+adapter. Text/binary payload files are a separate data-source input, not PNM measurements.
 
 Multiple RxMER files can be listed. The simulation core supports explicit validated
 measurement epochs and frame association; listing files alone does not activate
 playback. The UI must configure that schedule through the existing Rust contract.
 
-## Planned text-file source
+## Planned text and binary file source
 
-Add a Rust-owned source beside PRBS15, feeding the same payload/FEC path. A text
-file supplies its exact bytes, including line endings and any UTF-8 multibyte
-sequences. Do not normalize text, remove a BOM or convert it to numeric strings.
+Add a Rust-owned source beside PRBS15, feeding the same payload/FEC path. Text
+and binary files supply their exact bytes. For text, preserve line endings, BOM
+and any UTF-8 multibyte sequences without normalization or conversion. Binary
+files require no text decoding; embedded zeros and invalid UTF-8 remain intact.
 The proposed bit order is most-significant bit first within each byte; declare it
 in the source configuration and test it independently. This is a proposed source
 contract, not a change to the existing PRBS15 recurrence or its seed ordering.
@@ -125,6 +126,36 @@ Empty files, source-size limits, padding, cancellation and partial final bytes
 need defined results and tests before implementation. No source bytes or full
 text contents should be written to diagnostic logs.
 
+### Editable source panel and data-load checks
+
+Clicking Source in the diagram opens its editable settings. Choose PRBS15 or a
+text/binary file through an OS file picker; show the file size and selected EOF
+policy before applying it to the next run. File extensions must not determine
+whether bytes are accepted as payload. Keep source content out of logs.
+
+The Rust source/configuration layer owns bounded file-size checks and any future
+minimum, target or alignment requirement. Qt displays its validation result and
+blocks starting an invalid configuration; the CLI applies the same rules.
+Exact size requirements and target units are deferred: determine their relation
+to coding payload length, active profile and run duration before implementation.
+Fixed-size FEC words do not by themselves require fixed-size user files.
+
+When a defined target exceeds the file length, offer **Append PRBS15 to fill**.
+This is opt-in, with a reproducible seed and declared PRBS bit order. Show the
+original byte/bit count, target count and appended count. Original bytes always
+come first. Keep the PRBS generator independent of channel noise and never reseed
+it at codeword boundaries. The exact initial-state policy must be specified and
+tested before this mode is implemented. An oversized file fails validation or
+requires an explicit change to the target/run; never silently truncate it.
+
+Track three separate segments: original file bits, appended PRBS15 test bits and
+coding padding. Verify file and appended data independently, report their BER
+separately, and export only original file bytes as recovered-file output. Coding
+padding is never counted as meaningful data. Optional PRBS fill follows a finite
+explicit target; it does not imply infinite transmission after EOF. When fill is
+off, preserve send-once/idle behavior. A run that cannot transmit or verify its
+selected data reports partial results with meaningful completion counts.
+
 The core/source API and CLI must support this choice before Qt adds the control.
 PRBS15 remains the default for current runs. A file source is test traffic, not a
 claim to generate DOCSIS MAC frames or provide a network file-transfer service.
@@ -145,6 +176,6 @@ claim to generate DOCSIS MAC frames or provide a network file-transfer service.
 - Before the future UI implementation, add per-component user guides and actual
   screenshots. The Mermaid sketch is a navigational design, not a UI prototype.
 
-Track text-source work as SRC-04..06 and workspace work as UI-01..04 in the
+Track file-source work as SRC-04..06 and workspace work as UI-01..04 in the
 [official checklist](../../checklist.md). Planning this screen does not reorder
 current receiver-estimation dependencies or mark those items complete.

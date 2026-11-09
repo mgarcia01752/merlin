@@ -68,12 +68,14 @@ Guide: [Source design](../user/simulation/source.md).
   [PRBS design](../user/simulation/prbs.md) records seed/bit order, bounds and
   the distinction between mathematical and external interoperability evidence.
 
-- [ ] **SRC-04** Add a bounded exact-byte text source beside PRBS15, with an
+- [ ] **SRC-04** Add a bounded exact-byte text/binary source beside PRBS15, with an
   explicit bit order and cursor; preserve PRBS/noise behavior.
 - [ ] **SRC-05** Define send-once EOF, final-codeword padding and meaningful-length
-  accounting; independently compare recovered file bits and exclude padding.
+  accounting; define size/target rules later and offer opt-in PRBS15 append-to-fill.
+  Independently compare file/fill bits, exclude padding and preserve original bytes.
 - [ ] **SRC-06** Expose source selection through shared Rust/CLI configuration;
-  test byte preservation, empty/oversized inputs, EOF, truncation and cancellation.
+  test text/binary byte preservation, size checks, optional PRBS fill, empty/oversized
+  inputs, EOF, truncation and cancellation; keep noise/source state independent.
   See the [source/workspace plan](features/visual-workspace/plan.md).
 
 ## Forward error correction
@@ -622,7 +624,8 @@ See the [implementation record](features/pilot-channel-estimation/implementation
   cyclic prefix, roll-off/windowing, time-interleaver depth and pilot settings;
   validate through Rust and apply changes to the next run.
 - [ ] **UI-02** Add a role-based file panel and OS file picker; validate inputs
-  before applying them to a new run, with PRBS15/text source selection.
+  before applying them to a new run, with clickable/editable PRBS15/text/binary
+  source selection, size feedback and an explicit append-PRBS15 fill option.
 - [ ] **UI-03** Present separate LDPC, BER, payload pre/post-CE, continuous/scattered
   pilot and PLC-data/preamble analyzers with shared bounded Rust results.
 - [ ] **UI-04** Validate responsive jobs, cancellation, observation invariance and

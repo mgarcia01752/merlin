@@ -80,7 +80,7 @@ configures the transmitter and the matching receiver bootstrap for the next run.
 
 ```mermaid
 flowchart LR
-    SOURCE["Source: PRBS15 / planned text-file bytes"] --> TX["Transmitter"]
+    SOURCE["Source: PRBS15 / planned text or binary file"] --> TX["Transmitter"]
     SETTINGS["OFDM transmission settings<br/>Cyclic prefix · roll-off/windowing<br/>Time-interleaver depth · pilot configuration/scaling"] --> TX
     PROFILE["Modulation-profile PNM input"] --> TX
     TX --> CH["Channel simulator"] --> RX["Receiver"]
@@ -119,12 +119,25 @@ pilot-estimated H-hat remain separate receiver modes. The source comparison path
 is verification, not receiver feedback or PRBS reseeding. PNM labels describe input
 roles; current files enter through decoded JSON or validated typed scenarios.
 
-Plan a source choice of **PRBS15 or user-supplied text-file bytes**. The Rust source
-will preserve exact bytes, explicit bit order, meaningful lengths and independent
-recovered-data comparison. Proposed initial EOF policy is send-once with explicit
-final-codeword padding excluded from BER/output; truncated runs remain partial.
-Source/CLI integration must precede its Qt control; current PRBS behavior is
-unchanged. SRC-04..06 track this unimplemented extension.
+Plan a source choice of **PRBS15 or user-supplied text/binary file bytes**.
+Clicking the workspace Source block opens editable source settings and an OS file
+picker. Preserve exact bytes, explicit bit order, original length and independent
+recovered-data comparison; text needs no normalization or encoding conversion.
+
+Before a run, Rust validates file size against resource limits and the selected
+data-load policy. Show the original size, required/target size when defined,
+and remaining fill amount. Offer an explicit **Append PRBS15 to fill** option
+when a file is shorter than a defined target; do not silently append, repeat or
+truncate input. Exact size rules, target units and how they depend on the selected
+coding/profile/duration remain **TODO for later definition**. Do not impose a
+fixed file size merely because FEC uses fixed-size payload blocks.
+
+Keep original-file bits, appended PRBS15 bits and final-codeword padding distinct.
+Recovered-file output contains only the original bytes; compare file and PRBS15
+segments separately, excluding coding padding from BER. Without optional fill,
+send once and then use idle/filler; truncated runs remain partial. Source/CLI
+integration must precede its Qt control; current PRBS behavior is unchanged.
+SRC-04..06 track this unimplemented extension.
 
 The file panel associates inputs with their processing stages. Measurement files
 continue through the current decoded-PNM JSON importer; listing multiple RxMER
