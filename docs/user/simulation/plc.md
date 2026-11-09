@@ -18,7 +18,7 @@ flowchart TB
     EXTRACT --> RX["Soft demap, inverse mask/interleaving and LDPC"]
     RX --> CRC["Message validation and packet reassembly"]
     CRC --> DESC["Received descriptor fields"]
-    DESC -.-> CONFIG["TODO: receiver-owned channel/profile configuration"]
+    DESC --> CONFIG["Receiver-owned channel/profile configuration"]
     CONFIG -.-> DATA["TODO: configure full-channel data/NCP recovery"]
 ```
 
@@ -37,11 +37,12 @@ physical frequency bins. They currently pass between Rust modules as in-memory
 values. They do not yet pass through an IFFT, time-domain channel and FFT. That
 waveform path is a separate checklist stage.
 
-Recovered descriptors are validated and exposed today. **Applying them to a
-receiver-owned operational configuration is not implemented yet.** That state
-must combine a consistent OCD, ProfileA and NCP DPD before configuring full-channel
-recovery. PLC bootstrap alignment/numerology is still supplied reference knowledge.
-A valid message alone must not be described as a fully configured receiver.
+Recovered descriptors now feed a [receiver-owned configuration subsystem](../receiver-configuration/README.md).
+It collects a consistent OCD/ProfileA/NCP set, applies assignments, and gates
+settings with Waiting/Ready/Rejected states. A rejection preserves the last valid
+snapshot without leaving the gate open. PLC bootstrap alignment/numerology stays
+supplied reference knowledge. Full data/NCP receive orchestration remains planned;
+a ready configuration is not proof of completed payload recovery.
 
 Failures remain visible: LDPC decisions and iterations are retained, message
 acceptance requires decoding and timestamp validation, and packet HCS/FCS checks

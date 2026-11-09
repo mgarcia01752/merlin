@@ -129,8 +129,9 @@ adds tested permutation/inverse stages and bounded label observations.
 frame resets and a sign-only soft inverse, with direct typed snapshots.
 The [complete fixed PLC path](../user/plc-channel.md) now includes acquisition
 packets, repetition/segmentation, preamble, mapping, physical-bin assembly and
-bounded observations. The next dependency is **RX-CONFIG-01: receiver configuration
-from decoded PLC**; waveform implementation then starts at WAVE-01.
+bounded observations. **RX-CONFIG-01** now builds receiver-owned configuration
+from those decoded messages. The next implementation group is waveform
+transforms, beginning at **WAVE-01**.
 
 - [x] **PLC-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
@@ -184,7 +185,7 @@ Do not create empty source files merely to make the planned tree appear complete
 
 ## Receiver configuration from PLC
 
-- [ ] **RX-CONFIG-01** Add receiver-owned state that consumes CRC-validated,
+- [x] **RX-CONFIG-01** Add receiver-owned state that consumes CRC-validated,
   reassembled OCD/ProfileA/NCP DPD descriptors and applies a consistent channel
   configuration. Preserve channel/profile/change identities; validate required
   descriptors before data/NCP recovery. Derive layout, interleaving and modulation
@@ -192,8 +193,14 @@ Do not create empty source files merely to make the planned tree appear complete
   PLC bootstrap knowledge explicit. Test missing/corrupt/inconsistent messages,
   configuration readiness and unchanged valid state after rejection.
 
-Recovered messages and parsed TLVs exist; applying them to a full receiver is
-not implemented. See [PLC simulation design](../user/simulation/plc.md).
+Separate channel/profile/collection/configuration/state modules now validate
+received settings and expose a complete immutable snapshot behind a readiness
+gate. The acquisition composition receives actual PLC I/Q and messages; consumers
+can build physical/pilot/interleaver settings from received data alone. Tests cover
+all descriptor orders, independent counters, missing/corrupt/conflicting input,
+profile precedence and multi-frame transport. Dynamic activation and full data/NCP
+receive orchestration remain under NCP-03/RX-04. See the
+[receiver configuration design](../user/receiver-configuration/README.md).
 
 ## Waveform transforms
 

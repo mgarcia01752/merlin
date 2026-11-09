@@ -111,6 +111,14 @@ impl ManagementPacket {
     pub fn message_type(&self) -> u8 {
         self.bytes[MAC_HEADER_BYTES + 18]
     }
+    /// Copies the validated packet's CMTS MAC-domain source address.
+    /// # Returns
+    /// Six source octets from the received management PDU, never the host address.
+    pub fn source_address(&self) -> MacAddress {
+        let mut source = [0; 6];
+        source.copy_from_slice(&self.bytes[MAC_HEADER_BYTES + 6..MAC_HEADER_BYTES + 12]);
+        source
+    }
     /// Borrows the descriptor payload without MAC/LLC headers or FCS.
     /// # Returns
     /// Unchanged fixed fields and TLV bytes, without interpreting their values.

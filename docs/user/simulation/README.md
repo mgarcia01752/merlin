@@ -11,7 +11,7 @@ Start with the component you want to understand:
 | `source/` | [Payload source](source.md) | Generate reproducible input and retain comparison truth |
 | `coding_loop/` | [Coding loop](coding-loop.md) | Check noiseless256-QAM encoding and recovery, one codeword at a time |
 | `pilots/` | [Pilot signals](pilots.md) | Compose continuous/scattered reference signals for a physical symbol |
-| `plc/` | [PLC transmission and reception](plc.md) | Carry actual configuration messages through PLC coding and frequency bins |
+| `plc/` | [PLC transmission and reception](plc.md) | Recover actual PLC messages and build receiver-owned configuration |
 | `test_points/` | [Stage observations](test-points.md) | Inspect selected intermediate data without changing the experiment |
 | `config.rs`, `runner.rs`, `results.rs` | [Experiment runner](runner.md) | Validate limits, run the existing16-QAM trials and collect outcomes |
 

@@ -12,3 +12,6 @@ pub use receiver::{PlcFrameReceiver, ReceivedPlcFrame};
 pub use transmitter::{generate_frame, PlcFrameSignals};
 
 pub mod observation;
+
+pub mod acquisition;
+pub use acquisition::{PlcAcquisitionReceiver, PlcAcquisitionResult};

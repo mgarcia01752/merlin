@@ -20,6 +20,8 @@ component will adapt inputs and results without duplicating scientific logic.
 | `transmission::plc::{preamble,mapping}` | Verified BPSK columns, normalized16-QAM and soft demapping; analysis-only compatible |
 | `transmission::frame::{assemble,PhysicalFrequencySymbol}` | Physical protected bins, explicit RMS and preserved missing history |
 | `simulation::plc::{generate_frame,PlcFrameSignals,PlcFrameReceiver}` | Bounded known-phase PLC frame TX/RX with direct stage results |
+| `transmission::plc::receiver_configuration::{ReceiverConfigurationState,ReceiverConfigurationStatus,ReceiverConfiguration}` | Fixed-session descriptor admission, readiness gate and immutable received channel/profile settings; analysis-only compatible |
+| `simulation::plc::PlcAcquisitionReceiver` | Composed PLC IQ→FEC→MC packet reassembly→configuration, with retained decode/admission diagnostics |
 | `simulation::plc::observation` | Bounded PLC and physical frequency-grid observations |
 | `simulation::plc::PlcInterleavingStages` | Immutable coded/interleaved stage outputs and bounded optional label observations |
 | `fec_codec::plc::{PlcFecCodec, PlcBlockResult, puncturing}` | Separate PLC mother/punctured LDPC, restored LLRs and actual decoder iterations |

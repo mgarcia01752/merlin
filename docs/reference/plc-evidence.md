@@ -63,3 +63,27 @@ fixed reference scope. MULPI requirements above were checked against text; no
 rendered MULPI-figure verification or external interoperability is claimed.
 
 The full reproducible boundary is documented in [PLC channel](../user/plc-channel.md).
+
+## Receiver configuration from decoded descriptors
+
+MULPI I25 §6.4.40/PDF197–199 defines OCD channel identity, configuration count
+and static physical settings. §6.4.41/PDF200–203 defines per-profile identity and
+independent change counts, NCP uniform modulation and order-independent
+default/specific precedence. OCD and DPD counts are separate counters, not a
+shared generation number. Packet source identity follows §6.4.1/PDF99–100.
+
+The receiver now uses these decoded values for immutable channel/profile settings,
+physical/reduced association and interleaver setup. Available DPDs are checked
+against OCD geometry before readiness; protected OCD roles take precedence.
+The physical validator has one owner shared by OCD parsing and reconstruction.
+The occupied-bandwidth envelope is inferred from active assignments and labeled
+as a minimum; it is not an OCD wire field.
+
+Waiting/Ready/Rejected gating, preserving a historical valid snapshot after
+rejection, exact-repeat admission, byte-level conflict rejection and explicit
+reset for changed descriptors are fixed laboratory session policies. They do not
+claim the full normative modem dynamic-profile state machine. DPD activation
+using NCP change indicators, timeouts and loss recovery remain separate work.
+Tests cover all arrival orders, unequal counters, malformed/conflicting settings,
+assignment precedence, state preservation and actual multi-frame FEC/QAM receive
+configuration. See [receiver design](../user/receiver-configuration/README.md).

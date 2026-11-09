@@ -81,6 +81,7 @@ crates/
 │   │   ├── packing/           Bounded codeword queue and symbol plans
 │   │   ├── ncp/               Messages, control mapping and field CRC acceptance
 │   │   └── plc/               Acquisition/messages, coding, interleaving, masks and signals
+│   │       └── receiver_configuration/  Received channel/profiles, collection and readiness
 │   ├── signal_processing/
 │   │   ├── modulation/        QAM, LLRs, bit processing and cell randomization
 │   │   ├── interleaving/      Separate time, frequency and composition modules
@@ -90,7 +91,7 @@ crates/
 │   ├── simulation/
 │   │   ├── source/            Seeded source; PRBS remains TODO
 │   │   ├── pilots/            Typed stage composition and optional observation
-│   │   ├── plc/               Typed PLC stage composition and optional observation
+│   │   ├── plc/               PLC composition, acquisition and optional observation
 │   │   ├── test_points/       Borrowed events, selection and finite dispatch budgets
 │   │   ├── coding_loop/       Independent 256-QAM codeword trials
 │   │   ├── runner.rs          Existing 16-QAM trial orchestration
@@ -234,14 +235,25 @@ randomization, shared16-QAM mapping and the eight-symbol BPSK preamble. Full-fra
 composition is in `simulation/plc/{transmitter,receiver}.rs`, bounded to one128-symbol
 frame per operation. The receiver takes received equalized local PLC I/Q with
 known spacing/frame alignment, retains decisions/iterations and independently
-checks message and packet acceptance. This is not blind acquisition. Decoded
-OCD/ProfileA/NCP descriptors are not yet applied as receiver-owned operational
-configuration. Add that state before full-channel recovery: require a consistent,
-validated descriptor set, retain channel/profile/change identity and derive
-physical/interleaver/demodulation settings from received messages. Caller-supplied
-PLC bootstrap alignment/numerology remains explicitly separate. Track this gap
-as RX-CONFIG-01; do not pass transmitter layout/profile objects as hidden receiver
-configuration or describe message recovery alone as a configured receiver.
+checks message and packet acceptance. This is not blind acquisition.
+`transmission/plc/receiver_configuration/` now applies received OCD/ProfileA/NCP
+messages through encapsulated channel, profile, collection, configuration and
+readiness owners. Channel reconstruction and packet validation share one OCD
+physical validator. Profiles apply specific-over-default assignments independent
+of TLV order, with OCD protected roles taking precedence. Source/channel identity
+is pinned per fixed session; OCD and the two profile counts remain independent.
+A complete immutable receiver snapshot derives physical/reduced grids, prefix,
+roll-off, interleaving and NCP modulation without transmitter objects.
+
+`simulation/plc/acquisition.rs` composes PLC I/Q decoding, bounded MC reassembly
+and configuration admission. Only supplied PLC bootstrap spacing/alignment stays
+outside received signaling. The readiness gate is Waiting/Ready/Rejected and
+exposes data/NCP settings only when Ready. Rejection preserves accepted descriptors
+and historical configuration; a valid repeat can reopen the gate. Changed packet
+content requires an explicit reset in this fixed-session implementation. Live
+profile activation, descriptor timeouts, automatic loss recovery and full payload
+receive orchestration remain separate work. See the per-subsystem
+[receiver-configuration design guides](user/receiver-configuration/README.md).
 
 `transmission/frame/assembly.rs` combines already cell-interleaved data/NCP,
 scattered placeholders, PLC and actual pilots in increasing physical-bin order.
@@ -266,7 +278,6 @@ before implementation if source analysis shows a better existing owner.
 | --- | --- |
 | `signal_processing/modulation/interleaving/{parity,twist,demultiplexing}.rs` | Separate intermediate and inverse boundaries behind the existing facade |
 | `transmission/layout/additional_pilots.rs` | Specification-based additional continuous-pilot placement |
-| `transmission/plc/receiver_configuration.rs` | Receiver-owned decoded-descriptor state, consistency/readiness and downstream configuration; RX-CONFIG-01 |
 | `transmission/symbols/assembly.rs` | Typed data/NCP/filler composition before randomization/mapping |
 | `signal_processing/waveform/{ifft,fft,cyclic_prefix,windowing,overlap_add}.rs` | Separate waveform transforms and inverse operations |
 | `signal_processing/channel/` | Explicit reference-plane channel and impairment models |

@@ -3,9 +3,8 @@
 The complete fixed-setting PLC path now produces acquisition packets, message
 frames, LDPC codewords, randomized16-QAM data, BPSK preambles and physical
 frequency bins. A known-phase receiver soft-decodes those cells and reassembles
-received packets. Applying the recovered descriptors as operational receiver
-configuration is still pending under RX-CONFIG-01; the current receiver uses
-explicitly supplied PLC bootstrap alignment/numerology. All processing is Rust;
+received packets. Recovered descriptors now build a receiver-owned configuration behind a
+readiness gate; the PLC bootstrap still uses supplied alignment/numerology. All processing is Rust;
 stages remain separately callable.
 
 Run the bounded demonstration:
@@ -15,7 +14,7 @@ Run the bounded demonstration:
 ```
 
 It runs two frames at each spacing, inserts/extracts the PLC in full physical
-frequency grids and reports received OCD/ProfileA/NCP descriptors, actual LDPC
+frequency grids and reports received OCD/ProfileA/NCP descriptors, learned receiver settings, actual LDPC
 iterations, information-bit comparisons and small label/IQ windows. A successful
 noiseless run reports zero information-bit errors. The other data/NCP cells in
 this PLC-focused example are an explicit supplied reference plane. This example
@@ -51,6 +50,8 @@ flowchart TB
 | `transmission::plc::preamble`, `mapping` | Preamble table/sign generation, shared16-QAM mapping and soft demapping |
 | `transmission::frame::assembly` | Protected physical-bin insertion, normalization and explicit missing-history cells |
 | `simulation::plc::transmitter`, `receiver` | Thin bounded known-frame composition and typed completed results |
+| `transmission::plc::receiver_configuration` | Received channel/profile interpretation, bounded collection and immutable readiness-gated settings |
+| `simulation::plc::acquisition` | PLC I/Q reception through reassembly and configuration admission |
 | `simulation::plc::observation` | Selectable read-only stage windows after computation |
 
 Acquisition packet helpers, preamble, mapping and the frame assembler also work
@@ -86,7 +87,8 @@ DPD type50, both version5. Message length counts DSAP through payload; the outer
 MAC length includes the message FCS. Checksum fields use their defined reflected
 wire order. The receiver checks lengths, HCS, FCS and supported headers before
 accepting a packet. `descriptors::parse` exposes received fixed fields and TLVs;
-it does not implement a live modem's channel-configuration state machine.
+a separate fixed-session configuration owner now applies those fields. It does
+not implement dynamic profile activation or a live modem state machine.
 
 For symbol period $T_s=(N+N_{CP})/f_s$, a PLC frame occupies
 
@@ -180,3 +182,8 @@ Tables48/49/PDF151–152 and AnnexA16-QAM; CM-SP-MULPIv3.1-I25-230419
 §6.5.4/PDF218 and AnnexB/PDF592. PHY4.0 I07 §7.3.5.13 delegates FDD PLC
 to PHY3.1; no FDX claim. See [evidence](../reference/plc-evidence.md),
 [architecture](../architecture.md) and [checklist](../development/checklist.md).
+
+See the [receiver configuration design](receiver-configuration/README.md) for
+subsystem encapsulation, states and how received messages control settings.
+Pointer-free MC continuations use their full payload capacity; idle bytes are
+added only after packet data ends, never inside an unfinished packet.

@@ -106,10 +106,25 @@ impl PlcMessageScheduler {
         }
         let mut segment = Vec::with_capacity(candidate.mc_bytes - 1);
         let mut pointer = None;
-        let budget = candidate.mc_bytes - 3;
+        // Pointer-free continuation blocks have two extra payload bytes. Never
+        // reserve those bytes as idle padding in the middle of an unfinished packet.
+        let pointer_budget = candidate.mc_bytes - 3;
+        let pointer_needed = candidate.packet_index < candidate.packets.len()
+            && (candidate.packet_offset == 0
+                || (candidate.packet_index + 1 < candidate.packets.len()
+                    && candidate.packets[candidate.packet_index].len() - candidate.packet_offset
+                        < pointer_budget));
+        let budget = candidate.mc_bytes - 1 - 2 * usize::from(pointer_needed);
         while segment.len() < budget && candidate.packet_index < candidate.packets.len() {
-            if candidate.packet_offset == 0 && pointer.is_none() {
-                pointer = Some(segment.len() as u16);
+            if candidate.packet_offset == 0 {
+                if !pointer_needed {
+                    // An almost-full continuation cannot also fit pointer+start.
+                    // Finish the old packet, then defer the new one to the next frame.
+                    break;
+                }
+                if pointer.is_none() {
+                    pointer = Some(segment.len() as u16);
+                }
             }
             let packet = &candidate.packets[candidate.packet_index];
             let count = (budget - segment.len()).min(packet.len() - candidate.packet_offset);

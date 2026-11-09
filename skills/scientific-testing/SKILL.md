@@ -45,6 +45,14 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
   placeholders and protect PLC/pilot/excluded bins. Test actual cell-interleaver
   outputs and all128 phases. Observation windows retain full grid/frequency
   metadata; disabled/exhausted/failing callbacks preserve completed results.
+- For receiver configuration, recover settings from received messages rather than
+  transmitter objects. Test all descriptor arrival orders, independent OCD/DPD
+  counters, default/specific precedence, protected roles, coverage and grid bounds.
+  Test source/channel/bootstrap consistency, readiness gating and rejection
+  atomicity with the last valid snapshot retained. Keep fixed-session admission
+  policy distinct from dynamic profile activation. Include a real FEC/QAM/MC
+  integration with pointer-free middle continuations and downstream components
+  built only from received settings; never insert idle inside an unfinished packet.
 - For cell interleavers, verify exact index/delay vectors, all supported depths,
   partial columns and dummy padding, PLC-aligned pilot references, startup/drain
   and source-symbol phase at inverse randomizer resets. Never count None history

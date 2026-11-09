@@ -60,6 +60,13 @@ impl PlcMessageFrame {
         )?;
         Self::new(spacing, timestamp, channel)
     }
+    /// Borrows the decoded MC block for receiver-owned packet reassembly.
+    /// # Returns
+    /// Immutable message-channel bytes and pointer, without serializing a duplicate frame.
+    pub fn message_channel(&self) -> &MessageChannelBlock {
+        &self.message_channel
+    }
+
     /// Returns the fixed numerology without inferring it from encoded byte counts.
     /// # Returns
     /// The spacing supplied when this validated message frame was constructed.

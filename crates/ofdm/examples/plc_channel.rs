@@ -4,13 +4,12 @@
  */
 //! Bounded acquisition-to-frequency-grid demonstration for both FFT geometries.
 use docsis_ofdm_fec::{
-    simulation::plc::{generate_frame, PlcFrameReceiver},
+    simulation::plc::{generate_frame, PlcAcquisitionReceiver},
     transmission::{
         frame::assemble,
         layout::{CarrierLayout, CarrierLayoutSettings, PhysicalCarrierRole},
         plc::{
             descriptors::{parse, DescriptorIdentity, FixedPlcDescriptors},
-            reassembly::PlcMessageReassembler,
             scheduling::PlcMessageScheduler,
             ExtendedTimestamp, PlcMessageFrame,
         },
@@ -59,8 +58,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             },
         )?;
         let mut scheduler = PlcMessageScheduler::new(&settings, &descriptors)?;
-        let mut receiver = PlcFrameReceiver::new(spacing)?;
-        let mut messages = PlcMessageReassembler::new();
+        let mut receiver = PlcAcquisitionReceiver::new(spacing)?;
         let frame_samples = u64::from(settings.one_second_timing()?.symbol_period_samples) * 128;
         let mut frames = Vec::new();
         let mut received_descriptors = Vec::new();
@@ -102,8 +100,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     }
                 }
             }
-            let decoded = receiver.decode(&received, 0.01, 100)?;
+            let decoded = receiver.receive_frame(&received, 0.01, 100)?;
             let message = decoded
+                .frame
                 .message
                 .as_ref()
                 .ok_or("PLC message recovery failed")?;
@@ -113,16 +112,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .zip(&recovered)
                 .map(|(left, right)| (left ^ right).count_ones())
                 .sum();
-            for packet in messages.push(
-                &docsis_ofdm_fec::transmission::plc::MessageChannelBlock::from_bytes(
-                    &recovered[12..],
-                )?,
-            )? {
-                received_descriptors.push(parse(&packet)?);
+            for admission in &decoded.admissions {
+                if let Some(error) = &admission.error {
+                    return Err(error.clone().into());
+                }
+                received_descriptors.push(parse(&admission.packet)?);
             }
-            frames.push(serde_json::json!({"frame_index":frame_index,"compared_information_bits":original.len()*8,"bit_errors":bit_errors,"preamble_signs_match":decoded.preamble_signs_match,"ldpc_iterations":decoded.blocks.iter().map(|block|block.iterations).collect::<Vec<_>>(),"first_randomized_labels":&frame.codewords[0].randomized.values()[..8],"first_plc_iq":&frame.codewords[0].iq[..8]}));
+            frames.push(serde_json::json!({"frame_index":frame_index,"compared_information_bits":original.len()*8,"bit_errors":bit_errors,"preamble_signs_match":decoded.frame.preamble_signs_match,"ldpc_iterations":decoded.frame.blocks.iter().map(|block|block.iterations).collect::<Vec<_>>(),"first_randomized_labels":&frame.codewords[0].randomized.values()[..8],"first_plc_iq":&frame.codewords[0].iq[..8]}));
         }
-        results.push(serde_json::json!({"spacing_hz":spacing.frequency_hz(),"fft_bins":spacing.fft_samples(),"repeat_frames":scheduler.repeat_frames(),"received_descriptors":received_descriptors,"frames":frames}));
+        let configuration = receiver.configuration().require_ready()?;
+        let received_layout = configuration.channel().layout_settings();
+        results.push(serde_json::json!({"spacing_hz":spacing.frequency_hz(),"fft_bins":spacing.fft_samples(),"repeat_frames":scheduler.repeat_frames(),"received_descriptors":received_descriptors,"frames":frames,
+            "receiver_configuration": {
+                "status":receiver.configuration().status(),"channel_id":configuration.channel_id(),
+                "ocd_change_count":configuration.ocd_change_count(),"profile_a_change_count":configuration.profile_a().change_count(),"ncp_change_count":configuration.ncp().change_count(),
+                "zero_frequency_hz":received_layout.zero_frequency_hz,"plc_first_bin":received_layout.plc_first_bin,
+                "cp_samples":configuration.channel().transmission().cyclic_prefix_samples,
+                "interleaver_cells":configuration.interleaver_settings()?.cells(),"interleaver_depth":configuration.interleaver_settings()?.depth(),
+                "ncp_constellation_order":configuration.ncp_modulation().order()
+            }
+        }));
     }
     println!(
         "{}",

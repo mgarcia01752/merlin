@@ -33,7 +33,9 @@ Separate [pilot generators and bounded test points](docs/user/pilot-signals.md)
 provide physical-bin BPSK signs and explicit amplitude scaling.
 The [PLC channel path](docs/user/plc-channel.md) now includes fixed acquisition
 messages, FEC, interleaving, randomization, preamble, QAM and physical-bin assembly,
-with known-phase soft recovery and bounded stage observations. Full waveform
+with known-phase soft recovery and bounded stage observations.
+[Receiver configuration](docs/user/receiver-configuration/README.md) now derives
+channel/profile settings from received descriptors behind a readiness gate. Full waveform
 transmission and external interoperability validation remain pending. See
 [coding scope and equations](docs/reference/coding-mode.md).
 

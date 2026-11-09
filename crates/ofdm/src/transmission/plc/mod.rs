@@ -19,6 +19,7 @@ pub mod nibbles;
 pub mod preamble;
 pub mod randomization;
 pub mod reassembly;
+pub mod receiver_configuration;
 pub mod scheduling;
 pub mod timestamp;
 #[cfg(feature = "simulation")]
