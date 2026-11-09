@@ -10,6 +10,7 @@ component will adapt inputs and results without duplicating scientific logic.
 | `transmission::TransmissionTiming` | Whole-symbol accounting for one simulated second |
 | `transmission::layout::{CarrierLayout, CarrierLayoutSettings}` | Immutable physical bin roles and per-symbol scattered pilots |
 | `transmission::layout::ncp::select_ncp_cells` | Eligible NCP cells in the pre-interleaving domain |
+| `transmission::packing::{SymbolPacker, PackingSettings, PackedSymbol}` | Stateful256-QAM queue, symbol plans and NCP capacity reservations |
 | `scenario::{grid, observation}` | Exact identity, source provenance and full-resolution observations |
 | `scenario::association` | Explicit-tolerance timestamp association |
 | `scenario::document` | Versioned decoded scenario inputs |

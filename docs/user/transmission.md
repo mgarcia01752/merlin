@@ -13,7 +13,10 @@ full control-cell packing and time/frequency interleaving are pending.
 stateful API; PLC randomization and channel-runner integration remain pending.
 The [256-QAM coding loop](qam256-coding-loop.md) connects bit processing,
 randomization and reverse decoding as independent codeword trials.
-The existing CLI remains the separate16-QAM coding experiment.
+A [stateful symbol packer](symbol-packing.md) now carries256-QAM codewords
+across pre-interleaving plans with NCP reservations. Actual NCP encoding and
+physical-domain integration remain pending. The existing CLI remains the
+separate16-QAM coding experiment.
 
 ## Transmission flow
 
@@ -147,6 +150,8 @@ CM-SP-PHYv3.1-I20-230419 defines:
   delegated by downstream §7.5.8.1.
 - §7.5.5 and AnnexA: bit demultiplexing, randomization and constellation mapping.
 
-Next are additional-pilot generation, verified256-QAM bit processing, stateful
-interleavers, waveform/windowing and inverse receiver, then a streamed noiseless
-payload comparison. The timing tests do not establish full channel recovery.
+Verified256-QAM bit processing and a [stateful symbol packer](symbol-packing.md)
+are now available separately. Five major stages remain: actual NCP encoding and
+decoding; time/frequency interleaving; pilot/PLC signal generation; IFFT,
+prefix/windowing and inverse receiver; and full one-second noiseless integration.
+The timing and packing tests do not establish full channel recovery.

@@ -17,6 +17,7 @@ crates/
 │   ├── error.rs               Shared scientific diagnostics
 │   ├── types/                 Domain aliases, units and carrier roles
 │   ├── transmission/          Fixed channel numerology and one-second timing
+│   │   ├── packing/           Bounded codeword queue and pre-interleaving symbol plans
 │   │   └── layout/            Physical pilot/PLC roles and separate NCP eligibility
 │   ├── signal_processing/
 │   │   ├── modulation/        Embedded QAM through16K, bit ordering and soft demapping
@@ -125,3 +126,10 @@ remain unsupported in bit processing even when their mapper exists.
 `simulation::coding_loop` connects the256-QAM stages for one independent codeword
 per call and exports actual LDPC iterations. It does not implement continuous
 OFDM packing or channel timing. See [coding-loop flow](user/qam256-coding-loop.md).
+
+`transmission::packing` owns a bounded queue of post-bit-processing256-QAM
+codewords. It carries partial words across symbols, previews NCP/CRC reservations
+and commits valid plans atomically. Callers supply the inverse-interleaved pilot
+mask; the physical layout API alone cannot provide that mask. Typed NCP meanings
+and diagnostic word IDs are available, but control-message encoding and receiver
+boundary discovery remain pending. See [symbol packing](user/symbol-packing.md).

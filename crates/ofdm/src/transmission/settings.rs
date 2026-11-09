@@ -48,6 +48,17 @@ impl SubcarrierSpacing {
             Self::Khz50 => 32,
         }
     }
+
+    /// Returns the maximum reduced data/scattered-pilot domain size.
+    /// # Returns
+    ///7537for8K or3745for4K, from PHY I20 section7.5.6, PDF129.
+    /// PLC, continuous pilots and excluded bins are outside this domain.
+    pub fn max_interleaver_cells(self) -> usize {
+        match self {
+            Self::Khz25 => 7537,
+            Self::Khz50 => 3745,
+        }
+    }
 }
 
 /// Fixed setup for one downstream channel; consumers validate and freeze per run.

@@ -24,7 +24,8 @@ see [QAM mapping](docs/user/qam-mapping.md). A standalone
 [data/NCP randomizer](docs/user/cell-randomizer.md) supports the same data orders.
 A [noiseless256-QAM coding loop](docs/user/qam256-coding-loop.md) now connects
 bit processing, randomization and FEC, reporting iterations for each codeword.
-Full DOCSIS framing/placement and
+A [stateful symbol packer](docs/user/symbol-packing.md) carries those codewords
+across symbols and reserves NCP/CRC space. Full DOCSIS framing/placement and
 interoperability validation remain pending. See
 [coding scope and equations](docs/reference/coding-mode.md).
 

@@ -4,6 +4,7 @@
  */
 //! Fixed downstream transmission configuration and sample-clock scheduling.
 pub mod layout;
+pub mod packing;
 pub mod settings;
 pub mod timing;
 pub use settings::{SubcarrierSpacing, TransmissionSettings};
