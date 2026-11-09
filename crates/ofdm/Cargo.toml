@@ -91,3 +91,8 @@ required-features = ["simulation"]
 [[example]]
 name = "shortened_waveform"
 required-features = ["simulation"]
+
+[[example]]
+name = "prepare_channel_widths"
+path = "examples/channel_widths/main.rs"
+required-features = ["simulation"]

@@ -1,0 +1,11 @@
+{
+  "active_envelope_hz": 88000000,
+  "channel_correction": "unity",
+  "edge_taper_hz": 1000000,
+  "noise_in_channel_requests": false,
+  "occupied_bandwidth_hz": 90000000,
+  "purpose": "Ideal width/geometry and QAM transport tests; not a field capture or external vector",
+  "rxmer_db": 48.0,
+  "source": "../../single-channel/modulation_profile.json",
+  "synthetic": true
+}

@@ -889,3 +889,11 @@ refuse clobber and consume matching tested binaries. Native execution/publicatio
 awaits the user's later workflow push. QAM-04 stays excluded/deferred.
 See [delivery design](development/native-delivery.md) and
 [group record](development/features/completion-group/design.md).
+
+### Synthetic width validation
+
+The [channel-width fixture design](development/features/channel-widths/design.md)
+uses shared Rust pilot placement and per-bin loading for24/90MHz occupied widths.
+Decoder-shaped synthetic inputs retain four profile IDs; fixed-runner tests
+exercise each loading as internal ProfileA without expanding measured-selector
+support. No new production stage or input schema is introduced.

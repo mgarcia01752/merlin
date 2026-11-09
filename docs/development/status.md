@@ -135,3 +135,14 @@ locally, with Linux package tests; Windows/macOS execution and release publicati
 wait for the later workflow push. No remote action was performed. QAM-04 remains
 deferred/excluded. See the [design/validation record](features/completion-group/design.md)
 and [native delivery guide](native-delivery.md).
+
+## Synthetic channel-width validation
+
+The [width fixtures](../../examples/measurements/channel-widths/README.md) add
+24 MHz minimum and 90 MHz mid-width cases at 25 kHz spacing. Both preserve the
+existing four profile IDs/data orders (256/1024/2048/4096-QAM), with new valid
+pilot geometry, aligned synthetic epochs, flat RxMER and unity channel correction.
+All eight combinations are exercised through the noiseless waveform/FEC path.
+The captured IDs remain in imported scenarios; fixed runner configurations carry
+each selected loading as internal Profile A. This does not expand measured
+selection beyond ID 0. See the [design](features/channel-widths/design.md).

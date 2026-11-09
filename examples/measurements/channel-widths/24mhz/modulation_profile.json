@@ -1,0 +1,1157 @@
+{
+  "channel_id": 34,
+  "first_active_subcarrier_index": 356,
+  "mac_address": "00:ca:00:00:00:01",
+  "num_profiles": 4,
+  "pnm_header": {
+    "capture_time": 1700000000,
+    "file_type": "PNN",
+    "file_type_version": 10,
+    "major_version": 1,
+    "minor_version": 0
+  },
+  "profiles": [
+    {
+      "profile_id": 3,
+      "schemes": [
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 45,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 75,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 83,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 76,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 55,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 23,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 21,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 17,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 29,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 4,
+          "carrier_type": "plc",
+          "modulation_order": "plc",
+          "modulation_order_code": 20,
+          "num_subcarriers": 16,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 29,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 17,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 21,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 23,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 59,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 76,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 75,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 80,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 12,
+          "carrier_type": "data",
+          "modulation_order": "qam_4096",
+          "modulation_order_code": 12,
+          "num_subcarriers": 44,
+          "schema_type": "range"
+        }
+      ]
+    },
+    {
+      "profile_id": 2,
+      "schemes": [
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 45,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 75,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 83,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 76,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 55,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 23,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 21,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 17,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 29,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 4,
+          "carrier_type": "plc",
+          "modulation_order": "plc",
+          "modulation_order_code": 20,
+          "num_subcarriers": 16,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 29,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 17,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 21,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 23,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 59,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 76,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 75,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 80,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 11,
+          "carrier_type": "data",
+          "modulation_order": "qam_2048",
+          "modulation_order_code": 11,
+          "num_subcarriers": 44,
+          "schema_type": "range"
+        }
+      ]
+    },
+    {
+      "profile_id": 1,
+      "schemes": [
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 45,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 75,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 83,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 76,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 55,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 23,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 21,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 17,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 29,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 4,
+          "carrier_type": "plc",
+          "modulation_order": "plc",
+          "modulation_order_code": 20,
+          "num_subcarriers": 16,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 29,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 17,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 21,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 23,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 59,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 76,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 75,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 80,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 10,
+          "carrier_type": "data",
+          "modulation_order": "qam_1024",
+          "modulation_order_code": 10,
+          "num_subcarriers": 44,
+          "schema_type": "range"
+        }
+      ]
+    },
+    {
+      "profile_id": 0,
+      "schemes": [
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 45,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 75,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 83,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 76,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 55,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 23,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 21,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 17,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 29,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 4,
+          "carrier_type": "plc",
+          "modulation_order": "plc",
+          "modulation_order_code": 20,
+          "num_subcarriers": 16,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 29,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 17,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 21,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 23,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 59,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 76,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 75,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 80,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 1,
+          "carrier_type": "continuous_pilot",
+          "modulation_order": "continuous_pilot",
+          "modulation_order_code": 1,
+          "num_subcarriers": 1,
+          "schema_type": "range"
+        },
+        {
+          "bit_loading": 8,
+          "carrier_type": "data",
+          "modulation_order": "qam_256",
+          "modulation_order_code": 8,
+          "num_subcarriers": 44,
+          "schema_type": "range"
+        }
+      ]
+    }
+  ],
+  "subcarrier_spacing": 25000,
+  "subcarrier_zero_frequency": 631100000
+}

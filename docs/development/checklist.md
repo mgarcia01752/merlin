@@ -531,6 +531,10 @@ and [the later impairment reference](impairment-reference.md).
     policy. Fixture preparation alone does not establish waveform/FEC behavior.
   - [x] Validate/import all three capture types, expand bounded profiles, preserve
     missing readings and provide standalone CLI plus direct typed Rust API tests.
+- [x] Validate synthetic24/90MHz inputs at25kHz with four captured-profile
+  QAM orders, deterministic regeneration and eight noiseless waveform/FEC runs.
+  See [width design](features/channel-widths/design.md); measured selection
+  remains ProfileA only and external/native validation stays pending.
 - [x] **INPUT-02** Explicit decoder contract revision1 pins pnm-decode0.3.6;
   request schema2 requires the producer declaration. Preserve legacy schema1,
   exact-byte hashes/nulls/grids and shared Rust validation. Test actual exports,

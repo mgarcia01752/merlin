@@ -1,0 +1,8 @@
+{
+  "channel_estimation": "channel_estimation.json",
+  "modulation_profile": "modulation_profile.json",
+  "protocol": "docsis31",
+  "rxmer": "rxmer.json",
+  "schema_version": 1,
+  "tolerance_seconds": 0
+}

@@ -75,3 +75,12 @@ Legacy request schema1 remains available only without `decoder_contract`. The
 original `import` Rust API is that legacy adapter; `import_with_contract` enforces
 the producer declaration. A schema2 request without its contract, or a schema1
 request with one, rejects. The checked-in demo now uses schema2.
+
+## Synthetic channel-width tests
+
+The [24 MHz and 90 MHz examples](../../../examples/measurements/channel-widths/README.md)
+provide aligned RxMER/channel JSON plus four profiles (256/1024/2048/4096-QAM).
+They include CLI import and noiseless channel requests for each profile. These
+are generated ideal inputs, not additional captured measurements. The fixed
+runner applies each selected loading as its internal Profile A; imported IDs
+remain unchanged, and measured-selector support remains restricted to ID 0.
