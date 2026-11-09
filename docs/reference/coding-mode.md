@@ -41,7 +41,7 @@ passing round trips and independently transcribed parameter equations do not
 establish complete DOCSIS compliance.
 
 Private PDF/evidence copies live under ignored
-`development/specs/ds-profile-fec-lab/`. A fresh clone does not include them.
+`docs/development/local/specs/ds-profile-fec-lab/`. A fresh clone does not include them.
 The exact ETSI edition is available from its official archive:
 https://www.etsi.org/deliver/etsi_en/302700_302799/302769/01.02.01_60/en_302769v010201p.pdf
 

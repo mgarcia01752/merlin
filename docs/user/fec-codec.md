@@ -206,7 +206,7 @@ which delegates the coding definitions to ETSI EN 302 769 V1.2.1 (2011-04).
 BCH parameters and generator factors are in ETSI Tables 3(b)/4(b) (PDF pages
 29–30); the short rate-8/9 LDPC addresses are in Annex B, Table B.6 (PDF page 96).
 The implementation uses the pinned Rust `ldpc-toolbox` dependency and a Rust BCH
-implementation. Local specification evidence remains under ignored `development/`.
+implementation. Local specification evidence remains under ignored `docs/development/local/`.
 
 This example verifies the isolated coding path. It does not establish DOCSIS
 framing, waveform placement or interoperability. See

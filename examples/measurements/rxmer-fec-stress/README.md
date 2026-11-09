@@ -31,17 +31,17 @@ From the repository root, using new output paths:
 ```bash
 scripts/cargo-local.sh run -p docsis-ofdm-fec --release --locked \
   --example prepare_impairment_runs -- \
-  examples/measurements/single-channel development/export-rxmer-11 \
+  examples/measurements/single-channel docs/development/local/export-rxmer-11 \
   --stress-mer-db 11
 
 scripts/cargo-local.sh run -p docsis-ofdm-fec --release --locked \
   --example export_rxmer_pnm -- \
   examples/measurements/rxmer-fec-stress/rxmer-baseline.bin \
-  development/export-rxmer-11/rxmer-stress-scenario.json \
-  development/rxmer-stress-11db.bin
+  docs/development/local/export-rxmer-11/rxmer-stress-scenario.json \
+  docs/development/local/rxmer-stress-11db.bin
 
-pnm-decode development/rxmer-stress-11db.bin \
-  --output development/rxmer-stress-11db.json
+pnm-decode docs/development/local/rxmer-stress-11db.bin \
+  --output docs/development/local/rxmer-stress-11db.json
 ```
 
 The offline Rust exporter validates the original binary identity/grid/time,

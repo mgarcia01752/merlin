@@ -7,8 +7,9 @@ The [development status](development/status.md) summarizes the current milestone
 recent evidence and remaining product scope.
 The [simulation design index](user/simulation/README.md) links a separate
 Mermaid-based user guide for each simulation component. Detailed equations and
-examples live in the linked stage guides; private evidence and investigation
-notes live under ignored `development/`.
+examples live in the linked stage guides. The [development workspace](development/README.md)
+links tracked [feature records](development/features/README.md). Private evidence
+and generated artifacts live under ignored `docs/development/local/`.
 
 Status describes the **current source checkout**, including work awaiting commit.
 It does not imply a published release or external DOCSIS interoperability.

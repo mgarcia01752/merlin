@@ -16,16 +16,17 @@ flowchart LR
 From the repository root, choose new output paths:
 
 ```bash
+mkdir -p docs/development/local
 scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- channel \
-  --input examples/channel-awgn.json --output development/awgn-channel.json
+  --input examples/channel-awgn.json --output docs/development/local/awgn-channel.json
 
 scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- import-pnm \
   --input examples/measurements/single-channel/import.json \
-  --output development/demo-scenario.json
+  --output docs/development/local/demo-scenario.json
 
 scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- channel \
   --input examples/measurements/single-channel/channel-measured.json \
-  --scenario development/demo-scenario.json --output development/measured-channel.json
+  --scenario docs/development/local/demo-scenario.json --output docs/development/local/measured-channel.json
 ```
 
 `request.measurement` selects frame index, **profile ID**, optional channel index,
@@ -40,12 +41,12 @@ Do not combine measurement selection with another impairment source.
 
 ```bash
 scripts/cargo-local.sh run -p docsis-ofdm-fec --example prepare_impairment_runs --locked -- \
-  examples/measurements/single-channel development/lte-sweep
+  examples/measurements/single-channel docs/development/local/lte-sweep
 
 scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- channel \
-  --input development/lte-sweep/lte-1rb-request.json \
-  --scenario development/lte-sweep/lte-1rb-scenario.json \
-  --output development/lte-sweep/lte-1rb-result.json
+  --input docs/development/local/lte-sweep/lte-1rb-request.json \
+  --scenario docs/development/local/lte-sweep/lte-1rb-scenario.json \
+  --output docs/development/local/lte-sweep/lte-1rb-result.json
 ```
 
 The generator requires a new directory and creates baseline plus1,6,12,25,50
@@ -107,13 +108,13 @@ Use a separate synthetic stress case to distinguish impairment depth from width:
 ```bash
 scripts/cargo-local.sh run -p docsis-ofdm-fec --release --locked \
   --example prepare_impairment_runs -- \
-  examples/measurements/single-channel development/rxmer-stress-12 \
+  examples/measurements/single-channel docs/development/local/rxmer-stress-12 \
   --stress-mer-db 12
 
 scripts/cargo-local.sh run -p ofdm-fec-cli --release --locked -- channel \
-  --input development/rxmer-stress-12/rxmer-stress-request.json \
-  --scenario development/rxmer-stress-12/rxmer-stress-scenario.json \
-  --output development/rxmer-stress-12/rxmer-stress-result.json
+  --input docs/development/local/rxmer-stress-12/rxmer-stress-request.json \
+  --scenario docs/development/local/rxmer-stress-12/rxmer-stress-scenario.json \
+  --output docs/development/local/rxmer-stress-12/rxmer-stress-result.json
 ```
 
 This fixture caps available RxMER at the requested dB value on captured static

@@ -44,7 +44,8 @@ preserved QAM resources. It introduces no additional packages or native build
 dependencies. See [QAM resources and runtime behavior](../user/qam-mapping.md).
 
 Private normative PDFs, evidence and migration snapshots live in ignored
-`development/`. They are not present in a fresh clone. The specification skills
+`docs/development/local/`. They are not present in a fresh clone. Public plans
+and validation summaries live in the [feature index](features/README.md). The specification skills
 include versioned lookup extracts; diagrams still require the original PDF.
 
 The implementation branch is feature/ds-profile-fec-lab. Git operations use the
@@ -78,7 +79,8 @@ CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 ./scrip
 
 This runs the same checks; it changes build metadata/cache size, not scientific
 algorithms. Normal development can keep debug information enabled. The repository's
-ignored `development/` stores private validation logs; it is not a runtime input.
+ignored `docs/development/local/` stores private validation logs and generated outputs.
+The [workspace guide](README.md) explains where ongoing development belongs.
 
 ## Generated files and Git
 

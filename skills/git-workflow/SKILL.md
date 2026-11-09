@@ -7,7 +7,9 @@ description: Prepare commits and guarded pushes for DOCSIS OFDM Channel Sim usin
 
 Before a commit message, inspect git status --short, git diff --stat, git diff,
 staged changes and every untracked file. git-save stages all non-ignored files.
-Preserve private inputs under ignored development/ and never stage Cargo caches.
+Preserve private inputs under ignored docs/development/local/ and never stage
+Cargo caches. Track reviewed feature plans and validation summaries under
+docs/development/features/ and link them from its index.
 
 At feature completion and whenever the user asks for commit-msg, review
 `docs/architecture.md` and `docs/development/checklist.md` against the complete

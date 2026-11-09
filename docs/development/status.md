@@ -9,6 +9,8 @@ experiment into a standalone Rust
 **downstream OFDM waveform and FEC simulation engine**. Its current milestone is
 measurement-driven impairment experiments with actual recovered-payload outcomes.
 OFDMA and multi-channel simulation remain outside the implemented scope.
+Continue work through the [development workspace](README.md), which links public
+feature records and defines the ignored local evidence/output location.
 
 ## Completed milestones
 

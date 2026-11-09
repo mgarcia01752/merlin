@@ -33,7 +33,8 @@ with a known-reference receiver; external DOCSIS interoperability is not establi
 | Results | Recovered-payload BER, codeword failures, actual LDPC iterations, BCH corrections and bounded stage probes |
 | Modulation coverage | Mapping/soft demapping through 16384-QAM; full waveform coding currently uniform 256-QAM |
 
-See the [development status](docs/development/status.md) for completed milestones,
+Use the [development workspace](docs/development/README.md) for ongoing work
+and linked feature records. See the [development status](docs/development/status.md) for completed milestones,
 remaining work and validation limits. The [implementation checklist](docs/development/checklist.md)
 is the detailed source of progress; the [architecture](docs/architecture.md)
 describes component ownership.

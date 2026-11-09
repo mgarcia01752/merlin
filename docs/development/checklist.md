@@ -2,7 +2,8 @@
 
 This is the official progress and TODO list for DOCSIS OFDM Channel Sim. Read it
 with the [architecture](../architecture.md) and the concise
-[development status](status.md). Update both when adding a stage,
+[development status](status.md). The [development workspace](README.md) links
+ongoing plans and historical feature records. Update both when adding a stage,
 changing ownership, exposing a test point or extending scientific support.
 Review both at feature completion and before supplying each commit message;
 update affected sections and retain unchecked status for partial work.
@@ -212,7 +213,8 @@ future work, while the shared JSONL writer/CLI export is now implemented. Extern
 the initial known-reference waveform validation is now covered by WAVE-QA-02.
 
 Planned paths and test-point IDs are in the architecture. Resolve any missing
-normative behavior in `development/pilot-plc-signals/` before implementing it.
+normative behavior using the [pilot/PLC development record](features/pilot-plc-signals/architecture.md)
+and private evidence under `docs/development/local/pilot-plc-signals/` before implementing it.
 Do not create empty source files merely to make the planned tree appear complete.
 
 ## Receiver configuration from PLC

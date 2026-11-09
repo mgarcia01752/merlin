@@ -34,10 +34,13 @@ under .agents/skills/ and .claude/skills/.
   scrambling or waveform behavior from generic DVB support.
 - Bound files, trials, iterations, runtime and memory. Preserve completed FEC
   trials on cancellation. Never overwrite user inputs or export destinations.
-- Keep private PDFs and source captures under ignored development/. Do not ship
+- Keep private PDFs and source captures under ignored docs/development/local/. Do not ship
   migration prototypes, private evidence, Cargo caches or build outputs.
-- Plan implementation under development/<feature>/ and maintain public docs in
-  docs/. Update the architecture when ownership or input contracts change.
+- Plan ongoing implementation under docs/development/features/<feature>/; keep
+  public plans, design notes and validation summaries tracked and linked from
+  docs/development/README.md. Keep specs, captures and generated artifacts under
+  ignored docs/development/local/<feature>/. Maintain user guides under docs/user/.
+  Update the architecture when ownership or input contracts change.
 - No SNMP/TFTP, device capture/control, network analysis or Python sidecars.
 - No commits, pushes, publication or system-wide installation without explicit
   authorization. Supply commands when asked for commit/push commands.

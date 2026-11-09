@@ -7,7 +7,7 @@ target/
 
 # Project-local toolchains, private development inputs and release staging.
 /local/
-/development/
+/docs/development/local/
 /dist/
 /artifacts/
 

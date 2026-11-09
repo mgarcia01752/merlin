@@ -32,9 +32,10 @@ separately. Imported channel coefficients mean relative response H, not1/H.
 From the repository root:
 
 ```bash
+mkdir -p docs/development/local
 scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- import-pnm \
   --input examples/measurements/single-channel/import.json \
-  --output development/demo-scenario.json
+  --output docs/development/local/demo-scenario.json
 ```
 
 Capture paths in an import request resolve relative to that request. The demo's

@@ -18,6 +18,17 @@ CLI startup, argument parsing, commands and JSON I/O separate. Keep root modules
 focused on wiring and exports. Preserve established imports through re-exports
 when moving an API; do not keep duplicate implementations or empty placeholders.
 
+## Ongoing development workspace
+
+Use `docs/development/features/<feature>/` for tracked plans, implementation
+notes and validation summaries. Link new feature records from
+`docs/development/features/README.md`. Keep private specs/captures and generated
+results/logs under ignored `docs/development/local/<feature>/`. Do not recreate
+a separate root `development/` folder. Link public documentation only to tracked
+files; describe local-only evidence as paths rather than broken GitHub links.
+Historical notes must distinguish their original stage status from the current
+architecture and checklist. Maintained user guides stay under `docs/user/`.
+
 ## Per-model and module user guides
 
 Each substantive scientific model or processing module must have its own user

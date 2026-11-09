@@ -49,10 +49,10 @@ The input directory must also contain `channel_estimation.json` and
 checked before any output is written. Mismatches are rejected, never relabeled.
 
 ```bash
-mkdir -p development/pnm-measurement-inputs/regenerated
+mkdir -p docs/development/local/pnm-measurement-inputs/regenerated
 scripts/cargo-local.sh run -p docsis-ofdm-fec --example prepare_rxmer_variants --locked -- \
   examples/measurements/single-channel/rxmer.json \
-  development/pnm-measurement-inputs/regenerated
+  docs/development/local/pnm-measurement-inputs/regenerated
 ```
 
 Compare regenerated files with the linked snapshots. The original reduction
@@ -65,5 +65,5 @@ the waveform simulation. This preparation itself adds no waveform noise and
 computes no decoder outcomes. The rectangular notch remains a separate test case.
 
 Original sanitized binaries are retained locally under ignored
-`development/pnm-measurement-inputs/originals/`. To decode a binary again with
+`docs/development/local/pnm-measurement-inputs/originals/`. To decode a binary again with
 PNM Viewer Toolkit, use `pnm-decode INPUT.bin --output NEW_OUTPUT.json`.
