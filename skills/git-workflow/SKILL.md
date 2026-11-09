@@ -17,6 +17,8 @@ pending change scope. Update affected ownership, contracts, status and next step
 before supplying the command. Check items only when implementation and supporting
 validation are complete; record partial progress without checking combined items
 early. If no architecture or checklist change is needed, leave them unchanged.
+Verify the task-linked design record follows coding-style's per-task design
+requirements and reflects the completed implementation/validation.
 Inspect the final diff again so the message includes any documentation updates.
 
 Use tools/git/git-save.sh --commit-msg with one double-quoted multiline argument.

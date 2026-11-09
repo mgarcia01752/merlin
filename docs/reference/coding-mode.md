@@ -11,7 +11,9 @@ including its flow diagram and LaTeX encoding/decoding equations.
 
 The first experiment uses DOCSIS3.1 downstream short LDPC N=16200, K=14400,
 rate8/9, with BCH K=14232, N=14400, t=12, and uniform16-QAM.
-No DOCSIS LDPC shortening or puncturing is enabled. The BCH code itself is a
+No DOCSIS LDPC shortening or puncturing is enabled in that existing experiment.
+The independent [shortened codec](../user/fec-shortening/README.md) now implements
+FEC-03 separately, without changing the experiment's mode. The BCH code itself is a
 shortened binary BCH code over GF(2^14); this differs from DOCSIS LDPC shortening.
 
 Normative parameter sources:

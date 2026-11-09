@@ -2,6 +2,8 @@
 
 Status: implemented and validated; SRC-04..06 complete. Qt remains planned.
 
+The [task design](design.md) breaks down the approach by SRC-04, SRC-05 and SRC-06.
+
 The source remains outside FEC/PHY algorithms. `simulation/source/file/` owns
 bounded immutable input, MSB-first file bits, finite optional PRBS15 fill,
 independent verification and recovered bytes. Channel orchestration selects

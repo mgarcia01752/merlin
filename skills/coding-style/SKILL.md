@@ -29,6 +29,24 @@ files; describe local-only evidence as paths rather than broken GitHub links.
 Historical notes must distinguish their original stage status from the current
 architecture and checklist. Maintained user guides stay under `docs/user/`.
 
+## Per-task design records
+
+For every implementation task, create or update a tracked
+`docs/development/features/<feature>/design.md` before implementation and maintain
+it as the work changes. Identify the checklist task ID, purpose, chosen approach
+and reasons, owning modules, inputs/outputs, state/lifecycle, test points and
+validation. Include a Mermaid flow where it clarifies the component, plus math
+and pinned specification evidence when applicable. Keep small tasks concise.
+
+Closely related tasks may share one design document, but each task needs its own
+ID-labeled section so the user can see what was done. Link the design from the
+feature index and relevant checklist items; link user guides and implementation
+results rather than duplicating them. At completion, reconcile the design with
+the actual code and tests and clearly label deferred/unimplemented behavior.
+Review these links and the final design before supplying a commit message.
+Existing records named architecture.md or plan.md can remain linked historical
+references; do not rename or duplicate the entire archive to satisfy this rule.
+
 ## Per-model and module user guides
 
 Each substantive scientific model or processing module must have its own user

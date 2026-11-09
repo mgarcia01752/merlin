@@ -212,3 +212,11 @@ This example verifies the isolated coding path. It does not establish DOCSIS
 framing, waveform placement or interoperability. See
 [coding scope and channel equations](../reference/coding-mode.md) for the broader
 simulation, and [CLI usage](../cli.md) to run it.
+
+## Additional DOCSIS shortening
+
+The separate [shortening component guides](fec-shortening/README.md) explain
+FEC-03: variable original length, six-stage encoding, known-zero RX restoration,
+actual decoder outcomes and direct test points. This reuses the same16200-bit
+rate8/9 mother code. It does not add unsupported64800-bit downstream frames,
+change the legacy constructors above, or enable shortened waveform transport.

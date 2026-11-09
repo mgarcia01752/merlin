@@ -7,11 +7,9 @@ use crate::{
     bch::{decode_bch, encode_bch, BchResult},
     binary_bits,
     ldpc::{LdpcCodec, LdpcResult},
-    parameters::{BCH_INPUT_BITS, LDPC_CODEWORD_BITS, LDPC_INPUT_BITS},
+    parameters::{BCH_INPUT_BITS, LDPC_CODEWORD_BITS, LDPC_INPUT_BITS, NOISELESS_LLR_MAGNITUDE},
 };
 
-/// Finite reliable-bit evidence for a noiseless codec-loop test; not a noise model.
-const NOISELESS_LLR_MAGNITUDE: f64 = 20.0;
 /// Transmit stages retained for explicit post-LDPC and coded-bit comparisons.
 pub struct EncodedBlock {
     pub bch_codeword: Vec<u8>,

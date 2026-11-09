@@ -61,3 +61,15 @@ DOCSIS4.0 FDX and FDD remain distinct applicability scopes. This table follows
 I07's FDD delegation; it does not establish FDX sounding, echo cancellation or
 receiver equivalence. I07/I20 are the local editions checked here, not a claim
 that every later revision has been independently verified.
+
+## FEC mother mode and shortened lengths
+
+PHY I20 §7.5.4, PDF112–114 excludes normal64800-bit downstream frames and uses
+only the short16200-bit rate8/9 mother code. PHY4.0 I07 §7.2.5.4/§7.3.5.4 delegates
+FDX/FDD downstream FEC to that definition. FEC-03 now implements true shortened
+codec boundaries, retaining168 BCH and1800 LDPC parity bits for transmitted
+length K+1968. See [FEC shortening](../user/fec-shortening/README.md).
+
+This does not complete the bit-interleaving/QAM/NCP/waveform work tracked in
+QAM-03. The current channel still explicitly rejects shortened transport, and
+SRC file EOF uses its documented full-information-word padding policy.

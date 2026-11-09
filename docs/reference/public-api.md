@@ -162,3 +162,19 @@ copies the bounded recovered original prefix. Job results own that same optional
 `ChannelSummary.file_source` contains segment/completion accounting, absent for
 continuous PRBS. See [file source design](../user/simulation/file-source/README.md)
 for cursor, padding, truth and partial-export contracts.
+
+## Downstream FEC shortening
+
+`fec_codec::shortening::{Shortening, ShortenedCodec}` provides checked original
+lengths1..=14232 and reusable shortened encoding/decoding. Geometry methods expose
+BCH prefix insertion/removal, LDPC tail insertion/removal, received likelihood
+restoration and omitted-zero consistency independently. `EncodedShortenedBlock`
+and `DecodedShortenedBlock` retain bounded stage outputs and original-length
+payload decisions. `compare_payload` counts exactly K original bits independently
+of actual decoder flags. `success()` additionally requires known-zero consistency.
+
+Existing full-block APIs remain unchanged. Finite RX saturation is explicit in
+`shortening::decoding::SHORTENED_ZERO_LLR_MAGNITUDE`. No filesystem, Qt or Python
+type enters these interfaces. See the [component guides](../user/fec-shortening/README.md)
+and [FEC-03 design](../development/features/fec-shortening/design.md) for source
+applicability, equations, test-point shapes and pending waveform integration.

@@ -86,6 +86,7 @@ scripts/cargo-local.sh run -p fec-codec --example codec_loop --locked
 [Channel CLI](docs/user/channel-runner/cli.md) ·
 [Other CLI experiments](docs/cli.md) ·
 [FEC codec and equations](docs/user/fec-codec.md) ·
+[Codeword shortening](docs/user/fec-shortening/README.md) ·
 [Transmission settings](docs/user/transmission.md) ·
 [Modulation support](docs/reference/ofdm-support.md) ·
 [Public Rust API](docs/reference/public-api.md) ·

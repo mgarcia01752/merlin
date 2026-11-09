@@ -62,6 +62,35 @@ presentation component and Python bindings consume the public Rust APIs;
 neither owns scientific calculations. There is no UI or binding implementation
 in this stage, and no device capture/control or network-service dependency.
 
+## Downstream FEC shortening (FEC-03)
+
+`fec-codec/src/shortening/` implements variable original-length coding around the
+existing BCH/LDPC mother stages. `parameters` owns validated K, `encoding` the
+six-stage TX coordinates, `decoding` known-zero RX restoration and consistency,
+and `codec` their reusable composition. Each stage returns direct bounded test
+points, with independently measured K-bit payload comparison and actual decoder
+flags/iterations. Existing full-block constructors remain unchanged.
+
+Local PHY3.1 I20 §7.5.4, PDF112–115 specifies only the16200-bit rate8/9 mother
+code and shortening with all168 BCH/1800 LDPC parity retained. Normal64800-bit
+frames are not used. Original PDF Figures46–47 were visually verified; PHY4.0
+I07 FDX/FDD §7.2.5.4/§7.3.5.4 delegates FEC to these3.1 requirements. No additional
+mother family or broader FDX simulation follows from that delegation.
+
+For original K bits, prepend S=14232-K zeros before BCH, remove that prefix,
+append S zeros before LDPC and omit those systematic zeros from the transmitted
+word. Its length is K+1968. RX reconstructs finite positive known-zero evidence,
+uses the existing mother decoder, restores the BCH prefix and checks omitted
+coordinate consistency. Numerical LLR saturation is an explicit receiver policy;
+failed decisions and actual statuses remain available for independent truth BER.
+
+The [task design](development/features/fec-shortening/design.md) and
+[component guides](user/fec-shortening/README.md) document diagrams, equations,
+module contracts and validation. Shortened bit interleaving, cell packing,
+received length/signaling and waveform admission remain QAM-03. The file source
+still uses its full-word padding policy; this codec extension does not silently
+change channel operation or the measurement JSON contract.
+
 ## Planned visual system workspace and payload selection
 
 The future Qt workspace starts from the user's system diagram: clickable
@@ -290,7 +319,7 @@ processing; the packer groups coded bits using per-source-rank loading and expli
 last-cell padding. Actual PLC DPDs deliver the frozen applied ProfileA to RX.
 The receiver demaps variable-width soft cells and removes only final-cell padding
 before actual LDPC/BCH recovery. Uniform16/256 and mixed0,4,6..14-bit profiles are
-supported; unverified uniform higher-order coding, shortening and dynamic profile
+supported; unverified uniform higher-order coding, shortened waveform transport and dynamic profile
 activation reject explicitly rather than substituting mixed rules.
 
 The temporal model is piecewise-constant variance with conditionally independent
@@ -325,7 +354,8 @@ crates/
 ├── fec-codec/src/
 │   ├── bch.rs                 Payload BCH encoder/decoder
 │   ├── ldpc.rs                Payload LDPC encoder/soft decoder
-│   ├── concatenated.rs        Composition and independent payload comparison
+│   ├── concatenated.rs        Full-word composition and payload comparison
+│   ├── shortening/            Variable-length TX/RX boundaries and mother-code reuse
 │   ├── crc.rs                 CRC-24-D
 │   ├── ncp/                   NCP mother matrix, shortening/puncturing and decoder
 │   ├── plc/                   Separate PLC matrix, encoding, puncturing and decoding

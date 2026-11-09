@@ -12,7 +12,7 @@
 //! Shortened BCH(14400,14232), bounded-distance correction of up to12 errors.
 use crate::{
     binary_bits,
-    parameters::{BCH_INPUT_BITS, LDPC_INPUT_BITS},
+    parameters::{BCH_INPUT_BITS, BCH_PARITY_BITS, LDPC_INPUT_BITS},
 };
 use std::sync::OnceLock;
 
@@ -28,7 +28,6 @@ const BCH_FIELD_BITS: usize = 14;
 const BCH_FIELD_ORDER: usize = (1 << BCH_FIELD_BITS) - 1;
 const BCH_CORRECTION_BITS: usize = 12;
 const BCH_SYNDROMES: usize = 2 * BCH_CORRECTION_BITS;
-const BCH_PARITY_BITS: usize = LDPC_INPUT_BITS - BCH_INPUT_BITS;
 // ETSI Table4(b), g1..g12 in ascending coefficient order. g1 is primitive.
 const BCH_GENERATOR_FACTORS: [FieldElement; BCH_CORRECTION_BITS] = [
     0x402b, 0x4941, 0x4647, 0x5591, 0x6b55, 0x6389, 0x6ce5, 0x4f21, 0x460f, 0x5a49, 0x5811, 0x65ef,

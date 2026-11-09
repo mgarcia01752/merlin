@@ -63,6 +63,21 @@ fn library_leaves_logger_ownership_to_consumer_and_logging_does_not_change_codec
     assert_eq!(enabled.mother_codeword, disabled.mother_codeword);
     assert_eq!(enabled.iterations, disabled.iterations);
     assert_eq!(enabled.success, disabled.success);
+    let mut shortened = fec_codec::shortening::ShortenedCodec::new(
+        fec_codec::shortening::Shortening::new(6136).unwrap(),
+    )
+    .unwrap();
+    let payload = vec![1; 6136];
+    let wire = shortened.encode(&payload).unwrap().transmitted;
+    log::set_max_level(log::LevelFilter::Debug);
+    assert!(shortened.decode(&[0.0; 2], 30).is_err());
+    let enabled = shortened.decode_noiseless(&wire, 30).unwrap();
+    log::set_max_level(log::LevelFilter::Off);
+    let disabled = shortened.decode_noiseless(&wire, 30).unwrap();
+    assert_eq!(enabled.payload, disabled.payload);
+    assert_eq!(enabled.ldpc.codeword, disabled.ldpc.codeword);
+    assert_eq!(enabled.ldpc.iterations, disabled.ldpc.iterations);
+    assert_eq!(enabled.success(), disabled.success());
     let records = RECORDS.0.lock().unwrap();
     assert!(records
         .iter()
@@ -70,5 +85,8 @@ fn library_leaves_logger_ownership_to_consumer_and_logging_does_not_change_codec
     assert!(records
         .iter()
         .any(|(_, message)| message.contains("plc-ldpc-not-converged")));
+    assert!(records
+        .iter()
+        .any(|(_, message)| message.contains("shortened-ldpc-input-rejected")));
     assert!(records.iter().all(|(level, _)| *level == log::Level::Debug));
 }

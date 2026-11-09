@@ -26,6 +26,7 @@ shellcheck "${SHELL_SCRIPTS[@]}"
 SMOKE_DIRECTORY="$(mktemp -d)"
 trap 'rm -rf -- "${SMOKE_DIRECTORY}"' EXIT
 "${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- --version
+"${SCRIPT_DIR}/cargo-local.sh" run -p fec-codec --example shortened_codec_loop --release --locked --quiet -- 6136
 "${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- simulate \
   --input examples/awgn.json --output "${SMOKE_DIRECTORY}/awgn.json"
 python3 -m json.tool "${SMOKE_DIRECTORY}/awgn.json" >/dev/null

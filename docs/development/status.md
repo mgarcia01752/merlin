@@ -16,7 +16,7 @@ feature records and defines the ignored local evidence/output location.
 
 | Milestone | What is available | Design / evidence |
 | --- | --- | --- |
-| Scientific foundation | Separate Rust BCH/LDPC codecs, constellation mapping and soft demapping through 16K-QAM, bit processing and randomization | [FEC](../user/fec-codec.md), [QAM](../user/qam-mapping.md) |
+| Scientific foundation | Separate Rust full/shortened BCH/LDPC codecs, constellation mapping and soft demapping through 16K-QAM, bit processing and randomization | [FEC](../user/fec-codec.md), [QAM](../user/qam-mapping.md) |
 | Channel construction | Fixed single-channel numerology, protected roles, continuous/scattered pilots, frequency/time cell interleaving | [Transmission](../user/transmission.md), [pilots](../user/pilot-signals.md), [interleaving](../user/cell-interleaving.md) |
 | Signaling | Actual PLC/NCP coding and messages; receiver configuration derived from decoded descriptors for the fixed supported subset | [PLC](../user/plc-channel.md), [NCP](../user/ncp.md), [configuration](../user/receiver-configuration/README.md) |
 | Waveform TX/RX | IFFT/FFT, cyclic prefix, windowing/overlap and actual uniform-256-QAM payload recovery over samples | [Waveform](../user/waveform/README.md), [payload transport](../user/payload-transport/README.md) |
@@ -68,7 +68,7 @@ known timing/PLC phase. No full blind modem-acquisition claim is made.
 | --- | --- | --- |
 | Receiver realism | Full blind carrier/numerology/PLC-phase acquisition and broader estimator uncertainty models; current pilot/CP subset is implemented | WAVE-RX-05 |
 | Measurement evolution | Future explicit correlated/burst models and dynamic profile activation; piecewise independent Gaussian epochs and frozen mixed profiles are implemented | NCP-03, future model extensions |
-| Coding and profiles | More FEC modes/shortening; unverified uniform higher-order coding and external mixed-profile vectors; dynamic NCP/data profile activation | FEC-03, QAM-03/04, NCP-03 |
+| Coding and profiles | Shortened waveform integration, unverified uniform higher-order coding and external mixed-profile vectors; dynamic profile activation | QAM-03/04, NCP-03 |
 | Diagnostic and layout tools | Standalone hard slicer; specification-based additional continuous-pilot placement | QAM-02, LAYOUT-03 |
 | Input compatibility | Formal decoded-JSON compatibility/version contract; current JSON import is already implemented | INPUT-02 |
 | Independent validation | External full-channel interoperability vectors and Windows/macOS build/runtime CI | QA-05, QA-06 |
@@ -105,3 +105,13 @@ verification. The Rust API stays path-independent; CLI file options use the same
 contract. Size/alignment requirements inferred from channel/profile/duration
 remain deferred. Qt source controls remain planned under UI-02. See the
 [file-source implementation](features/file-payload-source/implementation.md).
+
+## Shortened-codec milestone
+
+FEC-03 adds variable-length shortened coding around the existing downstream
+short16200-bit rate8/9 mother code, retaining all BCH/LDPC parity. Independent
+coordinate/parity tests, actual iterative correction, failure decisions and full
+mode compatibility are covered. See the [design](features/fec-shortening/design.md)
+and [component guides](../user/fec-shortening/README.md). Shortened interleaving,
+QAM/NCP placement and waveform admission remain QAM-03; no64800-bit mode or
+change to the SRC file-padding policy is introduced.

@@ -77,6 +77,7 @@ Guide: [Source design](../user/simulation/source.md).
   test text/binary byte preservation, size checks, optional PRBS fill, empty/oversized
   inputs, EOF, truncation and cancellation; keep noise/source state independent.
   See the [file-source design](../user/simulation/file-source/README.md),
+  [task design](features/file-payload-source/design.md),
   [implementation and tests](features/file-payload-source/implementation.md) and
   [source/workspace plan](features/visual-workspace/plan.md).
 
@@ -91,9 +92,19 @@ Guide: [FEC codec](../user/fec-codec.md).
 - [x] **FEC-01** Rust BCH14232/14400 and short16200 rate8/9 LDPC encode/decode.
 - [x] **FEC-02** Concatenated codec results, payload truth comparison and actual
   LDPC iterations, with correction/failure and zero-error tests.
-- [ ] **FEC-03** Additional downstream codeword lengths, coding modes and
-  shortening rules verified against the PHY; the current short8/9 mode does not
-  establish every DOCSIS coding mode.
+- [x] **FEC-03** Implement PHY-verified downstream shortened codeword lengths and
+  effective rates using the short16200-bit rate8/9 mother code; retain all BCH/LDPC
+  parity and verify both TX/RX shortening boundaries independently.
+  - [x] Verify local PHY I20 Table23/Figures46–47 and4.0 FEC delegation; normal64800
+    downstream frames and other mother rates are not introduced.
+  - [x] Expose validated lengths, independent stage outputs, known-zero restoration,
+    consistency checks, actual decoder statuses/iterations and payload comparison.
+  - [x] Validate independent parity/coordinate oracles, varied lengths, noiseless
+    recovery, correction/failure boundaries and full-mode compatibility.
+  See the [task design](features/fec-shortening/design.md),
+  [validation](features/fec-shortening/validation.md) and
+  [component guides](../user/fec-shortening/README.md). Shortened bit processing,
+  QAM/NCP placement and waveform integration remain unchecked under QAM-03.
 
 ## Codeword bit processing
 
