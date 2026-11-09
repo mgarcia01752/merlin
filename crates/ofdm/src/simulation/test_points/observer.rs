@@ -229,12 +229,42 @@ fn validate_data(
             })
         }
         (TestPointId::PlcCodedNibbles, SignalDomain::CodewordCell, ProbeData::Labels(labels))
-        | (TestPointId::PlcInterleaved, SignalDomain::PlcCell, ProbeData::Labels(labels)) => {
+        | (
+            TestPointId::PlcInterleaved | TestPointId::PlcRandomized,
+            SignalDomain::PlcCell,
+            ProbeData::Labels(labels),
+        ) => {
             context.reference == SignalReference::NotApplicable
                 && context.plc_grid.is_some()
                 && labels.iter().all(|label| {
                     *label < 1 << crate::transmission::plc::geometry::PLC_BITS_PER_CELL
                 })
+        }
+        (TestPointId::PlcMessage, SignalDomain::MessageByte, ProbeData::Bytes(_)) => {
+            context.reference == SignalReference::NotApplicable
+        }
+        (TestPointId::PlcCodedBits, SignalDomain::CodewordBit, ProbeData::Bits(bits)) => {
+            context.reference == SignalReference::NotApplicable && bits.iter().all(|bit| *bit <= 1)
+        }
+        (
+            TestPointId::PlcPreamble | TestPointId::PlcIq,
+            SignalDomain::PlcCell,
+            ProbeData::Iq(iq),
+        ) => {
+            context.plc_grid.is_some()
+                && matches!(
+                    context.reference,
+                    SignalReference::OtherSubcarrierRms { .. }
+                )
+                && iq.iter().flatten().all(|value| value.is_finite())
+        }
+        (TestPointId::PhysicalBins, SignalDomain::PhysicalFftBin, ProbeData::OptionalIq(iq)) => {
+            context.physical_grid.is_some()
+                && matches!(
+                    context.reference,
+                    SignalReference::OtherSubcarrierRms { .. }
+                )
+                && iq.iter().flatten().flatten().all(|value| value.is_finite())
         }
         _ => false,
     };

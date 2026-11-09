@@ -165,6 +165,13 @@ impl CarrierLayout {
         self.spacing
     }
 
+    /// Borrows static assignments before the phase-dependent scattered pattern.
+    /// # Returns
+    /// Immutable full FFT grid, including all excluded, PLC and continuous-pilot bins.
+    pub fn static_roles(&self) -> &[PhysicalCarrierRole] {
+        &self.static_roles
+    }
+
     /// Returns one role per physical FFT bin for a symbol after the PLC preamble.
     /// # Arguments
     /// * `symbols_since_preamble_end` - Zero denotes the first symbol following

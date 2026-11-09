@@ -120,8 +120,9 @@ dependency in the codec. The message adapter uses the `simulation` feature and
 maps primitive errors to structured `LabError` categories.
 
 Direct arrays provide test points at the mother, transmitted, restored LLR and
-receive-decision boundaries. Registration with the common optional observer and
-CLI export remain TODO; this step does not silently claim those producers exist.
+receive-decision boundaries. The [full PLC producer](plc-channel.md) now emits
+transmitted coded bits through the common optional observer. Mother bits and RX
+decisions remain direct outputs; their observer adapters and CLI export remain TODO.
 
 ## Validation and next stage
 
@@ -136,9 +137,9 @@ at both spacings, followed by timestamp CRC validation.
 These are specification-derived tests, not externally generated interoperability
 vectors or a general error-correction-distance guarantee. There is no PLC BCH
 stage. [PLC block interleaving](plc-interleaving.md) and its hard/soft inverse
-are now implemented separately. Acquisition descriptors, preamble,
-16-QAM mapping and physical-bin insertion remain separate stages. The next coding
-boundary is **NEXT-11: PLC preamble**;
-[PLC randomization](plc-randomization.md) now has independent state and a soft inverse. See the
+are implemented separately. The [complete PLC path](plc-channel.md) now adds
+fixed acquisition messages, preamble,16-QAM mapping, physical-bin insertion and
+known-phase I/Q recovery. [PLC randomization](plc-randomization.md) owns its
+independent state and soft inverse. See the
 [message guide](plc-messages.md), [architecture](../architecture.md) and
 [checklist](../development/checklist.md).

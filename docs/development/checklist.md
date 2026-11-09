@@ -92,10 +92,12 @@ now recovers those inputs. [PLC block interleaving](../user/plc-interleaving.md)
 adds tested permutation/inverse stages and bounded label observations.
 [PLC randomization](../user/plc-randomization.md) now adds separate TX/RX state,
 frame resets and a sign-only soft inverse, with direct typed snapshots.
-Next is PLC preamble generation (NEXT-11);
-fixed-setting acquisition descriptor packets remain part of NEXT-07.
+The [complete fixed PLC path](../user/plc-channel.md) now includes acquisition
+packets, repetition/segmentation, preamble, mapping, physical-bin assembly and
+bounded observations. The next dependency is **RX-CONFIG-01: receiver configuration
+from decoded PLC**; waveform implementation then starts at WAVE-01.
 
-- [ ] **NEXT-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
+- [x] **NEXT-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
   phase and exact section/page evidence. Check PHY4.0 delegation where applicable.
 - [x] **NEXT-02** Define typed pilot sequence/value and PLC stage results, with
@@ -110,7 +112,7 @@ fixed-setting acquisition descriptor packets remain part of NEXT-07.
   reference energy; test signs, levels and collisions with protected roles.
 - [x] **NEXT-07A** Implement validated timestamp/MC message blocks, exact frame
   capacity and consecutive MSB-first36-byte/288-bit FEC inputs.
-- [ ] **NEXT-07** Complete fixed-setting PLC acquisition messages: OCD, Profile A
+- [x] **NEXT-07** Complete fixed-setting PLC acquisition messages: OCD, Profile A
   and NCP DPD MAC packets, packet CRCs, segmentation and repetition scheduling.
 - [x] **NEXT-08** Implement verified PLC coding as a separate stage; reuse a codec
   only where the PHY parameters match, otherwise add a focused Rust primitive.
@@ -118,33 +120,45 @@ fixed-setting acquisition descriptor packets remain part of NEXT-07.
   independent permutation vectors and a coded-to-interleaved test point.
 - [x] **NEXT-10** Implement PLC randomization with independent state and its own
   phase/reset tests; do not reuse data/NCP randomizer state.
-- [ ] **NEXT-11** Implement the PLC preamble in its own module with phase/sign tests.
-- [ ] **NEXT-12** Implement PLC QAM mapping separately with label/scale vectors.
-- [ ] **NEXT-13** Implement physical-bin assembly that combines interleaved cells,
+- [x] **NEXT-11** Implement the PLC preamble in its own module with phase/sign tests.
+- [x] **NEXT-12** Implement PLC QAM mapping separately with label/scale vectors.
+- [x] **NEXT-13** Implement physical-bin assembly that combines interleaved cells,
   pilot values and PLC without moving protected bins or replacing placeholders early.
-- [ ] **NEXT-14** Add selectable outputs for pilot values, PLC bytes/coded bits/IQ
+- [x] **NEXT-14** Add selectable outputs for pilot values, PLC bytes/coded bits/IQ
   and complete physical frequency bins; test with observation on and off.
-- [ ] **NEXT-15** Add module tests, a bounded example, integration tests and a user
+- [x] **NEXT-15** Add module tests, a bounded example, integration tests and a user
   guide with equations/diagram. Mark this stage complete only after these pass.
 
-Pilot evidence for NEXT-01 is verified against PHY3.1 I20 §7.5.15.3–4, PDF171,
-and PHY4.0 FDD delegation. PLC frame/message/bit-order requirements are verified
-and recorded in [PLC evidence](../reference/plc-evidence.md); exact remaining
-preamble vectors for NEXT-01 are still pending. Randomization is checked against
-rendered Figure68/PDF157 and independent polynomial/cadence tests at both spacings.
-Interleaving is
-verified against rendered Figures65–67 and full independent coordinate vectors.
-PLC coding is verified against the rendered Table21 and explicit puncturing
-ranges; the source numbering/figure discrepancies are recorded in the evidence.
-NEXT-02 now has pilot results, shared metadata and typed PLC message/FEC-input
-results; later PLC algorithms will add their own result types. NEXT-14/15 have
-pilot and PLC label probes plus pilot/message/codec/interleaver tests, examples
-and guides; remaining PLC observer producers,
-remaining signal stages and full-frame integration keep those items unchecked.
+Pilot and PLC evidence for NEXT-01 is recorded in [PLC evidence](../reference/plc-evidence.md)
+and the stage guides. Tables48/49, Figure68 and the block-interleaving figures
+were verified against the local PHY PDF. Acquisition management fields, assignments,
+MC segmentation and repeat intervals use pinned MULPI I25 text. The supported
+fixed subset has single-part OCD/ProfileA/NCP messages; arbitrary profiles,
+list/vector TLVs, multipart MMMs and EM/TR modes are not claimed.
+
+NEXT-14/15 now include selectable message bytes, transmitted coded bits, labels,
+PLC data/preamble I/Q and full physical grids, with independent module tests,
+both-spacing multi-frame FEC/QAM/CRC integration and a bounded example. RX diagnostics
+remain directly accessible; additional RX common-observer producers and CLI/file
+export remain later work. External interoperability and waveform validation remain
+open under QA-05/WAVE-06.
 
 Planned paths and test-point IDs are in the architecture. Resolve any missing
 normative behavior in `development/pilot-plc-signals/` before implementing it.
 Do not create empty source files merely to make the planned tree appear complete.
+
+## Receiver configuration from PLC
+
+- [ ] **RX-CONFIG-01** Add receiver-owned state that consumes CRC-validated,
+  reassembled OCD/ProfileA/NCP DPD descriptors and applies a consistent channel
+  configuration. Preserve channel/profile/change identities; validate required
+  descriptors before data/NCP recovery. Derive layout, interleaving and modulation
+  from received signaling rather than copying transmitter settings. Keep supplied
+  PLC bootstrap knowledge explicit. Test missing/corrupt/inconsistent messages,
+  configuration readiness and unchanged valid state after rejection.
+
+Recovered messages and parsed TLVs exist; applying them to a full receiver is
+not implemented. See [PLC simulation design](../user/simulation/plc.md).
 
 ## Waveform transmitter and receiver
 

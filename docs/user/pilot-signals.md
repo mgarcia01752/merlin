@@ -134,7 +134,7 @@ an event to the remaining budget.
 
 Application limits, independent of PHY limits, are:
 
-- 1–32 unique selected stages; four pilot and two PLC label producers are registered.
+- 1–32 unique selected stages; four pilot, seven PLC and physical-bin producers are registered.
 - At most100000 callbacks per probe instance.
 - At most65536 selected elements per event.
 - At most1048576 selected elements per probe instance.

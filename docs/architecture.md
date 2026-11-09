@@ -2,7 +2,9 @@
 
 This is the maintained architecture for this repository. The
 [implementation checklist](development/checklist.md) records completed work,
-remaining requirements and the next implementation step. Detailed equations and
+remaining requirements and the next implementation step.
+The [simulation design index](user/simulation/README.md) links a separate
+Mermaid-based user guide for each simulation component. Detailed equations and
 examples live in the linked stage guides; private evidence and investigation
 notes live under ignored `development/`.
 
@@ -72,9 +74,10 @@ crates/
 │   │   ├── settings.rs        Fixed numerology
 │   │   ├── timing.rs          Integer sample-clock schedules
 │   │   ├── layout/            Physical roles and inverse pilot reference
+│   │   ├── frame/             Protected physical frequency-bin assembly
 │   │   ├── packing/           Bounded codeword queue and symbol plans
 │   │   ├── ncp/               Messages, control mapping and field CRC acceptance
-│   │   └── plc/               Messages, FEC adapter, nibbles and block interleaving
+│   │   └── plc/               Acquisition/messages, coding, interleaving, masks and signals
 │   ├── signal_processing/
 │   │   ├── modulation/        QAM, LLRs, bit processing and cell randomization
 │   │   ├── interleaving/      Separate time, frequency and composition modules
@@ -136,7 +139,7 @@ flowchart TB
     SOURCE -->|"Independent truth"| TRUTH
     NCPRX -.-> SLICER["Optional hard slicer · profile-selected data I/Q"]
     classDef planned stroke-dasharray: 5 5;
-    class CELLS,PLC,FRAME,IFFT,CP,WINDOW,CHANNEL,TIMING,FFT,EQ,SLICER planned;
+    class CELLS,IFFT,CP,WINDOW,CHANNEL,TIMING,FFT,EQ,SLICER planned;
 ```
 
 The NCP and payload receiver paths use the appropriate separate demapping
@@ -154,7 +157,7 @@ modules before it is advertised as a standalone channel-run API.
 ## Test points and data access
 
 Existing APIs expose useful intermediate arrays and results. The common typed,
-bounded observer is implemented for **four pilot stages and two PLC label stages**. Other stage IDs below
+bounded observer is implemented for **four pilot stages, seven PLC stages and physical bins**. Other stage IDs below
 remain proposed; their direct outputs are not yet wired to that observer. CLI/file
 export and whole-run cancellation policy remain TODO. “Direct” means a caller can
 obtain data through an existing stage API.
@@ -171,14 +174,14 @@ obtain data through an existing stage API.
 | `tx.qam.iq` | Normalized I/Q with modulation and reference plane | Direct mapper output |
 | `tx.time.cells`, `tx.frequency.cells` | Each cell-interleaver output with startup markers | Direct separate APIs |
 | `tx.pilots.sequence`, `tx.pilots.continuous`, `tx.pilots.scattered`, `tx.pilots.power` | Separate sequence, signals, boost and physical locations | Direct values and bounded observer |
-| `tx.plc.message` | `transmission::plc`; TS+MC information bytes and288-bit inputs | Direct bounded APIs; observer and OCD/DPD packet construction TODO |
-| `tx.plc.coded` | `fec_codec::plc` and thin `transmission::plc::coding`; mother/transmitted bits | Direct arrays; common observer TODO |
+| `tx.plc.message` | `transmission::plc`; TS+MC information bytes and288-bit inputs | Fixed OCD/ProfileA/NCP packets, scheduling/reassembly and bounded message-byte observer |
+| `tx.plc.coded` | `fec_codec::plc` and thin `transmission::plc::coding`; mother/transmitted bits | Mother bits direct; transmitted bits through bounded observer |
 | `rx.plc.llrs`, `rx.plc.decoded` | Restored mother LLRs and soft decisions with iterations/parity | Direct APIs; common observer TODO |
 | `tx.plc.coded_nibbles`, `tx.plc.interleaved` | Grouped labels and time-major PLC grid | Direct typed results and bounded observer; explicit grid metadata |
 | `rx.plc.deinterleaved` | Hard-label or soft-bit inverse PLC permutation | Direct APIs; common observer TODO |
-| `tx.plc.randomized`, `rx.plc.descrambled` | Independent PLC masks and sign-only soft inverse; frame-index/register snapshots | Direct bounded block APIs; common observer TODO |
-| `tx.plc.preamble`, `tx.plc.iq` | PLC preamble and mapping outputs | TODO |
-| `tx.frame.bins` | Full physical frequency grid, roles and zero/excluded bins | TODO production assembler |
+| `tx.plc.randomized`, `rx.plc.descrambled` | Independent PLC masks and sign-only soft inverse; frame-index/register snapshots | Direct block APIs; TX labels through bounded observer, RX observer TODO |
+| `tx.plc.preamble`, `tx.plc.iq` | Verified BPSK preamble and shared16-QAM mapping | Direct typed arrays and bounded observer |
+| `tx.frame.bins` | Full physical frequency grid, roles and zero/excluded bins | Direct assembler and bounded observer; data None preserved |
 | `tx.ifft.samples`, `tx.cp.samples`, `tx.window.samples`, `tx.overlap_add.samples` | Separate waveform stages and sample indices | TODO |
 | `channel.input`, `channel.output` | Channel-plane I/Q and applied impairment configuration | TODO waveform path; cell AWGN exists |
 | `rx.timing`, `rx.cp.samples`, `rx.fft.bins`, `rx.channel.estimate`, `rx.equalized.iq` | Timing result, recovered grid, channel estimate and equalized data | TODO waveform receiver |
@@ -215,24 +218,40 @@ Native typed stage calls remain usable without observers. JSON is an export
 adapter, not the only way to get data. Probe failures and cancellation need an
 explicit runner policy that preserves already completed scientific results.
 
-The PLC message boundary now exposes a typed extended timestamp, timestamp block,
-message-channel block, complete TS+MC information frame and36-byte FEC inputs.
-An idle frame is valid at that boundary but does not carry channel-acquisition
-configuration. MAC OCD/DPD packets and repetition scheduling remain separate work.
-The separate PLC LDPC primitive and typed adapter now recover message inputs
-with actual iterations and parity status. PLC nibble grouping, block permutation
-and hard/soft inverse now have analysis-only APIs. Thin PLC stage composition
-provides bounded coded/interleaved label observations with full grid metadata.
-`transmission::plc::randomization` now owns independent frame-aligned PLC TX/RX
-streams. It reuses only the shared GF arithmetic, retains state across codewords,
-skips the eight preamble slots without clocks and resets before each new frame.
-Direct bounded outputs expose labels/LLRs and register snapshots; common observer
-integration for this stage remains pending. The known-phase block API requires
-consecutive complete blocks from phase0; it is not acquisition/resynchronization.
-Preamble, mapping and physical-bin assembly remain pending. See the
-[PLC randomization guide](user/plc-randomization.md),
-[PLC interleaving guide](user/plc-interleaving.md), [PLC coding guide](user/plc-coding.md),
-[PLC message guide](user/plc-messages.md) and [evidence](reference/plc-evidence.md).
+The fixed-setting PLC path now generates OCD, ProfileA and NCP descriptors as
+single-part management MAC packets, with HCS/FCS, mandatory edge/CP/PLC assignments,
+MC segmentation and independent reassembly. A frozen scheduler repeats the set
+within the200ms default using integer sample timing; packets too large for the
+supported single-part contract or repeat budget fail explicitly. The source
+settings and scheduler cadence must match. Received OCD geometry reuses the
+existing physical-layout validator; DPD TLVs retain explicit profile identity.
+
+Separate PLC stages own message coding, nibble grouping, block interleaving,
+randomization, shared16-QAM mapping and the eight-symbol BPSK preamble. Full-frame
+composition is in `simulation/plc/{transmitter,receiver}.rs`, bounded to one128-symbol
+frame per operation. The receiver takes received equalized local PLC I/Q with
+known spacing/frame alignment, retains decisions/iterations and independently
+checks message and packet acceptance. This is not blind acquisition. Decoded
+OCD/ProfileA/NCP descriptors are not yet applied as receiver-owned operational
+configuration. Add that state before full-channel recovery: require a consistent,
+validated descriptor set, retain channel/profile/change identity and derive
+physical/interleaver/demodulation settings from received messages. Caller-supplied
+PLC bootstrap alignment/numerology remains explicitly separate. Track this gap
+as RX-CONFIG-01; do not pass transmitter layout/profile objects as hidden receiver
+configuration or describe message recovery alone as a configured receiver.
+
+`transmission/frame/assembly.rs` combines already cell-interleaved data/NCP,
+scattered placeholders, PLC and actual pilots in increasing physical-bin order.
+Protected bins cannot be overwritten; excluded bins are zero and unavailable data
+history stays None. Normalization is an explicit RMS reference. Completed PLC and
+physical outputs expose bounded optional windows through
+`simulation/plc/observation.rs`; callbacks cannot modify scientific stage state.
+The [PLC channel guide](user/plc-channel.md) includes the complete flow, math,
+reproducible example, supported fixed subset and verification scope. Individual
+[coding](user/plc-coding.md), [message](user/plc-messages.md),
+[interleaving](user/plc-interleaving.md) and [randomization](user/plc-randomization.md)
+guides remain focused stage references. External interoperability, full data/NCP
+production orchestration and waveform TX/RX are still pending.
 
 ## Planned module ownership
 
@@ -244,10 +263,8 @@ before implementation if source analysis shows a better existing owner.
 | --- | --- |
 | `signal_processing/modulation/interleaving/{parity,twist,demultiplexing}.rs` | Separate intermediate and inverse boundaries behind the existing facade |
 | `transmission/layout/additional_pilots.rs` | Specification-based additional continuous-pilot placement |
-| `transmission/plc/{descriptors,mac_packets,scheduling}.rs` | Fixed-setting OCD/DPD packets, packet CRCs, segmentation and repetition; current message layer transports opaque segments |
-| `transmission/plc/{preamble,mapping}.rs` | Remaining PLC signal stages and distinct state; invoke verified codec primitives |
+| `transmission/plc/receiver_configuration.rs` | Receiver-owned decoded-descriptor state, consistency/readiness and downstream configuration; RX-CONFIG-01 |
 | `transmission/symbols/assembly.rs` | Typed data/NCP/filler composition before randomization/mapping |
-| `transmission/frame/assembly.rs` | Reduced-to-physical grid assembly and protected-role insertion |
 | `signal_processing/waveform/{ifft,fft,cyclic_prefix,windowing,overlap_add}.rs` | Separate waveform transforms and inverse operations |
 | `signal_processing/channel/` | Explicit reference-plane channel and impairment models |
 | `signal_processing/receiver/{timing,estimation,equalization}.rs` | Known-reference first, then independently verified estimation/acquisition |

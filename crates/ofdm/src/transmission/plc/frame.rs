@@ -60,6 +60,13 @@ impl PlcMessageFrame {
         )?;
         Self::new(spacing, timestamp, channel)
     }
+    /// Returns the fixed numerology without inferring it from encoded byte counts.
+    /// # Returns
+    /// The spacing supplied when this validated message frame was constructed.
+    pub fn spacing(&self) -> SubcarrierSpacing {
+        self.spacing
+    }
+
     /// Reports the frame's immutable numerology-derived dimensions.
     /// # Returns
     /// Small owned geometry record; no signal or parity bytes generated.

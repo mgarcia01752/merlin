@@ -35,6 +35,16 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
   clocks, frame reseeding, rejected-call invariance and exact soft sign inverse.
   Keep known-phase sequencing distinct from acquisition; recover multiple full
   frames through FEC/permutation/randomization without TX truth in RX inputs.
+- For full PLC signals, independently transcribe both preamble tables by columns,
+  test every label/sign/energy, and connect actual FEC/QAM to received soft bits.
+  Verify acquisition MAC HCS/FCS with independent check strings and corruption
+  tests, mandatory OCD edges/protected roles, DPD profile identity, integer repeat
+  deadlines and MC continuation/pointers across real frame boundaries. Keep MC
+  segmentation separate from multipart MMMs; reject unsupported formats explicitly.
+  Physical assembly must preserve missing history, require empty scattered-pilot
+  placeholders and protect PLC/pilot/excluded bins. Test actual cell-interleaver
+  outputs and all128 phases. Observation windows retain full grid/frequency
+  metadata; disabled/exhausted/failing callbacks preserve completed results.
 - For cell interleavers, verify exact index/delay vectors, all supported depths,
   partial columns and dummy padding, PLC-aligned pilot references, startup/drain
   and source-symbol phase at inverse randomizer resets. Never count None history

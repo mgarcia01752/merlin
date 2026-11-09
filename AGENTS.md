@@ -87,3 +87,7 @@ needed before returning the command, and keep partial work explicitly unchecked.
 Do not edit them solely to record that a review occurred.
 PRBS is a later source implementation, not a label for
 the existing seeded random generator.
+
+When the user says "next", implement the next unfinished item in the official
+checklist/architecture in dependency order. Keep its status accurate and report
+any prerequisite gaps rather than substituting unrelated work.

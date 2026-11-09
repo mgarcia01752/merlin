@@ -18,6 +18,24 @@ CLI startup, argument parsing, commands and JSON I/O separate. Keep root modules
 focused on wiring and exports. Preserve established imports through re-exports
 when moving an API; do not keep duplicate implementations or empty placeholders.
 
+## Per-model and module user guides
+
+Each substantive scientific model or processing module must have its own user
+page explaining its design under `docs/user/<feature>/`. Keep a feature index
+linking those pages; do not grow one undifferentiated guide for every component.
+For simulation components, use `docs/user/simulation/` as the starting example.
+
+Explain purpose, responsibility, inputs/outputs in plain language, state and
+lifecycle, links to adjacent stages, current support and remaining gaps. Include
+a Mermaid data-flow or state diagram for each component, distinguishing existing
+paths from planned integration. Add equations where they clarify the model.
+
+Keep these user guides focused on how the component works. Do not turn them into
+API catalogs or duplicate method signatures/parameter lists. Source rustdoc and
+`docs/reference/public-api.md` own API details. Link to existing stage math and
+examples rather than copying them. Update the relevant page/index alongside model
+changes and verify links/diagrams against the actual code and architecture.
+
 ## Scientific stage modules and test points
 
 Give each distinct processing stage a focused Rust module and a directly testable
@@ -28,6 +46,10 @@ can inspect data without duplicating algorithms, printing inside DSP code or
 accessing mutable internals. Keep test-point metadata explicit about units,
 normalization, source/channel phase, shape and startup/drain validity; bound
 optional snapshots and prove observation preserves scientific behavior.
+
+When the user says "next", select the next unfinished checklist/architecture
+item in dependency order. Report the active item ID and name in progress updates
+when moving between steps, including resumed prerequisite work.
 
 Follow docs/architecture.md and update docs/development/checklist.md when adding
 or completing a stage. Clearly distinguish planned common instrumentation from

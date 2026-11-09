@@ -41,6 +41,15 @@ impl SubcarrierSpacing {
     pub fn fft_samples(self) -> u32 {
         SAMPLE_RATE_HZ / self.frequency_hz()
     }
+    /// Returns the mandatory excluded carrier count at each physical FFT edge.
+    /// # Returns
+    ///296for8K or148for4K, MULPI I25 section6.4.40/PDF199.
+    pub fn mandatory_excluded_edge_bins(self) -> usize {
+        match self {
+            Self::Khz25 => 296,
+            Self::Khz50 => 148,
+        }
+    }
     /// Returns the maximum time-interleaver depth for this spacing.
     pub fn max_time_interleaver_depth(self) -> u8 {
         match self {

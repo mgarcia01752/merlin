@@ -31,16 +31,14 @@ provides control LDPC, CRC and received codeword-start discovery.
 delays, frequency permutations and the inverse physical pilot reference.
 Separate [pilot generators and bounded test points](docs/user/pilot-signals.md)
 provide physical-bin BPSK signs and explicit amplitude scaling.
-[PLC message blocks](docs/user/plc-messages.md) now provide timestamp/MC frames and
-ordered FEC inputs. A separate [PLC LDPC codec](docs/user/plc-coding.md) now recovers
-those inputs with actual decoder iterations. [PLC block interleaving](docs/user/plc-interleaving.md)
-adds the separate permutation, inverse and bounded observations.
-[PLC randomization](docs/user/plc-randomization.md) now provides independent
-frame-aligned label masks and a soft inverse. Acquisition
-descriptors and remaining PLC signal generation,
-full DOCSIS framing/placement and
-interoperability validation remain pending. See
+The [PLC channel path](docs/user/plc-channel.md) now includes fixed acquisition
+messages, FEC, interleaving, randomization, preamble, QAM and physical-bin assembly,
+with known-phase soft recovery and bounded stage observations. Full waveform
+transmission and external interoperability validation remain pending. See
 [coding scope and equations](docs/reference/coding-mode.md).
+
+[Simulation design guides](docs/user/simulation/README.md) explain each simulation
+component with its own data-flow diagram and current implementation scope.
 
 The isolated codec loop is available before involving modulation or a channel:
 

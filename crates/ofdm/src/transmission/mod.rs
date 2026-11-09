@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Fixed downstream transmission configuration and sample-clock scheduling.
+pub mod frame;
 pub mod layout;
 pub mod ncp;
 pub mod packing;

@@ -88,8 +88,8 @@ independent branch with identical state, not shared mutable history.
 
 This prints first/last/next-frame snapshots for both spacings using zero labels.
 Those labels demonstrate masks, not a valid encoded PLC message. Direct typed
-snapshots are available now; the common selectable observer for this stage is
-still pending.
+snapshots are available now; the [complete PLC producer](plc-channel.md) also exposes randomized labels
+through the common selectable observer.
 
 Tests use independent carryless polynomial reduction across three frames per
 spacing, check the explicit first mask and every cell/state, preserve soft
@@ -105,4 +105,4 @@ Authority: CM-SP-PHYv3.1-I20-230419 §7.5.13.8, Figure68, PDF157, verified again
 the local original PDF. CM-SP-PHYv4.0-I07-250627 §7.3.5.13/PDF146 delegates FDD
 PLC to PHY3.1; no FDX claim. See [evidence](../reference/plc-evidence.md),
 [interleaving](plc-interleaving.md), [architecture](../architecture.md) and
-[checklist](../development/checklist.md). The next signal stage is PLC preamble.
+[checklist](../development/checklist.md). Preamble, mapping and physical assembly are now available in the complete PLC path.

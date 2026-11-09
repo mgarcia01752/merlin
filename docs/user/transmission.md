@@ -7,8 +7,9 @@ Channel bonding and dynamic CMTS reconfiguration are outside this scope.
 The public Rust `transmission` module currently validates numerology and calculates
 a one-second schedule. [Carrier layout](carrier-layout.md) now validates physical
 bin geometry and generates scattered-pilot roles. [QAM mapping](qam-mapping.md)
-and reference soft demapping are available through16K-QAM. Waveform generation,
-full physical control signaling remains pending.
+and reference soft demapping are available through16K-QAM. The
+[fixed PLC signal path](plc-channel.md) now includes acquisition messages and
+physical-bin assembly; waveform generation and full channel orchestration remain pending.
 [Cell time/frequency interleaving](cell-interleaving.md) and its inverse receiver
 are now available with a correctly phased pilot reference.
 [Data/NCP randomization](cell-randomizer.md) is now available as a standalone

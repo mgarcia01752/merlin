@@ -16,6 +16,11 @@ component will adapt inputs and results without duplicating scientific logic.
 | `transmission::plc::{TimestampMessageBlock, PlcMessageFrame}` | CRC-backed TS+MC frame construction/parsing with the simulation feature; independent PLC parity generation through the adapter below |
 | `transmission::plc::{PlcCodewordNibbles, InterleavedPlcBlock, block_interleaving}` | Validated nibble grouping, block permutation and hard/soft inverse; analysis-only compatible |
 | `transmission::plc::{PlcRandomizer, RandomizedPlcBlock, DescrambledPlcBlock}` | Independent known-phase PLC state,96-label masks,384-LLR soft inverse and direct bounded snapshots; analysis-only compatible |
+| `transmission::plc::{descriptors,mac_packets,scheduling,reassembly}` | Fixed acquisition packets, CRC validation, repeats and MC segmentation/reassembly; analysis-only compatible |
+| `transmission::plc::{preamble,mapping}` | Verified BPSK columns, normalized16-QAM and soft demapping; analysis-only compatible |
+| `transmission::frame::{assemble,PhysicalFrequencySymbol}` | Physical protected bins, explicit RMS and preserved missing history |
+| `simulation::plc::{generate_frame,PlcFrameSignals,PlcFrameReceiver}` | Bounded known-phase PLC frame TX/RX with direct stage results |
+| `simulation::plc::observation` | Bounded PLC and physical frequency-grid observations |
 | `simulation::plc::PlcInterleavingStages` | Immutable coded/interleaved stage outputs and bounded optional label observations |
 | `fec_codec::plc::{PlcFecCodec, PlcBlockResult, puncturing}` | Separate PLC mother/punctured LDPC, restored LLRs and actual decoder iterations |
 | `transmission::plc::{PlcBlockCodec, EncodedPlcBlock, DecodedPlcBlock}` | Thin typed/serializable PLC coding adapter; failed decisions remain diagnostic |
@@ -60,7 +65,7 @@ See the [public-api skill](../../skills/public-api/SKILL.md) for API development
 requirements and [JSON contracts](documents.md) for the existing serialization.
 
 Existing typed operation outputs can be consumed directly. The common observer
-currently registers four pilot stages and two PLC label stages; it is available with the `simulation`
+currently registers four pilot stages, seven PLC stages and physical bins; it is available with the `simulation`
 feature. The underlying DSP pilot APIs work without default features. Other
 producers and CLI/file export remain on the
 [implementation checklist](../development/checklist.md). See

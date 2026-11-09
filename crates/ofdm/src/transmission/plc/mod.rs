@@ -4,15 +4,22 @@
  */
 //! PLC message boundaries; waveform and acquisition descriptors are separate stages.
 pub mod block_interleaving;
+pub mod checksums;
 #[cfg(feature = "simulation")]
 pub mod coding;
+pub mod descriptors;
 #[cfg(feature = "simulation")]
 pub mod frame;
 pub mod geometry;
 pub mod information;
+pub mod mac_packets;
+pub mod mapping;
 pub mod message_channel;
 pub mod nibbles;
+pub mod preamble;
 pub mod randomization;
+pub mod reassembly;
+pub mod scheduling;
 pub mod timestamp;
 #[cfg(feature = "simulation")]
 pub mod timestamp_block;

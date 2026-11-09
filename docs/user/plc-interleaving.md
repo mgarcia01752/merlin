@@ -123,8 +123,9 @@ Completed scientific results exist before observation. Disabled, filtered and
 budget-exhausted outcomes leave them unchanged; callback errors propagate without
 retry, consuming the existing dispatch budget. No callback gets mutable stage
 state. The [common observer limits](pilot-signals.md#direct-apis-and-observation)
-remain unchanged; registration now includes four pilot stages and these two PLC
-label stages. CLI/file export and other PLC signal producers remain TODO.
+remain unchanged. The [full PLC producer](plc-channel.md) now registers message,
+coded-bit, randomized-label, data/preamble I/Q and physical-grid stages as well.
+CLI/file export remains later work.
 
 ## Validation and remaining work
 
@@ -138,9 +139,9 @@ rejection, disabled/exhausted paths and callback-error invariance.
 
 These are specification-derived tests, not external interoperability vectors or
 full waveform validation. [PLC randomization](plc-randomization.md) now has a
-separate stateful stage and soft inverse. Preamble/mapping and physical-bin
-assembly remain pending. Acquisition descriptor packets remain
-separate pending work.
+separate stateful stage and soft inverse. Preamble, mapping, physical-bin
+assembly and fixed acquisition packets are now implemented in the
+[complete PLC path](plc-channel.md).
 
 Authority: CM-SP-PHYv3.1-I20-230419 §7.5.13.7, Figures65–67, PDF154–156, checked
 against the local original PDF; CM-SP-PHYv4.0-I07-250627 §7.3.5.13/PDF146 delegates
