@@ -43,11 +43,37 @@ pub enum TestPointId {
     PlcIq,
     #[serde(rename = "tx.frame.bins")]
     PhysicalBins,
+    #[serde(rename = "tx.ifft.samples")]
+    TxIfft,
+    #[serde(rename = "tx.cp.samples")]
+    TxPrefix,
+    #[serde(rename = "tx.window.samples")]
+    TxWindow,
+    #[serde(rename = "tx.overlap_add.samples")]
+    TxOverlap,
+    #[serde(rename = "channel.input")]
+    ChannelInput,
+    #[serde(rename = "channel.output")]
+    ChannelOutput,
+    #[serde(rename = "rx.framed.samples")]
+    RxFramed,
+    #[serde(rename = "rx.cp.samples")]
+    RxUseful,
+    #[serde(rename = "rx.fft.bins")]
+    RxFft,
+    #[serde(rename = "rx.equalized.iq")]
+    RxEqualized,
+    #[serde(rename = "rx.plc.iq")]
+    RxPlc,
+    #[serde(rename = "rx.pilots.iq")]
+    RxPilots,
+    #[serde(rename = "rx.reduced.iq")]
+    RxReduced,
 }
 impl TestPointId {
     /// Returns the direction registered for this stage.
     /// # Returns
-    /// Transmit for the current pilot/PLC stages; future receive IDs require a new arm.
+    /// Transmit or receive according to the registered producer; channel output is RX input.
     pub(super) fn direction(self) -> SignalDirection {
         match self {
             Self::PilotSequence
@@ -61,7 +87,20 @@ impl TestPointId {
             | Self::PlcRandomized
             | Self::PlcPreamble
             | Self::PlcIq
-            | Self::PhysicalBins => SignalDirection::Transmit,
+            | Self::PhysicalBins
+            | Self::TxIfft
+            | Self::TxPrefix
+            | Self::TxWindow
+            | Self::TxOverlap
+            | Self::ChannelInput => SignalDirection::Transmit,
+            Self::ChannelOutput
+            | Self::RxFramed
+            | Self::RxUseful
+            | Self::RxFft
+            | Self::RxEqualized
+            | Self::RxPlc
+            | Self::RxPilots
+            | Self::RxReduced => SignalDirection::Receive,
         }
     }
 }
@@ -156,6 +195,12 @@ pub struct PhysicalProbeGrid {
     pub spacing: SubcarrierSpacing,
     pub zero_frequency_hz: crate::types::FrequencyHz,
 }
+/// Full waveform numerology retained even when only a few samples/bins are selected.
+#[derive(Debug, Clone, PartialEq, serde::Serialize)]
+pub struct WaveformProbeGrid {
+    pub geometry: crate::signal_processing::waveform::WaveformGeometry,
+    pub sample_rate_hz: crate::types::FrequencyHz,
+}
 /// Caller-assigned run/config identities and optional stage-specific time metadata.
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct ProbeContext {
@@ -172,6 +217,7 @@ pub struct ProbeContext {
     pub reference: SignalReference,
     pub plc_grid: Option<PlcProbeGrid>,
     pub physical_grid: Option<PhysicalProbeGrid>,
+    pub waveform_grid: Option<WaveformProbeGrid>,
 }
 impl ProbeContext {
     /// Creates run metadata with explicitly unknown time/profile fields.
@@ -204,6 +250,7 @@ impl ProbeContext {
             reference: SignalReference::NotApplicable,
             plc_grid: None,
             physical_grid: None,
+            waveform_grid: None,
         };
         result.validate()?;
         Ok(result)
@@ -229,6 +276,11 @@ impl ProbeContext {
                 return Err(invalid("Probe RMS reference must be positive and finite."));
             }
         }
+        if self.waveform_grid.as_ref().is_some_and(|grid| {
+            grid.sample_rate_hz != crate::transmission::settings::SAMPLE_RATE_HZ
+        }) {
+            return Err(invalid("Waveform probes require the fixed sample clock."));
+        }
         Ok(())
     }
 }
@@ -243,6 +295,7 @@ pub enum ProbeData<'event> {
     Bytes(&'event [u8]),
     Iq(&'event [IqPair]),
     OptionalIq(&'event [Option<IqPair>]),
+    ReceivedPilots(&'event [crate::signal_processing::receiver::extraction::ReceivedPilot]),
 }
 impl ProbeData<'_> {
     /// Returns the number of selectable values, counting a power record as one.
@@ -252,6 +305,7 @@ impl ProbeData<'_> {
         match self {
             Self::Bits(data) => data.len(),
             Self::Pilots(data) => data.len(),
+            Self::ReceivedPilots(data) => data.len(),
             Self::Power(_) => 1,
             Self::Labels(data) => data.len(),
             Self::Bytes(data) => data.len(),
@@ -271,7 +325,7 @@ impl ProbeData<'_> {
     pub(super) fn units(self) -> ProbeUnits {
         match self {
             Self::Bits(_) => ProbeUnits::Binary,
-            Self::Pilots(_) => ProbeUnits::NormalizedIq,
+            Self::Pilots(_) | Self::ReceivedPilots(_) => ProbeUnits::NormalizedIq,
             Self::Power(_) => ProbeUnits::TypedRecord,
             Self::Labels(_) => ProbeUnits::QamLabel,
             Self::Bytes(_) => ProbeUnits::Octet,
@@ -288,6 +342,7 @@ impl ProbeData<'_> {
         match self {
             Self::Bits(data) => Self::Bits(&data[start..end]),
             Self::Pilots(data) => Self::Pilots(&data[start..end]),
+            Self::ReceivedPilots(data) => Self::ReceivedPilots(&data[start..end]),
             Self::Power(data) => Self::Power(data),
             Self::Labels(data) => Self::Labels(&data[start..end]),
             Self::Bytes(data) => Self::Bytes(&data[start..end]),

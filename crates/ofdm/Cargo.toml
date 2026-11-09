@@ -52,3 +52,7 @@ required-features = ["simulation"]
 [[example]]
 name = "plc_channel"
 required-features = ["simulation"]
+
+[[example]]
+name = "waveform_channel"
+required-features = ["simulation"]

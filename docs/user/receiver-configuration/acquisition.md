@@ -41,5 +41,6 @@ implementation. Automatic loss recovery and descriptor timeouts are not added.
 Integration tests send real descriptors over multiple coded/QAM PLC frames,
 observe Waiting then Ready, and construct physical/pilot/interleaver consumers
 from received configuration alone. See [the overview example](README.md) and
-[the full PLC guide](../plc-channel.md). IFFT/channel/FFT and the complete payload
-runner remain separate stages.
+[the full PLC guide](../plc-channel.md). The separate [waveform experiment](../waveform/reference-experiment.md) now
+feeds actual sample-recovered PLC cells into this component. The complete
+payload runner remains later work.

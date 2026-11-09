@@ -53,6 +53,17 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
   policy distinct from dynamic profile activation. Include a real FEC/QAM/MC
   integration with pointer-free middle continuations and downstream components
   built only from received settings; never insert idle inside an unfinished packet.
+- For waveform TX/RX, verify centered physical-bin ordering and unitary scaling
+  using independent impulse/DC/tone/direct-sum vectors, not only a round trip.
+  Cover both FFT sizes and every permitted CP/RP pair, including evaluation-only
+  zeroRP, the half-sample taper, cyclic suffix and independent overlap/energy
+  identities. Verify contiguous sample identity, arbitrary RX block splits,
+  incomplete/drain reporting, overflow and rejection-state invariance. Probe
+  metadata must retain direction, full geometry and original sample/bin offsets.
+  Compare actual pilot/PLC signals through time samples and decode real PLC bits;
+  deterministic reference data cells do not establish encoded payload/NCP transport.
+  Keep known-reference timing/equalization distinct from blind acquisition and
+  future full-channel production-runner validation.
 - For cell interleavers, verify exact index/delay vectors, all supported depths,
   partial columns and dummy padding, PLC-aligned pilot references, startup/drain
   and source-symbol phase at inverse randomizer resets. Never count None history

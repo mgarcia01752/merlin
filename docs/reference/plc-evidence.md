@@ -7,7 +7,7 @@ versioned text extraction; no rendered MULPI figure verification is claimed.
 
 | Source | Endpoint and requirement | Implementation / status |
 | --- | --- | --- |
-| PHY3.1 §7.5.13.2, PDF149; MULPI3.1 §6.5.1/Table74, PDF215 | CMTS constructs eight preamble and 120 data symbols; frame holds ten or twenty FEC blocks | `PlcFrameGeometry`, generated data/preamble columns and full frequency-grid tests; waveform pending |
+| PHY3.1 §7.5.13.2, PDF149; MULPI3.1 §6.5.1/Table74, PDF215 | CMTS constructs eight preamble and 120 data symbols; frame holds ten or twenty FEC blocks | `PlcFrameGeometry`, generated data/preamble columns and full frequency-grid tests and separate noiseless waveform recovery |
 | MULPI3.1 §6.5.1–2/Table75, PDF215–216 | CMTS places exactly one TS block first after preamble; header type1, reserved zero, eight-byte timestamp and CRC-24-D | `TimestampMessageBlock`, TS-first frame composition; independent CRC division tests |
 | MULPI3.1 §7.1.5, PDF227–228 | Extended timestamp uses55 coarse bits, modulo20 sample phase and four lower phase bits | `ExtendedTimestamp`; explicit sample units and overflow checks |
 | MULPI3.1 §6.2.1.2, PDF83 | Multioctet numeric fields use byte-big-endian order | Timestamp and pointer network-order vectors |

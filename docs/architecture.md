@@ -86,12 +86,16 @@ crates/
 │   │   ├── modulation/        QAM, LLRs, bit processing and cell randomization
 │   │   ├── interleaving/      Separate time, frequency and composition modules
 │   │   ├── pilots/            Shared sequence, power and separate CP/SP signals
+│   │   ├── waveform/          TX IFFT/prefix/window/overlap and RX FFT/prefix primitives
+│   │   ├── receiver/          Known timing, reference equalization and extraction
+│   │   ├── channel/           Unity time-domain reference transfer
 │   │   ├── noise/             AWGN and measured residual-noise processing
 │   │   └── ...                Analytical bit-loading/capacity helpers
 │   ├── simulation/
 │   │   ├── source/            Seeded source; PRBS remains TODO
 │   │   ├── pilots/            Typed stage composition and optional observation
 │   │   ├── plc/               PLC composition, acquisition and optional observation
+│   │   ├── waveform/          Separate TX/RX, bounded reference experiment and probes
 │   │   ├── test_points/       Borrowed events, selection and finite dispatch budgets
 │   │   ├── coding_loop/       Independent 256-QAM codeword trials
 │   │   ├── runner.rs          Existing 16-QAM trial orchestration
@@ -132,8 +136,8 @@ flowchart TB
     PLC["PLC preamble, messages and signal"] --> FRAME
     FREQ --> FRAME --> IFFT["IFFT"] --> CP["Cyclic prefix"]
     CP --> WINDOW["Windowing and overlap-add"] --> CHANNEL["Reference or impaired channel"]
-    CHANNEL --> TIMING["RX timing and block framing"] --> FFT["CP removal and FFT"]
-    FFT --> EQ["Pilot/PLC extraction and equalized data bins"]
+    CHANNEL --> TIMING["RX timing and block framing"] --> FFT["RX prefix removal and FFT"]
+    FFT --> EQ["RX known-reference equalization and extraction"]
     EQ --> INVF["Frequency de-interleaving"] --> INVT["Time de-interleaving"]
     INVT --> DEMAP["Soft demapping and inverse randomization"]
     DEMAP --> NCPRX["NCP FEC/CRC → received boundaries"]
@@ -143,7 +147,7 @@ flowchart TB
     SOURCE -->|"Independent truth"| TRUTH
     NCPRX -.-> SLICER["Optional hard slicer · profile-selected data I/Q"]
     classDef planned stroke-dasharray: 5 5;
-    class CELLS,IFFT,CP,WINDOW,CHANNEL,TIMING,FFT,EQ,SLICER planned;
+    class CELLS,SLICER planned;
 ```
 
 The NCP and payload receiver paths use the appropriate separate demapping
@@ -186,9 +190,11 @@ obtain data through an existing stage API.
 | `tx.plc.randomized`, `rx.plc.descrambled` | Independent PLC masks and sign-only soft inverse; frame-index/register snapshots | Direct block APIs; TX labels through bounded observer, RX observer TODO |
 | `tx.plc.preamble`, `tx.plc.iq` | Verified BPSK preamble and shared16-QAM mapping | Direct typed arrays and bounded observer |
 | `tx.frame.bins` | Full physical frequency grid, roles and zero/excluded bins | Direct assembler and bounded observer; data None preserved |
-| `tx.ifft.samples`, `tx.cp.samples`, `tx.window.samples`, `tx.overlap_add.samples` | Separate waveform stages and sample indices | TODO |
-| `channel.input`, `channel.output` | Channel-plane I/Q and applied impairment configuration | TODO waveform path; cell AWGN exists |
-| `rx.timing`, `rx.cp.samples`, `rx.fft.bins`, `rx.channel.estimate`, `rx.equalized.iq` | Timing result, recovered grid, channel estimate and equalized data | TODO waveform receiver |
+| `tx.ifft.samples`, `tx.cp.samples`, `tx.window.samples`, `tx.overlap_add.samples` | Separate TX waveform stages, frozen geometry and sample indices | Direct stage results and bounded observer |
+| `channel.input`, `channel.output` | TX-output/RX-input I/Q with preserved sample indices | Unity reference transfer and bounded observer; waveform impairments pending |
+| `rx.framed.samples`, `rx.cp.samples`, `rx.fft.bins`, `rx.equalized.iq` | RX known-boundary periods, useful samples, raw bins and reference-compensated bins | Direct results and bounded observer |
+| `rx.plc.iq`, `rx.pilots.iq`, `rx.reduced.iq` | RX separated protected roles and data/scattered domain | Direct results and bounded observer; sparse pilots retain physical bins |
+| `rx.timing`, `rx.channel.estimate` | Future estimated timing/channel state, distinct from supplied reference | TODO nonideal acquisition; not inferred from known-reference tests |
 | `rx.frequency.cells`, `rx.time.cells` | Separate inverse cell-interleaver outputs and source phase | Direct |
 | `rx.ncp.llrs`, `rx.ncp.accepted` | NCP soft inputs, accepted pointers and block iterations | Direct primitives; orchestration currently in tests |
 | `rx.data.llrs`, `rx.descrambler.llrs` | Data likelihoods before/after sign inversion | Direct primitives |
@@ -265,8 +271,10 @@ The [PLC channel guide](user/plc-channel.md) includes the complete flow, math,
 reproducible example, supported fixed subset and verification scope. Individual
 [coding](user/plc-coding.md), [message](user/plc-messages.md),
 [interleaving](user/plc-interleaving.md) and [randomization](user/plc-randomization.md)
-guides remain focused stage references. External interoperability, full data/NCP
-production orchestration and waveform TX/RX are still pending.
+guides remain focused stage references. External interoperability and full
+production data/NCP orchestration remain pending. The separate waveform path
+now carries these PLC/pilot signals through actual time-domain samples with
+known-reference reception; see [waveform design](user/waveform/README.md).
 
 ## Waveform direction and configuration
 
@@ -274,7 +282,7 @@ Waveform means the complete **TX → channel → RX** path, not just reception.
 The [checklist](development/checklist.md#waveform-direction-and-completion-scope)
 uses direction-specific groups:
 
-| Group | Direction and responsibility | Planned boundary |
+| Group | Direction and responsibility | Processing boundary |
 | --- | --- | --- |
 | `WAVE-TX` | Transmitter: IFFT, prefix insertion, windowing and overlap-add | Physical frequency bins → time-domain samples |
 | `WAVE-CH` | Connecting channel: noiseless reference first | TX time samples → RX time samples |
@@ -286,12 +294,27 @@ outputs. Shared transform/prefix primitives keep one numerical owner; TX/RX
 composition remains separate. Test truth is used only for comparison, never as
 an input to the receive decoder.
 
-The next implementation begins with WAVE-TX-01 (IFFT), paired with WAVE-RX-01
-(FFT) for independent transform checks. The first waveform milestone then adds
-prefix insertion/removal, TX windowing/overlap-add, the reference channel,
-known-reference framing and pilot/PLC extraction, bounded probes and noiseless
-integration. Nonideal acquisition, complete production payload recovery and the
-one-second runner retain their separate checklist requirements.
+The first noiseless waveform milestone is implemented: WAVE-TX-01..03,
+WAVE-CH-01, WAVE-RX-01..04 and WAVE-QA-01..02. Centered unitary transforms,
+separate prefix operations, a half-sample Tukey taper, stateful overlap-add,
+known-boundary stream framing, reference equalization and protected-role
+extraction have independent public boundaries. TX/RX each own configuration
+and history; finite sample blocks retain absolute ticks. Completed outputs are
+observed after computation through thirteen direction-tagged probe producers.
+
+`simulation/waveform/reference.rs` streams at most two PLC frames through real
+samples and compares recovered bins and actual decoded information bits.
+Its data plane contains deterministic256-QAM reference cells, not encoded
+payload/NCP. Tests cover both spacings with a192MHz configured cap, a wide
+active envelope and internal exclusions; the example uses a24MHz envelope.
+Neither establishes external interoperability or a one-second payload experiment.
+Nonideal acquisition (WAVE-RX-05), production data/NCP receive orchestration
+(WAVE-RX-06/CELL-02) and the full RUN group remain unchecked. The next noiseless
+integration priority is production data/NCP composition before the one-second
+runner, while keeping nonideal acquisition separate.
+
+See the [per-subsystem guides](user/waveform/README.md) and
+[pinned waveform evidence](reference/waveform-evidence.md).
 
 Prefix length and roll-off are **user-configurable before a run and constant
 within that run**. TX validates and retains the chosen configuration. OCD
@@ -311,12 +334,7 @@ before implementation if source analysis shows a better existing owner.
 | `signal_processing/modulation/interleaving/{parity,twist,demultiplexing}.rs` | Separate intermediate and inverse boundaries behind the existing facade |
 | `transmission/layout/additional_pilots.rs` | Specification-based additional continuous-pilot placement |
 | `transmission/symbols/assembly.rs` | Typed data/NCP/filler composition before randomization/mapping |
-| `signal_processing/waveform/ifft.rs` | WAVE-TX: frequency bins → useful time samples |
-| `signal_processing/waveform/fft.rs` | WAVE-RX: useful received samples → frequency bins |
-| `signal_processing/waveform/cyclic_prefix.rs` | Separate TX insertion and RX removal operations sharing validated geometry |
-| `signal_processing/waveform/{windowing,overlap_add}.rs` | WAVE-TX: tapering and stateful sample-stream overlap |
-| `signal_processing/channel/` | WAVE-CH: explicit TX-output/RX-input planes, reference transfer and later impairment models |
-| `signal_processing/receiver/{timing,estimation,equalization}.rs` | WAVE-RX: framing, known-reference equalization, then independently verified estimation/acquisition |
+| `signal_processing/receiver/estimation.rs` | WAVE-RX: independently verified nonideal synchronization/channel estimation beyond the existing known-reference receiver |
 | `signal_processing/modulation/slicing.rs` | Diagnostic hard decisions; keep soft demapping for LDPC |
 | `simulation/channel/{transmitter,receiver,runner,results}.rs` | Thin stateful orchestration and completed-result accounting |
 | `simulation/source/prbs.rs` | Explicit PRBS polynomial, seed, continuity and comparison |

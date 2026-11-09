@@ -10,3 +10,7 @@ pub mod noise;
 pub mod ofdm;
 pub mod pilots;
 pub mod shannon;
+
+pub mod channel;
+pub mod receiver;
+pub mod waveform;

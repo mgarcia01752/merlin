@@ -30,8 +30,10 @@ retain the full local grid; physical-bin windows retain spacing and frequency
 origin. Missing history stays missing, including JSON null when serialized.
 A selected window is not a new, shorter physical channel.
 
-Current producers cover pilot stages, PLC transmit stages and assembled physical
-bins. Other processing stages expose some results directly but are not all wired
+Current producers cover pilot stages, PLC transmit stages, assembled physical
+bins and thirteen [waveform TX/channel/RX boundaries](../waveform/observations.md).
+Waveform windows retain full numerology, sample clock, absolute sample origin
+and direction as well as physical frequency coordinates. Other processing stages expose some results directly but are not all wired
 to this common observation mechanism. A registry entry is not permission to claim
 that every stage in the architecture already has a producer.
 

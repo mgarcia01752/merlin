@@ -266,6 +266,52 @@ fn validate_data(
                 )
                 && iq.iter().flatten().flatten().all(|value| value.is_finite())
         }
+        (
+            TestPointId::TxIfft
+            | TestPointId::TxPrefix
+            | TestPointId::TxWindow
+            | TestPointId::TxOverlap
+            | TestPointId::ChannelInput
+            | TestPointId::ChannelOutput
+            | TestPointId::RxFramed
+            | TestPointId::RxUseful,
+            SignalDomain::TimeSample,
+            ProbeData::Iq(iq),
+        ) => {
+            context.waveform_grid.is_some()
+                && context.sample_start_index.is_some()
+                && iq.iter().flatten().all(|value| value.is_finite())
+        }
+        (
+            TestPointId::RxFft | TestPointId::RxEqualized,
+            SignalDomain::PhysicalFftBin,
+            ProbeData::Iq(iq),
+        ) => {
+            context.waveform_grid.is_some()
+                && context.physical_grid.is_some()
+                && iq.iter().flatten().all(|value| value.is_finite())
+        }
+        (TestPointId::RxPlc, SignalDomain::PlcCell, ProbeData::Iq(iq)) => {
+            context.waveform_grid.is_some()
+                && context.plc_grid.is_some()
+                && iq.iter().flatten().all(|value| value.is_finite())
+        }
+        (
+            TestPointId::RxPilots,
+            SignalDomain::PhysicalFftBin,
+            ProbeData::ReceivedPilots(pilots),
+        ) => {
+            context.waveform_grid.is_some()
+                && context.physical_grid.is_some()
+                && pilots
+                    .iter()
+                    .all(|pilot| pilot.iq.iter().all(|value| value.is_finite()))
+        }
+        (TestPointId::RxReduced, SignalDomain::ReducedCarrier, ProbeData::OptionalIq(iq)) => {
+            context.waveform_grid.is_some()
+                && context.physical_grid.is_some()
+                && iq.iter().flatten().flatten().all(|value| value.is_finite())
+        }
         _ => false,
     };
     if !valid {

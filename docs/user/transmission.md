@@ -9,7 +9,8 @@ a one-second schedule. [Carrier layout](carrier-layout.md) now validates physica
 bin geometry and generates scattered-pilot roles. [QAM mapping](qam-mapping.md)
 and reference soft demapping are available through16K-QAM. The
 [fixed PLC signal path](plc-channel.md) now includes acquisition messages and
-physical-bin assembly; waveform generation and full channel orchestration remain pending.
+physical-bin assembly. [Waveform TX and matched RX](waveform/README.md) now carry
+those signals through actual time samples; full payload orchestration remains pending.
 [Cell time/frequency interleaving](cell-interleaving.md) and its inverse receiver
 are now available with a correctly phased pilot reference.
 [Data/NCP randomization](cell-randomizer.md) is now available as a standalone
@@ -20,7 +21,7 @@ randomization and reverse decoding as independent codeword trials.
 A [stateful symbol packer](symbol-packing.md) now carries256-QAM codewords
 across pre-interleaving plans with NCP reservations. The [NCP codec](ncp.md)
 now provides actual control FEC, CRC and receiver boundary discovery.
-Physical-domain integration remains pending. The existing CLI remains the
+Production payload/NCP waveform integration remains pending. The existing CLI remains the
 separate16-QAM coding experiment.
 
 ## Transmission flow
@@ -89,7 +90,8 @@ separately defines frequency reference, band-edge/internal exclusions, PLC,
 continuous/scattered pilots and NCP allocation. Do not assign all192MHz/spacing
 carriers to payload. Physical layout inputs are now explicit; NCP transport still
 uses the [packer](symbol-packing.md) and [cell interleavers](cell-interleaving.md);
-full channel waveform generation is still pending.
+bounded pilot/PLC waveform generation and reception are implemented separately;
+full payload/NCP waveform transport remains pending.
 
 ## Configurable prefix, constant per run
 
@@ -129,8 +131,10 @@ numerology without that knowledge is a later receiver milestone.
 
 The [waveform checklist](../development/checklist.md#waveform-direction-and-completion-scope)
 tracks `WAVE-TX` transmission, `WAVE-CH` channel, `WAVE-RX` reception and `WAVE-QA`
-validation separately. These waveform operations remain planned; the existing
-settings validator and one-second timing calculations are already implemented.
+validation separately. The initial noiseless TX/RX waveform operations are now implemented, with
+[per-subsystem guides](waveform/README.md), probes and actual PLC recovery.
+Settings validation and one-second scheduling are separate from the still-planned
+continuous one-second payload runner.
 
 ## One-second timing
 
@@ -202,6 +206,7 @@ Verified256-QAM bit processing, a [stateful symbol packer](symbol-packing.md)
 and [NCP encoding/decoding](ncp.md) are now available separately.
 [Cell interleaving](cell-interleaving.md) and the inverse pilot reference are
 implemented as well. Separate [pilot generators](pilot-signals.md) now provide
-signs and power. Major remaining stages are PLC and physical-bin assembly; IFFT,
-prefix/windowing and inverse receiver; and full one-second noiseless integration.
+signs and power. PLC/physical-bin assembly and bounded noiseless TX/RX waveform integration
+are now available. Remaining stages include production data/NCP waveform
+orchestration, nonideal acquisition and the full one-second noiseless runner.
 The timing and packing tests do not establish full channel recovery.

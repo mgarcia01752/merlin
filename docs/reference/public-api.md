@@ -22,6 +22,11 @@ component will adapt inputs and results without duplicating scientific logic.
 | `simulation::plc::{generate_frame,PlcFrameSignals,PlcFrameReceiver}` | Bounded known-phase PLC frame TX/RX with direct stage results |
 | `transmission::plc::receiver_configuration::{ReceiverConfigurationState,ReceiverConfigurationStatus,ReceiverConfiguration}` | Fixed-session descriptor admission, readiness gate and immutable received channel/profile settings; analysis-only compatible |
 | `simulation::plc::PlcAcquisitionReceiver` | Composed PLC IQ→FEC→MC packet reassembly→configuration, with retained decode/admission diagnostics |
+| `signal_processing::waveform` | Frozen geometry, centered TX/RX transforms, separate prefix operations, window, overlap history and bounded indexed sample blocks; analysis-only compatible |
+| `signal_processing::receiver::{timing,equalization,extraction}` | Known-reference RX framing, response compensation and protected-role extraction; analysis-only compatible |
+| `signal_processing::channel::reference::NoiselessChannel` | Unity sample transfer with preserved indices and explicit TX/RX planes |
+| `simulation::waveform::{WaveformTransmitter,WaveformReceiver}` | Separate state owners and directly inspectable bounded TX/RX results |
+| `simulation::waveform::{observation,reference}` | Thirteen bounded stage producers and shared short actual-PLC waveform verifier; no one-second payload-run claim |
 | `simulation::plc::observation` | Bounded PLC and physical frequency-grid observations |
 | `simulation::plc::PlcInterleavingStages` | Immutable coded/interleaved stage outputs and bounded optional label observations |
 | `fec_codec::plc::{PlcFecCodec, PlcBlockResult, puncturing}` | Separate PLC mother/punctured LDPC, restored LLRs and actual decoder iterations |

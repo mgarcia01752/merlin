@@ -32,6 +32,5 @@ Ready object by editing public fields.
 
 Readiness means this fixed-session configuration is complete and validated. It
 does not mean a waveform has synchronized, payload decoding has succeeded, or
-all advertised constellation coding modes are implemented. The complete waveform
-and data/NCP receiver still need to consume these settings in later checklist
-stages. See [readiness state](state.md) and [receive composition](acquisition.md).
+all advertised constellation coding modes are implemented. The initial waveform receiver uses explicit reference/bootstrap settings.
+Dynamic consumption in the full data/NCP runner remains later checklist work. See [readiness state](state.md) and [receive composition](acquisition.md).

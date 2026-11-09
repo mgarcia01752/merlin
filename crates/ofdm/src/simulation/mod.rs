@@ -20,3 +20,5 @@ pub use crate::signal_processing::{
     modulation::{interleaving::transmit_bit_order, map_qam16, qam16_llrs},
     noise::MeasuredNoise,
 };
+
+pub mod waveform;

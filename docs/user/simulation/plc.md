@@ -34,8 +34,9 @@ across codewords and resets for the next post-preamble data region.
 
 Messages are serialized bytes, then coded bits, then QAM I/Q cells in the assigned
 physical frequency bins. They currently pass between Rust modules as in-memory
-values. They do not yet pass through an IFFT, time-domain channel and FFT. That
-waveform path is a separate checklist stage.
+values. The separate [waveform experiment](../waveform/reference-experiment.md) now
+passes these signals through IFFT, a time-domain unity channel and FFT before
+PLC decoding. The PLC-only example retains its direct frequency-domain scope.
 
 Recovered descriptors now feed a [receiver-owned configuration subsystem](../receiver-configuration/README.md).
 It collects a consistent OCD/ProfileA/NCP set, applies assignments, and gates

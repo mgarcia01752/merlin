@@ -50,9 +50,9 @@ of its real message/FEC/QAM receive path:
 ```
 
 It reports the configuration learned by the receiver, together with received
-descriptors, actual decoder iterations and information-bit comparisons. The
-frequency-domain path is implemented; IFFT/channel/FFT and the full data/NCP
-production runner remain later stages. The readiness gate is available to those
+descriptors, actual decoder iterations and information-bit comparisons. The separate [waveform path](../waveform/README.md) now adds IFFT, windowed
+sample transfer and matched FFT recovery. The full data/NCP production runner
+remains a later stage. The readiness gate is available to those
 future consumers; existing standalone codec functions remain independently usable.
 
 See [architecture](../../architecture.md), [checklist](../../development/checklist.md)

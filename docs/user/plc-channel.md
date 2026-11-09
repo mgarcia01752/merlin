@@ -187,3 +187,7 @@ See the [receiver configuration design](receiver-configuration/README.md) for
 subsystem encapsulation, states and how received messages control settings.
 Pointer-free MC continuations use their full payload capacity; idle bytes are
 added only after packet data ends, never inside an unfinished packet.
+
+The separate [waveform example](waveform/reference-experiment.md) now verifies
+this PLC path over actual time samples. The PLC-only example above remains
+a frequency-domain experiment.

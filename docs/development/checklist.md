@@ -34,8 +34,9 @@ item by the documented dependencies and current implementation priority.
 Every new algorithm gets a focused module, typed output and independent tests.
 Stateful stages own their state; runners only connect stages. Direct stage outputs
 remain usable independently of the observer. ARCH-04 currently registers the four
-pilot stages, seven PLC stages and physical bins. ARCH-05 has bounded stage/element/symbol
-selection; adapter export remains TODO. Pilot/PLC observation invariance is tested; ARCH-06 still needs
+pilot stages, seven PLC stages, physical bins and thirteen waveform TX/channel/RX
+boundaries. ARCH-05 has bounded stage/element/symbol selection; adapter export
+remains TODO. Pilot/PLC/waveform observation invariance is tested; ARCH-06 still needs
 coverage of stateful/RNG-driven stages as their producers are added.
 
 ## Payload source
@@ -132,8 +133,9 @@ frame resets and a sign-only soft inverse, with direct typed snapshots.
 The [complete fixed PLC path](../user/plc-channel.md) now includes acquisition
 packets, repetition/segmentation, preamble, mapping, physical-bin assembly and
 bounded observations. **RX-CONFIG-01** now builds receiver-owned configuration
-from those decoded messages. The next implementation group is waveform
-transmission, beginning at **WAVE-TX-01: IFFT**.
+from those decoded messages. The first waveform TX/channel/RX milestone is now
+implemented below. The next noiseless integration priority is **CELL-02** and
+**WAVE-RX-06**, preparing production data/NCP transport for the RUN group.
 
 - [x] **PLC-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
@@ -178,8 +180,8 @@ PLC-14/PLC-15 now include selectable message bytes, transmitted coded bits, labe
 PLC data/preamble I/Q and full physical grids, with independent module tests,
 both-spacing multi-frame FEC/QAM/CRC integration and a bounded example. RX diagnostics
 remain directly accessible; additional RX common-observer producers and CLI/file
-export remain later work. External interoperability and waveform validation remain
-open under QA-05/WAVE-QA-02.
+export remain later work. External interoperability remains open under QA-05;
+the initial known-reference waveform validation is now covered by WAVE-QA-02.
 
 Planned paths and test-point IDs are in the architecture. Resolve any missing
 normative behavior in `development/pilot-plc-signals/` before implementing it.
@@ -222,27 +224,28 @@ flowchart LR
     SIGNAL --> QA["WAVE-QA: compare recovered signals with independent TX truth"]
 ```
 
-All waveform items below remain planned. For the first noiseless milestone,
-implement TX stages and their matched RX primitives, then the channel,
-known-reference RX and bounded observations, finishing with WAVE-QA-02.
+The first noiseless milestone now includes TX stages, their matched RX
+primitives, the unity channel, known-reference framing/extraction, bounded
+observations and actual PLC waveform integration. Each completed item links
+to its subsystem guide in the [waveform index](../user/waveform/README.md).
 Nonideal synchronization (WAVE-RX-05) and complete production data/NCP recovery
 (WAVE-RX-06) remain explicit later work; the initial milestone must not claim
 these are complete. The one-second runner has its own RUN group below.
 
 ## Waveform transmitter: IFFT
 
-Design: [Transmission and receiver flow](../architecture.md#transmission-and-receiver-flow).
+Design: [TX IFFT](../user/waveform/tx-ifft.md).
 
-- [ ] **WAVE-TX-01** Convert the complete physical frequency grid to time-domain
+- [x] **WAVE-TX-01** Convert the complete physical frequency grid to time-domain
   I/Q in a separate IFFT module. Specify bin ordering, amplitude normalization,
   sample clock and sample indices. Verify independent impulse/tone and energy
   vectors at both FFT sizes, alongside the matched WAVE-RX-01 transform.
 
 ## Waveform transmitter: cyclic-prefix insertion
 
-Design: [Configurable prefix, constant per run](../user/transmission.md#configurable-prefix-constant-per-run).
+Design: [TX prefix insertion](../user/waveform/tx-prefix.md).
 
-- [ ] **WAVE-TX-02** Insert the selected cyclic prefix in a focused TX operation.
+- [x] **WAVE-TX-02** Insert the selected cyclic prefix in a focused TX operation.
   Users choose a PHY-permitted length before the run; validate and retain that
   configuration for the run. Copy the useful symbol's trailing samples to its
   front without changing the useful samples. Test every permitted prefix,
@@ -255,45 +258,45 @@ PLC bootstrap knowledge kept explicit. WAVE-RX-02 owns the inverse operation.
 
 ## Waveform transmitter: windowing and overlap-add
 
-Design: [Planned waveform stage ownership](../architecture.md#planned-module-ownership).
+Design: [TX windowing](../user/waveform/tx-window.md) and [TX overlap-add](../user/waveform/tx-overlap.md).
 
-- [ ] **WAVE-TX-03** Keep TX windowing and stateful overlap-add in separate
+- [x] **WAVE-TX-03** Keep TX windowing and stateful overlap-add in separate
   modules. Apply the selected roll-off and cyclic extension using pinned PHY
   rules. Verify taper samples, energy, continuity, symbol cadence, startup/drain
   tails and state across block boundaries. Roll-off must not add to symbol cadence.
 
 ## Waveform channel: reference connection
 
-Design: [Reference channel scope](../user/transmission.md).
+Design: [Unity channel](../user/waveform/channel.md).
 
-- [ ] **WAVE-CH-01** Connect TX time samples to RX time samples through a
+- [x] **WAVE-CH-01** Connect TX time samples to RX time samples through a
   reference/noiseless channel module. Document input/output reference planes,
   sample clock, timing and gain. Verify unity transfer and block continuity;
   impairments remain separate MODEL work.
 
 ## Waveform receiver: FFT
 
-Design: [Transmission and receiver flow](../architecture.md#transmission-and-receiver-flow).
+Design: [RX FFT](../user/waveform/rx-fft.md).
 
-- [ ] **WAVE-RX-01** Convert a useful received time-domain symbol to physical
+- [x] **WAVE-RX-01** Convert a useful received time-domain symbol to physical
   frequency-bin I/Q in a separate FFT module. Match the documented TX ordering
   and normalization. Test independent vectors and IFFT/FFT recovery at both
   sizes; a round trip alone is insufficient validation.
 
 ## Waveform receiver: cyclic-prefix removal
 
-Design: [Configurable prefix, constant per run](../user/transmission.md#configurable-prefix-constant-per-run).
+Design: [RX prefix removal](../user/waveform/rx-prefix.md).
 
-- [ ] **WAVE-RX-02** Remove the configured prefix from a correctly framed RX
+- [x] **WAVE-RX-02** Remove the configured prefix from a correctly framed RX
   symbol, preserving exactly the useful FFT input. Check input length, boundaries
   and every permitted prefix at both spacings. Keep prefix removal separate
   from timing acquisition and from TX prefix insertion.
 
 ## Waveform receiver: timing and symbol framing
 
-Design: [Planned receive flow](../architecture.md#transmission-and-receiver-flow).
+Design: [RX known-reference framing](../user/waveform/rx-framing.md).
 
-- [ ] **WAVE-RX-03** Recover symbol windows from the received stream using
+- [x] **WAVE-RX-03** Recover symbol windows from the received stream using
   explicit known-reference timing first. Compose framing, prefix removal and
   FFT recovery without borrowing transmitter buffers or payload truth. Verify
   offsets, arbitrary input block splits, partial symbols and windowed boundaries.
@@ -301,9 +304,9 @@ Design: [Planned receive flow](../architecture.md#transmission-and-receiver-flow
 
 ## Waveform receiver: signal extraction and equalization
 
-Design: [Planned receive flow](../architecture.md#transmission-and-receiver-flow).
+Design: [RX extraction](../user/waveform/rx-extraction.md) and [equalization](../user/waveform/rx-equalization.md).
 
-- [ ] **WAVE-RX-04** Extract pilots and PLC from recovered bins and apply
+- [x] **WAVE-RX-04** Extract pilots and PLC from recovered bins and apply
   known-reference equalization first. Preserve frequency/role associations and
   amplitude units; feed actual received PLC cells into the existing decoder and
   receiver-configuration owner. Keep bootstrap settings explicit.
@@ -321,21 +324,30 @@ Design: [Planned receive flow](../architecture.md#transmission-and-receiver-flow
 
 ## Waveform validation: observations
 
-Design: [Observation design](../user/simulation/test-points.md).
+Design: [Waveform test points](../user/waveform/observations.md).
 
-- [ ] **WAVE-QA-01** Add direction-tagged test points at each TX, channel and RX
+- [x] **WAVE-QA-01** Add direction-tagged test points at each TX, channel and RX
   boundary, with explicit sample/bin units, finite block/range limits and direct
   library access. Prove observation does not change outputs or stage state.
 
 ## Waveform validation: noiseless integration
 
-Design: [Full-channel design and remaining integration](../architecture.md#transmission-and-receiver-flow).
+Design: [Actual waveform reference experiment](../user/waveform/reference-experiment.md).
 
-- [ ] **WAVE-QA-02** Connect TX waveform generation, the noiseless channel and
+- [x] **WAVE-QA-02** Connect TX waveform generation, the noiseless channel and
   matched known-reference RX using real pilot/PLC signals. Verify recovered
   frequency bins numerically and actual decoded PLC information with zero bit
   errors at both spacings. Include prefix/window/overlap boundaries and retain
   decoder diagnostics. Document which payload/runner stages remain unfinished.
+
+Completed waveform validation includes independent centered/unitary vectors,
+all permitted CP/RP combinations at both spacings, shifted-window sums,
+partial/offset stream framing, rejection invariance and actual two-frame PLC
+recovery. Integration exercises a192MHz configured cap and wide active grid
+with synthetic exclusions, complete FFT-bin comparisons, actual decoder
+iterations, zero information-bit errors and observation invariance. This is
+reference PLC/pilot verification; full payload/NCP recovery and one-second
+lifecycle are not checked by those results. [Evidence](../reference/waveform-evidence.md).
 
 ## One-second reference run
 

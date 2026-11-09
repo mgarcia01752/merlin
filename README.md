@@ -35,8 +35,11 @@ The [PLC channel path](docs/user/plc-channel.md) now includes fixed acquisition
 messages, FEC, interleaving, randomization, preamble, QAM and physical-bin assembly,
 with known-phase soft recovery and bounded stage observations.
 [Receiver configuration](docs/user/receiver-configuration/README.md) now derives
-channel/profile settings from received descriptors behind a readiness gate. Full waveform
-transmission and external interoperability validation remain pending. See
+channel/profile settings from received descriptors behind a readiness gate.
+[Waveform TX and matched RX](docs/user/waveform/README.md) now carry actual PLC/pilot
+signals through time samples, with bounded test points and a noiseless example.
+The one-second payload runner, nonideal acquisition and external interoperability
+validation remain pending. See
 [coding scope and equations](docs/reference/coding-mode.md).
 
 [Simulation design guides](docs/user/simulation/README.md) explain each simulation
