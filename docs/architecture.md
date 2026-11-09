@@ -13,6 +13,9 @@ It does not imply a published release or external DOCSIS interoperability.
 Review this document and the checklist at feature completion and each commit-message
 request. Update affected design/status before supplying the command; partial work
 remains unchecked until its implementation and validation are complete.
+Checklist IDs use stable component/work-area prefixes, such as PLC, WAVE and
+RX-CONFIG, rather than temporary NEXT labels. Local numbering identifies work;
+dependencies and current priority determine the next item to implement.
 
 ## Purpose and scope
 

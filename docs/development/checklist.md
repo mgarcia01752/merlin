@@ -11,6 +11,13 @@ not mean committed, released or externally interoperable. Unchecked means work
 remains. Detailed limitations stay in the stage guides rather than being hidden
 by a broad “implemented” claim.
 
+Checklist IDs use the owning component or work area's prefix and a stable local
+number: `PLC-01` for PLC work, `WAVE-01` for waveform work and `RX-CONFIG-01` for
+receiver configuration. Use this pattern for new groups instead of a temporary
+`NEXT` prefix. Keep IDs stable when status or scheduling changes; numbering is
+local to a component, not a global execution order. Select the next unfinished
+item by the documented dependencies and current implementation priority.
+
 ## Architecture and module rules
 
 - [x] **ARCH-01** Maintain one canonical architecture and this checklist.
@@ -25,22 +32,39 @@ by a broad “implemented” claim.
 Every new algorithm gets a focused module, typed output and independent tests.
 Stateful stages own their state; runners only connect stages. Direct stage outputs
 remain usable independently of the observer. ARCH-04 currently registers the four
-pilot stages and two PLC label stages. ARCH-05 has bounded stage/element/symbol
+pilot stages, seven PLC stages and physical bins. ARCH-05 has bounded stage/element/symbol
 selection; adapter export remains TODO. Pilot/PLC observation invariance is tested; ARCH-06 still needs
 coverage of stateful/RNG-driven stages as their producers are added.
 
-## Existing scientific foundation
+## Payload source
+
+Guide: [Source design](../user/simulation/source.md).
 
 - [x] **SRC-01** Deterministic seeded payload source, separate from codecs.
 - [ ] **SRC-02** PRBS source with explicit polynomial, seed, ordering and continuity.
 - [ ] **SRC-03** Independent PRBS vectors and recovered-stream comparison.
+
+## Forward error correction
+
+Guide: [FEC codec](../user/fec-codec.md).
+
 - [x] **FEC-01** Rust BCH14232/14400 and short16200 rate8/9 LDPC encode/decode.
 - [x] **FEC-02** Concatenated codec results, payload truth comparison and actual
   LDPC iterations, with correction/failure and zero-error tests.
 - [ ] **FEC-03** Additional downstream codeword lengths, coding modes and
   shortening rules verified against the PHY; the current short8/9 mode does not
   establish every DOCSIS coding mode.
+
+## Codeword bit processing
+
+Guide: [Bit-processing flow](../user/qam256-coding-loop.md).
+
 - [x] **BITS-01** Uniform16/256-QAM parity/twist/demux and soft inverse.
+
+## QAM mapping and soft demapping
+
+Guide: [QAM mapping](../user/qam-mapping.md).
+
 - [x] **QAM-01** Embedded label-ordered mapping and max-log LLRs through16384-QAM.
 - [ ] **QAM-02** Standalone hard slicer with deterministic ties, nearest label,
   reference I/Q and error/distance output; keep LDPC soft inputs unchanged.
@@ -48,17 +72,28 @@ coverage of stateful/RNG-driven stages as their producers are added.
   including verified per-order padding, shortening and non-square rules.
 - [ ] **QAM-04** Mixed per-carrier data profiles and independent high-order
   interoperability vectors; mapper availability alone does not satisfy this item.
+
+## Data and NCP randomization
+
+Guide: [Cell randomization](../user/cell-randomizer.md).
+
 - [x] **RAND-01** Stateful data/NCP cell randomization and soft inverse, including
   pilot skipping, zero-loaded clocking and128-symbol reset tests.
+
+## Codeword packing
+
+Guide: [Symbol packing](../user/symbol-packing.md).
+
 - [x] **PACK-01** Bounded256-QAM queue, continuation, filler and NCP reservations.
+
+## Next Codeword Pointer signaling
+
+Guide: [NCP signaling](../user/ncp.md).
+
 - [x] **NCP-01** Real NCP messages, CRC-24-D, separate control LDPC and QAM grouping.
 - [x] **NCP-02** CRC-accepted receiver pointer discovery without transmitter IDs.
 - [ ] **NCP-03** Dynamic data/NCP profile switching and session-level signaling
   validation; the current fixed-profile path does not implement this behavior.
-
-Guides: [codec](../user/fec-codec.md), [bit processing](../user/qam256-coding-loop.md),
-[QAM](../user/qam-mapping.md), [randomizer](../user/cell-randomizer.md),
-[packing](../user/symbol-packing.md), [NCP](../user/ncp.md).
 
 ## Fixed channel and cell transport
 
@@ -81,7 +116,7 @@ These checked items establish cell transport, not an RF waveform. Guides:
 [transmission](../user/transmission.md), [layout](../user/carrier-layout.md),
 [cell interleaving](../user/cell-interleaving.md).
 
-## Next implementation: pilot and PLC signals
+## Pilot and PLC signal stages
 
 Start here before moving to IFFT. Develop each component separately and keep its
 input, output, phase and normalization available for tests. Typed pilot results
@@ -97,46 +132,46 @@ packets, repetition/segmentation, preamble, mapping, physical-bin assembly and
 bounded observations. The next dependency is **RX-CONFIG-01: receiver configuration
 from decoded PLC**; waveform implementation then starts at WAVE-01.
 
-- [x] **NEXT-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
+- [x] **PLC-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
   phase and exact section/page evidence. Check PHY4.0 delegation where applicable.
-- [x] **NEXT-02** Define typed pilot sequence/value and PLC stage results, with
+- [x] **PLC-02** Define typed pilot sequence/value and PLC stage results, with
   shared test-point metadata and bounded optional observation.
-- [x] **NEXT-03** Implement shared pilot sequence logic in its own module and
+- [x] **PLC-03** Implement shared pilot sequence logic in its own module and
   verify independent sequence/phase vectors.
-- [x] **NEXT-04** Implement continuous-pilot signal generation separately from
+- [x] **PLC-04** Implement continuous-pilot signal generation separately from
   additional-pilot placement; expose signs, I/Q, boost and locations.
-- [x] **NEXT-05** Implement scattered-pilot signal generation separately, using
+- [x] **PLC-05** Implement scattered-pilot signal generation separately, using
   the existing physical pattern and correct PLC-aligned phase after interleaving.
-- [x] **NEXT-06** Implement shared pilot power/boost conversion with explicit
+- [x] **PLC-06** Implement shared pilot power/boost conversion with explicit
   reference energy; test signs, levels and collisions with protected roles.
-- [x] **NEXT-07A** Implement validated timestamp/MC message blocks, exact frame
+- [x] **PLC-07A** Implement validated timestamp/MC message blocks, exact frame
   capacity and consecutive MSB-first36-byte/288-bit FEC inputs.
-- [x] **NEXT-07** Complete fixed-setting PLC acquisition messages: OCD, Profile A
+- [x] **PLC-07** Complete fixed-setting PLC acquisition messages: OCD, Profile A
   and NCP DPD MAC packets, packet CRCs, segmentation and repetition scheduling.
-- [x] **NEXT-08** Implement verified PLC coding as a separate stage; reuse a codec
+- [x] **PLC-08** Implement verified PLC coding as a separate stage; reuse a codec
   only where the PHY parameters match, otherwise add a focused Rust primitive.
-- [x] **NEXT-09** Implement PLC block interleaving in its own module with
+- [x] **PLC-09** Implement PLC block interleaving in its own module with
   independent permutation vectors and a coded-to-interleaved test point.
-- [x] **NEXT-10** Implement PLC randomization with independent state and its own
+- [x] **PLC-10** Implement PLC randomization with independent state and its own
   phase/reset tests; do not reuse data/NCP randomizer state.
-- [x] **NEXT-11** Implement the PLC preamble in its own module with phase/sign tests.
-- [x] **NEXT-12** Implement PLC QAM mapping separately with label/scale vectors.
-- [x] **NEXT-13** Implement physical-bin assembly that combines interleaved cells,
+- [x] **PLC-11** Implement the PLC preamble in its own module with phase/sign tests.
+- [x] **PLC-12** Implement PLC QAM mapping separately with label/scale vectors.
+- [x] **PLC-13** Implement physical-bin assembly that combines interleaved cells,
   pilot values and PLC without moving protected bins or replacing placeholders early.
-- [x] **NEXT-14** Add selectable outputs for pilot values, PLC bytes/coded bits/IQ
+- [x] **PLC-14** Add selectable outputs for pilot values, PLC bytes/coded bits/IQ
   and complete physical frequency bins; test with observation on and off.
-- [x] **NEXT-15** Add module tests, a bounded example, integration tests and a user
+- [x] **PLC-15** Add module tests, a bounded example, integration tests and a user
   guide with equations/diagram. Mark this stage complete only after these pass.
 
-Pilot and PLC evidence for NEXT-01 is recorded in [PLC evidence](../reference/plc-evidence.md)
+Pilot and PLC evidence for PLC-01 is recorded in [PLC evidence](../reference/plc-evidence.md)
 and the stage guides. Tables48/49, Figure68 and the block-interleaving figures
 were verified against the local PHY PDF. Acquisition management fields, assignments,
 MC segmentation and repeat intervals use pinned MULPI I25 text. The supported
 fixed subset has single-part OCD/ProfileA/NCP messages; arbitrary profiles,
 list/vector TLVs, multipart MMMs and EM/TR modes are not claimed.
 
-NEXT-14/15 now include selectable message bytes, transmitted coded bits, labels,
+PLC-14/PLC-15 now include selectable message bytes, transmitted coded bits, labels,
 PLC data/preamble I/Q and full physical grids, with independent module tests,
 both-spacing multi-frame FEC/QAM/CRC integration and a bounded example. RX diagnostics
 remain directly accessible; additional RX common-observer producers and CLI/file

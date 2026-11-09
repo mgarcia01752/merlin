@@ -50,6 +50,12 @@ optional snapshots and prove observation preserves scientific behavior.
 When the user says "next", select the next unfinished checklist/architecture
 item in dependency order. Report the active item ID and name in progress updates
 when moving between steps, including resumed prerequisite work.
+Name checklist IDs for their owning component/work area, such as PLC-01,
+WAVE-01 or RX-CONFIG-01, with stable local numbering. Avoid temporary NEXT
+prefixes; completion or reprioritization does not rename an existing ID. Update
+all maintained references when an explicit ID rename is requested.
+Group checklist work under separate component headings with its relevant user
+guide; avoid catch-all sections that mix unrelated models or processing stages.
 
 Follow docs/architecture.md and update docs/development/checklist.md when adding
 or completing a stage. Clearly distinguish planned common instrumentation from
