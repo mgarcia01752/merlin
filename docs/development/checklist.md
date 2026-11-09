@@ -90,7 +90,9 @@ scaling and example. The [PLC message guide](../user/plc-messages.md) now covers
 the timestamp/MC framing and FEC-input boundary. [PLC coding](../user/plc-coding.md)
 now recovers those inputs. [PLC block interleaving](../user/plc-interleaving.md)
 adds tested permutation/inverse stages and bounded label observations.
-Next is independent PLC randomization (NEXT-10);
+[PLC randomization](../user/plc-randomization.md) now adds separate TX/RX state,
+frame resets and a sign-only soft inverse, with direct typed snapshots.
+Next is PLC preamble generation (NEXT-11);
 fixed-setting acquisition descriptor packets remain part of NEXT-07.
 
 - [ ] **NEXT-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
@@ -114,7 +116,7 @@ fixed-setting acquisition descriptor packets remain part of NEXT-07.
   only where the PHY parameters match, otherwise add a focused Rust primitive.
 - [x] **NEXT-09** Implement PLC block interleaving in its own module with
   independent permutation vectors and a coded-to-interleaved test point.
-- [ ] **NEXT-10** Implement PLC randomization with independent state and its own
+- [x] **NEXT-10** Implement PLC randomization with independent state and its own
   phase/reset tests; do not reuse data/NCP randomizer state.
 - [ ] **NEXT-11** Implement the PLC preamble in its own module with phase/sign tests.
 - [ ] **NEXT-12** Implement PLC QAM mapping separately with label/scale vectors.
@@ -128,7 +130,9 @@ fixed-setting acquisition descriptor packets remain part of NEXT-07.
 Pilot evidence for NEXT-01 is verified against PHY3.1 I20 §7.5.15.3–4, PDF171,
 and PHY4.0 FDD delegation. PLC frame/message/bit-order requirements are verified
 and recorded in [PLC evidence](../reference/plc-evidence.md); exact remaining
-randomization/preamble vectors for NEXT-01 are still pending. Interleaving is
+preamble vectors for NEXT-01 are still pending. Randomization is checked against
+rendered Figure68/PDF157 and independent polynomial/cadence tests at both spacings.
+Interleaving is
 verified against rendered Figures65–67 and full independent coordinate vectors.
 PLC coding is verified against the rendered Table21 and explicit puncturing
 ranges; the source numbering/figure discrepancies are recorded in the evidence.

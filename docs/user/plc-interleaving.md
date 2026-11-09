@@ -57,7 +57,7 @@ $$
 The flattened output offset is $tF+f$. For 4K, the first symbol reads source
 labels `0,12,24,36,48,60,72,84`; the next reads `1,13,25,37,49,61,73,85`.
 For 8K the first symbol reads `0,6,12,18,...,90`. The permutation is block-local:
-each codeword starts a fresh array, while PLC randomizer state will be a separate
+each codeword starts a fresh array, while PLC randomizer state is a separate
 frame-level concern.
 
 The coordinates are **local PLC carrier offsets**, not physical FFT bins or the
@@ -83,7 +83,8 @@ $$
 =\ell^{\mathrm{received}}_{4(tF+f)+b},\qquad b=0,\ldots,3.
 $$
 
-A future receiver must undo PLC randomization before supplying these LLRs.
+A receiver must undo [PLC randomization](plc-randomization.md) before supplying
+these LLRs.
 Missing/partial blocks and nonfinite values are rejected; they are not padded
 with fabricated observations. Source inputs remain unchanged. Output vectors
 are bounded to 96 labels or 384 soft values; symbol lookup outside a block returns
@@ -136,8 +137,9 @@ Observation tests cover full-grid metadata on selected windows, phase/context
 rejection, disabled/exhausted paths and callback-error invariance.
 
 These are specification-derived tests, not external interoperability vectors or
-full waveform validation. PLC randomization is next (**NEXT-10**), followed by
-preamble/mapping and physical-bin assembly. Acquisition descriptor packets remain
+full waveform validation. [PLC randomization](plc-randomization.md) now has a
+separate stateful stage and soft inverse. Preamble/mapping and physical-bin
+assembly remain pending. Acquisition descriptor packets remain
 separate pending work.
 
 Authority: CM-SP-PHYv3.1-I20-230419 §7.5.13.7, Figures65–67, PDF154–156, checked

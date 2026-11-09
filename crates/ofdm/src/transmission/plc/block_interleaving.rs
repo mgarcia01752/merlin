@@ -101,7 +101,7 @@ pub fn deinterleave(interleaved: &InterleavedPlcBlock) -> Result<PlcCodewordNibb
 /// # Arguments
 /// * `spacing` - Known PLC geometry.
 /// * `llrs` -384 finite values, time-major labels with four MSB-first LLRs each.
-///   Future receiver must undo PLC randomization before passing these values.
+///   Receiver must undo PLC randomization before passing these values.
 /// # Returns
 ///384 LLRs in punctured-codeword bit order; no hard slicing, clipping or priors.
 /// # Errors

@@ -127,8 +127,9 @@ and AnnexA Figure99, PDF197. The imported BPSK/QPSK geometry tables need explici
 build-time label permutations to match Figures99–100; original files are retained
 unchanged. Independent tests verify all control labels.
 
-**PLC randomization is separate and remains pending.** Section7.5.13.8 uses seeds
-D0=0x4A7,D1=0xB4C and additional symbol-boundary clocks; it must not use this
+**[PLC randomization](plc-randomization.md) is implemented separately.**
+Section7.5.13.8 uses seeds D0=0x4A7,D1=0xB4C and one clock after each PLC
+carrier, including the final carrier before the next symbol; it must not use this
 data/NCP instance. PLC preamble randomization is prohibited. No actual NCP message
 is created by this API; the separate [NCP codec](ncp.md) creates messages.
 The existing16-QAM CLI experiment remains at its earlier

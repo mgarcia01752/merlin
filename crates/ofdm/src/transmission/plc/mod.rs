@@ -12,6 +12,7 @@ pub mod geometry;
 pub mod information;
 pub mod message_channel;
 pub mod nibbles;
+pub mod randomization;
 pub mod timestamp;
 #[cfg(feature = "simulation")]
 pub mod timestamp_block;
@@ -29,3 +30,4 @@ pub use coding::{DecodedPlcBlock, EncodedPlcBlock, PlcBlockCodec};
 
 pub use block_interleaving::InterleavedPlcBlock;
 pub use nibbles::{PlcCodewordNibbles, PlcNibble};
+pub use randomization::{DescrambledPlcBlock, PlcRandomizer, RandomizedPlcBlock};

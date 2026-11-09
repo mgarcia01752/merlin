@@ -29,6 +29,12 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
   orders for both FFT geometries, plus exact hard/soft inverse. Keep local PLC
   carrier/time coordinates distinct from physical FFT bins and data interleavers.
   Selected probe windows must retain full grid metadata and original offsets.
+  For PLC randomization, independently verify field polynomial arithmetic and
+  raw-bit versus MSB-first label masks (first PLC label mask0xE). Test state
+  continuity across codewords/symbols, independent data/NCP state, no preamble
+  clocks, frame reseeding, rejected-call invariance and exact soft sign inverse.
+  Keep known-phase sequencing distinct from acquisition; recover multiple full
+  frames through FEC/permutation/randomization without TX truth in RX inputs.
 - For cell interleavers, verify exact index/delay vectors, all supported depths,
   partial columns and dummy padding, PLC-aligned pilot references, startup/drain
   and source-symbol phase at inverse randomizer resets. Never count None history

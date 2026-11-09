@@ -1,7 +1,7 @@
 # PLC message boundary evidence
 
 Pinned sources: CM-SP-PHYv3.1-I20-230419, CM-SP-MULPIv3.1-I25-230419 and
-CM-SP-PHYv4.0-I07-250627. PHY3.1 Table21/PDF96 and Figures63–67/PDF153–156 were inspected in the local
+CM-SP-PHYv4.0-I07-250627. PHY3.1 Table21/PDF96 and Figures63–68/PDF153–157 were inspected in the local
 original PDF. MULPI field definitions and bounds below were checked against the
 versioned text extraction; no rendered MULPI figure verification is claimed.
 
@@ -15,6 +15,7 @@ versioned text extraction; no rendered MULPI figure verification is claimed.
 | PHY3.1 §7.5.13.5/Figure63, PDF153 | CMTS converts bytes to bits MSB first | `PlcInformationBlock`; independent literal bit vectors |
 | PHY3.1 §7.5.13.6, PDF153 | CMTS uses (384,288) punctured PLC LDPC from (480,288) rate3/5 mother | Separate `fec_codec::plc` encoder/decoder; mother basis/parity, puncture and noiseless tests pass |
 | PHY3.1 §7.5.13.7/Figures65–67, PDF154–156 | CMTS groups384 bits into96 MSB-first nibbles, writes rows and reads columns:4K8x12,8K16x6 | Separate validated grouping/permutation; full coordinate/basis tests, exact soft inverse and full-frame coding recovery; bounded label probes |
+| PHY3.1 §7.5.13.8/Figure68, PDF157 | CMTS uses independent PLC seeds4A7/B4C, clocks after each carrier, resets after preamble and never randomizes preamble | Shared GF primitive with independent PLC instances; MSB-first mask0xE, continuous block cadence, soft sign inverse and multi-frame tests |
 | PHY3.1 §7.5.13.4, PDF152; MULPI3.1 §6.4.40–41, PDF197–201 | CMTS communicates fixed OFDM and profile configuration via OCD/DPD | Descriptor MAC packets, packet CRCs and repetition scheduling pending; opaque MC input does not establish this requirement |
 | PHY4.0 §7.3.5.13, PDF146 | FDD PLC delegates to PHY3.1 §7.5.13 | Same message-boundary implementation; no FDX claim |
 

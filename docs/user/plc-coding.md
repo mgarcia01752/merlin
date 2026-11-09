@@ -136,8 +136,9 @@ at both spacings, followed by timestamp CRC validation.
 These are specification-derived tests, not externally generated interoperability
 vectors or a general error-correction-distance guarantee. There is no PLC BCH
 stage. [PLC block interleaving](plc-interleaving.md) and its hard/soft inverse
-are now implemented separately. Acquisition descriptors, randomization, preamble,
+are now implemented separately. Acquisition descriptors, preamble,
 16-QAM mapping and physical-bin insertion remain separate stages. The next coding
-boundary is **NEXT-10: PLC randomization**. See the
+boundary is **NEXT-11: PLC preamble**;
+[PLC randomization](plc-randomization.md) now has independent state and a soft inverse. See the
 [message guide](plc-messages.md), [architecture](../architecture.md) and
 [checklist](../development/checklist.md).

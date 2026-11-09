@@ -6,4 +6,5 @@
 mod cell;
 mod lfsr;
 pub use cell::CellRandomizer;
+pub(crate) use lfsr::Lfsr;
 pub use lfsr::{RandomizerRegister, RandomizerState};

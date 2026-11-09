@@ -176,7 +176,8 @@ obtain data through an existing stage API.
 | `rx.plc.llrs`, `rx.plc.decoded` | Restored mother LLRs and soft decisions with iterations/parity | Direct APIs; common observer TODO |
 | `tx.plc.coded_nibbles`, `tx.plc.interleaved` | Grouped labels and time-major PLC grid | Direct typed results and bounded observer; explicit grid metadata |
 | `rx.plc.deinterleaved` | Hard-label or soft-bit inverse PLC permutation | Direct APIs; common observer TODO |
-| `tx.plc.randomized`, `tx.plc.preamble`, `tx.plc.iq` | Separate PLC randomization, preamble and mapping outputs | TODO |
+| `tx.plc.randomized`, `rx.plc.descrambled` | Independent PLC masks and sign-only soft inverse; frame-index/register snapshots | Direct bounded block APIs; common observer TODO |
+| `tx.plc.preamble`, `tx.plc.iq` | PLC preamble and mapping outputs | TODO |
 | `tx.frame.bins` | Full physical frequency grid, roles and zero/excluded bins | TODO production assembler |
 | `tx.ifft.samples`, `tx.cp.samples`, `tx.window.samples`, `tx.overlap_add.samples` | Separate waveform stages and sample indices | TODO |
 | `channel.input`, `channel.output` | Channel-plane I/Q and applied impairment configuration | TODO waveform path; cell AWGN exists |
@@ -222,7 +223,14 @@ The separate PLC LDPC primitive and typed adapter now recover message inputs
 with actual iterations and parity status. PLC nibble grouping, block permutation
 and hard/soft inverse now have analysis-only APIs. Thin PLC stage composition
 provides bounded coded/interleaved label observations with full grid metadata.
-Randomization, preamble, mapping and physical-bin assembly remain pending. See the
+`transmission::plc::randomization` now owns independent frame-aligned PLC TX/RX
+streams. It reuses only the shared GF arithmetic, retains state across codewords,
+skips the eight preamble slots without clocks and resets before each new frame.
+Direct bounded outputs expose labels/LLRs and register snapshots; common observer
+integration for this stage remains pending. The known-phase block API requires
+consecutive complete blocks from phase0; it is not acquisition/resynchronization.
+Preamble, mapping and physical-bin assembly remain pending. See the
+[PLC randomization guide](user/plc-randomization.md),
 [PLC interleaving guide](user/plc-interleaving.md), [PLC coding guide](user/plc-coding.md),
 [PLC message guide](user/plc-messages.md) and [evidence](reference/plc-evidence.md).
 
@@ -237,7 +245,7 @@ before implementation if source analysis shows a better existing owner.
 | `signal_processing/modulation/interleaving/{parity,twist,demultiplexing}.rs` | Separate intermediate and inverse boundaries behind the existing facade |
 | `transmission/layout/additional_pilots.rs` | Specification-based additional continuous-pilot placement |
 | `transmission/plc/{descriptors,mac_packets,scheduling}.rs` | Fixed-setting OCD/DPD packets, packet CRCs, segmentation and repetition; current message layer transports opaque segments |
-| `transmission/plc/{randomization,preamble,mapping}.rs` | Remaining PLC signal stages and distinct state; invoke verified codec primitives |
+| `transmission/plc/{preamble,mapping}.rs` | Remaining PLC signal stages and distinct state; invoke verified codec primitives |
 | `transmission/symbols/assembly.rs` | Typed data/NCP/filler composition before randomization/mapping |
 | `transmission/frame/assembly.rs` | Reduced-to-physical grid assembly and protected-role insertion |
 | `signal_processing/waveform/{ifft,fft,cyclic_prefix,windowing,overlap_add}.rs` | Separate waveform transforms and inverse operations |

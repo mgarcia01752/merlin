@@ -12,7 +12,8 @@ full physical control signaling remains pending.
 [Cell time/frequency interleaving](cell-interleaving.md) and its inverse receiver
 are now available with a correctly phased pilot reference.
 [Data/NCP randomization](cell-randomizer.md) is now available as a standalone
-stateful API; PLC randomization and channel-runner integration remain pending.
+stateful API. [PLC randomization](plc-randomization.md) now has independent
+known-phase state and a soft inverse; channel-runner integration remains pending.
 The [256-QAM coding loop](qam256-coding-loop.md) connects bit processing,
 randomization and reverse decoding as independent codeword trials.
 A [stateful symbol packer](symbol-packing.md) now carries256-QAM codewords

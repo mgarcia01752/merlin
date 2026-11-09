@@ -34,7 +34,9 @@ provide physical-bin BPSK signs and explicit amplitude scaling.
 [PLC message blocks](docs/user/plc-messages.md) now provide timestamp/MC frames and
 ordered FEC inputs. A separate [PLC LDPC codec](docs/user/plc-coding.md) now recovers
 those inputs with actual decoder iterations. [PLC block interleaving](docs/user/plc-interleaving.md)
-adds the separate permutation, inverse and bounded observations. Acquisition
+adds the separate permutation, inverse and bounded observations.
+[PLC randomization](docs/user/plc-randomization.md) now provides independent
+frame-aligned label masks and a soft inverse. Acquisition
 descriptors and remaining PLC signal generation,
 full DOCSIS framing/placement and
 interoperability validation remain pending. See
