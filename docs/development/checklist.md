@@ -617,6 +617,10 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 - [ ] **UI-01** Build the planned Qt system workspace after core APIs exist:
   clickable source/TX/channel/RX blocks with purpose, settings and stage details.
+  Include the separate OFDM transmission settings panel from the
+  [updated diagram guide](../architecture.md#updated-workspace-diagram-guide):
+  cyclic prefix, roll-off/windowing, time-interleaver depth and pilot settings;
+  validate through Rust and apply changes to the next run.
 - [ ] **UI-02** Add a role-based file panel and OS file picker; validate inputs
   before applying them to a new run, with PRBS15/text source selection.
 - [ ] **UI-03** Present separate LDPC, BER, payload pre/post-CE, continuous/scattered

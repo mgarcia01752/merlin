@@ -71,6 +71,54 @@ analyzers consume bounded existing/new Rust contracts without changing the run.
 The [workspace plan and diagram](development/features/visual-workspace/plan.md)
 record this starting layout and ownership. This is planned; no Qt UI exists yet.
 
+### Updated workspace diagram guide
+
+The updated user sketch adds a separate **OFDM transmission settings** panel.
+Use this as the workspace navigation guide, not a final screen layout. Each
+processing block and analyzer opens its own focused panel; the settings panel
+configures the transmitter and the matching receiver bootstrap for the next run.
+
+```mermaid
+flowchart LR
+    SOURCE["Source: PRBS15 / planned text-file bytes"] --> TX["Transmitter"]
+    SETTINGS["OFDM transmission settings<br/>Cyclic prefix · roll-off/windowing<br/>Time-interleaver depth · pilot configuration/scaling"] --> TX
+    PROFILE["Modulation-profile PNM input"] --> TX
+    TX --> CH["Channel simulator"] --> RX["Receiver"]
+    MER["RxMER PNM input(s)"] --> CH
+    CE["DS channel-estimation PNM input"] -->|"Channel response H"| CH
+    CE -. "Supplied-H mode: reference correction" .-> RX
+    SETTINGS -. "Matching RX bootstrap settings" .-> RX
+    RX --> LDPC["LDPC statistics"]
+    RX --> BER["BER / recovered-data comparison"]
+    SOURCE -. "Independent expected-data reference" .-> BER
+    RX --> POST["QAM analyzer: post-CH-EST-RX correction"]
+    RX --> PRE["QAM analyzer: pre-CH-EST-RX correction"]
+    RX --> PILOTS["QAM analyzer: continuous / scattered pilots"]
+    RX --> PLC["QAM analyzer: PLC data / preamble"]
+```
+
+The settings panel explains the purpose and trade-offs of each control:
+
+| Setting | Purpose and ownership |
+| --- | --- |
+| Cyclic prefix | Protection against channel delay spread, with a capacity cost; applied by WAVE-TX and removed by matching WAVE-RX. |
+| Roll-off/windowing | Symbol-edge shaping and spectral behavior; matched waveform geometry owns taper and overlap processing. |
+| Time-interleaver depth | Spreads coded cells across symbols, affecting burst robustness, latency and startup/drain state. |
+| Pilot configuration/scaling | Applicable continuous/scattered pilot references and boost; TX generation and CH-EST-RX must use consistent PHY settings. |
+
+Use supported PHY choices and existing Rust validation; do not expose arbitrary
+pilot patterns or a second Qt implementation of the settings math. Settings are
+fixed during a run. A change is validated before starting a new run, preserving
+active source, interleaver and receiver state. The settings panel links to the
+[transmission guide](user/transmission.md), [waveform components](user/waveform/README.md)
+and [pilot design](user/pilot-signals.md).
+
+Receiver analyzer arrows represent read-only test points, including the raw FFT
+before correction and matched points after correction. Supplied H and independently
+pilot-estimated H-hat remain separate receiver modes. The source comparison path
+is verification, not receiver feedback or PRBS reseeding. PNM labels describe input
+roles; current files enter through decoded JSON or validated typed scenarios.
+
 Plan a source choice of **PRBS15 or user-supplied text-file bytes**. The Rust source
 will preserve exact bytes, explicit bit order, meaningful lengths and independent
 recovered-data comparison. Proposed initial EOF policy is send-once with explicit

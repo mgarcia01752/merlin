@@ -1,7 +1,8 @@
 # Visual system workspace and selectable payload source
 
 **Planned design; no Qt workspace or text-file source is implemented.**
-The user's system sketch is the starting layout, rather than a final screen
+The user's updated system sketch, including the OFDM transmission settings panel,
+is the starting layout, rather than a final screen
 specification. The application remains a standalone MERLIN simulator. Existing
 Rust scientific stages and test points own all computation; Qt presents them.
 
@@ -22,6 +23,7 @@ flowchart LR
         CE["DS channel-estimation PNM input"]
     end
     SRC["Source: PRBS15 or text-file bytes"]
+    SETTINGS["OFDM transmission settings: CP / roll-off / interleaver / pilots"]
     TX["Transmitter"]
     CH["Channel simulator"]
     RX["Receiver: FFT → CE correction → decoding"]
@@ -33,6 +35,8 @@ flowchart LR
     PLC["PLC analyzer: data / preamble"]
     TEXT --> SRC
     SRC --> TX
+    SETTINGS --> TX
+    SETTINGS -. "Matching RX bootstrap" .-> RX
     PROFILE --> TX
     TX --> CH --> RX
     MER --> CH
@@ -51,15 +55,19 @@ The source-to-BER connection represents an independent truth comparator, not a
 return channel or receiver-driven source reseeding. Analyzer arrows mean read-only
 observations of the appropriate internal receiver boundary. Pre-CE taps the FFT
 before correction even though it is drawn beside the receiver's other outputs.
-The reference correction uses supplied H; future pilot-derived H-hat is a
-separate receiver mode and must be labeled as such.
+The reference correction uses supplied H; implemented pilot-derived H-hat is a
+separate receiver mode and must be labeled as such. The settings panel uses the
+[updated architecture diagram](../../../architecture.md#updated-workspace-diagram-guide)
+and its setting descriptions as the guide. Validate changes for the next run;
+do not silently modify a running transmitter or receiver.
 
 ### Clickable blocks
 
 | Block | Proposed contents |
 | --- | --- |
 | Source | PRBS15 or text-file selection; seed or byte count; progress and EOF policy. |
-| Transmitter | Fixed transmission settings, applied profile, coding/mapping/interleaving and waveform stage breakdown. |
+| OFDM transmission settings | Cyclic prefix, roll-off/windowing, time-interleaver depth and supported pilot configuration/scaling; show purpose and trade-offs, validate through Rust and apply to the next run. |
+| Transmitter | Applied transmission settings, profile, coding/mapping/interleaving and waveform stage breakdown. |
 | Channel simulator | Selected RxMER frame(s), supplied H, noise/reference mode, frequency grid and impairment settings. |
 | Receiver | Acquisition/readiness, correction source and FFT/equalization/decoding stages. |
 | LDPC statistics | Actual iterations, convergence and failure counts, separated by payload/NCP/PLC. |
@@ -87,9 +95,9 @@ scenario. The workspace must not imply that native binary PNM parsing exists in
 this repo. Any future binary-file convenience must use an explicit decoder
 adapter. Text payload files are a separate data-source input, not PNM measurements.
 
-Multiple RxMER files can be listed, but the existing engine selects a validated
-frame. Temporal transitions and frame association remain MODEL-06 work; the UI
-must not imply that listing several files already simulates a changing channel.
+Multiple RxMER files can be listed. The simulation core supports explicit validated
+measurement epochs and frame association; listing files alone does not activate
+playback. The UI must configure that schedule through the existing Rust contract.
 
 ## Planned text-file source
 
