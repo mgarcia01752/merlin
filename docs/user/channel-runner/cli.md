@@ -106,3 +106,14 @@ Complete examples are [synthetic pilot reception](../../../examples/channel-pilo
 and [measured CE-only pilot reception](../../../examples/measurements/single-channel/channel-pilot-estimated.json).
 The latter requires an imported scenario through `--scenario` as for other
 measurement-driven requests. All existing destination/input/output limits apply.
+
+## Text and binary payload files
+
+Use request `source.kind=file` with `--payload-file FILE` and optional
+`--recovered-file NEW_FILE`. The shared Rust implementation preserves bytes,
+validates finite size/target/seed, performs optional PRBS15 append-to-fill and
+separates original data, fill and coding padding. See the
+[file-source guide](../simulation/file-source/README.md) for a complete example,
+JSON result fields, empty inputs and partial-file completion semantics.
+Omitting `source` retains continuous PRBS15 behavior. Paths stay in the CLI;
+`ChannelDocument.settings_with_inputs` accepts raw immutable bytes for other callers.

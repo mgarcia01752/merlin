@@ -8,7 +8,7 @@ Start with the component you want to understand:
 
 | Source location | Design guide | Purpose |
 | --- | --- | --- |
-| `source/` | [Payload source](source.md), [PRBS15](prbs.md) | Separate seeded/PRBS input, continuous state and independent comparison truth |
+| `source/` | [Payload source](source.md), [PRBS15](prbs.md), [file source](file-source/README.md) | Separate seeded/PRBS input, continuous state and independent comparison truth |
 | `coding_loop/` | [Coding loop](coding-loop.md) | Check noiseless256-QAM encoding and recovery, one codeword at a time |
 | `pilots/` | [Pilot signals](pilots.md) | Compose continuous/scattered reference signals for a physical symbol |
 | `plc/` | [PLC transmission and reception](plc.md) | Recover actual PLC messages and build receiver-owned configuration |

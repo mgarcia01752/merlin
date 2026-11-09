@@ -44,7 +44,7 @@ describes component ownership.
 
 ```mermaid
 flowchart LR
-    PRBS["PRBS15 payload"] --> TX["TX: BCH/LDPC, QAM, interleaving, OFDM waveform"]
+    PRBS["PRBS15 / text / binary payload"] --> TX["TX: BCH/LDPC, QAM, interleaving, OFDM waveform"]
     TX --> CHANNEL["Channel: noiseless, AWGN or RxMER residuals + optional H"]
     CHANNEL --> RX["RX: OFDM, equalization, inverse interleaving, LDPC/BCH"]
     RX --> RESULTS["Payload BER, codeword failures and LDPC iterations"]
@@ -73,6 +73,7 @@ scripts/cargo-local.sh run -p fec-codec --example codec_loop --locked
 
 ## Measurements and demos
 
+- [File payloads](docs/user/simulation/file-source/README.md): send exact text/binary bytes, optionally append finite PRBS15 fill, and export recovered bytes.
 - [PNM input guide](docs/user/measurement-inputs/README.md): import the three decoded capture types; binary decoding stays external.
 - [Impairment experiments](docs/user/impairments/experiments.md): reproduce the RxMER sweeps and inspect FEC outcomes.
 - [Paired constellations](docs/user/impairments/paired-constellation.md): export matched payload I/Q before and after equalization; includes an actual measured-response plot.

@@ -26,6 +26,7 @@ pub(crate) const MAX_COMPLETION_SYMBOLS: u64 = 4096;
 /// Independent settings snapshot; callers may edit it before creating a session.
 #[derive(Clone, serde::Serialize)]
 pub struct ChannelRunSettings {
+    pub source: crate::simulation::source::PayloadSourceConfig,
     pub data_bit_loading: Option<Vec<u8>>,
     pub impairment_timeline: Vec<super::timeline::ImpairmentEpoch>,
     pub protected_constellation: Option<super::protected_constellation::ProtectedCaptureSelection>,
@@ -58,6 +59,7 @@ impl ChannelRunSettings {
     /// Editable settings; validation occurs before any session processing.
     pub fn new(transmission: TransmissionSettings, layout: CarrierLayoutSettings) -> Self {
         Self {
+            source: Default::default(),
             data_bit_loading: None,
             impairment_timeline: Vec::new(),
             receiver_mode: Default::default(),
@@ -91,7 +93,12 @@ impl ChannelRunSettings {
             return Err(invalid("Invalid channel duration or receiver work limits."));
         }
         let timing = self.transmission.duration_timing(self.duration)?;
-        Prbs15::new(self.prbs_seed)?;
+        if matches!(
+            self.source,
+            crate::simulation::source::PayloadSourceConfig::Prbs15
+        ) {
+            Prbs15::new(self.prbs_seed)?;
+        }
         if let Some(selection) = &self.protected_constellation {
             selection.validate()?;
         }

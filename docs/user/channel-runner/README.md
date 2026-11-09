@@ -10,10 +10,10 @@ is independent of how long the host takes to calculate it.
 flowchart LR
     CONFIG["Frozen channel layout and duration"] --> PLAN["Integer sample-clock plan"]
     PLAN --> ACQ["Actual PLC acquisition through waveform samples"]
-    ACQ --> TX["Continuous PRBS → BCH/LDPC → payload/NCP TX"]
+    ACQ --> TX["PRBS15 / finite file → BCH/LDPC → payload/NCP TX"]
     TX --> WAVE["Physical pilots/PLC → IFFT/prefix/window → unity channel"]
     WAVE --> RX["Framing/FFT → received configuration → payload RX"]
-    RX --> COMPARE["Independent post-decode PRBS comparison"]
+    RX --> COMPARE["Independent post-decode source comparison"]
     COMPARE --> RESULTS["Bounded step output and cumulative totals"]
 ```
 
@@ -55,3 +55,6 @@ stage export. [Window accounting](accounting.md) separates contained words from
 boundary-crossing/outside words before calculating information-bit rate.
 
 See [architecture](../../architecture.md) and [checklist](../../development/checklist.md).
+
+Finite [text/binary file traffic](../simulation/file-source/README.md) shares this
+channel path, with optional PRBS15 fill and separate original-file recovery.

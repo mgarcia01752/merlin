@@ -66,5 +66,10 @@ for path in sys.argv[1:]:
         assert result["constellation"]["collected_pairs"] == 8192
         assert len(result["constellation"]["pairs"]) == 8192
 PY_IMPAIRMENTS
+"${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- channel \
+  --input examples/channel-file.json --payload-file examples/payloads/message.txt \
+  --output "${SMOKE_DIRECTORY}/file-result.json" \
+  --recovered-file "${SMOKE_DIRECTORY}/recovered-message.txt"
+cmp examples/payloads/message.txt "${SMOKE_DIRECTORY}/recovered-message.txt"
 python3 tools/release/versions.py
 echo 'All local pre-push checks passed.'

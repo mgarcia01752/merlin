@@ -7,6 +7,7 @@ mod arguments;
 mod commands;
 mod json_io;
 mod logging;
+mod source_io;
 use std::sync::{
     atomic::{AtomicBool, Ordering},
     Arc,

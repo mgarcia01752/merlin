@@ -46,8 +46,9 @@ Pilot-derived receiver correction is selectable alongside supplied-H reception. 
 cancellation, runtime limits, partial results and versioned probe export.
 The existing CLI also retains the earlier16-QAM coding experiment;
 Uniform/mixed packing/interleaving is exercised by the shared library, channel
-CLI, examples and tests. Separate seeded and PRBS15 sources are implemented with
-independent continuous PRBS verification; see the [PRBS design](user/simulation/prbs.md).
+CLI, examples and tests. Separate seeded, continuous PRBS15 and finite exact-byte file sources are implemented.
+File traffic supports explicit PRBS15 fill and separate meaningful-data verification;
+see the [PRBS design](user/simulation/prbs.md) and [file-source guide](user/simulation/file-source/README.md).
 
 Downstream mapping and reference soft demapping cover constellations through
 16384-QAM. Complete coding support must be tracked separately for each order;
@@ -80,7 +81,7 @@ configures the transmitter and the matching receiver bootstrap for the next run.
 
 ```mermaid
 flowchart LR
-    SOURCE["Source: PRBS15 / planned text or binary file"] --> TX["Transmitter"]
+    SOURCE["Source: PRBS15 / text or binary file"] --> TX["Transmitter"]
     SETTINGS["OFDM transmission settings<br/>Cyclic prefix · roll-off/windowing<br/>Time-interleaver depth · pilot configuration/scaling"] --> TX
     PROFILE["Modulation-profile PNM input"] --> TX
     TX --> CH["Channel simulator"] --> RX["Receiver"]
@@ -119,25 +120,27 @@ pilot-estimated H-hat remain separate receiver modes. The source comparison path
 is verification, not receiver feedback or PRBS reseeding. PNM labels describe input
 roles; current files enter through decoded JSON or validated typed scenarios.
 
-Plan a source choice of **PRBS15 or user-supplied text/binary file bytes**.
-Clicking the workspace Source block opens editable source settings and an OS file
-picker. Preserve exact bytes, explicit bit order, original length and independent
-recovered-data comparison; text needs no normalization or encoding conversion.
+The Rust API and CLI implement **PRBS15 or user-supplied text/binary file bytes**.
+The planned Qt Source block will open editable settings and an OS file picker.
+The source preserves exact bytes, MSB-first file bit order, original length and
+independent recovered-data comparison; text needs no encoding conversion.
 
-Before a run, Rust validates file size against resource limits and the selected
-data-load policy. Show the original size, required/target size when defined,
-and remaining fill amount. Offer an explicit **Append PRBS15 to fill** option
-when a file is shorter than a defined target; do not silently append, repeat or
-truncate input. Exact size rules, target units and how they depend on the selected
-coding/profile/duration remain **TODO for later definition**. Do not impose a
-fixed file size merely because FEC uses fixed-size payload blocks.
+Before a run, Rust validates the16MiB input bound and optional explicit total-bit
+target/PRBS seed. Appending PRBS15 is opt-in and finite; never silently append,
+repeat or truncate input. The future source panel shows original size, target
+and remaining fill count from the same Rust contract. A minimum/alignment or
+automatic target based on coding/profile/duration remains **TODO for later
+definition**; fixed-size FEC blocks do not require fixed-size user files.
 
 Keep original-file bits, appended PRBS15 bits and final-codeword padding distinct.
 Recovered-file output contains only the original bytes; compare file and PRBS15
 segments separately, excluding coding padding from BER. Without optional fill,
-send once and then use idle/filler; truncated runs remain partial. Source/CLI
-integration must precede its Qt control; current PRBS behavior is unchanged.
-SRC-04..06 track this unimplemented extension.
+send once and then use idle/filler. Duration completion does not imply full file
+completion: explicit generated/compared flags and recovered-prefix metadata
+retain partial results. Source/CLI integration now precedes the planned Qt
+control; continuous PRBS behavior is unchanged. SRC-04..06 track this extension.
+See the [file source design](user/simulation/file-source/README.md) and
+[implementation record](development/features/file-payload-source/implementation.md).
 
 The file panel associates inputs with their processing stages. Measurement files
 continue through the current decoded-PNM JSON importer; listing multiple RxMER
@@ -350,7 +353,7 @@ crates/
 │   │   ├── noise/             AWGN and measured residual-noise processing
 │   │   └── ...                Analytical bit-loading/capacity helpers
 │   ├── simulation/
-│   │   ├── source/            Seeded and PRBS15 sources; independent verification
+│   │   ├── source/            Seeded / PRBS15 / file sources; independent verification
 │   │   ├── pilots/            Typed stage composition and optional observation
 │   │   ├── plc/               PLC composition, acquisition and optional observation
 │   │   ├── waveform/          Separate TX/RX, bounded reference experiment and probes

@@ -145,3 +145,20 @@ from the crate root. It contains a stable `code` and a readable `message`,
 implements Rust's standard error/display traits, and serializes those same
 fields for adapters. The type rename does not change existing JSON error codes;
 `InvalidLabInput` remains the established invalid-input category.
+
+## Finite file sources
+
+`simulation::source::file` exposes `FilePayload`, `PrbsFill`, `FileSource`,
+`FileVerifier`, `FileSourceSummary` and `RecoveredFile`. `PayloadSourceConfig`
+selects continuous PRBS or validated immutable file data. `FilePayload::new`
+checks exact original bytes and optional target/seed; cloned configs share those
+bytes without serializing them. The core remains path-independent.
+
+`ChannelRunSettings.source` and `ChannelDocument.settings_with_inputs` select
+this path. Existing `settings`/`settings_with_scenario` methods continue to serve
+PRBS requests; file requests need supplied bytes. `ChannelRun.recovered_file()`
+copies the bounded recovered original prefix. Job results own that same optional
+`recovered_file`; JSON serializes metadata only, with `bytes()` for binary output.
+`ChannelSummary.file_source` contains segment/completion accounting, absent for
+continuous PRBS. See [file source design](../user/simulation/file-source/README.md)
+for cursor, padding, truth and partial-export contracts.

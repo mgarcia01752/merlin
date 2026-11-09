@@ -20,6 +20,7 @@ feature records and defines the ignored local evidence/output location.
 | Channel construction | Fixed single-channel numerology, protected roles, continuous/scattered pilots, frequency/time cell interleaving | [Transmission](../user/transmission.md), [pilots](../user/pilot-signals.md), [interleaving](../user/cell-interleaving.md) |
 | Signaling | Actual PLC/NCP coding and messages; receiver configuration derived from decoded descriptors for the fixed supported subset | [PLC](../user/plc-channel.md), [NCP](../user/ncp.md), [configuration](../user/receiver-configuration/README.md) |
 | Waveform TX/RX | IFFT/FFT, cyclic prefix, windowing/overlap and actual uniform-256-QAM payload recovery over samples | [Waveform](../user/waveform/README.md), [payload transport](../user/payload-transport/README.md) |
+| File traffic | Exact text/binary bytes, optional finite PRBS15 fill, independent file/fill BER and recovered original-byte export | [File source](../user/simulation/file-source/README.md) |
 | Run infrastructure | Continuous PRBS15; configurable duration; acquisition, observation, completion and drain; source-window accounting, cancellation and partial results | [Channel runner](../user/channel-runner/README.md) |
 | Observability | Typed stage boundaries, bounded probes/JSONL, standard Rust logging and real decoder statistics | [Probe export](../user/simulation/probe-export.md), [logging](logging.md) |
 | Measurement experiments | Current decoded-JSON import, per-carrier Gaussian residuals, sample AWGN, supplied response H and known-reference equalization | [Measurements](../user/measurement-inputs/README.md), [impairments](../user/impairments/README.md) |
@@ -95,3 +96,12 @@ screening and measured observations remain separate.
 
 Use the [architecture](../architecture.md) for design and the
 [implementation checklist](checklist.md) for individual completion states.
+
+## File-source milestone
+
+SRC-04..06 implement bounded exact-byte files, send-once EOF, optional explicit
+PRBS15 append-to-fill, coding-padding exclusion and separate original/fill
+verification. The Rust API stays path-independent; CLI file options use the same
+contract. Size/alignment requirements inferred from channel/profile/duration
+remain deferred. Qt source controls remain planned under UI-02. See the
+[file-source implementation](features/file-payload-source/implementation.md).

@@ -23,6 +23,7 @@ from a fresh clone and are deliberately not Markdown link targets.
 | checklist audit | [plan](checklist-audit/plan.md) · [validation](checklist-audit/validation.md) |
 | checklist naming | [plan](checklist-naming/plan.md) |
 | development workspace | [plan](development-workspace/plan.md) |
+| file payload source | [implementation](file-payload-source/implementation.md) |
 | impairment group | [plan](impairment-group/plan.md) · [validation](impairment-group/validation.md) |
 | lte ingress | [plan](lte-ingress/plan.md) · [validation](lte-ingress/validation.md) |
 | ncp codec | [architecture](ncp-codec/architecture.md) |

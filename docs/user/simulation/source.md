@@ -35,3 +35,11 @@ retain their behavior. Neither source builds DOCSIS MAC traffic or PLC descripto
 
 See [coding loop](coding-loop.md) for independent codeword verification and
 [runner](runner.md) for the bounded trial lifecycle.
+
+## Finite file traffic
+
+The channel runner also accepts an [exact-byte text/binary source](file-source/README.md)
+with optional finite PRBS15 fill. This is separate from the legacy seeded trial
+source above. File generation, EOF/padding, independent verification and recovered
+output have their own linked component guides. Source bytes never enter receive
+FEC decisions. The CLI loads a bounded file; core APIs consume immutable bytes.

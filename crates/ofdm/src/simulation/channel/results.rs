@@ -46,6 +46,9 @@ pub struct ChannelStep {
 /// Constant-size totals; completed words belong to returned steps, not this history.
 #[derive(Debug, Clone, Serialize)]
 pub struct ChannelSummary {
+    /// Finite file/fill progress; absent for the unchanged continuous PRBS path.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub file_source: Option<crate::simulation::source::file::FileSourceSummary>,
     /// Post-equalization data MER against independent TX diagnostic symbols, not RX input.
     pub measured_mer_db: Option<f64>,
     pub compared_data_carriers: u64,

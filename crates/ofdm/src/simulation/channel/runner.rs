@@ -15,7 +15,7 @@ use crate::{
     error::invalid,
     simulation::{
         payload::{observation, PayloadChannelSymbol, PayloadReceiver, PayloadTransmitter},
-        source::{Prbs15, PrbsComparison, PrbsVerifier},
+        source::{PayloadSource, PayloadVerifier, PrbsComparison},
         test_points::{CellProbeGrid, ProbeObserver, RunPhase, TestPointProbe},
     },
     types::PLC_FRAME_SYMBOLS,
@@ -33,8 +33,8 @@ pub struct ChannelRun {
     transmitter: Option<PayloadTransmitter>,
     receiver: Option<PayloadReceiver>,
     grid: Option<CellProbeGrid>,
-    source: Prbs15,
-    verifier: PrbsVerifier,
+    source: PayloadSource,
+    verifier: PayloadVerifier,
     next_symbol: u64,
     next_impairment_epoch: usize,
     summary: ChannelSummary,
@@ -79,6 +79,8 @@ impl ChannelRun {
             timing.observation_samples,
             timing.complete_symbols
         );
+        let (source, verifier) = settings.source.stages(settings.prbs_seed)?;
+        let file_source = verifier.file_summary(&source);
         Ok(Self {
             constellation: settings.constellation.as_ref().map(|selection| {
                 super::constellation::ConstellationCollector::new(selection, settings.receiver_mode)
@@ -88,11 +90,12 @@ impl ChannelRun {
             transmitter: None,
             receiver: None,
             grid: None,
-            source: Prbs15::new(settings.prbs_seed)?,
-            verifier: PrbsVerifier::new(settings.prbs_seed)?,
+            source,
+            verifier,
             next_symbol: 0,
             next_impairment_epoch: 0,
             summary: ChannelSummary {
+                file_source,
                 measured_mer_db: None,
                 compared_data_carriers: 0,
                 window: None,
@@ -140,6 +143,13 @@ impl ChannelRun {
     /// Completed results so far. A non-Finished phase is not a completed duration run.
     pub fn summary(&self) -> &ChannelSummary {
         &self.summary
+    }
+
+    /// Copies bounded recovered original-file bytes without changing run state.
+    /// # Returns
+    /// None for continuous PRBS; file bytes and completion metadata otherwise.
+    pub fn recovered_file(&self) -> Option<crate::simulation::source::file::RecoveredFile> {
+        self.verifier.recovered_file()
     }
 
     /// Borrows finite paired receive observations without advancing any scientific state.
@@ -209,6 +219,7 @@ impl ChannelRun {
             ));
         }
         let outcome = self.advance_inner(probe, observer);
+        self.summary.file_source = self.verifier.file_summary(&self.source);
         // Each frame's small iteration list is consumed immediately, never retained per run.
         self.summary.plc_ldpc_iterations += self
             .link
@@ -256,7 +267,9 @@ impl ChannelRun {
                         .as_mut()
                         .ok_or_else(|| invalid("Missing channel TX."))?;
                     while tx.queued_codewords() < QUEUED_PAYLOAD_TARGET {
-                        let payload = self.source.next_payload()?;
+                        let Some(payload) = self.source.next_payload()? else {
+                            break;
+                        };
                         let mut source_context = context.clone();
                         source_context.reference =
                             crate::simulation::test_points::SignalReference::NotApplicable;

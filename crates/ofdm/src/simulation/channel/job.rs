@@ -73,6 +73,8 @@ pub struct ChannelProgress {
 #[derive(Serialize)]
 pub struct ChannelJobResult {
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub recovered_file: Option<crate::simulation::source::file::RecoveredFile>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub channel_estimate:
         Option<crate::signal_processing::receiver::channel_estimation::ChannelEstimate>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -91,7 +93,7 @@ pub struct ChannelJobResult {
     pub probe_stats: ProbeStats,
     pub error: Option<SimulationError>,
 }
-/// Runs the noiseless channel with cooperative cancellation and finite host/output budgets.
+/// Runs the selected-source channel with cooperative cancellation and finite host/output budgets.
 /// # Arguments
 /// * `settings` - Frozen scientific settings; simulated time and host budget are distinct.
 /// * `limits` - Runtime and detailed-word retention bounds; zero retained words is valid.
@@ -184,6 +186,7 @@ fn run_with_clock(
     let constellation = session.take_constellation();
     let protected_constellation = session.take_protected_constellation();
     Ok(ChannelJobResult {
+        recovered_file: session.recovered_file(),
         channel_estimate: session.channel_estimate().cloned(),
         protected_constellation,
         constellation,

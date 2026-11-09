@@ -1,0 +1,2 @@
+MERLIN exact-byte payload example.
+Text and binary inputs use the same Rust source and FEC path.

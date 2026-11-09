@@ -68,15 +68,21 @@ Guide: [Source design](../user/simulation/source.md).
   [PRBS design](../user/simulation/prbs.md) records seed/bit order, bounds and
   the distinction between mathematical and external interoperability evidence.
 
-- [ ] **SRC-04** Add a bounded exact-byte text/binary source beside PRBS15, with an
+- [x] **SRC-04** Add a bounded exact-byte text/binary source beside PRBS15, with an
   explicit bit order and cursor; preserve PRBS/noise behavior.
-- [ ] **SRC-05** Define send-once EOF, final-codeword padding and meaningful-length
-  accounting; define size/target rules later and offer opt-in PRBS15 append-to-fill.
+- [x] **SRC-05** Define send-once EOF, final-codeword padding and meaningful-length
+  accounting; support explicit total-bit targets with opt-in PRBS15 append-to-fill.
   Independently compare file/fill bits, exclude padding and preserve original bytes.
-- [ ] **SRC-06** Expose source selection through shared Rust/CLI configuration;
+- [x] **SRC-06** Expose source selection through shared Rust/CLI configuration;
   test text/binary byte preservation, size checks, optional PRBS fill, empty/oversized
   inputs, EOF, truncation and cancellation; keep noise/source state independent.
-  See the [source/workspace plan](features/visual-workspace/plan.md).
+  See the [file-source design](../user/simulation/file-source/README.md),
+  [implementation and tests](features/file-payload-source/implementation.md) and
+  [source/workspace plan](features/visual-workspace/plan.md).
+
+Automatic channel-derived minimum/alignment/target rules remain a deferred policy
+decision. The implemented file source uses bounded arbitrary bytes and an optional
+explicit target; completing SRC-04..06 does not implement the Qt controls.
 
 ## Forward error correction
 

@@ -1,6 +1,6 @@
 # Visual system workspace and selectable payload source
 
-**Planned design; no Qt workspace or text/binary file source is implemented.**
+**Qt workspace planned; Rust/CLI text and binary file sources are implemented.**
 The user's updated system sketch, including the OFDM transmission settings panel,
 is the starting layout, rather than a final screen
 specification. The application remains a standalone MERLIN simulator. Existing
@@ -99,66 +99,32 @@ Multiple RxMER files can be listed. The simulation core supports explicit valida
 measurement epochs and frame association; listing files alone does not activate
 playback. The UI must configure that schedule through the existing Rust contract.
 
-## Planned text and binary file source
+## Implemented text and binary file source
 
-Add a Rust-owned source beside PRBS15, feeding the same payload/FEC path. Text
-and binary files supply their exact bytes. For text, preserve line endings, BOM
-and any UTF-8 multibyte sequences without normalization or conversion. Binary
-files require no text decoding; embedded zeros and invalid UTF-8 remain intact.
-The proposed bit order is most-significant bit first within each byte; declare it
-in the source configuration and test it independently. This is a proposed source
-contract, not a change to the existing PRBS15 recurrence or its seed ordering.
+SRC-04..06 now provide the shared Rust/CLI source underlying the planned Source
+panel. See the [file-source guide](../../../user/simulation/file-source/README.md)
+and [implementation record](../file-payload-source/implementation.md) for the
+current contract and validation. The Qt controls themselves remain planned.
 
-The adapter loads a bounded file and supplies bytes to a path-independent public
-Rust model. The source owns its byte/bit cursor and original payload length.
-A separate verifier compares recovered meaningful bits with the original bytes;
-LDPC convergence alone is not proof of correct recovered data. BER excludes
-padding and unsent/incomplete data. Any recovered-text preview is presentation
-only; do not discard invalid bytes when errors produce invalid UTF-8.
+Click Source to edit PRBS15 or file selection and open an OS file picker. Text
+and binary files preserve exact bytes, independent of extension or text encoding.
+Present original size, finite target/fill count, seed and completion information
+from the Rust model; keep input bytes out of logs and JSON results.
 
-Proposed initial EOF behavior is **send once**, without implicit repeat. The
-last FEC payload uses explicit padding; its meaningful-bit count is retained so
-padding is excluded from recovered-file output and BER. A longer configured
-run continues with existing idle/filler behavior after EOF. A shorter run reports
-partial transmission/comparison, not a successful full-file recovery. A repeat
-option, if added later, must be explicit and preserve absolute source offsets.
-Empty files, source-size limits, padding, cancellation and partial final bytes
-need defined results and tests before implementation. No source bytes or full
-text contents should be written to diagnostic logs.
+The implemented application bounds are16MiB original bytes and134,217,728 total
+meaningful bits. Optional **Append PRBS15 to fill** uses an explicit total-bit
+target and independent nonzero15-bit seed. Fill starts after the original file,
+continues across words and stops at the target. Empty files and equal-to-file
+length targets are supported. Targets below original size or beyond the work
+bound reject before starting. No original bytes are silently repeated/truncated.
 
-### Editable source panel and data-load checks
-
-Clicking Source in the diagram opens its editable settings. Choose PRBS15 or a
-text/binary file through an OS file picker; show the file size and selected EOF
-policy before applying it to the next run. File extensions must not determine
-whether bytes are accepted as payload. Keep source content out of logs.
-
-The Rust source/configuration layer owns bounded file-size checks and any future
-minimum, target or alignment requirement. Qt displays its validation result and
-blocks starting an invalid configuration; the CLI applies the same rules.
-Exact size requirements and target units are deferred: determine their relation
-to coding payload length, active profile and run duration before implementation.
-Fixed-size FEC words do not by themselves require fixed-size user files.
-
-When a defined target exceeds the file length, offer **Append PRBS15 to fill**.
-This is opt-in, with a reproducible seed and declared PRBS bit order. Show the
-original byte/bit count, target count and appended count. Original bytes always
-come first. Keep the PRBS generator independent of channel noise and never reseed
-it at codeword boundaries. The exact initial-state policy must be specified and
-tested before this mode is implemented. An oversized file fails validation or
-requires an explicit change to the target/run; never silently truncate it.
-
-Track three separate segments: original file bits, appended PRBS15 test bits and
-coding padding. Verify file and appended data independently, report their BER
-separately, and export only original file bytes as recovered-file output. Coding
-padding is never counted as meaningful data. Optional PRBS fill follows a finite
-explicit target; it does not imply infinite transmission after EOF. When fill is
-off, preserve send-once/idle behavior. A run that cannot transmit or verify its
-selected data reports partial results with meaningful completion counts.
-
-The core/source API and CLI must support this choice before Qt adds the control.
-PRBS15 remains the default for current runs. A file source is test traffic, not a
-claim to generate DOCSIS MAC frames or provide a network file-transfer service.
+Minimum/alignment and automatic channel/profile/duration-derived target rules
+remain deferred. The UI must not invent them or recompute source math.
+Without fill, send once then idle. Final BCH information padding is distinct
+from file/fill bits and excluded from meaningful BER and recovered-file output.
+File/fill comparisons are independent; exports contain actual decoded original
+bytes only and preserve honest partial status. Source state is independent of
+noise. Configuration changes apply to a new run, never an active session.
 
 ## Implementation boundaries and acceptance
 
@@ -176,6 +142,6 @@ claim to generate DOCSIS MAC frames or provide a network file-transfer service.
 - Before the future UI implementation, add per-component user guides and actual
   screenshots. The Mermaid sketch is a navigational design, not a UI prototype.
 
-Track file-source work as SRC-04..06 and workspace work as UI-01..04 in the
+Track implemented file-source work as SRC-04..06 and planned workspace work as UI-01..04 in the
 [official checklist](../../checklist.md). Planning this screen does not reorder
-current receiver-estimation dependencies or mark those items complete.
+other checklist dependencies or mark Qt items complete.

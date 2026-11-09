@@ -12,6 +12,8 @@ Commands:
   channel   Run the duration-based reference or impaired OFDM channel.
   import-pnm Import three decoded PNM JSON files into a scenario.
 
+Use --payload-file FILE with channel and source.kind=file for exact text/binary bytes.
+Use --recovered-file FILE with file-source channel jobs for recovered original bytes.
 Use --probes-output FILE with channel and request.probes for bounded JSONL export.
 
 Use --candidate with evaluate to test an existing internal candidate.
@@ -32,6 +34,8 @@ pub(crate) struct Arguments {
     pub(crate) frame: usize,
     pub(crate) frame_supplied: bool,
     pub(crate) probes_output: Option<PathBuf>,
+    pub(crate) payload_file: Option<PathBuf>,
+    pub(crate) recovered_file: Option<PathBuf>,
 }
 /// Parses process arguments, printing help/version without starting a job.
 /// # Returns
@@ -61,6 +65,8 @@ pub(crate) fn parse() -> Result<Option<Arguments>, String> {
     while let Some(option) = values.next() {
         let value = values.next().ok_or("Each option requires a value.")?;
         match option.to_str() {
+            Some("--payload-file") => arguments.payload_file = Some(value.into()),
+            Some("--recovered-file") => arguments.recovered_file = Some(value.into()),
             Some("--probes-output") => arguments.probes_output = Some(value.into()),
             Some("--input") => arguments.input = value.into(),
             Some("--output") => arguments.output = value.into(),
@@ -89,6 +95,11 @@ pub(crate) fn parse() -> Result<Option<Arguments>, String> {
     }
     if arguments.input.as_os_str().is_empty() || arguments.output.as_os_str().is_empty() {
         return Err("--input and --output are required.".into());
+    }
+    if arguments.command != "channel"
+        && (arguments.payload_file.is_some() || arguments.recovered_file.is_some())
+    {
+        return Err("--payload-file and --recovered-file apply to channel only.".into());
     }
     if arguments.command != "channel" && arguments.probes_output.is_some() {
         return Err("--probes-output applies to channel only.".into());

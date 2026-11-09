@@ -81,3 +81,10 @@ not observed modem errors.
 
 Library callers can choose a bounded subcarrier interval through `MeasuredNoise`.
 The CLI currently uses the entire selected source frame.
+
+## File payloads
+
+`channel --payload-file FILE` sends exact text or binary bytes when the request
+selects `source.kind=file`. Optional `--recovered-file NEW_FILE` exports actual
+recovered original bytes. See the [file-source guide](user/simulation/file-source/README.md)
+for optional PRBS15 fill, size bounds, segment BER and partial-result behavior.

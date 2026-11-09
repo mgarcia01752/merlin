@@ -28,16 +28,34 @@ pub(crate) fn run(arguments: Arguments, cancel: &AtomicBool) -> Result<(), Strin
         || arguments.frame_supplied
     {
         return Err(
-            "channel accepts --input, --output, --scenario and --probes-output only.".into(),
+            "channel accepts --input, --output, --scenario, --probes-output, --payload-file and --recovered-file only.".into(),
         );
     }
     let document: ChannelDocument = read_json(&arguments.input)?;
     let scenario = arguments.scenario.as_deref().map(read_json).transpose()?;
+    let payload = arguments
+        .payload_file
+        .as_deref()
+        .map(crate::source_io::read_payload)
+        .transpose()?;
     let settings = document
-        .settings_with_scenario(scenario.as_ref())
+        .settings_with_inputs(scenario.as_ref(), payload.as_deref())
         .map_err(|error| error.to_string())?;
     if arguments.output.exists() {
         return Err("Output already exists.".into());
+    }
+    if let Some(path) = &arguments.recovered_file {
+        if arguments.payload_file.is_none() {
+            return Err("--recovered-file requires a file source and --payload-file.".into());
+        }
+        if path.exists()
+            || path == &arguments.output
+            || arguments.probes_output.as_ref() == Some(path)
+        {
+            return Err(
+                "Recovered file must be a new destination separate from result/probes.".into(),
+            );
+        }
     }
     if document.probes.is_some() != arguments.probes_output.is_some() {
         return Err("Specify both request.probes and --probes-output, or neither.".into());
@@ -114,6 +132,11 @@ pub(crate) fn run(arguments: Arguments, cancel: &AtomicBool) -> Result<(), Strin
         }
     }
     write_json(&result, &arguments.output)?;
+    if let Some(path) = &arguments.recovered_file {
+        if let Some(file) = &result.recovered_file {
+            crate::source_io::write_recovered(path, file.bytes())?;
+        }
+    }
     if result.status == ChannelJobStatus::Failed {
         return Err(result
             .error

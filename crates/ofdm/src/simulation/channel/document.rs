@@ -16,6 +16,8 @@ use std::time::Duration;
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ChannelDocument {
+    #[serde(default)]
+    pub source: crate::simulation::source::file::SourceSelection,
     pub data_bit_loading: Option<Vec<u8>>,
     #[serde(default)]
     pub impairment_timeline: Vec<super::timeline::ImpairmentEpoch>,
@@ -83,10 +85,41 @@ impl ChannelDocument {
         &self,
         scenario: Option<&crate::scenario::document::ScenarioDocument>,
     ) -> Result<ChannelRunSettings, SimulationError> {
+        self.settings_with_inputs(scenario, None)
+    }
+    /// Resolves measurement selection and exact file bytes through shared Rust validation.
+    /// # Arguments
+    /// * `scenario` - Required exactly when measurement selection is requested.
+    /// * `payload_bytes` - Required exactly for source.kind=file; no paths enter core APIs.
+    /// # Returns
+    /// Frozen validated settings with shared immutable bytes and bounded fill policy.
+    /// # Errors
+    /// Rejects mismatched inputs, invalid targets/seeds, schema or channel settings.
+    pub fn settings_with_inputs(
+        &self,
+        scenario: Option<&crate::scenario::document::ScenarioDocument>,
+        payload_bytes: Option<&[u8]>,
+    ) -> Result<ChannelRunSettings, SimulationError> {
         if self.schema_version != 1 {
             return Err(invalid("Unsupported channel request schema version."));
         }
+        use crate::simulation::source::{
+            file::{FilePayload, SourceSelection},
+            PayloadSourceConfig,
+        };
+        let source = match (&self.source, payload_bytes) {
+            (SourceSelection::Prbs15, None) => PayloadSourceConfig::Prbs15,
+            (SourceSelection::File { fill }, Some(bytes)) => PayloadSourceConfig::File {
+                payload: FilePayload::new(bytes, *fill)?,
+            },
+            _ => {
+                return Err(invalid(
+                    "Supply payload bytes exactly when source.kind is file.",
+                ))
+            }
+        };
         let mut settings = ChannelRunSettings {
+            source,
             data_bit_loading: self.data_bit_loading.clone(),
             impairment_timeline: self.impairment_timeline.clone(),
             receiver_mode: self.receiver_mode,
