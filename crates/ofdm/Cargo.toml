@@ -77,3 +77,8 @@ required-features = ["simulation"]
 name="prepare_impairment_runs"
 path="examples/measurement_runs/main.rs"
 required-features=["simulation"]
+
+[[example]]
+name = "export_rxmer_pnm"
+path = "examples/measurement_export/main.rs"
+required-features = ["simulation"]

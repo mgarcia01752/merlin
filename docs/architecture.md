@@ -98,6 +98,13 @@ The receiver uses explicit known H; blind estimation remains open. Variances fol
 the same inverse cell interleaver as received I/Q before per-cell LLR calculation.
 Existing channel input/output and RX FFT/equalized probes expose the actual stages.
 The protected LTE sweep starts narrow and rejects overlap with the PLC6MHz neighborhood.
+The same Rust fixture generator offers a separate700–727MHz data-only RxMER
+stress cap to observe actual post-FEC errors. It preserves pilots, PLC, nulls and
+source identity; it is not modeled as a single LTE carrier. See the
+[experiment commands and results](user/impairments/experiments.md).
+An offline Rust fixture exporter preserves the original RxMER PNM header and
+encodes exactly representable scenario readings for external viewing. It does
+not change the decoded-JSON production input contract.
 
 ## Modules and stage boundaries
 

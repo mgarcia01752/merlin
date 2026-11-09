@@ -474,6 +474,10 @@ and [the later impairment reference](impairment-reference.md).
     independently transported per-cell LLR variances and no added thermal floor.
   - [x] Verify actual MER, PRBS/FEC outcomes, partial failure and protected narrow
     LTE sweep. This is a synchronized diagonal model, not general FIR multipath.
+  - [x] Expose LTE interference strength and a separate data-only RxMER stress
+    fixture for CLI error-boundary sweeps, keeping the PLC neighborhood unchanged.
+  - [x] Export baseline and12/11/10/9dB binary PNM demos, preserving original
+    headers and verifying all readings through the external decoder.
 - [ ] **MODEL-05** Applied downstream channel-estimate model and receiver estimation/
   equalization with no double counting of post-equalization RxMER noise.
   - [x] Apply supplied channel response H and independent known-reference1/H;

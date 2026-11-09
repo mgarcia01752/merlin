@@ -1,0 +1,52 @@
+{
+  "purpose": "Synthetic binary RxMER PNM views of the actual FEC stress-test inputs, not real capture events",
+  "base_source": "../single-channel/provenance.json",
+  "base_binary_sha256": "864ba70b0361bd8b4912b55f55e8db72dd7b319b478ce1988103979e0b19c98e",
+  "encoding": "PNN4 RxMER v1.0; exact unsigned quarter-dB values; 0xff unavailable",
+  "header": "Original 28 bytes retained; same MAC/channel/grid/capture time for all variants",
+  "stress_band_hz_start_inclusive_stop_exclusive": [
+    700000000,
+    727000000
+  ],
+  "changed_static_data_carriers": 1072,
+  "grid_carriers": 7480,
+  "protected_plc_hz": [
+    648000000,
+    654000000
+  ],
+  "decoder": "pnm-decode 0.3.1",
+  "files": [
+    {
+      "file": "rxmer-stress-12db.bin",
+      "synthetic": true,
+      "target_mer_db": 12,
+      "sha256": "f8d2409134e9cf34fd2884716cf2cdf599af132eada1b74a4c437f8ee627b2bb",
+      "bytes": 7508,
+      "verified_exact_scenario_values": true
+    },
+    {
+      "file": "rxmer-stress-11db.bin",
+      "synthetic": true,
+      "target_mer_db": 11,
+      "sha256": "148a5780ed1d7e19fd5d12ad6e8779b505f6ef56e19a9c8af3175f532a37a72d",
+      "bytes": 7508,
+      "verified_exact_scenario_values": true
+    },
+    {
+      "file": "rxmer-stress-10db.bin",
+      "synthetic": true,
+      "target_mer_db": 10,
+      "sha256": "a77bc41a17eed2974db9c6abdca532f8213e29aa2ffc5ffef4c35b7a9ff30515",
+      "bytes": 7508,
+      "verified_exact_scenario_values": true
+    },
+    {
+      "file": "rxmer-stress-9db.bin",
+      "synthetic": true,
+      "target_mer_db": 9,
+      "sha256": "701770797e658bf2d78c3701f4340de0084888d85c0231a8b0c2a8548685da39",
+      "bytes": 7508,
+      "verified_exact_scenario_values": true
+    }
+  ]
+}
