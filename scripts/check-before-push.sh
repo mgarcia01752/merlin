@@ -20,6 +20,7 @@ shellcheck "${SHELL_SCRIPTS[@]}"
 "${SCRIPT_DIR}/cargo-local.sh" fmt --all -- --check
 "${SCRIPT_DIR}/cargo-local.sh" clippy --workspace --all-targets --locked -- -D warnings
 "${SCRIPT_DIR}/cargo-local.sh" test --workspace --locked
+"${SCRIPT_DIR}/cargo-local.sh" test -p docsis-ofdm-fec --example prepare_rxmer_variants --locked
 "${SCRIPT_DIR}/cargo-local.sh" test -p docsis-ofdm-fec --no-default-features --locked
 "${SCRIPT_DIR}/cargo-local.sh" build -p ofdm-fec-cli --release --locked
 SMOKE_DIRECTORY="$(mktemp -d)"
@@ -43,5 +44,23 @@ with open(sys.argv[2], encoding="utf-8") as source:
     records = [json.loads(line) for line in source]
 assert records and all(record["schema_version"] == 1 for record in records)
 PY_CHANNEL
+"${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- import-pnm \
+  --input examples/measurements/single-channel/import.json --output "${SMOKE_DIRECTORY}/scenario.json"
+"${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- channel \
+  --input examples/measurements/single-channel/channel-measured.json \
+  --scenario "${SMOKE_DIRECTORY}/scenario.json" --output "${SMOKE_DIRECTORY}/measured.json"
+"${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- channel \
+  --input examples/channel-awgn.json --output "${SMOKE_DIRECTORY}/waveform-awgn.json"
+python3 - "${SMOKE_DIRECTORY}/measured.json" "${SMOKE_DIRECTORY}/waveform-awgn.json" <<'PY_IMPAIRMENTS'
+import json
+import sys
+for path in sys.argv[1:]:
+    with open(path, encoding="utf-8") as source:
+        result = json.load(source)
+    assert result["status"] == "complete"
+    assert result["summary"]["comparison"]["bit_errors"] == 0
+    assert result["summary"]["measured_mer_db"] is not None
+    assert result["summary"]["payload_mean_ldpc_iterations"] is not None
+PY_IMPAIRMENTS
 python3 tools/release/versions.py
 echo 'All local pre-push checks passed.'

@@ -26,7 +26,9 @@ flowchart LR
 | Standalone command and shared JSON | [CLI](cli.md) |
 
 The current path is uniform256-QAM ProfileA, short rate8/9 payload FEC, one
-fixed channel and a noiseless unity connection. NCP uses the selected supported
+fixed channel and a noiseless unity connection by default. Optional
+[waveform impairments](../impairments/README.md) add sample AWGN or selected RxMER
+residuals plus supplied channel response. NCP uses the selected supported
 positive QPSK/16-QAM/64-QAM control constellation. PRBS15 is experiment traffic,
 not a substitute for PHY scrambling. Actual PLC packets configure independent
 payload reception; original payload bits and TX queue IDs are never RX inputs.

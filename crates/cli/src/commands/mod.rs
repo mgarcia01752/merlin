@@ -5,6 +5,7 @@
 //! Small command dispatch; each operation owns its adaptation layer.
 mod channel;
 mod evaluate;
+mod import_pnm;
 mod simulate;
 use crate::arguments::Arguments;
 use std::sync::atomic::AtomicBool;
@@ -19,6 +20,7 @@ use std::sync::atomic::AtomicBool;
 pub(crate) fn run(arguments: Arguments, cancel: &AtomicBool) -> Result<(), String> {
     log::info!("command-start command={}", arguments.command);
     match arguments.command.as_str() {
+        "import-pnm" => import_pnm::run(arguments),
         "channel" => channel::run(arguments, cancel),
         "simulate" => simulate::run(arguments, cancel),
         "evaluate" => evaluate::run(arguments, cancel),

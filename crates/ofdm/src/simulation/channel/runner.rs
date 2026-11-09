@@ -53,6 +53,8 @@ impl ChannelRun {
             &settings.layout,
             settings.ncp_modulation,
             settings.receive_block_samples,
+            &settings.impairments,
+            settings.llr_variance,
         )?;
         log::info!(
             "channel-created observation-samples={} source-symbols={}",
@@ -69,6 +71,8 @@ impl ChannelRun {
             verifier: PrbsVerifier::new(settings.prbs_seed)?,
             next_symbol: 0,
             summary: ChannelSummary {
+                measured_mer_db: None,
+                compared_data_carriers: 0,
                 window: None,
                 phase: ChannelPhase::Acquisition,
                 timing,
@@ -92,6 +96,10 @@ impl ChannelRun {
                 },
                 payload_ber: None,
                 payload_codeword_errors: 0,
+                payload_ldpc_failures: 0,
+                payload_bch_failures: 0,
+                payload_mean_ldpc_iterations: None,
+                payload_ldpc_iteration_sum: 0,
                 payload_ldpc_iterations: vec![0; MAX_CHANNEL_DECODER_ITERATIONS + 1],
                 bch_corrected_bits: 0,
                 accepted_ncp_fields: 0,
@@ -122,8 +130,8 @@ impl ChannelRun {
     /// after Finished; repeated calls then do no work. Source state persists across calls.
     /// # Errors
     /// Stage/control/observer failures mark the session Failed and preserve completed
-    /// summary totals; subsequent calls reject. This stepping API does not yet provide
-    /// the later cancellable job/CLI facade or a restartable failed transaction.
+    /// summary totals; subsequent calls reject. Use run_channel for the cooperative
+    /// cancellation/job facade; a failed transaction is not restartable.
     pub fn advance(
         &mut self,
         probe: &mut TestPointProbe,
@@ -147,6 +155,13 @@ impl ChannelRun {
         self.summary.plc_frames = self.link.stats.plc_frames;
         self.summary.plc_bit_errors = self.link.stats.plc_bit_errors;
         self.summary.maximum_bin_error = self.link.stats.maximum_bin_error;
+        self.summary.compared_data_carriers = self.link.stats.compared_data_carriers;
+        if self.link.stats.data_signal_power > 0.0 && self.link.stats.data_error_power > 0.0 {
+            self.summary.measured_mer_db = Some(
+                10.0 * (self.link.stats.data_signal_power / self.link.stats.data_error_power)
+                    .log10(),
+            );
+        }
         if let Err(error) = &outcome {
             self.summary.phase = ChannelPhase::Failed;
             log::debug!(
@@ -357,11 +372,11 @@ impl ChannelRun {
             .receiver
             .as_mut()
             .ok_or_else(|| invalid("Missing channel RX."))?;
-        let decoded = rx.receive(
+        let decoded = rx.receive_with_variances(
             self.link.state(),
             received.symbol_index,
             &received.signals.reduced,
-            self.settings.llr_variance,
+            self.link.variances(),
             self.settings.max_iterations,
         )?;
         let mut words = Vec::new();
@@ -399,6 +414,13 @@ impl ChannelRun {
                     .verifier
                     .compare(&word.decoded.bch.codeword[..BCH_INPUT_BITS])?;
                 self.summary.recovered_payloads += 1;
+                self.summary.payload_ldpc_failures += u64::from(!word.decoded.ldpc.success);
+                self.summary.payload_bch_failures += u64::from(!word.decoded.bch.success);
+                self.summary.payload_ldpc_iteration_sum += word.decoded.ldpc.iterations as u64;
+                self.summary.payload_mean_ldpc_iterations = Some(
+                    self.summary.payload_ldpc_iteration_sum as f64
+                        / self.summary.recovered_payloads as f64,
+                );
                 self.summary.payload_ldpc_iterations[word.decoded.ldpc.iterations] += 1;
                 self.summary.bch_corrected_bits += u64::from(word.decoded.bch.corrected_bits);
                 if comparison.bit_errors > 0

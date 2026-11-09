@@ -37,3 +37,11 @@ observations and4million total samples; each grid permits at most65536 carriers.
 Candidates contain at most4096 source records, with names/hashes bounded by
 validation. Large source collections should be decoded incrementally by a
 consumer's bounded scanner; no archive extraction is implemented in this library.
+
+The [PNM importer](../user/impairments/pnm-import.md) hashes exact decoded JSON
+bytes and preserves independent source epochs. Its request paths are CLI-owned;
+the library receives borrowed bytes. Channel requests optionally include
+`impairments` (exclusive noiseless/AWGN/RxMER mode plus optional supplied H) or
+`measurement` selection paired with `--scenario`. Outputs retain the resolved
+settings, actual diagnostic MER, BER, LDPC iteration histogram/mean and decoder
+failure counts. See [experiments](../user/impairments/experiments.md).

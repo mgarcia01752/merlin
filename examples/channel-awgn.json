@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "transmission": {
+    "occupied_bandwidth_hz": 24000000,
+    "subcarrier_spacing": "50000",
+    "cyclic_prefix_samples": 512,
+    "roll_off_samples": 128,
+    "time_interleaver_depth": 32
+  },
+  "layout": {
+    "zero_frequency_hz": 100000000,
+    "first_active_bin": 160,
+    "active_end_exclusive": 640,
+    "plc_first_bin": 376,
+    "excluded_bins": [
+      600
+    ],
+    "additional_continuous_pilots": [
+      176,
+      224,
+      272,
+      460,
+      504,
+      540,
+      588,
+      628
+    ]
+  },
+  "limits": {
+    "max_runtime_ms": 300000,
+    "max_retained_words": 64
+  },
+  "duration_ms": 3,
+  "impairments": {
+    "seed": 41,
+    "noise": {
+      "mode": "awgn",
+      "sample_power": 0.001
+    },
+    "response": null
+  }
+}

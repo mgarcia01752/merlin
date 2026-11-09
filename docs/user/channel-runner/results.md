@@ -41,8 +41,15 @@ error count before any comparisons is not a measured zero BER.
 A Finished session requires all generated payloads recovered, zero pending
 payload bits and agreement between generated and compared source-bit counts.
 This is a completion check, not a requirement that a noisy receiver always
-correct all errors. Current operation is noiseless. Decoder flags remain distinct
+correct all errors. Optional waveform impairments now exercise real noisy decoding.
+Decoder flags remain distinct
 from truth error counts.
+
+`measured_mer_db` is an observation-phase post-equalization data-bin diagnostic
+against independent transmitted symbols, not the normative pilot-based RxMER
+measurement or hidden receiver input. Actual LDPC/BCH failure counts, mean LDPC
+iterations and its histogram accompany BER and BCH-corrected-bit counts. See
+[impaired experiments](../impairments/experiments.md) for interpretation and controls.
 
 The global totals include words completed after observation. They must not be
 divided by the observation duration as extra capacity. The separate `window`

@@ -18,6 +18,16 @@ const MAX_JSON_BYTES: u64 = 16 * 1024 * 1024;
 pub(crate) fn read_json<Document: serde::de::DeserializeOwned>(
     path: &Path,
 ) -> Result<Document, String> {
+    serde_json::from_slice(&read_bytes(path)?).map_err(|error| error.to_string())
+}
+/// Reads exact bounded JSON bytes for schema adaptation and provenance hashing.
+/// # Arguments
+/// * `path` - Caller-selected source.
+/// # Returns
+/// Owned original bytes without rewriting whitespace or scientific fields.
+/// # Errors
+/// Rejects I/O or input exceeding16MiB, including growing files.
+pub(crate) fn read_bytes(path: &Path) -> Result<Vec<u8>, String> {
     let file =
         std::fs::File::open(path).map_err(|error| format!("json-input-open-failed: {error}"))?;
     let mut bytes = vec![];
@@ -27,7 +37,7 @@ pub(crate) fn read_json<Document: serde::de::DeserializeOwned>(
     if bytes.len() as u64 > MAX_JSON_BYTES {
         return Err("Input exceeds16MiB.".into());
     }
-    serde_json::from_slice(&bytes).map_err(|error| error.to_string())
+    Ok(bytes)
 }
 /// Serializes a bounded document before creating a new destination.
 /// # Arguments

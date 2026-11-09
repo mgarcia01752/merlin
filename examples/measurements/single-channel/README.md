@@ -5,8 +5,10 @@ Sanitized decoded captures copied from PNM Viewer Toolkit using `pnm-decode
 hashes, decoded JSON hashes and individual capture times. Upstream
 [LICENSE](LICENSE) and [NOTICE](NOTICE) are retained.
 
-These files are fixture inputs for the planned importer, not current CLI scenario
-documents. Do not pass them directly to `ofdm-fec channel` or `--scenario`.
+These decoder files are inputs to `ofdm-fec import-pnm`, not channel requests or
+scenario documents. Use [import.json](import.json) to produce a scenario, then
+[channel-measured.json](channel-measured.json) to select profile0, RxMER and response.
+See the [experiment commands](../../../docs/user/impairments/experiments.md).
 
 | File | Purpose |
 | --- | --- |
@@ -21,7 +23,7 @@ documents. Do not pass them directly to `ofdm-fec channel` or `--scenario`.
 All three captures use modem `00:ca:00:00:00:01`, channel 34, zero frequency
 631100000 Hz, first index 356 and spacing 25000 Hz. RxMER and coefficients have
 7480 entries: centers run from 640000000 to 826975000 Hz. Profile assignments
-must still be expanded and semantically checked by the future importer. Shared headers alone
+are expanded and checked by the current importer. Shared headers alone
 do not prove role/assignment compatibility with a simulation mode.
 
 Capture epochs differ: RxMER 1380970, channel estimate 1391100, profile 1466967.
@@ -59,7 +61,7 @@ fixtures use \(M'_k=M_k-\Delta_k\) in dB. The new
 existing residual power and added interference before converting back to MER.
 It uses a10MHz envelope,9MHz flat core and−30dB core interference/signal power.
 No separate thermal floor is added; the resulting MER is applied only once in
-future simulation integration. This preparation adds no waveform noise and
+the waveform simulation. This preparation itself adds no waveform noise and
 computes no decoder outcomes. The rectangular notch remains a separate test case.
 
 Original sanitized binaries are retained locally under ignored

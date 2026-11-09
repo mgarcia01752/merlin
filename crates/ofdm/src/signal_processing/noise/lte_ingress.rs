@@ -58,6 +58,29 @@ impl LteDownlinkIngress {
         grid: &FrequencyGrid,
         mer_db: &[Option<f64>],
     ) -> Result<IngressResult, LabError> {
+        self.apply_resource_blocks(grid, mer_db, 50, &[])
+    }
+    /// Applies a centered partial-load LTE-inspired envelope outside protected frequency ranges.
+    /// # Arguments
+    /// * `grid` - Original physical capture grid.
+    /// * `mer_db` - Original total residual readings, with nulls preserved.
+    /// * `resource_blocks` -1..50 occupied180kHz blocks inside the nominal10MHz channel.
+    /// * `protected` - Half-open Hz ranges where added interference must be zero.
+    /// # Returns
+    /// Synthetic MER and added powers; shoulders remain500kHz each.
+    /// # Errors
+    /// Rejects invalid loading, malformed protected intervals or any envelope overlap,
+    /// including overlap with a PLC neighborhood supplied by the caller.
+    pub fn apply_resource_blocks(
+        &self,
+        grid: &FrequencyGrid,
+        mer_db: &[Option<f64>],
+        resource_blocks: u8,
+        protected: &[std::ops::Range<FrequencyHz>],
+    ) -> Result<IngressResult, LabError> {
+        if !(1..=50).contains(&resource_blocks) {
+            return Err(invalid("LTE loading must be1..50 resource blocks."));
+        }
         grid.validate()?;
         let envelope_start = self
             .center_frequency_hz
@@ -81,13 +104,25 @@ impl LteDownlinkIngress {
                 "Invalid LTE ingress power, coverage or carrier count.",
             ));
         }
+        let core_width_hz = u32::from(resource_blocks) * 180_000;
+        let envelope_half_width =
+            core_width_hz / 2 + (CHANNEL_BANDWIDTH_HZ - FLAT_CORE_BANDWIDTH_HZ) / 2;
+        let active_start = self.center_frequency_hz - envelope_half_width;
+        let active_stop = self.center_frequency_hz + envelope_half_width;
+        if protected.iter().any(|range| {
+            range.start >= range.end || (active_start < range.end && range.start < active_stop)
+        }) {
+            return Err(invalid(
+                "LTE impairment overlaps a protected frequency interval.",
+            ));
+        }
         let mut result = IngressResult {
             mer_db: Vec::with_capacity(mer_db.len()),
             interference_to_signal_power: Vec::with_capacity(mer_db.len()),
         };
         for (offset, reading) in mer_db.iter().enumerate() {
             let distance_hz = grid.frequency(offset)?.abs_diff(self.center_frequency_hz);
-            let weight = envelope_weight(distance_hz);
+            let weight = envelope_weight(distance_hz, core_width_hz);
             let interference_power = core_power * weight;
             let synthetic_mer = if let Some(mer) = reading {
                 let baseline_power = 10.0_f64.powf(-mer / 10.0);
@@ -117,9 +152,10 @@ impl LteDownlinkIngress {
 
 // A deliberate engineering envelope, not an LTE emission mask: flat core and
 // cosine power shoulders, with no modeled energy outside the nominal channel.
-fn envelope_weight(distance_hz: FrequencyHz) -> f64 {
-    let core_half_width_hz = FLAT_CORE_BANDWIDTH_HZ / 2;
-    let channel_half_width_hz = CHANNEL_BANDWIDTH_HZ / 2;
+fn envelope_weight(distance_hz: FrequencyHz, core_width_hz: FrequencyHz) -> f64 {
+    let core_half_width_hz = core_width_hz / 2;
+    let channel_half_width_hz =
+        core_half_width_hz + (CHANNEL_BANDWIDTH_HZ - FLAT_CORE_BANDWIDTH_HZ) / 2;
     if distance_hz <= core_half_width_hz {
         1.0
     } else if distance_hz >= channel_half_width_hz {

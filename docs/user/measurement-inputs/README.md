@@ -1,7 +1,7 @@
 # PNM measurement inputs
 
 Ideal/reference simulation needs transmission settings, not PNM captures.
-Measurement-driven operation will accept current `pnm-decode` JSON for three
+Measurement-driven operation accepts current `pnm-decode` JSON through an importer for three
 capture types: downstream RxMER, downstream channel estimation and the applied
 downstream modulation profile. Direct Rust callers will use the same typed
 scenario model without a decoder subprocess.
@@ -10,17 +10,18 @@ scenario model without a decoder subprocess.
 flowchart LR
     FILES["PNM binaries"] --> DECODE["External pnm-decode"]
     DECODE --> JSON["Current decoded JSON"]
-    JSON -.-> IMPORT["Planned Rust importer"]
-    IMPORT -.-> SCENARIO["Validated scenario types"]
+    JSON --> IMPORT["Rust importer / import-pnm CLI"]
+    IMPORT --> SCENARIO["Validated scenario types"]
     RUST["Direct Rust caller"] --> SCENARIO
     SCENARIO --> ANALYSIS["Existing scenario analysis"]
-    SCENARIO -.-> CHANNEL["Planned measurement-driven waveform simulation"]
+    SCENARIO --> CHANNEL["Selected uniform256-QAM measured waveform simulation"]
 ```
 
-Solid arrows show available paths; dashed arrows are pending. Today, CLI scenario
-inputs use this repository's own schema. Decoded JSON fixtures are not directly
-accepted by the CLI. INPUT-01 tracks the importer; MODEL-06 tracks waveform
-integration. Formal upstream schema/version compatibility is deferred in INPUT-02.
+CLI scenario inputs use this repository's own schema. The
+[import-pnm command](../impairments/pnm-import.md) converts decoded captures;
+[impaired channel requests](../impairments/experiments.md) select an imported
+frame/profile/response explicitly. Temporal/profile expansion remains MODEL-06.
+Formal upstream schema/version compatibility is deferred in INPUT-02.
 
 The [single-channel demo](../../../examples/measurements/single-channel/README.md)
 provides all three decoder outputs and reproducible synthetic RxMER variants,

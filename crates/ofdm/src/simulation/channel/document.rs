@@ -12,10 +12,13 @@ use crate::{
 };
 use serde::Deserialize;
 use std::time::Duration;
-/// Version1 fixed-profile noiseless channel request; unknown fields are rejected.
+/// Version1 fixed-profile reference/impaired channel request; unknown fields reject.
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ChannelDocument {
+    #[serde(default)]
+    pub impairments: crate::signal_processing::channel::impairments::ChannelImpairments,
+    pub measurement: Option<super::measurement::MeasurementSelection>,
     pub schema_version: u16,
     pub transmission: TransmissionSettings,
     pub layout: CarrierLayoutSettings,
@@ -60,10 +63,24 @@ impl ChannelDocument {
     /// # Errors
     /// Rejects unsupported schema version or invalid channel settings.
     pub fn settings(&self) -> Result<ChannelRunSettings, LabError> {
+        self.settings_with_scenario(None)
+    }
+    /// Resolves optional explicit measurement selection through the same scientific validation.
+    /// # Arguments
+    /// * `scenario` - Required exactly when request.measurement is present.
+    /// # Returns
+    /// Owned settings with selected full-resolution measurements, no file dependencies.
+    /// # Errors
+    /// Rejects missing/unrequested scenarios, incompatible profile/epochs or bad geometry.
+    pub fn settings_with_scenario(
+        &self,
+        scenario: Option<&crate::scenario::document::ScenarioDocument>,
+    ) -> Result<ChannelRunSettings, LabError> {
         if self.schema_version != 1 {
             return Err(invalid("Unsupported channel request schema version."));
         }
-        let settings = ChannelRunSettings {
+        let mut settings = ChannelRunSettings {
+            impairments: self.impairments.clone(),
             transmission: self.transmission.clone(),
             layout: self.layout.clone(),
             duration: Duration::from_millis(self.duration_ms),
@@ -73,6 +90,15 @@ impl ChannelDocument {
             max_iterations: self.max_iterations,
             receive_block_samples: self.receive_block_samples,
         };
+        match (&self.measurement, scenario) {
+            (Some(selection), Some(scenario)) => selection.apply(scenario, &mut settings)?,
+            (None, None) => {}
+            _ => {
+                return Err(invalid(
+                    "Supply both request.measurement and a scenario, or neither.",
+                ))
+            }
+        }
         self.limits.validate()?;
         settings.validate()?;
         Ok(settings)

@@ -91,9 +91,9 @@ impl CarrierLayout {
             .zero_frequency_hz
             .checked_add((fft_size as u32 - 1) * spacing.frequency_hz())
             .ok_or_else(|| invalid("FFT bin frequency overflows FrequencyHz."))?;
-        let (plc_width, neighborhood_side, distances): (usize, usize, [usize; 4]) = match spacing {
-            SubcarrierSpacing::Khz25 => (16, 112, [30, 48, 70, 94]),
-            SubcarrierSpacing::Khz50 => (8, 56, [15, 24, 35, 47]),
+        let (plc_width, neighborhood_side): (usize, usize) = match spacing {
+            SubcarrierSpacing::Khz25 => (16, 112),
+            SubcarrierSpacing::Khz50 => (8, 56),
         };
         let plc_first = usize::from(layout.plc_first_bin);
         let plc_end = plc_first + plc_width;
@@ -129,9 +129,8 @@ impl CarrierLayout {
             roles[bin] = PhysicalCarrierRole::Excluded;
         }
         roles[plc_first..plc_end].fill(PhysicalCarrierRole::Plc);
-        for distance in distances {
-            roles[plc_first - distance] = PhysicalCarrierRole::ContinuousPilot;
-            roles[plc_end - 1 + distance] = PhysicalCarrierRole::ContinuousPilot;
+        for bin in predefined_pilots(spacing, layout.plc_first_bin)? {
+            roles[usize::from(bin)] = PhysicalCarrierRole::ContinuousPilot;
         }
         if !(MIN_ADDITIONAL_PILOTS..=MAX_ADDITIONAL_PILOTS)
             .contains(&layout.additional_continuous_pilots.len())
@@ -163,6 +162,33 @@ impl CarrierLayout {
     ///25or50kHz numerology for reduced-domain interleaver validation.
     pub fn subcarrier_spacing(&self) -> SubcarrierSpacing {
         self.spacing
+    }
+
+    /// Returns the protected6MHz PLC neighborhood in absolute Hz.
+    /// # Returns
+    /// Half-open physical interval including the PLC and its mandatory nearby pilots.
+    /// # Errors
+    /// Rejects missing PLC state or unrepresentable frequency arithmetic.
+    pub fn plc_neighborhood_hz(&self) -> Result<std::ops::Range<FrequencyHz>, LabError> {
+        let first = self
+            .static_roles
+            .iter()
+            .position(|role| *role == PhysicalCarrierRole::Plc)
+            .ok_or_else(|| invalid("Missing PLC bins."))?;
+        let count = self
+            .static_roles
+            .iter()
+            .filter(|role| **role == PhysicalCarrierRole::Plc)
+            .count() as u32;
+        let guard = (PLC_NEIGHBORHOOD_HZ - count * self.spacing.frequency_hz()) / 2;
+        let start = self
+            .frequency_hz(first as u16)
+            .and_then(|frequency| frequency.checked_sub(guard))
+            .ok_or_else(|| invalid("PLC neighborhood frequency underflow."))?;
+        let stop = start
+            .checked_add(PLC_NEIGHBORHOOD_HZ)
+            .ok_or_else(|| invalid("PLC neighborhood frequency overflow."))?;
+        Ok(start..stop)
     }
 
     /// Borrows static assignments before the phase-dependent scattered pattern.
@@ -203,4 +229,37 @@ impl CarrierLayout {
         (usize::from(bin) < self.static_roles.len())
             .then(|| self.zero_frequency_hz + u32::from(bin) * self.spacing.frequency_hz())
     }
+}
+
+/// Returns the eight fixed pilots surrounding a PLC block.
+/// # Arguments
+/// * `spacing` - Frozen25/50kHz numerology.
+/// * `plc_first` - First PLC bin in increasing physical order.
+/// # Returns
+/// Owned physical-bin identities from PHY I20 section7.5.13.
+/// # Errors
+/// Rejects a PLC position whose pilot neighborhood falls outside the FFT.
+pub fn predefined_pilots(
+    spacing: SubcarrierSpacing,
+    plc_first: SubcarrierIdx,
+) -> Result<Vec<SubcarrierIdx>, LabError> {
+    let (width, distances): (u16, [u16; 4]) = match spacing {
+        SubcarrierSpacing::Khz25 => (16, [30, 48, 70, 94]),
+        SubcarrierSpacing::Khz50 => (8, [15, 24, 35, 47]),
+    };
+    let mut bins = Vec::new();
+    for distance in distances {
+        let low = plc_first
+            .checked_sub(distance)
+            .ok_or_else(|| invalid("PLC pilots fall below the FFT."))?;
+        let high = plc_first
+            .checked_add(width - 1)
+            .and_then(|value| value.checked_add(distance))
+            .ok_or_else(|| invalid("PLC pilot overflow."))?;
+        if u32::from(high) >= spacing.fft_samples() {
+            return Err(invalid("PLC pilots exceed the FFT."));
+        }
+        bins.extend([low, high]);
+    }
+    Ok(bins)
 }

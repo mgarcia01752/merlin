@@ -92,6 +92,33 @@ impl PayloadSymbolDecoder {
         variance: f64,
         max_iterations: usize,
     ) -> Result<PayloadSymbolResult, LabError> {
+        self.receive_with_variances(
+            source_symbol,
+            cells,
+            roles,
+            &vec![Some(variance); cells.len()],
+            max_iterations,
+        )
+    }
+    /// Decodes source-order cells with independently transported residual variances.
+    /// # Arguments
+    /// * `source_symbol` - Consecutive recovered source identity.
+    /// * `cells` - Restored cells without transmitter IDs.
+    /// * `roles` - Reconstructed pre-interleaving carrier roles.
+    /// * `variances` - Matched restored variances, including known pilot placeholders.
+    /// * `max_iterations` - Per-codeword iteration cap.
+    /// # Returns
+    /// Actual NCP/payload soft decisions and decoder outcomes.
+    /// # Errors
+    /// Rejects missing/invalid cell calibration or existing terminal/sequence failures.
+    pub fn receive_with_variances(
+        &mut self,
+        source_symbol: u64,
+        cells: &[Option<TransportCell>],
+        roles: &[PreInterleavingRole],
+        variances: &[Option<f64>],
+        max_iterations: usize,
+    ) -> Result<PayloadSymbolResult, LabError> {
         if self.closed {
             return Err(LabError::new(
                 "PayloadSessionClosed",
@@ -101,8 +128,11 @@ impl PayloadSymbolDecoder {
         if self.origin.checked_add(self.next_local) != Some(source_symbol)
             || cells.len() != self.settings.interleaver_cells
             || roles.len() != cells.len()
-            || !variance.is_finite()
-            || variance <= 0.0
+            || variances.len() != cells.len()
+            || variances
+                .iter()
+                .flatten()
+                .any(|variance| !variance.is_finite() || *variance <= 0.0)
             || !(1..=100).contains(&max_iterations)
         {
             return Err(invalid(
@@ -114,7 +144,8 @@ impl PayloadSymbolDecoder {
             .checked_add(1)
             .ok_or_else(|| invalid("Source symbol counter overflow."))?;
         let mut points = Vec::new();
-        for (cell, role) in cells.iter().zip(roles) {
+        let mut point_variances = Vec::new();
+        for ((cell, role), variance) in cells.iter().zip(roles).zip(variances) {
             match (cell, role) {
                 (
                     Some(TransportCell::PilotPlaceholder),
@@ -123,6 +154,10 @@ impl PayloadSymbolDecoder {
                 (Some(TransportCell::Sample(point)), PreInterleavingRole::Data)
                     if point.iter().all(|value| value.is_finite()) =>
                 {
+                    let variance = variance
+                        .filter(|value| value.is_finite() && *value > 0.0)
+                        .ok_or_else(|| invalid("Missing source-cell residual variance."))?;
+                    point_variances.push(variance);
                     points.push(*point)
                 }
                 _ => {
@@ -146,10 +181,10 @@ impl PayloadSymbolDecoder {
         let mut data_randomizer = self.data_randomizer.clone();
         data_randomizer.begin_symbol(self.next_local)?;
         let decision = (|| -> Result<(), LabError> {
-            result.ncp_soft = control::hypotheses(
+            result.ncp_soft = control::hypotheses_with_variances(
                 &points,
                 self.settings.ncp_modulation,
-                variance,
+                &point_variances,
                 &mut control_randomizer,
             )?;
             let hypotheses: Vec<_> = result
@@ -210,7 +245,7 @@ impl PayloadSymbolDecoder {
                         &qam_llrs(
                             crate::transmission::symbols::PAYLOAD_ORDER,
                             *point,
-                            variance,
+                            point_variances[data_position],
                         )?,
                     )?;
                     let llrs = soft

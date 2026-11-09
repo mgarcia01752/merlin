@@ -5,10 +5,7 @@
 //! Shared known-reference orchestration of existing physical/waveform/PLC stages.
 use crate::{
     error::invalid,
-    signal_processing::{
-        channel::reference::NoiselessChannel,
-        waveform::{SampleBlock, WaveformGeometry},
-    },
+    signal_processing::waveform::{SampleBlock, WaveformGeometry},
     simulation::{
         plc::{generate_frame, PlcAcquisitionReceiver, PlcFrameSignals},
         test_points::{
@@ -36,8 +33,13 @@ use crate::{
     LabError,
 };
 const REFERENCE_VARIANCE: f64 = 0.01;
+const REFERENCE_CHANNEL_ID: u8 = 7;
+const REFERENCE_SOURCE_MAC: crate::types::MacAddress = [0, 0xca, 0, 0, 0, 1];
 #[derive(Debug, Clone, PartialEq, serde::Serialize)]
 pub struct LinkStats {
+    pub data_signal_power: f64,
+    pub data_error_power: f64,
+    pub compared_data_carriers: u64,
     pub compared_bins: u64,
     pub maximum_bin_error: f64,
     pub plc_frames: u64,
@@ -47,6 +49,7 @@ pub struct LinkStats {
     pub preambles_match: bool,
 }
 pub(crate) struct WaveformLink {
+    channel: super::impairment::ImpairedChannel,
     geometry: WaveformGeometry,
     layout: CarrierLayout,
     tx: WaveformTransmitter,
@@ -66,6 +69,8 @@ impl WaveformLink {
     /// * `raw` - Known bootstrap carrier map; payload RX later uses decoded descriptors.
     /// * `ncp` - Fixed positive control constellation advertised through actual DPD.
     /// * `block_samples` - Validated positive bounded transfer chunk length.
+    /// * `impairments` - Explicit residual source and optional relative response H.
+    /// * `variance` - Noiseless fallback LLR variance, overridden by noise calibration.
     /// # Returns
     /// Fresh waveform/PLC streams with no sample history or configured payload receiver.
     /// # Errors
@@ -75,22 +80,32 @@ impl WaveformLink {
         raw: &CarrierLayoutSettings,
         ncp: NcpModulation,
         block_samples: usize,
+        impairments: &crate::signal_processing::channel::impairments::ChannelImpairments,
+        variance: f64,
     ) -> Result<Self, LabError> {
         let geometry = WaveformGeometry::new(settings)?;
         let layout = CarrierLayout::new(settings, raw)?;
+        let identity = match &impairments.noise {
+            crate::signal_processing::channel::impairments::NoiseModel::Rxmer { frame } => {
+                Some(&frame.key)
+            }
+            _ => impairments.response.as_ref().map(|response| &response.key),
+        };
         let descriptors = FixedPlcDescriptors::new(
             settings,
             &layout,
             DescriptorIdentity {
-                channel_id: 7,
+                channel_id: identity.map_or(REFERENCE_CHANNEL_ID, |key| key.channel_id),
                 change_count: 0,
-                source_mac: [0, 0xca, 0, 0, 0, 1],
+                source_mac: identity.map_or(REFERENCE_SOURCE_MAC, |key| key.mac_address),
                 primary_capable: true,
                 ncp_bits: ncp.order().ilog2() as u8,
             },
         )?;
         let scheduler = PlcMessageScheduler::new(settings, &descriptors)?;
         let tx = WaveformTransmitter::new(&geometry, 0, 0);
+        let channel =
+            super::impairment::ImpairedChannel::new(&geometry, &layout, impairments, variance)?;
         let rx = WaveformReceiver::new(
             &geometry,
             raw,
@@ -99,7 +114,7 @@ impl WaveformLink {
                 first_symbol_sample: 0,
                 first_symbol_index: 0,
                 reference_rms: 1.0,
-                channel_response: vec![[1.0, 0.0]; geometry.fft_samples()],
+                channel_response: channel.plan.response.clone(),
             },
         )?;
         let mut context = ProbeContext::new(
@@ -113,6 +128,7 @@ impl WaveformLink {
         });
         context.reference = SignalReference::OtherSubcarrierRms { rms: 1.0 };
         Ok(Self {
+            channel,
             geometry,
             layout,
             tx,
@@ -124,6 +140,9 @@ impl WaveformLink {
             block_samples,
             context,
             stats: LinkStats {
+                data_signal_power: 0.0,
+                data_error_power: 0.0,
+                compared_data_carriers: 0,
                 compared_bins: 0,
                 maximum_bin_error: 0.0,
                 plc_frames: 0,
@@ -223,8 +242,8 @@ impl WaveformLink {
             observer,
         )?;
         let mut completed = Vec::new();
-        for (offset, chunk) in transmitted
-            .output
+        let channel_output = self.channel.transfer(&physical, &transmitted.output)?;
+        for (offset, chunk) in channel_output
             .samples()
             .chunks(self.block_samples)
             .enumerate()
@@ -233,7 +252,7 @@ impl WaveformLink {
                 transmitted.output.start_index() + (offset * self.block_samples) as u64,
                 chunk.to_vec(),
             )?;
-            let received = NoiselessChannel::transfer(&input);
+            let received = input;
             observation::observe_channel(
                 &received,
                 true,
@@ -253,7 +272,7 @@ impl WaveformLink {
             .pop()
             .ok_or_else(|| invalid("Missing completed RX symbol."))?;
         observation::observe_receive(&received, &self.geometry, &context, probe, observer)?;
-        for (sample, expected) in received.bins.iter().zip(&physical.bins) {
+        for (bin, (sample, expected)) in received.equalized.iter().zip(&physical.bins).enumerate() {
             let expected = expected
                 .as_ref()
                 .ok_or_else(|| invalid("Incomplete TX grid in payload reference."))?;
@@ -262,12 +281,19 @@ impl WaveformLink {
                 .maximum_bin_error
                 .max((sample[0] - expected[0]).hypot(sample[1] - expected[1]));
             self.stats.compared_bins += 1;
+            if phase == RunPhase::Observation && physical.roles[bin] == PhysicalCarrierRole::Data {
+                self.stats.data_signal_power +=
+                    expected[0] * expected[0] + expected[1] * expected[1];
+                self.stats.data_error_power +=
+                    (sample[0] - expected[0]).powi(2) + (sample[1] - expected[1]).powi(2);
+                self.stats.compared_data_carriers += 1;
+            }
         }
         self.received_plc.extend_from_slice(&received.signals.plc);
         if index % PLC_FRAME_SYMBOLS == PLC_FRAME_SYMBOLS - 1 {
-            let decision = self
-                .plc_rx
-                .receive_frame(&self.received_plc, REFERENCE_VARIANCE, 50)?;
+            let decision =
+                self.plc_rx
+                    .receive_frame(&self.received_plc, self.plc_variance(), 50)?;
             self.received_plc.clear();
             if decision.transport_error.is_some()
                 || decision
@@ -324,7 +350,7 @@ impl WaveformLink {
         let tail = self.tx.finish()?;
         let context = self.context(RunPhase::Drain);
         observation::observe_channel(&tail, false, &self.geometry, &context, probe, observer)?;
-        let received = NoiselessChannel::transfer(&tail);
+        let received = self.channel.finish(&tail)?;
         observation::observe_channel(&received, true, &self.geometry, &context, probe, observer)?;
         if !self.rx.receive(&received)?.is_empty() {
             return Err(invalid(
@@ -332,5 +358,27 @@ impl WaveformLink {
             ));
         }
         Ok(self.rx.pending_samples())
+    }
+
+    /// Borrows frozen per-physical-bin post-equalization LLR calibration.
+    /// # Returns
+    /// Positive finite variances; receiver transports them with the received cells.
+    pub(crate) fn variances(&self) -> &[f64] {
+        &self.channel.plan.llr_variance
+    }
+    fn plc_variance(&self) -> f64 {
+        let mut sum = 0.0;
+        let mut count = 0;
+        for (role, variance) in self.layout.static_roles().iter().zip(self.variances()) {
+            if *role == PhysicalCarrierRole::Plc {
+                sum += variance;
+                count += 1;
+            }
+        }
+        if count == 0 {
+            REFERENCE_VARIANCE
+        } else {
+            sum / f64::from(count)
+        }
     }
 }

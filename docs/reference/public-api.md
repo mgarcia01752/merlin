@@ -52,6 +52,9 @@ component will adapt inputs and results without duplicating scientific logic.
 | `scenario::{grid, observation}` | Exact identity, source provenance and full-resolution observations |
 | `scenario::association` | Explicit-tolerance timestamp association |
 | `scenario::document` | Versioned decoded scenario inputs |
+| `scenario::pnm_json::{import,JsonCapture}` | Current-decoder JSON import, exact grid/time policy, bounded expansion and hashed JSON provenance |
+| `signal_processing::channel::{awgn,impairments}` | Seeded sample noise and frozen physical-grid H/residual/variance plans |
+| `simulation::channel::measurement::{MeasurementSelection,captured_layout}` | Explicit profile/source admission and captured PLC/pilot layout |
 | `profile::candidate` | Captured assignments and editable hypotheses |
 | `profile::{evaluation, document}` | Temporal screening, candidate documents and role verification |
 | `signal_processing::{modulation, noise}` | QAM, soft demapping and residual-noise models |

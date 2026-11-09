@@ -24,9 +24,11 @@ The current milestone supplies the fixed-profile TX, unity reference channel,
 known-reference RX, real payload/control FEC, actual LDPC iterations, independent
 PRBS truth, window accounting and bounded inspection/export.
 
-The later stage will define how measured RxMER and channel estimates enter the
-channel, establish reference planes and avoid counting residual noise twice.
+The initial impairment group now defines how measured RxMER and supplied H enter
+the symbol-diagonal channel, establishes reference planes and avoids duplicate
+residual noise. See the [component guides](../user/impairments/README.md).
 Profile expansion/mixed loading, nonideal estimation, time correlation and QAM
 analyzer presentation need their own validated scope. The current hard-slicer
 and broader QAM/FEC TODOs remain explicit in the [checklist](checklist.md).
-Impairment implementation begins in a separate later stage.
+Sample AWGN and fixed-profile measured operation are implemented. Nonideal channel
+estimation, temporal capture transitions and additional/mixed profiles remain open.

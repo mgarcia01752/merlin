@@ -4,18 +4,20 @@
  */
 //! Command-line syntax and small request fields.
 use std::path::PathBuf;
-const HELP: &str = r#"Usage: ofdm-fec <simulate|evaluate|channel> --input FILE --output FILE [--scenario FILE --candidate FILE --frame INDEX]
+const HELP: &str = r#"Usage: ofdm-fec <simulate|evaluate|channel|import-pnm> --input FILE --output FILE [--scenario FILE --candidate FILE --frame INDEX]
 
 Commands:
   simulate  Run a seeded short8/9 uniform16-QAM coding experiment.
   evaluate  Generate/evaluate a candidate from a decoded scenario JSON.
-  channel   Run the duration-based noiseless OFDM channel.
+  channel   Run the duration-based reference or impaired OFDM channel.
+  import-pnm Import three decoded PNM JSON files into a scenario.
 
 Use --probes-output FILE with channel and request.probes for bounded JSONL export.
 
 Use --candidate with evaluate to test an existing internal candidate.
 Use --settings FILE and --profile INDEX to generate an explicit candidate.
 Use --scenario and --candidate with simulate for measured per-carrier noise.
+Use --scenario with channel and request.measurement for waveform RxMER noise.
 Existing output files are never replaced. Ctrl-C preserves completed FEC trials.
 RUST_LOG controls stderr logging (default: info)."#;
 #[derive(Default)]

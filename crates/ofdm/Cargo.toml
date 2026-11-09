@@ -8,7 +8,7 @@ description = "Offline OFDM profile analysis and experimental LDPC/BCH simulatio
 
 [features]
 default = ["simulation"]
-simulation = ["dep:fec-codec", "dep:rand", "dep:rand_chacha", "dep:rand_distr", "dep:serde_json"]
+simulation = ["dep:fec-codec", "dep:rand", "dep:rand_chacha", "dep:rand_distr", "dep:serde_json", "dep:sha2"]
 
 [dependencies]
 log.workspace = true
@@ -19,6 +19,7 @@ rand_chacha = { version = "=0.9.0", optional = true }
 rand_distr = { version = "=0.5.1", optional = true }
 
 serde_json = { version = "=1.0.145", optional = true }
+sha2 = { version = "=0.10.9", optional = true }
 
 [dev-dependencies]
 serde_json = "=1.0.145"
@@ -71,3 +72,8 @@ required-features = ["simulation"]
 name = "prepare_rxmer_variants"
 path = "examples/measurement_fixtures/main.rs"
 required-features = ["simulation"]
+
+[[example]]
+name="prepare_impairment_runs"
+path="examples/measurement_runs/main.rs"
+required-features=["simulation"]

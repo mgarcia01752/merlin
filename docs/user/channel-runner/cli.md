@@ -17,6 +17,12 @@ synthetic24MHz50kHz layout with maximum interleaver depth. Actual time-domain
 samples, PLC/NCP and data FEC are processed; host execution can take longer than
 simulated time. Existing `simulate` and `evaluate` commands keep their older roles.
 
+Optional `impairments` select sample AWGN or explicit typed residual/response
+settings. Alternatively pair `request.measurement` with `--scenario` to select
+imported PNM measurements. `import-pnm` converts current decoder JSON first.
+See [impaired experiments](../impairments/experiments.md) for those commands and
+the LTE sweep kept away from the PLC neighborhood. Defaults remain noiseless.
+
 For a quick3ms run with bounded selected test-point export:
 
 ```bash

@@ -22,6 +22,8 @@ pub struct PayloadReceiveSymbol {
     pub channel_symbol_index: u64,
     pub source_symbol_index: Option<u64>,
     pub restored: Vec<Option<TransportCell>>,
+    /// Direct inspection of variance metadata after the same inverse permutation/delay.
+    pub restored_variances: Vec<Option<f64>>,
     /// None only for the explicitly known M-1 matched-pair warm-up interval.
     pub decoded: Option<PayloadSymbolResult>,
 }
@@ -33,6 +35,7 @@ pub struct PayloadReceiver {
     next_local: u64,
     reference: PilotReference,
     interleaver: SymbolInterleaver<TransportCell>,
+    variance_interleaver: SymbolInterleaver<f64>,
     decoder: PayloadSymbolDecoder,
 }
 impl PayloadReceiver {
@@ -53,6 +56,10 @@ impl PayloadReceiver {
         let interleaver =
             SymbolInterleaver::new(reference.settings(), InterleaverDirection::Receive)?;
         Ok(Self {
+            variance_interleaver: SymbolInterleaver::new(
+                reference.settings(),
+                InterleaverDirection::Receive,
+            )?,
             snapshot,
             layout,
             origin,
@@ -83,6 +90,28 @@ impl PayloadReceiver {
         variance: f64,
         max_iterations: usize,
     ) -> Result<PayloadReceiveSymbol, LabError> {
+        let variances = vec![variance; self.layout.static_roles().len()];
+        self.receive_with_variances(state, channel_symbol, reduced, &variances, max_iterations)
+    }
+    /// Receives physical cells with their post-equalization variance through matching delay paths.
+    /// # Arguments
+    /// * `state` - Live received configuration; must match the frozen snapshot.
+    /// * `channel_symbol` - Consecutive absolute channel index.
+    /// * `reduced` - Received physical reduced cells, retaining pilot placeholders.
+    /// * `variances` - Positive finite complex variance per full physical FFT bin.
+    /// * `max_iterations` - Per-codeword work bound.
+    /// # Returns
+    /// Restored cells and decisions with per-cell variance preserved across interleaving.
+    /// # Errors
+    /// Rejects shape/numeric/gate errors; terminal decoded failures close the session.
+    pub fn receive_with_variances(
+        &mut self,
+        state: &ReceiverConfigurationState,
+        channel_symbol: u64,
+        reduced: &[Option<IqPair>],
+        variances: &[f64],
+        max_iterations: usize,
+    ) -> Result<PayloadReceiveSymbol, LabError> {
         if state.require_ready()? != &self.snapshot {
             return Err(invalid(
                 "Acquired payload configuration changed; start a new session.",
@@ -96,8 +125,10 @@ impl PayloadReceiver {
         }
         if self.origin.checked_add(self.next_local) != Some(channel_symbol)
             || reduced.len() != self.reference.settings().cells()
-            || !variance.is_finite()
-            || variance <= 0.0
+            || variances.len() != self.layout.static_roles().len()
+            || variances
+                .iter()
+                .any(|variance| !variance.is_finite() || *variance <= 0.0)
             || !(1..=100).contains(&max_iterations)
         {
             return Err(invalid("Invalid physical payload input or work limits."));
@@ -108,7 +139,9 @@ impl PayloadReceiver {
             .ok_or_else(|| invalid("Payload RX channel index overflow."))?;
         let roles = self.layout.symbol_roles(channel_symbol);
         let mut cells = Vec::with_capacity(reduced.len());
+        let mut cell_variances = Vec::with_capacity(reduced.len());
         for (point, bin) in reduced.iter().zip(self.reference.physical_bins()) {
+            cell_variances.push(Some(variances[usize::from(*bin)]));
             cells.push(Some(match (point, roles[usize::from(*bin)]) {
                 (None, PhysicalCarrierRole::ScatteredPilot) => TransportCell::PilotPlaceholder,
                 (Some(point), PhysicalCarrierRole::Data)
@@ -124,22 +157,26 @@ impl PayloadReceiver {
             }));
         }
         let restored = self.interleaver.process_symbol(self.next_local, &cells)?;
+        let restored_variances = self
+            .variance_interleaver
+            .process_symbol(self.next_local, &cell_variances)?;
         let source_local = self
             .next_local
             .checked_sub(self.reference.settings().pair_delay_symbols() as u64);
         let source_symbol_index = source_local.map(|index| self.origin + index);
         let decoded = match (source_local, source_symbol_index) {
-            (Some(local), Some(source)) => Some(self.decoder.receive(
+            (Some(local), Some(source)) => Some(self.decoder.receive_with_variances(
                 source,
                 &restored,
                 self.reference.roles(local),
-                variance,
+                &restored_variances,
                 max_iterations,
             )?),
             _ => None,
         };
         self.next_local = next;
         Ok(PayloadReceiveSymbol {
+            restored_variances,
             channel_symbol_index: channel_symbol,
             source_symbol_index,
             restored,

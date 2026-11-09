@@ -160,8 +160,9 @@ implemented below. **CELL-02 / WAVE-RX-06** now add actual fixed256-QAM
 payload/NCP waveform transport. **SRC-02 / SRC-03: PRBS** are now complete,
 with independent recurrence vectors and actual recovered-stream comparison.
 The complete RUN group now includes source-window accounting, cancellation,
-partial jobs, CLI delivery and probe export. The next scientific group is
-MODEL-04; this milestone stops before waveform impairments.
+partial jobs, CLI delivery and probe export. The subsequent MODEL-04/INPUT-01
+group now adds waveform impairments and fixed-profile measured operation;
+nonideal estimation and temporal/profile expansion remain under MODEL-05/06.
 
 - [x] **PLC-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
@@ -443,18 +444,21 @@ and [the later impairment reference](impairment-reference.md).
 
 ## Impairments and measurement-driven operation
 
-- [ ] **INPUT-01** Import current `pnm-decode` JSON for RxMER, downstream channel
+- [x] **INPUT-01** Import current `pnm-decode` JSON for RxMER, downstream channel
   estimates and applied modulation profiles into the shared typed scenario model.
   Keep binary decoding external and direct Rust API inputs available; preserve
   source grids, nulls, timestamps and provenance. The CLI currently requires this
-  repository's scenario JSON, not raw decoder output.
+  repository's scenario JSON; `import-pnm` converts current decoder range-scheme
+  documents using explicit timestamp tolerance and SHA-256 of the exact JSON inputs.
   - [x] Prepare three current decoded single-capture fixtures with provenance,
     original local binaries and reproducible Rust-generated RxMER alternatives.
     Document timestamp differences and retain the parent importer TODO.
   - [x] Add a Rust LTE-inspired10MHz downlink fixture with linear residual-power
     combination, exact identity/grid/coverage rejection and an alignment sidecar.
     Keep the rectangular notch and record no additional thermal floor/apply-once
-    policy. This does not implement waveform impairments or close MODEL-04/06.
+    policy. Fixture preparation alone does not establish waveform/FEC behavior.
+  - [x] Validate/import all three capture types, expand bounded profiles, preserve
+    missing readings and provide standalone CLI plus direct typed Rust API tests.
 - [ ] **INPUT-02** Later: formalize the decoded-JSON compatibility contract with
   schema versions, verified PNM Viewer Toolkit versions, compatibility fixtures
   and explicit rejection of unsupported revisions. Begin INPUT-01 with the current
@@ -463,12 +467,23 @@ and [the later impairment reference](impairment-reference.md).
   original coding experiment, distinct from measured observations and screening.
 - [x] **MODEL-02** Scenario identity/grid/time association and protected-role profiles.
 - [x] **MODEL-03** Analytical temporal screening and gross useful-symbol capacity.
-- [ ] **MODEL-04** Verified waveform channel/impairment models with test points and
+- [x] **MODEL-04** Verified waveform channel/impairment models with test points and
   explicit reference planes; validate against the noiseless baseline first.
+  - [x] Seeded sample AWGN with chunk-invariant draws and unitary variance tests.
+  - [x] Gaussian per-carrier residual synthesis through waveform samples, with
+    independently transported per-cell LLR variances and no added thermal floor.
+  - [x] Verify actual MER, PRBS/FEC outcomes, partial failure and protected narrow
+    LTE sweep. This is a synchronized diagonal model, not general FIR multipath.
 - [ ] **MODEL-05** Applied downstream channel-estimate model and receiver estimation/
   equalization with no double counting of post-equalization RxMER noise.
+  - [x] Apply supplied channel response H and independent known-reference1/H;
+    verify complex gain and captured frequency response without duplicate residuals.
+  - [ ] Independently estimate channel/timing and validate nonideal equalization.
 - [ ] **MODEL-06** Measurement-driven channel runs using the applied modulation
   profile, missing-carrier policy, temporal frames and actual FEC outcomes.
+  - [x] Select one captured frame/profile/response with explicit epoch tolerance,
+    reject missing active samples and unsupported loading, and run real256-QAM FEC.
+  - [ ] Add temporal frame transitions and additional/mixed applied profile modes.
 - [ ] **MODEL-07** Validate any temporal/burst model independently; RxMER alone does
   not supply time correlation, impulse noise or modem implementation behavior.
 

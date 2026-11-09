@@ -4,6 +4,11 @@ The CLI accepts decoded scientific scenarios as JSON and calls the public Rust
 API. Binary capture adapters are separate from the scientific engine. Run `ofdm-fec --help` for options.
 Outputs must be new files; existing destinations are never replaced.
 
+`import-pnm` converts current decoder JSON for RxMER, channel response and profiles
+into a scenario. `channel --scenario` uses explicit measured selection, or the
+channel request can select sample AWGN. See the [impaired waveform guide](user/impairments/experiments.md)
+for executable commands, protected LTE sweep, noise policy and remaining limits.
+
 ## Diagnostic logging
 
 Logs go to stderr at info level by default. Set `RUST_LOG=debug` for progress and

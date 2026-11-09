@@ -22,16 +22,20 @@ use std::{io::Write, sync::atomic::AtomicBool};
 /// Rejects unrelated options, bad schema/configuration, existing destinations or
 /// I/O/scientific failures. A failed scientific job is written before reporting failure.
 pub(crate) fn run(arguments: Arguments, cancel: &AtomicBool) -> Result<(), String> {
-    if arguments.scenario.is_some()
-        || arguments.candidate.is_some()
+    if arguments.candidate.is_some()
         || arguments.settings.is_some()
         || arguments.profile.is_some()
         || arguments.frame_supplied
     {
-        return Err("channel accepts --input, --output and --probes-output only.".into());
+        return Err(
+            "channel accepts --input, --output, --scenario and --probes-output only.".into(),
+        );
     }
     let document: ChannelDocument = read_json(&arguments.input)?;
-    let settings = document.settings().map_err(|error| error.to_string())?;
+    let scenario = arguments.scenario.as_deref().map(read_json).transpose()?;
+    let settings = document
+        .settings_with_scenario(scenario.as_ref())
+        .map_err(|error| error.to_string())?;
     if arguments.output.exists() {
         return Err("Output already exists.".into());
     }

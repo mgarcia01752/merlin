@@ -69,6 +69,7 @@ impl ScenarioDocument {
             }
         }
         for channel in &self.channels {
+            channel.source.validate()?;
             channel.key.grid.validate()?;
             if channel.iq.len() != channel.key.grid.sample_count
                 || channel.source.capture_time != Some(channel.capture_time)

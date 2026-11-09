@@ -99,3 +99,35 @@ fn rejects_invalid_power_readings_grids_and_coverage() {
     .apply(&grid(), &original)
     .is_err());
 }
+
+#[test]
+fn partial_lte_loading_protects_plc_and_starts_with_a_small_span() {
+    let source = vec![Some(40.0); 81];
+    let narrow = model()
+        .apply_resource_blocks(
+            &grid(),
+            &source,
+            1,
+            std::slice::from_ref(&(648_000_000..654_000_000)),
+        )
+        .unwrap();
+    let wide = model().apply(&grid(), &source).unwrap();
+    let count = |powers: &[f64]| powers.iter().filter(|power| **power > 0.0).count();
+    assert!(
+        count(&narrow.interference_to_signal_power) < count(&wide.interference_to_signal_power)
+    );
+    assert!(model()
+        .apply_resource_blocks(
+            &grid(),
+            &source,
+            1,
+            std::slice::from_ref(&(737_000_000..738_000_000))
+        )
+        .is_err());
+    assert!(model()
+        .apply_resource_blocks(&grid(), &source, 0, &[])
+        .is_err());
+    assert!(model()
+        .apply_resource_blocks(&grid(), &source, 51, &[])
+        .is_err());
+}

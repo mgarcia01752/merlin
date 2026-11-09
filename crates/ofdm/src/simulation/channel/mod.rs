@@ -4,7 +4,9 @@
  */
 //! Duration-planned single-channel orchestration; DSP remains in stage modules.
 pub mod config;
+mod impairment;
 pub(crate) mod link;
+pub mod measurement;
 pub mod results;
 pub mod runner;
 pub use config::ChannelRunSettings;

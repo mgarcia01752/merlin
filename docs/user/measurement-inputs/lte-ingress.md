@@ -58,7 +58,7 @@ RF PSD through a receiver filter. An original30dB MER with−30dB core I/S gives
 26.9897dB; an original40dB MER gives29.5861dB. Degradation is not fixed at12dB.
 
 The original MER already represents total residual-error power. **No separate
-thermal/system floor is added.** A future noiseless waveform experiment applies
+thermal/system floor is added.** The waveform experiment applies
 the resulting RxMER-derived total once. Do not separately inject the original
 MER, this LTE term or thermal noise again. An independent thermal model would
 need an explicit noise budget and reference plane; it is not enabled here.
@@ -84,5 +84,12 @@ The example owns decoded-JSON adaptation and file I/O.
 See the [demo and regeneration instructions](../../../examples/measurements/single-channel/README.md).
 The [model sidecar](../../../examples/measurements/single-channel/lte-ingress-model.json)
 records settings, alignment and the single-application policy without changing
-the decoder JSON shape. INPUT-01 and MODEL-06 remain open: these are prepared
-fixtures, not an implemented simulation importer or measurement-driven waveform.
+the decoder JSON shape. The [PNM importer](../impairments/pnm-import.md) and
+[waveform experiments](../impairments/experiments.md) now consume prepared scenarios.
+Temporal capture transitions and broader applied profiles remain open in MODEL-06.
+
+`apply_resource_blocks` also supports1..50 occupied180kHz blocks inside this
+nominal10MHz channel. It narrows the flat core while retaining500kHz shoulders;
+these remain an engineering approximation. Callers can supply protected Hz
+intervals; overlap rejects rather than silently truncating the interference.
+The experiment generator protects the full6MHz PLC neighborhood and starts at1RB.

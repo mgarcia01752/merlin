@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "protocol": "docsis31",
+  "rxmer": "rxmer.json",
+  "channel_estimation": "channel_estimation.json",
+  "modulation_profile": "modulation_profile.json",
+  "tolerance_seconds": 90000
+}

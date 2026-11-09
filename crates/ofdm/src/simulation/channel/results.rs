@@ -46,6 +46,9 @@ pub struct ChannelStep {
 /// Constant-size totals; completed words belong to returned steps, not this history.
 #[derive(Debug, Clone, Serialize)]
 pub struct ChannelSummary {
+    /// Post-equalization data MER against independent TX diagnostic symbols, not RX input.
+    pub measured_mer_db: Option<f64>,
+    pub compared_data_carriers: u64,
     pub window: Option<super::accounting::WindowTotals>,
     pub phase: ChannelPhase,
     pub timing: DurationTiming,
@@ -66,6 +69,10 @@ pub struct ChannelSummary {
     /// None until a nonempty recovered comparison exists.
     pub payload_ber: Option<f64>,
     pub payload_codeword_errors: u64,
+    pub payload_ldpc_failures: u64,
+    pub payload_bch_failures: u64,
+    pub payload_mean_ldpc_iterations: Option<f64>,
+    pub payload_ldpc_iteration_sum: u64,
     /// Fixed101 bins indexed by actual iteration count0..100, not per-run history.
     pub payload_ldpc_iterations: Vec<u64>,
     pub bch_corrected_bits: u64,

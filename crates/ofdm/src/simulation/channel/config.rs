@@ -26,13 +26,16 @@ pub(crate) const MAX_COMPLETION_SYMBOLS: u64 = 4096;
 /// Independent settings snapshot; callers may edit it before creating a session.
 #[derive(Clone, serde::Serialize)]
 pub struct ChannelRunSettings {
+    /// Exclusive injected residual source and optional supplied relative response H.
+    pub impairments: crate::signal_processing::channel::impairments::ChannelImpairments,
     pub transmission: TransmissionSettings,
     pub layout: CarrierLayoutSettings,
     /// Source observation interval; acquisition, completion and drain are additional.
     pub duration: Duration,
     pub ncp_modulation: NcpModulation,
     pub prbs_seed: PrbsSeed,
-    /// Positive finite demapper reference variance; no actual noise is added.
+    /// Positive finite noiseless demapper reference variance. Actual noise modes
+    /// supply their own per-bin residual variances without changing this fallback.
     pub llr_variance: f64,
     pub max_iterations: usize,
     /// Maximum samples passed to one RX call; independent of observation duration.
@@ -48,6 +51,7 @@ impl ChannelRunSettings {
     /// Editable settings; validation occurs before any session processing.
     pub fn new(transmission: TransmissionSettings, layout: CarrierLayoutSettings) -> Self {
         Self {
+            impairments: Default::default(),
             transmission,
             layout,
             duration: Duration::from_secs(1),
@@ -76,7 +80,9 @@ impl ChannelRunSettings {
         }
         let timing = self.transmission.duration_timing(self.duration)?;
         Prbs15::new(self.prbs_seed)?;
-        CarrierLayout::new(&self.transmission, &self.layout)?;
+        let layout = CarrierLayout::new(&self.transmission, &self.layout)?;
+        self.impairments
+            .plan(&self.transmission, &layout, self.llr_variance)?;
         // Reserve representable absolute identities for bounded acquisition/completion/drain.
         timing
             .complete_symbols

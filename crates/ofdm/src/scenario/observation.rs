@@ -70,7 +70,8 @@ impl RxMerFrame {
         Ok(())
     }
 }
-/// Optional equalizer coefficient observation. None preserves an excluded carrier.
+/// Optional channel response H observation; the reciprocal forms a known-reference equalizer.
+/// None preserves an excluded/unavailable carrier, never a fabricated unity response.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ChannelFrame {

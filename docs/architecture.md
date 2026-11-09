@@ -30,8 +30,10 @@ Build a standalone, DOCSIS-focused Rust scientific engine with two modes:
   missing readings, timestamps and provenance. Establish reference planes before
   combining impairments so measured residual noise is not counted twice.
 
-The configurable-duration noiseless waveform stepper is implemented; the
-measurement-driven waveform model is not. The channel job and CLI now expose
+The configurable-duration waveform stepper supports noiseless, seeded sample
+AWGN and per-carrier RxMER residuals with optional supplied diagonal response H.
+The measurement path currently admits captured uniform256-QAM profiles only;
+temporal capture changes and nonideal estimation remain open. The channel job and CLI expose
 cancellation, runtime limits, partial results and versioned probe export.
 The existing CLI also retains the earlier16-QAM coding experiment;
 256-QAM packing/interleaving integration is currently exercised by library APIs,
@@ -60,10 +62,11 @@ also supply the same validated scenario types directly through the public API.
 Binary PNM decoding remains outside the simulation engine; the engine does not
 launch `pnm-decode` or depend on the viewer application.
 
-This is the selected integration direction, not an implemented importer. Today,
-the CLI accepts this repository's scenario JSON; unconverted `pnm-decode` output
-is not a supported CLI input. Measurement-driven waveform operation also remains
-pending under MODEL-06. Ideal/reference runs require no PNM captures.
+The `import-pnm` CLI and shared `scenario::pnm_json` API implement this direction
+for the current range-scheme decoder output. The waveform command accepts the
+converted scenario with explicit source/profile/epoch selection. Raw decoder
+documents are inputs to import-pnm, not direct channel requests. Ideal/reference
+runs require no PNM captures. Broader temporal/mixed-profile operation remains MODEL-06.
 
 Start the importer against representative current decoder output. Formal schema
 versioning, a supported-toolkit-version table and compatibility enforcement are
@@ -75,16 +78,26 @@ The [PNM input guide](user/measurement-inputs/README.md) links current decoder
 fixtures and Rust-generated RxMER alternatives. The sanitized originals are kept
 locally under ignored development storage. The three demo captures share a spatial
 grid but have different timestamps; they are not contemporaneous observations.
-Fixture preparation does not implement INPUT-01 or MODEL-06.
+The importer and current fixed-profile waveform integration now consume these
+fixtures; their different timestamps still require explicit tolerance.
 
 The [LTE ingress approximation](user/measurement-inputs/lte-ingress.md) is a shared
 Rust frequency-domain residual-power helper under `signal_processing::noise`.
 Fixture preparation checks exact spatial alignment and emits a synthetic RxMER
 document plus settings/alignment sidecar. It does not synthesize an LTE waveform.
-The intended measurement-driven mode starts noiseless and uses RxMER as its total
+The implemented measurement-driven mode starts noiseless and uses RxMER as its total
 residual-error budget; no extra thermal/system floor is enabled. Derived LTE MER
 already includes baseline plus added interference and must be applied once, not
-combined with a second baseline or LTE injection in the later waveform model.
+combined with a second baseline or LTE injection in the waveform model.
+
+See the [impairment component guides](user/impairments/README.md). Sample AWGN owns
+an independent contiguous seeded stream. The measured channel synthesizes Gaussian
+bin residuals plus supplied H through its own IFFT/CP/window/overlap stream. It is
+a synchronized symbol-diagonal model, not arbitrary continuous-time convolution.
+The receiver uses explicit known H; blind estimation remains open. Variances follow
+the same inverse cell interleaver as received I/Q before per-cell LLR calculation.
+Existing channel input/output and RX FFT/equalized probes expose the actual stages.
+The protected LTE sweep starts narrow and rejects overlap with the PLC6MHz neighborhood.
 
 ## Modules and stage boundaries
 
@@ -241,7 +254,7 @@ obtain data through an existing stage API.
 | `tx.plc.preamble`, `tx.plc.iq` | Verified BPSK preamble and shared16-QAM mapping | Direct typed arrays and bounded observer |
 | `tx.frame.bins` | Full physical frequency grid, roles and zero/excluded bins | Direct assembler and bounded observer; data None preserved |
 | `tx.ifft.samples`, `tx.cp.samples`, `tx.window.samples`, `tx.overlap_add.samples` | Separate TX waveform stages, frozen geometry and sample indices | Direct stage results and bounded observer |
-| `channel.input`, `channel.output` | TX-output/RX-input I/Q with preserved sample indices | Unity reference transfer and bounded observer; waveform impairments pending |
+| `channel.input`, `channel.output` | TX-output/RX-input I/Q with preserved sample indices | Unity, sample AWGN or symbol-diagonal H/RxMER synthesis with bounded observation |
 | `rx.framed.samples`, `rx.cp.samples`, `rx.fft.bins`, `rx.equalized.iq` | RX known-boundary periods, useful samples, raw bins and reference-compensated bins | Direct results and bounded observer |
 | `rx.plc.iq`, `rx.pilots.iq`, `rx.reduced.iq` | RX separated protected roles and data/scattered domain | Direct results and bounded observer; sparse pilots retain physical bins |
 | `rx.timing`, `rx.channel.estimate` | Future estimated timing/channel state, distinct from supplied reference | TODO nonideal acquisition; not inferred from known-reference tests |
@@ -363,7 +376,7 @@ active envelope and internal exclusions; the example uses a24MHz envelope.
 Neither establishes external interoperability or a one-second payload experiment.
 CELL-02/WAVE-RX-06 now add the separate actual payload waveform path described
 below. The duration stepper is implemented separately; nonideal acquisition
-(WAVE-RX-05) and measurement-driven impairments remain open. Window accounting
+(WAVE-RX-05) and temporal measurement-driven expansion remain open. Window accounting
 and bounded job/CLI lifecycle are implemented separately.
 
 See the [per-subsystem guides](user/waveform/README.md) and
@@ -458,10 +471,12 @@ with independent record/stream limits and explicit terminal I/O/limit errors.
 
 ARCH-05/06/07 and QA-04 close this infrastructure milestone: maintained export,
 source/noise draw-invariance tests, separate bit-processing boundaries, and a
-release channel/probe smoke check in the pre-push gate. Existing coding AWGN is
-only instrumented; no new waveform impairment is introduced. The next scientific
-stage is MODEL-04, using the [user diagram reference](development/impairment-reference.md).
-This milestone stops before that stage. See the [component guides](user/channel-runner/README.md),
+release channel/probe smoke check in the pre-push gate. The subsequent impairment
+group adds controlled waveform noise, PNM JSON import, fixed-profile measured
+operation and supplied H compensation. Remaining work includes nonideal estimation
+and temporal/profile expansion under MODEL-05/06, using the
+[user diagram reference](development/impairment-reference.md).
+See the [component guides](user/channel-runner/README.md),
 [channel CLI](user/channel-runner/cli.md), [export](user/simulation/probe-export.md)
 and [bit-processing design](user/bit-processing/README.md).
 
