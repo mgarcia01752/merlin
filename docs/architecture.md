@@ -56,6 +56,10 @@ can use functions. Do not create empty object wrappers or files solely to mimic
 classes. Orchestrators connect components without hiding their intermediate data
 or implementing a second copy of their mathematics.
 
+The [unchecked-item review](development/checklist-review.md) distinguishes
+completed component foundations from unfinished adapter, duration-runner and
+expanded PHY requirements. Checked substeps do not close their parent requirement.
+
 Existing composite stages that do not expose all intermediate results are tracked
 as gaps in the checklist. In particular, parity interleaving, column twisting and
 bit demultiplexing currently share a composed permutation. They need explicit

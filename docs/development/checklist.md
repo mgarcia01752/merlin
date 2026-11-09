@@ -11,6 +11,10 @@ not mean committed, released or externally interoperable. Unchecked means work
 remains. Detailed limitations stay in the stage guides rather than being hidden
 by a broad “implemented” claim.
 
+The [unchecked-item review](checklist-review.md) records source/test evidence for
+the remaining items. Checked substeps show finished components inside an open
+parent requirement; they do not imply that the full parent is complete.
+
 Checklist IDs use the owning component or work area's prefix and a stable local
 number: `PLC-01` for PLC work, `WAVE-TX-01` for waveform transmission,
 `WAVE-RX-01` for waveform reception and `RX-CONFIG-01` for receiver
@@ -27,9 +31,19 @@ item by the documented dependencies and current implementation priority.
 - [x] **ARCH-03** Record stage test-point IDs, metadata and bounded observation design.
 - [x] **ARCH-04** Implement the common typed test-point model and opt-in observer.
 - [ ] **ARCH-05** Implement bounded stage/range selection and export through an adapter.
+  - [x] Select registered stages, element ranges and source/channel symbol ranges
+    with finite event/element budgets in `simulation/test_points/`.
+  - [ ] Deliver a maintained export adapter; serialization in test sinks alone
+    does not supply a user-facing export path.
 - [ ] **ARCH-06** Prove probes do not change RNG draws, state, outputs or decisions.
+  - [x] Verify available pilot/PLC/waveform/payload producers, including retained
+    state and disabled/enabled/failed/exhausted observer cases where supported.
+  - [ ] Cover source/noise RNG producers as they are integrated; the seeded
+    source used to prepare a test payload does not establish RNG-probe coverage.
 - [ ] **ARCH-07** Expose parity, twist and demultiplexing as separately callable stages,
   including reverse boundaries, while preserving the existing bit-processing API.
+  - [x] Provide the composed16/256-QAM permutation and soft inverse (`BITS-01`).
+  - [ ] Expose each intermediate forward/reverse boundary independently.
 
 Every new algorithm gets a focused module, typed output and independent tests.
 Stateful stages own their state; runners only connect stages. Direct stage outputs
@@ -370,6 +384,9 @@ RUN work, not an inference from either bounded example. [Evidence](../reference/
 
 - [ ] **RUN-01** Separate transmitter, receiver and runner modules; avoid moving
   numerical algorithms into a large orchestration function.
+  - [x] Separate reusable payload/waveform TX and RX state owners; compose them
+    in the bounded reference verifier without duplicating stage mathematics.
+  - [ ] Add the duration-runner owner and lifecycle around those existing stages.
 - [ ] **RUN-02** Stream a user-configured duration of one fixed channel, initially
   defaulting to one simulated second. Use checked64-bit sample accounting and
   bounded buffers for longer runs; never reset stage state at second boundaries.
@@ -377,16 +394,27 @@ RUN work, not an inference from either bounded example. [Evidence](../reference/
   one_second_timing helper remains fixed until extended under this item.
 - [ ] **RUN-03** Preserve partial codewords, interleaver history, PLC phase and
   sequence state across buffer boundaries; no per-codeword state resets.
+  - [x] Verify these stateful foundations in payload/waveform/PLC tests and
+    continuous PRBS chunk, codeword and period tests.
+  - [ ] Verify their joint lifecycle in the duration runner, including longer
+    intervals and observation boundaries without reseeding or phase resets.
 - [ ] **RUN-04** Use source-symbol/sample identities for comparison and report
   complete, incomplete and excluded warm-up/drain payloads separately.
 - [ ] **RUN-05** Zero noiseless payload errors with actual NCP discovery; retain
   LDPC iterations, BCH outcomes, codeword errors and the number of compared bits.
+  - [x] Recover four real payloads through waveform samples at both spacings;
+    compare56928 PRBS bits per spacing with zero errors and retain decoder results.
+  - [ ] Establish the same accounting for completed/incomplete duration-runner
+    outcomes, rather than inferring it from the short reference experiment.
 - [ ] **RUN-06** Bound memory/runtime/probe output, support cancellation and retain
   completed scientific results, including an explicit partial status.
 - [ ] **RUN-07** Expose the channel runner through one public Rust API and a thin
   CLI command with shared typed JSON results; preserve the earlier coding mode.
 - [ ] **RUN-08** Provide a reproducible PRBS-based example, math, assumptions and
   CLI/user documentation for the duration-based path and its initial one-second default.
+  - [x] Provide the bounded PRBS waveform example and source/transport design
+    guides with Mermaid, recurrence and comparison math.
+  - [ ] Provide duration-based CLI examples and documentation once that path exists.
 
 ## Impairments and measurement-driven operation
 
