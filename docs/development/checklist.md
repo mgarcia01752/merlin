@@ -443,6 +443,15 @@ and [the later impairment reference](impairment-reference.md).
 
 ## Impairments and measurement-driven operation
 
+- [ ] **INPUT-01** Import current `pnm-decode` JSON for RxMER, downstream channel
+  estimates and applied modulation profiles into the shared typed scenario model.
+  Keep binary decoding external and direct Rust API inputs available; preserve
+  source grids, nulls, timestamps and provenance. The CLI currently requires this
+  repository's scenario JSON, not raw decoder output.
+- [ ] **INPUT-02** Later: formalize the decoded-JSON compatibility contract with
+  schema versions, verified PNM Viewer Toolkit versions, compatibility fixtures
+  and explicit rejection of unsupported revisions. Begin INPUT-01 with the current
+  decoder JSON rather than blocking on this contract work.
 - [x] **MODEL-01** Controlled cell AWGN and RxMER-derived residual noise in the
   original coding experiment, distinct from measured observations and screening.
 - [x] **MODEL-02** Scenario identity/grid/time association and protected-role profiles.

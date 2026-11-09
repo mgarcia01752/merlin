@@ -50,6 +50,27 @@ presentation component and Python bindings consume the public Rust APIs;
 neither owns scientific calculations. There is no UI or binding implementation
 in this stage, and no device capture/control or network-service dependency.
 
+## PNM measurement input direction
+
+Use the current `pnm-decode` JSON output from PNM Viewer Toolkit as the starting
+external measurement format for RxMER, downstream channel estimates and applied
+modulation profiles. A future Rust import adapter will translate those decoded
+documents into this repository's typed scenario inputs. Rust applications may
+also supply the same validated scenario types directly through the public API.
+Binary PNM decoding remains outside the simulation engine; the engine does not
+launch `pnm-decode` or depend on the viewer application.
+
+This is the selected integration direction, not an implemented importer. Today,
+the CLI accepts this repository's scenario JSON; unconverted `pnm-decode` output
+is not a supported CLI input. Measurement-driven waveform operation also remains
+pending under MODEL-06. Ideal/reference runs require no PNM captures.
+
+Start the importer against representative current decoder output. Formal schema
+versioning, a supported-toolkit-version table and compatibility enforcement are
+deferred under INPUT-02 in the [checklist](development/checklist.md). Existing
+scenario validation for grids, missing readings, timestamps and provenance
+continues to apply.
+
 ## Modules and stage boundaries
 
 **Each distinct algorithm stage has a focused module and a directly testable typed
