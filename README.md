@@ -27,6 +27,8 @@ bit processing, randomization and FEC, reporting iterations for each codeword.
 A [stateful symbol packer](docs/user/symbol-packing.md) carries those codewords
 across symbols and reserves NCP/CRC space. The [NCP codec](docs/user/ncp.md)
 provides control LDPC, CRC and received codeword-start discovery.
+[Cell interleaving](docs/user/cell-interleaving.md) now provides persistent time
+delays, frequency permutations and the inverse physical pilot reference.
 Full DOCSIS framing/placement and
 interoperability validation remain pending. See
 [coding scope and equations](docs/reference/coding-mode.md).
@@ -52,6 +54,7 @@ project-local toolchain when present and installs nothing.
 [Git and releases](docs/development/git.md) ·
 [CLI examples](docs/cli.md) ·
 [Architecture](docs/architecture.md) ·
+[Implementation checklist](docs/development/checklist.md) ·
 [Public API](docs/reference/public-api.md) ·
 [Transmission setup](docs/user/transmission.md) ·
 [Modulation coverage](docs/reference/ofdm-support.md) ·

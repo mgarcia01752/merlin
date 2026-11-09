@@ -18,6 +18,23 @@ CLI startup, argument parsing, commands and JSON I/O separate. Keep root modules
 focused on wiring and exports. Preserve established imports through re-exports
 when moving an API; do not keep duplicate implementations or empty placeholders.
 
+## Scientific stage modules and test points
+
+Give each distinct processing stage a focused Rust module and a directly testable
+typed input/output API. Stateful stages own explicit state; stateless algorithms
+can remain functions. Keep runners as composition, not a place to hide stage math.
+Expose intermediate results at stage boundaries so callers and optional observers
+can inspect data without duplicating algorithms, printing inside DSP code or
+accessing mutable internals. Keep test-point metadata explicit about units,
+normalization, source/channel phase, shape and startup/drain validity; bound
+optional snapshots and prove observation preserves scientific behavior.
+
+Follow docs/architecture.md and update docs/development/checklist.md when adding
+or completing a stage. Clearly distinguish planned common instrumentation from
+existing direct outputs. Record missing boundaries in composite stages and preserve
+existing APIs when exposing them; do not perform unrelated rewrites or create
+empty placeholder modules to satisfy a planned directory tree.
+
 ## Member and module order
 
 Place constants and type declarations before implementation blocks. Within an

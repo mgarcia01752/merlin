@@ -13,6 +13,9 @@ component will adapt inputs and results without duplicating scientific logic.
 | `transmission::packing::{SymbolPacker, PackingSettings, PackedSymbol}` | Stateful256-QAM queue, symbol plans and NCP capacity reservations |
 | `transmission::ncp::{NcpMessage, NcpFieldCodec}` | Control serialization, encoded fields and CRC-accepted receiver pointers |
 | `fec_codec::{ncp::NcpFecCodec, crc::crc24d}` | Separate NCP control LDPC and CRC-24-D |
+| `signal_processing::interleaving::{InterleaverSettings, SymbolInterleaver}` | Bounded cell time/frequency TX/RX streams and explicit startup/drain |
+| `signal_processing::interleaving::{FrequencyInterleaver, TimeInterleaver}` | Independent permutation and generic convolutional delay operations |
+| `transmission::layout::PilotReference` | Physical-bin association and pre-interleaving pilot masks |
 | `scenario::{grid, observation}` | Exact identity, source provenance and full-resolution observations |
 | `scenario::association` | Explicit-tolerance timestamp association |
 | `scenario::document` | Versioned decoded scenario inputs |
@@ -45,3 +48,9 @@ No Python dependency, binding package or stable C ABI is introduced now.
 
 See the [public-api skill](../../skills/public-api/SKILL.md) for API development
 requirements and [JSON contracts](documents.md) for the existing serialization.
+
+Existing typed operation outputs can be consumed directly. The planned common
+stage-observer/test-point contract is specified in the
+[architecture](../architecture.md#test-points-and-data-access), with remaining work
+tracked in the [implementation checklist](../development/checklist.md).
+It is not an implemented export/observer API yet.

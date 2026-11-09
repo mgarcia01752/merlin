@@ -7,8 +7,9 @@ recovered payload with the original and reports LDPC iterations per codeword.
 These are **independent codeword trials**, not physical OFDM transmission. Each
 trial initializes fresh phase-zero randomizers. This isolated loop does not use
 the separate [stateful symbol packer](symbol-packing.md) or [NCP codec](ncp.md).
-Pilot/control placement, time/frequency interleaving and waveform generation
-remain pending. The existing CLI `simulate` mode remains16-QAM.
+The separate [cell-interleaving API](cell-interleaving.md) now transports mapped
+cells and pilot placeholders. Actual pilot/control signals and waveform
+generation remain pending. The existing CLI `simulate` mode remains16-QAM.
 
 ## Run and inspect JSON
 

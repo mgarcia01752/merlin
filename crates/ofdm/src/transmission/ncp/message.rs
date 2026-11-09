@@ -77,6 +77,7 @@ impl NcpMessage {
     }
 }
 
+#[cfg(feature = "simulation")]
 pub(super) const MAX_MESSAGES: usize = 11;
 /// Validates one symbol's message order independently of FEC and profile state.
 ///
@@ -87,6 +88,7 @@ pub(super) const MAX_MESSAGES: usize = 11;
 /// # Errors
 /// Rejects bad fields, nonterminal NULL/Z, misplaced L, inconsistent N/U or
 /// more than10 active starts. Rolling4K limits require external session state.
+#[cfg(feature = "simulation")]
 pub(super) fn validate_chain(messages: &[NcpMessage]) -> Result<(), LabError> {
     if messages.is_empty() || messages.len() > MAX_MESSAGES {
         return Err(invalid("NCP chain requires1..11 messages before its CRC."));

@@ -20,6 +20,10 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
   vectors, independent mother-code parity expectations and explicit puncture/label
   ordering. Reject the whole field on CRC failure. Test receiver boundary discovery
   from decoded pointers without transmitter diagnostic IDs, alongside packer tests.
+- For cell interleavers, verify exact index/delay vectors, all supported depths,
+  partial columns and dummy padding, PLC-aligned pilot references, startup/drain
+  and source-symbol phase at inverse randomizer resets. Never count None history
+  as a zero sample or recovered payload. Keep bit and cell interleavers distinct.
 - Verify missing/excluded samples, exact grids, explicit time tolerances,
   protected roles, capacity overheads and intermittent impairments.
 - Check invalid schemas, input/work limits, cancellation and partial results.

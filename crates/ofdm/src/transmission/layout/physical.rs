@@ -158,6 +158,13 @@ impl CarrierLayout {
         })
     }
 
+    /// Returns the fixed subcarrier spacing used to construct this geometry.
+    /// # Returns
+    ///25or50kHz numerology for reduced-domain interleaver validation.
+    pub fn subcarrier_spacing(&self) -> SubcarrierSpacing {
+        self.spacing
+    }
+
     /// Returns one role per physical FFT bin for a symbol after the PLC preamble.
     /// # Arguments
     /// * `symbols_since_preamble_end` - Zero denotes the first symbol following

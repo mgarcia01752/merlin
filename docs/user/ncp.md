@@ -7,9 +7,10 @@ This closes the signaling gap between the [symbol packer](symbol-packing.md)
 and a receiver that needs to discover payload boundaries.
 
 This is a pre-interleaving, noiseless reference path. A full OFDM waveform,
-time/frequency interleaving, PLC signaling and dynamic profile switching remain
-outside this stage. The ordinary `ofdm-fec simulate` CLI remains its separate
-16-QAM experiment; the public API and example below exercise NCP functionality.
+PLC signaling and dynamic profile switching remain outside this stage.
+[Cell interleaving](cell-interleaving.md) now transports these mapped NCP cells
+and reverses the operation at the receiver. The ordinary `ofdm-fec simulate` CLI
+remains its separate16-QAM experiment; the public API and example below exercise NCP functionality.
 
 ## Run the example
 
@@ -167,8 +168,8 @@ not packer codeword IDs, offsets or reservation counts. Its pilot mask and small
 interleaver domain are synthetic; this is not external DOCSIS interoperability
 or full RF-channel validation.
 
-Four major stages remain: stateful time/frequency interleaving and inverse pilot
-mapping; pilot/PLC signal generation; IFFT/prefix/windowing and inverse receiver;
+Three major stages remain: pilot/PLC signal generation;
+IFFT/prefix/windowing and inverse receiver;
 and streamed one-second noiseless integration with warm-up and drain.
 
 Evidence: CM-SP-PHYv3.1-I20-230419 §7.4.3.2, PDF56; Table19, PDF91;

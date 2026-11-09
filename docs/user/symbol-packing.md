@@ -5,9 +5,10 @@ plans. Each16200-bit codeword becomes2025 labels after bit processing. Data fill
 eligible positions from low to high; NCP reservations fill from high to low.
 Partial codewords continue in the next symbol without resetting the randomizer.
 
-This is a **pre-interleaving plan**, not a transmitted waveform. The separate [NCP codec](ncp.md) now generates actual message bits, CRC and
-control FEC from these plans. Pilot signs, boost, PLC signaling,
-time/frequency interleaving and IFFT remain separate work.
+This is a **pre-interleaving plan**, not a transmitted waveform. The separate
+[NCP codec](ncp.md) now generates actual message bits, CRC and control FEC from
+these plans. [Time/frequency interleaving](cell-interleaving.md) is implemented
+separately. Pilot signs, boost, PLC signaling and IFFT remain pending.
 
 ## Run the example
 
@@ -42,7 +43,7 @@ flowchart LR
 `NI` is the fixed reduced interleaver-domain size after removing PLC, continuous
 pilots and excluded bins. Limits are7537 at25kHz and3745 at50kHz. The caller must
 supply the correct inverse-interleaved scattered-pilot placeholders for each
-symbol. Do not pass physical `CarrierLayout::symbol_roles` directly: physical
+symbol; `PilotReference::roles` now provides this [reference](cell-interleaving.md). Do not pass physical `CarrierLayout::symbol_roles` directly: physical
 pilot bins and pre-interleaving positions are different domains.
 
 Pointers count data positions, including zero-loaded positions, and skip pilot
@@ -101,12 +102,12 @@ verifies packing continuity and coding recovery, not NCP receiver discovery or
 external DOCSIS interoperability.
 
 A second integration test now uses real [NCP encoding and receiver discovery](ncp.md)
-instead of diagnostic boundaries. Four major stages remain:
+instead of diagnostic boundaries. A third test includes cell interleaving and
+the physical pilot reference. Three major stages remain:
 
-1. Stateful time and frequency interleaving with inverse pilot mapping.
-2. Continuous/scattered pilot and PLC signal generation.
-3. IFFT, cyclic prefix, windowing and the inverse receiver.
-4. Streamed one-second noiseless integration with warm-up and drain.
+1. Continuous/scattered pilot and PLC signal generation.
+2. IFFT, cyclic prefix, windowing and the inverse receiver.
+3. Streamed one-second noiseless integration with warm-up and drain.
 
 Pinned evidence: CM-SP-PHYv3.1-I20-230419 §7.5.5.5.1–2, PDF125–128
 (packing and pointer domain); §7.5.6, PDF129 (NI limits); §7.5.14.4,

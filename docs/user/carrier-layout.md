@@ -69,7 +69,8 @@ placeholders and zero-loaded cells. Results are in assignment order. Inputs are
 unchanged; insufficient capacity returns an error instead of partial output.
 
 Returned indices are not physical FFT-bin positions. The packer caller must
-inverse-map physical pilots through the actual frequency/time interleavers first.
+use `PilotReference::roles` to obtain the inverse-interleaved pilot mask.
+See [cell interleaving](cell-interleaving.md) for physical-bin association and phase.
 PLC, continuous pilots and exclusions are outside this cell domain. Required
 cell count comes from [NCP encoding](ncp.md) and [packing](symbol-packing.md);
 the helper does not invent

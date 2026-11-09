@@ -4,6 +4,7 @@
  */
 //! Reusable Rust signal-processing operations, independent of simulation jobs.
 pub mod bit_loading;
+pub mod interleaving;
 pub mod modulation;
 pub mod noise;
 pub mod ofdm;

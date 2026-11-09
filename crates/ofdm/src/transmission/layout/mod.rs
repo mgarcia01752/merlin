@@ -5,4 +5,6 @@
 //! Physical carrier roles, distinct from cells before time/frequency interleaving.
 pub mod ncp;
 pub mod physical;
+pub mod pilot_reference;
 pub use physical::{CarrierLayout, CarrierLayoutSettings, PhysicalCarrierRole};
+pub use pilot_reference::PilotReference;

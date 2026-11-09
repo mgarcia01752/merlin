@@ -79,5 +79,7 @@ and evaluation; signal_processing owns numerical algorithms; simulation owns
 source generation, job orchestration and results. Keep CLI main focused on
 startup, with arguments, commands and bounded JSON I/O in separate modules.
 Preserve existing public imports with re-exports rather than duplicate logic.
-See docs/architecture.md. PRBS is a later source implementation, not a label for
+Use docs/architecture.md as the canonical design and
+docs/development/checklist.md as the official progress/TODO list. Update them
+when stage ownership, test points or implementation status changes. PRBS is a later source implementation, not a label for
 the existing seeded random generator.

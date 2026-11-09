@@ -8,7 +8,9 @@ The public Rust `transmission` module currently validates numerology and calcula
 a one-second schedule. [Carrier layout](carrier-layout.md) now validates physical
 bin geometry and generates scattered-pilot roles. [QAM mapping](qam-mapping.md)
 and reference soft demapping are available through16K-QAM. Waveform generation,
-full control-cell packing and time/frequency interleaving are pending.
+full physical control signaling remains pending.
+[Cell time/frequency interleaving](cell-interleaving.md) and its inverse receiver
+are now available with a correctly phased pilot reference.
 [Data/NCP randomization](cell-randomizer.md) is now available as a standalone
 stateful API; PLC randomization and channel-runner integration remain pending.
 The [256-QAM coding loop](qam256-coding-loop.md) connects bit processing,
@@ -80,11 +82,12 @@ These choices are application defaults, not mandated CMTS settings. Roll-off mus
 be shorter than the prefix. Zero roll-off is evaluation-only, not operational.
 Roll-off means a window taper duration, not a raised-cosine QAM filter coefficient.
 
-Occupied bandwidth does not specify the data-carrier count. The upcoming layout
-must separately define frequency reference, band-edge/internal exclusions, PLC,
+Occupied bandwidth does not specify the data-carrier count. The layout
+separately defines frequency reference, band-edge/internal exclusions, PLC,
 continuous/scattered pilots and NCP allocation. Do not assign all192MHz/spacing
 carriers to payload. Physical layout inputs are now explicit; NCP transport still
-requires the upcoming packer and interleavers.
+uses the [packer](symbol-packing.md) and [cell interleavers](cell-interleaving.md);
+full channel waveform generation is still pending.
 
 ## One-second timing
 
@@ -117,7 +120,7 @@ assert_eq!(schedule.complete_symbols, 23_529);
 # Ok::<(), docsis_ofdm_fec::LabError>(())
 ```
 
-## Interleaver lifecycle for the upcoming runner
+## Interleaver lifecycle and upcoming waveform runner
 
 Stream symbols and waveform samples through bounded buffers. A second at this
 clock contains204.8million complex samples; retaining all samples is unnecessary.
@@ -136,8 +139,9 @@ Establish initialized transmitter/receiver state before the observation, then dr
 delayed cells afterward. Report warm-up, observation and drain separately. Mark
 startup/filler cells so that they do not become payload truth or error counts.
 Count complete payload blocks and retain boundary bits; never report zero BER for
-blocks not compared. Exact warm-up/drain lengths depend on the implemented delay
-structure and are not calculated by the current timing API.
+blocks not compared. The implemented matched interleaver pair adds M-1 symbols of delay and needs
+M-1 drain symbols for a finite input stream. These are separate from the
+one-second observation timing API; see [cell interleaving](cell-interleaving.md).
 
 ## Pinned evidence and next steps
 
@@ -151,8 +155,9 @@ CM-SP-PHYv3.1-I20-230419 defines:
   delegated by downstream §7.5.8.1.
 - §7.5.5 and AnnexA: bit demultiplexing, randomization and constellation mapping.
 
-Verified256-QAM bit processing and a [stateful symbol packer](symbol-packing.md)
-and [NCP encoding/decoding](ncp.md) are now available separately. Four major
-stages remain: time/frequency interleaving; pilot/PLC signal generation; IFFT,
+Verified256-QAM bit processing, a [stateful symbol packer](symbol-packing.md)
+and [NCP encoding/decoding](ncp.md) are now available separately.
+[Cell interleaving](cell-interleaving.md) and the inverse pilot reference are
+implemented as well. Three major stages remain: pilot/PLC signal generation; IFFT,
 prefix/windowing and inverse receiver; and full one-second noiseless integration.
 The timing and packing tests do not establish full channel recovery.

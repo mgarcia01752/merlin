@@ -1,146 +1,260 @@
 # DOCSIS OFDM Channel Sim architecture
 
-DOCSIS OFDM Channel Sim is a standalone DOCSIS scientific toolkit with a Rust library and CLI.
-Downstream OFDM is the current focus. OFDMA is deferred. All signal processing,
-channel modeling, modulation, soft demapping and FEC are implemented in Rust.
+This is the maintained architecture for this repository. The
+[implementation checklist](development/checklist.md) records completed work,
+remaining requirements and the next implementation step. Detailed equations and
+examples live in the linked stage guides; private evidence and investigation
+notes live under ignored `development/`.
+
+Status describes the **current source checkout**, including work awaiting commit.
+It does not imply a published release or external DOCSIS interoperability.
+
+## Purpose and scope
+
+Build a standalone, DOCSIS-focused Rust scientific engine with two modes:
+
+- **Ideal/reference:** known payload, fixed single downstream OFDM channel up to
+  192 MHz, initially uniform 256-QAM, noiseless recovery first, then controlled
+  impairments. The target observation is one second, with separate warm-up/drain.
+- **Measurement-driven:** condition a simulation on supplied RxMER, downstream
+  channel estimates and an applied modulation profile. Preserve exact grids,
+  missing readings, timestamps and provenance. Establish reference planes before
+  combining impairments so measured residual noise is not counted twice.
+
+The full one-second waveform runner and measurement-driven waveform model are
+not implemented. The existing CLI runs the earlier 16-QAM coding experiment;
+256-QAM packing/interleaving integration is currently exercised by library APIs,
+examples and tests. The seeded source is implemented; PRBS is still TODO.
+
+Downstream mapping and reference soft demapping cover constellations through
+16384-QAM. Complete coding support must be tracked separately for each order;
+current short8/9 bit processing supports uniform 16/256-QAM. See
+[modulation coverage](reference/ofdm-support.md). DOCSIS4.0 FDD delegation does
+not establish FDX behavior. OFDMA is a later scope.
+
+All FEC, DSP, channel models and scientific calculations are Rust, including
+algorithm dependencies. Scientific crates forbid unsafe code. A future Qt
+presentation component and Python bindings consume the public Rust APIs;
+neither owns scientific calculations. There is no UI or binding implementation
+in this stage, and no device capture/control or network-service dependency.
+
+## Modules and stage boundaries
+
+**Each distinct algorithm stage has a focused module and a directly testable typed
+input/output boundary.** Stateful stages own explicit structs; stateless stages
+can use functions. Do not create empty object wrappers or files solely to mimic
+classes. Orchestrators connect components without hiding their intermediate data
+or implementing a second copy of their mathematics.
+
+Existing composite stages that do not expose all intermediate results are tracked
+as gaps in the checklist. In particular, parity interleaving, column twisting and
+bit demultiplexing currently share a composed permutation. They need explicit
+intermediate boundaries before claiming complete stage instrumentation.
+
+Current source ownership:
 
 ```text
 crates/
 ├── fec-codec/src/
-│   ├── lib.rs                 Public exports and shared input validation
-│   ├── parameters.rs          Supported coding dimensions
-│   ├── bch.rs                 BCH encoding and decoding
-│   ├── crc.rs                 CRC-24-D with published reference vectors
-│   ├── ncp/                   Separate NCP LDPC shortening/puncturing
-│   ├── ldpc.rs                LDPC encoding and decoding
-│   └── concatenated.rs        BCH→LDPC; reverse decoding and payload comparison
+│   ├── bch.rs                 Payload BCH encoder/decoder
+│   ├── ldpc.rs                Payload LDPC encoder/soft decoder
+│   ├── concatenated.rs        Composition and independent payload comparison
+│   ├── crc.rs                 CRC-24-D
+│   ├── ncp/                   NCP mother matrix, shortening/puncturing and decoder
+│   └── parameters.rs          Verified coding dimensions
 ├── ofdm/src/
-│   ├── lib.rs                 Module wiring and compatibility exports
-│   ├── error.rs               Shared scientific diagnostics
-│   ├── types/                 Domain aliases, units and carrier roles
-│   ├── transmission/          Fixed channel numerology and one-second timing
-│   │   ├── ncp/               Control messages, NCP mapping and CRC-gated discovery
-│   │   ├── packing/           Bounded codeword queue and pre-interleaving symbol plans
-│   │   └── layout/            Physical pilot/PLC roles and separate NCP eligibility
+│   ├── types/                 Shared identities, units and modulation registry
+│   ├── transmission/
+│   │   ├── settings.rs        Fixed numerology
+│   │   ├── timing.rs          Integer sample-clock schedules
+│   │   ├── layout/            Physical roles and inverse pilot reference
+│   │   ├── packing/           Bounded codeword queue and symbol plans
+│   │   └── ncp/               Messages, control mapping and field CRC acceptance
 │   ├── signal_processing/
-│   │   ├── modulation/        Embedded QAM through16K, bit ordering and soft demapping
-│   │   └── noise/             Residual powers and controlled AWGN
+│   │   ├── modulation/        QAM, LLRs, bit processing and cell randomization
+│   │   ├── interleaving/      Separate time, frequency and composition modules
+│   │   ├── noise/             AWGN and measured residual-noise processing
+│   │   └── ...                Analytical bit-loading/capacity helpers
 │   ├── simulation/
-│   │   ├── coding_loop/       Independent256-QAM cell trials and decoder metrics
-│   │   ├── source/            Current seeded source; PRBS remains unimplemented
-│   │   ├── config.rs          Receiver and work limits
-│   │   ├── runner.rs          Connect stages; own cancellation and progress
-│   │   └── results.rs         Stage comparisons, counters and confidence bounds
-│   ├── scenario/              Grids, observations, association and input documents
-│   └── profile/               Candidates, role protection and analytical evaluation
+│   │   ├── source/            Seeded source; PRBS remains TODO
+│   │   ├── coding_loop/       Independent 256-QAM codeword trials
+│   │   ├── runner.rs          Existing 16-QAM trial orchestration
+│   │   ├── config.rs          Work limits and receiver policy
+│   │   └── results.rs         Counters, truth comparisons and confidence bounds
+│   ├── scenario/              Decoded observations, grids and association
+│   └── profile/               Hypotheses, role protection and screening
 └── cli/src/
-    ├── main.rs                Startup, signals and process exit
+    ├── main.rs                Startup and exit
     ├── arguments.rs           CLI syntax
-    ├── commands/              Focused simulate/evaluate adapters
-    └── json_io.rs             Bounded file input and safe new-file output
+    ├── commands/              Thin operation adapters
+    └── json_io.rs             Bounded input and safe new-file exports
 ```
 
-The scientific crates forbid unsafe code and have no Qt, Python-runtime or native
-codec dependency. Python remains useful for development/release tooling only.
-The optional future Python and Qt adapters call the same public scientific API;
-scientific functionality takes priority over either adapter.
+Dependencies flow from CLI/future adapters to `docsis-ofdm-fec`, then to the
+optional `fec-codec`. Analysis-only builds exclude codec-backed simulation.
+Preserve established imports through re-exports when reorganizing modules;
+each calculation retains one canonical implementation.
 
-Two simulation modes are planned:
+## Transmission and receiver flow
 
-- **Ideal/reference:** known symbols and channel, noiseless baseline or controlled
-  AWGN; actual FEC outcomes establish reference behavior.
-- **Measurement-driven:** exact-grid RxMER, downstream channel estimates and an
-  applied modulation profile describe the supplied OFDM conditions. RxMER-based
-  residual AWGN is implemented for the initial coding experiment. The complete
-  channel-estimate-driven model remains pending. Establish measurement reference
-  points before combining them; do not count equalized impairment twice.
+The diagram describes the target channel path. Dashed-border boxes are planned
+components. A solid box means the algorithm/API exists, not that a complete
+waveform runner already connects every box.
 
-Typed source inputs retain identity, units, timestamps, original grid positions,
-missing readings, exclusions and provenance. Applications that decode binary
-capture files retain original bytes and compute source hashes. A supplied JSON
-hash is metadata, not authentication. No silent interpolation or resampling occurs.
+```mermaid
+flowchart TB
+    SOURCE["Source payload · seeded now, PRBS TODO"] --> BCH["BCH encoding"]
+    BCH --> LDPC["LDPC encoding"] --> BITS["Parity → twist → demultiplexing"]
+    BITS --> PACK["Codeword packing"]
+    PACK --> NCP["NCP messages → CRC → control FEC"]
+    PACK --> CELLS["Typed data/NCP/filler assembly"]
+    NCP --> CELLS
+    CELLS --> RAND["Cell randomization"] --> QAM["QAM mapping"]
+    QAM --> TIME["Time interleaving"] --> FREQ["Frequency interleaving"]
+    PILOTS["Continuous/scattered pilot signals"] --> FRAME["Physical-bin assembly"]
+    PLC["PLC preamble, messages and signal"] --> FRAME
+    FREQ --> FRAME --> IFFT["IFFT"] --> CP["Cyclic prefix"]
+    CP --> WINDOW["Windowing and overlap-add"] --> CHANNEL["Reference or impaired channel"]
+    CHANNEL --> TIMING["RX timing and block framing"] --> FFT["CP removal and FFT"]
+    FFT --> EQ["Pilot/PLC extraction and equalized data bins"]
+    EQ --> INVF["Frequency de-interleaving"] --> INVT["Time de-interleaving"]
+    INVT --> DEMAP["Soft demapping and inverse randomization"]
+    DEMAP --> NCPRX["NCP FEC/CRC → received boundaries"]
+    NCPRX --> BITRX["Data collection and inverse bit processing"]
+    BITRX --> LDPCDEC["LDPC decoding · iterations/status"]
+    LDPCDEC --> BCHDEC["BCH decoding"] --> TRUTH["Compare original and recovered payload"]
+    SOURCE -->|"Independent truth"| TRUTH
+    NCPRX -.-> SLICER["Optional hard slicer · profile-selected data I/Q"]
+    classDef planned stroke-dasharray: 5 5;
+    class CELLS,PILOTS,PLC,FRAME,IFFT,CP,WINDOW,CHANNEL,TIMING,FFT,EQ,SLICER planned;
+```
 
-Scientific results distinguish measured observations, analytical target screening
-and simulated decoder outcomes. Individual frames and worst intervals remain
-visible; an average curve must not hide transient impairments. MER-derived noise
-averages linear error powers rather than arithmetic dB values.
+The NCP and payload receiver paths use the appropriate separate demapping
+hypotheses. Inverse randomization uses the recovered source-symbol phase, not the
+later channel-output phase. Actual pilot signals are inserted after interleaving;
+PLC, continuous pilots and exclusions never enter the reduced interleaver domain.
+Initially timing/equalization can use known reference settings; blind acquisition
+and estimated-channel operation are separate milestones, not implied by that mode.
 
-`fec-codec` provides safe Rust encoder/decoder APIs. LDPC reuses the pinned
-ldpc-toolbox matrix/decoder; BCH uses a bounded Rust implementation with documented
-algorithm provenance and retained licensing. A coding round trip does not prove
-DOCSIS interoperability. See [coding evidence](reference/coding-mode.md).
+Current integration tests already connect real payload/NCP coding, randomization,
+QAM, cell interleaving, inverse pilot references and received pointer discovery.
+The assembly/receive orchestration in those tests must become reusable production
+modules before it is advertised as a standalone channel-run API.
 
-`docsis-ofdm-fec` owns shared scenario and candidate models, exact association,
-analytical evaluation, simulation settings/results and document validation. Its
-optional `simulation` feature allows analysis-only builds without codecs.
-The CLI owns bounded file I/O, cancellation signals and safe new-file output.
+## Test points and data access
 
-Candidate edits preserve verified pilot, PLC and excluded roles. Saved result
-claims are recalculated against supplied observations, and captured roles are
-reverified. Internal candidate JSON does not deploy or activate a profile.
+Existing APIs expose useful intermediate arrays and results. A **common selectable
+test-point observer/export interface is planned, not implemented**. The names below
+are proposed stable stage identifiers for that interface. “Direct” means callers
+can already obtain that data from an existing operation; it does not mean the
+common observer exists.
 
-The downstream modulation target covers the pinned DOCSIS3.1/4.0 FDD definitions
-through16384-QAM, while implementation status remains explicit per mode. Device
-support requirements and implemented scientific capabilities are separate.
-See [modulation coverage](reference/ofdm-support.md) and [public API](reference/public-api.md).
+| Test point | Owner / data | Access now |
+| --- | --- | --- |
+| `source.payload` | `simulation::source`; source bits and seed/source identity | Direct seeded output; PRBS TODO |
+| `tx.bch.word` | `fec_codec::bch`; BCH data plus parity | Direct |
+| `tx.ldpc.word` | `fec_codec::ldpc`; systematic word plus parity | Direct |
+| `tx.bits.parity`, `tx.bits.twist`, `tx.bits.demux` | Separate bit-processing stages; bit positions and cell labels | Final labels/permutation direct; named intermediate arrays TODO |
+| `tx.packing.symbol` | `transmission::packing`; starts, roles, filler and offsets | Direct plan; IDs are transmitter truth only |
+| `tx.ncp.messages`, `tx.ncp.crc`, `tx.ncp.encoded` | Message bytes, CRC, control-code bits/labels | Direct field/codec outputs |
+| `tx.randomizer.cells` | Randomized labels and diagnostic LFSR state | Direct per-cell output/state |
+| `tx.qam.iq` | Normalized I/Q with modulation and reference plane | Direct mapper output |
+| `tx.time.cells`, `tx.frequency.cells` | Each cell-interleaver output with startup markers | Direct separate APIs |
+| `tx.pilots.sequence`, `tx.pilots.continuous`, `tx.pilots.scattered`, `tx.pilots.power` | Separate sequence, signals, boost and physical locations | Locations/reference direct; values TODO |
+| `tx.plc.message`, `tx.plc.coded`, `tx.plc.interleaved`, `tx.plc.randomized`, `tx.plc.preamble`, `tx.plc.iq` | Separate PLC message, coding, block-interleaving, randomization, preamble and mapping outputs | TODO |
+| `tx.frame.bins` | Full physical frequency grid, roles and zero/excluded bins | TODO production assembler |
+| `tx.ifft.samples`, `tx.cp.samples`, `tx.window.samples`, `tx.overlap_add.samples` | Separate waveform stages and sample indices | TODO |
+| `channel.input`, `channel.output` | Channel-plane I/Q and applied impairment configuration | TODO waveform path; cell AWGN exists |
+| `rx.timing`, `rx.cp.samples`, `rx.fft.bins`, `rx.channel.estimate`, `rx.equalized.iq` | Timing result, recovered grid, channel estimate and equalized data | TODO waveform receiver |
+| `rx.frequency.cells`, `rx.time.cells` | Separate inverse cell-interleaver outputs and source phase | Direct |
+| `rx.ncp.llrs`, `rx.ncp.accepted` | NCP soft inputs, accepted pointers and block iterations | Direct primitives; orchestration currently in tests |
+| `rx.data.llrs`, `rx.descrambler.llrs` | Data likelihoods before/after sign inversion | Direct primitives |
+| `rx.slicer.decisions` | Nearest label/reference point and distance/error vector | TODO hard slicer |
+| `rx.bits.inverse` | LLRs restored to codeword order | Direct final inverse; individual reverse stages TODO |
+| `rx.ldpc.bits` | Decisions, parity success and actual iteration count | Direct |
+| `rx.bch.payload` | Recovered bits, status and corrected-bit count | Direct |
+| `result.truth` | Actual bit/codeword comparisons and trial counters | Direct codec/trial results; channel-run aggregate TODO |
 
-The isolated codec loop lives in `fec_codec::concatenated`. It can encode, reverse
-decode and compare a payload without QAM, noise, profiles or a scenario. See
-[the codec-loop example](../crates/fec-codec/examples/codec_loop.rs).
-Source generation remains separate; no PRBS polynomial has been introduced.
-The [FEC codec user guide](user/fec-codec.md) shows the current flow, block
-dimensions and encoding/decoding equations.
+The planned test-point contract must provide:
 
-A simulation runner coordinates stages but does not implement their algorithms.
-Its source and AWGN operations share the same job RNG stream to preserve seeded
-draw order. Result reporting owns truth comparisons and confidence calculations.
+- Stage ID, direction and run/configuration identity; codeword/profile identity
+  where known. Receiver identities must come from decoded signaling/session state,
+  never transmitter diagnostic IDs supplied as hidden receiver input.
+- Source-symbol and channel-symbol indices separately; sample-clock position when
+  applicable, PLC phase, physical/reduced grid mapping, units and normalization.
+- Explicit value type and shape: bits, labels, I/Q, roles, LLRs or typed metadata.
+  Preserve missing/startup/drain markers and success/failure states.
+- Immutable borrowed data during a callback or explicitly owned snapshots with
+  documented lifetime. Do not expose mutable internal buffers or RNG state.
+- Opt-in stage selection, symbol/codeword/sample ranges and explicit data limits.
+  Stream large sample blocks; do not retain an entire second of waveform by default.
+- A disabled-observer path and tests proving observation does not alter RNG draws,
+  stage order, scientific outputs or decoder decisions. Export/sampling belongs
+  to adapters; scientific calculations remain in Rust stage modules.
 
-Existing `math::*`, `profile::model`, `profile::association`, `profile::simulation`
-and `profile::document::ScenarioDocument` imports remain available through
-re-exports. Each type and algorithm has one implementation at its canonical path.
+Native typed stage calls remain usable without observers. JSON is an export
+adapter, not the only way to get data. Probe failures and cancellation need an
+explicit runner policy that preserves already completed scientific results.
 
-`transmission` validates fixed single-channel setup and calculates integer
-sample-clock timing independently of the simulation feature. The channel runner,
-waveform and interleavers remain pending. See
-[transmission settings and lifecycle](user/transmission.md).
+## Planned module ownership
 
-`transmission::layout` owns immutable physical-bin geometry and128-symbol
-scattered-pilot progression. NCP eligibility uses a separate pre-interleaving
-domain; physical-bin indices cannot substitute for inverse interleaver mapping.
-Additional-pilot generation and full placement compliance remain pending. See
-[carrier-layout scope and equations](user/carrier-layout.md).
+These paths are the accepted direction for upcoming work, not existing files or
+promises that the algorithms have been implemented. Refine a path in this document
+before implementation if source analysis shows a better existing owner.
 
-QAM resources under `crates/ofdm/resources/qam-table` retain PyPNM provenance.
-The Rust build helper compiles label-ordered normalized references into static
-arrays. Shared mapping and max-log demapping cover all downstream data orders
-through16K-QAM; the full coding CLI remains16-QAM only. See
-[mapping, scaling and evidence](user/qam-mapping.md).
+| Planned path under `crates/ofdm/src/` | Responsibility |
+| --- | --- |
+| `signal_processing/modulation/interleaving/{parity,twist,demultiplexing}.rs` | Separate intermediate and inverse boundaries behind the existing facade |
+| `signal_processing/pilots/{sequence,continuous,scattered,power}.rs` | Pilot sequence, separate signal generation and amplitude/boost |
+| `transmission/layout/additional_pilots.rs` | Specification-based additional continuous-pilot placement |
+| `transmission/plc/{message,coding,block_interleaving,randomization,preamble,mapping}.rs` | PLC stages and distinct state; invoke verified codec primitives |
+| `transmission/symbols/assembly.rs` | Typed data/NCP/filler composition before randomization/mapping |
+| `transmission/frame/assembly.rs` | Reduced-to-physical grid assembly and protected-role insertion |
+| `signal_processing/waveform/{ifft,fft,cyclic_prefix,windowing,overlap_add}.rs` | Separate waveform transforms and inverse operations |
+| `signal_processing/channel/` | Explicit reference-plane channel and impairment models |
+| `signal_processing/receiver/{timing,estimation,equalization}.rs` | Known-reference first, then independently verified estimation/acquisition |
+| `signal_processing/modulation/slicing.rs` | Diagnostic hard decisions; keep soft demapping for LDPC |
+| `simulation/channel/{transmitter,receiver,runner,results}.rs` | Thin stateful orchestration and completed-result accounting |
+| `simulation/test_points/{model,observer}.rs` | Shared typed observation contract and bounded dispatch |
+| `simulation/source/prbs.rs` | Explicit PRBS polynomial, seed, continuity and comparison |
 
-`signal_processing::modulation::randomization` owns the data/NCP GF(2^12) LFSR
-and cell-mask processing. It retains state across codewords, resets on explicit
-128-symbol boundaries and reverses soft-bit randomization with LLR sign flips.
-The packer must supply synchronized pre-interleaving cell order; no existing
-simulation mode is silently changed. PLC has separate pending state/timing rules.
-See [randomizer equations and lifecycle](user/cell-randomizer.md).
+If PLC needs a new coding algorithm, its reusable primitive belongs in
+`fec-codec`, selected only after local PHY verification. Do not assume payload or
+NCP coding is interchangeable with PLC coding. Shared sequence/math definitions
+have one owner; do not copy an LFSR into every consumer.
 
-`modulation::interleaving` separates pinned coding parameters from reusable
-permutation/label/soft-inverse operations.16and256-QAM are enabled; other orders
-remain unsupported in bit processing even when their mapper exists.
-`simulation::coding_loop` connects the256-QAM stages for one independent codeword
-per call and exports actual LDPC iterations. It does not implement continuous
-OFDM packing or channel timing. See [coding-loop flow](user/qam256-coding-loop.md).
+The hard slicer is diagnostic: nearest constellation point with an explicit tie
+policy, symbol-error counts and data for EVM inspection. It must not silently
+replace soft LLR inputs to LDPC. Its implementation remains on the checklist.
 
-`transmission::packing` owns a bounded queue of post-bit-processing256-QAM
-codewords. It carries partial words across symbols, previews NCP/CRC reservations
-and commits valid plans atomically. Callers supply the inverse-interleaved pilot
-mask; the physical layout API alone cannot provide that mask. Typed NCP meanings
-and diagnostic word IDs are available. The separate NCP codec now provides
-control-message encoding and receiver boundary discovery. See [symbol packing](user/symbol-packing.md).
+## Lifecycle, validation and future interfaces
 
-`fec_codec::ncp` owns the Table19 mother LDPC, shortening, puncturing and soft
-inverse. `fec_codec::crc` owns CRC-24-D. These are independent of payload BCH/LDPC.
-`transmission::ncp` owns message serialization, QAM label grouping, complete-chain
-CRC acceptance and pointer-derived data spans. The packer adapter uses fixed even
-profiles without tagging or updates. Receiver discovery uses L and CRC, never
-transmitter IDs. The codec-backed field API is gated by `simulation`; message
-serialization remains available in analysis-only builds. See [NCP](user/ncp.md).
+Freeze numerology, layout and profile before each run. Carry partial codewords,
+interleaver buffers and sequence phase across calls. Keep PLC and data/NCP
+randomizer states separate. The cell-interleaver pair adds M-1 symbols of delay;
+None history is not transmitted payload. Warm-up, one-second observation and
+drain need separate accounting, including complete versus unfinished words.
+
+Bound files, buffers, observations, work and decoder iterations. Preserve
+completed results on cancellation. Keep decoder success, truth errors, measured
+observations and analytical screening distinct. No completed comparisons means
+no fabricated zero BER. The seeded baseline is reproducible on the tested build;
+external interoperability and untested platforms remain separate validation work.
+
+Future Python/Qt adapters call the same scientific APIs and test-point contracts.
+They do not implement DSP, codec math or scientific JSON post-processing. Native
+bindings, packaging and presentation are later milestones. Git/release helpers
+exist, but native installers and multi-OS release automation do not yet exist.
+
+## Stage references
+
+- [FEC codec](user/fec-codec.md), [coding evidence](reference/coding-mode.md)
+- [QAM mapping](user/qam-mapping.md), [256-QAM bit/coding loop](user/qam256-coding-loop.md)
+- [Randomizer](user/cell-randomizer.md), [symbol packing](user/symbol-packing.md), [NCP](user/ncp.md)
+- [Physical layout](user/carrier-layout.md), [cell interleaving](user/cell-interleaving.md)
+- [Transmission setup and timing](user/transmission.md), [public APIs](reference/public-api.md)
+- [JSON contracts](reference/documents.md), [build/test](development/build.md), [Git/releases](development/git.md)
+
+Pinned scientific sources and section/page evidence are recorded in those guides.
+Use local versioned PHY sources before adding pilot/PLC details. Update this
+architecture and the [checklist](development/checklist.md) together as stages change.
