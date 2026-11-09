@@ -5,8 +5,8 @@ plans. Each16200-bit codeword becomes2025 labels after bit processing. Data fill
 eligible positions from low to high; NCP reservations fill from high to low.
 Partial codewords continue in the next symbol without resetting the randomizer.
 
-This is a **pre-interleaving plan**, not a transmitted waveform. Actual NCP bits,
-CRC and control FEC are not generated yet. Pilot signs, boost, PLC signaling,
+This is a **pre-interleaving plan**, not a transmitted waveform. The separate [NCP codec](ncp.md) now generates actual message bits, CRC and
+control FEC from these plans. Pilot signs, boost, PLC signaling,
 time/frequency interleaving and IFFT remain separate work.
 
 ## Run the example
@@ -33,7 +33,7 @@ flowchart LR
     SYMBOL --> DATA["Data and zero-loaded filler"]
     SYMBOL --> NCP["NCP meanings and reserved cells"]
     DATA --> RANDOM["Shared data/NCP randomizer"]
-    NCP -. "Future encoded NCP labels" .-> RANDOM
+    NCP --> ENCODE["NCP codec · LDPC and CRC"] --> RANDOM
     RANDOM -.-> FUTURE["Time/frequency interleaving → waveform"]
 ```
 
@@ -64,8 +64,7 @@ A Z marker identifies the start of zero-loaded filler. Such cells carry BPSK and
 clock the randomizer; they are not payload. A NULL entry handles continuation
 without a new start. At a tight exact-end boundary the planner may reserve an
 extra NULL and carry the data tail to the next symbol rather than overfill NCP.
-Scattered-pilot placeholders do not clock the randomizer. Reserved NCP cells
-must eventually clock it with the actual encoded NCP labels.
+Scattered-pilot placeholders do not clock the randomizer. Reserved NCP cells clock it with the [encoded NCP labels](ncp.md).
 
 ## Public Rust API
 
@@ -101,13 +100,13 @@ randomizer clocking, and diagnostic word IDs/offsets as a boundary oracle. It
 verifies packing continuity and coding recovery, not NCP receiver discovery or
 external DOCSIS interoperability.
 
-Five major stages remain:
+A second integration test now uses real [NCP encoding and receiver discovery](ncp.md)
+instead of diagnostic boundaries. Four major stages remain:
 
-1. Actual NCP message encoding/decoding, CRC and FEC.
-2. Stateful time and frequency interleaving with inverse pilot mapping.
-3. Continuous/scattered pilot and PLC signal generation.
-4. IFFT, cyclic prefix, windowing and the inverse receiver.
-5. Streamed one-second noiseless integration with warm-up and drain.
+1. Stateful time and frequency interleaving with inverse pilot mapping.
+2. Continuous/scattered pilot and PLC signal generation.
+3. IFFT, cyclic prefix, windowing and the inverse receiver.
+4. Streamed one-second noiseless integration with warm-up and drain.
 
 Pinned evidence: CM-SP-PHYv3.1-I20-230419 §7.5.5.5.1–2, PDF125–128
 (packing and pointer domain); §7.5.6, PDF129 (NI limits); §7.5.14.4,

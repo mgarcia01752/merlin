@@ -16,6 +16,10 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
 - Verify constellation labels independently of imported point geometry, including
   BPSK/QPSK control labels. Test published randomizer states, mask-bit ordering,
   pilot/zero-loaded clocking, symbol resets and soft inverse sign conventions.
+- Test NCP control FEC separately from payload FEC: use the published CRC-24-D
+  vectors, independent mother-code parity expectations and explicit puncture/label
+  ordering. Reject the whole field on CRC failure. Test receiver boundary discovery
+  from decoded pointers without transmitter diagnostic IDs, alongside packer tests.
 - Verify missing/excluded samples, exact grids, explicit time tolerances,
   protected roles, capacity overheads and intermittent impairments.
 - Check invalid schemas, input/work limits, cancellation and partial results.

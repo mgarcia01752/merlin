@@ -68,10 +68,11 @@ It selects data cells from the highest index downward, skipping scattered-pilot
 placeholders and zero-loaded cells. Results are in assignment order. Inputs are
 unchanged; insufficient capacity returns an error instead of partial output.
 
-Returned indices are not physical FFT-bin positions. The future packer must
+Returned indices are not physical FFT-bin positions. The packer caller must
 inverse-map physical pilots through the actual frequency/time interleavers first.
 PLC, continuous pilots and exclusions are outside this cell domain. Required
-cell count comes from future NCP encoding/packing; the helper does not invent
+cell count comes from [NCP encoding](ncp.md) and [packing](symbol-packing.md);
+the helper does not invent
 pointer contents or reserve a fixed physical band. A physical Data role is a
 candidate location, not a final payload-capacity claim after NCP overhead.
 

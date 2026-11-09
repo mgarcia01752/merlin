@@ -6,8 +6,9 @@ recovered payload with the original and reports LDPC iterations per codeword.
 
 These are **independent codeword trials**, not physical OFDM transmission. Each
 trial initializes fresh phase-zero randomizers. This isolated loop does not use
-the separate [stateful symbol packer](symbol-packing.md). Actual NCP messages, pilot/control placement, time/frequency interleaving and waveform
-generation remain pending. The existing CLI `simulate` mode remains16-QAM.
+the separate [stateful symbol packer](symbol-packing.md) or [NCP codec](ncp.md).
+Pilot/control placement, time/frequency interleaving and waveform generation
+remain pending. The existing CLI `simulate` mode remains16-QAM.
 
 ## Run and inspect JSON
 
@@ -134,5 +135,5 @@ and seeded payloads recover without errors. These are not external DOCSIS
 interoperability vectors or a one-second RF/channel result.
 
 The separate [symbol packer](symbol-packing.md) now establishes planned NCP
-pointer locations across symbols. Actual NCP encoding is next; see
-[transmission settings](transmission.md).
+pointer locations across symbols. The [NCP codec](ncp.md) now encodes and
+decodes those messages; see [transmission settings](transmission.md).

@@ -18,7 +18,7 @@ pub enum PreInterleavingRole {
 /// # Arguments
 /// * `roles` - Data/scattered-pilot interleaver domain, with zero-loaded cells
 ///   explicitly marked. Caller must inverse-map physical pilots first.
-/// * `count` - Required NCP cell count supplied by future NCP encoding/packing.
+/// * `count` - Required NCP cell count supplied by NCP encoding/packing.
 /// # Returns
 /// Indices in NCP assignment order. These are not transmitted FFT-bin positions.
 /// # Errors

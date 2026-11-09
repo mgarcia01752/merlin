@@ -6,7 +6,9 @@
 #![forbid(unsafe_code)]
 pub mod bch;
 pub mod concatenated;
+pub mod crc;
 pub mod ldpc;
+pub mod ncp;
 pub mod parameters;
 
 // Retain established root imports while implementation lives with each codec.

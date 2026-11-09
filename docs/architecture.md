@@ -10,6 +10,8 @@ crates/
 │   ├── lib.rs                 Public exports and shared input validation
 │   ├── parameters.rs          Supported coding dimensions
 │   ├── bch.rs                 BCH encoding and decoding
+│   ├── crc.rs                 CRC-24-D with published reference vectors
+│   ├── ncp/                   Separate NCP LDPC shortening/puncturing
 │   ├── ldpc.rs                LDPC encoding and decoding
 │   └── concatenated.rs        BCH→LDPC; reverse decoding and payload comparison
 ├── ofdm/src/
@@ -17,6 +19,7 @@ crates/
 │   ├── error.rs               Shared scientific diagnostics
 │   ├── types/                 Domain aliases, units and carrier roles
 │   ├── transmission/          Fixed channel numerology and one-second timing
+│   │   ├── ncp/               Control messages, NCP mapping and CRC-gated discovery
 │   │   ├── packing/           Bounded codeword queue and pre-interleaving symbol plans
 │   │   └── layout/            Physical pilot/PLC roles and separate NCP eligibility
 │   ├── signal_processing/
@@ -131,5 +134,13 @@ OFDM packing or channel timing. See [coding-loop flow](user/qam256-coding-loop.m
 codewords. It carries partial words across symbols, previews NCP/CRC reservations
 and commits valid plans atomically. Callers supply the inverse-interleaved pilot
 mask; the physical layout API alone cannot provide that mask. Typed NCP meanings
-and diagnostic word IDs are available, but control-message encoding and receiver
-boundary discovery remain pending. See [symbol packing](user/symbol-packing.md).
+and diagnostic word IDs are available. The separate NCP codec now provides
+control-message encoding and receiver boundary discovery. See [symbol packing](user/symbol-packing.md).
+
+`fec_codec::ncp` owns the Table19 mother LDPC, shortening, puncturing and soft
+inverse. `fec_codec::crc` owns CRC-24-D. These are independent of payload BCH/LDPC.
+`transmission::ncp` owns message serialization, QAM label grouping, complete-chain
+CRC acceptance and pointer-derived data spans. The packer adapter uses fixed even
+profiles without tagging or updates. Receiver discovery uses L and CRC, never
+transmitter IDs. The codec-backed field API is gated by `simulation`; message
+serialization remains available in analysis-only builds. See [NCP](user/ncp.md).

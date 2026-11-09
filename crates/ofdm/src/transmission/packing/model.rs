@@ -81,7 +81,7 @@ impl PackingSettings {
     }
 }
 
-/// Planned NCP meaning; actual control bits, CRC and FEC are generated later.
+/// Planned NCP meaning; transmission::ncp encodes its control bits, CRC and FEC.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum NcpPlanEntry {

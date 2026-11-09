@@ -27,3 +27,7 @@ required-features = ["simulation"]
 [[example]]
 name = "symbol_packing"
 required-features = ["simulation"]
+
+[[example]]
+name = "ncp_field"
+required-features = ["simulation"]

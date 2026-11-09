@@ -130,7 +130,8 @@ unchanged. Independent tests verify all control labels.
 **PLC randomization is separate and remains pending.** Section7.5.13.8 uses seeds
 D0=0x4A7,D1=0xB4C and additional symbol-boundary clocks; it must not use this
 data/NCP instance. PLC preamble randomization is prohibited. No actual NCP message
-is created by this API. The existing16-QAM CLI experiment remains at its earlier
+is created by this API; the separate [NCP codec](ncp.md) creates messages.
+The existing16-QAM CLI experiment remains at its earlier
 coding boundary; this module is tested independently and is not yet wired into
 a full256-QAM channel. See [transmission scope](transmission.md) and
 [QAM mapping](qam-mapping.md).
