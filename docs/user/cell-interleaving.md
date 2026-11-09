@@ -194,7 +194,8 @@ uses these verified algorithms with actual pilot/PLC signals and waveform
 samples. Its received configuration, source/channel coordinates and explicit
 startup/drain are documented per subsystem. A separate
 [PRBS15 source/verifier](simulation/prbs.md) and duration-based stepping are
-implemented. Nonideal acquisition and cancellable channel jobs remain later work.
+implemented, including cancellable [channel jobs](channel-runner/job.md).
+Nonideal acquisition remains later work.
 
 Evidence: CM-SP-PHYv3.1-I20-230419 section 7.5.6.1–3, Figures 55–58,
 PDF129–133; Appendix I sample code, PDF211–212 (informative). The original local

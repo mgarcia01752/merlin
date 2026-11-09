@@ -44,11 +44,16 @@ This is a completion check, not a requirement that a noisy receiver always
 correct all errors. Current operation is noiseless. Decoder flags remain distinct
 from truth error counts.
 
-These totals include words completed after observation. They must not be divided
-by the observation duration and advertised as observation-window throughput:
-precise complete/incomplete/excluded payload classification is RUN-04, and is
-still pending. Likewise the stepping summary is not yet a formal cancellation
-result or CLI job document. Completed comparisons remain readable after a failure,
-but the Failed phase cannot be presented as a successfully completed run.
+The global totals include words completed after observation. They must not be
+divided by the observation duration as extra capacity. The separate `window`
+section now applies [whole-codeword source-window accounting](accounting.md),
+retaining crossing/outside counts and computing rate only for a completed job.
+Partial jobs retain unavailable final rates and expose incomplete received starts
+separately from generated-but-unrecovered payloads.
+
+The [job wrapper](job.md) supplies explicit completion/cancellation/runtime/failure
+status and finite retained word details. The [CLI](cli.md) writes those same typed
+results. Completed comparisons remain readable after failure, but the Failed phase
+cannot be presented as successful duration completion.
 
 See [timing](timing.md), [session](session.md) and [PRBS comparison](../simulation/prbs.md).

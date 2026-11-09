@@ -30,28 +30,30 @@ item by the documented dependencies and current implementation priority.
 - [x] **ARCH-02** Separate codec, DSP, transmission, simulation and adapter ownership.
 - [x] **ARCH-03** Record stage test-point IDs, metadata and bounded observation design.
 - [x] **ARCH-04** Implement the common typed test-point model and opt-in observer.
-- [ ] **ARCH-05** Implement bounded stage/range selection and export through an adapter.
+- [x] **ARCH-05** Implement bounded stage/range selection and export through an adapter.
   - [x] Select registered stages, element ranges and source/channel symbol ranges
     with finite event/element budgets in `simulation/test_points/`.
-  - [ ] Deliver a maintained export adapter; serialization in test sinks alone
-    does not supply a user-facing export path.
-- [ ] **ARCH-06** Prove probes do not change RNG draws, state, outputs or decisions.
+  - [x] Deliver the bounded versioned JSONL writer and channel CLI adapter;
+    preserve original selected metadata and reject byte/I/O failures explicitly.
+- [x] **ARCH-06** Prove probes do not change RNG draws, state, outputs or decisions.
   - [x] Verify available pilot/PLC/waveform/payload producers, including retained
     state and disabled/enabled/failed/exhausted observer cases where supported.
-  - [ ] Cover source/noise RNG producers as they are integrated; the seeded
-    source used to prepare a test payload does not establish RNG-probe coverage.
-- [ ] **ARCH-07** Expose parity, twist and demultiplexing as separately callable stages,
+  - [x] Cover actual source and preexisting coding-noise producers: enabled,
+    exhausted and failed observers preserve source/next-noise draws and outcomes.
+- [x] **ARCH-07** Expose parity, twist and demultiplexing as separately callable stages,
   including reverse boundaries, while preserving the existing bit-processing API.
   - [x] Provide the composed16/256-QAM permutation and soft inverse (`BITS-01`).
-  - [ ] Expose each intermediate forward/reverse boundary independently.
+  - [x] Expose independently callable parity/twist/demultiplexing forward and
+    soft-inverse modules; compose those same mapping owners in the legacy facade.
 
 Every new algorithm gets a focused module, typed output and independent tests.
 Stateful stages own their state; runners only connect stages. Direct stage outputs
 remain usable independently of the observer. ARCH-04 currently registers the four
 pilot stages, seven PLC stages, physical bins and thirteen waveform TX/channel/RX
-boundaries plus ten payload/NCP TX/RX producers. ARCH-05 has bounded stage/element/symbol selection; adapter export
-remains TODO. Pilot/PLC/waveform observation invariance is tested; ARCH-06 still needs
-coverage of stateful/RNG-driven stages as their producers are added.
+boundaries plus ten payload/NCP TX/RX producers and source/legacy-noise outputs.
+ARCH-05 now includes bounded JSONL/CLI export; ARCH-06 covers current stateful/RNG
+producers; ARCH-07 supplies independent bit-processing boundaries. Future producers
+must preserve the same limits and invariance requirements.
 
 ## Payload source
 
@@ -157,8 +159,9 @@ from those decoded messages. The first waveform TX/channel/RX milestone is now
 implemented below. **CELL-02 / WAVE-RX-06** now add actual fixed256-QAM
 payload/NCP waveform transport. **SRC-02 / SRC-03: PRBS** are now complete,
 with independent recurrence vectors and actual recovered-stream comparison.
-The RUN group now supplies duration stepping and zero-error recovery;
-its next priority is **RUN-04** window-specific payload accounting.
+The complete RUN group now includes source-window accounting, cancellation,
+partial jobs, CLI delivery and probe export. The next scientific group is
+MODEL-04; this milestone stops before waveform impairments.
 
 - [x] **PLC-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
@@ -202,8 +205,8 @@ list/vector TLVs, multipart MMMs and EM/TR modes are not claimed.
 PLC-14/PLC-15 now include selectable message bytes, transmitted coded bits, labels,
 PLC data/preamble I/Q and full physical grids, with independent module tests,
 both-spacing multi-frame FEC/QAM/CRC integration and a bounded example. RX diagnostics
-remain directly accessible; additional RX common-observer producers and CLI/file
-export remain later work. External interoperability remains open under QA-05;
+remain directly accessible; additional RX common-observer producers remain
+future work, while the shared JSONL writer/CLI export is now implemented. External interoperability remains open under QA-05;
 the initial known-reference waveform validation is now covered by WAVE-QA-02.
 
 Planned paths and test-point IDs are in the architecture. Resolve any missing
@@ -378,16 +381,17 @@ recovery. Integration exercises a192MHz configured cap and wide active grid
 with synthetic exclusions, complete FFT-bin comparisons, actual decoder
 iterations, zero information-bit errors and observation invariance. This is
 reference PLC/pilot verification. The separate CELL-02/WAVE-RX-06 proof adds
-actual encoded payload/NCP recovery; configurable-duration lifecycle remains
-RUN work, not an inference from either bounded example. [Evidence](../reference/waveform-evidence.md).
+actual encoded payload/NCP recovery; the separate RUN group now validates
+the duration-based lifecycle rather than inferring it from either bounded example. [Evidence](../reference/waveform-evidence.md).
 
 ## Configurable-duration reference run
 
 Design: [Channel runner](../user/channel-runner/README.md),
 [timing](../user/channel-runner/timing.md), [session](../user/channel-runner/session.md)
-and [results](../user/channel-runner/results.md). RUN-01/02/03/05 are implemented;
-next is RUN-04 observation-window payload accounting, followed by RUN-06/07/08
-job control and CLI delivery.
+and [results](../user/channel-runner/results.md). All RUN items are implemented
+for fixed-profile noiseless operation. See [accounting](../user/channel-runner/accounting.md),
+[job lifecycle](../user/channel-runner/job.md), [CLI](../user/channel-runner/cli.md)
+and [the later impairment reference](impairment-reference.md).
 
 - [x] **RUN-01** Separate transmitter, receiver and runner modules; avoid moving
   numerical algorithms into a large orchestration function.
@@ -406,8 +410,11 @@ job control and CLI delivery.
     continuous PRBS chunk, codeword and period tests.
   - [x] Verify their joint lifecycle in the duration runner, including longer
     intervals and observation boundaries without reseeding or phase resets.
-- [ ] **RUN-04** Use source-symbol/sample identities for comparison and report
+- [x] **RUN-04** Use source-symbol/sample identities for comparison and report
   complete, incomplete and excluded warm-up/drain payloads separately.
+  Whole-word source-window classification retains crossing/outside counts, late
+  contained recoveries, received incomplete starts and generated-unrecovered words.
+  Window BER/rate use only contained comparisons; final rate is null for partial jobs.
 - [x] **RUN-05** Zero noiseless payload errors with actual NCP discovery; retain
   LDPC iterations, BCH outcomes, codeword errors and the number of compared bits.
   - [x] Recover four real payloads through waveform samples at both spacings;
@@ -415,21 +422,24 @@ job control and CLI delivery.
   - [x] Retain per-step received comparisons, genuine iterations/BCH flags and
     bounded cumulative totals in duration runs. A1.01-second50kHz release run
     recovered8950 words/127376400 bits with zero payload or PLC errors.
-    Observation-window incomplete/excluded classification remains RUN-04.
-- [ ] **RUN-06** Bound memory/runtime/probe output, support cancellation and retain
+    RUN-04 now adds independent observation-window incomplete/excluded accounting.
+- [x] **RUN-06** Bound memory/runtime/probe output, support cancellation and retain
   completed scientific results, including an explicit partial status.
   - [x] Keep waveform/queue/history storage bounded independently of duration;
     expose completed step results and close failed sessions explicitly.
-  - [ ] Add formal cancellation, wall-clock budgets and partial-job results.
-- [ ] **RUN-07** Expose the channel runner through one public Rust API and a thin
+  - [x] Add cooperative token/runtime checks, progress, bounded retained details
+    and Complete/Cancelled/RuntimeExceeded/Failed results preserving completed science.
+- [x] **RUN-07** Expose the channel runner through one public Rust API and a thin
   CLI command with shared typed JSON results; preserve the earlier coding mode.
   - [x] Expose `ChannelRun`, settings, duration plans and typed step/summary JSON.
-  - [ ] Add the duration-channel CLI facade alongside the older coding commands.
-- [ ] **RUN-08** Provide a reproducible PRBS-based example, math, assumptions and
+  - [x] Add `ofdm-fec channel` with versioned requests, shared typed JSON and
+    bounded optional JSONL probes; preserve older coding commands and no-clobber output.
+- [x] **RUN-08** Provide a reproducible PRBS-based example, math, assumptions and
   CLI/user documentation for the duration-based path and its initial one-second default.
   - [x] Provide bounded and duration-based PRBS waveform examples and
     per-component guides with Mermaid, timing, recurrence and comparison math.
-  - [ ] Provide duration-based CLI examples and documentation once that path exists.
+  - [x] Provide the one-second default request, quick probe-export request and
+    subsystem guides with Mermaid/math, bounds and partial-result meanings.
 
 ## Impairments and measurement-driven operation
 
@@ -456,7 +466,9 @@ job control and CLI delivery.
 - [x] **QA-08** Add standard Rust facade and CLI-owned stderr logging, explicit
   levels/error ownership and tests for filters, clean data output and scientific
   invariance; document the current instrumentation scope.
-- [ ] **QA-04** Extend the gate as new channel commands/test-point exports are added.
+- [x] **QA-04** Extend the gate as new channel commands/test-point exports are added.
+  Release-mode channel/JSONL smoke validation and actual CLI no-clobber/schema tests
+  now accompany the existing coding CLI checks.
 - [ ] **QA-05** Independent external interoperability vectors for full channel stages.
 - [ ] **QA-06** Windows/macOS build/runtime validation and CI; Linux checks alone
   do not establish cross-platform runtime support.

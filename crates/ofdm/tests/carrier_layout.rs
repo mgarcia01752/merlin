@@ -203,7 +203,7 @@ fn ncp_uses_descending_preinterleaving_data_and_skips_placeholders_and_zero_load
     use PreInterleavingRole::{Data, ScatteredPilotPlaceholder, ZeroBitLoaded};
     let roles = [Data, Data, ScatteredPilotPlaceholder, Data, ZeroBitLoaded];
     assert_eq!(select_ncp_cells(&roles, 2).unwrap(), [3, 1]);
-    assert_eq!(select_ncp_cells(&roles, 0).unwrap(), []);
+    assert!(select_ncp_cells(&roles, 0).unwrap().is_empty());
     assert!(select_ncp_cells(&roles, 4).is_err());
     assert!(select_ncp_cells(&vec![Data; 8193], 1).is_err());
     assert_eq!(roles[3], Data);

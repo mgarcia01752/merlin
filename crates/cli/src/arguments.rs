@@ -4,11 +4,14 @@
  */
 //! Command-line syntax and small request fields.
 use std::path::PathBuf;
-const HELP: &str = r#"Usage: ofdm-fec <simulate|evaluate> --input FILE --output FILE [--scenario FILE --candidate FILE --frame INDEX]
+const HELP: &str = r#"Usage: ofdm-fec <simulate|evaluate|channel> --input FILE --output FILE [--scenario FILE --candidate FILE --frame INDEX]
 
 Commands:
   simulate  Run a seeded short8/9 uniform16-QAM coding experiment.
   evaluate  Generate/evaluate a candidate from a decoded scenario JSON.
+  channel   Run the duration-based noiseless OFDM channel.
+
+Use --probes-output FILE with channel and request.probes for bounded JSONL export.
 
 Use --candidate with evaluate to test an existing internal candidate.
 Use --settings FILE and --profile INDEX to generate an explicit candidate.
@@ -25,6 +28,8 @@ pub(crate) struct Arguments {
     pub(crate) settings: Option<PathBuf>,
     pub(crate) profile: Option<usize>,
     pub(crate) frame: usize,
+    pub(crate) frame_supplied: bool,
+    pub(crate) probes_output: Option<PathBuf>,
 }
 /// Parses process arguments, printing help/version without starting a job.
 /// # Returns
@@ -54,6 +59,7 @@ pub(crate) fn parse() -> Result<Option<Arguments>, String> {
     while let Some(option) = values.next() {
         let value = values.next().ok_or("Each option requires a value.")?;
         match option.to_str() {
+            Some("--probes-output") => arguments.probes_output = Some(value.into()),
             Some("--input") => arguments.input = value.into(),
             Some("--output") => arguments.output = value.into(),
             Some("--scenario") => arguments.scenario = Some(value.into()),
@@ -69,6 +75,7 @@ pub(crate) fn parse() -> Result<Option<Arguments>, String> {
                 )
             }
             Some("--frame") => {
+                arguments.frame_supplied = true;
                 arguments.frame = value
                     .to_str()
                     .ok_or("Invalid frame.")?
@@ -80,6 +87,9 @@ pub(crate) fn parse() -> Result<Option<Arguments>, String> {
     }
     if arguments.input.as_os_str().is_empty() || arguments.output.as_os_str().is_empty() {
         return Err("--input and --output are required.".into());
+    }
+    if arguments.command != "channel" && arguments.probes_output.is_some() {
+        return Err("--probes-output applies to channel only.".into());
     }
     Ok(Some(arguments))
 }

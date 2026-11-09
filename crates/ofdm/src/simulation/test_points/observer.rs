@@ -12,7 +12,8 @@ const MAX_EVENTS: usize = 100_000;
 const MAX_EVENT_ELEMENTS: usize = 65_536;
 const MAX_TOTAL_ELEMENTS: usize = 1_048_576;
 /// One registered stage and finite element/time windows; indices are array offsets.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ProbeSelection {
     pub stage: TestPointId,
     pub elements: Range<usize>,
@@ -21,6 +22,8 @@ pub struct ProbeSelection {
     pub channel_symbols: Option<Range<u64>>,
 }
 /// Application limits, independent of PHY limits. No default full-array capture.
+#[derive(Clone, serde::Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct ProbeConfig {
     pub selections: Vec<ProbeSelection>,
     pub max_events: usize,
@@ -207,6 +210,16 @@ fn validate_data(
 ) -> Result<(), LabError> {
     use super::SignalReference;
     let valid = match (stage, domain, data) {
+        (TestPointId::SourcePayload, SignalDomain::CodewordBit, ProbeData::Bits(bits)) => {
+            context.reference == SignalReference::NotApplicable && bits.iter().all(|bit| *bit <= 1)
+        }
+        (TestPointId::LegacyNoiseOutput, SignalDomain::CodewordCell, ProbeData::Iq(iq)) => {
+            matches!(
+                context.reference,
+                SignalReference::OtherSubcarrierRms { .. }
+            ) && iq.iter().flatten().all(|value| value.is_finite())
+        }
+
         (TestPointId::PilotSequence, SignalDomain::PhysicalFftBin, ProbeData::Bits(bits)) => {
             context.reference == SignalReference::NotApplicable && bits.iter().all(|bit| *bit <= 1)
         }

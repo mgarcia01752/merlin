@@ -22,6 +22,10 @@ pub enum ChannelPhase {
 /// Actual received word and post-decoding source comparison; no TX identifier enters RX.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct ChannelWordResult {
+    pub placement: super::accounting::WordPlacement,
+    pub first_source_sample: u64,
+    pub end_source_sample: u64,
+    pub recovered_during_drain: bool,
     pub receive_sequence: u64,
     pub first_source_symbol: u64,
     pub last_source_symbol: u64,
@@ -42,6 +46,7 @@ pub struct ChannelStep {
 /// Constant-size totals; completed words belong to returned steps, not this history.
 #[derive(Debug, Clone, Serialize)]
 pub struct ChannelSummary {
+    pub window: Option<super::accounting::WindowTotals>,
     pub phase: ChannelPhase,
     pub timing: DurationTiming,
     pub prbs_seed: PrbsSeed,

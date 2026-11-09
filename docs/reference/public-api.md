@@ -8,7 +8,13 @@ component will adapt inputs and results without duplicating scientific logic.
 | --- | --- |
 | `transmission::{TransmissionSettings, SubcarrierSpacing}` | Fixed single-channel numerology and PHY validation |
 | `transmission::{TransmissionTiming,DurationTiming}` | Legacy one-second schedule and checked64-bit duration/sample-clock planning |
-| `simulation::channel::{ChannelRun,ChannelRunSettings,ChannelSummary,ChannelStep}` | Frozen duration session, one-symbol stepping, independent PRBS comparison and bounded typed outcomes; CLI job lifecycle remains pending |
+| `simulation::channel::{ChannelRun,ChannelRunSettings,ChannelSummary,ChannelStep}` | Frozen duration session, one-symbol stepping, independent PRBS comparison and bounded typed outcomes; shared bounded job/CLI lifecycle available |
+| `simulation::channel::{run_channel,ChannelJobLimits,ChannelJobResult,ChannelJobStatus}` | Cooperative token/runtime limits, progress, finite word retention and preserved complete/partial science |
+| `simulation::channel::accounting::{ObservationWindow,WordPlacement,WindowTotals}` | Source-symbol/sample window classification and whole-word BER/information-bit rate |
+| `simulation::channel::document::ChannelDocument` | Versioned validated CLI/future-adapter request, with millisecond duration default |
+| `simulation::test_points::JsonlProbeExporter` | Generic bounded versioned JSONL writer; no filesystem/DSP ownership |
+| `signal_processing::modulation::interleaving::{parity,twist,demultiplexing}` | Independent permutations, binary forward and finite soft-inverse boundaries |
+| `simulation::runner::simulate_with_probes` | Existing coding experiment with source/noise observation and unchanged RNG draws |
 | `transmission::layout::{CarrierLayout, CarrierLayoutSettings}` | Immutable physical bin roles and per-symbol scattered pilots |
 | `transmission::layout::ncp::select_ncp_cells` | Eligible NCP cells in the pre-interleaving domain |
 | `transmission::packing::{SymbolPacker, PackingSettings, PackedSymbol}` | Stateful256-QAM queue, symbol plans and NCP capacity reservations |
@@ -78,10 +84,11 @@ No Python dependency, binding package or stable C ABI is introduced now.
 See the [public-api skill](../../skills/public-api/SKILL.md) for API development
 requirements and [JSON contracts](documents.md) for the existing serialization.
 
-Existing typed operation outputs can be consumed directly. The common observer
-currently registers four pilot stages, seven PLC stages and physical bins; it is available with the `simulation`
-feature. The underlying DSP pilot APIs work without default features. Other
-producers and CLI/file export remain on the
-[implementation checklist](../development/checklist.md). See
-[pilot signals](../user/pilot-signals.md) for callback lifetimes and limits and the
-[architecture](../architecture.md#test-points-and-data-access) for future stages.
+Existing typed operation outputs remain usable directly. The common observer
+covers pilot/PLC, physical/waveform, payload/NCP and source/legacy-noise boundaries
+with the simulation feature. The bounded [export adapter](../user/simulation/probe-export.md)
+and [channel CLI](../user/channel-runner/cli.md) serialize selected original views.
+Independent [bit-processing stages](../user/bit-processing/README.md) expose direct
+intermediate arrays without requiring observers. Underlying analysis-only DSP
+remains available without codec-backed simulation. See the
+[checklist](../development/checklist.md) for still-proposed producers and modes.

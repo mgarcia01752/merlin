@@ -9,3 +9,5 @@ pub use prbs::{Prbs15, PrbsComparison, PrbsSeed, PrbsVerifier};
 pub use seeded::SeededSource;
 /// Reproducible noncryptographic simulation seed.
 pub type SimulationSeed = u64;
+
+pub mod observation;

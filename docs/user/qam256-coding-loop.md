@@ -8,8 +8,10 @@ These are **independent codeword trials**, not physical OFDM transmission. Each
 trial initializes fresh phase-zero randomizers. This isolated loop does not use
 the separate [stateful symbol packer](symbol-packing.md) or [NCP codec](ncp.md).
 The separate [cell-interleaving API](cell-interleaving.md) now transports mapped
-cells and pilot placeholders. Actual pilot/control signals and waveform
-generation remain pending. The existing CLI `simulate` mode remains16-QAM.
+cells and pilot placeholders. The separate [channel job](channel-runner/README.md)
+now composes actual pilot/control signals and waveform recovery.
+[Independent bit-processing stages](bit-processing/README.md) expose intermediate
+parity/twist/demultiplexing and reverse boundaries. The existing CLI `simulate` mode remains16-QAM.
 
 ## Run and inspect JSON
 

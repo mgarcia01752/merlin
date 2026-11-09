@@ -74,6 +74,20 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
   filler and source/channel origins. Prove failed/exhausted probes preserve
   actual future recovery, and retain received soft-cell rank metadata. Long-run
   duration must not introduce per-second resets or unbounded waveform buffers.
+- For duration jobs, classify whole words by received source-symbol/sample spans,
+  independent of late drain arrival. Keep crossing/outside words in global PRBS
+  alignment but out of contained-word BER/rate. Test window edges, announced vs
+  unrecovered starts, partial/cancelled results and unavailable rates before completion.
+  Test runtime expiry with a deterministic clock rather than sleeps. Bound retained
+  word details separately from scalar totals and preserve science after sink errors.
+- For observation/export, test source/noise RNG continuity with enabled, exhausted
+  and failed sinks; observing a seeded payload downstream is not sufficient. Keep
+  the existing coding AWGN producer distinct from future waveform impairments.
+  Test selected original offsets/metadata, versioned JSONL, record/stream byte
+  limits before writer mutation, I/O failure, and non-overwriting CLI destinations.
+- For exposed parity/twist/demultiplexing stages, retain independent index anchors
+  and compose the same shared mappings behind the legacy facade. Test each reverse
+  soft boundary without adding unsupported coding/QAM modes.
 - For cell interleavers, verify exact index/delay vectors, all supported depths,
   partial columns and dummy padding, PLC-aligned pilot references, startup/drain
   and source-symbol phase at inverse randomizer resets. Never count None history

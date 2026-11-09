@@ -171,7 +171,7 @@ or full RF-channel validation.
 The separate [production payload transport](payload-transport/README.md) now
 connects this codec to actual continuous TX/RX and sample-domain recovery using
 PLC-derived configuration. The isolated NCP example remains unchanged. Dynamic
-activation and the cancellable channel CLI remain later work. The separate
+activation remains later work. The [channel CLI](channel-runner/cli.md) is implemented. The separate
 [duration stepper](channel-runner/README.md) reuses actual NCP decoding.
 The payload waveform example now uses the separate [PRBS15 source](simulation/prbs.md).
 

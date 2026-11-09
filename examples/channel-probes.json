@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "transmission": {
+    "occupied_bandwidth_hz": 24000000,
+    "subcarrier_spacing": "50000",
+    "cyclic_prefix_samples": 512,
+    "roll_off_samples": 128,
+    "time_interleaver_depth": 32
+  },
+  "layout": {
+    "zero_frequency_hz": 100000000,
+    "first_active_bin": 160,
+    "active_end_exclusive": 640,
+    "plc_first_bin": 376,
+    "excluded_bins": [
+      600
+    ],
+    "additional_continuous_pilots": [
+      176,
+      224,
+      272,
+      460,
+      504,
+      540,
+      588,
+      628
+    ]
+  },
+  "limits": {
+    "max_runtime_ms": 300000,
+    "max_retained_words": 64
+  },
+  "duration_ms": 3,
+  "probes": {
+    "selections": [
+      {
+        "stage": "source.payload",
+        "elements": {
+          "start": 0,
+          "end": 16
+        }
+      },
+      {
+        "stage": "rx.payload.bits",
+        "elements": {
+          "start": 0,
+          "end": 16
+        }
+      }
+    ],
+    "max_events": 32,
+    "max_elements_per_event": 16,
+    "max_total_elements": 512
+  }
+}

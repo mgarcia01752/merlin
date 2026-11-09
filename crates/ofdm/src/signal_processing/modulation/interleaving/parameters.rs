@@ -34,3 +34,19 @@ pub(super) fn for_order(order: ConstellationOrder) -> Option<&'static Parameters
         _ => None,
     }
 }
+
+/// Requires a verified uniform short8/9 bit-processing configuration.
+/// # Arguments
+/// * `order` - Physical constellation size.
+/// # Returns
+/// Shared static parameters for independently callable stages.
+/// # Errors
+/// Rejects all currently unsupported coding orders.
+pub(super) fn require(order: ConstellationOrder) -> Result<&'static Parameters, crate::LabError> {
+    for_order(order).ok_or_else(|| {
+        crate::LabError::new(
+            "UnsupportedCodingMode",
+            "Bit processing supports short8/9 uniform16or256-QAM only.",
+        )
+    })
+}

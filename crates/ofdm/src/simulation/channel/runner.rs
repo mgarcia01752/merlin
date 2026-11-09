@@ -69,6 +69,7 @@ impl ChannelRun {
             verifier: PrbsVerifier::new(settings.prbs_seed)?,
             next_symbol: 0,
             summary: ChannelSummary {
+                window: None,
                 phase: ChannelPhase::Acquisition,
                 timing,
                 prbs_seed: settings.prbs_seed,
@@ -176,6 +177,16 @@ impl ChannelRun {
                         .ok_or_else(|| invalid("Missing channel TX."))?;
                     while tx.queued_codewords() < QUEUED_PAYLOAD_TARGET {
                         let payload = self.source.next_payload()?;
+                        let mut source_context = context.clone();
+                        source_context.reference =
+                            crate::simulation::test_points::SignalReference::NotApplicable;
+                        source_context.codeword_index = Some(self.summary.generated_payloads);
+                        crate::simulation::source::observation::source_payload(
+                            &payload,
+                            &source_context,
+                            probe,
+                            observer,
+                        )?;
                         let encoded = tx.enqueue(&payload)?;
                         self.summary.generated_payloads += 1;
                         observation::observe_encoded(&encoded, grid, &context, probe, observer)?;
@@ -254,6 +265,9 @@ impl ChannelRun {
                             "Channel ended without complete generated-payload recovery.",
                         ));
                     }
+                    if let Some(window) = &mut self.summary.window {
+                        window.finalize(self.summary.timing);
+                    }
                     self.summary.phase = ChannelPhase::Finished;
                     log::info!(
                         "channel-finished source-symbols={} compared-bits={} payload-bit-errors={}",
@@ -305,6 +319,9 @@ impl ChannelRun {
                 self.settings.ncp_modulation,
                 self.next_symbol,
             )?);
+            self.summary.window = Some(super::accounting::WindowTotals::new(
+                super::accounting::ObservationWindow::new(self.next_symbol, self.summary.timing)?,
+            ));
             self.summary.payload_origin_symbol = Some(self.next_symbol);
             self.summary.phase = ChannelPhase::Observation;
         }
@@ -350,6 +367,26 @@ impl ChannelRun {
         let mut words = Vec::new();
         if let Some(source) = &decoded.decoded {
             if let Some(control) = &source.ncp {
+                if let Some(window) = &mut self.summary.window {
+                    if (window.coordinates.first_source_symbol
+                        ..window.coordinates.end_source_symbol)
+                        .contains(&source.source_symbol_index)
+                    {
+                        window.announced_starts_within += control
+                            .messages
+                            .iter()
+                            .filter(|message| {
+                                !message.zero_loaded
+                                    && message.pointer
+                                        != crate::transmission::ncp::message::NULL_POINTER
+                            })
+                            .count()
+                            as u64;
+                        window.incomplete_starts_within = window
+                            .announced_starts_within
+                            .saturating_sub(window.completed_starts_within);
+                    }
+                }
                 self.summary.accepted_ncp_fields += 1;
                 self.summary.ncp_ldpc_iterations += control
                     .block_iterations
@@ -370,7 +407,28 @@ impl ChannelRun {
                 {
                     self.summary.payload_codeword_errors += 1;
                 }
+                let window = self
+                    .summary
+                    .window
+                    .as_mut()
+                    .ok_or_else(|| invalid("Missing observation window."))?;
+                let placement = window
+                    .coordinates
+                    .classify(word.first_source_symbol, word.last_source_symbol)?;
+                let during_drain = phase != ChannelPhase::Observation;
+                window.record(
+                    placement,
+                    comparison.bits_tested,
+                    comparison.bit_errors,
+                    during_drain,
+                );
                 words.push(ChannelWordResult {
+                    placement,
+                    first_source_sample: word.first_source_symbol
+                        * u64::from(self.summary.timing.symbol_period_samples),
+                    end_source_sample: (word.last_source_symbol + 1)
+                        * u64::from(self.summary.timing.symbol_period_samples),
+                    recovered_during_drain: during_drain,
                     receive_sequence: word.receive_sequence,
                     first_source_symbol: word.first_source_symbol,
                     last_source_symbol: word.last_source_symbol,

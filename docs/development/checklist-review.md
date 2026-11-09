@@ -2,7 +2,7 @@
 
 Reviewed on 2026-11-08 against the current checkout. This is an evidence snapshot;
 the [official checklist](checklist.md) remains the source of completion status.
-This snapshot predates RUN-01/02/03/05 duration-stepper completion; see the
+This historical snapshot predates the complete RUN and ARCH-05/06/07 milestone; see the
 [current checklist](checklist.md#configurable-duration-reference-run) for updates.
 All30 originally unchecked parent items were reviewed at that baseline. None was found fully
 complete under its existing requirement. Completed components inside seven

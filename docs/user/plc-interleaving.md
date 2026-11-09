@@ -125,7 +125,8 @@ retry, consuming the existing dispatch budget. No callback gets mutable stage
 state. The [common observer limits](pilot-signals.md#direct-apis-and-observation)
 remain unchanged. The [full PLC producer](plc-channel.md) now registers message,
 coded-bit, randomized-label, data/preamble I/Q and physical-grid stages as well.
-CLI/file export remains later work.
+The shared [JSONL writer and CLI](simulation/probe-export.md) now export selected
+registered events; producers must still be invoked by the composing experiment.
 
 ## Validation and remaining work
 

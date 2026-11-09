@@ -53,3 +53,29 @@ local helpers described in [Git and versioning](git.md).
 Standard logging dependencies are pinned in Cargo.lock and downloaded by Cargo;
 no operating-system packages or separate installation step are required.
 See [logging configuration](logging.md).
+
+## Channel job and constrained-VM validation
+
+The [channel CLI](../user/channel-runner/cli.md) and
+[probe export](../user/simulation/probe-export.md) use the same Rust APIs as tests.
+The pre-push gate now includes a release channel/JSONL smoke run and keeps the
+older coding-mode smoke. No new operating-system packages are required.
+
+Debug build outputs can become large on a small VM. To remove only generated
+debug-profile outputs while retaining source files, Cargo downloads and release
+artifacts, use:
+
+```bash
+./scripts/cargo-local.sh clean --profile dev
+```
+
+For lower disk usage during a local full gate, disable debug symbols and
+incremental artifacts for that command only:
+
+```bash
+CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 ./scripts/check-before-push.sh
+```
+
+This runs the same checks; it changes build metadata/cache size, not scientific
+algorithms. Normal development can keep debug information enabled. The repository's
+ignored `development/` stores private validation logs; it is not a runtime input.

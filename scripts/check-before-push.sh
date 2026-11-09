@@ -28,5 +28,20 @@ trap 'rm -rf -- "${SMOKE_DIRECTORY}"' EXIT
 "${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- simulate \
   --input examples/awgn.json --output "${SMOKE_DIRECTORY}/awgn.json"
 python3 -m json.tool "${SMOKE_DIRECTORY}/awgn.json" >/dev/null
+"${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- channel \
+  --input examples/channel-probes.json --output "${SMOKE_DIRECTORY}/channel.json" \
+  --probes-output "${SMOKE_DIRECTORY}/channel-probes.jsonl"
+python3 - "${SMOKE_DIRECTORY}/channel.json" "${SMOKE_DIRECTORY}/channel-probes.jsonl" <<'PY_CHANNEL'
+import json
+import sys
+with open(sys.argv[1], encoding="utf-8") as source:
+    result = json.load(source)
+assert result["status"] == "complete"
+assert result["summary"]["comparison"]["bit_errors"] == 0
+assert result["summary"]["window"]["payload_rate_bps"] is not None
+with open(sys.argv[2], encoding="utf-8") as source:
+    records = [json.loads(line) for line in source]
+assert records and all(record["schema_version"] == 1 for record in records)
+PY_CHANNEL
 python3 tools/release/versions.py
 echo 'All local pre-push checks passed.'

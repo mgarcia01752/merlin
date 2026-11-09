@@ -24,7 +24,8 @@ exhausting a budget or failing a callback must not change those completed values
 Callback failures still consume the dispatch budget and are reported to the caller;
 they are not silently retried. The channel stepper ends a failed session on
 observer error and retains completed summary comparisons. Disabled/exhausted
-probes do not end a session. Formal job-level partial status remains RUN-06.
+probes do not end a session. The [job wrapper](../channel-runner/job.md) now
+returns explicit Failed/Cancelled/RuntimeExceeded results with completed science.
 
 Windows retain original element offsets and total source size. PLC windows also
 retain the full local grid; physical-bin windows retain spacing and frequency
@@ -45,3 +46,9 @@ a selected window while the callback is active; borrowed data cannot outlive tha
 call. Selection and finite budgets bound the amount of optional data collected.
 See [observation limits](../pilot-signals.md#direct-apis-and-observation) and
 [the architecture's stage map](../../architecture.md#test-points-and-data-access).
+
+Source and existing coding-noise outputs now have producers with independent RNG
+continuity tests. [Versioned bounded JSONL export](probe-export.md) and the
+[channel CLI](../channel-runner/cli.md) provide maintained file output. The
+[separate bit-processing stages](../bit-processing/README.md) expose direct
+intermediates without requiring the common observer.

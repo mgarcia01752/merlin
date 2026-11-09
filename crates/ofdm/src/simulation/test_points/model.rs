@@ -16,9 +16,13 @@ use crate::{
 use serde::Serialize;
 const MAX_PROBE_ID_BYTES: usize = 128;
 /// Registered observation stage; additional stages can be added without a closed API.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, serde::Deserialize)]
 #[non_exhaustive]
 pub enum TestPointId {
+    #[serde(rename = "source.payload")]
+    SourcePayload,
+    #[serde(rename = "legacy.noise.output")]
+    LegacyNoiseOutput,
     #[serde(rename = "tx.pilots.sequence")]
     PilotSequence,
     #[serde(rename = "tx.pilots.continuous")]
@@ -96,7 +100,8 @@ impl TestPointId {
     /// Transmit or receive according to the registered producer; channel output is RX input.
     pub(super) fn direction(self) -> SignalDirection {
         match self {
-            Self::PilotSequence
+            Self::SourcePayload
+            | Self::PilotSequence
             | Self::ContinuousPilots
             | Self::ScatteredPilots
             | Self::PilotPower
@@ -117,7 +122,8 @@ impl TestPointId {
             | Self::PayloadLabels
             | Self::PayloadMapped
             | Self::PayloadInterleaved => SignalDirection::Transmit,
-            Self::ChannelOutput
+            Self::LegacyNoiseOutput
+            | Self::ChannelOutput
             | Self::RxFramed
             | Self::RxUseful
             | Self::RxFft

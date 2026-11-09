@@ -54,8 +54,8 @@ descriptors, actual decoder iterations and information-bit comparisons. The sepa
 sample transfer and matched FFT recovery. The [fixed payload receiver](../payload-transport/receiver.md) now consumes the
 received snapshot and checks the live gate. The
 [channel stepper](../channel-runner/README.md) now acquires through this gate
-and freezes independent payload settings. The cancellable job/CLI facade remains
-a later stage; existing standalone codec functions remain independently usable.
+and freezes independent payload settings. The [channel job/CLI](../channel-runner/cli.md)
+now composes the same gate; existing standalone codec functions remain independently usable.
 
 See [architecture](../../architecture.md), [checklist](../../development/checklist.md)
 and [source evidence](../../reference/plc-evidence.md). These pages explain design;

@@ -18,7 +18,7 @@ are optional for CM/CMTS; they already appear in the DOCSIS3.1 baseline.
 | 16-QAM | 4 | Required | Implemented | Experimental | Initial experimental mode |
 | 64-QAM | 6 | Required | Implemented | Experimental | Pending |
 | 128-QAM | 7 | Required | Implemented | Experimental | Pending |
-| 256-QAM | 8 | Required | Implemented | Experimental | Pending |
+| 256-QAM | 8 | Required | Implemented | Experimental | Separate fixed-profile channel command |
 | 512-QAM | 9 | Required | Implemented | Experimental | Pending |
 | 1024-QAM | 10 | Required | Implemented | Experimental | Pending |
 | 2048-QAM | 11 | Required | Implemented | Experimental | Pending |
@@ -39,8 +39,10 @@ independently of complete coding-mode availability.
 A separate [noiseless256-QAM cell loop](../user/qam256-coding-loop.md) now covers
 BCH/LDPC, parity/twist/demultiplexing, randomization and soft inverse processing.
 It reports iterations per codeword but does not yet have physical symbol packing
-or integration into the general CLI simulation job. That is why256-QAM remains
-pending in the final column and in the registry's `coding_simulation` field.
+or integration into the general CLI `simulate` coding-mode selector. The separate
+[channel CLI](../user/channel-runner/cli.md) now implements fixed256-QAM waveform
+transport. The final column and registry still describe the older generic
+`simulate` selector, not the channel command.
 
 ## Coding work still required
 

@@ -42,8 +42,9 @@ signals through time samples, with bounded test points and a noiseless example.
 received PLC configuration, continuous state and real LDPC/BCH recovery over samples.
 The [duration-based channel stepper](docs/user/channel-runner/README.md) now
 streams continuous PRBS through actual waveform TX/RX, with separate acquisition,
-observation, completion and drain. The cancellable channel CLI, nonideal acquisition
-and external interoperability validation remain pending. See
+observation, completion and drain. The [channel CLI](docs/user/channel-runner/cli.md) adds source-window throughput/BER,
+cancellation, partial results and bounded probe export. Nonideal acquisition and
+external interoperability validation remain pending. See
 [coding scope and equations](docs/reference/coding-mode.md).
 
 [Simulation design guides](docs/user/simulation/README.md) explain each simulation

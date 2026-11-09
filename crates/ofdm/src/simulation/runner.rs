@@ -42,7 +42,36 @@ pub fn simulate(
     settings: &SimulationSettings,
     measured: Option<&MeasuredNoise<'_>>,
     cancel: &AtomicBool,
+    progress: impl FnMut(SimulationProgress),
+) -> Result<SimulationResult, LabError> {
+    simulate_with_probes(
+        settings,
+        measured,
+        cancel,
+        progress,
+        &mut super::test_points::TestPointProbe::disabled(),
+        &mut super::test_points::NoopObserver,
+    )
+}
+/// Runs the existing coding experiment with read-only source/noise boundary probes.
+/// # Arguments
+/// * `settings` - Existing bounded coding-mode settings; no new channel model.
+/// * `measured` - Optional exact-frame residual-power inputs.
+/// * `cancel` - Cooperative token checked before each word.
+/// * `progress` - Notification after completed trials.
+/// * `probe` - Finite optional selector; cannot consume source/noise draws.
+/// * `observer` - Read-only boundary sink; errors terminate this existing API.
+/// # Returns
+/// The same scientific outcomes/draw sequence as simulate for the same inputs.
+/// # Errors
+/// Propagates existing validation/codec failures and explicit observer errors.
+pub fn simulate_with_probes(
+    settings: &SimulationSettings,
+    measured: Option<&MeasuredNoise<'_>>,
+    cancel: &AtomicBool,
     mut progress: impl FnMut(SimulationProgress),
+    probe: &mut super::test_points::TestPointProbe,
+    observer: &mut impl super::test_points::ProbeObserver,
 ) -> Result<SimulationResult, LabError> {
     log::debug!(
         "simulation-start requested-codewords={} max-iterations={} max-runtime-ms={}",
@@ -80,7 +109,15 @@ pub fn simulate(
             break;
         }
         let message = source.next_payload();
+        let mut context = super::test_points::ProbeContext::new(
+            "coding-experiment",
+            "legacy16qam",
+            super::test_points::RunPhase::Observation,
+        )?;
+        context.codeword_index = Some(result.completed_codewords as u64);
+        super::source::observation::source_payload(&message, &context, probe, observer)?;
         let encoded = codec.encode(&message).map_err(invalid)?;
+        let mut noisy_symbols = Vec::with_capacity(LDPC_CODEWORD_BITS / QAM16_BITS_PER_SYMBOL);
         let mut llrs = vec![0.0; LDPC_CODEWORD_BITS];
         for (symbol_index, symbol_order) in order.chunks_exact(QAM16_BITS_PER_SYMBOL).enumerate() {
             let label = symbol_order.iter().fold(0, |label, offset| {
@@ -91,11 +128,14 @@ pub fn simulate(
             if !settings.noiseless {
                 add_awgn(&mut symbol, power, source.rng_mut());
             }
+            noisy_symbols.push(symbol);
             let likelihoods = qam16_llrs(symbol, power)?;
             for (bit, source_offset) in symbol_order.iter().enumerate() {
                 llrs[*source_offset] = likelihoods[bit];
             }
         }
+        context.reference = super::test_points::SignalReference::OtherSubcarrierRms { rms: 1.0 };
+        super::source::observation::noise_output(&noisy_symbols, &context, probe, observer)?;
         let decoded = codec
             .decode(&llrs, settings.max_iterations)
             .map_err(invalid)?;

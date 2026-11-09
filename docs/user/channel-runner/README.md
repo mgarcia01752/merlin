@@ -21,7 +21,9 @@ flowchart LR
 | --- | --- |
 | Duration and source-symbol schedule | [Timing](timing.md) |
 | Session state and encapsulated TX/RX composition | [Session](session.md) |
-| Per-step outcomes and interval accounting | [Results](results.md) |
+| Per-step outcomes and interval accounting | [Results](results.md), [window accounting](accounting.md) |
+| Cancellation, budgets and partial jobs | [Job lifecycle](job.md) |
+| Standalone command and shared JSON | [CLI](cli.md) |
 
 The current path is uniform256-QAM ProfileA, short rate8/9 payload FEC, one
 fixed channel and a noiseless unity connection. NCP uses the selected supported
@@ -44,11 +46,10 @@ one-second boundary, or3ms for a quick demonstration:
 ./scripts/cargo-local.sh run -p docsis-ofdm-fec --release --example channel_run --locked -- 3
 ```
 
-The example prints a shared Rust JSON summary. This is a stepping library API
-and an example, not a new command in the existing `ofdm-fec` CLI. Formal job
-cancellation, wall-clock budgets, progress callbacks and incomplete/excluded
-observation-window payload classification remain later RUN work. A caller can
-stop calling the session between symbols and inspect completed totals, but that
-does not yet supply a cancellable job result or resume a failed session.
+The example prints the stepping API's Rust JSON summary. The shared
+[channel job and CLI](cli.md) now add cooperative cancellation, host-runtime
+limits, finite detailed-result retention, explicit partial status and bounded
+stage export. [Window accounting](accounting.md) separates contained words from
+boundary-crossing/outside words before calculating information-bit rate.
 
 See [architecture](../../architecture.md) and [checklist](../../development/checklist.md).

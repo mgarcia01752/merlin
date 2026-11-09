@@ -10,3 +10,9 @@ pub mod runner;
 pub use config::ChannelRunSettings;
 pub use results::{ChannelPhase, ChannelStep, ChannelSummary, ChannelWordResult};
 pub use runner::ChannelRun;
+
+pub mod accounting;
+
+pub mod job;
+pub use job::{run_channel, ChannelJobLimits, ChannelJobResult, ChannelJobStatus, ChannelProgress};
+pub mod document;

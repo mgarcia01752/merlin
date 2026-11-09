@@ -2,7 +2,8 @@
 
 The root simulation files coordinate the existing bounded16-QAM coding experiment.
 They separate configuration policy, scientific execution and result accounting.
-They are not yet the planned one-second OFDM waveform runner.
+They are distinct from the now-implemented [channel job/CLI](../channel-runner/cli.md),
+which supplies the duration-based OFDM waveform path.
 
 ```mermaid
 flowchart TB

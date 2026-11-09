@@ -24,7 +24,7 @@ pub(crate) const QUEUED_PAYLOAD_TARGET: usize = 8;
 pub(crate) const MAX_ACQUISITION_SYMBOLS: u64 = 8 * crate::types::PLC_FRAME_SYMBOLS;
 pub(crate) const MAX_COMPLETION_SYMBOLS: u64 = 4096;
 /// Independent settings snapshot; callers may edit it before creating a session.
-#[derive(Clone)]
+#[derive(Clone, serde::Serialize)]
 pub struct ChannelRunSettings {
     pub transmission: TransmissionSettings,
     pub layout: CarrierLayoutSettings,

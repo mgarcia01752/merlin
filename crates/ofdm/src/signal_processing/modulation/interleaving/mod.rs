@@ -4,15 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Parity interleaving, column twists and cell demultiplexing, plus soft inverse.
+mod boundary;
+pub mod demultiplexing;
 mod parameters;
+pub mod parity;
+pub mod twist;
 use crate::{
     error::invalid, signal_processing::modulation::qam::SymbolLabel,
     types::ofdm_modulation::ConstellationOrder, LabError,
 };
-use fec_codec::parameters::{LDPC_CODEWORD_BITS, LDPC_INPUT_BITS};
+use fec_codec::parameters::LDPC_CODEWORD_BITS;
 use parameters::Parameters;
-const PARITY_GROUP_BITS: usize = 360;
-const PARITY_GROUPS: usize = (LDPC_CODEWORD_BITS - LDPC_INPUT_BITS) / PARITY_GROUP_BITS;
 
 /// Immutable short8/9 uniform-modulation bit permutation, reusable across words.
 ///
@@ -31,12 +33,7 @@ impl BitInterleaver {
     /// # Errors
     /// Returns UnsupportedCodingMode for other orders; never substitutes a mode.
     pub fn new(order: ConstellationOrder) -> Result<Self, LabError> {
-        let parameters = parameters::for_order(order).ok_or_else(|| {
-            LabError::new(
-                "UnsupportedCodingMode",
-                "Bit processing supports short8/9 uniform16or256-QAM only.",
-            )
-        })?;
+        let parameters = parameters::require(order)?;
         Ok(Self {
             bits_per_cell: parameters.bits_per_cell,
             output_to_codeword: build_permutation(parameters),
@@ -100,19 +97,10 @@ pub fn transmit_bit_order() -> Vec<usize> {
 }
 
 fn build_permutation(parameters: &Parameters) -> Vec<usize> {
-    let columns = parameters.twists.len();
-    let mut parity: Vec<usize> = (0..LDPC_CODEWORD_BITS).collect();
-    for group in 0..PARITY_GROUPS {
-        for offset in 0..PARITY_GROUP_BITS {
-            parity[LDPC_INPUT_BITS + PARITY_GROUP_BITS * group + offset] =
-                LDPC_INPUT_BITS + PARITY_GROUPS * offset + group;
-        }
-    }
-    let mut order = vec![0; LDPC_CODEWORD_BITS];
-    for (input, original) in parity.into_iter().enumerate() {
-        let column = input / parameters.rows;
-        let row = (input % parameters.rows + parameters.twists[column]) % parameters.rows;
-        order[row * columns + parameters.demultiplexer[column]] = original;
-    }
-    order
+    let parity = parity::permutation();
+    let twist = twist::for_parameters(parameters);
+    demultiplexing::for_parameters(parameters)
+        .into_iter()
+        .map(|position| parity[twist[position]])
+        .collect()
 }

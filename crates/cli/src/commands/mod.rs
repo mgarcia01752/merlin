@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Small command dispatch; each operation owns its adaptation layer.
+mod channel;
 mod evaluate;
 mod simulate;
 use crate::arguments::Arguments;
@@ -18,6 +19,7 @@ use std::sync::atomic::AtomicBool;
 pub(crate) fn run(arguments: Arguments, cancel: &AtomicBool) -> Result<(), String> {
     log::info!("command-start command={}", arguments.command);
     match arguments.command.as_str() {
+        "channel" => channel::run(arguments, cancel),
         "simulate" => simulate::run(arguments, cancel),
         "evaluate" => evaluate::run(arguments, cancel),
         _ => Err("Unknown command. Use --help.".into()),

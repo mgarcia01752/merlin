@@ -13,9 +13,9 @@ Start with the component you want to understand:
 | `pilots/` | [Pilot signals](pilots.md) | Compose continuous/scattered reference signals for a physical symbol |
 | `plc/` | [PLC transmission and reception](plc.md) | Recover actual PLC messages and build receiver-owned configuration |
 | `waveform/` | [Waveform TX/channel/RX](../waveform/README.md) | Separate sample-domain stages, known-reference receive and bounded actual PLC verification |
-| `channel/` | [Duration-based channel](../channel-runner/README.md) | Frozen duration plan, shared actual waveform link, bounded step/summary outcomes |
+| `channel/` | [Duration-based channel](../channel-runner/README.md) | Duration plan, source-window metrics, bounded cancellable jobs and CLI results |
 | `payload/` | [Actual payload/NCP transport](../payload-transport/README.md) | Continuous TX/RX, received configuration, bounded recovery and waveform proof |
-| `test_points/` | [Stage observations](test-points.md) | Inspect selected intermediate data without changing the experiment |
+| `test_points/` | [Stage observations](test-points.md) | Inspect/export bounded selected intermediates without changing scientific state |
 | `config.rs`, `runner.rs`, `results.rs` | [Experiment runner](runner.md) | Validate limits, run the existing16-QAM trials and collect outcomes |
 
 These are design guides. Method signatures and binding details belong in the
@@ -44,7 +44,7 @@ and tests. Its progress notifications are separate from common stage observation
 common producers cover pilots, PLC, physical bins, waveform TX/RX and actual
 payload/NCP boundaries.
 The bounded waveform reference experiment and separate configurable-duration
-payload stepper are implemented. Channel job cancellation and CLI delivery remain planned. The separate payload verifier additionally
+payload stepper, job cancellation and [channel CLI](../channel-runner/cli.md) are implemented. The separate payload verifier additionally
 recovers actual encoded data/NCP using PLC-derived settings. The root experiment's source
 and the independent coding loop are not one continuous OFDM transmission.
 

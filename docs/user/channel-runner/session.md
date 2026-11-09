@@ -62,8 +62,9 @@ are bounded independently of observation duration.
 Stage/control/observer errors close the session and return a typed diagnostic.
 Completed summary comparisons remain available. Calling a failed session rejects;
 calling a finished session returns no further steps. Failed calls are not atomic
-scientific transactions and cannot be retried in place. Formal cancellation,
-wall-clock budgets, restart and partial-job status belong to RUN-06.
+scientific transactions and cannot be retried in place. The separate [job wrapper](job.md) now adds cancellation, wall-clock budgets,
+progress and partial status. Failed-session restart remains explicit; the wrapper
+retains completed totals rather than retrying a partially mutated operation.
 
 Tests cover both spacings, maximum depth, sample chunk independence, setting
 snapshot ownership, invalid limits, observer failure and finite completion/drain.

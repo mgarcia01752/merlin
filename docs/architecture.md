@@ -31,8 +31,9 @@ Build a standalone, DOCSIS-focused Rust scientific engine with two modes:
   combining impairments so measured residual noise is not counted twice.
 
 The configurable-duration noiseless waveform stepper is implemented; the
-measurement-driven waveform model and cancellable channel CLI job are not.
-The existing CLI runs the earlier 16-QAM coding experiment;
+measurement-driven waveform model is not. The channel job and CLI now expose
+cancellation, runtime limits, partial results and versioned probe export.
+The existing CLI also retains the earlier16-QAM coding experiment;
 256-QAM packing/interleaving integration is currently exercised by library APIs,
 examples and tests. Separate seeded and PRBS15 sources are implemented with
 independent continuous PRBS verification; see the [PRBS design](user/simulation/prbs.md).
@@ -62,10 +63,10 @@ completed component foundations from unfinished adapter, job/CLI lifecycle and
 expanded PHY requirements. It predates the duration-stepper completion below.
 Checked substeps do not close their parent requirement.
 
-Existing composite stages that do not expose all intermediate results are tracked
-as gaps in the checklist. In particular, parity interleaving, column twisting and
-bit demultiplexing currently share a composed permutation. They need explicit
-intermediate boundaries before claiming complete stage instrumentation.
+Parity interleaving, column twisting and cell demultiplexing now expose separate
+forward/soft-inverse APIs and direct intermediate arrays. The existing facade
+composes their shared mapping owners. Supported coding modes remain uniform
+16/256-QAM short8/9; splitting stages does not expand that scientific support.
 
 Current source ownership:
 
@@ -107,8 +108,8 @@ crates/
 │   │   ├── plc/               PLC composition, acquisition and optional observation
 │   │   ├── waveform/          Separate TX/RX, bounded reference experiment and probes
 │   │   ├── payload/           Continuous payload TX/RX, probes and bounded waveform proof
-│   │   ├── channel/           Frozen duration settings, shared link, stepper and bounded totals
-│   │   ├── test_points/       Borrowed events, selection and finite dispatch budgets
+│   │   ├── channel/           Settings, shared link, stepper, window accounting and bounded jobs
+│   │   ├── test_points/       Borrowed events, finite selection and versioned JSONL writer export
 │   │   ├── coding_loop/       Independent 256-QAM codeword trials
 │   │   ├── runner.rs          Existing 16-QAM trial orchestration
 │   │   ├── config.rs          Work limits and receiver policy
@@ -177,17 +178,18 @@ scientific algorithms remain in their existing component modules.
 ## Test points and data access
 
 Existing APIs expose useful intermediate arrays and results. The common typed,
-bounded observer is implemented for **four pilot stages, seven PLC stages and physical bins**. Other stage IDs below
-remain proposed; their direct outputs are not yet wired to that observer. CLI/file
-export and whole-run cancellation policy remain TODO. “Direct” means a caller can
+bounded observer covers pilot/PLC, physical bins, waveform TX/RX, payload/NCP,
+source output and the existing coding experiment's noise output. A versioned
+bounded JSONL writer adapter and the channel CLI export selected events. Other
+stage IDs below remain proposed where direct outputs are not wired to producers. “Direct” means a caller can
 obtain data through an existing stage API.
 
 | Test point | Owner / data | Access now |
 | --- | --- | --- |
-| `source.payload` | `simulation::source`; source bits and seed/source identity | Direct seeded/PRBS output and absolute bit position |
+| `source.payload` | `simulation::source`; source bits and seed/source identity | Direct output plus bounded source producer in coding/channel jobs |
 | `tx.bch.word` | `fec_codec::bch`; BCH data plus parity | Direct |
 | `tx.ldpc.word` | `fec_codec::ldpc`; systematic word plus parity | Direct |
-| `tx.bits.parity`, `tx.bits.twist`, `tx.bits.demux` | Separate bit-processing stages; bit positions and cell labels | Final labels/permutation direct; named intermediate arrays TODO |
+| `tx.bits.parity`, `tx.bits.twist`, `tx.bits.demux` | Separate bit-processing stages; bit positions and cell labels | Separate forward/soft-inverse APIs and direct intermediate arrays; composed mapping preserved |
 | `tx.packing.symbol` | `transmission::packing`; starts, roles, filler and offsets | Direct plan; IDs are transmitter truth only |
 | `tx.ncp.messages`, `tx.ncp.crc`, `tx.ncp.encoded` | Message bytes, CRC, control-code bits/labels | Direct field/codec outputs |
 | `tx.randomizer.cells` | Randomized labels and diagnostic LFSR state | Direct per-cell output/state |
@@ -211,13 +213,13 @@ obtain data through an existing stage API.
 | `rx.ncp.llrs`, `rx.ncp.accepted` | Actual soft records, CRC-accepted messages and direct block iterations | Production source decoder and bounded observer |
 | `rx.data.llrs`, `rx.descrambler.llrs` | Data likelihoods after/before sign inversion | Post-inverse soft records have production observer; raw demapper remains direct |
 | `rx.slicer.decisions` | Nearest label/reference point and distance/error vector | TODO hard slicer |
-| `rx.bits.inverse` | Complete word LLRs restored to codeword order | Production collector and bounded observer; individual bit-processing substeps remain TODO |
+| `rx.bits.inverse` | Complete word LLRs restored to codeword order | Production collector and bounded observer; independent inverse bit-stage APIs available directly |
 | `rx.ldpc.bits` | Decisions, parity success and actual iteration count | Direct |
 | `rx.bch.payload` | Recovered bits, status and corrected-bit count | Direct |
 | `tx.payload.ldpc`, `tx.payload.labels` | Actual enqueue-stage coding/label outputs | Bounded TX observer; queue ID is diagnostic, placement time unknown |
 | `tx.cells.mapped`, `tx.cells.interleaved`, `rx.cells.restored` | Typed cells preserving pilots and unavailable history | Production stream owners and bounded directional observer |
 | `rx.payload.bits` | Actual recovered BCH payload, independent of source truth | Production collector and bounded RX observer |
-| `result.truth` | Actual bit/codeword comparisons and trial counters | Bounded payload-waveform proof plus duration-step results, PRBS totals and fixed iteration histogram; window classification remains RUN-04 |
+| `result.truth` | Actual bit/codeword comparisons and trial counters | Bounded payload-waveform proof plus duration-step results, PRBS totals and fixed iteration histogram; whole-word source-window metrics and explicit complete/partial job results implemented |
 
 The implemented contract provides borrowed bit/label arrays, sparse pilot records
 and a power record, with explicit metadata and finite selection budgets. See the
@@ -325,7 +327,8 @@ active envelope and internal exclusions; the example uses a24MHz envelope.
 Neither establishes external interoperability or a one-second payload experiment.
 CELL-02/WAVE-RX-06 now add the separate actual payload waveform path described
 below. The duration stepper is implemented separately; nonideal acquisition
-(WAVE-RX-05), observation-window accounting and job/CLI lifecycle remain open.
+(WAVE-RX-05) and measurement-driven impairments remain open. Window accounting
+and bounded job/CLI lifecycle are implemented separately.
 
 See the [per-subsystem guides](user/waveform/README.md) and
 [pinned waveform evidence](reference/waveform-evidence.md).
@@ -402,11 +405,29 @@ whole-run history. Failed sessions close explicitly; zero BER is unavailable
 until actual bits have been compared. A1.01-second50kHz release experiment recovered
 8950 words/127376400 payload bits with zero payload or PLC errors.
 
-This completes RUN-01/02/03/05 for the current fixed-profile noiseless scope.
-Next is RUN-04 window-specific complete/incomplete/excluded payload accounting.
-Formal cancellation/runtime-budget/partial-job semantics and the CLI facade remain
-RUN-06/07/08; a caller pausing between steps does not establish those features.
-See the [component guides](user/channel-runner/README.md) and example `channel_run`.
+The RUN group is now implemented for the fixed-profile noiseless scope. A shared
+window classifier uses received inclusive source-symbol spans and a half-open
+observation window; whole-contained words contribute window BER/information-bit
+rate, crossing/outside words remain explicitly excluded while global PRBS truth
+stays continuous. Late receive completion during drain does not change source
+membership. Partial jobs distinguish received announced incomplete starts from
+admitted-but-unrecovered words. Final window rate stays unavailable until completion.
+
+The job wrapper checks a caller cancellation token and finite host-runtime budget
+between bounded steps, retains finite word details and all completed scalar totals,
+and reports Complete/Cancelled/RuntimeExceeded/Failed independently of decoder
+success. The CLI writes the same typed result and never replaces existing files.
+Versioned JSONL export preserves original selected offsets, units and grid metadata,
+with independent record/stream limits and explicit terminal I/O/limit errors.
+
+ARCH-05/06/07 and QA-04 close this infrastructure milestone: maintained export,
+source/noise draw-invariance tests, separate bit-processing boundaries, and a
+release channel/probe smoke check in the pre-push gate. Existing coding AWGN is
+only instrumented; no new waveform impairment is introduced. The next scientific
+stage is MODEL-04, using the [user diagram reference](development/impairment-reference.md).
+This milestone stops before that stage. See the [component guides](user/channel-runner/README.md),
+[channel CLI](user/channel-runner/cli.md), [export](user/simulation/probe-export.md)
+and [bit-processing design](user/bit-processing/README.md).
 
 ## Planned module ownership
 
@@ -416,7 +437,6 @@ before implementation if source analysis shows a better existing owner.
 
 | Planned path under `crates/ofdm/src/` | Responsibility |
 | --- | --- |
-| `signal_processing/modulation/interleaving/{parity,twist,demultiplexing}.rs` | Separate intermediate and inverse boundaries behind the existing facade |
 | `transmission/layout/additional_pilots.rs` | Specification-based additional continuous-pilot placement |
 | `signal_processing/receiver/estimation.rs` | WAVE-RX: independently verified nonideal synchronization/channel estimation beyond the existing known-reference receiver |
 | `signal_processing/modulation/slicing.rs` | Diagnostic hard decisions; keep soft demapping for LDPC |
@@ -452,7 +472,7 @@ randomizer states separate. The cell-interleaver pair adds M-1 symbols of delay;
 None history is not transmitted payload; the physical reference uses explicit
 recorded startup/drain replacements. Warm-up, configurable observation duration
 (initially one second) and drain need separate accounting, including complete
-versus unfinished observation-window words (RUN-04). The existing
+versus unfinished observation-window words in the shared source-window classifier. The existing
 `one_second_timing` helper now delegates to general duration/sample planning,
 while preserving its original32-bit result shape. New plans use64-bit counts.
 

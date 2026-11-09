@@ -25,7 +25,7 @@ const NCP_ENCODED_BITS: usize = 48;
 const MAX_PROFILE_ID: ProfileId = 15;
 
 /// Uniform positive-bit-loaded NCP profile; no zero-loaded NCP cells in this mode.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum NcpModulation {
     Qpsk,

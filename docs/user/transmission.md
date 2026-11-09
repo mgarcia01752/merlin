@@ -12,7 +12,8 @@ and reference soft demapping are available through16K-QAM. The
 physical-bin assembly. [Waveform TX and matched RX](waveform/README.md) now carry
 those signals through actual time samples; the separate [payload transport](payload-transport/README.md) now adds actual
 encoded data/NCP recovery. The [channel stepper](channel-runner/README.md) now
-adds continuous duration-based orchestration; the cancellable CLI job remains pending.
+adds continuous duration-based orchestration; the [job/CLI](channel-runner/cli.md)
+now adds cancellation, window metrics and partial results.
 [Cell time/frequency interleaving](cell-interleaving.md) and its inverse receiver
 are now available with a correctly phased pilot reference.
 [Data/NCP randomization](cell-randomizer.md) is now available as a standalone
@@ -24,8 +25,8 @@ A [stateful symbol packer](symbol-packing.md) now carries256-QAM codewords
 across pre-interleaving plans with NCP reservations. The [NCP codec](ncp.md)
 now provides actual control FEC, CRC and receiver boundary discovery.
 Production fixed-profile payload/NCP waveform transport is now available
-separately. The existing CLI remains the
-separate16-QAM coding experiment.
+separately. The existing CLI `simulate` command remains the separate16-QAM coding experiment;
+`channel` runs the actual duration-based waveform path.
 
 ## Transmission flow
 
@@ -218,6 +219,6 @@ implemented as well. Separate [pilot generators](pilot-signals.md) now provide
 signs and power. PLC/physical-bin assembly and bounded noiseless TX/RX waveform integration
 are now available. Production fixed-profile data/NCP transport and a separate
 [PRBS15 source/verifier](simulation/prbs.md) are implemented. Remaining
-stages include nonideal acquisition, observation-window accounting and the
-cancellable channel CLI. Duration-based stepping is now implemented.
+stages include nonideal acquisition and waveform impairments. Duration stepping,
+window accounting and the cancellable channel CLI are now implemented.
 The timing and packing tests do not establish full channel recovery.

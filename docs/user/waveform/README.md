@@ -46,8 +46,8 @@ Actual PLC messages recovered from samples feed the existing descriptor admissio
 and readiness owner. Data bins in the bounded example are deterministic 256-QAM
 reference cells; the separate [payload waveform experiment](../payload-transport/reference-experiment.md)
 now carries actual encoded payload/NCP using acquired PLC configuration. Nonideal
-synchronization and the channel job/CLI lifecycle remain unchecked in the
-[checklist](../../development/checklist.md). The separate
-[channel stepper](../channel-runner/README.md) now supplies duration-based recovery.
+synchronization remains unchecked in the [checklist](../../development/checklist.md).
+The separate [channel job/CLI](../channel-runner/cli.md) now supplies duration-based
+recovery, source-window accounting, cooperative cancellation and partial results.
 
 Authority and implementation mapping: [waveform evidence](../../reference/waveform-evidence.md).

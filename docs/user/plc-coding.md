@@ -122,7 +122,9 @@ maps primitive errors to structured `LabError` categories.
 Direct arrays provide test points at the mother, transmitted, restored LLR and
 receive-decision boundaries. The [full PLC producer](plc-channel.md) now emits
 transmitted coded bits through the common optional observer. Mother bits and RX
-decisions remain direct outputs; their observer adapters and CLI export remain TODO.
+decisions remain direct outputs; their additional observer producers remain TODO.
+The shared [JSONL writer/CLI](simulation/probe-export.md) now export available
+selected producers without inventing missing stage events.
 
 ## Validation and next stage
 
