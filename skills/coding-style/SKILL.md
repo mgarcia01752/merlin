@@ -51,9 +51,13 @@ When the user says "next", select the next unfinished checklist/architecture
 item in dependency order. Report the active item ID and name in progress updates
 when moving between steps, including resumed prerequisite work.
 Name checklist IDs for their owning component/work area, such as PLC-01,
-WAVE-01 or RX-CONFIG-01, with stable local numbering. Avoid temporary NEXT
+WAVE-TX-01, WAVE-RX-01 or RX-CONFIG-01, with stable local numbering. Avoid temporary NEXT
 prefixes; completion or reprioritization does not rename an existing ID. Update
 all maintained references when an explicit ID rename is requested.
+For waveform work, use WAVE-TX for transmission, WAVE-RX for reception,
+WAVE-CH for the connecting channel and WAVE-QA for cross-direction validation.
+Document direction, reference plane and configuration ownership in each guide
+and progress update; shared numerical primitives retain one implementation.
 Group checklist work under separate component headings with its relevant user
 guide; avoid catch-all sections that mix unrelated models or processing stages.
 

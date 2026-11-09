@@ -12,8 +12,10 @@ remains. Detailed limitations stay in the stage guides rather than being hidden
 by a broad “implemented” claim.
 
 Checklist IDs use the owning component or work area's prefix and a stable local
-number: `PLC-01` for PLC work, `WAVE-01` for waveform work and `RX-CONFIG-01` for
-receiver configuration. Use this pattern for new groups instead of a temporary
+number: `PLC-01` for PLC work, `WAVE-TX-01` for waveform transmission,
+`WAVE-RX-01` for waveform reception and `RX-CONFIG-01` for receiver
+configuration. `WAVE-CH` owns the connecting channel; `WAVE-QA` owns shared
+waveform observation and integration checks. Use this pattern for new groups instead of a temporary
 `NEXT` prefix. Keep IDs stable when status or scheduling changes; numbering is
 local to a component, not a global execution order. Select the next unfinished
 item by the documented dependencies and current implementation priority.
@@ -131,7 +133,7 @@ The [complete fixed PLC path](../user/plc-channel.md) now includes acquisition
 packets, repetition/segmentation, preamble, mapping, physical-bin assembly and
 bounded observations. **RX-CONFIG-01** now builds receiver-owned configuration
 from those decoded messages. The next implementation group is waveform
-transforms, beginning at **WAVE-01**.
+transmission, beginning at **WAVE-TX-01: IFFT**.
 
 - [x] **PLC-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
@@ -177,7 +179,7 @@ PLC data/preamble I/Q and full physical grids, with independent module tests,
 both-spacing multi-frame FEC/QAM/CRC integration and a bounded example. RX diagnostics
 remain directly accessible; additional RX common-observer producers and CLI/file
 export remain later work. External interoperability and waveform validation remain
-open under QA-05/WAVE-06.
+open under QA-05/WAVE-QA-02.
 
 Planned paths and test-point IDs are in the architecture. Resolve any missing
 normative behavior in `development/pilot-plc-signals/` before implementing it.
@@ -199,60 +201,141 @@ gate. The acquisition composition receives actual PLC I/Q and messages; consumer
 can build physical/pilot/interleaver settings from received data alone. Tests cover
 all descriptor orders, independent counters, missing/corrupt/conflicting input,
 profile precedence and multi-frame transport. Dynamic activation and full data/NCP
-receive orchestration remain under NCP-03/RX-04. See the
+receive orchestration remain under NCP-03/WAVE-RX-06. See the
 [receiver configuration design](../user/receiver-configuration/README.md).
 
-## Waveform transforms
+## Waveform direction and completion scope
 
-These waveform components remain planned; links describe their intended design.
+Waveform work covers the **transmitter, connecting channel and receiver**.
+TX converts physical frequency-bin I/Q into time-domain samples. RX processes
+received samples back into frequency-bin I/Q and recovers the carried signals.
+Each direction has separate component IDs, modules, tests and design guides.
+Shared numerical primitives keep one implementation; direction labels do not
+require duplicate algorithms.
 
-Design: [Planned transmission and receiver flow](../architecture.md#transmission-and-receiver-flow).
+```mermaid
+flowchart LR
+    GRID["TX: assembled frequency bins"] --> TX["WAVE-TX: IFFT, prefix, window and overlap-add"]
+    TX --> CH["WAVE-CH: time-domain channel"]
+    CH --> RX["WAVE-RX: framing, prefix removal and FFT"]
+    RX --> SIGNAL["WAVE-RX: pilots, PLC and data recovery"]
+    SIGNAL --> QA["WAVE-QA: compare recovered signals with independent TX truth"]
+```
 
-- [ ] **WAVE-01** Separate IFFT and FFT modules with explicit bin ordering,
-  normalization, sample-clock units and independent impulse/tone vectors.
+All waveform items below remain planned. For the first noiseless milestone,
+implement TX stages and their matched RX primitives, then the channel,
+known-reference RX and bounded observations, finishing with WAVE-QA-02.
+Nonideal synchronization (WAVE-RX-05) and complete production data/NCP recovery
+(WAVE-RX-06) remain explicit later work; the initial milestone must not claim
+these are complete. The one-second runner has its own RUN group below.
 
-## Cyclic-prefix processing
+## Waveform transmitter: IFFT
 
-Design: [Fixed prefix settings and timing](../user/transmission.md).
+Design: [Transmission and receiver flow](../architecture.md#transmission-and-receiver-flow).
 
-- [ ] **WAVE-02** Separate cyclic-prefix insertion/removal with boundary tests.
+- [ ] **WAVE-TX-01** Convert the complete physical frequency grid to time-domain
+  I/Q in a separate IFFT module. Specify bin ordering, amplitude normalization,
+  sample clock and sample indices. Verify independent impulse/tone and energy
+  vectors at both FFT sizes, alongside the matched WAVE-RX-01 transform.
 
-## Transmit windowing and overlap-add
+## Waveform transmitter: cyclic-prefix insertion
+
+Design: [Configurable prefix, constant per run](../user/transmission.md#configurable-prefix-constant-per-run).
+
+- [ ] **WAVE-TX-02** Insert the selected cyclic prefix in a focused TX operation.
+  Users choose a PHY-permitted length before the run; validate and retain that
+  configuration for the run. Copy the useful symbol's trailing samples to its
+  front without changing the useful samples. Test every permitted prefix,
+  invalid settings, output lengths and symbol boundaries at both spacings.
+
+A fixed prefix is a per-run setting, not a hard-coded user restriction.
+Changing it requires a newly configured run/session. The transmitter advertises
+it in OCD; the receiver uses decoded settings after acquisition, with initial
+PLC bootstrap knowledge kept explicit. WAVE-RX-02 owns the inverse operation.
+
+## Waveform transmitter: windowing and overlap-add
 
 Design: [Planned waveform stage ownership](../architecture.md#planned-module-ownership).
 
-- [ ] **WAVE-03** Separate windowing and stateful overlap-add, checking symbol
-  cadence, taper lengths, energy and continuity at block boundaries.
+- [ ] **WAVE-TX-03** Keep TX windowing and stateful overlap-add in separate
+  modules. Apply the selected roll-off and cyclic extension using pinned PHY
+  rules. Verify taper samples, energy, continuity, symbol cadence, startup/drain
+  tails and state across block boundaries. Roll-off must not add to symbol cadence.
 
-## Reference waveform channel
+## Waveform channel: reference connection
 
 Design: [Reference channel scope](../user/transmission.md).
 
-- [ ] **WAVE-04** Reference/noiseless channel module with explicit input/output plane.
+- [ ] **WAVE-CH-01** Connect TX time samples to RX time samples through a
+  reference/noiseless channel module. Document input/output reference planes,
+  sample clock, timing and gain. Verify unity transfer and block continuity;
+  impairments remain separate MODEL work.
 
-## Waveform receiver
+## Waveform receiver: FFT
+
+Design: [Transmission and receiver flow](../architecture.md#transmission-and-receiver-flow).
+
+- [ ] **WAVE-RX-01** Convert a useful received time-domain symbol to physical
+  frequency-bin I/Q in a separate FFT module. Match the documented TX ordering
+  and normalization. Test independent vectors and IFFT/FFT recovery at both
+  sizes; a round trip alone is insufficient validation.
+
+## Waveform receiver: cyclic-prefix removal
+
+Design: [Configurable prefix, constant per run](../user/transmission.md#configurable-prefix-constant-per-run).
+
+- [ ] **WAVE-RX-02** Remove the configured prefix from a correctly framed RX
+  symbol, preserving exactly the useful FFT input. Check input length, boundaries
+  and every permitted prefix at both spacings. Keep prefix removal separate
+  from timing acquisition and from TX prefix insertion.
+
+## Waveform receiver: timing and symbol framing
 
 Design: [Planned receive flow](../architecture.md#transmission-and-receiver-flow).
 
-- [ ] **RX-01** Reference timing/framing, CP removal and FFT recovery.
-- [ ] **RX-02** Pilot/PLC extraction and known-reference equalization first.
-- [ ] **RX-03** Independently verified synchronization/channel estimation for
-  nonideal operation; no claim of blind acquisition from a known-reference test.
-- [ ] **RX-04** Connect physical data extraction, inverse cell interleaving,
-  source-phase inverse randomization, NCP discovery and data decoding in production.
+- [ ] **WAVE-RX-03** Recover symbol windows from the received stream using
+  explicit known-reference timing first. Compose framing, prefix removal and
+  FFT recovery without borrowing transmitter buffers or payload truth. Verify
+  offsets, arbitrary input block splits, partial symbols and windowed boundaries.
+  Known timing does not establish blind synchronization.
 
-## Waveform stage observations
+## Waveform receiver: signal extraction and equalization
+
+Design: [Planned receive flow](../architecture.md#transmission-and-receiver-flow).
+
+- [ ] **WAVE-RX-04** Extract pilots and PLC from recovered bins and apply
+  known-reference equalization first. Preserve frequency/role associations and
+  amplitude units; feed actual received PLC cells into the existing decoder and
+  receiver-configuration owner. Keep bootstrap settings explicit.
+
+## Waveform receiver: nonideal acquisition and payload recovery
+
+Design: [Planned receive flow](../architecture.md#transmission-and-receiver-flow).
+
+- [ ] **WAVE-RX-05** Independently verify synchronization/channel estimation for
+  nonideal operation. This extends the known-reference receiver; it must not be
+  marked complete from noiseless tests with supplied timing/channel knowledge.
+- [ ] **WAVE-RX-06** Connect physical data extraction, inverse cell interleaving,
+  source-phase inverse randomization, NCP discovery and data decoding in production.
+  Use received configuration; preserve the separate control/payload codec paths.
+
+## Waveform validation: observations
 
 Design: [Observation design](../user/simulation/test-points.md).
 
-- [ ] **WAVE-05** Test points at each waveform and receive boundary, with finite
-  block/range limits and direct library access.
+- [ ] **WAVE-QA-01** Add direction-tagged test points at each TX, channel and RX
+  boundary, with explicit sample/bin units, finite block/range limits and direct
+  library access. Prove observation does not change outputs or stage state.
 
-## Noiseless waveform integration
+## Waveform validation: noiseless integration
 
 Design: [Full-channel design and remaining integration](../architecture.md#transmission-and-receiver-flow).
 
-- [ ] **WAVE-06** Zero-error noiseless waveform integration with real pilot/PLC signals.
+- [ ] **WAVE-QA-02** Connect TX waveform generation, the noiseless channel and
+  matched known-reference RX using real pilot/PLC signals. Verify recovered
+  frequency bins numerically and actual decoded PLC information with zero bit
+  errors at both spacings. Include prefix/window/overlap boundaries and retain
+  decoder diagnostics. Document which payload/runner stages remain unfinished.
 
 ## One-second reference run
 

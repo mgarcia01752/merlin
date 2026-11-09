@@ -64,7 +64,7 @@ flowchart TD
 Freezing a validated snapshot is a requirement for the upcoming runner; the
 current settings API validates values but does not create or execute that runner.
 
-## Fixed setup
+## Configuration selected before each run
 
 | Parameter | Supported values | Initial choice |
 | --- | --- | --- |
@@ -90,6 +90,47 @@ continuous/scattered pilots and NCP allocation. Do not assign all192MHz/spacing
 carriers to payload. Physical layout inputs are now explicit; NCP transport still
 uses the [packer](symbol-packing.md) and [cell interleavers](cell-interleaving.md);
 full channel waveform generation is still pending.
+
+## Configurable prefix, constant per run
+
+“Fixed” describes the lifetime of the selected configuration. It does not lock
+the user to the initial 512-sample prefix. Before starting a run, choose one of
+the permitted lengths in the table above, together with a valid roll-off. The
+selected prefix and roll-off remain unchanged across that run's symbols.
+Changing either starts a newly configured run/session.
+
+On TX, prefix insertion copies the useful time symbol's trailing samples to its
+front. For useful length $N$ and prefix length $N_{CP}$, this stage produces
+$N+N_{CP}$ samples before the separate windowing/extension stage. On RX, framing
+identifies the correct symbol boundary; prefix removal then selects the $N$
+useful samples for the FFT. Insertion, framing and removal have separate
+responsibilities and tests.
+
+```mermaid
+flowchart LR
+    CONFIG["User selects valid prefix and roll-off before run"] --> TX["TX: IFFT → prefix insertion → window and overlap-add"]
+    TX --> CHANNEL["Channel: transmitted time samples → received time samples"]
+    CHANNEL --> RX["RX: framing → prefix removal → FFT"]
+    CONFIG --> OCD["TX advertises settings in OCD over PLC"]
+    OCD --> RECEIVED["RX decodes and validates settings"]
+    RECEIVED --> RX
+```
+
+For example, 256 samples means 1.25µs and 512 samples means 2.5µs at the fixed
+204.8MHz sample clock. Either can be selected if its roll-off is shorter than
+the prefix. Changing prefix length changes symbol cadence and the number of
+complete symbols that fit within one second; roll-off overlaps adjacent symbols
+and does not independently extend that cadence.
+
+TX owns its validated configuration. RX learns the prefix/roll-off from decoded
+OCD after acquisition rather than borrowing TX objects. The initial known-phase
+PLC reception still has explicit bootstrap knowledge; discovering timing and
+numerology without that knowledge is a later receiver milestone.
+
+The [waveform checklist](../development/checklist.md#waveform-direction-and-completion-scope)
+tracks `WAVE-TX` transmission, `WAVE-CH` channel, `WAVE-RX` reception and `WAVE-QA`
+validation separately. These waveform operations remain planned; the existing
+settings validator and one-second timing calculations are already implemented.
 
 ## One-second timing
 

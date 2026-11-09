@@ -13,7 +13,7 @@ It does not imply a published release or external DOCSIS interoperability.
 Review this document and the checklist at feature completion and each commit-message
 request. Update affected design/status before supplying the command; partial work
 remains unchecked until its implementation and validation are complete.
-Checklist IDs use stable component/work-area prefixes, such as PLC, WAVE and
+Checklist IDs use stable component/work-area prefixes, such as PLC, WAVE-TX, WAVE-RX and
 RX-CONFIG, rather than temporary NEXT labels. Local numbering identifies work;
 dependencies and current priority determine the next item to implement.
 
@@ -268,6 +268,38 @@ reproducible example, supported fixed subset and verification scope. Individual
 guides remain focused stage references. External interoperability, full data/NCP
 production orchestration and waveform TX/RX are still pending.
 
+## Waveform direction and configuration
+
+Waveform means the complete **TX → channel → RX** path, not just reception.
+The [checklist](development/checklist.md#waveform-direction-and-completion-scope)
+uses direction-specific groups:
+
+| Group | Direction and responsibility | Planned boundary |
+| --- | --- | --- |
+| `WAVE-TX` | Transmitter: IFFT, prefix insertion, windowing and overlap-add | Physical frequency bins → time-domain samples |
+| `WAVE-CH` | Connecting channel: noiseless reference first | TX time samples → RX time samples |
+| `WAVE-RX` | Receiver: framing, prefix removal, FFT, extraction and recovery | RX time samples → recovered frequency bins and decoded signals |
+| `WAVE-QA` | Validation across both directions and the channel | Bounded observations and independent end-to-end comparisons |
+
+Each subsystem owns its configuration/state and exposes testable intermediate
+outputs. Shared transform/prefix primitives keep one numerical owner; TX/RX
+composition remains separate. Test truth is used only for comparison, never as
+an input to the receive decoder.
+
+The next implementation begins with WAVE-TX-01 (IFFT), paired with WAVE-RX-01
+(FFT) for independent transform checks. The first waveform milestone then adds
+prefix insertion/removal, TX windowing/overlap-add, the reference channel,
+known-reference framing and pilot/PLC extraction, bounded probes and noiseless
+integration. Nonideal acquisition, complete production payload recovery and the
+one-second runner retain their separate checklist requirements.
+
+Prefix length and roll-off are **user-configurable before a run and constant
+within that run**. TX validates and retains the chosen configuration. OCD
+advertises the applicable settings; RX derives its channel configuration from
+received signaling after the explicit known-phase PLC bootstrap. A setting
+change starts a new configured run/session in this fixed-session model. See
+[the prefix explanation](user/transmission.md#configurable-prefix-constant-per-run).
+
 ## Planned module ownership
 
 These paths are the accepted direction for upcoming work, not existing files or
@@ -279,9 +311,12 @@ before implementation if source analysis shows a better existing owner.
 | `signal_processing/modulation/interleaving/{parity,twist,demultiplexing}.rs` | Separate intermediate and inverse boundaries behind the existing facade |
 | `transmission/layout/additional_pilots.rs` | Specification-based additional continuous-pilot placement |
 | `transmission/symbols/assembly.rs` | Typed data/NCP/filler composition before randomization/mapping |
-| `signal_processing/waveform/{ifft,fft,cyclic_prefix,windowing,overlap_add}.rs` | Separate waveform transforms and inverse operations |
-| `signal_processing/channel/` | Explicit reference-plane channel and impairment models |
-| `signal_processing/receiver/{timing,estimation,equalization}.rs` | Known-reference first, then independently verified estimation/acquisition |
+| `signal_processing/waveform/ifft.rs` | WAVE-TX: frequency bins → useful time samples |
+| `signal_processing/waveform/fft.rs` | WAVE-RX: useful received samples → frequency bins |
+| `signal_processing/waveform/cyclic_prefix.rs` | Separate TX insertion and RX removal operations sharing validated geometry |
+| `signal_processing/waveform/{windowing,overlap_add}.rs` | WAVE-TX: tapering and stateful sample-stream overlap |
+| `signal_processing/channel/` | WAVE-CH: explicit TX-output/RX-input planes, reference transfer and later impairment models |
+| `signal_processing/receiver/{timing,estimation,equalization}.rs` | WAVE-RX: framing, known-reference equalization, then independently verified estimation/acquisition |
 | `signal_processing/modulation/slicing.rs` | Diagnostic hard decisions; keep soft demapping for LDPC |
 | `simulation/channel/{transmitter,receiver,runner,results}.rs` | Thin stateful orchestration and completed-result accounting |
 | `simulation/source/prbs.rs` | Explicit PRBS polynomial, seed, continuity and comparison |
