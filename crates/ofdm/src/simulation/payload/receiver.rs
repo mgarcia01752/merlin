@@ -78,6 +78,34 @@ impl PayloadReceiver {
             decoder: PayloadSymbolDecoder::with_bit_loading(settings, origin, bit_loading)?,
         })
     }
+    /// Creates an opt-in full-word receiver supporting received DPD generations.
+    /// # Arguments
+    /// * `state` - Ready fixed OCD and initial ProfileA/NCP snapshot.
+    /// * `origin` - PLC-aligned source/channel origin.
+    /// # Returns
+    /// Receiver retaining one continuous inverse interleaver and randomizer history.
+    /// # Errors
+    /// Rejects invalid acquisition, geometry, loading or codec setup.
+    pub fn with_dynamic_profiles(
+        state: &ReceiverConfigurationState,
+        origin: u64,
+    ) -> Result<Self, SimulationError> {
+        let mut receiver = Self::new(state, origin)?;
+        receiver.decoder = receiver
+            .decoder
+            .enable_dynamic_profiles(state.require_ready()?)?;
+        Ok(receiver)
+    }
+    /// Admits an additional received DPD without changing the stable OCD gate.
+    /// # Arguments
+    /// * `bytes` - Actual recovered management packet, including HCS and FCS.
+    /// # Returns
+    /// New-generation admission status from the bounded bank.
+    /// # Errors
+    /// Rejects fixed/closed sessions, identity drift or occupied parity slots.
+    pub fn admit_profile_packet(&mut self, bytes: &[u8]) -> Result<bool, SimulationError> {
+        self.decoder.admit_profile_packet(bytes)
+    }
     /// Creates an opt-in full/shortened receiver from independently received descriptors.
     /// # Arguments
     /// * `state` - Ready live PLC configuration, including acquired data loading.

@@ -72,6 +72,21 @@ impl CarrierLayout {
         transmission: &TransmissionSettings,
         layout: &CarrierLayoutSettings,
     ) -> Result<Self, SimulationError> {
+        Self::build(transmission, layout, true)
+    }
+
+    pub(super) fn planning_base(
+        transmission: &TransmissionSettings,
+        layout: &CarrierLayoutSettings,
+    ) -> Result<Self, SimulationError> {
+        Self::build(transmission, layout, false)
+    }
+
+    fn build(
+        transmission: &TransmissionSettings,
+        layout: &CarrierLayoutSettings,
+        include_additional: bool,
+    ) -> Result<Self, SimulationError> {
         transmission.validate()?;
         let spacing = transmission.subcarrier_spacing;
         let fft_size = spacing.fft_samples() as usize;
@@ -132,12 +147,18 @@ impl CarrierLayout {
         for bin in predefined_pilots(spacing, layout.plc_first_bin)? {
             roles[usize::from(bin)] = PhysicalCarrierRole::ContinuousPilot;
         }
-        if !(MIN_ADDITIONAL_PILOTS..=MAX_ADDITIONAL_PILOTS)
-            .contains(&layout.additional_continuous_pilots.len())
+        if include_additional
+            && !(MIN_ADDITIONAL_PILOTS..=MAX_ADDITIONAL_PILOTS)
+                .contains(&layout.additional_continuous_pilots.len())
         {
             return Err(invalid("Provide8..120 additional continuous pilots."));
         }
-        for &bin in &layout.additional_continuous_pilots {
+        let additional = if include_additional {
+            layout.additional_continuous_pilots.as_slice()
+        } else {
+            &[]
+        };
+        for &bin in additional {
             let bin = usize::from(bin);
             if !(first..end).contains(&bin)
                 || (neighborhood_first..neighborhood_end).contains(&bin)

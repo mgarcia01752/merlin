@@ -13,3 +13,6 @@ pub use collection::MissingDescriptors;
 pub use configuration::ReceiverConfiguration;
 pub use profile::ReceivedProfile;
 pub use state::{ReceiverConfigurationState, ReceiverConfigurationStatus};
+
+#[cfg(feature = "simulation")]
+pub mod generations;

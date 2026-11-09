@@ -88,3 +88,14 @@ The CLI currently uses the entire selected source frame.
 selects `source.kind=file`. Optional `--recovered-file NEW_FILE` exports actual
 recovered original bytes. See the [file-source guide](user/simulation/file-source/README.md)
 for optional PRBS15 fill, size bounds, segment BER and partial-result behavior.
+
+## Decoder import and native installation
+
+New `import-pnm` requests use schema2 and an explicit decoder contract pinning
+pnm-decode0.3.6. Legacy schema1 remains supported without a producer declaration.
+See the [import contract](user/impairments/pnm-import.md#explicit-decoder-contract-input-02)
+and the updated measurement demo request.
+
+Native CLI archives/installers and per-OS install/uninstall instructions are
+described in the [installation guide](user/install/README.md). Workflow files are
+prepared locally; Windows/macOS execution and publication remain pending.

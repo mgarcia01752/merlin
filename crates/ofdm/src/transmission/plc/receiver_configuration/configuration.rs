@@ -151,7 +151,7 @@ pub(super) fn try_build(
         reduced_bins,
     }))
 }
-fn ncp_modulation(profile: &ReceivedProfile) -> Result<NcpModulation, SimulationError> {
+pub(super) fn ncp_modulation(profile: &ReceivedProfile) -> Result<NcpModulation, SimulationError> {
     let mut uniform = None;
     for bits in profile
         .bit_loading()

@@ -276,9 +276,11 @@ pub fn parse(packet: &ManagementPacket) -> Result<ParsedDescriptor, SimulationEr
                 return Err(invalid("OCD requires one of each fixed setting TLV."));
             }
         }
-    } else if ![0, 255].contains(&body[1]) || tlvs.iter().all(|tlv| tlv.kind != ASSIGNMENT_TLV) {
+    } else if !(body[1] <= 15 || body[1] == 255)
+        || tlvs.iter().all(|tlv| tlv.kind != ASSIGNMENT_TLV)
+    {
         return Err(invalid(
-            "Expected ProfileA or NCP descriptor with assignments.",
+            "Expected a data0..15 or NCP descriptor with assignments.",
         ));
     }
     if packet.message_type() == OCD_MESSAGE_TYPE {

@@ -80,6 +80,58 @@ impl SymbolPacker {
         packer.bit_loading = Some(bit_loading);
         Ok(packer)
     }
+    /// Changes data coding only after all previously queued source words are placed.
+    /// # Arguments
+    /// * `profile_id` - Next data profile identity0..15.
+    /// * `loading` - Next validated source-rank loading of unchanged NI.
+    /// # Returns
+    /// Unit preserving word IDs, symbol count and rolling start limits.
+    /// # Errors
+    /// Rejects pending words or invalid loading/settings without changing state.
+    #[cfg(feature = "simulation")]
+    pub fn activate_profile(
+        &mut self,
+        profile_id: crate::types::ProfileId,
+        loading: Vec<u8>,
+    ) -> Result<(), SimulationError> {
+        if !self.queue.is_empty() || loading.len() != self.settings.interleaver_cells {
+            return Err(invalid(
+                "Activate data profiles only with an empty source queue and unchanged NI.",
+            ));
+        }
+        let candidate = PackingSettings {
+            data_profile_id: profile_id,
+            ..self.settings
+        };
+        candidate.validate()?;
+        let order =
+            crate::signal_processing::modulation::interleaving::mixed::PayloadBitOrder::new(
+                &loading,
+            )?;
+        self.coded_bits = order.permutation().len();
+        self.bit_loading = Some(loading);
+        self.settings = candidate;
+        Ok(())
+    }
+    /// Changes uniform NCP modulation without discarding pending data or start history.
+    /// # Arguments
+    /// * `modulation` - Generation selected by a separately validated announcement.
+    /// # Returns
+    /// Unit with subsequent reservations using the new field cell count.
+    /// # Errors
+    /// Rejects insufficient NI without changing state.
+    pub fn activate_ncp(
+        &mut self,
+        modulation: super::NcpModulation,
+    ) -> Result<(), SimulationError> {
+        let candidate = PackingSettings {
+            ncp_modulation: modulation,
+            ..self.settings
+        };
+        candidate.validate()?;
+        self.settings = candidate;
+        Ok(())
+    }
     /// Queues an encoded, bit-interleaved full word for variable-width grouping.
     /// # Arguments
     /// * `bits` - Exactly the selected coded/padded bit count of binary values; final-cell padding is added during packing.

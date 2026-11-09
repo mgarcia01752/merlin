@@ -180,3 +180,6 @@ Evidence: CM-SP-PHYv3.1-I20-230419 §7.4.3.2, PDF56; Table19, PDF91;
 PDF180–184; AnnexE, PDF210. The local original PDF was inspected for the matrix,
 message layout and bit/label diagrams. External interoperability vectors remain
 outstanding.
+
+The opt-in [dynamic full-word profile path](ncp-profiles/README.md) uses received
+C/N/U flags and DPD generations. Fixed constructors retain their strict behavior.

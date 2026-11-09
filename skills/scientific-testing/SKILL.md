@@ -53,6 +53,19 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
   policy distinct from dynamic profile activation. Include a real FEC/QAM/MC
   integration with pointer-free middle continuations and downstream components
   built only from received settings; never insert idle inside an unfinished packet.
+- Dynamic profile tests must admit actual CRC-protected DPD packets and select
+  C/N generations from received fields. Verify the exact MSB-first128-symbol U
+  pattern, a word crossing the NCP change and continuous receive sequence/RNG/
+  interleaver history. Keep fixed-path rejection and parity-slot replacement
+  limits explicit; packet/hash admission alone does not verify interoperability.
+- For nonideal acquisition, fit the channel from continuous pilots and score
+  independent held-out scattered pilots. Test unknown timing/phase and nonzero
+  fractional CFO with noise, derotation across arbitrary block splits and weak/
+  ambiguous rejection. State known numerology and CFO aliasing bounds; synthetic
+  tests do not establish integer-CFO or arbitrary-channel acquisition.
+- Pilot placement tests must use actual active-frequency endpoints, include
+  predefined-pilot coverage of isolated PLC regions, and verify edge/poor-bin
+  avoidance, distinct count, density and reproducible nonperiodic placement.
 - For waveform TX/RX, verify centered physical-bin ordering and unitary scaling
   using independent impulse/DC/tone/direct-sum vectors, not only a round trip.
   Cover both FFT sizes and every permitted CP/RP pair, including evaluation-only

@@ -19,6 +19,10 @@ use crate::{
 };
 /// Persistent source-order receiver; a rejected control/collection result closes this session.
 pub struct PayloadSymbolDecoder {
+    dynamic_profiles: Option<(
+        crate::transmission::plc::receiver_configuration::generations::ProfileGenerations,
+        crate::transmission::ncp::activation::NcpTransitionReceiver,
+    )>,
     settings: PackingSettings,
     bit_loading: Vec<u8>,
     origin: u64,
@@ -69,6 +73,7 @@ impl PayloadSymbolDecoder {
             ));
         }
         Ok(Self {
+            dynamic_profiles: None,
             settings,
             origin,
             next_local: 0,
@@ -82,13 +87,67 @@ impl PayloadSymbolDecoder {
             closed: false,
         })
     }
+    /// Enables received-DPD data/NCP switching on an empty source-order decoder.
+    /// # Arguments
+    /// * `configuration` - Ready received OCD and initial ProfileA/NCP generations.
+    /// # Returns
+    /// This decoder with independent generation bank and received U-history state.
+    /// # Errors
+    /// Rejects mismatched geometry, already-advanced or shortened-word sessions.
+    pub fn enable_dynamic_profiles(
+        mut self,
+        configuration: &crate::transmission::plc::receiver_configuration::ReceiverConfiguration,
+    ) -> Result<Self, SimulationError> {
+        let packing = super::configuration::packing_settings(configuration)?;
+        if self.next_local != 0
+            || self.variable_collector.is_some()
+            || packing.interleaver_cells != self.settings.interleaver_cells
+            || packing.subcarrier_spacing != self.settings.subcarrier_spacing
+            || packing.ncp_modulation != self.settings.ncp_modulation
+        {
+            return Err(invalid(
+                "Dynamic profiles require a matching empty full-word decoder.",
+            ));
+        }
+        let bank =
+            crate::transmission::plc::receiver_configuration::generations::ProfileGenerations::new(
+                configuration,
+            );
+        self.bit_loading =
+            bank.data_loading(0, configuration.profile_a().change_count() & 1 != 0)?;
+        self.collector.activate_profile(0, &self.bit_loading)?;
+        self.dynamic_profiles = Some((
+            bank,
+            crate::transmission::ncp::activation::NcpTransitionReceiver::new(
+                configuration.ncp().change_count() & 1 != 0,
+            ),
+        ));
+        Ok(self)
+    }
+    /// Admits a new generation from received DPD packet bytes.
+    /// # Arguments
+    /// * `bytes` - Complete CRC-protected management packet, not a TX profile object.
+    /// # Returns
+    /// True for a new generation or false for an identical repeat.
+    /// # Errors
+    /// Rejects fixed/closed sessions or incompatible/occupied generations atomically.
+    pub fn admit_profile_packet(&mut self, bytes: &[u8]) -> Result<bool, SimulationError> {
+        if self.closed {
+            return Err(invalid("Cannot update a closed decoder."));
+        }
+        self.dynamic_profiles
+            .as_mut()
+            .ok_or_else(|| invalid("Enable dynamic profiles before admitting DPD updates."))?
+            .0
+            .admit(bytes)
+    }
     /// Enables independently received-boundary discovery for shortened/full words.
     /// # Returns
     /// This empty decoder with bounded variable-length collection enabled.
     /// # Errors
     /// Rejects an already advanced decoder or codec setup failure.
     pub fn enable_shortened_words(mut self) -> Result<Self, SimulationError> {
-        if self.next_local != 0 {
+        if self.next_local != 0 || self.dynamic_profiles.is_some() {
             return Err(invalid("Enable shortening before receiving any symbols."));
         }
         self.variable_collector = Some(super::variable::VariablePayloadCollector::new(
@@ -185,8 +244,7 @@ impl PayloadSymbolDecoder {
             .ok_or_else(|| invalid("Source symbol counter overflow."))?;
         let mut points = Vec::new();
         let mut point_variances = Vec::new();
-        let mut point_loading = Vec::new();
-        for (rank, ((cell, role), variance)) in cells.iter().zip(roles).zip(variances).enumerate() {
+        for ((cell, role), variance) in cells.iter().zip(roles).zip(variances) {
             match (cell, role) {
                 (
                     Some(TransportCell::PilotPlaceholder),
@@ -198,7 +256,6 @@ impl PayloadSymbolDecoder {
                     let variance = variance
                         .filter(|value| value.is_finite() && *value > 0.0)
                         .ok_or_else(|| invalid("Missing source-cell residual variance."))?;
-                    point_loading.push(self.bit_loading[rank]);
                     point_variances.push(variance);
                     points.push(*point)
                 }
@@ -226,9 +283,14 @@ impl PayloadSymbolDecoder {
         let mut data_randomizer = self.data_randomizer.clone();
         data_randomizer.begin_symbol(self.next_local)?;
         let decision = (|| -> Result<(), SimulationError> {
+            let ncp_modulation = if let Some((bank, activation)) = &self.dynamic_profiles {
+                bank.ncp_modulation(activation.expected_odd())?
+            } else {
+                self.settings.ncp_modulation
+            };
             result.ncp_soft = control::hypotheses_with_variances(
                 &points,
-                self.settings.ncp_modulation,
+                ncp_modulation,
                 &point_variances,
                 &mut control_randomizer,
             )?;
@@ -237,26 +299,42 @@ impl PayloadSymbolDecoder {
                 .iter()
                 .map(|cell| cell.llrs.clone())
                 .collect();
-            let field = self.control.decode_field(
-                &hypotheses,
-                self.settings.ncp_modulation,
-                max_iterations,
-            )?;
+            let field = self
+                .control
+                .decode_field(&hypotheses, ncp_modulation, max_iterations)?;
             result.ncp = Some(field);
             let field = result
                 .ncp
                 .as_ref()
                 .ok_or_else(|| invalid("Missing accepted NCP field."))?;
-            if field.messages.iter().any(|message| {
-                message.data_profile_odd
-                    || message.ncp_profile_odd
-                    || message.ncp_profile_update
-                    || message.tagged
-            }) {
+            if self.dynamic_profiles.is_none()
+                && field.messages.iter().any(|message| {
+                    message.data_profile_odd
+                        || message.ncp_profile_odd
+                        || message.ncp_profile_update
+                        || message.tagged
+                })
+            {
                 return Err(SimulationError::new(
                     "UnsupportedProfileActivation",
                     "Fixed payload session does not support odd profiles, NCP updates or tagging.",
                 ));
+            }
+            let mut next_activation = self
+                .dynamic_profiles
+                .as_ref()
+                .map(|(_, activation)| activation.clone());
+            if let Some(activation) = &mut next_activation {
+                if field.messages.iter().any(|message| message.tagged) {
+                    return Err(invalid(
+                        "Tagged NCP is outside dynamic full-word transport.",
+                    ));
+                }
+                let first = field
+                    .messages
+                    .first()
+                    .ok_or_else(|| invalid("Empty NCP field."))?;
+                activation.accept(first.ncp_profile_odd, first.ncp_profile_update)?;
             }
             let starts = field
                 .messages
@@ -277,15 +355,36 @@ impl PayloadSymbolDecoder {
                 .checked_sub(field.consumed_cells)
                 .ok_or_else(|| invalid("NCP field exceeds eligible data positions."))?;
             let spans = field.data_spans(data_count)?;
-            let mut payload = vec![false; points.len()];
+            // Loading follows each received start, including multiple profile IDs
+            // within one field. Continuations retain the previous codeword's DPD.
+            let source_ranks: Vec<_> = roles
+                .iter()
+                .enumerate()
+                .filter(|(_, role)| **role == PreInterleavingRole::Data)
+                .map(|(rank, _)| rank)
+                .collect();
             for span in &spans {
-                if !span.zero_loaded {
-                    payload[span.start..span.end_exclusive].fill(true);
+                if span.starts_codeword {
+                    if let Some((bank, _)) = &self.dynamic_profiles {
+                        let message = field
+                            .messages
+                            .iter()
+                            .find(|message| usize::from(message.pointer) == span.start)
+                            .ok_or_else(|| invalid("Missing start message."))?;
+                        let loading =
+                            bank.data_loading(message.profile_id, message.data_profile_odd)?;
+                        self.collector
+                            .activate_profile(message.profile_id, &loading)?;
+                        self.bit_loading = loading;
+                    }
                 }
-            }
-            for (data_position, (point, is_payload)) in points.iter().zip(payload).enumerate() {
-                if is_payload {
-                    let bits = point_loading[data_position];
+                let mut soft = Vec::new();
+                for data_position in span.start..span.end_exclusive {
+                    if span.zero_loaded {
+                        data_randomizer.zero_loaded_bpsk()?;
+                        continue;
+                    }
+                    let bits = self.bit_loading[source_ranks[data_position]];
                     let llrs = if bits == 0 {
                         data_randomizer.zero_loaded_bpsk()?;
                         Vec::new()
@@ -293,29 +392,21 @@ impl PayloadSymbolDecoder {
                         let order = 1u16 << bits;
                         data_randomizer.descramble_data_llrs(
                             order,
-                            &qam_llrs(order, *point, point_variances[data_position])?,
+                            &qam_llrs(
+                                order,
+                                points[data_position],
+                                point_variances[data_position],
+                            )?,
                         )?
                     };
-                    result.data_soft.push(SoftDataCell {
+                    soft.push(SoftDataCell {
                         data_position,
                         llrs,
                     });
-                } else {
-                    data_randomizer.zero_loaded_bpsk()?;
                 }
-            }
-            if data_randomizer.state() != control_randomizer.state() {
-                return Err(invalid("Data/NCP hypothesis clocks disagree."));
-            }
-            for span in &spans {
-                let soft = if span.zero_loaded {
-                    &[][..]
-                } else {
-                    result
-                        .data_soft
-                        .get(span.start..span.end_exclusive)
-                        .ok_or_else(|| invalid("Received data span has no matching soft cells."))?
-                };
+                let first_soft = result.data_soft.len();
+                result.data_soft.extend(soft);
+                let soft = &result.data_soft[first_soft..];
                 let completed = if let Some(collector) = &mut self.variable_collector {
                     collector.accept_span(span, soft, source_symbol, max_iterations)?
                 } else {
@@ -325,6 +416,17 @@ impl PayloadSymbolDecoder {
                 if let Some(word) = completed {
                     result.recovered.push(word);
                 }
+            }
+            for _ in data_count..points.len() {
+                data_randomizer.zero_loaded_bpsk()?;
+            }
+            if data_randomizer.state() != control_randomizer.state() {
+                return Err(invalid("Data/NCP hypothesis clocks disagree."));
+            }
+            if let (Some((_, activation)), Some(next)) =
+                (&mut self.dynamic_profiles, next_activation)
+            {
+                *activation = next;
             }
             self.previous_starts = starts;
             Ok(())

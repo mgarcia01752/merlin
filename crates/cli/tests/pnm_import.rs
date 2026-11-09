@@ -52,3 +52,36 @@ fn actual_import_command_hashes_exact_json_and_refuses_clobber_and_bad_epochs() 
     assert!(!run(&rejected).status.success());
     assert!(!rejected.exists());
 }
+
+#[test]
+fn contract_request_version_two_admits_known_exports_and_rejects_unknown_producers() {
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("import.json");
+    let output = directory.path().join("scenario.json");
+    let mut request = serde_json::json!({"schema_version":2,"decoder_contract":{"revision":1,"producer":"pnm-decode","producer_version":"0.3.6"},"protocol":"docsis31",
+        "rxmer":fixtures().join("rxmer.json"),"channel_estimation":fixtures().join("channel_estimation.json"),"modulation_profile":fixtures().join("modulation_profile.json"),"tolerance_seconds":90000});
+    let run = || {
+        Command::new(env!("CARGO_BIN_EXE_ofdm-fec"))
+            .args(["import-pnm", "--input"])
+            .arg(&input)
+            .arg("--output")
+            .arg(&output)
+            .output()
+            .unwrap()
+    };
+    std::fs::write(&input, serde_json::to_vec(&request).unwrap()).unwrap();
+    assert!(run().status.success());
+    std::fs::remove_file(&output).unwrap();
+    for (schema, producer) in [(2, "0.3.7"), (1, "0.3.6")] {
+        request["schema_version"] = serde_json::json!(schema);
+        request["decoder_contract"]["producer_version"] = serde_json::json!(producer);
+        std::fs::write(&input, serde_json::to_vec(&request).unwrap()).unwrap();
+        assert!(!run().status.success());
+        assert!(!output.exists());
+    }
+    request["schema_version"] = serde_json::json!(2);
+    request.as_object_mut().unwrap().remove("decoder_contract");
+    std::fs::write(&input, serde_json::to_vec(&request).unwrap()).unwrap();
+    assert!(!run().status.success());
+    assert!(!output.exists());
+}

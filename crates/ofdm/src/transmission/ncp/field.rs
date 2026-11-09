@@ -170,6 +170,21 @@ impl NcpFieldCodec {
     /// # Errors
     /// Rejects invalid meanings or mismatched/duplicate reserved positions.
     pub fn encode_packed(&self, symbol: &PackedSymbol) -> Result<EncodedNcpField, SimulationError> {
+        self.encode_packed_with_flags(symbol, super::activation::NcpFieldFlags::default())
+    }
+    /// Encodes a packed symbol with explicit generation and update flags.
+    /// # Arguments
+    /// * `symbol` - Validated uniform-profile packer plan.
+    /// * `flags` - C for each data start and N/U common to the entire field.
+    /// # Returns
+    /// Actual FEC/CRC labels, preserving the packer's reservation validation.
+    /// # Errors
+    /// Rejects invalid plans; temporal admission belongs to the session owner.
+    pub fn encode_packed_with_flags(
+        &self,
+        symbol: &PackedSymbol,
+        flags: super::activation::NcpFieldFlags,
+    ) -> Result<EncodedNcpField, SimulationError> {
         if symbol.ncp_entries.is_empty()
             || symbol.ncp_entries.len() > MAX_MESSAGES
             || symbol.cells.len() > SubcarrierSpacing::Khz25.max_interleaver_cells()
@@ -197,10 +212,10 @@ impl NcpFieldCodec {
                     zero_loaded,
                     pointer,
                     last: index + 1 == symbol.ncp_entries.len(),
-                    data_profile_odd: false,
-                    ncp_profile_odd: false,
+                    data_profile_odd: flags.data_profile_odd,
+                    ncp_profile_odd: flags.ncp_profile_odd,
                     tagged: false,
-                    ncp_profile_update: false,
+                    ncp_profile_update: flags.ncp_profile_update,
                 }
             })
             .collect();

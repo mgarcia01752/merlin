@@ -8,7 +8,7 @@ use crate::{
     json_io::{read_bytes, read_json, write_json},
 };
 use docsis_ofdm_fec::{
-    scenario::pnm_json::{import, JsonCapture},
+    scenario::pnm_json::{import, import_with_contract, DecoderContract, JsonCapture},
     types::ProtocolScope,
 };
 use serde::Deserialize;
@@ -18,6 +18,7 @@ use std::path::PathBuf;
 struct Request {
     schema_version: u16,
     protocol: ProtocolScope,
+    decoder_contract: Option<DecoderContract>,
     rxmer: PathBuf,
     channel_estimation: PathBuf,
     modulation_profile: PathBuf,
@@ -41,8 +42,14 @@ pub(super) fn run(arguments: Arguments) -> Result<(), String> {
         return Err("import-pnm accepts --input and --output only.".into());
     }
     let request: Request = read_json(&arguments.input)?;
-    if request.schema_version != 1 {
+    if !matches!(
+        (request.schema_version, &request.decoder_contract),
+        (1, None) | (2, Some(_))
+    ) {
         return Err("Unsupported import request version.".into());
+    }
+    if let Some(contract) = &request.decoder_contract {
+        contract.validate().map_err(|error| error.to_string())?;
     }
     let directory = arguments
         .input
@@ -66,7 +73,14 @@ pub(super) fn run(arguments: Arguments) -> Result<(), String> {
                 .map(|name| name.to_string_lossy().into_owned())
         })
         .collect::<Result<Vec<_>, _>>()?;
-    let scenario = import(
+    let import_capture =
+        |rxmer, channel, profiles, protocol, tolerance| match &request.decoder_contract {
+            Some(contract) => {
+                import_with_contract(contract, rxmer, channel, profiles, protocol, tolerance)
+            }
+            None => import(rxmer, channel, profiles, protocol, tolerance),
+        };
+    let scenario = import_capture(
         JsonCapture {
             name: &names[0],
             bytes: &bytes[0],

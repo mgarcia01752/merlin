@@ -29,7 +29,30 @@ pub fn assemble_packed(
     control: &NcpFieldCodec,
     randomizer: &mut CellRandomizer,
 ) -> Result<AssembledSymbol, SimulationError> {
-    let field = control.encode_packed(symbol)?;
+    assemble_packed_with_flags(
+        symbol,
+        control,
+        randomizer,
+        crate::transmission::ncp::activation::NcpFieldFlags::default(),
+    )
+}
+/// Assembles actual cells with explicit NCP generation flags and continuous randomization.
+/// # Arguments
+/// * `symbol` - Uniform-profile source plan.
+/// * `control` - Shared NCP codec.
+/// * `randomizer` - Caller-owned continuous cell state.
+/// * `flags` - Session-validated C/N/U flags.
+/// # Returns
+/// Actual encoded/mapped cells; commits randomizer only on success.
+/// # Errors
+/// Rejects malformed reservations, labels or randomizer sequencing.
+pub fn assemble_packed_with_flags(
+    symbol: &PackedSymbol,
+    control: &NcpFieldCodec,
+    randomizer: &mut CellRandomizer,
+    flags: crate::transmission::ncp::activation::NcpFieldFlags,
+) -> Result<AssembledSymbol, SimulationError> {
+    let field = control.encode_packed_with_flags(symbol, flags)?;
     if symbol
         .cells
         .iter()

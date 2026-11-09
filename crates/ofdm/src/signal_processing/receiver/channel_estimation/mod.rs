@@ -10,3 +10,5 @@ pub use model::{ChannelEstimate, PilotEstimate, ReceiverMode};
 pub use pilot::PilotChannelEstimator;
 
 pub mod timing;
+
+pub mod acquisition;

@@ -29,7 +29,7 @@ as RxMER worsens. External DOCSIS interoperability is not established.
 | Waveform TX/RX | Frequency/time interleaving, pilots, IFFT, prefix, windowing, sample transport and matched receiver |
 | Continuous runs | PRBS15, configurable duration, startup/drain accounting, cancellation and partial results |
 | Impairments | Seeded sample AWGN or per-carrier RxMER residuals; supplied channel response, reference or pilot-derived equalization |
-| Measurements | Current `pnm-decode` JSON import for RxMER, channel estimation and modulation profiles; explicit temporal epochs and frozen applied mixed profiles |
+| Measurements | Explicit pnm-decode0.3.6 JSON compatibility contract; import for RxMER, channel estimation and modulation profiles; explicit temporal epochs and frozen applied mixed profiles |
 | Paired constellation | Bounded raw/corrected payload I/Q pairs with exact carrier/time coordinates and CLI JSON |
 | Results | Recovered-payload BER, codeword failures, actual LDPC iterations, BCH corrections and bounded stage probes |
 | Modulation coverage | Mapping, hard/soft decisions and full uniform coding through16384-QAM; mixed profiles and explicit shortened waveform reference |
@@ -53,6 +53,12 @@ flowchart LR
 
 PLC/NCP signaling, pilots and receiver configuration are part of the implemented
 path. The [component guides](docs/user/simulation/README.md) explain each subsystem.
+
+Streaming APIs additionally support bounded data/NCP generation switching,
+generated continuous-pilot layouts and received-only timing/fractional-CFO/pilot-phase
+acquisition. The duration CLI retains its fixed-profile reference behavior.
+[Native CLI installation](docs/user/install/README.md) is documented; cross-platform
+workflows are prepared locally and their remote execution is deferred.
 
 ## Try it locally
 

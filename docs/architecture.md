@@ -20,6 +20,19 @@ Checklist IDs use stable component/work-area prefixes, such as PLC, WAVE-TX, WAV
 RX-CONFIG, rather than temporary NEXT labels. Local numbering identifies work;
 dependencies and current priority determine the next item to implement.
 
+## Terminology: cell and symbol
+
+**Cell = QAM symbol** in the data path: one complex I/Q point carried by one
+subcarrier during one OFDM symbol period. For example, a256-QAM cell represents
+eight coded bits. The term **OFDM symbol** means the complete set of subcarrier
+points transmitted together during that period, rather than one QAM symbol.
+
+Use **QAM symbol (cell)** when introducing the term. Existing cell-interleaving,
+cell-word and cell-index names retain the DOCSIS PHY terminology. Pilot/control
+cells may use BPSK or QPSK instead of a data-QAM constellation. Bit interleaving
+reorders coded bits; cell interleaving reorders modulation symbols across
+frequency and time.
+
 ## Purpose and scope
 
 MERLIN (Modulation, Encoding, Reception, Link Impairments & Noise) is the
@@ -352,8 +365,8 @@ last-cell padding. Actual PLC DPDs deliver the frozen applied ProfileA to RX.
 The receiver demaps variable-width soft cells and removes only final-cell padding
 before actual LDPC/BCH recovery. All ten uniform data orders and mixed0,4,6..14-bit
 profiles are supported. Shortened words use the separate explicit API/reference
-path described above. Dynamic profile activation rejects explicitly; uniform
-modes always select their own rules rather than substituting mixed processing.
+path described above. This fixed-duration path rejects dynamic activation; the opt-in NCP-03 stream
+path is separate. Uniform modes always select their own rules rather than substituting mixed processing.
 
 The temporal model is piecewise-constant variance with conditionally independent
 Gaussian residuals. RxMER alone supplies no burst correlation or event timing.
@@ -586,9 +599,8 @@ and configuration admission. Only supplied PLC bootstrap spacing/alignment stays
 outside received signaling. The readiness gate is Waiting/Ready/Rejected and
 exposes data/NCP settings only when Ready. Rejection preserves accepted descriptors
 and historical configuration; a valid repeat can reopen the gate. Changed packet
-content requires an explicit reset in this fixed-session implementation. Live
-profile activation, descriptor timeouts, automatic loss recovery and full payload
-receive orchestration remain separate work. See the per-subsystem
+content requires an explicit reset in this fixed-session implementation. Live DPD routing is now opt-in through NCP-03. Descriptor timeouts and automatic
+loss recovery remain separate work; payload receive orchestration is described below. See the per-subsystem
 [receiver-configuration design guides](user/receiver-configuration/README.md).
 
 `transmission/frame/assembly.rs` combines already cell-interleaved data/NCP,
@@ -672,8 +684,8 @@ closes recovery without clearing pending history or caller-owned completed words
 
 Support is frozen ProfileA ID0 with all ten uniform orders or verified mixed loading,
 including zero-loaded carriers, and uniform positive QPSK/16-QAM/64-QAM NCP.
-Odd selection, activation updates and tagging fail explicitly; dynamic switching
-remains NCP-03. See the applied-profile design for non-shortened coding bounds. Descriptor counts remain independent.
+The fixed constructors still reject odd selection, activation updates and tagging.
+NCP-03 adds a separate opt-in dynamic full-word path described below. See the applied-profile design for non-shortened coding bounds. Descriptor counts remain independent.
 The synchronized payload origin is a128-symbol boundary after PLC acquisition.
 TX deliberately emits recorded BPSK replacements for unavailable startup/drain
 history; RX suppresses only the configured M-1 warm-up, using no TX validity list.
@@ -804,9 +816,10 @@ no fabricated zero BER. The seeded baseline is reproducible on the tested build;
 external interoperability and untested platforms remain separate validation work.
 
 Future Python/Qt adapters call the same scientific APIs and test-point contracts.
-They do not implement DSP, codec math or scientific JSON post-processing. Native
-bindings, packaging and presentation are later milestones. Git/release helpers
-exist, but native installers and multi-OS release automation do not yet exist.
+They do not implement DSP, codec math or scientific JSON post-processing. Native bindings and presentation remain later milestones. Native CLI packaging and
+multi-OS validation/publication workflows are now prepared locally; only Linux can
+be verified on this host. Their remote execution is deferred, and the optional Qt
+application is not part of these CLI installers.
 
 ## Stage references
 
@@ -828,3 +841,51 @@ The [pilot/PLC reference demonstration](user/impairments/pilot-plc-constellation
 uses an example-owned observer over existing RX FFT/equalized probes. It keeps
 the four signal classes separate during acquisition. The newer CH-EST-RX shared
 collector and pilot-derived correction are documented in the receiver guides above.
+
+## Completion group: dynamic control, layout, acquisition and delivery
+
+NCP-03 adds a bounded received-DPD generation bank under
+`transmission/plc/receiver_configuration/generations.rs`, the temporal N/U
+recognizer/schedule under `transmission/ncp/activation.rs`, and opt-in streaming
+payload transport. Each data start selects profile0..15 plus C parity from the
+actual received NCP. The collector changes bit processing at word boundaries;
+continuations retain their selected generation. Positive uniform NCP changes use
+the exact preceding128-symbol U pattern to choose N before demapping. The
+fixed-session constructors remain strict. Further same-parity replacement requires
+reacquisition; dynamic shortened words/OPT tagging are not implemented.
+See [dynamic control design](user/ncp-profiles/README.md).
+
+LAYOUT-03 adds a deterministic additional-continuous-pilot generator in
+`transmission/layout/continuous.rs`, independent of simulation features. It shares
+the physical validator, computes density from actual active frequency span, merges
+eligible spectrum, protects PLC/poor bins/edges, covers isolated regions and
+perturbs placement without touching scientific RNG state. Generated settings feed
+the same descriptor/OCD builder as explicit settings.
+See [placement and equations](user/carrier-placement.md).
+
+WAVE-RX-05 adds bounded CP timing/fractional-CFO and held-out scattered-pilot phase
+acquisition in `signal_processing/receiver/channel_estimation/acquisition.rs`.
+Waveform RX owns continuous derotation and the existing pilot estimator/equalizer.
+It receives no transmitted channel, boundary or phase. Known numerology/layout,
+unit reference scaling, a sufficiently smooth channel and unaliased fractional
+CFO remain explicit assumptions. A recovered128-phase index is not an absolute
+PLC frame epoch. The duration CLI still selects its synchronized reference path.
+See [RX acquisition and equations](user/waveform/rx-acquisition.md).
+
+INPUT-02 adds an explicit producer allowlist and contract revision under
+`scenario/pnm_json/contract.rs`. CLI request schema2 requires the pnm-decode0.3.6
+export declaration; legacy schema1 is explicit and unchanged. Shared Rust imports
+retain actual JSON hashes and scientific checks. Ancillary additive display fields
+are allowed, while required field/unit/assignment drift rejects. Preserve the
+request with the scenario because ordinary upstream JSON has no producer stamp.
+See [decoder contract](user/impairments/pnm-import.md#explicit-decoder-contract-input-02).
+
+QA-05 remains open pending independent full-channel vectors and their actual replay
+format. Tooling only admits bounded provenance/files/hashes and reports that the
+science is unexecuted. QA-06/07 add locally prepared native tests and CLI package
+builders under `tools/packaging/`, with tag-triggered workflows under
+`.github/workflows/`. Package builders install nothing, preserve licenses/examples,
+refuse clobber and consume matching tested binaries. Native execution/publication
+awaits the user's later workflow push. QAM-04 stays excluded/deferred.
+See [delivery design](development/native-delivery.md) and
+[group record](development/features/completion-group/design.md).

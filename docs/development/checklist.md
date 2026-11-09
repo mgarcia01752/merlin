@@ -26,6 +26,15 @@ waveform observation and integration checks. Use this pattern for new groups ins
 local to a component, not a global execution order. Select the next unfinished
 item by the documented dependencies and current implementation priority.
 
+## Terminology
+
+**Cell = QAM symbol**: one complex I/Q point on one subcarrier during one OFDM
+symbol period. An **OFDM symbol** contains the complete set of subcarrier points
+for that period. A256-QAM cell carries eight coded bits; pilot/control cells may
+instead use BPSK or QPSK. Read cell interleaving as modulation-symbol interleaving,
+distinct from bit interleaving. Introduce the term as **QAM symbol (cell)**; see
+the [architecture definition](../architecture.md#terminology-cell-and-symbol).
+
 ## Architecture and module rules
 
 - [x] **ARCH-01** Maintain one canonical architecture and this checklist.
@@ -160,8 +169,13 @@ Guide: [NCP signaling](../user/ncp.md).
 
 - [x] **NCP-01** Real NCP messages, CRC-24-D, separate control LDPC and QAM grouping.
 - [x] **NCP-02** CRC-accepted receiver pointer discovery without transmitter IDs.
-- [ ] **NCP-03** Dynamic data/NCP profile switching and session-level signaling
-  validation; the current fixed-profile path does not implement this behavior.
+- [x] **NCP-03** Opt-in bounded data/NCP generation switching: received DPD bank,
+  C-selected data profiles0..15, exact128-symbol U announcement and N-selected
+  positive uniform NCP changes. Preserve codeword/randomizer/interleaver state;
+  verify real PLC DPD recovery and crossing-word payload recovery at both spacings.
+  Same-parity generation replacement requires reacquisition; OPT tagging and dynamic
+  shortened words are excluded. The duration CLI remains fixed-profile.
+  Guide: [dynamic profiles](../user/ncp-profiles/README.md).
 
 ## Fixed channel and cell transport
 
@@ -169,8 +183,10 @@ Guide: [NCP signaling](../user/ncp.md).
   and integer one-second timing calculations.
 - [x] **LAYOUT-01** Explicit physical PLC/continuous/scattered/excluded roles.
 - [x] **LAYOUT-02** Reduced-domain association and128-symbol inverse pilot reference.
-- [ ] **LAYOUT-03** Generate additional continuous-pilot positions from the PHY rules;
-  current tests supply explicit synthetic positions.
+- [x] **LAYOUT-03** Generate additional continuous pilots using PHY I20 density,
+  merged spectrum, PLC/poor-bin avoidance, edge guards, isolated-region coverage
+  and reproducible bounded disturbance. Validate both spacings and invalid inputs.
+  Guide: [pilot placement](../user/carrier-placement.md).
 - [x] **INT-01** Frequency permutation and inverse, full/partial columns and both NI limits.
 - [x] **INT-02** Stateful time interleaving and inverse at all supported depths,
   including dummy padding, M-1 pair delay, startup/drain and rejected-call atomicity.
@@ -209,7 +225,7 @@ The complete RUN group now includes source-window accounting, cancellation,
 partial jobs, CLI delivery and probe export. The subsequent MODEL-04/INPUT-01
 group now adds waveform impairments and fixed-profile measured operation;
 MODEL-05/06/07 now add supported pilot estimation, temporal epochs and mixed
-profiles below; full blind acquisition remains WAVE-RX-05.
+profiles below; the broader WAVE-RX-05 acquisition scope remains open.
 
 - [x] **PLC-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
@@ -278,7 +294,7 @@ gate. The acquisition composition receives actual PLC I/Q and messages; consumer
 can build physical/pilot/interleaver settings from received data alone. Tests cover
 all descriptor orders, independent counters, missing/corrupt/conflicting input,
 profile precedence and multi-frame transport. Fixed payload recovery now consumes
-these settings under WAVE-RX-06; dynamic activation remains NCP-03. See the
+these settings under WAVE-RX-06; opt-in dynamic activation is documented under NCP-03. See the
 [receiver configuration design](../user/receiver-configuration/README.md).
 
 ## Waveform direction and completion scope
@@ -303,7 +319,7 @@ The first noiseless milestone now includes TX stages, their matched RX
 primitives, the unity channel, known-reference framing/extraction, bounded
 observations and actual PLC waveform integration. Each completed item links
 to its subsystem guide in the [waveform index](../user/waveform/README.md).
-Nonideal synchronization (WAVE-RX-05) remains later work. WAVE-RX-06 now
+Bounded nonideal synchronization is now available under WAVE-RX-05. WAVE-RX-06 now
 implements production transport for the explicitly supported fixed256-QAM
 subset; it does not imply dynamic or every-order payload support. The one-second runner has its own RUN group below.
 
@@ -391,9 +407,17 @@ Design: [RX extraction](../user/waveform/rx-extraction.md) and [equalization](..
 Design: [Known-reference waveform](../user/waveform/README.md) and
 [fixed payload transport](../user/payload-transport/README.md).
 
-- [ ] **WAVE-RX-05** Independently verify synchronization/channel estimation for
-  nonideal operation. This extends the known-reference receiver; it must not be
-  marked complete from noiseless tests with supplied timing/channel knowledge.
+- [ ] **WAVE-RX-05** Complete nonideal synchronization/channel-estimation
+  verification, including the broader acquisition scope retained by this checklist.
+  - [x] Bounded received-only CP timing, fractional CFO correction and held-out
+    scattered-pilot phase selection, followed by pilot CH-EST-RX. Tests cover both
+    spacings, unknown offset/phase, nonzero CFO, additive sample perturbations and
+    a smooth complex channel without TX H in RX.
+  - [ ] Verify integer-carrier/unknown-numerology acquisition and broader channel
+    conditions beyond the implemented smooth-channel, known-layout subset.
+  Known geometry and an unaliased fractional offset remain assumptions. Do not
+  close the parent from these synthetic bounded-subset tests.
+  Guide: [WAVE-RX acquisition](../user/waveform/rx-acquisition.md).
 - [x] **WAVE-RX-06** Connect physical data extraction, inverse cell interleaving,
   source-phase inverse randomization, NCP discovery and data decoding in production.
   Use received configuration; preserve the separate control/payload codec paths.
@@ -507,10 +531,11 @@ and [the later impairment reference](impairment-reference.md).
     policy. Fixture preparation alone does not establish waveform/FEC behavior.
   - [x] Validate/import all three capture types, expand bounded profiles, preserve
     missing readings and provide standalone CLI plus direct typed Rust API tests.
-- [ ] **INPUT-02** Later: formalize the decoded-JSON compatibility contract with
-  schema versions, verified PNM Viewer Toolkit versions, compatibility fixtures
-  and explicit rejection of unsupported revisions. Begin INPUT-01 with the current
-  decoder JSON rather than blocking on this contract work.
+- [x] **INPUT-02** Explicit decoder contract revision1 pins pnm-decode0.3.6;
+  request schema2 requires the producer declaration. Preserve legacy schema1,
+  exact-byte hashes/nulls/grids and shared Rust validation. Test actual exports,
+  additive display fields and rejection of unsupported producer/revision drift.
+  Guide: [import contract](../user/impairments/pnm-import.md#explicit-decoder-contract-input-02).
 - [x] **MODEL-01** Controlled cell AWGN and RxMER-derived residual noise in the
   original coding experiment, distinct from measured observations and screening.
 - [x] **MODEL-02** Scenario identity/grid/time association and protected-role profiles.
@@ -530,8 +555,7 @@ and [the later impairment reference](impairment-reference.md).
 ## Paired constellation before and after equalization
 
 **Completed group: CONST-01 through CONST-05.** Uses supplied H and
-matching1/H first. MODEL-05 now adds independent pilot estimation; full blind
-acquisition remains WAVE-RX-05.
+matching1/H first. MODEL-05 now adds independent pilot estimation; the bounded nonideal acquisition model is documented under WAVE-RX-05.
 The [feature plan](features/paired-constellation/plan.md) defines confirmed reuse,
 profile/coordinate selection, reference planes, bounded collection and tests.
 The [user design](../user/impairments/paired-constellation.md) explains the result.
@@ -564,7 +588,7 @@ include direction. Use these prefixes for their respective task IDs.
     verify complex gain and captured frequency response without duplicate residuals.
   - [x] Independently estimate H from pilots and validate noisy equalization;
     provide bounded CP timing acquisition with known numerology/PLC phase.
-    Full blind acquisition remains WAVE-RX-05; the CLI retains known timing.
+    Bounded WAVE-RX-05 acquisition is opt-in; the CLI retains known timing.
 
   - [x] **CH-EST-RX-01** Build receiver-owned known pilot references and per-pilot H-hat
     estimates, starting noiseless with explicit known timing/phase.
@@ -581,7 +605,7 @@ include direction. Use these prefixes for their respective task IDs.
 
 The implemented MODEL-05 group is detailed in the
 [pilot-estimation and analyzer plan](features/pilot-channel-estimation/plan.md).
-Full blind acquisition stays under WAVE-RX-05. Bounded CP sample-offset search
+WAVE-RX-05 now provides bounded nonideal acquisition. Bounded CP sample-offset search
 is implemented independently; CLI operation retains known timing/PLC phase.
 See the [implementation record](features/pilot-channel-estimation/implementation.md).
 
@@ -591,7 +615,7 @@ See the [implementation record](features/pilot-channel-estimation/implementation
     reject missing active samples and unsupported loading, and run real256-QAM FEC.
   - [x] Add explicit same-grid temporal epochs and frozen uniform16/256/mixed
     ProfileA modes through actual coding/waveform/FEC, including zero loading.
-    Other profile selectors and dynamic activation remain unsupported, under NCP-03.
+    This fixed subset rejects other selectors; NCP-03 provides opt-in dynamic full-word transport.
 - [x] **MODEL-07** Validate any temporal/burst model independently; RxMER alone does
   not supply time correlation, impulse noise or modem implementation behavior.
   - [x] State the piecewise-constant, independent Gaussian model; verify power/lag
@@ -627,15 +651,28 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 ### External interoperability validation
 
 - [ ] **QA-05** Independent external interoperability vectors for full channel stages.
+  - [x] Record the required dataset/provenance and add bounded manifest/hash admission.
+  - [ ] Obtain external data, implement its Rust replay adapter and compare independent
+    scientific truth. Admission reports explicitly say admitted_unexecuted.
+  Requirements: [external channel vectors](features/completion-group/external-channel-vectors.md).
 
 ### Cross-platform builds and runtime
 
 - [ ] **QA-06** Windows/macOS build/runtime validation and CI; Linux checks alone
   do not establish cross-platform runtime support.
+  - [x] Prepare lean preflight, native science tests and CLI smoke jobs for Linux,
+    Windows x64 and macOS ARM64/Intel with pinned Rust and scoped caches.
+  - [ ] Push/run the workflows later and retain actual native results.
+  Guide: [native validation and delivery](native-delivery.md).
 
 ### Native packaging and release automation
 
 - [ ] **QA-07** Native packaging and release automation after core functionality.
+  - [x] Prepare CLI archives, DEB/PKG/MSI builders, checksums, license/example staging,
+    tag/version verification, tested-artifact publication and per-OS install guides.
+  - [ ] Verify all native installers and their install/upgrade/uninstall lifecycles;
+    run tag publication after the later workflow push.
+  Guide: [installation](../user/install/README.md).
 
 ### Optional Python adapter
 

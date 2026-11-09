@@ -11,6 +11,7 @@ use crate::{
 use fec_codec::concatenated::ConcatenatedCodec;
 /// At most one pending word; completed results are returned to the caller, never retained in history.
 pub struct PayloadCollector {
+    profile_id: crate::types::ProfileId,
     codec: ConcatenatedCodec,
     bits: PayloadBitOrder,
     pending: Vec<f64>,
@@ -25,6 +26,7 @@ impl PayloadCollector {
     /// Propagates codec/permutation setup failure.
     pub fn new() -> Result<Self, SimulationError> {
         Ok(Self {
+            profile_id: 0,
             codec: ConcatenatedCodec::new().map_err(invalid)?,
             bits: PayloadBitOrder::new(&[8])?,
             pending: Vec::new(),
@@ -44,6 +46,29 @@ impl PayloadCollector {
         collector.bits = PayloadBitOrder::new(loading)?;
         Ok(collector)
     }
+    /// Selects coding for a new received start without resetting receive sequence.
+    /// # Arguments
+    /// * `profile_id` - Validated data profile identity0..15.
+    /// * `loading` - Source-rank loading from the received DPD generation.
+    /// # Returns
+    /// Unit preserving completed-word ordering and codec ownership.
+    /// # Errors
+    /// Rejects an unfinished word, invalid profile or unsupported coding atomically.
+    pub fn activate_profile(
+        &mut self,
+        profile_id: crate::types::ProfileId,
+        loading: &[u8],
+    ) -> Result<(), SimulationError> {
+        if profile_id > 15 || !self.pending.is_empty() || self.first_source.is_some() {
+            return Err(invalid(
+                "Cannot change coding inside a pending data codeword.",
+            ));
+        }
+        let bits = PayloadBitOrder::new(loading)?;
+        self.bits = bits;
+        self.profile_id = profile_id;
+        Ok(())
+    }
     /// Reports incomplete received coded bits.
     /// # Returns
     /// Zero to the selected padded bit count (at most16212); incomplete bits are not payload.
@@ -52,7 +77,7 @@ impl PayloadCollector {
     }
     /// Collects one received NCP span and decodes only a complete word.
     /// # Arguments
-    /// * `span` - CRC-accepted pointer interval; profile0 is the supported data mode.
+    /// * `span` - CRC-accepted pointer interval; starts must match the selected profile.
     /// * `cells` - Actual inverse-randomized cells for exactly this interval; empty for filler.
     /// * `source_symbol` - Original pre-interleaving absolute symbol identity.
     /// * `max_iterations` - Positive payload LDPC work bound, at most100.
@@ -98,7 +123,7 @@ impl PayloadCollector {
         if !span.starts_codeword
             && span
                 .profile_id
-                .is_some_and(|profile| profile != crate::transmission::symbols::PAYLOAD_PROFILE_ID)
+                .is_some_and(|profile| profile != self.profile_id)
         {
             return Err(SimulationError::new(
                 "UnsupportedPayloadProfile",
@@ -109,10 +134,10 @@ impl PayloadCollector {
             if !self.pending.is_empty() || self.first_source.is_some() {
                 return Err(invalid("New NCP start interrupts an incomplete codeword."));
             }
-            if span.profile_id != Some(crate::transmission::symbols::PAYLOAD_PROFILE_ID) {
+            if span.profile_id != Some(self.profile_id) {
                 return Err(SimulationError::new(
                     "UnsupportedPayloadProfile",
-                    "Only fixed ProfileA is supported for payload decoding.",
+                    "Data start differs from the selected collector profile.",
                 ));
             }
         } else if self.first_source.is_none() {
@@ -159,7 +184,7 @@ impl PayloadCollector {
             .ok_or_else(|| invalid("Missing accepted codeword source identity."))?;
         let result = RecoveredPayload {
             receive_sequence: self.next_sequence,
-            profile_id: crate::transmission::symbols::PAYLOAD_PROFILE_ID,
+            profile_id: self.profile_id,
             first_source_symbol,
             last_source_symbol: source_symbol,
             cell_llrs: std::mem::take(&mut self.pending),

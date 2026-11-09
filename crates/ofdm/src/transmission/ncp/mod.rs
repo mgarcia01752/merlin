@@ -11,3 +11,5 @@ pub mod message;
 #[cfg(feature = "simulation")]
 pub use field::{DecodedNcpField, EncodedNcpField, NcpDataSpan, NcpFieldCodec};
 pub use message::{NcpMessage, NcpStartPointer, NULL_POINTER};
+
+pub mod activation;

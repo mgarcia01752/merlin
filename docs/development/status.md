@@ -66,13 +66,11 @@ known timing/PLC phase. No full blind modem-acquisition claim is made.
 
 | Work area | Remaining scope | Checklist IDs |
 | --- | --- | --- |
-| Receiver realism | Full blind carrier/numerology/PLC-phase acquisition and broader estimator uncertainty models; current pilot/CP subset is implemented | WAVE-RX-05 |
-| Measurement evolution | Future explicit correlated/burst models and dynamic profile activation; piecewise independent Gaussian epochs and frozen mixed profiles are implemented | NCP-03, future model extensions |
-| Coding and profiles | External high-order/mixed interoperability vectors (deferred with documented requirements); dynamic profile activation | QAM-04, NCP-03 |
-| Layout tools | Specification-based additional continuous-pilot placement | LAYOUT-03 |
-| Input compatibility | Formal decoded-JSON compatibility/version contract; current JSON import is already implemented | INPUT-02 |
-| Independent validation | External full-channel interoperability vectors and Windows/macOS build/runtime CI | QA-05, QA-06 |
-| Product interfaces | Native packaging/release automation, optional Python bindings and Qt presentation | QA-07, API-01, UI-01 |
+| Receiver realism | Integer-CFO/unknown-numerology acquisition and arbitrary-channel uncertainty remain beyond the implemented bounded subset | WAVE-RX-05 |
+| Measurement evolution | Future explicit correlated/burst models; streaming dynamic DPD/NCP activation is implemented, duration CLI remains fixed-profile | Future model extensions |
+| Coding and profiles | External high-order/mixed interoperability vectors, deferred with documented requirements | QAM-04 |
+| Independent validation | External full-channel dataset/replay; Windows/macOS native runs after the later workflow push | QA-05, QA-06 |
+| Product interfaces | Native installer lifecycle/release execution; optional Python bindings and Qt presentation | QA-07, API-01, UI-01 |
 | Later PHY scope | OFDMA, channel bonding/multiple channels and FDX-specific behavior | LATER-01, LATER-02 |
 
 This table groups outstanding work; it does not reorder the official checklist
@@ -125,3 +123,15 @@ explicit shortened transport through live PLC/NCP and waveform samples. See the
 and [component guides](../user/qam-processing/README.md). QAM-04 stays unchecked:
 externally produced interoperability evidence is deferred with a
 [required vector manifest and acceptance plan](features/qam-completion/external-vectors.md).
+
+## Downstream completion group
+
+NCP-03, LAYOUT-03 and INPUT-02 now have opt-in dynamic full-word transport,
+generated additional pilots and a pinned decoder import contract. WAVE-RX-05 adds
+bounded received-only nonideal acquisition but retains its broader parent TODO. Each component retains its stated limits;
+these do not silently change the fixed-profile CLI channel runner.
+QA-05 remains pending independent full-channel data. QA-06/07 tooling is prepared
+locally, with Linux package tests; Windows/macOS execution and release publication
+wait for the later workflow push. No remote action was performed. QAM-04 remains
+deferred/excluded. See the [design/validation record](features/completion-group/design.md)
+and [native delivery guide](native-delivery.md).

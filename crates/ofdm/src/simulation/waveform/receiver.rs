@@ -23,6 +23,7 @@ pub struct ReceivedSymbol {
     pub channel_estimate: Option<ChannelEstimate>,
     /// Applied inverse-gain power for raw-noise calibration.
     pub inverse_gain_power: Vec<f64>,
+    /// Framed samples after optional CFO derotation; original raw input stays caller-owned.
     pub period: SampleBlock,
     pub useful: Vec<IqPair>,
     pub bins: Vec<IqPair>,
@@ -31,6 +32,7 @@ pub struct ReceivedSymbol {
 }
 /// Frozen known-reference RX with independent timing, transform and extraction owners.
 pub struct WaveformReceiver {
+    carrier_correction: Option<crate::signal_processing::receiver::channel_estimation::acquisition::CarrierOffsetCorrection>,
     geometry: WaveformGeometry,
     layout: CarrierLayout,
     framer: SymbolFramer,
@@ -69,6 +71,7 @@ impl WaveformReceiver {
         }
         Ok(Self {
             estimator: None,
+            carrier_correction: None,
             reference_rms: reference.reference_rms,
             geometry: geometry.clone(),
             layout: CarrierLayout::new(geometry.settings(), layout)?,
@@ -162,6 +165,63 @@ impl WaveformReceiver {
         let symbols = receiver.receive(input)?;
         Ok((receiver, timing, symbols))
     }
+    /// Acquires bounded sample timing, fractional CFO and scattered-pilot phase.
+    /// # Arguments
+    /// * `geometry` - Known bootstrap numerology, without sample or phase truth.
+    /// * `layout` - Known bootstrap carrier assignments, without channel gains.
+    /// * `input` - Initial contiguous samples covering the full timing search.
+    /// * `max_offset_samples` - Inclusive CP timing search bound.
+    /// * `minimum_correlation` - Required normalized squared CP correlation.
+    /// # Returns
+    /// Live corrected unit-RMS pilot receiver, measured acquisition and completed symbols.
+    /// Recovered symbol IDs begin at phase0..127, not an invented absolute frame epoch.
+    /// Continue with raw received blocks; correction retains the original sample origin.
+    /// # Errors
+    /// Rejects weak/ambiguous acquisition, invalid geometry or unusable pilots.
+    /// Integer CFO, unknown numerology and arbitrary channels remain outside this model.
+    pub fn acquire_nonideal(
+        geometry:&WaveformGeometry,
+        layout:&CarrierLayoutSettings,
+        input:&SampleBlock,
+        max_offset_samples:usize,
+        minimum_correlation:f64,
+    )->Result<(Self,crate::signal_processing::receiver::channel_estimation::acquisition::AcquisitionEstimate,Vec<ReceivedSymbol>),SimulationError>{
+        use crate::signal_processing::receiver::channel_estimation::acquisition::{
+            estimate_pilot_phase, estimate_timing_and_cfo, AcquisitionEstimate,
+            CarrierOffsetCorrection,
+        };
+        let (timing, carrier_offset_hz) =
+            estimate_timing_and_cfo(geometry, input, max_offset_samples, minimum_correlation)?;
+        let correction =
+            CarrierOffsetCorrection::new(geometry, carrier_offset_hz, input.start_index())?;
+        let corrected = correction.apply(input)?;
+        let start = (timing.first_symbol_sample - input.start_index()) as usize;
+        let useful_start = start + geometry.prefix_samples();
+        let useful = &corrected.samples()[useful_start..useful_start + geometry.fft_samples()];
+        let bins = ForwardTransform::new(geometry.settings().subcarrier_spacing).apply(useful)?;
+        let map = CarrierLayout::new(geometry.settings(), layout)?;
+        let (pilot_phase, normalized_pilot_error) = estimate_pilot_phase(&map, &bins, 1.0)?;
+        let mut receiver = Self::from_pilots(
+            geometry,
+            layout,
+            input.start_index(),
+            timing.first_symbol_sample,
+            pilot_phase,
+            1.0,
+        )?;
+        receiver.carrier_correction = Some(correction);
+        let symbols = receiver.receive(input)?;
+        Ok((
+            receiver,
+            AcquisitionEstimate {
+                timing,
+                carrier_offset_hz,
+                pilot_phase,
+                normalized_pilot_error,
+            },
+            symbols,
+        ))
+    }
     /// Updates the explicitly supplied reference mode without changing sample framing.
     /// # Arguments
     /// * `response` - Same-grid finite nonzero gains for a reference experiment.
@@ -187,6 +247,12 @@ impl WaveformReceiver {
     /// Rejects stream discontinuity or downstream numerical failure. Framing is advanced
     /// once complete periods are accepted; after numerical failure start a new RX session.
     pub fn receive(&mut self, input: &SampleBlock) -> Result<Vec<ReceivedSymbol>, SimulationError> {
+        let corrected = self
+            .carrier_correction
+            .as_ref()
+            .map(|correction| correction.apply(input))
+            .transpose()?;
+        let input = corrected.as_ref().unwrap_or(input);
         let mut output = Vec::new();
         for frame in self.framer.push(input)? {
             let useful = cyclic_prefix::remove(&self.geometry, frame.period.samples())?.to_vec();

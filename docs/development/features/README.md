@@ -56,3 +56,4 @@ from a fresh clone and are deliberately not Markdown link targets.
 | visual workspace (planned) | [plan](visual-workspace/plan.md) |
 | waveform | [plan](waveform/plan.md) · [validation](waveform/validation.md) |
 | waveform direction | [notes](waveform-direction/notes.md) |
+| downstream completion group | [design](completion-group/design.md) · [validation](completion-group/validation.md) · [external vector needs](completion-group/external-channel-vectors.md) |

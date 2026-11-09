@@ -10,3 +10,5 @@ pub use physical::{CarrierLayout, CarrierLayoutSettings, PhysicalCarrierRole};
 pub use pilot_reference::PilotReference;
 
 pub mod bit_loading;
+
+pub mod continuous;

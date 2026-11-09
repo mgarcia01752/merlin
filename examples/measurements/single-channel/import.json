@@ -1,8 +1,13 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "protocol": "docsis31",
   "rxmer": "rxmer.json",
   "channel_estimation": "channel_estimation.json",
   "modulation_profile": "modulation_profile.json",
-  "tolerance_seconds": 90000
+  "tolerance_seconds": 90000,
+  "decoder_contract": {
+    "revision": 1,
+    "producer": "pnm-decode",
+    "producer_version": "0.3.6"
+  }
 }

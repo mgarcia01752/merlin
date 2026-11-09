@@ -23,7 +23,7 @@ pub struct ReceivedProfile {
 impl ReceivedProfile {
     /// Returns the received data-profile identity or 255 for the NCP profile.
     /// # Returns
-    ///0or 255 within the current acquisition subset; no inferred profile selection.
+    ///0..15 for data or255 for NCP; no inferred activation selection.
     pub fn profile_id(&self) -> ProfileId {
         self.profile_id
     }

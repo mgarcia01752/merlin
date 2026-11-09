@@ -13,7 +13,7 @@ use crate::{
         layout::{CarrierLayout, CarrierLayoutSettings, PhysicalCarrierRole, PilotReference},
         ncp::NcpFieldCodec,
         packing::{CodewordId, NcpModulation, PackedSymbol, PackingSettings, SymbolPacker},
-        symbols::{assemble_packed, AssembledSymbol, TransportCell},
+        symbols::{AssembledSymbol, TransportCell},
         TransmissionSettings,
     },
     types::IqPair,
@@ -53,6 +53,12 @@ pub struct PayloadTransmitSymbol {
 /// Frozen-profile TX state; buffers remain bounded independently of simulation duration.
 pub struct PayloadTransmitter {
     origin: u64,
+    data_profile_odd: bool,
+    ncp_profile_odd: bool,
+    ncp_transition: Option<(
+        crate::transmission::ncp::activation::NcpTransitionSchedule,
+        NcpModulation,
+    )>,
     next_local: u64,
     drain_remaining: Option<usize>,
     layout: CarrierLayout,
@@ -96,6 +102,9 @@ impl PayloadTransmitter {
             SymbolInterleaver::new(reference.settings(), InterleaverDirection::Transmit)?;
         Ok(Self {
             origin,
+            data_profile_odd: false,
+            ncp_profile_odd: false,
+            ncp_transition: None,
             next_local: 0,
             drain_remaining: None,
             layout,
@@ -147,6 +156,62 @@ impl PayloadTransmitter {
             loading,
         )?;
         Ok(transmitter)
+    }
+    /// Activates a received-signaled data generation for subsequently queued words.
+    /// # Arguments
+    /// * `profile_id` - Data profile identity0..15.
+    /// * `change_count` - DPD counter; its LSB becomes C at subsequent starts.
+    /// * `physical_loading` - Full physical-grid loading of unchanged geometry.
+    /// # Returns
+    /// Unit preserving continuous randomizer, interleaver, symbol and word-ID state.
+    /// # Errors
+    /// Rejects pending source words, drain, malformed loading or unsupported coding.
+    pub fn activate_data_profile(
+        &mut self,
+        profile_id: crate::types::ProfileId,
+        change_count: u8,
+        physical_loading: &[u8],
+    ) -> Result<(), SimulationError> {
+        if self.drain_remaining.is_some() {
+            return Err(invalid("Cannot activate profiles after drain."));
+        }
+        let loading = crate::transmission::layout::bit_loading::source_bit_loading(
+            &self.layout,
+            physical_loading,
+        )?;
+        let bits = crate::signal_processing::modulation::interleaving::mixed::PayloadBitOrder::new(
+            &loading,
+        )?;
+        self.packer.activate_profile(profile_id, loading)?;
+        self.profile_bits = Some(bits);
+        self.data_profile_odd = change_count & 1 != 0;
+        Ok(())
+    }
+    /// Announces one NCP-generation change using the actual128-symbol U pattern.
+    /// # Arguments
+    /// * `activation_symbol` - Absolute source symbol, at least128 clocks ahead.
+    /// * `modulation` - New generation's positive uniform NCP modulation.
+    /// # Returns
+    /// Unit; data words may continue through the NCP change without resetting state.
+    /// # Errors
+    /// Rejects drain, overlapping schedules or insufficient announcement lead time.
+    pub fn schedule_ncp_change(
+        &mut self,
+        activation_symbol: u64,
+        modulation: NcpModulation,
+    ) -> Result<(), SimulationError> {
+        if self.drain_remaining.is_some() || self.ncp_transition.is_some() {
+            return Err(invalid(
+                "An open transmitter with no pending NCP change is required.",
+            ));
+        }
+        let schedule = crate::transmission::ncp::activation::NcpTransitionSchedule::new(
+            self.origin + self.next_local,
+            activation_symbol,
+            self.ncp_profile_odd,
+        )?;
+        self.ncp_transition = Some((schedule, modulation));
+        Ok(())
     }
     /// Encodes and queues one actual payload; no truth is passed to RX.
     /// # Arguments
@@ -237,10 +302,29 @@ impl PayloadTransmitter {
         self.origin
             .checked_add(next)
             .ok_or_else(|| invalid("Absolute payload TX symbol overflow."))?;
+        let mut update = false;
+        if let Some((schedule, modulation)) = self.ncp_transition {
+            let (odd, bit) = schedule.flags(self.origin + self.next_local);
+            update = bit;
+            if odd != self.ncp_profile_odd {
+                self.packer.activate_ncp(modulation)?;
+                self.ncp_profile_odd = odd;
+                self.ncp_transition = None;
+            }
+        }
         let packed = self
             .packer
             .pack_symbol(self.reference.roles(self.next_local))?;
-        let assembled = assemble_packed(&packed, &self.control, &mut self.randomizer)?;
+        let assembled = crate::transmission::symbols::assembly::assemble_packed_with_flags(
+            &packed,
+            &self.control,
+            &mut self.randomizer,
+            crate::transmission::ncp::activation::NcpFieldFlags {
+                data_profile_odd: self.data_profile_odd,
+                ncp_profile_odd: self.ncp_profile_odd,
+                ncp_profile_update: update,
+            },
+        )?;
         let cells = self
             .interleaver
             .process_symbol(self.next_local, &assembled.cells)?;

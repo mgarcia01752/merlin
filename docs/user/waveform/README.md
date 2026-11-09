@@ -46,8 +46,9 @@ unity channel response. It does not discover these through blind acquisition.
 Actual PLC messages recovered from samples feed the existing descriptor admission
 and readiness owner. Data bins in the bounded example are deterministic 256-QAM
 reference cells; the separate [payload waveform experiment](../payload-transport/reference-experiment.md)
-now carries actual encoded payload/NCP using acquired PLC configuration. Nonideal
-synchronization remains unchecked in the [checklist](../../development/checklist.md).
+now carries actual encoded payload/NCP using acquired PLC configuration. The opt-in [nonideal acquisition](rx-acquisition.md) derives bounded timing,
+fractional CFO and pilot phase from received samples; its assumptions differ from
+this synchronized reference experiment.
 The separate [channel job/CLI](../channel-runner/cli.md) now supplies duration-based
 recovery, source-window accounting, cooperative cancellation and partial results.
 

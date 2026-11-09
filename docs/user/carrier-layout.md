@@ -33,11 +33,10 @@ distances 15, 24, 35 and 47 from each nearest PLC edge for 4K, or 30, 48, 70 and
 94 for 8K. Supply only the additional pilots: 8–120 distinct locations outside
 that neighborhood.
 
-Additional-pilot **generation** is pending. Count bounds and collision checks
-do not certify the full §7.5.15.2.2 algorithm: density, merged-spectrum placement,
-edge adjustment, isolated-region coverage and periodicity perturbation still
-need verification. This representation also does not certify spectral masks or
-encode PLC messages. It is not a complete operational CMTS channel validator.
+Additional pilots can be supplied explicitly or produced by the shared Rust
+[continuous-pilot generator](carrier-placement.md), including density, merged
+spectrum, edge protection, isolated-region coverage and seeded disturbance.
+Layout validation does not certify spectral masks or encode PLC messages.
 
 ## Scattered-pilot progression
 

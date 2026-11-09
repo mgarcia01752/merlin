@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Current pnm-decode JSON adapter, independent of paths and decoder subprocesses.
+pub mod contract;
 mod decoded;
 use crate::{
     error::invalid,
@@ -11,6 +12,7 @@ use crate::{
     types::{modulation::ModulationAssignment, ProtocolScope},
     SimulationError,
 };
+pub use contract::DecoderContract;
 use decoded::{Channel, ProfileDocument, Rxmer};
 use sha2::{Digest, Sha256};
 
@@ -21,7 +23,33 @@ pub struct JsonCapture<'input> {
     pub bytes: &'input [u8],
 }
 
-/// Imports the three current-decoder capture documents without resampling.
+/// Imports captures after admitting an explicit decoder compatibility declaration.
+/// # Arguments
+/// * `contract` - Export-record producer identity; never inferred from PNM headers.
+/// * `rxmer` - Named decoded RxMER JSON bytes.
+/// * `channel` - Named decoded channel-estimation JSON bytes.
+/// * `profiles` - Named decoded modulation-profile JSON bytes.
+/// * `protocol` - Explicit DOCSIS scope.
+/// * `tolerance_seconds` - Maximum capture epoch distance from RxMER.
+/// # Returns
+/// Owned scenario with the same exact-byte hashes and grids as the legacy adapter.
+/// Preserve the request alongside the scenario to retain producer declarations.
+/// # Errors
+/// Rejects unsupported contracts before parsing, then applies all import validation.
+pub fn import_with_contract(
+    contract: &DecoderContract,
+    rxmer: JsonCapture<'_>,
+    channel: JsonCapture<'_>,
+    profiles: JsonCapture<'_>,
+    protocol: ProtocolScope,
+    tolerance_seconds: u32,
+) -> Result<ScenarioDocument, SimulationError> {
+    contract.validate()?;
+    import(rxmer, channel, profiles, protocol, tolerance_seconds)
+}
+
+/// Imports legacy unversioned decoder documents without resampling.
+/// Prefer import_with_contract for newly recorded producer exports.
 ///
 /// # Arguments
 /// * `rxmer` - Decoded RxMER JSON, at most16MiB.

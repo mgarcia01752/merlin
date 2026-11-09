@@ -104,3 +104,10 @@ in ignored `local/doc-plots/`; no system installation is required. See the
 for isolated setup and rendering commands. All DSP, impairment generation and
 scientific results still come from Rust. The release gate now also checks8192
 paired samples in its existing measured channel smoke run.
+
+## Native CLI delivery checks
+
+The local gate also runs the packaging and external-vector admission helper tests.
+For prepared native workflows and package builders, see
+[native validation/delivery](native-delivery.md). These workflows stay unpushed
+until requested; passing this Linux gate does not establish Windows/macOS support.

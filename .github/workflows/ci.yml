@@ -1,0 +1,119 @@
+# Copyright 2026 DOCSIS OFDM Channel Sim contributors
+# SPDX-License-Identifier: Apache-2.0
+
+name: Rust validation
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+permissions:
+  contents: read
+# Tag validation must finish even if another branch run starts.
+concurrency:
+  group: rust-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: '0'
+  CARGO_PROFILE_DEV_DEBUG: '0'
+  CARGO_PROFILE_TEST_DEBUG: '0'
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install pinned Rust components
+        run: rustup toolchain install 1.85.1 --profile minimal --component rustfmt --component clippy
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: core-${{ runner.os }}-${{ runner.arch }}-1.85.1-${{ hashFiles('Cargo.lock') }}
+          restore-keys: core-${{ runner.os }}-${{ runner.arch }}-1.85.1-
+      - name: Versions, helpers and style
+        run: |
+          python tools/release/versions.py
+          python -m unittest discover -s tools/release -p 'test_*.py'
+          python -m unittest discover -s tools/git/tests -p 'test_*.py'
+          python -m unittest discover -s tools/packaging -p 'test_*.py'
+          python -m unittest discover -s tools/validation -p 'test_*.py'
+          bash -n scripts/check-before-push.sh
+          shellcheck scripts/*.sh tools/git/*.sh tools/bump-version.sh
+          cargo fmt --all -- --check
+          cargo clippy --workspace --all-targets --locked -- -D warnings
+  native:
+    needs: preflight
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux-x64
+            os: ubuntu-22.04
+            executable: ofdm-fec
+          - name: windows-x64
+            os: windows-2022
+            executable: ofdm-fec.exe
+          - name: macos-arm64
+            os: macos-15
+            executable: ofdm-fec
+          - name: macos-x64
+            os: macos-15-intel
+            executable: ofdm-fec
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install pinned Rust
+        run: rustup toolchain install 1.85.1 --profile minimal
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: native-${{ matrix.name }}-1.85.1-${{ hashFiles('Cargo.lock') }}
+          restore-keys: native-${{ matrix.name }}-1.85.1-
+      - name: Science and feature-boundary tests
+        run: |
+          cargo test --workspace --locked
+          cargo test -p docsis-ofdm-fec --no-default-features --locked
+          cargo test -p docsis-ofdm-fec --example prepare_rxmer_variants --locked
+      - name: Build and exercise native CLI
+        run: |
+          cargo build -p ofdm-fec-cli --release --locked
+          python tools/packaging/native_smoke.py --binary target/release/${{ matrix.executable }}
+      - name: Install pinned WiX for tag packaging
+        if: runner.os == 'Windows' && github.ref_type == 'tag'
+        shell: pwsh
+        run: |
+          choco upgrade wixtoolset --version=3.14.1 --allow-downgrade --yes --no-progress
+          if ($LASTEXITCODE -ne 0) { throw 'WiX setup failed' }
+          $wixBin = "${env:ProgramFiles(x86)}\WiX Toolset v3.14\bin"
+          foreach ($tool in @('candle.exe', 'light.exe')) {
+            if (!(Test-Path "$wixBin\$tool")) { throw "Missing WiX tool: $tool" }
+          }
+          "WIX_BIN=$wixBin" >> $env:GITHUB_ENV
+      - name: Build archive and native installer after successful tests
+        if: github.ref_type == 'tag'
+        run: python tools/packaging/package.py --binary target/release/${{ matrix.executable }} --output dist/${{ matrix.name }} --native
+      - uses: actions/upload-artifact@v6
+        if: github.ref_type == 'tag'
+        with:
+          name: merlin-assets-${{ matrix.name }}
+          path: dist/${{ matrix.name }}/
+          if-no-files-found: error
+          retention-days: 7

@@ -35,6 +35,8 @@ pub struct PlcAcquisitionResult {
 }
 /// Owns the three independent receive subsystems without any transmitter objects.
 pub struct PlcAcquisitionReceiver {
+    profile_generations:
+        Option<crate::transmission::plc::receiver_configuration::generations::ProfileGenerations>,
     frame_receiver: PlcFrameReceiver,
     reassembler: PlcMessageReassembler,
     configuration: ReceiverConfigurationState,
@@ -49,6 +51,7 @@ impl PlcAcquisitionReceiver {
     /// Propagates codec initialization failure.
     pub fn new(bootstrap_spacing: SubcarrierSpacing) -> Result<Self, SimulationError> {
         Ok(Self {
+            profile_generations: None,
             frame_receiver: PlcFrameReceiver::new(bootstrap_spacing)?,
             reassembler: PlcMessageReassembler::new(),
             configuration: ReceiverConfigurationState::new(bootstrap_spacing),
@@ -59,6 +62,25 @@ impl PlcAcquisitionReceiver {
     /// Read-only state; callers use require_ready before configuring data/NCP stages.
     pub fn configuration(&self) -> &ReceiverConfigurationState {
         &self.configuration
+    }
+    /// Routes future received DPD updates into a bounded generation bank.
+    /// # Returns
+    /// Unit preserving the ready OCD snapshot and all PLC reassembly/decoder history.
+    /// Subsequent admissions expose the actual recovered packet for payload-bank admission.
+    /// # Errors
+    /// Rejects missing/rejected initial configuration or already-enabled routing.
+    pub fn enable_profile_updates(&mut self) -> Result<(), SimulationError> {
+        if self.profile_generations.is_some() {
+            return Err(crate::error::invalid(
+                "Dynamic DPD routing is already enabled.",
+            ));
+        }
+        self.profile_generations = Some(
+            crate::transmission::plc::receiver_configuration::generations::ProfileGenerations::new(
+                self.configuration.require_ready()?,
+            ),
+        );
+        Ok(())
     }
     /// Receives one equalized known-phase local PLC grid and admits its descriptors.
     /// # Arguments
@@ -90,7 +112,21 @@ impl PlcAcquisitionReceiver {
             match self.reassembler.push(message.message_channel()) {
                 Ok(packets) => {
                     for packet in packets {
-                        let error = self.configuration.accept_packet(&packet).err();
+                        let error = if let Some(bank) = &mut self.profile_generations {
+                            if packet.message_type()
+                                == crate::transmission::plc::mac_packets::DPD_MESSAGE_TYPE
+                            {
+                                let error = bank.admit(packet.bytes()).err();
+                                if let Some(error) = &error {
+                                    self.configuration.reject(error.clone());
+                                }
+                                error
+                            } else {
+                                self.configuration.accept_packet(&packet).err()
+                            }
+                        } else {
+                            self.configuration.accept_packet(&packet).err()
+                        };
                         admissions.push(DescriptorAdmission {
                             message_type: packet.message_type(),
                             packet,
@@ -118,6 +154,7 @@ impl PlcAcquisitionReceiver {
     /// # Returns
     /// Unit with Waiting status; reusable decoder setup and bootstrap spacing remain.
     pub fn reset(&mut self) {
+        self.profile_generations = None;
         self.reassembler = PlcMessageReassembler::new();
         self.configuration.reset();
     }

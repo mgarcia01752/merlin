@@ -30,7 +30,14 @@ build, commit, create tags or push.
 Supply copy/paste commands beginning with
 cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
 unless explicitly asked to execute. Adding release tooling is not authorization
-to release. This repository currently has no automated publication/installer
-workflow; a successful tag push does not itself create a GitHub Release.
+to release. Native CLI validation/release workflows are prepared under .github/workflows/.
+They publish matching tested archives and DEB/PKG/MSI assets on successful version
+tag validation after the workflows are pushed. File presence does not establish
+native execution or authorize a push. Keep QA-06/07 pending until target evidence
+exists. tools/packaging/ owns staging/builders/checksums/collection/notes; use those
+helpers instead of duplicating packaging in workflow shell. Preserve full license
+notices and public examples. Install nothing while testing package generation.
+Use docs/development/native-delivery.md for exact stage ownership and the
+per-OS docs/user/install/ guides for installer/upgrade/uninstall instructions.
 Future GUI installers and Python packaging need their own explicitly scoped work.
 Report native platform and interoperability evidence separately from tag creation.

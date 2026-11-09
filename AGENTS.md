@@ -55,7 +55,8 @@ scripts/cargo-local.sh test -p docsis-ofdm-fec --no-default-features --locked
 ```
 
 The initial toolkit version is 0.1.0. Source packages and VERSION must agree.
-No native installer or cross-platform runtime is validated yet.
+Native CLI package builders/workflows are prepared locally. Cross-platform
+runtime, native installer lifecycles and remote publication remain unverified.
 
 ## Git and releases
 
@@ -71,7 +72,9 @@ Cargo.lock. Combined --tag-patch/--tag-minor/--tag-major modes require clean mas
 validate the bumped candidate, commit version files, annotate and atomically push.
 No validation bypass or Git force-push. --force permits a fresh release only
 from an already published clean HEAD. --tag retries without another bump.
-No automatic GitHub publication or installer workflow is configured yet.
+Prepared native validation/publication workflows live under .github/workflows/.
+Keep them local until the user requests pushing; file presence is not runtime
+evidence. Native CLI packaging lives under tools/packaging/.
 
 ## Source module ownership
 
