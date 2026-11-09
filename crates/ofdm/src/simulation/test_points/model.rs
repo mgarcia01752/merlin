@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Borrowed typed stage observations; registered IDs describe implemented producers.
+use crate::transmission::{
+    plc::{PlcFrameGeometry, PlcNibble},
+    SubcarrierSpacing,
+};
 use crate::{
     error::invalid,
     signal_processing::pilots::{PilotPower, PilotValue},
@@ -23,17 +27,23 @@ pub enum TestPointId {
     ScatteredPilots,
     #[serde(rename = "tx.pilots.power")]
     PilotPower,
+    #[serde(rename = "tx.plc.coded_nibbles")]
+    PlcCodedNibbles,
+    #[serde(rename = "tx.plc.interleaved")]
+    PlcInterleaved,
 }
 impl TestPointId {
     /// Returns the direction registered for this stage.
     /// # Returns
-    /// Transmit for the current pilot stages; future receive IDs require a new arm.
+    /// Transmit for the current pilot/PLC stages; future receive IDs require a new arm.
     pub(super) fn direction(self) -> SignalDirection {
         match self {
             Self::PilotSequence
             | Self::ContinuousPilots
             | Self::ScatteredPilots
-            | Self::PilotPower => SignalDirection::Transmit,
+            | Self::PilotPower
+            | Self::PlcCodedNibbles
+            | Self::PlcInterleaved => SignalDirection::Transmit,
         }
     }
 }
@@ -59,6 +69,8 @@ pub enum SignalDomain {
     PhysicalFftBin,
     ReducedCarrier,
     CodewordBit,
+    CodewordCell,
+    PlcCell,
     TimeSample,
     Parameter,
 }
@@ -76,6 +88,29 @@ pub enum ProbeUnits {
     Binary,
     NormalizedIq,
     TypedRecord,
+    QamLabel,
+}
+/// Full PLC block geometry; event element_start/shape identify a selected flat window.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+pub struct PlcProbeGrid {
+    spacing: SubcarrierSpacing,
+    symbols: usize,
+    subcarriers_per_symbol: usize,
+}
+impl PlcProbeGrid {
+    /// Derives unambiguous PLC grid dimensions from known fixed numerology.
+    /// # Arguments
+    /// * `spacing` -25/50kHz spacing, never inferred from selected window length.
+    /// # Returns
+    /// Full6x16 or12x8 grid metadata, even when only a few labels are observed.
+    pub fn new(spacing: SubcarrierSpacing) -> Self {
+        let geometry = PlcFrameGeometry::new(spacing);
+        Self {
+            spacing,
+            symbols: geometry.data_symbols_per_codeword,
+            subcarriers_per_symbol: geometry.plc_subcarriers,
+        }
+    }
 }
 /// Caller-assigned run/config identities and optional stage-specific time metadata.
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -91,6 +126,7 @@ pub struct ProbeContext {
     pub profile_id: Option<ProfileId>,
     pub plc_phase: Option<u8>,
     pub reference: SignalReference,
+    pub plc_grid: Option<PlcProbeGrid>,
 }
 impl ProbeContext {
     /// Creates run metadata with explicitly unknown time/profile fields.
@@ -121,6 +157,7 @@ impl ProbeContext {
             profile_id: None,
             plc_phase: None,
             reference: SignalReference::NotApplicable,
+            plc_grid: None,
         };
         result.validate()?;
         Ok(result)
@@ -156,6 +193,7 @@ pub enum ProbeData<'event> {
     Bits(&'event [u8]),
     Pilots(&'event [PilotValue]),
     Power(&'event PilotPower),
+    Labels(&'event [PlcNibble]),
 }
 impl ProbeData<'_> {
     /// Returns the number of selectable values, counting a power record as one.
@@ -166,6 +204,7 @@ impl ProbeData<'_> {
             Self::Bits(data) => data.len(),
             Self::Pilots(data) => data.len(),
             Self::Power(_) => 1,
+            Self::Labels(data) => data.len(),
         }
     }
     /// Reports whether this event contains no selectable values.
@@ -176,12 +215,13 @@ impl ProbeData<'_> {
     }
     /// Returns the data representation's explicit unit tag.
     /// # Returns
-    /// Binary values, normalized I/Q records or a typed power record.
+    /// Binary values, QAM labels, normalized I/Q records or a typed power record.
     pub(super) fn units(self) -> ProbeUnits {
         match self {
             Self::Bits(_) => ProbeUnits::Binary,
             Self::Pilots(_) => ProbeUnits::NormalizedIq,
             Self::Power(_) => ProbeUnits::TypedRecord,
+            Self::Labels(_) => ProbeUnits::QamLabel,
         }
     }
     /// Borrows the selected subrange after the dispatcher has intersected bounds.
@@ -195,6 +235,7 @@ impl ProbeData<'_> {
             Self::Bits(data) => Self::Bits(&data[start..end]),
             Self::Pilots(data) => Self::Pilots(&data[start..end]),
             Self::Power(data) => Self::Power(data),
+            Self::Labels(data) => Self::Labels(&data[start..end]),
         }
     }
 }

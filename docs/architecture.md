@@ -74,7 +74,7 @@ crates/
 │   │   ├── layout/            Physical roles and inverse pilot reference
 │   │   ├── packing/           Bounded codeword queue and symbol plans
 │   │   ├── ncp/               Messages, control mapping and field CRC acceptance
-│   │   └── plc/               Message frames/FEC inputs and thin PLC codec adapter
+│   │   └── plc/               Messages, FEC adapter, nibbles and block interleaving
 │   ├── signal_processing/
 │   │   ├── modulation/        QAM, LLRs, bit processing and cell randomization
 │   │   ├── interleaving/      Separate time, frequency and composition modules
@@ -84,6 +84,7 @@ crates/
 │   ├── simulation/
 │   │   ├── source/            Seeded source; PRBS remains TODO
 │   │   ├── pilots/            Typed stage composition and optional observation
+│   │   ├── plc/               Typed PLC stage composition and optional observation
 │   │   ├── test_points/       Borrowed events, selection and finite dispatch budgets
 │   │   ├── coding_loop/       Independent 256-QAM codeword trials
 │   │   ├── runner.rs          Existing 16-QAM trial orchestration
@@ -153,7 +154,7 @@ modules before it is advertised as a standalone channel-run API.
 ## Test points and data access
 
 Existing APIs expose useful intermediate arrays and results. The common typed,
-bounded observer is implemented for **four pilot stages**. Other stage IDs below
+bounded observer is implemented for **four pilot stages and two PLC label stages**. Other stage IDs below
 remain proposed; their direct outputs are not yet wired to that observer. CLI/file
 export and whole-run cancellation policy remain TODO. “Direct” means a caller can
 obtain data through an existing stage API.
@@ -173,7 +174,9 @@ obtain data through an existing stage API.
 | `tx.plc.message` | `transmission::plc`; TS+MC information bytes and288-bit inputs | Direct bounded APIs; observer and OCD/DPD packet construction TODO |
 | `tx.plc.coded` | `fec_codec::plc` and thin `transmission::plc::coding`; mother/transmitted bits | Direct arrays; common observer TODO |
 | `rx.plc.llrs`, `rx.plc.decoded` | Restored mother LLRs and soft decisions with iterations/parity | Direct APIs; common observer TODO |
-| `tx.plc.interleaved`, `tx.plc.randomized`, `tx.plc.preamble`, `tx.plc.iq` | Separate PLC interleaving, randomization, preamble and mapping outputs | TODO |
+| `tx.plc.coded_nibbles`, `tx.plc.interleaved` | Grouped labels and time-major PLC grid | Direct typed results and bounded observer; explicit grid metadata |
+| `rx.plc.deinterleaved` | Hard-label or soft-bit inverse PLC permutation | Direct APIs; common observer TODO |
+| `tx.plc.randomized`, `tx.plc.preamble`, `tx.plc.iq` | Separate PLC randomization, preamble and mapping outputs | TODO |
 | `tx.frame.bins` | Full physical frequency grid, roles and zero/excluded bins | TODO production assembler |
 | `tx.ifft.samples`, `tx.cp.samples`, `tx.window.samples`, `tx.overlap_add.samples` | Separate waveform stages and sample indices | TODO |
 | `channel.input`, `channel.output` | Channel-plane I/Q and applied impairment configuration | TODO waveform path; cell AWGN exists |
@@ -187,7 +190,7 @@ obtain data through an existing stage API.
 | `rx.bch.payload` | Recovered bits, status and corrected-bit count | Direct |
 | `result.truth` | Actual bit/codeword comparisons and trial counters | Direct codec/trial results; channel-run aggregate TODO |
 
-The implemented pilot contract provides borrowed bit arrays, sparse pilot records
+The implemented contract provides borrowed bit/label arrays, sparse pilot records
 and a power record, with explicit metadata and finite selection budgets. See the
 [pilot guide](user/pilot-signals.md) for the executable example and exact behavior.
 The broader contract, including future producers, must provide:
@@ -216,9 +219,11 @@ message-channel block, complete TS+MC information frame and36-byte FEC inputs.
 An idle frame is valid at that boundary but does not carry channel-acquisition
 configuration. MAC OCD/DPD packets and repetition scheduling remain separate work.
 The separate PLC LDPC primitive and typed adapter now recover message inputs
-with actual iterations and parity status. PLC interleaving and signal stages
-remain pending. See the
-[PLC coding guide](user/plc-coding.md),
+with actual iterations and parity status. PLC nibble grouping, block permutation
+and hard/soft inverse now have analysis-only APIs. Thin PLC stage composition
+provides bounded coded/interleaved label observations with full grid metadata.
+Randomization, preamble, mapping and physical-bin assembly remain pending. See the
+[PLC interleaving guide](user/plc-interleaving.md), [PLC coding guide](user/plc-coding.md),
 [PLC message guide](user/plc-messages.md) and [evidence](reference/plc-evidence.md).
 
 ## Planned module ownership
@@ -232,7 +237,7 @@ before implementation if source analysis shows a better existing owner.
 | `signal_processing/modulation/interleaving/{parity,twist,demultiplexing}.rs` | Separate intermediate and inverse boundaries behind the existing facade |
 | `transmission/layout/additional_pilots.rs` | Specification-based additional continuous-pilot placement |
 | `transmission/plc/{descriptors,mac_packets,scheduling}.rs` | Fixed-setting OCD/DPD packets, packet CRCs, segmentation and repetition; current message layer transports opaque segments |
-| `transmission/plc/{block_interleaving,randomization,preamble,mapping}.rs` | Remaining PLC signal stages and distinct state; invoke verified codec primitives |
+| `transmission/plc/{randomization,preamble,mapping}.rs` | Remaining PLC signal stages and distinct state; invoke verified codec primitives |
 | `transmission/symbols/assembly.rs` | Typed data/NCP/filler composition before randomization/mapping |
 | `transmission/frame/assembly.rs` | Reduced-to-physical grid assembly and protected-role insertion |
 | `signal_processing/waveform/{ifft,fft,cyclic_prefix,windowing,overlap_add}.rs` | Separate waveform transforms and inverse operations |

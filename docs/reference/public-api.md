@@ -14,6 +14,8 @@ component will adapt inputs and results without duplicating scientific logic.
 | `transmission::ncp::{NcpMessage, NcpFieldCodec}` | Control serialization, encoded fields and CRC-accepted receiver pointers |
 | `transmission::plc::{PlcFrameGeometry, ExtendedTimestamp, MessageChannelBlock, PlcInformationBlock}` | Fixed dimensions, validated timestamp/MC bytes and MSB-first FEC inputs; analysis-only compatible |
 | `transmission::plc::{TimestampMessageBlock, PlcMessageFrame}` | CRC-backed TS+MC frame construction/parsing with the simulation feature; independent PLC parity generation through the adapter below |
+| `transmission::plc::{PlcCodewordNibbles, InterleavedPlcBlock, block_interleaving}` | Validated nibble grouping, block permutation and hard/soft inverse; analysis-only compatible |
+| `simulation::plc::PlcInterleavingStages` | Immutable coded/interleaved stage outputs and bounded optional label observations |
 | `fec_codec::plc::{PlcFecCodec, PlcBlockResult, puncturing}` | Separate PLC mother/punctured LDPC, restored LLRs and actual decoder iterations |
 | `transmission::plc::{PlcBlockCodec, EncodedPlcBlock, DecodedPlcBlock}` | Thin typed/serializable PLC coding adapter; failed decisions remain diagnostic |
 | `fec_codec::{ncp::NcpFecCodec, crc::crc24d}` | Separate NCP control LDPC and CRC-24-D |
@@ -57,7 +59,7 @@ See the [public-api skill](../../skills/public-api/SKILL.md) for API development
 requirements and [JSON contracts](documents.md) for the existing serialization.
 
 Existing typed operation outputs can be consumed directly. The common observer
-currently registers four pilot stages; it is available with the `simulation`
+currently registers four pilot stages and two PLC label stages; it is available with the `simulation`
 feature. The underlying DSP pilot APIs work without default features. Other
 producers and CLI/file export remain on the
 [implementation checklist](../development/checklist.md). See

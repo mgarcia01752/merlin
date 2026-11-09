@@ -14,6 +14,7 @@ locally; macOS and Windows runtime/build validation remains outstanding.
 ./scripts/cargo-local.sh run -p docsis-ofdm-fec --example pilot_signals --locked
 ./scripts/cargo-local.sh run -p docsis-ofdm-fec --example plc_messages --locked
 ./scripts/cargo-local.sh run -p docsis-ofdm-fec --example plc_codec_loop --locked
+./scripts/cargo-local.sh run -p docsis-ofdm-fec --example plc_interleaving --locked
 ./scripts/cargo-local.sh clippy --workspace --all-targets --locked -- -D warnings
 ./scripts/cargo-local.sh test -p docsis-ofdm-fec --no-default-features --locked
 ./scripts/cargo-local.sh build -p ofdm-fec-cli --release --locked

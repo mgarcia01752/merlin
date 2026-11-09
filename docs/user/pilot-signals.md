@@ -103,7 +103,7 @@ operations into a `PilotStageResult`. Generate the scientific result first;
 modify the result or generator. A callback failure returns an error while the
 caller retains the completed result.
 
-`simulation::test_points` provides the common callback model. Currently registered
+`simulation::test_points` provides the common callback model. The registered pilot
 IDs are:
 
 | ID | Payload | Selection domain |
@@ -134,7 +134,7 @@ an event to the remaining budget.
 
 Application limits, independent of PHY limits, are:
 
-- 1–32 unique selected stages; only the four current producers are registered.
+- 1–32 unique selected stages; four pilot and two PLC label producers are registered.
 - At most100000 callbacks per probe instance.
 - At most65536 selected elements per event.
 - At most1048576 selected elements per probe instance.
@@ -147,7 +147,9 @@ without implicit retry. `PilotGenerator::observe` stops on the first error.
 Event data and context are borrowed only for the callback. The observer owns any
 copies it elects to retain. The dispatcher stores configuration and counters,
 not scientific arrays, and receives no RNG state. The example sink demonstrates
-bounded JSON copies. General CLI/file export, other stage producers and runner
+bounded JSON copies. The [PLC interleaver](plc-interleaving.md) adds label events with optional
+`plc_grid` context; pilot contexts leave it unset. General CLI/file export,
+other stage producers and runner
 cancellation policy remain on the checklist.
 
 ## Validation and remaining work

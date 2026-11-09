@@ -118,7 +118,7 @@ impl TestPointProbe {
     }
     /// Dispatches one selected immutable window of an already computed result.
     /// # Arguments
-    /// * `stage` - Registered producer identity; currently the four pilot stages.
+    /// * `stage` - Registered producer identity; pilot or PLC label stage.
     /// * `context` - Run/time/reference metadata, validated before a callback.
     /// * `domain` - Scientific coordinate domain; selection uses element offsets.
     /// * `data` - Borrowed stage values, never modified or retained here.
@@ -227,6 +227,14 @@ fn validate_data(
             ) && pilots.iter().all(|pilot| {
                 pilot.sequence_bit <= 1 && pilot.iq.iter().all(|value| value.is_finite())
             })
+        }
+        (TestPointId::PlcCodedNibbles, SignalDomain::CodewordCell, ProbeData::Labels(labels))
+        | (TestPointId::PlcInterleaved, SignalDomain::PlcCell, ProbeData::Labels(labels)) => {
+            context.reference == SignalReference::NotApplicable
+                && context.plc_grid.is_some()
+                && labels.iter().all(|label| {
+                    *label < 1 << crate::transmission::plc::geometry::PLC_BITS_PER_CELL
+                })
         }
         _ => false,
     };

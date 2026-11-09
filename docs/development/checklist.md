@@ -25,8 +25,8 @@ by a broad “implemented” claim.
 Every new algorithm gets a focused module, typed output and independent tests.
 Stateful stages own their state; runners only connect stages. Direct stage outputs
 remain usable independently of the observer. ARCH-04 currently registers the four
-pilot stages only. ARCH-05 has bounded stage/element/symbol selection; adapter
-export remains TODO. Pilot observation invariance is tested; ARCH-06 still needs
+pilot stages and two PLC label stages. ARCH-05 has bounded stage/element/symbol
+selection; adapter export remains TODO. Pilot/PLC observation invariance is tested; ARCH-06 still needs
 coverage of stateful/RNG-driven stages as their producers are added.
 
 ## Existing scientific foundation
@@ -88,7 +88,9 @@ input, output, phase and normalization available for tests. Typed pilot results
 and bounded test points are now implemented in separate modules. The [pilot guide](../user/pilot-signals.md) records the verified sequence,
 scaling and example. The [PLC message guide](../user/plc-messages.md) now covers
 the timestamp/MC framing and FEC-input boundary. [PLC coding](../user/plc-coding.md)
-now recovers those inputs; next is PLC block interleaving (NEXT-09);
+now recovers those inputs. [PLC block interleaving](../user/plc-interleaving.md)
+adds tested permutation/inverse stages and bounded label observations.
+Next is independent PLC randomization (NEXT-10);
 fixed-setting acquisition descriptor packets remain part of NEXT-07.
 
 - [ ] **NEXT-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
@@ -110,7 +112,7 @@ fixed-setting acquisition descriptor packets remain part of NEXT-07.
   and NCP DPD MAC packets, packet CRCs, segmentation and repetition scheduling.
 - [x] **NEXT-08** Implement verified PLC coding as a separate stage; reuse a codec
   only where the PHY parameters match, otherwise add a focused Rust primitive.
-- [ ] **NEXT-09** Implement PLC block interleaving in its own module with
+- [x] **NEXT-09** Implement PLC block interleaving in its own module with
   independent permutation vectors and a coded-to-interleaved test point.
 - [ ] **NEXT-10** Implement PLC randomization with independent state and its own
   phase/reset tests; do not reuse data/NCP randomizer state.
@@ -126,12 +128,14 @@ fixed-setting acquisition descriptor packets remain part of NEXT-07.
 Pilot evidence for NEXT-01 is verified against PHY3.1 I20 §7.5.15.3–4, PDF171,
 and PHY4.0 FDD delegation. PLC frame/message/bit-order requirements are verified
 and recorded in [PLC evidence](../reference/plc-evidence.md); exact remaining
-interleaving/randomization/preamble vectors for NEXT-01 are still pending.
+randomization/preamble vectors for NEXT-01 are still pending. Interleaving is
+verified against rendered Figures65–67 and full independent coordinate vectors.
 PLC coding is verified against the rendered Table21 and explicit puncturing
 ranges; the source numbering/figure discrepancies are recorded in the evidence.
 NEXT-02 now has pilot results, shared metadata and typed PLC message/FEC-input
 results; later PLC algorithms will add their own result types. NEXT-14/15 have
-pilot probes plus pilot/message/codec tests, examples and guides; PLC observer producers,
+pilot and PLC label probes plus pilot/message/codec/interleaver tests, examples
+and guides; remaining PLC observer producers,
 remaining signal stages and full-frame integration keep those items unchecked.
 
 Planned paths and test-point IDs are in the architecture. Resolve any missing

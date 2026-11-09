@@ -8,7 +8,9 @@ Partial codewords continue in the next symbol without resetting the randomizer.
 This is a **pre-interleaving plan**, not a transmitted waveform. The separate
 [NCP codec](ncp.md) now generates actual message bits, CRC and control FEC from
 these plans. [Time/frequency interleaving](cell-interleaving.md) is implemented
-separately. Pilot signs, boost, PLC signaling and IFFT remain pending.
+separately. [Pilot signs/boost](pilot-signals.md) and the separate
+[PLC message/coding/interleaving stages](plc-interleaving.md) are now available.
+Acquisition descriptor signaling, physical assembly and IFFT remain pending.
 
 ## Run the example
 

@@ -6,6 +6,7 @@
 pub mod coding_loop;
 pub mod config;
 pub mod pilots;
+pub mod plc;
 pub mod results;
 pub mod runner;
 pub mod source;

@@ -25,6 +25,10 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
   information/parity as zero LLR erasures, never shortened known-zero priors.
   Preserve actual iterations and failed decisions. Test CRC, parity convergence
   and truth independently, including a different-valid-codeword example.
+  For PLC block interleaving, verify MSB-first nibbles and independent full read
+  orders for both FFT geometries, plus exact hard/soft inverse. Keep local PLC
+  carrier/time coordinates distinct from physical FFT bins and data interleavers.
+  Selected probe windows must retain full grid metadata and original offsets.
 - For cell interleavers, verify exact index/delay vectors, all supported depths,
   partial columns and dummy padding, PLC-aligned pilot references, startup/drain
   and source-symbol phase at inverse randomizer resets. Never count None history

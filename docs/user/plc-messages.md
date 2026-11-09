@@ -113,7 +113,8 @@ bytes; an individual MC block is bounded to 708 bytes before copying.
 Geometry, timestamp, MC and information APIs work without default features.
 CRC-backed timestamp-block/frame APIs use the existing `simulation` feature and
 optional Rust `fec-codec` dependency. Direct typed results and JSON serialization
-are available; PLC producer registration with the common observer is still TODO.
+are available; message producer registration with the common observer is still
+TODO. [PLC interleaving](plc-interleaving.md) now supplies separate label producers.
 
 ## Validation and remaining scope
 
@@ -126,6 +127,7 @@ interoperability vectors.
 The idle frame establishes a real message-block and FEC-input boundary. It does
 not advertise a channel configuration to a modem. Fixed-setting OCD, Profile A
 and NCP DPD MAC packets, packet CRCs, segmentation and repetition scheduling remain
-TODO. PLC FEC is now implemented separately. Block interleaving, randomization,
+TODO. PLC FEC and [block interleaving](plc-interleaving.md) are implemented
+separately. Randomization,
 preamble, mapping and physical-bin assembly also remain separate stages. See [evidence](../reference/plc-evidence.md),
 [architecture](../architecture.md) and [checklist](../development/checklist.md).

@@ -157,7 +157,9 @@ uses the existing convention: first symbol following the PLC preamble.
 The reference transports **placeholders**. Actual scattered-pilot BPSK signs and
 boost are available from the separate [pilot generators](pilot-signals.md); full
 physical-bin insertion after interleaving remains TODO. Additional continuous-pilot
-placement and PLC content are also still pending. The caller supplies the existing layout's
+placement and PLC signal insertion are still pending. PLC message/coding and
+[block interleaving](plc-interleaving.md) are implemented separately.
+The caller supplies the existing layout's
 additional continuous pilots; the reference does not certify their generation.
 
 ## Startup, drain and verification

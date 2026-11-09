@@ -33,8 +33,9 @@ Separate [pilot generators and bounded test points](docs/user/pilot-signals.md)
 provide physical-bin BPSK signs and explicit amplitude scaling.
 [PLC message blocks](docs/user/plc-messages.md) now provide timestamp/MC frames and
 ordered FEC inputs. A separate [PLC LDPC codec](docs/user/plc-coding.md) now recovers
-those inputs with actual decoder iterations. Acquisition descriptors, remaining
-PLC interleaving/signal generation,
+those inputs with actual decoder iterations. [PLC block interleaving](docs/user/plc-interleaving.md)
+adds the separate permutation, inverse and bounded observations. Acquisition
+descriptors and remaining PLC signal generation,
 full DOCSIS framing/placement and
 interoperability validation remain pending. See
 [coding scope and equations](docs/reference/coding-mode.md).
