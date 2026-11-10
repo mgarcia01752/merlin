@@ -90,6 +90,9 @@ class ReleaseCollectionTests(unittest.TestCase):
         from release_notes import render
         contents = render("example/MERLIN", f"v{version()}")
         self.assertNotIn("@TAG@", contents)
-        self.assertIn(f"https://github.com/example/MERLIN/blob/v{version()}/docs/user/install/windows.md", contents)
+        self.assertNotIn("@REPOSITORY@", contents)
+        self.assertNotIn("/docs/user/install/windows.md", contents)
+        self.assertNotIn("/docs/user/install/macos.md", contents)
+        self.assertIn(f"https://github.com/example/MERLIN/blob/v{version()}/docs/user/install/linux.md", contents)
         with self.assertRaises(ValueError):
             render("example/MERLIN", "main")

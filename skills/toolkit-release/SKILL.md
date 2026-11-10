@@ -28,11 +28,12 @@ candidate/commit/tag before recovery. Never move or overwrite public tags.
 build, commit, create tags or push.
 
 Supply copy/paste commands beginning with
-cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
+cd /home/dev01/Projects/merlin &&
 unless explicitly asked to execute. Adding release tooling is not authorization
 to release. Native CLI validation/release workflows are prepared under .github/workflows/.
-They publish matching tested archives and DEB/PKG/MSI assets on successful version
-tag validation after the workflows are pushed. File presence does not establish
+Initial workflows test Ubuntu 22.04, 24.04 and 26.04 x64, then publish the
+22.04-built archive, DEB and checksums after successful version-tag validation.
+Windows/macOS packaging helpers are retained but workflow execution is deferred. File presence does not establish
 native execution or authorize a push. Keep QA-06/07 pending until target evidence
 exists. tools/packaging/ owns staging/builders/checksums/collection/notes; use those
 helpers instead of duplicating packaging in workflow shell. Preserve full license

@@ -27,14 +27,14 @@ widths above; occupied width and active carrier span are different quantities.
 Load and run, using new output filenames:
 
 ```bash
-cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
+cd /home/dev01/Projects/merlin &&
 scripts/cargo-local.sh run -p ofdm-fec-cli -- import-pnm \
   --input examples/measurements/channel-widths/24mhz/import.json \
   --output /tmp/merlin-24mhz-scenario.json
 ```
 
 ```bash
-cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
+cd /home/dev01/Projects/merlin &&
 scripts/cargo-local.sh run -p ofdm-fec-cli -- channel \
   --input examples/measurements/channel-widths/24mhz/channel-profile-3.json \
   --output /tmp/merlin-24mhz-profile-3-result.json
@@ -51,7 +51,7 @@ an actual `pnm-decode` producer; no producer-version declaration is fabricated.
 Regenerate into a **new** directory; existing output roots are rejected:
 
 ```bash
-cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
+cd /home/dev01/Projects/merlin &&
 scripts/cargo-local.sh run -p docsis-ofdm-fec \
   --example prepare_channel_widths -- /tmp/merlin-new-channel-widths
 ```

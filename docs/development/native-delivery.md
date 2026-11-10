@@ -5,8 +5,8 @@ workflows are not pushed or executed. Local Linux results do not establish nativ
 Windows/macOS runtime or installer support. See the [group design](features/completion-group/design.md).
 
 `.github/workflows/ci.yml` runs a lean Linux preflight (versions, tooling tests,
-ShellCheck, formatting and Clippy), then native tests on Ubuntu22.04 x64,
-Windows2022 x64, macOS15 ARM64 and macOS15 Intel. Matrix failures do not cancel
+ShellCheck, formatting and Clippy), then native tests on Ubuntu 22.04,
+24.04 and 26.04 x64. Windows/macOS workflow execution is deferred. Matrix failures do not cancel
 other platforms. Every platform runs all workspace tests, the no-default-feature
 boundary and fixture-preparation tests, builds the CLI and exercises version/help,
 invalid input, JSON export and no-clobber behavior. Rust1.85.1 and locked
@@ -19,13 +19,14 @@ needed by the delivered CLI; Python here only orchestrates development checks.
 
 `.github/workflows/release.yml` starts on a version tag, verifies exact agreement
 with VERSION, and calls the same preflight/native workflow. Tag jobs package
-already tested binaries into portable archives and native DEB/PKG/MSI installers.
-Linux uses dpkg-deb; macOS uses Apple's pkgbuild; Windows uses WiX3.14.1. All
+the tested Ubuntu 22.04 binary into a portable archive and DEB using dpkg-deb.
+The oldest supported Ubuntu supplies the shared libc baseline; newer Ubuntu jobs
+run the same tests and CLI smoke checks without publishing duplicate assets. All
 native jobs must succeed before publication. Failed platforms keep the workflow
 failed and do not produce a public partial release in this initial DOFT policy.
 No tag is created by CI and the local Git helper retains its validation gate.
 
-Each platform uploads one artifact with its archive, installer and checksums,
+The Ubuntu 22.04 job uploads one artifact with its archive, DEB and checksums,
 retained7days. Publication verifies each uploaded checksum, rejects name collisions
 or undeclared files, merges assets and generates one release SHA256SUMS. Release
 notes link to tagged per-OS installation instructions using the actual repository
@@ -41,5 +42,6 @@ notices, the adapted BCH notice and the PyPNM QAM resource license/attribution. 
 under [install](../user/install/README.md).
 
 Before closing QA-06/07, push the prepared workflows when authorized, retain the
-native run evidence and verify installation/upgrade/uninstallation on each target.
+Ubuntu run evidence and verify installation/upgrade/uninstallation on each target.
+Windows/macOS builders and guides remain prepared for later work.
 A locally generated MSI XML or a passing Linux build does not satisfy that check.

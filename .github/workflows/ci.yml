@@ -58,14 +58,11 @@ jobs:
           - name: linux-x64
             os: ubuntu-22.04
             executable: ofdm-fec
-          - name: windows-x64
-            os: windows-2022
-            executable: ofdm-fec.exe
-          - name: macos-arm64
-            os: macos-15
+          - name: ubuntu-24.04-x64
+            os: ubuntu-24.04
             executable: ofdm-fec
-          - name: macos-x64
-            os: macos-15-intel
+          - name: ubuntu-26.04-x64
+            os: ubuntu-26.04
             executable: ofdm-fec
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
@@ -96,22 +93,11 @@ jobs:
         run: |
           cargo build -p ofdm-fec-cli --release --locked
           python tools/packaging/native_smoke.py --binary target/release/${{ matrix.executable }}
-      - name: Install pinned WiX for tag packaging
-        if: runner.os == 'Windows' && github.ref_type == 'tag'
-        shell: pwsh
-        run: |
-          choco upgrade wixtoolset --version=3.14.1 --allow-downgrade --yes --no-progress
-          if ($LASTEXITCODE -ne 0) { throw 'WiX setup failed' }
-          $wixBin = "${env:ProgramFiles(x86)}\WiX Toolset v3.14\bin"
-          foreach ($tool in @('candle.exe', 'light.exe')) {
-            if (!(Test-Path "$wixBin\$tool")) { throw "Missing WiX tool: $tool" }
-          }
-          "WIX_BIN=$wixBin" >> $env:GITHUB_ENV
       - name: Build archive and native installer after successful tests
-        if: github.ref_type == 'tag'
+        if: github.ref_type == 'tag' && matrix.os == 'ubuntu-22.04'
         run: python tools/packaging/package.py --binary target/release/${{ matrix.executable }} --output dist/${{ matrix.name }} --native
       - uses: actions/upload-artifact@v6
-        if: github.ref_type == 'tag'
+        if: github.ref_type == 'tag' && matrix.os == 'ubuntu-22.04'
         with:
           name: merlin-assets-${{ matrix.name }}
           path: dist/${{ matrix.name }}/

@@ -2,7 +2,17 @@
 
 *Modulation, Encoding, Reception, Link Impairments & Noise*
 
+[![Status: Under development](https://img.shields.io/badge/Status-Under_development-yellow)](docs/development/status.md)
+[![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-blue)](VERSION)
+[![CI: Not run on GitHub](https://img.shields.io/badge/CI-Not_run_on_GitHub-lightgrey)](.github/workflows/ci.yml)
+[![Rust 1.85.1](https://img.shields.io/badge/Rust-1.85.1-000000?logo=rust&logoColor=white)](rust-toolchain.toml)
+[![Ubuntu LTS targets: 22.04, 24.04, 26.04 x64](https://img.shields.io/badge/Ubuntu_LTS-22.04%20%7C%2024.04%20%7C%2026.04-E95420?logo=ubuntu&logoColor=white)](docs/development/native-delivery.md)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+
 **Under development — standalone Rust simulation core and CLI.**
+
+Initial platform scope: Ubuntu 22.04, 24.04 and 26.04 x64.
+Windows and macOS delivery is deferred.
 
 Simulate a single downstream DOCSIS OFDM channel, recover its payload through
 actual BCH/LDPC decoding, and measure how impairments affect bit errors and decoder

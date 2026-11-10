@@ -14,7 +14,7 @@ non-ignored changes, including new files. Private development evidence, PDFs,
 local toolchains and target/ remain ignored.
 
 ```bash
-cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
+cd /home/dev01/Projects/merlin &&
 tools/git/git-save.sh --commit-msg "Feature: Describe the complete change
 - Describe the implementation
 - Tests: Record actual validation"
@@ -26,7 +26,7 @@ commits work in a new repository once Git author identity is configured.
 ## Push
 
 ```bash
-cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
+cd /home/dev01/Projects/merlin &&
 tools/git/git-push.sh
 ```
 
@@ -44,7 +44,7 @@ A missing check is a failure; there is no validation-skip option.
 ## Local bump preview
 
 ```bash
-cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
+cd /home/dev01/Projects/merlin &&
 tools/bump-version.sh --bump patch --dry-run
 ```
 
@@ -56,7 +56,7 @@ Git commit, tag or push occurs. Major resets minor/patch; minor resets patch.
 After saving and merging reviewed work to master:
 
 ```bash
-cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&
+cd /home/dev01/Projects/merlin &&
 tools/git/git-push.sh --tag-patch
 ```
 
@@ -74,5 +74,11 @@ If a release upload fails, local state is retained. Inspect it and retry the sam
 tag with `tools/git/git-push.sh --tag vMAJOR.MINOR.PATCH`; do not bump again blindly.
 Version edits or commits made before a failed check are never reset automatically.
 
-No release workflow exists yet in this new repository. Pushing a tag alone does
-not build installers, publish assets or establish DOCSIS interoperability.
+Prepared tag workflows validate Ubuntu 22.04, 24.04 and 26.04 before publishing
+the tested Ubuntu 22.04 CLI archive, DEB and checksums. Remote execution remains
+unverified until the first push. See [native delivery](native-delivery.md).
+
+The local checkout is `/home/dev01/Projects/merlin`, with `master` as the
+integration/release branch. The original implementation branch is retained.
+Configure origin only after the actual repository URL is supplied; the GitHub
+owner profile alone is not a repository URL.

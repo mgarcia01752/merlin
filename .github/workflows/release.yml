@@ -40,8 +40,7 @@ jobs:
       - name: Verify and collect successful native packages
         run: >-
           python3 tools/packaging/collect_release.py --source dist/native --output dist/release
-          --expected-artifacts merlin-assets-linux-x64 merlin-assets-windows-x64
-          merlin-assets-macos-arm64 merlin-assets-macos-x64
+          --expected-artifacts merlin-assets-linux-x64
       - name: Publish tested CLI release
         env:
           GH_TOKEN: ${{ github.token }}

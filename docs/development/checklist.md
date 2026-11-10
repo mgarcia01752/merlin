@@ -668,12 +668,12 @@ See the [implementation record](features/pilot-channel-estimation/implementation
   external-vector admission tooling stays optional and is not scientific evidence.
   Evidence: [closed-loop validation](features/closed-loop-validation/validation.md).
 
-### Cross-platform builds and runtime
+### Ubuntu builds and deferred cross-platform runtime
 
-- [ ] **QA-06** Windows/macOS build/runtime validation and CI; Linux checks alone
-  do not establish cross-platform runtime support.
-  - [x] Prepare lean preflight, native science tests and CLI smoke jobs for Linux,
-    Windows x64 and macOS ARM64/Intel with pinned Rust and scoped caches.
+- [ ] **QA-06** Validate Ubuntu 22.04, 24.04 and 26.04 x64 in CI.
+  Windows/macOS execution is deferred; Linux checks do not establish their support.
+  - [x] Prepare lean preflight, science tests and CLI smoke jobs for all three
+    Ubuntu releases with pinned Rust and separate caches.
   - [ ] Push/run the workflows later and retain actual native results.
   Guide: [native validation and delivery](native-delivery.md).
 

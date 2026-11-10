@@ -48,7 +48,8 @@ Private normative PDFs, evidence and migration snapshots live in ignored
 and validation summaries live in the [feature index](features/README.md). The specification skills
 include versioned lookup extracts; diagrams still require the original PDF.
 
-The implementation branch is feature/ds-profile-fec-lab. Git operations use the
+The integration/release branch is `master`; the original
+`feature/ds-profile-fec-lab` branch is retained. Git operations use the
 local helpers described in [Git and versioning](git.md).
 
 Standard logging dependencies are pinned in Cargo.lock and downloaded by Cargo;

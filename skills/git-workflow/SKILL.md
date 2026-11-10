@@ -25,7 +25,7 @@ Use tools/git/git-save.sh --commit-msg with one double-quoted multiline argument
 Use Feature:, BugFix: or Documentation:, imperative summary and - detail lines,
 including - Tests:. Keep every message line at most60characters.
 Provide a command unless the user explicitly authorizes execution; start command
-blocks with cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&.
+blocks with cd /home/dev01/Projects/merlin &&.
 
 Use tools/git/git-push.sh for pushes. Plain push requires clean main/master,
 origin, nondiverged ancestry and successful scripts/check-before-push.sh.

@@ -908,8 +908,9 @@ following the user's scope clarification. External-vector tooling only checks
 provenance/files/hashes and stays optional; it is not a minimum acceptance gate. QA-06/07 add locally prepared native tests and CLI package
 builders under `tools/packaging/`, with tag-triggered workflows under
 `.github/workflows/`. Package builders install nothing, preserve licenses/examples,
-refuse clobber and consume matching tested binaries. Native execution/publication
-awaits the user's later workflow push. QAM-04 also closes within the documented closed-loop scope.
+refuse clobber and consume matching tested binaries. Initial delivery targets Ubuntu 22.04, 24.04 and 26.04 x64, with tests on each
+and one shared archive/DEB built on 22.04. Windows/macOS execution is deferred.
+Native execution/publication awaits the first authorized workflow push. QAM-04 also closes within the documented closed-loop scope.
 See [delivery design](development/native-delivery.md) and
 [group record](development/features/completion-group/design.md).
 

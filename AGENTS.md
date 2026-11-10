@@ -71,7 +71,7 @@ Use tools/git/git-save.sh --commit-msg and tools/git/git-push.sh. Inspect all
 tracked/staged/untracked changes before writing a message. Format Feature:,
 BugFix: or Documentation:, followed by - detail lines and - Tests:, at most60
 characters per message line. Supply commands unless asked to execute.
-Begin Git command blocks with cd /home/dev01/Projects/DOCSIS-OFDM-Channel-Sim &&.
+Begin Git command blocks with cd /home/dev01/Projects/merlin &&.
 
 VERSION is canonical. tools/bump-version.sh synchronizes every local package and
 Cargo.lock. Combined --tag-patch/--tag-minor/--tag-major modes require clean master,
