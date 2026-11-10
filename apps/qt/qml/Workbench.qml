@@ -11,12 +11,16 @@ Item {
     required property var theme
     required property var settingsBackend
     required property var profileBackend
+    required property var sourceBackend
+    property alias sourcePopup: sourceDialog
+    property var sourceState: ({status: "attention", reason: "Apply a validated PRBS15 or file source before starting."})
+    function refreshSourceState() { sourceState = JSON.parse(sourceBackend.state()) }
     property alias profilePopup: profileDialog
     property var profileState: ({selected: false, profile_status: "attention", ofdm_status: "attention", reason: "A validated modulation-profile input is required.", summary: {}})
     function refreshProfileState() {
         profileState = JSON.parse(profileBackend.state(settingsBackend.current()))
     }
-    Component.onCompleted: refreshProfileState()
+    Component.onCompleted: { refreshProfileState(); refreshSourceState() }
     property alias ofdmPopup: ofdmDialog
     property alias sectionPopup: sectionDialog
     property string iconRoot: "qrc:/branding/"
@@ -122,9 +126,9 @@ Item {
                 WorkbenchBlock {
                     id: sourceBlock; objectName: "sourceBlock"; x: 215; y: 35; width: 170; height: 90
                     theme: workbench.theme; heading: "PRBS-TX"
-                    blockStatus: "attention"
-                    statusReason: "Source configuration and simulation integration are pending."
-                    onClicked: workbench.openSection(heading, "Select continuous PRBS15 or exact text/binary payload bytes. File selection and explicit PRBS15 fill controls will be added here.\n\nOriginal source data remains the independent reference for recovered-data verification.")
+                    blockStatus: workbench.sourceState.status
+                    statusReason: workbench.sourceState.reason
+                    onClicked: sourceDialog.open()
                 }
                 WorkbenchBlock {
                     id: transmitterBlock; objectName: "transmitterBlock"; x: 215; y: 190; width: 170; height: 90
@@ -207,6 +211,12 @@ Item {
         backend: workbench.profileBackend
         settingsBackend: workbench.settingsBackend
         onInputApplied: workbench.refreshProfileState()
+    }
+    SourceInputDialog {
+        id: sourceDialog
+        theme: workbench.theme
+        backend: workbench.sourceBackend
+        onSourceApplied: workbench.refreshSourceState()
     }
     SectionPreviewDialog {
         id: sectionDialog

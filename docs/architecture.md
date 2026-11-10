@@ -159,7 +159,7 @@ The next major phase is the native Qt Quick/QML workbench, initially targeting
 Ubuntu 22.04, 24.04 and 26.04 x64. Python bindings follow UI-01 through UI-04.
 The initial UI-01 shell now exists under apps/qt: the clickable diagram, section
 preview dialogs, theme switching, embedded icons and a tree-based OFDM editor.
-The DPD capture importer also exists; other editors, measurement input loading,
+The DPD capture importer and PRBS-TX editor also exist; other editors, measurement input loading,
 analyzers and Rust job integration remain pending. Lower-right run controls are
 visible but disabled. See the [workbench guide](user/workbench.md) and
 [Qt build/VM instructions](development/qt.md). Other target validation is pending.
@@ -275,12 +275,59 @@ Settings contains application preferences such as theme, distinct from OFDM
 transmission configuration. About presents MERLIN's expanded name, version,
 licenses and acknowledgements. All three actions remain pending implementation.
 
+### PRBS-TX source configuration
+
+PRBS-TX now has its own workbench editor. Its block name is retained, but the dialog
+title is **Transmit source (PRBS-TX)** because the existing Rust source API also
+accepts files. Use a separate Parameter/Value tree dialog with field descriptions,
+mode-dependent controls and Apply/Cancel, consistent with OCD and DPD.
+
+| User option | Configuration and validation |
+| --- | --- |
+| Source mode | Continuous PRBS15 (initial draft default), or File (text/binary). The user must Apply before the block becomes ready. |
+| PRBS15 seed | Decimal integer 1–32767; initial value 32767 (`0x7fff`), matching the runner. Show the fixed polynomial and period as read-only descriptions. |
+| File | Open through the OS-native picker; retain exact original bytes in Rust. No text conversion or extension-based rejection; text and binary use the same source path. |
+| File summary | Read-only filename, original byte/bit count and original-byte SHA-256, supplied by Rust. Limit original bytes to 16 MiB. |
+| Append PRBS15 | File mode only, off initially. Disabled means send the original file once, then idle/filler. |
+| Total meaningful bits | Enabled only with append; includes original file plus fill. Require original bits ≤ target ≤ 134217728. Do not auto-size from duration/profile or silently add fill. |
+| Fill seed | Enabled only with append; independent seed 1–32767, initially 32767. Fill starts after the original file and continues without codeword reseeding. |
+| Fill summary | Rust-derived original bits, target bits and additional PRBS bits. Keep final-codeword padding separate. |
+
+Allow empty files as the core does: no-fill sends no payload; a positive target
+produces finite fill. Equal target/original length appends nothing; partial-byte
+fill is supported. Duration belongs to run configuration, not a source bit-count
+estimate. Finishing a run does not guarantee all file bits were generated/recovered.
+Other PRBS polynomials, repeat-file, editable payload text and automatic targets
+are outside this first editor; do not expose unimplemented choices.
+
+Rust owns bounded file reads, immutable bytes, provenance, validation and the
+accepted source snapshot. Reuse `Prbs15::new`, `FilePayload::new`, `PrbsFill` and
+`PayloadSourceConfig`; do not duplicate generators or fill math in QML. Loading
+and editing stage a draft; Apply validates and commits, Cancel preserves the
+accepted source. Rejected drafts report locally without changing accepted readiness.
+PRBS-TX is yellow until a valid source is explicitly accepted, then green; an
+accepted source that becomes invalid is red. Clearing a file requires replacing
+it with a valid source before Apply. Independent PRBS-RX truth uses the accepted
+source/seed, with its own state; source acceptance alone does not complete PRBS-RX
+or enable Start. Edits affect the next frozen job, never an active stream.
+
+The editor accepts session-only settings; actual run wiring remains pending. The
+optional `source-input` feature exposes existing source validation without FEC or
+runner dependencies. `FilePayload::with_fill` shares immutable bytes while
+revalidating a policy, avoiding payload copies during edits. See the
+[source configuration plan](development/features/visual-workspace/design.md#ui-02-prbs-tx-source-editor)
+and [source UI guide](user/source-input.md).
+
 ### Downstream profile input dialog
 
 File and folder selection must use the operating system's native picker, without
 a Qt-rendered fallback or custom file explorer. Qt platform integration may invoke
-the OS picker. Enforcing and verifying this requirement on the target VM remains
-pending; application-owned editors remain Qt dialogs.
+the OS picker. PRBS-TX and DPD now use a shared GTK native chooser on Ubuntu,
+in an isolated presentation-only process of the same executable, before Qt
+initialization. It exchanges only a URI/cancellation/error and prevents GTK and
+Qt from consuming each other's UI events. An explicit error is returned if
+GTK/display initialization is unavailable. No
+Qt file browser is instantiated; application-owned editors remain Qt dialogs.
 
 The Downstream Profile Descriptor (DPD) input block opens its own Qt tree dialog
 with Open File, Load demo, detected representation, File/Channel information,

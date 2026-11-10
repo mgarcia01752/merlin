@@ -5,11 +5,10 @@
 //! DPD input lifecycle and filesystem adapter; all scientific validation is Rust.
 mod document;
 use cxx_qt::CxxQtType;
-use cxx_qt_lib::{QString, QUrl};
+use cxx_qt_lib::QString;
 use docsis_ofdm_fec::transmission::TransmissionSettings;
 use document::{Capture, MAX_INPUT_BYTES};
 use serde_json::{json, Value};
-use std::{fs::File, io::Read, path::Path};
 
 #[cxx_qt::bridge]
 pub mod bridge {
@@ -34,6 +33,11 @@ pub mod bridge {
         /// Preview JSON or an error; failure preserves the previous draft.
         #[qinvokable]
         fn stage(self: Pin<&mut ProfileInput>, url: &QString) -> QString;
+        /// Opens the OS-native picker and stages a chosen capture.
+        /// # Returns
+        /// Preview JSON; Cancel preserves the current draft.
+        #[qinvokable]
+        fn choose_file(self: Pin<&mut ProfileInput>) -> QString;
         /// Stages the sanitized embedded binary demo without filesystem writes.
         /// # Returns
         /// Validated demo preview JSON or an error.
@@ -97,32 +101,6 @@ fn settings(document: &str) -> Result<TransmissionSettings, String> {
     settings.validate().map_err(|error| error.to_string())?;
     Ok(settings)
 }
-fn read(path: &Path) -> Result<Vec<u8>, String> {
-    let metadata =
-        std::fs::metadata(path).map_err(|error| format!("Cannot inspect input: {error}"))?;
-    if !metadata.is_file() {
-        return Err("Choose a regular input file.".into());
-    }
-    if metadata.len() > MAX_INPUT_BYTES as u64 {
-        return Err("Input exceeds the 16 MiB file limit.".into());
-    }
-    let file = File::open(path).map_err(|error| format!("Cannot open input: {error}"))?;
-    if !file
-        .metadata()
-        .map_err(|error| error.to_string())?
-        .is_file()
-    {
-        return Err("Choose a regular input file.".into());
-    }
-    let mut bytes = Vec::new();
-    file.take((MAX_INPUT_BYTES + 1) as u64)
-        .read_to_end(&mut bytes)
-        .map_err(|error| format!("Cannot read input: {error}"))?;
-    if bytes.len() > MAX_INPUT_BYTES {
-        return Err("Input exceeds the 16 MiB file limit.".into());
-    }
-    Ok(bytes)
-}
 
 impl ProfileInputRust {
     fn stage_bytes(&mut self, name: String, bytes: Vec<u8>) -> Result<Value, String> {
@@ -162,21 +140,19 @@ impl bridge::ProfileInput {
     /// # Returns
     /// Preview JSON or a diagnostic preserving the previous draft and accepted input.
     pub fn stage(mut self: core::pin::Pin<&mut Self>, url: &QString) -> QString {
-        let result = QUrl::from(url)
-            .to_local_file()
-            .ok_or_else(|| "Choose a local file.".to_string())
-            .and_then(|path| {
-                let path = std::path::PathBuf::from(path.to_string());
-                let bytes = read(&path)?;
-                self.as_mut().rust_mut().stage_bytes(
-                    path.file_name()
-                        .unwrap_or_default()
-                        .to_string_lossy()
-                        .into_owned(),
-                    bytes,
-                )
-            });
+        let result = crate::input_file::read_local(&url.to_string(), MAX_INPUT_BYTES)
+            .and_then(|(name, bytes)| self.as_mut().rust_mut().stage_bytes(name, bytes));
         response(result)
+    }
+    /// Opens the OS picker without a Qt fallback; cancellation keeps the draft.
+    /// # Returns
+    /// Draft preview or a diagnostic preserving the accepted input.
+    pub fn choose_file(mut self: core::pin::Pin<&mut Self>) -> QString {
+        match crate::native_file_picker::choose("Open downstream OFDM modulation-profile capture") {
+            Ok(Some(url)) => self.as_mut().stage(&QString::from(url)),
+            Ok(None) => response(Ok(json!({"cancelled":true}))),
+            Err(error) => response(Err(error)),
+        }
     }
     /// Stages the same sanitized binary fixture identified by the demo provenance.
     /// # Returns

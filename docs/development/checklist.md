@@ -701,7 +701,9 @@ Detailed tasks: [UI checklist](ui-checklist.md) and
 [task design](features/visual-workspace/design.md). Develop left to right, starting
 with OFDM Channel Descriptor (OCD). UI-01 is partial: diagram, section-preview dialogs and
 theme/icon shell and Rust-validated OFDM tree editor exist. Other editors,
-workbench persistence and Rust jobs remain pending. The DPD binary/JSON input
+workbench persistence and Rust jobs remain pending. PRBS-TX now accepts PRBS15
+or exact-byte file/finite-fill configuration through shared Rust validation.
+The DPD binary/JSON input
 dialog accepts compatible profiles and drives DPD/OCD readiness. Other inputs and
 run integration remain pending.
 
@@ -716,6 +718,10 @@ run integration remain pending.
 - [ ] **UI-02** Add a role-based file panel and OS file picker; validate inputs
   before applying them to a new run, with clickable/editable PRBS15/text/binary
   source selection, size feedback and an explicit append-PRBS15 fill option.
+  Implemented: PRBS-TX source editor with continuous PRBS15 or exact-byte File selection,
+  explicit seeds and optional finite total-bit fill. Options and readiness are
+  defined in the [architecture](../architecture.md#prbs-tx-source-configuration);
+  source acceptance/readiness is implemented; run integration remains pending.
 - [ ] **UI-03** Present separate LDPC, BER, payload pre/post-CE, continuous/scattered
   pilot and PLC-data/preamble analyzers with shared bounded Rust results.
 - [ ] **UI-04** Validate responsive jobs, cancellation, observation invariance and

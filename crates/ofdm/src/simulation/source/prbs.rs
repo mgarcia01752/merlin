@@ -4,6 +4,7 @@
  */
 //! Explicit PRBS15 experiment source; unrelated to the PHY cell randomizer.
 use crate::{error::invalid, SimulationError};
+#[cfg(feature = "simulation")]
 use fec_codec::parameters::BCH_INPUT_BITS;
 use serde::Serialize;
 
@@ -71,6 +72,7 @@ impl Prbs15 {
     /// Exactly BCH_INPUT_BITS bits continuing from the previous call.
     /// # Errors
     /// Rejects absolute-position overflow without advancing state.
+    #[cfg(feature = "simulation")]
     pub fn next_payload(&mut self) -> Result<Vec<u8>, SimulationError> {
         self.generate(BCH_INPUT_BITS)
     }

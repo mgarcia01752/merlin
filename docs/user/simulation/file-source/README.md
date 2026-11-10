@@ -74,5 +74,6 @@ See [verification](verification.md) before interpreting a partial export.
 
 The Rust API takes immutable bytes through `FilePayload`/`PayloadSourceConfig`
 or `ChannelDocument.settings_with_inputs`; it never needs a filesystem path.
-The future Qt Source block will call this same API for editable file selection,
-size feedback and optional append-to-fill. Qt is still unimplemented.
+The [Qt PRBS-TX editor](../../source-input.md) now uses these same contracts for
+exact-byte file selection, size feedback and optional append-to-fill. UI job
+dispatch remains pending.

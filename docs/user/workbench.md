@@ -5,7 +5,7 @@ OFDM Channel Descriptor (OCD), PRBS-TX, Transmitter, Channel Simulator, Receiver
 of the measurement-input blocks to open its section dialog. Close the dialog
 or press Escape to return. Light mode/Dark mode changes the palette and icon.
 
-The workbench includes an editable **OFDM Channel Descriptor (OCD)** dialog. Other blocks open
+The workbench includes an editable **OFDM Channel Descriptor (OCD)** dialog. PRBS-TX supports source configuration. Other blocks open
 section previews. DPD supports capture input; other file pickers and simulation
 jobs are not connected yet.
 The lower-right Start, Stop and Pause controls are disabled. There are no UI
@@ -19,6 +19,32 @@ Measurement input blocks will use supported decoded PNM JSON. The existing
 See [Qt setup and VM launch](../development/qt.md) and the
 [UI checklist](../development/ui-checklist.md). The interface remains in the dev
 phase; initial Ubuntu targets require separate native validation.
+
+## PRBS-TX options
+
+Click PRBS-TX to open **Transmit source (PRBS-TX)**.
+Choose continuous PRBS15 or a text/binary file in a tree like the OCD editor.
+The [dark interactive design preview](../images/workbench/prbs-tx-design.html)
+shows the proposed tree, conditional File/fill controls and Apply/Cancel. It is
+a mockup, not runtime evidence; its Open action does not access files.
+
+- **PRBS15:** set a nonzero seed from 1 to 32767; the initial draft uses 32767.
+- **File:** select a file through the OS picker. Rust preserves its exact bytes
+  and reports filename, size and SHA-256. Text is not re-encoded. Maximum: 16 MiB.
+- **Append PRBS15:** optional and initially off. Set a total meaningful-bit target
+  including the file, plus a separate seed. The target must be at least the file's
+  bit count and at most 134217728 bits. A summary shows how many bits are appended.
+
+Without append, a file is sent once and followed by idle/filler. Empty files are
+allowed; positive fill can supply finite traffic. The total need not be byte-aligned.
+Run duration is configured separately and does not guarantee complete file recovery.
+See the [source editor guide](source-input.md) for actual dark VM screenshots.
+Apply accepts a validated source for the next run; Cancel preserves the previous
+selection. Only explicit acceptance makes PRBS-TX green. Other blocks and run
+integration must also be ready before Start is available.
+
+See [PRBS15 behavior](simulation/prbs.md) and
+[file and fill behavior](simulation/file-source/README.md) for existing Rust support.
 
 ## Block status
 

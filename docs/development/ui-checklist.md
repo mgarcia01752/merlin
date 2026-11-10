@@ -33,6 +33,9 @@ Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first 
 - [x] Connect accepted/removed/rejected DPD input to Rust-backed DPD/OCD readiness.
 - [ ] Connect remaining input/job states and dependency invalidation to readiness.
 - [ ] Implement PRBS-TX / Transmitter configuration and stage details.
+  PRBS-TX source configuration is implemented; Transmitter/run wiring remains
+  pending. Source options are defined in the
+  [architecture](../architecture.md#prbs-tx-source-configuration).
 - [ ] Implement Channel Simulator configuration and stage details.
 - [ ] Implement Receiver / PRBS-RX configuration and recovered-data status.
 - [ ] Keep source/recovered comparison independent of receiver feedback.
@@ -52,10 +55,22 @@ Integrate input blocks as their owning sections are developed left to right.
 
 - [x] Add the DPD Open File dialog, content detection, binary/JSON import and
   staged profile selection/removal with exact-byte provenance.
-- [ ] Enforce and verify OS-native file/folder pickers without Qt-rendered fallback.
+- [x] Enforce and verify OS-native Open for PRBS-TX and DPD without Qt fallback.
+  Save/folder selection remains pending with its owning future dialogs.
 - [ ] Add OS file pickers to remaining applicable dialogs and show input roles/status.
-- [ ] Support PRBS15 or exact text/binary payload bytes with Rust-derived size
+- [x] Support PRBS15 or exact text/binary payload bytes with Rust-derived size
   feedback and explicit optional append-PRBS15 fill.
+  - [x] Add a separate Transmit source (PRBS-TX) tree dialog with descriptions,
+    staged Apply/Cancel and conditional PRBS15/File controls.
+  - [x] Expose continuous PRBS15 seed 1–32767, initially 32767; no other polynomial.
+  - [x] Read bounded exact-byte files through the OS-native picker; report Rust
+    byte/bit counts and SHA-256 without serializing payload bytes to QML.
+  - [x] Add opt-in finite fill, explicit total meaningful bits and independent
+    fill seed; reuse core limits, including empty/equal-target/partial-byte cases.
+  - [x] Drive PRBS-TX readiness from accepted Rust configuration; rejected drafts
+    and Cancel preserve accepted state. Apply does not start or mutate a run.
+  - [x] Verify UI lifecycle/native picker and adapter validation with existing
+    PRBS/file tests reused; document actual dark VM screenshots.
 - [x] Accept modulation-profile capture inputs in DPD and show the OCD summary.
 - [ ] Attach accepted DPD profiles to the actual Transmitter run request.
 - [ ] Attach DS channel-estimation and RxMER inputs to Channel Simulator.

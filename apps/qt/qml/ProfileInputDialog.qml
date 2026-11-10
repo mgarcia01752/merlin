@@ -5,7 +5,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Dialogs
 
 Dialog {
     id: dialog
@@ -34,6 +33,9 @@ Dialog {
     onClosed: backend.cancel()
     function showResult(document) {
         const result = JSON.parse(document)
+        if (result.cancelled) {
+            return
+        }
         if (result.error) {
             errorMessage = result.error
             return
@@ -54,17 +56,11 @@ Dialog {
         updated[key] = !updated[key]
         collapsed = updated
     }
-    FileDialog {
-        id: picker
-        title: "Open downstream OFDM modulation-profile capture"
-        nameFilters: ["PNM captures and JSON (*.bin *.pnm *.json)", "All files (*)"]
-        onAccepted: dialog.showResult(dialog.backend.stage(selectedFile.toString()))
-    }
     contentItem: ColumnLayout {
         spacing: 10
         RowLayout {
             Layout.fillWidth: true
-            Button { objectName: "profileOpenFile"; text: "Open File…"; onClicked: picker.open() }
+            Button { objectName: "profileOpenFile"; text: "Open File…"; onClicked: dialog.showResult(dialog.backend.choose_file()) }
             Button { objectName: "profileLoadDemo"; text: "Load demo"; onClicked: dialog.showResult(dialog.backend.demo()) }
             Label { text: dialog.previewModel.source_name || "No input selected"; color: theme.text; elide: Text.ElideMiddle; Layout.fillWidth: true }
             Label { objectName: "profileDetectedType"; text: dialog.previewModel.format ? "Detected: " + dialog.previewModel.format : ""; color: theme.accent }

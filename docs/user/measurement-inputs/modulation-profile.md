@@ -16,7 +16,9 @@ flowchart LR
 ```
 
 Choose **Open File** or **Load demo**, inspect the tree, choose a profile, then
-Apply. Loading alone does not change the accepted selection. Cancel/Escape
+Apply. Open File uses the OS-native GTK picker on Ubuntu; cancellation preserves
+the draft, and unavailable integration reports an error without a Qt fallback.
+Loading alone does not change the accepted selection. Cancel/Escape
 preserves it. Remove input is also staged until Apply. Captures stay unchanged;
 this dialog does not export modified captures or start a run. Settings and inputs
 are currently in memory only.

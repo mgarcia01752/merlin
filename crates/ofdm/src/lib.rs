@@ -9,7 +9,7 @@ pub mod input_format;
 pub mod profile;
 pub mod scenario;
 pub mod signal_processing;
-#[cfg(feature = "simulation")]
+#[cfg(any(feature = "simulation", feature = "source-input"))]
 pub mod simulation;
 pub mod transmission;
 pub mod types;

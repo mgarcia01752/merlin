@@ -53,9 +53,27 @@ impl FilePayload {
         if bytes.len() > MAX_FILE_BYTES {
             return Err(invalid("Payload file exceeds16MiB."));
         }
-        let original_bits = bytes.len() as u64 * 8;
-        let target_bits = fill.map_or(original_bits, |policy| policy.target_bits);
-        if target_bits < original_bits || target_bits > MAX_FILE_BITS {
+        Self {
+            bytes: Arc::from(bytes),
+            original_bytes: bytes.len(),
+            target_bits: bytes.len() as u64 * 8,
+            fill: None,
+        }
+        .with_fill(fill)
+    }
+
+    /// Revalidates a finite fill policy while sharing unchanged original bytes.
+    ///
+    /// # Arguments
+    /// * `fill` - Optional total meaningful-bit target and independent PRBS15 seed.
+    /// # Returns
+    /// A new configuration sharing immutable storage; this input stays unchanged.
+    /// No source bits are generated and original bytes are not copied.
+    /// # Errors
+    /// Rejects targets below original size, above the work bound or invalid seeds.
+    pub fn with_fill(&self, fill: Option<PrbsFill>) -> Result<Self, SimulationError> {
+        let target_bits = fill.map_or(self.original_bytes as u64 * 8, |policy| policy.target_bits);
+        if target_bits < self.original_bytes as u64 * 8 || target_bits > MAX_FILE_BITS {
             return Err(invalid(
                 "File fill target is below the original size or exceeds the source budget.",
             ));
@@ -64,8 +82,8 @@ impl FilePayload {
             Prbs15::new(policy.seed)?;
         }
         Ok(Self {
-            bytes: Arc::from(bytes),
-            original_bytes: bytes.len(),
+            bytes: Arc::clone(&self.bytes),
+            original_bytes: self.original_bytes,
             target_bits,
             fill,
         })

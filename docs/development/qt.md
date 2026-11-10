@@ -1,7 +1,7 @@
 # Qt workbench development
 
 UI-01 currently provides a native Qt Quick/QML shell with the clickable system
-diagram and section-preview dialogs. The OCD timing editor and DPD capture importer are implemented; other editors,
+diagram and section-preview dialogs. The OCD timing editor, DPD capture importer and PRBS-TX source editor are implemented; other editors,
 analyzers and run integration remain pending. Start/Stop/Pause are visible and disabled.
 See the [UI checklist](ui-checklist.md) and
 [design/provenance](features/visual-workspace/design.md).

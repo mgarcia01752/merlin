@@ -156,7 +156,14 @@ fields for adapters. The type rename does not change existing JSON error codes;
 `FileVerifier`, `FileSourceSummary` and `RecoveredFile`. `PayloadSourceConfig`
 selects continuous PRBS or validated immutable file data. `FilePayload::new`
 checks exact original bytes and optional target/seed; cloned configs share those
-bytes without serializing them. The core remains path-independent.
+bytes without serializing them. `FilePayload::with_fill` revalidates target/seed
+while sharing original byte storage, allowing interactive policy changes without
+copying payloads. The core remains path-independent.
+
+The optional `source-input` feature exposes PRBS state/validation, `FilePayload`,
+`PrbsFill`, `SourceSelection` and `PayloadSourceConfig` without FEC, waveform or
+runner dependencies. Payload-sized generation, file comparison and runner APIs
+remain gated by `simulation`; their established imports are unchanged.
 
 `ChannelRunSettings.source` and `ChannelDocument.settings_with_inputs` select
 this path. Existing `settings`/`settings_with_scenario` methods continue to serve

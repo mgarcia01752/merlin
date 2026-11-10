@@ -231,6 +231,57 @@ and viewer binary-decoder coverage rather than duplicating scientific tests.
 Standalone binary-decoder integration, UI state and readiness transitions remain
 pending; the graphic is not evidence of implemented file loading.
 
+## UI-02: PRBS-TX source editor
+
+Implementation approach: add the optional `source-input` core feature to expose
+existing PRBS/file configuration validation without compiling the runner or FEC.
+Payload-sized generation and file verification retain their simulation-feature paths.
+Use a shared GTK native picker bridge on the initial Ubuntu targets for PRBS-TX
+and DPD; unavailable GTK returns an explicit diagnostic with no Qt browser fallback.
+The bridge handles presentation only; Rust owns reads and all input interpretation.
+The same executable runs an internal native-picker process before constructing
+Qt, isolating GTK event dispatch from Qt. This avoids mixed-toolkit event warnings;
+the helper exchanges only a selected URI or cancellation/error, never capture
+bytes or scientific calculations. No external picker executable is required.
+
+Implemented: expose the existing Rust source choices through a dedicated
+`Transmit source (PRBS-TX)` tree dialog. The canonical option/default/limit table
+is in the [architecture](../../../architecture.md#prbs-tx-source-configuration).
+The PRBS-TX block label is retained; run integration remains pending.
+The [dark design preview](../../../images/workbench/prbs-tx-design.html) shows
+PRBS15 and File modes in the same Parameter/Value tree. Expandable sections,
+conditional fill fields, descriptions and draft acceptance are illustrative only;
+runtime screenshots and validation are recorded separately from this mockup.
+
+Use a separate QML dialog and focused Rust source adapter. Rust owns bounded OS
+file input, immutable bytes/provenance, draft/accepted configuration and validation
+through existing `Prbs15`, `FilePayload`, `PrbsFill` and `PayloadSourceConfig` APIs.
+QML renders bounded summaries and transient selection only. File paths/bytes do
+not enter the scientific request JSON. Keep source configuration independent of
+DPD compatibility; complete-job validation remains the run adapter's responsibility.
+
+```mermaid
+flowchart LR
+    OPTIONS["PRBS15 seed / file and optional fill"] --> DRAFT["Rust draft source"]
+    PICKER["OS-native picker"] --> BYTES["Bounded original bytes"] --> DRAFT
+    DRAFT --> VALIDATE["Existing Rust source validators"]
+    VALIDATE --> APPLY["Apply: accepted snapshot / PRBS-TX readiness"]
+    APPLY --> JOB["Later: frozen run source and independent verifier"]
+```
+
+Cancel/rejected loads preserve accepted input. Start stays subject to all block
+and run-integration gates. Active sources are never reseeded by editing settings.
+Test points: accepted configuration, exact-byte hash/counts, bounded fill summary,
+validation diagnostics and readiness. Reuse existing PRBS/file scientific tests;
+add scoped adapter/QML lifecycle checks for modes, invalid seeds/targets, empty
+files, equal targets, partial-byte fill and Cancel/rejection invariance. Verify the
+OS-native picker on the VM, then update the user guide with dark runtime captures.
+The implemented editor uses SourceInputDialog.qml and source_input/model.rs with
+a source_input.rs Qt bridge. input_file.rs shares bounded reads with DPD, and
+native_file_picker.{rs,h} invokes GTK directly. GTK is presentation-only; no
+scientific code crosses CXX. Existing GTK development prerequisites are required
+at compile time through pkg-config. No additional system packages were installed.
+
 ## UI-02 implementation: DPD capture input
 
 Use a standalone Rust content detector in the core, independent of paths and file

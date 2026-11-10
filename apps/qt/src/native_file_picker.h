@@ -1,0 +1,59 @@
+/*
+ * Copyright 2026 MERLIN contributors
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+#pragma once
+#include <QString>
+#ifdef __linux__
+#pragma push_macro("signals")
+#undef signals
+#include <gtk/gtk.h>
+#pragma pop_macro("signals")
+#endif
+
+/**
+ * Open the desktop toolkit's modal chooser in the isolated picker process.
+ * Return a local file URI, empty on Cancel, or an error marker on unavailable
+ * native integration. No Qt file dialog or custom browser fallback is used.
+ * GTK owns the selection UI only; Rust reads and validates selected bytes.
+ */
+inline QString chooseNativeFile(const QString &title) {
+#ifdef __linux__
+    // Match XCB/XWayland so the native chooser shares the application's display.
+    if (qgetenv("QT_QPA_PLATFORM") == "xcb") {
+        gdk_set_allowed_backends("x11");
+    }
+    if (!gtk_init_check(nullptr, nullptr)) {
+        return QStringLiteral("ERROR: OS-native file selection is unavailable (GTK display initialization failed).");
+    }
+    struct Selection {
+        GMainLoop *loop;
+        int response;
+    } selection{g_main_loop_new(nullptr, false), GTK_RESPONSE_CANCEL};
+    const auto titleBytes = title.toUtf8();
+    auto *chooser = gtk_file_chooser_native_new(titleBytes.constData(), nullptr,
+        GTK_FILE_CHOOSER_ACTION_OPEN, "Open", "Cancel");
+    gtk_native_dialog_set_modal(GTK_NATIVE_DIALOG(chooser), true);
+    g_signal_connect(chooser, "response", G_CALLBACK(+[](GtkNativeDialog *, int response, gpointer data) {
+        auto *selection = static_cast<Selection *>(data);
+        selection->response = response;
+        g_main_loop_quit(selection->loop);
+    }), &selection);
+    gtk_native_dialog_show(GTK_NATIVE_DIALOG(chooser));
+    g_main_loop_run(selection.loop);
+    QString result;
+    if (selection.response == GTK_RESPONSE_ACCEPT) {
+        char *uri = gtk_file_chooser_get_uri(GTK_FILE_CHOOSER(chooser));
+        if (uri != nullptr) {
+            result = QString::fromUtf8(uri);
+            g_free(uri);
+        }
+    }
+    gtk_native_dialog_destroy(GTK_NATIVE_DIALOG(chooser));
+    g_object_unref(chooser);
+    g_main_loop_unref(selection.loop);
+    return result;
+#else
+    return QStringLiteral("ERROR: OS-native file selection is implemented for Ubuntu only.");
+#endif
+}

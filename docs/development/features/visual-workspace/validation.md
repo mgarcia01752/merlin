@@ -150,3 +150,36 @@ Decoder-format acceptance remains type 10 / format 1.0 / range schemes. Skip and
 unsupported encodings reject; other measurement imports, persistence, profile
 editing and simulation integration remain pending. Viewing/selecting four demo
 profiles does not broaden the existing measured-runner support contract.
+
+## UI-02: PRBS-TX source editor
+
+Implemented and validated on the Ubuntu 22.04 VM with Qt 6.8.3 / Rust 1.85.1:
+
+- Qt formatting, warnings-denied adapter Clippy, build, seven Rust adapter tests
+  and all 20 QML cases pass. The added adapter coverage checks exact reads,
+  nonlocal/nonregular/oversize rejection, source acceptance and draft restoration,
+  invalid seeds/targets, empty files and equal/partial-byte fill targets.
+- Eleven focused core tests pass: existing PRBS (five), file source (four) and
+  source configuration (two). The two configuration tests also pass with only
+  `source-input` enabled, proving no FEC/runner feature is needed for validation.
+  Shared fill configurations retain the same byte storage; rejected policies
+  preserve original length/bytes. Core library Clippy and formatting pass.
+- The unchanged no-simulation `SymbolPacker.coded_bits` warning remains; no
+  suppression or unrelated scientific rewrite was introduced. No full DSP/FEC
+  regression suite was rerun.
+- Native review rejected PRBS seed zero without closing the editor, accepted
+  a valid seed with green PRBS-TX, then loaded the exact 97-byte message fixture
+  through the OS-native GTK chooser. Its 776 bits and a 20000-bit target report
+  19224 additional bits. Applied File configuration reopens correctly; picker
+  Cancel and dialog Cancel preserve accepted file/options.
+- DPD also loads its existing binary capture through the shared native picker.
+  GTK runs in an isolated presentation-only process of the same executable,
+  before Qt initialization, avoiding mixed-toolkit event dispatch. This process
+  exchanges URI/cancellation/error only; input reads and scientific work stay
+  Rust-owned. Missing display integration returns an explicit error marker.
+- Actual dark PRBS15/File and workbench screenshots are tracked and linked from
+  the user guide. PRBS-TX, OCD and DPD can be green together; remaining blocks
+  keep Start disabled. The native application log has no QML errors.
+
+Actual job dispatch, source persistence, PRBS-RX configuration, responsiveness
+under active simulation and native Ubuntu 24.04/26.04 validation remain pending.

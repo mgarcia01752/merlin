@@ -3,10 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Thin selection of continuous PRBS or finite file stages; algorithms keep one owner.
+use super::file::FilePayload;
+#[cfg(feature = "simulation")]
 use super::{
-    file::{FilePayload, FileSource, FileSourceSummary, FileVerifier, RecoveredFile},
+    file::{FileSource, FileSourceSummary, FileVerifier, RecoveredFile},
     Prbs15, PrbsComparison, PrbsSeed, PrbsVerifier,
 };
+#[cfg(feature = "simulation")]
 use crate::SimulationError;
 /// Immutable shared source configuration; raw file bytes never enter JSON output.
 #[derive(Clone, Default, serde::Serialize)]
@@ -18,14 +21,17 @@ pub enum PayloadSourceConfig {
         payload: FilePayload,
     },
 }
+#[cfg(feature = "simulation")]
 pub(crate) enum PayloadSource {
     Prbs(Prbs15),
     File(FileSource),
 }
+#[cfg(feature = "simulation")]
 pub(crate) enum PayloadVerifier {
     Prbs(PrbsVerifier),
     File(FileVerifier),
 }
+#[cfg(feature = "simulation")]
 impl PayloadSourceConfig {
     /// Builds independently owned generation and truth state for a new run.
     /// # Arguments
@@ -50,6 +56,7 @@ impl PayloadSourceConfig {
         })
     }
 }
+#[cfg(feature = "simulation")]
 impl PayloadSource {
     /// Emits the next BCH payload or finite EOF.
     /// # Returns
@@ -72,6 +79,7 @@ impl PayloadSource {
         }
     }
 }
+#[cfg(feature = "simulation")]
 impl PayloadVerifier {
     /// Compares actual decoded payload with independent selected-source truth.
     /// # Arguments

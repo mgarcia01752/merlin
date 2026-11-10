@@ -385,6 +385,7 @@ dependencies = [
  "cxx-qt-lib",
  "docsis-ofdm-fec",
  "pnm",
+ "serde",
  "serde_json",
  "sha2",
 ]

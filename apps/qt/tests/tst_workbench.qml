@@ -41,9 +41,36 @@ Pane {
             return JSON.stringify({selected: acceptedId >= 0, profile_status: acceptedId >= 0 ? "complete" : "attention", ofdm_status: acceptedId >= 0 ? "complete" : "attention", reason: acceptedId >= 0 ? "Profile and settings valid" : "A validated modulation-profile input is required.", summary: acceptedId >= 0 ? {profile_id: String(acceptedId), source_file: "test.bin", subcarrier_assignments: "Test assignments"} : {}})
         }
     }
+    QtObject {
+        id: sourceBackend
+        property bool acceptedSource: false
+        property var acceptedOptions: ({mode: "prbs15", seed: 32767, append: false, target_bits: 0, fill_seed: 32767})
+        property bool fileSelected: false
+        property bool acceptedFile: false
+        function fileView() { return {selected: fileSelected, name: fileSelected ? "test.bin" : "", bytes: fileSelected ? 2 : null, bits: fileSelected ? 16 : null, sha256: fileSelected ? "test-hash" : ""} }
+        function begin() { fileSelected = acceptedFile; return JSON.stringify({options: acceptedOptions, file: fileView()}) }
+        function choose_file() { fileSelected = true; return JSON.stringify(fileView()) }
+        function describe(document) {
+            const options = JSON.parse(document)
+            let error = ""
+            if (options.mode === "prbs15" && (options.seed < 1 || options.seed > 32767)) { error = "Invalid PRBS15 seed" }
+            if (options.mode === "file" && !fileSelected) { error = "Select a file" }
+            if (options.mode === "file" && options.append && (options.target_bits < 16 || options.target_bits > 134217728 || options.fill_seed < 1 || options.fill_seed > 32767)) { error = "Invalid fill" }
+            return JSON.stringify({error: error, fill_bits: error ? null : options.mode === "file" && options.append ? options.target_bits - 16 : 0})
+        }
+        function apply(document) {
+            const result = JSON.parse(describe(document))
+            if (result.error) { return result.error }
+            acceptedOptions = JSON.parse(document); acceptedSource = true
+            acceptedFile = acceptedOptions.mode === "file" && fileSelected
+            return ""
+        }
+        function cancel() { fileSelected = acceptedFile }
+        function state() { return JSON.stringify({status: acceptedSource ? "complete" : "attention", reason: acceptedSource ? "Validated source accepted for the next run" : "Apply a validated PRBS15 or file source before starting."}) }
+    }
     Workbench {
         id: workbench
-        anchors.fill: parent; theme: theme; settingsBackend: backend; profileBackend: profileBackend
+        anchors.fill: parent; theme: theme; settingsBackend: backend; profileBackend: profileBackend; sourceBackend: sourceBackend
         iconRoot: "../../../docs/images/logo/"
     }
     Component {
@@ -56,7 +83,7 @@ Pane {
         function test_sections_data() {
             return [
                 {tag: "ofdm", block: "ofdmBlock", title: "OFDM Channel Descriptor (OCD)"},
-                {tag: "source", block: "sourceBlock", title: "PRBS-TX"},
+                {tag: "source", block: "sourceBlock", title: "Transmit source (PRBS-TX)"},
                 {tag: "tx", block: "transmitterBlock", title: "Transmitter"},
                 {tag: "channel", block: "channelBlock", title: "Channel Simulator"},
                 {tag: "rx", block: "receiverBlock", title: "Receiver"},
@@ -70,11 +97,11 @@ Pane {
             const block = findChild(workbench, data.block)
             verify(block !== null)
             mouseClick(block)
-            const dialog = data.block === "ofdmBlock" ? workbench.ofdmPopup : data.block === "profileBlock" ? workbench.profilePopup : workbench.sectionPopup
+            const dialog = data.block === "ofdmBlock" ? workbench.ofdmPopup : data.block === "profileBlock" ? workbench.profilePopup : data.block === "sourceBlock" ? workbench.sourcePopup : workbench.sectionPopup
             verify(dialog !== null)
             tryCompare(dialog, "opened", true)
             compare(dialog.title, data.title)
-            if (data.block !== "ofdmBlock" && data.block !== "profileBlock") { verify(workbench.sectionDescription.length > 30) }
+            if (data.block !== "ofdmBlock" && data.block !== "profileBlock" && data.block !== "sourceBlock") { verify(workbench.sectionDescription.length > 30) }
             keyClick(Qt.Key_Escape)
             tryCompare(dialog, "visible", false)
         }
@@ -212,6 +239,50 @@ Pane {
             mouseClick(findChild(workbench, "themeToggle"))
             compare(theme.dark, !previous)
             theme.dark = previous
+        }
+        function test_source_options_and_accepted_readiness() {
+            const dialog = workbench.sourcePopup
+            mouseClick(findChild(workbench, "sourceBlock"))
+            tryCompare(dialog, "opened", true)
+            compare(dialog.draft.mode, "prbs15")
+            compare(dialog.draft.seed, 32767)
+            dialog.edit("seed", 0)
+            mouseClick(findChild(dialog, "sourceApply"))
+            compare(dialog.visible, true)
+            verify(dialog.errorMessage.length > 0)
+            compare(workbench.sourceState.status, "attention")
+            dialog.edit("seed", 1)
+            mouseClick(findChild(dialog, "sourceApply"))
+            tryCompare(dialog, "visible", false)
+            compare(workbench.sourceState.status, "complete")
+            compare(findChild(workbench, "sourceBlock").blockStatus, "complete")
+            compare(findChild(workbench, "startButton").enabled, false)
+            mouseClick(findChild(workbench, "sourceBlock"))
+            tryCompare(dialog, "opened", true)
+            dialog.edit("mode", "file")
+            compare(findChild(dialog, "sourceSeed").visible, false)
+            verify(findChild(dialog, "sourceOpenFile").visible)
+            compare(findChild(dialog, "sourceTarget").enabled, false)
+            dialog.chooseFile()
+            compare(dialog.fileInfo.bytes, 2)
+            dialog.edit("append", true)
+            compare(findChild(dialog, "sourceTarget").enabled, true)
+            dialog.edit("target_bits", 19)
+            compare(dialog.summary.fill_bits, 3)
+            mouseClick(findChild(dialog, "sourceCancel"))
+            tryCompare(dialog, "visible", false)
+            compare(sourceBackend.acceptedOptions.mode, "prbs15")
+            mouseClick(findChild(workbench, "sourceBlock"))
+            tryCompare(dialog, "opened", true)
+            compare(dialog.fileInfo.selected, false)
+            dialog.edit("mode", "file")
+            dialog.chooseFile()
+            mouseClick(findChild(dialog, "sourceApply"))
+            tryCompare(dialog, "visible", false)
+            compare(sourceBackend.acceptedOptions.mode, "file")
+            sourceBackend.acceptedSource = false; sourceBackend.acceptedFile = false
+            sourceBackend.acceptedOptions = ({mode: "prbs15", seed: 32767, append: false, target_bits: 0, fill_seed: 32767})
+            workbench.refreshSourceState()
         }
         function test_render() {
             theme.dark = true

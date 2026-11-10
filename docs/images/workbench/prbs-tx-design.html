@@ -1,0 +1,104 @@
+<!-- Copyright 2026 MERLIN contributors. SPDX-License-Identifier: Apache-2.0 -->
+<div id="merlin-prbs-preview" class="viz-dotted-background">
+  <style>
+    #merlin-prbs-preview { padding: 16px; font: 14px/1.5 system-ui, sans-serif; color-scheme: dark; }
+    #merlin-prbs-preview .wb-window { background: #101c2c; color: #e5edf6; border: 1px solid #33485f; border-radius: 10px; max-width: 820px; margin: auto; overflow: hidden; }
+    #merlin-prbs-preview .wb-title { padding: 16px 20px; border-bottom: 1px solid #33485f; }
+    #merlin-prbs-preview h2 { font-size: 19px; font-weight: 600; margin: 0; }
+    #merlin-prbs-preview .wb-muted { color: #a8b9cd; }
+    #merlin-prbs-preview .wb-content { padding: 16px 20px; }
+    #merlin-prbs-preview .wb-columns, #merlin-prbs-preview .wb-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: center; padding: 9px 12px; }
+    #merlin-prbs-preview .wb-columns { background: #203047; font-weight: 600; }
+    #merlin-prbs-preview .wb-row { border-bottom: 1px solid #27384c; }
+    #merlin-prbs-preview .wb-tree { border: 1px solid #33485f; background: #0c1623; }
+    #merlin-prbs-preview details > summary { background: #172639; padding: 9px 12px; font-weight: 600; }
+    #merlin-prbs-preview .wb-row > :first-child { padding-left: 20px; }
+    #merlin-prbs-preview button, #merlin-prbs-preview input, #merlin-prbs-preview select { font: inherit; padding: 6px 10px; border: 1px solid #455f79; border-radius: 4px; background: #203149; color: #e5edf6; max-width: 100%; box-sizing: border-box; }
+    #merlin-prbs-preview input[type=number], #merlin-prbs-preview select { width: 100%; }
+    #merlin-prbs-preview input[type=checkbox] { accent-color: #45cbbb; }
+    #merlin-prbs-preview button { cursor: pointer; }
+    #merlin-prbs-preview button:focus-visible, #merlin-prbs-preview summary:focus-visible { outline: 2px solid #45cbbb; outline-offset: 2px; }
+    #merlin-prbs-preview .wb-help { background: #172639; border: 1px solid #33485f; margin-top: 14px; padding: 12px 14px; }
+    #merlin-prbs-preview .wb-help strong { color: #62d9ca; }
+    #merlin-prbs-preview .wb-footer { padding: 14px 20px; border-top: 1px solid #33485f; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    #merlin-prbs-preview .wb-status { flex: 1 1 200px; color: #e8c774; }
+    #merlin-prbs-preview .wb-apply { background: #24695f; border-color: #45cbbb; }
+    #merlin-prbs-preview .wb-error { color: #ffb6ad; }
+    #merlin-prbs-preview [hidden] { display: none !important; }
+    #merlin-prbs-preview .wb-wrap { overflow-wrap: anywhere; }
+    @media(max-width: 480px) { #merlin-prbs-preview { padding: 4px; } #merlin-prbs-preview .wb-content { padding: 12px; } #merlin-prbs-preview .wb-row { grid-template-columns: 1fr; gap: 4px; } #merlin-prbs-preview .wb-row > :first-child { padding-left: 0; } }
+  </style>
+  <section class="wb-window" aria-label="Proposed MERLIN PRBS-TX dialog">
+    <header class="wb-title"><h2>Transmit source (PRBS-TX)</h2><div class="wb-muted">Design preview · not the running Qt application</div></header>
+    <div class="wb-content">
+      <div class="wb-tree">
+        <div class="wb-columns"><span>Parameter</span><span>Value</span></div>
+        <details open><summary>Source</summary>
+          <div class="wb-row"><label for="wb-mode">Source mode</label><select id="wb-mode"><option value="prbs">Continuous PRBS15</option><option value="file">File (text / binary)</option></select></div>
+        </details>
+        <details open id="wb-prbs"><summary>PRBS15 generator</summary>
+          <div class="wb-row"><label for="wb-seed">Seed</label><input id="wb-seed" type="number" min="1" max="32767" value="32767"></div>
+          <div class="wb-row"><span>Polynomial</span><span>x¹⁵ + x¹⁴ + 1</span></div>
+          <div class="wb-row"><span>Sequence period</span><span>32,767 bits</span></div>
+          <div class="wb-row"><span>Operation</span><span>Continuous for the run</span></div>
+        </details>
+        <details open id="wb-file" hidden><summary>Payload file</summary>
+          <div class="wb-row"><span>File selection</span><span><button id="wb-open" type="button">Open file…</button></span></div>
+          <div class="wb-row"><span>Source file</span><span id="wb-name" class="wb-muted">No input selected</span></div>
+          <div class="wb-row"><span>Original size</span><span id="wb-size">—</span></div>
+          <div class="wb-row"><span>Original SHA-256</span><span class="wb-muted wb-wrap">Available from Rust after selection</span></div>
+          <div class="wb-row"><span>Byte handling</span><span>Exact bytes · maximum 16 MiB</span></div>
+        </details>
+        <details open id="wb-fill" hidden><summary>Optional PRBS15 fill</summary>
+          <div class="wb-row"><label for="wb-append">Append after file</label><label><input id="wb-append" type="checkbox"> Enable PRBS15 fill</label></div>
+          <div id="wb-fill-fields" hidden>
+            <div class="wb-row"><label for="wb-target">Total meaningful bits</label><input id="wb-target" type="number" min="0" max="134217728" value="20000"></div>
+            <div class="wb-row"><label for="wb-fill-seed">Fill seed</label><input id="wb-fill-seed" type="number" min="1" max="32767" value="32767"></div>
+            <div class="wb-row"><span>Additional PRBS bits</span><span id="wb-added">Select a file first</span></div>
+          </div>
+          <div class="wb-row"><span>After source ends</span><span>Idle / filler · no file repeat</span></div>
+        </details>
+      </div>
+      <div class="wb-help"><strong id="wb-help-title">PRBS15 seed</strong><div id="wb-help-text">Choose a nonzero 15-bit seed, 1–32767. The initial value is 32767 (0x7fff). Codeword boundaries do not restart the sequence.</div></div>
+      <div class="wb-muted" style="margin-top:12px">Apply accepts settings for the next run. Run duration is configured separately.</div>
+      <div id="wb-feedback" role="status" aria-live="polite"></div>
+    </div>
+    <footer class="wb-footer"><span id="wb-status" class="wb-status">● Needs attention · source not accepted</span><button id="wb-cancel" type="button">Cancel</button><button id="wb-apply" class="wb-apply" type="button">Apply</button></footer>
+  </section>
+  <script>
+    (() => {
+      const root = document.getElementById('merlin-prbs-preview');
+      const get = id => root.querySelector('#wb-' + id);
+      let accepted = null;
+      const snapshot = () => ({ mode:get('mode').value, seed:get('seed').value, append:get('append').checked, target:get('target').value, fillSeed:get('fill-seed').value });
+      const validSeed = value => Number.isInteger(Number(value)) && Number(value)>=1 && Number(value)<=32767;
+      const render = () => {
+        const file = get('mode').value === 'file';
+        get('prbs').hidden = file;
+        get('file').hidden = !file;
+        get('fill').hidden = !file;
+        get('fill-fields').hidden = !get('append').checked;
+        get('help-title').textContent = file ? 'Exact-byte file source' : 'PRBS15 seed';
+        get('help-text').textContent = file ? 'Use the OS-native picker in the Qt implementation. Preserve text and binary bytes unchanged. Optional fill targets include the original file bits; coding padding is separate.' : 'Choose a nonzero 15-bit seed, 1–32767. The initial value is 32767 (0x7fff). Codeword boundaries do not restart the sequence.';
+        get('feedback').textContent = '';
+      };
+      get('mode').addEventListener('change', render);
+      get('append').addEventListener('change', render);
+      get('open').addEventListener('click', () => {get('feedback').textContent='In the Qt application, this opens the OS-native file picker. This design preview does not read files.';});
+      get('apply').addEventListener('click', () => {
+        if (get('mode').value === 'file') { get('feedback').textContent='Select a real file in the future Qt editor before accepting File mode.'; return; }
+        if (!validSeed(get('seed').value)) { get('feedback').textContent='Seed must be an integer from 1 to 32767.'; return; }
+        accepted=snapshot();
+        get('status').textContent='● Ready · PRBS15 accepted (preview)';
+        get('status').style.color='#62d9ca';
+        get('feedback').textContent='Preview only: no simulation started.';
+      });
+      get('cancel').addEventListener('click', () => {
+        const value=accepted || {mode:'prbs',seed:'32767',append:false,target:'20000',fillSeed:'32767'};
+        get('mode').value=value.mode; get('seed').value=value.seed; get('append').checked=value.append; get('target').value=value.target; get('fill-seed').value=value.fillSeed;
+        render(); get('feedback').textContent='Draft discarded; accepted source preserved.';
+      });
+      render();
+    })();
+  </script>
+</div>
