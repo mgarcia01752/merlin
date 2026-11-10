@@ -6,6 +6,9 @@ of the measurement-input blocks to open its section dialog. Close the dialog
 or press Escape to return. Use **Settings → Global → Light/Dark mode** to change the palette and icon
 across all windows. The change applies immediately and lasts for this session.
 
+The heading displays MERLIN and the toolkit title; the secondary subtitle has
+been removed to keep the header compact.
+
 Every popup has a circular **X** in its upper-right title bar, as well as its
 existing **Close** or **Cancel** button. X dismisses only the current popup;
 editor drafts are not applied. Closing a nested analyzer returns to its parent

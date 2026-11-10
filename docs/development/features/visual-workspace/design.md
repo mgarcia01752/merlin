@@ -9,6 +9,17 @@ input and observation boundaries.
 
 ## UI-01: Shell, dialogs and lifecycle
 
+### UI-SHELL-08: Simplify workbench heading
+
+Remove the “Single-channel downstream OFDM” subtitle from `Workbench.qml`.
+Retain the MERLIN label and toolkit title. This presentation-only change uses
+the existing QML checks, a retained-artifact Qt build and an actual dark VM
+screenshot in the workbench user guide.
+
+Complete: 25 QML checks passed, the Qt executable was rebuilt and restarted,
+and the actual dark VM header was reviewed. The guide screenshot is refreshed;
+the native log has no QML warnings. No non-Qt checks were needed.
+
 ### UI-SHELL-07: Measurement input placement
 
 Remove the top dashed original/recovered comparison connector and its caption.

@@ -106,7 +106,6 @@ Item {
                 spacing: 5
                 Label { text: "MERLIN"; color: theme.accent; font.pixelSize: 13; font.letterSpacing: 3 }
                 Label { text: "MERLIN — DOCSIS OFDM Simulation Toolkit"; color: theme.text; font.pixelSize: 23; font.weight: Font.DemiBold }
-                Label { text: "Single-channel downstream OFDM"; color: theme.muted; font.pixelSize: 13 }
             }
             Item { Layout.fillWidth: true }
         }
