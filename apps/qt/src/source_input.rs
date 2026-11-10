@@ -73,7 +73,7 @@ impl bridge::SourceInput {
     /// # Returns
     /// Metadata JSON or an error; picker cancellation preserves the staged file.
     pub fn choose_file(mut self: core::pin::Pin<&mut Self>) -> QString {
-        let result = crate::native_file_picker::choose("Open transmit payload (text or binary)")
+        let result = crate::native_file_picker::choose("Open Transmit Payload (Text or Binary)")
             .and_then(|url| {
                 if let Some(url) = url {
                     let (name, bytes) = crate::input_file::read_local(

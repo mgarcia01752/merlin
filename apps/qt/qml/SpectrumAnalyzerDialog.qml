@@ -15,7 +15,7 @@ Dialog {
     property var viewport: ({points: [], x_ticks: [], y_ticks: []})
     property string displayedToken: ""
     property bool captureFrequencyAxis: false
-    title: "Spectrum Analyzer · " + (dialog.state.tap_name || "OFDM samples")
+    title: "Spectrum Analyzer · " + (dialog.state.tap_name || "OFDM Samples")
     parent: Overlay.overlay
     anchors.centerIn: parent
     width: Math.min(1120, parent ? parent.width - 40 : 1120)

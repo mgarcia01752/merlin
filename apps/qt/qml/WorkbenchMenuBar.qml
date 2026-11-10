@@ -14,13 +14,17 @@ MenuBar {
     Menu {
         title: "&File"
         MenuItem {
-            objectName: "openWorkbenchConfig"; text: "Open WB configuration…"; enabled: false
+            objectName: "openWorkbenchConfig"
+            action: Action { text: "Open…"; shortcut: StandardKey.Open; enabled: false }
             Accessible.description: "JSON workbench loading is pending."
         }
         MenuItem {
-            objectName: "saveWorkbenchConfig"; text: "Save WB configuration…"; enabled: false
+            objectName: "saveWorkbenchConfig"
+            action: Action { text: "Save"; shortcut: StandardKey.Save; enabled: false }
             Accessible.description: "JSON workbench saving is pending."
         }
+        MenuItem { objectName: "saveWorkbenchAs"; action: Action { text: "Save As…"; shortcut: StandardKey.SaveAs; enabled: false }
+            Accessible.description: "JSON workbench saving is pending." }
     }
     Menu {
         title: "&Settings"

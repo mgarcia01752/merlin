@@ -6,6 +6,7 @@
 pub mod association;
 pub mod document;
 pub mod grid;
+pub mod measurement_view;
 pub mod observation;
 #[cfg(any(feature = "simulation", feature = "pnm-input"))]
 pub mod pnm_json;

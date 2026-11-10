@@ -78,7 +78,7 @@ Pane {
         function generate() { if (ready) { busy = true } }
         function cancel() { busy = false }
         function finish() { busy = false; resultAvailable = true; token = String(Number(token) + 1) }
-        function poll() { return JSON.stringify({status: ready ? "complete" : "attention", reason: ready ? "Accepted source, profile and settings form a transmitter" : "Accept compatible OCD, DPD and PRBS-TX inputs to configure the transmitter.", tap_name: "TX output", tap_id: "tx.overlap_add.samples", tap_description: "Complex baseband I/Q before channel", busy: busy, can_generate: ready && !busy, has_result: resultAvailable, result_token: token, progress: busy ? 0.5 : 0, message: ""}) }
+        function poll() { return JSON.stringify({status: ready ? "complete" : "attention", reason: ready ? "Accepted source, profile and settings form a transmitter" : "Accept compatible OCD, DPD and PRBS-TX inputs to configure the transmitter.", tap_name: "TX Output", tap_id: "tx.overlap_add.samples", tap_description: "Complex baseband I/Q before channel", busy: busy, can_generate: ready && !busy, has_result: resultAvailable, result_token: token, progress: busy ? 0.5 : 0, message: ""}) }
         function timing(velocity) {
             if (!resultAvailable) { return JSON.stringify({points:[],ticks:[],error:"Run simulation"}) }
             return JSON.stringify({points:[{x:0,coefficient:0},{x:0.2,coefficient:1},{x:1,coefficient:1}],ticks:[{x:0,label:"0"},{x:1,label:"3.125 µs"}],prefix_fraction:0.8,roll_off_fraction:0.2,overview:"CP 512 · FFT 8192 samples",roll_label:"δ 0.625 µs",guard_label:"Flat guard 1.875 µs",budget_label:"Ideal guard budget: 1.875 µs",extra_path:isNaN(velocity) ? "Unknown VF" : velocity === 0.87 ? "1604 ft" : "1512 ft",reflection_spacing:isNaN(velocity) ? "Unknown VF" : velocity === 0.87 ? "802 ft" : "756 ft"})
@@ -86,6 +86,40 @@ Pane {
         function view(start, count, captureAxis) {
             return JSON.stringify({points: [{x:0,y:0.7,minimum_y:0.8,readout:"Test low bin"},{x:0.5,y:0.2,minimum_y:0.4,readout:"Test center bin"},{x:1,y:0.6,minimum_y:0.9,readout:"Test high bin"}],x_ticks:[{x:0,label:captureAxis ? "631.100" : "-102.400"},{x:1,label:captureAxis ? "835.875" : "102.375"}],y_ticks:[{y:0,label:"-60"},{y:1,label:"-160"}],start:start,count:count || 8192,total:8192,axis_label:"Normalized PSD",frequency_label:captureAxis ? "Capture mapping" : "Baseband frequency offset (MHz)",summary:"Test FFT metadata",detail:"Bounded fixture",trace_label:"Test envelope"})
         }
+    }
+    QtObject {
+        id: measurementBackend
+        property bool acceptedRx: false
+        property bool draftRx: false
+        property bool flat: true
+        property bool draftFlat: true
+        function fileRows() { return draftRx ? [{index:0,name:"rxmer.bin",format:"Binary PNM",bytes:7508,capture_time:1380970,mac:"00:ca:00:00:00:01",channel:34,frequency:"640–827 MHz",sha256:"test",compatible:profileBackend.acceptedId >= 0,reason:"Test exact grid"}] : [] }
+        function metadata(rxmer) { return JSON.stringify({files:rxmer ? fileRows() : [],flat:draftFlat,options:{mode:"single",interval_symbols:"1000",tolerance_seconds:90000}}) }
+        function begin(rxmer) { if (rxmer) { draftRx = acceptedRx } else { draftFlat = flat }; return metadata(rxmer) }
+        function choose_files(rxmer) { return demo(rxmer,0) }
+        function demo(rxmer,variant) { if (rxmer) { draftRx = true } else { draftFlat = false }; return metadata(rxmer) }
+        function edit(rxmer,index,delta) { if (rxmer) { draftRx = false } else { draftFlat = true }; return metadata(rxmer) }
+        function describe(rxmer,options,settings) { return JSON.stringify({error:profileBackend.acceptedId < 0 ? "Apply DPD" : rxmer && !draftRx ? "Choose RxMER" : "",summary:"Interval 42.500 ms · final capture held"}) }
+        function view(rxmer,request,settings) {
+            const ready = profileBackend.acceptedId >= 0 && (!rxmer || draftRx)
+            return JSON.stringify({points:ready ? [{x:0,y:0.5,minimum_y:0.5,gap:false,readout:"Test"},{x:1,y:0.5,minimum_y:0.5,gap:false,readout:"Test"}] : [],x_ticks:[],y_ticks:[],total:7480,start:0,count:7480,axis_label:rxmer ? "RxMER (dB)" : "Channel gain (dB)",summary:"Test capture"})
+        }
+        function apply(rxmer,options,settings) {
+            const error=JSON.parse(describe(rxmer,options,settings)).error
+            if (error) { return error }
+            if (rxmer) { acceptedRx=draftRx } else { flat=draftFlat }
+            return ""
+        }
+        function state(settings) {
+            const response=profileBackend.acceptedId >= 0
+            const rx=response && acceptedRx
+            return JSON.stringify({rxmer:{status:rx ? "complete":"attention",reason:rx ? "RxMER configured and accepted":"Apply compatible RxMER inputs before running."},response:{status:response ? "complete":"attention",reason:response ? "Flat/unity channel configured":"Apply compatible DPD to define the channel grid."},channel:{status:rx ? "complete":"attention",reason:rx ? "Both channel inputs configured":"Configure both inputs"},flat:flat})
+        }
+    }
+    QtObject {
+        id: aboutBackend
+        function version() { return "0.1.0" }
+        function license_document(key) { return JSON.stringify({title:key === "gpl" ? "GNU General Public License v3" : "Apache License 2.0",text:key === "gpl" ? "GNU GENERAL PUBLIC LICENSE" : "Apache License"}) }
     }
     WorkbenchMenuBar {
         id: appMenu
@@ -96,7 +130,7 @@ Pane {
     Workbench {
         id: workbench
         anchors { top: appMenu.bottom; bottom: parent.bottom; left: parent.left; right: parent.right }
-        theme: theme; settingsBackend: backend; profileBackend: profileBackend; sourceBackend: sourceBackend; transmitterBackend: transmitterBackend
+        theme: theme; settingsBackend: backend; profileBackend: profileBackend; sourceBackend: sourceBackend; transmitterBackend: transmitterBackend; measurementBackend: measurementBackend; aboutBackend: aboutBackend
         iconRoot: "../../../docs/images/logo/"
     }
     Component {
@@ -113,25 +147,25 @@ Pane {
         function test_sections_data() {
             return [
                 {tag: "ofdm", block: "ofdmBlock", title: "OFDM Channel Descriptor (OCD)"},
-                {tag: "source", block: "sourceBlock", title: "Transmit source (PRBS-TX)"},
-                {tag: "tx", block: "transmitterBlock", title: "Spectrum Analyzer · TX output"},
-                {tag: "channel", block: "channelBlock", title: "Channel Simulator"},
+                {tag: "source", block: "sourceBlock", title: "Transmit Source (PRBS-TX)"},
+                {tag: "tx", block: "transmitterBlock", title: "Spectrum Analyzer · TX Output"},
+                {tag: "channel", block: "channelBlock", title: "Channel Simulator · Configuration"},
                 {tag: "rx", block: "receiverBlock", title: "Receiver"},
                 {tag: "verify", block: "verificationBlock", title: "PRBS-RX"},
                 {tag: "profile", block: "profileBlock", title: "Downstream Profile Descriptor (DPD)"},
-                {tag: "ce", block: "channelEstimateBlock", title: "DS Channel Est."},
-                {tag: "mer", block: "rxmerBlock", title: "RxMER"}
+                {tag: "ce", block: "channelEstimateBlock", title: "DS Channel Estimate · Response Configuration"},
+                {tag: "mer", block: "rxmerBlock", title: "RxMER · Capture Configuration"}
             ]
         }
         function test_sections(data) {
             const block = findChild(workbench, data.block)
             verify(block !== null)
             mouseClick(block)
-            const dialog = data.block === "ofdmBlock" ? workbench.ofdmPopup : data.block === "profileBlock" ? workbench.profilePopup : data.block === "sourceBlock" ? workbench.sourcePopup : data.block === "transmitterBlock" ? workbench.transmitterPopup : workbench.sectionPopup
+            const dialog = data.block === "ofdmBlock" ? workbench.ofdmPopup : data.block === "profileBlock" ? workbench.profilePopup : data.block === "sourceBlock" ? workbench.sourcePopup : data.block === "transmitterBlock" ? workbench.transmitterPopup : data.block === "channelBlock" ? workbench.channelPopup : data.block === "channelEstimateBlock" ? workbench.responsePopup : data.block === "rxmerBlock" ? workbench.rxmerPopup : workbench.sectionPopup
             verify(dialog !== null)
             tryCompare(dialog, "opened", true)
             compare(dialog.title, data.title)
-            if (data.block !== "ofdmBlock" && data.block !== "profileBlock" && data.block !== "sourceBlock" && data.block !== "transmitterBlock") { verify(workbench.sectionDescription.length > 30) }
+            if (data.block !== "ofdmBlock" && data.block !== "profileBlock" && data.block !== "sourceBlock" && data.block !== "transmitterBlock" && data.block !== "channelBlock" && data.block !== "channelEstimateBlock" && data.block !== "rxmerBlock") { verify(workbench.sectionDescription.length > 30) }
             keyClick(Qt.Key_Escape)
             tryCompare(dialog, "visible", false)
         }
@@ -212,7 +246,7 @@ Pane {
         function test_start_requires_every_block_complete() {
             const isolated = createTemporaryObject(gatingWorkbenchComponent, window, {
                 theme: theme, settingsBackend: backend, profileBackend: profileBackend,
-                sourceBackend: sourceBackend, transmitterBackend: transmitterBackend,
+                sourceBackend: sourceBackend, transmitterBackend: transmitterBackend, measurementBackend: measurementBackend, aboutBackend: aboutBackend,
                 iconRoot: "../../../docs/images/logo/"
             })
             verify(isolated !== null)
@@ -293,6 +327,13 @@ Pane {
             mouseClick(findChild(appMenu, "aboutAction"))
             tryCompare(workbench.aboutPopup, "opened", true)
             compare(workbench.aboutPopup.title, "About MERLIN")
+            verify(findChild(workbench.aboutPopup, "aboutIcon") !== null)
+            compare(findChild(workbench.aboutPopup, "aboutVersion").text, "Version 0.1.0")
+            workbench.aboutPopup.licensesPopup.showDocument("gpl")
+            tryCompare(workbench.aboutPopup.licensesPopup, "opened", true)
+            verify(findChild(workbench.aboutPopup.licensesPopup, "licenseDocumentText").text.indexOf("GNU") >= 0)
+            keyClick(Qt.Key_Escape)
+            tryCompare(workbench.aboutPopup.licensesPopup, "visible", false)
             keyClick(Qt.Key_Escape)
             tryCompare(workbench.aboutPopup, "visible", false)
         }
@@ -381,6 +422,36 @@ Pane {
             compare(workbench.transmitterState.has_result, false)
             compare(dialog.viewport.points.length, 0)
             compare(timingPanel.timing.points.length, 0)
+        }
+        function test_shared_measurement_viewers_and_joint_channel_readiness() {
+            profileBackend.acceptedId = 0
+            workbench.refreshProfileState()
+            compare(findChild(workbench, "channelEstimateBlock").blockStatus, "complete")
+            compare(findChild(workbench, "channelBlock").blockStatus, "attention")
+            mouseClick(findChild(workbench, "channelEstimateBlock"))
+            tryCompare(workbench.responsePopup, "opened", true)
+            verify(findChild(workbench.responsePopup, "sharedMeasurementViewer") !== null)
+            keyClick(Qt.Key_Escape)
+            tryCompare(workbench.responsePopup, "visible", false)
+            mouseClick(findChild(workbench, "rxmerBlock"))
+            tryCompare(workbench.rxmerPopup, "opened", true)
+            verify(findChild(workbench.rxmerPopup, "sharedMeasurementViewer") !== null)
+            mouseClick(findChild(workbench.rxmerPopup, "measurementDemo"))
+            mouseClick(findChild(workbench.rxmerPopup, "measurementApply"))
+            tryCompare(workbench.rxmerPopup, "visible", false)
+            compare(findChild(workbench, "rxmerBlock").blockStatus, "complete")
+            compare(findChild(workbench, "channelBlock").blockStatus, "complete")
+            compare(findChild(workbench, "startButton").enabled, false)
+            mouseClick(findChild(workbench, "rxmerBlock"))
+            tryCompare(workbench.rxmerPopup, "opened", true)
+            measurementBackend.draftRx = false
+            keyClick(Qt.Key_Escape)
+            tryCompare(workbench.rxmerPopup, "visible", false)
+            compare(measurementBackend.acceptedRx, true)
+            measurementBackend.acceptedRx = false
+            profileBackend.acceptedId = -1
+            workbench.refreshProfileState()
+            compare(findChild(workbench, "channelBlock").blockStatus, "attention")
         }
         function test_render() {
             theme.dark = true

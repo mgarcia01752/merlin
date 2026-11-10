@@ -24,7 +24,7 @@ Dialog {
     width: Math.min(900, parent ? parent.width - 40 : 900)
     height: Math.min(720, parent ? parent.height - 40 : 720)
     modal: true
-    title: "Transmit source (PRBS-TX)"
+    title: "Transmit Source (PRBS-TX)"
     onOpened: {
         const initial = JSON.parse(backend.begin())
         draft = initial.options

@@ -25,3 +25,9 @@ remain in the pinned upstream source and must accompany future redistributions.
 The sanitized modulation-profile demo is derived from PyPNM fixtures; see
 examples/measurements/single-channel/provenance.json and the applicable LICENSE/NOTICE files beside it.
 PyPNM - Proactive Network Maintenance Toolkit
+
+The shared measurement tree and Canvas patterns are adapted from
+apps/qt/qml/RxMerCollectionTree.qml and RxMerBitLoadingChart.qml in the same
+pinned viewer revision. Their GPL copyright notices remain in the adapted files.
+The same Apache-2.0 pnm dependency decodes RxMER and channel-response files.
+No network services, Python processing or viewer runtime is used.

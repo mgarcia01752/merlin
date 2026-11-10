@@ -67,3 +67,5 @@ from a fresh clone and are deliberately not Markdown link targets.
 | closed-loop minimum acceptance | [design](closed-loop-validation/design.md) · [test evidence](closed-loop-validation/validation.md) |
 
 Build tooling proposal: [BUILD-01–04 content-based cache](build-cache/design.md).
+
+Channel Estimate/RxMER workbench: [design](rxmer-workbench/design.md) · [validation](rxmer-workbench/validation.md) · [user guide](../../user/channel-measurements.md).

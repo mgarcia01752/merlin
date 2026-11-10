@@ -326,6 +326,18 @@ in focused modules; share reusable controls and core models without duplication.
 When adding, editing or removing a dialog, update its QML registration, callers,
 tests and user guide together so it can be maintained independently.
 
+## UI titles, navigation and About
+
+Use a standard top menu bar and conventional File labels Open…, Save, Save As…
+with their standard shortcuts. Window/dialog title bars use initial capitals for
+significant words; preserve acronyms and proper names (RxMER, DOCSIS, OFDM,
+PRBS-TX, MERLIN). Do not apply title capitalization to ordinary descriptions.
+About shows the active theme's application icon, compiled version, project link,
+and clickable bundled license/NOTICE documents for offline use. Keep desktop
+and reusable-library licenses distinct. Light/dark icons share the same rounded
+outer silhouette and transparent corners, following the approved outer border;
+preserve interior artwork and use those assets consistently in desktop/side/About.
+
 ## Workbench readiness rules
 
 Follow the canonical [block readiness rules](../../docs/architecture.md#workbench-block-readiness-rules)

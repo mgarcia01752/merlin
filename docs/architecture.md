@@ -160,8 +160,9 @@ Ubuntu 22.04, 24.04 and 26.04 x64. Python bindings follow UI-01 through UI-04.
 The initial UI-01 shell now exists under apps/qt: the clickable diagram, section
 preview dialogs, theme switching, embedded icons and a tree-based OFDM editor.
 The DPD capture importer, PRBS-TX editor and reusable SA with TX sample generation
-also exist; other editors, measurement input loading,
-analyzers and Rust job integration remain pending. Lower-right run controls are
+also exist. Channel Estimate/RxMER share native capture viewers and Rust-backed
+configuration/playback previews. Receiver analyzers and full-loop Rust job
+integration remain pending. Lower-right run controls are
 visible but disabled. See the [workbench guide](user/workbench.md) and
 [Qt build/VM instructions](development/qt.md). Other target validation is pending.
 
@@ -229,10 +230,12 @@ bypass/default mode. Rust must still validate/freeze the complete request before
 dispatch. Run availability and lifecycle are additional gates. The current shell
 checks all block statuses but keeps Start disabled until run dispatch is connected.
 
-Current implementation: applying a validated, OCD-compatible DPD capture/profile
-turns DPD and OCD green. Removing it with Apply returns both to yellow; Cancel
-preserves accepted state. Other preview blocks remain yellow with explicit pending
-reasons. Run integration and other input-driven transitions remain pending.
+Current implementation: accepted OCD-compatible DPD turns DPD and OCD green;
+accepted PRBS-TX configuration also makes Transmitter ready. Default unity response
+becomes ready on the valid DPD/OCD grid. Accepted compatible RxMER makes RxMER
+and Channel Simulator green. Removing/replacing inputs revalidates dependencies;
+Cancel preserves accepted state. Receiver and PRBS-RX remain yellow with explicit
+pending reasons. Full-loop dispatch and remaining input transitions are pending.
 Optional measurements are not required for every future run.
 
 ### OFDM editor, registry and application navigation
@@ -252,7 +255,8 @@ discards staged edits. Run integration and file persistence remain pending.
 The diagram block and popup use the full name OFDM Channel Descriptor (OCD).
 This editor label does not imply complete OCD message import/export support.
 Each dialog has its own QML file and focused Rust adapter where needed.
-The core dependency disables simulation features; DSP implementations are unchanged.
+The Qt adapter reuses core simulation APIs for TX snapshots and measurement
+configuration previews; QML implements no DSP.
 
 Use an OSCAR-style metadata registry concept without importing its TLV protocol
 model. Canonical location: `resources/registry/ofdm-settings.json`,
@@ -275,13 +279,14 @@ The application has a standard top **File | Settings | About** menu bar above
 workbench branding, rather than content-area navigation buttons. Settings →
 Global opens appearance preferences; About → About MERLIN opens project details.
 The instruction banner and standalone theme button are removed.
-**File → Open WB configuration** and **File → Save WB configuration**
-are disabled until persistence is implemented; individual capture inputs remain in
+**File → Open…**, **Save** and **Save As…** use standard labels and shortcuts
+and are disabled until workbench JSON persistence is implemented; individual capture inputs remain in
 their corresponding block dialogs. **Settings → Global → Light/Dark mode**
 applies the shared theme immediately to all windows, for this session only.
 Settings is separate from OFDM transmission configuration. About presents
 MERLIN's expanded name, purpose, component licenses and acknowledgements.
-Version details and expanded license inspection remain future About work.
+About includes the active rounded icon, compiled version and project link.
+Bundled GPL, Apache and NOTICE links open a separate offline document viewer.
 Each dialog owns its own QML file. See UI-SHELL-02 in the
 [workbench design](development/features/visual-workspace/design.md).
 
@@ -703,6 +708,57 @@ job carries the latest bounded receiver estimate, not unlimited FFT history.
 
 See the [subsystem user guides](user/receiver-estimation/README.md) and
 [implementation/validation record](development/features/pilot-channel-estimation/implementation.md).
+
+### Channel-input readiness (WB-RULE-05 / UI-CHANNEL-01)
+
+Channel Simulator requires valid RxMER configuration and valid channel-response
+configuration, plus supported channel settings. The response defaults to an
+explicit **Flat / unity** configuration: linear H=1+0i per carrier on the accepted
+DPD/OCD grid, equivalent to 0 dB gain and 0° phase. Linear H=0+0i is not a flat
+channel; it suppresses the signal. This synthetic default is not a measured PNM
+estimate or receiver H-hat. Unity counts as configured once the grid is valid;
+a response capture is optional in this mode. Imported responses must pass the
+existing exact compatibility and active-gain checks. RxMER needs accepted
+compatible inputs and a valid combination/schedule before Channel Simulator is
+green. Dependency changes revalidate and invalidate old results. This rule is
+implemented for configuration; full-loop UI dispatch remains pending. See
+[the design](development/features/rxmer-workbench/design.md#ui-channel-01-response-configuration-and-channel-readiness).
+
+### Shared Channel Estimate/RxMER viewer
+
+Separate Channel Estimate and RxMER dialogs compose one shared tree/chart viewer
+and one focused Rust input adapter. The exact pinned PNM decoder parses binary
+captures; standalone MERLIN JSON import APIs preserve the existing format contracts.
+Original bytes, hashes, epochs and complete arrays remain in Rust. Local OS-native
+selection supports one response file or multiple RxMER files, with no Qt browser
+fallback. Inputs are staged and Apply validates before replacing accepted state.
+
+RxMER modes are single, equal-capture-weight average of linear error power,
+explicit symbol-scheduled hold, and interpolation of residual power. The effective
+preview uses immutable core MeasurementPlayback queries; original capture epochs
+are never rewritten and frequency grids are never interpolated. Preview symbol,
+explicit ordering and a configurable capture-time tolerance are visible controls.
+Response charts show gain, wrapped phase, real or imaginary H; synthetic unity is
+explicitly labeled. Bounded min/max charts preserve missing-data breaks.
+
+UI-RXMER-01/02 and the editor/scheduling-preview part of UI-RXMER-03 are implemented.
+Production runner interpolation and accepted-input dispatch are still pending;
+these preview controls do not change the TX-only SA. See the
+[design](development/features/rxmer-workbench/design.md),
+[validation](development/features/rxmer-workbench/validation.md) and
+[user guide](user/channel-measurements.md).
+
+### Planned receiver QAM view with RxMER
+
+The shared SA remains tap-specific: TX output precedes impairments and is
+unchanged by RxMER; channel/RX input spectra may show added residual power even
+when the occupied signal shape changes little. The primary QAM analyzer samples
+RX after equalization and before decisions, paired with raw RX FFT samples using
+the existing bounded Rust constellation collector. Display must preserve matching
+carrier/time, correction mode and modulation; pilots/PLC/mixed QAM orders are not
+silently pooled. Symbol-window selection will show RxMER playback changes over
+time. These UI connections are pending. See
+[UI-QAM-01](development/features/rxmer-workbench/design.md#ui-qam-01-receiver-constellation-and-shared-sa-reference-planes).
 
 ## Temporal measurements and applied profiles
 

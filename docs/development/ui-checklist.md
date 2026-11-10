@@ -30,7 +30,8 @@ Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first 
   and accepted settings of every block; define bounds, schema and input encoding.
 - [x] **UI-SHELL-03** Use a standard application menu bar above WB branding,
   replacing the content-area navigation buttons.
-- [ ] Extend About version details.
+- [x] **UI-SHELL-05** Add About icon/version/project and offline license links;
+  standardize title capitalization and matched rounded light/dark icons.
 - [ ] Define and implement versioned workbench JSON persistence separately from
   registry metadata; Open restores configuration without starting a run.
 - [x] Show heading-only blocks and shared green/yellow/red readiness stripes,
@@ -79,11 +80,13 @@ Integrate input blocks as their owning sections are developed left to right.
     PRBS/file tests reused; document actual dark VM screenshots.
 - [x] Accept modulation-profile capture inputs in DPD and show the OCD summary.
 - [ ] Attach accepted DPD profiles to the actual Transmitter run request.
-- [ ] Attach DS channel-estimation and RxMER inputs to Channel Simulator.
-- [ ] Validate supported decoded PNM JSON using the existing Rust importer;
+- [x] Attach DS channel-estimation and RxMER configuration to Channel Simulator
+  readiness; full-loop execution wiring remains pending.
+- [x] Validate binary PNM through the pinned decoder and standalone decoded
+  JSON through the shared Rust importers;
   preserve grids, missing samples, timestamps and provenance.
-- [ ] Configure multiple RxMER inputs through explicit validated epoch schedules;
-  merely listing files must not activate playback.
+- [ ] Dispatch accepted multiple-RxMER configuration through validated full-run
+  schedules; merely listing files must not activate playback.
 - [ ] Apply replacements to the next run; preserve active inputs and original bytes.
 
 ## UI-03: Observations and analyzers
@@ -124,3 +127,21 @@ Integrate input blocks as their owning sections are developed left to right.
 Python API-01 remains deferred until UI-01 through UI-04 are complete.
 
 Initial shell evidence and remaining validation: [Qt development](qt.md).
+
+## Proposed RxMER editor and shell follow-up
+
+- [x] **UI-SHELL-04** Use the requested main WB heading and conventional File labels.
+- [x] **UI-RXMER-01** Stage single/multiple RxMER inputs with exact DPD association.
+- [x] **UI-RXMER-02** Add static/average/hold/interpolated-power configuration and
+  bounded previews with strict required-carrier validity.
+- [x] **UI-RXMER-03 editor** Expose symbol intervals/order/end policy and previews.
+- [ ] **UI-RXMER-03 dispatch** Integrate accepted configuration and interpolation
+  into full channel jobs, including job-duration admission and continuous RNG.
+
+See the [design and remaining scope](features/rxmer-workbench/design.md).
+
+- [ ] **UI-QAM-01** Reuse paired RX FFT/equalized constellation observations before
+  decisions, with carrier/modulation/time selection and explicit SA reference planes.
+
+- [x] **UI-CHANNEL-01** Require valid RxMER and response configurations for green
+  Channel Simulator; provide explicit Flat/unity H=1+0i default on the DPD grid.

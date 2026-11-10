@@ -13,11 +13,13 @@ ApplicationWindow {
     minimumWidth: 960
     minimumHeight: 640
     visible: true
-    title: "MERLIN — Simulation Workbench"
+    title: "MERLIN — DOCSIS OFDM Simulation Toolkit"
     Branding { id: branding }
+    AboutInfo { id: aboutInfo }
     OfdmSettings { id: ofdmSettings }
     ProfileInput { id: profileInput }
     SourceInput { id: sourceInput }
+    MeasurementInputs { id: measurementInputs }
     TransmitterAnalyzer { id: transmitterAnalyzer }
     Theme { id: theme; onDarkChanged: branding.update_icon(dark) }
     Component.onCompleted: branding.update_icon(theme.dark)
@@ -28,5 +30,5 @@ ApplicationWindow {
         onGlobalSettingsRequested: workbench.settingsPopup.open()
         onAboutRequested: workbench.aboutPopup.open()
     }
-    Workbench { id: workbench; anchors.fill: parent; theme: theme; settingsBackend: ofdmSettings; profileBackend: profileInput; sourceBackend: sourceInput; transmitterBackend: transmitterAnalyzer }
+    Workbench { id: workbench; anchors.fill: parent; theme: theme; settingsBackend: ofdmSettings; profileBackend: profileInput; sourceBackend: sourceInput; transmitterBackend: transmitterAnalyzer; measurementBackend: measurementInputs; aboutBackend: aboutInfo }
 }

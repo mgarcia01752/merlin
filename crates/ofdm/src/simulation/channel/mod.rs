@@ -23,3 +23,5 @@ pub mod document;
 pub mod protected_constellation;
 
 pub mod timeline;
+
+pub mod measurement_playback;

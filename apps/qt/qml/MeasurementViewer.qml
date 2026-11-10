@@ -1,0 +1,50 @@
+/*
+ * Copyright 2026 MERLIN contributors
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+RowLayout {
+    id: viewer
+    required property var theme
+    required property var backend
+    required property var settingsBackend
+    required property bool rxmer
+    required property var options
+    property var files: []
+    property int selectedIndex: -1
+    property int metric: 0
+    property string symbol: "0"
+    property var viewport: ({points: [], x_ticks: [], y_ticks: []})
+    function refresh(start, count) {
+        viewport = JSON.parse(backend.view(rxmer, JSON.stringify({index: selectedIndex, metric: metric, symbol: symbol, start: start || 0, count: count || 0, options: options}), settingsBackend.current()))
+    }
+    function reset() { refresh(0, 0) }
+    function zoom(factor) {
+        if (!viewport.total) { return }
+        const count = Math.max(2, Math.min(viewport.total, Math.round(viewport.count * factor)))
+        const start = Math.max(0, Math.min(viewport.total - count, Math.round(viewport.start + viewport.count / 2 - count / 2)))
+        refresh(start, count)
+    }
+    spacing: 12
+    ColumnLayout {
+        Layout.preferredWidth: 285; Layout.fillHeight: true
+        Button { objectName: "measurementEffective"; Layout.fillWidth: true; text: viewer.rxmer ? "Effective RxMER / playback" : "Channel response H"; onClicked: { viewer.selectedIndex = -1; viewer.reset() } }
+        MeasurementCaptureTree { Layout.fillWidth: true; Layout.fillHeight: true; theme: viewer.theme; files: viewer.files; selectedIndex: viewer.selectedIndex; onSelected: function(index) { viewer.selectedIndex = index; viewer.reset() } }
+        Label { Layout.fillWidth: true; text: !viewer.rxmer && !viewer.files.length ? "Flat / unity H = 1 + 0i\nSynthetic · 0 dB gain / 0° phase" : viewer.files.length + " original capture(s) retained in Rust"; color: theme.muted; font.pixelSize: 11; wrapMode: Text.WordWrap }
+    }
+    Rectangle { width: 1; Layout.fillHeight: true; color: theme.line }
+    ColumnLayout {
+        Layout.fillWidth: true; Layout.fillHeight: true
+        RowLayout {
+            Layout.fillWidth: true
+            Label { text: viewer.selectedIndex < 0 ? (viewer.rxmer ? "Effective residual model" : "Channel response") : "Original capture " + (viewer.selectedIndex + 1); color: theme.accent; Layout.fillWidth: true }
+            ComboBox { objectName: "measurementMetric"; visible: !viewer.rxmer; model: ["Gain (dB)", "Phase (degrees)", "Real H", "Imaginary H"]; onActivated: function(index) { viewer.metric = index; viewer.reset() } }
+            Button { text: "+"; Accessible.name: "Zoom into measurement"; onClicked: viewer.zoom(0.5) }
+            Button { text: "−"; Accessible.name: "Zoom out measurement"; onClicked: viewer.zoom(2) }
+            Button { text: "Full span"; onClicked: viewer.reset() }
+        }
+        MeasurementPlot { Layout.fillWidth: true; Layout.fillHeight: true; theme: viewer.theme; viewport: viewer.viewport }
+    }
+}

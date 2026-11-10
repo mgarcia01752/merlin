@@ -148,7 +148,7 @@ impl bridge::ProfileInput {
     /// # Returns
     /// Draft preview or a diagnostic preserving the accepted input.
     pub fn choose_file(mut self: core::pin::Pin<&mut Self>) -> QString {
-        match crate::native_file_picker::choose("Open downstream OFDM modulation-profile capture") {
+        match crate::native_file_picker::choose("Open Downstream OFDM Modulation-Profile Capture") {
             Ok(Some(url)) => self.as_mut().stage(&QString::from(url)),
             Ok(None) => response(Ok(json!({"cancelled":true}))),
             Err(error) => response(Err(error)),

@@ -248,3 +248,19 @@ After the Qt UI milestone, API-01 proposes one `MerlinSimulation` class wrapping
 the existing Rust operations. It holds settings, source, optional measurements,
 limits and the latest result. No Python package is available yet. See the
 [high-level class proposal](../development/features/python-adapter/design.md).
+
+## Shared measurement inputs and playback
+
+`scenario::pnm_json::{import_rxmer, import_channel}` admit standalone current
+decoder JSON using the existing header/grid/unit contracts. Adapters retain
+original binary/JSON bytes and their provenance separately from intermediate JSON.
+`scenario::measurement_view` projects complex response values and supplies bounded
+min/max views with gaps and Rust-derived units/frequencies.
+
+`simulation::channel::measurement_playback::MeasurementPlayback` freezes exact
+compatible RxMER frames and explicit static/average/hold/interpolated-power policy.
+Its `at` operation returns residual powers with source indices and interpolation
+weight without changing original epochs or RNG state. `span` and
+`interval_milliseconds` use frozen OFDM cadence. `validate_response` checks imported
+H or explicit unity against the captured profile. These operations are available
+for adapters; they are not yet connected to full-loop UI execution.

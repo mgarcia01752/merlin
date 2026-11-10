@@ -4,6 +4,8 @@
  */
 //! Current pnm-decode JSON adapter, independent of paths and decoder subprocesses.
 pub mod contract;
+mod measurements;
+pub use measurements::{import_channel, import_rxmer};
 mod decoded;
 use crate::{
     error::invalid,

@@ -192,7 +192,7 @@ impl Analyzer {
                 )
             })
             .unwrap_or_default();
-        json!({"status":status,"reason":reason,"tap_name":"TX output","tap_id":"tx.overlap_add.samples","tap_description":"Complex baseband I/Q · post-prefix, window and overlap · before channel","busy":self.job.is_some(),"can_generate":self.request.is_some()&&self.job.is_none(),"has_result":self.result.is_some(),"result_token":self.result_token.to_string(),"progress":if total==0 {0.0} else {done as f64/total as f64},"message":if self.error.is_empty(){self.notice.as_str()} else {self.error.as_str()}})
+        json!({"status":status,"reason":reason,"tap_name":"TX Output","tap_id":"tx.overlap_add.samples","tap_description":"Complex baseband I/Q · post-prefix, window and overlap · before channel","busy":self.job.is_some(),"can_generate":self.request.is_some()&&self.job.is_none(),"has_result":self.result.is_some(),"result_token":self.result_token.to_string(),"progress":if total==0 {0.0} else {done as f64/total as f64},"message":if self.error.is_empty(){self.notice.as_str()} else {self.error.as_str()}})
     }
 
     /// Formats a min/max spectrum viewport; large sample/FFT storage stays in Rust.

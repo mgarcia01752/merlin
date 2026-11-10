@@ -701,11 +701,15 @@ Detailed tasks: [UI checklist](ui-checklist.md) and
 [task design](features/visual-workspace/design.md). Develop left to right, starting
 with OFDM Channel Descriptor (OCD). UI-01 is partial: diagram, section-preview dialogs and
 theme/icon shell and Rust-validated OFDM tree editor exist. Other editors,
-workbench persistence and Rust jobs remain pending. PRBS-TX now accepts PRBS15
+workbench persistence and full-loop Rust jobs remain pending. PRBS-TX now accepts PRBS15
 or exact-byte file/finite-fill configuration through shared Rust validation.
 UI-SHELL-02/03 provide a standard top File | Settings | About menu, with appearance
 under Settings → Global. File Open/Save remain disabled pending JSON persistence of all block settings
 and PNM inputs (UI-WB-JSON-01).
+UI-RXMER-01/02 and UI-RXMER-03 editor previews, with UI-CHANNEL-01 joint readiness,
+are implemented. UI-RXMER-03 full-run dispatch and UI-QAM-01 receiver-analyzer
+connections remain pending;
+see the [review plan](features/rxmer-workbench/design.md).
 UI-SA-03 removes lower SA bookkeeping text. UI-SA-04 fills that space with
 Rust-derived symbol/window timing and nominal cable echo budgets. Actual IQ trace
 inspection remains pending.

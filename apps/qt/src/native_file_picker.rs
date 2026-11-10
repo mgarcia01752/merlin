@@ -10,6 +10,7 @@ mod bridge {
         type QString = cxx_qt_lib::QString;
         include!("native_file_picker.h");
         fn chooseNativeFile(title: &QString) -> QString;
+        fn chooseNativeFiles(title: &QString) -> QString;
     }
 }
 
@@ -21,9 +22,35 @@ mod bridge {
 /// # Errors
 /// Reports unavailable OS-native picker integration.
 pub(crate) fn choose(title: &str) -> Result<Option<String>, String> {
+    select(title, false)
+}
+
+/// Selects multiple original inputs through the same isolated OS-native picker.
+/// # Arguments
+/// * `title` - Native picker title.
+/// # Returns
+/// At most 64 local URIs; empty means Cancel.
+/// # Errors
+/// Reports missing native integration or malformed/oversize selection.
+pub(crate) fn choose_many(title: &str) -> Result<Vec<String>, String> {
+    let selected = select(title, true)?.unwrap_or_default();
+    if selected.len() > 262144 {
+        return Err("Native selection is too large.".into());
+    }
+    Ok(selected.lines().map(str::to_owned).collect())
+}
+
+fn select(title: &str, multiple: bool) -> Result<Option<String>, String> {
     let output =
         std::process::Command::new(std::env::current_exe().map_err(|error| error.to_string())?)
-            .args(["--native-file-picker", title])
+            .args([
+                if multiple {
+                    "--native-file-picker-multiple"
+                } else {
+                    "--native-file-picker"
+                },
+                title,
+            ])
             .output()
             .map_err(|error| format!("Cannot open OS-native file picker: {error}"))?;
     if !output.status.success() {
@@ -43,13 +70,18 @@ pub(crate) fn choose(title: &str) -> Result<Option<String>, String> {
 /// Handles the internal native-picker process before any Qt application exists.
 /// # Arguments
 /// * `title` - Bounded picker title supplied by the parent application.
+/// * `multiple` - Whether the native dialog permits multiple selected files.
 /// # Returns
 /// Writes only a URI, empty cancellation or error marker to the internal pipe.
 /// GTK owns transient selection; no input bytes or scientific data are processed.
-pub(crate) fn run_helper(title: &str) {
+pub(crate) fn run_helper(title: &str, multiple: bool) {
     use std::io::Write;
     let selected = if title.len() <= 512 {
-        bridge::chooseNativeFile(&cxx_qt_lib::QString::from(title)).to_string()
+        if multiple {
+            bridge::chooseNativeFiles(&cxx_qt_lib::QString::from(title)).to_string()
+        } else {
+            bridge::chooseNativeFile(&cxx_qt_lib::QString::from(title)).to_string()
+        }
     } else {
         "ERROR: Native picker title is too long.".into()
     };

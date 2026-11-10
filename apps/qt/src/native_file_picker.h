@@ -17,7 +17,7 @@
  * native integration. No Qt file dialog or custom browser fallback is used.
  * GTK owns the selection UI only; Rust reads and validates selected bytes.
  */
-inline QString chooseNativeFile(const QString &title) {
+inline QString chooseNativeSelection(const QString &title, bool multiple) {
 #ifdef __linux__
     // Match XCB/XWayland so the native chooser shares the application's display.
     if (qgetenv("QT_QPA_PLATFORM") == "xcb") {
@@ -33,6 +33,7 @@ inline QString chooseNativeFile(const QString &title) {
     const auto titleBytes = title.toUtf8();
     auto *chooser = gtk_file_chooser_native_new(titleBytes.constData(), nullptr,
         GTK_FILE_CHOOSER_ACTION_OPEN, "Open", "Cancel");
+    gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), multiple);
     gtk_native_dialog_set_modal(GTK_NATIVE_DIALOG(chooser), true);
     g_signal_connect(chooser, "response", G_CALLBACK(+[](GtkNativeDialog *, int response, gpointer data) {
         auto *selection = static_cast<Selection *>(data);
@@ -43,11 +44,18 @@ inline QString chooseNativeFile(const QString &title) {
     g_main_loop_run(selection.loop);
     QString result;
     if (selection.response == GTK_RESPONSE_ACCEPT) {
-        char *uri = gtk_file_chooser_get_uri(GTK_FILE_CHOOSER(chooser));
-        if (uri != nullptr) {
-            result = QString::fromUtf8(uri);
-            g_free(uri);
+        GSList *uris = gtk_file_chooser_get_uris(GTK_FILE_CHOOSER(chooser));
+        if (g_slist_length(uris) > 64) {
+            result = QStringLiteral("ERROR: Select at most 64 files.");
+        } else {
+            for (GSList *item = uris; item != nullptr; item = item->next) {
+                if (!result.isEmpty()) {
+                    result += QLatin1Char('\n');
+                }
+                result += QString::fromUtf8(static_cast<const char *>(item->data));
+            }
         }
+        g_slist_free_full(uris, g_free);
     }
     gtk_native_dialog_destroy(GTK_NATIVE_DIALOG(chooser));
     g_object_unref(chooser);
@@ -56,4 +64,13 @@ inline QString chooseNativeFile(const QString &title) {
 #else
     return QStringLiteral("ERROR: OS-native file selection is implemented for Ubuntu only.");
 #endif
+}
+
+/** Open a single-file native chooser; preserve the existing adapter contract. */
+inline QString chooseNativeFile(const QString &title) {
+    return chooseNativeSelection(title, false);
+}
+/** Open the same OS-native chooser with bounded multi-selection enabled. */
+inline QString chooseNativeFiles(const QString &title) {
+    return chooseNativeSelection(title, true);
 }

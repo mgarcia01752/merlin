@@ -7,17 +7,21 @@ or press Escape to return. Use **Settings → Global → Light/Dark mode** to ch
 across all windows. The change applies immediately and lasts for this session.
 
 The standard menu bar at the top is **File | Settings | About**. File contains
-**Open WB configuration** and **Save WB configuration**, currently disabled while
+**Open…**, **Save** and **Save As…**, currently disabled while
 persistence is pending; load captures through their block dialogs.
-About shows MERLIN's expanded name, purpose and license acknowledgements.
+About shows the active icon, compiled version, MERLIN's expanded name and project
+link. License/NOTICE links open bundled text offline. Title bars use consistent
+initial capitals and the light/dark icons share transparent rounded corners.
+
+![About MERLIN](../images/workbench/about-dark.png)
 The instruction banner and standalone theme button have been removed.
 
 ![Global appearance settings](../images/workbench/settings-global-dark.png)
 
-The workbench includes an editable **OFDM Channel Descriptor (OCD)** dialog. PRBS-TX supports source configuration. Other blocks open
-section previews, while Transmitter opens the shared [Spectrum Analyzer](spectrum-analyzer.md).
-DPD supports capture input; other file pickers and full-loop simulation
-jobs are not connected yet.
+The workbench includes an editable **OFDM Channel Descriptor (OCD)** dialog. PRBS-TX supports source configuration. Channel Estimate and RxMER use the shared
+[measurement viewer](channel-measurements.md); Transmitter opens the shared [Spectrum Analyzer](spectrum-analyzer.md).
+DPD and measurement blocks support capture input. Full-loop simulation
+jobs and receiver analyzers are not connected yet.
 The lower-right Start, Stop and Pause controls are disabled. There are no UI
 full-loop receiver results or automatically loaded measurements.
 

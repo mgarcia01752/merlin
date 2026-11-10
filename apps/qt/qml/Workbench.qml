@@ -12,6 +12,13 @@ Item {
     required property var settingsBackend
     required property var profileBackend
     required property var sourceBackend
+    required property var aboutBackend
+    required property var measurementBackend
+    property alias rxmerPopup: rxmerDialog
+    property alias responsePopup: responseDialog
+    property alias channelPopup: channelDialog
+    property var measurementState: ({rxmer: {status: "attention", reason: "Configure RxMER"}, response: {status: "attention", reason: "Apply DPD"}, channel: {status: "attention", reason: "Configure channel inputs"}, flat: true})
+    function refreshMeasurements() { measurementState = JSON.parse(measurementBackend.state(settingsBackend.current())) }
     required property var transmitterBackend
     property alias settingsPopup: settingsDialog
     property alias aboutPopup: aboutDialog
@@ -26,6 +33,7 @@ Item {
     function refreshProfileState() {
         profileState = JSON.parse(profileBackend.state(settingsBackend.current()))
         refreshTransmitterState()
+        refreshMeasurements()
     }
     Component.onCompleted: { refreshProfileState(); refreshSourceState() }
     property alias ofdmPopup: ofdmDialog
@@ -69,7 +77,7 @@ Item {
             ColumnLayout {
                 spacing: 5
                 Label { text: "MERLIN"; color: theme.accent; font.pixelSize: 13; font.letterSpacing: 3 }
-                Label { text: "Simulation Workbench"; color: theme.text; font.pixelSize: 25; font.weight: Font.DemiBold }
+                Label { text: "MERLIN — DOCSIS OFDM Simulation Toolkit"; color: theme.text; font.pixelSize: 23; font.weight: Font.DemiBold }
                 Label { text: "Single-channel downstream OFDM"; color: theme.muted; font.pixelSize: 13 }
             }
             Item { Layout.fillWidth: true }
@@ -133,9 +141,9 @@ Item {
                 WorkbenchBlock {
                     id: channelBlock; objectName: "channelBlock"; x: 520; y: 190; width: 190; height: 90
                     theme: workbench.theme; heading: "Channel Simulator"
-                    blockStatus: "attention"
-                    statusReason: "Channel configuration and simulation integration are pending."
-                    onClicked: workbench.openSection(heading, "Configure the reference channel or measurement-driven impairments using the existing Rust engine.\n\nChannel-estimation and RxMER inputs belong to this section. No measurement files are loaded yet.")
+                    blockStatus: workbench.measurementState.channel.status
+                    statusReason: workbench.measurementState.channel.reason
+                    onClicked: channelDialog.open()
                 }
                 WorkbenchBlock {
                     id: receiverBlock; objectName: "receiverBlock"; x: 845; y: 190; width: 170; height: 90
@@ -161,16 +169,16 @@ Item {
                 WorkbenchBlock {
                     id: channelEstimateBlock; objectName: "channelEstimateBlock"; x: 445; y: 360; width: 170; height: 90
                     theme: workbench.theme; heading: "DS Channel Est."
-                    blockStatus: "attention"
-                    statusReason: "Optional channel-estimation input is not configured. Input integration is pending."; inputBlock: true
-                    onClicked: workbench.openSection(heading, "Supply downstream channel-estimation input through the Rust decoded-JSON importer.\n\nThe channel uses response H; supplied-H receiver correction is a separately labeled reference mode. File selection is planned.")
+                    blockStatus: workbench.measurementState.response.status
+                    statusReason: workbench.measurementState.response.reason; inputBlock: true
+                    onClicked: responseDialog.open()
                 }
                 WorkbenchBlock {
                     id: rxmerBlock; objectName: "rxmerBlock"; x: 640; y: 360; width: 170; height: 90
                     theme: workbench.theme; heading: "RxMER"
-                    blockStatus: "attention"
-                    statusReason: "Optional RxMER input is not configured. Input integration is pending."; inputBlock: true
-                    onClicked: workbench.openSection(heading, "Supply RxMER observations for the channel's residual-error model.\n\nMultiple inputs require an explicit validated epoch schedule. Listing files alone will not start playback. File selection is planned.")
+                    blockStatus: workbench.measurementState.rxmer.status
+                    statusReason: workbench.measurementState.rxmer.reason; inputBlock: true
+                    onClicked: rxmerDialog.open()
                 }
             }
         }
@@ -191,8 +199,21 @@ Item {
             Button { objectName: "pauseButton"; text: "Ⅱ  Pause"; enabled: false; Accessible.name: "Pause simulation" }
         }
     }
+    RxmerInputDialog {
+        id: rxmerDialog; theme: workbench.theme; backend: workbench.measurementBackend; settingsBackend: workbench.settingsBackend
+        onMeasurementApplied: workbench.refreshMeasurements()
+    }
+    ChannelResponseDialog {
+        id: responseDialog; theme: workbench.theme; backend: workbench.measurementBackend; settingsBackend: workbench.settingsBackend
+        onMeasurementApplied: workbench.refreshMeasurements()
+    }
+    ChannelConfigurationDialog {
+        id: channelDialog; theme: workbench.theme; configuration: workbench.measurementState
+        onRxmerRequested: rxmerDialog.open()
+        onResponseRequested: responseDialog.open()
+    }
     SettingsDialog { id: settingsDialog; theme: workbench.theme }
-    AboutDialog { id: aboutDialog; theme: workbench.theme }
+    AboutDialog { id: aboutDialog; theme: workbench.theme; backend: workbench.aboutBackend; iconRoot: workbench.iconRoot }
     OfdmSettingsDialog {
         id: ofdmDialog
         theme: workbench.theme
