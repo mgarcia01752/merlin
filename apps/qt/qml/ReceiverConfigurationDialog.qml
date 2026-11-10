@@ -34,8 +34,7 @@ WorkbenchDialog {
             Label { text: "Noise Seed"; color: theme.text }
             SpinBox { from:0; to:2147483647; editable:true; value:dialog.draft.noise_seed === undefined ? 41 : dialog.draft.noise_seed; onValueModified: dialog.draft.noise_seed=value }
         }
-        Label { text: "Supplied H uses the same channel-response input for known-reference correction (1/H). Pilot mode estimates H-hat from received pilots independently. Timing uses the supported known-boundary bootstrap."; color:theme.muted; Layout.fillWidth:true; wrapMode:Text.WordWrap }
-        Label { text: "Pause preserves the same Rust session at OFDM-step boundaries; paused time is excluded from the host budget. Stop retains completed comparisons."; color:theme.muted; Layout.fillWidth:true; wrapMode:Text.WordWrap }
+        Label { text: "Known symbol timing is required. Supplied H uses the channel input; pilot mode estimates the response."; color:theme.muted; Layout.fillWidth:true; wrapMode:Text.WordWrap }
         Label { objectName:"receiverConfigError"; text:dialog.errorMessage; color:theme.statusError; Layout.fillWidth:true; wrapMode:Text.WordWrap }
         Button { objectName:"receiverConfigApply"; text:"Apply Receiver Configuration"; onClicked: { dialog.errorMessage=backend.apply(JSON.stringify(dialog.draft),settingsBackend.current()); if (!dialog.errorMessage.length) { dialog.configurationApplied();dialog.close() } } }
     }

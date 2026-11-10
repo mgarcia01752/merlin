@@ -218,6 +218,14 @@ separate fine underline below. Source evidence is recorded in the
 
 ### Workbench block readiness rules
 
+UI-COPY-01 keeps normal application wording focused on user tasks: no language,
+framework or adapter ownership commentary in About, accessibility text or routine
+help. Persistent notes are concise and limited to actionable errors, missing/
+partial data, import identity/compatibility, display limits and essential
+measurement assumptions. Detailed explanations stay in guides/field help;
+original legal notices and capture names remain intact. See the
+[design](development/features/ui-copy/design.md).
+
 The left icon/WB gutter is removed (UI-SHELL-11). The diagram and header use
 equal side margins; application branding stays in the top header and window icon.
 
@@ -355,6 +363,31 @@ opening validates the whole document before replacing accepted state, invalidate
 old results, and never starts a simulation automatically. Rejected loads preserve
 the current workbench. Saving does not overwrite original PNM captures. Generated
 results, caches and worker state are not configuration.
+
+### Curated workbench examples and Open location
+
+`examples/workbench/manifest.json` inventories two runnable bundles: `single`
+(one DPD, one RxMER, one supplied DS channel estimate) and `multi-rxmer` (one DPD,
+five compatible RxMER inputs, one estimate). Each contains original files and a
+self-contained WB with hashes, provenance and licenses. They share exact modem,
+channel, frequency grid and DPD coverage; production Rust project/request
+validation checks compatibility. Original epochs remain unchanged; multi-RxMER
+uses average residual power for synthetic alternatives, not invented time history.
+
+All native Open dialogs start in this examples root. Rust locates it relative
+to installed resources or the marked source checkout; the isolated native picker
+receives that directory only for Open. Save destinations keep OS behavior.
+Linux shared-resource, portable and macOS resource layouts are recognized;
+installed desktop delivery and per-OS runtime validation remain pending.
+
+INSTALL-EXAMPLES-01 requires future desktop installers to include the runnable
+manifest/bundles and verify hashes, offline restore and default Open from an
+unrelated working directory. Existing CLI staging copies the examples already;
+that is not desktop installer acceptance. `multi-rxmer-dschan` is a reserved,
+non-runnable scenario: channel-estimate collection ordering, interpolation,
+cadence, receiver interaction and WB schema remain CH-EST-PLAYBACK-01 work.
+See the [design](development/features/workbench-examples/design.md) and
+[user guide](user/workbench-examples.md).
 
 ### RxMER capture actions (UI-RXMER-04)
 

@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "description": "Spatially matching sanitized captures; original epochs differ. Synthetic RxMER alternatives are not successive capture events.",
+  "upstream_repository": "https://github.com/PyPNMApps/PNM-Viewer-Toolkit",
+  "upstream_commit": "5fbd5561f3e06b73486546b5ffa520279080a5eb",
+  "ofdm": {
+    "cm_mac": "00:ca:00:00:00:01",
+    "channel_id": 34,
+    "zero_frequency_hz": 631100000,
+    "first_index": 356,
+    "spacing_hz": 25000,
+    "sample_count": 7480,
+    "capture_times": {
+      "rxmer": 1380970,
+      "channel_estimate": 1391100,
+      "modulation_profile": 1466967
+    }
+  },
+  "files": [
+    {
+      "file": "modulation-profile.bin",
+      "bytes": 1881,
+      "sha256": "bfefd266de98685fe158630c5f98c4a7a57cb22feb55bcdd92012c06135c824a",
+      "synthetic": false,
+      "source_provenance": "../../measurements/single-channel/provenance.json",
+      "source_binary_name": "modulation_profile.bin"
+    },
+    {
+      "file": "ds-channel-estimate.bin",
+      "bytes": 29948,
+      "sha256": "e06997c3fcc35456ebbec5d03933814f3aebb1e412afe68989850e8c506103e5",
+      "synthetic": false,
+      "source_provenance": "../../measurements/single-channel/provenance.json",
+      "source_binary_name": "channel_estimation.bin"
+    },
+    {
+      "file": "rxmer-baseline.bin",
+      "bytes": 7508,
+      "sha256": "864ba70b0361bd8b4912b55f55e8db72dd7b319b478ce1988103979e0b19c98e",
+      "synthetic": false,
+      "source_provenance": "../../measurements/single-channel/provenance.json",
+      "source_binary_name": "rxmer.bin"
+    },
+    {
+      "file": "rxmer-stress-12db.bin",
+      "bytes": 7508,
+      "sha256": "f8d2409134e9cf34fd2884716cf2cdf599af132eada1b74a4c437f8ee627b2bb",
+      "synthetic": true,
+      "source_provenance": "../../measurements/rxmer-fec-stress/provenance.json",
+      "source_binary_name": "rxmer-stress-12db.bin"
+    },
+    {
+      "file": "rxmer-stress-11db.bin",
+      "bytes": 7508,
+      "sha256": "148a5780ed1d7e19fd5d12ad6e8779b505f6ef56e19a9c8af3175f532a37a72d",
+      "synthetic": true,
+      "source_provenance": "../../measurements/rxmer-fec-stress/provenance.json",
+      "source_binary_name": "rxmer-stress-11db.bin"
+    },
+    {
+      "file": "rxmer-stress-10db.bin",
+      "bytes": 7508,
+      "sha256": "a77bc41a17eed2974db9c6abdca532f8213e29aa2ffc5ffef4c35b7a9ff30515",
+      "synthetic": true,
+      "source_provenance": "../../measurements/rxmer-fec-stress/provenance.json",
+      "source_binary_name": "rxmer-stress-10db.bin"
+    },
+    {
+      "file": "rxmer-stress-9db.bin",
+      "bytes": 7508,
+      "sha256": "701770797e658bf2d78c3701f4340de0084888d85c0231a8b0c2a8548685da39",
+      "synthetic": true,
+      "source_provenance": "../../measurements/rxmer-fec-stress/provenance.json",
+      "source_binary_name": "rxmer-stress-9db.bin"
+    }
+  ]
+}

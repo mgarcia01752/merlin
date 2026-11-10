@@ -1,5 +1,17 @@
 # Native validation and CLI delivery
 
+## Future desktop examples (INSTALL-EXAMPLES-01)
+
+Desktop installers must deliver `examples/workbench/manifest.json` and every
+runnable bundle's exact PNM files, self-contained WB, provenance, LICENSE and
+NOTICE. Keep `single` and `multi-rxmer` runnable; `multi-rxmer-dschan` is deferred
+and excluded from the runnable inventory. Native Open must resolve examples from
+the installed executable/resources, not the launch working directory. Test
+relocation, offline WB validation, all resource hashes and installed picker
+behavior. The current CLI resource-staging test verifies bundle inclusion only;
+it does not validate desktop installation. See the
+[design](features/workbench-examples/design.md) and [user guide](../user/workbench-examples.md).
+
 QA-06/07 tooling is prepared locally. No remote is configured in this checkout;
 workflows are not pushed or executed. Local Linux results do not establish native
 Windows/macOS runtime or installer support. See the [group design](features/completion-group/design.md).

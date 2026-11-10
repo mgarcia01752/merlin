@@ -35,7 +35,7 @@ WorkbenchDialog {
         }
         RowLayout {
             visible:dialog.sourceIndex===1
-            Label { text:"Retained RX Symbol";color:dialog.theme.muted }
+            Label { text:"RX Symbol";color:dialog.theme.muted }
             ComboBox { objectName:"receiverResponseSnapshot";model:dialog.response.snapshots || [];currentIndex:dialog.snapshotIndex;enabled:model.length>0;onActivated:function(index){dialog.snapshotIndex=index;dialog.refresh()} }
         }
         Label { text:dialog.response.summary || dialog.response.reason || "";color:dialog.theme.accent;Layout.fillWidth:true;wrapMode:Text.WordWrap }

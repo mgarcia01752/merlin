@@ -23,6 +23,5 @@ WorkbenchDialog {
         Label { text: dialog.configuration.flat ? "Flat / unity · H = 1 + 0i per subcarrier · 0 dB / 0°" : "Imported channel-response capture"; color: theme.text; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         Label { text: dialog.configuration.response ? dialog.configuration.response.reason : "Apply DPD to define the grid"; color: theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         Button { text: "Configure channel response…"; onClicked: { dialog.close(); dialog.responseRequested() } }
-        Label { text: "Green indicates valid configuration. Full-loop UI run dispatch remains pending; the TX Spectrum Analyzer runs before these impairments."; color: theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap }
     }
 }

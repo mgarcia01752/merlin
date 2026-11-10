@@ -20,7 +20,7 @@ Pane {
         }
         function current() { return accepted }
         function defaults() { return accepted }
-        function describe(document) { return JSON.stringify({summary: "Timing tested in Rust"}) }
+        function describe(document) { return JSON.stringify({summary: "Timing configuration"}) }
         function apply(document) { accepted = document; return "" }
     }
     QtObject {

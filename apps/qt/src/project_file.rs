@@ -159,6 +159,70 @@ impl Project {
 mod tests {
     use super::*;
     #[test]
+    fn curated_workbenches_restore_matching_originals_and_prepare_full_requests() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../examples/workbench");
+        let manifest: Value =
+            serde_json::from_slice(&std::fs::read(root.join("manifest.json")).unwrap()).unwrap();
+        let bundles = manifest["bundles"].as_array().unwrap();
+        assert_eq!(bundles.len(), 2);
+        assert_eq!(manifest["planned"][0]["id"], "multi-rxmer-dschan");
+        for bundle in bundles {
+            let path = root.join(bundle["workbench"].as_str().unwrap());
+            let project: Project = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+            let inputs = project.validate().unwrap();
+            let profile = inputs.profile.as_ref().unwrap();
+            let playback = inputs.playback.as_ref().unwrap();
+            let response = inputs.response.as_ref().unwrap();
+            assert_eq!(profile.key, response.key);
+            assert!(playback.frames.iter().all(|frame| frame.key == profile.key));
+            assert_eq!(profile.key.grid.sample_count, 7480);
+            assert_eq!(profile.key.grid.spacing_hz, 25000);
+            let prepared = crate::closed_loop::model::prepare(
+                &project.transmission,
+                &inputs,
+                project.receiver.as_ref().unwrap(),
+            )
+            .unwrap();
+            prepared.validate().unwrap();
+            let measurements = &project.sections["measurements"];
+            assert_eq!(measurements["options"]["mode"], bundle["mode"]);
+            let captures = measurements["rxmer"].as_array().unwrap();
+            let paths = bundle["rxmer"].as_array().unwrap();
+            assert_eq!(captures.len(), paths.len());
+            assert_eq!(captures.len(), if bundle["id"] == "single" { 1 } else { 5 });
+            let mut originals = vec![
+                (
+                    &project.sections["profile"]["file"],
+                    &bundle["modulation_profile"],
+                ),
+                (&measurements["response"], &bundle["channel_estimate"]),
+            ];
+            originals.extend(captures.iter().zip(paths));
+            for (stored, relative) in originals {
+                let (name, bytes) = decode(stored).unwrap();
+                let original = root.join(relative.as_str().unwrap());
+                assert_eq!(original.file_name().unwrap().to_str().unwrap(), name);
+                assert_eq!(std::fs::read(original).unwrap(), bytes);
+            }
+            let provenance: Value = serde_json::from_slice(
+                &std::fs::read(root.join(bundle["provenance"].as_str().unwrap())).unwrap(),
+            )
+            .unwrap();
+            for entry in provenance["files"].as_array().unwrap() {
+                let bytes =
+                    std::fs::read(path.parent().unwrap().join(entry["file"].as_str().unwrap()))
+                        .unwrap();
+                assert_eq!(entry["bytes"], bytes.len());
+                assert_eq!(entry["sha256"], format!("{:x}", Sha256::digest(bytes)));
+            }
+            assert!(path.parent().unwrap().join("LICENSE").is_file());
+            assert!(path.parent().unwrap().join("NOTICE").is_file());
+        }
+        assert!(!root
+            .join("multi-rxmer-dschan/workbench.merlin.json")
+            .exists());
+    }
+    #[test]
     fn self_contained_project_roundtrip_preserves_originals_and_rejects_corruption() {
         let file = encode("message.txt", b"exact\0payload\n");
         let profile = encode(

@@ -7,6 +7,19 @@ See the [task design](features/visual-workspace/design.md). The initial shell is
 
 ## UI-01: Workbench and section dialogs
 
+- [x] **UI-COPY-01** Use user-focused text and concise essential notes; remove
+  programming-language/framework commentary from normal UI.
+  [Design](features/ui-copy/design.md).
+
+- [x] **UI-EXAMPLES-01** Curate single/multi-RxMER WB bundles with compatible
+  originals, hashes and notices. [Design](features/workbench-examples/design.md).
+- [x] **UI-OPEN-01** Default native Open to relocatable example resources.
+  [Design](features/workbench-examples/design.md).
+- [ ] **INSTALL-EXAMPLES-01** Ship and validate the runnable inventory in future
+  native desktop installers, including installed-OS Open/restore behavior.
+- [ ] **CH-EST-PLAYBACK-01** Define varying channel-estimate collections before
+  adding a runnable multi-RxMER/multi-channel-estimate WB.
+
 - [x] **UI-RXMER-04** Remove RxMER demo/notch buttons and use Open file(s).
   [Design](features/rxmer-workbench/design.md#ui-rxmer-04-remove-demo-actions-from-rxmer).
 

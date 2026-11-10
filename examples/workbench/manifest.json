@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "application": "MERLIN",
+  "bundles": [
+    {
+      "id": "single",
+      "workbench": "single/workbench.merlin.json",
+      "modulation_profile": "single/modulation-profile.bin",
+      "channel_estimate": "single/ds-channel-estimate.bin",
+      "rxmer": [
+        "single/rxmer.bin"
+      ],
+      "mode": "single",
+      "provenance": "single/provenance.json"
+    },
+    {
+      "id": "multi-rxmer",
+      "workbench": "multi-rxmer/workbench.merlin.json",
+      "modulation_profile": "multi-rxmer/modulation-profile.bin",
+      "channel_estimate": "multi-rxmer/ds-channel-estimate.bin",
+      "rxmer": [
+        "multi-rxmer/rxmer-baseline.bin",
+        "multi-rxmer/rxmer-stress-12db.bin",
+        "multi-rxmer/rxmer-stress-11db.bin",
+        "multi-rxmer/rxmer-stress-10db.bin",
+        "multi-rxmer/rxmer-stress-9db.bin"
+      ],
+      "mode": "average",
+      "provenance": "multi-rxmer/provenance.json"
+    }
+  ],
+  "planned": [
+    {
+      "id": "multi-rxmer-dschan",
+      "directory": "multi-rxmer-dschan",
+      "reason": "Multiple channel-estimate playback and WB schema are deferred; not a runnable example."
+    }
+  ]
+}

@@ -76,7 +76,6 @@ WorkbenchDialog {
             rxmer: dialog.rxmer; options: dialog.options; files: dialog.metadata.files || []
         }
         Label { text: dialog.errorMessage || dialog.admission.error || dialog.admission.summary || ""; color: dialog.errorMessage || dialog.admission.error ? theme.statusError : theme.accent; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 12 }
-        Label { text: dialog.rxmer ? "Simulation configuration · no inferred burst correlation · final capture held · full-loop UI dispatch pending" : "Channel response H input · receiver channel estimation is separate · Apply does not start a run"; color: theme.muted; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
     }
     footer: DialogButtonBox {
         Button { text: "Cancel"; DialogButtonBox.buttonRole: DialogButtonBox.RejectRole }

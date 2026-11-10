@@ -33,7 +33,6 @@ WorkbenchDialog {
     contentItem: ColumnLayout {
         spacing: 14
         RowLayout { Layout.fillWidth:true; Label { text: "Receiver Signal Path"; font.pixelSize:19; font.bold:true; color:dialog.theme.text; Layout.fillWidth:true } Button { objectName:"receiverFecShortcut"; text:"FEC Statistics"; onClicked:fec.open() } Button { objectName:"receiverConfigure"; text:"Configure Receiver / Run…"; onClicked:dialog.configurationRequested() } }
-        Label { text: "Configure the next run, then inspect actual retained receiver observations."; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         Rectangle {
             Layout.fillWidth: true; Layout.preferredHeight: 142
             color: dialog.theme.background; radius: 12; border.color: dialog.theme.line
@@ -92,7 +91,7 @@ WorkbenchDialog {
             }
         }
         Item { Layout.fillHeight: true }
-        Label { text: dialog.runState.result ? "Run "+dialog.runState.result.status+" · instrument selection reads retained results" : "Configure Receiver and enable PRBS-RX comparison before Start. Analyzers do not gate readiness."; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 12 }
+        Label { visible: !dialog.runState.result && !dialog.runState.can_start && !dialog.runState.busy; text: dialog.runState.reason || "Configure Receiver and enable PRBS-RX before starting."; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 12 }
     }
     ReceiverQamDialog { id: qam; theme: dialog.theme; backend: dialog.backend }
     ReceiverResponseDialog { id:response;theme:dialog.theme;backend:dialog.backend;runState:dialog.runState }
@@ -109,6 +108,6 @@ WorkbenchDialog {
         tapOptions: ["RX Input / Channel Output", "RX Framed Samples", "RX Useful Samples", "RX FFT Bin Power"]
         selectedTap: dialog.selectedTap
         onTapRequested: function(index) { dialog.selectTap(index) }
-        generateDescription: "Use main-workbench Start to run the closed loop. This panel reads retained RX results."
+        generateDescription: "Use Start on the main workbench to run the simulation."
     }
 }

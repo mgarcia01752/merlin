@@ -138,7 +138,7 @@ WorkbenchDialog {
                     Button {
                         objectName: "sourceOpenFile"; text: "Open file…"
                         onClicked: dialog.chooseFile()
-                        onActiveFocusChanged: if (activeFocus) { dialog.help("Exact-byte file", "Open using the OS-native picker. Text, BOM, line endings, zeros and binary bytes are preserved unchanged. Maximum original size: 16 MiB.") }
+                        onActiveFocusChanged: if (activeFocus) { dialog.help("Exact-byte file", "Choose a file up to 16 MiB. All bytes, including line endings and zeros, are preserved.") }
                     }
                     FieldLabel { text: "Source file" }
                     ValueLabel { objectName: "sourceFileName"; text: dialog.fileInfo.selected ? dialog.fileInfo.name : "No input selected" }
@@ -210,7 +210,6 @@ WorkbenchDialog {
             visible: text.length > 0; color: theme.text
             Layout.fillWidth: true; wrapMode: Text.WordWrap
         }
-        Label { text: "Session only · Run duration is separate · Simulation integration remains pending"; color: theme.muted; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
     }
     footer: Pane {
         padding: 10

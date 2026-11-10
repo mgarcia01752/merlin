@@ -340,6 +340,14 @@ their native controls; menus and dropdown lists are not popup dialogs.
 
 ## UI titles, navigation and About
 
+Keep user-facing copy focused on the task. Do not mention Rust, Qt/QML, CXX-Qt,
+adapters or implementation ownership in normal UI, About descriptions or
+accessibility text. Preserve original legal notices and capture filenames.
+Keep persistent footnotes only for actionable errors, missing/partial data,
+display limits, import type/compatibility or essential measurement limitations.
+Use short, conditional notes; put detailed explanations in guides or field help.
+Do not show stale development status or repeat generic lifecycle assurances.
+
 Use mouse-driven zoom for every UI feature that supports zoom: wheel/trackpad
 over the plot zooms around the pointer, horizontal left-drag selects a range,
 and a **Full Span** action restores the complete retained view. Do not add Zoom

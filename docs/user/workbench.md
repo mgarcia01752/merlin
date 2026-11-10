@@ -6,6 +6,10 @@ of the measurement-input blocks to open its section dialog. Close the dialog
 or press Escape to return. Use **Settings → Global → Light/Dark mode** to change the palette and icon
 across all windows. The change applies immediately and lasts for this session.
 
+Use the [curated workbench examples](workbench-examples.md) for single or multiple
+RxMER inputs on a matching OFDM grid. Native Open begins in that examples root;
+future installed desktop packages must ship the same portable WB bundles.
+
 The left icon/WB gutter has been removed so the diagram uses the available width.
 Menus and the branded header remain at the top. PRBS-RX opens a structured
 [comparison summary with payload graphs](closed-loop-workbench.md#inspect-actual-results).
@@ -41,6 +45,11 @@ existing **Close** or **Cancel** button. X dismisses only the current popup;
 editor drafts are not applied. Closing a nested analyzer returns to its parent
 window and does not stop the main simulation. Escape remains available.
 Native file pickers use the operating system's own window controls.
+
+Dialogs show concise, task-focused text. Bottom notes appear for errors,
+missing/partial data, import details, display limits or important measurement
+assumptions. About keeps product, version and license information; implementation
+details and development-status messages are omitted.
 
 ![Popup title bar with X and retained footer buttons](../images/workbench/popup-close-dark.png)
 

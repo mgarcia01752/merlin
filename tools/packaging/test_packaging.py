@@ -6,6 +6,8 @@
 """Package safety, no-clobber behavior and complete resource ownership."""
 import tempfile
 import unittest
+import hashlib
+import json
 from pathlib import Path
 from unittest.mock import patch
 from common import checksums, copy_tree, stage, version
@@ -50,6 +52,19 @@ class PackageTests(unittest.TestCase):
             resources = payload / "share/merlin"
             for name in ("LICENSE", "NOTICE", "fec-codec-LICENSE-MIT", "examples/awgn.json", "crates/ofdm/resources/qam-table/NOTICE"):
                 self.assertTrue((resources / name).is_file(), name)
+            examples = resources / "examples/workbench"
+            manifest = json.loads((examples / "manifest.json").read_text())
+            self.assertEqual(len(manifest["bundles"]), 2)
+            for bundle in manifest["bundles"]:
+                workbench = examples / bundle["workbench"]
+                self.assertTrue(workbench.is_file())
+                self.assertTrue((workbench.parent / "LICENSE").is_file())
+                self.assertTrue((workbench.parent / "NOTICE").is_file())
+                provenance = json.loads((examples / bundle["provenance"]).read_text())
+                for capture in provenance["files"]:
+                    payload = (workbench.parent / capture["file"]).read_bytes()
+                    self.assertEqual(len(payload), capture["bytes"])
+                    self.assertEqual(hashlib.sha256(payload).hexdigest(), capture["sha256"])
             output = root / "assets"
             output.mkdir()
             (output / "example").write_bytes(b"abc")

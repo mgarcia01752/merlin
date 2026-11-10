@@ -129,7 +129,6 @@ WorkbenchDialog {
             }
         }
         Label { objectName: "profileInputError"; text: dialog.errorMessage; visible: text.length > 0; color: theme.text; Layout.fillWidth: true; wrapMode: Text.WordWrap }
-        Label { text: "Apply accepts this input for the session. Simulation and file saving remain pending."; color: theme.muted; font.pixelSize: 12 }
     }
     footer: Pane {
         padding: 10

@@ -55,7 +55,7 @@ ColumnLayout {
         Label { text:"Modulation";color:controls.theme.muted }
         ComboBox {
             objectName:"receiverModulation";model:(controls.metadata.orders || []).map(function(order){return order+" QAM"})
-            displayText:(controls.metadata.orders || []).length ? currentText : "No retained group"
+            displayText:(controls.metadata.orders || []).length ? currentText : "No available group"
             currentIndex:controls.order===0 ? 0 : (controls.metadata.orders || []).indexOf(controls.order)
             Layout.preferredWidth:170;enabled:(controls.metadata.orders || []).length>0
             onActivated:function(index){controls.order=controls.metadata.orders[index];controls.selectionChanged()}
@@ -73,5 +73,5 @@ ColumnLayout {
         Label { text:"Last RX Symbol";color:controls.theme.muted }
         SpinBox { objectName:"receiverLastSymbol";from:-1;to:1000000;editable:true;value:controls.lastSymbol;textFromValue:function(v){return v<0 ? "All" : v.toString()};valueFromText:function(t){return t==="All" ? -1 : Number(t)};Layout.preferredWidth:115;onValueModified:{controls.lastSymbol=value;controls.selectionChanged()} }
     }
-    Label { text:metadata.retained ? "Retained: "+metadata.retained+" cells · bins "+metadata.first_bin+"–"+metadata.last_bin+" · RX symbols "+metadata.first_symbol+"–"+metadata.last_symbol+" · All means retained coordinates only" : "No retained coordinates for this signal";color:controls.theme.muted;font.pixelSize:11;Layout.fillWidth:true;wrapMode:Text.WordWrap }
+    Label { text:metadata.retained ? "Available: "+metadata.retained+" cells · bins "+metadata.first_bin+"–"+metadata.last_bin+" · RX symbols "+metadata.first_symbol+"–"+metadata.last_symbol : "No data for this signal";color:controls.theme.muted;font.pixelSize:11;Layout.fillWidth:true;wrapMode:Text.WordWrap }
 }

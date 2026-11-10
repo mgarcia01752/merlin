@@ -257,7 +257,14 @@ impl Capture {
                 ));
             }
             if schemes.len() > MAX_VISIBLE_SCHEMES {
-                rows.push(leaf("limit", "Display limit", &format!("Showing {MAX_VISIBLE_SCHEMES} of {} schemes", schemes.len()), 2, &["profiles", &key], "The entire capture is retained and validated in Rust. This is a bounded tree preview."));
+                rows.push(leaf(
+                    "limit",
+                    "Display limit",
+                    &format!("Showing {MAX_VISIBLE_SCHEMES} of {} schemes", schemes.len()),
+                    2,
+                    &["profiles", &key],
+                    "Only the displayed rows are limited; the full capture is validated.",
+                ));
             }
         }
         rows.push(branch("provenance", "Input provenance", "", 0, &[]));

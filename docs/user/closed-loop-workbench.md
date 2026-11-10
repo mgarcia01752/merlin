@@ -48,6 +48,8 @@ first 64 retained payloads, labeled by received sequence. Zero-error comparisons
 appear on the baseline; payloads with no compared bits are excluded explicitly.
 The detail note reports omitted and uncompared retained records; summary totals
 cover all completed comparisons. Neither chart is a BER-over-time history.
+The note is hidden when no records are omitted or uncompared. A separate BER
+message appears only when no compared bits are available.
 
 ![Recovered data summary and actual payload comparison graphs](../images/workbench/verification-results-dark.png)
 

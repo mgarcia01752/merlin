@@ -679,6 +679,13 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 ### Native packaging and release automation
 
+- [ ] **INSTALL-EXAMPLES-01** Include the curated runnable WB inventory, PNM
+  originals, hashes and notices in desktop installers; verify installed Open
+  location, offline restore and relocation on each supported OS.
+  [Design](features/workbench-examples/design.md).
+- [ ] **CH-EST-PLAYBACK-01** Define and validate varying channel-estimate
+  collections before enabling the reserved multi-RxMER/multi-channel scenario.
+
 - [ ] **QA-07** Native packaging and release automation after core functionality.
   - [x] Prepare CLI archives, DEB/PKG/MSI builders, checksums, license/example staging,
     tag/version verification, tested-artifact publication and per-OS install guides.
@@ -697,6 +704,11 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 ### Qt simulation workbench
 
+- [x] **UI-EXAMPLES-01** Organize matching single/multi-RxMER bundles, each with
+  a portable WB and original captures. [Design](features/workbench-examples/design.md).
+- [x] **UI-OPEN-01** Default native Open to installed/source example resources,
+  independently of the launch directory. [Design](features/workbench-examples/design.md).
+
 Detailed tasks: [UI checklist](ui-checklist.md) and
 [task design](features/visual-workspace/design.md). Develop left to right, starting
 with OFDM Channel Descriptor (OCD). UI-01 is partial: diagram, section-preview dialogs and
@@ -714,6 +726,8 @@ UI-SHELL-10 centers merge/split connectors, refines the header pulse/underline
 and identifies OSSI PNM types inside the three capture-input cards.
 UI-SHELL-11 removes the left gutter; UI-VERIFY-02 adds a structured recovered-data
 panel with bounded payload recovery and per-payload bit-error charts.
+UI-COPY-01 removes implementation commentary and stale development footnotes,
+preserving actionable diagnostics and essential input/measurement information.
 UI-RXMER-04 removes demo/notch actions from RxMER, retaining native file selection.
 UI-ZOOM-01 replaces zoom buttons in TX/RX SA and measurement viewers with shared
 mouse wheel/range navigation and Full Span; see the [design](features/mouse-zoom/design.md).

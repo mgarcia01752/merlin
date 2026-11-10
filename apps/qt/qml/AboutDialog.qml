@@ -26,7 +26,7 @@ WorkbenchDialog {
             }
         }
         Label { Layout.fillWidth: true; text: "Modulation, Encoding, Reception, Link Impairments & Noise"; wrapMode: Text.WordWrap; color: dialog.theme.text }
-        Label { Layout.fillWidth: true; text: "Standalone single-channel downstream OFDM simulation. Signal processing runs in Rust; the native desktop uses Qt and CXX-Qt."; wrapMode: Text.WordWrap; color: dialog.theme.muted }
+        Label { Layout.fillWidth: true; text: "Standalone DOCSIS downstream OFDM simulation."; wrapMode: Text.WordWrap; color: dialog.theme.muted }
         Label {
             objectName: "aboutProjectLink"
             text: '<a style="color: ' + dialog.theme.accent + ';" href="https://github.com/mgarcia01752/merlin">MERLIN on GitHub</a>'
@@ -39,11 +39,11 @@ WorkbenchDialog {
         Label {
             objectName: "aboutLicenseLinks"
             Layout.fillWidth: true; wrapMode: Text.WordWrap; textFormat: Text.RichText
-            text: 'Desktop: <a style="color: ' + dialog.theme.accent + ';" href="gpl">GPL-3.0-only</a><br/>Reusable Rust libraries: <a style="color: ' + dialog.theme.accent + ';" href="apache">Apache-2.0</a><br/><a style="color: ' + dialog.theme.accent + ';" href="notice">MERLIN Notices</a> · <a style="color: ' + dialog.theme.accent + ';" href="pnm">PNM Decoder Notices</a>'
+            text: 'Desktop: <a style="color: ' + dialog.theme.accent + ';" href="gpl">GPL-3.0-only</a><br/>Reusable libraries: <a style="color: ' + dialog.theme.accent + ';" href="apache">Apache-2.0</a><br/><a style="color: ' + dialog.theme.accent + ';" href="notice">MERLIN Notices</a> · <a style="color: ' + dialog.theme.accent + ';" href="pnm">PNM Decoder Notices</a>'
             color: dialog.theme.muted; linkColor: dialog.theme.accent
             onLinkActivated: function(key) { licenses.showDocument(key) }
         }
-        Label { Layout.fillWidth: true; text: "Desktop foundations and measurement viewers adapted from PNM Viewer contributors. Third-party components retain their own licenses. Bundled license links work offline."; wrapMode: Text.WordWrap; color: dialog.theme.muted; font.pixelSize: 12 }
+        Label { Layout.fillWidth: true; text: "Includes contributions from PNM Viewer. See notices for attribution."; wrapMode: Text.WordWrap; color: dialog.theme.muted; font.pixelSize: 12 }
     }
     LicenseDialog { id: licenses; theme: dialog.theme; backend: dialog.backend }
 }

@@ -21,7 +21,7 @@ WorkbenchDialog {
     modal:true;standardButtons:Dialog.Close
     contentItem:ColumnLayout {
         spacing:10
-        Label { objectName:"receiverFecStatus";text:dialog.statistics.available ? "Run "+dialog.statistics.status+" · actual decoder outcomes" : dialog.statistics.reason || "Run the simulation first";color:dialog.theme.accent;font.bold:true;Layout.fillWidth:true;wrapMode:Text.WordWrap }
+        Label { objectName:"receiverFecStatus";text:dialog.statistics.available ? "Run "+dialog.statistics.status : dialog.statistics.reason || "Run the simulation first";color:dialog.theme.accent;font.bold:true;Layout.fillWidth:true;wrapMode:Text.WordWrap }
         GridLayout {
             visible:dialog.statistics.available;columns:3;columnSpacing:22;Layout.fillWidth:true
             Label { text:"Payload BCH / LDPC\nGenerated: "+dialog.value(dialog.statistics.generated)+"\nRecovered: "+dialog.value(dialog.statistics.payloads)+"\nLDPC failures: "+dialog.value(dialog.statistics.ldpc_failures)+"\nBCH failures: "+dialog.value(dialog.statistics.bch_failures)+"\nBCH corrected bits: "+dialog.value(dialog.statistics.bch_corrected_bits)+"\nMean LDPC iterations: "+dialog.value(dialog.statistics.mean_iterations);color:dialog.theme.text;Layout.fillWidth:true }
@@ -40,6 +40,6 @@ WorkbenchDialog {
                 elide:Text.ElideRight
             }
         }
-        Label { text:dialog.statistics.error ? JSON.stringify(dialog.statistics.error) : "Decode failures and incomplete words remain results; no comparisons means BER is unavailable. All counts are from the same retained run.";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:11 }
+        Label { visible:text.length>0;text:dialog.statistics.error ? JSON.stringify(dialog.statistics.error) : dialog.statistics.available && dialog.statistics.ber===null ? "BER unavailable: no compared bits." : "";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:11 }
     }
 }

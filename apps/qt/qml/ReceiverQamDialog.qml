@@ -68,12 +68,11 @@ WorkbenchDialog {
                         }
                         Label { objectName: "receiverQamUnavailable"; visible: !dialog.observation.available; text: dialog.observation.reason || "No retained receiver results"; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; horizontalAlignment: Text.AlignHCenter }
                         Item { visible: !dialog.observation.available; Layout.fillHeight: true }
-                        Label { text: dialog.observation.available ? dialog.observation.points.length+" actual matched cells · I / Q" : "No I/Q points retained"; color: dialog.theme.muted; Layout.alignment: Qt.AlignHCenter; font.pixelSize: 11 }
+                        Label { text: dialog.observation.available ? dialog.observation.points.length+" cells · I / Q" : "No I/Q data"; color: dialog.theme.muted; Layout.alignment: Qt.AlignHCenter; font.pixelSize: 11 }
                     }
                 }
             }
         }
-        Label { objectName: "receiverQamDetail"; text: dialog.observation.detail || ""; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 12 }
-        Label { text: "Raw: " + (dialog.observation.raw_tap || "—") + "    Equalized: " + (dialog.observation.equalized_tap || "—"); color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 11 }
+        Label { objectName: "receiverQamDetail"; visible: text.length > 0; text: dialog.observation.available && dialog.observation.retained > dialog.observation.points.length ? "Showing " + dialog.observation.points.length + " of " + dialog.observation.retained + " available cells." : ""; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 12 }
     }
 }

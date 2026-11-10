@@ -15,7 +15,7 @@ WorkbenchDialog {
     property string seenToken: ""
     readonly property bool hasResult: !runState.busy && !!runState.result
     readonly property var comparisonResult: hasResult ? runState.result : ({})
-    readonly property string statusText: runState.busy ? (runState.paused ? "Paused" : "Running") : hasResult ? ({complete: "Complete", cancelled: "Cancelled · Partial Result", runtime_exceeded: "Runtime Limit · Partial Result", failed: "Failed · Retained Result"})[comparisonResult.status] || comparisonResult.status : "No Run Results Yet"
+    readonly property string statusText: runState.busy ? (runState.paused ? "Paused" : "Running") : hasResult ? ({complete: "Complete", cancelled: "Cancelled · Partial Result", runtime_exceeded: "Runtime Limit · Partial Result", failed: "Failed · Partial Result"})[comparisonResult.status] || comparisonResult.status : "No Run Results Yet"
     signal configurationApplied()
     function number(value) {
         if (value === undefined || value === null) {
@@ -74,7 +74,7 @@ WorkbenchDialog {
             }
             Label {
                 Layout.fillWidth: true; wrapMode: Text.WordWrap; color: dialog.theme.muted
-                text: "Recovered payloads are checked against the independent PRBS15 sequence or original file bytes and explicit fill. Comparison never feeds the receiver or reseeds PRBS-TX."
+                text: "Recovered data is compared with the original PRBS15 sequence or file, including configured fill."
             }
             GridLayout {
                 Layout.fillWidth: true; columns: width < 620 ? 2 : 4; columnSpacing: 10; rowSpacing: 10
@@ -115,12 +115,13 @@ WorkbenchDialog {
             }
             Label {
                 Layout.fillWidth: true; color: dialog.theme.muted; font.pixelSize: 11; wrapMode: Text.WordWrap
-                text: dialog.hasResult && dialog.statistics.available ? "Per-payload chart: first 64 retained outcomes · omitted: " + dialog.statistics.verification_charts.omitted + " · retained without compared bits: " + dialog.statistics.verification_charts.uncompared_retained + ". Scalar totals include all completed comparisons. Unrecovered generated payloads are not counted as compared bit errors." : "No compared bits means BER is unavailable, not zero. Running and paused jobs show no final totals."
+                visible: text.length > 0
+                text: dialog.hasResult && dialog.statistics.available && (dialog.statistics.verification_charts.omitted > 0 || dialog.statistics.verification_charts.uncompared_retained > 0) ? "Chart: up to 64 payloads · omitted: " + dialog.statistics.verification_charts.omitted + " · without compared bits: " + dialog.statistics.verification_charts.uncompared_retained : ""
             }
-            Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: dialog.theme.line }
             Label {
                 Layout.fillWidth: true; color: dialog.theme.muted; wrapMode: Text.WordWrap; font.pixelSize: 11
-                text: "Complete, cancelled, runtime-limited and failed runs remain distinct. Decode failures are simulation outcomes; detailed decoder statistics are available in Receiver → FEC Statistics."
+                visible: dialog.hasResult && (dialog.comparisonResult.ber === null || dialog.comparisonResult.ber === undefined)
+                text: "BER unavailable: no compared bits."
             }
         }
     }

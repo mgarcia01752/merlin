@@ -34,6 +34,10 @@ inline QString chooseNativeSelection(const QString &title, bool multiple, bool s
     auto *chooser = gtk_file_chooser_native_new(titleBytes.constData(), nullptr,
         save ? GTK_FILE_CHOOSER_ACTION_SAVE : GTK_FILE_CHOOSER_ACTION_OPEN, save ? "Save" : "Open", "Cancel");
     gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), multiple);
+    const auto initialDirectory = qgetenv("MERLIN_NATIVE_OPEN_DIRECTORY");
+    if (!save && !initialDirectory.isEmpty()) {
+        gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser), initialDirectory.constData());
+    }
     if (save) {
         gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(chooser), "workbench.merlin.json");
         gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser), true);

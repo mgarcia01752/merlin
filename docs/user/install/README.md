@@ -14,6 +14,10 @@ The initial release contains one Ubuntu DEB, one matching portable archive and
 `SHA256SUMS`. Both binaries are built on Ubuntu 22.04 and tested on all three
 Ubuntu targets. Windows/macOS packaging helpers are retained for later work.
 The CLI, example inputs and applicable licenses are included in each package.
+Curated [workbench bundles](../workbench-examples.md) now live under
+`examples/workbench/`. Desktop installer delivery remains pending; its contract
+requires these bundles and a native Open default pointing to their installed
+resource directory. Current CLI staging includes them as resources, not a Qt app.
 Source builds remain independent of native installer tools:
 
 ```bash

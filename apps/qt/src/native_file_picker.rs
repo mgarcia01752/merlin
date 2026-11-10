@@ -63,11 +63,19 @@ fn select(title: &str, multiple: bool) -> Result<Option<String>, String> {
     )
 }
 fn select_mode(title: &str, mode: &str) -> Result<Option<String>, String> {
-    let output =
-        std::process::Command::new(std::env::current_exe().map_err(|error| error.to_string())?)
-            .args([mode, title])
-            .output()
-            .map_err(|error| format!("Cannot open OS-native file picker: {error}"))?;
+    let executable = std::env::current_exe().map_err(|error| error.to_string())?;
+    let mut command = std::process::Command::new(&executable);
+    command
+        .args([mode, title])
+        .env_remove("MERLIN_NATIVE_OPEN_DIRECTORY");
+    if mode != "--native-save-picker" {
+        if let Some(directory) = crate::example_directory::locate(&executable) {
+            command.env("MERLIN_NATIVE_OPEN_DIRECTORY", directory);
+        }
+    }
+    let output = command
+        .output()
+        .map_err(|error| format!("Cannot open OS-native file picker: {error}"))?;
     if !output.status.success() {
         return Err("OS-native file picker did not complete successfully.".into());
     }

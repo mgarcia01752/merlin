@@ -6,6 +6,7 @@
 mod about_info;
 mod branding;
 mod closed_loop;
+mod example_directory;
 mod input_file;
 mod measurement_input;
 mod native_file_picker;

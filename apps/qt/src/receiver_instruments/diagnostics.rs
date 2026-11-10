@@ -198,7 +198,7 @@ pub(crate) fn response(document: &str) -> Result<Value, String> {
         response.available_bins,
         settings.receiver_mode
     ));
-    state["detail"]=json!(format!("Dominant impulse peak: {:.4} µs · signed extra path {:.2} ft · two-way spacing {:.2} ft at VF {:.2}. Excluded/unknown bins are masked; zero-filled band limits cause ringing. Peaks are diagnostics, not identified physical echoes or guaranteed protection.",response.peak_delay_microseconds,response.peak_extra_path_feet,response.peak_two_way_spacing_feet,f64::from(query.velocity_percent)/100.0));
+    state["detail"]=json!(format!("Peak delay: {:.4} µs · extra path {:.2} ft · two-way spacing {:.2} ft · VF {:.2}. Band-limited estimate; not guaranteed echo protection.",response.peak_delay_microseconds,response.peak_extra_path_feet,response.peak_two_way_spacing_feet,f64::from(query.velocity_percent)/100.0));
     Ok(state)
 }
 /// Returns exact received-cell slicing and actual post-descrambling soft values.

@@ -67,7 +67,7 @@ explicitly **Sort by capture time**; filenames never determine playback order.
 The final capture is held after the last transition, with no extrapolation or
 implicit looping. Recorded capture times are separate from this playback clock.
 
-![Interpolated-power preview between two captures](../images/workbench/rxmer-interpolation-dark.png)
+![Interpolated-power preview between the first two captures in the bundled collection](../images/workbench/rxmer-interpolation-dark.png)
 
 RxMER uses **Open file(s)…** for capture selection; Load demo and Add notch demo
 have been removed from its toolbar. The Channel Estimate editor retains its own

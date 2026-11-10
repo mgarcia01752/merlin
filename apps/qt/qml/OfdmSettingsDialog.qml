@@ -171,7 +171,6 @@ WorkbenchDialog {
             }
         }
         Label { objectName: "ofdmValidationError"; text: dialog.errorMessage; visible: text.length > 0; color: theme.text; Layout.fillWidth: true; wrapMode: Text.WordWrap }
-        Label { text: dialog.profileSummary.profile_id !== undefined ? "Accepted profile shown above. Settings are kept in this session only." : "No modulation profile selected. Settings are kept in this session only."; color: theme.muted; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
     }
     footer: DialogButtonBox {
         Button {

@@ -261,7 +261,7 @@ Item {
                 enabled: workbench.allBlocksComplete && workbench.runState.can_start
                 onClicked: { workbench.runBackend.start();workbench.pollRun() }
                 Accessible.name: "Start simulation"
-                Accessible.description: !workbench.allBlocksComplete ? "Every workbench block must be green before starting." : "The Rust worker must be idle before starting."
+                Accessible.description: !workbench.allBlocksComplete ? "Every workbench block must be green before starting." : "Wait for the current simulation to finish before starting another."
             }
             Button { objectName: "stopButton"; text: "■  Stop"; enabled: workbench.runState.busy; onClicked: workbench.runBackend.stop(); Accessible.name: "Stop simulation" }
             Button { objectName: "pauseButton"; text: workbench.runState.paused ? "▶  Resume" : "Ⅱ  Pause"; enabled: workbench.runState.busy; onClicked: { workbench.runBackend.pause();workbench.pollRun() } Accessible.name: "Pause simulation" }

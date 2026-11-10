@@ -35,7 +35,7 @@ WorkbenchDialog {
             Item { Layout.fillWidth:true }
         }
         ReceiverCellControls { id:selection;theme:dialog.theme;visible:!dialog.decoderInput;showView:false;Layout.fillWidth:true;onSelectionChanged:dialog.refresh() }
-        Label { text:dialog.diagnosticState.detail || dialog.diagnosticState.reason || "";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:11 }
+        Label { visible:text.length>0;text:!dialog.diagnosticState.available ? dialog.diagnosticState.reason || "No data for this selection." : dialog.diagnosticState.llr && dialog.diagnosticState.llr.count===0 ? "No LLR data for this signal." : "";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:11 }
         SpectrumPlot { theme:dialog.theme;viewport:dialog.diagnosticState.histogram || ({points:[],x_ticks:[],y_ticks:[],error:dialog.diagnosticState.reason});Layout.fillWidth:true;Layout.fillHeight:true;Layout.minimumHeight:100 }
         Label { visible:!dialog.decoderInput;text:"Physical decisions · matched receive coordinates · actual post-descrambling LLRs";color:dialog.theme.accent;font.bold:true }
         ListView {
