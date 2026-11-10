@@ -13,6 +13,7 @@ ColumnLayout {
     required property var theme
     property var viewport: ({points: [], x_ticks: [], y_ticks: []})
     property string readout: ""
+    signal viewportRequested(int start, int count)
     onViewportChanged: { readout = ""; canvas.requestPaint() }
     Label { text: chart.viewport.axis_label || "Measurement"; color: theme.muted; font.pixelSize: 12 }
     Canvas {
@@ -55,11 +56,13 @@ ColumnLayout {
                 previous = point
             }
         }
-        MouseArea {
-            anchors.fill: parent; hoverEnabled: true
-            onPositionChanged: function(mouse) {
+        ChartNavigation {
+            anchors.fill: parent
+            theme: chart.theme; viewport: chart.viewport
+            leftMargin: 52; rightMargin: 18; topMargin: 12; bottomMargin: 33
+            onRangeRequested: function(start, count) { chart.viewportRequested(start, count) }
+            onPointHovered: function(fraction) {
                 const points = chart.viewport.points || []
-                const fraction = Math.max(0, Math.min(1, (mouse.x - 52) / Math.max(1, width - 70)))
                 const index = Math.min(points.length - 1, Math.floor(fraction * points.length))
                 chart.readout = index >= 0 ? points[index].readout : ""
             }

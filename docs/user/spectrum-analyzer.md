@@ -40,9 +40,19 @@ power before conversion to dB**. FFT size is 8192 or 4096 at 204.8 MS/s; display
 bin spacing and equivalent noise bandwidth follow that geometry. This analysis
 window is separate from the transmitter's OFDM roll-off window.
 
-Hover or use Left/Right on the plot to select a bin group for zoom. The trace shows each
+Scroll the mouse wheel over the trace to zoom in/out around the pointer. Drag
+left or right with the left mouse button to select a frequency range; the shaded
+band previews the selection. **Full Span** restores the entire retained spectrum.
+Zoom In/Out buttons have been removed. Click the plot and use +/- to zoom or Home
+to reset; Left/Right selects a bin group. The same controls apply to TX and RX SA
+test points and the RxMER/Channel Estimate measurement viewers. Navigation does
+not rerun the simulation.
+
+![Mouse-driven SA with Full Span](../images/workbench/sa-mouse-zoom-dark.png)
+
+Hover or use Left/Right on the plot to select a bin group. The trace shows each
 group's peak and a min/max envelope; full-resolution FFT data stays in Rust.
-**Zoom in**, **Zoom out** and **Full span** query new bounded views without
+Mouse gestures and **Full Span** query new bounded views without
 regenerating the signal. At close zoom, individual bins become visible. Zero
 power remains explicit in retained Rust data; the finite drawing floor is visual only.
 The area below the frequency axis now contains the symbol-timing and cable panel.

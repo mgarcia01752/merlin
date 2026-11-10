@@ -46,13 +46,6 @@ WorkbenchDialog {
         }
     }
     function showView(start, count) { viewport = JSON.parse(backend.view(start, count, captureFrequencyAxis)) }
-    function zoom(factor) {
-        if (!viewport.total) { return }
-        const count = Math.max(2, Math.min(viewport.total, Math.round(viewport.count * factor)))
-        const anchor = viewport.start + plot.selectedFraction * (viewport.count - 1)
-        const start = Math.max(0, Math.min(viewport.total - count, Math.round(anchor - count / 2)))
-        showView(start, count)
-    }
     contentItem: ColumnLayout {
         spacing: 10
         RowLayout {
@@ -64,9 +57,7 @@ WorkbenchDialog {
             }
             Button { objectName: "saCancel"; text: "Cancel"; enabled: dialog.state.busy; onClicked: backend.cancel() }
             Item { Layout.fillWidth: true }
-            Button { objectName: "saZoomIn"; text: "Zoom in"; enabled: dialog.state.has_result; onClicked: dialog.zoom(0.5) }
-            Button { objectName: "saZoomOut"; text: "Zoom out"; enabled: dialog.state.has_result; onClicked: dialog.zoom(2) }
-            Button { objectName: "saFullSpan"; text: "Full span"; enabled: dialog.state.has_result; onClicked: dialog.showView(0, 0) }
+            Button { objectName: "saFullSpan"; text: "Full Span"; enabled: dialog.state.has_result; onClicked: dialog.showView(0, 0) }
         }
         Label { text: dialog.viewport.summary || (dialog.state.tap_description || "Complex baseband I/Q sample snapshot"); color: theme.accent; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         RowLayout {
@@ -92,7 +83,7 @@ WorkbenchDialog {
             }
             Label { text: "Tap: " + (dialog.state.tap_id || "—"); color: theme.muted; Layout.fillWidth: true; elide: Text.ElideRight }
         }
-        SpectrumPlot { id: plot; theme: dialog.theme; viewport: dialog.viewport; Layout.fillWidth: true; Layout.fillHeight: true }
+        SpectrumPlot { id: plot; theme: dialog.theme; viewport: dialog.viewport; zoomEnabled: dialog.state.has_result; onViewportRequested: function(start, count) { dialog.showView(start, count) } Layout.fillWidth: true; Layout.fillHeight: true }
         SymbolTimingPanel {
             objectName: "saTimingPanel"
             Layout.fillWidth: true; Layout.preferredHeight: 210

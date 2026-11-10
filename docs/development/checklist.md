@@ -708,6 +708,8 @@ buttons and cancellation semantics; see the [design](features/popup-close-contro
 UI-SHELL-07 relocates RxMER above Channel Simulator, splits the DS Channel
 Estimate input into channel/receiver branches and removes the top comparison
 connector; verification behavior remains unchanged.
+UI-ZOOM-01 replaces zoom buttons in TX/RX SA and measurement viewers with shared
+mouse wheel/range navigation and Full Span; see the [design](features/mouse-zoom/design.md).
 UI-SHELL-02/03 provide a standard top File | Settings | About menu, with appearance
 under Settings → Global. UI-WB-JSON-01 now implements native Open/Save/Save As
 for self-contained JSON with original inputs and accepted block settings.

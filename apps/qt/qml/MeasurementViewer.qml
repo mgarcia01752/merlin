@@ -21,12 +21,6 @@ RowLayout {
         viewport = JSON.parse(backend.view(rxmer, JSON.stringify({index: selectedIndex, metric: metric, symbol: symbol, start: start || 0, count: count || 0, options: options}), settingsBackend.current()))
     }
     function reset() { refresh(0, 0) }
-    function zoom(factor) {
-        if (!viewport.total) { return }
-        const count = Math.max(2, Math.min(viewport.total, Math.round(viewport.count * factor)))
-        const start = Math.max(0, Math.min(viewport.total - count, Math.round(viewport.start + viewport.count / 2 - count / 2)))
-        refresh(start, count)
-    }
     spacing: 12
     ColumnLayout {
         Layout.preferredWidth: 285; Layout.fillHeight: true
@@ -41,10 +35,8 @@ RowLayout {
             Layout.fillWidth: true
             Label { text: viewer.selectedIndex < 0 ? (viewer.rxmer ? "Effective residual model" : "Channel response") : "Original capture " + (viewer.selectedIndex + 1); color: theme.accent; Layout.fillWidth: true }
             ComboBox { objectName: "measurementMetric"; visible: !viewer.rxmer; model: ["Gain (dB)", "Phase (degrees)", "Real H", "Imaginary H"]; onActivated: function(index) { viewer.metric = index; viewer.reset() } }
-            Button { text: "+"; Accessible.name: "Zoom into measurement"; onClicked: viewer.zoom(0.5) }
-            Button { text: "−"; Accessible.name: "Zoom out measurement"; onClicked: viewer.zoom(2) }
-            Button { text: "Full span"; onClicked: viewer.reset() }
+            Button { objectName: "measurementFullSpan"; text: "Full Span"; onClicked: viewer.reset() }
         }
-        MeasurementPlot { Layout.fillWidth: true; Layout.fillHeight: true; theme: viewer.theme; viewport: viewer.viewport }
+        MeasurementPlot { Layout.fillWidth: true; Layout.fillHeight: true; theme: viewer.theme; viewport: viewer.viewport; onViewportRequested: function(start, count) { viewer.refresh(start, count) } }
     }
 }

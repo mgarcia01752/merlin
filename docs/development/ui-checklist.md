@@ -7,6 +7,9 @@ See the [task design](features/visual-workspace/design.md). The initial shell is
 
 ## UI-01: Workbench and section dialogs
 
+- [x] **UI-ZOOM-01** Replace all zoom buttons with shared mouse wheel/range
+  navigation and retain Full Span. [Design](features/mouse-zoom/design.md).
+
 - [x] **UI-SHELL-07** Place RxMER above Channel Simulator and split DS Channel
   Estimate into channel/receiver inputs; remove the top comparison connector.
   [Design](features/visual-workspace/design.md#ui-shell-07-measurement-input-placement).

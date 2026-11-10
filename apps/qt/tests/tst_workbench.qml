@@ -102,7 +102,8 @@ Pane {
         function describe(rxmer,options,settings) { return JSON.stringify({error:profileBackend.acceptedId < 0 ? "Apply DPD" : rxmer && !draftRx ? "Choose RxMER" : "",summary:"Interval 42.500 ms · final capture held"}) }
         function view(rxmer,request,settings) {
             const ready = profileBackend.acceptedId >= 0 && (!rxmer || draftRx)
-            return JSON.stringify({points:ready ? [{x:0,y:0.5,minimum_y:0.5,gap:false,readout:"Test"},{x:1,y:0.5,minimum_y:0.5,gap:false,readout:"Test"}] : [],x_ticks:[],y_ticks:[],total:7480,start:0,count:7480,axis_label:rxmer ? "RxMER (dB)" : "Channel gain (dB)",summary:"Test capture"})
+            const selection = JSON.parse(request)
+            return JSON.stringify({points:ready ? [{x:0,y:0.5,minimum_y:0.5,gap:false,readout:"Test"},{x:1,y:0.5,minimum_y:0.5,gap:false,readout:"Test"}] : [],x_ticks:[],y_ticks:[],total:7480,start:selection.start,count:selection.count || 7480,axis_label:rxmer ? "RxMER (dB)" : "Channel gain (dB)",summary:"Test capture"})
         }
         function apply(rxmer,options,settings) {
             const error=JSON.parse(describe(rxmer,options,settings)).error
@@ -452,9 +453,31 @@ Pane {
             cable.currentIndex = 0
             compare(dialog.captureFrequencyAxis, false)
             compare(dialog.viewport.count, 8192)
-            mouseClick(findChild(dialog, "saZoomIn"))
+            compare(findChild(dialog, "saZoomIn"), null)
+            compare(findChild(dialog, "saZoomOut"), null)
+            const navigation = findChild(dialog, "chartNavigation")
+            const x = navigation.leftMargin + navigation.plotWidth * 0.25
+            const y = navigation.topMargin + 20
+            mouseWheel(navigation, x, y, 0, 240)
             compare(dialog.viewport.count, 4096)
+            compare(dialog.viewport.start, 1024)
+            mouseWheel(navigation, x, y, 0, -240)
+            compare(dialog.viewport.count, 8192)
+            compare(dialog.viewport.start, 0)
+            mouseDrag(navigation, navigation.leftMargin + navigation.plotWidth * 0.25, y, navigation.plotWidth * 0.5, 0)
+            verify(dialog.viewport.count >= 4096 && dialog.viewport.count <= 4098)
+            verify(dialog.viewport.start >= 2047 && dialog.viewport.start <= 2048)
             mouseClick(findChild(dialog, "saFullSpan"))
+            compare(dialog.viewport.count, 8192)
+            mouseWheel(navigation, 5, y, 0, 240)
+            compare(dialog.viewport.count, 8192)
+            for (let index = 0; index < 14; ++index) { mouseWheel(navigation, x, y, 0, 240) }
+            compare(dialog.viewport.count, 2)
+            verify(dialog.viewport.start >= 0 && dialog.viewport.start + dialog.viewport.count <= dialog.viewport.total)
+            mouseClick(navigation, x, y)
+            keyClick(Qt.Key_Home)
+            compare(dialog.viewport.count, 8192)
+            keyClick(Qt.Key_Minus)
             compare(dialog.viewport.count, 8192)
             keyClick(Qt.Key_Escape)
             tryCompare(dialog, "visible", false)
@@ -465,6 +488,7 @@ Pane {
             compare(workbench.transmitterState.status, "attention")
             compare(workbench.transmitterState.has_result, false)
             compare(dialog.viewport.points.length, 0)
+            compare(navigation.canZoom, false)
             compare(timingPanel.timing.points.length, 0)
         }
         function test_shared_measurement_viewers_and_joint_channel_readiness() {
@@ -474,7 +498,13 @@ Pane {
             compare(findChild(workbench, "channelBlock").blockStatus, "attention")
             mouseClick(findChild(workbench, "channelEstimateBlock"))
             tryCompare(workbench.responsePopup, "opened", true)
-            verify(findChild(workbench.responsePopup, "sharedMeasurementViewer") !== null)
+            const viewer = findChild(workbench.responsePopup, "sharedMeasurementViewer")
+            verify(viewer !== null)
+            const navigation = findChild(viewer, "chartNavigation")
+            mouseWheel(navigation, navigation.leftMargin + navigation.plotWidth / 2, navigation.topMargin + 20, 0, 240)
+            compare(viewer.viewport.count, 3740)
+            mouseClick(findChild(viewer, "measurementFullSpan"))
+            compare(viewer.viewport.count, 7480)
             keyClick(Qt.Key_Escape)
             tryCompare(workbench.responsePopup, "visible", false)
             mouseClick(findChild(workbench, "rxmerBlock"))

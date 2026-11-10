@@ -16,6 +16,7 @@ from a fresh clone and are deliberately not Markdown link targets.
 
 | Work area | Records |
 | --- | --- |
+| mouse chart navigation | [design](mouse-zoom/design.md) |
 | receiver instruments | [design](receiver-instruments/design.md) |
 | popup close controls | [design](popup-close-controls/design.md) |
 | carrier layout | [architecture](carrier-layout/architecture.md) |

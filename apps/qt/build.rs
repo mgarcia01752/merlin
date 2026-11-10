@@ -64,6 +64,7 @@ fn main() {
                 "qml/SourceInputDialog.qml",
                 "qml/SpectrumAnalyzerDialog.qml",
                 "qml/SpectrumPlot.qml",
+                "qml/ChartNavigation.qml",
                 "qml/SymbolTimingPanel.qml",
                 "qml/MeasurementPlot.qml",
                 "qml/MeasurementCaptureTree.qml",

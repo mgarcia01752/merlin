@@ -11,6 +11,8 @@ ColumnLayout {
     required property var theme
     property var viewport: ({points: [], x_ticks: [], y_ticks: []})
     property int selectedIndex: 0
+    property bool zoomEnabled: false
+    signal viewportRequested(int start, int count)
     readonly property var selectedPoint: viewport.points.length > 0 ? viewport.points[Math.max(0, Math.min(selectedIndex, viewport.points.length - 1))] : null
     readonly property real selectedFraction: selectedPoint ? selectedPoint.x : 0.5
     onViewportChanged: { selectedIndex = Math.max(0, Math.min(selectedIndex, viewport.points.length - 1)); plot.requestPaint() }
@@ -89,15 +91,17 @@ ColumnLayout {
                 }
                 ctx.restore()
             }
-            MouseArea {
+            ChartNavigation {
                 anchors.fill: parent
-                hoverEnabled: true
-                onPositionChanged: function(mouse) {
-                    const width = plot.width - plot.leftMargin - plot.rightMargin
-                    const fraction = Math.max(0, Math.min(1, (mouse.x - plot.leftMargin) / width))
+                theme: chart.theme; viewport: chart.viewport; zoomEnabled: chart.zoomEnabled
+                leftMargin: plot.leftMargin; rightMargin: plot.rightMargin
+                topMargin: plot.topMargin; bottomMargin: plot.bottomMargin
+                onRangeRequested: function(start, count) { chart.viewportRequested(start, count) }
+                onPointHovered: function(fraction) {
                     chart.selectedIndex = Math.round(fraction * Math.max(0, chart.viewport.points.length - 1))
                 }
-                onClicked: plot.forceActiveFocus()
+                Keys.onLeftPressed: chart.selectedIndex = Math.max(0, chart.selectedIndex - 1)
+                Keys.onRightPressed: chart.selectedIndex = Math.min(chart.viewport.points.length - 1, chart.selectedIndex + 1)
             }
         }
         Label {

@@ -340,6 +340,14 @@ their native controls; menus and dropdown lists are not popup dialogs.
 
 ## UI titles, navigation and About
 
+Use mouse-driven zoom for every UI feature that supports zoom: wheel/trackpad
+over the plot zooms around the pointer, horizontal left-drag selects a range,
+and a **Full Span** action restores the complete retained view. Do not add Zoom
+In/Out or +/- buttons. Keep keyboard equivalents and hover readouts available.
+Reuse `ChartNavigation.qml` for viewport gestures; Rust still owns samples,
+decimation and analysis. Zoom must never start a simulation or alter accepted
+inputs. Ignore empty/out-of-axes gestures and clear stale ranges on new inputs.
+
 Use a standard top menu bar and conventional File labels Open…, Save, Save As…
 with their standard shortcuts. Window/dialog title bars use initial capitals for
 significant words; preserve acronyms and proper names (RxMER, DOCSIS, OFDM,

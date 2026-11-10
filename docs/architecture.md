@@ -323,6 +323,18 @@ old results, and never starts a simulation automatically. Rejected loads preserv
 the current workbench. Saving does not overwrite original PNM captures. Generated
 results, caches and worker state are not configuration.
 
+### Chart zoom interaction (UI-ZOOM-01)
+
+Workbench-wide zoom policy (UI-ZOOM-01): existing zoomable charts use wheel/
+trackpad zoom anchored at the pointer and horizontal left-drag range selection.
+Keep Full Span to reset the retained view; omit Zoom In/Out and +/- buttons.
+Shared `ChartNavigation.qml` owns transient index selection only; existing Rust
+viewport APIs retain sample ownership, bounds, units and decimation. Gestures
+never rerun simulation or edit inputs. Keyboard +/- and Home remain available.
+The shared TX/RX SA and RxMER/Channel Estimate viewer use this policy; diagnostic
+plots without zoom remain unchanged. See the
+[design](development/features/mouse-zoom/design.md).
+
 ### SA symbol-timing and cable panel (UI-SA-04)
 
 The SA lower panel shows a CP-start zoom of actual TransmitWindow coefficients,

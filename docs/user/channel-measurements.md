@@ -5,6 +5,13 @@ one shared measurement viewer. A capture tree on the left retains original
 file metadata; the chart on the right supports zoom, full span and hover
 readouts. All parsing, calculations and chart reduction happen in Rust.
 
+Scroll over the plot to zoom around the pointer, or left-drag horizontally to
+select a range. **Full Span** resets the view. There are no +/- zoom buttons.
+Click the plot for keyboard +/- zoom and Home reset. Changing a capture or metric
+resets the range; zoom only queries retained input data.
+
+![Shared measurement mouse navigation](../images/workbench/measurement-mouse-zoom-dark.png)
+
 Apply a DPD first. Inputs must match its device, channel, frequency origin,
 subcarrier spacing and complete source grid. Merely overlapping frequencies do
 not qualify. Active carrier coverage is checked before Apply. Missing/excluded
