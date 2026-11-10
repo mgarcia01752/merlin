@@ -36,6 +36,21 @@ PRBS-RX shows complete/cancelled/runtime-exceeded/failed status, compared bits,
 bit errors, BER and unrecovered generated payloads. No compared bits means BER is
 unavailable, not zero. Receiver → FEC Monitor shows actual decoder totals.
 
+The PRBS-RX panel groups compared bits, bit errors, BER and recovered payloads
+into summary cards. The acceptance badge replaces the disabled comparison button;
+**Enable Comparison** remains available when configuration needs acceptance.
+Run status distinguishes Complete, Cancelled, Runtime Limit and Failed results.
+Running/paused jobs show no final totals. Closing the panel does not stop a run.
+
+**Payload Recovery** compares recovered and unrecovered generated payload counts.
+**Bit Errors by Payload** plots actual errors for compared outcomes among the
+first 64 retained payloads, labeled by received sequence. Zero-error comparisons
+appear on the baseline; payloads with no compared bits are excluded explicitly.
+The detail note reports omitted and uncompared retained records; summary totals
+cover all completed comparisons. Neither chart is a BER-over-time history.
+
+![Recovered data summary and actual payload comparison graphs](../images/workbench/verification-results-dark.png)
+
 Receiver's QAM analyzer now displays retained payload or PLC raw/equalized pairs.
 Paired panels share axes; PLC preamble and data remain separate. Payload plots use
 Profile 0 and the first compatible modulation group, up to 2048 actual points.

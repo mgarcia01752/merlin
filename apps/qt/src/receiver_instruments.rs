@@ -5,6 +5,7 @@
 //! Bounded receiver instruments over one shared immutable closed-loop result.
 pub(crate) mod diagnostics;
 pub(crate) mod selection;
+mod verification;
 mod views;
 use cxx_qt_lib::QString;
 use docsis_ofdm_fec::simulation::test_points::TestPointId;

@@ -135,7 +135,7 @@ Pane {
         }
         function response(document) { lastQuery=JSON.parse(document);return JSON.stringify({available:retainedCells,points:[],x_ticks:[],y_ticks:[],snapshots:[10],reason:"Response test",summary:"Actual response query"}) }
         function slicer(document,decoderInput) { lastQuery=JSON.parse(document);lastDecoderInput=decoderInput;return JSON.stringify({available:retainedCells,rows:[],llr:{count:retainedCells ? 8 : 0},histogram:{points:[],x_ticks:[],y_ticks:[]},detail:"Actual soft query"}) }
-        function fec() {return JSON.stringify({available:retainedCells,status:"complete",words:[],histogram:{points:[],x_ticks:[],y_ticks:[]}})}
+        function fec() {return JSON.stringify({available:retainedCells,status:"complete",words:[],verification_charts:{recovery:{points:[]},word_errors:{points:[]},omitted:0,uncompared_retained:0},histogram:{points:[],x_ticks:[],y_ticks:[]}})}
         function qam(signal, view, part) { return JSON.stringify({available:false,reason:"No retained receiver results",detail:signal === 1 ? "Matched received NCP I/Q collection is pending" : "Receiver collector not connected",points:[],profiles:[],raw_tap:"rx.fft.bins",equalized_tap:"rx.equalized.iq"}) }
         function spectrum(tap) { return JSON.stringify({tap_name:["RX Input / Channel Output","RX Framed Samples","RX Useful Samples","RX FFT Bin Power"][tap],tap_id:["channel.output","rx.framed.samples","rx.cp.samples","rx.fft.bins"][tap],tap_description:"Selected receiver test point",reason:"No retained receiver results",has_result:false,result_token:"",can_generate:false,busy:false}) }
         function cancel() {}
@@ -146,7 +146,8 @@ Pane {
         property bool verified:false
         property bool busy:false
         property bool paused:false
-        function data() { return {receiver_status:configured ? "complete":"attention",verify_status:verified ? "complete":"attention",reason:"Configure accepted receiver and independent source comparison before running.",busy:busy,paused:paused,can_start:configured&&verified&&!busy,has_result:false,result_token:"0",options:{receiver_mode:"supplied_channel",duration_ms:3,max_iterations:50,max_runtime_ms:300000,noise_seed:41},verified:verified} }
+        property var lastResult: null
+        function data() { return {receiver_status:configured ? "complete":"attention",verify_status:verified ? "complete":"attention",reason:"Configure accepted receiver and independent source comparison before running.",busy:busy,paused:paused,can_start:configured&&verified&&!busy,has_result:!!lastResult,result:lastResult,result_token:lastResult ? "1":"0",options:{receiver_mode:"supplied_channel",duration_ms:3,max_iterations:50,max_runtime_ms:300000,noise_seed:41},verified:verified} }
         function configure(settings) { return JSON.stringify(data()) }
         function poll() { return JSON.stringify(data()) }
         function apply(options,settings) { configured=true;return "" }
@@ -593,6 +594,28 @@ Pane {
             mouseClick(findChild(workbench,"stopButton"));workbench.pollRun()
             compare(workbench.runState.busy,false)
             runBackend.configured=false;runBackend.verified=false;workbench.pollRun()
+        }
+        function test_verification_partial_results_running_and_empty_state() {
+            const dialog = workbench.verificationPopup
+            runBackend.lastResult = {status:"cancelled",bits_tested:0,bit_errors:0,ber:null,recovered_payloads:0,unrecovered:2}
+            receiverBackend.retainedCells = true
+            workbench.pollRun()
+            dialog.open();tryCompare(dialog,"opened",true)
+            compare(dialog.statusText,"Cancelled · Partial Result")
+            verify(dialog.hasResult)
+            verify(findChild(dialog,"verificationWordErrors") !== null)
+            runBackend.busy = true;workbench.pollRun()
+            compare(dialog.statusText,"Running")
+            compare(dialog.hasResult,false)
+            compare(dialog.statistics.available,false)
+            runBackend.paused = true;workbench.pollRun()
+            compare(dialog.statusText,"Paused")
+            runBackend.busy = false;runBackend.paused = false
+            runBackend.lastResult = null;workbench.pollRun()
+            compare(dialog.hasResult,false)
+            compare(dialog.statistics.available,false)
+            mouseClick(findChild(dialog,"popupCloseButton"));tryCompare(dialog,"visible",false)
+            receiverBackend.retainedCells = false
         }
         function test_receiver_retained_filters_response_soft_and_fec_navigation() {
             const receiver=workbench.receiverPopup

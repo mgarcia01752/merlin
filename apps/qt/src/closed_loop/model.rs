@@ -549,6 +549,17 @@ mod tests {
             crate::receiver_instruments::diagnostics::fec()["compared_bits"],
             result.job.summary.comparison.bits_tested
         );
+        let charts = crate::receiver_instruments::diagnostics::fec()["verification_charts"].clone();
+        assert_eq!(
+            charts["recovery"]["points"][0]["count"],
+            result.job.summary.recovered_payloads.to_string()
+        );
+        assert!(charts["word_errors"]["points"].as_array().unwrap().len() <= 64);
+        assert!(charts["word_errors"]["points"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|point| point["count"] == "0"));
         model.invalidate();
         assert!(latest().is_none());
         assert_eq!(

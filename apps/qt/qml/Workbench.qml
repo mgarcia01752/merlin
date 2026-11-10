@@ -79,26 +79,8 @@ Item {
         sectionDescription = description
         sectionDialog.open()
     }
-    Rectangle {
-        width: 72; height: parent.height
-        color: theme.panel
-        Image {
-            anchors.top: parent.top; anchors.topMargin: 22
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: 48; height: 48; fillMode: Image.PreserveAspectFit
-            source: theme.dark ? iconRoot + "merlin-icon-dark.png" : iconRoot + "merlin-icon-light.png"
-        }
-        Label {
-            anchors.top: parent.top; anchors.topMargin: 88
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "WB"; color: theme.accent; font.bold: true; font.pixelSize: 14
-        }
-        Rectangle {
-            anchors.right: parent.right; width: 1; height: parent.height; color: theme.line
-        }
-    }
     ColumnLayout {
-        anchors.fill: parent; anchors.leftMargin: 96; anchors.rightMargin: 24
+        anchors.fill: parent; anchors.leftMargin: 24; anchors.rightMargin: 24
         anchors.topMargin: 24; anchors.bottomMargin: 20; spacing: 16
         Item {
             id: workbenchHeader
@@ -300,7 +282,7 @@ Item {
     }
     ReceiverWorkbenchDialog { id: receiverDialog; theme: workbench.theme; backend: workbench.receiverBackend; runState: workbench.runState; onConfigurationRequested: receiverConfig.open() }
     ReceiverConfigurationDialog { id: receiverConfig; theme: workbench.theme; backend: workbench.runBackend; settingsBackend: workbench.settingsBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
-    VerificationDialog { id: verificationDialog; theme: workbench.theme; backend: workbench.runBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
+    VerificationDialog { id: verificationDialog; theme: workbench.theme; backend: workbench.runBackend; diagnosticsBackend: workbench.receiverBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
     WorkbenchFileFeedback { id: fileFeedback; theme:workbench.theme; message:workbench.fileMessage }
     SettingsDialog { id: settingsDialog; theme: workbench.theme }
     AboutDialog { id: aboutDialog; theme: workbench.theme; backend: workbench.aboutBackend; iconRoot: workbench.iconRoot }

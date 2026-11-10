@@ -218,6 +218,17 @@ separate fine underline below. Source evidence is recorded in the
 
 ### Workbench block readiness rules
 
+The left icon/WB gutter is removed (UI-SHELL-11). The diagram and header use
+equal side margins; application branding stays in the top header and window icon.
+
+PRBS-RX (UI-VERIFY-02) presents comparison acceptance, distinct run status and
+summary cards plus payload recovery and retained per-payload error charts.
+The existing Rust FEC query supplies at most 64 normalized word bars and explicit
+omitted/uncompared counts. No-comparison BER remains unavailable; running/paused
+states hide old final totals. These are aggregate recovery and sequence-index
+charts, not BER history. Opening the panel never starts a job or changes DSP.
+See the [design](development/features/verification-panel/design.md).
+
 Each diagram block displays its heading, with a small in-card `CM PNM File:`
 type footnote on DPD, RxMER and DS Channel Estimate. No generic status/subtitle
 text is added inside cards. The left stripe communicates

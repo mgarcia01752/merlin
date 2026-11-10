@@ -77,6 +77,7 @@ fn main() {
                 "qml/ReceiverChip.qml",
                 "qml/ReceiverConfigurationDialog.qml",
                 "qml/VerificationDialog.qml",
+                "qml/VerificationBarChart.qml",
                 "qml/WorkbenchFileFeedback.qml",
                 "qml/ReceiverQamDialog.qml",
                 "qml/ReceiverCellControls.qml",

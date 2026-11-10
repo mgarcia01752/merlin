@@ -6,6 +6,10 @@ of the measurement-input blocks to open its section dialog. Close the dialog
 or press Escape to return. Use **Settings → Global → Light/Dark mode** to change the palette and icon
 across all windows. The change applies immediately and lasts for this session.
 
+The left icon/WB gutter has been removed so the diagram uses the available width.
+Menus and the branded header remain at the top. PRBS-RX opens a structured
+[comparison summary with payload graphs](closed-loop-workbench.md#inspect-actual-results).
+
 The heading displays MERLIN and the toolkit title; the secondary subtitle has
 been removed to keep the header compact.
 

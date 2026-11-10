@@ -712,6 +712,8 @@ UI-SHELL-09 groups OCD/DPD inside Transmitter Configuration with a merged visual
 TX input and revised branded diagram; each block retains independent readiness.
 UI-SHELL-10 centers merge/split connectors, refines the header pulse/underline
 and identifies OSSI PNM types inside the three capture-input cards.
+UI-SHELL-11 removes the left gutter; UI-VERIFY-02 adds a structured recovered-data
+panel with bounded payload recovery and per-payload bit-error charts.
 UI-ZOOM-01 replaces zoom buttons in TX/RX SA and measurement viewers with shared
 mouse wheel/range navigation and Full Span; see the [design](features/mouse-zoom/design.md).
 UI-SHELL-02/03 provide a standard top File | Settings | About menu, with appearance

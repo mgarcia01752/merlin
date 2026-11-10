@@ -7,6 +7,11 @@ See the [task design](features/visual-workspace/design.md). The initial shell is
 
 ## UI-01: Workbench and section dialogs
 
+- [x] **UI-SHELL-11** Remove the left icon/WB gutter and use equal side margins.
+  [Design](features/verification-panel/design.md).
+- [x] **UI-VERIFY-02** Restyle PRBS-RX with comparison cards, payload recovery
+  and retained word-error charts. [Design](features/verification-panel/design.md).
+
 - [x] **UI-SHELL-10** Center diagram connections, refine the two-line branded
   header and show PNM type footnotes inside input blocks.
   [Design](features/visual-workspace/design.md#ui-shell-10-centered-connections-and-in-card-pnm-types).
