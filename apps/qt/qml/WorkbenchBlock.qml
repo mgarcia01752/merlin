@@ -14,16 +14,21 @@ Button {
     readonly property string statusLabel: blockStatus === "complete" ? "Complete" : blockStatus === "error" ? "Error" : "Needs attention"
     readonly property color statusColor: blockStatus === "complete" ? theme.statusComplete : blockStatus === "error" ? theme.statusError : theme.statusAttention
     property bool inputBlock: false
+    property string pnmFileType: ""
     Accessible.name: heading
-    Accessible.description: statusLabel + ": " + statusReason
+    Accessible.description: statusLabel + ": " + statusReason + (pnmFileType ? ". CM PNM File: " + pnmFileType : "")
     ToolTip.visible: hovered || visualFocus
     ToolTip.delay: 500
     ToolTip.text: statusLabel + ": " + statusReason
     hoverEnabled: true
     background: Rectangle {
-        radius: block.inputBlock ? 6 : 12
+        radius: 12
+        gradient: Gradient {
+            GradientStop { position: 0; color: block.hovered || block.visualFocus ? block.theme.accentSoft : block.theme.dark ? "#102d46" : "#f4fbff" }
+            GradientStop { position: 1; color: block.hovered || block.visualFocus ? block.theme.accentSoft : block.theme.panel }
+        }
         color: block.hovered || block.visualFocus ? block.theme.accentSoft : block.theme.panel
-        border.color: block.hovered || block.visualFocus ? block.theme.accent : block.theme.line
+        border.color: block.hovered || block.visualFocus ? block.theme.accent : block.theme.dark ? "#168cb5" : "#659db8"
         border.width: block.visualFocus ? 2 : 1
         Rectangle {
             objectName: "statusStripe"
@@ -32,13 +37,28 @@ Button {
             color: block.statusColor
         }
     }
-    contentItem: Text {
-        text: block.heading
-        color: block.theme.text
-        font.pixelSize: 15
-        font.weight: Font.DemiBold
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        wrapMode: Text.WordWrap
+    contentItem: Item {
+        Text {
+            anchors.left: parent.left; anchors.right: parent.right
+            anchors.top: parent.top; anchors.bottom: fileFootnote.top
+            anchors.bottomMargin: block.pnmFileType ? 4 : 0
+            text: block.heading
+            color: block.theme.text
+            font.pixelSize: 18; minimumPixelSize: 12; fontSizeMode: Text.Fit
+            font.weight: Font.DemiBold
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.WordWrap
+        }
+        Text {
+            id: fileFootnote; objectName: "pnmFileTypeFootnote"
+            anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom
+            height: block.pnmFileType ? implicitHeight : 0
+            visible: block.pnmFileType !== ""
+            text: block.pnmFileType ? "CM PNM File:\n" + block.pnmFileType : ""
+            color: block.theme.muted; font.pixelSize: 9
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WrapAnywhere
+        }
     }
 }

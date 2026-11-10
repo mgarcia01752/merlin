@@ -7,6 +7,13 @@ See the [task design](features/visual-workspace/design.md). The initial shell is
 
 ## UI-01: Workbench and section dialogs
 
+- [x] **UI-SHELL-10** Center diagram connections, refine the two-line branded
+  header and show PNM type footnotes inside input blocks.
+  [Design](features/visual-workspace/design.md#ui-shell-10-centered-connections-and-in-card-pnm-types).
+
+- [x] **UI-SHELL-09** Group OCD/DPD under Transmitter Configuration and match
+  the revised diagram/header styling. [Design](features/visual-workspace/design.md#ui-shell-09-group-transmitter-configuration).
+
 - [x] **UI-ZOOM-01** Replace all zoom buttons with shared mouse wheel/range
   navigation and retain Full Span. [Design](features/mouse-zoom/design.md).
 

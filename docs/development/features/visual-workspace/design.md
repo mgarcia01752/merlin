@@ -9,6 +9,69 @@ input and observation boundaries.
 
 ## UI-01: Shell, dialogs and lifecycle
 
+### UI-SHELL-10: Centered connections and in-card PNM types
+
+Center the OCD/DPD merge between their card centers and align it with the main
+signal path. Center the DS Channel Estimate split exactly between the channel
+and receiver centers. Keep equal processing-column pitch and balanced outer
+margins. Remove the external supplied-H caption. Add small in-card footnotes
+to DPD, RxMER and DS Channel Estimate using `CM PNM File: <OSSI type name>`;
+these identify accepted capture types, not new mandatory-input rules. OCD has
+no PNM-file label and the flat/unity channel response remains valid.
+
+Use CM-SP-CM-OSSIv3.1-I27-250219 §D.2.14, PDF page 192
+(`CmDsOfdmModulationProfile`), §D.2.8, PDF page 172 (`CmDsOfdmRxMer`) and
+§D.2.6, PDF page 166 (`CmDsOfdmChanEstimateCoef`). Clear versioned section text
+was reviewed read-only through the reference skill; no rendered-PDF verification
+is claimed. The type names are specification object headings identifying the
+corresponding PNM capture families, not invented binary signatures.
+
+Refine the header to match the user's close-up: pulse beside the title leading
+toward the existing logo, with a separate fine underline below. Native QML owns
+the geometry. Use existing QML checks and a retained-artifact Qt build; inspect
+dark/light and actual VM normal/minimum-size layouts and refresh the user guide.
+
+Complete: processing columns keep equal pitch; the source/measurement row and
+lower channel-estimate row are equally spaced from the main signal path. The
+OCD/DPD merge and channel/receiver split use exact center/midpoint coordinates.
+PNM footnotes are inside the cards, with responsive heading fit and accessible
+type descriptions. The default flat response and existing readiness are intact.
+All 25 QML checks, Qt formatting and the coding-style skill validator pass.
+Both skill discovery links resolve to the canonical file. Reviewed dark/light
+offscreen renderings and actual dark Ubuntu 22.04 VM layouts at 1210×736 and
+960×640. The latest Qt executable is built/running; the native log has no QML
+warnings. The user guide screenshot is refreshed. Local evidence remains under
+`docs/development/local/visual-workspace/centered-wb-*`; no non-Qt checks were
+needed and other target runtimes remain unverified.
+
+### UI-SHELL-09: Group transmitter configuration
+
+Follow the supplied revised WB graphic: enclose OCD and DPD in a labeled
+Transmitter Configuration panel at the left, merge their visual connections
+into Transmitter, align PRBS-TX/RxMER/PRBS-RX above the three processing blocks,
+and retain the split DS Channel Estimate input below channel/receiver. Keep
+each editor independently clickable and preserve its actual readiness stripe;
+the group is a visual container, not a new configuration or readiness state.
+
+`Workbench.qml` owns the scaled diagram and branded header. Reuse the existing
+dark/light MERLIN logo assets; add a theme-aware accent divider and rounded
+gradient cards to reflect the reference without embedding a static screenshot.
+Keep native menus, lower-right controls, Rust settings and jobs unchanged.
+Validate existing QML interactions and dark/light/minimum-size rendering, build
+Qt using retained artifacts and refresh the actual dark VM user-guide image.
+
+Implemented: the two configuration cards retain their original dialog handlers
+and readiness bindings. Existing dark/light logos are embedded through the Qt
+resource file; no logo assets were changed. All 25 QML checks passed, including
+all nine block dialogs, readiness, dark/light rendering and minimum-size editor
+navigation. Qt formatting and the retained-artifact native build passed.
+Reviewed the actual Ubuntu 22.04 VM at 1210×736 and 960×640 using the existing
+saved example WB: the group, merged connector, labels and run controls fit.
+The [workbench guide](../../../user/workbench.md) contains the refreshed actual
+dark screenshot. The native log has no QML warnings. No non-Qt workspace checks
+were needed; other target runtime validation remains pending. Local logs remain
+under `docs/development/local/visual-workspace/grouped-wb-*`.
+
 ### UI-SHELL-08: Simplify workbench heading
 
 Remove the “Single-channel downstream OFDM” subtitle from `Workbench.qml`.

@@ -708,6 +708,10 @@ buttons and cancellation semantics; see the [design](features/popup-close-contro
 UI-SHELL-07 relocates RxMER above Channel Simulator, splits the DS Channel
 Estimate input into channel/receiver branches and removes the top comparison
 connector; verification behavior remains unchanged.
+UI-SHELL-09 groups OCD/DPD inside Transmitter Configuration with a merged visual
+TX input and revised branded diagram; each block retains independent readiness.
+UI-SHELL-10 centers merge/split connectors, refines the header pulse/underline
+and identifies OSSI PNM types inside the three capture-input cards.
 UI-ZOOM-01 replaces zoom buttons in TX/RX SA and measurement viewers with shared
 mouse wheel/range navigation and Full Span; see the [design](features/mouse-zoom/design.md).
 UI-SHELL-02/03 provide a standard top File | Settings | About menu, with appearance

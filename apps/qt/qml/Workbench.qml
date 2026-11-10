@@ -100,14 +100,54 @@ Item {
     ColumnLayout {
         anchors.fill: parent; anchors.leftMargin: 96; anchors.rightMargin: 24
         anchors.topMargin: 24; anchors.bottomMargin: 20; spacing: 16
-        RowLayout {
-            Layout.fillWidth: true
-            ColumnLayout {
-                spacing: 5
-                Label { text: "MERLIN"; color: theme.accent; font.pixelSize: 13; font.letterSpacing: 3 }
-                Label { text: "MERLIN — DOCSIS OFDM Simulation Toolkit"; color: theme.text; font.pixelSize: 23; font.weight: Font.DemiBold }
+        Item {
+            id: workbenchHeader
+            Layout.fillWidth: true; Layout.preferredHeight: 88
+            Label { x: 0; y: 1; text: "MERLIN"; color: theme.accent; font.pixelSize: 15; font.letterSpacing: 4 }
+            Text {
+                id: toolkitTitle
+                x: 0; y: 29
+                width: Math.min(implicitWidth, workbenchHeader.width * 0.72)
+                height: 34
+                text: "MERLIN — DOCSIS OFDM Simulation Toolkit"
+                color: theme.text; font.pixelSize: 23; font.weight: Font.DemiBold
+                fontSizeMode: Text.HorizontalFit; minimumPixelSize: 18
+                verticalAlignment: Text.AlignVCenter
             }
-            Item { Layout.fillWidth: true }
+            Image {
+                id: headerLogo
+                anchors.right: parent.right; anchors.top: parent.top
+                width: 145; height: 78
+                fillMode: Image.PreserveAspectFit
+                source: workbench.iconRoot + (theme.dark ? "merlin-logo-dark.png" : "merlin-logo-light.png")
+            }
+            Canvas {
+                id: headerPulse
+                x: toolkitTitle.x + toolkitTitle.width + 10; y: toolkitTitle.y + 4
+                width: Math.max(0, headerLogo.x - x - 12); height: 34
+                visible: width >= 45
+                onWidthChanged: requestPaint()
+                Connections { target: theme; function onDarkChanged() { headerPulse.requestPaint() } }
+                onPaint: {
+                    const ctx = getContext("2d")
+                    ctx.reset(); ctx.strokeStyle = theme.accent; ctx.lineWidth = 1.7
+                    const pulse = Math.max(24, width - 65)
+                    ctx.beginPath(); ctx.moveTo(0, 17); ctx.lineTo(pulse - 22, 17)
+                    ctx.lineTo(pulse - 16, 10); ctx.lineTo(pulse - 10, 25)
+                    ctx.lineTo(pulse - 2, 2); ctx.lineTo(pulse + 6, 32)
+                    ctx.lineTo(pulse + 14, 12); ctx.lineTo(pulse + 20, 17)
+                    ctx.lineTo(width, 17); ctx.stroke()
+                }
+            }
+            Rectangle {
+                x: 0; y: 73; width: headerLogo.x - 24; height: 1
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0; color: "transparent" }
+                    GradientStop { position: 0.6; color: theme.accent }
+                    GradientStop { position: 1; color: "transparent" }
+                }
+            }
         }
         Rectangle {
             Layout.fillWidth: true; Layout.fillHeight: true
@@ -132,79 +172,95 @@ Item {
             Item {
                 id: diagram
                 anchors.centerIn: parent
-                width: 1040; height: 470
+                width: 1140; height: 580
                 scale: Math.min((parent.width - 24) / width, (parent.height - 20) / height)
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 150; fromY: 235; toX: 215; toY: 235 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 385; fromY: 235; toX: 520; toY: 235 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 710; fromY: 235; toX: 845; toY: 235 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 300; fromY: 125; toX: 300; toY: 190 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 930; fromY: 190; toX: 930; toY: 125 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 300; fromY: 360; toX: 300; toY: 280 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 615; fromY: 125; toX: 615; toY: 190 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 777.5; fromY: 360; toX: 777.5; toY: 325; arrowHead: false }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 680; fromY: 325; toX: 880; toY: 325; arrowHead: false }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 680; fromY: 325; toX: 680; toY: 280 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 880; fromY: 325; toX: 880; toY: 280 }
-                Label { x: 652.5; y: 455; width: 250; horizontalAlignment: Text.AlignHCenter; text: "Supplied H · reference correction"; color: theme.muted; font.pixelSize: 10 }
+                Rectangle {
+                    objectName: "transmitterConfigurationGroup"
+                    x: 10; y: 130; width: 270; height: 320; radius: 20
+                    color: theme.dark ? "#0b2332" : theme.accentSoft
+                    border.color: theme.accent; border.width: 1.5
+                    Label {
+                        x: 10; y: 16; width: parent.width - 20
+                        text: "Transmitter Configuration"
+                        horizontalAlignment: Text.AlignHCenter
+                        color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold
+                    }
+                }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 242.5; fromY: 230; toX: 260; toY: 230; arrowHead: false }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 242.5; fromY: 350; toX: 260; toY: 350; arrowHead: false }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 260; fromY: 230; toX: 260; toY: 350; arrowHead: false }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 260; fromY: 290; toX: 325; toY: 290 }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 520; fromY: 290; toX: 630; toY: 290 }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 825; fromY: 290; toX: 935; toY: 290 }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 422.5; fromY: 155; toX: 422.5; toY: 245 }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 1032.5; fromY: 245; toX: 1032.5; toY: 155 }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 727.5; fromY: 155; toX: 727.5; toY: 245 }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 880; fromY: 425; toX: 880; toY: 380; arrowHead: false }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 727.5; fromY: 380; toX: 1032.5; toY: 380; arrowHead: false }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 727.5; fromY: 380; toX: 727.5; toY: 335 }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 1032.5; fromY: 380; toX: 1032.5; toY: 335 }
                 WorkbenchBlock {
-                    id: ofdmBlock; objectName: "ofdmBlock"; x: 10; y: 190; width: 140; height: 90
-                    theme: workbench.theme; heading: "OFDM Channel\nDescriptor (OCD)"
+                    id: ofdmBlock; objectName: "ofdmBlock"; x: 47.5; y: 185; width: 195; height: 90
+                    theme: workbench.theme; heading: "OFDM Channel\nDescriptor\n(OCD)"
                     blockStatus: workbench.profileState.ofdm_status
                     statusReason: workbench.profileState.reason
                     onClicked: ofdmDialog.open()
                 }
                 WorkbenchBlock {
-                    id: sourceBlock; objectName: "sourceBlock"; x: 215; y: 35; width: 170; height: 90
+                    id: sourceBlock; objectName: "sourceBlock"; x: 325; y: 65; width: 195; height: 90
                     theme: workbench.theme; heading: "PRBS-TX"
                     blockStatus: workbench.sourceState.status
                     statusReason: workbench.sourceState.reason
                     onClicked: sourceDialog.open()
                 }
                 WorkbenchBlock {
-                    id: transmitterBlock; objectName: "transmitterBlock"; x: 215; y: 190; width: 170; height: 90
+                    id: transmitterBlock; objectName: "transmitterBlock"; x: 325; y: 245; width: 195; height: 90
                     theme: workbench.theme; heading: "Transmitter"
                     blockStatus: workbench.transmitterState.status
                     statusReason: workbench.transmitterState.reason
                     onClicked: transmitterDialog.open()
                 }
                 WorkbenchBlock {
-                    id: channelBlock; objectName: "channelBlock"; x: 520; y: 190; width: 190; height: 90
-                    theme: workbench.theme; heading: "Channel Simulator"
+                    id: channelBlock; objectName: "channelBlock"; x: 630; y: 245; width: 195; height: 90
+                    theme: workbench.theme; heading: "Channel\nSimulator"
                     blockStatus: workbench.measurementState.channel.status
                     statusReason: workbench.measurementState.channel.reason
                     onClicked: channelDialog.open()
                 }
                 WorkbenchBlock {
-                    id: receiverBlock; objectName: "receiverBlock"; x: 845; y: 190; width: 170; height: 90
+                    id: receiverBlock; objectName: "receiverBlock"; x: 935; y: 245; width: 195; height: 90
                     theme: workbench.theme; heading: "Receiver"
                     blockStatus: workbench.runState.receiver_status
                     statusReason: workbench.runState.reason
                     onClicked: receiverDialog.open()
                 }
                 WorkbenchBlock {
-                    id: verificationBlock; objectName: "verificationBlock"; x: 845; y: 35; width: 170; height: 90
+                    id: verificationBlock; objectName: "verificationBlock"; x: 935; y: 65; width: 195; height: 90
                     theme: workbench.theme; heading: "PRBS-RX"
                     blockStatus: workbench.runState.verify_status
                     statusReason: workbench.runState.verified ? "Independent recovered-source comparison enabled." : "Enable independent source comparison in PRBS-RX."
                     onClicked: verificationDialog.open()
                 }
                 WorkbenchBlock {
-                    id: profileBlock; objectName: "profileBlock"; x: 215; y: 360; width: 170; height: 90
-                    theme: workbench.theme; heading: "Downstream Profile\nDescriptor (DPD)"
+                    id: profileBlock; objectName: "profileBlock"; x: 47.5; y: 305; width: 195; height: 90
+                    theme: workbench.theme; heading: "Downstream\nProfile\nDescriptor (DPD)"
+                    pnmFileType: "CmDsOfdmModulationProfile"
                     blockStatus: workbench.profileState.profile_status
                     statusReason: workbench.profileState.reason; inputBlock: true
                     onClicked: profileDialog.open()
                 }
                 WorkbenchBlock {
-                    id: channelEstimateBlock; objectName: "channelEstimateBlock"; x: 692.5; y: 360; width: 170; height: 90
+                    id: channelEstimateBlock; objectName: "channelEstimateBlock"; x: 770; y: 425; width: 220; height: 90
                     theme: workbench.theme; heading: "DS Channel Est."
+                    pnmFileType: "CmDsOfdmChanEstimateCoef"
                     blockStatus: workbench.measurementState.response.status
                     statusReason: workbench.measurementState.response.reason; inputBlock: true
                     onClicked: responseDialog.open()
                 }
                 WorkbenchBlock {
-                    id: rxmerBlock; objectName: "rxmerBlock"; x: 530; y: 35; width: 170; height: 90
+                    id: rxmerBlock; objectName: "rxmerBlock"; x: 630; y: 65; width: 195; height: 90
                     theme: workbench.theme; heading: "RxMER"
+                    pnmFileType: "CmDsOfdmRxMer"
                     blockStatus: workbench.measurementState.rxmer.status
                     statusReason: workbench.measurementState.rxmer.reason; inputBlock: true
                     onClicked: rxmerDialog.open()

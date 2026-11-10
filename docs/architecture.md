@@ -176,9 +176,13 @@ its measurement inputs, and finally Receiver / PRBS-RX and results.
 
 ```mermaid
 flowchart LR
-    SETTINGS["OFDM Channel Descriptor (OCD)"] --> TX["Transmitter"]
+    subgraph TXCONFIG["Transmitter Configuration"]
+        SETTINGS["OFDM Channel Descriptor (OCD)"]
+        PROFILE["Downstream Profile Descriptor (DPD)"]
+    end
+    SETTINGS --> TX["Transmitter"]
     SOURCE["PRBS-TX / file source"] --> TX
-    PROFILE["Modulation Profile PNM input"] --> TX
+    PROFILE --> TX
     TX --> CHANNEL["Channel Simulator"] --> RX["Receiver"]
     CE["DS Channel Estimation PNM input(s)"] --> CHANNEL
     CE --> RX
@@ -196,9 +200,27 @@ inputs use supported decoded PNM JSON. The DPD input additionally accepts binary
 modulation-profile PNM through a pinned Rust decoder dependency.
 The detailed diagram below retains analyzer and receiver-reference ownership.
 
+OCD and DPD are stacked inside the left-hand Transmitter Configuration panel,
+with a merged visual connector into Transmitter. This is a presentation group;
+each block retains its own dialog, readiness and validation. The top-row source/
+measurement/verification blocks align above their processing stages. Rounded
+cards and a branded header with the existing theme-specific logo follow the
+approved reference graphic (UI-SHELL-09); light-mode support remains available.
+
+UI-SHELL-10 centers the OCD/DPD merge on their midpoint and centers the supplied
+channel-estimate split between Channel Simulator and Receiver. The external
+supplied-H caption is removed. In-card PNM labels use the CM-OSSI I27 object names
+`CmDsOfdmModulationProfile`, `CmDsOfdmRxMer` and `CmDsOfdmChanEstimateCoef`;
+these document capture families and do not change optional flat/unity behavior.
+The header pulse continues beside the toolkit title toward the logo, with a
+separate fine underline below. Source evidence is recorded in the
+[design](development/features/visual-workspace/design.md#ui-shell-10-centered-connections-and-in-card-pnm-types).
+
 ### Workbench block readiness rules
 
-Each diagram block displays its heading only. The left stripe communicates
+Each diagram block displays its heading, with a small in-card `CM PNM File:`
+type footnote on DPD, RxMER and DS Channel Estimate. No generic status/subtitle
+text is added inside cards. The left stripe communicates
 readiness; the tooltip and accessible description provide a status and reason.
 These are MERLIN workflow rules, not DOCSIS specification requirements.
 

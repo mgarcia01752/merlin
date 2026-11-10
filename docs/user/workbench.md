@@ -9,6 +9,29 @@ across all windows. The change applies immediately and lasts for this session.
 The heading displays MERLIN and the toolkit title; the secondary subtitle has
 been removed to keep the header compact.
 
+The revised diagram groups **OCD** and **DPD** inside **Transmitter Configuration**
+at the left. Click either card to open its own editor. Their shared connector
+feeds Transmitter; their status stripes still reflect independent validation.
+PRBS-TX, RxMER and PRBS-RX align above Transmitter, Channel Simulator and Receiver.
+The MERLIN logo and accent divider complete the header. All cards retain the
+same keyboard, hover and light/dark behavior.
+
+OCD/DPD merge at the center of their two cards; DS Channel Estimate branches
+equally into the centers of Channel Simulator and Receiver. The old supplied-H
+caption is removed. Small footnotes **inside** DPD, RxMER and DS Channel Estimate
+identify their capture families:
+
+| Block | CM PNM File type (CM-OSSI I27) |
+| --- | --- |
+| DPD | `CmDsOfdmModulationProfile` (§D.2.14) |
+| RxMER | `CmDsOfdmRxMer` (§D.2.8) |
+| DS Channel Est. | `CmDsOfdmChanEstimateCoef` (§D.2.6) |
+
+These labels identify accepted file types, not new required-input rules. DS
+Channel Estimate still permits the configured flat/unity response without a
+capture. The header now has a pulse beside the title leading toward the logo,
+plus a separate fine underline below.
+
 Every popup has a circular **X** in its upper-right title bar, as well as its
 existing **Close** or **Cancel** button. X dismisses only the current popup;
 editor drafts are not applied. Closing a nested analyzer returns to its parent

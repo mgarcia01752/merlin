@@ -361,7 +361,10 @@ preserve interior artwork and use those assets consistently in desktop/side/Abou
 ## Workbench readiness rules
 
 Follow the canonical [block readiness rules](../../docs/architecture.md#workbench-block-readiness-rules)
-when changing workbench blocks. Keep headings only inside blocks. Use the shared
+when changing workbench blocks. Keep headings inside blocks, allowing a small
+`CM PNM File: <OSSI type name>` footnote beneath the heading on PNM input cards.
+Verify those names against the versioned OSSI reference and record provenance
+in the task design. Do not reintroduce generic status subtitles. Use the shared
 status stripe and palette, with tooltip/accessibility reasons. New readiness rules
 belong in the architecture and owning task design/checklist, not scattered QML
 conditions. Keep this skill as workflow guidance rather than a second rule table.
