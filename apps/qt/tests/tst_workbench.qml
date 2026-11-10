@@ -121,6 +121,12 @@ Pane {
         function version() { return "0.1.0" }
         function license_document(key) { return JSON.stringify({title:key === "gpl" ? "GNU General Public License v3" : "Apache License 2.0",text:key === "gpl" ? "GNU GENERAL PUBLIC LICENSE" : "Apache License"}) }
     }
+    QtObject {
+        id: receiverBackend
+        function qam(signal, view, part) { return JSON.stringify({available:false,reason:"No retained receiver results",detail:signal === 1 ? "Matched received NCP I/Q collection is pending" : "Receiver collector not connected",points:[],profiles:[],raw_tap:"rx.fft.bins",equalized_tap:"rx.equalized.iq"}) }
+        function spectrum(tap) { return JSON.stringify({tap_name:["RX Input / Channel Output","RX Framed Samples","RX Useful Samples","RX FFT Bin Power"][tap],tap_id:["channel.output","rx.framed.samples","rx.cp.samples","rx.fft.bins"][tap],tap_description:"Selected receiver test point",reason:"No retained receiver results",has_result:false,result_token:"",can_generate:false,busy:false}) }
+        function cancel() {}
+    }
     WorkbenchMenuBar {
         id: appMenu
         anchors.top: parent.top; width: parent.width; theme: theme
@@ -130,7 +136,7 @@ Pane {
     Workbench {
         id: workbench
         anchors { top: appMenu.bottom; bottom: parent.bottom; left: parent.left; right: parent.right }
-        theme: theme; settingsBackend: backend; profileBackend: profileBackend; sourceBackend: sourceBackend; transmitterBackend: transmitterBackend; measurementBackend: measurementBackend; aboutBackend: aboutBackend
+        theme: theme; settingsBackend: backend; profileBackend: profileBackend; sourceBackend: sourceBackend; transmitterBackend: transmitterBackend; measurementBackend: measurementBackend; aboutBackend: aboutBackend; receiverBackend: receiverBackend
         iconRoot: "../../../docs/images/logo/"
     }
     Component {
@@ -150,7 +156,7 @@ Pane {
                 {tag: "source", block: "sourceBlock", title: "Transmit Source (PRBS-TX)"},
                 {tag: "tx", block: "transmitterBlock", title: "Spectrum Analyzer · TX Output"},
                 {tag: "channel", block: "channelBlock", title: "Channel Simulator · Configuration"},
-                {tag: "rx", block: "receiverBlock", title: "Receiver"},
+                {tag: "rx", block: "receiverBlock", title: "Receiver Workbench"},
                 {tag: "verify", block: "verificationBlock", title: "PRBS-RX"},
                 {tag: "profile", block: "profileBlock", title: "Downstream Profile Descriptor (DPD)"},
                 {tag: "ce", block: "channelEstimateBlock", title: "DS Channel Estimate · Response Configuration"},
@@ -161,11 +167,11 @@ Pane {
             const block = findChild(workbench, data.block)
             verify(block !== null)
             mouseClick(block)
-            const dialog = data.block === "ofdmBlock" ? workbench.ofdmPopup : data.block === "profileBlock" ? workbench.profilePopup : data.block === "sourceBlock" ? workbench.sourcePopup : data.block === "transmitterBlock" ? workbench.transmitterPopup : data.block === "channelBlock" ? workbench.channelPopup : data.block === "channelEstimateBlock" ? workbench.responsePopup : data.block === "rxmerBlock" ? workbench.rxmerPopup : workbench.sectionPopup
+            const dialog = data.block === "ofdmBlock" ? workbench.ofdmPopup : data.block === "profileBlock" ? workbench.profilePopup : data.block === "sourceBlock" ? workbench.sourcePopup : data.block === "transmitterBlock" ? workbench.transmitterPopup : data.block === "channelBlock" ? workbench.channelPopup : data.block === "channelEstimateBlock" ? workbench.responsePopup : data.block === "rxmerBlock" ? workbench.rxmerPopup : data.block === "receiverBlock" ? workbench.receiverPopup : workbench.sectionPopup
             verify(dialog !== null)
             tryCompare(dialog, "opened", true)
             compare(dialog.title, data.title)
-            if (data.block !== "ofdmBlock" && data.block !== "profileBlock" && data.block !== "sourceBlock" && data.block !== "transmitterBlock" && data.block !== "channelBlock" && data.block !== "channelEstimateBlock" && data.block !== "rxmerBlock") { verify(workbench.sectionDescription.length > 30) }
+            if (data.block !== "ofdmBlock" && data.block !== "profileBlock" && data.block !== "sourceBlock" && data.block !== "transmitterBlock" && data.block !== "channelBlock" && data.block !== "channelEstimateBlock" && data.block !== "rxmerBlock" && data.block !== "receiverBlock") { verify(workbench.sectionDescription.length > 30) }
             keyClick(Qt.Key_Escape)
             tryCompare(dialog, "visible", false)
         }
@@ -246,7 +252,7 @@ Pane {
         function test_start_requires_every_block_complete() {
             const isolated = createTemporaryObject(gatingWorkbenchComponent, window, {
                 theme: theme, settingsBackend: backend, profileBackend: profileBackend,
-                sourceBackend: sourceBackend, transmitterBackend: transmitterBackend, measurementBackend: measurementBackend, aboutBackend: aboutBackend,
+                sourceBackend: sourceBackend, transmitterBackend: transmitterBackend, measurementBackend: measurementBackend, aboutBackend: aboutBackend, receiverBackend: receiverBackend,
                 iconRoot: "../../../docs/images/logo/"
             })
             verify(isolated !== null)
@@ -452,6 +458,49 @@ Pane {
             profileBackend.acceptedId = -1
             workbench.refreshProfileState()
             compare(findChild(workbench, "channelBlock").blockStatus, "attention")
+        }
+        function test_receiver_signal_views_and_independent_spectrum_taps() {
+            const receiver = workbench.receiverPopup
+            mouseClick(findChild(workbench, "receiverBlock"))
+            tryCompare(receiver, "opened", true)
+            mouseClick(findChild(receiver, "receiverNcpQam"))
+            const qam = receiver.qamPopup
+            tryCompare(qam, "opened", true)
+            compare(qam.signalIndex, 1)
+            verify(qam.observation.detail.indexOf("NCP") >= 0)
+            const signal = findChild(qam, "receiverQamSignal")
+            mouseClick(signal); keyClick(Qt.Key_End); keyClick(Qt.Key_Return)
+            compare(qam.signalIndex, 2)
+            verify(findChild(qam, "receiverPlcPart").visible)
+            const view = findChild(qam, "receiverQamView")
+            mouseClick(view); keyClick(Qt.Key_End); keyClick(Qt.Key_Return)
+            compare(qam.viewIndex, 2)
+            compare(qam.observation.points.length, 0)
+            keyClick(Qt.Key_Escape); tryCompare(qam, "visible", false)
+            compare(receiver.opened, true)
+            waitForRendering(receiver.contentItem)
+            wait(100)
+            mouseClick(findChild(receiver, "receiverInputTap"))
+            const sa = receiver.spectrumPopup
+            tryCompare(sa, "opened", true)
+            compare(sa.state.tap_id, "channel.output")
+            compare(findChild(sa, "saGenerate").enabled, false)
+            sa.viewport = ({points:[{x:0,y:0,readout:"Previous result"}],x_ticks:[],y_ticks:[]})
+            const tap = findChild(sa, "saTestPoint")
+            tap.forceActiveFocus(); keyClick(Qt.Key_End); keyClick(Qt.Key_Return)
+            compare(sa.state.tap_id, "rx.fft.bins")
+            compare(sa.viewport.points.length, 0)
+            compare(qam.signalIndex, 2)
+            compare(findChild(sa, "saTimingPanel").visible, false)
+            keyClick(Qt.Key_Escape); tryCompare(sa, "visible", false)
+            mouseClick(findChild(receiver, "receiverDataQam"))
+            tryCompare(qam, "opened", true)
+            compare(qam.signalIndex, 0)
+            compare(receiver.selectedTap, 3)
+            compare(findChild(qam, "receiverProfile").enabled, false)
+            keyClick(Qt.Key_Escape); tryCompare(qam, "visible", false)
+            keyClick(Qt.Key_Escape); tryCompare(receiver, "visible", false)
+            compare(findChild(workbench, "receiverBlock").blockStatus, "attention")
         }
         function test_render() {
             theme.dark = true

@@ -102,8 +102,11 @@ ColumnLayout {
         }
         Label {
             anchors.centerIn: parent
+            width: parent.width - 80
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
             visible: chart.viewport.points.length === 0
-            text: "Generate or select samples to display the spectrum"
+            text: chart.viewport.error || "Generate or select samples to display the spectrum"
             color: theme.muted
         }
     }

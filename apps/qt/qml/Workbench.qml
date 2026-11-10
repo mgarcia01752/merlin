@@ -14,6 +14,8 @@ Item {
     required property var sourceBackend
     required property var aboutBackend
     required property var measurementBackend
+    required property var receiverBackend
+    property alias receiverPopup: receiverDialog
     property alias rxmerPopup: rxmerDialog
     property alias responsePopup: responseDialog
     property alias channelPopup: channelDialog
@@ -150,7 +152,7 @@ Item {
                     theme: workbench.theme; heading: "Receiver"
                     blockStatus: "attention"
                     statusReason: "Receiver integration and a validated run configuration are pending."
-                    onClicked: workbench.openSection(heading, "Inspect receiver acquisition, FFT, channel correction and decoding.\n\nSupplied-H reference correction and pilot-estimated H-hat remain separate modes. Stage observations will come from bounded Rust test points.")
+                    onClicked: receiverDialog.open()
                 }
                 WorkbenchBlock {
                     id: verificationBlock; objectName: "verificationBlock"; x: 845; y: 35; width: 170; height: 90
@@ -212,6 +214,7 @@ Item {
         onRxmerRequested: rxmerDialog.open()
         onResponseRequested: responseDialog.open()
     }
+    ReceiverWorkbenchDialog { id: receiverDialog; theme: workbench.theme; backend: workbench.receiverBackend }
     SettingsDialog { id: settingsDialog; theme: workbench.theme }
     AboutDialog { id: aboutDialog; theme: workbench.theme; backend: workbench.aboutBackend; iconRoot: workbench.iconRoot }
     OfdmSettingsDialog {

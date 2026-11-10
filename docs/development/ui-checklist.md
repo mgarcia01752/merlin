@@ -110,6 +110,29 @@ Integrate input blocks as their owning sections are developed left to right.
 - [ ] Preserve units, reference planes, supplied H versus estimated H-hat,
   missing values and shared retention limits across open panels.
 
+## Receiver workbench navigation and instruments
+
+- [x] **UI-RX-WB-01** Replace the Receiver preview with its own workbench: processing
+  stages, clickable test-point markers and instrument navigation; soft demapping
+  and optional hard slicing remain separate branches.
+- [x] **UI-RX-WB-02** Align equal-width stage/instrument chips and annotation rows;
+  use rounded edges, subtle chip pins and visible keyboard/hover feedback.
+- [x] **UI-QAM-01 selectors** Add Data Profile / NCP / PLC and Raw / Equalized /
+  Paired controls, separate PLC data/preamble and unavailable received-profile state.
+- [ ] **UI-QAM-01 data** Connect supported received-role collectors and actual
+  profile/carrier/symbol controls; preserve explicit unsupported cases.
+- [ ] **UI-QAM-02** Add bounded matched received NCP I/Q classification/collection
+  before enabling its constellation view; LLR/control events are not I/Q.
+- [x] **UI-SA-05 selector** Add independent SA Test Point routing with empty-state
+  admission and a distinct FFT-bin-power label; disable receiver generation.
+- [ ] **UI-SA-05 data** Connect retained RX time samples and FFT-bin power with
+  correct units, boundary handling and normalization.
+- [ ] Verify selection does not rerun science, hides stale results, preserves
+  matched run/carrier/time identities and shares bounded retention across panels.
+
+Design: [Receiver Workbench](features/receiver-workbench/design.md).
+Navigation is implemented; receiver chart wiring remains pending.
+
 ## UI-04: Validation and delivery evidence
 
 - [ ] Verify responsive worker execution, progress and state-dependent controls.

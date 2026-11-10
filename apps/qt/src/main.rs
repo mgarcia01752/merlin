@@ -10,6 +10,7 @@ mod measurement_input;
 mod native_file_picker;
 mod ofdm_settings;
 mod profile_input;
+mod receiver_instruments;
 mod source_input;
 mod transmitter_analyzer;
 mod workbench_session;

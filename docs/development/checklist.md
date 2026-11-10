@@ -710,6 +710,12 @@ UI-RXMER-01/02 and UI-RXMER-03 editor previews, with UI-CHANNEL-01 joint readine
 are implemented. UI-RXMER-03 full-run dispatch and UI-QAM-01 receiver-analyzer
 connections remain pending;
 see the [review plan](features/rxmer-workbench/design.md).
+Receiver navigation now has a [dedicated design](features/receiver-workbench/design.md):
+UI-RX-WB-01 navigation, NCP/PLC/data-profile QAM selectors (UI-QAM-01) and an
+independent RX SA test-point selector (UI-SA-05) are implemented. UI-RX-WB-02
+adds aligned, equal-width rounded stage/instrument chips. Actual receiver
+charts, NCP matched-I/Q collection (UI-QAM-02) and full-loop result integration
+remain pending.
 UI-SA-03 removes lower SA bookkeeping text. UI-SA-04 fills that space with
 Rust-derived symbol/window timing and nominal cable echo budgets. Actual IQ trace
 inspection remains pending.

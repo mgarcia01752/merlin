@@ -151,6 +151,9 @@ burst correlation. Channel/RX SA and QAM UI wiring remain pending; existing Rust
 paired constellation collection is implemented and documented in
 [the receiver guide](../../../user/impairments/paired-constellation.md).
 
+Receiver navigation, NCP/PLC/profile selection and SA test-point routing are
+expanded in the [Receiver Workbench design](../receiver-workbench/design.md).
+
 ## Implementation order and verification
 
 1. Review this proposal, then implement the title/File-label corrections.

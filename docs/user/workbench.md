@@ -20,6 +20,8 @@ The instruction banner and standalone theme button have been removed.
 
 The workbench includes an editable **OFDM Channel Descriptor (OCD)** dialog. PRBS-TX supports source configuration. Channel Estimate and RxMER use the shared
 [measurement viewer](channel-measurements.md); Transmitter opens the shared [Spectrum Analyzer](spectrum-analyzer.md).
+The [Receiver Workbench](receiver-workbench.md) adds NCP/PLC/data-profile
+QAM selection and an independent SA test-point selector.
 DPD and measurement blocks support capture input. Full-loop simulation
 jobs and receiver analyzers are not connected yet.
 The lower-right Start, Stop and Pause controls are disabled. There are no UI

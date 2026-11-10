@@ -69,3 +69,5 @@ from a fresh clone and are deliberately not Markdown link targets.
 Build tooling proposal: [BUILD-01–04 content-based cache](build-cache/design.md).
 
 Channel Estimate/RxMER workbench: [design](rxmer-workbench/design.md) · [validation](rxmer-workbench/validation.md) · [user guide](../../user/channel-measurements.md).
+
+Receiver Workbench navigation: [design](receiver-workbench/design.md) · [validation](receiver-workbench/validation.md) · [user interaction](../../user/receiver-workbench.md).

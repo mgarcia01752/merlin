@@ -46,6 +46,7 @@ fn main() {
                 "src/profile_input.rs",
                 "src/source_input.rs",
                 "src/measurement_input.rs",
+                "src/receiver_instruments.rs",
                 "src/transmitter_analyzer.rs",
             ],
             qml_files: &[
@@ -68,6 +69,10 @@ fn main() {
                 "qml/RxmerInputDialog.qml",
                 "qml/ChannelResponseDialog.qml",
                 "qml/ChannelConfigurationDialog.qml",
+                "qml/ReceiverWorkbenchDialog.qml",
+                "qml/ReceiverChip.qml",
+                "qml/ReceiverQamDialog.qml",
+                "qml/ReceiverDiagnosticDialog.qml",
                 "qml/SectionPreviewDialog.qml",
                 "qml/WorkbenchBlock.qml",
                 "qml/Connection.qml",

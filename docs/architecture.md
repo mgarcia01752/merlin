@@ -760,6 +760,37 @@ silently pooled. Symbol-window selection will show RxMER playback changes over
 time. These UI connections are pending. See
 [UI-QAM-01](development/features/rxmer-workbench/design.md#ui-qam-01-receiver-constellation-and-shared-sa-reference-planes).
 
+### Receiver Workbench
+
+Clicking Receiver opens a dedicated workbench with processing stages,
+selectable test points and shared diagnostic instruments. The QAM analyzer has
+independent **Signal: Data Profile / NCP / PLC** and **View: Raw / Equalized /
+Paired** selectors. Received profile/carrier/symbol selection remains unavailable
+until retained receiver results are connected.
+PLC data and preamble remain separate. Optional hard slicing is a diagnostic
+branch; soft demapping consumes received I/Q before hard decisions. Control and
+payload decode paths are distinct; PRBS comparison belongs to payload recovery.
+
+The shared SA has an independent **Test Point** selector, initially RX Input
+(`channel.output`), then eligible framed/useful time-sample taps. An FFT-bin power
+view is explicitly frequency-domain with appropriate normalization, not another
+FFT of bins or an automatically calibrated PSD. QAM signal selection does not
+silently filter the SA's full-channel sample tap. Channel-response H/echo remains
+a separate scientific view. Instrument selection is independent of scientific state. Actual charts will query
+immutable bounded Rust results; retained-result integration remains pending.
+
+The navigation and selectors are implemented in separate receiver/QAM dialogs.
+Stage/instrument chips use shared rounded styling, equal widths within each row
+and aligned test-point/annotation slots; pin accents are decorative, not status.
+The Rust presentation adapter maps taps to registered IDs and reports unavailable
+observations. Receiver SA generation stays disabled; no TX fallback is used.
+Existing Rust payload/PLC collectors have explicit support limits. Matched NCP constellation classification
+and retained-result/full-loop Qt integration still need implementation. Receiver
+readiness remains yellow and Start remains disabled. Unsupported
+views show a reason; no generated clouds, mislabeled TX data or TX-truth profile
+assignment. See [receiver workbench design](development/features/receiver-workbench/design.md)
+and [user guide](user/receiver-workbench.md).
+
 ## Temporal measurements and applied profiles
 
 `simulation/channel/timeline.rs` owns explicit piecewise measurement epochs.
