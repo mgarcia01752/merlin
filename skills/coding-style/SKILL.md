@@ -65,6 +65,21 @@ API catalogs or duplicate method signatures/parameter lists. Source rustdoc and
 examples rather than copying them. Update the relevant page/index alongside model
 changes and verify links/diagrams against the actual code and architecture.
 
+## Workbench user documentation and dark visuals
+
+Every workbench (WB) UI or graphic change must include a new or updated user
+guide under `docs/user/`, linked from `docs/user/workbench.md` when separate.
+Explain the changed controls, interaction and visible results; distinguish
+planned behavior from implemented behavior. Update existing pages rather than
+creating duplicate guides for small changes.
+
+Keep workbench documentation screenshots, diagrams and illustrative graphics in
+the dark theme. For implemented visual changes, capture the actual Qt UI on the
+VM and update the affected user-guide images. Label design mockups as planned;
+never present them as runtime evidence. Documentation-only planning changes do
+not require a Qt rebuild or a fabricated screenshot. Preserve the application's
+existing light-theme support unless the user requests a behavior change.
+
 ## Scientific stage modules and test points
 
 Give each distinct processing stage a focused Rust module and a directly testable

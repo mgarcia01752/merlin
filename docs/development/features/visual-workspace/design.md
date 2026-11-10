@@ -111,3 +111,27 @@ The approved light icon now matches the dark design. Dark icon bytes were
 preserved. Desktop entry generation is checkout-local; no system installation
 or application-menu registration was performed. See [Qt development](../../qt.md)
 and the [user guide](../../../user/workbench.md).
+
+## Next editor design: OFDM Settings and navigation
+
+The OFDM block will open an editable pop-up. Use expandable Spectrum, Timing and
+Interleaving categories with dropdown editors for supported values. Selecting a
+field shows its description, units, supported choices, suggested default and
+pinned PHY source. Derived values are read-only and calculated in Rust. Apply
+validates staged changes for the next run; Cancel leaves the workbench unchanged.
+
+Propose `resources/registry/ofdm-settings.json` for the bundled field-description
+registry. Follow the OSCAR registry concept, not its TLV wire semantics. Entries
+carry stable IDs, groups, labels, storage types/units, choices, descriptions,
+application-default rationale and versioned section/table provenance. Mark
+paraphrases explicitly. Do not invent MULPI provenance or normative defaults.
+Rust validation remains authoritative; verify registry choices against Rust.
+
+Propose separate versioned `*.merlin.json` files for workbench values and input
+references. Registry metadata is not duplicated in saved workbenches. File
+persistence and registry loading belong in Rust; QML owns editing presentation.
+
+Top-level Open selects a workbench; Settings opens application preferences
+(including theme); About shows the expanded MERLIN name, version, licensing and
+acknowledgements. Input capture selection stays with the owning diagram block.
+These requirements are recorded for discussion and remain unimplemented.

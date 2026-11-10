@@ -188,6 +188,37 @@ reseeding. File sources retain their own exact-byte verification. Measurement
 inputs initially use supported decoded PNM JSON, not native binary PNM parsing.
 The detailed diagram below retains analyzer and receiver-reference ownership.
 
+### OFDM editor, registry and application navigation
+
+Planned next: clicking OFDM Settings opens an editable pop-up with an expandable
+category tree, dropdowns for supported values, and a description panel for the
+selected field. Group bandwidth/spacing under Spectrum, cyclic prefix/roll-off
+under Timing, and time-interleaver depth under Interleaving. Display sample rate,
+FFT size and symbol duration as Rust-derived read-only values. Apply validates a
+staged configuration in Rust for the next run; Cancel discards staged edits.
+
+Use an OSCAR-style metadata registry concept without importing its TLV protocol
+model. Proposed canonical location: `resources/registry/ofdm-settings.json`,
+bundled with the application and loaded through Rust. Each entry records a stable
+field ID, group, label, storage unit/type, supported choices, description,
+application default and its rationale, and pinned specification/version/section/
+table references. Label paraphrases and any short exact quotations explicitly;
+do not represent MERLIN defaults as normative requirements. PHY is authoritative
+for these waveform fields; cite MULPI only for fields with actual pinned MULPI
+evidence. Rust remains authoritative for scientific validation and derivation;
+registry consistency checks must detect divergence from supported Rust values.
+
+Proposed workbench persistence uses a separate versioned `*.merlin.json` document
+containing selected settings and input references, not a copy of the registry.
+The registry describes fields; the workbench stores user choices. These paths and
+persistence contracts are proposals, not implemented interfaces.
+
+Add top-level **Open | Settings | About** actions. Open selects a saved MERLIN
+workbench; individual capture inputs remain in their corresponding block dialogs.
+Settings contains application preferences such as theme, distinct from OFDM
+transmission configuration. About presents MERLIN's expanded name, version,
+licenses and acknowledgements. All three actions remain pending implementation.
+
 ### Reuse of the PNM Viewer Qt framework
 
 Reuse suitable Qt shell, theme, dialog, navigation, Rust/Qt adapter and build
@@ -218,6 +249,10 @@ release/push gates remain intact.
 The proposed [build/test cache](development/features/build-cache/design.md)
 adds SHA-256 task fingerprints and affected-test selection above Cargo. It is
 planning-only; see BUILD-01 through BUILD-04 in the main checklist.
+
+Every workbench UI or graphic change includes a corresponding user-guide update.
+Use dark-theme screenshots and graphics in those guides, capturing implemented
+UI changes on the VM and clearly labeling planned mockups.
 
 ### Workbench run controls
 

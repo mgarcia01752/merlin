@@ -17,6 +17,13 @@ Develop the workbench left to right; OFDM Settings is the first functional dialo
   visible behind it. Settings editors and file pickers remain pending.
 - [ ] Implement OFDM Settings: cyclic prefix, roll-off/windowing, interleaver
   depth and supported pilot settings, using Rust validation for the next run.
+- [ ] Replace OFDM preview with an expandable settings tree, supported-value
+  dropdowns, field descriptions/source references, and Apply/Cancel behavior.
+- [ ] Add a bundled JSON field registry with pinned PHY references, separately
+  labeled application defaults, and consistency checks against Rust settings.
+- [ ] Add Open | Settings | About navigation and application-preference dialog.
+- [ ] Define and implement versioned workbench JSON persistence separately from
+  registry metadata; Open restores configuration without starting a run.
 - [ ] Implement PRBS-TX / Transmitter configuration and stage details.
 - [ ] Implement Channel Simulator configuration and stage details.
 - [ ] Implement Receiver / PRBS-RX configuration and recovered-data status.
@@ -63,7 +70,8 @@ Integrate input blocks as their owning sections are developed left to right.
 - [ ] Check dark/light readability, keyboard navigation and accessible controls.
 - [ ] Validate native builds and runtime separately on Ubuntu 22.04/24.04/26.04 x64.
 - [ ] Keep Rust/CLI builds independent of Qt and run applicable Rust and Qt checks.
-- [ ] Add user guides and actual screenshots once the UI exists.
+- [ ] Update user guides with every WB UI/graphic change; use dark-theme
+  graphics and actual VM screenshots for implemented visual changes.
 - [ ] Reconcile architecture, task design and both checklists with verified behavior.
 
 Python API-01 remains deferred until UI-01 through UI-04 are complete.
