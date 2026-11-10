@@ -130,6 +130,10 @@ Integrate input blocks as their owning sections are developed left to right.
 
 ## UI-03: Observations and analyzers
 
+- [x] **UI-TX-03** Implement staged Transmitter navigation, test points
+  and actual OCD/DPD header/TLV/byte inspection, preserving emitted-message status.
+  [Design and validation](features/transmitter-workbench/design.md).
+
 - [x] **UI-TX-01** Derive green Transmitter readiness from accepted OCD/DPD/source
   through the supported Rust request; invalidate/cancel on applied input changes.
 - [x] **UI-TX-02** Reuse a generic SA dialog for actual TX-output samples, with

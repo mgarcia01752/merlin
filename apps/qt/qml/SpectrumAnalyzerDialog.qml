@@ -19,7 +19,7 @@ WorkbenchDialog {
     property bool showTiming: true
     property var tapOptions: []
     property int selectedTap: 0
-    property string generateDescription: "Run the transmitter preview and recalculate its spectrum. Channel and receiver are not connected yet."
+    property string generateDescription: "Run the transmitter preview and recalculate its spectrum."
     signal tapRequested(int index)
     title: "Spectrum Analyzer · " + (dialog.state.tap_name || "OFDM Samples")
     parent: Overlay.overlay

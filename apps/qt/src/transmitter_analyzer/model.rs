@@ -219,12 +219,13 @@ impl Analyzer {
             timing::symbol_timing, WaveformGeometry,
         };
         let prepare = || -> Result<Value, String> {
-            let result = self
-                .result
+            let completed = crate::closed_loop::model::latest();
+            let settings = completed
                 .as_ref()
+                .map(|result| &result.job.settings.transmission)
+                .or_else(|| self.result.as_ref().map(|result| &result.settings))
                 .ok_or("Run simulation to show symbol timing.")?;
-            let geometry =
-                WaveformGeometry::new(&result.settings).map_err(|error| error.to_string())?;
+            let geometry = WaveformGeometry::new(settings).map_err(|error| error.to_string())?;
             let report = symbol_timing(
                 &geometry,
                 if velocity.is_nan() {

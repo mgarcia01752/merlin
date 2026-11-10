@@ -27,6 +27,87 @@ fn settings() -> ChannelRunSettings {
     settings.duration = Duration::from_millis(3);
     settings
 }
+
+#[test]
+fn tx_message_and_frame_observation_preserve_channel_results() {
+    use docsis_ofdm_fec::simulation::test_points::{ProbeData, RunPhase};
+    struct TxSink {
+        messages: usize,
+        grids: usize,
+    }
+    impl ProbeObserver for TxSink {
+        fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
+            match event.stage {
+                TestPointId::PlcMessage => {
+                    assert!(matches!(event.data, ProbeData::Bytes(_)));
+                    assert_eq!(event.element_start, 0);
+                    self.messages += 1;
+                }
+                TestPointId::PhysicalBins => {
+                    assert!(matches!(event.data, ProbeData::OptionalIq(_)));
+                    assert!(event.context.physical_grid.is_some());
+                    assert_eq!(event.context.phase, RunPhase::Observation);
+                    self.grids += 1;
+                }
+                _ => panic!("Unselected stage"),
+            }
+            Ok(())
+        }
+    }
+    let settings = settings();
+    let limits = ChannelJobLimits::default();
+    let baseline = run_channel(
+        &settings,
+        &limits,
+        &AtomicBool::new(false),
+        &mut TestPointProbe::disabled(),
+        &mut NoopObserver,
+        |_| {},
+    )
+    .unwrap();
+    let mut probe = TestPointProbe::new(ProbeConfig {
+        selections: [TestPointId::PlcMessage, TestPointId::PhysicalBins]
+            .into_iter()
+            .map(|stage| ProbeSelection {
+                stage,
+                elements: 0..8192,
+                source_symbols: None,
+                channel_symbols: None,
+            })
+            .collect(),
+        max_events: 64,
+        max_elements_per_event: 8192,
+        max_total_elements: 65536,
+    })
+    .unwrap();
+    probe.set_phase_filter(Some(RunPhase::Observation));
+    probe
+        .set_stage_phase_filter(TestPointId::PlcMessage, None)
+        .unwrap();
+    probe
+        .limit_stage_events(TestPointId::PhysicalBins, 1)
+        .unwrap();
+    let mut sink = TxSink {
+        messages: 0,
+        grids: 0,
+    };
+    let observed = run_channel(
+        &settings,
+        &limits,
+        &AtomicBool::new(false),
+        &mut probe,
+        &mut sink,
+        |_| {},
+    )
+    .unwrap();
+    assert!(sink.messages > 0);
+    assert_eq!(sink.grids, 1);
+    assert_eq!(
+        serde_json::to_value(baseline.summary).unwrap(),
+        serde_json::to_value(observed.summary).unwrap()
+    );
+    assert_eq!(baseline.retained_words, observed.retained_words);
+}
 #[test]
 fn whole_word_window_counts_exclude_crossing_and_completion_only_words() {
     let result = run_channel(

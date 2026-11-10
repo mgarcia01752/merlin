@@ -85,7 +85,6 @@ Item {
         Item {
             id: workbenchHeader
             Layout.fillWidth: true; Layout.preferredHeight: 88
-            Label { x: 0; y: 1; text: "MERLIN"; color: theme.accent; font.pixelSize: 15; font.letterSpacing: 4 }
             Text {
                 id: toolkitTitle
                 x: 0; y: 29
@@ -310,11 +309,12 @@ Item {
         interval: 100; running: true; repeat: true
         onTriggered: { workbench.transmitterState = JSON.parse(workbench.transmitterBackend.poll());workbench.pollRun() }
     }
-    SpectrumAnalyzerDialog {
+    TransmitterWorkbenchDialog {
         id: transmitterDialog
         theme: workbench.theme
         backend: workbench.transmitterBackend
-        state: workbench.transmitterState
+        transmitterState: workbench.transmitterState
+        runState: workbench.runState
     }
     SectionPreviewDialog {
         id: sectionDialog

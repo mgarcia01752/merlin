@@ -66,6 +66,7 @@ pub struct TestPointProbe {
     phase: Option<super::RunPhase>,
     stats: ProbeStats,
     stage_limits: BTreeMap<TestPointId, (usize, usize)>,
+    stage_phases: BTreeMap<TestPointId, Option<super::RunPhase>>,
 }
 impl TestPointProbe {
     /// Creates a zero-callback observation path without validating unused metadata.
@@ -77,6 +78,7 @@ impl TestPointProbe {
             phase: None,
             stats: ProbeStats::default(),
             stage_limits: BTreeMap::new(),
+            stage_phases: BTreeMap::new(),
         }
     }
     /// Validates finite windows and budgets for one observation job.
@@ -120,6 +122,7 @@ impl TestPointProbe {
             phase: None,
             stats: ProbeStats::default(),
             stage_limits: BTreeMap::new(),
+            stage_phases: BTreeMap::new(),
         })
     }
     /// Limits one selected stage so early sample streams cannot exhaust later-stage budgets.
@@ -159,6 +162,34 @@ impl TestPointProbe {
     pub fn set_phase_filter(&mut self, phase: Option<super::RunPhase>) {
         self.phase = phase;
     }
+    /// Overrides the global phase filter for one selected stage before dispatch.
+    /// # Arguments
+    /// * `stage` - Producer already present in the configured selections.
+    /// * `phase` - Exact phase, or None to admit all phases for this stage.
+    /// # Returns
+    /// Unit; phase rejection consumes no event or element budget.
+    /// # Errors
+    /// Rejects unselected stages and changes after the first dispatched event.
+    pub fn set_stage_phase_filter(
+        &mut self,
+        stage: TestPointId,
+        phase: Option<super::RunPhase>,
+    ) -> Result<(), SimulationError> {
+        if self.stats.dispatched_events != 0
+            || self.config.as_ref().is_none_or(|config| {
+                !config
+                    .selections
+                    .iter()
+                    .any(|selection| selection.stage == stage)
+            })
+        {
+            return Err(invalid(
+                "Stage phase filters require a selected stage before dispatch.",
+            ));
+        }
+        self.stage_phases.insert(stage, phase);
+        Ok(())
+    }
     /// Returns counters without resetting the selector or budgets.
     /// # Returns
     /// Small owned copy; callback failures remain visible.
@@ -187,7 +218,13 @@ impl TestPointProbe {
         data: ProbeData<'_>,
         observer: &mut impl ProbeObserver,
     ) -> Result<ProbeOutcome, SimulationError> {
-        if self.phase.is_some_and(|phase| phase != context.phase) {
+        if self
+            .stage_phases
+            .get(&stage)
+            .copied()
+            .unwrap_or(self.phase)
+            .is_some_and(|phase| phase != context.phase)
+        {
             return Ok(ProbeOutcome::Filtered);
         }
         if self

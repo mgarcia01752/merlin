@@ -1,5 +1,8 @@
 # MERLIN Simulation Workbench
 
+The [Transmitter workbench](transmitter-workbench.md) provides staged test points,
+an SA beside TX Output, and OCD/DPD message inspection.
+
 The native Qt workbench starts with the single-channel system diagram. Click
 OFDM Channel Descriptor (OCD), PRBS-TX, Transmitter, Channel Simulator, Receiver, PRBS-RX or one
 of the measurement-input blocks to open its section dialog. Close the dialog
@@ -14,8 +17,11 @@ The left icon/WB gutter has been removed so the diagram uses the available width
 Menus and the branded header remain at the top. PRBS-RX opens a structured
 [comparison summary with payload graphs](closed-loop-workbench.md#inspect-actual-results).
 
-The heading displays MERLIN and the toolkit title; the secondary subtitle has
+The heading displays the full toolkit title and logo; the small MERLIN label
+above the title is removed. The secondary subtitle has
 been removed to keep the header compact.
+
+![Workbench header and system diagram](../images/workbench/workbench-header-dark.png)
 
 The revised diagram groups **OCD** and **DPD** inside **Transmitter Configuration**
 at the left. Click either card to open its own editor. Their shared connector
@@ -67,7 +73,9 @@ The instruction banner and standalone theme button have been removed.
 ![Global appearance settings](../images/workbench/settings-global-dark.png)
 
 The workbench includes an editable **OFDM Channel Descriptor (OCD)** dialog. PRBS-TX supports source configuration. Channel Estimate and RxMER use the shared
-[measurement viewer](channel-measurements.md); Transmitter opens the shared [Spectrum Analyzer](spectrum-analyzer.md).
+[measurement viewer](channel-measurements.md); Transmitter opens its staged
+[workbench](transmitter-workbench.md), with the shared
+[Spectrum Analyzer](spectrum-analyzer.md) attached at TX Output.
 The [Receiver Workbench](receiver-workbench.md) adds NCP/PLC/data-profile
 QAM selection and an independent SA test-point selector.
 DPD and measurement blocks support capture input. Configure Receiver and enable

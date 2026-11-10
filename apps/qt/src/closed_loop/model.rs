@@ -59,6 +59,7 @@ pub(crate) struct Samples {
 }
 #[derive(Default)]
 pub(crate) struct Observations {
+    pub tx: crate::transmitter_instruments::capture::Capture,
     pub taps: [Samples; 4],
     pub responses: Vec<(u64, Vec<IqPair>)>,
     pub decoder_llrs: Vec<f64>,
@@ -73,6 +74,7 @@ impl ProbeObserver for Observations {
     /// # Errors
     /// No adapter errors are introduced by exhausted retention.
     fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), docsis_ofdm_fec::SimulationError> {
+        self.tx.observe(event);
         if event.context.phase != RunPhase::Observation {
             return Ok(());
         }
@@ -286,7 +288,7 @@ impl Model {
             .name("merlin-closed-loop".into())
             .spawn(move || {
                 let run = || -> Result<ResultData, String> {
-                    let stages = [
+                    let mut stages = vec![
                         TestPointId::ChannelOutput,
                         TestPointId::RxFramed,
                         TestPointId::RxUseful,
@@ -294,6 +296,7 @@ impl Model {
                         TestPointId::RxChannelEstimate,
                         TestPointId::PayloadLdpcInput,
                     ];
+                    stages.extend(crate::transmitter_instruments::capture::STAGES);
                     let mut probe = TestPointProbe::new(ProbeConfig {
                         selections: stages
                             .into_iter()
@@ -310,6 +313,29 @@ impl Model {
                     })
                     .map_err(|e| e.to_string())?;
                     probe.set_phase_filter(Some(RunPhase::Observation));
+                    for stage in crate::transmitter_instruments::capture::STAGES {
+                        probe
+                            .limit_stage_events(
+                                stage,
+                                if stage == TestPointId::PlcMessage {
+                                    64
+                                } else if stage == TestPointId::TxOverlap {
+                                    4
+                                } else {
+                                    1
+                                },
+                            )
+                            .map_err(|e| e.to_string())?;
+                    }
+                    probe
+                        .set_stage_phase_filter(TestPointId::PlcMessage, None)
+                        .map_err(|e| e.to_string())?;
+                    probe
+                        .set_stage_phase_filter(TestPointId::PlcIq, None)
+                        .map_err(|e| e.to_string())?;
+                    probe
+                        .set_stage_phase_filter(TestPointId::PlcPreamble, None)
+                        .map_err(|e| e.to_string())?;
                     for (stage, events) in [
                         (TestPointId::ChannelOutput, 12),
                         (TestPointId::RxFramed, 4),
@@ -498,6 +524,69 @@ mod tests {
             model.state()
         );
         assert_eq!(result.job.summary.comparison.bit_errors, 0);
+        let source = crate::transmitter_instruments::stage(0, 0);
+        assert_eq!(source["available"], true, "{source}");
+        assert_eq!(source["rows"][0]["value"].as_str().unwrap().len(), 32);
+        let coded = crate::transmitter_instruments::stage(1, 0);
+        assert_eq!(coded["total"], 16200);
+        let page = crate::transmitter_instruments::stage(1, 2048);
+        assert_eq!(page["rows"][0]["index"], 2048);
+        assert_eq!(
+            crate::transmitter_instruments::stage(1, -1)["available"],
+            false
+        );
+        assert_eq!(
+            crate::transmitter_instruments::stage(20, 0)["available"],
+            false
+        );
+        let mapped = crate::transmitter_instruments::stage(4, 0);
+        assert_eq!(mapped["available"], true);
+        assert!(!mapped["points"].as_array().unwrap().is_empty());
+        assert!(mapped["points"].as_array().unwrap().len() <= 2048);
+        let bins = crate::transmitter_instruments::stage(6, 0);
+        assert_eq!(bins["total"], 8192);
+        let messages = crate::transmitter_instruments::messages();
+        let packets = messages["messages"].as_array().unwrap();
+        assert!(packets.iter().any(|p| p["type"] == 49), "{messages}");
+        assert!(packets.iter().any(|p| p["profile"] == 0), "{messages}");
+        assert!(packets.iter().any(|p| p["profile"] == 255), "{messages}");
+        for packet in packets {
+            assert_eq!(packet["channel"], 34);
+            assert_eq!(packet["completed_frame"], true);
+            let bytes: Vec<u8> = packet["hex_rows"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .flat_map(|row| {
+                    row["hex"]
+                        .as_str()
+                        .unwrap()
+                        .split_whitespace()
+                        .map(|b| u8::from_str_radix(b, 16).unwrap())
+                })
+                .collect();
+            let decoded =
+                docsis_ofdm_fec::transmission::plc::mac_packets::ManagementPacket::from_bytes(
+                    &bytes,
+                )
+                .unwrap();
+            let parsed = docsis_ofdm_fec::transmission::plc::descriptors::parse(&decoded).unwrap();
+            assert_eq!(parsed.channel_id, 34);
+            for tlv in packet["tlvs"].as_array().unwrap() {
+                let offset = tlv["offset"].as_u64().unwrap() as usize;
+                assert_eq!(bytes[offset], tlv["kind"].as_u64().unwrap() as u8);
+                assert_eq!(bytes[offset + 1], tlv["length"].as_u64().unwrap() as u8);
+            }
+        }
+        for tap in 0..4 {
+            assert_eq!(
+                crate::transmitter_instruments::spectrum_state(tap)["has_result"],
+                true
+            );
+            let view = crate::transmitter_instruments::spectrum(tap, 0, 0, false);
+            assert!(view.get("error").is_none(), "{view}");
+            assert!(view["points"].as_array().unwrap().len() <= 2048);
+        }
         assert!(!result.observations.taps[0].values.is_empty());
         assert!(result.job.constellation.as_ref().unwrap().collected_pairs > 0);
         let query = crate::receiver_instruments::selection::Query::default();
@@ -562,6 +651,18 @@ mod tests {
             .all(|point| point["count"] == "0"));
         model.invalidate();
         assert!(latest().is_none());
+        assert_eq!(
+            crate::transmitter_instruments::stage(0, 0)["available"],
+            false
+        );
+        assert!(crate::transmitter_instruments::messages()["messages"]
+            .as_array()
+            .unwrap()
+            .is_empty());
+        assert_eq!(
+            crate::transmitter_instruments::spectrum_state(3)["has_result"],
+            false
+        );
         assert_eq!(
             crate::receiver_instruments::selection::qam(&query)["available"],
             false

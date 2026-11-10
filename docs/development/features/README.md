@@ -1,5 +1,7 @@
 # Feature development records
 
+- [Transmitter workbench (UI-TX-03)](transmitter-workbench/design.md)
+
 This index includes ongoing feature plans and historical design/validation
 records moved from the former root workspace. The [paired constellation](paired-constellation/implementation.md) group
 implements CONST-01 through CONST-05 using supplied H/reciprocal correction. Historical records describe the state at the

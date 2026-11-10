@@ -8,6 +8,9 @@ Start with [development setup](setup.md) for the Ubuntu package/toolchain instal
 The [Qt closed-loop and workbench-file design](features/qt-closed-loop/design.md)
 tracks native execution/persistence and its validation.
 
+The [Transmitter workbench design](features/transmitter-workbench/design.md)
+tracks staged TX instruments and actual OCD/DPD packet inspection.
+
 The separate [UI checklist](ui-checklist.md) tracks the Qt workbench.
 [Qt setup and VM validation](qt.md) covers the initial native shell.
 

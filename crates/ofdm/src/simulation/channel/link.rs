@@ -332,6 +332,12 @@ impl WaveformLink {
         let mut context = self.context(phase);
         context.channel_symbol_index = Some(index);
         context.plc_phase = Some((index % PLC_FRAME_SYMBOLS) as u8);
+        if index % PLC_FRAME_SYMBOLS == 0 {
+            frame.observe(&context, probe, observer)?;
+        }
+        crate::simulation::plc::observation::observe_frequency_symbol(
+            &physical, &context, probe, observer,
+        )?;
         observation::observe_transmit(&transmitted, &self.geometry, &context, probe, observer)?;
         observation::observe_channel(
             &transmitted.output,

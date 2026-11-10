@@ -2,15 +2,18 @@
 
 The SA is a reusable workbench window for time-domain complex I/Q test points.
 Its first connection is **TX output**, after cyclic prefix, windowing and
-overlap-add and before channel impairments. Other channel/RX tap connections
-remain pending. The FFT and all signal calculations run in Rust; Qt draws the
+overlap-add and before channel impairments. TX IFFT/prefix/window and receiver
+input/framed/useful/FFT-bin views are also connected. The FFT and all signal calculations run in Rust; Qt draws the
 bounded trace and handles selection/zoom.
 
 Accept OCD, DPD Profile A (ID 0) and PRBS-TX source settings. Transmitter turns
-green when these form a supported Rust request. Click **Transmitter** to open
-the SA and generate its first sample snapshot. **Run simulation** regenerates
-from the same frozen source settings. This does not start the full closed loop;
-its Start gate and other workbench blocks remain separate.
+green when these form a supported Rust request. Click **Transmitter**, then
+**Spectrum Analyzer** directly below **TX Output** in the staged
+[Transmitter workbench](transmitter-workbench.md). After main Start completes,
+the SA reads that run's actual selected TX samples. Before a completed run,
+TX Output can generate its independent preview; **Run simulation** regenerates
+that preview from frozen source settings. This does not start the full closed
+loop. Opening the SA while the main run is busy never starts another preview.
 
 ![Actual shared SA showing TX baseband output](../images/workbench/sa-tx-baseband-dark.png)
 
@@ -35,7 +38,9 @@ accepted optional fill is honored, with idle/filler after EOF. Generated source
 bit counts include queued preview words and do not prove full transmission or
 recovery. No receiver runs for this preview.
 
-The SA uses 32 periodic-Hann FFT windows with 50% overlap, averaging **linear
+The transmitter-only preview uses 32 periodic-Hann FFT windows with 50% overlap;
+retained run taps use the available complete windows, with the count displayed.
+Both average **linear
 power before conversion to dB**. FFT size is 8192 or 4096 at 204.8 MS/s; displayed
 bin spacing and equivalent noise bandwidth follow that geometry. This analysis
 window is separate from the transmitter's OFDM roll-off window.

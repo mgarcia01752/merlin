@@ -78,6 +78,10 @@ Pane {
         function generate() { if (ready) { busy = true } }
         function cancel() { busy = false }
         function finish() { busy = false; resultAvailable = true; token = String(Number(token) + 1) }
+        function stage(index,offset) { return JSON.stringify({available:true,rows:[{index:offset,value:"1010"}],points:[{x:0.5,y:0.5}],symbol:128,phase:"Observation",retained:4096,total:4096,offset:offset,end:Math.min(4096,offset+2048),iq_count:1,missing:0}) }
+        function messages() { return JSON.stringify({messages:[{name:"OCD",type:49,channel:34,profile:null,change_count:0,source:"00:ca:00:00:00:01",bytes:40,symbol:0,completed_frame:true,status:"Carried in completed TX PLC frame",integrity:"HCS / FCS valid",tlvs:[{name:"Cyclic Prefix",kind:1,length:1,offset:28,hex:"02"}],hex_rows:[{offset:"0000",hex:"C2 00"}]}],reason:"",pending_bytes:0}) }
+        function spectrum_tap(tap) { return JSON.stringify({has_result:false,can_generate:false,busy:false,tap_name:["TX IFFT","TX Cyclic Prefix","TX Window","TX Output"][tap],tap_id:["tx.ifft.samples","tx.cp.samples","tx.window.samples","tx.overlap_add.samples"][tap],result_token:"",reason:"Use Start to capture TX samples"}) }
+        function view_tap(tap,start,count,captureAxis) { return view(start,count,captureAxis) }
         function poll() { return JSON.stringify({status: ready ? "complete" : "attention", reason: ready ? "Accepted source, profile and settings form a transmitter" : "Accept compatible OCD, DPD and PRBS-TX inputs to configure the transmitter.", tap_name: "TX Output", tap_id: "tx.overlap_add.samples", tap_description: "Complex baseband I/Q before channel", busy: busy, can_generate: ready && !busy, has_result: resultAvailable, result_token: token, progress: busy ? 0.5 : 0, message: ""}) }
         function timing(velocity) {
             if (!resultAvailable) { return JSON.stringify({points:[],ticks:[],error:"Run simulation"}) }
@@ -197,7 +201,7 @@ Pane {
             return [
                 {tag: "ofdm", block: "ofdmBlock", title: "OFDM Channel Descriptor (OCD)"},
                 {tag: "source", block: "sourceBlock", title: "Transmit Source (PRBS-TX)"},
-                {tag: "tx", block: "transmitterBlock", title: "Spectrum Analyzer · TX Output"},
+                {tag: "tx", block: "transmitterBlock", title: "Transmitter Workbench"},
                 {tag: "channel", block: "channelBlock", title: "Channel Simulator · Configuration"},
                 {tag: "rx", block: "receiverBlock", title: "Receiver Workbench"},
                 {tag: "verify", block: "verificationBlock", title: "PRBS-RX / Recovered Data"},
@@ -435,7 +439,11 @@ Pane {
             compare(findChild(workbench, "transmitterBlock").blockStatus, "complete")
             compare(findChild(workbench, "startButton").enabled, false)
             mouseClick(findChild(workbench, "transmitterBlock"))
-            const dialog = workbench.transmitterPopup
+            const transmitter = workbench.transmitterPopup
+            tryCompare(transmitter, "opened", true)
+            compare(transmitterBackend.busy, false)
+            mouseClick(transmitter.stageRepeater.itemAt(6).outputSaButton)
+            const dialog = transmitter.spectrumPopup
             tryCompare(dialog, "opened", true)
             compare(transmitterBackend.busy, true)
             transmitterBackend.finish()
@@ -482,6 +490,7 @@ Pane {
             compare(dialog.viewport.count, 8192)
             keyClick(Qt.Key_Escape)
             tryCompare(dialog, "visible", false)
+            closeWithX(transmitter)
             sourceBackend.acceptedSource = false
             profileBackend.acceptedId = -1
             workbench.refreshSourceState()
@@ -491,6 +500,40 @@ Pane {
             compare(dialog.viewport.points.length, 0)
             compare(navigation.canZoom, false)
             compare(timingPanel.timing.points.length, 0)
+        }
+        function test_transmitter_stage_message_and_qam_navigation() {
+            mouseClick(findChild(workbench,"transmitterBlock"))
+            const tx=workbench.transmitterPopup
+            tryCompare(tx,"opened",true)
+            verify(findChild(tx,"txMessages").width>=200)
+            verify(findChild(tx,"txProtected").width>=200)
+            mouseClick(tx.stageRepeater.itemAt(1).tapButton)
+            tryCompare(tx.stagePopup,"opened",true)
+            compare(tx.stagePopup.stageIndex,1)
+            mouseClick(findChild(tx.stagePopup,"txNextPage"))
+            compare(tx.stagePopup.pageOffset,2048)
+            closeWithX(tx.stagePopup)
+            mouseClick(findChild(tx,"txQam"))
+            tryCompare(tx.qamPopup,"opened",true)
+            verify(tx.qamPopup.observation.points.length>0)
+            closeWithX(tx.qamPopup)
+            mouseClick(findChild(tx,"txMessages"))
+            tryCompare(tx.messagePopup,"opened",true)
+            compare(tx.messagePopup.packet.channel,34)
+            mouseClick(findChild(tx.messagePopup,"txMessageBytes"))
+            compare(tx.messagePopup.showBytes,true)
+            closeWithX(tx.messagePopup)
+            runBackend.lastResult=null
+            runBackend.busy=true
+            workbench.pollRun()
+            tx.openSpectrum(0)
+            tryCompare(tx.spectrumPopup,"opened",true)
+            compare(tx.usePreview,false)
+            compare(transmitterBackend.busy,false)
+            closeWithX(tx.spectrumPopup)
+            runBackend.stop()
+            workbench.pollRun()
+            closeWithX(tx)
         }
         function test_shared_measurement_viewers_and_joint_channel_readiness() {
             profileBackend.acceptedId = 0

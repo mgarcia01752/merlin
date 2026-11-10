@@ -1,5 +1,9 @@
 # Transmitter readiness and OFDM spectrum
 
+UI-TX-03 now routes Transmitter through its staged
+[workbench](../transmitter-workbench/design.md), with the SA attached to TX Output.
+The direct-open behavior described below records the original preview integration.
+
 ## UI-TX-01: Accepted-input readiness
 
 Transmitter becomes ready when accepted OCD, DPD and PRBS-TX form a supported

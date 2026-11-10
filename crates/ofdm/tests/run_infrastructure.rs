@@ -36,6 +36,35 @@ fn probes(budget: usize) -> TestPointProbe {
     })
     .unwrap()
 }
+
+#[test]
+fn per_stage_phase_override_preserves_budgets_and_other_stage_filters() {
+    let mut selected = probes(2);
+    selected.set_phase_filter(Some(RunPhase::Observation));
+    selected
+        .set_stage_phase_filter(TestPointId::SourcePayload, None)
+        .unwrap();
+    assert!(selected
+        .set_stage_phase_filter(TestPointId::TxIfft, None)
+        .is_err());
+    let warmup = ProbeContext::new("test", "config", RunPhase::Warmup).unwrap();
+    let bits = [0, 1, 0, 1, 1, 0, 1, 0];
+    observation::source_payload(&bits, &warmup, &mut selected, &mut NoopObserver).unwrap();
+    assert_eq!(selected.stats().dispatched_elements, 4);
+    assert!(selected
+        .set_stage_phase_filter(TestPointId::SourcePayload, Some(RunPhase::Drain))
+        .is_err());
+    let iq = [[1.0, 0.0]; 8];
+    observation::noise_output(&iq, &warmup, &mut selected, &mut NoopObserver).unwrap();
+    assert_eq!(selected.stats().dispatched_events, 1);
+    let mut context = warmup;
+    context.phase = RunPhase::Observation;
+    context.reference =
+        docsis_ofdm_fec::simulation::test_points::SignalReference::OtherSubcarrierRms { rms: 1.0 };
+    observation::noise_output(&iq, &context, &mut selected, &mut NoopObserver).unwrap();
+    assert_eq!(selected.stats().dispatched_events, 2);
+    assert_eq!(selected.stats().dispatched_elements, 8);
+}
 #[test]
 fn window_classification_has_exact_half_open_edges_and_checked_samples() {
     let timing = TransmissionSettings::default()

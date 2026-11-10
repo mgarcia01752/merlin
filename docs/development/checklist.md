@@ -704,6 +704,10 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 ### Qt simulation workbench
 
+- [x] **UI-TX-03** Implement the staged Transmitter workbench with
+  test-point instruments and generated/emitted OCD/DPD message inspection.
+  [Design and validation](features/transmitter-workbench/design.md).
+
 - [x] **UI-EXAMPLES-01** Organize matching single/multi-RxMER bundles, each with
   a portable WB and original captures. [Design](features/workbench-examples/design.md).
 - [x] **UI-OPEN-01** Default native Open to installed/source example resources,

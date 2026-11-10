@@ -51,6 +51,42 @@ pub mod bridge {
         /// Bounded geometry/labels, with unavailable distances kept explicit.
         #[qinvokable]
         fn timing(self: &TransmitterAnalyzer, velocity: f64) -> QString;
+        /// Queries a bounded page of an actual completed-run transmitter boundary.
+        /// # Arguments
+        /// * `stage` - Registered presentation stage index0..8.
+        /// * `offset` - Nonnegative first retained element.
+        /// # Returns
+        /// At most64 rows and2048 scatter points, or explicit unavailability.
+        #[qinvokable]
+        fn stage(self: &TransmitterAnalyzer, stage: i32, offset: i32) -> QString;
+        /// Reads actual TX PLC packet headers, TLVs and bounded byte rows.
+        /// # Returns
+        /// At most32 reassembled packets with completed-frame provenance.
+        #[qinvokable]
+        fn messages(self: &TransmitterAnalyzer) -> QString;
+        /// Describes a retained-run waveform test point without running a job.
+        /// # Arguments
+        /// * `tap` - IFFT, prefix, window or overlap-add index0..3.
+        /// # Returns
+        /// SA availability and immutable reference-plane identity.
+        #[qinvokable]
+        fn spectrum_tap(self: &TransmitterAnalyzer, tap: i32) -> QString;
+        /// Formats the selected retained TX waveform spectrum.
+        /// # Arguments
+        /// * `tap` - Waveform boundary0..3.
+        /// * `start` - First bin, nonnegative.
+        /// * `count` - Bin count, or zero for full span.
+        /// * `capture_axis` - Display capture-mapped frequency coordinates.
+        /// # Returns
+        /// Bounded shared spectrum viewport or an unavailable/error document.
+        #[qinvokable]
+        fn view_tap(
+            self: &TransmitterAnalyzer,
+            tap: i32,
+            start: i32,
+            count: i32,
+            capture_axis: bool,
+        ) -> QString;
     }
 }
 
@@ -61,6 +97,42 @@ pub struct TransmitterAnalyzerRust {
 }
 
 impl bridge::TransmitterAnalyzer {
+    /// Queries immutable TX stage data without starting or altering a simulation.
+    /// # Arguments
+    /// * `stage` - Presentation stage0..8.
+    /// * `offset` - First retained element in the bounded page.
+    /// # Returns
+    /// Small JSON page with original metadata and finite scatter points.
+    pub fn stage(&self, stage: i32, offset: i32) -> QString {
+        QString::from(crate::transmitter_instruments::stage(stage, offset).to_string())
+    }
+    /// Reads actual retained TX management packets through the existing decoders.
+    /// # Returns
+    /// Bounded header/TLV/byte records with transmission status.
+    pub fn messages(&self) -> QString {
+        QString::from(crate::transmitter_instruments::messages().to_string())
+    }
+    /// Reports the availability of one genuine TX waveform plane.
+    /// # Arguments
+    /// * `tap` - IFFT, prefix, window or overlap-add index.
+    /// # Returns
+    /// Scalar shared SA state; no sample arrays cross this method.
+    pub fn spectrum_tap(&self, tap: i32) -> QString {
+        QString::from(crate::transmitter_instruments::spectrum_state(tap).to_string())
+    }
+    /// Adapts a retained TX time-sample spectrum to a bounded viewport.
+    /// # Arguments
+    /// * `tap` - Waveform plane0..3.
+    /// * `start` - First FFT display bin.
+    /// * `count` - Bin count, or zero for full span.
+    /// * `capture_axis` - Use mapped frequency labels without RF upconversion.
+    /// # Returns
+    /// Normalized viewport points or an explicit diagnostic.
+    pub fn view_tap(&self, tap: i32, start: i32, count: i32, capture_axis: bool) -> QString {
+        QString::from(
+            crate::transmitter_instruments::spectrum(tap, start, count, capture_axis).to_string(),
+        )
+    }
     /// Resolves accepted Rust snapshots and validates supported transmitter readiness.
     /// # Arguments
     /// * `settings` - Bounded accepted OCD settings document.

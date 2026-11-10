@@ -17,6 +17,7 @@ mod receiver_instruments;
 mod source_input;
 mod spectrum_view;
 mod transmitter_analyzer;
+mod transmitter_instruments;
 mod workbench_file;
 mod workbench_session;
 use cxx_qt_lib::{QGuiApplication, QQmlApplicationEngine, QString, QUrl};

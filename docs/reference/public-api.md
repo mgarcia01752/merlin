@@ -269,6 +269,10 @@ transitions update residual powers without resetting RNG or waveform history.
 `channel::job::run_channel_controlled` adds a pause gate at OFDM-step boundaries,
 excluding paused host time. Existing `run_channel` retains its unpaused behavior.
 `TestPointProbe::set_phase_filter` filters before consuming observation budgets.
+`TestPointProbe::set_stage_phase_filter` overrides that filter for one selected
+producer before dispatch starts; `None` admits all phases for that producer.
+This permits acquisition PLC messages beside observation-only waveform/payload
+captures without spending the latter stages' budgets during acquisition.
 
 
 ## Receiver instrument observations and diagnostics

@@ -1,0 +1,83 @@
+<div id="merlin-tx-proposal" class="viz-dotted-background">
+<style>
+#merlin-tx-proposal {font:14px system-ui,sans-serif;color:#e0ecfa;padding:12px 0}
+#merlin-tx-proposal * {box-sizing:border-box}
+#merlin-tx-proposal .window {background:#0c1521;border:1px solid #30465d;border-radius:14px;padding:18px}
+#merlin-tx-proposal header {display:flex;align-items:center;gap:12px;margin-bottom:22px}
+#merlin-tx-proposal h2 {font-size:18px;margin:0;flex:1}
+#merlin-tx-proposal .muted {color:#a5bbd1;font-size:12px}
+#merlin-tx-proposal button {font:inherit;color:inherit;background:#172b3b;border:1px solid #47657c;border-radius:8px;padding:10px;cursor:var(--cursor-interactive,pointer)}
+#merlin-tx-proposal button[aria-pressed="true"] {background:#163d3e;border-color:#40d6c8}
+#merlin-tx-proposal .flow {display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
+#merlin-tx-proposal .stage {min-height:76px;font-size:12px;font-weight:600;position:relative}
+#merlin-tx-proposal .stage:not(:last-child)::after {content:'→';position:absolute;right:-11px;top:27px;color:#a5bbd1}
+#merlin-tx-proposal .taps {display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;margin-top:10px}
+#merlin-tx-proposal .tap {background:transparent;border-color:#294356;color:#48d9cc;padding:8px 2px;font-size:11px}
+#merlin-tx-proposal .branch {margin-top:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px;background:#101f2c;border:1px solid #294356;border-radius:10px}
+#merlin-tx-proposal .branch span {color:#a5bbd1;font-size:12px}
+#merlin-tx-proposal .instruments {display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+#merlin-tx-proposal .instruments button {flex:1;min-width:120px}
+#merlin-tx-proposal .inspector {border:1px solid #30465d;border-radius:10px;overflow:hidden;background:#101c2b}
+#merlin-tx-proposal .toolbar {display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px;border-bottom:1px solid #30465d}
+#merlin-tx-proposal .toolbar strong {flex:1;min-width:145px}
+#merlin-tx-proposal .toolbar button {font-size:12px;padding:7px 13px}
+#merlin-tx-proposal #tx-detail {padding:16px;min-height:192px;line-height:1.7}
+#merlin-tx-proposal details {padding-left:12px}
+#merlin-tx-proposal summary {cursor:var(--cursor-interactive,pointer)}
+#merlin-tx-proposal .fields {padding:6px 0 8px 20px;color:#a5bbd1}
+#merlin-tx-proposal footer {display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:16px}
+@media(max-width:600px){#merlin-tx-proposal .flow,#merlin-tx-proposal .taps{grid-template-columns:repeat(2,minmax(0,1fr))}#merlin-tx-proposal .stage::after{display:none}#merlin-tx-proposal .window{padding:12px}}
+</style>
+<div class="window">
+<header><h2>Transmitter Workbench</h2><span class="muted">Design Preview</span><button type="button" aria-label="Close preview" id="tx-close">×</button></header>
+<div class="flow" aria-label="Proposed transmitter signal path">
+<button type="button" class="stage" data-tx="source">Source</button>
+<button type="button" class="stage" data-tx="coding">BCH / LDPC</button>
+<button type="button" class="stage" data-tx="bits">Bit Processing<br>Randomizer</button>
+<button type="button" class="stage" data-tx="qam">QAM Mapper</button>
+<button type="button" class="stage" data-tx="interleave">Cell<br>Interleavers</button>
+<button type="button" class="stage" data-tx="frame">Frame<br>Assembly</button>
+<button type="button" class="stage" data-tx="wave">IFFT / CP<br>Window / OLA</button>
+</div>
+<div class="taps" aria-label="Proposed selectable test points">
+<button type="button" class="tap" data-tx="source">● Bits</button>
+<button type="button" class="tap" data-tx="coding">● Codewords</button>
+<button type="button" class="tap" data-tx="bits">● Cell Labels</button>
+<button type="button" class="tap" data-tx="qam">● Mapped I/Q</button>
+<button type="button" class="tap" data-tx="interleave">● Ordered Cells</button>
+<button type="button" class="tap" data-tx="frame">● Physical Bins</button>
+<button type="button" class="tap" data-tx="wave">● TX Samples</button>
+</div>
+<div class="branch"><button type="button" data-tx="messages">OCD / DPD Messages</button><span>→ PLC Encoding / Mapping → Frame Assembly</span></div>
+<div class="branch"><button type="button" data-tx="protected">NCP / Pilots</button><span>Separate generation / mapping → Frame Assembly</span></div>
+<div class="instruments"><button type="button" data-tx="wave">Spectrum Analyzer</button><button type="button" data-tx="qam">QAM Analyzer</button><button type="button" data-tx="messages">Message Inspector</button><button type="button" data-tx="coding">Bit / Codeword Inspector</button></div>
+<section class="inspector" aria-label="Instrument preview">
+<div class="toolbar"><strong id="tx-title">Message Inspector</strong><button type="button" id="tx-ocd" aria-pressed="true">OCD</button><button type="button" id="tx-dpd" aria-pressed="false">DPD</button><button type="button" id="tx-bytes" aria-pressed="false">Bytes</button></div>
+<div id="tx-detail" aria-live="polite"></div>
+</section>
+<footer><span class="muted">Proposed layout · no captured values shown</span><button type="button" id="tx-footer-close">Close</button></footer>
+</div>
+<script>
+(() => {
+ const root=document.getElementById('merlin-tx-proposal');
+ const title=root.querySelector('#tx-title'), detail=root.querySelector('#tx-detail');
+ let message='ocd', current='messages';
+ const sections={source:['Source Bits','PRBS15 / file payload → coding input'],coding:['Bit / Codeword Inspector','Source payload → BCH word → LDPC word'],bits:['Cell Label Inspector','Parity interleaving → bit twisting → demultiplexing → cell randomization'],qam:['QAM Analyzer','Data Profile · NCP · PLC<br>Mapped complex I/Q before cell interleaving'],interleave:['Cell Interleavers','Time interleaver → frequency interleaver<br>Inspect cell order and startup validity'],frame:['Physical Bin Inspector','Data · PLC · NCP · pilots · excluded carriers<br>Physical frequency bins before IFFT'],wave:['Spectrum Analyzer','Test point: IFFT / cyclic prefix / window / overlap-add<br>TX output: complex baseband, before channel impairments'],protected:['Protected Signals','PLC message coding / mapping · NCP message coding / mapping · pilot generation<br>Separate paths feed the physical frame assembly']};
+ function render() {
+  root.querySelectorAll('.toolbar button').forEach(b=>b.hidden=current!=='messages');
+  if(current!=='messages'){title.textContent=sections[current][0];detail.innerHTML=sections[current][1];return;}
+  title.textContent='Message Inspector';
+  root.querySelector('#tx-ocd').setAttribute('aria-pressed',String(message==='ocd'));
+  root.querySelector('#tx-dpd').setAttribute('aria-pressed',String(message==='dpd'));
+  root.querySelector('#tx-bytes').setAttribute('aria-pressed',String(message==='bytes'));
+  if(message==='bytes'){detail.innerHTML='Message / TLV bytes<br><span class="muted">Available after a message is captured. No illustrative hex bytes.</span>';return;}
+  const ocd=message==='ocd';
+  detail.innerHTML='<details open><summary>'+ (ocd?'OFDM Channel Descriptor (OCD)':'Downstream Profile Descriptor (DPD)')+'</summary><details open><summary>Message Header</summary><div class="fields">Channel identity · configuration change count'+(ocd?'':' · profile identity')+'</div></details><details open><summary>TLVs</summary><div class="fields">'+(ocd?'Channel geometry<br>Cyclic prefix / roll-off<br>Subcarrier assignments':'Profile identifier<br>Subcarrier modulation assignments')+'</div></details></details><span class="muted">Field names only; values and type/length/offset come from captured messages.</span>';
+ }
+ root.querySelectorAll('[data-tx]').forEach(b=>b.addEventListener('click',()=>{current=b.dataset.tx;render();}));
+ ['ocd','dpd','bytes'].forEach(key=>root.querySelector('#tx-'+key).addEventListener('click',()=>{message=key;render();}));
+ ['tx-close','tx-footer-close'].forEach(id=>root.querySelector('#'+id).addEventListener('click',()=>{current='messages';message='ocd';render();}));
+ render();
+})();
+</script>
+</div>

@@ -428,6 +428,26 @@ and window coefficients; Qt owns layout/drawing. See the
 
 ### Shared Spectrum Analyzer (SA) and transmitter readiness
 
+UI-TX-03 opens a Transmitter workbench matching Receiver stage/test-point
+navigation, with bounded source/LDPC/bit/cell pages, QAM and waveform inspection.
+The shared SA is attached directly below TX Output, before channel impairments;
+IFFT, prefix and window taps are selectable inside it. Without a completed run,
+TX Output retains the existing transmit-only preview; other inspectors read main
+Start results. Opening the workbench does not automatically run a preview.
+Separate PLC/NCP/pilot paths feed frame assembly. The message inspector
+reassembles observed PLC bytes through existing decoders and shows actual OCD,
+Profile A DPD and NCP DPD headers, expandable TLVs and original packet bytes.
+Completed TX PLC frames are distinguished from incomplete scheduled frames using
+actual transmitted-sample totals; capture limits and incomplete packets remain
+visible. Imported modulation-profile PNM bytes are never presented as MAC packets.
+The adapter retains64 PLC frames, at most32 displayed packets, one snapshot per
+bit/cell/bin boundary and32768 contiguous output samples. Per-stage phase filters
+admit acquisition PLC while keeping other TX/RX snapshots observation-only.
+The coding view exposes LDPC, not a separately retained BCH word; mixed mapped
+Data/NCP cells are explicitly grouped. NCP/pilot physical-bin inspection is shared.
+The redundant small MERLIN eyebrow is removed from the main header.
+See the [design](development/features/transmitter-workbench/design.md).
+
 **WB-RULE-04:** accepted OCD, DPD and PRBS-TX inputs jointly configure Transmitter.
 When they are green and form a supported Rust transmitter request, Transmitter
 is green without a separate acceptance dialog. Missing inputs are yellow; actual
@@ -461,7 +481,8 @@ min/max display buckets. Zero power stays explicit; a plotting floor does not
 change retained density. Hover, keyboard selection, zoom and full-span rendering
 are presentation operations. The SA lower panel shows frozen symbol timing, actual transmit-window
 coefficients and a nominal cable echo budget. Sample bookkeeping and selection
-text remain omitted from the panel. The **Run simulation** button reruns this transmitter-only preview and its FFT;
+text remain omitted from the panel. The **Run simulation** button, when enabled
+for the transmit-only preview fallback, reruns that preview and its FFT;
 it does not dispatch the full channel/receiver loop. Diagnostics use its tooltip.
 At most one cancellable worker runs; stale results
 cannot replace results for newer accepted input.
