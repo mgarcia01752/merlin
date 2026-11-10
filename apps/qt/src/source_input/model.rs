@@ -53,6 +53,17 @@ pub(super) struct SourceModel {
 }
 
 impl SourceModel {
+    /// Borrows accepted source identity through an immutable typed snapshot.
+    /// # Returns
+    /// Shared file storage/configuration and explicit seed, or None before Apply.
+    pub(super) fn snapshot(&self) -> Option<crate::workbench_session::AcceptedSource> {
+        self.accepted
+            .as_ref()
+            .map(|accepted| crate::workbench_session::AcceptedSource {
+                config: accepted.config.clone(),
+                seed: accepted.options.seed,
+            })
+    }
     /// Restores accepted bytes/options for a new edit session.
     /// # Returns
     /// Initial options and bounded metadata; no source bits are generated.

@@ -9,6 +9,8 @@ pub mod geometry;
 pub mod ifft;
 pub mod overlap_add;
 pub mod samples;
+pub mod spectrum;
+pub mod timing;
 mod transform;
 pub mod windowing;
 pub use geometry::WaveformGeometry;

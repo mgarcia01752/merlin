@@ -150,6 +150,29 @@ implements Rust's standard error/display traits, and serializes those same
 fields for adapters. The type rename does not change existing JSON error codes;
 `InvalidLabInput` remains the established invalid-input category.
 
+## Shared spectrum analysis and TX preview
+
+`signal_processing::waveform::spectrum::estimate` analyzes bounded contiguous
+complex samples using the existing centered FFT, periodic Hann, 50% overlap and
+linear-power averaging. `PowerSpectrum` retains full normalized density and
+frequency metadata; `buckets` supplies at most 2048 contiguous min/max spans.
+`density_db` keeps zero/unavailable density distinct from finite power.
+
+`simulation::transmitter_preview::TransmitterPreviewRequest` freezes accepted
+transmission settings, captured Profile A and immutable source configuration.
+`generate` reuses production TX stages with cooperative cancellation and scalar
+progress. Its result retains bounded actual samples, first-sample identity,
+source generation/EOF metadata and full PSD. It runs no channel or receiver.
+The estimator and its units are reusable by other time-sample tap adapters;
+capture-frequency labels are metadata, not RF upconversion.
+
+`signal_processing::waveform::timing::symbol_timing` consumes validated
+`WaveformGeometry` and optional nominal cable velocity factor. It returns bounded
+actual window coefficients, symbol/CP/roll-off times and ideal flat-guard path
+budgets. Unknown VF yields no distance; invalid values return a structured error.
+The explicitly assumed two-way reflector spacing is half the extra path length,
+with zero reserved timing margin, not guaranteed receiver protection.
+
 ## Finite file sources
 
 `simulation::source::file` exposes `FilePayload`, `PrbsFill`, `FileSource`,

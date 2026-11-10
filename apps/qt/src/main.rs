@@ -9,6 +9,8 @@ mod native_file_picker;
 mod ofdm_settings;
 mod profile_input;
 mod source_input;
+mod transmitter_analyzer;
+mod workbench_session;
 use cxx_qt_lib::{QGuiApplication, QQmlApplicationEngine, QString, QUrl};
 
 /// Starts the native workbench; scientific jobs are not connected in this increment.

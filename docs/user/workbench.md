@@ -3,13 +3,23 @@
 The native Qt workbench starts with the single-channel system diagram. Click
 OFDM Channel Descriptor (OCD), PRBS-TX, Transmitter, Channel Simulator, Receiver, PRBS-RX or one
 of the measurement-input blocks to open its section dialog. Close the dialog
-or press Escape to return. Light mode/Dark mode changes the palette and icon.
+or press Escape to return. Use **Settings → Global → Light/Dark mode** to change the palette and icon
+across all windows. The change applies immediately and lasts for this session.
+
+The standard menu bar at the top is **File | Settings | About**. File contains
+**Open WB configuration** and **Save WB configuration**, currently disabled while
+persistence is pending; load captures through their block dialogs.
+About shows MERLIN's expanded name, purpose and license acknowledgements.
+The instruction banner and standalone theme button have been removed.
+
+![Global appearance settings](../images/workbench/settings-global-dark.png)
 
 The workbench includes an editable **OFDM Channel Descriptor (OCD)** dialog. PRBS-TX supports source configuration. Other blocks open
-section previews. DPD supports capture input; other file pickers and simulation
+section previews, while Transmitter opens the shared [Spectrum Analyzer](spectrum-analyzer.md).
+DPD supports capture input; other file pickers and full-loop simulation
 jobs are not connected yet.
 The lower-right Start, Stop and Pause controls are disabled. There are no UI
-simulation results or automatically loaded measurements.
+full-loop receiver results or automatically loaded measurements.
 
 Development proceeds left to right from OFDM Channel Descriptor (OCD). The PRBS-TX/PRBS-RX
 connection means original/recovered data comparison, not receiver feedback.
@@ -149,3 +159,12 @@ original file. This does not start a simulation or save a workbench.
 See [supported profile files and limits](measurement-inputs/modulation-profile.md).
 The [original dark mockup](../images/workbench/dpd-design-dark.png) is a design
 reference; the screenshot above is the actual native application.
+
+## Workbench configuration files (planned)
+
+A WB configuration will be a versioned **JSON** document containing all PNM
+inputs and each block's accepted settings. Opening it will restore the configured
+workbench without starting a simulation. Saving it will preserve the current
+configuration, including PNM/profile associations; it will not modify the source
+PNM files. Exact storage encoding and size limits are still being designed.
+The File menu is present, but Open/Save are not yet implemented.

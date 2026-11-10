@@ -306,3 +306,50 @@ truncation. Other profiles are selectable for inspection. Accepted capture hashe
 profile identity and exact grids remain in Rust; no UI modulation calculations.
 The accepted DPD and compatible OCD become green; other stages remain pending.
 No job dispatch, persistence, capture editing or speculative profile overrides.
+
+## UI-SHELL-02: Application actions and global appearance
+
+Remove the instruction banner and standalone theme action. Present File,
+Settings and About in a left-aligned top row. SettingsDialog owns Global →
+Light/Dark mode, applying the shared session theme immediately. AboutDialog
+provides project identity and license information. Each window has its own QML
+file. File contains disabled Open WB configuration / Save WB configuration actions
+until Rust workbench persistence/loading exists;
+individual capture pickers remain in their block dialogs. No persistence or
+scientific state changes are introduced. Validate navigation/theme controls with
+Qt checks and actual dark VM screenshots; update the workbench guide.
+
+### UI-WB-JSON-01: Planned complete configuration
+
+Use versioned JSON for all accepted block settings and every associated PNM
+input, not merely path references. Define content encoding, bounds and schema
+migrations before implementation. Rust owns save/load and validates a complete
+load before replacing state. OS-native pickers select paths; load never runs
+a job and failed loads preserve accepted input. Source captures remain untouched.
+Serialization and persistence are pending; the File menu exposes disabled actions.
+
+UI-SHELL-02 validation: Qt Clippy/format checks and 9 Rust tests passed. The
+updated QML suite passes all 21 cases, including File action availability,
+Settings theme changes and About navigation. A timing-tree interaction test
+now waits for rendering before clicking after dialog layout. Native Ubuntu
+22.04 VM review captured the updated action row and Global appearance dialog.
+Saved workbench JSON remains pending. Read-only comparison used the viewer's
+AboutDialog.qml shell pattern; no viewer update/retrieval logic was copied.
+
+### UI-SHELL-03: Standard top application menu
+
+Replace the content-area navigation buttons/separators with a standard Qt
+MenuBar in ApplicationWindow.menuBar, above branding and the workbench. A focused
+WorkbenchMenuBar.qml owns File Open/Save (disabled pending persistence),
+Settings → Global and About → About MERLIN menu actions. Signals open the
+existing separate dialogs. Preserve shared palette and keyboard menu mnemonics.
+Read-only reference inspection: PNM Viewer apps/qt/qml/Main.qml uses a top shell
+header for its actions; MERLIN uses the user's requested standard MenuBar.
+No viewer file/retrieval behavior is imported. Validate menu navigation and
+update actual dark VM screenshots and guides.
+
+UI-SHELL-03 validation: all 21 QML cases pass after switching tests to real
+menu actions. Rebuilt the native Qt executable, verified the top menu and
+Settings → Global navigation on the Ubuntu 22.04 VM, and refreshed the actual
+dark workbench, settings and SA screenshots. No scientific code changed for
+this menu correction; earlier scoped UI-SA-04 Rust validation remains applicable.

@@ -41,3 +41,6 @@ pub mod payload;
 
 #[cfg(feature = "simulation")]
 pub mod channel;
+
+#[cfg(feature = "simulation")]
+pub mod transmitter_preview;

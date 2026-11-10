@@ -68,14 +68,44 @@ Pane {
         function cancel() { fileSelected = acceptedFile }
         function state() { return JSON.stringify({status: acceptedSource ? "complete" : "attention", reason: acceptedSource ? "Validated source accepted for the next run" : "Apply a validated PRBS15 or file source before starting."}) }
     }
+    QtObject {
+        id: transmitterBackend
+        property bool busy: false
+        property bool resultAvailable: false
+        property string token: "0"
+        property bool ready: false
+        function configure(settings) { ready = sourceBackend.acceptedSource && profileBackend.acceptedId === 0; resultAvailable = false; return poll() }
+        function generate() { if (ready) { busy = true } }
+        function cancel() { busy = false }
+        function finish() { busy = false; resultAvailable = true; token = String(Number(token) + 1) }
+        function poll() { return JSON.stringify({status: ready ? "complete" : "attention", reason: ready ? "Accepted source, profile and settings form a transmitter" : "Accept compatible OCD, DPD and PRBS-TX inputs to configure the transmitter.", tap_name: "TX output", tap_id: "tx.overlap_add.samples", tap_description: "Complex baseband I/Q before channel", busy: busy, can_generate: ready && !busy, has_result: resultAvailable, result_token: token, progress: busy ? 0.5 : 0, message: ""}) }
+        function timing(velocity) {
+            if (!resultAvailable) { return JSON.stringify({points:[],ticks:[],error:"Run simulation"}) }
+            return JSON.stringify({points:[{x:0,coefficient:0},{x:0.2,coefficient:1},{x:1,coefficient:1}],ticks:[{x:0,label:"0"},{x:1,label:"3.125 µs"}],prefix_fraction:0.8,roll_off_fraction:0.2,overview:"CP 512 · FFT 8192 samples",roll_label:"δ 0.625 µs",guard_label:"Flat guard 1.875 µs",budget_label:"Ideal guard budget: 1.875 µs",extra_path:isNaN(velocity) ? "Unknown VF" : velocity === 0.87 ? "1604 ft" : "1512 ft",reflection_spacing:isNaN(velocity) ? "Unknown VF" : velocity === 0.87 ? "802 ft" : "756 ft"})
+        }
+        function view(start, count, captureAxis) {
+            return JSON.stringify({points: [{x:0,y:0.7,minimum_y:0.8,readout:"Test low bin"},{x:0.5,y:0.2,minimum_y:0.4,readout:"Test center bin"},{x:1,y:0.6,minimum_y:0.9,readout:"Test high bin"}],x_ticks:[{x:0,label:captureAxis ? "631.100" : "-102.400"},{x:1,label:captureAxis ? "835.875" : "102.375"}],y_ticks:[{y:0,label:"-60"},{y:1,label:"-160"}],start:start,count:count || 8192,total:8192,axis_label:"Normalized PSD",frequency_label:captureAxis ? "Capture mapping" : "Baseband frequency offset (MHz)",summary:"Test FFT metadata",detail:"Bounded fixture",trace_label:"Test envelope"})
+        }
+    }
+    WorkbenchMenuBar {
+        id: appMenu
+        anchors.top: parent.top; width: parent.width; theme: theme
+        onGlobalSettingsRequested: workbench.settingsPopup.open()
+        onAboutRequested: workbench.aboutPopup.open()
+    }
     Workbench {
         id: workbench
-        anchors.fill: parent; theme: theme; settingsBackend: backend; profileBackend: profileBackend; sourceBackend: sourceBackend
+        anchors { top: appMenu.bottom; bottom: parent.bottom; left: parent.left; right: parent.right }
+        theme: theme; settingsBackend: backend; profileBackend: profileBackend; sourceBackend: sourceBackend; transmitterBackend: transmitterBackend
         iconRoot: "../../../docs/images/logo/"
     }
     Component {
         id: statusBlockComponent
         WorkbenchBlock { width: 170; height: 90 }
+    }
+    Component {
+        id: gatingWorkbenchComponent
+        Workbench { width: 1240; height: 780; visible: false }
     }
     TestCase {
         name: "Workbench"
@@ -84,7 +114,7 @@ Pane {
             return [
                 {tag: "ofdm", block: "ofdmBlock", title: "OFDM Channel Descriptor (OCD)"},
                 {tag: "source", block: "sourceBlock", title: "Transmit source (PRBS-TX)"},
-                {tag: "tx", block: "transmitterBlock", title: "Transmitter"},
+                {tag: "tx", block: "transmitterBlock", title: "Spectrum Analyzer · TX output"},
                 {tag: "channel", block: "channelBlock", title: "Channel Simulator"},
                 {tag: "rx", block: "receiverBlock", title: "Receiver"},
                 {tag: "verify", block: "verificationBlock", title: "PRBS-RX"},
@@ -97,11 +127,11 @@ Pane {
             const block = findChild(workbench, data.block)
             verify(block !== null)
             mouseClick(block)
-            const dialog = data.block === "ofdmBlock" ? workbench.ofdmPopup : data.block === "profileBlock" ? workbench.profilePopup : data.block === "sourceBlock" ? workbench.sourcePopup : workbench.sectionPopup
+            const dialog = data.block === "ofdmBlock" ? workbench.ofdmPopup : data.block === "profileBlock" ? workbench.profilePopup : data.block === "sourceBlock" ? workbench.sourcePopup : data.block === "transmitterBlock" ? workbench.transmitterPopup : workbench.sectionPopup
             verify(dialog !== null)
             tryCompare(dialog, "opened", true)
             compare(dialog.title, data.title)
-            if (data.block !== "ofdmBlock" && data.block !== "profileBlock" && data.block !== "sourceBlock") { verify(workbench.sectionDescription.length > 30) }
+            if (data.block !== "ofdmBlock" && data.block !== "profileBlock" && data.block !== "sourceBlock" && data.block !== "transmitterBlock") { verify(workbench.sectionDescription.length > 30) }
             keyClick(Qt.Key_Escape)
             tryCompare(dialog, "visible", false)
         }
@@ -142,10 +172,12 @@ Pane {
             compare(findChild(dialog.contentItem, "subcarrier_spacingEditor"), null)
             const branch = findChild(dialog.contentItem, "TimingBranch")
             const editor = findChild(dialog.contentItem, "cyclic_prefix_samplesEditor")
+            waitForRendering(branch)
+            wait(100)
             mouseClick(branch)
-            compare(editor.visible, false)
+            tryCompare(editor, "visible", false)
             mouseClick(branch)
-            compare(editor.visible, true)
+            tryCompare(editor, "visible", true)
             dialog.close()
             tryCompare(dialog, "visible", false)
         }
@@ -178,22 +210,28 @@ Pane {
             }
         }
         function test_start_requires_every_block_complete() {
-            const blocks = workbench.diagramBlocks
+            const isolated = createTemporaryObject(gatingWorkbenchComponent, window, {
+                theme: theme, settingsBackend: backend, profileBackend: profileBackend,
+                sourceBackend: sourceBackend, transmitterBackend: transmitterBackend,
+                iconRoot: "../../../docs/images/logo/"
+            })
+            verify(isolated !== null)
+            const blocks = isolated.diagramBlocks
             const previous = blocks.map(block => block.blockStatus)
             try {
                 for (const block of blocks) { block.blockStatus = "complete" }
-                compare(workbench.allBlocksComplete, true)
+                compare(isolated.allBlocksComplete, true)
                 // Readiness must not enable a button with no run dispatch.
-                compare(workbench.runIntegrationAvailable, false)
-                compare(findChild(workbench, "startButton").enabled, false)
+                compare(isolated.runIntegrationAvailable, false)
+                compare(findChild(isolated, "startButton").enabled, false)
                 for (const block of blocks) {
                     for (const status of ["attention", "error"]) {
                         block.blockStatus = status
-                        compare(workbench.allBlocksComplete, false)
-                        compare(findChild(workbench, "startButton").enabled, false)
+                        compare(isolated.allBlocksComplete, false)
+                        compare(findChild(isolated, "startButton").enabled, false)
                     }
                     block.blockStatus = "complete"
-                    compare(workbench.allBlocksComplete, true)
+                    compare(isolated.allBlocksComplete, true)
                 }
             } finally {
                 for (let index = 0; index < blocks.length; ++index) { blocks[index].blockStatus = previous[index] }
@@ -236,9 +274,27 @@ Pane {
                 compare(findChild(workbench, name).enabled, false)
             }
             const previous = theme.dark
-            mouseClick(findChild(workbench, "themeToggle"))
+            compare(findChild(workbench, "themeToggle"), null)
+            mouseClick(appMenu.itemAt(0))
+            compare(findChild(appMenu, "openWorkbenchConfig").enabled, false)
+            compare(findChild(appMenu, "saveWorkbenchConfig").enabled, false)
+            keyClick(Qt.Key_Escape)
+            mouseClick(appMenu.itemAt(1))
+            mouseClick(findChild(appMenu, "globalSettingsAction"))
+            tryCompare(workbench.settingsPopup, "opened", true)
+            const mode = findChild(workbench.settingsPopup, "globalThemeMode")
+            mode.currentIndex = previous ? 1 : 0
+            mode.activated(mode.currentIndex)
             compare(theme.dark, !previous)
+            keyClick(Qt.Key_Escape)
+            tryCompare(workbench.settingsPopup, "visible", false)
             theme.dark = previous
+            mouseClick(appMenu.itemAt(2))
+            mouseClick(findChild(appMenu, "aboutAction"))
+            tryCompare(workbench.aboutPopup, "opened", true)
+            compare(workbench.aboutPopup.title, "About MERLIN")
+            keyClick(Qt.Key_Escape)
+            tryCompare(workbench.aboutPopup, "visible", false)
         }
         function test_source_options_and_accepted_readiness() {
             const dialog = workbench.sourcePopup
@@ -283,6 +339,48 @@ Pane {
             sourceBackend.acceptedSource = false; sourceBackend.acceptedFile = false
             sourceBackend.acceptedOptions = ({mode: "prbs15", seed: 32767, append: false, target_bits: 0, fill_seed: 32767})
             workbench.refreshSourceState()
+        }
+        function test_transmitter_readiness_analyzer_zoom_and_invalidation() {
+            sourceBackend.acceptedSource = true
+            profileBackend.acceptedId = 0
+            workbench.refreshSourceState()
+            workbench.refreshProfileState()
+            compare(findChild(workbench, "transmitterBlock").blockStatus, "complete")
+            compare(findChild(workbench, "startButton").enabled, false)
+            mouseClick(findChild(workbench, "transmitterBlock"))
+            const dialog = workbench.transmitterPopup
+            tryCompare(dialog, "opened", true)
+            compare(transmitterBackend.busy, true)
+            transmitterBackend.finish()
+            tryVerify(() => dialog.viewport.points.length === 3)
+            compare(findChild(dialog, "saReadout"), null)
+            compare(findChild(dialog, "saStatus"), null)
+            const timingPanel = findChild(dialog, "saTimingPanel")
+            verify(timingPanel !== null)
+            tryVerify(() => timingPanel.timing.points.length === 3)
+            verify(findChild(timingPanel, "saEchoSpacing").text.indexOf("756 ft") >= 0)
+            const cable = findChild(timingPanel, "saCableModel")
+            cable.currentIndex = 1
+            tryVerify(() => findChild(timingPanel, "saEchoSpacing").text.indexOf("802 ft") >= 0)
+            cable.currentIndex = 2
+            tryVerify(() => findChild(timingPanel, "saEchoSpacing").text.indexOf("Unknown VF") >= 0)
+            cable.currentIndex = 0
+            compare(dialog.captureFrequencyAxis, false)
+            compare(dialog.viewport.count, 8192)
+            mouseClick(findChild(dialog, "saZoomIn"))
+            compare(dialog.viewport.count, 4096)
+            mouseClick(findChild(dialog, "saFullSpan"))
+            compare(dialog.viewport.count, 8192)
+            keyClick(Qt.Key_Escape)
+            tryCompare(dialog, "visible", false)
+            sourceBackend.acceptedSource = false
+            profileBackend.acceptedId = -1
+            workbench.refreshSourceState()
+            workbench.refreshProfileState()
+            compare(workbench.transmitterState.status, "attention")
+            compare(workbench.transmitterState.has_result, false)
+            compare(dialog.viewport.points.length, 0)
+            compare(timingPanel.timing.points.length, 0)
         }
         function test_render() {
             theme.dark = true

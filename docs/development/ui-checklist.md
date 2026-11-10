@@ -23,7 +23,14 @@ Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first 
   values blank until selected, without displaying placeholder channel defaults.
 - [x] Add a bundled JSON field registry with pinned PHY references, separately
   labeled application defaults, and consistency checks against Rust settings.
-- [ ] Add Open | Settings | About navigation and application-preference dialog.
+- [x] **UI-SHELL-02** Add left-aligned File | Settings | About actions; move
+  Light/Dark mode into Settings → Global; remove the instruction banner.
+  Settings/About have separate QML files and session-only theme selection.
+- [ ] **UI-WB-JSON-01** Implement File Open/Save for JSON containing all PNM inputs
+  and accepted settings of every block; define bounds, schema and input encoding.
+- [x] **UI-SHELL-03** Use a standard application menu bar above WB branding,
+  replacing the content-area navigation buttons.
+- [ ] Extend About version details.
 - [ ] Define and implement versioned workbench JSON persistence separately from
   registry metadata; Open restores configuration without starting a run.
 - [x] Show heading-only blocks and shared green/yellow/red readiness stripes,
@@ -32,9 +39,8 @@ Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first 
   unavailable; record WB-RULE-01/02 in the architecture and task design.
 - [x] Connect accepted/removed/rejected DPD input to Rust-backed DPD/OCD readiness.
 - [ ] Connect remaining input/job states and dependency invalidation to readiness.
-- [ ] Implement PRBS-TX / Transmitter configuration and stage details.
-  PRBS-TX source configuration is implemented; Transmitter/run wiring remains
-  pending. Source options are defined in the
+- [x] Implement PRBS-TX configuration and supported Transmitter preview readiness.
+  Full-loop Transmitter/job wiring remains pending. Source options are defined in the
   [architecture](../architecture.md#prbs-tx-source-configuration).
 - [ ] Implement Channel Simulator configuration and stage details.
 - [ ] Implement Receiver / PRBS-RX configuration and recovered-data status.
@@ -81,6 +87,18 @@ Integrate input blocks as their owning sections are developed left to right.
 - [ ] Apply replacements to the next run; preserve active inputs and original bytes.
 
 ## UI-03: Observations and analyzers
+
+- [x] **UI-TX-01** Derive green Transmitter readiness from accepted OCD/DPD/source
+  through the supported Rust request; invalidate/cancel on applied input changes.
+- [x] **UI-TX-02** Reuse a generic SA dialog for actual TX-output samples, with
+  centered baseband default, optional capture mapping, normalized Hann PSD,
+  bounded min/max viewports, zoom, progress and cooperative cancellation.
+  Design: [Transmitter spectrum](features/transmitter-spectrum/design.md).
+- [x] **UI-SA-03** Clear the SA lower text panel and reserve blank space.
+- [x] **UI-SA-04** Fit symbol/window timing and nominal cable echo budgets below
+  the PSD, using frozen result settings and Rust calculations.
+- [ ] Add actual IQ sample trace inspection, distinct from the window-coefficient view.
+- [ ] Connect the shared SA to channel output and eligible RX time-sample taps.
 
 - [ ] Present actual LDPC outcomes/iterations and independent BER/completion status.
 - [ ] Add bounded matched payload pre/post-equalization views.

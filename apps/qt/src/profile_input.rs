@@ -202,13 +202,20 @@ impl bridge::ProfileInput {
         profile_id: i32,
         settings: &QString,
     ) -> QString {
-        QString::from(
-            self.as_mut()
-                .rust_mut()
-                .accept(profile_id, &settings.to_string())
-                .err()
-                .unwrap_or_default(),
-        )
+        let result = self
+            .as_mut()
+            .rust_mut()
+            .accept(profile_id, &settings.to_string());
+        if result.is_ok() {
+            let selected = self
+                .rust()
+                .accepted
+                .as_ref()
+                .and_then(|(capture, id)| capture.profile(*id).ok())
+                .cloned();
+            crate::workbench_session::set_profile(selected);
+        }
+        QString::from(result.err().unwrap_or_default())
     }
     /// Discards draft input and restores the accepted snapshot without I/O.
     pub fn cancel(mut self: core::pin::Pin<&mut Self>) {

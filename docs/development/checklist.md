@@ -703,6 +703,14 @@ with OFDM Channel Descriptor (OCD). UI-01 is partial: diagram, section-preview d
 theme/icon shell and Rust-validated OFDM tree editor exist. Other editors,
 workbench persistence and Rust jobs remain pending. PRBS-TX now accepts PRBS15
 or exact-byte file/finite-fill configuration through shared Rust validation.
+UI-SHELL-02/03 provide a standard top File | Settings | About menu, with appearance
+under Settings → Global. File Open/Save remain disabled pending JSON persistence of all block settings
+and PNM inputs (UI-WB-JSON-01).
+UI-SA-03 removes lower SA bookkeeping text. UI-SA-04 fills that space with
+Rust-derived symbol/window timing and nominal cable echo budgets. Actual IQ trace
+inspection remains pending.
+UI-TX-01/02 now add supported Transmitter readiness and a shared Spectrum Analyzer
+using actual generated complex-baseband TX output. Full-loop dispatch is separate.
 The DPD binary/JSON input
 dialog accepts compatible profiles and drives DPD/OCD readiness. Other inputs and
 run integration remain pending.
@@ -724,6 +732,10 @@ run integration remain pending.
   source acceptance/readiness is implemented; run integration remains pending.
 - [ ] **UI-03** Present separate LDPC, BER, payload pre/post-CE, continuous/scattered
   pilot and PLC-data/preamble analyzers with shared bounded Rust results.
+  - [x] **UI-TX-01/02** Shared Spectrum Analyzer at actual TX overlap-add samples,
+    derived readiness, Rust FFT/averaging, bounded viewports and cancellable worker.
+  - [ ] Connect additional channel/RX SA taps.
+  See [SA design](features/transmitter-spectrum/design.md).
 - [ ] **UI-04** Validate responsive jobs, cancellation, observation invariance and
   dark/light readability; add user guides and actual workspace screenshots.
   See the [starting diagram and interaction plan](features/visual-workspace/plan.md).

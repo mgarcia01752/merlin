@@ -110,14 +110,11 @@ impl bridge::SourceInput {
     /// # Returns
     /// Empty on success; error text otherwise.
     pub fn apply(mut self: core::pin::Pin<&mut Self>, document: &QString) -> QString {
-        QString::from(
-            self.as_mut()
-                .rust_mut()
-                .model
-                .accept(&document.to_string())
-                .err()
-                .unwrap_or_default(),
-        )
+        let result = self.as_mut().rust_mut().model.accept(&document.to_string());
+        if result.is_ok() {
+            crate::workbench_session::set_source(self.rust().model.snapshot());
+        }
+        QString::from(result.err().unwrap_or_default())
     }
 
     /// Restores the accepted file; QML discards its transient options on close.

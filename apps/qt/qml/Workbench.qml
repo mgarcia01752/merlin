@@ -12,13 +12,20 @@ Item {
     required property var settingsBackend
     required property var profileBackend
     required property var sourceBackend
+    required property var transmitterBackend
+    property alias settingsPopup: settingsDialog
+    property alias aboutPopup: aboutDialog
+    property alias transmitterPopup: transmitterDialog
+    property var transmitterState: ({status: "attention", reason: "Accept compatible OCD, DPD and PRBS-TX inputs to configure the transmitter.", busy: false, can_generate: false, has_result: false, result_token: ""})
+    function refreshTransmitterState() { transmitterState = JSON.parse(transmitterBackend.configure(settingsBackend.current())) }
     property alias sourcePopup: sourceDialog
     property var sourceState: ({status: "attention", reason: "Apply a validated PRBS15 or file source before starting."})
-    function refreshSourceState() { sourceState = JSON.parse(sourceBackend.state()) }
+    function refreshSourceState() { sourceState = JSON.parse(sourceBackend.state()); refreshTransmitterState() }
     property alias profilePopup: profileDialog
     property var profileState: ({selected: false, profile_status: "attention", ofdm_status: "attention", reason: "A validated modulation-profile input is required.", summary: {}})
     function refreshProfileState() {
         profileState = JSON.parse(profileBackend.state(settingsBackend.current()))
+        refreshTransmitterState()
     }
     Component.onCompleted: { refreshProfileState(); refreshSourceState() }
     property alias ofdmPopup: ofdmDialog
@@ -66,20 +73,6 @@ Item {
                 Label { text: "Single-channel downstream OFDM"; color: theme.muted; font.pixelSize: 13 }
             }
             Item { Layout.fillWidth: true }
-            Button {
-                objectName: "themeToggle"
-                text: theme.dark ? "Light mode" : "Dark mode"
-                onClicked: theme.dark = !theme.dark
-            }
-        }
-        Rectangle {
-            Layout.fillWidth: true; implicitHeight: 42; radius: 6
-            color: theme.accentSoft
-            Label {
-                anchors.centerIn: parent
-                text: "Start with OFDM Channel Descriptor (OCD)  ·  Click any block to explore its section"
-                color: theme.accent; font.pixelSize: 13
-            }
         }
         Rectangle {
             Layout.fillWidth: true; Layout.fillHeight: true
@@ -133,9 +126,9 @@ Item {
                 WorkbenchBlock {
                     id: transmitterBlock; objectName: "transmitterBlock"; x: 215; y: 190; width: 170; height: 90
                     theme: workbench.theme; heading: "Transmitter"
-                    blockStatus: "attention"
-                    statusReason: "Transmitter integration and a validated run configuration are pending."
-                    onClicked: workbench.openSection(heading, "Inspect the Rust transmitter stages: FEC coding, mapping, interleaving and waveform generation.\n\nTransmission settings and the applied modulation profile configure the next run.")
+                    blockStatus: workbench.transmitterState.status
+                    statusReason: workbench.transmitterState.reason
+                    onClicked: transmitterDialog.open()
                 }
                 WorkbenchBlock {
                     id: channelBlock; objectName: "channelBlock"; x: 520; y: 190; width: 190; height: 90
@@ -185,7 +178,7 @@ Item {
             Layout.fillWidth: true; spacing: 10
             ColumnLayout {
                 Label { text: "WORKBENCH PREVIEW"; color: theme.accent; font.pixelSize: 11; font.letterSpacing: 1.5 }
-                Label { text: "OCD settings are editable. Simulation controls are not connected yet."; color: theme.muted; font.pixelSize: 12 }
+                Label { text: "Configure inputs, then open Transmitter to inspect the generated spectrum."; color: theme.muted; font.pixelSize: 12 }
             }
             Item { Layout.fillWidth: true }
             Button {
@@ -198,6 +191,8 @@ Item {
             Button { objectName: "pauseButton"; text: "Ⅱ  Pause"; enabled: false; Accessible.name: "Pause simulation" }
         }
     }
+    SettingsDialog { id: settingsDialog; theme: workbench.theme }
+    AboutDialog { id: aboutDialog; theme: workbench.theme }
     OfdmSettingsDialog {
         id: ofdmDialog
         theme: workbench.theme
@@ -217,6 +212,16 @@ Item {
         theme: workbench.theme
         backend: workbench.sourceBackend
         onSourceApplied: workbench.refreshSourceState()
+    }
+    Timer {
+        interval: 100; running: true; repeat: true
+        onTriggered: workbench.transmitterState = JSON.parse(workbench.transmitterBackend.poll())
+    }
+    SpectrumAnalyzerDialog {
+        id: transmitterDialog
+        theme: workbench.theme
+        backend: workbench.transmitterBackend
+        state: workbench.transmitterState
     }
     SectionPreviewDialog {
         id: sectionDialog

@@ -18,9 +18,15 @@ ApplicationWindow {
     OfdmSettings { id: ofdmSettings }
     ProfileInput { id: profileInput }
     SourceInput { id: sourceInput }
+    TransmitterAnalyzer { id: transmitterAnalyzer }
     Theme { id: theme; onDarkChanged: branding.update_icon(dark) }
     Component.onCompleted: branding.update_icon(theme.dark)
     ThemePalette { targetControl: window; theme: theme }
     color: theme.background
-    Workbench { anchors.fill: parent; theme: theme; settingsBackend: ofdmSettings; profileBackend: profileInput; sourceBackend: sourceInput }
+    menuBar: WorkbenchMenuBar {
+        theme: theme
+        onGlobalSettingsRequested: workbench.settingsPopup.open()
+        onAboutRequested: workbench.aboutPopup.open()
+    }
+    Workbench { id: workbench; anchors.fill: parent; theme: theme; settingsBackend: ofdmSettings; profileBackend: profileInput; sourceBackend: sourceInput; transmitterBackend: transmitterAnalyzer }
 }

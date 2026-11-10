@@ -23,7 +23,9 @@ the UI section in docs/architecture.md and docs/development/ui-checklist.md,
 starting left to right with OFDM Channel Descriptor (OCD). The Qt workbench
 shell, Rust-validated timing/interleaving editor, PRBS-TX source editor and DPD
 binary/JSON capture importer are implemented. Source and OCD/profile readiness
-are connected; other editors, measurement inputs and run integration remain pending;
+are connected. A shared Spectrum Analyzer now shows actual complex-baseband TX
+output with derived Transmitter readiness. Other editors, remaining SA taps,
+measurement inputs and full-loop run integration remain pending;
 Python bindings are deferred until after UI-01 through UI-04.
 Dependencies point from CLI/future adapters to docsis-ofdm-fec to fec-codec.
 

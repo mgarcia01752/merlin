@@ -159,7 +159,8 @@ The next major phase is the native Qt Quick/QML workbench, initially targeting
 Ubuntu 22.04, 24.04 and 26.04 x64. Python bindings follow UI-01 through UI-04.
 The initial UI-01 shell now exists under apps/qt: the clickable diagram, section
 preview dialogs, theme switching, embedded icons and a tree-based OFDM editor.
-The DPD capture importer and PRBS-TX editor also exist; other editors, measurement input loading,
+The DPD capture importer, PRBS-TX editor and reusable SA with TX sample generation
+also exist; other editors, measurement input loading,
 analyzers and Rust job integration remain pending. Lower-right run controls are
 visible but disabled. See the [workbench guide](user/workbench.md) and
 [Qt build/VM instructions](development/qt.md). Other target validation is pending.
@@ -265,15 +266,101 @@ evidence. Rust remains authoritative for scientific validation and derivation;
 registry consistency checks must detect divergence from supported Rust values.
 
 Proposed workbench persistence uses a separate versioned `*.merlin.json` document
-containing selected settings and input references, not a copy of the registry.
+containing all accepted block settings and all associated PNM inputs, not a copy
+of the registry. Input paths alone do not satisfy the restoration contract.
 The registry describes fields; the proposed workbench file will store user
 choices. Workbench persistence remains a proposal, not an implemented interface.
 
-Add top-level **Open | Settings | About** actions. Open selects a saved MERLIN
-workbench; individual capture inputs remain in their corresponding block dialogs.
-Settings contains application preferences such as theme, distinct from OFDM
-transmission configuration. About presents MERLIN's expanded name, version,
-licenses and acknowledgements. All three actions remain pending implementation.
+The application has a standard top **File | Settings | About** menu bar above
+workbench branding, rather than content-area navigation buttons. Settings →
+Global opens appearance preferences; About → About MERLIN opens project details.
+The instruction banner and standalone theme button are removed.
+**File → Open WB configuration** and **File → Save WB configuration**
+are disabled until persistence is implemented; individual capture inputs remain in
+their corresponding block dialogs. **Settings → Global → Light/Dark mode**
+applies the shared theme immediately to all windows, for this session only.
+Settings is separate from OFDM transmission configuration. About presents
+MERLIN's expanded name, purpose, component licenses and acknowledgements.
+Version details and expanded license inspection remain future About work.
+Each dialog owns its own QML file. See UI-SHELL-02 in the
+[workbench design](development/features/visual-workspace/design.md).
+
+### Workbench JSON configuration contract (planned)
+
+File → Open WB configuration and File → Save WB configuration will use a
+versioned JSON workbench document. It contains every block's accepted settings
+and all PNM inputs associated with those blocks, including selected profiles,
+channel-estimation and RxMER inputs. Do not reduce the saved document to OCD
+settings or filenames alone. Preserve input identity/provenance and enough input
+content to restore the same configuration. The exact embedded-byte representation,
+size limits and schema/migration rules must be defined before persistence lands.
+Rust owns serialization, file I/O and validation. OS-native pickers choose paths;
+opening validates the whole document before replacing accepted state, invalidates
+old results, and never starts a simulation automatically. Rejected loads preserve
+the current workbench. Saving does not overwrite original PNM captures. Generated
+results, caches and worker state are not configuration. Persistence remains pending.
+
+### SA symbol-timing and cable panel (UI-SA-04)
+
+The SA lower panel shows a CP-start zoom of actual TransmitWindow coefficients,
+with symbol/FFT timing, prefix and roll-off boundaries from the completed
+snapshot's frozen settings. It is explicitly a dimensionless window view, not
+signal amplitude. Full time-domain IQ trace inspection remains future work.
+
+Cable selection offers Belden 1694WB (nominal VF 0.82), CommScope P3 500 (0.87)
+and custom VF. Rust derives the ideal flat guard budget `(Ncp-Nrp)/Fs` as extra
+path length and, for the explicitly labeled two-way reflection assumption, half
+that length as reflector spacing. Zero reserved timing margin is explicit.
+These are timing estimates, not guaranteed echo immunity or maximum plant reach.
+Unknown custom VF gives no distance; invalid VF is rejected. Cable changes only
+query bounded display data and never rerun DSP or alter results. Applied input
+changes clear old timing with the old spectrum. Scientific crates own calculations
+and window coefficients; Qt owns layout/drawing. See the
+[design and evidence](development/features/transmitter-spectrum/design.md#ui-sa-04-symbol-timing-and-cable-echo-budget).
+
+### Shared Spectrum Analyzer (SA) and transmitter readiness
+
+**WB-RULE-04:** accepted OCD, DPD and PRBS-TX inputs jointly configure Transmitter.
+When they are green and form a supported Rust transmitter request, Transmitter
+is green without a separate acceptance dialog. Missing inputs are yellow; actual
+unsupported/inconsistent accepted input or generation failure is red with a reason.
+Applied input changes invalidate the old spectrum and cancel any stale preview.
+Rejected drafts/Cancel preserve accepted state. The initial live descriptor path
+supports Profile A ID 0; other accepted DPD IDs remain inspectable but TX reports
+their unsupported preview status explicitly. Full-loop Start still requires all
+blocks plus dispatch readiness; SA generation is independent of that gate.
+
+SpectrumAnalyzerDialog and SpectrumPlot are shared presentation components, not
+TX-specific analysis implementations. A Rust adapter supplies the selected tap,
+sample identity, progress and bounded viewport. The first connected tap is
+`tx.overlap_add.samples`, before channel impairments. Future channel/RX sample
+taps reuse the same estimator and dialog while preserving their reference plane.
+The analyzer accepts actual contiguous complex I/Q samples, never bit arrays or
+already-transformed bins mislabeled as a time waveform.
+
+The signal remains **complex baseband**: no RF upconversion occurs. Default axes
+show frequency offset from DC (−102.4 to +102.375 MHz for the 8192-point case).
+Optional capture-frequency mapping adds the captured physical-bin origin to
+axis labels only; samples and PSD remain identical. Power is normalized PSD in
+dB re one sample unit squared/Hz, with no dBm/dBmV calibration assumed.
+
+The Rust transmit-only preview reuses accepted source configuration, captured
+carrier layout/loading and existing BCH/LDPC/NCP/PLC/pilot/IFFT/CP/window/overlap
+APIs. Idle priming fills interleaver history before consuming source bits. The
+bounded estimator averages 32 periodic-Hann FFT windows with 50% overlap in
+linear power, retaining full PSD/samples in Rust and returning at most 2048
+min/max display buckets. Zero power stays explicit; a plotting floor does not
+change retained density. Hover, keyboard selection, zoom and full-span rendering
+are presentation operations. The SA lower panel shows frozen symbol timing, actual transmit-window
+coefficients and a nominal cable echo budget. Sample bookkeeping and selection
+text remain omitted from the panel. The **Run simulation** button reruns this transmitter-only preview and its FFT;
+it does not dispatch the full channel/receiver loop. Diagnostics use its tooltip.
+At most one cancellable worker runs; stale results
+cannot replace results for newer accepted input.
+
+See the [SA design](development/features/transmitter-spectrum/design.md) and
+[user guide](user/spectrum-analyzer.md). Full-loop jobs and remaining analyzer
+taps are pending; this preview does not establish RF compliance or file recovery.
 
 ### PRBS-TX source configuration
 
