@@ -11,6 +11,7 @@ mod bridge {
         include!("native_file_picker.h");
         fn chooseNativeFile(title: &QString) -> QString;
         fn chooseNativeFiles(title: &QString) -> QString;
+        fn chooseNativeSave(title: &QString) -> QString;
     }
 }
 
@@ -40,17 +41,31 @@ pub(crate) fn choose_many(title: &str) -> Result<Vec<String>, String> {
     Ok(selected.lines().map(str::to_owned).collect())
 }
 
+/// Opens the OS-native project destination chooser with overwrite confirmation.
+/// # Arguments
+/// * `title` - User-facing native window title.
+/// # Returns
+/// Local destination URI or cancellation.
+/// # Errors
+/// Reports unavailable native integration without a Qt browser fallback.
+pub(crate) fn save(title: &str) -> Result<Option<String>, String> {
+    select_mode(title, "--native-save-picker")
+}
+
 fn select(title: &str, multiple: bool) -> Result<Option<String>, String> {
+    select_mode(
+        title,
+        if multiple {
+            "--native-file-picker-multiple"
+        } else {
+            "--native-file-picker"
+        },
+    )
+}
+fn select_mode(title: &str, mode: &str) -> Result<Option<String>, String> {
     let output =
         std::process::Command::new(std::env::current_exe().map_err(|error| error.to_string())?)
-            .args([
-                if multiple {
-                    "--native-file-picker-multiple"
-                } else {
-                    "--native-file-picker"
-                },
-                title,
-            ])
+            .args([mode, title])
             .output()
             .map_err(|error| format!("Cannot open OS-native file picker: {error}"))?;
     if !output.status.success() {
@@ -71,13 +86,16 @@ fn select(title: &str, multiple: bool) -> Result<Option<String>, String> {
 /// # Arguments
 /// * `title` - Bounded picker title supplied by the parent application.
 /// * `multiple` - Whether the native dialog permits multiple selected files.
+/// * `save` - Select a destination and confirm overwriting through GTK.
 /// # Returns
 /// Writes only a URI, empty cancellation or error marker to the internal pipe.
 /// GTK owns transient selection; no input bytes or scientific data are processed.
-pub(crate) fn run_helper(title: &str, multiple: bool) {
+pub(crate) fn run_helper(title: &str, multiple: bool, save: bool) {
     use std::io::Write;
     let selected = if title.len() <= 512 {
-        if multiple {
+        if save {
+            bridge::chooseNativeSave(&cxx_qt_lib::QString::from(title)).to_string()
+        } else if multiple {
             bridge::chooseNativeFiles(&cxx_qt_lib::QString::from(title)).to_string()
         } else {
             bridge::chooseNativeFile(&cxx_qt_lib::QString::from(title)).to_string()

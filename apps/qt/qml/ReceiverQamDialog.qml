@@ -15,7 +15,7 @@ Dialog {
     property int plcPartIndex: 0
     property var observation: ({points: [], profiles: []})
     readonly property string signalName: ["Data Profile", "NCP", "PLC"][signalIndex] || "Unavailable"
-    function refresh() { observation = JSON.parse(backend.qam(signalIndex, viewIndex, plcPartIndex)) }
+    function refresh() { if (!backend) { return }; observation = JSON.parse(backend.qam(signalIndex, viewIndex, plcPartIndex)) }
     onSignalIndexChanged: refresh()
     onViewIndexChanged: refresh()
     onPlcPartIndexChanged: refresh()
@@ -39,7 +39,7 @@ Dialog {
         }
         RowLayout {
             Label { visible: dialog.signalIndex === 0; text: "Received Profile"; color: dialog.theme.muted }
-            ComboBox { objectName: "receiverProfile"; visible: dialog.signalIndex === 0; model: dialog.observation.profiles || []; displayText: "No received profile"; enabled: false; Layout.preferredWidth: 190 }
+            ComboBox { objectName: "receiverProfile"; visible: dialog.signalIndex === 0; model: dialog.observation.profiles || []; displayText: (dialog.observation.profiles || []).length ? dialog.observation.profiles[0] : "No received profile"; enabled: false; Layout.preferredWidth: 190 }
             Label { text: "Carrier / Symbol Window"; color: dialog.theme.muted }
             Label { text: "Available with retained receiver observations"; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         }
@@ -55,10 +55,28 @@ Dialog {
                     ColumnLayout {
                         anchors.fill: parent; anchors.margins: 18
                         Label { text: modelData; color: dialog.theme.text; font.bold: true }
-                        Item { Layout.fillHeight: true }
-                        Label { objectName: "receiverQamUnavailable"; text: dialog.observation.reason || "No retained receiver results"; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; horizontalAlignment: Text.AlignHCenter }
-                        Item { Layout.fillHeight: true }
-                        Label { text: "No I/Q points retained"; color: dialog.theme.muted; Layout.alignment: Qt.AlignHCenter; font.pixelSize: 11 }
+                        Canvas {
+                            id: scatter
+                            Layout.fillWidth:true; Layout.fillHeight:true
+                            property bool raw: modelData.indexOf("Raw") === 0
+                            Connections { target: dialog; function onObservationChanged() { scatter.requestPaint() } }
+                            Connections { target: dialog.theme; function onDarkChanged() { scatter.requestPaint() } }
+                            onWidthChanged: requestPaint()
+                            onHeightChanged: requestPaint()
+                            onPaint: {
+                                const ctx=getContext("2d");ctx.reset()
+                                if (!dialog.observation.available) { return }
+                                ctx.strokeStyle=dialog.theme.line;ctx.lineWidth=1
+                                ctx.beginPath();ctx.moveTo(width/2,0);ctx.lineTo(width/2,height);ctx.moveTo(0,height/2);ctx.lineTo(width,height/2);ctx.stroke()
+                                ctx.fillStyle=dialog.theme.accent
+                                for (const point of dialog.observation.points || []) {
+                                    ctx.fillRect((raw ? point.raw_x : point.eq_x)*width-1,(raw ? point.raw_y : point.eq_y)*height-1,2,2)
+                                }
+                            }
+                        }
+                        Label { objectName: "receiverQamUnavailable"; visible: !dialog.observation.available; text: dialog.observation.reason || "No retained receiver results"; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; horizontalAlignment: Text.AlignHCenter }
+                        Item { visible: !dialog.observation.available; Layout.fillHeight: true }
+                        Label { text: dialog.observation.available ? dialog.observation.points.length+" actual matched cells · I / Q" : "No I/Q points retained"; color: dialog.theme.muted; Layout.alignment: Qt.AlignHCenter; font.pixelSize: 11 }
                     }
                 }
             }

@@ -1,65 +1,48 @@
 # Receiver Workbench
 
-Click Receiver to open **Receiver Workbench**. The navigation and selectors are
-implemented; actual receiver charts and full-loop UI runs remain pending.
-
-The Receiver Workbench places processing blocks across the top, clickable
-test points below them, and instrument actions along the bottom, following the
-supplied sketch. Processing stages use aligned, equal-size rounded chips with
-subtle pin accents; test points line up below them. Pin accents are decoration,
-not readiness indicators. Instrument buttons use matching rounded styling.
-Each instrument opens its own focused dialog. Close the instrument to return to
-the receiver workspace; Escape closes only the topmost dialog.
+Click Receiver for the stage diagram and instruments. Rounded stage chips share
+equal widths and aligned test-point rows; decorative pins do not indicate status.
+Each editor/instrument has its own QML implementation or shared reusable dialog.
 
 ![Receiver Workbench](../images/workbench/receiver-workbench-dark.png)
 
+Use **Configure Receiver / Run…** to choose supplied-H reference correction or
+pilot-estimated H-hat and finite duration/decoder/runtime limits. Apply validates
+the accepted OCD, DPD, source and channel inputs. Receiver becomes green when
+this request is supported, before any results exist. PRBS-RX separately enables
+independent source comparison. See the [run/save guide](closed-loop-workbench.md).
+
 ## QAM analyzer
 
-Use **Signal: Data Profile | NCP | PLC** to choose the received signal.
-Use **View: Raw | Equalized | Paired** independently to inspect it before/after
-receiver correction. Equalized is before slicing so noise remains visible.
+**Signal: Data Profile | NCP | PLC** is independent of **Raw | Equalized | Paired**.
+Equalized is before hard slicing, so the received residual remains visible.
+Payload and PLC views now show actual bounded matched observations from the last
+complete or partial run; paired panels use shared axes. PLC Data / Preamble stay
+separate. The current payload view uses supported Profile 0 and its first
+compatible modulation group. General profile/carrier/symbol selection is pending.
 
-When receiver results are connected, Data Profile will allow a supported received
-profile, carrier or compatible same-QAM group and symbol interval. For PLC, select data or preamble separately.
-The **Data Profile QAM**, **NCP QAM** and **PLC QAM** buttons open the same analyzer
-with that signal selected. Raw / Equalized / Paired is an independent control.
-PLC exposes a separate Data / Preamble selector. Received Profile is blank and
-disabled until real receiver metadata is available.
+![NCP selection with an explicit support diagnostic](../images/workbench/receiver-qam-ncp-dark.png)
 
-![NCP paired QAM selection](../images/workbench/receiver-qam-ncp-dark.png)
+Matched NCP I/Q collection is not implemented. NCP control decoding still runs
+in the closed loop, but its LLRs or accepted messages are not received scatter
+points. The analyzer reports this gap rather than inventing samples.
 
-NCP requires its own received-control I/Q selection; decoding an NCP message does
-not by itself make a received constellation available. Unsupported selections
-show why they are unavailable. Mixed modulations are not combined silently.
+## Spectrum Analyzer and diagnostics
 
-## Spectrum Analyzer
+Click **RX Input · SA**, **FFT Bins**, or **Spectrum Analyzer**. The independent
+Test Point selector offers RX Input / Channel Output, RX Framed Samples, RX Useful
+Samples and RX FFT Bin Power. The first three use retained contiguous time samples;
+useful symbols are not joined across prefix gaps. FFT-bin power is a distinct
+frequency-domain view with its own units and physical frequency grid.
 
-The SA has its own **Test Point** dropdown. Click **RX Input · SA**, **FFT Bins**
-or **Spectrum Analyzer** to open it. The selected tap is retained independently
-of the QAM signal. Switching taps clears stale viewport content. Start with **RX Input / Channel
-Output**, which includes channel impairments. Framed and prefix-removed samples
-can be added with explicit boundary handling. **RX FFT Bin Power** is a separate
-frequency-domain view with its own units. Channel-response/echo inspection is
-separate from spectral power.
+![Actual retained RX input spectrum](../images/workbench/receiver-spectrum-dark.png)
 
-![Receiver SA test-point selection](../images/workbench/receiver-spectrum-dark.png)
+Receiver SA's local Run button is disabled: use main Start to run the full loop.
+Changing QAM or SA selection only reads retained Rust results and clears stale
+viewports. TX window timing is hidden here. FEC Monitor displays real job totals;
+response/echo and slicer/LLR result renderers remain pending. Supplied response H
+and receiver-estimated H-hat are always distinct.
 
-Choosing NCP or PLC in the QAM analyzer does not change the SA's full-channel
-input. Selecting a test-point marker opens the instrument at that location;
-switching instruments or selectors reads the same retained run and never starts
-a new simulation. If that run did not retain the requested data, the UI explains
-it rather than substituting other samples or leaving an old plot mislabeled.
-
-Receiver SA **Run simulation** is disabled until receiver-run dispatch exists.
-It does not call the transmitter preview. TX-only window timing is hidden for
-receiver instruments. Response/echo, slicer/LLR and FEC buttons currently explain
-their pending data connections. Receiver remains yellow; opening instruments
-does not satisfy run readiness.
-
-The existing TX SA remains available. Actual receiver plots require the pending
-full-loop UI connection and bounded retained-result session. The first payload
-collector supports a limited profile selection; general profile and NCP views
-must be enabled only as their Rust APIs support them.
-
-See the [task design](../development/features/receiver-workbench/design.md) and
-[workbench guide](workbench.md). Screenshots show the actual dark Qt UI on the Ubuntu VM.
+Dark/light presentation and 960×640 layout are checked on the Ubuntu VM. See the
+[task design](../development/features/receiver-workbench/design.md) and
+[workbench guide](workbench.md).

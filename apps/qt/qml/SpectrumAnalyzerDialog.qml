@@ -15,6 +15,7 @@ Dialog {
     property var viewport: ({points: [], x_ticks: [], y_ticks: []})
     property string displayedToken: ""
     property bool captureFrequencyAxis: false
+    property bool frequencyAxisAvailable: true
     property bool autoGenerate: true
     property bool showTiming: true
     property var tapOptions: []
@@ -77,9 +78,10 @@ Dialog {
         }
         RowLayout {
             Layout.fillWidth: true
-            Label { text: "Frequency axis"; color: theme.text }
+            Label { text: dialog.frequencyAxisAvailable ? "Frequency axis" : "Physical FFT frequency grid"; color: theme.text }
             ComboBox {
                 objectName: "saFrequencyAxis"
+                visible: dialog.frequencyAxisAvailable
                 enabled: dialog.state.has_result || false
                 Layout.preferredWidth: 235
                 model: ["Complex baseband", "Capture frequency mapping"]
@@ -97,7 +99,7 @@ Dialog {
             Layout.fillWidth: true; Layout.preferredHeight: 210
             visible: dialog.showTiming
             theme: dialog.theme; backend: dialog.backend
-            hasResult: dialog.state.has_result || false
+            hasResult: dialog.showTiming && (dialog.state.has_result || false)
             resultToken: dialog.state.result_token || ""
         }
 

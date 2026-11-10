@@ -14,13 +14,39 @@ Item {
     required property var sourceBackend
     required property var aboutBackend
     required property var measurementBackend
+    required property var fileBackend
+    property string fileMessage: ""
+    function openProject() {
+        if (runState.busy) { return }
+        const result=JSON.parse(fileBackend.open())
+        if (result.error) { fileMessage=result.error;fileFeedback.open();return }
+        if (!result.opened) { return }
+        settingsBackend.apply(JSON.stringify(result.transmission))
+        profileBackend.reload();sourceBackend.reload();measurementBackend.reload()
+        runBackend.restore(JSON.stringify(result.receiver),result.verified,settingsBackend.current())
+        theme.dark=result.dark
+        refreshProfileState();refreshSourceState();pollRun()
+        fileMessage="Opened "+result.path
+    }
+    function saveProject(saveAs) {
+        if (runState.busy) { return }
+        const result=JSON.parse(fileBackend.save(saveAs,settingsBackend.current(),JSON.stringify(runState.accepted_options || null),runState.verified,theme.dark))
+        if (result.error) { fileMessage=result.error;fileFeedback.open() }
+        else if (result.saved) { fileMessage="Saved "+result.path;fileFeedback.open() }
+    }
+    required property var runBackend
+    property var runState: ({receiver_status:"attention",verify_status:"attention",reason:"Configure Receiver",busy:false,can_start:false,paused:false,options:{},verified:false})
+    function pollRun() { runState=JSON.parse(runBackend.poll()) }
+    function refreshRun() { runState=JSON.parse(runBackend.configure(settingsBackend.current())) }
+    property alias receiverConfigPopup: receiverConfig
+    property alias verificationPopup: verificationDialog
     required property var receiverBackend
     property alias receiverPopup: receiverDialog
     property alias rxmerPopup: rxmerDialog
     property alias responsePopup: responseDialog
     property alias channelPopup: channelDialog
     property var measurementState: ({rxmer: {status: "attention", reason: "Configure RxMER"}, response: {status: "attention", reason: "Apply DPD"}, channel: {status: "attention", reason: "Configure channel inputs"}, flat: true})
-    function refreshMeasurements() { measurementState = JSON.parse(measurementBackend.state(settingsBackend.current())) }
+    function refreshMeasurements() { measurementState = JSON.parse(measurementBackend.state(settingsBackend.current())); refreshRun() }
     required property var transmitterBackend
     property alias settingsPopup: settingsDialog
     property alias aboutPopup: aboutDialog
@@ -29,7 +55,7 @@ Item {
     function refreshTransmitterState() { transmitterState = JSON.parse(transmitterBackend.configure(settingsBackend.current())) }
     property alias sourcePopup: sourceDialog
     property var sourceState: ({status: "attention", reason: "Apply a validated PRBS15 or file source before starting."})
-    function refreshSourceState() { sourceState = JSON.parse(sourceBackend.state()); refreshTransmitterState() }
+    function refreshSourceState() { sourceState = JSON.parse(sourceBackend.state()); refreshTransmitterState(); refreshRun() }
     property alias profilePopup: profileDialog
     property var profileState: ({selected: false, profile_status: "attention", ofdm_status: "attention", reason: "A validated modulation-profile input is required.", summary: {}})
     function refreshProfileState() {
@@ -43,8 +69,8 @@ Item {
     property string iconRoot: "qrc:/branding/"
     readonly property var diagramBlocks: [ofdmBlock, sourceBlock, transmitterBlock, channelBlock, receiverBlock, verificationBlock, profileBlock, channelEstimateBlock, rxmerBlock]
     readonly property bool allBlocksComplete: diagramBlocks.every(block => block.blockStatus === "complete")
-    // Run dispatch is not connected yet; readiness alone cannot start a job.
-    readonly property bool runIntegrationAvailable: false
+    // Start requires accepted block readiness and one idle Rust worker.
+    readonly property bool runIntegrationAvailable: true
     property string selectedSection: ""
     property string sectionDescription: ""
     // Opens explanatory section content; editors will use Rust validation later.
@@ -118,6 +144,8 @@ Item {
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 300; fromY: 360; toX: 300; toY: 280 }
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 530; fromY: 360; toX: 580; toY: 280 }
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 725; fromY: 360; toX: 655; toY: 280 }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 810; fromY: 385; toX: 930; toY: 280; comparison: true }
+                Label { x: 824; y: 324; width: 200; text: "Supplied H · reference correction"; color: theme.muted; font.pixelSize: 10 }
                 Label { x: 470; y: 48; width: 300; horizontalAlignment: Text.AlignHCenter; text: "Original ↔ recovered data comparison"; color: theme.muted; font.pixelSize: 12 }
                 WorkbenchBlock {
                     id: ofdmBlock; objectName: "ofdmBlock"; x: 10; y: 190; width: 140; height: 90
@@ -150,16 +178,16 @@ Item {
                 WorkbenchBlock {
                     id: receiverBlock; objectName: "receiverBlock"; x: 845; y: 190; width: 170; height: 90
                     theme: workbench.theme; heading: "Receiver"
-                    blockStatus: "attention"
-                    statusReason: "Receiver integration and a validated run configuration are pending."
+                    blockStatus: workbench.runState.receiver_status
+                    statusReason: workbench.runState.reason
                     onClicked: receiverDialog.open()
                 }
                 WorkbenchBlock {
                     id: verificationBlock; objectName: "verificationBlock"; x: 845; y: 35; width: 170; height: 90
                     theme: workbench.theme; heading: "PRBS-RX"
-                    blockStatus: "attention"
-                    statusReason: "Recovered-data comparison setup and simulation integration are pending."
-                    onClicked: workbench.openSection(heading, "Compare recovered bits with the independent original source and inspect BER and completion. File payloads retain exact-byte verification.\n\nThis comparison never feeds back into the source. There are no simulation results yet.")
+                    blockStatus: workbench.runState.verify_status
+                    statusReason: workbench.runState.verified ? "Independent recovered-source comparison enabled." : "Enable independent source comparison in PRBS-RX."
+                    onClicked: verificationDialog.open()
                 }
                 WorkbenchBlock {
                     id: profileBlock; objectName: "profileBlock"; x: 215; y: 360; width: 170; height: 90
@@ -169,14 +197,14 @@ Item {
                     onClicked: profileDialog.open()
                 }
                 WorkbenchBlock {
-                    id: channelEstimateBlock; objectName: "channelEstimateBlock"; x: 445; y: 360; width: 170; height: 90
+                    id: channelEstimateBlock; objectName: "channelEstimateBlock"; x: 640; y: 360; width: 170; height: 90
                     theme: workbench.theme; heading: "DS Channel Est."
                     blockStatus: workbench.measurementState.response.status
                     statusReason: workbench.measurementState.response.reason; inputBlock: true
                     onClicked: responseDialog.open()
                 }
                 WorkbenchBlock {
-                    id: rxmerBlock; objectName: "rxmerBlock"; x: 640; y: 360; width: 170; height: 90
+                    id: rxmerBlock; objectName: "rxmerBlock"; x: 445; y: 360; width: 170; height: 90
                     theme: workbench.theme; heading: "RxMER"
                     blockStatus: workbench.measurementState.rxmer.status
                     statusReason: workbench.measurementState.rxmer.reason; inputBlock: true
@@ -187,18 +215,19 @@ Item {
         RowLayout {
             Layout.fillWidth: true; spacing: 10
             ColumnLayout {
-                Label { text: "WORKBENCH PREVIEW"; color: theme.accent; font.pixelSize: 11; font.letterSpacing: 1.5 }
-                Label { text: "Configure inputs, then open Transmitter to inspect the generated spectrum."; color: theme.muted; font.pixelSize: 12 }
+                Label { text: workbench.runState.busy ? (workbench.runState.paused ? "PAUSED" : "RUNNING") : "SIMULATION WORKBENCH"; color: theme.accent; font.pixelSize: 11; font.letterSpacing: 1.5 }
+                Label { text: workbench.runState.busy ? "Completed observation symbols: "+workbench.runState.completed_symbols : workbench.runState.result ? "Run "+workbench.runState.result.status+" · "+workbench.runState.result.bits_tested+" bits compared · "+workbench.runState.result.bit_errors+" bit errors" : workbench.runState.reason; color: theme.muted; font.pixelSize: 12 }
             }
             Item { Layout.fillWidth: true }
             Button {
                 objectName: "startButton"; text: "▶  Start"
-                enabled: workbench.allBlocksComplete && workbench.runIntegrationAvailable
+                enabled: workbench.allBlocksComplete && workbench.runState.can_start
+                onClicked: { workbench.runBackend.start();workbench.pollRun() }
                 Accessible.name: "Start simulation"
-                Accessible.description: !workbench.allBlocksComplete ? "Every workbench block must be green before starting." : "Simulation run integration is pending."
+                Accessible.description: !workbench.allBlocksComplete ? "Every workbench block must be green before starting." : "The Rust worker must be idle before starting."
             }
-            Button { objectName: "stopButton"; text: "■  Stop"; enabled: false; Accessible.name: "Stop simulation" }
-            Button { objectName: "pauseButton"; text: "Ⅱ  Pause"; enabled: false; Accessible.name: "Pause simulation" }
+            Button { objectName: "stopButton"; text: "■  Stop"; enabled: workbench.runState.busy; onClicked: workbench.runBackend.stop(); Accessible.name: "Stop simulation" }
+            Button { objectName: "pauseButton"; text: workbench.runState.paused ? "▶  Resume" : "Ⅱ  Pause"; enabled: workbench.runState.busy; onClicked: { workbench.runBackend.pause();workbench.pollRun() } Accessible.name: "Pause simulation" }
         }
     }
     RxmerInputDialog {
@@ -214,7 +243,10 @@ Item {
         onRxmerRequested: rxmerDialog.open()
         onResponseRequested: responseDialog.open()
     }
-    ReceiverWorkbenchDialog { id: receiverDialog; theme: workbench.theme; backend: workbench.receiverBackend }
+    ReceiverWorkbenchDialog { id: receiverDialog; theme: workbench.theme; backend: workbench.receiverBackend; runState: workbench.runState; onConfigurationRequested: receiverConfig.open() }
+    ReceiverConfigurationDialog { id: receiverConfig; theme: workbench.theme; backend: workbench.runBackend; settingsBackend: workbench.settingsBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
+    VerificationDialog { id: verificationDialog; theme: workbench.theme; backend: workbench.runBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
+    WorkbenchFileFeedback { id: fileFeedback; theme:workbench.theme; message:workbench.fileMessage }
     SettingsDialog { id: settingsDialog; theme: workbench.theme }
     AboutDialog { id: aboutDialog; theme: workbench.theme; backend: workbench.aboutBackend; iconRoot: workbench.iconRoot }
     OfdmSettingsDialog {
@@ -239,7 +271,7 @@ Item {
     }
     Timer {
         interval: 100; running: true; repeat: true
-        onTriggered: workbench.transmitterState = JSON.parse(workbench.transmitterBackend.poll())
+        onTriggered: { workbench.transmitterState = JSON.parse(workbench.transmitterBackend.poll());workbench.pollRun() }
     }
     SpectrumAnalyzerDialog {
         id: transmitterDialog

@@ -204,6 +204,54 @@ impl WaveformLink {
         self.channel.transition(plan);
         Ok(())
     }
+    /// Replaces residual variances without resetting source, receiver or RNG state.
+    /// # Arguments
+    /// * `snapshot` - Rust playback powers at the current observation symbol.
+    /// * `grid` - Original exact measurement coordinates.
+    /// # Returns
+    /// Unit after atomically updating channel powers and calibrated LLR variances.
+    /// # Errors
+    /// Rejects missing/invalid active powers or incompatible physical coverage.
+    pub(crate) fn residual_transition(
+        &mut self,
+        snapshot: &super::measurement_playback::ResidualSnapshot,
+        grid: &crate::scenario::FrequencyGrid,
+    ) -> Result<(), SimulationError> {
+        let mut powers = self.channel.plan.residual_power.clone();
+        let mut variances = self.calibrated_variances.clone();
+        for (bin, role) in self.layout.static_roles().iter().enumerate() {
+            if *role == PhysicalCarrierRole::Excluded {
+                continue;
+            }
+            let frequency = self
+                .layout
+                .frequency_hz(bin as u16)
+                .ok_or_else(|| invalid("Missing playback frequency."))?;
+            let offset = crate::signal_processing::channel::impairments::offset(
+                grid,
+                frequency,
+                self.geometry.settings().subcarrier_spacing.frequency_hz(),
+            )?;
+            let power = snapshot
+                .power
+                .get(offset)
+                .copied()
+                .flatten()
+                .ok_or_else(|| invalid("Missing playback residual."))?;
+            if !power.is_finite()
+                || power <= 0.0
+                || power > crate::signal_processing::channel::MAX_NORMALIZED_NOISE_POWER
+            {
+                return Err(invalid("Invalid playback residual power."));
+            }
+            powers[bin] = power;
+            variances[bin] = power;
+        }
+        self.channel.plan.residual_power = powers;
+        self.channel.plan.llr_variance = variances.clone();
+        self.calibrated_variances = variances;
+        Ok(())
+    }
     /// Borrows the actual PLC acquisition gate after received frame processing.
     /// # Returns
     /// Immutable live state; ready snapshots originate only in decoded management packets.

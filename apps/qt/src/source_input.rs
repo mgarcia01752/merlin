@@ -46,6 +46,9 @@ pub mod bridge {
         /// Discards staged file changes without altering accepted configuration.
         #[qinvokable]
         fn cancel(self: Pin<&mut SourceInput>);
+        /// Reloads accepted source state after atomic workbench Open.
+        #[qinvokable]
+        fn reload(self: Pin<&mut SourceInput>);
         /// Reports readiness from explicit accepted source configuration.
         /// # Returns
         /// Compact status/reason JSON; defaults alone never imply acceptance.
@@ -60,7 +63,28 @@ pub struct SourceInputRust {
     model: SourceModel,
 }
 
+/// Validates an offline project source into an independent scientific snapshot.
+/// # Arguments
+/// * `value` - Stored original source bytes/options.
+/// # Returns
+/// None for an unconfigured source, otherwise validated exact bytes/PRBS seed.
+/// # Errors
+/// Reports malformed source data without changing the current workbench.
+pub(crate) fn restore_source(
+    value: &serde_json::Value,
+) -> Result<Option<crate::workbench_session::AcceptedSource>, String> {
+    Ok(model::SourceModel::from_saved(value)?.snapshot())
+}
 impl bridge::SourceInput {
+    /// Adopts already validated project source state on the GUI thread.
+    pub fn reload(mut self: core::pin::Pin<&mut Self>) {
+        if let Ok(model) =
+            model::SourceModel::from_saved(&crate::workbench_session::saved("source"))
+        {
+            self.as_mut().rust_mut().model = model;
+        }
+    }
+
     /// Copies accepted file/options into the edit session, without generating bits.
     /// # Returns
     /// Initial options and compact original-file metadata.
@@ -113,6 +137,7 @@ impl bridge::SourceInput {
         let result = self.as_mut().rust_mut().model.accept(&document.to_string());
         if result.is_ok() {
             crate::workbench_session::set_source(self.rust().model.snapshot());
+            crate::workbench_session::put_saved("source", self.rust().model.export());
         }
         QString::from(result.err().unwrap_or_default())
     }

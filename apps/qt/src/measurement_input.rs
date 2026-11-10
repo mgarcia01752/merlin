@@ -22,6 +22,9 @@ pub mod bridge {
         #[qobject]
         #[qml_element]
         type MeasurementInputs = super::MeasurementInputsRust;
+        /// Reloads accepted originals after an atomic project Open.
+        #[qinvokable]
+        fn reload(self: Pin<&mut MeasurementInputs>);
         /// Starts a draft from the accepted measurement configuration.
         /// # Arguments
         /// * `rxmer` - Selects RxMER or channel response.
@@ -192,7 +195,35 @@ impl MeasurementInputsRust {
         }
     }
 }
+pub(crate) struct RestoredMeasurements {
+    pub playback:
+        Option<docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackConfiguration>,
+    pub response: Option<docsis_ofdm_fec::scenario::ChannelFrame>,
+}
+/// Decodes all saved originals into an independent accepted measurement snapshot.
+/// # Arguments
+/// * `value` - Self-contained saved measurement section.
+/// * `_settings` - OCD; cross-input mismatches remain editable readiness errors.
+/// * `profile` - Current DPD or None for incomplete projects.
+/// # Returns
+/// Typed playback/response inputs, preserving all original bytes in the editor model.
+/// # Errors
+/// Reports malformed originals, unknown fields or exceeded resource limits.
+pub(crate) fn restore_measurements(
+    value: &Value,
+    _settings: &TransmissionSettings,
+    profile: Option<&docsis_ofdm_fec::profile::candidate::CapturedProfile>,
+) -> Result<RestoredMeasurements, String> {
+    Model::from_saved(value)?.published(profile)
+}
 impl bridge::MeasurementInputs {
+    /// Adopts original captures/options after complete project validation.
+    pub fn reload(mut self: core::pin::Pin<&mut Self>) {
+        if let Ok(model) = Model::from_saved(&crate::workbench_session::saved("measurements")) {
+            self.as_mut().rust_mut().model = model;
+        }
+    }
+
     /// Creates a draft without changing accepted scientific state.
     /// # Arguments
     /// * `rxmer` - Measurement kind.
@@ -378,8 +409,25 @@ impl bridge::MeasurementInputs {
                 model.accepted_response = model.draft_response.clone();
                 model.response_tolerance = options.tolerance_seconds;
             }
+            if rxmer {
+                let profile = crate::workbench_session::snapshot().profile.ok_or("Missing DPD")?;
+                let frames = model.accepted_rx.iter().filter_map(|capture| match &capture.measurement {
+                    document::Measurement::Rxmer(frame) => Some(frame.as_ref().clone()), _ => None,
+                }).collect();
+                crate::workbench_session::set_playback(Some(docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackConfiguration {
+                    profile, frames, mode: model.options.mode, interval_symbols: model.options.interval_symbols.parse().map_err(|_| "Invalid interval")?,
+                    tolerance_seconds: model.options.tolerance_seconds,
+                }));
+            } else {
+                crate::workbench_session::set_response(model.accepted_response.as_ref().and_then(|capture| match &capture.measurement {
+                    document::Measurement::Response(frame) => Some(frame.as_ref().clone()), _ => None,
+                }));
+            }
             Ok(())
         });
+        if result.is_ok() {
+            crate::workbench_session::put_saved("measurements", self.rust().model.export());
+        }
         QString::from(result.err().unwrap_or_default())
     }
     /// Derives joint configuration readiness; run dispatch remains separate.
@@ -391,6 +439,10 @@ impl bridge::MeasurementInputs {
         let profile = crate::workbench_session::snapshot().profile;
         let settings = parse::<TransmissionSettings>(&settings.to_string());
         let model = &self.rust().model;
+        if let Ok(inputs) = model.published(profile.as_ref()) {
+            crate::workbench_session::set_playback(inputs.playback);
+            crate::workbench_session::set_response(inputs.response);
+        }
         let rx = settings
             .as_ref()
             .map_err(Clone::clone)

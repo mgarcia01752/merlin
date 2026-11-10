@@ -14,7 +14,7 @@ Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first 
 - [x] Add the native Qt Quick/QML shell and separate Rust presentation adapter.
 - [x] Render the user's high-level signal path and clickable input blocks.
 - [x] Open a focused section-preview pop-up for each block; keep the workbench
-  visible behind it. Other settings editors and file pickers remain pending.
+  visible behind it; accepted source/profile/measurement editors are available.
 - [ ] Implement OFDM Channel Descriptor (OCD): cyclic prefix, roll-off/windowing, interleaver
   depth and supported pilot settings, using Rust validation for the next run.
 - [x] Replace OFDM preview with an expandable settings tree, supported-value
@@ -25,36 +25,37 @@ Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first 
   labeled application defaults, and consistency checks against Rust settings.
 - [x] **UI-SHELL-02** Add left-aligned File | Settings | About actions; move
   Light/Dark mode into Settings → Global; remove the instruction banner.
-  Settings/About have separate QML files and session-only theme selection.
-- [ ] **UI-WB-JSON-01** Implement File Open/Save for JSON containing all PNM inputs
+  Settings/About have separate QML files; explicit WB saves include the theme.
+- [x] **UI-WB-JSON-01** Implement File Open/Save for JSON containing all PNM inputs
   and accepted settings of every block; define bounds, schema and input encoding.
 - [x] **UI-SHELL-03** Use a standard application menu bar above WB branding,
   replacing the content-area navigation buttons.
 - [x] **UI-SHELL-05** Add About icon/version/project and offline license links;
   standardize title capitalization and matched rounded light/dark icons.
-- [ ] Define and implement versioned workbench JSON persistence separately from
+- [x] Define and implement versioned workbench JSON persistence separately from
   registry metadata; Open restores configuration without starting a run.
 - [x] Show heading-only blocks and shared green/yellow/red readiness stripes,
   with status/reason tooltips and accessible descriptions.
 - [x] Keep OFDM Channel Descriptor (OCD) yellow while a validated modulation-profile input is
   unavailable; record WB-RULE-01/02 in the architecture and task design.
 - [x] Connect accepted/removed/rejected DPD input to Rust-backed DPD/OCD readiness.
-- [ ] Connect remaining input/job states and dependency invalidation to readiness.
+- [x] Connect accepted input/job states and dependency invalidation to readiness.
 - [x] Implement PRBS-TX configuration and supported Transmitter preview readiness.
-  Full-loop Transmitter/job wiring remains pending. Source options are defined in the
+  Full-loop Transmitter/job wiring uses the shared Rust engine. Source options are defined in the
   [architecture](../architecture.md#prbs-tx-source-configuration).
 - [ ] Implement Channel Simulator configuration and stage details.
-- [ ] Implement Receiver / PRBS-RX configuration and recovered-data status.
-- [ ] Keep source/recovered comparison independent of receiver feedback.
-- [ ] Add persistent lower-right Start, Stop and Pause/Resume icons with tooltips,
+- [x] **UI-RX-CONFIG-01 / UI-VERIFY-01** Implement Receiver / PRBS-RX configuration
+  and actual recovered-data status.
+- [x] Keep source/recovered comparison independent of receiver feedback.
+- [x] **UI-RUN-01** Add persistent lower-right Start, Stop and Pause/Resume icons with tooltips,
   accessible names and state-dependent availability.
 - [x] Gate Start on every block being green; any yellow/red block disables it.
-  Keep the run-integration guard closed until a worker action is connected.
-- [ ] Connect Start to a validated frozen request and a bounded Rust worker job.
-- [ ] Connect Stop to cooperative cancellation, preserving completed partial results.
-- [ ] Define Rust pause boundaries, paused-time budget accounting, Stop/close while
-  paused, progress delivery and worker cleanup before implementing Pause/Resume.
-- [ ] Implement pause/resume without resetting scientific state or RNG streams.
+  The guard now admits only a complete supported request and an idle worker.
+- [x] Connect Start to a validated frozen request and a bounded Rust worker job.
+- [x] Connect Stop to cooperative cancellation, preserving completed partial results.
+- [x] Define Rust pause boundaries, paused-time budget accounting, Stop/close while
+  paused, progress delivery and worker cancellation on close.
+- [x] Implement pause/resume without resetting scientific state or RNG streams.
 
 ## UI-02: Input dialogs and source files
 
@@ -63,7 +64,7 @@ Integrate input blocks as their owning sections are developed left to right.
 - [x] Add the DPD Open File dialog, content detection, binary/JSON import and
   staged profile selection/removal with exact-byte provenance.
 - [x] Enforce and verify OS-native Open for PRBS-TX and DPD without Qt fallback.
-  Save/folder selection remains pending with its owning future dialogs.
+  Native project Save is implemented; folder selection remains outside current dialogs.
 - [ ] Add OS file pickers to remaining applicable dialogs and show input roles/status.
 - [x] Support PRBS15 or exact text/binary payload bytes with Rust-derived size
   feedback and explicit optional append-PRBS15 fill.
@@ -79,13 +80,13 @@ Integrate input blocks as their owning sections are developed left to right.
   - [x] Verify UI lifecycle/native picker and adapter validation with existing
     PRBS/file tests reused; document actual dark VM screenshots.
 - [x] Accept modulation-profile capture inputs in DPD and show the OCD summary.
-- [ ] Attach accepted DPD profiles to the actual Transmitter run request.
+- [x] Attach accepted DPD profiles to the actual closed-loop Transmitter request.
 - [x] Attach DS channel-estimation and RxMER configuration to Channel Simulator
-  readiness; full-loop execution wiring remains pending.
+  readiness and the frozen closed-loop request.
 - [x] Validate binary PNM through the pinned decoder and standalone decoded
   JSON through the shared Rust importers;
   preserve grids, missing samples, timestamps and provenance.
-- [ ] Dispatch accepted multiple-RxMER configuration through validated full-run
+- [x] Dispatch accepted multiple-RxMER configuration through validated full-run
   schedules; merely listing files must not activate playback.
 - [ ] Apply replacements to the next run; preserve active inputs and original bytes.
 
@@ -101,10 +102,10 @@ Integrate input blocks as their owning sections are developed left to right.
 - [x] **UI-SA-04** Fit symbol/window timing and nominal cable echo budgets below
   the PSD, using frozen result settings and Rust calculations.
 - [ ] Add actual IQ sample trace inspection, distinct from the window-coefficient view.
-- [ ] Connect the shared SA to channel output and eligible RX time-sample taps.
+- [x] Connect the shared SA to retained channel output and RX framed/useful taps.
 
-- [ ] Present actual LDPC outcomes/iterations and independent BER/completion status.
-- [ ] Add bounded matched payload pre/post-equalization views.
+- [x] Present actual LDPC outcomes/iterations and independent BER/completion status.
+- [x] Add bounded matched supported payload pre/post-equalization views.
 - [ ] Add separate continuous/scattered pilot and PLC data/preamble views.
 - [ ] Reuse existing Rust results and test points; label unsupported observations.
 - [ ] Preserve units, reference planes, supplied H versus estimated H-hat,
@@ -119,19 +120,20 @@ Integrate input blocks as their owning sections are developed left to right.
   use rounded edges, subtle chip pins and visible keyboard/hover feedback.
 - [x] **UI-QAM-01 selectors** Add Data Profile / NCP / PLC and Raw / Equalized /
   Paired controls, separate PLC data/preamble and unavailable received-profile state.
-- [ ] **UI-QAM-01 data** Connect supported received-role collectors and actual
-  profile/carrier/symbol controls; preserve explicit unsupported cases.
+- [x] **UI-QAM-01 data** Connect supported payload/PLC received-role collectors.
+- [ ] Generalize profile/carrier/symbol controls and preserve unsupported cases.
 - [ ] **UI-QAM-02** Add bounded matched received NCP I/Q classification/collection
   before enabling its constellation view; LLR/control events are not I/Q.
 - [x] **UI-SA-05 selector** Add independent SA Test Point routing with empty-state
   admission and a distinct FFT-bin-power label; disable receiver generation.
-- [ ] **UI-SA-05 data** Connect retained RX time samples and FFT-bin power with
+- [x] **UI-SA-05 data** Connect retained RX time samples and FFT-bin power with
   correct units, boundary handling and normalization.
 - [ ] Verify selection does not rerun science, hides stale results, preserves
   matched run/carrier/time identities and shares bounded retention across panels.
 
 Design: [Receiver Workbench](features/receiver-workbench/design.md).
-Navigation is implemented; receiver chart wiring remains pending.
+Navigation and supported retained charts are implemented; NCP constellation and
+generalized observation-window controls remain pending.
 
 ## UI-04: Validation and delivery evidence
 
@@ -158,7 +160,7 @@ Initial shell evidence and remaining validation: [Qt development](qt.md).
 - [x] **UI-RXMER-02** Add static/average/hold/interpolated-power configuration and
   bounded previews with strict required-carrier validity.
 - [x] **UI-RXMER-03 editor** Expose symbol intervals/order/end policy and previews.
-- [ ] **UI-RXMER-03 dispatch** Integrate accepted configuration and interpolation
+- [x] **UI-RXMER-03 dispatch** Integrate accepted configuration and interpolation
   into full channel jobs, including job-duration admission and continuous RNG.
 
 See the [design and remaining scope](features/rxmer-workbench/design.md).
@@ -168,3 +170,5 @@ See the [design and remaining scope](features/rxmer-workbench/design.md).
 
 - [x] **UI-CHANNEL-01** Require valid RxMER and response configurations for green
   Channel Simulator; provide explicit Flat/unity H=1+0i default on the DPD grid.
+
+Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) · [validation](features/qt-closed-loop/validation.md).

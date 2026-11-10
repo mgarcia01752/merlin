@@ -165,3 +165,68 @@ fn failed_sink_preserves_science_completed_before_the_callback() {
         result.summary.recovered_payloads
     );
 }
+
+#[test]
+fn paused_run_resumes_without_restarting_science_and_stop_works_while_paused() {
+    use docsis_ofdm_fec::simulation::channel::job::run_channel_controlled;
+    use std::sync::Arc;
+    let baseline = run_channel(
+        &settings(),
+        &ChannelJobLimits::default(),
+        &AtomicBool::new(false),
+        &mut TestPointProbe::disabled(),
+        &mut NoopObserver,
+        |_| {},
+    )
+    .unwrap();
+    let paused = Arc::new(AtomicBool::new(false));
+    let gate = paused.clone();
+    let (send, receive) = std::sync::mpsc::sync_channel(1);
+    let resume = std::thread::spawn(move || {
+        receive.recv().unwrap();
+        std::thread::sleep(Duration::from_millis(40));
+        gate.store(false, Ordering::Relaxed);
+    });
+    let mut first = true;
+    let result = run_channel_controlled(
+        &settings(),
+        &ChannelJobLimits::default(),
+        &AtomicBool::new(false),
+        &paused,
+        &mut TestPointProbe::disabled(),
+        &mut NoopObserver,
+        |_| {
+            if first {
+                first = false;
+                paused.store(true, Ordering::Relaxed);
+                send.send(()).unwrap();
+            }
+        },
+    )
+    .unwrap();
+    resume.join().unwrap();
+    assert_eq!(result.status, ChannelJobStatus::Complete);
+    assert_eq!(
+        serde_json::to_value(result.summary).unwrap(),
+        serde_json::to_value(baseline.summary).unwrap()
+    );
+    let cancelled = Arc::new(AtomicBool::new(false));
+    let stop = cancelled.clone();
+    let stopper = std::thread::spawn(move || {
+        std::thread::sleep(Duration::from_millis(40));
+        stop.store(true, Ordering::Relaxed);
+    });
+    let result = run_channel_controlled(
+        &settings(),
+        &ChannelJobLimits::default(),
+        &cancelled,
+        &AtomicBool::new(true),
+        &mut TestPointProbe::disabled(),
+        &mut NoopObserver,
+        |_| panic!("No step may advance while initially paused"),
+    )
+    .unwrap();
+    stopper.join().unwrap();
+    assert_eq!(result.status, ChannelJobStatus::Cancelled);
+    assert_eq!(result.summary.comparison.bits_tested, 0);
+}

@@ -5,6 +5,9 @@ Start with the [status](status.md), [checklist](checklist.md) and
 [architecture](../architecture.md), then use the feature records for design history.
 Start with [development setup](setup.md) for the Ubuntu package/toolchain installer.
 
+The [Qt closed-loop and workbench-file design](features/qt-closed-loop/design.md)
+tracks native execution/persistence and its validation.
+
 The separate [UI checklist](ui-checklist.md) tracks the Qt workbench.
 [Qt setup and VM validation](qt.md) covers the initial native shell.
 

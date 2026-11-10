@@ -228,14 +228,18 @@ not the presence of results from that run; PRBS-RX must be ready to compare befo
 Start. Optional measurement blocks can be green through an explicit validated
 bypass/default mode. Rust must still validate/freeze the complete request before
 dispatch. Run availability and lifecycle are additional gates. The current shell
-checks all block statuses but keeps Start disabled until run dispatch is connected.
+checks all block statuses and dispatches a validated frozen request through the
+Rust worker only when idle. Receiver/PRBS-RX acceptance is configuration, not a
+requirement to have prior results.
 
 Current implementation: accepted OCD-compatible DPD turns DPD and OCD green;
 accepted PRBS-TX configuration also makes Transmitter ready. Default unity response
 becomes ready on the valid DPD/OCD grid. Accepted compatible RxMER makes RxMER
 and Channel Simulator green. Removing/replacing inputs revalidates dependencies;
-Cancel preserves accepted state. Receiver and PRBS-RX remain yellow with explicit
-pending reasons. Full-loop dispatch and remaining input transitions are pending.
+Cancel preserves accepted state. Applying supported receiver options validates
+the complete accepted input set; enabling independent source comparison configures
+PRBS-RX. Both become green before the first run. Start/Stop and Pause/Resume use
+the same bounded Rust closed-loop worker; missing or incompatible inputs block it.
 Optional measurements are not required for every future run.
 
 ### OFDM editor, registry and application navigation
@@ -251,7 +255,8 @@ profiles (MULPI I25 §§6.4.40–6.4.41; PHY I20 §7.5.13.4). Bandwidth and spac
 remain in the Rust configuration, outside this editor; future input integration
 must reconcile them separately rather than treating DPD as channel numerology.
 Apply validates a staged configuration through the core Rust API and retains it in memory; Cancel
-discards staged edits. Run integration and file persistence remain pending.
+discards staged edits. Accepted settings feed the closed-loop worker and
+self-contained workbench persistence.
 The diagram block and popup use the full name OFDM Channel Descriptor (OCD).
 This editor label does not imply complete OCD message import/export support.
 Each dialog has its own QML file and focused Rust adapter where needed.
@@ -269,20 +274,25 @@ for these waveform fields; cite MULPI only for fields with actual pinned MULPI
 evidence. Rust remains authoritative for scientific validation and derivation;
 registry consistency checks must detect divergence from supported Rust values.
 
-Proposed workbench persistence uses a separate versioned `*.merlin.json` document
+Workbench persistence uses a separate versioned `*.merlin.json` document
 containing all accepted block settings and all associated PNM inputs, not a copy
 of the registry. Input paths alone do not satisfy the restoration contract.
-The registry describes fields; the proposed workbench file will store user
-choices. Workbench persistence remains a proposal, not an implemented interface.
+The registry describes fields; the workbench file stores accepted user choices.
+Schema version 1 embeds original inputs as bounded base64 with byte counts and
+SHA-256, including PNM and payload files. Load fully validates before replacing
+accepted state; cross-input incompatibilities remain editable readiness diagnostics.
+Save uses a temporary sibling and atomic replacement; imported original paths are
+protected. Results, drafts and transient instrument viewports are not persisted.
 
 The application has a standard top **File | Settings | About** menu bar above
 workbench branding, rather than content-area navigation buttons. Settings →
 Global opens appearance preferences; About → About MERLIN opens project details.
 The instruction banner and standalone theme button are removed.
 **File → Open…**, **Save** and **Save As…** use standard labels and shortcuts
-and are disabled until workbench JSON persistence is implemented; individual capture inputs remain in
+and operate through the OS-native file chooser and Rust persistence adapter; individual capture inputs remain in
 their corresponding block dialogs. **Settings → Global → Light/Dark mode**
-applies the shared theme immediately to all windows, for this session only.
+applies the shared theme immediately to all windows; explicit workbench saves
+also retain that choice.
 Settings is separate from OFDM transmission configuration. About presents
 MERLIN's expanded name, purpose, component licenses and acknowledgements.
 About includes the active rounded icon, compiled version and project link.
@@ -721,7 +731,7 @@ a response capture is optional in this mode. Imported responses must pass the
 existing exact compatibility and active-gain checks. RxMER needs accepted
 compatible inputs and a valid combination/schedule before Channel Simulator is
 green. Dependency changes revalidate and invalidate old results. This rule is
-implemented for configuration; full-loop UI dispatch remains pending. See
+implemented for configuration and reused for frozen closed-loop requests. See
 [the design](development/features/rxmer-workbench/design.md#ui-channel-01-response-configuration-and-channel-readiness).
 
 ### Shared Channel Estimate/RxMER viewer
@@ -742,8 +752,10 @@ Response charts show gain, wrapped phase, real or imaginary H; synthetic unity i
 explicitly labeled. Bounded min/max charts preserve missing-data breaks.
 
 UI-RXMER-01/02 and the editor/scheduling-preview part of UI-RXMER-03 are implemented.
-Production runner interpolation and accepted-input dispatch are still pending;
-these preview controls do not change the TX-only SA. See the
+The production runner now consumes this power playback on one continuous RNG/
+waveform stream. Whole schedules must fit the observation window. Acquisition
+uses the initial powers and completion/drain retain the terminal modeled state.
+These channel controls do not change the TX-only SA; the RX SA includes them. See the
 [design](development/features/rxmer-workbench/design.md),
 [validation](development/features/rxmer-workbench/validation.md) and
 [user guide](user/channel-measurements.md).
@@ -766,7 +778,8 @@ Clicking Receiver opens a dedicated workbench with processing stages,
 selectable test points and shared diagnostic instruments. The QAM analyzer has
 independent **Signal: Data Profile / NCP / PLC** and **View: Raw / Equalized /
 Paired** selectors. Received profile/carrier/symbol selection remains unavailable
-until retained receiver results are connected.
+for future general selection; current retained views show the supported profile
+and first compatible modulation group.
 PLC data and preamble remain separate. Optional hard slicing is a diagnostic
 branch; soft demapping consumes received I/Q before hard decisions. Control and
 payload decode paths are distinct; PRBS comparison belongs to payload recovery.
@@ -776,20 +789,54 @@ The shared SA has an independent **Test Point** selector, initially RX Input
 view is explicitly frequency-domain with appropriate normalization, not another
 FFT of bins or an automatically calibrated PSD. QAM signal selection does not
 silently filter the SA's full-channel sample tap. Channel-response H/echo remains
-a separate scientific view. Instrument selection is independent of scientific state. Actual charts will query
-immutable bounded Rust results; retained-result integration remains pending.
+a separate scientific view. Instrument selection is independent of scientific state. Charts query
+immutable bounded Rust results from one complete or partial closed-loop run.
 
 The navigation and selectors are implemented in separate receiver/QAM dialogs.
 Stage/instrument chips use shared rounded styling, equal widths within each row
 and aligned test-point/annotation slots; pin accents are decorative, not status.
 The Rust presentation adapter maps taps to registered IDs and reports unavailable
-observations. Receiver SA generation stays disabled; no TX fallback is used.
+observations. Receiver SA generation stays disabled locally: main Start runs
+the full loop and the instrument queries retained results; no TX fallback is used.
 Existing Rust payload/PLC collectors have explicit support limits. Matched NCP constellation classification
-and retained-result/full-loop Qt integration still need implementation. Receiver
-readiness remains yellow and Start remains disabled. Unsupported
+still needs implementation. Payload/PLC QAM, RX time spectra and FFT-bin power
+now consume real retained observations. Receiver becomes green after full-request
+validation; PRBS-RX requires explicit independent comparison acceptance. Unsupported
 views show a reason; no generated clouds, mislabeled TX data or TX-truth profile
 assignment. See [receiver workbench design](development/features/receiver-workbench/design.md)
 and [user guide](user/receiver-workbench.md).
+
+### Qt closed-loop execution and workbench files
+
+The main diagram places RxMER to the left of DS Channel Estimate. Both feed the
+channel; a dashed DS Channel Estimate → Receiver arrow labels supplied-H reference
+correction. The channel consumes H, while reference RX uses 1/H. Pilot-estimated
+H-hat remains independent and does not consume the supplied-response arrow.
+
+UI-RUN-01 freezes accepted source, DPD loading, timing, original measurements,
+playback and receiver options in Rust. The worker reuses ChannelRunSettings and
+the channel job API; QML performs no DSP or FEC. Default UI observation is 3 ms,
+limited to 1–1000 ms, 1–100 decoder iterations and a finite active host budget.
+These are application limits, not DOCSIS defaults. Supplied-H and pilot-estimated
+correction use the existing known-boundary bootstrap; no RF acquisition is claimed.
+
+Pause waits between completed OFDM steps, retaining source, RNG, overlap,
+interleaver and receiver state; paused time is excluded from the host budget. Stop
+also works while paused. Complete/cancelled/runtime-exceeded/failed results preserve
+actual completed comparisons. Changing accepted scientific settings invalidates old
+results and requests cancellation; busy Open/Save are disabled. Worker shutdown
+requests cancellation without blocking the UI thread.
+
+Observation-only phase filtering prevents acquisition from exhausting the sample
+retention budget. Retain finite contiguous RX input/framed snapshots, one useful
+symbol and one raw FFT; never concatenate useful samples across prefix gaps.
+Payload/PLC charts use existing matched collectors and shared raw/corrected axes.
+NCP I/Q collection and general carrier/time/profile selection remain pending.
+FEC/PRBS-RX show actual job totals, and FFT-bin power has separate units from PSD.
+
+See [design](development/features/qt-closed-loop/design.md),
+[validation](development/features/qt-closed-loop/validation.md) and
+[user guide](user/closed-loop-workbench.md).
 
 ## Temporal measurements and applied profiles
 

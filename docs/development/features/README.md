@@ -71,3 +71,5 @@ Build tooling proposal: [BUILD-01–04 content-based cache](build-cache/design.m
 Channel Estimate/RxMER workbench: [design](rxmer-workbench/design.md) · [validation](rxmer-workbench/validation.md) · [user guide](../../user/channel-measurements.md).
 
 Receiver Workbench navigation: [design](receiver-workbench/design.md) · [validation](receiver-workbench/validation.md) · [user interaction](../../user/receiver-workbench.md).
+
+Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/design.md) · [validation](qt-closed-loop/validation.md) · [user guide](../../user/closed-loop-workbench.md).

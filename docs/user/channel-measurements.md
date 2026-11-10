@@ -81,16 +81,18 @@ and links back to the editors.
 
 Green means **configured**, not a running simulation. This task provides shared
 viewers, accepted input state and reusable Rust combination/preview operations.
-Full-loop UI dispatch and receiver QAM/channel-output SA connections remain
-pending. The TX SA's **Run simulation** still runs before these impairments.
-Job-duration checks and continuous playback integration belong to that dispatch
-work; a valid editor schedule is not proof it fits a future run duration.
+Main Start dispatches the frozen configuration through the closed-loop worker,
+with actual payload/PLC QAM and channel-output SA observations. The TX SA's local
+**Run simulation** remains a separate preview before these impairments.
+Receiver Apply checks that the playback transition span fits the selected run
+duration; a valid editor schedule can still be too long for that request.
 
 The editor accepts at most 64 RxMER files, 64 MiB original RxMER bytes and four
 million decoded carrier values. One response file has a separate 16 MiB ceiling;
 each input file is at most 16 MiB. Originals/full arrays remain in Rust; each chart
 returns at most 1024 min/max groups, preserving narrow extrema and missing-data
-breaks. Configuration remains session-only; WB JSON save/load is still pending.
+breaks. Workbench JSON Save/Open preserves accepted original files and settings; see the
+[run/save guide](closed-loop-workbench.md).
 
 See the [design and validation](../development/features/rxmer-workbench/design.md),
 [existing engine playback](impairments/measurement-timeline.md) and

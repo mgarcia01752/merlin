@@ -1,6 +1,6 @@
 # Development status
 
-Reviewed against the local source and checklist on **2026-11-09**.
+Reviewed against the local source and checklist on **2026-11-10**.
 Version source: root `VERSION`, currently **0.1.0**. This describes the current
 checkout, not a published release, platform certification or interoperability claim.
 
@@ -70,7 +70,7 @@ known timing/PLC phase. No full blind modem-acquisition claim is made.
 | Receiver extensions | Arbitrary RF acquisition, sample-rate error and severe-channel tracking remain outside the bounded minimum model | Future receiver extensions |
 | Measurement evolution | Future explicit correlated/burst models; streaming dynamic DPD/NCP activation is implemented, duration CLI remains fixed-profile | Future model extensions |
 | Cross-platform validation | Windows/macOS native builds/runtime after the later workflow push | QA-06 |
-| Product interfaces | Native installer lifecycle/release execution; optional Python bindings and Qt presentation | QA-07, API-01, UI-01 |
+| Product interfaces | Native installer lifecycle/release execution; optional Python bindings and remaining Qt instrumentation | QA-07, API-01, UI-01 |
 | Later PHY scope | OFDMA, channel bonding/multiple channels and FDX-specific behavior | LATER-01, LATER-02 |
 
 This table groups outstanding work; it does not reorder the official checklist
@@ -101,7 +101,7 @@ SRC-04..06 implement bounded exact-byte files, send-once EOF, optional explicit
 PRBS15 append-to-fill, coding-padding exclusion and separate original/fill
 verification. The Rust API stays path-independent; CLI file options use the same
 contract. Size/alignment requirements inferred from channel/profile/duration
-remain deferred. Qt source controls remain planned under UI-02. See the
+remain deferred. Qt source controls are implemented under UI-02. See the
 [file-source implementation](features/file-payload-source/implementation.md).
 
 ## Shortened-codec milestone
@@ -164,11 +164,19 @@ implementation is not required; those two items therefore close for the document
 MERLIN-only acceptance scope. No external comparison has been claimed. See the
 [closed-loop acceptance record](features/closed-loop-validation/design.md).
 
-## Qt workbench shell (UI-01 partial)
+## Qt workbench and closed loop (UI-01 through UI-04 partial)
 
-The standalone Qt Quick/QML shell now renders the system diagram and opens all
-nine section-preview dialogs. It has dark/light themes and matching MERLIN icons.
-Start, Stop and Pause are visible but disabled; editors, inputs, analyzers and
-Rust simulation integration remain pending. The VM is the interactive review
-target. See [Qt development](qt.md), [user guide](../user/workbench.md) and the
-[UI checklist](ui-checklist.md). No UI milestone is marked fully complete.
+The native Qt workbench now has accepted OCD/DPD/source/measurement editors,
+receiver configuration, independent source-comparison acceptance and derived
+readiness. Start runs the Rust closed loop; Stop retains completed comparisons,
+and Pause/Resume keeps the same engine state. Actual payload/PLC QAM, RX spectrum
+and BER/FEC results share one bounded run. NCP matched constellation capture and
+broader observation selectors remain pending.
+
+Native File Open/Save/Save As use self-contained versioned workbench JSON with
+exact embedded input bytes and checksums. The VM is the interactive review target;
+Windows/macOS and other Ubuntu versions are not runtime-validated here. See the
+[closed-loop design](features/qt-closed-loop/design.md),
+[validation](features/qt-closed-loop/validation.md),
+[user guide](../user/closed-loop-workbench.md) and
+[UI checklist](ui-checklist.md). No entire UI milestone is marked complete.

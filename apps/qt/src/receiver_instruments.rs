@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Receiver instrument admission until bounded full-loop results are connected.
+mod views;
 use cxx_qt_lib::QString;
 use docsis_ofdm_fec::simulation::test_points::TestPointId;
 use serde_json::{json, Value};
 
-const NO_RESULTS: &str =
-    "No retained receiver results. Full-loop UI run dispatch is not connected yet.";
+const NO_RESULTS: &str = "Run the closed loop to retain receiver observations.";
 
 #[cxx_qt::bridge]
 pub mod bridge {
@@ -36,6 +36,22 @@ pub mod bridge {
         /// Shared SA state with generation disabled until retained results exist.
         #[qinvokable]
         fn spectrum(self: &ReceiverInstruments, tap: i32) -> QString;
+        /// Queries retained RX time spectra or separately normalized FFT-bin power.
+        /// # Arguments
+        /// * `tap` - Registered receiver tap index.
+        /// * `start` - Nonnegative first display bin.
+        /// * `count` - Bin count, zero for full span.
+        /// * `capture_axis` - Use captured frequency mapping without RF conversion.
+        /// # Returns
+        /// Bounded points or an explicit unavailable diagnostic.
+        #[qinvokable]
+        fn view_tap(
+            self: &ReceiverInstruments,
+            tap: i32,
+            start: i32,
+            count: i32,
+            capture_axis: bool,
+        ) -> QString;
         /// Preserves the shared SA cancellation interface; there is no RX worker yet.
         #[qinvokable]
         fn cancel(self: &ReceiverInstruments);
@@ -100,7 +116,12 @@ impl bridge::ReceiverInstruments {
     /// # Returns
     /// Bounded metadata, no source bytes or synthesized I/Q.
     pub fn qam(&self, signal: i32, view: i32, part: i32) -> QString {
-        QString::from(qam_state(signal, view, part).to_string())
+        let mut state =
+            views::qam(signal, view, part).unwrap_or_else(|| qam_state(signal, view, part));
+        if signal == 1 && crate::closed_loop::model::latest().is_some() {
+            state["reason"] = json!("Matched NCP constellation collection is not implemented yet.");
+        }
+        QString::from(state.to_string())
     }
 
     /// Maps a presentation choice to the core's registered test-point identity.
@@ -109,9 +130,38 @@ impl bridge::ReceiverInstruments {
     /// # Returns
     /// Shared SA state; all selections currently require full-loop UI results.
     pub fn spectrum(&self, tap: i32) -> QString {
-        QString::from(spectrum_state(tap).to_string())
+        let mut state = spectrum_state(tap);
+        if let Some(result) = crate::closed_loop::model::latest() {
+            let available = usize::try_from(tap)
+                .ok()
+                .and_then(|i| result.observations.taps.get(i))
+                .is_some_and(|t| !t.values.is_empty());
+            state["has_result"] = json!(available);
+            state["result_token"] = json!(format!("{}-{tap}", result.job.elapsed_ms));
+            state["reason"] = json!(if available {
+                "Retained receiver observations"
+            } else {
+                "No samples retained for this tap"
+            });
+        }
+        QString::from(state.to_string())
     }
 
+    /// Returns a bounded real-data spectrum viewport without running the simulation.
+    /// # Arguments
+    /// * `tap` - Receiver sample/bin reference plane.
+    /// * `start` - First bin.
+    /// * `count` - Requested count; zero uses full span.
+    /// * `capture_axis` - True for mapped captured frequency coordinates.
+    /// # Returns
+    /// Rust-derived display coordinates or a diagnostic with no stale samples.
+    pub fn view_tap(&self, tap: i32, start: i32, count: i32, capture_axis: bool) -> QString {
+        QString::from(
+            views::spectrum(tap, start, count, capture_axis)
+                .unwrap_or_else(|e| json!({"error":e,"points":[],"x_ticks":[],"y_ticks":[]}))
+                .to_string(),
+        )
+    }
     /// Completes the shared SA close operation without changing scientific state.
     /// No receiver job exists to cancel in this navigation implementation.
     pub fn cancel(&self) {}

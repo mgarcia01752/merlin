@@ -263,4 +263,9 @@ Its `at` operation returns residual powers with source indices and interpolation
 weight without changing original epochs or RNG state. `span` and
 `interval_milliseconds` use frozen OFDM cadence. `validate_response` checks imported
 H or explicit unity against the captured profile. These operations are available
-for adapters; they are not yet connected to full-loop UI execution.
+for adapters and are connected to core `ChannelRunSettings.playback`. The optional
+`PlaybackConfiguration` retains original frames/profile and explicit mode/clock;
+transitions update residual powers without resetting RNG or waveform history.
+`channel::job::run_channel_controlled` adds a pause gate at OFDM-step boundaries,
+excluding paused host time. Existing `run_channel` retains its unpaused behavior.
+`TestPointProbe::set_phase_filter` filters before consuming observation budgets.

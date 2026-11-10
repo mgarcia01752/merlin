@@ -5,14 +5,18 @@
  */
 mod about_info;
 mod branding;
+mod closed_loop;
 mod input_file;
 mod measurement_input;
 mod native_file_picker;
 mod ofdm_settings;
 mod profile_input;
+mod project_file;
 mod receiver_instruments;
 mod source_input;
+mod spectrum_view;
 mod transmitter_analyzer;
+mod workbench_file;
 mod workbench_session;
 use cxx_qt_lib::{QGuiApplication, QQmlApplicationEngine, QString, QUrl};
 
@@ -25,11 +29,12 @@ fn main() {
     // process, so the two toolkits cannot consume each other's pending UI events.
     if matches!(
         std::env::args().nth(1).as_deref(),
-        Some("--native-file-picker" | "--native-file-picker-multiple")
+        Some("--native-file-picker" | "--native-file-picker-multiple" | "--native-save-picker")
     ) {
         native_file_picker::run_helper(
             &std::env::args().nth(2).unwrap_or_default(),
             std::env::args().nth(1).as_deref() == Some("--native-file-picker-multiple"),
+            std::env::args().nth(1).as_deref() == Some("--native-save-picker"),
         );
         return;
     }

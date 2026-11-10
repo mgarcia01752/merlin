@@ -37,6 +37,7 @@ pub struct ChannelRun {
     verifier: PayloadVerifier,
     next_symbol: u64,
     next_impairment_epoch: usize,
+    playback: Option<super::measurement_playback::MeasurementPlayback>,
     summary: ChannelSummary,
 }
 impl ChannelRun {
@@ -59,6 +60,14 @@ impl ChannelRun {
             settings.llr_variance,
             settings.data_bit_loading.as_deref(),
         )?;
+        let playback = settings
+            .playback
+            .as_ref()
+            .map(|config| config.prepare(&settings.transmission))
+            .transpose()?;
+        if let Some(plan) = &playback {
+            link.residual_transition(&plan.at(0), &plan.frames()[0].key.grid)?;
+        }
         if settings.receiver_mode
             == crate::signal_processing::receiver::channel_estimation::ReceiverMode::PilotEstimated
         {
@@ -94,6 +103,7 @@ impl ChannelRun {
             verifier,
             next_symbol: 0,
             next_impairment_epoch: 0,
+            playback,
             summary: ChannelSummary {
                 file_source,
                 measured_mer_db: None,
@@ -455,6 +465,11 @@ impl ChannelRun {
         } else {
             RunPhase::Drain
         };
+        if let Some(playback) = &self.playback {
+            let symbol = self.summary.observation_symbols;
+            self.link
+                .residual_transition(&playback.at(symbol), &playback.frames()[0].key.grid)?;
+        }
         if phase == ChannelPhase::Observation {
             if let Some(epoch) = self
                 .settings

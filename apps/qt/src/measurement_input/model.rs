@@ -65,6 +65,102 @@ pub(super) struct ChartRequest {
     pub options: Options,
 }
 impl Model {
+    /// Serializes accepted originals and controls, excluding drafts and result arrays.
+    /// # Returns
+    /// Self-contained Rust-owned persistence section.
+    pub(super) fn export(&self) -> Value {
+        json!({"rxmer":self.accepted_rx.iter().map(|c|crate::project_file::encode(&c.name,&c.original)).collect::<Vec<_>>(),
+            "response":self.accepted_response.as_ref().map(|c|crate::project_file::encode(&c.name,&c.original)),
+            "options":self.options,"response_tolerance":self.response_tolerance})
+    }
+    /// Reconstructs originals and options from a bounded project section.
+    /// # Arguments
+    /// * `value` - Persisted accepted state, null for untouched defaults.
+    /// # Returns
+    /// Independent editor model with exact original capture bytes.
+    /// # Errors
+    /// Rejects invalid source types, hashes, options or combined allocation limits.
+    pub(super) fn from_saved(value: &Value) -> Result<Self, String> {
+        if value.is_null() {
+            return Ok(Self::default());
+        }
+        #[derive(Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct Saved {
+            rxmer: Vec<Value>,
+            response: Option<Value>,
+            options: Options,
+            response_tolerance: u32,
+        }
+        let saved: Saved = serde_json::from_value(value.clone()).map_err(|e| e.to_string())?;
+        if saved.rxmer.len() > 64 {
+            return Err("Too many saved RxMER inputs".into());
+        }
+        saved
+            .options
+            .interval_symbols
+            .parse::<u64>()
+            .map_err(|_| "Invalid saved playback interval")?;
+        let mut model = Self::default();
+        for file in saved.rxmer {
+            let (name, bytes) = crate::project_file::decode(&file)?;
+            model.stage(vec![Capture::decode(name, bytes, true)?], true)?;
+        }
+        if let Some(file) = saved.response {
+            let (name, bytes) = crate::project_file::decode(&file)?;
+            model.stage(vec![Capture::decode(name, bytes, false)?], false)?;
+        }
+        model.accepted_rx = model.draft_rx.clone();
+        model.accepted_response = model.draft_response.clone();
+        model.options = saved.options;
+        model.response_tolerance = saved.response_tolerance;
+        Ok(model)
+    }
+    /// Resolves accepted original captures without hiding cross-input readiness failures.
+    /// # Arguments
+    /// * `profile` - Current accepted DPD, optional during incomplete project editing.
+    /// # Returns
+    /// Typed worker inputs; response None explicitly means unity.
+    /// # Errors
+    /// Rejects an invalid stored interval; cross-input validation occurs on run admission.
+    pub(super) fn published(
+        &self,
+        profile: Option<&CapturedProfile>,
+    ) -> Result<super::RestoredMeasurements, String> {
+        let frames = self
+            .accepted_rx
+            .iter()
+            .filter_map(|c| match &c.measurement {
+                Measurement::Rxmer(frame) => Some(frame.as_ref().clone()),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        let playback = if let Some(profile) = profile.filter(|_| !frames.is_empty()) {
+            Some(
+                docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackConfiguration {
+                    profile: profile.clone(),
+                    frames,
+                    mode: self.options.mode,
+                    interval_symbols: self
+                        .options
+                        .interval_symbols
+                        .parse()
+                        .map_err(|_| "Invalid interval")?,
+                    tolerance_seconds: self.options.tolerance_seconds,
+                },
+            )
+        } else {
+            None
+        };
+        let response = self
+            .accepted_response
+            .as_ref()
+            .and_then(|c| match &c.measurement {
+                Measurement::Response(frame) => Some(frame.as_ref().clone()),
+                _ => None,
+            });
+        Ok(super::RestoredMeasurements { playback, response })
+    }
     /// Starts a fresh draft from accepted immutable input snapshots.
     /// # Arguments
     /// * `rxmer` - Selects RxMER or response editor.

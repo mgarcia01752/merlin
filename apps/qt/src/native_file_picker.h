@@ -17,7 +17,7 @@
  * native integration. No Qt file dialog or custom browser fallback is used.
  * GTK owns the selection UI only; Rust reads and validates selected bytes.
  */
-inline QString chooseNativeSelection(const QString &title, bool multiple) {
+inline QString chooseNativeSelection(const QString &title, bool multiple, bool save = false) {
 #ifdef __linux__
     // Match XCB/XWayland so the native chooser shares the application's display.
     if (qgetenv("QT_QPA_PLATFORM") == "xcb") {
@@ -32,8 +32,12 @@ inline QString chooseNativeSelection(const QString &title, bool multiple) {
     } selection{g_main_loop_new(nullptr, false), GTK_RESPONSE_CANCEL};
     const auto titleBytes = title.toUtf8();
     auto *chooser = gtk_file_chooser_native_new(titleBytes.constData(), nullptr,
-        GTK_FILE_CHOOSER_ACTION_OPEN, "Open", "Cancel");
+        save ? GTK_FILE_CHOOSER_ACTION_SAVE : GTK_FILE_CHOOSER_ACTION_OPEN, save ? "Save" : "Open", "Cancel");
     gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), multiple);
+    if (save) {
+        gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(chooser), "workbench.merlin.json");
+        gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser), true);
+    }
     gtk_native_dialog_set_modal(GTK_NATIVE_DIALOG(chooser), true);
     g_signal_connect(chooser, "response", G_CALLBACK(+[](GtkNativeDialog *, int response, gpointer data) {
         auto *selection = static_cast<Selection *>(data);
@@ -73,4 +77,9 @@ inline QString chooseNativeFile(const QString &title) {
 /** Open the same OS-native chooser with bounded multi-selection enabled. */
 inline QString chooseNativeFiles(const QString &title) {
     return chooseNativeSelection(title, true);
+}
+
+/** Select a project destination with native overwrite confirmation. */
+inline QString chooseNativeSave(const QString &title) {
+    return chooseNativeSelection(title, false, true);
 }

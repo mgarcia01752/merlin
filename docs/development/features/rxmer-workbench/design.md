@@ -1,3 +1,8 @@
+Current follow-up: [Qt closed-loop and persistence](../qt-closed-loop/design.md)
+connects supported receiver results, pause/run dispatch and project files. Older
+pending statements below describe the original implementation stage. NCP matched
+I/Q and generalized observation selection remain pending.
+
 # Shared channel measurement configuration
 
 Status: shared Channel Estimate/RxMER editors, title/File labels and About are

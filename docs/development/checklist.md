@@ -701,29 +701,33 @@ Detailed tasks: [UI checklist](ui-checklist.md) and
 [task design](features/visual-workspace/design.md). Develop left to right, starting
 with OFDM Channel Descriptor (OCD). UI-01 is partial: diagram, section-preview dialogs and
 theme/icon shell and Rust-validated OFDM tree editor exist. Other editors,
-workbench persistence and full-loop Rust jobs remain pending. PRBS-TX now accepts PRBS15
+workbench persistence and bounded full-loop Rust jobs are now connected. PRBS-TX now accepts PRBS15
 or exact-byte file/finite-fill configuration through shared Rust validation.
 UI-SHELL-02/03 provide a standard top File | Settings | About menu, with appearance
-under Settings → Global. File Open/Save remain disabled pending JSON persistence of all block settings
-and PNM inputs (UI-WB-JSON-01).
+under Settings → Global. UI-WB-JSON-01 now implements native Open/Save/Save As
+for self-contained JSON with original inputs and accepted block settings.
 UI-RXMER-01/02 and UI-RXMER-03 editor previews, with UI-CHANNEL-01 joint readiness,
-are implemented. UI-RXMER-03 full-run dispatch and UI-QAM-01 receiver-analyzer
-connections remain pending;
+are implemented. UI-RXMER-03 power playback and UI-QAM-01 supported payload/PLC observations
+are now connected to the closed loop;
 see the [review plan](features/rxmer-workbench/design.md).
 Receiver navigation now has a [dedicated design](features/receiver-workbench/design.md):
 UI-RX-WB-01 navigation, NCP/PLC/data-profile QAM selectors (UI-QAM-01) and an
 independent RX SA test-point selector (UI-SA-05) are implemented. UI-RX-WB-02
-adds aligned, equal-width rounded stage/instrument chips. Actual receiver
-charts, NCP matched-I/Q collection (UI-QAM-02) and full-loop result integration
-remain pending.
+adds aligned, equal-width rounded stage/instrument chips. Actual payload/PLC QAM, RX SA and full-loop job results are connected. NCP
+matched-I/Q collection (UI-QAM-02) and generalized view selection remain pending.
+UI-RUN-01 / UI-RX-CONFIG-01 / UI-VERIFY-01 provide validated pre-run readiness,
+independent comparison and cooperative Start/Stop/Pause/Resume; see the
+[closed-loop design](features/qt-closed-loop/design.md).
 UI-SA-03 removes lower SA bookkeeping text. UI-SA-04 fills that space with
 Rust-derived symbol/window timing and nominal cable echo budgets. Actual IQ trace
 inspection remains pending.
 UI-TX-01/02 now add supported Transmitter readiness and a shared Spectrum Analyzer
-using actual generated complex-baseband TX output. Full-loop dispatch is separate.
+using actual generated complex-baseband TX output. Full-loop dispatch now has
+its own bounded worker and retained RX observations.
 The DPD binary/JSON input
-dialog accepts compatible profiles and drives DPD/OCD readiness. Other inputs and
-run integration remain pending.
+dialog accepts compatible profiles and drives DPD/OCD readiness. Remaining UI
+work includes NCP matched I/Q, generalized instrument selection and native
+validation on the other initial Ubuntu targets.
 
 - [ ] **UI-01** Build the planned Qt system workspace after core APIs exist:
   clickable source/TX/channel/RX blocks with focused pop-up dialogs.

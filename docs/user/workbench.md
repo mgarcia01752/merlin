@@ -7,8 +7,9 @@ or press Escape to return. Use **Settings → Global → Light/Dark mode** to ch
 across all windows. The change applies immediately and lasts for this session.
 
 The standard menu bar at the top is **File | Settings | About**. File contains
-**Open…**, **Save** and **Save As…**, currently disabled while
-persistence is pending; load captures through their block dialogs.
+**Open…**, **Save** and **Save As…** for self-contained `*.merlin.json` workbenches.
+Original PNM/payload bytes and accepted block settings are embedded; see the
+[run/save guide](closed-loop-workbench.md). Load individual captures in their dialogs.
 About shows the active icon, compiled version, MERLIN's expanded name and project
 link. License/NOTICE links open bundled text offline. Title bars use consistent
 initial capitals and the light/dark icons share transparent rounded corners.
@@ -22,10 +23,11 @@ The workbench includes an editable **OFDM Channel Descriptor (OCD)** dialog. PRB
 [measurement viewer](channel-measurements.md); Transmitter opens the shared [Spectrum Analyzer](spectrum-analyzer.md).
 The [Receiver Workbench](receiver-workbench.md) adds NCP/PLC/data-profile
 QAM selection and an independent SA test-point selector.
-DPD and measurement blocks support capture input. Full-loop simulation
-jobs and receiver analyzers are not connected yet.
-The lower-right Start, Stop and Pause controls are disabled. There are no UI
-full-loop receiver results or automatically loaded measurements.
+DPD and measurement blocks support capture input. Configure Receiver and enable
+PRBS-RX independent comparison to complete next-run readiness. The lower-right
+Start, Stop and Pause/Resume controls now drive a bounded Rust closed-loop worker.
+Receiver instruments read real retained observations; NCP scatter collection is
+still pending.
 
 Development proceeds left to right from OFDM Channel Descriptor (OCD). The PRBS-TX/PRBS-RX
 connection means original/recovered data comparison, not receiver feedback.
@@ -86,11 +88,12 @@ requirement.
 
 **Start requires every block to be green.** A yellow or red block disables it.
 Green before a run means configured and ready; comparison results are not needed
-to start the run. Start also remains disabled while simulation integration is
-pending. Optional inputs may satisfy readiness through an explicit valid
+to start the run. Start is enabled only for an idle worker and a fully validated
+frozen request. Optional inputs may satisfy readiness through an explicit valid
 bypass/default mode when those controls are implemented.
 
-Other preview blocks remain yellow because integration or inputs are pending.
+Receiver remains yellow until its full-request configuration is applied; PRBS-RX
+requires independent comparison acceptance. Visiting analyzer tabs has no effect.
 Optional measurement inputs will not be required for every future run.
 
 ## Edit OFDM transmission settings

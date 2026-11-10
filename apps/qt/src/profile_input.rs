@@ -63,6 +63,9 @@ pub mod bridge {
         /// Empty on success or a diagnostic preserving accepted input.
         #[qinvokable]
         fn apply(self: Pin<&mut ProfileInput>, profile_id: i32, settings: &QString) -> QString;
+        /// Reloads accepted original captures after atomic project Open.
+        #[qinvokable]
+        fn reload(self: Pin<&mut ProfileInput>);
         /// Drops staged bytes and restores the accepted snapshot.
         #[qinvokable]
         fn cancel(self: Pin<&mut ProfileInput>);
@@ -103,9 +106,33 @@ fn settings(document: &str) -> Result<TransmissionSettings, String> {
 }
 
 impl ProfileInputRust {
+    fn from_saved(value: &Value) -> Result<Self, String> {
+        if value.is_null() {
+            return Ok(Self::default());
+        }
+        #[derive(serde::Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct Saved {
+            file: Value,
+            profile_id: u8,
+        }
+        let saved: Saved = serde_json::from_value(value.clone()).map_err(|e| e.to_string())?;
+        let (name, bytes) = crate::project_file::decode(&saved.file)?;
+        let capture = Capture::decode(name, bytes)?;
+        capture.profile(saved.profile_id)?;
+        Ok(Self {
+            draft: Some(capture.clone()),
+            accepted: Some((capture, saved.profile_id)),
+        })
+    }
+
     fn stage_bytes(&mut self, name: String, bytes: Vec<u8>) -> Result<Value, String> {
         let capture = Capture::decode(name, bytes)?;
-        let id = capture.profiles[0].profile_id;
+        let id = capture
+            .profiles
+            .iter()
+            .find(|profile| profile.profile_id == 0)
+            .map_or(capture.profiles[0].profile_id, |profile| profile.profile_id);
         let preview = capture.preview(id)?;
         self.draft = Some(capture);
         Ok(preview)
@@ -122,7 +149,34 @@ impl ProfileInputRust {
     }
 }
 
+/// Decodes an embedded original profile without mutating current state.
+/// # Arguments
+/// * `value` - Original bytes and selected profile ID.
+/// * `_settings` - Current numerology; cross-input errors remain readiness diagnostics.
+/// # Returns
+/// Typed profile, or None when unconfigured.
+/// # Errors
+/// Reports malformed bytes, digest or unavailable profile IDs.
+pub(crate) fn restore_profile(
+    value: &Value,
+    _settings: &TransmissionSettings,
+) -> Result<Option<docsis_ofdm_fec::profile::candidate::CapturedProfile>, String> {
+    let model = ProfileInputRust::from_saved(value)?;
+    model
+        .accepted
+        .map(|(capture, id)| capture.profile(id).cloned())
+        .transpose()
+}
 impl bridge::ProfileInput {
+    /// Adopts already validated project captures without a file-picker round trip.
+    pub fn reload(mut self: core::pin::Pin<&mut Self>) {
+        if let Ok(model) = ProfileInputRust::from_saved(&crate::workbench_session::saved("profile"))
+        {
+            self.as_mut().rust_mut().draft = model.draft;
+            self.as_mut().rust_mut().accepted = model.accepted;
+        }
+    }
+
     /// Restores a draft from the accepted snapshot; accepted input stays unchanged.
     /// # Returns
     /// A bounded preview of the accepted selection or an empty tree.
@@ -214,6 +268,8 @@ impl bridge::ProfileInput {
                 .and_then(|(capture, id)| capture.profile(*id).ok())
                 .cloned();
             crate::workbench_session::set_profile(selected);
+            let section=self.rust().accepted.as_ref().map(|(c,id)|json!({"file":crate::project_file::encode(&c.name,&c.original),"profile_id":id})).unwrap_or(Value::Null);
+            crate::workbench_session::put_saved("profile", section);
         }
         QString::from(result.err().unwrap_or_default())
     }

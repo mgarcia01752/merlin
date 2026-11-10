@@ -115,11 +115,68 @@ pub fn run_channel(
     observer: &mut impl ProbeObserver,
     progress: impl FnMut(ChannelProgress),
 ) -> Result<ChannelJobResult, SimulationError> {
-    let started = Instant::now();
-    run_with_clock(settings, limits, cancel, probe, observer, progress, || {
-        started.elapsed().as_millis().min(u128::from(u64::MAX)) as u64
-    })
+    run_channel_controlled(
+        settings,
+        limits,
+        cancel,
+        &AtomicBool::new(false),
+        probe,
+        observer,
+        progress,
+    )
 }
+
+/// Runs one channel with cooperative pause at completed OFDM-step boundaries.
+/// # Arguments
+/// * `settings` - Frozen source/channel/receiver request.
+/// * `limits` - Active host runtime and retained word budgets.
+/// * `cancel` - Stop token, honored while paused and before each step.
+/// * `paused` - Pause gate; clearing it resumes the same scientific session.
+/// * `probe` - Bounded immutable observation selection.
+/// * `observer` - Read-only observer, never a source of receiver truth.
+/// * `progress` - Notification after each completed step.
+/// # Returns
+/// Complete or partial real results; paused time is excluded from host runtime.
+/// # Errors
+/// Reports validation/construction errors before processing starts.
+#[allow(clippy::too_many_arguments)]
+pub fn run_channel_controlled(
+    settings: &ChannelRunSettings,
+    limits: &ChannelJobLimits,
+    cancel: &AtomicBool,
+    paused: &AtomicBool,
+    probe: &mut TestPointProbe,
+    observer: &mut impl ProbeObserver,
+    progress: impl FnMut(ChannelProgress),
+) -> Result<ChannelJobResult, SimulationError> {
+    let started = Instant::now();
+    let pause_time = std::cell::Cell::new(std::time::Duration::ZERO);
+    run_with_clock(
+        settings,
+        limits,
+        cancel,
+        probe,
+        observer,
+        progress,
+        || {
+            started
+                .elapsed()
+                .saturating_sub(pause_time.get())
+                .as_millis()
+                .min(u128::from(u64::MAX)) as u64
+        },
+        || {
+            if paused.load(Ordering::Relaxed) {
+                let since = Instant::now();
+                while paused.load(Ordering::Relaxed) && !cancel.load(Ordering::Relaxed) {
+                    std::thread::sleep(std::time::Duration::from_millis(10));
+                }
+                pause_time.set(pause_time.get() + since.elapsed());
+            }
+        },
+    )
+}
+#[allow(clippy::too_many_arguments)]
 fn run_with_clock(
     settings: &ChannelRunSettings,
     limits: &ChannelJobLimits,
@@ -128,6 +185,7 @@ fn run_with_clock(
     observer: &mut impl ProbeObserver,
     mut progress: impl FnMut(ChannelProgress),
     mut elapsed: impl FnMut() -> u64,
+    mut wait: impl FnMut(),
 ) -> Result<ChannelJobResult, SimulationError> {
     limits.validate()?;
     let mut session = ChannelRun::new(settings)?;
@@ -135,6 +193,7 @@ fn run_with_clock(
     let mut omitted_word_details = 0;
     let mut error = None;
     let status = loop {
+        wait();
         if cancel.load(Ordering::Relaxed) {
             break ChannelJobStatus::Cancelled;
         }
@@ -232,6 +291,7 @@ mod tests {
             &mut crate::simulation::test_points::NoopObserver,
             |_| {},
             || 2,
+            || {},
         )
         .unwrap();
         assert_eq!(result.status, ChannelJobStatus::RuntimeExceeded);

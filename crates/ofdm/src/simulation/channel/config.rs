@@ -29,6 +29,8 @@ pub struct ChannelRunSettings {
     pub source: crate::simulation::source::PayloadSourceConfig,
     pub data_bit_loading: Option<Vec<u8>>,
     pub impairment_timeline: Vec<super::timeline::ImpairmentEpoch>,
+    /// Optional explicit RxMER power playback; mutually exclusive with epoch timelines.
+    pub playback: Option<super::measurement_playback::PlaybackConfiguration>,
     pub protected_constellation: Option<super::protected_constellation::ProtectedCaptureSelection>,
     pub receiver_mode: crate::signal_processing::receiver::channel_estimation::ReceiverMode,
     /// Optional bounded payload-only raw/corrected constellation observations.
@@ -62,6 +64,7 @@ impl ChannelRunSettings {
             source: Default::default(),
             data_bit_loading: None,
             impairment_timeline: Vec::new(),
+            playback: None,
             receiver_mode: Default::default(),
             protected_constellation: None,
             constellation: None,
@@ -115,6 +118,33 @@ impl ChannelRunSettings {
         }
         self.impairments
             .plan(&self.transmission, &layout, self.llr_variance)?;
+        if let Some(playback) = &self.playback {
+            if !self.impairment_timeline.is_empty() {
+                return Err(invalid("Choose playback or measurement epochs, not both."));
+            }
+            let plan = playback.prepare(&self.transmission)?;
+            if plan.span().0 >= timing.complete_symbols && plan.span().0 != 0 {
+                return Err(invalid(
+                    "Playback final transition exceeds the observation window.",
+                ));
+            }
+            let expected =
+                super::measurement::captured_layout(&playback.profile, &self.transmission)?;
+            if expected != self.layout {
+                return Err(invalid(
+                    "Playback layout differs from the frozen channel layout.",
+                ));
+            }
+            match &self.impairments.noise {
+                crate::signal_processing::channel::impairments::NoiseModel::Rxmer { frame }
+                    if frame.key == playback.profile.key => {}
+                _ => {
+                    return Err(invalid(
+                        "Playback requires the same RxMER identity and one noise stream.",
+                    ))
+                }
+            }
+        }
         let retained_samples = self
             .impairment_timeline
             .iter()

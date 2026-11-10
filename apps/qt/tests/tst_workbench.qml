@@ -127,6 +127,27 @@ Pane {
         function spectrum(tap) { return JSON.stringify({tap_name:["RX Input / Channel Output","RX Framed Samples","RX Useful Samples","RX FFT Bin Power"][tap],tap_id:["channel.output","rx.framed.samples","rx.cp.samples","rx.fft.bins"][tap],tap_description:"Selected receiver test point",reason:"No retained receiver results",has_result:false,result_token:"",can_generate:false,busy:false}) }
         function cancel() {}
     }
+    QtObject {
+        id: runBackend
+        property bool configured:false
+        property bool verified:false
+        property bool busy:false
+        property bool paused:false
+        function data() { return {receiver_status:configured ? "complete":"attention",verify_status:verified ? "complete":"attention",reason:"Configure accepted receiver and independent source comparison before running.",busy:busy,paused:paused,can_start:configured&&verified&&!busy,has_result:false,result_token:"0",options:{receiver_mode:"supplied_channel",duration_ms:3,max_iterations:50,max_runtime_ms:300000,noise_seed:41},verified:verified} }
+        function configure(settings) { return JSON.stringify(data()) }
+        function poll() { return JSON.stringify(data()) }
+        function apply(options,settings) { configured=true;return "" }
+        function verify() { verified=true }
+        function start() { busy=true }
+        function stop() { busy=false;paused=false }
+        function pause() { paused=!paused }
+        function restore(options,verify,settings) { configured=options!=="null";verified=verify }
+    }
+    QtObject {
+        id: fileBackend
+        function open() { return JSON.stringify({cancelled:true}) }
+        function save(saveAs,settings,receiver,verified,dark) { return JSON.stringify({cancelled:true}) }
+    }
     WorkbenchMenuBar {
         id: appMenu
         anchors.top: parent.top; width: parent.width; theme: theme
@@ -136,7 +157,7 @@ Pane {
     Workbench {
         id: workbench
         anchors { top: appMenu.bottom; bottom: parent.bottom; left: parent.left; right: parent.right }
-        theme: theme; settingsBackend: backend; profileBackend: profileBackend; sourceBackend: sourceBackend; transmitterBackend: transmitterBackend; measurementBackend: measurementBackend; aboutBackend: aboutBackend; receiverBackend: receiverBackend
+        theme: theme; settingsBackend: backend; profileBackend: profileBackend; sourceBackend: sourceBackend; transmitterBackend: transmitterBackend; measurementBackend: measurementBackend; aboutBackend: aboutBackend; receiverBackend: receiverBackend; runBackend: runBackend; fileBackend: fileBackend
         iconRoot: "../../../docs/images/logo/"
     }
     Component {
@@ -157,7 +178,7 @@ Pane {
                 {tag: "tx", block: "transmitterBlock", title: "Spectrum Analyzer · TX Output"},
                 {tag: "channel", block: "channelBlock", title: "Channel Simulator · Configuration"},
                 {tag: "rx", block: "receiverBlock", title: "Receiver Workbench"},
-                {tag: "verify", block: "verificationBlock", title: "PRBS-RX"},
+                {tag: "verify", block: "verificationBlock", title: "PRBS-RX / Recovered Data"},
                 {tag: "profile", block: "profileBlock", title: "Downstream Profile Descriptor (DPD)"},
                 {tag: "ce", block: "channelEstimateBlock", title: "DS Channel Estimate · Response Configuration"},
                 {tag: "mer", block: "rxmerBlock", title: "RxMER · Capture Configuration"}
@@ -167,11 +188,11 @@ Pane {
             const block = findChild(workbench, data.block)
             verify(block !== null)
             mouseClick(block)
-            const dialog = data.block === "ofdmBlock" ? workbench.ofdmPopup : data.block === "profileBlock" ? workbench.profilePopup : data.block === "sourceBlock" ? workbench.sourcePopup : data.block === "transmitterBlock" ? workbench.transmitterPopup : data.block === "channelBlock" ? workbench.channelPopup : data.block === "channelEstimateBlock" ? workbench.responsePopup : data.block === "rxmerBlock" ? workbench.rxmerPopup : data.block === "receiverBlock" ? workbench.receiverPopup : workbench.sectionPopup
+            const dialog = data.block === "ofdmBlock" ? workbench.ofdmPopup : data.block === "profileBlock" ? workbench.profilePopup : data.block === "sourceBlock" ? workbench.sourcePopup : data.block === "transmitterBlock" ? workbench.transmitterPopup : data.block === "channelBlock" ? workbench.channelPopup : data.block === "channelEstimateBlock" ? workbench.responsePopup : data.block === "rxmerBlock" ? workbench.rxmerPopup : data.block === "receiverBlock" ? workbench.receiverPopup : data.block === "verificationBlock" ? workbench.verificationPopup : workbench.sectionPopup
             verify(dialog !== null)
             tryCompare(dialog, "opened", true)
             compare(dialog.title, data.title)
-            if (data.block !== "ofdmBlock" && data.block !== "profileBlock" && data.block !== "sourceBlock" && data.block !== "transmitterBlock" && data.block !== "channelBlock" && data.block !== "channelEstimateBlock" && data.block !== "rxmerBlock" && data.block !== "receiverBlock") { verify(workbench.sectionDescription.length > 30) }
+            if (data.block !== "ofdmBlock" && data.block !== "profileBlock" && data.block !== "sourceBlock" && data.block !== "transmitterBlock" && data.block !== "channelBlock" && data.block !== "channelEstimateBlock" && data.block !== "rxmerBlock" && data.block !== "receiverBlock" && data.block !== "verificationBlock") { verify(workbench.sectionDescription.length > 30) }
             keyClick(Qt.Key_Escape)
             tryCompare(dialog, "visible", false)
         }
@@ -252,7 +273,7 @@ Pane {
         function test_start_requires_every_block_complete() {
             const isolated = createTemporaryObject(gatingWorkbenchComponent, window, {
                 theme: theme, settingsBackend: backend, profileBackend: profileBackend,
-                sourceBackend: sourceBackend, transmitterBackend: transmitterBackend, measurementBackend: measurementBackend, aboutBackend: aboutBackend, receiverBackend: receiverBackend,
+                sourceBackend: sourceBackend, transmitterBackend: transmitterBackend, measurementBackend: measurementBackend, aboutBackend: aboutBackend, receiverBackend: receiverBackend, runBackend: runBackend, fileBackend: fileBackend,
                 iconRoot: "../../../docs/images/logo/"
             })
             verify(isolated !== null)
@@ -261,8 +282,8 @@ Pane {
             try {
                 for (const block of blocks) { block.blockStatus = "complete" }
                 compare(isolated.allBlocksComplete, true)
-                // Readiness must not enable a button with no run dispatch.
-                compare(isolated.runIntegrationAvailable, false)
+                // All blocks still require a valid frozen request and idle worker.
+                compare(isolated.runIntegrationAvailable, true)
                 compare(findChild(isolated, "startButton").enabled, false)
                 for (const block of blocks) {
                     for (const status of ["attention", "error"]) {
@@ -316,8 +337,8 @@ Pane {
             const previous = theme.dark
             compare(findChild(workbench, "themeToggle"), null)
             mouseClick(appMenu.itemAt(0))
-            compare(findChild(appMenu, "openWorkbenchConfig").enabled, false)
-            compare(findChild(appMenu, "saveWorkbenchConfig").enabled, false)
+            compare(findChild(appMenu, "openWorkbenchConfig").enabled, true)
+            compare(findChild(appMenu, "saveWorkbenchConfig").enabled, true)
             keyClick(Qt.Key_Escape)
             mouseClick(appMenu.itemAt(1))
             mouseClick(findChild(appMenu, "globalSettingsAction"))
@@ -501,6 +522,30 @@ Pane {
             keyClick(Qt.Key_Escape); tryCompare(qam, "visible", false)
             keyClick(Qt.Key_Escape); tryCompare(receiver, "visible", false)
             compare(findChild(workbench, "receiverBlock").blockStatus, "attention")
+        }
+        function test_receiver_configuration_comparison_and_run_controls() {
+            mouseClick(findChild(workbench,"receiverBlock"))
+            tryCompare(workbench.receiverPopup,"opened",true)
+            mouseClick(findChild(workbench.receiverPopup,"receiverConfigure"))
+            tryCompare(workbench.receiverConfigPopup,"opened",true)
+            mouseClick(findChild(workbench.receiverConfigPopup,"receiverConfigApply"))
+            tryCompare(workbench.receiverConfigPopup,"visible",false)
+            compare(workbench.runState.receiver_status,"complete")
+            keyClick(Qt.Key_Escape);tryCompare(workbench.receiverPopup,"visible",false)
+            mouseClick(findChild(workbench,"verificationBlock"))
+            tryCompare(workbench.verificationPopup,"opened",true)
+            mouseClick(findChild(workbench.verificationPopup,"verificationApply"))
+            compare(workbench.runState.verify_status,"complete")
+            keyClick(Qt.Key_Escape);tryCompare(workbench.verificationPopup,"visible",false)
+            runBackend.start();workbench.pollRun()
+            compare(findChild(workbench,"pauseButton").enabled,true)
+            mouseClick(findChild(workbench,"pauseButton"))
+            compare(workbench.runState.paused,true)
+            mouseClick(findChild(workbench,"pauseButton"))
+            compare(workbench.runState.paused,false)
+            mouseClick(findChild(workbench,"stopButton"));workbench.pollRun()
+            compare(workbench.runState.busy,false)
+            runBackend.configured=false;runBackend.verified=false;workbench.pollRun()
         }
         function test_render() {
             theme.dark = true

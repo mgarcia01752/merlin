@@ -10,13 +10,17 @@ Dialog {
     id: dialog
     required property var theme
     required property var backend
+    required property var runState
+    property string seenToken: ""
+    signal configurationRequested()
+    onRunStateChanged: { if (runState.result_token !== seenToken) { seenToken=runState.result_token || ""; qam.refresh(); selectTap(selectedTap) } }
     property alias qamPopup: qam
     property alias spectrumPopup: spectrum
     property alias diagnosticPopup: diagnostic
     property int selectedTap: 0
     property var spectrumState: ({has_result: false, can_generate: false, busy: false})
     function openQam(signal, view) { qam.signalIndex = signal; qam.viewIndex = view; qam.open() }
-    function selectTap(index) { selectedTap = index; spectrumState = JSON.parse(backend.spectrum(index)); spectrum.clearView() }
+    function selectTap(index) { if (!backend) { return }; selectedTap = index; spectrum.clearView(); spectrumState = JSON.parse(backend.spectrum(index)); spectrum.updateResult() }
     function openSpectrum(index) { selectTap(index); spectrum.open() }
     function showDiagnostic(name, point, detail) { diagnostic.showInstrument(name, point, detail) }
     title: "Receiver Workbench"
@@ -27,8 +31,8 @@ Dialog {
     closePolicy: Popup.CloseOnEscape
     contentItem: ColumnLayout {
         spacing: 14
-        Label { text: "Receiver Signal Path"; font.pixelSize: 19; font.bold: true; color: dialog.theme.text }
-        Label { text: "Select a stage or test point to open its instrument. Receiver-run result wiring is pending."; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+        RowLayout { Layout.fillWidth:true; Label { text: "Receiver Signal Path"; font.pixelSize:19; font.bold:true; color:dialog.theme.text; Layout.fillWidth:true } Button { objectName:"receiverConfigure"; text:"Configure Receiver / Run…"; onClicked:dialog.configurationRequested() } }
+        Label { text: "Configure the next run, then inspect actual retained receiver observations."; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         Rectangle {
             Layout.fillWidth: true; Layout.preferredHeight: 142
             color: dialog.theme.background; radius: 12; border.color: dialog.theme.line
@@ -82,21 +86,26 @@ Dialog {
                     ReceiverChip { theme: dialog.theme; objectName: "receiverSa"; text: "Spectrum Analyzer"; Layout.fillWidth: true; onClicked: dialog.openSpectrum(dialog.selectedTap) }
                     ReceiverChip { theme: dialog.theme; text: "Channel Response / Echo"; Layout.fillWidth: true; onClicked: dialog.showDiagnostic("Channel Response / Echo", "rx.channel_estimation.response", "Inspect estimated response H-hat and delay/echo results independently of spectral power. Result connection is pending.") }
                     ReceiverChip { theme: dialog.theme; text: "Slicer / LLR"; Layout.fillWidth: true; onClicked: dialog.showDiagnostic("Slicer / LLR", "rx.slicer.decisions · rx.ncp.llrs · rx.data.llrs", "Slicing is an optional diagnostic. The registered NCP/data soft records are separate from I/Q; streamed slicer decisions are still pending.") }
-                    ReceiverChip { theme: dialog.theme; text: "FEC Monitor"; Layout.fillWidth: true; onClicked: dialog.showDiagnostic("FEC Monitor", "Receiver decoder outcomes", "Inspect real branch-specific decoder iterations and codeword outcomes. PRBS comparison applies to recovered payload only. Result connection is pending.") }
+                    ReceiverChip { theme: dialog.theme; text: "FEC Monitor"; Layout.fillWidth: true; onClicked: dialog.showDiagnostic("FEC Monitor", "Receiver decoder outcomes", "Inspect actual decoder iterations and failures from the closed loop. PRBS comparison applies to recovered payload only.") }
                 }
             }
         }
         Item { Layout.fillHeight: true }
-        Label { text: "No receiver results yet · instrument selection does not run the simulation · Receiver readiness remains yellow"; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 12 }
+        Label { text: dialog.runState.result ? "Run "+dialog.runState.result.status+" · instrument selection reads retained results" : "Configure Receiver and enable PRBS-RX comparison before Start. Analyzers do not gate readiness."; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 12 }
     }
     ReceiverQamDialog { id: qam; theme: dialog.theme; backend: dialog.backend }
-    ReceiverDiagnosticDialog { id: diagnostic; theme: dialog.theme }
+    ReceiverDiagnosticDialog { id: diagnostic; theme: dialog.theme; runState: dialog.runState }
+    QtObject {
+        id: spectrumProxy
+        function cancel() {}
+        function view(start,count,captureAxis) { return dialog.backend.view_tap(dialog.selectedTap,start,count,captureAxis) }
+    }
     SpectrumAnalyzerDialog {
-        id: spectrum; theme: dialog.theme; backend: dialog.backend; state: dialog.spectrumState
-        autoGenerate: false; showTiming: false
+        id: spectrum; theme: dialog.theme; backend: spectrumProxy; state: dialog.spectrumState
+        autoGenerate: false; showTiming: false; frequencyAxisAvailable: dialog.selectedTap < 3
         tapOptions: ["RX Input / Channel Output", "RX Framed Samples", "RX Useful Samples", "RX FFT Bin Power"]
         selectedTap: dialog.selectedTap
         onTapRequested: function(index) { dialog.selectTap(index) }
-        generateDescription: "Full-loop UI dispatch is pending. This receiver instrument never substitutes a transmitter preview."
+        generateDescription: "Use main-workbench Start to run the closed loop. This panel reads retained RX results."
     }
 }

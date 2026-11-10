@@ -60,6 +60,7 @@ pub trait ProbeObserver {
 /// Job-owned selector and finite budgets; independent of DSP and RNG state.
 pub struct TestPointProbe {
     config: Option<ProbeConfig>,
+    phase: Option<super::RunPhase>,
     stats: ProbeStats,
 }
 impl TestPointProbe {
@@ -69,6 +70,7 @@ impl TestPointProbe {
     pub fn disabled() -> Self {
         Self {
             config: None,
+            phase: None,
             stats: ProbeStats::default(),
         }
     }
@@ -110,8 +112,17 @@ impl TestPointProbe {
         }
         Ok(Self {
             config: Some(config),
+            phase: None,
             stats: ProbeStats::default(),
         })
+    }
+    /// Filters by run phase before consuming any observation budget.
+    /// # Arguments
+    /// * `phase` - Exact warmup/observation/drain selection; None admits all phases.
+    /// # Returns
+    /// Unit; already consumed budgets and scientific state are unchanged.
+    pub fn set_phase_filter(&mut self, phase: Option<super::RunPhase>) {
+        self.phase = phase;
     }
     /// Returns counters without resetting the selector or budgets.
     /// # Returns
@@ -141,6 +152,9 @@ impl TestPointProbe {
         data: ProbeData<'_>,
         observer: &mut impl ProbeObserver,
     ) -> Result<ProbeOutcome, SimulationError> {
+        if self.phase.is_some_and(|phase| phase != context.phase) {
+            return Ok(ProbeOutcome::Filtered);
+        }
         let Some(config) = &self.config else {
             return Ok(ProbeOutcome::Disabled);
         };

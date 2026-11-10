@@ -8,6 +8,9 @@ import QtQuick.Controls
 MenuBar {
     id: bar
     required property var theme
+    property bool fileActionsEnabled: true
+    signal openRequested()
+    signal saveRequested(bool saveAs)
     signal globalSettingsRequested()
     signal aboutRequested()
     background: Rectangle { color: bar.theme.panel }
@@ -15,16 +18,16 @@ MenuBar {
         title: "&File"
         MenuItem {
             objectName: "openWorkbenchConfig"
-            action: Action { text: "Open…"; shortcut: StandardKey.Open; enabled: false }
-            Accessible.description: "JSON workbench loading is pending."
+            action: Action { text: "Open…"; shortcut: StandardKey.Open; enabled: bar.fileActionsEnabled; onTriggered: bar.openRequested() }
+            Accessible.description: "Open a self-contained MERLIN workbench JSON file."
         }
         MenuItem {
             objectName: "saveWorkbenchConfig"
-            action: Action { text: "Save"; shortcut: StandardKey.Save; enabled: false }
-            Accessible.description: "JSON workbench saving is pending."
+            action: Action { text: "Save"; shortcut: StandardKey.Save; enabled: bar.fileActionsEnabled; onTriggered: bar.saveRequested(false) }
+            Accessible.description: "Save accepted block settings and original inputs in workbench JSON."
         }
-        MenuItem { objectName: "saveWorkbenchAs"; action: Action { text: "Save As…"; shortcut: StandardKey.SaveAs; enabled: false }
-            Accessible.description: "JSON workbench saving is pending." }
+        MenuItem { objectName: "saveWorkbenchAs"; action: Action { text: "Save As…"; shortcut: StandardKey.SaveAs; enabled: bar.fileActionsEnabled; onTriggered: bar.saveRequested(true) }
+            Accessible.description: "Save accepted block settings and original inputs in workbench JSON." }
     }
     Menu {
         title: "&Settings"

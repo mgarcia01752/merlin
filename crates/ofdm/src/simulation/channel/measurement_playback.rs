@@ -33,6 +33,39 @@ pub enum PlaybackMode {
     Interpolate,
 }
 
+/// Frozen measurement inputs and explicit synthetic playback clock for a channel run.
+#[derive(Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PlaybackConfiguration {
+    pub profile: CapturedProfile,
+    pub frames: Vec<RxMerFrame>,
+    pub mode: PlaybackMode,
+    pub interval_symbols: u64,
+    pub tolerance_seconds: u32,
+}
+impl PlaybackConfiguration {
+    /// Validates original inputs and freezes reusable residual powers.
+    /// # Arguments
+    /// * `settings` - Accepted channel numerology.
+    /// # Returns
+    /// Immutable plan preserving original epochs and source identities.
+    /// # Errors
+    /// Reports unsupported identity, coverage, resources or schedule.
+    pub fn prepare(
+        &self,
+        settings: &TransmissionSettings,
+    ) -> Result<MeasurementPlayback, SimulationError> {
+        MeasurementPlayback::new(
+            settings,
+            &self.profile,
+            self.frames.clone(),
+            self.mode,
+            self.interval_symbols,
+            self.tolerance_seconds,
+        )
+    }
+}
+
 /// One immutable query result, with original source indexes and interpolation weight.
 pub struct ResidualSnapshot {
     pub power: Vec<Option<f64>>,

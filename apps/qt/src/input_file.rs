@@ -6,6 +6,8 @@
 use cxx_qt_lib::{QString, QUrl};
 use std::{fs::File, io::Read};
 
+thread_local! { static INPUT_PATHS: std::cell::RefCell<std::collections::BTreeSet<std::path::PathBuf>> = const { std::cell::RefCell::new(std::collections::BTreeSet::new()) }; }
+
 /// Reads one local regular file with a caller-supplied byte ceiling.
 /// # Arguments
 /// * `url` - Local file URL; remote schemes reject before filesystem access.
@@ -15,6 +17,34 @@ use std::{fs::File, io::Read};
 /// # Errors
 /// Rejects remote URLs, nonregular files, oversize input and filesystem errors.
 pub(crate) fn read_local(url: &str, limit: usize) -> Result<(String, Vec<u8>), String> {
+    let result = read_untracked(url, limit)?;
+    let path = QUrl::from(&QString::from(url))
+        .to_local_file()
+        .ok_or("Choose a local file")?;
+    let path = std::fs::canonicalize(path.to_string()).map_err(|e| e.to_string())?;
+    INPUT_PATHS.with(|paths| -> Result<(), String> {
+        let mut paths = paths.borrow_mut();
+        if paths.len() >= 4096 && !paths.contains(&path) {
+            return Err(
+                "Too many original source paths tracked; reopen a saved workbench to release them."
+                    .into(),
+            );
+        }
+        paths.insert(path);
+        Ok(())
+    })?;
+    Ok(result)
+}
+
+/// Reads a project document without treating its own Save destination as source input.
+/// # Arguments
+/// * `url` - Local project URI.
+/// * `limit` - Maximum project bytes.
+/// # Returns
+/// Original bounded project bytes and basename.
+/// # Errors
+/// Reports invalid local paths, file kinds, length or read failures.
+pub(crate) fn read_untracked(url: &str, limit: usize) -> Result<(String, Vec<u8>), String> {
     let path = QUrl::from(&QString::from(url))
         .to_local_file()
         .ok_or("Choose a local file.")?;
@@ -49,6 +79,21 @@ pub(crate) fn read_local(url: &str, limit: usize) -> Result<(String, Vec<u8>), S
             .into_owned(),
         bytes,
     ))
+}
+
+/// Checks whether a proposed project destination would overwrite an imported source.
+/// # Arguments
+/// * `path` - Explicit project destination.
+/// # Returns
+/// True for a currently tracked imported original; missing destinations are false.
+pub(crate) fn is_original(path: &std::path::Path) -> bool {
+    std::fs::canonicalize(path)
+        .ok()
+        .is_some_and(|path| INPUT_PATHS.with(|paths| paths.borrow().contains(&path)))
+}
+/// Releases external source-path protection after adopting self-contained project originals.
+pub(crate) fn clear_original_paths() {
+    INPUT_PATHS.with(|paths| paths.borrow_mut().clear());
 }
 
 #[cfg(test)]

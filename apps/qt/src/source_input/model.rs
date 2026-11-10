@@ -53,6 +53,38 @@ pub(super) struct SourceModel {
 }
 
 impl SourceModel {
+    /// Serializes accepted source choices and original bytes for project persistence.
+    /// # Returns
+    /// A bounded Rust-owned document, or null before acceptance.
+    pub(super) fn export(&self) -> Value {
+        self.accepted.as_ref().map(|a|json!({"options":a.options,"file":a.file.as_ref().map(|f|crate::project_file::encode(&f.name,f.payload.bytes()))})).unwrap_or(Value::Null)
+    }
+    /// Reconstructs an editor from validated original project bytes without publishing it.
+    /// # Arguments
+    /// * `value` - Versioned project source section.
+    /// # Returns
+    /// A fresh accepted editor model, independent of current UI state.
+    /// # Errors
+    /// Rejects unknown choices, invalid embedded bytes or core source limits.
+    pub(super) fn from_saved(value: &Value) -> Result<Self, String> {
+        if value.is_null() {
+            return Ok(Self::default());
+        }
+        #[derive(Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct Saved {
+            options: Options,
+            file: Option<Value>,
+        }
+        let saved: Saved = serde_json::from_value(value.clone()).map_err(|e| e.to_string())?;
+        let mut model = Self::default();
+        if let Some(file) = saved.file {
+            let (name, bytes) = crate::project_file::decode(&file)?;
+            model.stage(name, bytes)?;
+        }
+        model.accept(&serde_json::to_string(&saved.options).map_err(|e| e.to_string())?)?;
+        Ok(model)
+    }
     /// Borrows accepted source identity through an immutable typed snapshot.
     /// # Returns
     /// Shared file storage/configuration and explicit seed, or None before Apply.

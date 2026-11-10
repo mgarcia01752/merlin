@@ -47,6 +47,8 @@ fn main() {
                 "src/source_input.rs",
                 "src/measurement_input.rs",
                 "src/receiver_instruments.rs",
+                "src/closed_loop.rs",
+                "src/workbench_file.rs",
                 "src/transmitter_analyzer.rs",
             ],
             qml_files: &[
@@ -71,6 +73,9 @@ fn main() {
                 "qml/ChannelConfigurationDialog.qml",
                 "qml/ReceiverWorkbenchDialog.qml",
                 "qml/ReceiverChip.qml",
+                "qml/ReceiverConfigurationDialog.qml",
+                "qml/VerificationDialog.qml",
+                "qml/WorkbenchFileFeedback.qml",
                 "qml/ReceiverQamDialog.qml",
                 "qml/ReceiverDiagnosticDialog.qml",
                 "qml/SectionPreviewDialog.qml",

@@ -28,8 +28,10 @@ output with derived Transmitter readiness. Channel Estimate/RxMER now share
 native input viewers with exact DPD validation, flat/unity response and Rust
 combination/playback previews. Channel readiness reflects accepted configuration.
 Receiver workbench navigation, NCP/PLC/profile QAM selectors and RX SA test-point
-routing are implemented with explicit unavailable observations. Receiver charts,
-remaining SA data taps and full-loop run integration remain pending;
+routing are implemented. A bounded Rust closed-loop worker drives Start/Stop/
+Pause/Resume, accepted Receiver/PRBS-RX readiness and actual payload/PLC QAM, RX SA
+and BER/FEC results. Native Open/Save/Save As persist self-contained workbench JSON.
+NCP matched I/Q and generalized observation selectors remain pending;
 Python bindings are deferred until after UI-01 through UI-04.
 Dependencies point from CLI/future adapters to docsis-ofdm-fec to fec-codec.
 

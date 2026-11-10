@@ -21,6 +21,8 @@ ApplicationWindow {
     SourceInput { id: sourceInput }
     MeasurementInputs { id: measurementInputs }
     ReceiverInstruments { id: receiverInstruments }
+    ClosedLoop { id: closedLoop }
+    WorkbenchFile { id: workbenchFile }
     TransmitterAnalyzer { id: transmitterAnalyzer }
     Theme { id: theme; onDarkChanged: branding.update_icon(dark) }
     Component.onCompleted: branding.update_icon(theme.dark)
@@ -28,8 +30,11 @@ ApplicationWindow {
     color: theme.background
     menuBar: WorkbenchMenuBar {
         theme: theme
+        fileActionsEnabled: !workbench.runState.busy
+        onOpenRequested: workbench.openProject()
+        onSaveRequested: function(saveAs) { workbench.saveProject(saveAs) }
         onGlobalSettingsRequested: workbench.settingsPopup.open()
         onAboutRequested: workbench.aboutPopup.open()
     }
-    Workbench { id: workbench; anchors.fill: parent; theme: theme; settingsBackend: ofdmSettings; profileBackend: profileInput; sourceBackend: sourceInput; transmitterBackend: transmitterAnalyzer; measurementBackend: measurementInputs; aboutBackend: aboutInfo; receiverBackend: receiverInstruments }
+    Workbench { id: workbench; anchors.fill: parent; theme: theme; settingsBackend: ofdmSettings; profileBackend: profileInput; sourceBackend: sourceInput; transmitterBackend: transmitterAnalyzer; measurementBackend: measurementInputs; aboutBackend: aboutInfo; receiverBackend: receiverInstruments; runBackend: closedLoop; fileBackend: workbenchFile }
 }
