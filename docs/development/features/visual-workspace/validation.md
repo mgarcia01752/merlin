@@ -37,3 +37,85 @@ Logs and rendering outputs are local-only under
 Ubuntu 24.04/26.04 runtime validation, installers, settings/file editors,
 scientific jobs, pause/resume and analyzers remain unverified or unimplemented.
 The known rand advisory remains outside this shell change and is not suppressed.
+
+## OFDM Settings editor increment
+
+Validated on Ubuntu 22.04 x64, Qt 6.8.3 and Rust 1.85.1:
+
+- Qt adapter formatting and Clippy passed; native executable rebuilt and restarted
+  on the active VM. The existing core dependency dead-code warning remains.
+- Two Rust tests passed: rejected-edit atomicity (invalid bandwidth, CP/RP,
+  interleaver depth, malformed/oversized JSON), valid 50 kHz/depth-32 acceptance,
+  and bundled registry default/choice agreement with core validation.
+- All 14 QML cases passed after adding actual dropdown-keyboard editing,
+  Cancel/Escape, Apply and reopen checks with a presentation test adapter. Rust
+  tests and native interaction separately verify the production backend.
+- Native interaction rejected CP 192 / RP 256, preserving the editor and showing
+  the Rust diagnostic. Reset defaults, Apply and reopen succeeded. The OFDM
+  popup remains open for user review. The native application log has no QML errors.
+- The dark native VM screenshot is tracked in
+  [the user guide](../../../user/workbench.md). It shows the actual production
+  backend and registry, not the QML test adapter. Private review captures remain
+  under `docs/development/local/visual-workspace/`.
+- No scientific source changes or full scientific test rerun. The Qt adapter now
+  consumes the existing core with default simulation features disabled; accepted
+  settings are in memory only. Other editors, file persistence, application
+  navigation and run integration remain pending.
+
+The dialog-per-QML-file rule was added to coding-style; skill validation and both
+canonical discovery links pass. Ubuntu 24.04/26.04 remain unverified.
+
+## Approved Parameter/Value tree revision
+
+The tree uses full-width Parameter/Value rows with indented children, expandable
+Symbol timing, Interleaving and Modulation Profile branches, and descriptions
+below. OFDM channel defaults are no longer presented as profile information.
+Profile ID, Source file and Subcarrier assignments stay blank with no selected
+profile. The core still validates the complete accepted transmission settings;
+channel/profile input integration remains pending.
+
+Qt-focused validation on Ubuntu 22.04 x64: 15 QML cases pass, including branch
+collapse/expand, three blank profile fields, no spectrum editors, and existing
+Apply/Cancel/reopen behavior. Two existing Rust adapter tests pass; no scientific
+source changed and no full scientific suite was run. PHY I20 §7.5.13.4 and the
+local MULPI I25 §§6.4.40–6.4.41 text extraction establish the terminology; this is
+not rendered-PDF verification. Other Ubuntu versions remain unverified.
+
+The rebuilt native application was restarted on the VM. Visual inspection of the
+production dialog confirmed the approved tree, three editable settings, blank
+profile values and descriptions below. The updated dark screenshot is tracked in
+the user guide, the native log has no QML errors, and the dialog is left open for
+review. Formatting, Qt Clippy/build, document links and diff whitespace pass.
+
+## Heading-only blocks and readiness stripes
+
+Qt presentation checks cover green Complete, yellow Needs attention and red Error
+colors with explicit accessible status/reasons, all nine preview blocks initially
+yellow, and OFDM still yellow after accepting a settings draft without a profile.
+17 QML cases pass. The skill validator and canonical discovery links pass.
+No scientific source changes or full scientific suite are needed for this change.
+Automatic profile/run-driven state changes remain pending alongside their inputs.
+
+Qt formatting, Clippy, both Rust adapter tests and the native build passed. The
+application was restarted on the active Ubuntu 22.04 VM and the heading-only
+blocks/yellow stripes were visually checked. Updated native dark overview and
+OFDM-dialog screenshots are tracked in the user guide. Native logs contain no
+QML errors; the workbench overview is left open. Document links and whitespace
+checks pass. Ubuntu 24.04/26.04 runtime validation remains pending.
+
+## All-green Start gate and OCD label
+
+18 QML cases pass after adding the all-block readiness gate. The new check marks
+every block green in the presentation fixture, then verifies each individual
+block independently closes the gate when yellow or red and restores readiness
+when green. Start stays disabled while run integration is unavailable. Fixture
+statuses are restored after the check. No non-Qt rebuild/test suite was run.
+
+The block and popup use OFDM Channel Descriptor (OCD), the user-selected full
+specification name; stable internal IDs are retained. The architecture records
+WB-RULE-03 and distinguishes pre-run readiness from the availability of results.
+
+The Qt-only native build passed and the application was restarted on the VM.
+Both the full OCD box label and matching popup title were visually verified;
+updated dark overview/dialog screenshots are tracked. The native log is free of
+QML errors and the overview is left open. Document links and whitespace pass.

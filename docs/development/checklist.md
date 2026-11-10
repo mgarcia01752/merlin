@@ -699,8 +699,10 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 Detailed tasks: [UI checklist](ui-checklist.md) and
 [task design](features/visual-workspace/design.md). Develop left to right, starting
-with OFDM Settings. UI-01 is partial: diagram, section-preview dialogs and
-theme/icon shell exist; editors and Rust jobs remain pending.
+with OFDM Channel Descriptor (OCD). UI-01 is partial: diagram, section-preview dialogs and
+theme/icon shell and Rust-validated OFDM tree editor exist. Other editors,
+workbench persistence and Rust jobs remain pending. Blocks show headings and
+readiness stripes; profile-driven readiness transitions await input integration.
 
 - [ ] **UI-01** Build the planned Qt system workspace after core APIs exist:
   clickable source/TX/channel/RX blocks with focused pop-up dialogs.

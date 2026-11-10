@@ -20,7 +20,9 @@ do not describe closed-loop results as external interoperability evidence.
 The CLI functional MVP is complete within its documented supported scope.
 Native Qt UI development is the next phase; Qt is presentation only. Follow
 the UI section in docs/architecture.md and docs/development/ui-checklist.md,
-starting left to right with OFDM Settings. The initial Qt workbench shell exists; editors and run integration remain pending;
+starting left to right with OFDM Channel Descriptor (OCD). The Qt workbench
+shell and Rust-validated timing/interleaving editor exist; input loading, other
+editors and run integration remain pending;
 Python bindings are deferred until after UI-01 through UI-04.
 Dependencies point from CLI/future adapters to docsis-ofdm-fec to fec-codec.
 

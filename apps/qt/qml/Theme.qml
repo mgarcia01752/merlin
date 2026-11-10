@@ -14,5 +14,8 @@ QtObject {
     readonly property color line: dark ? "#24354b" : "#d8e2ea"
     readonly property color accent: dark ? "#51d6bf" : "#007e75"
     readonly property color accentSoft: dark ? "#163a3d" : "#e0f4ef"
+    readonly property color statusComplete: dark ? "#45cf83" : "#187344"
+    readonly property color statusAttention: dark ? "#f3cb56" : "#936400"
+    readonly property color statusError: dark ? "#f16c75" : "#bb2636"
     readonly property color button: dark ? "#19293e" : "#f6f9fb"
 }

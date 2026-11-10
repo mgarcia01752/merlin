@@ -158,7 +158,8 @@ The CLI functional MVP is complete for its documented closed-loop configurations
 The next major phase is the native Qt Quick/QML workbench, initially targeting
 Ubuntu 22.04, 24.04 and 26.04 x64. Python bindings follow UI-01 through UI-04.
 The initial UI-01 shell now exists under apps/qt: the clickable diagram, section
-preview dialogs, theme switching and embedded icons. Editors, input loading,
+preview dialogs, theme switching, embedded icons and a tree-based OFDM editor.
+Other editors, input loading,
 analyzers and Rust job integration remain pending. Lower-right run controls are
 visible but disabled. See the [workbench guide](user/workbench.md) and
 [Qt build/VM instructions](development/qt.md). Other target validation is pending.
@@ -166,13 +167,13 @@ visible but disabled. See the [workbench guide](user/workbench.md) and
 The user's high-level diagram defines a clickable workbench, with focused pop-up
 dialogs for editing each section, selecting an applicable file, and inspecting
 purpose, status and available stage observations. Keep the signal path visible
-behind the dialogs. Develop left to right, beginning with **OFDM Settings**:
+behind the dialogs. Develop left to right, beginning with **OFDM Channel Descriptor (OCD)**:
 then PRBS-TX / Transmitter and modulation-profile input, Channel Simulator and
 its measurement inputs, and finally Receiver / PRBS-RX and results.
 
 ```mermaid
 flowchart LR
-    SETTINGS["OFDM Settings"] --> TX["Transmitter"]
+    SETTINGS["OFDM Channel Descriptor (OCD)"] --> TX["Transmitter"]
     SOURCE["PRBS-TX / file source"] --> TX
     PROFILE["Modulation Profile PNM input"] --> TX
     TX --> CHANNEL["Channel Simulator"] --> RX["Receiver"]
@@ -188,20 +189,73 @@ reseeding. File sources retain their own exact-byte verification. Measurement
 inputs initially use supported decoded PNM JSON, not native binary PNM parsing.
 The detailed diagram below retains analyzer and receiver-reference ownership.
 
+### Workbench block readiness rules
+
+Each diagram block displays its heading only. The left stripe communicates
+readiness; the tooltip and accessible description provide a status and reason.
+These are MERLIN workflow rules, not DOCSIS specification requirements.
+
+| Status | Stripe | Meaning |
+| --- | --- | --- |
+| Complete | Green | The block's applicable requirements are satisfied by accepted, validated state. Before a run this means configured/ready, including receiver/comparison setup; results are not a prerequisite to starting. |
+| Needs attention | Yellow | Required input, configuration, integration or results are missing or pending. |
+| Error | Red | An actual selected-input, accepted-configuration or processing failure is present, with a concrete diagnostic. |
+
+**WB-RULE-01:** OFDM Channel Descriptor (OCD) remains yellow until its accepted settings are valid
+and a compatible modulation-profile PNM input has been successfully accepted by
+Rust. Selecting a filename, opening a dialog or applying default settings does
+not satisfy the profile requirement. Removing/replacing a profile invalidates the
+previous readiness until the new state is checked. An actual profile validation
+failure is red; a missing profile is yellow. Error takes precedence over missing
+prerequisites; otherwise complete requires every applicable prerequisite.
+
+**WB-RULE-02:** Keep each rule with its owning block and dependencies. Rust owns
+scientific input/configuration validation and processing outcomes; Qt maps their
+status and reason to presentation. A rejected draft shows its diagnostic inside
+the editor and preserves the previously accepted block state. Do not invent red
+errors for missing inputs, cancelled dialogs or unimplemented UI. Expected noisy
+FEC outcomes belong to scientific results and are not automatically UI failures.
+Optional inputs do not become mandatory through this display policy; future
+explicit bypass/default modes must be evaluated by their owning Rust request.
+
+**WB-RULE-03:** Start requires all nine workbench blocks to be green. Any yellow
+or red block disables Start. Green means readiness to participate in the next run,
+not the presence of results from that run; PRBS-RX must be ready to compare before
+Start. Optional measurement blocks can be green through an explicit validated
+bypass/default mode. Rust must still validate/freeze the complete request before
+dispatch. Run availability and lifecycle are additional gates. The current shell
+checks all block statuses but keeps Start disabled until run dispatch is connected.
+
+Current implementation: the shared block renders all three statuses, with
+non-color explanations. Every preview block is yellow with an explicit pending
+reason. Profile import and run integration are pending, so automatic readiness
+transitions from those operations remain unimplemented. This does not imply that
+every optional measurement must be supplied before a future run.
+
 ### OFDM editor, registry and application navigation
 
-Planned next: clicking OFDM Settings opens an editable pop-up with an expandable
-category tree, dropdowns for supported values, and a description panel for the
-selected field. Group bandwidth/spacing under Spectrum, cyclic prefix/roll-off
-under Timing, and time-interleaver depth under Interleaving. Display sample rate,
-FFT size and symbol duration as Rust-derived read-only values. Apply validates a
-staged configuration in Rust for the next run; Cancel discards staged edits.
+Clicking OFDM Channel Descriptor (OCD) opens an editable pop-up with an expandable
+Parameter/Value tree, dropdowns for supported values, and a description panel
+below the selected field. Symbol timing contains cyclic prefix/roll-off, and
+Interleaving contains time-interleaver depth. A Modulation Profile branch shows
+blank Profile ID, Source file and Subcarrier assignments values until a profile
+is selected; profile loading remains pending. There is no Channel context branch.
+The OCD describes common channel parameters; the DPD describes downstream
+profiles (MULPI I25 §§6.4.40–6.4.41; PHY I20 §7.5.13.4). Bandwidth and spacing
+remain in the Rust configuration, outside this editor; future input integration
+must reconcile them separately rather than treating DPD as channel numerology.
+Apply validates a staged configuration through the core Rust API and retains it in memory; Cancel
+discards staged edits. Run integration and file persistence remain pending.
+The diagram block and popup use the full name OFDM Channel Descriptor (OCD).
+This editor label does not imply complete OCD message import/export support.
+Each dialog has its own QML file and focused Rust adapter where needed.
+The core dependency disables simulation features; DSP implementations are unchanged.
 
 Use an OSCAR-style metadata registry concept without importing its TLV protocol
-model. Proposed canonical location: `resources/registry/ofdm-settings.json`,
+model. Canonical location: `resources/registry/ofdm-settings.json`,
 bundled with the application and loaded through Rust. Each entry records a stable
-field ID, group, label, storage unit/type, supported choices, description,
-application default and its rationale, and pinned specification/version/section/
+field ID, group, label, supported choices with display units, description,
+application default where applicable, and pinned specification/version/section/
 table references. Label paraphrases and any short exact quotations explicitly;
 do not represent MERLIN defaults as normative requirements. PHY is authoritative
 for these waveform fields; cite MULPI only for fields with actual pinned MULPI
@@ -210,8 +264,8 @@ registry consistency checks must detect divergence from supported Rust values.
 
 Proposed workbench persistence uses a separate versioned `*.merlin.json` document
 containing selected settings and input references, not a copy of the registry.
-The registry describes fields; the workbench stores user choices. These paths and
-persistence contracts are proposals, not implemented interfaces.
+The registry describes fields; the proposed workbench file will store user
+choices. Workbench persistence remains a proposal, not an implemented interface.
 
 Add top-level **Open | Settings | About** actions. Open selects a saved MERLIN
 workbench; individual capture inputs remain in their corresponding block dialogs.

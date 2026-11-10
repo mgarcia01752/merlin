@@ -7,29 +7,39 @@ See the [task design](features/visual-workspace/design.md). The initial shell is
 
 ## UI-01: Workbench and section dialogs
 
-Develop the workbench left to right; OFDM Settings is the first functional dialog.
+Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first functional dialog.
 
 - [x] Inspect PNM Viewer Qt infrastructure read-only; select reusable components
   and record source revisions, adaptations, licenses and notices in the design.
 - [x] Add the native Qt Quick/QML shell and separate Rust presentation adapter.
 - [x] Render the user's high-level signal path and clickable input blocks.
 - [x] Open a focused section-preview pop-up for each block; keep the workbench
-  visible behind it. Settings editors and file pickers remain pending.
-- [ ] Implement OFDM Settings: cyclic prefix, roll-off/windowing, interleaver
+  visible behind it. Other settings editors and file pickers remain pending.
+- [ ] Implement OFDM Channel Descriptor (OCD): cyclic prefix, roll-off/windowing, interleaver
   depth and supported pilot settings, using Rust validation for the next run.
-- [ ] Replace OFDM preview with an expandable settings tree, supported-value
+- [x] Replace OFDM preview with an expandable settings tree, supported-value
   dropdowns, field descriptions/source references, and Apply/Cancel behavior.
-- [ ] Add a bundled JSON field registry with pinned PHY references, separately
+  Use Parameter/Value columns with descriptions below; keep Modulation Profile
+  values blank until selected, without displaying placeholder channel defaults.
+- [x] Add a bundled JSON field registry with pinned PHY references, separately
   labeled application defaults, and consistency checks against Rust settings.
 - [ ] Add Open | Settings | About navigation and application-preference dialog.
 - [ ] Define and implement versioned workbench JSON persistence separately from
   registry metadata; Open restores configuration without starting a run.
+- [x] Show heading-only blocks and shared green/yellow/red readiness stripes,
+  with status/reason tooltips and accessible descriptions.
+- [x] Keep OFDM Channel Descriptor (OCD) yellow while a validated modulation-profile input is
+  unavailable; record WB-RULE-01/02 in the architecture and task design.
+- [ ] Connect Rust input/job state to automatic block readiness and diagnostics;
+  verify accepted/removed/rejected profiles and dependency invalidation.
 - [ ] Implement PRBS-TX / Transmitter configuration and stage details.
 - [ ] Implement Channel Simulator configuration and stage details.
 - [ ] Implement Receiver / PRBS-RX configuration and recovered-data status.
 - [ ] Keep source/recovered comparison independent of receiver feedback.
 - [ ] Add persistent lower-right Start, Stop and Pause/Resume icons with tooltips,
   accessible names and state-dependent availability.
+- [x] Gate Start on every block being green; any yellow/red block disables it.
+  Keep the run-integration guard closed until a worker action is connected.
 - [ ] Connect Start to a validated frozen request and a bounded Rust worker job.
 - [ ] Connect Stop to cooperative cancellation, preserving completed partial results.
 - [ ] Define Rust pause boundaries, paused-time budget accounting, Stop/close while

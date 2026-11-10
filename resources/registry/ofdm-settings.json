@@ -1,0 +1,401 @@
+{
+  "schema_version": 1,
+  "default_note": "MERLIN application defaults, not specification-mandated defaults.",
+  "fields": [
+    {
+      "id": "occupied_bandwidth_hz",
+      "group": "Spectrum",
+      "label": "Occupied bandwidth",
+      "choices": [
+        {
+          "value": 24000000,
+          "label": "24 MHz"
+        },
+        {
+          "value": 30000000,
+          "label": "30 MHz"
+        },
+        {
+          "value": 36000000,
+          "label": "36 MHz"
+        },
+        {
+          "value": 42000000,
+          "label": "42 MHz"
+        },
+        {
+          "value": 48000000,
+          "label": "48 MHz"
+        },
+        {
+          "value": 54000000,
+          "label": "54 MHz"
+        },
+        {
+          "value": 60000000,
+          "label": "60 MHz"
+        },
+        {
+          "value": 66000000,
+          "label": "66 MHz"
+        },
+        {
+          "value": 72000000,
+          "label": "72 MHz"
+        },
+        {
+          "value": 78000000,
+          "label": "78 MHz"
+        },
+        {
+          "value": 84000000,
+          "label": "84 MHz"
+        },
+        {
+          "value": 90000000,
+          "label": "90 MHz"
+        },
+        {
+          "value": 96000000,
+          "label": "96 MHz"
+        },
+        {
+          "value": 102000000,
+          "label": "102 MHz"
+        },
+        {
+          "value": 108000000,
+          "label": "108 MHz"
+        },
+        {
+          "value": 114000000,
+          "label": "114 MHz"
+        },
+        {
+          "value": 120000000,
+          "label": "120 MHz"
+        },
+        {
+          "value": 126000000,
+          "label": "126 MHz"
+        },
+        {
+          "value": 132000000,
+          "label": "132 MHz"
+        },
+        {
+          "value": 138000000,
+          "label": "138 MHz"
+        },
+        {
+          "value": 144000000,
+          "label": "144 MHz"
+        },
+        {
+          "value": 150000000,
+          "label": "150 MHz"
+        },
+        {
+          "value": 156000000,
+          "label": "156 MHz"
+        },
+        {
+          "value": 162000000,
+          "label": "162 MHz"
+        },
+        {
+          "value": 168000000,
+          "label": "168 MHz"
+        },
+        {
+          "value": 174000000,
+          "label": "174 MHz"
+        },
+        {
+          "value": 180000000,
+          "label": "180 MHz"
+        },
+        {
+          "value": 186000000,
+          "label": "186 MHz"
+        },
+        {
+          "value": 192000000,
+          "label": "192 MHz"
+        }
+      ],
+      "application_default": 192000000,
+      "description": "Occupied bandwidth includes the modulated spectrum and the window taper regions. It is a multiple of 6 MHz, with a minimum of 24 MHz. MERLIN supports one channel up to 192 MHz.",
+      "description_kind": "paraphrase",
+      "source": {
+        "document": "CM-SP-PHYv3.1-I20-230419",
+        "section": "7.5.9",
+        "table": null
+      }
+    },
+    {
+      "id": "subcarrier_spacing",
+      "group": "Spectrum",
+      "label": "Subcarrier spacing",
+      "choices": [
+        {
+          "value": "25000",
+          "label": "25 kHz"
+        },
+        {
+          "value": "50000",
+          "label": "50 kHz"
+        }
+      ],
+      "application_default": "25000",
+      "description": "Selects the separation between adjacent subcarriers. At the fixed 204.8 Msamples/s clock, 25 kHz uses an 8192-point FFT and 50 kHz uses a 4096-point FFT.",
+      "description_kind": "paraphrase",
+      "source": {
+        "document": "CM-SP-PHYv3.1-I20-230419",
+        "section": "7.5.7.1",
+        "table": 38
+      }
+    },
+    {
+      "id": "cyclic_prefix_samples",
+      "group": "Timing",
+      "label": "Cyclic prefix",
+      "choices": [
+        {
+          "value": 192,
+          "label": "192 samples / 0.9375 µs"
+        },
+        {
+          "value": 256,
+          "label": "256 samples / 1.25 µs"
+        },
+        {
+          "value": 512,
+          "label": "512 samples / 2.5 µs"
+        },
+        {
+          "value": 768,
+          "label": "768 samples / 3.75 µs"
+        },
+        {
+          "value": 1024,
+          "label": "1024 samples / 5 µs"
+        }
+      ],
+      "application_default": 512,
+      "description": "Cyclic prefix extension protects against delayed channel energy. The CMTS and CM must support the listed values for both FFT sizes. The roll-off period must be shorter than the cyclic prefix.",
+      "description_kind": "paraphrase",
+      "source": {
+        "document": "CM-SP-PHYv3.1-I20-230419",
+        "section": "7.5.8.1",
+        "table": 39
+      }
+    },
+    {
+      "id": "roll_off_samples",
+      "group": "Timing",
+      "label": "Roll-off period",
+      "choices": [
+        {
+          "value": 0,
+          "label": "0 samples / 0 µs"
+        },
+        {
+          "value": 64,
+          "label": "64 samples / 0.3125 µs"
+        },
+        {
+          "value": 128,
+          "label": "128 samples / 0.625 µs"
+        },
+        {
+          "value": 192,
+          "label": "192 samples / 0.9375 µs"
+        },
+        {
+          "value": 256,
+          "label": "256 samples / 1.25 µs"
+        }
+      ],
+      "application_default": 128,
+      "description": "Window taper sharpens spectral edges. The CMTS must not allow roll-off greater than or equal to the cyclic prefix. Zero is for evaluation purposes, not an operational mode.",
+      "description_kind": "paraphrase",
+      "source": {
+        "document": "CM-SP-PHYv3.1-I20-230419",
+        "section": "7.5.8.1",
+        "table": 40
+      }
+    },
+    {
+      "id": "time_interleaver_depth",
+      "group": "Interleaving",
+      "label": "Time-interleaver depth",
+      "choices": [
+        {
+          "value": 1,
+          "label": "1 "
+        },
+        {
+          "value": 2,
+          "label": "2 "
+        },
+        {
+          "value": 3,
+          "label": "3 "
+        },
+        {
+          "value": 4,
+          "label": "4 "
+        },
+        {
+          "value": 5,
+          "label": "5 "
+        },
+        {
+          "value": 6,
+          "label": "6 "
+        },
+        {
+          "value": 7,
+          "label": "7 "
+        },
+        {
+          "value": 8,
+          "label": "8 "
+        },
+        {
+          "value": 9,
+          "label": "9 "
+        },
+        {
+          "value": 10,
+          "label": "10 "
+        },
+        {
+          "value": 11,
+          "label": "11 "
+        },
+        {
+          "value": 12,
+          "label": "12 "
+        },
+        {
+          "value": 13,
+          "label": "13 "
+        },
+        {
+          "value": 14,
+          "label": "14 "
+        },
+        {
+          "value": 15,
+          "label": "15 "
+        },
+        {
+          "value": 16,
+          "label": "16 "
+        },
+        {
+          "value": 17,
+          "label": "17 "
+        },
+        {
+          "value": 18,
+          "label": "18 "
+        },
+        {
+          "value": 19,
+          "label": "19 "
+        },
+        {
+          "value": 20,
+          "label": "20 "
+        },
+        {
+          "value": 21,
+          "label": "21 "
+        },
+        {
+          "value": 22,
+          "label": "22 "
+        },
+        {
+          "value": 23,
+          "label": "23 "
+        },
+        {
+          "value": 24,
+          "label": "24 "
+        },
+        {
+          "value": 25,
+          "label": "25 "
+        },
+        {
+          "value": 26,
+          "label": "26 "
+        },
+        {
+          "value": 27,
+          "label": "27 "
+        },
+        {
+          "value": 28,
+          "label": "28 "
+        },
+        {
+          "value": 29,
+          "label": "29 "
+        },
+        {
+          "value": 30,
+          "label": "30 "
+        },
+        {
+          "value": 31,
+          "label": "31 "
+        },
+        {
+          "value": 32,
+          "label": "32 "
+        }
+      ],
+      "application_default": 16,
+      "description": "The CMTS must support depths 1–16 for 25 kHz spacing and 1–32 for 50 kHz spacing. Apply checks the depth against the selected spacing.",
+      "description_kind": "paraphrase",
+      "source": {
+        "document": "CM-SP-PHYv3.1-I20-230419",
+        "section": "7.5.6.1",
+        "table": null
+      }
+    }
+  ],
+  "profile_fields": [
+    {
+      "id": "profile_id",
+      "label": "Profile ID",
+      "description": "Identifier of the selected downstream modulation profile. No profile is selected yet.",
+      "description_kind": "paraphrase",
+      "source": {
+        "document": "CM-SP-MULPIv3.1-I25-230419",
+        "section": "6.4.41"
+      }
+    },
+    {
+      "id": "source_file",
+      "label": "Source file",
+      "description": "File supplying the selected modulation profile. This is MERLIN input provenance, not a DOCSIS protocol field.",
+      "description_kind": "application metadata"
+    },
+    {
+      "id": "subcarrier_assignments",
+      "label": "Subcarrier assignments",
+      "description": "The downstream profile describes modulation assignments for subcarriers. Channel-wide parameters are described separately by the OFDM Channel Descriptor. No assignments have been loaded.",
+      "description_kind": "paraphrase",
+      "source": {
+        "document": "CM-SP-MULPIv3.1-I25-230419",
+        "section": "6.4.40–6.4.41"
+      }
+    }
+  ]
+}

@@ -9,9 +9,16 @@ Button {
     id: block
     required property var theme
     required property string heading
-    required property string detail
+    required property string blockStatus
+    required property string statusReason
+    readonly property string statusLabel: blockStatus === "complete" ? "Complete" : blockStatus === "error" ? "Error" : "Needs attention"
+    readonly property color statusColor: blockStatus === "complete" ? theme.statusComplete : blockStatus === "error" ? theme.statusError : theme.statusAttention
     property bool inputBlock: false
     Accessible.name: heading
+    Accessible.description: statusLabel + ": " + statusReason
+    ToolTip.visible: hovered || visualFocus
+    ToolTip.delay: 500
+    ToolTip.text: statusLabel + ": " + statusReason
     hoverEnabled: true
     background: Rectangle {
         radius: block.inputBlock ? 6 : 12
@@ -19,26 +26,19 @@ Button {
         border.color: block.hovered || block.visualFocus ? block.theme.accent : block.theme.line
         border.width: block.visualFocus ? 2 : 1
         Rectangle {
+            objectName: "statusStripe"
             width: 3; height: parent.height - 26
             x: 0; y: 13; radius: 1
-            color: block.theme.accent
+            color: block.statusColor
         }
     }
-    contentItem: Item {
-      Column {
-        spacing: 8
-        anchors.centerIn: parent
-        width: parent.width - 20
-        Text {
-            width: parent.width; text: block.heading; color: block.theme.text
-            font.pixelSize: 15; font.weight: Font.DemiBold
-            horizontalAlignment: Text.AlignHCenter; wrapMode: Text.WordWrap
-        }
-        Text {
-            width: parent.width; text: block.detail; color: block.theme.muted
-            font.pixelSize: 12; horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
-        }
-      }
+    contentItem: Text {
+        text: block.heading
+        color: block.theme.text
+        font.pixelSize: 15
+        font.weight: Font.DemiBold
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        wrapMode: Text.WordWrap
     }
 }

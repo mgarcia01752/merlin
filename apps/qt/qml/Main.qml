@@ -15,9 +15,10 @@ ApplicationWindow {
     visible: true
     title: "MERLIN — Simulation Workbench"
     Branding { id: branding }
+    OfdmSettings { id: ofdmSettings }
     Theme { id: theme; onDarkChanged: branding.update_icon(dark) }
     Component.onCompleted: branding.update_icon(theme.dark)
     ThemePalette { targetControl: window; theme: theme }
     color: theme.background
-    Workbench { anchors.fill: parent; theme: theme }
+    Workbench { anchors.fill: parent; theme: theme; settingsBackend: ofdmSettings }
 }

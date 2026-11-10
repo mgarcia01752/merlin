@@ -310,6 +310,26 @@ Qt executable matching the current UI at handoff. Changed modules still require
 compilation and the executable may need relinking; never reuse stale artifacts
 as validation of changed code.
 
+## Qt window and dialog organization
+
+Give each workbench window or dialog its own descriptively named QML file.
+Keep the workbench responsible for composition and opening dialogs, rather than
+embedding each editor implementation in it. Keep dialog-specific Rust adapters
+in focused modules; share reusable controls and core models without duplication.
+When adding, editing or removing a dialog, update its QML registration, callers,
+tests and user guide together so it can be maintained independently.
+
+## Workbench readiness rules
+
+Follow the canonical [block readiness rules](../../docs/architecture.md#workbench-block-readiness-rules)
+when changing workbench blocks. Keep headings only inside blocks. Use the shared
+status stripe and palette, with tooltip/accessibility reasons. New readiness rules
+belong in the architecture and owning task design/checklist, not scattered QML
+conditions. Keep this skill as workflow guidance rather than a second rule table.
+Scientific validation/outcomes come from Rust; selected filenames and application
+defaults must not imply validated inputs or a complete block. Preserve accepted
+state on rejected drafts. Update user docs and dark VM screenshots with changes.
+
 ## Consumer boundaries
 
 Optional future presentation and Python adapters consume the same public Rust API.
