@@ -69,8 +69,9 @@ implicit looping. Recorded capture times are separate from this playback clock.
 
 ![Interpolated-power preview between two captures](../images/workbench/rxmer-interpolation-dark.png)
 
-**Load demo** adds the sanitized binary baseline; **Add notch demo** adds the
-existing decoded alternative. Adding a second file requires selecting Average or
+RxMER uses **Open file(s)…** for capture selection; Load demo and Add notch demo
+have been removed from its toolbar. The Channel Estimate editor retains its own
+Load demo action. Adding a second file requires selecting Average or
 one of the sequence modes. The combined chart always identifies the effective
 residual model, not a new measured capture. RxMER does not establish real burst
 correlation or reconstruct measured I/Q.

@@ -356,6 +356,13 @@ old results, and never starts a simulation automatically. Rejected loads preserv
 the current workbench. Saving does not overwrite original PNM captures. Generated
 results, caches and worker state are not configuration.
 
+### RxMER capture actions (UI-RXMER-04)
+
+The RxMER capture toolbar uses native Open file(s) and collection controls;
+demo/notch actions are removed (UI-RXMER-04). The shared Channel Estimate dialog
+retains its own demo action. Existing Rust fixture/import APIs and WB restores
+are unchanged. See the [design](development/features/rxmer-workbench/design.md#ui-rxmer-04-remove-demo-actions-from-rxmer).
+
 ### Chart zoom interaction (UI-ZOOM-01)
 
 Workbench-wide zoom policy (UI-ZOOM-01): existing zoomable charts use wheel/

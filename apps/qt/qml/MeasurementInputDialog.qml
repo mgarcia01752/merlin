@@ -36,8 +36,7 @@ WorkbenchDialog {
         spacing: 10
         RowLayout {
             Button { objectName: "measurementOpen"; text: dialog.rxmer ? "Open file(s)…" : "Open file…"; onClicked: dialog.setMetadata(backend.choose_files(dialog.rxmer)) }
-            Button { objectName: "measurementDemo"; text: "Load demo"; onClicked: dialog.setMetadata(backend.demo(dialog.rxmer, 0)) }
-            Button { objectName: "measurementNotchDemo"; visible: dialog.rxmer; text: "Add notch demo"; onClicked: dialog.setMetadata(backend.demo(true, 1)) }
+            Button { objectName: "measurementDemo"; visible: !dialog.rxmer; text: "Load demo"; onClicked: dialog.setMetadata(backend.demo(false, 0)) }
             Button { text: dialog.rxmer ? "Clear" : "Flat / unity"; onClicked: dialog.setMetadata(backend.edit(dialog.rxmer, -1, 0)) }
             Button { visible: dialog.rxmer; text: "Remove"; enabled: viewer.selectedIndex >= 0; onClicked: dialog.setMetadata(backend.edit(true, viewer.selectedIndex, 0)) }
             Button { visible: dialog.rxmer; text: "↑"; Accessible.name: "Move capture earlier"; enabled: viewer.selectedIndex > 0; onClicked: dialog.setMetadata(backend.edit(true, viewer.selectedIndex, -1)) }

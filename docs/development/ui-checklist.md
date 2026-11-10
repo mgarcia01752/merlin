@@ -7,6 +7,9 @@ See the [task design](features/visual-workspace/design.md). The initial shell is
 
 ## UI-01: Workbench and section dialogs
 
+- [x] **UI-RXMER-04** Remove RxMER demo/notch buttons and use Open file(s).
+  [Design](features/rxmer-workbench/design.md#ui-rxmer-04-remove-demo-actions-from-rxmer).
+
 - [x] **UI-SHELL-11** Remove the left icon/WB gutter and use equal side margins.
   [Design](features/verification-panel/design.md).
 - [x] **UI-VERIFY-02** Restyle PRBS-RX with comparison cards, payload recovery

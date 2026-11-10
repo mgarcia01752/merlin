@@ -5,6 +5,27 @@ I/Q and generalized observation selection remain pending.
 
 # Shared channel measurement configuration
 
+## UI-RXMER-04: Remove demo actions from RxMER
+
+Remove Load demo and Add notch demo from the RxMER toolbar. Keep native
+Open file(s), collection controls, existing imports and accepted WB restoration.
+The shared Channel Estimate editor retains its own Load demo action. This is a
+presentation-only change in `MeasurementInputDialog.qml`; Rust demo fixtures and
+decoder tests remain available for development. Update the existing interaction
+test to exercise Open file(s), run QML checks, rebuild Qt using retained artifacts
+and refresh the actual dark RxMER guide screenshots on the VM.
+
+Complete: all 26 QML checks passed, including file selection, hidden/removed
+demo actions and joint channel readiness. The current native Qt executable is
+built with retained Cargo artifacts. On the Ubuntu 22.04 VM, restored a saved
+baseline, reviewed the cleaned toolbar and wheel zoom, then imported the existing
+notch JSON through the native picker and inspected a two-file interpolated-power
+preview at symbol 500. Cancel preserved the accepted single capture. Refreshed
+the three affected dark RxMER screenshots; the native log has no QML warnings.
+Local logs remain under `docs/development/local/visual-workspace/rxmer-toolbar-*`.
+No Rust processing or non-Qt checks were needed; other target runtimes remain
+unverified.
+
 Status: shared Channel Estimate/RxMER editors, title/File labels and About are
 implemented. Static/power-average/hold/interpolated-power Rust preview operations
 are implemented. Full-loop UI dispatch, receiver QAM and channel/RX SA wiring
