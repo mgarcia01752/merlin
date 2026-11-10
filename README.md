@@ -1,3 +1,11 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/logo/merlin-logo-dark-rounded.svg">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/logo/merlin-logo-light-rounded.svg">
+    <img src="docs/images/logo/merlin-logo-light-rounded.svg" alt="MERLIN — DOCSIS OFDM Simulation Toolkit" width="520">
+  </picture>
+</p>
+
 # MERLIN — DOCSIS OFDM Simulation Toolkit
 
 *Modulation, Encoding, Reception, Link Impairments & Noise*
