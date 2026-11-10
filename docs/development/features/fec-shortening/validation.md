@@ -41,11 +41,11 @@ license change is introduced.
 
 `cargo run -p fec-codec --example shortened_codec_loop -- 6136` reports6136
 original bits,8104 transmitted bits,8096 omitted zeros and zero recovery errors.
-The pre-push gate now runs this in release mode alongside existing scientific
+The pre-push gate now runs this in release mode alongside existing simulation
 smokes, full workspace/analysis-only tests, helper tests and formatting/Clippy.
 The full gate passed:32 helper tests, Bash/ShellCheck, formatting, warnings-denied
 all-target Clippy, workspace and analysis-only tests, fixture checks, release
-builds and all scientific smokes. The shortened release example reports zero
+builds and all simulation smokes. The shortened release example reports zero
 errors with the dimensions above. Project-local Cargo/Rust1.85.1 was used.
 
 Local-only generated logs and the rendered reference page belong under

@@ -12,7 +12,7 @@ unchecked umbrella entry. Requirements and stable IDs are preserved.
 This audit changes documentation only. It does not implement missing stages or
 promote a short reference experiment into a duration-based channel runner.
 
-## Architecture and scientific stages
+## Architecture and simulation stages
 
 | Item | Evidence already present | Why the parent stays open |
 | --- | --- | --- |
@@ -62,7 +62,7 @@ Completed constituent steps are checked under RUN-01, RUN-03, RUN-05 and RUN-08.
 | QA-06 | Linux pinned-toolchain validation exists. | There is no Windows/macOS runtime validation or CI workflow in this checkout. |
 | QA-07 | Version and guarded Git/release helpers exist. | There are no native installers or configured automatic publication workflow. |
 | API-01 | Public Rust operations are designed for future adapters. | No optional Python binding crate or Python runtime tests exist. |
-| UI-01 | Scientific modules remain independent of presentation. | No Qt presentation component exists; this is deliberately deferred. |
+| UI-01 | Simulation modules remain independent of presentation. | No Qt presentation component exists; this is deliberately deferred. |
 | LATER-01 | Downstream OFDM is the active scope. | OFDMA design/implementation is deliberately deferred. |
 | LATER-02 | The current architecture models one fixed downstream channel. | Channel bonding, multi-channel simulation and FDX-specific operation require separate future design/validation. |
 

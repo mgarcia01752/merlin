@@ -6,10 +6,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Dialog {
+WorkbenchDialog {
     id: dialog
     objectName: "profileInputDialog"
-    required property var theme
     required property var backend
     required property var settingsBackend
     property var previewModel: ({rows: [], profile_ids: [], selected_profile_id: -1, source_name: "", format: ""})

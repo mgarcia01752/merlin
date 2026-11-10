@@ -132,6 +132,6 @@ MPLCONFIGDIR=docs/development/local/protected-scatter/matplotlib \
 ```
 
 The renderer only selects the exported streams and draws their unchanged points.
-It performs no DSP, equalization, noise generation or scientific statistics.
+It performs no DSP, equalization, noise generation or numerical statistics.
 Output files must be new. Matplotlib is optional development tooling, not a
-scientific runtime dependency.
+simulation runtime dependency.

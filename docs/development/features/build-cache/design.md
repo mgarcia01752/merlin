@@ -3,7 +3,7 @@
 Status: **proposal only; no caching implementation or gate changes authorized by
 this document**. The user requested a plan before implementation. This plan serves
 fast local iteration, initially on the Ubuntu development VM. It does not change
-scientific algorithms or replace Cargo's compiler/dependency tracking.
+signal-processing algorithms or replace Cargo's compiler/dependency tracking.
 
 ## Objective and current behavior
 
@@ -14,7 +14,7 @@ every selected build/test and every reuse decision.
 
 Currently scripts/qt-desktop.sh check always runs formatting, Clippy, Rust tests,
 build and QML tests; run invokes cargo run. The Qt app has its own manifest,
-lockfile and apps/qt/target. The scientific workspace has a separate root target.
+lockfile and apps/qt/target. The simulation workspace has a separate root target.
 Both retain artifacts, but there is no task-level successful-test cache.
 scripts/check-before-push.sh and CI define separate broad validation policies.
 
@@ -101,7 +101,7 @@ file-name similarity alone is not sufficient evidence of test coverage.
 | Icons/QRC assets | Resource/application build and branding/render checks |
 | Qt Rust/native bridge | Qt build, applicable Rust style/Clippy/tests and adapter/QML integration checks |
 | Test file or test fixture | Consuming test groups and their build prerequisites |
-| A known scientific subdirectory | Owning crate compilation, mapped unit/integration tests and known affected consumers |
+| A known simulation subdirectory | Owning crate compilation, mapped unit/integration tests and known affected consumers |
 | Shared types, re-exports or public API | Owning crate plus reverse-dependent compile checks and mapped consumer tests |
 | Crate root or unmapped Rust source | Broader owning-crate validation and conservative consumer coverage |
 | Cargo features, manifests, lockfiles, build scripts or toolchain | Recompute affected dependency/task closure; conservatively broaden when uncertain |
@@ -109,7 +109,7 @@ file-name similarity alone is not sufficient evidence of test coverage.
 | Documentation only | Relevant documentation/link checks; no application compilation |
 | Development tool or mapping | Tool tests and affected tasks; invalidate changed task definitions |
 
-Start with coarse Qt/science/CLI/tool groups, then add reviewed scientific
+Start with coarse Qt/science/CLI/tool groups, then add reviewed simulation
 subdirectory mappings incrementally. An internal function can change public
 behavior without changing a signature; do not limit consumer checks to API text
 diffs. Shared primitives, macros and global configuration need broad mappings.
@@ -149,7 +149,7 @@ runs, source changes during execution and empty test selection. No ten-minute
 science suite is necessary to validate the planner's own logic.
 
 Then verify real Qt cold/warm runs, one QML edit, one icon edit and one bridge
-change. Validate a small representative scientific mapping against broader known
+change. Validate a small representative simulation mapping against broader known
 coverage before enabling finer selection. Seed success records only from observed
 successful executions; do not backfill them from informal historical reports.
 

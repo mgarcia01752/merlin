@@ -26,7 +26,7 @@ Status: targeted tests and the full pre-push gate pass.
 There are13 new tests across five focused files. Targeted tests report zero
 payload errors in noiseless recovery. The full gate passed:32 helper tests, Bash/ShellCheck, formatting,
 warnings-denied all-target Clippy, workspace tests, analysis-only tests, release
-CLI builds, version agreement and all existing scientific/CLI smokes. The release
+CLI builds, version agreement and all existing simulation/CLI smokes. The release
 example/gate runs `shortened_waveform` and verifies its JSON parses; the example
 itself rejects failed noiseless recovery.
 

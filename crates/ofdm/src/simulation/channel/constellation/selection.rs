@@ -25,6 +25,8 @@ pub struct ConstellationSelection {
     pub profile_id: ProfileId,
     pub start_hz: Option<FrequencyHz>,
     pub stop_hz: Option<FrequencyHz>,
+    /// Retain CRC-classified matched NCP cells using the same coordinate inverse.
+    pub capture_ncp: bool,
 }
 impl Default for ConstellationSelection {
     /// Selects8192 observations across the supported payload profile.
@@ -36,6 +38,7 @@ impl Default for ConstellationSelection {
             profile_id: PAYLOAD_PROFILE_ID,
             start_hz: None,
             stop_hz: None,
+            capture_ncp: false,
         }
     }
 }

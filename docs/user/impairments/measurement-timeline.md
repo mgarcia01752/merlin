@@ -11,7 +11,7 @@ flowchart LR
     PLAN --> CH["Replace response/residual plan at physical symbol boundary"]
     RNG["Continuous dedicated Gaussian RNG"] --> CH
     TX["Continuous TX waveform"] --> CH --> RX["Continuous receiver + actual FEC"]
-    CH --> OBS["Before/after test points and scientific outcomes"]
+    CH --> OBS["Before/after test points and simulation outcomes"]
 ```
 
 Extend a measurement selection with explicit later source indexes:
@@ -48,7 +48,7 @@ than an inferred measurement time scale.
 
 All epochs use one noise seed and continuous RNG state. At most4096 transitions
 and4 million retained frame samples are accepted. Active coverage/null/response
-checks apply to every epoch before scientific work starts.
+checks apply to every epoch before simulation work starts.
 
 ## Temporal model and its limits
 
@@ -68,5 +68,5 @@ No hidden thermal floor or second noise source is added.
 
 Tests verify two independently expected residual-power levels and near-zero lag
 correlation, reject invalid timelines, and prove an identical-coefficient epoch
-transition leaves the entire FEC/scientific summary unchanged. These are tests
+transition leaves the entire FEC/simulation summary unchanged. These are tests
 of this stated Gaussian piecewise model, not field burst statistics.

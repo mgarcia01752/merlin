@@ -32,7 +32,7 @@ PLC comparisons. It does not estimate throughput from a guessed bit rate.
 
 The verifier permits1–512 source symbols and at most16 scheduled payloads.
 Acquisition is bounded to eight PLC frames. An interval too short to place/recover
-all scheduled words fails explicitly. Samples and scientific stage histories are
+all scheduled words fails explicitly. Samples and signal-processing stage histories are
 streamed; no entire waveform is retained. Output summaries remain bounded.
 The demonstration uses a synthetic24MHz active envelope with explicit pilot
 positions and a unity channel. A positive soft-reference variance generates

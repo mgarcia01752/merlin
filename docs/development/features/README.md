@@ -16,6 +16,8 @@ from a fresh clone and are deliberately not Markdown link targets.
 
 | Work area | Records |
 | --- | --- |
+| receiver instruments | [design](receiver-instruments/design.md) |
+| popup close controls | [design](popup-close-controls/design.md) |
 | carrier layout | [architecture](carrier-layout/architecture.md) |
 | cell interleaving | [architecture](cell-interleaving/architecture.md) |
 | cell randomizer | [architecture](cell-randomizer/architecture.md) |

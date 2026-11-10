@@ -30,7 +30,7 @@ For a quick3ms run with bounded selected test-point export:
 ```
 
 Every destination must be new. Existing result/probe files are never overwritten.
-The core schema handles scientific values; the CLI only validates paths, adapts
+The core schema handles simulation values; the CLI only validates paths, adapts
 requests, connects the process Ctrl-C token and writes typed JSON/JSONL. Input
 and result JSON are limited to16MiB. [Probe export](../simulation/probe-export.md)
 has separate record/stream and event/element limits.
@@ -48,20 +48,20 @@ The output has its own schema-version1 result contract:
 | Field | Meaning |
 | --- | --- |
 | `status`, `error` | Job outcome and optional terminal diagnostic. |
-| `settings`, `limits` | Frozen scientific configuration and host/output policy. Duration in settings uses serialized seconds/nanoseconds; the request adapter uses milliseconds. |
+| `settings`, `limits` | Frozen simulation configuration and host/output policy. Duration in settings uses serialized seconds/nanoseconds; the request adapter uses milliseconds. |
 | `summary` | Actual FEC/PRBS totals, decoder histogram, source-window accounting, intervals and sample identities. |
 | `retained_words`, `omitted_word_details` | Bounded per-word details and explicit retention omissions. |
 | `unrecovered_generated_payloads` | Admitted source words without recovered comparisons at termination. |
 | `constellation` | Optional bounded paired raw/equalized payload I/Q, selection, coordinates and capture status. Omitted when disabled. |
 | `probe_stats` | Event/element counts and callback failures. |
-| `elapsed_ms` | Host elapsed time; excluded from deterministic scientific equality tests. |
+| `elapsed_ms` | Host elapsed time; excluded from deterministic simulation equality tests. |
 
 A saved result is not an input request. Inspect `status` even when the process
 exits successfully: Ctrl-C and host-budget stops preserve valid partial output.
 Stage/export failures also preserve completed results when result-file writing
 succeeds, then return status1. Export final flush/sync is checked before the
 result is written, so a final export failure also produces Failed status while
-retaining completed scientific totals. A failed final disk write is reported and the
+retaining completed simulation totals. A failed final disk write is reported and the
 existing bounded JSON writer removes its own incomplete result file. JSONL may
 retain a valid prefix or an incomplete final record on I/O failure; it is not
 silently reported as a complete export.

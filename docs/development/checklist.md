@@ -4,7 +4,7 @@ This is the official progress and TODO list for DOCSIS OFDM Channel Sim. Read it
 with the [architecture](../architecture.md) and the concise
 [development status](status.md). The [development workspace](README.md) links
 ongoing plans and historical feature records. Update both when adding a stage,
-changing ownership, exposing a test point or extending scientific support.
+changing ownership, exposing a test point or extending signal-processing support.
 Review both at feature completion and before supplying each commit message;
 update affected sections and retain unchecked status for partial work.
 
@@ -501,7 +501,7 @@ and [the later impairment reference](impairment-reference.md).
     recovered8950 words/127376400 bits with zero payload or PLC errors.
     RUN-04 now adds independent observation-window incomplete/excluded accounting.
 - [x] **RUN-06** Bound memory/runtime/probe output, support cancellation and retain
-  completed scientific results, including an explicit partial status.
+  completed simulation results, including an explicit partial status.
   - [x] Keep waveform/queue/history storage bounded independently of duration;
     expose completed step results and close failed sessions explicitly.
   - [x] Add cooperative token/runtime checks, progress, bounded retained details
@@ -575,7 +575,7 @@ The [user design](../user/impairments/paired-constellation.md) explains the resu
 - [x] **CONST-03** Expose one Rust result through the public API and opt-in channel
   CLI JSON; preserve existing input contracts and no-clobber/output limits.
 - [x] **CONST-04** Verify H/inverse reference planes, payload eligibility including
-  failed words, startup/drain handling and unchanged scientific/RNG outcomes.
+  failed words, startup/drain handling and unchanged simulation/RNG outcomes.
 - [x] **CONST-05** Provide a reproducible8192-pair demo, user instructions and
   actual validation evidence; update design/status after implementation.
 
@@ -637,17 +637,17 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 - [x] **QA-01** Project-local Cargo wrapper, version source and Git/release helpers.
 
-### Local validation and scientific regression
+### Local validation and simulation regression
 
 - [x] **QA-02** Formatting, warnings-denied Clippy, workspace and analysis-only tests,
   release CLI build and smoke validation in the existing pre-push gate.
-- [x] **QA-03** Deterministic scientific tests with pinned source evidence and
+- [x] **QA-03** Deterministic numerical tests with pinned source evidence and
   independent fixed vectors where available.
 
 ### Rust logging and diagnostics
 
 - [x] **QA-08** Add standard Rust facade and CLI-owned stderr logging, explicit
-  levels/error ownership and tests for filters, clean data output and scientific
+  levels/error ownership and tests for filters, clean data output and simulation
   invariance; document the current instrumentation scope.
 
 ### CLI and test-point validation
@@ -665,7 +665,7 @@ See the [implementation record](features/pilot-channel-estimation/implementation
     actual control recovery, cancellation/partial outcomes and API/CLI consistency.
   - [x] Pass workspace/focused tests, Clippy, formatting and analysis-only checks.
   Scope clarified2026-11-09: another implementation is not required. Existing
-  external-vector admission tooling stays optional and is not scientific evidence.
+  external-vector admission tooling stays optional and is not simulation evidence.
   Evidence: [closed-loop validation](features/closed-loop-validation/validation.md).
 
 ### Ubuntu builds and deferred cross-platform runtime
@@ -691,7 +691,7 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 - [ ] **API-01** After UI-01 through UI-04, add a separate optional Python adapter
   preserving the Rust simulation core, buffer lifetimes and observation contracts.
   Start with one `MerlinSimulation` class holding settings, source, measurements,
-  limits and the latest result. All scientific processing remains Rust.
+  limits and the latest result. All signal processing remains Rust.
   Proposed approach: PyO3 bindings and maturin packaging, independent of Qt/CLI.
   Plan: [simple Python class](features/python-adapter/design.md).
 
@@ -703,6 +703,11 @@ with OFDM Channel Descriptor (OCD). UI-01 is partial: diagram, section-preview d
 theme/icon shell and Rust-validated OFDM tree editor exist. Other editors,
 workbench persistence and bounded full-loop Rust jobs are now connected. PRBS-TX now accepts PRBS15
 or exact-byte file/finite-fill configuration through shared Rust validation.
+UI-SHELL-06 adds a shared circular X to every popup title while retaining footer
+buttons and cancellation semantics; see the [design](features/popup-close-controls/design.md).
+UI-SHELL-07 relocates RxMER above Channel Simulator, splits the DS Channel
+Estimate input into channel/receiver branches and removes the top comparison
+connector; verification behavior remains unchanged.
 UI-SHELL-02/03 provide a standard top File | Settings | About menu, with appearance
 under Settings → Global. UI-WB-JSON-01 now implements native Open/Save/Save As
 for self-contained JSON with original inputs and accepted block settings.
@@ -713,8 +718,12 @@ see the [review plan](features/rxmer-workbench/design.md).
 Receiver navigation now has a [dedicated design](features/receiver-workbench/design.md):
 UI-RX-WB-01 navigation, NCP/PLC/data-profile QAM selectors (UI-QAM-01) and an
 independent RX SA test-point selector (UI-SA-05) are implemented. UI-RX-WB-02
-adds aligned, equal-width rounded stage/instrument chips. Actual payload/PLC QAM, RX SA and full-loop job results are connected. NCP
-matched-I/Q collection (UI-QAM-02) and generalized view selection remain pending.
+adds aligned, equal-width rounded stage/instrument chips. Actual payload/NCP/PLC/pilot QAM, RX SA and full-loop results are connected.
+UI-QAM-02 adds received NCP attribution; UI-QAM-01 exposes available profile,
+modulation, bin and receive-symbol filters over retained observations.
+UI-CH-EST-RX-01 / UI-SLICER-01 / UI-FEC-01 complete the response/echo, physical
+decision/actual LLR and decoder-statistics views; see the
+[receiver instrument design](features/receiver-instruments/design.md).
 UI-RUN-01 / UI-RX-CONFIG-01 / UI-VERIFY-01 provide validated pre-run readiness,
 independent comparison and cooperative Start/Stop/Pause/Resume; see the
 [closed-loop design](features/qt-closed-loop/design.md).
@@ -726,8 +735,8 @@ using actual generated complex-baseband TX output. Full-loop dispatch now has
 its own bounded worker and retained RX observations.
 The DPD binary/JSON input
 dialog accepts compatible profiles and drives DPD/OCD readiness. Remaining UI
-work includes NCP matched I/Q, generalized instrument selection and native
-validation on the other initial Ubuntu targets.
+work includes expanded waveform trace inspection and native validation on the
+other initial Ubuntu targets.
 
 - [ ] **UI-01** Build the planned Qt system workspace after core APIs exist:
   clickable source/TX/channel/RX blocks with focused pop-up dialogs.
@@ -753,7 +762,7 @@ validation on the other initial Ubuntu targets.
 - [ ] **UI-04** Validate responsive jobs, cancellation, observation invariance and
   dark/light readability; add user guides and actual workspace screenshots.
   See the [starting diagram and interaction plan](features/visual-workspace/plan.md).
-  All scientific computation stays in Rust. The shell alone does not complete
+  All simulation computation stays in Rust. The shell alone does not complete
   UI-01 or the UI-04 validation milestone.
 
 ### Future DOCSIS scope

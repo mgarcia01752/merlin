@@ -20,7 +20,7 @@ Completed NEXT01, NEXT07, NEXT11–15 for the fixed-setting reference scope.
 - Separate analysis-only all-target Clippy passed. Logs retained in this directory.
 - plc_channel example ran successfully: both FFTs, two frames each, all three
   received descriptors, zero errors. JSON structure verified with development
-  tooling; scientific calculations and comparisons are implemented in Rust.
+  tooling; numerical calculations and comparisons are implemented in Rust.
 - Changed Markdown relative links/fences pass. Both updated canonical skills and
   their Codex/Claude discovery links validate.
 - No commits/pushes/system installations performed. No external interoperability,

@@ -167,10 +167,10 @@ RxMER/response settings.
 The run retains at most the requested number of pairs. A separate diagnostic
 inverse interleaver and bounded reorder map account for attribution latency;
 collection stops retaining/transporting diagnostics after the target is met.
-Scientific processing continues unchanged. Cancellation, runtime expiry and
+Signal processing continues unchanged. Cancellation, runtime expiry and
 terminal stage/probe failures preserve previously confirmed pairs. Unclassified
 points are not guessed after bad NCP. Explicitly taking a partial capture through
-the Rust stepper stops further retention without stopping the scientific session.
+the Rust stepper stops further retention without stopping the simulation session.
 
 A short run or narrow/single-carrier selection can produce fewer points than
 requested. The runner does not pad, repeat points, extend duration or reseed to
@@ -182,7 +182,7 @@ use the direct Rust result. Existing destinations are never replaced.
 ## Reproduce the documentation plot
 
 The optional plotter only draws exported Rust values; it performs no DSP, noise
-modeling, normalization, FEC or scientific-statistics calculation. It uses
+modeling, normalization, FEC or numerical statistics calculation. It uses
 Matplotlib3.10.8 in an isolated, ignored environment; the simulator does not
 require Python or Matplotlib.
 
@@ -218,7 +218,7 @@ physical/source-coordinate arithmetic, exact pair count/order, single-carrier
 partial results, invalid selections, cancellation/probe failure, failed payloads,
 receive-block splitting and unchanged FEC/noise outcomes. The actual release CLI
 also exported8192 measured pairs; a11dB stress case retained483 payload errors
-with its entire scientific summary unchanged from the earlier no-collector run.
+with its entire simulation summary unchanged from the earlier no-collector run.
 See the [implementation record](../../development/features/paired-constellation/implementation.md)
 for ownership, ordering bounds and validation scope. No Qt scatter UI is included.
 

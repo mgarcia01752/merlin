@@ -26,7 +26,7 @@ count must not be used to rescale this parameter implicitly.
 Zero power is exact passthrough and draws no random numbers. Block splitting
 does not reseed or change output. Invalid/discontinuous calls reject before
 committing the candidate RNG or sample clock. State is constant-size across long
-runs; scientific callbacks observe completed channel input/output blocks.
+runs; simulation callbacks observe completed channel input/output blocks.
 
 `examples/channel-awgn.json` selects power0.001, corresponding to approximately
 30dB data MER at unity response. Actual diagnostic MER is measured from received

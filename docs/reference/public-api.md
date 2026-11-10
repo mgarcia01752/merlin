@@ -1,8 +1,8 @@
 # Public API
 
-DOCSIS OFDM Channel Sim's scientific entry points are public Rust APIs. The standalone CLI calls
+DOCSIS OFDM Channel Sim's simulation entry points are public Rust APIs. The standalone CLI calls
 those same functions. Future Python bindings and an optional Qt presentation
-component will adapt inputs and results without duplicating scientific logic.
+component will adapt inputs and results without duplicating simulation logic.
 
 | Public module | Responsibility |
 | --- | --- |
@@ -78,12 +78,12 @@ Canonical modules are shown above. Existing imports under `math`, `profile::mode
 `profile::association`, `profile::simulation` and
 `profile::document::ScenarioDocument` remain supported by re-exports. Existing
 root `fec_codec::{encode_bch, decode_bch, LdpcCodec, ...}` imports also remain valid.
-No duplicate scientific implementations are kept for compatibility.
+No duplicate simulation implementations are kept for compatibility.
 
 New APIs should use documented units, typed input/results, structured recoverable
 errors and explicit ownership/lifetime contracts. Library functions must not exit
 the process, depend on GUI objects, require Python objects or emit results through
-console text. Consumers preserve missing values and original scientific results.
+console text. Consumers preserve missing values and original simulation results.
 
 Progress callbacks and cancellation are Rust job interfaces. A future binding
 will manage Python interpreter locking, callback delivery and buffer lifetimes.
@@ -110,7 +110,7 @@ Set `ChannelRunSettings.constellation` before constructing a run. The stepper's
 confirmed partial/final pairs and disables further diagnostic retention only.
 `ChannelJobResult.constellation` contains the same owned result on every job
 termination status when requested. No Python/Qt types or file paths enter the
-scientific API. See the [component guide](../user/impairments/paired-constellation.md)
+simulation API. See the [component guide](../user/impairments/paired-constellation.md)
 for coordinate meaning, finite bounds and reference scaling.
 
 ## Receiver Channel Estimation (CH-EST-RX) and applied measurements
@@ -269,3 +269,20 @@ transitions update residual powers without resetting RNG or waveform history.
 `channel::job::run_channel_controlled` adds a pause gate at OFDM-step boundaries,
 excluding paused host time. Existing `run_channel` retains its unpaused behavior.
 `TestPointProbe::set_phase_filter` filters before consuming observation budgets.
+
+
+## Receiver instrument observations and diagnostics
+
+`ConstellationSelection.capture_ncp` optionally retains CRC-classified matched
+NCP pairs through the shared inverse transport, independently of payload capture
+completion. `ConstellationResult.ncp_pairs` carries actual receive/source/bin
+coordinates and LLRs; payload pairs also retain actual post-descrambling cell LLRs.
+No profile is inferred for NCP and no hypothesis beyond the received field's
+consumed-cell count is classified as control.
+
+`signal_processing::receiver::diagnostics` provides bounded response/gain/phase,
+zero-filled band-limited impulse analysis and exact retained-LLR statistics.
+`TestPointProbe::limit_stage_events` caps a selected producer before dispatch,
+without spending the global budget on already-full snapshots. It must be set
+before any callback; later reconfiguration is rejected. Qt uses these APIs and
+the existing Rust slicer rather than implementing DSP in QML.

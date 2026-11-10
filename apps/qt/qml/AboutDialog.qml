@@ -5,9 +5,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-Dialog {
+WorkbenchDialog {
     id: dialog
-    required property var theme
     required property var backend
     property string iconRoot: "qrc:/branding/"
     property alias licensesPopup: licenses
@@ -27,7 +26,7 @@ Dialog {
             }
         }
         Label { Layout.fillWidth: true; text: "Modulation, Encoding, Reception, Link Impairments & Noise"; wrapMode: Text.WordWrap; color: dialog.theme.text }
-        Label { Layout.fillWidth: true; text: "Standalone single-channel downstream OFDM simulation. Scientific processing runs in Rust; the native desktop uses Qt and CXX-Qt."; wrapMode: Text.WordWrap; color: dialog.theme.muted }
+        Label { Layout.fillWidth: true; text: "Standalone single-channel downstream OFDM simulation. Signal processing runs in Rust; the native desktop uses Qt and CXX-Qt."; wrapMode: Text.WordWrap; color: dialog.theme.muted }
         Label {
             objectName: "aboutProjectLink"
             text: '<a style="color: ' + dialog.theme.accent + ';" href="https://github.com/mgarcia01752/merlin">MERLIN on GitHub</a>'

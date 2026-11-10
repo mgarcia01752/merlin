@@ -1,4 +1,4 @@
-# Coding experiment and scientific conventions
+# Coding experiment and simulation conventions
 
 This page describes the existing general16-QAM simulation job. A separate
 [256-QAM noiseless cell loop](../user/qam256-coding-loop.md) now connects its

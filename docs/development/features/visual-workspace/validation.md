@@ -1,7 +1,7 @@
 # Initial workbench validation
 
 Validated on Ubuntu 22.04 x64 with Qt 6.8.3 and Rust 1.85.1. UI-01 remains
-partial; this evidence covers the shell and presentation, not scientific UI jobs.
+partial; this evidence covers the shell and presentation, not simulation UI jobs.
 
 - Native Qt build passed. The application opened in the active VM desktop with
   the title MERLIN — Simulation Workbench and WM_CLASS merlin. Its X11 window
@@ -24,7 +24,7 @@ partial; this evidence covers the shell and presentation, not scientific UI jobs
 
 The initial full Rust workspace tests, workspace Clippy with warnings denied,
 Rust formatting and analysis-only tests passed. The analysis-only build emits an
-existing dead-code warning for SymbolPacker.coded_bits; no scientific source was
+existing dead-code warning for SymbolPacker.coded_bits; no simulation source was
 modified in this increment. Future UI-only iterations use Qt-focused validation
 and preserve compiled artifacts; broader checks run only when necessary.
 
@@ -35,7 +35,7 @@ Logs and rendering outputs are local-only under
 `workbench-light.png` and `workbench-dialog.png`.
 
 Ubuntu 24.04/26.04 runtime validation, installers, settings/file editors,
-scientific jobs, pause/resume and analyzers remain unverified or unimplemented.
+simulation jobs, pause/resume and analyzers remain unverified or unimplemented.
 The known rand advisory remains outside this shell change and is not suppressed.
 
 ## OFDM Settings editor increment
@@ -57,7 +57,7 @@ Validated on Ubuntu 22.04 x64, Qt 6.8.3 and Rust 1.85.1:
   [the user guide](../../../user/workbench.md). It shows the actual production
   backend and registry, not the QML test adapter. Private review captures remain
   under `docs/development/local/visual-workspace/`.
-- No scientific source changes or full scientific test rerun. The Qt adapter now
+- No simulation source changes or full simulation test rerun. The Qt adapter now
   consumes the existing core with default simulation features disabled; accepted
   settings are in memory only. Other editors, file persistence, application
   navigation and run integration remain pending.
@@ -76,8 +76,8 @@ channel/profile input integration remains pending.
 
 Qt-focused validation on Ubuntu 22.04 x64: 15 QML cases pass, including branch
 collapse/expand, three blank profile fields, no spectrum editors, and existing
-Apply/Cancel/reopen behavior. Two existing Rust adapter tests pass; no scientific
-source changed and no full scientific suite was run. PHY I20 §7.5.13.4 and the
+Apply/Cancel/reopen behavior. Two existing Rust adapter tests pass; no simulation
+source changed and no full simulation suite was run. PHY I20 §7.5.13.4 and the
 local MULPI I25 §§6.4.40–6.4.41 text extraction establish the terminology; this is
 not rendered-PDF verification. Other Ubuntu versions remain unverified.
 
@@ -93,7 +93,7 @@ Qt presentation checks cover green Complete, yellow Needs attention and red Erro
 colors with explicit accessible status/reasons, all nine preview blocks initially
 yellow, and OFDM still yellow after accepting a settings draft without a profile.
 17 QML cases pass. The skill validator and canonical discovery links pass.
-No scientific source changes or full scientific suite are needed for this change.
+No simulation source changes or full simulation suite are needed for this change.
 Automatic profile/run-driven state changes remain pending alongside their inputs.
 
 Qt formatting, Clippy, both Rust adapter tests and the native build passed. The
@@ -165,7 +165,7 @@ Implemented and validated on the Ubuntu 22.04 VM with Qt 6.8.3 / Rust 1.85.1:
   Shared fill configurations retain the same byte storage; rejected policies
   preserve original length/bytes. Core library Clippy and formatting pass.
 - The unchanged no-simulation `SymbolPacker.coded_bits` warning remains; no
-  suppression or unrelated scientific rewrite was introduced. No full DSP/FEC
+  suppression or unrelated simulation rewrite was introduced. No full DSP/FEC
   regression suite was rerun.
 - Native review rejected PRBS seed zero without closing the editor, accepted
   a valid seed with green PRBS-TX, then loaded the exact 97-byte message fixture
@@ -175,7 +175,7 @@ Implemented and validated on the Ubuntu 22.04 VM with Qt 6.8.3 / Rust 1.85.1:
 - DPD also loads its existing binary capture through the shared native picker.
   GTK runs in an isolated presentation-only process of the same executable,
   before Qt initialization, avoiding mixed-toolkit event dispatch. This process
-  exchanges URI/cancellation/error only; input reads and scientific work stay
+  exchanges URI/cancellation/error only; input reads and simulation work stay
   Rust-owned. Missing display integration returns an explicit error marker.
 - Actual dark PRBS15/File and workbench screenshots are tracked and linked from
   the user guide. PRBS-TX, OCD and DPD can be green together; remaining blocks

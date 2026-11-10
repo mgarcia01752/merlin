@@ -65,7 +65,7 @@ Historical intermediate layout; UI-SA-04 below now occupies this space.
 
 Remove visible selection readout, trace explanation, sample bookkeeping,
 completion status and baseband disclaimer from below the plot. Reserve that
-space as an empty panel for future work. Scientific results remain unchanged
+space as an empty panel for future work. Simulation results remain unchanged
 in Rust. Selection still anchors zoom and supports the plot's accessibility
 description; generation diagnostics are available on the generate button's
 tooltip/accessibility description. No numerical or source lifecycle changes.

@@ -51,7 +51,7 @@ ready to run after each UI change. Do not routinely clean targets or change prof
 settings, which would discard useful build reuse.
 
 UI-only work uses Qt-focused build/tests. Non-Qt workspace compilation and tests
-are needed only when changes affect shared scientific code, dependency contracts
+are needed only when changes affect shared signal-processing code, dependency contracts
 or integration behavior. Required push/release checks remain unchanged.
 
 ## Validation
@@ -65,7 +65,7 @@ navigation/theme/render tests using Qt's offscreen software renderer. QML tests
 cover all nine blocks, closing dialogs, disabled lifecycle controls, theme
 switching and minimum-window navigation. Rendering outputs stay in ignored
 `docs/development/local/visual-workspace/`; this directory must exist before the
-render tests. The helper creates it. Scientific tests remain the commands in
+render tests. The helper creates it. Numerical tests remain the commands in
 [build.md](build.md). No UI test fabricates simulation results.
 
 ## Desktop branding
@@ -87,4 +87,4 @@ an installer. GNOME trust/launcher registration and native packaging remain
 separate work; no OS protections are bypassed.
 
 The Qt application is GPL-3.0-only; see apps/qt/LICENSE and apps/qt/NOTICE.
-Scientific libraries and independent development tooling retain Apache-2.0.
+Signal-processing libraries and independent development tooling retain Apache-2.0.

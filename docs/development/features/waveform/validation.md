@@ -34,7 +34,7 @@ response compensation and extraction owners feed thin TX/RX compositions.
 - scientific-testing skill: validates at canonical path and both discovery links.
 - git diff --check: PASS.
 
-## Scientific scope
+## Simulation scope
 
 Local PHY I20 PDF133 and69 visually verified; exact unitary centered transform
 and half-sample Tukey taper implemented. Neighboring text/tables provide CP/RP

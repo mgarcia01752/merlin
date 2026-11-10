@@ -35,13 +35,13 @@ rules remain deferred. File selection in Qt is planned, not implemented here.
   equivalence. The session retains frozen file settings when the caller changes
   its configuration afterward.
 - Two real CLI tests verify binary/text round trips, equality with shared Rust
-  scientific summaries, metadata-only JSON, no-clobber and rejected input/target/
+  simulation summaries, metadata-only JSON, no-clobber and rejected input/target/
   seed/option combinations. Existing continuous PRBS tests remain unchanged.
 - The pre-push gate now includes a release file round trip using
   `examples/channel-file.json` and a byte-for-byte `cmp` of the recovered message.
 - Full pre-push gate passes on the local Linux host:32 helper tests, Bash and
   ShellCheck, formatting, warnings-denied all-target Clippy, workspace tests,
-  analysis-only tests, fixture example, release CLI build and all scientific
+  analysis-only tests, fixture example, release CLI build and all simulation
   smoke checks, including byte-for-byte file recovery. Ten new Rust source,
   waveform and CLI tests pass within that gate.
 - Final launcher alignment uses the existing Cargo wrapper for the file smoke

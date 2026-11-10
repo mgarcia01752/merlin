@@ -14,5 +14,5 @@
 - Coding-style skill requires per-model/module design user docs with diagrams,
   independent of API catalogs. Canonical and both discovery paths validate.
 - README/architecture/checklist updated; RX-CONFIG-01 records the receiver-state
-  gap discussed with the user. No scientific source changes for this docs task.
+  gap discussed with the user. No simulation source changes for this docs task.
 - git diff --check passes. Mermaid rendering was not executed (mmdc unavailable).

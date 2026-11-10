@@ -6,8 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Dialog {
-    required property var theme
+WorkbenchDialog {
     property string description: ""
     objectName: "sectionDialog"
     parent: Overlay.overlay

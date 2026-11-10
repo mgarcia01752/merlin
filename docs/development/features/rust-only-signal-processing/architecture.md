@@ -3,11 +3,11 @@
 > Local artifacts: `docs/development/local/rust-only-signal-processing/`
 > Logs, captures and specification images are not published.
 
-# Standalone DOFT and Rust-only scientific processing
+# Standalone DOFT and Rust-only signal processing
 
 User direction: standalone DOCSIS OFDM/OFDMA FEC toolkit, OFDM first. Remove
 product documentation centered on an external application. Keep algorithms100%
-Rust; optional Qt presentation and Python bindings follow scientific functionality.
+Rust; optional Qt presentation and Python bindings follow simulation functionality.
 
 ## Implemented
 
@@ -16,7 +16,7 @@ Rust; optional Qt presentation and Python bindings follow scientific functionali
   Field/generator tables are immutable, initialized once. Decoder failure returns
   the unmodified received decisions and zero claimed corrections.
 - Removed native source/build script and CXX dependencies. Retained MIT licensing
-  and algorithm provenance in the codec crate and NOTICE. Both scientific crates
+  and algorithm provenance in the codec crate and NOTICE. Both simulation crates
   forbid unsafe code; ldpc-toolbox supplies Rust LDPC algorithms.
 - Preserved the existing public codec signatures, noiseless/AWGN metrics and
   independently transcribed generator/parity-equation tests. Added varied

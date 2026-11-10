@@ -1,15 +1,15 @@
 ---
 name: docsis-signal-processing
-description: Implement or review DOCSIS OFDM Channel Sim signal-processing and FEC behavior using local pinned PHY evidence, Rust-only algorithms and explicit scientific support states. OFDMA work is deferred unless requested.
+description: Implement or review DOCSIS OFDM Channel Sim signal-processing and FEC behavior using local pinned PHY evidence, Rust-only algorithms and explicit signal-processing support states. OFDMA work is deferred unless requested.
 ---
 
-# DOCSIS OFDM Channel Sim scientific scope
+# DOCSIS OFDM Channel Sim simulation scope
 
 - DOCSIS OFDM Channel Sim is standalone and DOCSIS-centric. Prioritize downstream OFDM functionality.
   OFDMA is a later scope. Optional Qt presentation and Python bindings are deferred.
-- All DSP, channel models, constellation mapping/demapping, FEC and scientific
+- All DSP, channel models, constellation mapping/demapping, FEC and simulation
   orchestration must be Rust. This includes algorithm dependencies. Do not use
-  C/C++ codecs, native FFT/BLAS DSP wrappers or Python scientific sidecars.
+  C/C++ codecs, native FFT/BLAS DSP wrappers or Python simulation sidecars.
 - Use the versioned local PHY skills. Keep editions, sections/pages, delegation
   and CM/CMTS/FDD/FDX applicability explicit. Do not claim latest-revision or
   rendered-PDF verification without checking the relevant source.
@@ -28,5 +28,5 @@ description: Implement or review DOCSIS OFDM Channel Sim signal-processing and F
   from MER alone. Preserve individual frames, gaps and worst conditions.
 - Verify non-square mappings and high-order scrambling/padding against local
   tables/figures. Tests need independent evidence, not only reversible transforms.
-- Apply public-api and scientific-testing. All scientific JSON fields are Rust
+- Apply public-api and scientific-testing. All simulation JSON fields are Rust
   models/calculations shared by CLI and future adapters.

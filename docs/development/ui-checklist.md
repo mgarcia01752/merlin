@@ -7,6 +7,10 @@ See the [task design](features/visual-workspace/design.md). The initial shell is
 
 ## UI-01: Workbench and section dialogs
 
+- [x] **UI-SHELL-07** Place RxMER above Channel Simulator and split DS Channel
+  Estimate into channel/receiver inputs; remove the top comparison connector.
+  [Design](features/visual-workspace/design.md#ui-shell-07-measurement-input-placement).
+
 Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first functional dialog.
 
 - [x] Inspect PNM Viewer Qt infrastructure read-only; select reusable components
@@ -30,6 +34,9 @@ Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first 
   and accepted settings of every block; define bounds, schema and input encoding.
 - [x] **UI-SHELL-03** Use a standard application menu bar above WB branding,
   replacing the content-area navigation buttons.
+- [x] **UI-SHELL-06** Add a shared circular X to all popup titles, retaining
+  footer buttons, draft cancellation and nested-popup behavior.
+  [Design](features/popup-close-controls/design.md).
 - [x] **UI-SHELL-05** Add About icon/version/project and offline license links;
   standardize title capitalization and matched rounded light/dark icons.
 - [x] Define and implement versioned workbench JSON persistence separately from
@@ -55,7 +62,7 @@ Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first 
 - [x] Connect Stop to cooperative cancellation, preserving completed partial results.
 - [x] Define Rust pause boundaries, paused-time budget accounting, Stop/close while
   paused, progress delivery and worker cancellation on close.
-- [x] Implement pause/resume without resetting scientific state or RNG streams.
+- [x] Implement pause/resume without resetting simulation state or RNG streams.
 
 ## UI-02: Input dialogs and source files
 
@@ -106,9 +113,9 @@ Integrate input blocks as their owning sections are developed left to right.
 
 - [x] Present actual LDPC outcomes/iterations and independent BER/completion status.
 - [x] Add bounded matched supported payload pre/post-equalization views.
-- [ ] Add separate continuous/scattered pilot and PLC data/preamble views.
-- [ ] Reuse existing Rust results and test points; label unsupported observations.
-- [ ] Preserve units, reference planes, supplied H versus estimated H-hat,
+- [x] Add separate continuous/scattered pilot and PLC data/preamble views.
+- [x] Reuse existing Rust results and test points; label unsupported observations.
+- [x] Preserve units, reference planes, supplied H versus estimated H-hat,
   missing values and shared retention limits across open panels.
 
 ## Receiver workbench navigation and instruments
@@ -121,25 +128,35 @@ Integrate input blocks as their owning sections are developed left to right.
 - [x] **UI-QAM-01 selectors** Add Data Profile / NCP / PLC and Raw / Equalized /
   Paired controls, separate PLC data/preamble and unavailable received-profile state.
 - [x] **UI-QAM-01 data** Connect supported payload/PLC received-role collectors.
-- [ ] Generalize profile/carrier/symbol controls and preserve unsupported cases.
-- [ ] **UI-QAM-02** Add bounded matched received NCP I/Q classification/collection
+- [x] Generalize available profile/modulation/bin/receive-symbol controls over
+  retained data and preserve unsupported transport cases.
+- [x] **UI-QAM-02** Add bounded matched received NCP I/Q classification/collection
   before enabling its constellation view; LLR/control events are not I/Q.
 - [x] **UI-SA-05 selector** Add independent SA Test Point routing with empty-state
   admission and a distinct FFT-bin-power label; disable receiver generation.
 - [x] **UI-SA-05 data** Connect retained RX time samples and FFT-bin power with
   correct units, boundary handling and normalization.
-- [ ] Verify selection does not rerun science, hides stale results, preserves
+- [x] Verify selection does not rerun the simulation, hides stale results, preserves
   matched run/carrier/time identities and shares bounded retention across panels.
 
 Design: [Receiver Workbench](features/receiver-workbench/design.md).
-Navigation and supported retained charts are implemented; NCP constellation and
-generalized observation-window controls remain pending.
+Navigation, matched NCP/payload/PLC/pilot plots and bounded retained-data selectors
+are implemented. Unretained history and unsupported transport stay explicit.
+
+- [x] **UI-CH-EST-RX-01** Display supplied H and actual H-hat snapshots with
+  response curves and band-limited impulse/echo diagnostics.
+- [x] **UI-SLICER-01** Show selected physical decisions/residuals and actual
+  NCP/payload cell LLRs plus the retained LDPC-input window.
+- [x] **UI-FEC-01** Add dedicated FEC statistics, iteration distribution and
+  bounded word outcomes, with a prominent Receiver header shortcut.
+
+[Receiver instrument completion design](features/receiver-instruments/design.md).
 
 ## UI-04: Validation and delivery evidence
 
 - [ ] Verify responsive worker execution, progress and state-dependent controls.
 - [ ] Test cancellation, runtime limits, pause/resume, Stop while paused and shutdown.
-- [ ] Verify scientific parity with the same Rust request and observation invariance
+- [ ] Verify simulation parity with the same Rust request and observation invariance
   when opening/closing dialogs and analyzers, separating host timing from science.
 - [ ] Test invalid input, repeated runs, partial results and resource cleanup.
 - [ ] Check dark/light readability, keyboard navigation and accessible controls.
@@ -165,7 +182,7 @@ Initial shell evidence and remaining validation: [Qt development](qt.md).
 
 See the [design and remaining scope](features/rxmer-workbench/design.md).
 
-- [ ] **UI-QAM-01** Reuse paired RX FFT/equalized constellation observations before
+- [x] **UI-QAM-01** Reuse paired RX FFT/equalized constellation observations before
   decisions, with carrier/modulation/time selection and explicit SA reference planes.
 
 - [x] **UI-CHANNEL-01** Require valid RxMER and response configurations for green

@@ -178,7 +178,7 @@ Implementation validation is recorded separately.
 
 Existing references: [measurement playback](../../../user/impairments/measurement-timeline.md),
 [architecture](../../../architecture.md#temporal-measurements-and-applied-profiles),
-[UI checklist](../../ui-checklist.md). UI owns presentation; all scientific input,
+[UI checklist](../../ui-checklist.md). UI owns presentation; all simulation input,
 combination, scheduling, persistence and validation stay in Rust.
 
 ## Implementation scope (UI-RXMER-01/02/03, UI-CHANNEL-01)

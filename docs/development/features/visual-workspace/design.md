@@ -1,18 +1,40 @@
 # Qt workbench task design
 
 Status: UI-01 shell implemented; section editors, file import, analyzers and
-scientific job integration remain pending.
+simulation job integration remain pending.
 The [UI architecture](../../../architecture.md#ui-merlin-simulation-workbench)
 owns the layout and signal-flow diagrams. The [UI checklist](../../ui-checklist.md)
-expands the main milestones. The [earlier plan](plan.md) retains detailed scientific
+expands the main milestones. The [earlier plan](plan.md) retains detailed simulation
 input and observation boundaries.
 
 ## UI-01: Shell, dialogs and lifecycle
 
+### UI-SHELL-07: Measurement input placement
+
+Remove the top dashed original/recovered comparison connector and its caption.
+Independent PRBS-RX verification stays enabled through its existing dialog; this
+is a layout change only. Center RxMER above Channel Simulator with a downward
+input arrow. Center DS Channel Estimate below the gap between Channel Simulator
+and Receiver, with one visible split feeding both blocks. Preserve the main
+left-to-right signal path, input dialogs, readiness and Rust job settings.
+
+`Workbench.qml` owns placement and connections; `Connection.qml` supports plain
+segments for the split junction. Validate with existing QML interaction tests,
+build the Qt executable using retained artifacts and review the actual dark VM
+layout at normal and minimum window sizes. Update the workbench user guide and
+architecture diagram; no signal-processing rebuild or tests are needed.
+
+Implemented in the two owning QML files. All 25 existing QML checks pass, and the
+native Qt executable was rebuilt with retained Cargo artifacts. Actual dark VM
+review at 1210×736 and 960×640 confirms the downward RxMER arrow, split
+channel-estimate input and absence of the top comparison line. The [workbench guide](../../../user/workbench.md)
+contains the updated native screenshot. Logs remain local under
+`docs/development/local/visual-workspace/input-layout-*`.
+
 Use the name MERLIN Simulation Workbench. Implement native Qt Quick/QML with a
 separate Rust adapter, proposed under apps/qt/, consuming the existing public
-scientific APIs. Keep Qt dependencies out of the scientific libraries and all
-DSP, modulation, FEC and derived scientific values in Rust.
+simulation APIs. Keep Qt dependencies out of the signal-processing libraries and all
+DSP, modulation, FEC and derived simulation values in Rust.
 
 Follow the user's diagram left to right: OFDM Settings first, then PRBS-TX /
 Transmitter and profile input, Channel Simulator and measurement inputs, and
@@ -30,16 +52,16 @@ snapshots before delivery to the UI; never retain their borrowed buffers.
 
 Pause is not implemented by the existing job API. Design its safe step boundary,
 paused-time treatment in the host-runtime budget, Stop/close handling and worker
-cleanup before coding it. Resume must continue the same scientific state, not
+cleanup before coding it. Resume must continue the same simulation state, not
 restart or reseed. Settings edits apply only to the next run.
 
 ### Qt framework reuse
 
 Inspect PNM Viewer Toolkit read-only for reusable shell, theme, dialogs,
 navigation, adapter and build infrastructure. Adapt selected components only
-inside MERLIN, preserving the standalone simulator and Rust scientific ownership.
+inside MERLIN, preserving the standalone simulator and Rust simulation ownership.
 The Qt application incorporating viewer code uses GPL-3.0-only; preserve copied
-copyrights, third-party licenses and NOTICE content. Independent scientific
+copyrights, third-party licenses and NOTICE content. Independent simulation
 libraries stay Apache-2.0. Record each copied source path/revision and adaptation
 here during implementation. The initial reuse record is below.
 
@@ -62,14 +84,14 @@ RNG draws, source bits or decoding decisions. Share observation retention budget
 ## UI-04: Acceptance
 
 Initial native targets are Ubuntu 22.04, 24.04 and 26.04 x64. Verify navigation,
-input rejection, Rust/UI scientific result parity, responsive progress, cancel,
+input rejection, Rust/UI simulation result parity, responsive progress, cancel,
 pause/resume, runtime accounting, shutdown and repeated-run cleanup. Test
 observation invariance independently of host timing. Check dark/light readability
 and accessible controls; capture actual screenshots after implementation.
 Keep platform validation and UI milestones unchecked until evidence exists.
 
 Initial planning was documentation-only. Shell build, QML rendering and test
-evidence are now recorded in [validation.md](validation.md); no new scientific
+evidence are now recorded in [validation.md](validation.md); no new simulation
 lifecycle support is claimed.
 
 ## UI-01 initial increment: workbench shell
@@ -79,7 +101,7 @@ component, scalable connectors and lower-right controls. Controls remain disable
 until real Rust lifecycle integration exists; no simulated progress or results.
 Dialogs explain each section and clearly identify pending editors/file pickers.
 Use Qt 6.8.3 and the viewer's pinned CXX-Qt 0.7.3 bootstrap in an independent
-apps/qt Cargo workspace. Reuse its theme palette; keep scientific crates unchanged.
+apps/qt Cargo workspace. Reuse its theme palette; keep simulation crates unchanged.
 The VM is the interactive rendering/review target. Verify the native build and
 QML navigation tests, then inspect actual rendering. This increment does not
 complete UI-01 or UI-04.
@@ -185,7 +207,7 @@ attention because their inputs, run integration or results are unavailable.
 OFDM Settings specifically requires valid accepted settings AND an accepted,
 compatible modulation-profile PNM input. Its current values alone cannot make it
 green. Profile import is pending, so OFDM remains yellow even after Apply.
-Scientific readiness and error classification must come from Rust when connected;
+Simulation readiness and error classification must come from Rust when connected;
 QML renders status and must not infer successful import from a selected filename.
 An invalid draft keeps the previous accepted state and shows its error locally.
 No new synthetic errors or implicit requirements for optional inputs are added.
@@ -227,7 +249,7 @@ Channel information and expandable Profiles/assignment schemes, profile choice,
 Cancel and Apply. Keep captured data immutable. A shared Rust content detector
 must distinguish recognized binary PNM from JSON text, unsupported text/binary
 and empty inputs; extensions are picker hints only. Reuse existing JSON importer
-and viewer binary-decoder coverage rather than duplicating scientific tests.
+and viewer binary-decoder coverage rather than duplicating numerical tests.
 Standalone binary-decoder integration, UI state and readiness transitions remain
 pending; the graphic is not evidence of implemented file loading.
 
@@ -242,7 +264,7 @@ The bridge handles presentation only; Rust owns reads and all input interpretati
 The same executable runs an internal native-picker process before constructing
 Qt, isolating GTK event dispatch from Qt. This avoids mixed-toolkit event warnings;
 the helper exchanges only a selected URI or cancellation/error, never capture
-bytes or scientific calculations. No external picker executable is required.
+bytes or numerical calculations. No external picker executable is required.
 
 Implemented: expose the existing Rust source choices through a dedicated
 `Transmit source (PRBS-TX)` tree dialog. The canonical option/default/limit table
@@ -257,7 +279,7 @@ Use a separate QML dialog and focused Rust source adapter. Rust owns bounded OS
 file input, immutable bytes/provenance, draft/accepted configuration and validation
 through existing `Prbs15`, `FilePayload`, `PrbsFill` and `PayloadSourceConfig` APIs.
 QML renders bounded summaries and transient selection only. File paths/bytes do
-not enter the scientific request JSON. Keep source configuration independent of
+not enter the simulation request JSON. Keep source configuration independent of
 DPD compatibility; complete-job validation remains the run adapter's responsibility.
 
 ```mermaid
@@ -272,14 +294,14 @@ flowchart LR
 Cancel/rejected loads preserve accepted input. Start stays subject to all block
 and run-integration gates. Active sources are never reseeded by editing settings.
 Test points: accepted configuration, exact-byte hash/counts, bounded fill summary,
-validation diagnostics and readiness. Reuse existing PRBS/file scientific tests;
+validation diagnostics and readiness. Reuse existing PRBS/file numerical tests;
 add scoped adapter/QML lifecycle checks for modes, invalid seeds/targets, empty
 files, equal targets, partial-byte fill and Cancel/rejection invariance. Verify the
 OS-native picker on the VM, then update the user guide with dark runtime captures.
 The implemented editor uses SourceInputDialog.qml and source_input/model.rs with
 a source_input.rs Qt bridge. input_file.rs shares bounded reads with DPD, and
 native_file_picker.{rs,h} invokes GTK directly. GTK is presentation-only; no
-scientific code crosses CXX. Existing GTK development prerequisites are required
+signal-processing code crosses CXX. Existing GTK development prerequisites are required
 at compile time through pkg-config. No additional system packages were installed.
 
 ## UI-02 implementation: DPD capture input
@@ -316,7 +338,7 @@ provides project identity and license information. Each window has its own QML
 file. File contains disabled Open WB configuration / Save WB configuration actions
 until Rust workbench persistence/loading exists;
 individual capture pickers remain in their block dialogs. No persistence or
-scientific state changes are introduced. Validate navigation/theme controls with
+simulation state changes are introduced. Validate navigation/theme controls with
 Qt checks and actual dark VM screenshots; update the workbench guide.
 
 ### UI-WB-JSON-01: Planned complete configuration
@@ -351,5 +373,5 @@ update actual dark VM screenshots and guides.
 UI-SHELL-03 validation: all 21 QML cases pass after switching tests to real
 menu actions. Rebuilt the native Qt executable, verified the top menu and
 Settings → Global navigation on the Ubuntu 22.04 VM, and refreshed the actual
-dark workbench, settings and SA screenshots. No scientific code changed for
+dark workbench, settings and SA screenshots. No signal-processing code changed for
 this menu correction; earlier scoped UI-SA-04 Rust validation remains applicable.

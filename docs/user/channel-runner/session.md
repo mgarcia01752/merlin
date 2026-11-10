@@ -23,7 +23,7 @@ stateDiagram-v2
 Construction validates and copies the settings. Changing the caller's original
 settings does not reconfigure a running session. Source and verifier each own a
 PRBS15 stream initialized once. Observations must use exclusive sequential access
-to the session; no second-boundary clock or host timer drives scientific state.
+to the session; no second-boundary clock or host timer drives simulation state.
 
 Acquisition advances real PLC, pilot and waveform processing one symbol at a
 time. The received gate admits actual OCD/ProfileA/NCP descriptors; at the next
@@ -62,7 +62,7 @@ are bounded independently of observation duration.
 Stage/control/observer errors close the session and return a typed diagnostic.
 Completed summary comparisons remain available. Calling a failed session rejects;
 calling a finished session returns no further steps. Failed calls are not atomic
-scientific transactions and cannot be retried in place. The separate [job wrapper](job.md) now adds cancellation, wall-clock budgets,
+simulation transactions and cannot be retried in place. The separate [job wrapper](job.md) now adds cancellation, wall-clock budgets,
 progress and partial status. Failed-session restart remains explicit; the wrapper
 retains completed totals rather than retrying a partially mutated operation.
 

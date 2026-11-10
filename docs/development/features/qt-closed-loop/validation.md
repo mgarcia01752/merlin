@@ -8,7 +8,7 @@ No commit, push or system installation was performed.
 
 - Qt `scripts/qt-desktop.sh check`: formatting, warnings-denied Clippy, 13 Rust
   adapter tests, native executable build and 24 QML tests passed.
-- Core `channel_job`: five tests passed, including exact scientific equality
+- Core `channel_job`: five tests passed, including exact simulation equality
   between baseline and paused/resumed runs, and cancellation while paused.
 - Core `channel_playback`: two tests passed. A real captured Profile 0 run with
   identical interpolated endpoints preserves the single-frame run's exact

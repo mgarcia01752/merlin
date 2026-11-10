@@ -1,11 +1,11 @@
 # DOCSIS OFDM Channel Sim
 
-DOCSIS OFDM Channel Sim is a standalone DOCSIS scientific
+DOCSIS OFDM Channel Sim is a standalone DOCSIS simulation
 library and CLI. Work exclusively in this repository unless scope is changed.
 For Qt framework reuse, read-only inspection of PNM-Viewer-Toolkit is authorized;
 all modifications remain in MERLIN. Follow coding-style for reuse and licensing.
 
-Focus on downstream OFDM first. OFDMA is deferred. Two scientific modes are the
+Focus on downstream OFDM first. OFDMA is deferred. Two simulation modes are the
 ideal/reference experiment and measurement-driven analysis using RxMER, downstream
 channel estimates and an applied modulation profile. Support is developed against
 pinned DOCSIS3.1/4.0 evidence up to16384-QAM; do not equate a recognized order with
@@ -31,19 +31,20 @@ Receiver workbench navigation, NCP/PLC/profile QAM selectors and RX SA test-poin
 routing are implemented. A bounded Rust closed-loop worker drives Start/Stop/
 Pause/Resume, accepted Receiver/PRBS-RX readiness and actual payload/PLC QAM, RX SA
 and BER/FEC results. Native Open/Save/Save As persist self-contained workbench JSON.
-NCP matched I/Q and generalized observation selectors remain pending;
+Matched NCP/pilot I/Q and retained-data selectors, response/echo, slicer/LLR and
+detailed FEC instruments are implemented for the supported transport;
 Python bindings are deferred until after UI-01 through UI-04.
 Dependencies point from CLI/future adapters to docsis-ofdm-fec to fec-codec.
 
 Apply skills/coding-style, skills/scientific-testing, and the applicable versioned
 PHY skill. Apply skills/public-api to public models and operations and
-skills/docsis-signal-processing to scientific changes. Keep canonical skills under skills/ with relative discovery links
+skills/docsis-signal-processing to signal-processing changes. Keep canonical skills under skills/ with relative discovery links
 under .agents/skills/ and .claude/skills/.
 
-- All signal processing, channel models, modulation/demapping, FEC and scientific
+- All signal processing, channel models, modulation/demapping, FEC and simulation
   orchestration are 100% Rust, including dependencies providing those algorithms.
   Do not add C/C++ DSP/codec implementations, native FFI or Python calculations.
-  Keep scientific crates free of unsafe code. CXX-Qt/native icon interop is confined
+  Keep simulation crates free of unsafe code. CXX-Qt/native icon interop is confined
   to the separate GPL Qt presentation adapter. Development tooling may use Python.
 - Reusable code and tools are Apache-2.0. Preserve copied copyrights and third
   party licenses, including the Rust-adapted MIT BCH implementation and ldpc-toolbox.
@@ -78,13 +79,13 @@ Validation scope:
 
 For UI-only work, use scripts/qt-desktop.sh build/check and targeted Qt tests.
 Do not rebuild or retest the non-Qt workspace on every UI iteration. Broaden
-validation when scientific/shared code, dependency contracts, or integration
+validation when simulation/shared code, dependency contracts, or integration
 changes make it necessary. Release/push gates retain their required checks.
 Preserve Cargo target artifacts and the stable build profile so unchanged code
 is ready for reuse/linking; do not routinely clean or delete build outputs.
 Keep the Qt executable built for the latest UI changes before handing off.
 
-Scientific/shared-code validation when applicable:
+Simulation/shared-code validation when applicable:
 
 ```bash
 scripts/cargo-local.sh fmt --all -- --check

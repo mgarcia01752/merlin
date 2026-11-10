@@ -6,10 +6,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Dialog {
+WorkbenchDialog {
     id: dialog
     objectName: "ofdmSettingsDialog"
-    required property var theme
     required property var backend
     property var draft: ({})
     property var profileSummary: ({})

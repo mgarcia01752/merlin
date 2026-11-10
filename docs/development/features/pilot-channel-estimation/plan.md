@@ -112,7 +112,7 @@ H-hat. Both before/after panels use a shared display reference and axis policy.
 PLC data must be classified from the physical PLC map and actual frame phase,
 not guessed from observed I/Q. Separate preamble columns and PLC data phase.
 Do not retain only CRC/LDPC-successful PLC frames: failed observations remain
-available with corresponding scientific outcomes. PLC uses its own LDPC/CRC and
+available with corresponding simulation outcomes. PLC uses its own LDPC/CRC and
 packet checks; it is not the payload BCH/LDPC path. Pilots have no FEC iterations.
 
 Missing observations, startup estimates, incomplete pilot coverage, short runs,
@@ -122,9 +122,9 @@ Collection on/off/exhaustion must preserve source/noise draws and decoder inputs
 for the selected receiver mode. Compare reference versus estimated modes as
 separate experiments; their decoding outcomes are allowed to differ.
 
-All estimation, interpolation, correction, eligibility and scientific metrics
+All estimation, interpolation, correction, eligibility and simulation metrics
 remain Rust. CLI and future Qt only consume the shared typed outputs. Extend
-scientific modules by responsibility; do not put estimator math in the runner,
+simulation modules by responsibility; do not put estimator math in the runner,
 CLI or plotting helper. A Qt application is still deferred.
 
 ## Implementation group and validation

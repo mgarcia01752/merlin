@@ -54,4 +54,4 @@ annotation slots. Native dark review at normal size and 960×640 found no clippi
 QAM/instrument rows also use equal widths. The stage border pins are decorative.
 The existing 23 QML checks passed again after styling, and the Qt executable was
 rebuilt with retained artifacts. User screenshots were refreshed; no DSP/FEC
-source or scientific tests changed for this styling follow-up.
+source or numerical tests changed for this styling follow-up.

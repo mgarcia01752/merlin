@@ -6,7 +6,10 @@
 use super::{ProbeContext, ProbeData, ProbeEvent, SignalDomain, TestPointId};
 use crate::{error::invalid, SimulationError};
 use serde::Serialize;
-use std::{collections::BTreeSet, ops::Range};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    ops::Range,
+};
 const MAX_SELECTIONS: usize = 32;
 const MAX_EVENTS: usize = 100_000;
 const MAX_EVENT_ELEMENTS: usize = 65_536;
@@ -62,6 +65,7 @@ pub struct TestPointProbe {
     config: Option<ProbeConfig>,
     phase: Option<super::RunPhase>,
     stats: ProbeStats,
+    stage_limits: BTreeMap<TestPointId, (usize, usize)>,
 }
 impl TestPointProbe {
     /// Creates a zero-callback observation path without validating unused metadata.
@@ -72,6 +76,7 @@ impl TestPointProbe {
             config: None,
             phase: None,
             stats: ProbeStats::default(),
+            stage_limits: BTreeMap::new(),
         }
     }
     /// Validates finite windows and budgets for one observation job.
@@ -114,7 +119,37 @@ impl TestPointProbe {
             config: Some(config),
             phase: None,
             stats: ProbeStats::default(),
+            stage_limits: BTreeMap::new(),
         })
+    }
+    /// Limits one selected stage so early sample streams cannot exhaust later-stage budgets.
+    /// # Arguments
+    /// * `stage` - Already configured producer identity.
+    /// * `events` - Positive per-stage event cap, no larger than100000.
+    /// # Returns
+    /// Unit; whole events above this cap are filtered without spending the global budget.
+    /// # Errors
+    /// Rejects an unselected stage, invalid cap or changes after dispatch has started.
+    pub fn limit_stage_events(
+        &mut self,
+        stage: TestPointId,
+        events: usize,
+    ) -> Result<(), SimulationError> {
+        if !(1..=MAX_EVENTS).contains(&events)
+            || self.stats.dispatched_events != 0
+            || self.config.as_ref().is_none_or(|config| {
+                !config
+                    .selections
+                    .iter()
+                    .any(|selection| selection.stage == stage)
+            })
+        {
+            return Err(invalid(
+                "Stage event limits require a selected stage before dispatch.",
+            ));
+        }
+        self.stage_limits.insert(stage, (events, 0));
+        Ok(())
     }
     /// Filters by run phase before consuming any observation budget.
     /// # Arguments
@@ -153,6 +188,13 @@ impl TestPointProbe {
         observer: &mut impl ProbeObserver,
     ) -> Result<ProbeOutcome, SimulationError> {
         if self.phase.is_some_and(|phase| phase != context.phase) {
+            return Ok(ProbeOutcome::Filtered);
+        }
+        if self
+            .stage_limits
+            .get(&stage)
+            .is_some_and(|(limit, count)| count >= limit)
+        {
             return Ok(ProbeOutcome::Filtered);
         }
         let Some(config) = &self.config else {
@@ -203,6 +245,9 @@ impl TestPointProbe {
         };
         self.stats.dispatched_events += 1;
         self.stats.dispatched_elements += count;
+        if let Some((_, dispatched)) = self.stage_limits.get_mut(&stage) {
+            *dispatched += 1;
+        }
         if let Err(error) = observer.observe(&event) {
             self.stats.callback_errors += 1;
             log::debug!(

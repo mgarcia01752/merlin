@@ -6,10 +6,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Dialog {
+WorkbenchDialog {
     id: dialog
     objectName: "sourceInputDialog"
-    required property var theme
     required property var backend
     property var draft: ({mode: "prbs15", seed: 32767, append: false, target_bits: 0, fill_seed: 32767})
     property var fileInfo: ({selected: false, name: "", bytes: null, bits: null, sha256: ""})

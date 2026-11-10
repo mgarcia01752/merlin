@@ -11,3 +11,5 @@ pub mod timing;
 pub mod payload;
 
 pub mod channel_estimation;
+
+pub mod diagnostics;

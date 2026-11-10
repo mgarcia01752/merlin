@@ -6,7 +6,7 @@ The caller owns the destination writer; the CLI creates a new file for it.
 
 ```mermaid
 flowchart LR
-    RESULT["Completed scientific stage output"] --> SELECT["Stage, element and source/channel-symbol selection"]
+    RESULT["Completed signal-processing stage output"] --> SELECT["Stage, element and source/channel-symbol selection"]
     SELECT --> BUDGET["Finite event and element budgets"]
     BUDGET --> ENCODE["Bounded one-record JSON serialization"]
     ENCODE --> BYTES["Record and stream byte budgets"]

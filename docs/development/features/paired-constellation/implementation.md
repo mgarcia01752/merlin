@@ -54,7 +54,7 @@ independent; the optional result and settings fields are omitted when disabled.
 returns the bounded partial/final result and stops only diagnostic retention.
 `run_channel` attaches the finalized result on every job outcome. The existing
 channel JSON request accepts `constellation`; the existing CLI serializes the same
-Rust result without calculating or renaming scientific fields.
+Rust result without calculating or renaming simulation fields.
 
 Complete requests are `examples/channel-constellation.json` (noiseless) and
 `examples/measurements/single-channel/channel-constellation.json` (measured H,
@@ -62,7 +62,7 @@ RxMER and profile0,700–727MHz). The measured3ms/seed41 run exported8192 pairs,
 compared3614928 payload bits with zero errors and produced the linked
 [user-guide image](../../../user/impairments/paired-constellation.md).
 The matching11dB stress scenario exported8192 pairs and retained all483 bit
-errors; its entire scientific summary matched the saved no-collector experiment.
+errors; its entire simulation summary matched the saved no-collector experiment.
 
 The optional Matplotlib renderer under `tools/plots/constellation/` presents
 exported samples with shared axes. Its `--view before`, `--view after` and
@@ -79,7 +79,7 @@ depth, independent normalized256-QAM levels and complex-gain arithmetic, source/
 physical carrier mapping, receive-time order, invalid requests, single-carrier
 partial and zero-pre-acquisition output, cancellation, probe-export failure,
 failed-payload retention, midstream diagnostic removal, block splitting and full
-scientific-summary invariance. Two actual-CLI tests cover serialized Rust-result
+simulation-summary invariance. Two actual-CLI tests cover serialized Rust-result
 equality, default count, invalid/unknown fields and non-overwriting output.
 
 A first short-run test chose a carrier with no eligible payload in that source

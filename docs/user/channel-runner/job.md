@@ -1,13 +1,13 @@
 # Channel job lifecycle
 
 The job wrapper owns host-runtime limits, cooperative cancellation, progress and
-bounded retention. The underlying session still owns scientific sequencing and
+bounded retention. The underlying session still owns simulation sequencing and
 independent TX/RX state. Simulated observation duration does not set host execution
 speed or the wall-clock budget.
 
 ```mermaid
 flowchart TB
-    REQUEST["Validate scientific settings and job limits"] --> SESSION["Create channel session"]
+    REQUEST["Validate simulation settings and job limits"] --> SESSION["Create channel session"]
     SESSION --> CHECK["Check cancellation and elapsed host time"]
     CHECK -->|"Continue"| STEP["Advance one bounded OFDM step"]
     STEP --> SAVE["Retain completed scalar totals and bounded word details"]
@@ -32,7 +32,7 @@ next budget check. The default host budget is300000ms; requested observation tim
 remains separately configurable with a one-second default.
 
 Detailed words are retained up to an explicit count, default64 and maximum10000.
-Zero retention is supported. Scientific totals continue after detail retention is
+Zero retention is supported. Simulation totals continue after detail retention is
 exhausted. `omitted_word_details` counts details not retained, including recovery
 completed before a failed observer prevented a successful step return.
 `unrecovered_generated_payloads` counts generated/admitted words without recovered

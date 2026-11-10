@@ -76,7 +76,7 @@ ColumnLayout {
                     const point = chart.viewport.points[index]
                     const x = leftMargin + point.x * width
                     const y = topMargin + point.y * height
-                    if (index === 0) { ctx.moveTo(x, y) } else { ctx.lineTo(x, y) }
+                    if (index === 0 || point.gap) { ctx.moveTo(x, y) } else { ctx.lineTo(x, y) }
                 }
                 ctx.stroke()
                 if (chart.selectedPoint) {

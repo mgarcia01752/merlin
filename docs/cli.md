@@ -1,6 +1,6 @@
 # CLI
 
-The CLI accepts decoded scientific scenarios as JSON and calls the public Rust
+The CLI accepts decoded simulation scenarios as JSON and calls the public Rust
 API. Binary capture adapters are separate from the simulation core. Run `ofdm-fec --help` for options.
 Outputs must be new files; existing destinations are never replaced.
 

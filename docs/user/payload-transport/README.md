@@ -31,7 +31,7 @@ flowchart TB
 | Pending word and actual decoder results | [Collector](collector.md) |
 | Source-order receive processing | [Decoder](decoder.md) |
 | Physical-to-source RX stream | [Receiver](receiver.md) |
-| Scientific result meanings | [Results](results.md) |
+| Simulation result meanings | [Results](results.md) |
 | Bounded stage inspection | [Test points](observations.md) |
 | Actual sample-domain demonstration | [Reference experiment](reference-experiment.md) |
 

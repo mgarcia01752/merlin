@@ -50,7 +50,7 @@ Keep private originals under ignored `docs/development/local/qam-completion/`.
 After permission/provenance review, add sanitized distributable vectors under a
 focused test-fixture directory with a manifest, then write Rust tests comparing
 stage outputs against their independently produced expected values. Set tolerance
-before inspecting discrepancies; do not round scientific values to conceal them.
+before inspecting discrepancies; do not round simulation values to conceal them.
 Run the full gate and record exact vector hashes/tool versions/results in a linked
 validation record before reporting an external interoperability result. No tool/license purchase or
 external file acquisition is assumed by this plan.

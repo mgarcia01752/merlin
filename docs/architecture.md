@@ -84,11 +84,11 @@ current short8/9 bit processing supports all ten downstream data orders. See
 [modulation coverage](reference/ofdm-support.md). DOCSIS4.0 FDD delegation does
 not establish FDX behavior. OFDMA is a later scope.
 
-All FEC, DSP, channel models and scientific calculations are Rust, including
-algorithm dependencies. Scientific crates forbid unsafe code. The Qt
+All FEC, DSP, channel models and numerical calculations are Rust, including
+algorithm dependencies. Simulation crates forbid unsafe code. The Qt
 presentation shell and future Python bindings use the public Rust APIs; neither
-owns scientific calculations. The shell currently provides navigation only;
-scientific UI integration and Python bindings remain pending. There is no
+owns numerical calculations. The Qt shell integrates bounded closed-loop jobs
+and receiver instruments; Python bindings remain pending. There is no
 device capture/control or network-service dependency.
 
 ## Downstream FEC shortening (FEC-03)
@@ -161,9 +161,10 @@ The initial UI-01 shell now exists under apps/qt: the clickable diagram, section
 preview dialogs, theme switching, embedded icons and a tree-based OFDM editor.
 The DPD capture importer, PRBS-TX editor and reusable SA with TX sample generation
 also exist. Channel Estimate/RxMER share native capture viewers and Rust-backed
-configuration/playback previews. Receiver analyzers and full-loop Rust job
-integration remain pending. Lower-right run controls are
-visible but disabled. See the [workbench guide](user/workbench.md) and
+configuration/playback previews. Bounded full-loop Rust jobs now drive run
+controls and actual receiver QAM, spectrum, response/echo, slicer/LLR and FEC
+instruments. Receiver selectors query one immutable result; unsupported transport
+modes remain explicit. See the [workbench guide](user/workbench.md) and
 [Qt build/VM instructions](development/qt.md). Other target validation is pending.
 
 The user's high-level diagram defines a clickable workbench, with focused pop-up
@@ -180,14 +181,17 @@ flowchart LR
     PROFILE["Modulation Profile PNM input"] --> TX
     TX --> CHANNEL["Channel Simulator"] --> RX["Receiver"]
     CE["DS Channel Estimation PNM input(s)"] --> CHANNEL
+    CE --> RX
     MER["RxMER PNM input(s)"] --> CHANNEL
     RX --> VERIFY["PRBS-RX / recovered-data verification"]
-    SOURCE -. "Independent original/recovered comparison" .-> VERIFY
 ```
 
 PRBS-TX and PRBS-RX represent source generation and independent recovered-data
-verification. Their comparison connection is not receiver feedback or source
-reseeding. File sources retain their own exact-byte verification. Measurement
+verification. The workbench omits the original/recovered comparison connector;
+verification remains independent and does not feed back or reseed the source.
+RxMER sits above Channel Simulator with a downward arrow. DS Channel Estimate
+sits below the gap between Channel Simulator and Receiver, splitting its input
+connection to both blocks. File sources retain their own exact-byte verification. Measurement
 inputs use supported decoded PNM JSON. The DPD input additionally accepts binary
 modulation-profile PNM through a pinned Rust decoder dependency.
 The detailed diagram below retains analyzer and receiver-reference ownership.
@@ -214,11 +218,11 @@ show their diagnostic in the dialog and preserve accepted readiness. Error takes
 prerequisites; otherwise complete requires every applicable prerequisite.
 
 **WB-RULE-02:** Keep each rule with its owning block and dependencies. Rust owns
-scientific input/configuration validation and processing outcomes; Qt maps their
+simulation input/configuration validation and processing outcomes; Qt maps their
 status and reason to presentation. A rejected draft shows its diagnostic inside
 the editor and preserves the previously accepted block state. Do not invent red
 errors for missing inputs, cancelled dialogs or unimplemented UI. Expected noisy
-FEC outcomes belong to scientific results and are not automatically UI failures.
+FEC outcomes belong to simulation results and are not automatically UI failures.
 Optional inputs do not become mandatory through this display policy; future
 explicit bypass/default modes must be evaluated by their owning Rust request.
 
@@ -260,6 +264,10 @@ self-contained workbench persistence.
 The diagram block and popup use the full name OFDM Channel Descriptor (OCD).
 This editor label does not imply complete OCD message import/export support.
 Each dialog has its own QML file and focused Rust adapter where needed.
+All MERLIN popup dialogs inherit a shared title header with an upper-right
+circular X, while retaining footer Close/Cancel controls. X rejects the current
+popup without applying drafts or closing its parent; native file pickers retain
+OS controls. See [UI-SHELL-06](development/features/popup-close-controls/design.md).
 The Qt adapter reuses core simulation APIs for TX snapshots and measurement
 configuration previews; QML implements no DSP.
 
@@ -271,7 +279,7 @@ application default where applicable, and pinned specification/version/section/
 table references. Label paraphrases and any short exact quotations explicitly;
 do not represent MERLIN defaults as normative requirements. PHY is authoritative
 for these waveform fields; cite MULPI only for fields with actual pinned MULPI
-evidence. Rust remains authoritative for scientific validation and derivation;
+evidence. Rust remains authoritative for numerical validation and derivation;
 registry consistency checks must detect divergence from supported Rust values.
 
 Workbench persistence uses a separate versioned `*.merlin.json` document
@@ -300,20 +308,20 @@ Bundled GPL, Apache and NOTICE links open a separate offline document viewer.
 Each dialog owns its own QML file. See UI-SHELL-02 in the
 [workbench design](development/features/visual-workspace/design.md).
 
-### Workbench JSON configuration contract (planned)
+### Workbench JSON configuration contract (version 1)
 
-File → Open WB configuration and File → Save WB configuration will use a
-versioned JSON workbench document. It contains every block's accepted settings
+File → Open, Save and Save As use a versioned JSON workbench document. It contains every block's accepted settings
 and all PNM inputs associated with those blocks, including selected profiles,
 channel-estimation and RxMER inputs. Do not reduce the saved document to OCD
 settings or filenames alone. Preserve input identity/provenance and enough input
-content to restore the same configuration. The exact embedded-byte representation,
-size limits and schema/migration rules must be defined before persistence lands.
+content to restore the same configuration. Version 1 embeds exact originals as
+base64 with byte counts/SHA-256 and caps the document at 144 MiB; original input
+limits remain in force. Unsupported schema versions are rejected.
 Rust owns serialization, file I/O and validation. OS-native pickers choose paths;
 opening validates the whole document before replacing accepted state, invalidates
 old results, and never starts a simulation automatically. Rejected loads preserve
 the current workbench. Saving does not overwrite original PNM captures. Generated
-results, caches and worker state are not configuration. Persistence remains pending.
+results, caches and worker state are not configuration.
 
 ### SA symbol-timing and cable panel (UI-SA-04)
 
@@ -329,7 +337,7 @@ that length as reflector spacing. Zero reserved timing margin is explicit.
 These are timing estimates, not guaranteed echo immunity or maximum plant reach.
 Unknown custom VF gives no distance; invalid VF is rejected. Cable changes only
 query bounded display data and never rerun DSP or alter results. Applied input
-changes clear old timing with the old spectrum. Scientific crates own calculations
+changes clear old timing with the old spectrum. Simulation crates own calculations
 and window coefficients; Qt owns layout/drawing. See the
 [design and evidence](development/features/transmitter-spectrum/design.md#ui-sa-04-symbol-timing-and-cable-echo-budget).
 
@@ -374,8 +382,8 @@ At most one cancellable worker runs; stale results
 cannot replace results for newer accepted input.
 
 See the [SA design](development/features/transmitter-spectrum/design.md) and
-[user guide](user/spectrum-analyzer.md). Full-loop jobs and remaining analyzer
-taps are pending; this preview does not establish RF compliance or file recovery.
+[user guide](user/spectrum-analyzer.md). Main Start owns the full loop and RX
+instruments; this separate TX preview does not establish RF compliance or file recovery.
 
 ### PRBS-TX source configuration
 
@@ -413,7 +421,7 @@ it with a valid source before Apply. Independent PRBS-RX truth uses the accepted
 source/seed, with its own state; source acceptance alone does not complete PRBS-RX
 or enable Start. Edits affect the next frozen job, never an active stream.
 
-The editor accepts session-only settings; actual run wiring remains pending. The
+Accepted source settings feed the frozen request and explicit WB persistence. The
 optional `source-input` feature exposes existing source validation without FEC or
 runner dependencies. `FilePayload::with_fill` shares immutable bytes while
 revalidating a policy, avoiding payload copies during edits. See the
@@ -452,8 +460,8 @@ The core's `scenario::pnm_json::import_profiles` shares validation with the CLI'
 three-capture importer. The optional `pnm-input` feature enables it without FEC or
 simulation in Qt. Apply checks spacing and carrier span against accepted OCD
 settings before committing a selection; Cancel and rejected loads preserve input.
-Bandwidth/spacing editing, skip-scheme import, WB persistence and scientific job
-integration remain pending. See the [profile input guide](user/measurement-inputs/modulation-profile.md)
+WB persistence and simulation-job integration are implemented; bandwidth/spacing
+editing and skip-scheme import remain outside this editor. See the [profile input guide](user/measurement-inputs/modulation-profile.md)
 and [development setup](development/setup.md).
 
 ### Reuse of the PNM Viewer Qt framework
@@ -467,7 +475,7 @@ checkout. All simulation, DSP, modulation and FEC remain in MERLIN's Rust engine
 
 The user accepted GPL reuse: the Qt application incorporating viewer desktop/UI
 code uses GPL-3.0-only, preserving source copyrights, licenses and applicable
-NOTICE content. Independent scientific libraries remain Apache-2.0. Check the
+NOTICE content. Independent signal-processing libraries remain Apache-2.0. Check the
 actual license of each selected file and retain third-party terms. Record source
 paths, revision and adaptations in the UI task design when copying occurs.
 The shell now adapts the viewer bootstrap, palette and icon wrapper; exact source
@@ -499,7 +507,7 @@ Start validates and freezes settings before beginning a bounded Rust job. Stop
 requests cooperative cancellation and retains completed results with explicit
 partial status. Pause must suspend advancement while retaining source, RNG,
 interleaver, receiver and observation state; Resume continues the same run.
-Opening or editing a dialog must not change active scientific state. Settings
+Opening or editing a dialog must not change active simulation state. Settings
 changes apply to the next run.
 
 Pause is a new Rust lifecycle requirement, not an existing `run_channel` feature.
@@ -507,7 +515,7 @@ Before implementing it, define safe pause boundaries, whether paused time counts
 toward the host-runtime budget, Stop/close behavior while paused, and worker cleanup.
 Do not implement Pause by restarting a run or merely freezing the display.
 Jobs run away from the UI thread. Rust owns all DSP, modulation, FEC, validation,
-scientific calculations and bounded results; Qt owns presentation and transient
+numerical calculations and bounded results; Qt owns presentation and transient
 interaction. Existing Rust APIs and test points remain the source of truth.
 
 The [UI checklist](development/ui-checklist.md) tracks the detailed work beneath
@@ -711,7 +719,7 @@ predictions are explicit. A ready flag is not a guarantee of estimate accuracy.
 pilot, scattered pilot, PLC16-QAM and BPSK-preamble pairs, including acquisition
 and failed-frame observations. Targets/windows and combined retention are bounded;
 current-fit pilots are labeled separately from pre-update predictions. Public
-Rust access and the CLI expose identical scientific results. Existing payload
+Rust access and the CLI expose identical simulation results. Existing payload
 capture reports each selected cell's actual modulation order and correction mode.
 `rx.channel_estimation.response` adds a dimensionless-gain test point; the final
 job carries the latest bounded receiver estimate, not unlimited FFT history.
@@ -760,7 +768,7 @@ These channel controls do not change the TX-only SA; the RX SA includes them. Se
 [validation](development/features/rxmer-workbench/validation.md) and
 [user guide](user/channel-measurements.md).
 
-### Planned receiver QAM view with RxMER
+### Receiver QAM view with RxMER
 
 The shared SA remains tap-specific: TX output precedes impairments and is
 unchanged by RxMER; channel/RX input spectra may show added residual power even
@@ -769,17 +777,18 @@ RX after equalization and before decisions, paired with raw RX FFT samples using
 the existing bounded Rust constellation collector. Display must preserve matching
 carrier/time, correction mode and modulation; pilots/PLC/mixed QAM orders are not
 silently pooled. Symbol-window selection will show RxMER playback changes over
-time. These UI connections are pending. See
+time. The bounded retained UI queries now implement these connections. See
 [UI-QAM-01](development/features/rxmer-workbench/design.md#ui-qam-01-receiver-constellation-and-shared-sa-reference-planes).
 
 ### Receiver Workbench
 
 Clicking Receiver opens a dedicated workbench with processing stages,
 selectable test points and shared diagnostic instruments. The QAM analyzer has
-independent **Signal: Data Profile / NCP / PLC** and **View: Raw / Equalized /
-Paired** selectors. Received profile/carrier/symbol selection remains unavailable
-for future general selection; current retained views show the supported profile
-and first compatible modulation group.
+independent **Signal: Data Profile / NCP / PLC / Continuous Pilots / Scattered
+Pilots** and **View: Raw / Equalized / Paired** selectors. Available received
+profiles and compatible modulation groups can be selected with inclusive
+physical-bin and receive-symbol bounds over the retained capture. Empty ranges
+clear the plot; unretained history is not synthesized.
 PLC data and preamble remain separate. Optional hard slicing is a diagnostic
 branch; soft demapping consumes received I/Q before hard decisions. Control and
 payload decode paths are distinct; PRBS comparison belongs to payload recovery.
@@ -789,7 +798,7 @@ The shared SA has an independent **Test Point** selector, initially RX Input
 view is explicitly frequency-domain with appropriate normalization, not another
 FFT of bins or an automatically calibrated PSD. QAM signal selection does not
 silently filter the SA's full-channel sample tap. Channel-response H/echo remains
-a separate scientific view. Instrument selection is independent of scientific state. Charts query
+a separate simulation view. Instrument selection is independent of simulation state. Charts query
 immutable bounded Rust results from one complete or partial closed-loop run.
 
 The navigation and selectors are implemented in separate receiver/QAM dialogs.
@@ -798,9 +807,9 @@ and aligned test-point/annotation slots; pin accents are decorative, not status.
 The Rust presentation adapter maps taps to registered IDs and reports unavailable
 observations. Receiver SA generation stays disabled locally: main Start runs
 the full loop and the instrument queries retained results; no TX fallback is used.
-Existing Rust payload/PLC collectors have explicit support limits. Matched NCP constellation classification
-still needs implementation. Payload/PLC QAM, RX time spectra and FFT-bin power
-now consume real retained observations. Receiver becomes green after full-request
+Existing Rust payload/PLC collectors have explicit support limits. Matched NCP classification now uses CRC-accepted received consumed-cell counts
+and the shared inverse coordinate transport. Payload/NCP/PLC/pilot QAM, RX time
+spectra and FFT-bin power consume real retained observations. Receiver becomes green after full-request
 validation; PRBS-RX requires explicit independent comparison acceptance. Unsupported
 views show a reason; no generated clouds, mislabeled TX data or TX-truth profile
 assignment. See [receiver workbench design](development/features/receiver-workbench/design.md)
@@ -823,7 +832,7 @@ correction use the existing known-boundary bootstrap; no RF acquisition is claim
 Pause waits between completed OFDM steps, retaining source, RNG, overlap,
 interleaver and receiver state; paused time is excluded from the host budget. Stop
 also works while paused. Complete/cancelled/runtime-exceeded/failed results preserve
-actual completed comparisons. Changing accepted scientific settings invalidates old
+actual completed comparisons. Changing accepted simulation settings invalidates old
 results and requests cancellation; busy Open/Save are disabled. Worker shutdown
 requests cancellation without blocking the UI thread.
 
@@ -831,7 +840,20 @@ Observation-only phase filtering prevents acquisition from exhausting the sample
 retention budget. Retain finite contiguous RX input/framed snapshots, one useful
 symbol and one raw FFT; never concatenate useful samples across prefix gaps.
 Payload/PLC charts use existing matched collectors and shared raw/corrected axes.
-NCP I/Q collection and general carrier/time/profile selection remain pending.
+NCP I/Q collection and available profile/modulation/bin/receive-symbol selectors
+are implemented over bounded retained windows. Payload captures retain at most
+65,536 pairs, NCP 8,192 pairs and each protected stream 8,192 pairs; at most 2,048
+selected pairs are rendered. Per-stage probe event caps reserve the global budget
+for four H-hat snapshots and one actual payload LDPC-input window.
+
+UI-CH-EST-RX-01 separates supplied H from actual receiver H-hat and shows gain,
+phase, real/imaginary response and a masked band-limited impulse diagnostic.
+UI-SLICER-01 uses the existing Rust slicer on selected cells and exposes actual
+post-descrambling NCP/payload LLRs plus coding-order LDPC input. Protected streams
+show physical decisions without inventing a per-cell LLR boundary. UI-FEC-01 adds
+a prominent FEC Statistics shortcut and actual branch counters, iteration
+distribution and bounded completed-word records. See the
+[receiver instrument design](development/features/receiver-instruments/design.md).
 FEC/PRBS-RX show actual job totals, and FFT-bin power has separate units from PSD.
 
 See [design](development/features/qt-closed-loop/design.md),
@@ -990,7 +1012,7 @@ and estimated-channel operation are separate milestones, not implied by that mod
 Current integration tests already connect real payload/NCP coding, randomization,
 QAM, cell interleaving, inverse pilot references and received pointer discovery.
 The reusable payload TX/RX owners now feed a duration-planned channel stepper;
-scientific algorithms remain in their existing component modules.
+signal-processing algorithms remain in their existing component modules.
 
 ## Test points and data access
 
@@ -1029,7 +1051,7 @@ obtain data through an existing stage API.
 | `rx.frequency.cells`, `rx.time.cells` | Separate inverse cell-interleaver outputs and source phase | Direct |
 | `rx.ncp.llrs`, `rx.ncp.accepted` | Actual soft records, CRC-accepted messages and direct block iterations | Production source decoder and bounded observer |
 | `rx.data.llrs`, `rx.descrambler.llrs` | Data likelihoods after/before sign inversion | Post-inverse soft records have production observer; raw demapper remains direct |
-| `rx.slicer.decisions` | Nearest label/reference point and distance/error vector | Direct slicing API implemented; registered stream pending |
+| `rx.slicer.decisions` | Nearest label/reference point and distance/error vector | Direct API and bounded Qt decisions implemented; no streamed producer |
 | `rx.bits.inverse` | Complete word LLRs restored to codeword order | Production collector and bounded observer; independent inverse bit-stage APIs available directly |
 | `rx.ldpc.bits` | Decisions, parity success and actual iteration count | Direct |
 | `rx.bch.payload` | Recovered bits, status and corrected-bit count | Direct |
@@ -1055,12 +1077,12 @@ The broader contract, including future producers, must provide:
 - Opt-in stage selection, symbol/codeword/sample ranges and explicit data limits.
   Stream large sample blocks; do not retain an entire second of waveform by default.
 - A disabled-observer path and tests proving observation does not alter RNG draws,
-  stage order, scientific outputs or decoder decisions. Export/sampling belongs
-  to adapters; scientific calculations remain in Rust stage modules.
+  stage order, simulation outputs or decoder decisions. Export/sampling belongs
+  to adapters; numerical calculations remain in Rust stage modules.
 
 Native typed stage calls remain usable without observers. JSON is an export
 adapter, not the only way to get data. Probe failures and cancellation need an
-explicit runner policy that preserves already completed scientific results.
+explicit runner policy that preserves already completed simulation results.
 
 The fixed-setting PLC path now generates OCD, ProfileA and NCP descriptors as
 single-part management MAC packets, with HCS/FCS, mandatory edge/CP/PLC assignments,
@@ -1099,7 +1121,7 @@ scattered placeholders, PLC and actual pilots in increasing physical-bin order.
 Protected bins cannot be overwritten; excluded bins are zero and unavailable data
 history stays None. Normalization is an explicit RMS reference. Completed PLC and
 physical outputs expose bounded optional windows through
-`simulation/plc/observation.rs`; callbacks cannot modify scientific stage state.
+`simulation/plc/observation.rs`; callbacks cannot modify signal-processing stage state.
 The [PLC channel guide](user/plc-channel.md) includes the complete flow, math,
 reproducible example, supported fixed subset and verification scope. Individual
 [coding](user/plc-coding.md), [message](user/plc-messages.md),
@@ -1273,17 +1295,17 @@ observer registration remains distinct from the direct decision API.
 
 ## Diagnostic logging
 
-Scientific crates use the shared `log` facade; only the CLI installs `env_logger`.
+Simulation crates use the shared `log` facade; only the CLI installs `env_logger`.
 The backend defaults to info on stderr and accepts `RUST_LOG` filters. Libraries
 keep logger ownership with the caller. Error records belong at the terminal
 application boundary, with separately suppressed failures recorded by their owner.
-Expected decoder failures/input rejection are debug diagnostics; scientific
+Expected decoder failures/input rejection are debug diagnostics; simulation
 outcomes remain typed results. No sample/capture arrays or MACs are logged.
 
 The current retrofit covers command/JSON failure handling, simulation lifecycle,
 BCH and payload/NCP/PLC LDPC outcomes, timestamp CRC rejection and observer
 failures/budgets. Logs are separate from typed test points and cannot control
-scientific decisions or RNG draws. See [logging](development/logging.md).
+simulation decisions or RNG draws. See [logging](development/logging.md).
 
 The simulation core exposes `SimulationError` for domain failures, with stable
 `code` and readable `message` fields. CLI and future adapters translate this
@@ -1307,8 +1329,8 @@ observations and analytical screening distinct. No completed comparisons means
 no fabricated zero BER. The seeded baseline is reproducible on the tested build;
 external interoperability and untested platforms remain separate validation work.
 
-Future Python/Qt adapters call the same scientific APIs and test-point contracts.
-They do not implement DSP, codec math or scientific JSON post-processing. Native bindings and presentation remain later milestones. Native CLI packaging and
+Future Python/Qt adapters call the same simulation APIs and test-point contracts.
+They do not implement DSP, codec math or simulation JSON post-processing. Native bindings and presentation remain later milestones. Native CLI packaging and
 multi-OS validation/publication workflows are now prepared locally; only Linux can
 be verified on this host. Their remote execution is deferred, and the optional Qt
 application is not part of these CLI installers.
@@ -1325,7 +1347,7 @@ application is not part of these CLI installers.
 - [Transmission setup and timing](user/transmission.md), [public APIs](reference/public-api.md)
 - [JSON contracts](reference/documents.md), [build/test](development/build.md), [Git/releases](development/git.md)
 
-Pinned scientific sources and section/page evidence are recorded in those guides.
+Pinned simulation sources and section/page evidence are recorded in those guides.
 Use local versioned PHY sources before adding pilot/PLC details. Update this
 architecture and the [checklist](development/checklist.md) together as stages change.
 
@@ -1351,7 +1373,7 @@ LAYOUT-03 adds a deterministic additional-continuous-pilot generator in
 `transmission/layout/continuous.rs`, independent of simulation features. It shares
 the physical validator, computes density from actual active frequency span, merges
 eligible spectrum, protects PLC/poor bins/edges, covers isolated regions and
-perturbs placement without touching scientific RNG state. Generated settings feed
+perturbs placement without touching simulation RNG state. Generated settings feed
 the same descriptor/OCD builder as explicit settings.
 See [placement and equations](user/carrier-placement.md).
 
@@ -1372,7 +1394,7 @@ See [RX guide](user/waveform/rx-acquisition.md) and
 INPUT-02 adds an explicit producer allowlist and contract revision under
 `scenario/pnm_json/contract.rs`. CLI request schema2 requires the pnm-decode0.3.6
 export declaration; legacy schema1 is explicit and unchanged. Shared Rust imports
-retain actual JSON hashes and scientific checks. Ancillary additive display fields
+retain actual JSON hashes and simulation checks. Ancillary additive display fields
 are allowed, while required field/unit/assignment drift rejects. Preserve the
 request with the scenario because ordinary upstream JSON has no producer stamp.
 See [decoder contract](user/impairments/pnm-import.md#explicit-decoder-contract-input-02).

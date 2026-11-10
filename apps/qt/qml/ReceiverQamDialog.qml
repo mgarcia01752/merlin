@@ -6,19 +6,16 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Dialog {
+WorkbenchDialog {
     id: dialog
-    required property var theme
     required property var backend
-    property int signalIndex: 0
-    property int viewIndex: 1
-    property int plcPartIndex: 0
+    property alias signalIndex: selection.signalIndex
+    property alias viewIndex: selection.viewIndex
+    property alias plcPartIndex: selection.plcPartIndex
+    property alias selectionControls: selection
     property var observation: ({points: [], profiles: []})
-    readonly property string signalName: ["Data Profile", "NCP", "PLC"][signalIndex] || "Unavailable"
-    function refresh() { if (!backend) { return }; observation = JSON.parse(backend.qam(signalIndex, viewIndex, plcPartIndex)) }
-    onSignalIndexChanged: refresh()
-    onViewIndexChanged: refresh()
-    onPlcPartIndexChanged: refresh()
+    readonly property string signalName: ["Data Profile", "NCP", "PLC", "Continuous Pilots", "Scattered Pilots"][signalIndex] || "Unavailable"
+    function refresh() { if (!backend || !selection) { return }; observation = JSON.parse(backend.qam_selected(JSON.stringify(selection.query()))) }
     onOpened: refresh()
     title: "QAM Analyzer · " + signalName
     parent: Overlay.overlay; anchors.centerIn: parent
@@ -28,20 +25,10 @@ Dialog {
     standardButtons: Dialog.Close
     contentItem: ColumnLayout {
         spacing: 12
-        RowLayout {
-            Label { text: "Signal"; color: dialog.theme.text }
-            ComboBox { objectName: "receiverQamSignal"; model: ["Data Profile", "NCP", "PLC"]; currentIndex: dialog.signalIndex; Layout.preferredWidth: 170; onActivated: function(index) { dialog.signalIndex = index } }
-            Label { text: "QAM View"; color: dialog.theme.text }
-            ComboBox { objectName: "receiverQamView"; model: ["Raw", "Equalized", "Paired"]; currentIndex: dialog.viewIndex; Layout.preferredWidth: 155; onActivated: function(index) { dialog.viewIndex = index } }
-            Label { visible: dialog.signalIndex === 2; text: "PLC Part"; color: dialog.theme.text }
-            ComboBox { objectName: "receiverPlcPart"; visible: dialog.signalIndex === 2; model: ["Data", "Preamble"]; currentIndex: dialog.plcPartIndex; onActivated: function(index) { dialog.plcPartIndex = index } }
-            Item { Layout.fillWidth: true }
-        }
-        RowLayout {
-            Label { visible: dialog.signalIndex === 0; text: "Received Profile"; color: dialog.theme.muted }
-            ComboBox { objectName: "receiverProfile"; visible: dialog.signalIndex === 0; model: dialog.observation.profiles || []; displayText: (dialog.observation.profiles || []).length ? dialog.observation.profiles[0] : "No received profile"; enabled: false; Layout.preferredWidth: 190 }
-            Label { text: "Carrier / Symbol Window"; color: dialog.theme.muted }
-            Label { text: "Available with retained receiver observations"; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+        ReceiverCellControls {
+            id:selection;theme:dialog.theme;metadata:dialog.observation
+            Layout.fillWidth:true
+            onSelectionChanged:dialog.refresh()
         }
         Label { text: "Received I/Q before hard decisions · supplied H and estimated H-hat remain distinct"; color: dialog.theme.accent; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         RowLayout {
@@ -66,11 +53,16 @@ Dialog {
                             onPaint: {
                                 const ctx=getContext("2d");ctx.reset()
                                 if (!dialog.observation.available) { return }
+                                const edge=Math.min(width,height)
+                                const left=(width-edge)/2
+                                const top=(height-edge)/2
                                 ctx.strokeStyle=dialog.theme.line;ctx.lineWidth=1
-                                ctx.beginPath();ctx.moveTo(width/2,0);ctx.lineTo(width/2,height);ctx.moveTo(0,height/2);ctx.lineTo(width,height/2);ctx.stroke()
+                                ctx.beginPath();ctx.moveTo(left+edge/2,top);ctx.lineTo(left+edge/2,top+edge);ctx.moveTo(left,top+edge/2);ctx.lineTo(left+edge,top+edge/2);ctx.stroke()
+                                ctx.fillStyle=dialog.theme.muted;ctx.font="11px sans-serif"
+                                ctx.fillText("I",left+edge-10,top+edge/2-6);ctx.fillText("Q",left+edge/2+6,top+12)
                                 ctx.fillStyle=dialog.theme.accent
                                 for (const point of dialog.observation.points || []) {
-                                    ctx.fillRect((raw ? point.raw_x : point.eq_x)*width-1,(raw ? point.raw_y : point.eq_y)*height-1,2,2)
+                                    ctx.fillRect(left+(raw ? point.raw_x : point.eq_x)*edge-1,top+(raw ? point.raw_y : point.eq_y)*edge-1,2,2)
                                 }
                             }
                         }

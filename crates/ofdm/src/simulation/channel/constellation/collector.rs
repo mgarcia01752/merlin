@@ -3,7 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Bounded diagnostic inverse transport and receive-time ordering, never receiver inputs.
-use super::{ConstellationPair, ConstellationResult, ConstellationSelection, ConstellationStatus};
+use super::{
+    ConstellationPair, ConstellationResult, ConstellationSelection, ConstellationStatus,
+    NcpConstellationPair,
+};
 use crate::{
     error::invalid,
     signal_processing::interleaving::{InterleaverDirection, SymbolInterleaver},
@@ -35,6 +38,7 @@ pub(crate) struct ConstellationCollector {
     result: ConstellationResult,
     stream: Option<CoordinateStream>,
     pending: BTreeMap<(u64, SubcarrierIdx), ConstellationPair>,
+    pending_ncp: BTreeMap<(u64, SubcarrierIdx), NcpConstellationPair>,
 }
 impl ConstellationCollector {
     /// Creates an empty finite capture before receiver acquisition.
@@ -55,9 +59,11 @@ impl ConstellationCollector {
                 reference: "raw_receiver_iq_shared_unit_rms_no_display_normalization",
                 channel_coefficients: if mode==crate::signal_processing::receiver::channel_estimation::ReceiverMode::PilotEstimated {"pilot_estimated_h_receiver_reciprocal"}else{"response_h_receiver_reciprocal"},
                 pairs: Vec::new(),
+                ncp_pairs: Vec::new(),
             },
             stream: None,
             pending: BTreeMap::new(),
+            pending_ncp: BTreeMap::new(),
         }
     }
     /// Freezes diagnostic transport from actual accepted receiver configuration.
@@ -103,7 +109,7 @@ impl ConstellationCollector {
         waveform: &ReceivedSymbol,
         payload: &PayloadReceiveSymbol,
     ) -> Result<(), SimulationError> {
-        if self.result.status == ConstellationStatus::Complete {
+        if self.complete() {
             return Ok(());
         }
         let stream = self
@@ -136,6 +142,24 @@ impl ConstellationCollector {
             .filter(|source| source.error.is_none())
         {
             if (stream.origin..stream.end_source).contains(&source.source_symbol_index) {
+                // Only the first consumed high-to-low hypotheses belong to the CRC-accepted
+                // field. Remaining hypotheses may be payload and must never be called NCP.
+                let ncp_cells: BTreeMap<_, _> = if self.result.selection.capture_ncp {
+                    source
+                        .ncp
+                        .as_ref()
+                        .map(|field| {
+                            source
+                                .ncp_soft
+                                .iter()
+                                .take(field.consumed_cells)
+                                .map(|cell| (cell.data_position, cell))
+                                .collect()
+                        })
+                        .unwrap_or_default()
+                } else {
+                    BTreeMap::new()
+                };
                 let mut selected = source
                     .data_soft
                     .iter()
@@ -144,16 +168,45 @@ impl ConstellationCollector {
                 let mut data_position = 0;
                 for (cell, coordinate) in payload.restored.iter().zip(restored) {
                     if let Some(TransportCell::Sample(point)) = cell {
+                        if let Some(soft) = ncp_cells.get(&data_position) {
+                            let coordinate = coordinate
+                                .as_ref()
+                                .ok_or_else(|| invalid("Missing NCP receive coordinate."))?;
+                            if coordinate.after != *point {
+                                return Err(invalid("NCP transport differs from received cell."));
+                            }
+                            let frequency_hz = stream
+                                .layout
+                                .frequency_hz(coordinate.bin)
+                                .ok_or_else(|| invalid("NCP carrier outside geometry."))?;
+                            if self.result.selection.contains(frequency_hz)
+                                && self.result.ncp_pairs.len()
+                                    < self.result.selection.requested_pairs.min(8192)
+                            {
+                                self.pending_ncp.insert(
+                                    (coordinate.channel_symbol, coordinate.bin),
+                                    NcpConstellationPair {
+                                        channel_symbol_index: coordinate.channel_symbol,
+                                        source_symbol_index: source.source_symbol_index,
+                                        physical_bin: coordinate.bin,
+                                        frequency_hz,
+                                        data_position,
+                                        modulation_order: 1u16 << soft.llrs.len(),
+                                        before_equalization: coordinate.before,
+                                        after_equalization: coordinate.after,
+                                        llrs: soft.llrs.clone(),
+                                    },
+                                );
+                            }
+                        }
                         if selected
                             .peek()
                             .is_some_and(|selected| selected.data_position == data_position)
                         {
-                            let modulation_order = 1u16
-                                << selected
-                                    .next()
-                                    .ok_or_else(|| invalid("Missing selected payload cell."))?
-                                    .llrs
-                                    .len();
+                            let soft = selected
+                                .next()
+                                .ok_or_else(|| invalid("Missing selected payload cell."))?;
+                            let modulation_order = 1u16 << soft.llrs.len();
                             let coordinate = coordinate.ok_or_else(|| {
                                 invalid("Missing constellation payload coordinate.")
                             })?;
@@ -166,7 +219,9 @@ impl ConstellationCollector {
                                 stream.layout.frequency_hz(coordinate.bin).ok_or_else(|| {
                                     invalid("Constellation carrier outside geometry.")
                                 })?;
-                            if self.result.selection.contains(frequency_hz) {
+                            if self.result.selection.contains(frequency_hz)
+                                && self.result.status != ConstellationStatus::Complete
+                            {
                                 self.pending.insert(
                                     (coordinate.channel_symbol, coordinate.bin),
                                     ConstellationPair {
@@ -179,6 +234,7 @@ impl ConstellationCollector {
                                         modulation_order,
                                         before_equalization: coordinate.before,
                                         after_equalization: coordinate.after,
+                                        llrs: soft.llrs.clone(),
                                     },
                                 );
                             }
@@ -194,12 +250,26 @@ impl ConstellationCollector {
             let watermark = source.source_symbol_index;
             self.release(Some(watermark));
         }
-        if self.pending.len() > self.stream.as_ref().map_or(0, |stream| stream.max_pending) {
+        if self.pending.len() + self.pending_ncp.len()
+            > self.stream.as_ref().map_or(0, |stream| stream.max_pending)
+        {
             return Err(invalid("Constellation pending-coordinate limit exceeded."));
         }
         Ok(())
     }
     fn release(&mut self, watermark: Option<u64>) {
+        while self.result.ncp_pairs.len() < self.result.selection.requested_pairs.min(8192) {
+            if self
+                .pending_ncp
+                .first_key_value()
+                .is_none_or(|(key, _)| watermark.is_some_and(|limit| key.0 > limit))
+            {
+                break;
+            }
+            if let Some((_, pair)) = self.pending_ncp.pop_first() {
+                self.result.ncp_pairs.push(pair);
+            }
+        }
         while self.result.pairs.len() < self.result.selection.requested_pairs {
             if self
                 .pending
@@ -223,8 +293,16 @@ impl ConstellationCollector {
         };
         if self.result.status == ConstellationStatus::Complete {
             self.pending.clear();
+        }
+        if self.complete() {
+            self.pending_ncp.clear();
             self.stream = None;
         }
+    }
+    fn complete(&self) -> bool {
+        self.result.status == ConstellationStatus::Complete
+            && (!self.result.selection.capture_ncp
+                || self.result.ncp_pairs.len() == self.result.selection.requested_pairs.min(8192))
     }
     /// Returns the bounded capture collected so far without advancing transport.
     /// # Returns

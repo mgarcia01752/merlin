@@ -14,7 +14,7 @@ Unknown fields are rejected in versioned documents/settings rather than guessed.
   Consumers must compute hashes from retained original bytes. Synthetic examples
   label their provenance; their identity values do not authenticate captures.
 - Per-frame MER in dB with JSON null for unavailable readings; channel IQ retains
-  null exclusions. Scientific arrays remain full resolution.
+  null exclusions. Simulation arrays remain full resolution.
 
 The candidate document uses `document_kind: "docsis_ofdm_fec_candidate"` and
 `schema_version: 1`. It contains `candidate`, `settings` and optional `evaluation`.

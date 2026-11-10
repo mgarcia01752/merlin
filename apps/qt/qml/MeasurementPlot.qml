@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 // Adapted from PNM Viewer's RxMerBitLoadingChart Canvas: Rust now supplies all
-// scientific coordinates/units and bounded min/max groups for both input kinds.
+// signal coordinates/units and bounded min/max groups for both input kinds.
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts

@@ -123,6 +123,18 @@ Pane {
     }
     QtObject {
         id: receiverBackend
+        property bool retainedCells:false
+        property var lastQuery: ({})
+        property bool lastDecoderInput:false
+        function qam_selected(document) {
+            lastQuery=JSON.parse(document)
+            if (!retainedCells) { return qam(lastQuery.signal,lastQuery.view,lastQuery.part) }
+            const available=(lastQuery.first_bin<0 || lastQuery.first_bin<=320) && (lastQuery.last_bin<0 || lastQuery.last_bin>=320)
+            return JSON.stringify({available:available,reason:available ? "Actual test observations" : "No cells match",points:available ? [{raw_x:0.4,raw_y:0.4,eq_x:0.5,eq_y:0.5}] : [],profiles:[0],orders:[256],first_bin:320,last_bin:320,first_symbol:10,last_symbol:10,retained:1,detail:"Retained test result"})
+        }
+        function response(document) { lastQuery=JSON.parse(document);return JSON.stringify({available:retainedCells,points:[],x_ticks:[],y_ticks:[],snapshots:[10],reason:"Response test",summary:"Actual response query"}) }
+        function slicer(document,decoderInput) { lastQuery=JSON.parse(document);lastDecoderInput=decoderInput;return JSON.stringify({available:retainedCells,rows:[],llr:{count:retainedCells ? 8 : 0},histogram:{points:[],x_ticks:[],y_ticks:[]},detail:"Actual soft query"}) }
+        function fec() {return JSON.stringify({available:retainedCells,status:"complete",words:[],histogram:{points:[],x_ticks:[],y_ticks:[]}})}
         function qam(signal, view, part) { return JSON.stringify({available:false,reason:"No retained receiver results",detail:signal === 1 ? "Matched received NCP I/Q collection is pending" : "Receiver collector not connected",points:[],profiles:[],raw_tap:"rx.fft.bins",equalized_tap:"rx.equalized.iq"}) }
         function spectrum(tap) { return JSON.stringify({tap_name:["RX Input / Channel Output","RX Framed Samples","RX Useful Samples","RX FFT Bin Power"][tap],tap_id:["channel.output","rx.framed.samples","rx.cp.samples","rx.fft.bins"][tap],tap_description:"Selected receiver test point",reason:"No retained receiver results",has_result:false,result_token:"",can_generate:false,busy:false}) }
         function cancel() {}
@@ -171,6 +183,14 @@ Pane {
     TestCase {
         name: "Workbench"
         when: windowShown
+        function closeWithX(dialog) {
+            const button = findChild(dialog.header, "popupCloseButton")
+            verify(button !== null)
+            verify(button.visible && button.enabled)
+            compare(button.Accessible.name, "Close " + dialog.title)
+            mouseClick(button)
+            tryCompare(dialog, "visible", false)
+        }
         function test_sections_data() {
             return [
                 {tag: "ofdm", block: "ofdmBlock", title: "OFDM Channel Descriptor (OCD)"},
@@ -193,8 +213,7 @@ Pane {
             tryCompare(dialog, "opened", true)
             compare(dialog.title, data.title)
             if (data.block !== "ofdmBlock" && data.block !== "profileBlock" && data.block !== "sourceBlock" && data.block !== "transmitterBlock" && data.block !== "channelBlock" && data.block !== "channelEstimateBlock" && data.block !== "rxmerBlock" && data.block !== "receiverBlock" && data.block !== "verificationBlock") { verify(workbench.sectionDescription.length > 30) }
-            keyClick(Qt.Key_Escape)
-            tryCompare(dialog, "visible", false)
+            closeWithX(dialog)
         }
         function test_ofdm_cancel_and_reopen() {
             const dialog = workbench.ofdmPopup
@@ -207,8 +226,7 @@ Pane {
             editor.forceActiveFocus()
             keyClick(Qt.Key_Down)
             compare(dialog.draft.cyclic_prefix_samples, 1024)
-            keyClick(Qt.Key_Escape)
-            tryCompare(dialog, "visible", false)
+            closeWithX(dialog)
             compare(backend.current(), original)
             mouseClick(findChild(workbench, "ofdmBlock"))
             tryCompare(dialog, "opened", true)
@@ -359,10 +377,9 @@ Pane {
             workbench.aboutPopup.licensesPopup.showDocument("gpl")
             tryCompare(workbench.aboutPopup.licensesPopup, "opened", true)
             verify(findChild(workbench.aboutPopup.licensesPopup, "licenseDocumentText").text.indexOf("GNU") >= 0)
-            keyClick(Qt.Key_Escape)
-            tryCompare(workbench.aboutPopup.licensesPopup, "visible", false)
-            keyClick(Qt.Key_Escape)
-            tryCompare(workbench.aboutPopup, "visible", false)
+            closeWithX(workbench.aboutPopup.licensesPopup)
+            compare(workbench.aboutPopup.opened, true)
+            closeWithX(workbench.aboutPopup)
         }
         function test_source_options_and_accepted_readiness() {
             const dialog = workbench.sourcePopup
@@ -490,14 +507,14 @@ Pane {
             compare(qam.signalIndex, 1)
             verify(qam.observation.detail.indexOf("NCP") >= 0)
             const signal = findChild(qam, "receiverQamSignal")
-            mouseClick(signal); keyClick(Qt.Key_End); keyClick(Qt.Key_Return)
+            mouseClick(signal); keyClick(Qt.Key_Down); keyClick(Qt.Key_Return)
             compare(qam.signalIndex, 2)
             verify(findChild(qam, "receiverPlcPart").visible)
             const view = findChild(qam, "receiverQamView")
             mouseClick(view); keyClick(Qt.Key_End); keyClick(Qt.Key_Return)
             compare(qam.viewIndex, 2)
             compare(qam.observation.points.length, 0)
-            keyClick(Qt.Key_Escape); tryCompare(qam, "visible", false)
+            closeWithX(qam)
             compare(receiver.opened, true)
             waitForRendering(receiver.contentItem)
             wait(100)
@@ -513,7 +530,7 @@ Pane {
             compare(sa.viewport.points.length, 0)
             compare(qam.signalIndex, 2)
             compare(findChild(sa, "saTimingPanel").visible, false)
-            keyClick(Qt.Key_Escape); tryCompare(sa, "visible", false)
+            closeWithX(sa)
             mouseClick(findChild(receiver, "receiverDataQam"))
             tryCompare(qam, "opened", true)
             compare(qam.signalIndex, 0)
@@ -546,6 +563,36 @@ Pane {
             mouseClick(findChild(workbench,"stopButton"));workbench.pollRun()
             compare(workbench.runState.busy,false)
             runBackend.configured=false;runBackend.verified=false;workbench.pollRun()
+        }
+        function test_receiver_retained_filters_response_soft_and_fec_navigation() {
+            const receiver=workbench.receiverPopup
+            receiverBackend.retainedCells=true
+            receiver.open();tryCompare(receiver,"opened",true)
+            mouseClick(findChild(receiver,"receiverDataQam"));tryCompare(receiver.qamPopup,"opened",true)
+            const qam=receiver.qamPopup
+            compare(qam.observation.points.length,1)
+            verify(findChild(qam,"receiverProfile").enabled)
+            const first=findChild(qam,"receiverFirstBin")
+            first.value=400;first.valueModified()
+            compare(receiverBackend.lastQuery.first_bin,400)
+            compare(qam.observation.points.length,0)
+            qam.selectionControls.resetFilters()
+            compare(qam.observation.points.length,1)
+            closeWithX(qam);compare(receiver.opened,true)
+            receiver.responsePopup.open();tryCompare(receiver.responsePopup,"opened",true)
+            const view=findChild(receiver.responsePopup,"receiverResponseView")
+            view.currentIndex=4;view.activated(4)
+            compare(receiverBackend.lastQuery.view,4)
+            closeWithX(receiver.responsePopup)
+            receiver.openSlicer();tryCompare(receiver.slicerPopup,"opened",true)
+            const boundary=findChild(receiver.slicerPopup,"receiverSoftBoundary")
+            boundary.currentIndex=1;boundary.activated(1)
+            compare(receiverBackend.lastDecoderInput,true)
+            closeWithX(receiver.slicerPopup)
+            mouseClick(findChild(receiver,"receiverFecShortcut"));tryCompare(receiver.fecPopup,"opened",true)
+            verify(findChild(receiver.fecPopup,"receiverFecStatus").text.indexOf("complete")>=0)
+            closeWithX(receiver.fecPopup);closeWithX(receiver)
+            receiverBackend.retainedCells=false
         }
         function test_render() {
             theme.dark = true

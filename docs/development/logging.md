@@ -1,11 +1,11 @@
 # Rust logging
 
-The scientific libraries emit records through the standard `log` facade. The CLI
+The signal-processing libraries emit records through the standard `log` facade. The CLI
 owns its `env_logger` backend; library callers can install a compatible backend
 without the engine changing global logging configuration.
 
 The CLI defaults to **info** and writes logs to **stderr**. Help/version remain
-on stdout, and scientific JSON files keep the same contracts. Per-codeword
+on stdout, and simulation JSON files keep the same contracts. Per-codeword
 progress is debug output; normal runs show concise command and completion records.
 
 ```bash
@@ -48,7 +48,7 @@ Cargo's own build messages are separate from application logging.
 | Info | Command start, successful export/completion and cancellation |
 | Debug | Simulation counts, optional progress, binary/LLR validation, payload/NCP/PLC non-convergence, PLC timestamp CRC rejection and probe failures/budgets |
 
-Expected FEC non-convergence is part of scientific results. It is not an
+Expected FEC non-convergence is part of simulation results. It is not an
 application error and does not produce error/warn floods in a noisy run. Invalid
 library inputs continue to return errors; the caller decides whether to log them
 at its terminal boundary. The CLI logs a propagated failure once rather than
@@ -74,7 +74,7 @@ package entries even when those features are not active. Check active dependenci
 with `cargo tree -p ofdm-fec-cli --edges normal`.
 
 The independent codec examples do not install a logger automatically. An embedding
-application or future Python/Qt adapter owns the backend and filtering; scientific
+application or future Python/Qt adapter owns the backend and filtering; simulation
 APIs stay independent of it. See the upstream
 [log facade documentation](https://docs.rs/log/0.4.35) and
 [env_logger builder](https://docs.rs/env_logger/0.11.11/env_logger/struct.Builder.html).
@@ -83,10 +83,10 @@ APIs stay independent of it. See the upstream
 
 Spawned CLI tests cover default/debug/off/module filters, one terminal error
 record, stderr routing, help/version output and destination protection. Their
-scientific results match after excluding wall-clock elapsed time. An isolated
+simulation results match after excluding wall-clock elapsed time. An isolated
 codec test installs a caller-owned sink after constructing the library codec,
 checks diagnostic levels and verifies identical decisions/iterations with logs
-on and off. Existing scientific tests remain required.
+on and off. Existing numerical tests remain required.
 
 Logging can change execution time. A run close to its wall-clock budget can
 complete a different number of words; completed results remain valid partial

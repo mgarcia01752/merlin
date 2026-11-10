@@ -1,3 +1,5 @@
+Current receiver instrument follow-up: [completed views and selectors](../receiver-instruments/design.md). Earlier pending statements record the original task stage.
+
 Current follow-up: [Qt closed-loop and persistence](../qt-closed-loop/design.md)
 connects supported receiver results, pause/run dispatch and project files. Older
 pending statements below describe the original implementation stage. NCP matched
@@ -96,7 +98,7 @@ a matched NCP constellation: add received NCP I/Q classification and bounded
 paired collection in Rust before enabling that view. Preserve public APIs.
 
 Full-loop UI dispatch and a common bounded retained-result session are prerequisites
-for actual RX charts. Rust owns scientific coordinates, frequency/carrier mapping,
+for actual RX charts. Rust owns simulation coordinates, frequency/carrier mapping,
 classification, decimation, normalization and resource accounting. QML owns layout
 and transient instrument selection. All open instruments share finite retention
 budgets and an immutable result identity. No fake scatter points or fallback TX
@@ -138,7 +140,7 @@ TX timing panel. Its existing transmitter behavior remains the default.
 `receiver_instruments.rs` is the focused Rust admission adapter. It maps spectrum
 choices to registered core `TestPointId` values and reports unavailable data,
 including specific NCP/collector support gaps. It starts no worker and owns no
-RNG/scientific state. Receiver SA generation stays disabled and cannot call the
+RNG/simulation state. Receiver SA generation stays disabled and cannot call the
 TX preview; changing taps clears old viewport state. Profile and carrier/time
 queries stay unavailable until received metadata exists. Receiver readiness and
 Start gating are unchanged. UI-RX-WB-01 is complete as navigation, not receiver
@@ -153,6 +155,6 @@ must not shift the last two stages relative to the others. Rounded 12-pixel stag
 bodies have subtle pin accents and an inset border; these accents convey no
 readiness status. Smaller instrument chips share rounded corners and equal
 widths within their row. Keep keyboard focus visible, preserve light/dark theme
-colors and do not change navigation or scientific state. Refresh native dark
+colors and do not change navigation or simulation state. Refresh native dark
 screenshots and check minimum-size layout using the existing QML suite and Qt
 build only; no new DSP tests are needed for this presentation change.

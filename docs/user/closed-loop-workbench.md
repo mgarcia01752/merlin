@@ -39,8 +39,10 @@ unavailable, not zero. Receiver → FEC Monitor shows actual decoder totals.
 Receiver's QAM analyzer now displays retained payload or PLC raw/equalized pairs.
 Paired panels share axes; PLC preamble and data remain separate. Payload plots use
 Profile 0 and the first compatible modulation group, up to 2048 actual points.
-General carrier/time/profile selection and matched NCP I/Q collection remain
-pending; NCP LLRs/messages are never fabricated into a constellation.
+NCP matched I/Q and available profile/modulation/bin/receive-symbol selectors
+are implemented. Inspect response/echo, actual slicer/LLR and detailed FEC views
+through the [receiver instruments](receiver-workbench.md). NCP LLRs/messages
+are never fabricated into a constellation.
 
 The RX SA has actual channel-output/framed time samples, one contiguous useful
 symbol and raw FFT-bin power. Useful symbols are not concatenated across prefix
@@ -51,7 +53,7 @@ and uses its physical frequency grid. Changing a selector never starts a new run
 
 Accepted input/settings changes invalidate old observations and cancel stale work.
 Receiver configuration can be green before any results exist. Expected noisy FEC
-outcomes remain scientific results, distinct from invalid setup or job failure.
+outcomes remain simulation results, distinct from invalid setup or job failure.
 
 ## Save and reopen
 

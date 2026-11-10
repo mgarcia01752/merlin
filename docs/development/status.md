@@ -16,7 +16,7 @@ feature records and defines the ignored local evidence/output location.
 
 | Milestone | What is available | Design / evidence |
 | --- | --- | --- |
-| Scientific foundation | Separate Rust full/shortened BCH/LDPC codecs, constellation mapping and soft demapping through 16K-QAM, bit processing and randomization | [FEC](../user/fec-codec.md), [QAM](../user/qam-mapping.md) |
+| Signal-processing foundation | Separate Rust full/shortened BCH/LDPC codecs, constellation mapping and soft demapping through 16K-QAM, bit processing and randomization | [FEC](../user/fec-codec.md), [QAM](../user/qam-mapping.md) |
 | Channel construction | Fixed single-channel numerology, protected roles, continuous/scattered pilots, frequency/time cell interleaving | [Transmission](../user/transmission.md), [pilots](../user/pilot-signals.md), [interleaving](../user/cell-interleaving.md) |
 | Signaling | Actual PLC/NCP coding and messages; receiver configuration derived from decoded descriptors for the fixed supported subset | [PLC](../user/plc-channel.md), [NCP](../user/ncp.md), [configuration](../user/receiver-configuration/README.md) |
 | Waveform TX/RX | IFFT/FFT, cyclic prefix, windowing/overlap and actual uniform-256-QAM payload recovery over samples | [Waveform](../user/waveform/README.md), [payload transport](../user/payload-transport/README.md) |
@@ -51,7 +51,7 @@ not a single LTE carrier. See the experiment guide for the complete results.
 Supplied H and1/H compensation now expose8192 matched payload QAM observations
 by default through a bounded Rust collector, direct API and opt-in channel CLI
 JSON. The measured demonstration and11dB stress case each exported8192 pairs;
-the stress case retained483 errors with the earlier scientific summary unchanged.
+the stress case retained483 errors with the earlier simulation summary unchanged.
 See the [implementation record](features/paired-constellation/implementation.md).
 
 ## Receiver and measurement milestone
@@ -170,8 +170,10 @@ The native Qt workbench now has accepted OCD/DPD/source/measurement editors,
 receiver configuration, independent source-comparison acceptance and derived
 readiness. Start runs the Rust closed loop; Stop retains completed comparisons,
 and Pause/Resume keeps the same engine state. Actual payload/PLC QAM, RX spectrum
-and BER/FEC results share one bounded run. NCP matched constellation capture and
-broader observation selectors remain pending.
+and BER/FEC results share one bounded run. Matched NCP/pilot plots, retained
+profile/modulation/bin/symbol filters, response/echo, slicer/actual LLR and
+detailed FEC views are now implemented. Their capture windows and current
+Profile A/ID 0 transport limits remain explicit.
 
 Native File Open/Save/Save As use self-contained versioned workbench JSON with
 exact embedded input bytes and checksums. The VM is the interactive review target;

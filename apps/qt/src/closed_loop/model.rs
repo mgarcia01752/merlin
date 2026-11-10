@@ -60,6 +60,9 @@ pub(crate) struct Samples {
 #[derive(Default)]
 pub(crate) struct Observations {
     pub taps: [Samples; 4],
+    pub responses: Vec<(u64, Vec<IqPair>)>,
+    pub decoder_llrs: Vec<f64>,
+    pub decoder_word: Option<u64>,
 }
 impl ProbeObserver for Observations {
     /// Retains finite contiguous time windows and one raw FFT without changing science.
@@ -71,6 +74,26 @@ impl ProbeObserver for Observations {
     /// No adapter errors are introduced by exhausted retention.
     fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), docsis_ofdm_fec::SimulationError> {
         if event.context.phase != RunPhase::Observation {
+            return Ok(());
+        }
+        if event.stage == TestPointId::RxChannelEstimate {
+            if let ProbeData::Iq(values) = event.data {
+                if self.responses.len() < 4 {
+                    self.responses.push((
+                        event.context.channel_symbol_index.unwrap_or(0),
+                        values.to_vec(),
+                    ));
+                }
+            }
+            return Ok(());
+        }
+        if event.stage == TestPointId::PayloadLdpcInput {
+            if let ProbeData::Llrs(values) = event.data {
+                if self.decoder_llrs.is_empty() {
+                    self.decoder_llrs = values.iter().copied().take(16200).collect();
+                    self.decoder_word = event.context.codeword_index;
+                }
+            }
             return Ok(());
         }
         let index = match event.stage {
@@ -196,8 +219,19 @@ pub(crate) fn prepare(
     .apply(&scenario, &mut settings)
     .map_err(|e| e.to_string())?;
     settings.playback = Some(playback);
-    settings.constellation = Some(Default::default());
-    settings.protected_constellation = Some(Default::default());
+    settings.constellation = Some(
+        docsis_ofdm_fec::simulation::channel::constellation::ConstellationSelection {
+            requested_pairs: 65536,
+            capture_ncp: true,
+            ..Default::default()
+        },
+    );
+    settings.protected_constellation = Some(
+        docsis_ofdm_fec::simulation::channel::protected_constellation::ProtectedCaptureSelection {
+            pairs_per_stream: 8192,
+            ..Default::default()
+        },
+    );
     settings.validate().map_err(|e| e.to_string())?;
     Ok(settings)
 }
@@ -257,6 +291,8 @@ impl Model {
                         TestPointId::RxFramed,
                         TestPointId::RxUseful,
                         TestPointId::RxFft,
+                        TestPointId::RxChannelEstimate,
+                        TestPointId::PayloadLdpcInput,
                     ];
                     let mut probe = TestPointProbe::new(ProbeConfig {
                         selections: stages
@@ -274,6 +310,18 @@ impl Model {
                     })
                     .map_err(|e| e.to_string())?;
                     probe.set_phase_filter(Some(RunPhase::Observation));
+                    for (stage, events) in [
+                        (TestPointId::ChannelOutput, 12),
+                        (TestPointId::RxFramed, 4),
+                        (TestPointId::RxUseful, 1),
+                        (TestPointId::RxFft, 1),
+                        (TestPointId::RxChannelEstimate, 4),
+                        (TestPointId::PayloadLdpcInput, 1),
+                    ] {
+                        probe
+                            .limit_stage_events(stage, events)
+                            .map_err(|e| e.to_string())?;
+                    }
                     let mut observations = Observations::default();
                     let job = run_channel_controlled(
                         &settings,
@@ -452,7 +500,60 @@ mod tests {
         assert_eq!(result.job.summary.comparison.bit_errors, 0);
         assert!(!result.observations.taps[0].values.is_empty());
         assert!(result.job.constellation.as_ref().unwrap().collected_pairs > 0);
+        let query = crate::receiver_instruments::selection::Query::default();
+        let scatter = crate::receiver_instruments::selection::qam(&query);
+        assert_eq!(scatter["available"], true);
+        let control = result
+            .job
+            .constellation
+            .as_ref()
+            .unwrap()
+            .ncp_pairs
+            .first()
+            .expect("Actual CRC-classified NCP");
+        let ncp_query = crate::receiver_instruments::selection::Query {
+            signal: 1,
+            first_bin: i32::from(control.physical_bin),
+            last_bin: i32::from(control.physical_bin),
+            first_symbol: control.channel_symbol_index as i64,
+            last_symbol: control.channel_symbol_index as i64,
+            ..Default::default()
+        };
+        let scatter = crate::receiver_instruments::selection::qam(&ncp_query);
+        assert_eq!(scatter["available"], true);
+        assert_eq!(scatter["points"][0]["bin"], control.physical_bin);
+        let empty_query = crate::receiver_instruments::selection::Query {
+            first_bin: 8191,
+            last_bin: 8191,
+            ..Default::default()
+        };
+        assert_eq!(
+            crate::receiver_instruments::selection::qam(&empty_query)["points"],
+            serde_json::json!([])
+        );
+        let decisions = crate::receiver_instruments::diagnostics::slicer("{}", false).unwrap();
+        assert!(!decisions["rows"].as_array().unwrap().is_empty());
+        assert!(decisions["llr"]["count"].as_u64().unwrap() > 0);
+        let coding = crate::receiver_instruments::diagnostics::slicer("{}", true).unwrap();
+        assert_eq!(coding["llr"]["count"], 16200);
+        assert_eq!(
+            crate::receiver_instruments::diagnostics::response("{}").unwrap()["available"],
+            true
+        );
+        assert_eq!(
+            crate::receiver_instruments::diagnostics::response(r#"{"source":1}"#).unwrap()
+                ["available"],
+            false
+        );
+        assert_eq!(
+            crate::receiver_instruments::diagnostics::fec()["compared_bits"],
+            result.job.summary.comparison.bits_tested
+        );
         model.invalidate();
         assert!(latest().is_none());
+        assert_eq!(
+            crate::receiver_instruments::selection::qam(&query)["available"],
+            false
+        );
     }
 }

@@ -17,12 +17,12 @@ PLC message CRC rejection and optional probe failures/budget exhaustion. Log sca
 counts/status/error codes, no data arrays, frame bytes, MACs or provenance dumps.
 Input/CRC rejection and expected decoder failures are debug, not application error.
 Terminal failures log once at CLI boundary; only separately suppressed failures
-need their own error record. Preserve Result and scientific outputs; logging is
+need their own error record. Preserve Result and simulation outputs; logging is
 not a success flag, cancellation or probe replacement. No loop info/warn floods.
 
 Testing: spawned CLI stderr/stdout/filter/error behavior, no-clobber output, same
-scientific results with logs enabled/disabled (exclude elapsed time), facade record
-ownership/levels and no global library initialization. Whole existing scientific
+simulation results with logs enabled/disabled (exclude elapsed time), facade record
+ownership/levels and no global library initialization. Whole existing simulation
 suite and analysis-only gate remain required. Update architecture/checklist/docs
 and coding-style skill; no commit/push or global system installation.
 
@@ -35,7 +35,7 @@ The active dependency graph has no enabled regex/color/time backend feature;
 Cargo.lock also records optional regex packages from resolver metadata.
 
 Four new tests pass:3 isolated CLI tests and1 consumer-owned facade test. CLI
-filters include default,debug,off and module selection; scientific JSON matches
+filters include default,debug,off and module selection; simulation JSON matches
 apart from elapsed_ms. Error status/destination protection remain unchanged.
 Full pre-push gate passed, along with analysis-only warnings-denied Clippy.
 Coding-style skill validates through canonical and both discovery paths. Changed
@@ -45,4 +45,4 @@ smoke run; explicit default tests remove that inherited setting per child proces
 
 Updated architecture, checklistQA-08, coding style, CLI docs, build docs and the
 logging guide. No log files are automatically created and no logger is installed
-by either scientific library. NEXT-09 PLC block interleaving stays pending.
+by either simulation library. NEXT-09 PLC block interleaving stays pending.

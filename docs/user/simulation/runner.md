@@ -1,7 +1,7 @@
 # Experiment-runner design
 
 The root simulation files coordinate the existing bounded16-QAM coding experiment.
-They separate configuration policy, scientific execution and result accounting.
+They separate configuration policy, simulation execution and result accounting.
 They are distinct from the now-implemented [channel job/CLI](../channel-runner/cli.md),
 which supplies the duration-based OFDM waveform path.
 
@@ -24,7 +24,7 @@ limit, runtime budget and noise choice. Inputs are validated before execution.
 Optional measured RxMER supplies residual noise at the existing equalized-cell
 reference plane; channel-estimate gain is not added again to those measurements.
 
-The runner connects reusable scientific stages. It retains original payloads
+The runner connects reusable simulation stages. It retains original payloads
 for comparisons, records each completed trial and checks cancellation/runtime
 between codewords. A bounded word already in progress may complete after a stop
 request. Codec setup occurs before the trial timer starts.

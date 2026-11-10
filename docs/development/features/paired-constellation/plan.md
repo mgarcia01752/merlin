@@ -174,7 +174,7 @@ no UI, binding, installer or new platform claim.
    pairwise admission, requested count, finite pending storage and partial results.
 3. **CONST-03: shared API and CLI export.** Opt-in channel capture, bounded JSON
    output and no-clobber behavior; direct Rust consumers receive the same data.
-4. **CONST-04: scientific/invariance validation.** Known H-only distortion/correction,
+4. **CONST-04: simulation/invariance validation.** Known H-only distortion/correction,
    measured residuals, failure unbiasedness and unchanged decoder outcomes.
 5. **CONST-05: user guide and reproducible demo.** Generate actual 8,192-pair
    artifacts with exact input settings/provenance and CLI instructions; update
@@ -208,4 +208,4 @@ Reviewed the actual imported-response, waveform receiver, probe producers and
 channel/CLI module layout. Checked public Markdown target paths, balanced fences,
 control characters, unique pending CONST IDs and retained open MODEL-05/WAVE-RX-05
 status. Checked whitespace. No Rust source, CLI behavior or simulation results
-changed; no scientific tests or Mermaid rendering were run for this plan.
+changed; no numerical tests or Mermaid rendering were run for this plan.

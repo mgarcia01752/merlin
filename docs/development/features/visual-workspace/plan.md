@@ -10,7 +10,7 @@ a focused pop-up dialog; implementation proceeds left to right from OFDM Setting
 The user's updated system sketch, including the OFDM transmission settings panel,
 is the starting layout, rather than a final screen
 specification. The application remains a standalone MERLIN simulator. Existing
-Rust scientific stages and test points own all computation; Qt presents them.
+Rust simulation stages and test points own all computation; Qt presents them.
 
 ## Workspace concept
 
@@ -137,7 +137,7 @@ noise. Configuration changes apply to a new run, never an active session.
 - Keep generation, byte-to-bit conversion, source accounting, verification and
   simulation lifecycle in Rust source/runner owners. Preserve separate independent
   source/channel RNG state and existing PRBS results.
-- Keep Qt view state and file dialogs outside scientific modules. Run bounded jobs
+- Keep Qt view state and file dialogs outside simulation modules. Run bounded jobs
   away from the UI thread; preserve cancellation and partial-result semantics.
 - Bind analyzers to shared result/probe contracts. Opening, closing or refreshing
   a panel must not alter noise draws, transmitted bits or decoder decisions.

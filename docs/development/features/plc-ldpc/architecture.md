@@ -45,7 +45,7 @@ structured errors/failure decisions. All nine new tests pass.
 A preliminary test incorrectly assumed all-zero LLRs converge to a zero word;
 the actual decoder does not converge in that case. The final truth test instead
 uses likelihoods for a different valid codeword; no production algorithm was
-changed to force a tie result. This preserves the intended scientific distinction.
+changed to force a tie result. This preserves the intended simulation distinction.
 
 Full pre-push gate passed, including workspace and analysis-only tests, warnings-
 denied Clippy, helper/shell checks, release CLI build and smoke run. Separate

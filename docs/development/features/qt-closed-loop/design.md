@@ -1,3 +1,5 @@
+Current receiver instrument follow-up: [completed views and selectors](../receiver-instruments/design.md). Earlier pending statements record the original task stage.
+
 # Qt closed-loop execution
 
 Active tasks: UI-RUN-01, UI-RX-CONFIG-01, UI-VERIFY-01, UI-SA-05 data and
@@ -48,7 +50,7 @@ reserves retention for observation samples, excluding acquisition warm-up.
 ## UI-SA-05 / UI-QAM-01 data
 
 `receiver_instruments/views.rs` queries the same immutable result. Payload/PLC
-pairs and four RX test points are bounded; scientific PSD/FFT power and axes use
+pairs and four RX test points are bounded; simulation PSD/FFT power and axes use
 existing Rust APIs. QML draws returned points only. NCP matched I/Q, arbitrary
 carrier/time selection, channel-response/echo and slicer detail renderers remain
 pending; their windows do not fabricate results.

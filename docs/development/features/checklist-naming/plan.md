@@ -8,14 +8,14 @@
 Rename the maintained PLC-series NEXT identifiers to PLC, preserving their numbers,
 status and existing07A extension. Apply stable component-local prefixes to future
 checklist groups through the architecture and coding-style skill. Keep
-RX-CONFIG-01 as the next prerequisite; no scientific or scheduling change.
+RX-CONFIG-01 as the next prerequisite; no simulation or scheduling change.
 Also correct the stale common-observer producer count in the checklist.
 
 Validation: check unique IDs and unchanged checkbox statuses, no old numbered
 NEXT references in maintained docs/skills, relative links and whitespace; validate
 canonical coding-style skill and both discovery links. No Rust source changes.
 
-Follow-up: split the scientific foundation into seven component sections, place
+Follow-up: split the signal-processing foundation into seven component sections, place
 each user-guide link with its own items and preserve every checkbox/ID/item text.
 
 Follow-up: separate transforms, prefix, transmit window/overlap, reference channel,

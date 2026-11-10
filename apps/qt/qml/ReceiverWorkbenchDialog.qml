@@ -6,9 +6,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Dialog {
+WorkbenchDialog {
     id: dialog
-    required property var theme
     required property var backend
     required property var runState
     property string seenToken: ""
@@ -16,13 +15,15 @@ Dialog {
     onRunStateChanged: { if (runState.result_token !== seenToken) { seenToken=runState.result_token || ""; qam.refresh(); selectTap(selectedTap) } }
     property alias qamPopup: qam
     property alias spectrumPopup: spectrum
-    property alias diagnosticPopup: diagnostic
+    property alias responsePopup: response
+    property alias slicerPopup: slicer
+    property alias fecPopup: fec
     property int selectedTap: 0
     property var spectrumState: ({has_result: false, can_generate: false, busy: false})
     function openQam(signal, view) { qam.signalIndex = signal; qam.viewIndex = view; qam.open() }
     function selectTap(index) { if (!backend) { return }; selectedTap = index; spectrum.clearView(); spectrumState = JSON.parse(backend.spectrum(index)); spectrum.updateResult() }
     function openSpectrum(index) { selectTap(index); spectrum.open() }
-    function showDiagnostic(name, point, detail) { diagnostic.showInstrument(name, point, detail) }
+    function openSlicer() { slicer.useSelection(qam.selectionControls.query()); slicer.open() }
     title: "Receiver Workbench"
     parent: Overlay.overlay; anchors.centerIn: parent
     width: Math.min(1140, parent ? parent.width - 40 : 1140)
@@ -31,7 +32,7 @@ Dialog {
     closePolicy: Popup.CloseOnEscape
     contentItem: ColumnLayout {
         spacing: 14
-        RowLayout { Layout.fillWidth:true; Label { text: "Receiver Signal Path"; font.pixelSize:19; font.bold:true; color:dialog.theme.text; Layout.fillWidth:true } Button { objectName:"receiverConfigure"; text:"Configure Receiver / Run…"; onClicked:dialog.configurationRequested() } }
+        RowLayout { Layout.fillWidth:true; Label { text: "Receiver Signal Path"; font.pixelSize:19; font.bold:true; color:dialog.theme.text; Layout.fillWidth:true } Button { objectName:"receiverFecShortcut"; text:"FEC Statistics"; onClicked:fec.open() } Button { objectName:"receiverConfigure"; text:"Configure Receiver / Run…"; onClicked:dialog.configurationRequested() } }
         Label { text: "Configure the next run, then inspect actual retained receiver observations."; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         Rectangle {
             Layout.fillWidth: true; Layout.preferredHeight: 142
@@ -52,7 +53,7 @@ Dialog {
                 Label { text: "→"; color: dialog.theme.muted; font.pixelSize: 18; Layout.alignment: Qt.AlignTop; Layout.topMargin: 26 }
                 ColumnLayout {
                     Layout.fillWidth: true; Layout.preferredWidth: 1; Layout.minimumWidth: 0; spacing: 10
-                    ReceiverChip { theme: dialog.theme; text: "CH-EST /\nEqualizer"; Layout.fillWidth: true; stage: true; Layout.preferredHeight: 64; onClicked: dialog.showDiagnostic("Channel Response / Echo", "rx.channel_estimation.response", "Receiver-estimated H-hat is distinct from the channel-input response H. Response/echo result display is pending.") }
+                    ReceiverChip { theme: dialog.theme; text: "CH-EST /\nEqualizer"; Layout.fillWidth: true; stage: true; Layout.preferredHeight: 64; onClicked: response.open() }
                     ReceiverChip { theme: dialog.theme; text: "● Equalized I/Q"; Layout.preferredHeight: 28; Layout.fillWidth: true; onClicked: dialog.openQam(qam.signalIndex, 1) }
                 }
                 Label { text: "→"; color: dialog.theme.muted; font.pixelSize: 18; Layout.alignment: Qt.AlignTop; Layout.topMargin: 26 }
@@ -64,7 +65,7 @@ Dialog {
                 Label { text: "→"; color: dialog.theme.muted; font.pixelSize: 18; Layout.alignment: Qt.AlignTop; Layout.topMargin: 26 }
                 ColumnLayout {
                     Layout.fillWidth: true; Layout.preferredWidth: 1; Layout.minimumWidth: 0; spacing: 10
-                    ReceiverChip { theme: dialog.theme; text: "Soft Demap /\nDecode"; Layout.fillWidth: true; stage: true; Layout.preferredHeight: 64; onClicked: dialog.showDiagnostic("Slicer / LLR", "rx.ncp.llrs · rx.data.llrs", "Soft demapping uses received I/Q, not hard-slicer decisions. NCP, PLC and payload have separate decode paths.") }
+                    ReceiverChip { theme: dialog.theme; text: "Soft Demap /\nDecode"; Layout.fillWidth: true; stage: true; Layout.preferredHeight: 64; onClicked: dialog.openSlicer() }
                     Label { text: "Branch-specific FEC"; color: dialog.theme.muted; Layout.fillWidth: true; Layout.preferredHeight: 28; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; font.pixelSize: 11 }
                 }
             }
@@ -84,9 +85,9 @@ Dialog {
                 Label { text: "Diagnostic Instruments"; color: dialog.theme.text; font.bold: true }
                 RowLayout {
                     ReceiverChip { theme: dialog.theme; objectName: "receiverSa"; text: "Spectrum Analyzer"; Layout.fillWidth: true; onClicked: dialog.openSpectrum(dialog.selectedTap) }
-                    ReceiverChip { theme: dialog.theme; text: "Channel Response / Echo"; Layout.fillWidth: true; onClicked: dialog.showDiagnostic("Channel Response / Echo", "rx.channel_estimation.response", "Inspect estimated response H-hat and delay/echo results independently of spectral power. Result connection is pending.") }
-                    ReceiverChip { theme: dialog.theme; text: "Slicer / LLR"; Layout.fillWidth: true; onClicked: dialog.showDiagnostic("Slicer / LLR", "rx.slicer.decisions · rx.ncp.llrs · rx.data.llrs", "Slicing is an optional diagnostic. The registered NCP/data soft records are separate from I/Q; streamed slicer decisions are still pending.") }
-                    ReceiverChip { theme: dialog.theme; text: "FEC Monitor"; Layout.fillWidth: true; onClicked: dialog.showDiagnostic("FEC Monitor", "Receiver decoder outcomes", "Inspect actual decoder iterations and failures from the closed loop. PRBS comparison applies to recovered payload only.") }
+                    ReceiverChip { theme: dialog.theme; text: "Channel Response / Echo"; Layout.fillWidth: true; onClicked: response.open() }
+                    ReceiverChip { theme: dialog.theme; text: "Slicer / LLR"; Layout.fillWidth: true; onClicked: dialog.openSlicer() }
+                    ReceiverChip { theme: dialog.theme; text: "FEC Monitor"; Layout.fillWidth: true; onClicked: fec.open() }
                 }
             }
         }
@@ -94,7 +95,9 @@ Dialog {
         Label { text: dialog.runState.result ? "Run "+dialog.runState.result.status+" · instrument selection reads retained results" : "Configure Receiver and enable PRBS-RX comparison before Start. Analyzers do not gate readiness."; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 12 }
     }
     ReceiverQamDialog { id: qam; theme: dialog.theme; backend: dialog.backend }
-    ReceiverDiagnosticDialog { id: diagnostic; theme: dialog.theme; runState: dialog.runState }
+    ReceiverResponseDialog { id:response;theme:dialog.theme;backend:dialog.backend;runState:dialog.runState }
+    ReceiverSlicerDialog { id:slicer;theme:dialog.theme;backend:dialog.backend;runState:dialog.runState }
+    ReceiverFecDialog { id:fec;theme:dialog.theme;backend:dialog.backend;runState:dialog.runState }
     QtObject {
         id: spectrumProxy
         function cancel() {}

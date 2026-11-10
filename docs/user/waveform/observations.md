@@ -8,7 +8,7 @@ state and cannot change overlap, framing, samples or decoder decisions.
 flowchart LR
     RESULT["Completed TX, channel or RX boundary"] --> SELECT["Finite stage, symbol and element selector"]
     SELECT --> BUDGET["Event and total-element budgets"] --> SINK["Borrowed read-only callback"]
-    RESULT --> NEXT["Subsequent scientific processing remains independent"]
+    RESULT --> NEXT["Subsequent signal processing remains independent"]
 ```
 
 | Direction | IDs | Domain |

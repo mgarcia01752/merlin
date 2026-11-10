@@ -5,9 +5,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-Dialog {
+WorkbenchDialog {
     id: dialog
-    required property var theme
     required property var configuration
     signal rxmerRequested()
     signal responseRequested()

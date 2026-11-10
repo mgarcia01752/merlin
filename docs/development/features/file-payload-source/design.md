@@ -23,7 +23,7 @@ flowchart LR
 `simulation/source/file/config.rs` owns validated immutable original bytes and
 optional fill policy. Reference-counted storage shares the original input across
 configuration, generation and truth without sharing mutable state. Neither raw
-bytes nor filesystem paths enter serialized scientific settings/results.
+bytes nor filesystem paths enter serialized simulation settings/results.
 
 `file/generator.rs` owns the source cursor. File bytes are emitted MSB-first;
 text and binary inputs use the same path, preserving BOM, line endings, zeros and
@@ -68,7 +68,7 @@ output. Existing PRBS-only callers retain their default behavior.
 Application bounds are16MiB original input and134,217,728 total meaningful bits.
 These are resource policies, not DOCSIS file-size requirements. Empty input and
 equal-to-file fill targets are allowed; smaller/excessive targets and invalid
-fill seeds reject before scientific work. Automatic minimum/alignment or a target
+fill seeds reject before simulation work. Automatic minimum/alignment or a target
 inferred from channel/profile/duration is deferred. Qt selection/editing remains
 under UI-02 and must consume these same Rust decisions.
 

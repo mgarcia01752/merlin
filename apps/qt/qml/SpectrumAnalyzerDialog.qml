@@ -6,10 +6,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-Dialog {
+WorkbenchDialog {
     id: dialog
     objectName: "spectrumAnalyzerDialog"
-    required property var theme
     required property var backend
     required property var state
     property var viewport: ({points: [], x_ticks: [], y_ticks: []})

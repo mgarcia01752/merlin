@@ -16,7 +16,7 @@ public navigation; the [architecture](../../../architecture.md) and
 - Promote 45 authored records with historical-status banners, keeping copied
   specification text, images, captures and migration snapshots private.
 - Update runnable examples, local sweep launchers, agent instructions and skills
-  to use the new workspace; retain saved scientific result bytes and provenance.
+  to use the new workspace; retain saved simulation result bytes and provenance.
 - Link the public development entry point from the main README and maintained
   architecture/checklist. Add the ongoing workspace rules to development skills.
 
@@ -25,5 +25,5 @@ public navigation; the [architecture](../../../architecture.md) and
 Validate public Markdown targets and reject links into ignored local evidence.
 Verify the old root directory is absent, local artifacts remain ignored, public
 records remain trackable and both skill discovery paths validate. Check the
-relocated artifact hashes against the original manifest. No scientific algorithm,
+relocated artifact hashes against the original manifest. No simulation algorithm,
 input values, decoder outcomes or coding contracts change in this reorganization.

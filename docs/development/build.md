@@ -39,7 +39,7 @@ Cargo.lock pins the dependency graph. ldpc-toolbox0.10.1 was selected because
 newer inspected releases use Rust APIs unavailable on the pinned toolchain.
 BCH encoding and decoding are implemented in safe Rust. Upstream algorithm
 provenance and the retained MIT notice are described in NOTICE. No native codec
-build script, CXX bridge or C++ source is included in the scientific build.
+build script, CXX bridge or C++ source is included in the simulation build.
 The separate [Qt shell](qt.md) uses CXX-Qt only for presentation.
 
 A Rust-only build helper under `crates/ofdm/build/` validates and embeds the
@@ -81,7 +81,7 @@ incremental artifacts for that command only:
 CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 ./scripts/check-before-push.sh
 ```
 
-This runs the same checks; it changes build metadata/cache size, not scientific
+This runs the same checks; it changes build metadata/cache size, not simulation
 algorithms. Normal development can keep debug information enabled. The repository's
 ignored `docs/development/local/` stores private validation logs and generated outputs.
 The [workspace guide](README.md) explains where ongoing development belongs.
@@ -106,7 +106,7 @@ in Cargo.lock. The optional presentation-only plot helper uses Matplotlib3.10.8
 in ignored `local/doc-plots/`; no system installation is required. See the
 [paired constellation guide](../user/impairments/paired-constellation.md#reproduce-the-documentation-plot)
 for isolated setup and rendering commands. All DSP, impairment generation and
-scientific results still come from Rust. The release gate now also checks8192
+simulation results still come from Rust. The release gate now also checks8192
 paired samples in its existing measured channel smoke run.
 
 ## Native CLI delivery checks

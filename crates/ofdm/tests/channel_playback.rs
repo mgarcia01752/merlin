@@ -144,3 +144,39 @@ fn phase_filter_does_not_spend_the_observation_budget_on_warmup() {
         .unwrap();
     assert_eq!(probe.stats().dispatched_events, 1);
 }
+
+#[test]
+fn per_stage_limit_preserves_remaining_global_observation_budget() {
+    let mut probe = TestPointProbe::new(ProbeConfig {
+        selections: vec![ProbeSelection {
+            stage: TestPointId::SourcePayload,
+            elements: 0..1,
+            source_symbols: None,
+            channel_symbols: None,
+        }],
+        max_events: 2,
+        max_elements_per_event: 1,
+        max_total_elements: 2,
+    })
+    .unwrap();
+    probe
+        .limit_stage_events(TestPointId::SourcePayload, 1)
+        .unwrap();
+    let context = ProbeContext::new("run", "settings", RunPhase::Observation).unwrap();
+    for _ in 0..3 {
+        probe
+            .emit(
+                TestPointId::SourcePayload,
+                &context,
+                SignalDomain::CodewordBit,
+                ProbeData::Bits(&[1]),
+                &mut NoopObserver,
+            )
+            .unwrap();
+    }
+    assert_eq!(probe.stats().dispatched_events, 1);
+    assert_eq!(probe.stats().dispatched_elements, 1);
+    assert!(probe
+        .limit_stage_events(TestPointId::SourcePayload, 2)
+        .is_err());
+}

@@ -3,7 +3,7 @@
 The user-defined minimum is MERLIN TX → channel → MERLIN RX → original-source
 comparison. The following existing tests passed in the local workspace regression
 on Ubuntu22.04 x64 with pinned Rust/Cargo1.85.1. Scope clarification changes only
-documentation and test policy; no new scientific run is claimed for this edit.
+documentation and test policy; no new simulation run is claimed for this edit.
 
 | Coverage | Evidence |
 | --- | --- |

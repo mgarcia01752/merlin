@@ -4,8 +4,7 @@
  */
 import QtQuick
 import QtQuick.Controls
-Dialog {
-    required property var theme
+WorkbenchDialog {
     property string message: ""
     title:"MERLIN Workbench File"
     parent:Overlay.overlay; anchors.centerIn:parent

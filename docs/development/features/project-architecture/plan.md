@@ -23,7 +23,7 @@ observation design. Mark planned modules explicitly; do not create empty Rust
 files. Record next-step PHY evidence/acceptance TODO before implementing pilots/
 PLC. Update README and coding-style/public-api routing as appropriate. Validate
 Markdown links and modified canonical/discovery skill paths. No Rust changes or
-full scientific rerun needed for this documentation-only delta.
+full simulation rerun needed for this documentation-only delta.
 
 ## Completed
 

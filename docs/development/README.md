@@ -58,3 +58,5 @@ paths explicitly; a fresh clone does not include the ignored evidence directory.
 There is no longer a separate root development workspace.
 
 [Security checks](security.md) describe CodeQL, RustSec and local dependency audits.
+
+Receiver instrument completion: [design](features/receiver-instruments/design.md) · [user guide](../user/receiver-workbench.md).

@@ -1,6 +1,6 @@
 ---
 name: coding-style
-description: Apply DOCSIS OFDM Channel Sim coding conventions when writing, modifying, or reviewing project-owned code, including SPDX headers, full public-function documentation banners, multiline branches and focused Rust scientific modules.
+description: Apply DOCSIS OFDM Channel Sim coding conventions when writing, modifying, or reviewing project-owned code, including SPDX headers, full public-function documentation banners, multiline branches and focused Rust simulation modules.
 ---
 
 # DOCSIS OFDM Channel Sim coding style
@@ -47,9 +47,14 @@ Review these links and the final design before supplying a commit message.
 Existing records named architecture.md or plan.md can remain linked historical
 references; do not rename or duplicate the entire archive to satisfy this rule.
 
+In MERLIN-authored documentation, use “simulation” for engine state, runs and
+results, “signal processing” for DSP stages/core ownership, and “numerical” for
+calculations, accuracy and quantitative checks. Preserve code identifiers,
+canonical skill paths and quoted specification titles.
+
 ## Per-model and module user guides
 
-Each substantive scientific model or processing module must have its own user
+Each substantive simulation model or processing module must have its own user
 page explaining its design under `docs/user/<feature>/`. Keep a feature index
 linking those pages; do not grow one undifferentiated guide for every component.
 For simulation components, use `docs/user/simulation/` as the starting example.
@@ -80,7 +85,7 @@ never present them as runtime evidence. Documentation-only planning changes do
 not require a Qt rebuild or a fabricated screenshot. Preserve the application's
 existing light-theme support unless the user requests a behavior change.
 
-## Scientific stage modules and test points
+## Signal-processing stage modules and test points
 
 Give each distinct processing stage a focused Rust module and a directly testable
 typed input/output API. Stateful stages own explicit state; stateless algorithms
@@ -89,7 +94,7 @@ Expose intermediate results at stage boundaries so callers and optional observer
 can inspect data without duplicating algorithms, printing inside DSP code or
 accessing mutable internals. Keep test-point metadata explicit about units,
 normalization, source/channel phase, shape and startup/drain validity; bound
-optional snapshots and prove observation preserves scientific behavior.
+optional snapshots and prove observation preserves simulation behavior.
 
 When the user says "next", select the next unfinished checklist/architecture
 item in dependency order. Report the active item ID and name in progress updates
@@ -249,7 +254,7 @@ Use domain types when they prevent mixing unrelated identities. Do not wrap ever
 counter or text string. Do not create closed enums for extensible domains without
 an explicit unknown/unsupported path.
 
-## Scientific ownership and named constants
+## Simulation ownership and named constants
 
 Verify protocol constants against the applicable pinned PHY or OSSI source.
 Do not promote PyPNM behavior to normative requirements or change its checkout.
@@ -261,8 +266,8 @@ application limits. Keep application safety limits distinct from protocol limits
 Centralize definitions only when semantics actually match. Mathematical zeroes
 and tiny obvious loop origins need no artificial constants.
 
-Use focused snake_case Rust modules and UpperCamelCase types. Scientific code
-must not depend on Qt, a transport or application state. Scientific crates forbid
+Use focused snake_case Rust modules and UpperCamelCase types. Signal-processing code
+must not depend on Qt, a transport or application state. Simulation crates forbid
 unsafe code; keep codecs and DSP in Rust and preserve upstream notices.
 
 ## JSON contracts and calculation ownership
@@ -272,7 +277,7 @@ Rust serialization/analysis helper. CLI and desktop exports must use that same
 contract; do not add, rename or calculate measurement fields in Qt/QML
 or CLI-specific post-processing. Reuse the existing analysis before adding a
 second calculation. All measurement math, derived rates, unit conversions and
-scientific aggregation belong in Rust; UI code presents the supplied values.
+simulation aggregation belong in Rust; UI code presents the supplied values.
 Transient selection and layout arithmetic remain UI concerns.
 
 For JSON changes, verify both core serialization and actual CLI output, keep
@@ -293,7 +298,7 @@ capture workflows, and no transfer of simulation/DSP/FEC ownership out of Rust.
 The user accepted GPL reuse for the Qt application. Preserve GPL-3.0-only on
 copied viewer desktop/UI code, original copyrights, third-party licenses and
 applicable NOTICE content; do not relabel copied code Apache-2.0. Use GPL-3.0-only
-for the MERLIN Qt application incorporating it. Independent scientific libraries
+for the MERLIN Qt application incorporating it. Independent signal-processing libraries
 and project-owned development tooling remain Apache-2.0. Inspect each selected
 file's actual license before copying, and record source path, revision and local
 adaptations in the UI design record. Reuse is planned until inspected and tested.
@@ -302,7 +307,7 @@ adaptations in the UI design record. Reuse is planned until inspected and tested
 
 For UI-only iterations, build/check the Qt adapter and run relevant presentation
 checks. Do not compile/test the non-Qt workspace every time; expand validation
-only for affected shared/scientific code, dependencies or integration contracts.
+only for affected shared/signal-processing code, dependencies or integration contracts.
 This does not weaken required push/release gates. Preserve Cargo target outputs,
 dependency caches and stable build settings so Cargo reuses unchanged compiled
 code for linking. Avoid routine cargo clean or output deletion. Leave a built
@@ -326,6 +331,13 @@ in focused modules; share reusable controls and core models without duplication.
 When adding, editing or removing a dialog, update its QML registration, callers,
 tests and user guide together so it can be maintained independently.
 
+Every MERLIN-owned popup dialog must use the shared `WorkbenchDialog` title
+header with an upper-right circular X close control. Keep its existing footer
+Close/Cancel/Apply buttons as well. X dismisses only that popup without applying
+drafts, preserving its cancellation and cleanup behavior. Give the X an accessible
+name, keyboard focus and theme-aware contrast. Native OS file pickers retain
+their native controls; menus and dropdown lists are not popup dialogs.
+
 ## UI titles, navigation and About
 
 Use a standard top menu bar and conventional File labels Open…, Save, Save As…
@@ -345,7 +357,7 @@ when changing workbench blocks. Keep headings only inside blocks. Use the shared
 status stripe and palette, with tooltip/accessibility reasons. New readiness rules
 belong in the architecture and owning task design/checklist, not scattered QML
 conditions. Keep this skill as workflow guidance rather than a second rule table.
-Scientific validation/outcomes come from Rust; selected filenames and application
+Numerical validation/outcomes come from Rust; selected filenames and application
 defaults must not imply validated inputs or a complete block. Preserve accepted
 state on rejected drafts. Update user docs and dark VM screenshots with changes.
 
@@ -362,13 +374,13 @@ without installing system packages or discarding build caches.
 ## Consumer boundaries
 
 Optional future presentation and Python adapters consume the same public Rust API.
-The toolkit owns scientific computation and typed results. Keep library inputs independent of
+The toolkit owns simulation computation and typed results. Keep library inputs independent of
 QML, GUI controls, filesystem paths and HTTP. Preserve bounded work, cancellation
 and partial-result semantics when refactoring.
 
 ## Rust logging and error ownership
 
-Use the standard `log` facade in scientific libraries; the executable owns backend
+Use the standard `log` facade in signal-processing libraries; the executable owns backend
 initialization. The CLI uses `env_logger` under `src/logging/`, with stderr output,
 default info and `RUST_LOG` module/level filters. Share the pinned facade through
 workspace dependencies. Libraries must not install/replace a global logger, read
@@ -381,7 +393,7 @@ logging environment variables, create log files or force a consumer's log level.
   generic error constructors. Add scalar context where the operation is known.
 - Use warn for degraded/partial operation such as runtime-budget exhaustion; info
   for command/run lifecycle; debug for input/CRC rejection, expected decoder
-  non-convergence and optional per-codeword progress. Scientific failure counts
+  non-convergence and optional per-codeword progress. Simulation failure counts
   stay in typed results; normal noisy-trial failures are not application errors.
 - Keep messages concise with action and named scalar fields/units. Do not print
   arrays, LLRs, frame bytes, source captures, MAC addresses, credentials or full
@@ -389,9 +401,9 @@ logging environment variables, create log files or force a consumer's log level.
 - Reserve stdout for help/version or intentional data output. Do not use println
   or eprintln for diagnostics except the CLI's pre-logger initialization fallback.
   Keep progress callbacks and typed test points independent of diagnostic logs.
-- Never change RNG draws, stage state, acceptance decisions or scientific results
+- Never change RNG draws, stage state, acceptance decisions or simulation results
   based on enabled log levels. Test filtering, stderr/error ownership, unchanged
-  outputs and no-clobber behavior. Compare scientific values separately from
+  outputs and no-clobber behavior. Compare simulation values separately from
   wall-clock elapsed time; logging can affect runtime-budget completion.
 
 See docs/development/logging.md for usage and current instrumentation scope.

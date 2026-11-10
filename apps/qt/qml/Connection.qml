@@ -12,6 +12,8 @@ Canvas {
     property real toX
     property real toY
     property bool comparison: false
+    property bool arrowHead: true
+    onArrowHeadChanged: requestPaint()
     onWidthChanged: requestPaint()
     onHeightChanged: requestPaint()
     onFromXChanged: requestPaint()
@@ -30,6 +32,9 @@ Canvas {
         }
         ctx.beginPath(); ctx.moveTo(fromX, fromY); ctx.lineTo(toX, toY); ctx.stroke()
         ctx.setLineDash([])
+        if (!arrowHead) {
+            return
+        }
         const angle = Math.atan2(toY - fromY, toX - fromX)
         ctx.beginPath(); ctx.moveTo(toX, toY)
         ctx.lineTo(toX - 10 * Math.cos(angle - 0.4), toY - 10 * Math.sin(angle - 0.4))

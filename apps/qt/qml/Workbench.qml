@@ -140,13 +140,13 @@ Item {
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 710; fromY: 235; toX: 845; toY: 235 }
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 300; fromY: 125; toX: 300; toY: 190 }
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 930; fromY: 190; toX: 930; toY: 125 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 385; fromY: 80; toX: 845; toY: 80; comparison: true }
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 300; fromY: 360; toX: 300; toY: 280 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 530; fromY: 360; toX: 580; toY: 280 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 725; fromY: 360; toX: 655; toY: 280 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 810; fromY: 385; toX: 930; toY: 280; comparison: true }
-                Label { x: 824; y: 324; width: 200; text: "Supplied H · reference correction"; color: theme.muted; font.pixelSize: 10 }
-                Label { x: 470; y: 48; width: 300; horizontalAlignment: Text.AlignHCenter; text: "Original ↔ recovered data comparison"; color: theme.muted; font.pixelSize: 12 }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 615; fromY: 125; toX: 615; toY: 190 }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 777.5; fromY: 360; toX: 777.5; toY: 325; arrowHead: false }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 680; fromY: 325; toX: 880; toY: 325; arrowHead: false }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 680; fromY: 325; toX: 680; toY: 280 }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 880; fromY: 325; toX: 880; toY: 280 }
+                Label { x: 652.5; y: 455; width: 250; horizontalAlignment: Text.AlignHCenter; text: "Supplied H · reference correction"; color: theme.muted; font.pixelSize: 10 }
                 WorkbenchBlock {
                     id: ofdmBlock; objectName: "ofdmBlock"; x: 10; y: 190; width: 140; height: 90
                     theme: workbench.theme; heading: "OFDM Channel\nDescriptor (OCD)"
@@ -197,14 +197,14 @@ Item {
                     onClicked: profileDialog.open()
                 }
                 WorkbenchBlock {
-                    id: channelEstimateBlock; objectName: "channelEstimateBlock"; x: 640; y: 360; width: 170; height: 90
+                    id: channelEstimateBlock; objectName: "channelEstimateBlock"; x: 692.5; y: 360; width: 170; height: 90
                     theme: workbench.theme; heading: "DS Channel Est."
                     blockStatus: workbench.measurementState.response.status
                     statusReason: workbench.measurementState.response.reason; inputBlock: true
                     onClicked: responseDialog.open()
                 }
                 WorkbenchBlock {
-                    id: rxmerBlock; objectName: "rxmerBlock"; x: 445; y: 360; width: 170; height: 90
+                    id: rxmerBlock; objectName: "rxmerBlock"; x: 530; y: 35; width: 170; height: 90
                     theme: workbench.theme; heading: "RxMER"
                     blockStatus: workbench.measurementState.rxmer.status
                     statusReason: workbench.measurementState.rxmer.reason; inputBlock: true

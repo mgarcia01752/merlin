@@ -7,7 +7,7 @@
 
 Scope: verified parity/twist/demux and standalone noiseless cell-stream loop.
 Not a full physical OFDM-symbol or1second waveform simulation. Existing16QAM CLI
-and golden scientific metrics must remain unchanged.
+and golden simulation metrics must remain unchanged.
 
 Evidence: local PHY I20 section7.5.4.3.1 Table24/25 PDF116 and7.5.5.2.1 Table32
 PDF121 delegates short256 to ETSI EN302769 V1.2.1 clauses6.1.3/6.2.1,

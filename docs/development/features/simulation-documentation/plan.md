@@ -13,4 +13,4 @@ binding details in the existing public API reference. Preserve focused stage gui
 Record receiver-owned descriptor configuration as unfinished prerequisite work.
 Enforce per-model/module design guides in the canonical coding-style skill and
 validate both discovery links. Validate Markdown links/fences and source alignment;
-no scientific implementation changes or unrelated test reruns are necessary.
+no simulation implementation changes or unrelated test reruns are necessary.

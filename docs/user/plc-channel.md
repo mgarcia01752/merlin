@@ -166,7 +166,7 @@ stages. Filters and budgets retain their existing limits. Codeword observations
 filter by their first channel symbol; preamble and physical-grid observations
 filter by the actual symbol. Selected windows retain original offsets, full PLC
 grid dimensions or physical spacing/frequency origin. Missing grid cells export
-as JSON null. Callback failures do not alter completed scientific results.
+as JSON null. Callback failures do not alter completed simulation results.
 
 Tests cover independent preamble columns,16-QAM coordinates and energy, standard
 CRC check strings, one-bit corruption in every packet byte, descriptor assignments,

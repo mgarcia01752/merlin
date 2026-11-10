@@ -82,7 +82,7 @@ Reuse `TransmissionSettings`, `ChannelDocument`, validated scenario/PNM imports,
 `ChannelRunSettings`, `run_channel`, `ChannelJobLimits` and `ChannelJobResult`.
 The binding maps structured `SimulationError` categories to Python exceptions,
 releases the interpreter lock during execution and owns conversions/lifetimes.
-No scientific calculation moves to Python. Start with synchronous execution;
+No numerical calculation moves to Python. Start with synchronous execution;
 plan progress/cancellation delivery against the Rust job contract before adding
 Python callbacks, threads or a persistent session. NumPy/zero-copy APIs are later
 work and require lifetime/layout evidence.

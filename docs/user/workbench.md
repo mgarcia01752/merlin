@@ -6,6 +6,14 @@ of the measurement-input blocks to open its section dialog. Close the dialog
 or press Escape to return. Use **Settings → Global → Light/Dark mode** to change the palette and icon
 across all windows. The change applies immediately and lasts for this session.
 
+Every popup has a circular **X** in its upper-right title bar, as well as its
+existing **Close** or **Cancel** button. X dismisses only the current popup;
+editor drafts are not applied. Closing a nested analyzer returns to its parent
+window and does not stop the main simulation. Escape remains available.
+Native file pickers use the operating system's own window controls.
+
+![Popup title bar with X and retained footer buttons](../images/workbench/popup-close-dark.png)
+
 The standard menu bar at the top is **File | Settings | About**. File contains
 **Open…**, **Save** and **Save As…** for self-contained `*.merlin.json` workbenches.
 Original PNM/payload bytes and accepted block settings are embedded; see the
@@ -26,11 +34,17 @@ QAM selection and an independent SA test-point selector.
 DPD and measurement blocks support capture input. Configure Receiver and enable
 PRBS-RX independent comparison to complete next-run readiness. The lower-right
 Start, Stop and Pause/Resume controls now drive a bounded Rust closed-loop worker.
-Receiver instruments read real retained observations; NCP scatter collection is
-still pending.
+Receiver instruments read real retained observations, including matched NCP
+constellations and bounded profile/bin/symbol selection.
 
-Development proceeds left to right from OFDM Channel Descriptor (OCD). The PRBS-TX/PRBS-RX
-connection means original/recovered data comparison, not receiver feedback.
+Development proceeds left to right from OFDM Channel Descriptor (OCD). RxMER sits
+above Channel Simulator and points down into it. DS Channel Estimate sits below
+the gap between Channel Simulator and Receiver; its connection splits to both.
+Click either input block to edit its existing configuration. The top dashed
+comparison line is removed; PRBS-RX still controls independent original/recovered
+verification through its dialog.
+
+![Measurement inputs on the workbench](../images/workbench/workbench-input-layout-dark.png)
 Measurement input blocks will use supported decoded PNM JSON. The existing
 [channel CLI](channel-runner/cli.md) remains available for actual simulations.
 

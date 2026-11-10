@@ -98,7 +98,7 @@ frame or its boosted pilots.
 analysis-only build with default features disabled.
 
 With the `simulation` feature, `simulation::pilots::PilotGenerator` composes those
-operations into a `PilotStageResult`. Generate the scientific result first;
+operations into a `PilotStageResult`. Generate the simulation result first;
 `observe` optionally dispatches immutable views afterward. Observation cannot
 modify the result or generator. A callback failure returns an error while the
 caller retains the completed result.
@@ -146,7 +146,7 @@ without implicit retry. `PilotGenerator::observe` stops on the first error.
 
 Event data and context are borrowed only for the callback. The observer owns any
 copies it elects to retain. The dispatcher stores configuration and counters,
-not scientific arrays, and receives no RNG state. The example sink demonstrates
+not simulation arrays, and receives no RNG state. The example sink demonstrates
 bounded JSON copies. The [PLC interleaver](plc-interleaving.md) adds label events with optional
 `plc_grid` context; pilot contexts leave it unset. General CLI/file export,
 other stage producers and runner
@@ -157,7 +157,7 @@ cancellation policy remain on the checklist.
 Separate tests cover published sequence bits, an independently transcribed
 13-stage diagram, the8191-state period, both FFT sizes, signs, amplitude/power,
 all128 pilot phases, protected-role collisions, invalid inputs, bounded callback
-behavior and unchanged scientific results with observation enabled or disabled.
+behavior and unchanged simulation results with observation enabled or disabled.
 The pilot generator uses no RNG; invariance for future RNG-driven producers must
 be tested when those producers are added.
 

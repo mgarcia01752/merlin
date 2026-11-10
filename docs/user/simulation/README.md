@@ -15,7 +15,7 @@ Start with the component you want to understand:
 | `waveform/` | [Waveform TX/channel/RX](../waveform/README.md) | Separate sample-domain stages, known-reference receive and bounded actual PLC verification |
 | `channel/` | [Duration-based channel](../channel-runner/README.md) | Duration plan, source-window metrics, bounded cancellable jobs and CLI results |
 | `payload/` | [Actual payload/NCP transport](../payload-transport/README.md) | Continuous TX/RX, received configuration, bounded recovery and waveform proof |
-| `test_points/` | [Stage observations](test-points.md) | Inspect/export bounded selected intermediates without changing scientific state |
+| `test_points/` | [Stage observations](test-points.md) | Inspect/export bounded selected intermediates without changing simulation state |
 | `config.rs`, `runner.rs`, `results.rs` | [Experiment runner](runner.md) | Validate limits, run the existing16-QAM trials and collect outcomes |
 
 These are design guides. Method signatures and binding details belong in the

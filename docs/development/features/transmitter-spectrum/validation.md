@@ -2,7 +2,7 @@
 
 Validated locally on Ubuntu 22.04 x64 with Qt 6.8.3 on 2026-11-09.
 
-- Scoped scientific tests: 7 passed (spectrum, actual transmitter preview and
+- Scoped numerical tests: 7 passed (spectrum, actual transmitter preview and
   existing waveform transforms). Independent tone power, Parseval normalization,
   Hann bandwidth and both FFT spacings are covered.
 - Generic spectrum without simulation features: 2 passed. The existing
@@ -32,7 +32,7 @@ advisory suppression or new audit-scan result is claimed here.
 UI-SA-03 follow-up: removed lower-panel text and updated actual baseband/mapped
 VM screenshots. The button now reads Run simulation and its tooltip explains
 the transmitter-only scope. The updated QML suite passes all 21 checks. The
-latest Qt executable is rebuilt; no scientific code or dependency changes were
+latest Qt executable is rebuilt; no signal-processing code or dependency changes were
 needed for this presentation revision. UI-SA-04's timing/cable graphic is labeled
 a proposal and is not runtime evidence.
 

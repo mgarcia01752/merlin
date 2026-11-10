@@ -33,9 +33,9 @@ probe, using only the owned test process and ignored development outputs.
 
 438 local doc link paths and balanced fences checked. New Mermaid diagrams inspected
 as source, not rendered. User block diagram recorded as later impairment reference.
-Architecture and checklist updated; next scientific work remains MODEL-04.
+Architecture and checklist updated; next simulation work remains MODEL-04.
 
-Initial gate failed for disk exhaustion, not scientific tests. Removed only this
+Initial gate failed for disk exhaustion, not numerical tests. Removed only this
 checkout's generated debug profile via cargo clean --profile dev (15.4GiB), preserving
 source, downloads and release artifacts. Successful full gate used command-local
 CARGO_INCREMENTAL=0 CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0 to reduce

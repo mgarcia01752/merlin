@@ -4,7 +4,7 @@ On2026-11-09 the user clarified that MERLIN is a closed loop using its own TX,
 channel and RX. QA-05 now closes through [internal end-to-end validation](../closed-loop-validation/validation.md).
 Independent instrument/reference-tool data is not part of minimum acceptance.
 The requirements below are retained only for optional future interoperability
-work. The existing admission tool checks provenance/integrity, not scientific
+work. The existing admission tool checks provenance/integrity, not simulation
 results, and is not a required minimum workflow.
 
 If that optional scope is requested later, obtain one reproducible dataset from an independent CMTS/reference implementation,
@@ -42,7 +42,7 @@ python3 tools/validation/admit_external_vectors.py \
 
 The report status is deliberately `admitted_unexecuted`: it checks declared
 provenance/file integrity only. It does not authenticate the source or interpret
-scientific payloads. No external-vector replay adapter or scientific comparison
+simulation payloads. No external-vector replay adapter or simulation comparison
 has been implemented from an absent format. Once actual artifacts arrive, add a
 Rust replay adapter for their specified encoding and compare raw transforms,
 control, soft decisions, corrected samples, recovered payload and decoder outcomes

@@ -3,7 +3,7 @@
 The channel session connects the completed transmitter and receiver stages into
 one continuous downstream OFDM experiment. Select a duration before construction;
 the initial default is one simulated second. Calls advance one complete OFDM
-symbol at a time, keeping all scientific state between calls. Simulated duration
+symbol at a time, keeping all simulation state between calls. Simulated duration
 is independent of how long the host takes to calculate it.
 
 ```mermaid

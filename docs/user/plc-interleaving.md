@@ -119,7 +119,7 @@ adapter checks matching channel index/PLC phase and supplies grid metadata;
 unknown source identities remain unknown. Codeword IDs are diagnostic metadata
 and are not receiver inputs.
 
-Completed scientific results exist before observation. Disabled, filtered and
+Completed simulation results exist before observation. Disabled, filtered and
 budget-exhausted outcomes leave them unchanged; callback errors propagate without
 retry, consuming the existing dispatch budget. No callback gets mutable stage
 state. The [common observer limits](pilot-signals.md#direct-apis-and-observation)

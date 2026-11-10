@@ -36,7 +36,7 @@ Configuration permits one or two frames, bounded chunk sizes and explicit sample
 origin/reference RMS. It retains only a symbol's stage buffers, a PLC frame and
 bounded receive/overlap state; it does not retain an entire second of samples.
 No random draw, host time, RF device, filesystem capture or Python sidecar enters
-the scientific runner. Callback failures stop this short synchronous experiment;
+the simulation runner. Callback failures stop this short synchronous experiment;
 this is not the cancellable production runner with partial-job result accounting.
 
 The example uses a 24MHz synthetic active envelope. Transform/window unit tests

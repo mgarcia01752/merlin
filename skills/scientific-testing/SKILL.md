@@ -1,9 +1,9 @@
 ---
 name: scientific-testing
-description: Add or review codec, DSP, profile evaluation and interoperability tests in DOCSIS OFDM Channel Sim. Use for scientific changes and input-format contracts.
+description: Add or review codec, DSP, profile evaluation and interoperability tests in DOCSIS OFDM Channel Sim. Use for signal-processing changes and input-format contracts.
 ---
 
-# Scientific testing
+# Simulation testing
 
 - Minimum acceptance is MERLIN-only closed-loop verification: original source →
   MERLIN TX → configured channel → MERLIN RX → original-bit comparison. The user
@@ -125,7 +125,7 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
   exclude control/pilots/filler and verify receive-time ordering, finite pending
   storage and honest partial counts. Collection/removal/exhaustion must preserve
   noise/source draws and decoder outcomes. Compare direct Rust and CLI data through
-  the same JSON parse boundary; do not round scientific samples to hide differences.
+  the same JSON parse boundary; do not round simulation samples to hide differences.
 - Verify missing/excluded samples, exact grids, explicit time tolerances,
   protected roles, capacity overheads and intermittent impairments.
 - Check invalid schemas, input/work limits, cancellation and partial results.

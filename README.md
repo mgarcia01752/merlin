@@ -130,7 +130,7 @@ The [minimum engine](docs/user/validation/README.md) validates a MERLIN-only
 closed loop. Another DOCSIS implementation or external interoperability dataset
 is not required.
 
-Apache-2.0 scientific libraries and tooling; the Qt application is
+Apache-2.0 signal-processing libraries and tooling; the Qt application is
 [GPL-3.0-only](apps/qt/LICENSE). With MIT/Apache dependencies and a Rust-adapted MIT BCH
 implementation. See [LICENSE](LICENSE), [NOTICE](NOTICE) and the
 [AFF3CT notice](crates/fec-codec/LICENSE-MIT).

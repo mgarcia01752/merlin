@@ -45,5 +45,5 @@ example validates20 information blocks,720 bytes and288 bits/block. Markdown
 links/fences and git diff whitespace checks pass. No dependencies were added.
 
 NEXT-02 and NEXT-07A are checked. NEXT-07 stays incomplete for actual acquisition
-MAC packets and repetition; NEXT-08 remains the next scientific implementation.
+MAC packets and repetition; NEXT-08 remains the next simulation implementation.
 No EM/TR support, observer producer, codec, signal or blind receiver is claimed.
