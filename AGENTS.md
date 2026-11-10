@@ -9,6 +9,12 @@ channel estimates and an applied modulation profile. Support is developed agains
 pinned DOCSIS3.1/4.0 evidence up to16384-QAM; do not equate a recognized order with
 an implemented full coding chain or assume an optional modem capability.
 
+The minimum engine is a MERLIN-only closed loop: source → MERLIN TX → channel
+model → MERLIN RX → compare recovered bits against the original source. Another
+implementation or external interoperability dataset is not an acceptance
+prerequisite. Preserve normative/source-table checks and honest decoder outcomes;
+do not describe closed-loop results as external interoperability evidence.
+
 A future optional Qt component is presentation only. Build scientific functionality
 first; there is no UI implementation or Python binding in the current scope.
 Dependencies point from CLI/future adapters to docsis-ofdm-fec to fec-codec.

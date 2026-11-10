@@ -1,11 +1,13 @@
-# QA-05: independent full-channel evidence still required
+# Optional independent full-channel interoperability
 
-No external full-channel known-truth dataset is available in this checkout.
-Locally generated encoder/receiver round trips, pinned arithmetic and synthetic
-noisy-channel tests are separate evidence. They cannot close QA-05. QAM-04 remains
-excluded/deferred and its existing high-order vector requirements stay unchanged.
+On2026-11-09 the user clarified that MERLIN is a closed loop using its own TX,
+channel and RX. QA-05 now closes through [internal end-to-end validation](../closed-loop-validation/validation.md).
+Independent instrument/reference-tool data is not part of minimum acceptance.
+The requirements below are retained only for optional future interoperability
+work. The existing admission tool checks provenance/integrity, not scientific
+results, and is not a required minimum workflow.
 
-Obtain one reproducible dataset from an independent CMTS/reference implementation,
+If that optional scope is requested later, obtain one reproducible dataset from an independent CMTS/reference implementation,
 with redistribution permission or keep it under ignored `docs/development/local/`.
 The producer must supply all four roles below; ordinary PNM measurements do not
 contain transmitted PRBS truth and therefore are insufficient by themselves.
@@ -44,4 +46,11 @@ scientific payloads. No external-vector replay adapter or scientific comparison
 has been implemented from an absent format. Once actual artifacts arrive, add a
 Rust replay adapter for their specified encoding and compare raw transforms,
 control, soft decisions, corrected samples, recovered payload and decoder outcomes
-against that independent truth. Only then can QA-05 be checked.
+against that independent truth before claiming external interoperability.
+
+## Scope clarification
+
+Synthetic and measurement-driven closed-loop tests are sufficient for the current
+MERLIN minimum. Existing tests compare recovered source bits, file bytes and
+control information against the corresponding original values. The absence of
+an external waveform/payload/control bundle is not an open minimum task.

@@ -58,3 +58,5 @@ from a fresh clone and are deliberately not Markdown link targets.
 | waveform direction | [notes](waveform-direction/notes.md) |
 | downstream completion group | [design](completion-group/design.md) · [validation](completion-group/validation.md) · [external vector needs](completion-group/external-channel-vectors.md) |
 | synthetic channel widths | [design and validation](channel-widths/design.md) |
+| receiver acquisition | [WAVE-RX-05 design](receiver-acquisition/design.md) · [validation](receiver-acquisition/validation.md) |
+| closed-loop minimum acceptance | [design](closed-loop-validation/design.md) · [test evidence](closed-loop-validation/validation.md) |

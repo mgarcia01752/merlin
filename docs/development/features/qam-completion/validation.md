@@ -47,11 +47,26 @@ observation producer reuses the same original-length payload accessor.
 Host validation is Linux with the project-local pinned Rust/Cargo1.85.1. No new
 Windows/macOS runtime or external DOCSIS device interoperability claim is made.
 The tests' expected matrices are independent transcriptions/calculations, not
-externally generated interoperability vectors. QAM-04 is explicitly deferred
-with [the required vector bundle](external-vectors.md).
+externally generated interoperability vectors. QAM-04 closes under the user-defined
+[closed-loop acceptance](../closed-loop-validation/design.md); any future
+[external comparison](external-vectors.md) remains a separate scope.
 
 Logs/rendered pages belong under ignored `docs/development/local/qam-completion/`.
 Private PDFs, generated PNGs, build outputs and transient JSON are not committed.
 The original general `simulate` selector, SRC EOF padding and channel request
 schema remain unchanged. Explicit shortened traffic is a bounded Rust/reference
 experiment; no MAC packet builder or dynamic profile activation is implemented.
+
+
+## Complete PyPNM source-table verification
+
+`qam_reference_tables.rs` now checks every data label across all ten orders:
+32,720 mappings, pinned source SHA-256, independently transcribed PHY Table54
+energies and selected inverse-soft-bit signs. The source text files are identical
+to PyPNM commit82bbf79fe04a0b5e766dc3eb4d5ca2004008bca9. These tests passed.
+
+This validates row/label import fidelity, not independent coding-chain truth:
+production uses the same source files. This source check, together with existing
+supported full/shortened/mixed recovery tests, closes QAM-04 within the user-defined
+closed loop. Independent external stage vectors are not required for that scope.
+See the [source reference review](external-vectors.md#pypnm-text-table-review).

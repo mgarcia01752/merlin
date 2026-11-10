@@ -27,4 +27,7 @@ as well as its frozen mixed ProfileA. Shortened transport is an explicit Rust
 API/reference experiment; it does not automatically replace file EOF padding or
 add a new general CLI coding-mode selector. Dynamic profile activation remains
 separate work. Passing local specification-derived tests is not external modem
-interoperability: QAM-04 external evidence is [deferred](../../development/features/qam-completion/external-vectors.md).
+interoperability. QAM-04 is complete for the documented MERLIN-only closed loop.
+
+See [minimum-engine validation](../validation/README.md) for a plain explanation
+of the source-table checks, original-bit comparisons and completed QAM-04/QA-05 scope.

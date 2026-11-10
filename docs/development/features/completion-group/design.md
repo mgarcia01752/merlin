@@ -1,5 +1,14 @@
 # Remaining downstream core and delivery group
 
+Current scope override: on2026-11-09 the user removed external interoperability
+from minimum acceptance. QA-05 now records completed internal closed-loop tests;
+see [scope and evidence](../closed-loop-validation/design.md). External requirements
+below describe the earlier batch, not current acceptance gates.
+
+Historical batch record. For the later WAVE-RX-05 completion and current QAM
+checks, see [receiver acquisition](../receiver-acquisition/design.md) and
+[QAM reference review](../qam-completion/external-vectors.md#pypnm-text-table-review).
+
 Status: implementation and local validation; external/native execution gaps remain. QAM-04 is excluded at the user's request. Workflow files
 will be prepared locally; no Git commit, push, publication or remote CI execution
 is authorized. Preserve the pending cell/QAM-symbol terminology documentation.
@@ -48,8 +57,9 @@ External known-truth channel vectors are an input dependency, not output that
 MERLIN can manufacture. Add bounded manifest/admission and comparison tooling
 with provenance/hash/units/configuration requirements. Document missing artifacts
 and distinguish published control-code checks, transcribed arithmetic, local
-simulation and independently produced channel vectors. Keep QA-05 open without
-actual independent evidence. QAM-04 remains untouched/excluded.
+simulation and independently produced channel vectors. That earlier external
+QA-05 acceptance was left open without independent evidence. The later user-defined
+closed-loop acceptance supersedes that gate; QAM-04 also closes internally.
 
 ## QA-06: native checks
 

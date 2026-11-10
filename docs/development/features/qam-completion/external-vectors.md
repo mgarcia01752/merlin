@@ -1,10 +1,12 @@
-# QAM-04 deferred: required external interoperability evidence
+# Optional external QAM interoperability references
 
-Status: **deferred at the user's request**. QAM-04 remains unchecked. Existing
-frozen mixed-profile transport and specification-derived unit tests remain
-implemented. Do not relabel our own encoder/decoder output, imported ideal QAM
-point tables or independently transcribed specification arithmetic as external
-end-to-end interoperability evidence.
+External interoperability is outside MERLIN's minimum closed-loop scope, as
+clarified by the user on2026-11-09. QAM-04 is complete for its documented source
+checks and internal coding/recovery tests. No external-vector result is claimed.
+See [minimum acceptance](../closed-loop-validation/design.md).
+
+The following list is retained only for a future explicitly requested external
+comparison; it is not a blocker for QAM-04 or QA-05.
 
 ## What to obtain
 
@@ -42,7 +44,7 @@ synchronization/calibration, so bit-order defects can be localized.
    and source/channel coordinate metadata. A mapper-only vector cannot validate
    NCP, cell interleaving or a complete receiver.
 
-## Later implementation task
+## Optional later implementation task
 
 Keep private originals under ignored `docs/development/local/qam-completion/`.
 After permission/provenance review, add sanitized distributable vectors under a
@@ -50,5 +52,37 @@ focused test-fixture directory with a manifest, then write Rust tests comparing
 stage outputs against their independently produced expected values. Set tolerance
 before inspecting discrepancies; do not round scientific values to conceal them.
 Run the full gate and record exact vector hashes/tool versions/results in a linked
-validation record before marking QAM-04 complete. No tool/license purchase or
+validation record before reporting an external interoperability result. No tool/license purchase or
 external file acquisition is assumed by this plan.
+
+## PyPNM text-table review
+
+Reviewed the local PyPNM checkout at commit
+`82bbf79fe04a0b5e766dc3eb4d5ca2004008bca9`. All thirteen copied QAM/scaling
+text files match byte-for-byte. For data orders, the imported convention uses
+row index as the MSB-first label. A new Rust test checks all 32,720 data labels
+across ten orders, source SHA-256 hashes, independent Table54 scaling constants
+and selected inverse-soft-bit signs. No additional table copy or Python DSP is
+introduced; the production resources retain their existing license/provenance.
+
+This closes the **complete source-table preservation check**, not independent
+coding-chain interoperability. The production mapper already uses those files.
+Comparing them against that mapper can catch import/order/build defects but
+cannot independently certify the source labels or FEC/interleaver behavior.
+PyPNM's separate `CodeWordLutGenerator` constructs generic axis Gray labels and
+uses a sequential-Gray fallback for nonrectangular constellations. Its generated
+`qam_lut.py` must not silently replace the preserved DOCSIS table row convention.
+
+For an optional external comparison, the evidence would be a file produced by another
+DOCSIS implementation containing known input bits plus expected encoded/interleaved
+bits and QAM output. Original PNM constellation samples and ideal point tables do
+not contain the complete known transmitted-bit chain. This optional comparison must not be reported as executed unless the actual
+external stage comparisons pass; it is not required to close the internal task.
+
+The pinned PHY specification explicitly names **PHYv3.1 QAM** sample code for
+bit-to-point mapping (AnnexA; reference list section2.2). This would be a useful
+independent mapper reference if obtained with its provenance. The legacy official
+`CM-PHYv3.1_QAM-Mapping140610.zip` HTTPS download returned404 during this review;
+no such archive was found in the inspected local specification/resource trees.
+Do not silently substitute generic Gray-code output. A mapper-only sample still
+would not supply the full encoded/interleaved/control truth listed above.

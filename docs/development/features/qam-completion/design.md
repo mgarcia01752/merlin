@@ -1,7 +1,8 @@
 # QAM-02..04: slicer, coding and profile transport
 
-Status: QAM-02/03 implemented and validated; full pre-push gate passes. QAM-04 external
-vectors deferred at the user's request; see [required evidence](external-vectors.md).
+Status: QAM-02/03 and QAM-04 implemented and validated within the documented
+MERLIN closed loop. The user removed external interoperability from minimum
+scope on2026-11-09; see [closed-loop acceptance](../closed-loop-validation/design.md).
 
 ## QAM-02: diagnostic hard slicer
 
@@ -41,13 +42,14 @@ odd byte lengths. Its informative receiver algorithm rounds a terminated span
 down to the nearest odd byte count. Keep bit-granular FEC admission separate
 from byte-constrained transport. Do not silently change SRC padding or framing.
 
-## QAM-04: frozen mixed profiles and external evidence
+## QAM-04: frozen mixed profiles and closed-loop verification
 
 Retain current frozen ProfileA, inverse-frequency loading and live PLC/NCP path.
 Expand tests to every supported order, zeros, final-cell padding, both spacings
 and failed outcomes. Independently transcribed matrices are specification tests,
-not external interoperability vectors. Search local resources for externally
-produced high-order vectors; keep that subitem open if none is available.
+not external interoperability vectors. Complete source-table/hash/scale checks
+and supported coding/recovery comparisons close the internal task. External
+reference vectors are optional future evidence, not an acceptance dependency.
 
 ## Owners, state and test points
 

@@ -12,3 +12,5 @@ pub use pilot::PilotChannelEstimator;
 pub mod timing;
 
 pub mod acquisition;
+
+pub mod search;

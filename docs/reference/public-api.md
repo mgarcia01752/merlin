@@ -33,6 +33,8 @@ component will adapt inputs and results without duplicating scientific logic.
 | `signal_processing::receiver::{timing,equalization,extraction}` | Known-reference RX framing, response compensation and protected-role extraction; analysis-only compatible |
 | `signal_processing::channel::reference::NoiselessChannel` | Unity sample transfer with preserved indices and explicit TX/RX planes |
 | `simulation::waveform::{WaveformTransmitter,WaveformReceiver}` | Separate state owners and directly inspectable bounded TX/RX results |
+| `signal_processing::receiver::channel_estimation::search` | Bounded bootstrap hypothesis selection, integer/fractional CFO and two-symbol phase outputs |
+| `WaveformReceiver::acquire_search` | Live pilot receiver using selected geometry and continuous total-CFO correction; initial samples consumed once |
 | `simulation::waveform::{observation,reference}` | Thirteen bounded stage producers and shared short actual-PLC waveform verifier; no one-second payload-run claim |
 | `transmission::symbols::{assemble_packed,TransportCell}` | Actual randomized data/NCP/BPSK assembly; diagnostic TX identities excluded from transported values |
 | `signal_processing::receiver::payload` | Received-profile checks, independent control hypotheses, bounded collector and source decoder; simulation feature required |

@@ -61,10 +61,11 @@ EOF padding. There is no automatic MAC framing or new generic shortening option.
 
 The [mixed-profile path](../user/payload-transport/applied-profiles.md) uses its
 own24-column rule, inverse-frequency loading and sequential cell grouping.
-QAM-04 external high-order interoperability vectors remain deferred at the user's
-request. Their [required contents and acceptance plan](../development/features/qam-completion/external-vectors.md)
-are documented. Our independent table arithmetic and actual FEC/waveform tests
-do not substitute for externally generated output vectors.
+QAM-04 checks every data label against pinned PyPNM text rows and verifies the
+supported coding/profile paths through MERLIN's own TX/channel/RX. It is complete
+for the documented closed-loop minimum. External interoperability is optional
+future scope; its [reference plan](../development/features/qam-completion/external-vectors.md)
+is retained without making it an acceptance prerequisite.
 
 DOCSIS4.0 FDX and FDD remain distinct applicability scopes. This table follows
 I07's FDD delegation; it does not establish FDX sounding, echo cancellation or

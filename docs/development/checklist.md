@@ -140,13 +140,16 @@ Guide: [QAM mapping](../user/qam-mapping.md).
   See the [task design](features/qam-completion/design.md) and
   [component guides](../user/qam-processing/README.md). General SRC/file jobs retain
   full-word EOF padding; shortened traffic is an explicit API/reference experiment.
-- [ ] **QAM-04** Mixed per-carrier data profiles and independent high-order
-  interoperability vectors; mapper availability alone does not satisfy this item.
+- [x] **QAM-04** Validate full/shortened/mixed QAM within MERLIN's closed loop.
   - [x] Implement frozen mixed ProfileA transport, variable-width cells, zero loading
     and final-cell padding through actual PLC/NCP/waveform/FEC at both spacings.
-  - [ ] Validate independent external high-order interoperability vectors.
-    Deferred at the user's request. [Required vector bundle and acceptance plan](features/qam-completion/external-vectors.md).
-    Existing local specification-derived matrices/round trips do not close this item.
+  - [x] Check all32720 data labels against pinned PyPNM text rows, source hashes
+    and normative scaling; verify selected inverse-soft-bit signs.
+  - [x] Verify supported uniform orders through16K and shortened/mixed recovery
+    with original-bit comparisons and actual decoder outcomes.
+  Scope clarified2026-11-09: external coding-chain interoperability is not part
+  of minimum acceptance. This does not claim external vectors were executed.
+  See [closed-loop acceptance](features/closed-loop-validation/design.md).
 
 ## Data and NCP randomization
 
@@ -225,7 +228,7 @@ The complete RUN group now includes source-window accounting, cancellation,
 partial jobs, CLI delivery and probe export. The subsequent MODEL-04/INPUT-01
 group now adds waveform impairments and fixed-profile measured operation;
 MODEL-05/06/07 now add supported pilot estimation, temporal epochs and mixed
-profiles below; the broader WAVE-RX-05 acquisition scope remains open.
+profiles below; WAVE-RX-05 now verifies bounded integer-CFO/numerology acquisition.
 
 - [x] **PLC-01** Confirm local PHY3.1 I20 section7.5.15 pilot requirements and
   section7.5.13 PLC requirements; record endpoint, sequence/bit order, scaling,
@@ -270,7 +273,7 @@ PLC-14/PLC-15 now include selectable message bytes, transmitted coded bits, labe
 PLC data/preamble I/Q and full physical grids, with independent module tests,
 both-spacing multi-frame FEC/QAM/CRC integration and a bounded example. RX diagnostics
 remain directly accessible; additional RX common-observer producers remain
-future work, while the shared JSONL writer/CLI export is now implemented. External interoperability remains open under QA-05;
+future work, while the shared JSONL writer/CLI export is now implemented. QA-05 now records closed-loop acceptance; external interoperability is optional;
 the initial known-reference waveform validation is now covered by WAVE-QA-02.
 
 Planned paths and test-point IDs are in the architecture. Resolve any missing
@@ -407,17 +410,18 @@ Design: [RX extraction](../user/waveform/rx-extraction.md) and [equalization](..
 Design: [Known-reference waveform](../user/waveform/README.md) and
 [fixed payload transport](../user/payload-transport/README.md).
 
-- [ ] **WAVE-RX-05** Complete nonideal synchronization/channel-estimation
-  verification, including the broader acquisition scope retained by this checklist.
-  - [x] Bounded received-only CP timing, fractional CFO correction and held-out
-    scattered-pilot phase selection, followed by pilot CH-EST-RX. Tests cover both
-    spacings, unknown offset/phase, nonzero CFO, additive sample perturbations and
-    a smooth complex channel without TX H in RX.
-  - [ ] Verify integer-carrier/unknown-numerology acquisition and broader channel
-    conditions beyond the implemented smooth-channel, known-layout subset.
-  Known geometry and an unaliased fractional offset remain assumptions. Do not
-  close the parent from these synthetic bounded-subset tests.
+- [x] **WAVE-RX-05** Complete bounded nonideal acquisition verification for the
+  minimum single-channel engine, retaining explicit bootstrap/search assumptions.
+  - [x] Received-only CP timing, fractional CFO and held-out pilot-phase scoring.
+  - [x] Select25/50kHz spacing from supplied bootstrap hypotheses and recover
+    signed integer-carrier CFO, with two-symbol phase scoring for narrow channels.
+  - [x] Verify24/90/192MHz, reflected paths and noise, continuous correction,
+    ambiguity/resource rejection and actual zero-error BCH/LDPC block recovery.
+  CP/RP/maps remain supplied possibilities; the channel CLI retains known timing.
+  This finite acquisition model does not certify arbitrary RF acquisition or
+  independent full-channel interoperability; that is outside minimum QA-05 scope.
   Guide: [WAVE-RX acquisition](../user/waveform/rx-acquisition.md).
+  Design: [WAVE-RX-05](features/receiver-acquisition/design.md).
 - [x] **WAVE-RX-06** Connect physical data extraction, inverse cell interleaving,
   source-phase inverse randomization, NCP discovery and data decoding in production.
   Use received configuration; preserve the separate control/payload codec paths.
@@ -652,13 +656,17 @@ See the [implementation record](features/pilot-channel-estimation/implementation
   Release-mode channel/JSONL smoke validation and actual CLI no-clobber/schema tests
   now accompany the existing coding CLI checks.
 
-### External interoperability validation
+### Closed-loop end-to-end validation
 
-- [ ] **QA-05** Independent external interoperability vectors for full channel stages.
-  - [x] Record the required dataset/provenance and add bounded manifest/hash admission.
-  - [ ] Obtain external data, implement its Rust replay adapter and compare independent
-    scientific truth. Admission reports explicitly say admitted_unexecuted.
-  Requirements: [external channel vectors](features/completion-group/external-channel-vectors.md).
+- [x] **QA-05** Validate MERLIN TX/channel/RX against the original source.
+  - [x] Recover PRBS/file data through actual waveform, control and FEC stages;
+    require positive compared bits and zero errors in supported noiseless tests.
+  - [x] Verify impaired-channel decoder results, exact file/fill comparisons,
+    actual control recovery, cancellation/partial outcomes and API/CLI consistency.
+  - [x] Pass workspace/focused tests, Clippy, formatting and analysis-only checks.
+  Scope clarified2026-11-09: another implementation is not required. Existing
+  external-vector admission tooling stays optional and is not scientific evidence.
+  Evidence: [closed-loop validation](features/closed-loop-validation/validation.md).
 
 ### Cross-platform builds and runtime
 

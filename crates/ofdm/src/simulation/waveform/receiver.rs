@@ -222,6 +222,43 @@ impl WaveformReceiver {
             symbols,
         ))
     }
+    /// Acquires a live receiver from bounded numerology and integer-CFO hypotheses.
+    /// # Arguments
+    /// * `hypotheses` - Independent bootstrap possibilities, without TX H or payload truth.
+    /// * `input` - Initial received samples; consumed once on successful construction.
+    /// * `settings` - Timing/integer search limits and CP acceptance threshold.
+    /// # Returns
+    /// Selected live unit-RMS pilot receiver, measured synchronization and initial symbols.
+    /// Continue with raw contiguous blocks; total CFO correction keeps its phase origin.
+    /// # Errors
+    /// Rejects unsupported/ambiguous acquisition or initial framing/CH-EST-RX failure.
+    pub fn acquire_search(
+        hypotheses: &[crate::signal_processing::receiver::channel_estimation::search::AcquisitionHypothesis],
+        input: &SampleBlock,
+        settings: &crate::signal_processing::receiver::channel_estimation::search::AcquisitionSearchSettings,
+    ) -> Result<(Self, crate::signal_processing::receiver::channel_estimation::search::AcquisitionSearchEstimate, Vec<ReceivedSymbol>), SimulationError>{
+        use crate::signal_processing::receiver::channel_estimation::{
+            acquisition::CarrierOffsetCorrection, search::search_acquisition,
+        };
+        let estimate = search_acquisition(hypotheses, input, settings)?;
+        let selected = &hypotheses[estimate.hypothesis_index];
+        let mut receiver = Self::from_pilots(
+            &selected.geometry,
+            &selected.layout,
+            input.start_index(),
+            estimate.acquisition.timing.first_symbol_sample,
+            estimate.acquisition.pilot_phase,
+            1.0,
+        )?;
+        receiver.carrier_correction = Some(CarrierOffsetCorrection::with_integer_offset(
+            &selected.geometry,
+            estimate.fractional_carrier_offset_hz,
+            estimate.integer_carrier_offset,
+            input.start_index(),
+        )?);
+        let symbols = receiver.receive(input)?;
+        Ok((receiver, estimate, symbols))
+    }
     /// Updates the explicitly supplied reference mode without changing sample framing.
     /// # Arguments
     /// * `response` - Same-grid finite nonzero gains for a reference experiment.

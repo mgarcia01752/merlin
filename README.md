@@ -102,11 +102,12 @@ scripts/cargo-local.sh run -p fec-codec --example codec_loop --locked
 [Logging](docs/development/logging.md) ·
 [Git and releases](docs/development/git.md)
 
-OFDMA, dynamic profile activation, broader blind receiver acquisition, Python
-bindings, a Qt interface and native installers remain future work. Current runtime
-validation is Linux; Windows/macOS and external interoperability remain open.
-The [QAM-04 external-vector requirements](docs/development/features/qam-completion/external-vectors.md)
-record the deferred evidence needed to validate interoperability.
+OFDMA, dynamic profile activation in the duration CLI, arbitrary RF acquisition,
+Python bindings, a Qt interface and native delivery verification remain later work. Current runtime
+validation is Linux; Windows/macOS execution remains later work.
+The [minimum engine](docs/user/validation/README.md) validates a MERLIN-only
+closed loop. Another DOCSIS implementation or external interoperability dataset
+is not required.
 
 Apache-2.0 project code, with MIT/Apache dependencies and a Rust-adapted MIT BCH
 implementation. See [LICENSE](LICENSE), [NOTICE](NOTICE) and the

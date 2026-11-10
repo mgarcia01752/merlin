@@ -5,9 +5,19 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
 
 # Scientific testing
 
+- Minimum acceptance is MERLIN-only closed-loop verification: original source →
+  MERLIN TX → configured channel → MERLIN RX → original-bit comparison. The user
+  explicitly excluded external interoperability as a prerequisite. Do not block
+  minimum task closure on another implementation or external dataset. Retain
+  normative/source checks and accurate evidence labels; a passed closed loop is
+  not a claim of external compatibility.
 - Keep separate integration tests for codec boundaries, normative parameter
   arithmetic, QAM/LLR conventions, temporal evaluation and document/CLI behavior.
 - Use independent expected values and external vectors when available.
+  Source-table preservation checks may use pinned PyPNM row labels and hashes,
+  but must not be reported as independent coding-chain interoperability when
+  production uses those same tables. Keep generic Gray-LUT conventions separate
+  from the DOCSIS row/label convention and preserve explicit control permutations.
   An encoder/decoder round trip alone does not prove DOCSIS compatibility.
 - Distinguish independently transcribed specification arithmetic from externally
   produced interoperability vectors. Record exact document issue, page and table.
@@ -61,8 +71,12 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
 - For nonideal acquisition, fit the channel from continuous pilots and score
   independent held-out scattered pilots. Test unknown timing/phase and nonzero
   fractional CFO with noise, derotation across arbitrary block splits and weak/
-  ambiguous rejection. State known numerology and CFO aliasing bounds; synthetic
-  tests do not establish integer-CFO or arbitrary-channel acquisition.
+  ambiguous rejection. Distinguish the original fractional-only operation from
+  the bounded bootstrap-hypothesis search. For the latter, cover both spacings,
+  signed integer offsets, two-symbol narrow-channel scoring, indistinguishable
+  hypotheses, raw-block continuation and recovered coded bits without TX H in RX.
+  State candidate CP/RP/maps and search bounds; these synthetic checks do not
+  establish arbitrary RF acquisition or external full-channel interoperability.
 - Pilot placement tests must use actual active-frequency endpoints, include
   predefined-pilot coverage of isolated PLC regions, and verify edge/poor-bin
   avoidance, distinct count, density and reproducible nonperiodic placement.

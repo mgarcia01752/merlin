@@ -1,8 +1,17 @@
 # Downstream completion-group validation
 
+Current scope override: on2026-11-09 the user removed external interoperability
+from minimum acceptance. QA-05 now records completed internal closed-loop tests;
+see [scope and evidence](../closed-loop-validation/design.md). External requirements
+below describe the earlier batch, not current acceptance gates.
+
+Historical batch record. For the later WAVE-RX-05 completion and current QAM
+checks, see [receiver acquisition](../receiver-acquisition/design.md) and
+[QAM reference review](../qam-completion/external-vectors.md#pypnm-text-table-review).
+
 Host: Ubuntu22.04 x64; project-local Rust/Cargo1.85.1. VERSION remains0.1.0.
 Nothing was committed, pushed, tagged, published, installed or system-provisioned.
-QAM-04 remains excluded/deferred. The preceding cell/QAM-symbol terminology edits
+At that earlier milestone QAM-04 was excluded/deferred. The preceding cell/QAM-symbol terminology edits
 were preserved. Workflow files are prepared locally only.
 
 ## Task status and evidence
@@ -13,7 +22,7 @@ were preserved. Workflow files are prepared locally only.
 | LAYOUT-03 | Implemented generated additional pilots; both FFT sizes, density, exclusions/PLC/poor bins, edge guards, isolated centers, predefined coverage and repeatability pass | No spectral-mask or field-device certification claimed |
 | WAVE-RX-05 | Implemented bounded received-only timing/fractional-CFO/pilot-phase acquisition; noisy smooth-channel tests and corrected payload I/Q checks pass | Parent stays open for integer-carrier/unknown-numerology and broader-channel verification |
 | INPUT-02 | Explicit producer/revision allowlist, shared Rust API and request schema2; actual0.3.6 exports, additive fields, malformed/drifted requests and legacy CLI tests pass | New producer versions require deliberate fixture verification |
-| QA-05 | Bounded provenance/hash admission and integrity/path tests pass | Actual external dataset, its Rust replay adapter and independent science comparison remain missing |
+| Former external QA-05 proposal | Bounded provenance/hash admission and integrity/path tests pass | Now optional; current QA-05 closes through internal source/control/payload comparisons |
 | QA-06 | Native workflow/matrix and CLI smoke tooling prepared; YAML parsed locally | Windows/macOS execution waits for later workflow push |
 | QA-07 | CLI archive/DEB built locally; metadata/checksums/resources/licenses and native binary smoke checked | PKG/MSI execution, all native install/upgrade/uninstall lifecycles and publication remain unverified |
 

@@ -20,6 +20,21 @@ Checklist IDs use stable component/work-area prefixes, such as PLC, WAVE-TX, WAV
 RX-CONFIG, rather than temporary NEXT labels. Local numbering identifies work;
 dependencies and current priority determine the next item to implement.
 
+## Minimum acceptance: MERLIN closed loop
+
+The user clarified on2026-11-09 that this project validates its own single-channel
+transmitter, channel simulator and receiver. Compare decoded PRBS15/file data
+against the original source, retain actual LDPC/BCH outcomes and iterations, and
+verify control/configuration recovery, bounded work and partial results.
+Another DOCSIS implementation or external reference dataset is not required.
+
+WAVE-RX-05, QAM-04 and QA-05 are complete within their documented supported
+closed-loop configurations. Existing normative/source-table checks remain in
+place. These results do not claim external modem/CMTS interoperability. The
+[closed-loop design](development/features/closed-loop-validation/design.md) and
+[evidence](development/features/closed-loop-validation/validation.md) define the
+minimum; Qt, Python, native delivery, OFDMA and multiple channels remain later work.
+
 ## Terminology: cell and symbol
 
 **Cell = QAM symbol** in the data path: one complex I/Q point carried by one
@@ -132,9 +147,9 @@ NCP, interleavers and waveform samples in a bounded reference experiment. It acc
 explicit original words, supplies a real following filler boundary, then drains.
 It adds no noise, MAC framing, automatic file shortening or new general channel schema.
 See [component guides](user/qam-processing/README.md) and the
-[task design](development/features/qam-completion/design.md). QAM-04 external
-interoperability is [deferred](development/features/qam-completion/external-vectors.md)
-at the user's request; local round trips and transcribed tables are separate evidence.
+[task design](development/features/qam-completion/design.md). QAM-04 validates this closed loop alongside the pinned source-table checks.
+[External interoperability](development/features/qam-completion/external-vectors.md)
+is optional future scope.
 
 ## Planned visual system workspace and payload selection
 
@@ -307,8 +322,9 @@ result/settings field when collection is disabled. Existing raw/equalized generi
 probe stages remain separate and available. No new noise/QAM/equalizer math or
 Qt UI is introduced. See the [accepted plan](development/features/paired-constellation/plan.md),
 [implementation](development/features/paired-constellation/implementation.md) and
-[user guide](user/impairments/paired-constellation.md). MODEL-05 now adds the supported pilot-estimated receiver below; full blind
-acquisition remains WAVE-RX-05.
+[user guide](user/impairments/paired-constellation.md). MODEL-05 now adds the supported pilot-estimated receiver below; bounded
+bootstrap acquisition is implemented by WAVE-RX-05. Arbitrary blind RF acquisition
+is outside the minimum model.
 
 ## Receiver Channel Estimation (CH-EST-RX) and pilot/PLC analyzers
 
@@ -325,8 +341,9 @@ uses1/H-hat; omission preserves the supplied-H baseline.
 
 The CLI keeps known sample timing/PLC phase. A separate public acquisition operation
 composes an observed CP boundary with pilot reception while retaining known
-numerology and PLC phase. Full blind numerology/carrier/PLC-phase acquisition stays
-WAVE-RX-05; neither API claims a production CM receiver.
+numerology and PLC phase. The newer WAVE-RX-05 search selects bootstrap numerology and total CFO;
+absolute PLC-frame acquisition and arbitrary RF discovery remain separate.
+Neither API claims a production CM receiver.
 
 The first bounded raw PLC frame is corrected using the completed pilot pattern
 before FEC/admission. Independent source/receiver owners continue beyond startup.
@@ -534,7 +551,7 @@ obtain data through an existing stage API.
 | `channel.input`, `channel.output` | TX-output/RX-input I/Q with preserved sample indices | Unity, sample AWGN or symbol-diagonal H/RxMER synthesis with bounded observation |
 | `rx.framed.samples`, `rx.cp.samples`, `rx.fft.bins`, `rx.equalized.iq` | RX known-boundary periods, useful samples, raw bins and reference-compensated bins | Direct results and bounded observer |
 | `rx.plc.iq`, `rx.pilots.iq`, `rx.reduced.iq` | RX separated protected roles and data/scattered domain | Direct results and bounded observer; sparse pilots retain physical bins |
-| `rx.timing`, `rx.channel.estimate` | Future estimated timing/channel state, distinct from supplied reference | TODO nonideal acquisition; not inferred from known-reference tests |
+| `rx.timing`, `rx.channel.estimate` | Estimated timing/channel state, distinct from supplied reference | Direct typed acquisition/CH-EST outputs exist; named streamed acquisition event is not registered |
 | `rx.frequency.cells`, `rx.time.cells` | Separate inverse cell-interleaver outputs and source phase | Direct |
 | `rx.ncp.llrs`, `rx.ncp.accepted` | Actual soft records, CRC-accepted messages and direct block iterations | Production source decoder and bounded observer |
 | `rx.data.llrs`, `rx.descrambler.llrs` | Data likelihoods after/before sign inversion | Post-inverse soft records have production observer; raw demapper remains direct |
@@ -652,7 +669,8 @@ active envelope and internal exclusions; the example uses a24MHz envelope.
 Neither establishes external interoperability or a one-second payload experiment.
 CELL-02/WAVE-RX-06 now add the separate actual payload waveform path described
 below. The duration stepper is implemented separately; nonideal acquisition
-(WAVE-RX-05) and temporal measurement-driven expansion remain open. Window accounting
+(WAVE-RX-05) now has a bounded bootstrap search; temporal expansion has its
+separate MODEL-06 implementation. Window accounting
 and bounded job/CLI lifecycle are implemented separately.
 
 See the [per-subsystem guides](user/waveform/README.md) and
@@ -863,14 +881,19 @@ perturbs placement without touching scientific RNG state. Generated settings fee
 the same descriptor/OCD builder as explicit settings.
 See [placement and equations](user/carrier-placement.md).
 
-WAVE-RX-05 adds bounded CP timing/fractional-CFO and held-out scattered-pilot phase
-acquisition in `signal_processing/receiver/channel_estimation/acquisition.rs`.
-Waveform RX owns continuous derotation and the existing pilot estimator/equalizer.
-It receives no transmitted channel, boundary or phase. Known numerology/layout,
-unit reference scaling, a sufficiently smooth channel and unaliased fractional
-CFO remain explicit assumptions. A recovered128-phase index is not an absolute
-PLC frame epoch. The duration CLI still selects its synchronized reference path.
-See [RX acquisition and equations](user/waveform/rx-acquisition.md).
+WAVE-RX-05 now adds a finite hypothesis search in
+`signal_processing/receiver/channel_estimation/search.rs`, alongside the original
+known-numerology fractional-only operation. Candidate25/50kHz bootstrap geometries
+are selected using received samples; integer-carrier shifts and two-symbol
+held-out pilot scoring resolve CFO aliases and narrow-channel pilot counts.
+The selected total derotator retains one absolute sample origin across blocks.
+Search/selected hypothesis/timing/CFO/phase/error and normal receiver outputs are
+public test points. Tests cover24/90/192MHz and reflected-path/sample-noise cases,
+including actual zero-error coded-block recovery. CP/RP and layouts remain
+candidate inputs, not discovered RF metadata; absolute PLC frame acquisition is
+separate. The duration CLI retains its synchronized reference mode.
+See [RX guide](user/waveform/rx-acquisition.md) and
+[design and validation](development/features/receiver-acquisition/design.md).
 
 INPUT-02 adds an explicit producer allowlist and contract revision under
 `scenario/pnm_json/contract.rs`. CLI request schema2 requires the pnm-decode0.3.6
@@ -880,13 +903,13 @@ are allowed, while required field/unit/assignment drift rejects. Preserve the
 request with the scenario because ordinary upstream JSON has no producer stamp.
 See [decoder contract](user/impairments/pnm-import.md#explicit-decoder-contract-input-02).
 
-QA-05 remains open pending independent full-channel vectors and their actual replay
-format. Tooling only admits bounded provenance/files/hashes and reports that the
-science is unexecuted. QA-06/07 add locally prepared native tests and CLI package
+QA-05 now records completed closed-loop source/control/payload validation,
+following the user's scope clarification. External-vector tooling only checks
+provenance/files/hashes and stays optional; it is not a minimum acceptance gate. QA-06/07 add locally prepared native tests and CLI package
 builders under `tools/packaging/`, with tag-triggered workflows under
 `.github/workflows/`. Package builders install nothing, preserve licenses/examples,
 refuse clobber and consume matching tested binaries. Native execution/publication
-awaits the user's later workflow push. QAM-04 stays excluded/deferred.
+awaits the user's later workflow push. QAM-04 also closes within the documented closed-loop scope.
 See [delivery design](development/native-delivery.md) and
 [group record](development/features/completion-group/design.md).
 

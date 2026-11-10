@@ -6,8 +6,8 @@ checkout, not a published release, platform certification or interoperability cl
 
 MERLIN — DOCSIS OFDM Simulation Toolkit — has grown from an isolated FEC
 experiment into a standalone Rust
-**downstream OFDM waveform and FEC simulation engine**. Its current milestone is
-measurement-driven impairment experiments with actual recovered-payload outcomes.
+**downstream OFDM waveform and FEC simulation engine**. Its minimum closed-loop milestone is complete for the documented supported
+configurations: MERLIN TX → channel model → MERLIN RX → original-source comparison.
 OFDMA and multi-channel simulation remain outside the implemented scope.
 Continue work through the [development workspace](README.md), which links public
 feature records and defines the ignored local evidence/output location.
@@ -29,8 +29,9 @@ feature records and defines the ignored local evidence/output location.
 
 The isolated coding experiment and complete waveform runner have different
 support boundaries. Mapping a QAM order does not establish its full FEC,
-placement or waveform support. The current waveform path uses uniform 256-QAM
-and short 16,200-bit rate-8/9 LDPC with BCH 14,232/14,400.
+placement or waveform support. The channel path supports the documented uniform orders through16K-QAM and
+frozen mixed loading, with short16,200-bit rate8/9 LDPC and BCH14,232/14,400;
+explicit shortened transport has its separately tested entry point.
 
 ## Latest demonstrated experiment
 
@@ -66,10 +67,9 @@ known timing/PLC phase. No full blind modem-acquisition claim is made.
 
 | Work area | Remaining scope | Checklist IDs |
 | --- | --- | --- |
-| Receiver realism | Integer-CFO/unknown-numerology acquisition and arbitrary-channel uncertainty remain beyond the implemented bounded subset | WAVE-RX-05 |
+| Receiver extensions | Arbitrary RF acquisition, sample-rate error and severe-channel tracking remain outside the bounded minimum model | Future receiver extensions |
 | Measurement evolution | Future explicit correlated/burst models; streaming dynamic DPD/NCP activation is implemented, duration CLI remains fixed-profile | Future model extensions |
-| Coding and profiles | External high-order/mixed interoperability vectors, deferred with documented requirements | QAM-04 |
-| Independent validation | External full-channel dataset/replay; Windows/macOS native runs after the later workflow push | QA-05, QA-06 |
+| Cross-platform validation | Windows/macOS native builds/runtime after the later workflow push | QA-06 |
 | Product interfaces | Native installer lifecycle/release execution; optional Python bindings and Qt presentation | QA-07, API-01, UI-01 |
 | Later PHY scope | OFDMA, channel bonding/multiple channels and FDX-specific behavior | LATER-01, LATER-02 |
 
@@ -120,20 +120,20 @@ QAM-02 adds the diagnostic hard slicer while preserving soft LDPC inputs. QAM-03
 implements full uniform rules through16384-QAM, exact padding/soft inversion and
 explicit shortened transport through live PLC/NCP and waveform samples. See the
 [design](features/qam-completion/design.md), [validation](features/qam-completion/validation.md)
-and [component guides](../user/qam-processing/README.md). QAM-04 stays unchecked:
-externally produced interoperability evidence is deferred with a
-[required vector manifest and acceptance plan](features/qam-completion/external-vectors.md).
+and [component guides](../user/qam-processing/README.md). QAM-04 closes with
+complete source-table preservation and supported full/shortened/mixed recovery
+within MERLIN. External interoperability is outside minimum scope.
 
 ## Downstream completion group
 
 NCP-03, LAYOUT-03 and INPUT-02 now have opt-in dynamic full-word transport,
 generated additional pilots and a pinned decoder import contract. WAVE-RX-05 adds
-bounded received-only nonideal acquisition but retains its broader parent TODO. Each component retains its stated limits;
+bounded received-only nonideal acquisition. Its later integer-CFO/numerology
+completion is recorded below. Each component retains its stated limits;
 these do not silently change the fixed-profile CLI channel runner.
-QA-05 remains pending independent full-channel data. QA-06/07 tooling is prepared
+QA-05 closes with the documented internal end-to-end comparisons. QA-06/07 tooling is prepared
 locally, with Linux package tests; Windows/macOS execution and release publication
-wait for the later workflow push. No remote action was performed. QAM-04 remains
-deferred/excluded. See the [design/validation record](features/completion-group/design.md)
+wait for the later workflow push. No remote action was performed. QAM-04 also closes for internal validation. See the [design/validation record](features/completion-group/design.md)
 and [native delivery guide](native-delivery.md).
 
 ## Synthetic channel-width validation
@@ -146,3 +146,20 @@ All eight combinations are exercised through the noiseless waveform/FEC path.
 The captured IDs remain in imported scenarios; fixed runner configurations carry
 each selected loading as internal Profile A. This does not expand measured
 selection beyond ID 0. See the [design](features/channel-widths/design.md).
+
+
+## Minimum engine completion: receiver and reference checks
+
+WAVE-RX-05 is complete for a finite bootstrap-hypothesis model: unknown25/50kHz
+selection, signed integer/fractional CFO, two-symbol pilot phase and received-pilot
+CH-EST-RX. Tests cover24/90/192MHz, actual reflected paths/sample perturbations,
+block-split invariance and known coded-block recovery without TX H in RX.
+See the [design](features/receiver-acquisition/design.md). The CLI reference path
+is unchanged; this is not arbitrary RF channel discovery.
+
+QAM-04 verifies all32720 source-table labels, scaling and supported coding/profile
+round trips. QA-05 verifies the complete internal source/control/payload path,
+impairments and honest partial results. On2026-11-09 the user clarified that another
+implementation is not required; those two items therefore close for the documented
+MERLIN-only acceptance scope. No external comparison has been claimed. See the
+[closed-loop acceptance record](features/closed-loop-validation/design.md).

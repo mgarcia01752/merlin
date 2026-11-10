@@ -83,7 +83,9 @@ See [QAM processing](qam-processing/README.md). Explicit shortened words use the
 separate24-column path and received-boundary length discovery. The original
 [256-QAM independent cell loop](qam256-coding-loop.md) remains available; the
 general CLI `simulate` selector is still the original16-QAM coding experiment.
-Full external interoperability evidence remains deferred under QAM-04.
+All32,720 data labels now have complete pinned-table preservation tests.
+QAM-04 is complete within MERLIN's documented closed-loop scope. External
+interoperability is not a minimum acceptance requirement.
 
 ## Evidence and validation
 

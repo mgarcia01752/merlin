@@ -17,11 +17,16 @@ use crate::{
         layout::{CarrierLayout, PhysicalCarrierRole},
         settings::SAMPLE_RATE_HZ,
     },
-    types::IqPair,
+    types::{IqPair, PLC_FRAME_SYMBOLS},
     SimulationError,
 };
 use serde::Serialize;
-/// Observed timing, fractional carrier offset and recovered128-symbol pilot phase.
+const MAX_PHASE_WINDOW_SYMBOLS: usize = 4;
+const MIN_PHASE_PILOT_OBSERVATIONS: usize = 2;
+const MAX_PILOT_PHASE_ERROR: f64 = 0.2;
+const MIN_PILOT_PHASE_ERROR_MARGIN: f64 = 0.1;
+
+/// Observed timing, carrier offset and recovered128-symbol pilot phase.
 #[derive(Debug, Clone, Serialize)]
 pub struct AcquisitionEstimate {
     pub timing: TimingEstimate,
@@ -30,7 +35,7 @@ pub struct AcquisitionEstimate {
     /// Held-out scattered-pilot prediction error normalized by expected pilot power.
     pub normalized_pilot_error: f64,
 }
-/// Fixed fractional-frequency correction referenced to an explicit sample origin.
+/// Fixed carrier-frequency correction referenced to an explicit sample origin.
 #[derive(Debug, Clone)]
 pub struct CarrierOffsetCorrection {
     offset_hz: f64,
@@ -60,6 +65,32 @@ impl CarrierOffsetCorrection {
             ));
         }
         Ok(Self { offset_hz, origin })
+    }
+    /// Creates a correction for an admitted integer plus fractional CFO search result.
+    /// # Arguments
+    /// * `geometry` - Selected receiver numerology.
+    /// * `fractional_hz` - Fractional offset strictly inside half a subcarrier.
+    /// * `integer_carriers` - Integer offset within the shared finite search limit.
+    /// * `origin` - Absolute phase origin retained across subsequent blocks.
+    /// # Returns
+    /// A total-frequency derotator using the same continuous-phase operation.
+    /// # Errors
+    /// Rejects invalid fractional offset or an integer outside the application bound.
+    pub fn with_integer_offset(
+        geometry: &WaveformGeometry,
+        fractional_hz: f64,
+        integer_carriers: i16,
+        origin: u64,
+    ) -> Result<Self, SimulationError> {
+        let mut correction = Self::new(geometry, fractional_hz, origin)?;
+        if !(-super::search::MAX_INTEGER_CARRIER_OFFSET..=super::search::MAX_INTEGER_CARRIER_OFFSET)
+            .contains(&integer_carriers)
+        {
+            return Err(invalid("Integer CFO exceeds acquisition search bound."));
+        }
+        correction.offset_hz += f64::from(integer_carriers)
+            * f64::from(geometry.settings().subcarrier_spacing.frequency_hz());
+        Ok(correction)
     }
     /// Derotates a received block without modifying it or resetting phase at its edges.
     /// # Arguments
@@ -145,38 +176,71 @@ pub fn estimate_pilot_phase(
     bins: &[IqPair],
     reference_rms: f64,
 ) -> Result<(u64, f64), SimulationError> {
-    if bins.len() != layout.static_roles().len()
-        || bins.iter().flatten().any(|value| !value.is_finite())
+    estimate_pilot_phase_window(layout, &[bins], reference_rms)
+}
+
+/// Scores consecutive received symbols to acquire pilot phase on narrow channels.
+/// # Arguments
+/// * `layout` - Independently supplied receiver pilot/carrier map.
+/// * `symbols` - One to four consecutive aligned FFT grids, without channel truth.
+/// * `reference_rms` - Positive nonpilot RMS reference used for pilot scaling.
+/// # Returns
+/// Phase of the first symbol and normalized held-out prediction error across the window.
+/// Two symbols avoid insufficient per-phase pilot counts in narrow4K channels.
+/// # Errors
+/// Rejects nonfinite/mismatched grids, invalid window length, insufficient combined
+/// pilot observations, weak fits or ambiguous phases. Inputs remain unchanged.
+pub fn estimate_pilot_phase_window(
+    layout: &CarrierLayout,
+    symbols: &[&[IqPair]],
+    reference_rms: f64,
+) -> Result<(u64, f64), SimulationError> {
+    if symbols.is_empty()
+        || symbols.len() > MAX_PHASE_WINDOW_SYMBOLS
+        || symbols.iter().any(|bins| {
+            bins.len() != layout.static_roles().len()
+                || bins.iter().flatten().any(|value| !value.is_finite())
+        })
     {
-        return Err(invalid("Invalid received pilot-phase FFT grid."));
+        return Err(invalid("Invalid received pilot-phase FFT window."));
     }
     let sequence = PilotSequence::new(layout.subcarrier_spacing());
     let amplitude = PilotPower::new(reference_rms)?.amplitude();
     let reference = |bin: usize| amplitude * (1.0 - 2.0 * f64::from(sequence.bits()[bin]));
-    let nodes: Vec<_> = layout
-        .static_roles()
-        .iter()
-        .enumerate()
-        .filter(|(_, role)| **role == PhysicalCarrierRole::ContinuousPilot)
-        .map(|(bin, _)| (bin, bins[bin].map(|value| value / reference(bin))))
-        .collect();
-    let (response, _) = interpolate(&nodes, bins.len())?;
-    let mut scores = Vec::with_capacity(128);
-    for phase in 0..128 {
-        let roles = layout.symbol_roles(phase);
+    let mut responses = Vec::with_capacity(symbols.len());
+    for bins in symbols {
+        let nodes: Vec<_> = layout
+            .static_roles()
+            .iter()
+            .enumerate()
+            .filter(|(_, role)| **role == PhysicalCarrierRole::ContinuousPilot)
+            .map(|(bin, _)| (bin, bins[bin].map(|value| value / reference(bin))))
+            .collect();
+        responses.push(interpolate(&nodes, bins.len())?.0);
+    }
+    let mut scores = Vec::with_capacity(PLC_FRAME_SYMBOLS as usize);
+    for phase in 0..PLC_FRAME_SYMBOLS {
         let mut error = 0.0;
         let mut power = 0.0;
         let mut count = 0;
-        for (bin, role) in roles.iter().enumerate() {
-            if *role != PhysicalCarrierRole::ScatteredPilot {
-                continue;
+        for (offset, (bins, response)) in symbols.iter().zip(&responses).enumerate() {
+            let roles = layout.symbol_roles(phase + offset as u64);
+            for (bin, role) in roles.iter().enumerate() {
+                if *role != PhysicalCarrierRole::ScatteredPilot {
+                    continue;
+                }
+                let predicted = response[bin].map(|value| value * reference(bin));
+                error +=
+                    (bins[bin][0] - predicted[0]).powi(2) + (bins[bin][1] - predicted[1]).powi(2);
+                power += predicted[0].powi(2) + predicted[1].powi(2);
+                count += 1;
             }
-            let predicted = response[bin].map(|value| value * reference(bin));
-            error += (bins[bin][0] - predicted[0]).powi(2) + (bins[bin][1] - predicted[1]).powi(2);
-            power += predicted[0].powi(2) + predicted[1].powi(2);
-            count += 1;
         }
-        if count < 2 || power <= 0.0 || !error.is_finite() || !power.is_finite() {
+        if count < MIN_PHASE_PILOT_OBSERVATIONS
+            || power <= 0.0
+            || !error.is_finite()
+            || !power.is_finite()
+        {
             return Err(invalid(
                 "Insufficient usable scattered pilots for phase acquisition.",
             ));
@@ -184,7 +248,9 @@ pub fn estimate_pilot_phase(
         scores.push((phase, error / power));
     }
     scores.sort_by(|left, right| left.1.total_cmp(&right.1));
-    if scores[0].1 > 0.2 || scores[1].1 - scores[0].1 < 0.1 {
+    if scores[0].1 > MAX_PILOT_PHASE_ERROR
+        || scores[1].1 - scores[0].1 < MIN_PILOT_PHASE_ERROR_MARGIN
+    {
         return Err(invalid("Weak or ambiguous received scattered-pilot phase."));
     }
     Ok(scores[0])
