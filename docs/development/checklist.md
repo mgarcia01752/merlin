@@ -733,3 +733,12 @@ integration. It does not mean all the broader product items above are complete.
   documentation-only outgoing branch commits; retain full checks for mixed/code
   changes, initial pushes and releases. Inspect merge parents and rename paths.
   Evidence: [design and validation](features/docs-only-push/design.md).
+
+### Security workflows
+
+- [x] **SEC-01** Prepare Rust CodeQL and RustSec dependency-audit workflows,
+  weekly/manual triggers, release gates, report retention and README badges.
+- [ ] Verify CodeQL analysis/upload and dependency checks in GitHub Actions
+  after pushing; resolve findings without treating successful scans as proof
+  that the engine has no vulnerabilities.
+  Evidence: [design and validation](features/security-checks/design.md).

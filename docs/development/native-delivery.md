@@ -45,3 +45,6 @@ Before closing QA-06/07, push the prepared workflows when authorized, retain the
 Ubuntu run evidence and verify installation/upgrade/uninstallation on each target.
 Windows/macOS builders and guides remain prepared for later work.
 A locally generated MSI XML or a passing Linux build does not satisfy that check.
+
+Tagged publication also requires the reusable CodeQL and RustSec workflows to
+pass. See [security checks](security.md) for schedules, permissions and reports.

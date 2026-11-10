@@ -47,6 +47,7 @@ from a fresh clone and are deliberately not Markdown link targets.
 | qam256 coding loop | [architecture](qam256-coding-loop/architecture.md) |
 | receiver configuration | [plan](receiver-configuration/plan.md) · [validation](receiver-configuration/validation.md) |
 | run infrastructure | [plan](run-infrastructure/plan.md) · [validation](run-infrastructure/validation.md) |
+| security checks | [design](security-checks/design.md) |
 | rust logging | [architecture](rust-logging/architecture.md) |
 | rust only signal processing | [architecture](rust-only-signal-processing/architecture.md) |
 | rxmer error sweep | [README](rxmer-error-sweep/README.md) |

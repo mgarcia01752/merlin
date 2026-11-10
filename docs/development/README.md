@@ -45,3 +45,5 @@ paths; they are historical evidence, not current runnable path instructions.
 Public Markdown links point to tracked documentation. Commands use local output
 paths explicitly; a fresh clone does not include the ignored evidence directory.
 There is no longer a separate root development workspace.
+
+[Security checks](security.md) describe CodeQL, RustSec and local dependency audits.

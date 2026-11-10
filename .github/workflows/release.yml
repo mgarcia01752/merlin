@@ -26,8 +26,19 @@ jobs:
     uses: ./.github/workflows/ci.yml
     permissions:
       contents: read
+  codeql:
+    needs: version
+    uses: ./.github/workflows/codeql.yml
+    permissions:
+      contents: read
+      security-events: write
+  dependency-security:
+    needs: version
+    uses: ./.github/workflows/dependency-security.yml
+    permissions:
+      contents: read
   publish:
-    needs: [version, validate]
+    needs: [version, validate, codeql, dependency-security]
     runs-on: ubuntu-24.04
     permissions:
       contents: write

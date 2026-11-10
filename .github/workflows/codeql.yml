@@ -1,0 +1,33 @@
+# Copyright 2026 MERLIN contributors
+# SPDX-License-Identifier: Apache-2.0
+name: CodeQL
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  schedule:
+    - cron: '17 11 * * 1'
+  workflow_dispatch:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  analyze:
+    name: Rust source analysis
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v5
+      - name: Initialize Rust CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: rust
+          build-mode: none
+          queries: security-extended
+      - name: Analyze and upload findings
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:rust

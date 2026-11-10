@@ -12,7 +12,9 @@
 
 [![Status: Under development](https://img.shields.io/badge/Status-Under_development-yellow)](docs/development/status.md)
 [![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-blue)](VERSION)
-[![CI: Not run on GitHub](https://img.shields.io/badge/CI-Not_run_on_GitHub-lightgrey)](.github/workflows/ci.yml)
+[![Ubuntu CI](https://github.com/mgarcia01752/merlin/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/mgarcia01752/merlin/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/mgarcia01752/merlin/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/mgarcia01752/merlin/actions/workflows/codeql.yml)
+[![Dependency security](https://github.com/mgarcia01752/merlin/actions/workflows/dependency-security.yml/badge.svg?branch=master)](https://github.com/mgarcia01752/merlin/actions/workflows/dependency-security.yml)
 [![Rust 1.85.1](https://img.shields.io/badge/Rust-1.85.1-000000?logo=rust&logoColor=white)](rust-toolchain.toml)
 [![Ubuntu LTS targets: 22.04, 24.04, 26.04 x64](https://img.shields.io/badge/Ubuntu_LTS-22.04%20%7C%2024.04%20%7C%2026.04-E95420?logo=ubuntu&logoColor=white)](docs/development/native-delivery.md)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)

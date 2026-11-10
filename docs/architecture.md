@@ -929,3 +929,12 @@ pushes. Only maintained documentation paths skip the local build/test gate.
 Initial pushes and release/tag modes retain full validation; clean-tree, ancestry
 and unchanged-commit guards remain mandatory. Remote CI is unchanged.
 See [DOC-PUSH-01 design](development/features/docs-only-push/design.md).
+
+### Security validation
+
+Separate CodeQL and RustSec workflows own source-security analysis and dependency
+advisory checks. They run without the simulation matrix on Ubuntu 24.04, and
+tag publication depends on both succeeding alongside native tests. The local
+audit launcher verifies a pinned static tool in ignored local storage; it does
+not install system packages or change the simulation core or dependency graph.
+See [security checks](development/security.md).
