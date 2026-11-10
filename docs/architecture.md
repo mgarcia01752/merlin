@@ -159,7 +159,7 @@ The next major phase is the native Qt Quick/QML workbench, initially targeting
 Ubuntu 22.04, 24.04 and 26.04 x64. Python bindings follow UI-01 through UI-04.
 The initial UI-01 shell now exists under apps/qt: the clickable diagram, section
 preview dialogs, theme switching, embedded icons and a tree-based OFDM editor.
-Other editors, input loading,
+The DPD capture importer also exists; other editors, measurement input loading,
 analyzers and Rust job integration remain pending. Lower-right run controls are
 visible but disabled. See the [workbench guide](user/workbench.md) and
 [Qt build/VM instructions](development/qt.md). Other target validation is pending.
@@ -186,7 +186,8 @@ flowchart LR
 PRBS-TX and PRBS-RX represent source generation and independent recovered-data
 verification. Their comparison connection is not receiver feedback or source
 reseeding. File sources retain their own exact-byte verification. Measurement
-inputs initially use supported decoded PNM JSON, not native binary PNM parsing.
+inputs use supported decoded PNM JSON. The DPD input additionally accepts binary
+modulation-profile PNM through a pinned Rust decoder dependency.
 The detailed diagram below retains analyzer and receiver-reference ownership.
 
 ### Workbench block readiness rules
@@ -204,9 +205,10 @@ These are MERLIN workflow rules, not DOCSIS specification requirements.
 **WB-RULE-01:** OFDM Channel Descriptor (OCD) remains yellow until its accepted settings are valid
 and a compatible modulation-profile PNM input has been successfully accepted by
 Rust. Selecting a filename, opening a dialog or applying default settings does
-not satisfy the profile requirement. Removing/replacing a profile invalidates the
-previous readiness until the new state is checked. An actual profile validation
-failure is red; a missing profile is yellow. Error takes precedence over missing
+not satisfy the profile requirement. Committing removal/replacement recalculates
+readiness from the new accepted state. An accepted profile that
+becomes incompatible is red; a missing profile is yellow. Rejected draft files
+show their diagnostic in the dialog and preserve accepted readiness. Error takes precedence over missing
 prerequisites; otherwise complete requires every applicable prerequisite.
 
 **WB-RULE-02:** Keep each rule with its owning block and dependencies. Rust owns
@@ -226,11 +228,11 @@ bypass/default mode. Rust must still validate/freeze the complete request before
 dispatch. Run availability and lifecycle are additional gates. The current shell
 checks all block statuses but keeps Start disabled until run dispatch is connected.
 
-Current implementation: the shared block renders all three statuses, with
-non-color explanations. Every preview block is yellow with an explicit pending
-reason. Profile import and run integration are pending, so automatic readiness
-transitions from those operations remain unimplemented. This does not imply that
-every optional measurement must be supplied before a future run.
+Current implementation: applying a validated, OCD-compatible DPD capture/profile
+turns DPD and OCD green. Removing it with Apply returns both to yellow; Cancel
+preserves accepted state. Other preview blocks remain yellow with explicit pending
+reasons. Run integration and other input-driven transitions remain pending.
+Optional measurements are not required for every future run.
 
 ### OFDM editor, registry and application navigation
 
@@ -239,7 +241,7 @@ Parameter/Value tree, dropdowns for supported values, and a description panel
 below the selected field. Symbol timing contains cyclic prefix/roll-off, and
 Interleaving contains time-interleaver depth. A Modulation Profile branch shows
 blank Profile ID, Source file and Subcarrier assignments values until a profile
-is selected; profile loading remains pending. There is no Channel context branch.
+is selected; accepted DPD input supplies that summary. There is no Channel context branch.
 The OCD describes common channel parameters; the DPD describes downstream
 profiles (MULPI I25 §§6.4.40–6.4.41; PHY I20 §7.5.13.4). Bandwidth and spacing
 remain in the Rust configuration, outside this editor; future input integration
@@ -272,6 +274,38 @@ workbench; individual capture inputs remain in their corresponding block dialogs
 Settings contains application preferences such as theme, distinct from OFDM
 transmission configuration. About presents MERLIN's expanded name, version,
 licenses and acknowledgements. All three actions remain pending implementation.
+
+### Downstream profile input dialog
+
+File and folder selection must use the operating system's native picker, without
+a Qt-rendered fallback or custom file explorer. Qt platform integration may invoke
+the OS picker. Enforcing and verifying this requirement on the target VM remains
+pending; application-owned editors remain Qt dialogs.
+
+The Downstream Profile Descriptor (DPD) input block opens its own Qt tree dialog
+with Open File, Load demo, detected representation, File/Channel information,
+Profiles with numbered Range rows, profile selection and staged removal.
+These are downstream OFDM modulation-profile PNM captures or supported decoded
+JSON, not raw DPD MAC messages. Supported captures are type 10, format 1.0 with
+range schemes; skip/unsupported encodings reject explicitly. Tree queries retain
+compact schemes in Rust and show at most 256 scheme rows for the selected profile.
+
+`input_format` is a separate safe Rust content detector. Extensions are picker
+hints; JSON text (including optional UTF-8 BOM), recognized binary PNM, unsupported
+text/binary and empty content are distinguished before decoding. Files are bounded
+to 16 MiB. The Qt Rust adapter retains original bytes/hashes and draft/accepted
+input; QML presents bounded rows. Binary conversion uses pnm 0.3.6 fetched from
+PNM Viewer Toolkit at Git revision 5fbd5561f3e06b73486546b5ffa520279080a5eb.
+Sources live in ignored Cargo cache, not a vendored viewer copy. Runtime needs no
+viewer checkout, Python, network or decoder subprocess. Preserve dependency notices.
+
+The core's `scenario::pnm_json::import_profiles` shares validation with the CLI's
+three-capture importer. The optional `pnm-input` feature enables it without FEC or
+simulation in Qt. Apply checks spacing and carrier span against accepted OCD
+settings before committing a selection; Cancel and rejected loads preserve input.
+Bandwidth/spacing editing, skip-scheme import, WB persistence and scientific job
+integration remain pending. See the [profile input guide](user/measurement-inputs/modulation-profile.md)
+and [development setup](development/setup.md).
 
 ### Reuse of the PNM Viewer Qt framework
 

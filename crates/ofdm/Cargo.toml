@@ -8,6 +8,7 @@ description = "Offline OFDM profile analysis and experimental LDPC/BCH simulatio
 
 [features]
 default = ["simulation"]
+pnm-input = ["dep:serde_json", "dep:sha2"]
 simulation = ["dep:fec-codec", "dep:rand", "dep:rand_chacha", "dep:rand_distr", "dep:serde_json", "dep:sha2"]
 
 [dependencies]

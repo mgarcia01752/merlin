@@ -30,8 +30,8 @@ Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first 
   with status/reason tooltips and accessible descriptions.
 - [x] Keep OFDM Channel Descriptor (OCD) yellow while a validated modulation-profile input is
   unavailable; record WB-RULE-01/02 in the architecture and task design.
-- [ ] Connect Rust input/job state to automatic block readiness and diagnostics;
-  verify accepted/removed/rejected profiles and dependency invalidation.
+- [x] Connect accepted/removed/rejected DPD input to Rust-backed DPD/OCD readiness.
+- [ ] Connect remaining input/job states and dependency invalidation to readiness.
 - [ ] Implement PRBS-TX / Transmitter configuration and stage details.
 - [ ] Implement Channel Simulator configuration and stage details.
 - [ ] Implement Receiver / PRBS-RX configuration and recovered-data status.
@@ -50,10 +50,14 @@ Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first 
 
 Integrate input blocks as their owning sections are developed left to right.
 
-- [ ] Add OS file pickers to applicable pop-up dialogs and show input roles/status.
+- [x] Add the DPD Open File dialog, content detection, binary/JSON import and
+  staged profile selection/removal with exact-byte provenance.
+- [ ] Enforce and verify OS-native file/folder pickers without Qt-rendered fallback.
+- [ ] Add OS file pickers to remaining applicable dialogs and show input roles/status.
 - [ ] Support PRBS15 or exact text/binary payload bytes with Rust-derived size
   feedback and explicit optional append-PRBS15 fill.
-- [ ] Attach modulation-profile inputs to Transmitter.
+- [x] Accept modulation-profile capture inputs in DPD and show the OCD summary.
+- [ ] Attach accepted DPD profiles to the actual Transmitter run request.
 - [ ] Attach DS channel-estimation and RxMER inputs to Channel Simulator.
 - [ ] Validate supported decoded PNM JSON using the existing Rust importer;
   preserve grids, missing samples, timestamps and provenance.

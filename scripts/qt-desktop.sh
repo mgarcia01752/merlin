@@ -50,6 +50,8 @@ case "${ACTION}" in
     QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software "${QT_SDK_DIR}/bin/qmltestrunner" -input "${PROJECT_DIR}/apps/qt/tests"
     ;;
   run)
+    # The pinned development SDK uses XCB, including under XWayland sessions.
+    export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-xcb}"
     if [[ -z "${DISPLAY:-}" && -z "${WAYLAND_DISPLAY:-}" ]]; then
       while IFS='=' read -r setting value; do
         case "${setting}" in

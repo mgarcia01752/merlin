@@ -15,3 +15,13 @@ The build/run helper is adapted from the reference's Apache-2.0 development
 script. It remains Apache-2.0, separate from the GPL application.
 Qt and CXX-Qt dependencies retain their own licenses. This development shell
 is not a redistributable Qt SDK bundle or an installed release package.
+
+The DPD input adapter uses PNM Viewer Toolkit's Apache-2.0 Rust decoder, pnm 0.3.6,
+fetched by Cargo from https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git at
+5fbd5561f3e06b73486546b5ffa520279080a5eb. No decoder source is vendored here.
+Cargo retains source in its ignored development cache; runtime needs no checkout.
+Preserved decoder LICENSE/NOTICE are under third-party/. Resource licenses/notices
+remain in the pinned upstream source and must accompany future redistributions.
+The sanitized modulation-profile demo is derived from PyPNM fixtures; see
+examples/measurements/single-channel/provenance.json and the applicable LICENSE/NOTICE files beside it.
+PyPNM - Proactive Network Maintenance Toolkit

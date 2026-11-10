@@ -119,3 +119,34 @@ The Qt-only native build passed and the application was restarted on the VM.
 Both the full OCD box label and matching popup title were visually verified;
 updated dark overview/dialog screenshots are tracked. The native log is free of
 QML errors and the overview is left open. Document links and whitespace pass.
+
+## UI-02: DPD file input and source dependency
+
+Validated on Ubuntu 22.04 x64 with Qt 6.8.3 and Rust 1.85.1:
+
+- 19 QML cases pass, including draft loading, Cancel, Apply, rejected loads and
+  staged removal/readiness. Presentation fixtures do not claim decoder validation.
+- Four Qt Rust tests pass: the existing OCD tests plus binary/JSON assignment/grid
+  parity and draft rejection/removal/compatibility acceptance. Content detection
+  succeeds independently of misleading source names.
+- Existing targeted core coverage passes: three pnm_json_import cases, two
+  pnm_json_contract cases, and one new shared detector case. The existing actual
+  CLI import-command test also passes. No full DSP/FEC suite was rerun.
+- Qt formatting/Clippy/build and core library Clippy pass. The existing optional
+  no-simulation SymbolPacker.coded_bits warning remains; no suppression was added.
+- Native Open File loaded both the binary and JSON demo. An ASCII file named
+  .bin rejected as unsupported text while preserving the accepted input. Cancel
+  preserved accepted input; applied removal returned OCD/DPD to yellow, and
+  accepting the compatible demo returned both to green. Start stayed disabled.
+- The final executable was rebuilt/restarted and the DPD dialog left open with
+  demo profile 0. Native dark screenshots show real production state; logs have
+  no QML errors. The original binary fixture hash matches existing provenance.
+- No PNM Viewer source is vendored. Cargo fetched pnm 0.3.6 at revision
+  5fbd5561f3e06b73486546b5ffa520279080a5eb into ignored local storage. The 73 source,
+  build and resource hashes match the reviewed upstream copy. Its notices are
+  retained under apps/qt/third-party; runtime needs no upstream checkout.
+
+Decoder-format acceptance remains type 10 / format 1.0 / range schemes. Skip and
+unsupported encodings reject; other measurement imports, persistence, profile
+editing and simulation integration remain pending. Viewing/selecting four demo
+profiles does not broaden the existing measured-runner support contract.

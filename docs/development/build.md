@@ -24,7 +24,9 @@ locally; macOS and Windows runtime/build validation remains outstanding.
 
 A globally available Cargo works with rust-toolchain.toml. Alternatively, a
 project-local Rust installation can live under ignored local/cargo and local/rustup.
-No script in this checkout installs system packages or changes shell profiles.
+[Development setup](setup.md) provides `install.sh --development` to install
+missing Ubuntu packages and local tools. Check/dry-run do not install; no mode
+changes shell profiles.
 Project-local toolchain/cache links can reuse an existing development installation;
 build outputs remain in this repository's target/.
 

@@ -56,6 +56,7 @@ from a fresh clone and are deliberately not Markdown link targets.
 | single channel transmission | [architecture](single-channel-transmission/architecture.md) |
 | source organization | [architecture](source-organization/architecture.md) |
 | symbol packing | [architecture](symbol-packing/architecture.md) |
+| Development setup | [installer and pinned source design](development-setup/design.md) |
 | Qt simulation workbench (UI-01 partial) | [design](visual-workspace/design.md) · [validation](visual-workspace/validation.md) · [plan](visual-workspace/plan.md) · [UI checklist](../ui-checklist.md) |
 | waveform | [plan](waveform/plan.md) · [validation](waveform/validation.md) |
 | waveform direction | [notes](waveform-direction/notes.md) |

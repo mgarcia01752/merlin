@@ -6,7 +6,8 @@ of the measurement-input blocks to open its section dialog. Close the dialog
 or press Escape to return. Light mode/Dark mode changes the palette and icon.
 
 The workbench includes an editable **OFDM Channel Descriptor (OCD)** dialog. Other blocks open
-section previews; file pickers and simulation jobs are not connected yet.
+section previews. DPD supports capture input; other file pickers and simulation
+jobs are not connected yet.
 The lower-right Start, Stop and Pause controls are disabled. There are no UI
 simulation results or automatically loaded measurements.
 
@@ -32,14 +33,14 @@ Blocks show their name only. Their left stripe indicates status:
 Hover over a block, or focus it with the keyboard, to see its status and reason.
 Screen readers receive the same explanation. Click the block for its dialog.
 
-![Heading-only blocks with yellow attention stripes](../images/workbench/workbench-status-dark.png)
+![Validated OCD/DPD inputs are green; pending stages are yellow](../images/workbench/workbench-status-dark.png)
 
-**OFDM Channel Descriptor (OCD) stays yellow until a compatible modulation-profile PNM input has
-been accepted and its settings are valid.** Applying timing settings alone does
-not complete it. Profile import remains pending, so this requirement cannot yet
-be satisfied in the UI. Missing input is yellow; an actual validation failure
-will be red when import is connected. An invalid draft remains in its editor
-with an error, preserving the last accepted configuration.
+**OCD stays yellow until a compatible modulation-profile input is accepted and
+its settings are valid.** Applying a compatible profile through DPD turns both
+blocks green. Missing input is yellow; an accepted input that becomes incompatible
+is red. A rejected draft remains in its editor with a diagnostic and preserves
+the accepted selection. Applying timing settings alone does not satisfy the input
+requirement.
 
 **Start requires every block to be green.** A yellow or red block disables it.
 Green before a run means configured and ready; comparison results are not needed
@@ -47,9 +48,8 @@ to start the run. Start also remains disabled while simulation integration is
 pending. Optional inputs may satisfy readiness through an explicit valid
 bypass/default mode when those controls are implemented.
 
-All current preview blocks are yellow because integration or inputs are pending. Optional measurement inputs will not be required for every future run.
-Green/red presentation is available; automatic input/run-driven status changes
-remain pending.
+Other preview blocks remain yellow because integration or inputs are pending.
+Optional measurement inputs will not be required for every future run.
 
 ## Edit OFDM transmission settings
 
@@ -62,9 +62,9 @@ reference below the tree.
 ![OFDM Channel Descriptor (OCD) in the native dark workbench](../images/workbench/ofdm-settings-dark.png)
 
 The **Modulation Profile** branch shows Profile ID, Source file and Subcarrier
-assignments. Their values stay blank when no profile is selected. Profile input
-is not connected yet, so the application starts with all three blank. Application
-defaults do not imply that a profile has been selected.
+assignments. Values start blank; applying a profile in DPD fills them. Removing
+the accepted input clears them again. Application defaults do not imply that a
+profile has been selected.
 
 DOCSIS uses **OFDM Channel Descriptor (OCD)** for common channel parameters and
 **Downstream Profile Descriptor (DPD)** for profile parameters, including modulation
@@ -100,3 +100,26 @@ integration and workbench-file saving remain pending. The bundled
 These actions are planned. Measurement-file selection will remain in its owning
 workbench block. User-guide screenshots and graphics use the dark theme;
 light-theme support remains available in the application.
+
+## Downstream Profile Descriptor (DPD)
+
+Click the **Downstream Profile Descriptor (DPD)** block. **Open File** accepts a
+binary modulation-profile PNM capture (including `.bin`/`.pnm`) or supported
+decoded JSON. **Load demo** stages the sanitized embedded binary without searching
+for a source-checkout path. Detection uses file contents, not the extension.
+
+![Native DPD capture input tree](../images/workbench/dpd-input-dark.png)
+
+Expand File information, Channel information and Profiles. Choose a profile from
+the dropdown or its tree row; inspect numbered **Range** entries and select rows
+for details. Input provenance is separately expandable. Values are read-only.
+
+**Apply** validates compatibility with accepted OCD settings and accepts the
+selection for this session. **Cancel/Escape** discards staged changes. **Remove
+input** stages removal; Apply commits it and returns OCD/DPD to yellow. Rejected
+files preserve the previous draft and accepted selection. Nothing overwrites the
+original file. This does not start a simulation or save a workbench.
+
+See [supported profile files and limits](measurement-inputs/modulation-profile.md).
+The [original dark mockup](../images/workbench/dpd-design-dark.png) is a design
+reference; the screenshot above is the actual native application.

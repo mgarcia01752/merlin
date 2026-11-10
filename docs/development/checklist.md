@@ -701,8 +701,9 @@ Detailed tasks: [UI checklist](ui-checklist.md) and
 [task design](features/visual-workspace/design.md). Develop left to right, starting
 with OFDM Channel Descriptor (OCD). UI-01 is partial: diagram, section-preview dialogs and
 theme/icon shell and Rust-validated OFDM tree editor exist. Other editors,
-workbench persistence and Rust jobs remain pending. Blocks show headings and
-readiness stripes; profile-driven readiness transitions await input integration.
+workbench persistence and Rust jobs remain pending. The DPD binary/JSON input
+dialog accepts compatible profiles and drives DPD/OCD readiness. Other inputs and
+run integration remain pending.
 
 - [ ] **UI-01** Build the planned Qt system workspace after core APIs exist:
   clickable source/TX/channel/RX blocks with focused pop-up dialogs.
@@ -767,3 +768,14 @@ Plan: [BUILD-01–04 design](features/build-cache/design.md). No implementation 
 - [ ] **BUILD-04** Validate invalidation, concurrency and actual warm-run savings.
 
 Local development scope only; existing push/release and security gates stay intact.
+
+### Development setup
+
+- [x] **DEV-01** Add explicit Ubuntu x64 development setup with safe check/dry-run,
+  pinned local Rust/Qt and required package declarations. Host syntax/control-flow
+  checks pass; clean-machine provisioning remains unverified.
+- [x] **DEV-02** Fetch the PNM decoder by exact Git/version pins into ignored
+  Cargo storage; preserve notices without vendoring viewer source.
+- [ ] **DEV-03** Validate complete provisioning on pristine Ubuntu 22.04/24.04/26.04.
+
+See [setup](setup.md) and [design](features/development-setup/design.md).

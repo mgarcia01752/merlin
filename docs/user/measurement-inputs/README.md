@@ -26,7 +26,8 @@ Formal upstream schema/version compatibility is deferred in INPUT-02.
 The [single-channel demo](../../../examples/measurements/single-channel/README.md)
 provides all three decoder outputs and reproducible synthetic RxMER variants,
 including the [LTE downlink ingress approximation](lte-ingress.md).
-Its original binary copies stay in ignored local development storage. Each source
+The sanitized modulation_profile.bin is also tracked for the Qt DPD importer;
+other original binary copies stay in ignored local development storage. Each source
 has a separate timestamp and provenance; the demo does not establish simultaneous
 conditions. Imported measurements must preserve grids, nulls and source identity,
 and use an explicit association policy rather than rewriting mismatched headers.
@@ -38,3 +39,7 @@ linear-power model and preserves the decoder's document shape. Its precheck reje
 identity/grid/coverage mismatches without changing headers. No extra thermal floor
 is added; derived RxMER represents the total residual to apply once later. Review
 the demo's provenance before using these inputs as evidence.
+
+The Qt [DPD profile-file dialog](modulation-profile.md) additionally accepts the
+binary modulation-profile capture directly through a pinned in-process Rust
+decoder. The CLI three-capture importer continues to consume decoded JSON.

@@ -312,6 +312,13 @@ as validation of changed code.
 
 ## Qt window and dialog organization
 
+Use the operating system's native file/folder picker for Open, Save and directory
+selection. Do not use Qt Quick's fallback file browser, a Qt Widgets file dialog,
+or a custom QML file explorer. Qt may invoke the native picker through its platform
+integration, but must not silently fall back to a Qt-rendered browser. Verify the
+native picker on the target VM; report unavailable platform integration clearly.
+Application-owned editors such as OCD and DPD remain separate Qt dialogs.
+
 Give each workbench window or dialog its own descriptively named QML file.
 Keep the workbench responsible for composition and opening dialogs, rather than
 embedding each editor implementation in it. Keep dialog-specific Rust adapters
@@ -329,6 +336,16 @@ conditions. Keep this skill as workflow guidance rather than a second rule table
 Scientific validation/outcomes come from Rust; selected filenames and application
 defaults must not imply validated inputs or a complete block. Preserve accepted
 state on rejected drafts. Update user docs and dark VM screenshots with changes.
+
+## Development dependencies and decoder reuse
+
+Reuse the PNM decoder through its exact Git revision/version in the Qt manifest
+and lockfile; fetch source into ignored Cargo storage rather than vendoring a
+viewer source copy. Preserve dependency licenses/notices. Runtime must not require
+the reference checkout or a decoder subprocess. New Ubuntu development prerequisites
+belong in `scripts/install-development.sh` and `docs/development/setup.md`;
+`install.sh --development` is the entry point. Validate safe check/dry-run modes
+without installing system packages or discarding build caches.
 
 ## Consumer boundaries
 

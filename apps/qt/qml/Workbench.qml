@@ -10,6 +10,13 @@ Item {
     id: workbench
     required property var theme
     required property var settingsBackend
+    required property var profileBackend
+    property alias profilePopup: profileDialog
+    property var profileState: ({selected: false, profile_status: "attention", ofdm_status: "attention", reason: "A validated modulation-profile input is required.", summary: {}})
+    function refreshProfileState() {
+        profileState = JSON.parse(profileBackend.state(settingsBackend.current()))
+    }
+    Component.onCompleted: refreshProfileState()
     property alias ofdmPopup: ofdmDialog
     property alias sectionPopup: sectionDialog
     property string iconRoot: "qrc:/branding/"
@@ -108,8 +115,8 @@ Item {
                 WorkbenchBlock {
                     id: ofdmBlock; objectName: "ofdmBlock"; x: 10; y: 190; width: 140; height: 90
                     theme: workbench.theme; heading: "OFDM Channel\nDescriptor (OCD)"
-                    blockStatus: "attention"
-                    statusReason: "A validated modulation-profile PNM input is required. Profile import is not connected yet."
+                    blockStatus: workbench.profileState.ofdm_status
+                    statusReason: workbench.profileState.reason
                     onClicked: ofdmDialog.open()
                 }
                 WorkbenchBlock {
@@ -149,10 +156,10 @@ Item {
                 }
                 WorkbenchBlock {
                     id: profileBlock; objectName: "profileBlock"; x: 215; y: 360; width: 170; height: 90
-                    theme: workbench.theme; heading: "Modulation Profile"
-                    blockStatus: "attention"
-                    statusReason: "No validated modulation-profile PNM input is selected. Profile import is pending."; inputBlock: true
-                    onClicked: workbench.openSection(heading, "Select a supported decoded modulation-profile PNM JSON document.\n\nThe file picker and Rust import validation are planned. Native binary PNM decoding is not part of this workbench.")
+                    theme: workbench.theme; heading: "Downstream Profile\nDescriptor (DPD)"
+                    blockStatus: workbench.profileState.profile_status
+                    statusReason: workbench.profileState.reason; inputBlock: true
+                    onClicked: profileDialog.open()
                 }
                 WorkbenchBlock {
                     id: channelEstimateBlock; objectName: "channelEstimateBlock"; x: 445; y: 360; width: 170; height: 90
@@ -191,6 +198,15 @@ Item {
         id: ofdmDialog
         theme: workbench.theme
         backend: workbench.settingsBackend
+        profileSummary: workbench.profileState.summary
+        onSettingsApplied: workbench.refreshProfileState()
+    }
+    ProfileInputDialog {
+        id: profileDialog
+        theme: workbench.theme
+        backend: workbench.profileBackend
+        settingsBackend: workbench.settingsBackend
+        onInputApplied: workbench.refreshProfileState()
     }
     SectionPreviewDialog {
         id: sectionDialog

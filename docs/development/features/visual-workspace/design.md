@@ -213,3 +213,45 @@ for the block and popup. Wrap the heading across lines to fit the diagram.
 Keep stable internal IDs and source filenames to avoid unrelated renames. This
 is an editor label, not a claim that the dialog imports/exports complete OCD
 messages; the modulation-profile summary remains separate from OCD semantics.
+
+## UI-02 proposal: downstream profile input tree
+
+Use Downstream Profile Descriptor (DPD) as the workbench workflow name, while
+identifying imported files as downstream OFDM modulation-profile PNM captures,
+not raw DPD MAC messages. The approved graphic terminology is Range 1, Range 2,
+etc. for contiguous assignment schemes; actual skip schemes retain their type.
+The dark mockup is linked from the user guide and uses existing demo values.
+
+Plan a dedicated dialog with Open File, detected input type, File information,
+Channel information and expandable Profiles/assignment schemes, profile choice,
+Cancel and Apply. Keep captured data immutable. A shared Rust content detector
+must distinguish recognized binary PNM from JSON text, unsupported text/binary
+and empty inputs; extensions are picker hints only. Reuse existing JSON importer
+and viewer binary-decoder coverage rather than duplicating scientific tests.
+Standalone binary-decoder integration, UI state and readiness transitions remain
+pending; the graphic is not evidence of implemented file loading.
+
+## UI-02 implementation: DPD capture input
+
+Use a standalone Rust content detector in the core, independent of paths and file
+extensions. Reuse the existing profile JSON validation by exposing import_profiles;
+the three-capture CLI importer calls the same function. The optional pnm-input
+feature enables input contracts without FEC/simulation dependencies in Qt.
+
+Binary conversion calls the unchanged Apache-2.0 pnm 0.3.6 Rust library from
+PNM Viewer Toolkit, pinned by Git revision 5fbd5561f3e06b73486546b5ffa520279080a5eb
+in the Qt manifest/lockfile. Cargo fetches its source into an ignored local cache;
+no decoder source is vendored in MERLIN. Original notices are preserved under
+apps/qt/third-party/. There is no runtime viewer checkout dependency. The sanitized binary demo matches the hash already recorded
+in examples/measurements/single-channel/provenance.json. Never overwrite inputs.
+
+A dedicated Rust Qt adapter bounds file reads (16 MiB) and retains original bytes
+for accepted/draft input. Loading stages a capture and profile ID; Apply validates
+against accepted OCD spacing/FFT/bandwidth, Cancel preserves accepted input, and
+Remove input is staged until Apply. Rejected loads preserve the previous draft.
+Profile tree queries return bounded compact scheme rows, not expanded carriers.
+A maximum of 256 scheme rows for the selected profile are shown with explicit
+truncation. Other profiles are selectable for inspection. Accepted capture hashes,
+profile identity and exact grids remain in Rust; no UI modulation calculations.
+The accepted DPD and compatible OCD become green; other stages remain pending.
+No job dispatch, persistence, capture editing or speculative profile overrides.

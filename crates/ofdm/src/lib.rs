@@ -5,6 +5,7 @@
 //! Standalone Rust simulation core with focused domain and processing modules.
 #![forbid(unsafe_code)]
 pub mod error;
+pub mod input_format;
 pub mod profile;
 pub mod scenario;
 pub mod signal_processing;

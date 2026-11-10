@@ -7,7 +7,7 @@ pub mod association;
 pub mod document;
 pub mod grid;
 pub mod observation;
-#[cfg(feature = "simulation")]
+#[cfg(any(feature = "simulation", feature = "pnm-input"))]
 pub mod pnm_json;
 pub use grid::{FrequencyGrid, ScenarioKey, MAX_LAB_CARRIERS};
 pub use observation::{ChannelFrame, RxMerFrame, SourceProvenance};

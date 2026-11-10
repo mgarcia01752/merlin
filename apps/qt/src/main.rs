@@ -5,6 +5,7 @@
  */
 mod branding;
 mod ofdm_settings;
+mod profile_input;
 use cxx_qt_lib::{QGuiApplication, QQmlApplicationEngine, QString, QUrl};
 
 /// Starts the native workbench; scientific jobs are not connected in this increment.

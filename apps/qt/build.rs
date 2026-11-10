@@ -16,11 +16,16 @@ fn main() {
         .qt_module("QuickControls2")
         .qml_module(QmlModule {
             uri: "Merlin.Workbench",
-            rust_files: &["src/branding.rs", "src/ofdm_settings.rs"],
+            rust_files: &[
+                "src/branding.rs",
+                "src/ofdm_settings.rs",
+                "src/profile_input.rs",
+            ],
             qml_files: &[
                 "qml/Main.qml",
                 "qml/Workbench.qml",
                 "qml/OfdmSettingsDialog.qml",
+                "qml/ProfileInputDialog.qml",
                 "qml/SectionPreviewDialog.qml",
                 "qml/WorkbenchBlock.qml",
                 "qml/Connection.qml",

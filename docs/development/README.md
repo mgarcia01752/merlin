@@ -3,6 +3,8 @@
 This is the working home for ongoing development and its published documentation.
 Start with the [status](status.md), [checklist](checklist.md) and
 [architecture](../architecture.md), then use the feature records for design history.
+Start with [development setup](setup.md) for the Ubuntu package/toolchain installer.
+
 The separate [UI checklist](ui-checklist.md) tracks the Qt workbench.
 [Qt setup and VM validation](qt.md) covers the initial native shell.
 

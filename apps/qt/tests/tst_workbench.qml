@@ -23,9 +23,27 @@ Pane {
         function describe(document) { return JSON.stringify({summary: "Timing tested in Rust"}) }
         function apply(document) { accepted = document; return "" }
     }
+    QtObject {
+        id: profileBackend
+        property int acceptedId: -1
+        property bool loaded: false
+        function view(id) {
+            return JSON.stringify({source_name: loaded ? "test.bin" : "", format: loaded ? "Binary PNM" : "", profile_ids: loaded ? [0, 1] : [], selected_profile_id: loaded ? id : -1, rows: loaded ? [{key: "profiles", label: "Profiles", value: "2 available", depth: 0, ancestors: [], branch: true, description: "Test capture"}, {key: "profile_0", label: "Profile 0", value: "Test assignments", depth: 1, ancestors: ["profiles"], branch: true, profile_id: 0, description: "Test profile"}] : []})
+        }
+        function begin() { loaded = acceptedId >= 0; return view(acceptedId) }
+        function demo() { loaded = true; return view(0) }
+        function preview(id) { return view(id) }
+        function stage(url) { return JSON.stringify({error: "Invalid test input"}) }
+        function clear_draft() { loaded = false; return view(-1) }
+        function apply(id, settings) { acceptedId = loaded ? id : -1; return "" }
+        function cancel() { loaded = acceptedId >= 0 }
+        function state(settings) {
+            return JSON.stringify({selected: acceptedId >= 0, profile_status: acceptedId >= 0 ? "complete" : "attention", ofdm_status: acceptedId >= 0 ? "complete" : "attention", reason: acceptedId >= 0 ? "Profile and settings valid" : "A validated modulation-profile input is required.", summary: acceptedId >= 0 ? {profile_id: String(acceptedId), source_file: "test.bin", subcarrier_assignments: "Test assignments"} : {}})
+        }
+    }
     Workbench {
         id: workbench
-        anchors.fill: parent; theme: theme; settingsBackend: backend
+        anchors.fill: parent; theme: theme; settingsBackend: backend; profileBackend: profileBackend
         iconRoot: "../../../docs/images/logo/"
     }
     Component {
@@ -43,7 +61,7 @@ Pane {
                 {tag: "channel", block: "channelBlock", title: "Channel Simulator"},
                 {tag: "rx", block: "receiverBlock", title: "Receiver"},
                 {tag: "verify", block: "verificationBlock", title: "PRBS-RX"},
-                {tag: "profile", block: "profileBlock", title: "Modulation Profile"},
+                {tag: "profile", block: "profileBlock", title: "Downstream Profile Descriptor (DPD)"},
                 {tag: "ce", block: "channelEstimateBlock", title: "DS Channel Est."},
                 {tag: "mer", block: "rxmerBlock", title: "RxMER"}
             ]
@@ -52,11 +70,11 @@ Pane {
             const block = findChild(workbench, data.block)
             verify(block !== null)
             mouseClick(block)
-            const dialog = data.block === "ofdmBlock" ? workbench.ofdmPopup : workbench.sectionPopup
+            const dialog = data.block === "ofdmBlock" ? workbench.ofdmPopup : data.block === "profileBlock" ? workbench.profilePopup : workbench.sectionPopup
             verify(dialog !== null)
             tryCompare(dialog, "opened", true)
             compare(dialog.title, data.title)
-            if (data.block !== "ofdmBlock") { verify(workbench.sectionDescription.length > 30) }
+            if (data.block !== "ofdmBlock" && data.block !== "profileBlock") { verify(workbench.sectionDescription.length > 30) }
             keyClick(Qt.Key_Escape)
             tryCompare(dialog, "visible", false)
         }
@@ -153,6 +171,38 @@ Pane {
             } finally {
                 for (let index = 0; index < blocks.length; ++index) { blocks[index].blockStatus = previous[index] }
             }
+        }
+        function test_profile_staging_apply_cancel_and_remove() {
+            const dialog = workbench.profilePopup
+            mouseClick(findChild(workbench, "profileBlock"))
+            tryCompare(dialog, "opened", true)
+            compare(dialog.previewModel.profile_ids.length, 0)
+            mouseClick(findChild(dialog, "profileLoadDemo"))
+            compare(dialog.previewModel.format, "Binary PNM")
+            compare(profileBackend.acceptedId, -1)
+            keyClick(Qt.Key_Escape)
+            tryCompare(dialog, "visible", false)
+            compare(profileBackend.acceptedId, -1)
+            mouseClick(findChild(workbench, "profileBlock"))
+            tryCompare(dialog, "opened", true)
+            mouseClick(findChild(dialog, "profileLoadDemo"))
+            mouseClick(findChild(dialog, "profileApply"))
+            tryCompare(dialog, "visible", false)
+            compare(profileBackend.acceptedId, 0)
+            compare(workbench.profileState.profile_status, "complete")
+            compare(workbench.profileState.ofdm_status, "complete")
+            compare(findChild(workbench, "startButton").enabled, false)
+            mouseClick(findChild(workbench, "profileBlock"))
+            tryCompare(dialog, "opened", true)
+            dialog.showResult(profileBackend.stage("file:///bad.bin"))
+            verify(dialog.errorMessage.length > 0)
+            compare(dialog.previewModel.selected_profile_id, 0)
+            mouseClick(findChild(dialog, "profileRemove"))
+            compare(profileBackend.acceptedId, 0)
+            mouseClick(findChild(dialog, "profileApply"))
+            tryCompare(dialog, "visible", false)
+            compare(profileBackend.acceptedId, -1)
+            compare(workbench.profileState.profile_status, "attention")
         }
         function test_controls_and_theme() {
             for (const name of ["startButton", "stopButton", "pauseButton"]) {

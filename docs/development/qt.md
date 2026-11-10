@@ -1,8 +1,8 @@
 # Qt workbench development
 
 UI-01 currently provides a native Qt Quick/QML shell with the clickable system
-diagram and section-preview dialogs. Editors, file import, analyzers and run
-integration remain pending. Start/Stop/Pause are visible and disabled.
+diagram and section-preview dialogs. The OCD timing editor and DPD capture importer are implemented; other editors,
+analyzers and run integration remain pending. Start/Stop/Pause are visible and disabled.
 See the [UI checklist](ui-checklist.md) and
 [design/provenance](features/visual-workspace/design.md).
 
@@ -11,7 +11,9 @@ See the [UI checklist](ui-checklist.md) and
 Use Qt 6.8.3 gcc_64 and the pinned Rust 1.85.1 toolchain. The desktop adapter has
 its own Cargo workspace/lockfile under apps/qt; CLI builds remain Qt-independent.
 CXX-Qt 0.7.3 and CXX 1.0.158 are pinned. A C++ compiler is needed for Qt interop
-only; no DSP/FEC algorithms use C++. No setup command installs system packages.
+only; no DSP/FEC algorithms use C++. Use [development setup](setup.md): `./install.sh --development` installs missing
+Ubuntu prerequisites and prepares the project-local pinned Rust/Qt toolchain.
+Its check/dry-run modes do not install packages.
 
 Set QT_SDK_DIR to an existing SDK or place it under local/qt/6.8.3/gcc_64.
 For the current development VM, the existing reference SDK can be read without

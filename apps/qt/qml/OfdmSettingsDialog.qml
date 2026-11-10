@@ -12,6 +12,7 @@ Dialog {
     required property var theme
     required property var backend
     property var draft: ({})
+    property var profileSummary: ({})
     property var registryData: ({fields: [], profile_fields: []})
     property var selectedField: null
     property string errorMessage: ""
@@ -118,9 +119,9 @@ Dialog {
                                                     id: profileValue
                                                     Label {
                                                         objectName: fieldRow.modelData.id + "Value"
-                                                        text: ""
+                                                        text: dialog.profileSummary[fieldRow.modelData.id] || ""
                                                         color: theme.muted
-                                                        Accessible.name: fieldRow.modelData.label + ": no modulation profile selected"
+                                                        Accessible.name: fieldRow.modelData.label + ": " + (text || "no modulation profile selected")
                                                     }
                                                 }
                                                 Component {
@@ -171,7 +172,7 @@ Dialog {
             }
         }
         Label { objectName: "ofdmValidationError"; text: dialog.errorMessage; visible: text.length > 0; color: theme.text; Layout.fillWidth: true; wrapMode: Text.WordWrap }
-        Label { text: "No modulation profile selected. Settings are kept in this session only."; color: theme.muted; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+        Label { text: dialog.profileSummary.profile_id !== undefined ? "Accepted profile shown above. Settings are kept in this session only." : "No modulation profile selected. Settings are kept in this session only."; color: theme.muted; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap }
     }
     footer: DialogButtonBox {
         Button {

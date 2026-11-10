@@ -374,7 +374,7 @@
     {
       "id": "profile_id",
       "label": "Profile ID",
-      "description": "Identifier of the selected downstream modulation profile. No profile is selected yet.",
+      "description": "Identifier of the selected downstream modulation profile.",
       "description_kind": "paraphrase",
       "source": {
         "document": "CM-SP-MULPIv3.1-I25-230419",
@@ -390,7 +390,7 @@
     {
       "id": "subcarrier_assignments",
       "label": "Subcarrier assignments",
-      "description": "The downstream profile describes modulation assignments for subcarriers. Channel-wide parameters are described separately by the OFDM Channel Descriptor. No assignments have been loaded.",
+      "description": "The downstream profile describes modulation assignments for subcarriers. Channel-wide parameters are described separately by the OFDM Channel Descriptor.",
       "description_kind": "paraphrase",
       "source": {
         "document": "CM-SP-MULPIv3.1-I25-230419",

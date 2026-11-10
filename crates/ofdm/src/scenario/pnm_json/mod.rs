@@ -74,10 +74,8 @@ pub fn import(
 ) -> Result<ScenarioDocument, SimulationError> {
     let readings: Rxmer = parse(&rxmer)?;
     let response: Channel = parse(&channel)?;
-    let captured: ProfileDocument = parse(&profiles)?;
     readings.header.check(4)?;
     response.header.check(2)?;
-    captured.header.check(10)?;
     let key = readings.grid.key(readings.values.len())?;
     if readings.value_units != "dB"
         || readings.data_length != readings.values.len()
@@ -88,21 +86,74 @@ pub fn import(
                 .checked_mul(4)
                 .ok_or_else(|| invalid("IQ length overflow."))?
         || response.grid.key(response.iq.len())? != key
-        || captured.num_profiles != captured.profiles.len()
-        || captured.profiles.is_empty()
-        || captured.profiles.len() > 256
     {
         return Err(invalid(
             "Decoded measurements have inconsistent units, identity or lengths.",
         ));
     }
-    for epoch in [response.header.capture_time, captured.header.capture_time] {
+    let decoded_profiles = import_profiles(profiles)?;
+    if decoded_profiles.iter().any(|profile| profile.key != key) {
+        return Err(invalid(
+            "Profile frequency grid or coverage differs from RxMER.",
+        ));
+    }
+    for epoch in std::iter::once(response.header.capture_time)
+        .chain(decoded_profiles.iter().map(|profile| profile.capture_time))
+    {
         if epoch.abs_diff(readings.header.capture_time) > tolerance_seconds {
             return Err(invalid(
                 "PNM capture epochs exceed the explicit association tolerance.",
             ));
         }
     }
+    let scenario = ScenarioDocument {
+        schema_version: 1,
+        protocol,
+        frames: vec![RxMerFrame {
+            key: key.clone(),
+            capture_time: readings.header.capture_time,
+            source: provenance(&rxmer, &readings.header, "decoded_json_rxmer"),
+            mer_db: readings.values,
+        }],
+        channels: vec![ChannelFrame {
+            key,
+            capture_time: response.header.capture_time,
+            source: provenance(&channel, &response.header, "decoded_json_channel_response"),
+            iq: response.iq,
+        }],
+        profiles: decoded_profiles,
+    };
+    scenario.validate()?;
+    Ok(scenario)
+}
+
+/// Imports a standalone decoded modulation-profile capture through the shared contract.
+///
+/// # Arguments
+/// * `source` - Named decoder JSON bytes, at most 16 MiB; originals stay unchanged.
+/// # Returns
+/// Bounded profiles retaining exact device/channel/grid identity and JSON provenance.
+/// # Errors
+/// Rejects unsupported format/schemes, duplicate IDs, invalid grids or contradictory
+/// assignment codes/names/roles. Other captures are not needed for inspection.
+pub fn import_profiles(source: JsonCapture<'_>) -> Result<Vec<CapturedProfile>, SimulationError> {
+    let captured: ProfileDocument = parse(&source)?;
+    captured.header.check(10)?;
+    if captured.num_profiles != captured.profiles.len()
+        || captured.profiles.is_empty()
+        || captured.profiles.len() > 256
+    {
+        return Err(invalid("Invalid modulation-profile count."));
+    }
+    let count = captured.profiles[0]
+        .schemes
+        .iter()
+        .try_fold(0usize, |total, scheme| {
+            total
+                .checked_add(scheme.num_subcarriers)
+                .ok_or_else(|| invalid("Profile size overflow."))
+        })?;
+    let key = captured.grid.key(count)?;
     let mut decoded_profiles = Vec::new();
     let mut expanded_total = key.grid.sample_count * 2;
     let mut seen = std::collections::BTreeSet::new();
@@ -152,35 +203,13 @@ pub fn import(
         }
         decoded_profiles.push(CapturedProfile {
             key: key.clone(),
-            source: provenance(
-                &profiles,
-                &captured.header,
-                "decoded_json_modulation_profile",
-            ),
+            source: provenance(&source, &captured.header, "decoded_json_modulation_profile"),
             capture_time: captured.header.capture_time,
             profile_id: profile.profile_id,
             assignments,
         });
     }
-    let scenario = ScenarioDocument {
-        schema_version: 1,
-        protocol,
-        frames: vec![RxMerFrame {
-            key: key.clone(),
-            capture_time: readings.header.capture_time,
-            source: provenance(&rxmer, &readings.header, "decoded_json_rxmer"),
-            mer_db: readings.values,
-        }],
-        channels: vec![ChannelFrame {
-            key,
-            capture_time: response.header.capture_time,
-            source: provenance(&channel, &response.header, "decoded_json_channel_response"),
-            iq: response.iq,
-        }],
-        profiles: decoded_profiles,
-    };
-    scenario.validate()?;
-    Ok(scenario)
+    Ok(decoded_profiles)
 }
 
 fn parse<Model: serde::de::DeserializeOwned>(

@@ -22,7 +22,8 @@ Native Qt UI development is the next phase; Qt is presentation only. Follow
 the UI section in docs/architecture.md and docs/development/ui-checklist.md,
 starting left to right with OFDM Channel Descriptor (OCD). The Qt workbench
 shell and Rust-validated timing/interleaving editor exist; input loading, other
-editors and run integration remain pending;
+editors and run integration remain pending. The DPD binary/JSON capture importer
+and OCD/profile readiness are implemented;
 Python bindings are deferred until after UI-01 through UI-04.
 Dependencies point from CLI/future adapters to docsis-ofdm-fec to fec-codec.
 
@@ -58,6 +59,12 @@ under .agents/skills/ and .claude/skills/.
 - No SNMP/TFTP, device capture/control, network analysis or Python sidecars.
 - No commits, pushes, publication or system-wide installation without explicit
   authorization. Supply commands when asked for commit/push commands.
+
+Development setup uses `./install.sh --development` on the initial Ubuntu x64
+targets, with read-only `--check` and `--dry-run` modes. The PNM Rust decoder is
+an exact Git/version dependency fetched into ignored Cargo caches; do not vendor
+PNM Viewer source. Keep source pins, developer prerequisites and setup docs current.
+No setup invocation or system package installation is implied by ordinary UI work.
 
 Validation scope:
 

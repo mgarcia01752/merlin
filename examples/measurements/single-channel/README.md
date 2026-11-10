@@ -14,6 +14,7 @@ See the [experiment commands](../../../docs/user/impairments/experiments.md).
 | --- | --- |
 | [rxmer.json](rxmer.json) | Unchanged decoder output; baseline readings |
 | [channel_estimation.json](channel_estimation.json) | Unchanged complex coefficient observations |
+| [modulation_profile.bin](modulation_profile.bin) | Sanitized original binary; native Qt DPD demo |
 | [modulation_profile.json](modulation_profile.json) | Unchanged captured profiles; select a profile explicitly later |
 | [rxmer-reduced-6db.json](rxmer-reduced-6db.json) | Synthetic: subtract 6 dB from each available reading |
 | [rxmer-center-notch-12db.json](rxmer-center-notch-12db.json) | Synthetic: subtract 12 dB within the middle 10% of array positions |
