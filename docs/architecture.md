@@ -938,3 +938,14 @@ tag publication depends on both succeeding alongside native tests. The local
 audit launcher verifies a pinned static tool in ignored local storage; it does
 not install system packages or change the simulation core or dependency graph.
 See [security checks](development/security.md).
+
+### Python adapter roadmap — after Qt
+
+API-01 follows UI-01 through UI-04. Start with a single proposed
+`MerlinSimulation` Python class with settings, source, optional decoded PNM
+measurements, work limits and the latest owned result. A separate optional PyO3
+adapter calls the same Rust validation and channel-job APIs as the CLI/Qt UI;
+Python does not implement DSP/FEC or require Qt. Prefer simple owned inputs and
+dictionary results initially; decide cancellation, callbacks and array ownership
+before exposing more advanced sessions. No binding exists yet.
+See the [API-01 class proposal](development/features/python-adapter/design.md).

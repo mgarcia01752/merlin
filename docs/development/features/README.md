@@ -41,6 +41,7 @@ from a fresh clone and are deliberately not Markdown link targets.
 | pnm measurement inputs | [README](pnm-measurement-inputs/README.md) |
 | prbs source | [plan](prbs-source/plan.md) · [validation](prbs-source/validation.md) |
 | project architecture | [plan](project-architecture/plan.md) |
+| Python adapter (after Qt, planned) | [API-01 class proposal](python-adapter/design.md) |
 | project rename | [notes](project-rename/notes.md) |
 | qam completion | [QAM-02/03 design](qam-completion/design.md) · [validation](qam-completion/validation.md) · [QAM-04 evidence needed](qam-completion/external-vectors.md) |
 | qam mapping | [architecture](qam-mapping/architecture.md) |

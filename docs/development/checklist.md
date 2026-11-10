@@ -686,10 +686,14 @@ See the [implementation record](features/pilot-channel-estimation/implementation
     run tag publication after the later workflow push.
   Guide: [installation](../user/install/README.md).
 
-### Optional Python adapter
+### Optional Python adapter — after the Qt UI
 
-- [ ] **API-01** Python bindings as a separate optional adapter, preserving the same
-  simulation core, buffer lifetimes and observation contracts.
+- [ ] **API-01** After UI-01 through UI-04, add a separate optional Python adapter
+  preserving the Rust simulation core, buffer lifetimes and observation contracts.
+  Start with one `MerlinSimulation` class holding settings, source, measurements,
+  limits and the latest result. All scientific processing remains Rust.
+  Proposed approach: PyO3 bindings and maturin packaging, independent of Qt/CLI.
+  Plan: [simple Python class](features/python-adapter/design.md).
 
 ### Qt system workspace
 

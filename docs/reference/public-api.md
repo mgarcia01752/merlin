@@ -209,3 +209,10 @@ layout, physical loading and1..16 original words, plus bounded waveform probes.
 It returns serializable per-word actual outcomes and independent error counts.
 See [component guides](../user/qam-processing/README.md) for lifecycle, math and
 bounds. No new general channel request schema or Python/Qt dependency is added.
+
+## Planned Python convenience class
+
+After the Qt UI milestone, API-01 proposes one `MerlinSimulation` class wrapping
+the existing Rust operations. It holds settings, source, optional measurements,
+limits and the latest result. No Python package is available yet. See the
+[high-level class proposal](../development/features/python-adapter/design.md).
