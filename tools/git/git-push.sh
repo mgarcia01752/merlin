@@ -37,7 +37,8 @@ Safety checks:
   - The current branch must be main or master.
   - The origin remote must exist.
   - The local branch must not be behind or diverged from origin.
-  - Required local checks must pass; no skip option is provided.
+  - Documentation-only outgoing ranges skip the local build/test gate.
+  - All other changes and all releases require the full local gate.
   - Branch, commit and working tree must stay unchanged during checks.
   - Force-push is never used.
 EOF
@@ -118,11 +119,13 @@ if ! git -C "${PROJECT_DIR}" remote get-url "${REMOTE}" >/dev/null 2>&1; then
   die "Remote '${REMOTE}' is not configured"
 fi
 
+remote_base=""
 remote_head="$(git -C "${PROJECT_DIR}" ls-remote --heads "${REMOTE}" "refs/heads/${branch}")"
 if [[ -n "${remote_head}" ]]; then
   echo "Fetching ${REMOTE}/${branch}..."
   git -C "${PROJECT_DIR}" fetch "${REMOTE}" "${branch}"
-  remote_ref="${REMOTE}/${branch}"
+  remote_ref="FETCH_HEAD"
+  remote_base="$(git -C "${PROJECT_DIR}" rev-parse FETCH_HEAD)"
 
   if ! git -C "${PROJECT_DIR}" merge-base --is-ancestor "${remote_ref}" HEAD; then
     die "Local ${branch} is behind or diverged from ${remote_ref}"
@@ -132,12 +135,21 @@ else
 fi
 
 validated_commit="$(git -C "${PROJECT_DIR}" rev-parse HEAD)"
-echo "Validating ${branch} before push..."
-bash "${PROJECT_DIR}/scripts/check-before-push.sh"
+validation_scope="full"
+if [[ -n "${remote_base}" ]]; then
+  validation_scope="$(python3 "${SCRIPT_DIR}/docs_only.py" \
+    --root "${PROJECT_DIR}" --base "${remote_base}" --head "${validated_commit}")"
+fi
+if [[ "${validation_scope}" == "docs" ]]; then
+  echo "Documentation-only outgoing commits; skipping local build/test checks."
+else
+  echo "Validating ${branch} before push..."
+  bash "${PROJECT_DIR}/scripts/check-before-push.sh"
+fi
 if [[ "$(git -C "${PROJECT_DIR}" rev-parse HEAD)" != "${validated_commit}" ||
       "$(git -C "${PROJECT_DIR}" branch --show-current)" != "${branch}" ||
       -n "$(git -C "${PROJECT_DIR}" status --porcelain)" ]]; then
   die "Branch, commit or working tree changed during validation; retry after saving"
 fi
-echo "Pushing validated commit ${validated_commit} to ${REMOTE}/${branch}..."
+echo "Pushing checked commit ${validated_commit} to ${REMOTE}/${branch}..."
 git -C "${PROJECT_DIR}" push --no-follow-tags --recurse-submodules=no --set-upstream "${REMOTE}" "${validated_commit}:refs/heads/${branch}"

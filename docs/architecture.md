@@ -921,3 +921,11 @@ uses shared Rust pilot placement and per-bin loading for24/90MHz occupied widths
 Decoder-shaped synthetic inputs retain four profile IDs; fixed-runner tests
 exercise each loading as internal ProfileA without expanding measured-selector
 support. No new production stage or input schema is introduced.
+
+### Local documentation-only push validation
+
+The Git push helper classifies each outgoing commit before ordinary branch
+pushes. Only maintained documentation paths skip the local build/test gate.
+Initial pushes and release/tag modes retain full validation; clean-tree, ancestry
+and unchanged-commit guards remain mandatory. Remote CI is unchanged.
+See [DOC-PUSH-01 design](development/features/docs-only-push/design.md).

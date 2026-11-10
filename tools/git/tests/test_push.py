@@ -25,6 +25,7 @@ class PushGateTests(unittest.TestCase):
             (root / "scripts").mkdir()
             (root / "bin").mkdir()
             shutil.copy2(PROJECT / "tools/git/git-push.sh", root / "tools/git/git-push.sh")
+            shutil.copy2(PROJECT / "tools/git/docs_only.py", root / "tools/git/docs_only.py")
             (root / "scripts/check-before-push.sh").write_text(
                 '#!/bin/bash\n'
                 'echo validate >> "$TRACE"\n'
@@ -43,7 +44,13 @@ case "$1" in
   branch) echo master ;;
   remote) echo git@example.invalid:repo ;;
   ls-remote)
-    if [[ "$MODE" == remote-fail ]]; then exit 19; fi ;;
+    if [[ "$MODE" == remote-fail ]]; then exit 19; fi
+    if [[ "$MODE" == docs || "$MODE" == mixed ]]; then echo 'base refs/heads/master'; fi ;;
+  fetch|merge-base) exit 0 ;;
+  rev-list) echo outgoing ;;
+  diff-tree)
+    if [[ "$MODE" == docs ]]; then printf 'README.md\\0'
+    else printf 'source.rs\\0'; fi ;;
   push) echo "push $*" >> "$TRACE" ;;
   *) exit 99 ;;
 esac
@@ -81,3 +88,15 @@ esac
         result, trace = self.exercise("remote-fail")
         self.assertEqual(result.returncode, 19)
         self.assertEqual(trace, "")
+
+    def test_documentation_range_skips_validation(self):
+        result, trace = self.exercise("docs")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("validate\n", trace)
+        self.assertIn("validated:refs/heads/master", trace)
+        self.assertIn("Documentation-only", result.stdout)
+
+    def test_mixed_range_runs_validation(self):
+        result, trace = self.exercise("mixed")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(trace.startswith("validate\n"))

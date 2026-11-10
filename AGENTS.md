@@ -76,7 +76,10 @@ Begin Git command blocks with cd /home/dev01/Projects/merlin &&.
 VERSION is canonical. tools/bump-version.sh synchronizes every local package and
 Cargo.lock. Combined --tag-patch/--tag-minor/--tag-major modes require clean master,
 validate the bumped candidate, commit version files, annotate and atomically push.
-No validation bypass or Git force-push. --force permits a fresh release only
+Ordinary branch pushes may automatically skip local builds/tests only for
+verified documentation-only outgoing commits; see skills/git-workflow. Initial
+pushes and tag/release modes always require full validation. No unrestricted
+validation bypass or Git force-push. --force permits a fresh release only
 from an already published clean HEAD. --tag retries without another bump.
 Prepared native validation/publication workflows live under .github/workflows/.
 Keep them local until the user requests pushing; file presence is not runtime

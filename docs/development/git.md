@@ -31,15 +31,28 @@ tools/git/git-push.sh
 ```
 
 Plain push requires clean main/master, a configured origin and a local branch
-that is not behind or diverged. It runs `scripts/check-before-push.sh`, rechecks
-that branch/commit/tree are unchanged and pushes only that tested branch object.
+that is not behind or diverged. It classifies every outgoing commit against the
+fetched remote HEAD, rechecks that branch/commit/tree are unchanged and pushes
+only the captured branch object. Documentation-only ranges skip the local
+build/test gate automatically; all other ranges run `scripts/check-before-push.sh`.
 Feature branches must be reviewed and merged locally before using this helper.
 
 The validation gate includes version consistency, Python helper tests, Bash
 syntax/ShellCheck, rustfmt, Clippy, all workspace tests, analysis-only tests,
 a release CLI build and an actual seeded simulation smoke run. It installs
 nothing. Python3, ShellCheck, and the pinned Rust toolchain are prerequisites.
-A missing check is a failure; there is no validation-skip option.
+For automatic documentation-only pushes, the allowed paths are root `README.md`,
+Markdown files under `docs/`, and PNG/JPG/JPEG/SVG/WebP/GIF images under
+`docs/images/`. Changes to skills, AGENTS.md, fixtures, source, manifests, tools
+or workflows always require the full gate. Every outgoing commit is inspected,
+including merge-parent differences and both paths of renames; reverting code
+later does not make a range documentation-only. Initial pushes and release/tag
+modes always run the full gate. Git inspection errors stop the push.
+
+Use the same ordinary push command for documentation changes; there is no manual
+unrestricted skip flag. Clean-tree, ancestry, unchanged-HEAD and non-force guards
+still apply. This shortcut affects local validation only; GitHub CI is unchanged.
+For full-gate pushes, missing checks remain failures.
 
 ## Local bump preview
 

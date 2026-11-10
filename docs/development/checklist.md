@@ -726,3 +726,10 @@ integration. It does not mean all the broader product items above are complete.
   existing probes; verify modulation geometry and Y=HZ in Rust. This does not
   itself complete CH-EST-RX-01..06. The later shared collector/estimator is now
   implemented and validated separately in the linked receiver implementation record.
+
+### Documentation-only push tooling
+
+- [x] **DOC-PUSH-01** Automatically skip the local build/test gate only for
+  documentation-only outgoing branch commits; retain full checks for mixed/code
+  changes, initial pushes and releases. Inspect merge parents and rename paths.
+  Evidence: [design and validation](features/docs-only-push/design.md).

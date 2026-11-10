@@ -28,9 +28,14 @@ Provide a command unless the user explicitly authorizes execution; start command
 blocks with cd /home/dev01/Projects/merlin &&.
 
 Use tools/git/git-push.sh for pushes. Plain push requires clean main/master,
-origin, nondiverged ancestry and successful scripts/check-before-push.sh.
-The same tested commit and clean tree must remain unchanged throughout validation.
-Do not bypass checks or use Git force-push. No feature-branch push is authorized
+origin and nondiverged ancestry. The helper automatically skips the local
+build/test gate only when every outgoing commit changes root README.md, Markdown
+under docs/, or approved documentation images under docs/images/. It inspects
+per-commit merge/rename paths, so code reverted later still requires full checks.
+Initial pushes, mixed changes and all tag/releases use the full gate. No manual
+skip flag is supported; Git inspection failures stop the push. GitHub CI is
+unchanged. The captured commit and clean tree must remain unchanged throughout.
+Do not bypass the helper's classification or use Git force-push. No feature-branch push is authorized
 by the helper. Use toolkit-release for explicit version/tag modes.
 
 A new empty repository needs its initial reviewed commit and origin before a
