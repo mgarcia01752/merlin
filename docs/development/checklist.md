@@ -695,10 +695,16 @@ See the [implementation record](features/pilot-channel-estimation/implementation
   Proposed approach: PyO3 bindings and maturin packaging, independent of Qt/CLI.
   Plan: [simple Python class](features/python-adapter/design.md).
 
-### Qt system workspace
+### Qt simulation workbench
+
+Detailed tasks: [UI checklist](ui-checklist.md) and
+[task design](features/visual-workspace/design.md). Develop left to right, starting
+with OFDM Settings. All UI items remain planned.
 
 - [ ] **UI-01** Build the planned Qt system workspace after core APIs exist:
-  clickable source/TX/channel/RX blocks with purpose, settings and stage details.
+  clickable source/TX/channel/RX blocks with focused pop-up dialogs.
+  Include persistent lower-right Start, Stop and Pause/Resume controls; define
+  Rust pause lifecycle and runtime-budget behavior before implementing pause.
   Include the separate OFDM transmission settings panel from the
   [updated diagram guide](../architecture.md#updated-workspace-diagram-guide):
   cyclic prefix, roll-off/windowing, time-interleaver depth and pilot settings;

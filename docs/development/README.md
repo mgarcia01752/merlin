@@ -3,12 +3,14 @@
 This is the working home for ongoing development and its published documentation.
 Start with the [status](status.md), [checklist](checklist.md) and
 [architecture](../architecture.md), then use the feature records for design history.
+The separate [UI checklist](ui-checklist.md) tracks the planned Qt workbench.
 
 ```text
 docs/development/
 ├── README.md                 Development entry point
 ├── status.md                 Current milestone and remaining scope
 ├── checklist.md              Official completion/TODO list
+├── ui-checklist.md           Detailed Qt workbench tasks
 ├── build.md                  Toolchain, validation and generated files
 ├── git.md                    Commit, push and release workflow
 ├── logging.md                Logging conventions and usage

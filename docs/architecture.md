@@ -151,15 +151,62 @@ See [component guides](user/qam-processing/README.md) and the
 [External interoperability](development/features/qam-completion/external-vectors.md)
 is optional future scope.
 
-## Planned visual system workspace and payload selection
+## UI: MERLIN Simulation Workbench
 
-The future Qt workspace starts from the user's system diagram: clickable
-**Source → Transmitter → Channel simulator → Receiver** blocks, a files/input
-panel, and separate LDPC, BER, payload pre/post-CE, pilot and PLC analyzers.
-Each block opens its purpose, settings, status and available stage observations;
-analyzers consume bounded existing/new Rust contracts without changing the run.
-The [workspace plan and diagram](development/features/visual-workspace/plan.md)
-record this starting layout and ownership. This is planned; no Qt UI exists yet.
+The CLI functional MVP is complete for its documented closed-loop configurations.
+The next major phase is the native Qt Quick/QML workbench, initially targeting
+Ubuntu 22.04, 24.04 and 26.04 x64. Python bindings follow UI-01 through UI-04.
+This UI is planned, not implemented; platform runtime validation remains pending.
+
+The user's high-level diagram defines a clickable workbench, with focused pop-up
+dialogs for editing each section, selecting an applicable file, and inspecting
+purpose, status and available stage observations. Keep the signal path visible
+behind the dialogs. Develop left to right, beginning with **OFDM Settings**:
+then PRBS-TX / Transmitter and modulation-profile input, Channel Simulator and
+its measurement inputs, and finally Receiver / PRBS-RX and results.
+
+```mermaid
+flowchart LR
+    SETTINGS["OFDM Settings"] --> TX["Transmitter"]
+    SOURCE["PRBS-TX / file source"] --> TX
+    PROFILE["Modulation Profile PNM input"] --> TX
+    TX --> CHANNEL["Channel Simulator"] --> RX["Receiver"]
+    CE["DS Channel Estimation PNM input(s)"] --> CHANNEL
+    MER["RxMER PNM input(s)"] --> CHANNEL
+    RX --> VERIFY["PRBS-RX / recovered-data verification"]
+    SOURCE -. "Independent original/recovered comparison" .-> VERIFY
+```
+
+PRBS-TX and PRBS-RX represent source generation and independent recovered-data
+verification. Their comparison connection is not receiver feedback or source
+reseeding. File sources retain their own exact-byte verification. Measurement
+inputs initially use supported decoded PNM JSON, not native binary PNM parsing.
+The detailed diagram below retains analyzer and receiver-reference ownership.
+
+### Workbench run controls
+
+Persistent **Start (▶), Stop (■), and Pause/Resume (⏸/▶)** icons sit in the
+lower-right corner, with accessible names, tooltips and state-dependent availability.
+Start validates and freezes settings before beginning a bounded Rust job. Stop
+requests cooperative cancellation and retains completed results with explicit
+partial status. Pause must suspend advancement while retaining source, RNG,
+interleaver, receiver and observation state; Resume continues the same run.
+Opening or editing a dialog must not change active scientific state. Settings
+changes apply to the next run.
+
+Pause is a new Rust lifecycle requirement, not an existing `run_channel` feature.
+Before implementing it, define safe pause boundaries, whether paused time counts
+toward the host-runtime budget, Stop/close behavior while paused, and worker cleanup.
+Do not implement Pause by restarting a run or merely freezing the display.
+Jobs run away from the UI thread. Rust owns all DSP, modulation, FEC, validation,
+scientific calculations and bounded results; Qt owns presentation and transient
+interaction. Existing Rust APIs and test points remain the source of truth.
+
+The [UI checklist](development/ui-checklist.md) tracks the detailed work beneath
+UI-01 through UI-04 in the [main checklist](development/checklist.md).
+The [task design](development/features/visual-workspace/design.md) and
+[earlier workspace plan](development/features/visual-workspace/plan.md) record
+interaction, ownership and validation. No UI completion is claimed by these plans.
 
 ### Updated workspace diagram guide
 

@@ -15,8 +15,11 @@ implementation or external interoperability dataset is not an acceptance
 prerequisite. Preserve normative/source-table checks and honest decoder outcomes;
 do not describe closed-loop results as external interoperability evidence.
 
-A future optional Qt component is presentation only. Build scientific functionality
-first; there is no UI implementation or Python binding in the current scope.
+The CLI functional MVP is complete within its documented supported scope.
+Native Qt UI development is the next phase; Qt is presentation only. Follow
+the UI section in docs/architecture.md and docs/development/ui-checklist.md,
+starting left to right with OFDM Settings. UI implementation remains pending;
+Python bindings are deferred until after UI-01 through UI-04.
 Dependencies point from CLI/future adapters to docsis-ofdm-fec to fec-codec.
 
 Apply skills/coding-style, skills/scientific-testing, and the applicable versioned

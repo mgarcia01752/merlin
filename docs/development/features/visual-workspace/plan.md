@@ -1,6 +1,11 @@
-# Visual system workspace and selectable payload source
+# MERLIN Simulation Workbench and selectable payload source
 
-**Qt workspace planned; Rust/CLI text and binary file sources are implemented.**
+**Qt workbench planned; Rust/CLI text and binary file sources are implemented.**
+
+The latest agreed layout and lower-right Start/Stop/Pause controls are recorded
+in the [UI architecture](../../../architecture.md#ui-merlin-simulation-workbench),
+[task design](design.md) and [UI checklist](../../ui-checklist.md). Each block opens
+a focused pop-up dialog; implementation proceeds left to right from OFDM Settings.
 The user's updated system sketch, including the OFDM transmission settings panel,
 is the starting layout, rather than a final screen
 specification. The application remains a standalone MERLIN simulator. Existing
