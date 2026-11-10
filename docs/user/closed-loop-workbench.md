@@ -10,7 +10,7 @@ engine. Instrument selections do not determine readiness.
    Profile A ID 0; importing other profiles does not make them runnable. Load demo
    prefers Profile 0 when available. Apply PRBS-TX or an exact-byte file source.
 2. Apply compatible RxMER input(s). Channel Estimate defaults to **flat H=1+0i**;
-   optionally apply a real response file. RxMER is now left of Channel Estimate.
+   optionally apply a real response file. RxMER sits above Channel Simulator; DS Channel Est. connects to both channel and receiver.
 3. Open **Receiver → Configure Receiver / Run…**. Choose supplied-H reference
    correction or pilot-estimated H-hat, observation duration and finite decoder/
    host limits. Apply validates the entire accepted request and makes Receiver green.
@@ -28,7 +28,7 @@ known-boundary bootstrap; this UI does not claim arbitrary RF acquisition.
 
 ![Receiver and run configuration](../images/workbench/receiver-configuration-dark.png)
 
-![Ready workbench and swapped measurement blocks](../images/workbench/closed-loop-ready-dark.png)
+![Ready workbench with accepted inputs](../images/workbench/workbench-header-dark.png)
 
 ## Inspect actual results
 
@@ -66,7 +66,7 @@ symbol and raw FFT-bin power. Useful symbols are not concatenated across prefix
 gaps. Time spectra use the shared Rust Hann PSD; FFT-bin power has different units
 and uses its physical frequency grid. Changing a selector never starts a new run.
 
-![Actual closed-loop receiver observations](../images/workbench/closed-loop-qam-dark.png)
+![Actual retained NCP receiver observations](../images/workbench/receiver-qam-ncp-dark.png)
 
 Accepted input/settings changes invalidate old observations and cancel stale work.
 Receiver configuration can be green before any results exist. Expected noisy FEC
@@ -93,8 +93,6 @@ state, then reloads all editors. It never starts a run automatically. Cancel or
 malformed data preserves the current project. Cross-input incompatibilities are
 restored as editable readiness diagnostics. Open/Save are disabled while a worker
 is active; Stop and wait for completion before changing projects.
-
-![Workbench saved through the native chooser](../images/workbench/workbench-save-dark.png)
 
 Draft edits, previous run results and transient instrument selections are not
 saved. The project limit is 144 MiB, with original per-file/combined measurement

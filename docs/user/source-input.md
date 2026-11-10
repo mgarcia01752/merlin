@@ -35,7 +35,7 @@ flowchart LR
     DRAFT --> CHECK["Shared Rust source validation"]
     CHECK --> APPLY["Apply: accept source / green PRBS-TX"]
     DRAFT --> CANCEL["Cancel: retain accepted source"]
-    APPLY -. "Run integration pending" .-> JOB["Frozen source / independent verification"]
+    APPLY --> JOB["Frozen source / independent verification"]
 ```
 
 Apply validates and accepts the source for a future run. Cancel/Escape discards
@@ -44,8 +44,8 @@ targets leave accepted source/readiness unchanged. Files are held as immutable
 snapshots; later filesystem changes do not alter accepted bytes.
 
 PRBS-TX stays yellow until explicit acceptance, then turns green. This does not
-configure PRBS-RX or enable Start: remaining blocks and job integration are still
-required. A completed run may have incomplete file recovery; original-file bits,
+configure PRBS-RX or enable Start: the remaining blocks must also be ready.
+A completed run may have incomplete file recovery; original-file bits,
 appended fill and coding padding have separate accounting in the Rust engine.
 
 See the [workbench](workbench.md) and [architecture](../architecture.md#prbs-tx-source-configuration).

@@ -146,6 +146,10 @@ Integrate input blocks as their owning sections are developed left to right.
 - [x] **UI-SA-06** Replace the SA axis dropdown with radio buttons and remove
   the redundant caption/raw Tap text, preserving the selected bin window.
   [Design](features/transmitter-spectrum/design.md#ui-sa-06-concise-frequency-axis-controls).
+- [x] **UI-DOC-01** Refresh native user-guide captures, remove obsolete
+  overview copies and reconcile stale instructions.
+  [Audit record](features/user-guide-captures/design.md).
+
 - [x] **UI-SA-07** Overlay plot metadata, move run/cancel actions to the footer,
   and clarify the cable echo estimate with a labeled grid.
   [Design](features/transmitter-spectrum/design.md#ui-sa-07-plot-metadata-footer-actions-and-cable-context).

@@ -61,8 +61,6 @@ missing/partial data, import details, display limits or important measurement
 assumptions. About keeps product, version and license information; implementation
 details and development-status messages are omitted.
 
-![Popup title bar with X and retained footer buttons](../images/workbench/popup-close-dark.png)
-
 The standard menu bar at the top is **File | Settings | About**. File contains
 **Open…**, **Save** and **Save As…** for self-contained `*.merlin.json` workbenches.
 Original PNM/payload bytes and accepted block settings are embedded; see the
@@ -95,8 +93,7 @@ Click either input block to edit its existing configuration. The top dashed
 comparison line is removed; PRBS-RX still controls independent original/recovered
 verification through its dialog.
 
-![Measurement inputs on the workbench](../images/workbench/workbench-input-layout-dark.png)
-Measurement input blocks will use supported decoded PNM JSON. The existing
+Measurement input blocks accept supported binary PNM and decoded JSON. The existing
 [channel CLI](channel-runner/cli.md) remains available for actual simulations.
 
 See [Qt setup and VM launch](../development/qt.md) and the
@@ -107,9 +104,6 @@ phase; initial Ubuntu targets require separate native validation.
 
 Click PRBS-TX to open **Transmit source (PRBS-TX)**.
 Choose continuous PRBS15 or a text/binary file in a tree like the OCD editor.
-The [dark interactive design preview](../images/workbench/prbs-tx-design.html)
-shows the proposed tree, conditional File/fill controls and Apply/Cancel. It is
-a mockup, not runtime evidence; its Open action does not access files.
 
 - **PRBS15:** set a nonzero seed from 1 to 32767; the initial draft uses 32767.
 - **File:** select a file through the OS picker. Rust preserves its exact bytes
@@ -142,7 +136,7 @@ Blocks show their name only. Their left stripe indicates status:
 Hover over a block, or focus it with the keyboard, to see its status and reason.
 Screen readers receive the same explanation. Click the block for its dialog.
 
-![Validated OCD/DPD inputs are green; pending stages are yellow](../images/workbench/workbench-status-dark.png)
+The overview above shows an accepted, ready configuration.
 
 **OCD stays yellow until a compatible modulation-profile input is accepted and
 its settings are valid.** Applying a compatible profile through DPD turns both
@@ -181,7 +175,7 @@ DOCSIS uses **OFDM Channel Descriptor (OCD)** for common channel parameters and
 assignments. They are separate concepts (MULPI 3.1 I25 §§6.4.40–6.4.41; PHY 3.1
 I20 §7.5.13.4). The previous Channel context label has been removed. Bandwidth and
 spacing remain in the core configuration but are not editable in this dialog;
-channel/profile import integration remains pending. This dialog alone does not
+the imported profile supplies the channel grid. This dialog alone does not
 configure a complete transmission or import/export a complete OCD message.
 
 **Apply** validates the draft in Rust and retains it in this application session.
@@ -189,27 +183,17 @@ Invalid combinations remain open with an error and do not replace the last
 accepted configuration. Roll-off must be shorter than the prefix. Interleaver
 depth must be at most 16 for 25 kHz spacing or 32 for 50 kHz spacing. Zero roll-off
 is evaluation-only. The interleaver-depth limit uses the channel spacing held by
-Rust. Channel settings will need to be reconciled when profile input is connected.
+Rust. Changing accepted inputs revalidates their compatibility.
 
 **Cancel** or **Escape** discards edits. Reopening restores the last applied
 values. **Reset defaults** changes the draft to MERLIN's application defaults;
 press Apply to accept them. These defaults are not mandated by the specification.
 See [transmission settings](transmission.md) for the supported values and units.
 
-Settings are held in memory only and reset when the application closes. Run
-integration and workbench-file saving remain pending. The bundled
-`resources/registry/ofdm-settings.json` describes the fields; the proposed
-`*.merlin.json` workbench format will separately store values and input references.
-
-## Planned application navigation
-
-- **Open:** restore a saved workbench configuration without starting a run.
-- **Settings:** change application preferences such as theme.
-- **About:** view MERLIN's expanded name, version, licenses and acknowledgements.
-
-These actions are planned. Measurement-file selection will remain in its owning
-workbench block. User-guide screenshots and graphics use the dark theme;
-light-theme support remains available in the application.
+Accepted settings are saved with **File → Save / Save As…** and restored with
+**Open…**. The bundled `resources/registry/ofdm-settings.json` describes editor
+fields; the workbench JSON stores accepted values and original input bytes.
+See the [run/save guide](closed-loop-workbench.md#save-and-reopen).
 
 ## Downstream Profile Descriptor (DPD)
 
@@ -231,14 +215,9 @@ files preserve the previous draft and accepted selection. Nothing overwrites the
 original file. This does not start a simulation or save a workbench.
 
 See [supported profile files and limits](measurement-inputs/modulation-profile.md).
-The [original dark mockup](../images/workbench/dpd-design-dark.png) is a design
-reference; the screenshot above is the actual native application.
 
-## Workbench configuration files (planned)
+## Workbench configuration files
 
-A WB configuration will be a versioned **JSON** document containing all PNM
-inputs and each block's accepted settings. Opening it will restore the configured
-workbench without starting a simulation. Saving it will preserve the current
-configuration, including PNM/profile associations; it will not modify the source
-PNM files. Exact storage encoding and size limits are still being designed.
-The File menu is present, but Open/Save are not yet implemented.
+Use **File → Open…**, **Save** or **Save As…** for self-contained JSON workbenches.
+The [run/save guide](closed-loop-workbench.md#save-and-reopen) describes stored
+settings, embedded PNM files, limits and atomic replacement behavior.

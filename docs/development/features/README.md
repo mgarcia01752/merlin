@@ -83,3 +83,5 @@ Channel Estimate/RxMER workbench: [design](rxmer-workbench/design.md) · [valida
 Receiver Workbench navigation: [design](receiver-workbench/design.md) · [validation](receiver-workbench/validation.md) · [user interaction](../../user/receiver-workbench.md).
 
 Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/design.md) · [validation](qt-closed-loop/validation.md) · [user guide](../../user/closed-loop-workbench.md).
+
+- [Current native user-guide captures (UI-DOC-01)](user-guide-captures/design.md)

@@ -704,6 +704,10 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 ### Qt simulation workbench
 
+- [x] **UI-DOC-01** Refresh native user-guide captures, remove obsolete
+  overview copies and reconcile stale instructions.
+  [Audit record](features/user-guide-captures/design.md).
+
 - [x] **UI-SA-07** Place metadata inside the SA plot, run actions in the footer
   and cable echo context in a labeled grid.
   [Design](features/transmitter-spectrum/design.md#ui-sa-07-plot-metadata-footer-actions-and-cable-context).

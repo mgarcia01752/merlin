@@ -51,6 +51,4 @@ are reported. Capture is limited to64 PLC frames and32 displayed packets.
 
 Inspectors read completed or partial results without rerunning the simulation.
 Applying changed inputs clears stale observations. Existing readiness and main
-Start/Stop/Pause behavior are preserved. The
-[original design preview](../images/workbench/transmitter-workbench-proposal.html)
-is retained as a historical mockup.
+Start/Stop/Pause behavior are preserved.

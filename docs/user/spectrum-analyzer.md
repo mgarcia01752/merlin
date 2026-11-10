@@ -131,6 +131,4 @@ protection. Actual echoes also depend on topology, strength and receiver behavio
 Applying new accepted inputs clears the panel until a new snapshot completes.
 Full time-domain I/Q trace inspection remains pending. The
 [design and source evidence](../development/features/transmitter-spectrum/design.md#ui-sa-04-symbol-timing-and-cable-echo-budget)
-records the PHY derivation and manufacturer VF references. The
-[original graphic](../images/workbench/sa-timing-proposal-dark.png) is a historical
-proposal; screenshots above show the implemented compact panel.
+records the PHY derivation and manufacturer VF references.
