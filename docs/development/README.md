@@ -3,7 +3,8 @@
 This is the working home for ongoing development and its published documentation.
 Start with the [status](status.md), [checklist](checklist.md) and
 [architecture](../architecture.md), then use the feature records for design history.
-The separate [UI checklist](ui-checklist.md) tracks the planned Qt workbench.
+The separate [UI checklist](ui-checklist.md) tracks the Qt workbench.
+[Qt setup and VM validation](qt.md) covers the initial native shell.
 
 ```text
 docs/development/
@@ -19,6 +20,9 @@ docs/development/
 ├── features/<feature>/       Tracked plans, design notes and validation summaries
 └── local/<feature>/          Ignored specs, captures, logs and generated outputs
 ```
+
+The proposed [content-based build/test cache](features/build-cache/design.md)
+defines fast development iteration; implementation has not started.
 
 ## Working on a feature
 

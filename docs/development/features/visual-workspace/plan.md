@@ -1,6 +1,7 @@
 # MERLIN Simulation Workbench and selectable payload source
 
-**Qt workbench planned; Rust/CLI text and binary file sources are implemented.**
+**Qt shell implemented; editors and jobs remain planned. Rust/CLI text and binary
+file sources are implemented.**
 
 The latest agreed layout and lower-right Start/Stop/Pause controls are recorded
 in the [UI architecture](../../../architecture.md#ui-merlin-simulation-workbench),

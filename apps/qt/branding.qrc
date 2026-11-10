@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/branding">
+    <file alias="merlin-icon-dark.png">../../docs/images/logo/merlin-icon-dark.png</file>
+    <file alias="merlin-icon-light.png">../../docs/images/logo/merlin-icon-light.png</file>
+  </qresource>
+</RCC>

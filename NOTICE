@@ -26,3 +26,7 @@ resources. Acknowledgment: PyPNM - Proactive Network Maintenance Toolkit.
 Retain crates/ofdm/resources/qam-table/LICENSE and NOTICE when distributing
 these resources or their embedded references. Source hashes and revisions are
 recorded in crates/ofdm/resources/qam-table/provenance.json.
+
+The separate MERLIN Qt workbench under apps/qt is GPL-3.0-only. It adapts
+PNM Viewer Qt presentation infrastructure; see apps/qt/LICENSE and apps/qt/NOTICE
+for attribution. Independent scientific libraries retain Apache-2.0.

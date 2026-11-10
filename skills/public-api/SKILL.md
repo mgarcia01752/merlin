@@ -5,9 +5,9 @@ description: Design and review DOCSIS OFDM Channel Sim public Rust APIs so stand
 
 # Public scientific API
 
-DOCSIS OFDM Channel Sim owns a standalone Rust simulation core. A future Python package and optional
-Qt interface must call the same algorithms. Implement functionality first; Python
-bindings, packaging and UI work are deferred until explicitly requested.
+DOCSIS OFDM Channel Sim owns a standalone Rust simulation core. The native Qt
+interface and future Python package must call the same algorithms. Qt UI work is
+the next phase; Python bindings remain deferred until UI-01 through UI-04.
 
 - Put reusable scientific operations in crates/ofdm or crates/fec-codec, exposed
   through documented public Rust modules. CLI or GUI code adapts inputs/results;
@@ -40,3 +40,9 @@ bindings, packaging and UI work are deferred until explicitly requested.
 All signal processing and FEC must remain Rust. Any future wrapper only converts
 inputs, dispatches work and returns Rust-derived results. Follow coding-style and
 scientific-testing for documentation banners, independent evidence and validation.
+
+For Qt infrastructure reuse, follow coding-style's PNM Viewer reuse guidance.
+Inspect that checkout read-only and adapt presentation components into MERLIN.
+Keep viewer types, Qt types and GPL UI code out of the independent Apache-2.0
+scientific API; adapters consume MERLIN models rather than importing viewer
+analysis/capture ownership. CLI and scientific builds remain Qt-independent.

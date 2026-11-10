@@ -85,10 +85,11 @@ current short8/9 bit processing supports all ten downstream data orders. See
 not establish FDX behavior. OFDMA is a later scope.
 
 All FEC, DSP, channel models and scientific calculations are Rust, including
-algorithm dependencies. Scientific crates forbid unsafe code. A future Qt
-presentation component and Python bindings consume the public Rust APIs;
-neither owns scientific calculations. There is no UI or binding implementation
-in this stage, and no device capture/control or network-service dependency.
+algorithm dependencies. Scientific crates forbid unsafe code. The Qt
+presentation shell and future Python bindings use the public Rust APIs; neither
+owns scientific calculations. The shell currently provides navigation only;
+scientific UI integration and Python bindings remain pending. There is no
+device capture/control or network-service dependency.
 
 ## Downstream FEC shortening (FEC-03)
 
@@ -156,7 +157,11 @@ is optional future scope.
 The CLI functional MVP is complete for its documented closed-loop configurations.
 The next major phase is the native Qt Quick/QML workbench, initially targeting
 Ubuntu 22.04, 24.04 and 26.04 x64. Python bindings follow UI-01 through UI-04.
-This UI is planned, not implemented; platform runtime validation remains pending.
+The initial UI-01 shell now exists under apps/qt: the clickable diagram, section
+preview dialogs, theme switching and embedded icons. Editors, input loading,
+analyzers and Rust job integration remain pending. Lower-right run controls are
+visible but disabled. See the [workbench guide](user/workbench.md) and
+[Qt build/VM instructions](development/qt.md). Other target validation is pending.
 
 The user's high-level diagram defines a clickable workbench, with focused pop-up
 dialogs for editing each section, selecting an applicable file, and inspecting
@@ -183,6 +188,37 @@ reseeding. File sources retain their own exact-byte verification. Measurement
 inputs initially use supported decoded PNM JSON, not native binary PNM parsing.
 The detailed diagram below retains analyzer and receiver-reference ownership.
 
+### Reuse of the PNM Viewer Qt framework
+
+Reuse suitable Qt shell, theme, dialog, navigation, Rust/Qt adapter and build
+patterns from `/home/dev01/Projects/PNM-Viewer-Toolkit`. The user authorized
+read-only reference inspection; all modifications stay in MERLIN. Select and
+adapt components to this simulator rather than copying the viewer's product
+workflows. MERLIN remains standalone, with no runtime dependency on the viewer
+checkout. All simulation, DSP, modulation and FEC remain in MERLIN's Rust engine.
+
+The user accepted GPL reuse: the Qt application incorporating viewer desktop/UI
+code uses GPL-3.0-only, preserving source copyrights, licenses and applicable
+NOTICE content. Independent scientific libraries remain Apache-2.0. Check the
+actual license of each selected file and retain third-party terms. Record source
+paths, revision and adaptations in the UI task design when copying occurs.
+The shell now adapts the viewer bootstrap, palette and icon wrapper; exact source
+hashes and adaptations are recorded in the UI design. The coding-style and
+public-API skills carry these reuse and ownership rules into implementation.
+
+### UI iteration and VM handoff
+
+The VM is the rendering and interactive review target. Preserve compiled Qt and
+Rust dependency artifacts between iterations and leave the current Qt executable
+ready to run. Rebuild changed modules and relink as needed; do not routinely clean
+build outputs. UI-only work uses Qt-focused checks, with non-Qt compilation/tests
+only when affected shared code or integration makes them necessary. Required
+release/push gates remain intact.
+
+The proposed [build/test cache](development/features/build-cache/design.md)
+adds SHA-256 task fingerprints and affected-test selection above Cargo. It is
+planning-only; see BUILD-01 through BUILD-04 in the main checklist.
+
 ### Workbench run controls
 
 Persistent **Start (▶), Stop (■), and Pause/Resume (⏸/▶)** icons sit in the
@@ -206,7 +242,7 @@ The [UI checklist](development/ui-checklist.md) tracks the detailed work beneath
 UI-01 through UI-04 in the [main checklist](development/checklist.md).
 The [task design](development/features/visual-workspace/design.md) and
 [earlier workspace plan](development/features/visual-workspace/plan.md) record
-interaction, ownership and validation. No UI completion is claimed by these plans.
+interaction, ownership and validation. UI-01 remains partially implemented; this shell does not complete the milestone.
 
 ### Updated workspace diagram guide
 

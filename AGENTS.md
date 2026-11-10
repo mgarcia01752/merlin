@@ -2,6 +2,8 @@
 
 DOCSIS OFDM Channel Sim is a standalone DOCSIS scientific
 library and CLI. Work exclusively in this repository unless scope is changed.
+For Qt framework reuse, read-only inspection of PNM-Viewer-Toolkit is authorized;
+all modifications remain in MERLIN. Follow coding-style for reuse and licensing.
 
 Focus on downstream OFDM first. OFDMA is deferred. Two scientific modes are the
 ideal/reference experiment and measurement-driven analysis using RxMER, downstream
@@ -18,7 +20,7 @@ do not describe closed-loop results as external interoperability evidence.
 The CLI functional MVP is complete within its documented supported scope.
 Native Qt UI development is the next phase; Qt is presentation only. Follow
 the UI section in docs/architecture.md and docs/development/ui-checklist.md,
-starting left to right with OFDM Settings. UI implementation remains pending;
+starting left to right with OFDM Settings. The initial Qt workbench shell exists; editors and run integration remain pending;
 Python bindings are deferred until after UI-01 through UI-04.
 Dependencies point from CLI/future adapters to docsis-ofdm-fec to fec-codec.
 
@@ -30,7 +32,8 @@ under .agents/skills/ and .claude/skills/.
 - All signal processing, channel models, modulation/demapping, FEC and scientific
   orchestration are 100% Rust, including dependencies providing those algorithms.
   Do not add C/C++ DSP/codec implementations, native FFI or Python calculations.
-  Keep scientific crates free of unsafe code. Development tooling may use Python.
+  Keep scientific crates free of unsafe code. CXX-Qt/native icon interop is confined
+  to the separate GPL Qt presentation adapter. Development tooling may use Python.
 - Reusable code and tools are Apache-2.0. Preserve copied copyrights and third
   party licenses, including the Rust-adapted MIT BCH implementation and ldpc-toolbox.
 - Follow meaningful domain aliases, descriptive variables/lifetimes and multiline
@@ -54,7 +57,17 @@ under .agents/skills/ and .claude/skills/.
 - No commits, pushes, publication or system-wide installation without explicit
   authorization. Supply commands when asked for commit/push commands.
 
-Validation:
+Validation scope:
+
+For UI-only work, use scripts/qt-desktop.sh build/check and targeted Qt tests.
+Do not rebuild or retest the non-Qt workspace on every UI iteration. Broaden
+validation when scientific/shared code, dependency contracts, or integration
+changes make it necessary. Release/push gates retain their required checks.
+Preserve Cargo target artifacts and the stable build profile so unchanged code
+is ready for reuse/linking; do not routinely clean or delete build outputs.
+Keep the Qt executable built for the latest UI changes before handing off.
+
+Scientific/shared-code validation when applicable:
 
 ```bash
 scripts/cargo-local.sh fmt --all -- --check

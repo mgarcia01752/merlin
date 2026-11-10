@@ -163,3 +163,12 @@ impairments and honest partial results. On2026-11-09 the user clarified that ano
 implementation is not required; those two items therefore close for the documented
 MERLIN-only acceptance scope. No external comparison has been claimed. See the
 [closed-loop acceptance record](features/closed-loop-validation/design.md).
+
+## Qt workbench shell (UI-01 partial)
+
+The standalone Qt Quick/QML shell now renders the system diagram and opens all
+nine section-preview dialogs. It has dark/light themes and matching MERLIN icons.
+Start, Stop and Pause are visible but disabled; editors, inputs, analyzers and
+Rust simulation integration remain pending. The VM is the interactive review
+target. See [Qt development](qt.md), [user guide](../user/workbench.md) and the
+[UI checklist](ui-checklist.md). No UI milestone is marked fully complete.

@@ -56,10 +56,12 @@ from a fresh clone and are deliberately not Markdown link targets.
 | single channel transmission | [architecture](single-channel-transmission/architecture.md) |
 | source organization | [architecture](source-organization/architecture.md) |
 | symbol packing | [architecture](symbol-packing/architecture.md) |
-| Qt simulation workbench (planned) | [design](visual-workspace/design.md) · [plan](visual-workspace/plan.md) · [UI checklist](../ui-checklist.md) |
+| Qt simulation workbench (UI-01 partial) | [design](visual-workspace/design.md) · [validation](visual-workspace/validation.md) · [plan](visual-workspace/plan.md) · [UI checklist](../ui-checklist.md) |
 | waveform | [plan](waveform/plan.md) · [validation](waveform/validation.md) |
 | waveform direction | [notes](waveform-direction/notes.md) |
 | downstream completion group | [design](completion-group/design.md) · [validation](completion-group/validation.md) · [external vector needs](completion-group/external-channel-vectors.md) |
 | synthetic channel widths | [design and validation](channel-widths/design.md) |
 | receiver acquisition | [WAVE-RX-05 design](receiver-acquisition/design.md) · [validation](receiver-acquisition/validation.md) |
 | closed-loop minimum acceptance | [design](closed-loop-validation/design.md) · [test evidence](closed-loop-validation/validation.md) |
+
+Build tooling proposal: [BUILD-01–04 content-based cache](build-cache/design.md).

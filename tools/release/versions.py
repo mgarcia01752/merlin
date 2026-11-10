@@ -10,8 +10,8 @@ import re
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFESTS = ('crates/ofdm/Cargo.toml', 'crates/fec-codec/Cargo.toml',
-             'crates/cli/Cargo.toml')
-LOCKS = ('Cargo.lock',)
+             'crates/cli/Cargo.toml', 'apps/qt/Cargo.toml')
+LOCKS = ('Cargo.lock', 'apps/qt/Cargo.lock')
 
 
 def validate(version):

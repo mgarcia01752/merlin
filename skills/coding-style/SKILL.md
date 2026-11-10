@@ -7,7 +7,7 @@ description: Apply DOCSIS OFDM Channel Sim coding conventions when writing, modi
 
 Use documented public Rust APIs, meaningful domain types and pinned local PHY evidence.
 All signal processing and FEC algorithms are Rust. Do not introduce native DSP
-or codec libraries through FFI. An optional future Qt layer only presents results.
+or codec libraries through FFI. The native Qt layer only presents results.
 
 ## Source responsibility boundaries
 
@@ -265,6 +265,36 @@ unavailable values explicit, and regenerate the linked JSON examples. Expose
 Rust-derived metadata to UI components rather than reading values back from
 exported JSON or recomputing them for chips/tables.
 
+## Reusing the PNM Viewer Qt framework
+
+For MERLIN UI work, inspect reusable shell, theme, dialogs, navigation, adapter
+and build patterns in /home/dev01/Projects/PNM-Viewer-Toolkit read-only before
+rebuilding equivalent infrastructure. Adapt suitable components into MERLIN;
+all writes and implementation remain in /home/dev01/Projects/merlin. Do not
+modify, build or run services in the reference repository as part of this reuse.
+Keep MERLIN standalone: no runtime dependency on the viewer checkout, no viewer
+capture workflows, and no transfer of simulation/DSP/FEC ownership out of Rust.
+
+The user accepted GPL reuse for the Qt application. Preserve GPL-3.0-only on
+copied viewer desktop/UI code, original copyrights, third-party licenses and
+applicable NOTICE content; do not relabel copied code Apache-2.0. Use GPL-3.0-only
+for the MERLIN Qt application incorporating it. Independent scientific libraries
+and project-owned development tooling remain Apache-2.0. Inspect each selected
+file's actual license before copying, and record source path, revision and local
+adaptations in the UI design record. Reuse is planned until inspected and tested.
+
+## Qt iteration and retained build artifacts
+
+For UI-only iterations, build/check the Qt adapter and run relevant presentation
+checks. Do not compile/test the non-Qt workspace every time; expand validation
+only for affected shared/scientific code, dependencies or integration contracts.
+This does not weaken required push/release gates. Preserve Cargo target outputs,
+dependency caches and stable build settings so Cargo reuses unchanged compiled
+code for linking. Avoid routine cargo clean or output deletion. Leave a built
+Qt executable matching the current UI at handoff. Changed modules still require
+compilation and the executable may need relinking; never reuse stale artifacts
+as validation of changed code.
+
 ## Consumer boundaries
 
 Optional future presentation and Python adapters consume the same public Rust API.
@@ -312,6 +342,7 @@ header after checking its ownership and license context.
 | --- | --- |
 | Reusable Rust libraries under crates/ and their tests | Apache-2.0 |
 | Project-owned development tooling under scripts/ and tools/ | Apache-2.0 |
+| Qt application incorporating viewer desktop/UI code under apps/qt/ | GPL-3.0-only |
 
 Rust, JavaScript and TypeScript:
 

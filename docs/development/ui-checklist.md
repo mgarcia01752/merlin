@@ -3,16 +3,18 @@
 The [architecture](../architecture.md#ui-merlin-simulation-workbench) defines the
 MERLIN Simulation Workbench. This checklist expands UI-01 through UI-04 in the
 [main checklist](checklist.md); keep their milestone status consistent.
-See the [task design](features/visual-workspace/design.md). Everything below is
-planned and unimplemented. Initial targets: Ubuntu 22.04/24.04/26.04 x64.
+See the [task design](features/visual-workspace/design.md). The initial shell is implemented; unchecked tasks remain pending. Initial targets: Ubuntu 22.04/24.04/26.04 x64.
 
 ## UI-01: Workbench and section dialogs
 
 Develop the workbench left to right; OFDM Settings is the first functional dialog.
 
-- [ ] Add the native Qt Quick/QML shell and separate Rust presentation adapter.
-- [ ] Render the user's high-level signal path and clickable input blocks.
-- [ ] Open a focused pop-up for each block; keep the workbench visible behind it.
+- [x] Inspect PNM Viewer Qt infrastructure read-only; select reusable components
+  and record source revisions, adaptations, licenses and notices in the design.
+- [x] Add the native Qt Quick/QML shell and separate Rust presentation adapter.
+- [x] Render the user's high-level signal path and clickable input blocks.
+- [x] Open a focused section-preview pop-up for each block; keep the workbench
+  visible behind it. Settings editors and file pickers remain pending.
 - [ ] Implement OFDM Settings: cyclic prefix, roll-off/windowing, interleaver
   depth and supported pilot settings, using Rust validation for the next run.
 - [ ] Implement PRBS-TX / Transmitter configuration and stage details.
@@ -65,3 +67,5 @@ Integrate input blocks as their owning sections are developed left to right.
 - [ ] Reconcile architecture, task design and both checklists with verified behavior.
 
 Python API-01 remains deferred until UI-01 through UI-04 are complete.
+
+Initial shell evidence and remaining validation: [Qt development](qt.md).

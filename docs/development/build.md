@@ -37,7 +37,8 @@ Cargo.lock pins the dependency graph. ldpc-toolbox0.10.1 was selected because
 newer inspected releases use Rust APIs unavailable on the pinned toolchain.
 BCH encoding and decoding are implemented in safe Rust. Upstream algorithm
 provenance and the retained MIT notice are described in NOTICE. No native codec
-build script, CXX bridge or C++ source is included in the build.
+build script, CXX bridge or C++ source is included in the scientific build.
+The separate [Qt shell](qt.md) uses CXX-Qt only for presentation.
 
 A Rust-only build helper under `crates/ofdm/build/` validates and embeds the
 preserved QAM resources. It introduces no additional packages or native build
@@ -87,8 +88,8 @@ The [workspace guide](README.md) explains where ongoing development belongs.
 
 `.gitignore` excludes nested Cargo `target/` directories, profiling/coverage
 outputs, native executables/libraries/debug symbols and installer packages.
-Future Qt/CMake build outputs and Qt Creator per-user settings are excluded too;
-this does not introduce a Qt build or installer implementation.
+Qt/CMake build outputs and Qt Creator per-user settings are excluded too.
+The Qt shell has a separate build; installer implementation remains pending.
 
 Keep `Cargo.lock`, shared build configuration, QAM resources and intentional PNM
 `.bin` demos in Git. PNM binaries are measurement fixtures, not compiled programs.

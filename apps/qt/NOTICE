@@ -1,0 +1,17 @@
+MERLIN Simulation Workbench
+
+GPL-3.0-only Qt application. See LICENSE in this directory.
+
+The Qt bootstrap/build patterns, Theme.qml palette subset, ThemePalette.qml,
+and branding.h icon wrapper are adapted from PNM Viewer Toolkit:
+https://github.com/mgarcia01752/PNM-Viewer-Toolkit
+Reference checkout HEAD: 5fbd5561f3e06b73486546b5ffa520279080a5eb.
+Source was the local working tree; file hashes and adaptations are recorded in
+docs/development/features/visual-workspace/design.md, not assumed to match HEAD.
+Copyright 2026 PNM Viewer contributors. Original notices are retained.
+Copyright 2026 MERLIN contributors for local adaptations and workbench components.
+
+The build/run helper is adapted from the reference's Apache-2.0 development
+script. It remains Apache-2.0, separate from the GPL application.
+Qt and CXX-Qt dependencies retain their own licenses. This development shell
+is not a redistributable Qt SDK bundle or an installed release package.

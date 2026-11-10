@@ -119,16 +119,18 @@ scripts/cargo-local.sh run -p fec-codec --example codec_loop --locked
 [Public Rust API](docs/reference/public-api.md) ·
 [JSON contracts](docs/reference/documents.md) ·
 [Build and test](docs/development/build.md) ·
+[Qt workbench preview](docs/user/workbench.md) ·
 [Logging](docs/development/logging.md) ·
 [Git and releases](docs/development/git.md)
 
 OFDMA, dynamic profile activation in the duration CLI, arbitrary RF acquisition,
-Python bindings, a Qt interface and native delivery verification remain later work. Current runtime
+Python bindings, Qt simulation integration and native delivery verification remain later work. Current runtime
 validation is Linux; Windows/macOS execution remains later work.
 The [minimum engine](docs/user/validation/README.md) validates a MERLIN-only
 closed loop. Another DOCSIS implementation or external interoperability dataset
 is not required.
 
-Apache-2.0 project code, with MIT/Apache dependencies and a Rust-adapted MIT BCH
+Apache-2.0 scientific libraries and tooling; the Qt application is
+[GPL-3.0-only](apps/qt/LICENSE). With MIT/Apache dependencies and a Rust-adapted MIT BCH
 implementation. See [LICENSE](LICENSE), [NOTICE](NOTICE) and the
 [AFF3CT notice](crates/fec-codec/LICENSE-MIT).

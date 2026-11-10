@@ -699,7 +699,8 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 Detailed tasks: [UI checklist](ui-checklist.md) and
 [task design](features/visual-workspace/design.md). Develop left to right, starting
-with OFDM Settings. All UI items remain planned.
+with OFDM Settings. UI-01 is partial: diagram, section-preview dialogs and
+theme/icon shell exist; editors and Rust jobs remain pending.
 
 - [ ] **UI-01** Build the planned Qt system workspace after core APIs exist:
   clickable source/TX/channel/RX blocks with focused pop-up dialogs.
@@ -717,7 +718,8 @@ with OFDM Settings. All UI items remain planned.
 - [ ] **UI-04** Validate responsive jobs, cancellation, observation invariance and
   dark/light readability; add user guides and actual workspace screenshots.
   See the [starting diagram and interaction plan](features/visual-workspace/plan.md).
-  All scientific computation stays in Rust; the UI remains unimplemented.
+  All scientific computation stays in Rust. The shell alone does not complete
+  UI-01 or the UI-04 validation milestone.
 
 ### Future DOCSIS scope
 
@@ -752,3 +754,14 @@ integration. It does not mean all the broader product items above are complete.
   after pushing; resolve findings without treating successful scans as proof
   that the engine has no vulnerabilities.
   Evidence: [design and validation](features/security-checks/design.md).
+
+### Development build and test cache (proposed)
+
+Plan: [BUILD-01–04 design](features/build-cache/design.md). No implementation yet.
+
+- [ ] **BUILD-01** Define content fingerprints and an explainable task planner.
+- [ ] **BUILD-02** Reuse verified build artifacts and separate successful check records.
+- [ ] **BUILD-03** Map affected crate/subdirectory tests and conservative consumers.
+- [ ] **BUILD-04** Validate invalidation, concurrency and actual warm-run savings.
+
+Local development scope only; existing push/release and security gates stay intact.
