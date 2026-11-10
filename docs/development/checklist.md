@@ -704,6 +704,13 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 ### Qt simulation workbench
 
+- [x] **UI-SA-07** Place metadata inside the SA plot, run actions in the footer
+  and cable echo context in a labeled grid.
+  [Design](features/transmitter-spectrum/design.md#ui-sa-07-plot-metadata-footer-actions-and-cable-context).
+
+- [x] **UI-SA-06** Use radio buttons for SA frequency axes and remove redundant
+  caption/raw Tap text. [Design](features/transmitter-spectrum/design.md#ui-sa-06-concise-frequency-axis-controls).
+
 - [x] **UI-TX-03** Implement the staged Transmitter workbench with
   test-point instruments and generated/emitted OCD/DPD message inspection.
   [Design and validation](features/transmitter-workbench/design.md).

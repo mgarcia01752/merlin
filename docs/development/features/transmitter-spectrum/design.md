@@ -1,5 +1,52 @@
 # Transmitter readiness and OFDM spectrum
 
+## UI-SA-07: Plot metadata, footer actions and cable context
+
+Move the FFT/sample-rate/window metadata into a compact theme-aware overlay
+inside the shared SA plot, keeping viewport gestures available. Move Run
+simulation into the lower-left footer; show Cancel preview only while the local
+TX preview worker is active. Its scope is that preview, never main Stop.
+Keep Full Span above the plot and Close at the lower right.
+
+Organize the cable estimate into labeled grid rows for flat guard time, extra
+cable path and two-way reflector distance. Explain VF and the distance assumption
+briefly; retain the uniform-cable/zero-margin limitation and distinguish echo
+distance from total plant reach. Reuse existing timing calculations unchanged.
+SpectrumPlot.qml owns the metadata overlay, SpectrumAnalyzerDialog.qml the action
+placement, and SymbolTimingPanel.qml the cable grid. Validate scoped QML behavior,
+rebuild Qt once after edits and inspect actual dark VM screenshots. No DSP tests
+or non-Qt builds are required for these presentation changes.
+
+Implemented with all27 QML checks passing. Tests cover the footer Run action,
+busy-only Cancel preview, metadata presence, unchanged radio/zoom interaction
+and existing cable values. Native Ubuntu22.04/Qt6.8.3 review confirms the overlay,
+footer placement, cable grid and custom unknown-VF state at1210x736 and960x640.
+Wheel zoom works directly over the metadata overlay; Full Span restores the view.
+Timing tick labels avoid the endpoint label at narrow widths. Dark guide images
+are actual native captures and the native log has no QML warnings. The executable
+is rebuilt using retained artifacts. No DSP source, numerical interpretation or
+non-Qt build/test scope changed. The preceding radio task uses UI-SA-06; the
+existing UI-SA-05 remains the receiver test-point task.
+
+## UI-SA-06: Concise frequency-axis controls
+
+Replace the shared SA frequency-axis dropdown with mutually exclusive Complex
+baseband / Capture frequency mapping radio buttons. Remove the adjacent Frequency
+axis caption and raw Tap identifier text. The named Test Point selector and dialog
+title retain instrument identity. Hide the radio row for fixed physical FFT grids;
+disable it without results. Axis changes preserve the selected bin window and
+retained data and never dispatch a simulation. This is presentation only in
+SpectrumAnalyzerDialog.qml. Validate focused QML behavior, rebuild Qt with retained
+artifacts and capture the actual dark VM view; no processing tests are required.
+
+Implemented and validated: all27 QML checks pass, including mutual exclusion,
+baseband/capture labels, preservation of a zoomed bin window, no generation on
+axis changes and disabled controls after result invalidation. The Qt executable
+is rebuilt with retained artifacts and restarted in the Ubuntu22.04 VM. Actual
+dark captures show both radio selections and mouse zoom/Full Span with no raw
+Tap or Frequency axis text. Native logs contain no QML warnings. No Rust source
+changed and no non-Qt compilation or processing tests were run for this task.
+
 UI-TX-03 now routes Transmitter through its staged
 [workbench](../transmitter-workbench/design.md), with the SA attached to TX Output.
 The direct-open behavior described below records the original preview integration.

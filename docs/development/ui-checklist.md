@@ -143,6 +143,12 @@ Integrate input blocks as their owning sections are developed left to right.
 - [x] **UI-SA-03** Clear the SA lower text panel and reserve blank space.
 - [x] **UI-SA-04** Fit symbol/window timing and nominal cable echo budgets below
   the PSD, using frozen result settings and Rust calculations.
+- [x] **UI-SA-06** Replace the SA axis dropdown with radio buttons and remove
+  the redundant caption/raw Tap text, preserving the selected bin window.
+  [Design](features/transmitter-spectrum/design.md#ui-sa-06-concise-frequency-axis-controls).
+- [x] **UI-SA-07** Overlay plot metadata, move run/cancel actions to the footer,
+  and clarify the cable echo estimate with a labeled grid.
+  [Design](features/transmitter-spectrum/design.md#ui-sa-07-plot-metadata-footer-actions-and-cable-context).
 - [ ] Add actual IQ sample trace inspection, distinct from the window-coefficient view.
 - [x] Connect the shared SA to retained channel output and RX framed/useful taps.
 

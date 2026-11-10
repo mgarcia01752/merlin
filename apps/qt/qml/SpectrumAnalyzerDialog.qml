@@ -46,47 +46,47 @@ WorkbenchDialog {
         }
     }
     function showView(start, count) { viewport = JSON.parse(backend.view(start, count, captureFrequencyAxis)) }
+    function selectFrequencyAxis(capture) {
+        if (captureFrequencyAxis === capture) { return }
+        captureFrequencyAxis = capture
+        if (state.has_result) { showView(viewport.start, viewport.count) }
+    }
+    ButtonGroup { id: frequencyAxes }
     contentItem: ColumnLayout {
         spacing: 10
         RowLayout {
             Layout.fillWidth: true
-            Button { objectName: "saGenerate"; text: "Run simulation"; enabled: dialog.state.can_generate; onClicked: backend.generate()
-                ToolTip.visible: hovered
-                ToolTip.text: dialog.generateDescription + "\n" + (dialog.viewport.error || dialog.state.message || dialog.state.reason)
-                Accessible.description: dialog.viewport.error || dialog.state.message || dialog.state.reason
-            }
-            Button { objectName: "saCancel"; text: "Cancel"; enabled: dialog.state.busy; onClicked: backend.cancel() }
+            Label { visible: dialog.tapOptions.length > 0; text: "Test Point"; color: dialog.theme.text }
+            ComboBox { visible: dialog.tapOptions.length > 0; objectName: "saTestPoint"; model: dialog.tapOptions; currentIndex: dialog.selectedTap; Layout.preferredWidth: 280; onActivated: function(index) { dialog.tapRequested(index) } }
             Item { Layout.fillWidth: true }
             Button { objectName: "saFullSpan"; text: "Full Span"; enabled: dialog.state.has_result; onClicked: dialog.showView(0, 0) }
         }
-        Label { text: dialog.viewport.summary || (dialog.state.tap_description || "Complex baseband I/Q sample snapshot"); color: theme.accent; Layout.fillWidth: true; wrapMode: Text.WordWrap }
-        RowLayout {
-            visible: dialog.tapOptions.length > 0
-            Label { text: "Test Point"; color: dialog.theme.text }
-            ComboBox { objectName: "saTestPoint"; model: dialog.tapOptions; currentIndex: dialog.selectedTap; Layout.preferredWidth: 280; onActivated: function(index) { dialog.tapRequested(index) } }
-            Label { text: dialog.state.reason || ""; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 11 }
-        }
         RowLayout {
             Layout.fillWidth: true
-            Label { text: dialog.frequencyAxisAvailable ? "Frequency axis" : "Physical FFT frequency grid"; color: theme.text }
-            ComboBox {
-                objectName: "saFrequencyAxis"
-                visible: dialog.frequencyAxisAvailable
+            visible: dialog.frequencyAxisAvailable
+            RadioButton {
+                objectName: "saBasebandAxis"
+                text: "Complex baseband"
+                ButtonGroup.group: frequencyAxes
                 enabled: dialog.state.has_result || false
-                Layout.preferredWidth: 235
-                model: ["Complex baseband", "Capture frequency mapping"]
-                currentIndex: dialog.captureFrequencyAxis ? 1 : 0
-                onActivated: function(index) {
-                    dialog.captureFrequencyAxis = index === 1
-                    if (dialog.state.has_result) { dialog.showView(dialog.viewport.start, dialog.viewport.count) }
-                }
+                checked: !dialog.captureFrequencyAxis
+                onClicked: dialog.selectFrequencyAxis(false)
             }
-            Label { text: "Tap: " + (dialog.state.tap_id || "—"); color: theme.muted; Layout.fillWidth: true; elide: Text.ElideRight }
+            RadioButton {
+                objectName: "saCaptureAxis"
+                text: "Capture frequency mapping"
+                ButtonGroup.group: frequencyAxes
+                enabled: dialog.state.has_result || false
+                checked: dialog.captureFrequencyAxis
+                onClicked: dialog.selectFrequencyAxis(true)
+            }
+            Item { Layout.fillWidth: true }
         }
-        SpectrumPlot { id: plot; theme: dialog.theme; viewport: dialog.viewport; zoomEnabled: dialog.state.has_result; onViewportRequested: function(start, count) { dialog.showView(start, count) } Layout.fillWidth: true; Layout.fillHeight: true }
+        SpectrumPlot { id: plot; theme: dialog.theme; viewport: dialog.viewport; overlayText: dialog.viewport.summary || ""; zoomEnabled: dialog.state.has_result; onViewportRequested: function(start, count) { dialog.showView(start, count) } Layout.fillWidth: true; Layout.fillHeight: true }
         SymbolTimingPanel {
+            id: timingPanel
             objectName: "saTimingPanel"
-            Layout.fillWidth: true; Layout.preferredHeight: 210
+            Layout.fillWidth: true; Layout.preferredHeight: implicitHeight
             visible: dialog.showTiming
             theme: dialog.theme; backend: dialog.backend
             hasResult: dialog.showTiming && (dialog.state.has_result || false)
@@ -94,5 +94,27 @@ WorkbenchDialog {
         }
 
     }
-    footer: DialogButtonBox { standardButtons: DialogButtonBox.Close; onRejected: dialog.close() }
+    footer: Pane {
+        objectName: "saFooter"
+        padding: 10
+        contentItem: RowLayout {
+            spacing: 10
+            Button {
+                objectName: "saGenerate"; text: "Run simulation"
+                enabled: dialog.state.can_generate; onClicked: backend.generate()
+                ToolTip.visible: hovered
+                ToolTip.text: dialog.generateDescription + "\n" + (dialog.viewport.error || dialog.state.message || dialog.state.reason)
+                Accessible.description: dialog.generateDescription
+            }
+            Button {
+                objectName: "saCancel"; text: "Cancel preview"
+                visible: dialog.state.busy || false
+                onClicked: backend.cancel()
+                ToolTip.visible: hovered
+                ToolTip.text: "Cancel this TX preview. The main simulation uses Stop on the workbench."
+            }
+            Item { Layout.fillWidth: true }
+            Button { objectName: "saClose"; text: "Close"; onClicked: dialog.close() }
+        }
+    }
 }

@@ -1,5 +1,9 @@
 # MERLIN Simulation Workbench
 
+The [README overview](../../README.md#workbench-overview) uses matching dark/light
+system illustrations. They show the signal connections; the images below show
+the actual native interface.
+
 The [Transmitter workbench](transmitter-workbench.md) provides staged test points,
 an SA beside TX Output, and OCD/DPD message inspection.
 

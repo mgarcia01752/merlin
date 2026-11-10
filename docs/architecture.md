@@ -428,6 +428,20 @@ and window coefficients; Qt owns layout/drawing. See the
 
 ### Shared Spectrum Analyzer (SA) and transmitter readiness
 
+UI-SA-06 uses mutually exclusive Complex baseband / Capture frequency mapping
+radio buttons in the shared TX/RX SA. The Frequency axis caption and raw Tap ID
+line are removed; named test-point selection stays. Fixed FFT-bin grids hide the
+axis choices. Changing axis preserves the current bin window and never reruns
+the simulation. See the [control design](development/features/transmitter-spectrum/design.md#ui-sa-06-concise-frequency-axis-controls).
+
+UI-SA-07 places FFT/window/sample-rate metadata in a compact plot overlay and
+Run simulation at the lower left. Cancel preview appears only during local TX
+preview generation; it never controls the main run. The cable panel uses a labeled
+grid for flat guard time, extra cable path and distance to a reflector, explaining
+VF and the out-and-back assumption. Uniform-cable/zero-margin limitations remain;
+no signal calculations change. See the
+[layout design](development/features/transmitter-spectrum/design.md#ui-sa-07-plot-metadata-footer-actions-and-cable-context).
+
 UI-TX-03 opens a Transmitter workbench matching Receiver stage/test-point
 navigation, with bounded source/LDPC/bit/cell pages, QAM and waveform inspection.
 The shared SA is attached directly below TX Output, before channel impairments;

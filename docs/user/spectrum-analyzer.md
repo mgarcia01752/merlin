@@ -15,13 +15,29 @@ TX Output can generate its independent preview; **Run simulation** regenerates
 that preview from frozen source settings. This does not start the full closed
 loop. Opening the SA while the main run is busy never starts another preview.
 
+**Run simulation** is at the lower left; **Close** stays at the lower right.
+**Cancel preview** appears only while the separate TX preview is running. It
+cancels that preview, preserving accepted inputs and any previous completed
+snapshot. Use **Stop** on the main workbench to stop the full simulation.
+Sample rate, FFT length, window, averaging and bin/ENBW details appear as a compact
+overlay inside the plot; mouse zoom and Full Span continue to work beneath it.
+
 ![Actual shared SA showing TX baseband output](../images/workbench/sa-tx-baseband-dark.png)
 
 The signal is **complex baseband**, centered at DC. There is no RF upconversion.
+Baseband describes the frequency range around zero; complex describes its I/Q
+representation, which retains amplitude and phase and distinguishes positive
+from negative frequency offsets. It is the same baseband signal, not another band.
 The default axis shows positive and negative frequency offset: at 25 kHz spacing
 the 8192-point FFT spans −102.4 through +102.375 MHz. **Capture frequency mapping**
 instead labels the same bins using the selected capture's frequency origin.
 Changing the axis never changes or upconverts samples.
+
+Choose **Complex baseband** or **Capture frequency mapping** with the radio
+buttons above the plot. The choice preserves any zoomed bin range and does not
+rerun the simulation. The old Frequency axis caption and raw Tap text are removed;
+the named Test Point selector identifies the signal. Fixed RX FFT-bin views hide
+the axis choices.
 
 ![The same PSD with capture frequency labels](../images/workbench/sa-tx-mapped-dark.png)
 
@@ -95,6 +111,15 @@ Select **Belden 1694WB RG-6**, **CommScope P3 500** or **Custom cable / velocity
 factor** on the right. Custom VF must be greater than zero and at most one; an
 empty value leaves distances unknown. Cable selection updates the estimate
 without rerunning the simulation or changing any samples.
+
+The **Cable Echo Estimate** grid gives context for the distances:
+
+| Field | Meaning |
+| --- | --- |
+| Velocity factor (VF) | Signal speed in the cable divided by the speed of light. |
+| Flat guard time | Available timing interval after roll-off, before useful FFT samples. |
+| Extra cable path | Additional distance a delayed copy can travel within that interval. |
+| Distance to reflector | One-way distance for an echo that travels out and back. |
 
 The ideal timing budget is `(CP samples − roll-off samples) / sample rate`.
 For CP512/RP128, it is 1.875 µs. With VF0.82, this corresponds to about 1512 ft

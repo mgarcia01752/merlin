@@ -35,6 +35,19 @@ generation. A simulated channel and receiver complete the experiment so you can
 measure payload recovery and decoder behavior. Its scope is the supported PHY
 path; full CMTS MAC services and multi-channel operation are outside that scope.
 
+## Workbench overview
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/logo/merlin-toolkit-diagram-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/logo/merlin-toolkit-diagram-light.png">
+    <img src="docs/images/logo/merlin-toolkit-diagram-light.png" alt="MERLIN workbench: OCD and DPD configure the transmitter; RxMER and DS channel estimates feed the channel and receiver; PRBS source data is recovered at PRBS-RX." width="1100">
+  </picture>
+</p>
+
+Illustrated system overview. See the [workbench guide](docs/user/workbench.md)
+for native UI screenshots, configuration and test-point instruments.
+
 ## Where development stands
 
 The waveform engine supports all ten uniform data orders through16384-QAM and frozen mixed ProfileA loading,

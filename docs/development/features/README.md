@@ -1,5 +1,7 @@
 # Feature development records
 
+- [Theme-aware README workbench diagram](readme-workbench-diagram/design.md)
+
 - [Transmitter workbench (UI-TX-03)](transmitter-workbench/design.md)
 
 This index includes ongoing feature plans and historical design/validation
