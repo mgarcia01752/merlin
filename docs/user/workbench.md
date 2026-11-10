@@ -4,6 +4,9 @@ The [README overview](../../README.md#workbench-overview) uses matching dark/lig
 system illustrations. They show the signal connections; the images below show
 the actual native interface.
 
+The [README analyzer gallery](../../README.md#signal-analyzers) links directly to
+the Spectrum Analyzer, QAM, channel response/echo and RxMER instrument guides.
+
 The [Transmitter workbench](transmitter-workbench.md) provides staged test points,
 an SA beside TX Output, and OCD/DPD message inspection.
 
@@ -61,13 +64,18 @@ missing/partial data, import details, display limits or important measurement
 assumptions. About keeps product, version and license information; implementation
 details and development-status messages are omitted.
 
-The standard menu bar at the top is **File | Settings | About**. File contains
+The standard menu bar at the top is **File | Settings | About**.
+Choose **About → Terminology…** to open the [terminology guide](terminology.md)
+on MERLIN's GitHub page in your default browser. This online guide requires
+internet access; license documents remain available offline. File contains
 **Open…**, **Save** and **Save As…** for self-contained `*.merlin.json` workbenches.
 Original PNM/payload bytes and accepted block settings are embedded; see the
 [run/save guide](closed-loop-workbench.md). Load individual captures in their dialogs.
 About shows the active icon, compiled version, MERLIN's expanded name and project
 link. License/NOTICE links open bundled text offline. Title bars use consistent
 initial capitals and the light/dark icons share transparent rounded corners.
+
+![About menu with online Terminology link](../images/workbench/about-menu-dark.png)
 
 ![About MERLIN](../images/workbench/about-dark.png)
 The instruction banner and standalone theme button have been removed.
@@ -221,3 +229,7 @@ See [supported profile files and limits](measurement-inputs/modulation-profile.m
 Use **File → Open…**, **Save** or **Save As…** for self-contained JSON workbenches.
 The [run/save guide](closed-loop-workbench.md#save-and-reopen) describes stored
 settings, embedded PNM files, limits and atomic replacement behavior.
+
+Channel Simulator provides staged input/model/output navigation and a Spectrum/QAM
+chooser at each signal boundary. See [channel inputs and instruments](channel-measurements.md)
+and [additional tilt/cable loss](impairments/additional-loss.md).

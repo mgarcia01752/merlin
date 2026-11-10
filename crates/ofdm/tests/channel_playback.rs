@@ -46,6 +46,11 @@ fn actual_channel_playback_preserves_rng_fec_epochs_and_rejects_out_of_run_sched
         captured_layout(&profile, &transmission).unwrap(),
     );
     settings.duration = Duration::from_millis(1);
+    // Selection and later residual playback must retain the explicit extra response.
+    settings.impairments.additional_loss =
+        docsis_ofdm_fec::signal_processing::channel::additional_loss::AdditionalLoss::Manual {
+            tilt_db: -6.0,
+        };
     MeasurementSelection {
         use_rxmer_noise: true,
         transitions: vec![],
@@ -66,6 +71,12 @@ fn actual_channel_playback_preserves_rng_fec_epochs_and_rejects_out_of_run_sched
         &mut settings,
     )
     .unwrap();
+    assert_eq!(
+        settings.impairments.additional_loss,
+        docsis_ofdm_fec::signal_processing::channel::additional_loss::AdditionalLoss::Manual {
+            tilt_db: -6.0
+        }
+    );
     let baseline = run_channel(
         &settings,
         &ChannelJobLimits::default(),

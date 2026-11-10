@@ -85,3 +85,13 @@ Receiver Workbench navigation: [design](receiver-workbench/design.md) · [valida
 Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/design.md) · [validation](qt-closed-loop/validation.md) · [user guide](../../user/closed-loop-workbench.md).
 
 - [Current native user-guide captures (UI-DOC-01)](user-guide-captures/design.md)
+
+- [Online terminology guide (UI-DOC-02)](terminology/design.md)
+
+- [Basic Channel Simulator staging (UI-CH-01, implemented)](channel-workbench/design.md)
+
+- [Additional channel tilt (WAVE-CH-TILT-01, implemented)](channel-tilt/design.md)
+
+- [Absolute downstream power budget (RF-POWER-01, planned)](rf-power-budget/design.md)
+
+- [Qt source organization (UI-ORG-01)](qt-source-organization/design.md)

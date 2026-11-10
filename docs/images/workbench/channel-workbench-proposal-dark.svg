@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="720" viewBox="0 0 1240 720">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="#93a8be"/></marker></defs>
+<rect width="1240" height="720" fill="#080e18"/>
+<rect x="20" y="20" width="1200" height="680" rx="14" fill="#0c1422" stroke="#24354b"/>
+<g font-family="DejaVu Sans,sans-serif">
+<text x="42" y="49" font-size="17" fill="#e8f0f7" font-weight="700" text-anchor="start">Channel Simulator Workbench</text>
+<rect x="1000" y="32" width="140" height="26" rx="13" fill="#3a3220" stroke="#766132"/>
+<text x="1070" y="50" font-size="12" fill="#f3cb56" font-weight="400" text-anchor="middle">Proposed Layout</text>
+<circle cx="1187" cy="46" r="15" fill="#19293e"/><path d="M1182,41 L1192,51 M1192,41 L1182,51" stroke="#e8f0f7" stroke-width="1.8"/>
+<path d="M40,69 L1200,69" fill="none" stroke="#93a8be" stroke-width="2"/>
+<text x="50" y="107" font-size="25" fill="#e8f0f7" font-weight="700" text-anchor="start">Channel Signal Path</text>
+<rect x="40" y="126" width="1160" height="510" rx="14" fill="#0c1422" stroke="#24354b"/>
+<path d="M340,342 L460,342" fill="none" stroke="#93a8be" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M780,342 L900,342" fill="none" stroke="#93a8be" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M620,234 L620,292" fill="none" stroke="#93a8be" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M620,458 L620,392" fill="none" stroke="#93a8be" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="460" y="150" width="320" height="84" rx="12" fill="#14283a" stroke="#389d9b"/>
+<rect x="464" y="154" width="312" height="76" rx="9" fill="none" stroke="#243b51"/>
+<text x="620.0" y="192.0" font-size="20" fill="#e8f0f7" font-weight="700" text-anchor="middle">RxMER</text>
+<text x="620.0" y="218.0" font-size="14" fill="#93a8be" font-weight="400" text-anchor="middle">Open Input Frame</text>
+<rect x="80" y="292" width="260" height="100" rx="12" fill="#19293e" stroke="#31475f"/>
+<rect x="84" y="296" width="252" height="92" rx="9" fill="none" stroke="#243b51"/>
+<text x="210.0" y="342.0" font-size="20" fill="#e8f0f7" font-weight="700" text-anchor="middle">Channel Input</text>
+<text x="210.0" y="368.0" font-size="14" fill="#93a8be" font-weight="400" text-anchor="middle">Spectrum / QAM</text>
+<rect x="460" y="292" width="320" height="100" rx="12" fill="#19293e" stroke="#31475f"/>
+<rect x="464" y="296" width="312" height="92" rx="9" fill="none" stroke="#243b51"/>
+<text x="620.0" y="342.0" font-size="20" fill="#e8f0f7" font-weight="700" text-anchor="middle">Channel Model</text>
+<text x="620.0" y="368.0" font-size="14" fill="#93a8be" font-weight="400" text-anchor="middle">Tilt: Off · Configure…</text>
+<rect x="900" y="292" width="260" height="100" rx="12" fill="#19293e" stroke="#31475f"/>
+<rect x="904" y="296" width="252" height="92" rx="9" fill="none" stroke="#243b51"/>
+<text x="1030.0" y="342.0" font-size="20" fill="#e8f0f7" font-weight="700" text-anchor="middle">Channel Output</text>
+<text x="1030.0" y="368.0" font-size="14" fill="#93a8be" font-weight="400" text-anchor="middle">Spectrum / QAM</text>
+<rect x="460" y="458" width="320" height="100" rx="12" fill="#14283a" stroke="#389d9b"/>
+<rect x="464" y="462" width="312" height="92" rx="9" fill="none" stroke="#243b51"/>
+<text x="620.0" y="508.0" font-size="20" fill="#e8f0f7" font-weight="700" text-anchor="middle">DS Channel Estimate</text>
+<text x="620.0" y="534.0" font-size="14" fill="#93a8be" font-weight="400" text-anchor="middle">Open Input Frame</text>
+<rect x="1096" y="653" width="100" height="30" rx="4" fill="#263a50" stroke="#53667d"/>
+<text x="1146" y="674" font-size="14" fill="#e8f0f7" font-weight="400" text-anchor="middle">Close</text>
+</g></svg>

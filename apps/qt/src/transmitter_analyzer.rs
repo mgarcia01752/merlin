@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Qt adapter for transmitter readiness and bounded worker spectrum queries.
-mod model;
+use crate::instruments::transmitter::preview as model;
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 
@@ -59,6 +59,14 @@ pub mod bridge {
         /// At most64 rows and2048 scatter points, or explicit unavailability.
         #[qinvokable]
         fn stage(self: &TransmitterAnalyzer, stage: i32, offset: i32) -> QString;
+        /// Selects actual physical TX bins before channel application.
+        /// # Arguments
+        /// * `first` - Inclusive physical bin, -1 for no lower bound.
+        /// * `last` - Inclusive physical bin, -1 for no upper bound.
+        /// # Returns
+        /// Bounded actual I/Q and coordinates, or explicit unavailability.
+        #[qinvokable]
+        fn channel_qam(self: &TransmitterAnalyzer, first: i32, last: i32) -> QString;
         /// Reads actual TX PLC packet headers, TLVs and bounded byte rows.
         /// # Returns
         /// At most32 reassembled packets with completed-frame provenance.
@@ -105,6 +113,15 @@ impl bridge::TransmitterAnalyzer {
     /// Small JSON page with original metadata and finite scatter points.
     pub fn stage(&self, stage: i32, offset: i32) -> QString {
         QString::from(crate::transmitter_instruments::stage(stage, offset).to_string())
+    }
+    /// Selects an immutable physical-bin window without running a simulation.
+    /// # Arguments
+    /// * `first` - Inclusive physical bin or -1 for all.
+    /// * `last` - Inclusive physical bin or -1 for all.
+    /// # Returns
+    /// At most2048 real TX points, without inferred data/control labels.
+    pub fn channel_qam(&self, first: i32, last: i32) -> QString {
+        QString::from(crate::transmitter_instruments::channel_input::qam(first, last).to_string())
     }
     /// Reads actual retained TX management packets through the existing decoders.
     /// # Returns

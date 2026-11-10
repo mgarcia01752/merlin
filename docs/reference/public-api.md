@@ -17,6 +17,7 @@ Return to the [documentation index](../README.md) for other guides.
 | `simulation::channel::{run_channel,ChannelJobLimits,ChannelJobResult,ChannelJobStatus}` | Cooperative token/runtime limits, progress, finite word retention and preserved complete/partial science |
 | `simulation::channel::accounting::{ObservationWindow,WordPlacement,WindowTotals}` | Source-symbol/sample window classification and whole-word BER/information-bit rate |
 | `simulation::channel::document::ChannelDocument` | Versioned validated CLI/future-adapter request, with millisecond duration default |
+| `simulation::test_points::{ProbeContext,TransmitCellRole}` | Optional bounded TX source-grid role metadata for data/NCP/filler/pilot diagnostics; no receiver inputs |
 | `simulation::test_points::JsonlProbeExporter` | Generic bounded versioned JSONL writer; no filesystem/DSP ownership |
 | `signal_processing::modulation::interleaving::{parity,twist,demultiplexing}` | Independent permutations, binary forward and finite soft-inverse boundaries |
 | `simulation::runner::simulate_with_probes` | Existing coding experiment with source/noise observation and unchanged RNG draws |
@@ -295,3 +296,8 @@ zero-filled band-limited impulse analysis and exact retained-LLR statistics.
 without spending the global budget on already-full snapshots. It must be set
 before any callback; later reconfiguration is rejected. Qt uses these APIs and
 the existing Rust slicer rather than implementing DSP in QML.
+
+`signal_processing::channel::additional_loss` exposes typed Off/manual/cable-distance
+models, explicit units and bounded gain evaluation. `ChannelImpairments.additional_loss`
+composes the magnitude with measured H while preserving originals and the existing
+post-equalization RxMER reference plane. See the [model guide](../user/impairments/additional-loss.md).

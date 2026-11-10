@@ -12,7 +12,7 @@ use docsis_ofdm_fec::{
         source::SeededSource,
         test_points::{
             CellProbeGrid, ProbeConfig, ProbeContext, ProbeEvent, ProbeObserver, ProbeSelection,
-            RunPhase, TestPointId, TestPointProbe,
+            RunPhase, TestPointId, TestPointProbe, TransmitCellRole,
         },
     },
     transmission::{packing::NcpModulation, SubcarrierSpacing},
@@ -22,12 +22,19 @@ use std::collections::BTreeSet;
 struct Sink {
     fail: bool,
     stages: BTreeSet<TestPointId>,
+    roles: Vec<TransmitCellRole>,
 }
 impl ProbeObserver for Sink {
     fn observe(&mut self, event: &ProbeEvent<'_>) -> Result<(), SimulationError> {
         self.stages.insert(event.stage);
         assert!(event.shape[0] <= 2);
         assert!(event.context.cell_grid.is_some());
+        if event.stage == TestPointId::PayloadMapped {
+            self.roles = event.context.transmit_cell_roles.clone().unwrap();
+            assert_eq!(self.roles.len(), event.total_elements);
+        } else {
+            assert!(event.context.transmit_cell_roles.is_none());
+        }
         if self.fail {
             Err(SimulationError::new(
                 "TestObserverFailure",
@@ -81,6 +88,7 @@ fn run(mode: u8) -> (Vec<u8>, BTreeSet<TestPointId>) {
     let mut sink = Sink {
         fail: mode == 2,
         stages: BTreeSet::new(),
+        roles: Vec::new(),
     };
     let mut tx = PayloadTransmitter::new(&settings, &raw, NcpModulation::Qpsk, 128).unwrap();
     let mut rx = PayloadReceiver::new(&state, 128).unwrap();
@@ -99,6 +107,24 @@ fn run(mode: u8) -> (Vec<u8>, BTreeSet<TestPointId>) {
             observation::observe_transmit(&symbol, grid, &context, &mut probe, &mut sink);
         if !sink.fail {
             observed.unwrap();
+        }
+        if mode == 1 {
+            for (cell, role) in symbol.packed.cells.iter().zip(&sink.roles) {
+                assert_eq!(
+                    matches!(
+                        cell,
+                        docsis_ofdm_fec::transmission::packing::PackedCell::NcpReserved { .. }
+                    ),
+                    *role == TransmitCellRole::Ncp
+                );
+                assert_eq!(
+                    matches!(
+                        cell,
+                        docsis_ofdm_fec::transmission::packing::PackedCell::ZeroLoadedFiller
+                    ),
+                    *role == TransmitCellRole::Filler
+                );
+            }
         }
         let received = rx
             .receive(

@@ -5,6 +5,8 @@
 import QtQuick
 import QtQuick.Controls
 import Merlin.Workbench
+import "shell"
+import "theme"
 
 ApplicationWindow {
     id: window
@@ -35,6 +37,7 @@ ApplicationWindow {
         onSaveRequested: function(saveAs) { workbench.saveProject(saveAs) }
         onGlobalSettingsRequested: workbench.settingsPopup.open()
         onAboutRequested: workbench.aboutPopup.open()
+        onTerminologyRequested: function(target) { Qt.openUrlExternally(target) }
     }
     Workbench { id: workbench; anchors.fill: parent; theme: theme; settingsBackend: ofdmSettings; profileBackend: profileInput; sourceBackend: sourceInput; transmitterBackend: transmitterAnalyzer; measurementBackend: measurementInputs; aboutBackend: aboutInfo; receiverBackend: receiverInstruments; runBackend: closedLoop; fileBackend: workbenchFile }
 }

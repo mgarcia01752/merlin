@@ -37,6 +37,9 @@ pub struct ChannelImpairments {
     pub noise: NoiseModel,
     /// Supplied relative channel response H, not equalizer1/H or calibrated path loss.
     pub response: Option<ChannelFrame>,
+    /// Explicit synthetic magnitude response composed without rewriting captures.
+    #[serde(default)]
+    pub additional_loss: super::additional_loss::AdditionalLoss,
 }
 /// Direct numerical inspection boundary for the complete frozen physical FFT grid.
 pub struct ImpairmentPlan {
@@ -127,6 +130,20 @@ impl ChannelImpairments {
         if !reference_variance.is_finite() || reference_variance <= 0.0 {
             return Err(invalid("Invalid LLR reference variance."));
         }
+        self.additional_loss.validate()?;
+        let active: Vec<_> = layout
+            .static_roles()
+            .iter()
+            .enumerate()
+            .filter(|(_, role)| **role != PhysicalCarrierRole::Excluded)
+            .filter_map(|(bin, _)| layout.frequency_hz(bin as u16))
+            .collect();
+        let low = *active
+            .first()
+            .ok_or_else(|| invalid("No active channel carriers."))?;
+        let high = *active
+            .last()
+            .ok_or_else(|| invalid("No active channel carriers."))?;
         let count = settings.subcarrier_spacing.fft_samples() as usize;
         let mut plan = ImpairmentPlan {
             response: vec![[1.0, 0.0]; count],
@@ -135,7 +152,9 @@ impl ChannelImpairments {
         };
         if let NoiseModel::Awgn { sample_power } = self.noise {
             super::awgn::SampleAwgn::new(sample_power, self.seed, 0)?;
-            if self.response.is_some() {
+            if self.response.is_some()
+                || self.additional_loss != super::additional_loss::AdditionalLoss::Off
+            {
                 return Err(invalid("Sample AWGN with supplied response is not supported; use explicit RxMER reference plane."));
             }
             plan.residual_power.fill(sample_power);
@@ -192,6 +211,21 @@ impl ChannelImpairments {
                 )?;
                 plan.response[bin] = response.iq[offset]
                     .ok_or_else(|| invalid("Missing response for an active simulation carrier."))?;
+            }
+        }
+        if self.additional_loss != super::additional_loss::AdditionalLoss::Off {
+            for (bin, role) in layout.static_roles().iter().enumerate() {
+                if *role == PhysicalCarrierRole::Excluded {
+                    continue;
+                }
+                let frequency = layout
+                    .frequency_hz(bin as u16)
+                    .ok_or_else(|| invalid("Missing physical frequency."))?;
+                let gain =
+                    10.0_f64.powf(self.additional_loss.gain_db(frequency, low, high)? / 20.0);
+                for component in &mut plan.response[bin] {
+                    *component *= gain;
+                }
             }
         }
         KnownReferenceEqualizer::new(&plan.response, 1.0)?;

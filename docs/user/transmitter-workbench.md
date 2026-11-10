@@ -2,9 +2,14 @@
 
 Click **Transmitter** to open its signal path. Each rounded stage has a selectable
 test point below it. Opening this workbench does not start a run or change inputs.
-The small MERLIN label above the main workbench title has been removed.
+The **Source · PRBS-TX** chip identifies the source configuration block.
+Its inspector names the boundary **Source Bits · PRBS-TX**: generated PRBS15 or
+accepted file bits with optional fill, before BCH/LDPC encoding.
+See the [source editor](source-input.md) and [terminology](terminology.md).
 
 ![Native Transmitter workbench](../images/workbench/transmitter-workbench-dark.png)
+
+![Source bits from the accepted PRBS-TX configuration](../images/workbench/transmitter-source-dark.png)
 
 Click **Spectrum Analyzer**, directly below **TX Output**, to see complex-baseband
 output before the channel. The Test Point selector also offers IFFT, cyclic-prefix
@@ -30,7 +35,21 @@ PLC preamble. Data/NCP views include their combined cells and filler; they are n
 payload-only classifications. Missing interleaver history is not plotted as zero.
 The view shows up to2048 actual points and reports the available count.
 
-![Actual transmitter mapped I/Q](../images/workbench/transmitter-qam-dark.png)
+Mixed mapped/interleaved views show **green squares for Data** and **red circles
+for NCP**, with a legend above the plot. Explicit filler uses amber diamonds;
+unclassified samples use a neutral marker and label. Colors identify symbol roles,
+not error status. NCP is drawn last so overlapping data does not hide control cells.
+Both palettes preserve these role colors. Display reduction keeps rare roles
+represented within the same2048-point limit.
+
+Classification follows the actual TX packing plan and its retained source grid.
+The first interleaved snapshot uses the same interleaver transport for role labels;
+when the necessary history is unavailable, samples remain unclassified. Missing
+cells are not drawn. PLC Data/Preamble remain separate selections.
+
+![Actual transmitter mapped I/Q with Data and NCP legend](../images/workbench/transmitter-qam-dark.png)
+
+![Interleaved Data and NCP with missing startup cells preserved](../images/workbench/transmitter-qam-interleaved-dark.png)
 
 **OCD / DPD Messages** or **Message Inspector** opens actual packets reassembled
 from captured TX PLC frames. Select OCD, Profile A DPD or NCP DPD, expand TLVs for
@@ -39,7 +58,27 @@ channel, profile, change count and source identity. TLV offsets count from the
 start of the complete MAC packet; HCS/FCS validation uses those same bytes.
 These are not the imported modulation-profile PNM bytes.
 
-![Actual transmitted OCD header and TLVs](../images/workbench/transmitter-messages-dark.png)
+The message inspector shows an aligned **Field / Value / Type / Length / Offset**
+tree. Use the disclosure arrow or double-click a row to fold its child fields;
+**Expand All** and **Collapse All** apply to the current packet. Select a row,
+then use Right/Left to expand/collapse or move to its parent. Up/Down move between
+visible rows; Enter or Space toggles a branch.
+
+Top-level values summarize the encoded setting or inclusive subcarrier range.
+Children expose assignment/loading fields and exact value bytes. Type identifies
+the parent TLV; decoded children are fields, not additional TLVs. Length counts
+bytes. Offsets are absolute positions in the complete packet: the parent points
+at its type byte, and child fields point inside its value after the two-byte
+TLV header. Select a row for its complete value, description and selectable hex.
+Unsupported values remain marked and available as bytes.
+
+**Bytes** switches to the complete original packet; **TLV Tree** returns to the
+same folding state. Choosing another message resets folding and selection. These
+views inspect retained transmissions and never change OCD/DPD configuration.
+
+![Actual transmitted OCD header and folding TLV tree](../images/workbench/transmitter-messages-dark.png)
+
+![Actual Profile 0 DPD assignment fields](../images/workbench/transmitter-dpd-tree-dark.png)
 
 ![Original MAC packet bytes](../images/workbench/transmitter-message-bytes-dark.png)
 

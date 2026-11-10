@@ -68,11 +68,10 @@ impl Project {
     pub(crate) fn validate(&self) -> Result<crate::workbench_session::Inputs, String> {
         if self.schema_version != 1
             || self.application != "MERLIN"
-            || self.sections.len() > 3
-            || self
-                .sections
-                .keys()
-                .any(|k| !["source", "profile", "measurements"].contains(&k.as_str()))
+            || self.sections.len() > 4
+            || self.sections.keys().any(|k| {
+                !["source", "profile", "measurements", "channel_model"].contains(&k.as_str())
+            })
         {
             return Err("Unsupported workbench format/sections.".into());
         }
@@ -94,6 +93,9 @@ impl Project {
             profile,
             playback: measurements.playback,
             response: measurements.response,
+            additional_loss: crate::channel_model::restore(
+                self.sections.get("channel_model").unwrap_or(&Value::Null),
+            )?,
         };
         if let Some(options) = &self.receiver {
             if !(1..=1000).contains(&options.duration_ms)
@@ -184,6 +186,28 @@ mod tests {
             )
             .unwrap();
             prepared.validate().unwrap();
+            let mut with_loss: Project =
+                serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+            let loss=docsis_ofdm_fec::signal_processing::channel::additional_loss::AdditionalLoss::Manual {tilt_db:-6.0};
+            with_loss
+                .sections
+                .insert("channel_model".into(), crate::channel_model::saved(&loss));
+            let roundtrip: Project =
+                serde_json::from_slice(&serde_json::to_vec(&with_loss).unwrap()).unwrap();
+            let restored = roundtrip.validate().unwrap();
+            assert_eq!(restored.additional_loss, loss);
+            let changed = crate::closed_loop::model::prepare(
+                &roundtrip.transmission,
+                &restored,
+                roundtrip.receiver.as_ref().unwrap(),
+            )
+            .unwrap();
+            assert_eq!(changed.impairments.additional_loss, loss);
+            assert_eq!(
+                roundtrip.sections["measurements"],
+                project.sections["measurements"]
+            );
+
             let measurements = &project.sections["measurements"];
             assert_eq!(measurements["options"]["mode"], bundle["mode"]);
             let captures = measurements["rxmer"].as_array().unwrap();

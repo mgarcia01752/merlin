@@ -20,6 +20,7 @@ flowchart LR
 | Seeded sample-domain Gaussian noise | [AWGN](awgn.md) |
 | Current decoder JSON adaptation | [PNM import](pnm-import.md) |
 | Carrier-wise residual synthesis and LLR calibration | [RxMER residuals](rxmer.md) |
+| Additional manual tilt and full cable loss | [Additional loss](additional-loss.md) |
 | Supplied response H and known-reference compensation | [Channel response](channel-response.md) |
 | Paired payload constellation before/after compensation | [Paired constellation](paired-constellation.md) |
 | Receiver Channel Estimation (CH-EST-RX) | [Pilot estimation and analyzers](../receiver-estimation/README.md) |

@@ -209,6 +209,7 @@ pub(crate) fn prepare(
     settings.duration = Duration::from_millis(options.duration_ms);
     settings.max_iterations = options.max_iterations;
     settings.receiver_mode = options.receiver_mode;
+    settings.impairments.additional_loss = inputs.additional_loss.clone();
     MeasurementSelection {
         use_rxmer_noise: true,
         transitions: vec![],
@@ -496,6 +497,7 @@ mod tests {
             profile: Some(profile),
             playback: Some(playback),
             response: None,
+            additional_loss: Default::default(),
         };
         let transmission = TransmissionSettings::default();
         let options = Options {
@@ -545,6 +547,14 @@ mod tests {
         assert!(mapped["points"].as_array().unwrap().len() <= 2048);
         let bins = crate::transmitter_instruments::stage(6, 0);
         assert_eq!(bins["total"], 8192);
+        let input = crate::transmitter_instruments::channel_input::qam(-1, -1);
+        assert_eq!(input["available"], true, "{input}");
+        let point = &input["points"][0];
+        let bin = point["index"].as_i64().unwrap() as i32;
+        let selected = crate::transmitter_instruments::channel_input::qam(bin, bin);
+        assert_eq!(selected["points"].as_array().unwrap().len(), 1);
+        assert_eq!(selected["points"][0]["i"], point["i"]);
+        assert!(crate::transmitter_instruments::channel_input::qam(4, 3)["available"] == false);
         let messages = crate::transmitter_instruments::messages();
         let packets = messages["messages"].as_array().unwrap();
         assert!(packets.iter().any(|p| p["type"] == 49), "{messages}");

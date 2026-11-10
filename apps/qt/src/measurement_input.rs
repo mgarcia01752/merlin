@@ -106,6 +106,35 @@ pub mod bridge {
             options: &QString,
             settings: &QString,
         ) -> QString;
+        /// Returns accepted additional-loss parameters; absent legacy settings mean Off.
+        /// # Returns
+        /// Small typed parameter JSON without capture arrays.
+        #[qinvokable]
+        fn loss_current(self: &MeasurementInputs) -> QString;
+        /// Validates a draft and returns a bounded response preview.
+        /// # Arguments
+        /// * `document` - At most4096 bytes of additional-loss parameters.
+        /// * `settings` - Accepted OCD JSON.
+        /// # Returns
+        /// Gain chart and endpoint summary, or an explicit diagnostic.
+        #[qinvokable]
+        fn loss_preview(
+            self: &MeasurementInputs,
+            document: &QString,
+            settings: &QString,
+        ) -> QString;
+        /// Accepts additional loss atomically without editing measured captures.
+        /// # Arguments
+        /// * `document` - Draft additional-loss parameters.
+        /// * `settings` - Accepted OCD JSON.
+        /// # Returns
+        /// Empty on success; failed validation preserves previous settings.
+        #[qinvokable]
+        fn loss_apply(
+            self: Pin<&mut MeasurementInputs>,
+            document: &QString,
+            settings: &QString,
+        ) -> QString;
         /// Derives joint readiness from accepted measurements and current OCD/DPD.
         /// # Arguments
         /// * `settings` - Accepted OCD JSON.
@@ -430,6 +459,52 @@ impl bridge::MeasurementInputs {
         }
         QString::from(result.err().unwrap_or_default())
     }
+    /// Returns accepted additional-loss parameters for a new editor draft.
+    /// # Returns
+    /// Small JSON configuration without original measurement arrays.
+    pub fn loss_current(&self) -> QString {
+        QString::from(
+            serde_json::to_string(&crate::workbench_session::snapshot().additional_loss)
+                .unwrap_or_default(),
+        )
+    }
+    /// Validates and previews a draft through the shared Rust channel planner.
+    /// # Arguments
+    /// * `document` - Bounded model JSON.
+    /// * `settings` - Accepted OCD JSON.
+    /// # Returns
+    /// Bounded gain chart or error, without changing accepted state.
+    pub fn loss_preview(&self, document: &QString, settings: &QString) -> QString {
+        let result = parse(&document.to_string())
+            .and_then(|loss| crate::channel_model::preview(&loss, &parse(&settings.to_string())?));
+        QString::from(
+            result
+                .unwrap_or_else(|error| json!({"error":error,"points":[]}))
+                .to_string(),
+        )
+    }
+    /// Commits a valid additional response and its versioned persistence section.
+    /// # Arguments
+    /// * `document` - Bounded model JSON.
+    /// * `settings` - Accepted OCD JSON.
+    /// # Returns
+    /// Empty on success, diagnostic preserving accepted state otherwise.
+    pub fn loss_apply(
+        self: core::pin::Pin<&mut Self>,
+        document: &QString,
+        settings: &QString,
+    ) -> QString {
+        let result = parse(&document.to_string()).and_then(|loss| {
+            crate::channel_model::preview(&loss, &parse(&settings.to_string())?)?;
+            crate::workbench_session::put_saved(
+                "channel_model",
+                crate::channel_model::saved(&loss),
+            );
+            crate::workbench_session::set_additional_loss(loss);
+            Ok(())
+        });
+        QString::from(result.err().unwrap_or_default())
+    }
     /// Derives joint configuration readiness; run dispatch remains separate.
     /// # Arguments
     /// * `settings` - Accepted OCD JSON.
@@ -471,11 +546,21 @@ impl bridge::MeasurementInputs {
             profile.is_none() || model.accepted_rx.is_empty(),
         );
         let response_status = status(response.clone(), profile.is_none());
-        let channel = if rx.is_ok() && response.is_ok() {
-            json!({"status":"complete","reason":"RxMER and channel response are configured. Full-loop UI dispatch remains pending."})
+        let loss = settings
+            .as_ref()
+            .map_err(Clone::clone)
+            .and_then(|settings| {
+                crate::channel_model::preview(
+                    &crate::workbench_session::snapshot().additional_loss,
+                    settings,
+                )
+                .map(|_| ())
+            });
+        let channel = if rx.is_ok() && response.is_ok() && loss.is_ok() {
+            json!({"status":"complete","reason":"RxMER, channel response and additional loss are configured."})
         } else {
-            json!({"status":if rx_status["status"]=="error"||response_status["status"]=="error" {"error"} else {"attention"},"reason":format!("{} {}",rx.err().unwrap_or_default(),response.err().unwrap_or_default())})
+            json!({"status":if rx_status["status"]=="error"||response_status["status"]=="error"||(profile.is_some() && loss.is_err()) {"error"} else {"attention"},"reason":format!("{} {} {}",rx.err().unwrap_or_default(),response.err().unwrap_or_default(),loss.err().unwrap_or_default())})
         };
-        QString::from(json!({"rxmer":rx_status,"response":response_status,"channel":channel,"flat":model.accepted_response.is_none()}).to_string())
+        QString::from(json!({"rxmer":rx_status,"response":response_status,"channel":channel,"flat":model.accepted_response.is_none(),"additional_loss":crate::workbench_session::snapshot().additional_loss}).to_string())
     }
 }

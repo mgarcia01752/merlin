@@ -3,10 +3,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Bounded receiver instruments over one shared immutable closed-loop result.
-pub(crate) mod diagnostics;
-pub(crate) mod selection;
-mod verification;
-mod views;
+use crate::instruments::receiver::views;
+pub(crate) use crate::instruments::receiver::{diagnostics, selection};
 use cxx_qt_lib::QString;
 use docsis_ofdm_fec::simulation::test_points::TestPointId;
 use serde_json::{json, Value};

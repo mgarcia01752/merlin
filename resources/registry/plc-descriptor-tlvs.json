@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "scope": "Display metadata for MERLIN's implemented fixed descriptor subset; not a complete MULPI registry.",
+  "normative_reference": "CM-SP-MULPIv3.1-I25, sections 6.4.40–6.4.41, Tables 69–70",
+  "evidence_kind": "implementation",
+  "sources": [
+    "crates/ofdm/src/transmission/plc/descriptors.rs",
+    "crates/ofdm/src/transmission/plc/receiver_configuration/channel.rs",
+    "crates/ofdm/src/transmission/plc/receiver_configuration/profile.rs"
+  ],
+  "fields": [
+    {"message": "OCD", "type": 0, "name": "DFT Size", "description": "FFT size and subcarrier spacing selected by the encoded value."},
+    {"message": "OCD", "type": 1, "name": "Cyclic Prefix", "description": "Index into the supported cyclic-prefix sample table."},
+    {"message": "OCD", "type": 2, "name": "Roll-off Period", "description": "Index into the supported roll-off sample table; zero is evaluation-only."},
+    {"message": "OCD", "type": 3, "name": "Subcarrier Zero Frequency", "description": "Frequency origin encoded as a four-byte big-endian Hz value."},
+    {"message": "OCD", "type": 4, "name": "Time Interleaving Depth", "description": "Encoded interleaving depth for this channel."},
+    {"message": "OCD", "type": 5, "name": "Subcarrier Assignment", "description": "Implemented five-byte inclusive range and channel-function assignment."},
+    {"message": "OCD", "type": 6, "name": "Primary Capable", "description": "Advertised primary capability; not modem registration or service readiness."},
+    {"message": "DPD", "type": 5, "name": "Subcarrier Assignment", "description": "Implemented five-byte inclusive range, default flag and bit loading. OCD protected roles take precedence."}
+  ]
+}

@@ -257,6 +257,19 @@ pub struct CellProbeGrid {
     pub origin_symbol: u64,
     pub ncp_modulation: crate::transmission::packing::NcpModulation,
 }
+/// Diagnostic source-cell role from the actual TX packing plan; never an RX input.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TransmitCellRole {
+    /// Encoded payload cell, including coded padding.
+    Data,
+    /// Encoded next-codeword-pointer control cell.
+    Ncp,
+    /// Explicit zero-loaded or idle BPSK filler.
+    Filler,
+    /// Scattered-pilot placeholder; no payload I/Q is present here.
+    Pilot,
+}
 /// Caller-assigned run/config identities and optional stage-specific time metadata.
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct ProbeContext {
@@ -275,6 +288,10 @@ pub struct ProbeContext {
     pub physical_grid: Option<PhysicalProbeGrid>,
     pub waveform_grid: Option<WaveformProbeGrid>,
     pub cell_grid: Option<CellProbeGrid>,
+    /// Optional full source-rank roles, at most8192 entries, only for TX mapped cells.
+    /// Element selection applies through event.element_start, not a role-vector offset.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub transmit_cell_roles: Option<Vec<TransmitCellRole>>,
 }
 impl ProbeContext {
     /// Creates run metadata with explicitly unknown time/profile fields.
@@ -313,6 +330,7 @@ impl ProbeContext {
             physical_grid: None,
             waveform_grid: None,
             cell_grid: None,
+            transmit_cell_roles: None,
         };
         result.validate()?;
         Ok(result)
@@ -351,6 +369,17 @@ impl ProbeContext {
             return Err(invalid(
                 "Cell probe session origin must align with PLC phase0.",
             ));
+        }
+        if let Some(roles) = &self.transmit_cell_roles {
+            if roles.len() > 8192
+                || self
+                    .cell_grid
+                    .is_none_or(|grid| roles.len() != grid.settings.cells())
+            {
+                return Err(invalid(
+                    "TX role metadata must match the bounded source grid.",
+                ));
+            }
         }
         Ok(())
     }

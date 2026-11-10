@@ -125,6 +125,7 @@ fn real_waveform_awgn_recovers_payload_and_reports_mer_iterations() {
             sample_power: 0.001,
         },
         response: None,
+        additional_loss: Default::default(),
     };
     let noisy = run(&settings);
     assert_eq!(noisy.phase, ChannelPhase::Finished);
@@ -154,6 +155,7 @@ fn per_carrier_rxmer_and_complex_response_pass_through_samples_and_equalization(
             frame: frame.clone(),
         },
         response: None,
+        additional_loss: Default::default(),
     };
     let unity = run(&settings);
     settings.impairments.response = Some(response);
@@ -162,6 +164,21 @@ fn per_carrier_rxmer_and_complex_response_pass_through_samples_and_equalization(
     assert_eq!(equalized.recovered_payloads, unity.recovered_payloads);
     assert!((equalized.measured_mer_db.unwrap() - unity.measured_mer_db.unwrap()).abs() < 1e-8);
     assert!(equalized.measured_mer_db.unwrap() > 34.0 && equalized.measured_mer_db.unwrap() < 36.0);
+    // Explicit additional response composes with measured complex H and preserves
+    // the post-EQ residual reference, RNG sequence and recovered payload count.
+    let original = serde_json::to_value(&settings.impairments.response).unwrap();
+    settings.impairments.additional_loss =
+        docsis_ofdm_fec::signal_processing::channel::additional_loss::AdditionalLoss::Manual {
+            tilt_db: -6.0,
+        };
+    let tilted = run(&settings);
+    assert_eq!(tilted.comparison.bit_errors, 0);
+    assert_eq!(tilted.recovered_payloads, unity.recovered_payloads);
+    assert!((tilted.measured_mer_db.unwrap() - unity.measured_mer_db.unwrap()).abs() < 1e-8);
+    assert_eq!(
+        serde_json::to_value(&settings.impairments.response).unwrap(),
+        original
+    );
     let mut invalid = frame;
     invalid.mer_db[200] = None;
     settings.impairments.noise = NoiseModel::Rxmer { frame: invalid };
@@ -176,6 +193,7 @@ fn noisy_failed_control_preserves_partial_science_without_fake_zero_ber() {
         seed: 41,
         noise: NoiseModel::Awgn { sample_power: 10.0 },
         response: None,
+        additional_loss: Default::default(),
     };
     let result = run_channel(
         &config,
@@ -203,6 +221,7 @@ fn exhausted_channel_probes_do_not_change_noisy_scientific_outcomes() {
             sample_power: 0.001,
         },
         response: None,
+        additional_loss: Default::default(),
     };
     let baseline = run(&config);
     let mut session = ChannelRun::new(&config).unwrap();
@@ -227,4 +246,34 @@ fn exhausted_channel_probes_do_not_change_noisy_scientific_outcomes() {
         serde_json::to_value(session.summary()).unwrap(),
         serde_json::to_value(baseline).unwrap()
     );
+}
+
+#[test]
+fn additional_cable_loss_alone_synthesizes_full_attenuation_and_recovers_payload() {
+    use docsis_ofdm_fec::{
+        signal_processing::channel::additional_loss::{AdditionalLoss, CableModel, LengthUnit},
+        transmission::layout::{CarrierLayout, PhysicalCarrierRole},
+    };
+    let mut settings = settings();
+    settings.impairments.additional_loss = AdditionalLoss::Cable {
+        cable: CableModel::Belden1694aV1,
+        length: 100.0,
+        unit: LengthUnit::Feet,
+    };
+    let layout = CarrierLayout::new(&settings.transmission, &settings.layout).unwrap();
+    let plan = settings
+        .impairments
+        .plan(&settings.transmission, &layout, settings.llr_variance)
+        .unwrap();
+    for (bin, role) in layout.static_roles().iter().enumerate() {
+        if *role == PhysicalCarrierRole::Excluded {
+            assert_eq!(plan.response[bin], [1.0, 0.0]);
+        } else {
+            assert!(plan.response[bin][0] < 1.0);
+            assert_eq!(plan.response[bin][1], 0.0);
+        }
+    }
+    let recovered = run(&settings);
+    assert_eq!(recovered.comparison.bit_errors, 0);
+    assert!(recovered.recovered_payloads > 0);
 }

@@ -8,7 +8,7 @@ use crate::{
     error::invalid,
     simulation::test_points::{
         CellProbeGrid, ProbeContext, ProbeData, ProbeObserver, ProbeOutcome, SignalDomain,
-        TestPointId, TestPointProbe,
+        TestPointId, TestPointProbe, TransmitCellRole,
     },
     SimulationError,
 };
@@ -94,22 +94,40 @@ pub fn observe_transmit(
     context.plc_phase =
         Some((symbol.channel.channel_symbol_index % crate::types::PLC_FRAME_SYMBOLS) as u8);
     context.codeword_index = None;
-    Ok(vec![
-        probe.emit(
-            TestPointId::PayloadMapped,
-            &context,
-            SignalDomain::ReducedCarrier,
-            ProbeData::TransportCells(&symbol.assembled.cells),
-            observer,
-        )?,
-        probe.emit(
-            TestPointId::PayloadInterleaved,
-            &context,
-            SignalDomain::ReducedCarrier,
-            ProbeData::TransportCells(&symbol.channel.cells),
-            observer,
-        )?,
-    ])
+    use crate::transmission::packing::PackedCell;
+    context.transmit_cell_roles = Some(
+        symbol
+            .packed
+            .cells
+            .iter()
+            .map(|cell| match cell {
+                PackedCell::Data { .. } | PackedCell::BitData { order: 4.., .. } => {
+                    TransmitCellRole::Data
+                }
+                PackedCell::BitData { .. } | PackedCell::ZeroLoadedFiller => {
+                    TransmitCellRole::Filler
+                }
+                PackedCell::NcpReserved { .. } => TransmitCellRole::Ncp,
+                PackedCell::ScatteredPilotPlaceholder => TransmitCellRole::Pilot,
+            })
+            .collect(),
+    );
+    let mapped = probe.emit(
+        TestPointId::PayloadMapped,
+        &context,
+        SignalDomain::ReducedCarrier,
+        ProbeData::TransportCells(&symbol.assembled.cells),
+        observer,
+    )?;
+    context.transmit_cell_roles = None;
+    let interleaved = probe.emit(
+        TestPointId::PayloadInterleaved,
+        &context,
+        SignalDomain::ReducedCarrier,
+        ProbeData::TransportCells(&symbol.channel.cells),
+        observer,
+    )?;
+    Ok(vec![mapped, interleaved])
 }
 /// Observes actual restored cells, accepted control, soft data and recovered words after RX computation.
 /// # Arguments

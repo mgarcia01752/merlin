@@ -46,12 +46,15 @@ impl ImpairedChannel {
             NoiseModel::Awgn { sample_power } => sample_power,
             _ => 0.0,
         };
-        let synthesis =
-            if matches!(settings.noise, NoiseModel::Rxmer { .. }) || settings.response.is_some() {
-                Some(WaveformTransmitter::new(geometry, 0, 0))
-            } else {
-                None
-            };
+        let synthesis = if matches!(settings.noise, NoiseModel::Rxmer { .. })
+            || settings.response.is_some()
+            || settings.additional_loss
+                != crate::signal_processing::channel::additional_loss::AdditionalLoss::Off
+        {
+            Some(WaveformTransmitter::new(geometry, 0, 0))
+        } else {
+            None
+        };
         Ok(Self {
             plan,
             synthesis,

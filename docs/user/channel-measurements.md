@@ -82,10 +82,9 @@ Apply validates the entire draft before replacing accepted state. Invalid edits
 and Cancel preserve accepted inputs. Replacing DPD or OCD revalidates dependent
 configuration; old incompatible inputs report an error instead of silently being
 realigned. Channel Simulator is green when both accepted RxMER and channel
-response configurations are valid. Opening Channel Simulator shows their summary
+response and additional-loss configurations are valid. Opening Channel Model shows their summary
 and links back to the editors.
 
-![Accepted channel inputs](../images/workbench/channel-inputs-ready-dark.png)
 
 Green means **configured**, not a running simulation. This task provides shared
 viewers, accepted input state and reusable Rust combination/preview operations.
@@ -105,3 +104,55 @@ breaks. Workbench JSON Save/Open preserves accepted original files and settings;
 See the [design and validation](../development/features/rxmer-workbench/design.md),
 [existing engine playback](impairments/measurement-timeline.md) and
 [paired receiver constellation](impairments/paired-constellation.md).
+
+## Channel Simulator stages
+
+Click **Channel Simulator** to open **Channel Input → Channel Model → Channel
+Output**, with separate **RxMER** and **DS Channel Estimate** input blocks.
+Click either measurement block to open its existing input frame.
+
+Click **Channel Input** or **Channel Output** to choose **Spectrum** or **QAM**.
+Input Spectrum uses TX output samples; input QAM shows the retained physical TX
+FFT symbol with bin-range filters. It does not identify Data/NCP roles from point
+positions. Output Spectrum uses channel-output samples at RX input; output QAM
+uses actual received FFT cells **before equalization**, with the existing received
+role/profile/bin/symbol selectors. Empty selections stay unavailable.
+
+![Raw Channel Output QAM](../images/workbench/channel-output-qam-dark.png)
+
+There is no separate SA block. Opening an instrument does not run the simulation;
+use the main workbench Start/Stop/Pause controls. After changing accepted settings,
+run again to populate current observations.
+
+Channel Model shows input summaries and opens the separate
+[Additional Tilt / Cable Loss editor](impairments/additional-loss.md). The default
+is Off. Manual tilt or full additional cable loss composes with the supplied
+response, preserving the imported files. These settings save in the WB JSON.
+
+![Channel Simulator staging](../images/workbench/channel-inputs-ready-dark.png)
+
+See the [staging design](../development/features/channel-workbench/design.md)
+and [additional-loss design](../development/features/channel-tilt/design.md).
+
+## Planned launch amplifier, attenuator and TapPoints
+
+The proposed power-budget layout keeps both conditioning controls inside Channel
+Simulator. Click the amplifier triangle or variable-attenuator symbol itself to
+open settings; there are no separate Configure buttons or blocks. Planned defaults
+are **0 dB gain**, **0 dB attenuation** and **Tilt Off**, requiring no initial setup.
+Zero dB means unchanged level, not0 dBmV absolute power. Receiver AGC is separate.
+
+Circular **TP** (TapPoint) controls sit before and after the amplifier. Clicking a
+TP opens an **SA / QAM** chooser for that point. Both routes reuse shared
+instrument windows, with the selected tap named in the title. There is no
+standalone SA block or junction branch. Output instruments remain at receiver
+input after attenuation. The compact layout uses equal gaps between neighboring
+icons, centered captions, straight connectors and matching upper/lower input
+blocks at equal distances from Channel Model.
+
+![Proposed amplifier and TapPoint layout, not a runtime screenshot](../images/workbench/channel-power-staging-proposal-dark.png)
+
+The planned SA calculates total **Channel Power** at its selected tap in dBmV,
+separately from the6 MHz equivalent level. Its integration bandwidth is explicit
+and independent of display zoom. These controls and absolute RF-power checks are
+**not implemented**; see the [power-budget plan](../development/features/rf-power-budget/design.md).

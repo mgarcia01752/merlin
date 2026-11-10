@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Explicit reference-plane sample channels; impairment models remain separate.
+pub mod additional_loss;
 #[cfg(feature = "simulation")]
 pub mod awgn;
 #[cfg(feature = "simulation")]

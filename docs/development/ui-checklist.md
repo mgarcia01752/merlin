@@ -81,7 +81,10 @@ Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first 
 - [x] Implement PRBS-TX configuration and supported Transmitter preview readiness.
   Full-loop Transmitter/job wiring uses the shared Rust engine. Source options are defined in the
   [architecture](../architecture.md#prbs-tx-source-configuration).
-- [ ] Implement Channel Simulator configuration and stage details.
+- [x] **UI-CH-01** Implement Channel Input/Model/Output staging with direct
+  RxMER/DS Channel Estimate frames and Spectrum/QAM chooser at each boundary.
+  Separate additional-loss editor supplies manual tilt and full cable loss.
+  [Design](features/channel-workbench/design.md).
 - [x] **UI-RX-CONFIG-01 / UI-VERIFY-01** Implement Receiver / PRBS-RX configuration
   and actual recovered-data status.
 - [x] Keep source/recovered comparison independent of receiver feedback.
@@ -129,6 +132,32 @@ Integrate input blocks as their owning sections are developed left to right.
 - [ ] Apply replacements to the next run; preserve active inputs and original bytes.
 
 ## UI-03: Observations and analyzers
+
+- [ ] **RF-POWER-01** Add clickable amplifier/attenuator symbols opening their
+  own dialogs, default0 dB gain/loss and Tilt Off. Inline TP circles before/after
+  the amplifier open shared SA/QAM windows; remove the dedicated SA card/branch.
+  SA calculates Channel Power separately from6 MHz equivalent level. Requires
+  calibrated boundaries and a defined noise/limit policy.
+  [Design](features/rf-power-budget/design.md).
+- [x] **UI-ORG-01** Group QML and Rust instrument providers by responsibility,
+  preserving UI behavior and updating registration/imports/resource references.
+  [Design](features/qt-source-organization/design.md).
+- [ ] **UI-INSTR-01** Share TP QAM presentation across sources with explicit tap
+  providers. Folder organization is tracked separately under UI-ORG-01.
+  [Plan](features/rf-power-budget/design.md#shared-instrument-organization-proposal).
+
+- [x] **UI-DOC-02** Add terminology Markdown and About menu online access.
+  [Design](features/terminology/design.md).
+- [x] **UI-TX-06** Identify Source and Source Bits as originating in PRBS-TX.
+  [Design](features/transmitter-workbench/design.md#ui-tx-06-source-stage-origin-label).
+
+- [x] **UI-TX-05** Color Data/NCP QAM roles with a legend and retain actual
+  TX role provenance through bounded observation/display selection.
+  [Design](features/transmitter-workbench/design.md#ui-tx-05-qam-symbol-role-colors-and-legend).
+
+- [x] **UI-TX-04** Replace message TLV buttons with a folding tree grid and
+  registry-backed decoded fields, preserving exact packet bytes.
+  [Design](features/transmitter-workbench/design.md#ui-tx-04-folding-descriptor-tree-grid).
 
 - [x] **UI-TX-03** Implement staged Transmitter navigation, test points
   and actual OCD/DPD header/TLV/byte inspection, preserving emitted-message status.

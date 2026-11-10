@@ -5,9 +5,11 @@
  */
 mod about_info;
 mod branding;
+mod channel_model;
 mod closed_loop;
 mod example_directory;
 mod input_file;
+mod instruments;
 mod measurement_input;
 mod native_file_picker;
 mod ofdm_settings;
@@ -15,12 +17,11 @@ mod profile_input;
 mod project_file;
 mod receiver_instruments;
 mod source_input;
-mod spectrum_view;
 mod transmitter_analyzer;
-mod transmitter_instruments;
 mod workbench_file;
 mod workbench_session;
 use cxx_qt_lib::{QGuiApplication, QQmlApplicationEngine, QString, QUrl};
+pub(crate) use instruments::{spectrum as spectrum_view, transmitter as transmitter_instruments};
 
 /// Starts the native workbench; scientific jobs are not connected in this increment.
 ///

@@ -444,6 +444,99 @@ VF and the out-and-back assumption. Uniform-cable/zero-margin limitations remain
 no signal calculations change. See the
 [layout design](development/features/transmitter-spectrum/design.md#ui-sa-07-plot-metadata-footer-actions-and-cable-context).
 
+UI-CH-01 implements Channel Input → Channel Model → Channel Output in its own
+Qt dialog. RxMER and DS Channel Estimate open existing input frames directly.
+Input/output open a Spectrum/QAM chooser; no separate SA block exists. Input uses
+retained TX samples/physical bins; output uses RX-input samples/raw received FFT
+cells before equalization. Missing observations remain unavailable. Input QAM
+retains one physical symbol with bin filters; output retains existing received
+role/profile/bin/symbol selectors. Main execution/readiness rules remain unchanged.
+See the [staging design](development/features/channel-workbench/design.md).
+
+WAVE-CH-TILT-01 adds optional Additional Loss under Channel Model, default Off.
+The shared Rust impairment planner composes signed manual slope or full additional
+cable attenuation with H. The initial versioned Belden 1694A preset uses pinned
+manufacturer attenuation, explicit additional length and ft/m, without extrapolation.
+VF-only echo presets remain separate. Measurements and provenance stay unchanged.
+The existing Y = H_effective (X + E) model preserves post-EQ RxMER; reference RX
+uses effective H, while pilot RX estimates received pilots. Cable distance does
+not introduce a receiver noise floor or automatically worsen BER. No physical
+cable delay/convolution or calibrated RF power is implied. The versioned optional
+WB `channel_model` section defaults to Off when absent. See the
+[model, limits and evidence](development/features/channel-tilt/design.md) and
+[user guide](user/impairments/additional-loss.md).
+
+RF-POWER-01 is the planned absolute-power follow-up. Current normalized I/Q and
+relative H do not establish transmitter launch power or CM input sensitivity.
+Add explicit TX/RX6 MHz equivalent levels and separately integrated channel power,
+calibration, imported-H reference policy and receiver noise/front-end limits.
+The user's ±12 dBmV/6 MHz target is an engineering margin inside the pinned
+PHY input level range, not total channel power. The proposed60 dBmV TX limit
+needs a bandwidth and port-capability definition. Keep existing RxMER conditioning
+explicit and avoid double-counting noise. No absolute-power controls or calibrated
+SA units are implemented. The proposed channel workspace places a clickable
+right-pointing amplifier triangle before Channel Model and a variable resistive
+attenuator with a diagonal adjustment arrow after it. Circular TP (TapPoint)
+selectors before and after the amplifier open an SA/QAM chooser for that plane;
+there is no dedicated SA block or branch. Output instruments stay after the
+attenuator, and receiver AGC stays separate. Clicking the amplifier/attenuator
+symbols opens their dialogs directly. Defaults are0 dB gain,0 dB attenuation and
+Tilt Off, without initial setup or an extra readiness gate at those defaults.
+The SA will calculate integrated Channel Power at its selected tap, with explicit
+bandwidth and calibrated dBmV units, separately from6 MHz equivalent power.
+Display zoom must not change this integral. These controls remain planned.
+
+UI layouts and diagrams follow visual symmetry, centerline alignment and a shared
+spacing scale. Adjacent visible block/icon edges have equal clearance; matching
+branch blocks have equal dimensions and connector lengths. Center labels and the
+complete group, preserve balanced margins and prefer straight connections. These
+rules are maintained in the coding-style skill and apply to future UI work.
+
+UI-ORG-01 groups QML under `shell`, `theme`, `components`, `about`, `inputs`,
+`workbenches` and `instruments`; Main.qml remains the embedded bootstrap.
+Instrument windows/charts are grouped by spectrum, QAM, response, slicer, FEC,
+messages and stages. Input directories use the corresponding Rust owner names.
+Qt-facing instrument providers now live under `apps/qt/src/instruments/`, with
+cohesive transmitter/receiver and shared spectrum modules. Existing root Rust
+paths are retained through re-exports or the existing QObject bridges. Pinned
+CXX-Qt requires those bridge files to stay together under src/ for this QML module.
+File moves preserve registered QML type names, imports, embedded resources and
+visible behavior. See the [organization design](development/features/qt-source-organization/design.md).
+
+UI-INSTR-01's common TP QAM window/provider routing remains pending: the current
+SA is shared, while TX/input and receiver QAM wrappers remain separate. Core
+numerical algorithms stay in their existing Rust modules. RF power extensions
+remain in the [power-budget plan](development/features/rf-power-budget/design.md).
+
+UI-DOC-02 adds About → Terminology… linking the maintained
+`docs/user/terminology.md` on the repository's GitHub master branch. The menu emits
+an explicit URL and the desktop shell opens the system browser; this optional
+online documentation does not affect offline simulation or bundled licenses.
+The online page requires the documentation to be pushed before it is available.
+UI-TX-06 labels Source / PRBS-TX and Source Bits · PRBS-TX to identify the owning
+input block without implying that file-based sources are always PRBS.
+
+UI-TX-05 identifies mixed TX QAM roles with green Data squares, red NCP circles
+and a visible legend; filler and unavailable classifications remain separate.
+The mapped TX probe retains a bounded source-role vector from actual PackedCell
+variants, never from I/Q values. The Qt Rust adapter transports the first aligned
+interleaved snapshot's roles through the existing SymbolInterleaver; unavailable
+history remains unknown. Role-stratified reduction preserves rare controls within
+the shared2048-point cap. These TX-only diagnostics never enter receiver inputs.
+Theme colors and marker shapes apply to future mixed-role instruments. See the
+[role-color design](development/features/transmitter-workbench/design.md#ui-tx-05-qam-symbol-role-colors-and-legend).
+
+UI-TX-04 presents OCD/DPD messages through a shared folding TLV tree grid with
+Field/Value/Type/Length/Offset columns, keyboard expansion and raw-byte inspection.
+Rust interprets only the existing fixed descriptor subset; the bundled
+`resources/registry/plc-descriptor-tlvs.json` supplies display metadata traced to
+that implementation. QML owns visible-row projection, folding and selection,
+never binary interpretation. Child fields retain absolute packet-byte ranges;
+unknown/reserved values stay raw and marked unsupported. This is a bounded JSON
+tree grid, not a native QAbstractItemModel TreeView. Reuse the component for
+compatible structured inspectors. See the
+[tree-grid design](development/features/transmitter-workbench/design.md#ui-tx-04-folding-descriptor-tree-grid).
+
 UI-TX-03 opens a Transmitter workbench matching Receiver stage/test-point
 navigation, with bounded source/LDPC/bit/cell pages, QAM and waveform inspection.
 The shared SA is attached directly below TX Output, before channel impairments;

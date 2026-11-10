@@ -28,7 +28,7 @@ focused core observer/channel tests cover the necessary integration changes.
 `TransmitterWorkbenchDialog.qml` replaces the direct SA entry and reuses shared
 chip/SA controls. Stage, QAM, scatter and message views are separate QML files.
 The existing TransmitterAnalyzer bridge adds bounded query methods; focused
-`transmitter_instruments/{capture,views,messages}.rs` modules own presentation
+`instruments/transmitter/{capture,views,messages}.rs` modules own presentation
 admission and finite copied data. `closed_loop/model.rs` composes TX capture into
 the existing immutable result, discarded on input changes or a new run.
 
@@ -150,3 +150,114 @@ separate from the historical mockup. Native logs contain no QML warnings.
 The latest executable is built and restarted in the VM; other OS runtime and
 installer validation remain unverified. Local logs use the `tx-staging-*` prefix
 under ignored `docs/development/local/visual-workspace/`.
+
+## UI-TX-04: Folding descriptor tree grid
+
+Replace the message inspector's full-width TLV buttons with a reusable virtualized
+QML tree grid: Field, Value, Type, Length and Offset columns; indented expandable
+children; keyboard navigation; Expand All/Collapse All and exact packet bytes.
+Qt6.8 TreeView requires QAbstractItemModel and does not decode TLVs. The existing
+bounded Rust JSON interface stays; the shared component flattens only visible rows
+and holds transient selection/folding state. Do not claim a native TreeView model
+or use text-editor code folding to interpret binary records.
+
+Rust owns interpreted values and byte ranges. A bundled display registry at
+resources/registry/plc-descriptor-tlvs.json names the existing OCD0–6/DPD5 subset,
+with source paths and MULPI I25 Table69/70 references. Interpretation is traced to
+current descriptors.rs and receiver_configuration/{channel,profile}.rs, not a new
+specification decoder. Reuse CP/roll-off tables and spacing types. Unsupported or
+reserved forms remain raw and marked unsupported; folding never parses bytes.
+Assignment children expose assignment byte, first/last subcarrier and DPD default
+flag/loading without inventing nested TLVs. All offsets are absolute packet-byte
+positions; parent offset points at the TLV type and child values start after its
+two-byte header. Preserve packet integrity/emission status and bounded capture.
+
+Own presentation in TlvTreeGrid.qml, composition in TransmitterMessageDialog.qml,
+and decoded rows in instruments/transmitter/tlv_fields.rs. Reuse the tree-grid
+pattern for later structured inspectors when their Rust models expose children;
+this task does not rewrite unrelated input editors or graphs. The read-only
+PNM Viewer RxMerCollectionTree.qml was inspected; it uses a different collection
+navigation model, so no viewer source is copied for this component.
+
+Validate scoped Rust decoding/offset tests, adapter checks, QML folding/selection/
+packet-change/bytes behavior, native dark/minimum-width rendering and updated
+user screenshots. Build only the Qt workspace with retained artifacts. Update the
+canonical coding-style UI guidance and verify both skill discovery links.
+
+Qt reference: [Qt6.8 TreeView](https://doc.qt.io/qt-6.8/qml-qtquick-treeview.html)
+documents the QAbstractItemModel boundary; it is not a binary TLV decoder.
+The JSON projection is a presentation implementation choice for the existing
+adapter, not an assertion that Qt lacks native tree controls.
+
+Implemented and validated: all20 Qt-adapter Rust tests pass, including three
+new registry/field tests covering core timing tables, exact byte ranges, DPD
+default flags/loading, unsupported forms and registry key uniqueness. Formatting
+and Clippy pass. All27 QML checks pass, including disclosure clicks with retained
+focus, keyboard folding, Expand/Collapse All, bytes-view state preservation and
+selection/folding reset on packet changes. Native review found and corrected a
+delegate-lifetime focus error; focus is now established before replacing visible
+rows. Final native logs contain no QML warnings.
+
+The latest Qt executable is built with retained artifacts and running in the VM.
+Actual dark captures show expanded OCD and Profile0 DPD fields; the existing
+bytes view is preserved. Reviewed960x640 and1210x736 layouts and restored the
+larger window for handoff. The accepted single example completed with actual
+PLC messages and1,223,952 compared bits; no source captures or WB files were
+modified. No simulation-library source changed or non-Qt workspace suite ran.
+The canonical UI guidance and both discovery links validate; relative links,
+registry JSON, screenshot integrity and diff whitespace pass.
+
+## UI-TX-05: QAM symbol-role colors and legend
+
+Use green Data, red NCP and a visible legend in mixed TX QAM views. Filler remains
+separate and unknown roles are not guessed from constellation coordinates. The
+current TransportCell sample does not retain its packing role, so add bounded,
+TX-only source-role metadata to the existing mapped-cell observation context,
+derived from actual PackedCell variants. Preserve signal data and receiver inputs.
+Retain that metadata in the Qt capture; align the first interleaved snapshot using
+the existing generic Rust SymbolInterleaver and matching source/grid origin. If
+history or a full source map is unavailable, mark role unknown. No QML decoding
+or new interleaving math. Stratify display reduction so rare NCP points survive
+the shared2048-point cap. Draw NCP last and use distinct marker shapes as well as
+colors, with palette variants for dark/light backgrounds.
+
+Update the shared theme, TransmitterScatter/TransmitterQamDialog, role display
+adapter, UI guidance, architecture and guides together. Validate core observation
+invariance/metadata, Rust role transport and bounded selection, QML legend/colors,
+native captures and current Qt build. Core tests are scoped to changed observation
+contracts; no unrelated full workspace suite is needed.
+
+Implemented and validated: mapped/interleaved QAM now uses green Data squares and
+red NCP circles with a legend, optional amber filler diamonds and neutral unknown
+markers. Role-aware reduction retains rare control points and all points when
+below the shared cap. The snapshot keeps the actual source packing roles and
+matching source/grid context; the adapter uses the existing SymbolInterleaver
+for the first retained aligned channel symbol. Later/unavailable history is
+explicitly unclassified rather than inferred. The full metadata vector is bounded
+to8192 source cells and independent of an event's selected element slice.
+
+Validation: five scoped core observation tests pass, including unchanged decoded
+payloads with disabled/enabled/failing/exhausted observers and actual packing-role
+checks. Core Clippy and formatting pass. All22 Qt-adapter Rust tests and27 QML
+checks pass, covering rare NCP retention, interleaver alignment, unknown roles,
+legend visibility and both theme palettes. Native dark Ubuntu review confirms
+red/green markers in mapped and interleaved views at1210x736 and960x640; updated
+user/README screenshots are actual captures. Native logs have no QML warnings.
+The completed single-example run still compares1,223,952 bits with zero errors.
+The latest Qt build is running in the VM. No full workspace suite was run; only
+the affected core observation contracts and Qt workspace were checked.
+
+## UI-TX-06: Source-stage origin label
+
+Label the source chip Source / PRBS-TX and its inspector selector Source Bits ·
+PRBS-TX. The label identifies the owning configuration block, not a fixed PRBS
+mode: accepted input may be PRBS15 or a file with optional fill. This is UI-only
+copy in the existing separate dialogs. Update user guides and actual native
+captures; verify chip/selector text in QML and leave a current built executable.
+
+UI-TX-06 is implemented: Source now identifies PRBS-TX in the stage chip and
+inspector selector. All27 QML checks pass, including the exact chip/selector
+labels. Native captures show the source label and actual PRBS15 bits before
+coding; existing TX guide images were refreshed where their parent diagram
+changed. The latest executable is built/running; no non-Qt build or additional
+simulation tests were needed for these label-only changes.

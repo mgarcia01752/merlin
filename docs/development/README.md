@@ -11,6 +11,13 @@ tracks native execution/persistence and its validation.
 The [Transmitter workbench design](features/transmitter-workbench/design.md)
 tracks staged TX instruments and actual OCD/DPD packet inspection.
 
+The [Channel Simulator staging](features/channel-workbench/design.md) and
+[additional-loss model](features/channel-tilt/design.md) record channel instruments,
+cable evidence and response/noise policy.
+
+The [Qt source organization](features/qt-source-organization/design.md) records
+QML feature folders, instrument providers and the CXX-Qt bridge constraint.
+
 The separate [UI checklist](ui-checklist.md) tracks the Qt workbench.
 [Qt setup and VM validation](qt.md) covers the initial native shell.
 

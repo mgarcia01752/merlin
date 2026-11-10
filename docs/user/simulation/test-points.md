@@ -52,3 +52,14 @@ continuity tests. [Versioned bounded JSONL export](probe-export.md) and the
 [channel CLI](../channel-runner/cli.md) provide maintained file output. The
 [separate bit-processing stages](../bit-processing/README.md) expose direct
 intermediates without requiring the common observer.
+
+## TX QAM role metadata
+
+The mapped TX cell observation carries optional `transmit_cell_roles` in its
+context, derived from the actual packing plan: data, NCP, filler and scattered-pilot
+placeholders. The vector covers the complete source-rank grid, at most8192 cells;
+selected event data still uses its original element offset. Consumers must not
+index this vector as a selected-slice-relative array. This metadata is TX-only
+and does not alter transported I/Q or enter receiver decoding. An interleaved
+consumer must transport roles through the matching interleaver or mark them
+unknown; constellation coordinates do not establish their role.

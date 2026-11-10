@@ -49,3 +49,13 @@ The Measurements and demos section remains unchanged.
 
 Implemented as documentation-only navigation changes. Verify relative links,
 README entry points and diff whitespace; no compilation or runtime tests needed.
+
+## DOC-BRAND-04: Analyzer gallery
+
+Add a compact two-column README gallery linking current native dark screenshots
+to the SA, transmitter QAM, receiver response/echo and RxMER guides. Reuse the
+reviewed user-guide assets without cropping, recoloring or making new mockups.
+Each thumbnail opens its instrument guide. Keep captions short and identify the
+images as actual native UI captures. No UI source or processing behavior changes.
+Validate image integrity, local paths, heading anchors and diff whitespace; no
+compilation or runtime tests are needed for reusing unchanged screenshots.

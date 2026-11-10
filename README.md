@@ -48,6 +48,16 @@ its scope.
 Illustrated system overview. See the [workbench guide](docs/user/workbench.md)
 for native UI screenshots, configuration and test-point instruments.
 
+## Signal analyzers
+
+Actual native UI captures. Select an image to open its guide.
+
+| Spectrum Analyzer | QAM Analyzer |
+| --- | --- |
+| [<img src="docs/images/workbench/sa-tx-baseband-dark.png" alt="OFDM spectrum with symbol timing and cable echo estimate" width="520">](docs/user/spectrum-analyzer.md) | [<img src="docs/images/workbench/transmitter-qam-dark.png" alt="Transmitter QAM constellation from captured mapped I/Q" width="520">](docs/user/transmitter-workbench.md) |
+| **Channel Response / Echo** | **RxMER** |
+| [<img src="docs/images/workbench/receiver-response-dark.png" alt="Receiver-estimated impulse response showing delayed channel energy" width="520">](docs/user/receiver-workbench.md#channel-response-and-echo) | [<img src="docs/images/workbench/rxmer-single-dark.png" alt="Measured RxMER versus subcarrier frequency" width="520">](docs/user/channel-measurements.md#rxmer-captures) |
+
 ## Measurements and demos
 
 - [File payloads](docs/user/simulation/file-source/README.md): send exact text/binary bytes, optionally append finite PRBS15 fill, and export recovered bytes.

@@ -704,6 +704,27 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 ### Qt simulation workbench
 
+- [ ] **RF-POWER-01** Define and implement calibrated TX/RX levels, explicit
+  6 MHz/total power references, TP-selected SA Channel Power, receiver
+  noise/front-end limits and WB persistence.
+  Distinguish the ±12 dBmV operating target from normative limits; resolve the
+  proposed60 dBmV transmitter reference. [Design](features/rf-power-budget/design.md).
+
+
+- [x] **UI-ORG-01** Group QML windows/components and Rust instrument providers
+  by responsibility; update registration, imports, resource references and
+  coding-style guidance. [Design](features/qt-source-organization/design.md).
+
+- [ ] **UI-INSTR-01** Complete shared TP QAM presentation and tap-specific data
+  providers. Instrument-folder organization is handled by UI-ORG-01. [Plan](features/rf-power-budget/design.md#shared-instrument-organization-proposal).
+
+- [x] **WAVE-CH-TILT-01** Implement manual tilt and full additional cable loss
+  with Rust-owned composition, bounded preview, explicit RxMER/correction policy
+  and versioned workbench persistence. [Design](features/channel-tilt/design.md).
+- [x] **UI-CH-01** Implement Channel Input/Model/Output staging, direct measurement
+  input frames and Spectrum/QAM chooser at each signal boundary.
+  [Design](features/channel-workbench/design.md).
+
 - [x] **UI-DOC-01** Refresh native user-guide captures, remove obsolete
   overview copies and reconcile stale instructions.
   [Audit record](features/user-guide-captures/design.md).
@@ -714,6 +735,19 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 - [x] **UI-SA-06** Use radio buttons for SA frequency axes and remove redundant
   caption/raw Tap text. [Design](features/transmitter-spectrum/design.md#ui-sa-06-concise-frequency-axis-controls).
+
+- [x] **UI-DOC-02** Add terminology Markdown and About menu online access.
+  [Design](features/terminology/design.md).
+- [x] **UI-TX-06** Identify Source and Source Bits as originating in PRBS-TX.
+  [Design](features/transmitter-workbench/design.md#ui-tx-06-source-stage-origin-label).
+
+- [x] **UI-TX-05** Color Data/NCP QAM roles with a legend and retain actual
+  TX role provenance through bounded observation/display selection.
+  [Design](features/transmitter-workbench/design.md#ui-tx-05-qam-symbol-role-colors-and-legend).
+
+- [x] **UI-TX-04** Replace message TLV buttons with a folding tree grid and
+  registry-backed decoded fields, preserving exact packet bytes.
+  [Design](features/transmitter-workbench/design.md#ui-tx-04-folding-descriptor-tree-grid).
 
 - [x] **UI-TX-03** Implement the staged Transmitter workbench with
   test-point instruments and generated/emitted OCD/DPD message inspection.
@@ -822,6 +856,11 @@ integration. It does not mean all the broader product items above are complete.
   implemented and validated separately in the linked receiver implementation record.
 
 ### Repository introduction
+
+- [x] **DOC-BRAND-04** Link current SA, QAM, response/echo and RxMER
+  screenshots from a compact README analyzer gallery.
+  [Design](features/readme-workbench-diagram/design.md#doc-brand-04-analyzer-gallery).
+
 
 - [x] **DOC-BRAND-03** Add a documentation index and UI, Rust API and
   planned Python guide entry points.

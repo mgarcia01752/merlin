@@ -8,6 +8,8 @@
 | [Rust API Guide](reference/public-api.md) | Simulation entry points, typed inputs, results and stage APIs |
 | [Python Guide](user/python/README.md) | Binding roadmap; implementation is deferred until after the UI |
 
+[Terminology](user/terminology.md): definitions used by the workbench and analyzers.
+
 ## Command line
 
 - [Channel CLI](user/channel-runner/cli.md)

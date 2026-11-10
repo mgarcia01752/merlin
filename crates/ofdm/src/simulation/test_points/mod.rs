@@ -8,7 +8,7 @@ mod observer;
 pub use model::{
     CellProbeGrid, PhysicalProbeGrid, PlcProbeGrid, ProbeContext, ProbeData, ProbeEvent,
     ProbeUnits, RunPhase, SignalDirection, SignalDomain, SignalReference, TestPointId,
-    WaveformProbeGrid,
+    TransmitCellRole, WaveformProbeGrid,
 };
 pub use observer::{
     ProbeConfig, ProbeObserver, ProbeOutcome, ProbeSelection, ProbeStats, TestPointProbe,

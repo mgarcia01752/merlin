@@ -5,7 +5,9 @@
 import QtQuick
 import QtQuick.Controls
 import QtTest
-import "../qml"
+import "../qml/components"
+import "../qml/shell"
+import "../qml/theme"
 
 Pane {
     id: window
@@ -78,8 +80,13 @@ Pane {
         function generate() { if (ready) { busy = true } }
         function cancel() { busy = false }
         function finish() { busy = false; resultAvailable = true; token = String(Number(token) + 1) }
-        function stage(index,offset) { return JSON.stringify({available:true,rows:[{index:offset,value:"1010"}],points:[{x:0.5,y:0.5}],symbol:128,phase:"Observation",retained:4096,total:4096,offset:offset,end:Math.min(4096,offset+2048),iq_count:1,missing:0}) }
-        function messages() { return JSON.stringify({messages:[{name:"OCD",type:49,channel:34,profile:null,change_count:0,source:"00:ca:00:00:00:01",bytes:40,symbol:0,completed_frame:true,status:"Carried in completed TX PLC frame",integrity:"HCS / FCS valid",tlvs:[{name:"Cyclic Prefix",kind:1,length:1,offset:28,hex:"02"}],hex_rows:[{offset:"0000",hex:"C2 00"}]}],reason:"",pending_bytes:0}) }
+        function stage(index,offset) { return JSON.stringify({available:true,rows:[{index:offset,value:"1010"}],points:[{x:0.5,y:0.5,role:"data"},{x:0.6,y:0.6,role:"ncp"}],role_counts:{data:1,ncp:1},symbol:128,phase:"Observation",retained:4096,total:4096,offset:offset,end:Math.min(4096,offset+2048),iq_count:1,missing:0}) }
+        function messages() {
+            const packet = {name:"OCD",type:49,channel:34,profile:null,change_count:0,source:"00:ca:00:00:00:01",bytes:40,symbol:0,completed_frame:true,status:"Carried in completed TX PLC frame",integrity:"HCS / FCS valid",tlvs:[{name:"Cyclic Prefix",value:"512 samples",kind:1,length:1,offset:28,hex:"02",children:[{name:"Encoded Value",value:"512 samples",offset:30,length:1,hex:"02"},{name:"Value Bytes",value:"02",offset:30,length:1,hex:"02"}]}],hex_rows:[{offset:"0000",hex:"C2 00"}]}
+            const dpd = Object.assign({}, packet, {name:"DPD",type:50,profile:0,tlvs:[{name:"Subcarrier Assignment",value:"0–8191 · 256-QAM",kind:5,length:5,offset:29,hex:"28 00 00 1F FF",children:[{name:"First Subcarrier",value:"0",offset:32,length:2,hex:"00 00"}]}]})
+            return JSON.stringify({messages:[packet,dpd],reason:"",pending_bytes:0})
+        }
+        function channel_qam(first,last) {return JSON.stringify({available:false,points:[],reason:"No TX bins retained"})}
         function spectrum_tap(tap) { return JSON.stringify({has_result:false,can_generate:false,busy:false,tap_name:["TX IFFT","TX Cyclic Prefix","TX Window","TX Output"][tap],tap_id:["tx.ifft.samples","tx.cp.samples","tx.window.samples","tx.overlap_add.samples"][tap],result_token:"",reason:"Use Start to capture TX samples"}) }
         function view_tap(tap,start,count,captureAxis) { return view(start,count,captureAxis) }
         function poll() { return JSON.stringify({status: ready ? "complete" : "attention", reason: ready ? "Accepted source, profile and settings form a transmitter" : "Accept compatible OCD, DPD and PRBS-TX inputs to configure the transmitter.", tap_name: "TX Output", tap_id: "tx.overlap_add.samples", tap_description: "Complex baseband I/Q before channel", busy: busy, can_generate: ready && !busy, has_result: resultAvailable, result_token: token, progress: busy ? 0.5 : 0, message: ""}) }
@@ -93,6 +100,14 @@ Pane {
     }
     QtObject {
         id: measurementBackend
+        property var loss: ({mode:"off"})
+        function loss_current() {return JSON.stringify(loss)}
+        function loss_preview(document,settings) {
+            const options=JSON.parse(document)
+            const valid=options.mode!=="cable" || (options.length>=0 && options.length<=1000)
+            return JSON.stringify({error:valid ? "" : "Invalid length",points:[],chart:[],band:"640–827 MHz",low_gain:"−4 dB",high_gain:"−5 dB",tilt:"−1 dB"})
+        }
+        function loss_apply(document,settings) {const error=JSON.parse(loss_preview(document,settings)).error;if(!error){loss=JSON.parse(document)};return error}
         property bool acceptedRx: false
         property bool draftRx: false
         property bool flat: true
@@ -168,6 +183,8 @@ Pane {
     }
     WorkbenchMenuBar {
         id: appMenu
+        property url openedTerminology: ""
+        onTerminologyRequested: function(target) { openedTerminology=target }
         anchors.top: parent.top; width: parent.width; theme: theme
         onGlobalSettingsRequested: workbench.settingsPopup.open()
         onAboutRequested: workbench.aboutPopup.open()
@@ -176,7 +193,7 @@ Pane {
         id: workbench
         anchors { top: appMenu.bottom; bottom: parent.bottom; left: parent.left; right: parent.right }
         theme: theme; settingsBackend: backend; profileBackend: profileBackend; sourceBackend: sourceBackend; transmitterBackend: transmitterBackend; measurementBackend: measurementBackend; aboutBackend: aboutBackend; receiverBackend: receiverBackend; runBackend: runBackend; fileBackend: fileBackend
-        iconRoot: "../../../docs/images/logo/"
+        iconRoot: Qt.resolvedUrl("../../../docs/images/logo/").toString()
     }
     Component {
         id: statusBlockComponent
@@ -202,7 +219,7 @@ Pane {
                 {tag: "ofdm", block: "ofdmBlock", title: "OFDM Channel Descriptor (OCD)"},
                 {tag: "source", block: "sourceBlock", title: "Transmit Source (PRBS-TX)"},
                 {tag: "tx", block: "transmitterBlock", title: "Transmitter Workbench"},
-                {tag: "channel", block: "channelBlock", title: "Channel Simulator · Configuration"},
+                {tag: "channel", block: "channelBlock", title: "Channel Simulator Workbench"},
                 {tag: "rx", block: "receiverBlock", title: "Receiver Workbench"},
                 {tag: "verify", block: "verificationBlock", title: "PRBS-RX / Recovered Data"},
                 {tag: "profile", block: "profileBlock", title: "Downstream Profile Descriptor (DPD)"},
@@ -298,7 +315,7 @@ Pane {
             const isolated = createTemporaryObject(gatingWorkbenchComponent, window, {
                 theme: theme, settingsBackend: backend, profileBackend: profileBackend,
                 sourceBackend: sourceBackend, transmitterBackend: transmitterBackend, measurementBackend: measurementBackend, aboutBackend: aboutBackend, receiverBackend: receiverBackend, runBackend: runBackend, fileBackend: fileBackend,
-                iconRoot: "../../../docs/images/logo/"
+                iconRoot: Qt.resolvedUrl("../../../docs/images/logo/").toString()
             })
             verify(isolated !== null)
             const blocks = isolated.diagramBlocks
@@ -386,6 +403,9 @@ Pane {
             closeWithX(workbench.aboutPopup.licensesPopup)
             compare(workbench.aboutPopup.opened, true)
             closeWithX(workbench.aboutPopup)
+            mouseClick(appMenu.itemAt(2))
+            mouseClick(findChild(appMenu,"terminologyAction"))
+            compare(String(appMenu.openedTerminology),"https://github.com/mgarcia01752/merlin/blob/master/docs/user/terminology.md")
         }
         function test_source_options_and_accepted_readiness() {
             const dialog = workbench.sourcePopup
@@ -534,23 +554,72 @@ Pane {
             mouseClick(findChild(workbench,"transmitterBlock"))
             const tx=workbench.transmitterPopup
             tryCompare(tx,"opened",true)
+            compare(tx.stageRepeater.itemAt(0).modelData,"Source\nPRBS-TX")
             verify(findChild(tx,"txMessages").width>=200)
             verify(findChild(tx,"txProtected").width>=200)
             mouseClick(tx.stageRepeater.itemAt(1).tapButton)
             tryCompare(tx.stagePopup,"opened",true)
             compare(tx.stagePopup.stageIndex,1)
+            compare(findChild(tx.stagePopup,"txStageSelection").model[0],"Source Bits · PRBS-TX")
             mouseClick(findChild(tx.stagePopup,"txNextPage"))
             compare(tx.stagePopup.pageOffset,2048)
             closeWithX(tx.stagePopup)
             mouseClick(findChild(tx,"txQam"))
             tryCompare(tx.qamPopup,"opened",true)
             verify(tx.qamPopup.observation.points.length>0)
+            compare(findChild(tx.qamPopup,"txQamLegend").visible,true)
+            const scatter=findChild(tx.qamPopup,"txQamScatter")
+            compare(scatter.roleColor("data"),findChild(tx.qamPopup,"txQamDataLegend").color)
+            compare(scatter.roleColor("ncp"),findChild(tx.qamPopup,"txQamNcpLegend").color)
+            verify(scatter.roleColor("data")!==scatter.roleColor("ncp"))
+            theme.dark=false
+            compare(scatter.roleColor("data"),theme.qamData)
+            compare(scatter.roleColor("ncp"),theme.qamNcp)
+            verify(scatter.roleColor("data")!==scatter.roleColor("ncp"))
+            theme.dark=true
+            const signal=findChild(tx.qamPopup,"txQamSignal")
+            signal.currentIndex=2;signal.activated(2)
+            compare(findChild(tx.qamPopup,"txQamLegend").visible,false)
+            signal.currentIndex=0;signal.activated(0)
             closeWithX(tx.qamPopup)
             mouseClick(findChild(tx,"txMessages"))
             tryCompare(tx.messagePopup,"opened",true)
             compare(tx.messagePopup.packet.channel,34)
+            const tree = findChild(tx.messagePopup,"txTlvTree")
+            compare(tree.rowCount,1)
+            mouseClick(findChild(tree,"tlvFold0"))
+            compare(tree.rowCount,3)
+            verify(tree.list.activeFocus)
+            mouseClick(findChild(tree,"tlvFold0"))
+            compare(tree.rowCount,1)
+            mouseClick(findChild(tree,"tlvExpandAll"))
+            compare(tree.rowCount,3)
+            compare(tree.visibleRows[1].node.offset,30)
+            compare(tree.visibleRows[1].depth,1)
+            mouseClick(findChild(tree,"tlvCollapseAll"))
+            compare(tree.rowCount,1)
+            tree.list.currentIndex=0
+            tree.list.forceActiveFocus()
+            keyClick(Qt.Key_Right)
+            compare(tree.rowCount,3)
+            tree.list.currentIndex=1
+            keyClick(Qt.Key_Left)
+            compare(tree.list.currentIndex,0)
+            keyClick(Qt.Key_Left)
+            compare(tree.rowCount,1)
+            mouseClick(findChild(tree,"tlvExpandAll"))
             mouseClick(findChild(tx.messagePopup,"txMessageBytes"))
             compare(tx.messagePopup.showBytes,true)
+            mouseClick(findChild(tx.messagePopup,"txMessageBytes"))
+            compare(tx.messagePopup.showBytes,false)
+            compare(tree.rowCount,3)
+            const messageSelection=findChild(tx.messagePopup,"txMessageSelection")
+            messageSelection.currentIndex=1
+            messageSelection.activated(1)
+            compare(tx.messagePopup.packet.profile,0)
+            compare(tree.rowCount,1)
+            compare(tree.selectedNode,null)
+
             closeWithX(tx.messagePopup)
             runBackend.lastResult=null
             runBackend.busy=true
@@ -720,6 +789,43 @@ Pane {
             verify(findChild(receiver.fecPopup,"receiverFecStatus").text.indexOf("complete")>=0)
             closeWithX(receiver.fecPopup);closeWithX(receiver)
             receiverBackend.retainedCells=false
+        }
+        function test_channel_stages_tap_routing_and_loss_draft_cancel() {
+            const dialog=workbench.channelPopup
+            dialog.open();tryCompare(dialog,"opened",true)
+            mouseClick(findChild(dialog,"channelRxmer"));tryCompare(workbench.rxmerPopup,"opened",true)
+            closeWithX(workbench.rxmerPopup)
+            mouseClick(findChild(dialog,"channelEstimate"));tryCompare(workbench.responsePopup,"opened",true)
+            closeWithX(workbench.responsePopup)
+            mouseClick(findChild(dialog,"channelInput"));tryCompare(dialog.instrumentPopup,"opened",true)
+            mouseClick(findChild(dialog.instrumentPopup,"channelQam"));tryCompare(dialog.inputQamPopup,"opened",true)
+            compare(dialog.inputQamPopup.observation.available,false)
+            closeWithX(dialog.inputQamPopup)
+            mouseClick(findChild(dialog,"channelInput"));tryCompare(dialog.instrumentPopup,"opened",true)
+            compare(dialog.output,false)
+            mouseClick(findChild(dialog.instrumentPopup,"channelSpectrum"));tryCompare(dialog.spectrumPopup,"opened",true)
+            closeWithX(dialog.spectrumPopup)
+            mouseClick(findChild(dialog,"channelOutput"));tryCompare(dialog.instrumentPopup,"opened",true)
+            compare(dialog.output,true)
+            mouseClick(findChild(dialog.instrumentPopup,"channelQam"));tryCompare(dialog.outputQamPopup,"opened",true)
+            compare(dialog.outputQamPopup.viewIndex,0)
+            compare(findChild(dialog.outputQamPopup,"receiverQamView").visible,false)
+            closeWithX(dialog.outputQamPopup)
+            mouseClick(findChild(dialog,"channelModel"));tryCompare(dialog.modelPopup,"opened",true)
+            mouseClick(findChild(dialog.modelPopup,"channelConfigureLoss"));tryCompare(dialog.lossPopup,"opened",true)
+            const mode=findChild(dialog.lossPopup,"channelLossMode")
+            mode.currentIndex=2;mode.activated(2)
+            const length=findChild(dialog.lossPopup,"channelCableLength")
+            length.text="100";dialog.lossPopup.refresh()
+            closeWithX(dialog.lossPopup)
+            compare(measurementBackend.loss.mode,"off")
+            mouseClick(findChild(dialog.modelPopup,"channelConfigureLoss"));tryCompare(dialog.lossPopup,"opened",true)
+            compare(mode.currentIndex,0)
+            mode.currentIndex=2;mode.activated(2);length.text="100";dialog.lossPopup.refresh()
+            mouseClick(findChild(dialog.lossPopup,"channelLossApply"));tryCompare(dialog.lossPopup,"visible",false)
+            compare(measurementBackend.loss.length,100)
+            measurementBackend.loss={mode:"off"}
+            closeWithX(dialog.modelPopup);closeWithX(dialog)
         }
         function test_render() {
             theme.dark = true

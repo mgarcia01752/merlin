@@ -1,11 +1,48 @@
 # Qt workbench development
 
-UI-01 currently provides a native Qt Quick/QML shell with the clickable system
-diagram and section-preview dialogs. The OCD timing editor, DPD capture importer and PRBS-TX source editor are implemented, together with a reusable Spectrum
-Analyzer at actual generated TX output; other editors,
-analyzers and run integration remain pending. Start/Stop/Pause are visible and disabled.
+The native workbench includes OCD/DPD/source editors, measurement inputs,
+transmitter/channel/receiver stage navigation, SA/QAM and decoder instruments,
+closed-loop Start/Stop/Pause and self-contained workbench Open/Save.
 See the [UI checklist](ui-checklist.md) and
-[design/provenance](features/visual-workspace/design.md).
+[architecture](../architecture.md) for supported behavior and remaining work.
+The RF amplifier/attenuator and absolute-power extensions remain planned.
+
+## Source organization
+
+```text
+apps/qt/
+├── qml/
+│   ├── Main.qml
+│   ├── shell/                 Workbench, menus and global settings
+│   ├── theme/                 Theme and palette
+│   ├── components/            Dialog shell, chips, connectors and tree grid
+│   ├── about/                 About and licenses
+│   ├── inputs/                ofdm_settings, profile_input, source_input,
+│   │                          measurement_input
+│   ├── workbenches/           transmitter, channel, receiver, verification
+│   └── instruments/           spectrum, qam, response, slicer, fec,
+│                              messages, stages
+└── src/
+    ├── main.rs                Startup and stable module re-exports
+    ├── *.rs                   QObject bridges and application/input owners
+    └── instruments/
+        ├── receiver/          Received-cell/response/decoder providers
+        ├── transmitter/       Preview, retained stages and message providers
+        └── spectrum/          Shared spectrum viewport formatting
+```
+
+Inputs use their Rust owner names; workbenches compose editors/instruments.
+Instrument windows and their charts live together. Shared Qt components remain
+under components; signal-processing algorithms stay in the independent core.
+Each window retains its own QML file. Relative directory imports make dependencies
+explicit and let local QtTest fixtures run without the compiled Rust module.
+
+Register every QML file in build.rs, preserving the Main.qml embedded entry URL.
+Pinned CXX-Qt0.7.3 permits one directory of Rust QObject bridge files per QML
+module, so the bridges stay together in src/ and import grouped providers.
+Do not move an individual QObject bridge into an instrument directory. Existing
+root Rust instrument paths are retained through re-exports where possible.
+See the [organization design](features/qt-source-organization/design.md).
 
 ## Build and launch in the VM
 
@@ -62,7 +99,7 @@ scripts/qt-desktop.sh check
 
 Checks Rust formatting, warnings-denied Clippy, adapter tests/build and QML
 navigation/theme/render tests using Qt's offscreen software renderer. QML tests
-cover all nine blocks, closing dialogs, disabled lifecycle controls, theme
+cover all nine blocks, closing dialogs, run readiness/controls, theme
 switching and minimum-window navigation. Rendering outputs stay in ignored
 `docs/development/local/visual-workspace/`; this directory must exist before the
 render tests. The helper creates it. Numerical tests remain the commands in

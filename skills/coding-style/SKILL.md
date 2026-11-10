@@ -338,6 +338,89 @@ drafts, preserving its cancellation and cleanup behavior. Give the X an accessib
 name, keyboard focus and theme-aware contrast. Native OS file pickers retain
 their native controls; menus and dropdown lists are not popup dialogs.
 
+## Qt feature and instrument folders
+
+Keep `apps/qt/qml/Main.qml` as bootstrap; place other QML under responsibility
+folders: `shell`, `theme`, `components`, `about`, `inputs`, `workbenches` and
+`instruments`. Group inputs by their Rust owner names and instruments by spectrum,
+QAM, response, slicer, FEC, messages or stage inspection. Keep each window in its
+own file, with its dedicated charts/controls nearby. Use `components` for controls
+shared across features; do not accumulate a new flat catch-all folder.
+
+Keep Qt-facing instrument adapters under `apps/qt/src/instruments/`, with cohesive
+TX/RX providers and shared spectrum formatting. Align QML and Rust by feature and
+responsibility where practical; do not force one-to-one directory mirroring or
+split a shared provider merely to match chart names. Core algorithms remain in
+the existing independent Rust libraries. Preserve established Rust module paths
+with re-exports during moves, not duplicate code or empty forwarding files.
+Pinned CXX-Qt0.7.3 requires all QObject bridge files for the same QML module to
+share one directory: keep these bridge files under src/ and import grouped
+instrument providers. Do not move only some bridges to feature subfolders.
+
+For file moves, update build.rs registration, bridge paths, QML directory imports,
+resource includes, tests and maintained source references together. Keep local
+QML tests independent of Rust module registration. Leave no obsolete source copy;
+verify all QML files are registered and run the scoped Qt checks/native build.
+Document the source map in the Qt development guide. A folder reorganization
+must preserve visible behavior and accepted state.
+
+## UI symmetry, alignment and spacing
+
+Apply visual symmetry, alignment and consistent spacing to MERLIN windows,
+workbench diagrams, icons and mockups. Use a shared spacing scale/layout grid.
+For consecutive signal-path elements of different sizes, keep equal **edge-to-edge
+clearance** between visible icon/block boundaries; equal center distances alone
+create uneven gaps. Size equivalent blocks and TP circles consistently, and
+center the complete group within balanced outer margins.
+
+Align stage centers, TP centers and signal connectors on the same axis. Center
+branch blocks and connectors on their owning stage; use equal branch lengths and
+matching block dimensions for corresponding upper/lower inputs. Prefer straight
+connections without elbows. Center captions/status text beneath their symbol's
+visible bounding box, with consistent vertical separation and room for the text.
+Preserve real functional differences; do not add controls or branches just to
+make a diagram mirror perfectly.
+
+Use shared layout geometry, not unrelated hand-tuned coordinates. For graphics,
+calculate positions from common sizes/gaps. Inspect the rendered result for
+unequal gaps, off-center lines, inconsistent padding, overlap and clipping; for
+implemented Qt changes also check supported window sizes. The same rules apply
+to future instrument windows and editors, not only the current channel diagram.
+
+## Mixed QAM symbol roles
+
+When a QAM view mixes symbol types, use contrasting role colors and a visible
+legend. Data is green and NCP is red; these are role colors, not error indicators.
+Use the shared theme's QAM colors so both
+dark and light modes remain readable. Distinguish roles by marker shape as well
+as color, and draw rare control symbols after data so overlap does not hide them.
+Label filler separately; unknown/unavailable provenance must never be labeled
+data or NCP. Derive roles from retained processing metadata, not I/Q coordinates,
+constellation size or screen position. Preserve roles through existing Rust
+transport APIs and keep role labels aligned during bounded display reduction.
+Reuse these semantics in future mixed-role analyzers; separate single-role panels
+do not need an artificial mixed-role legend.
+
+## Structured binary and TLV inspectors
+
+Present TLV breakdowns as an aligned folding tree grid rather than one full-width
+button per record. Reuse `apps/qt/qml/components/TlvTreeGrid.qml` for bounded tree JSON, with
+Field/Value and Type/Length/Offset columns, indentation, disclosure controls,
+Expand All/Collapse All and keyboard navigation. Preserve exact bytes and clear
+absolute-offset semantics; decoded child fields are not automatically nested
+TLVs. Packet/model changes reset selection and folding; switching to raw bytes
+within the same packet can preserve them. Keep X and footer Close available.
+
+Rust supplies names, interpretations, byte ranges and unsupported-value flags.
+Keep supported-subset display metadata in `resources/registry/`; identify pinned
+specification or implementation provenance and reuse core tables/types. Never
+infer unknown TLV semantics in QML or label an incomplete registry comprehensive.
+Use the same structured-inspection pattern in other views when their domain
+models provide children; do not turn graph points into TLVs or rewrite unrelated
+editors solely for visual consistency. Qt tree controls provide folding, not a
+TLV decoder. On pinned Qt6.8 the shared JSON tree grid virtualizes visible rows;
+a native TreeView requires a QAbstractItemModel and is not the current component.
+
 ## UI titles, navigation and About
 
 Keep user-facing copy focused on the task. Do not mention Rust, Qt/QML, CXX-Qt,

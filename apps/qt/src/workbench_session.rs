@@ -21,6 +21,8 @@ pub(crate) struct Inputs {
     pub playback:
         Option<docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackConfiguration>,
     pub response: Option<docsis_ofdm_fec::scenario::ChannelFrame>,
+    pub additional_loss:
+        docsis_ofdm_fec::signal_processing::channel::additional_loss::AdditionalLoss,
 }
 
 thread_local! { static INPUTS: RefCell<Inputs> = RefCell::new(Inputs::default()); }
@@ -103,4 +105,13 @@ pub(crate) fn restore(
 ) {
     INPUTS.with(|current| *current.borrow_mut() = inputs);
     SAVED.with(|saved| *saved.borrow_mut() = sections);
+}
+
+/// Publishes the accepted synthetic magnitude response for the next frozen run.
+/// # Arguments
+/// * `loss` - Validated additional loss; original measurements remain unchanged.
+pub(crate) fn set_additional_loss(
+    loss: docsis_ofdm_fec::signal_processing::channel::additional_loss::AdditionalLoss,
+) {
+    INPUTS.with(|inputs| inputs.borrow_mut().additional_loss = loss);
 }
