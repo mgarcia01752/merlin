@@ -1,8 +1,13 @@
-# Public API
+# Rust API Guide
 
-DOCSIS OFDM Channel Sim's simulation entry points are public Rust APIs. The standalone CLI calls
-those same functions. Future Python bindings and an optional Qt presentation
-component will adapt inputs and results without duplicating simulation logic.
+MERLIN exposes its simulation engine through public Rust APIs. The CLI and native
+Qt workbench reuse those APIs; planned Python bindings will adapt the same inputs
+and results. Signal processing remains in Rust.
+
+Use the [channel design guide](../user/channel-runner/README.md) for the run
+lifecycle and the [component guides](../user/simulation/README.md) for subsystem
+behavior. The table below maps public modules to their responsibilities.
+Return to the [documentation index](../README.md) for other guides.
 
 | Public module | Responsibility |
 | --- | --- |

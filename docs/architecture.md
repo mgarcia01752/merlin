@@ -51,8 +51,10 @@ frequency and time.
 ## Purpose and scope
 
 MERLIN (Modulation, Encoding, Reception, Link Impairments & Noise) is the
-DOCSIS OFDM Simulation Toolkit. Its transmitter models a CMTS-like single-channel
-downstream PHY path, paired with a simulated channel and receiver. Full CMTS MAC
+DOCSIS OFDM Simulation Toolkit. Its transmitter simulates the downstream PHY
+transmit functions of a CMTS for one OFDM channel, paired with a simulated channel
+and receiver. Actual waveform generation and payload recovery exercise the
+supported PHY path. Full CMTS MAC
 services and multi-channel operation are outside the current scope.
 
 Build a standalone, DOCSIS-focused Rust simulation core with two modes:

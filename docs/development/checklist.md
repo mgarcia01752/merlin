@@ -821,6 +821,17 @@ integration. It does not mean all the broader product items above are complete.
   itself complete CH-EST-RX-01..06. The later shared collector/estimator is now
   implemented and validated separately in the linked receiver implementation record.
 
+### Repository introduction
+
+- [x] **DOC-BRAND-03** Add a documentation index and UI, Rust API and
+  planned Python guide entry points.
+  [Design](features/readme-workbench-diagram/design.md#doc-brand-03-documentation-entry-points).
+
+
+- [x] **DOC-BRAND-02** Shorten README, describe the CMTS downstream PHY
+  simulation directly and link existing flow/status documentation.
+  [Design](features/readme-workbench-diagram/design.md#doc-brand-02-concise-repository-introduction).
+
 ### Documentation-only push tooling
 
 - [x] **DOC-PUSH-01** Automatically skip the local build/test gate only for
