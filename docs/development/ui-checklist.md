@@ -301,3 +301,10 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
 - [x] **UI-DPD-VIEW-02** Adapt the full PNM Viewer modulation view with
   profile overlays, dB/bit loading, carrier filters/lanes and gross Profile BW.
   [Design](features/pnm-measurement-inputs/profile-view.md#ui-dpd-view-02-full-pnm-viewer-profile-inspection).
+
+## Receiver profile performance
+
+- [x] **UI-RX-PERF-01** Add the Receiver Profile Performance dialog with profile
+  selection, MER/profile overlays, TotalCW/CCW/UFEC, mouse zoom and Full Span.
+  Requires RX-PERF-01 independent jobs and FEC-COUNTS-01 actual core counters.
+  [Design](features/profile-performance/design.md).

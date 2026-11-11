@@ -341,7 +341,7 @@ mod tests {
         assert!(model.timing(0.82).get("error").is_some());
         assert_eq!(model.status()["status"], "attention");
         let mut unsupported = inputs();
-        unsupported.profile.as_mut().unwrap().profile_id = 1;
+        unsupported.profile.as_mut().unwrap().profile_id = 16;
         model.configure(&settings, unsupported);
         assert_eq!(model.status()["status"], "error");
     }

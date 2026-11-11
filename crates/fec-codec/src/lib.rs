@@ -12,11 +12,13 @@ pub mod ncp;
 pub mod parameters;
 pub mod plc;
 pub mod shortening;
+pub mod statistics;
 
 // Retain established root imports while implementation lives with each codec.
 pub use bch::{decode_bch, encode_bch, BchResult};
 pub use ldpc::{LdpcCodec, LdpcResult};
 pub use parameters::{BCH_INPUT_BITS, LDPC_CODEWORD_BITS, LDPC_INPUT_BITS};
+pub use statistics::{FecCounters, FecOutcome};
 
 fn binary_bits(bits: &[u8], expected: usize) -> Result<(), String> {
     if bits.len() != expected || bits.iter().any(|bit| *bit > 1) {

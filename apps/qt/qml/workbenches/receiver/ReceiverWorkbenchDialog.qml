@@ -7,6 +7,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import "../../components"
 import "../../instruments/fec"
+import "../../instruments/profile_performance"
 import "../../instruments/qam"
 import "../../instruments/response"
 import "../../instruments/slicer"
@@ -23,6 +24,7 @@ WorkbenchDialog {
     property alias spectrumPopup: spectrum
     property alias responsePopup: response
     property alias slicerPopup: slicer
+    property alias performancePopup: performance
     property alias fecPopup: fec
     property int selectedTap: 0
     property var spectrumState: ({has_result: false, can_generate: false, busy: false})
@@ -30,7 +32,7 @@ WorkbenchDialog {
     function selectTap(index) { if (!backend) { return }; selectedTap = index; spectrum.clearView(); spectrumState = JSON.parse(backend.spectrum(index)); spectrum.updateResult() }
     function openSpectrum(index) { selectTap(index); spectrum.open() }
     function openSlicer() { slicer.useSelection(qam.selectionControls.query()); slicer.open() }
-    title: "Receiver Workbench"
+    title: "Receiver Workbench" + (dialog.runState.result && dialog.runState.result.profile_id !== undefined ? " · Latest Profile " + dialog.runState.result.profile_id : "")
     parent: Overlay.overlay; anchors.centerIn: parent
     width: Math.min(1140, parent ? parent.width - 40 : 1140)
     height: Math.min(560, parent ? parent.height - 40 : 560)
@@ -75,7 +77,7 @@ WorkbenchDialog {
                 }
             }
         }
-        Label { text: "QAM Instruments"; color: dialog.theme.accent; font.bold: true }
+        Label { text: "QAM Instruments · Latest Profile " + (dialog.runState.result ? dialog.runState.result.profile_id : "—"); color: dialog.theme.accent; font.bold: true }
         RowLayout {
             Layout.fillWidth: true
             ReceiverChip { theme: dialog.theme; objectName: "receiverDataQam"; text: "Data Profile QAM"; Layout.fillWidth: true; onClicked: dialog.openQam(0, qam.viewIndex) }
@@ -92,6 +94,7 @@ WorkbenchDialog {
                     ReceiverChip { theme: dialog.theme; objectName: "receiverSa"; text: "Spectrum Analyzer"; Layout.fillWidth: true; onClicked: dialog.openSpectrum(dialog.selectedTap) }
                     ReceiverChip { theme: dialog.theme; text: "Channel Response / Echo"; Layout.fillWidth: true; onClicked: response.open() }
                     ReceiverChip { theme: dialog.theme; text: "Slicer / LLR"; Layout.fillWidth: true; onClicked: dialog.openSlicer() }
+                    ReceiverChip { theme: dialog.theme; objectName:"receiverProfilePerformance"; text: "Profile Performance"; Layout.fillWidth: true; onClicked: performance.open() }
                     ReceiverChip { theme: dialog.theme; text: "FEC Monitor"; Layout.fillWidth: true; onClicked: fec.open() }
                 }
             }
@@ -102,6 +105,7 @@ WorkbenchDialog {
     ReceiverQamDialog { id: qam; theme: dialog.theme; backend: dialog.backend }
     ReceiverResponseDialog { id:response;theme:dialog.theme;backend:dialog.backend;runState:dialog.runState }
     ReceiverSlicerDialog { id:slicer;theme:dialog.theme;backend:dialog.backend;runState:dialog.runState }
+    ProfilePerformanceDialog { id:performance;theme:dialog.theme;backend:dialog.backend;runState:dialog.runState }
     ReceiverFecDialog { id:fec;theme:dialog.theme;backend:dialog.backend;runState:dialog.runState }
     QtObject {
         id: spectrumProxy

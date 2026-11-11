@@ -58,7 +58,7 @@ fn actual_demo_transmission_uses_selected_source_and_cooperative_cancellation() 
     assert_ne!(result.samples, finite.samples);
     let canceled = request.generate(&cancel, |_, _| cancel.store(true, Ordering::Relaxed));
     assert!(canceled.is_err());
-    profiles[0].profile_id = 1;
+    profiles[0].profile_id = 16;
     assert!(TransmitterPreviewRequest::new(
         &settings,
         &profiles[0],

@@ -97,6 +97,8 @@ impl ObservationWindow {
 /// Constant-size source-window totals; no inferred fractional information-bit attribution.
 #[derive(Debug, Clone, Serialize)]
 pub struct WindowTotals {
+    /// Completed whole-contained payload codewords, including drain completion.
+    pub fec: super::results::FecCounters,
     pub coordinates: ObservationWindow,
     pub contained_words: u64,
     pub crossing_start_words: u64,
@@ -122,6 +124,7 @@ impl WindowTotals {
     /// Empty metrics with unavailable BER/rate until observations/finalization.
     pub(crate) fn new(coordinates: ObservationWindow) -> Self {
         Self {
+            fec: Default::default(),
             coordinates,
             contained_words: 0,
             crossing_start_words: 0,

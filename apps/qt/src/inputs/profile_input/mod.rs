@@ -119,6 +119,21 @@ pub(crate) fn restore_profile(
         .map(|(capture, id)| capture.profile(id).cloned())
         .transpose()
 }
+/// Restores all accepted captured profiles for an independent sweep.
+/// # Arguments
+/// * `value` - Saved original capture and applied selection, or null.
+/// # Returns
+/// All captured identities, empty only for an unconfigured input.
+/// # Errors
+/// Rejects invalid original bytes or saved profile identity.
+pub(crate) fn restore_profiles(
+    value: &Value,
+) -> Result<Vec<docsis_ofdm_fec::profile::candidate::CapturedProfile>, String> {
+    Ok(ProfileModel::from_saved(value)?
+        .accepted
+        .map(|(capture, _)| capture.profiles.as_ref().clone())
+        .unwrap_or_default())
+}
 #[cfg(test)]
 mod tests {
     use super::*;

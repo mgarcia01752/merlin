@@ -70,7 +70,8 @@ Build a standalone, DOCSIS-focused Rust simulation core with two modes:
 
 The configurable-duration waveform stepper supports noiseless, seeded sample
 AWGN and per-carrier RxMER residuals with optional supplied diagonal response H.
-The measurement path admits captured ProfileA ID0 with uniform data orders through16384-QAM or verified
+The measurement path admits captured data profiles ID0..15 as independent
+bootstrap ProfileA (wire ID0) experiments, with uniform data orders through16384-QAM or verified
 non-shortened mixed loading, and explicit same-grid temporal measurement epochs.
 Pilot-derived receiver correction is selectable alongside supplied-H reception. The channel job and CLI expose
 cancellation, runtime limits, partial results and versioned probe export.
@@ -605,9 +606,9 @@ When they are green and form a supported Rust transmitter request, Transmitter
 is green without a separate acceptance dialog. Missing inputs are yellow; actual
 unsupported/inconsistent accepted input or generation failure is red with a reason.
 Applied input changes invalidate the old spectrum and cancel any stale preview.
-Rejected drafts/Cancel preserve accepted state. The initial live descriptor path
-supports Profile A ID 0; other accepted DPD IDs remain inspectable but TX reports
-their unsupported preview status explicitly. Full-loop Start still requires all
+Rejected drafts/Cancel preserve accepted state. Captured data profile IDs0..15
+can drive independent previews/runs; their assignments become the fresh run's
+bootstrap Profile A (wire ID0), preserving captured identity in provenance. Full-loop Start still requires all
 blocks plus dispatch readiness; SA generation is independent of that gate.
 
 SpectrumAnalyzerDialog and SpectrumPlot are shared presentation components, not
@@ -1769,3 +1770,28 @@ Audits cover both Cargo lockfiles without suppression. SECURITY-DEPS-02 patches
 rand to 0.9.5 and cxx/cxx-gen to 1.0.195/0.7.195 while retaining Rust 1.85.1 and
 CXX-Qt 0.7.3. See the [design and validation](development/features/ubuntu-desktop/design.md)
 and [desktop user guide](user/install/ubuntu-desktop.md).
+
+### Receiver profile performance
+
+The profile-comparison mode runs each accepted DPD profile as a separate
+closed-loop experiment, resetting source/receiver/noise/playback state under
+identical configured conditions and seeds. It does not switch profiles mid-run.
+Receiver Profile Performance combines measured post-equalization MER,
+ideal profile minimum MER and per-profile TotalCW/CCW/UFEC counters, with bounded
+instrument retention and independent source verification. The reusable FecCounters type owns private counters and exposes getters and
+copyable snapshots. CCW includes actual LDPC hard-decision changes and BCH
+corrections, while source mismatches remain independently reported. See the
+[profile performance design](development/features/profile-performance/design.md).
+
+The sweep accepts at most32 profiles/262144 assignments and shares the configured
+active runtime budget across jobs. All imported data profiles must validate
+before admission. Each captured loading becomes the independent experiment's
+bootstrap ProfileA (wire ID0); this does not imply live on-wire switching.
+Completed/partial performance curves and counters remain selectable per captured
+ID. Other instruments retain and identify the latest completed profile's detailed
+snapshot. Stop/budget expiry preserves completed entries and marks unstarted
+profiles explicitly. WB receiver options persist all-profiles/applied-only mode;
+legacy missing fields default to all profiles. Results remain transient.
+`CarrierMer` stores per-physical-bin observation signal/error powers in the core;
+`ChannelJobResult` exposes them through the same Rust API as other results.
+Python bindings remain deferred; neither FEC accounting nor MER depends on Qt.

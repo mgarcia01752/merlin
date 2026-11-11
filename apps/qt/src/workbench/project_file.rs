@@ -100,6 +100,9 @@ impl Project {
                 self.sections.get("channel_power").unwrap_or(&Value::Null),
             )?,
             source,
+            profiles: crate::inputs::profile_input::restore_profiles(
+                self.sections.get("profile").unwrap_or(&Value::Null),
+            )?,
             profile,
             playback: measurements.playback,
             response: measurements.response,

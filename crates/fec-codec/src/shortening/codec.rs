@@ -99,7 +99,14 @@ impl ShortenedCodec {
         max_iterations: usize,
     ) -> Result<DecodedShortenedBlock, String> {
         let restored_llrs = self.shortening.restore_ldpc_llrs(wire_llrs)?;
-        let ldpc = self.ldpc.decode(&restored_llrs, max_iterations)?;
+        let mut ldpc = self.ldpc.decode(&restored_llrs, max_iterations)?;
+        // Only wire coordinates are observations; restored shortening zeros are synthetic.
+        ldpc.hard_decision_changes = ldpc.codeword[..self.shortening.bch_bits()]
+            .iter()
+            .chain(&ldpc.codeword[crate::parameters::LDPC_INPUT_BITS..])
+            .zip(wire_llrs)
+            .filter(|(bit, llr)| **llr != 0.0 && **bit != u8::from(**llr < 0.0))
+            .count();
         let bch_input = self.shortening.restore_bch_input(&ldpc.codeword)?;
         let bch = decode_bch(&bch_input)?;
         let known_zeros_consistent = self

@@ -173,6 +173,11 @@ Pane {
         function response(document) { lastQuery=JSON.parse(document);return JSON.stringify({available:retainedCells,points:[],x_ticks:[],y_ticks:[],snapshots:[10],reason:"Response test",summary:"Actual response query"}) }
         function slicer(document,decoderInput) { lastQuery=JSON.parse(document);lastDecoderInput=decoderInput;return JSON.stringify({available:retainedCells,rows:[],llr:{count:retainedCells ? 8 : 0},histogram:{points:[],x_ticks:[],y_ticks:[]},detail:"Actual soft query"}) }
         function fec() {return JSON.stringify({available:retainedCells,status:"complete",words:[],verification_charts:{recovery:{points:[]},word_errors:{points:[]},omitted:0,uncompared_retained:0},histogram:{points:[],x_ticks:[],y_ticks:[]}})}
+        function performance(id,start,count) {
+            if (!retainedCells) return JSON.stringify({available:false,profiles:[],reason:"Run the simulation first."})
+            return JSON.stringify({available:true,profiles:[{id:0,status:"complete"},{id:3,status:"cancelled"}],profile_id:id < 0 ? 3 : id,channel:34,status:id === 0 ? "complete":"cancelled",fec:{total_cw:10,ccw:3,ufec:1,clean_cw:6,undetected_errors:0},total:100,start:count ? start : 0,count:count || 100,points:[{x:0},{x:1}],series:[],lanes:[],markers:[],x_ticks:[],y_ticks:[]})
+        }
+
         function qam(signal, view, part) { return JSON.stringify({available:false,reason:"No retained receiver results",detail:signal === 1 ? "Matched received NCP I/Q collection is pending" : "Receiver collector not connected",points:[],profiles:[],raw_tap:"rx.fft.bins",equalized_tap:"rx.equalized.iq"}) }
         function spectrum(tap) { return JSON.stringify({tap_name:["RX Input / Channel Output","RX Framed Samples","RX Useful Samples","RX FFT Bin Power"][tap],tap_id:["channel.output","rx.framed.samples","rx.cp.samples","rx.fft.bins"][tap],tap_description:"Selected receiver test point",reason:"No retained receiver results",has_result:false,result_token:"",can_generate:false,busy:false}) }
         function cancel() {}
@@ -805,6 +810,23 @@ Pane {
             compare(dialog.statistics.available,false)
             mouseClick(findChild(dialog,"popupCloseButton"));tryCompare(dialog,"visible",false)
             receiverBackend.retainedCells = false
+        }
+        function test_receiver_profile_performance_navigation_and_scope() {
+            const receiver=workbench.receiverPopup
+            receiverBackend.retainedCells=true
+            receiver.open();tryCompare(receiver,"opened",true)
+            mouseClick(findChild(receiver,"receiverProfilePerformance"))
+            const dialog=receiver.performancePopup
+            tryCompare(dialog,"opened",true)
+            compare(dialog.viewport.profile_id,3)
+            compare(dialog.viewport.fec.total_cw,10)
+            compare(dialog.viewport.status,"cancelled")
+            dialog.profileId=0;dialog.refresh(10,20)
+            compare(dialog.viewport.profile_id,0)
+            compare(dialog.viewport.start,10);compare(dialog.viewport.count,20)
+            mouseClick(findChild(dialog,"performanceFullSpan"));compare(dialog.viewport.count,100)
+            mouseClick(findChild(dialog,"popupCloseButton"));tryCompare(dialog,"visible",false)
+            receiver.close();receiverBackend.retainedCells=false
         }
         function test_receiver_retained_filters_response_soft_and_fec_navigation() {
             const receiver=workbench.receiverPopup

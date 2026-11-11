@@ -103,6 +103,7 @@ fn main() {
                 "qml/instruments/response/ReceiverResponseDialog.qml",
                 "qml/instruments/slicer/ReceiverSlicerDialog.qml",
                 "qml/instruments/fec/ReceiverFecDialog.qml",
+                "qml/instruments/profile_performance/ProfilePerformanceDialog.qml",
                 "qml/shell/SectionPreviewDialog.qml",
                 "qml/components/WorkbenchBlock.qml",
                 "qml/components/Connection.qml",

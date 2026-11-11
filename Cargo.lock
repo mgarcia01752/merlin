@@ -329,6 +329,7 @@ dependencies = [
  "log",
  "ndarray",
  "num-traits",
+ "serde",
 ]
 
 [[package]]

@@ -101,7 +101,7 @@ impl bridge::ClosedLoop {
                 .map_err(|e| e.to_string())?;
             let transmission =
                 serde_json::from_str(&settings.to_string()).map_err(|e| e.to_string())?;
-            model::prepare(
+            model::prepare_sweep(
                 &transmission,
                 &crate::workbench::session::snapshot(),
                 &options,

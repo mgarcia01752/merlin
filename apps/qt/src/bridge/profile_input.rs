@@ -245,6 +245,13 @@ impl bridge::ProfileInput {
                 .and_then(|(capture, id)| capture.profile(*id).ok())
                 .cloned();
             crate::workbench::session::set_profile(selected);
+            crate::workbench::session::set_profiles(
+                self.rust()
+                    .accepted
+                    .as_ref()
+                    .map(|(capture, _)| capture.profiles.as_ref().clone())
+                    .unwrap_or_default(),
+            );
             let section=self.rust().accepted.as_ref().map(|(c,id)|json!({"file":crate::workbench::project_file::encode(&c.name,&c.original),"profile_id":id})).unwrap_or(Value::Null);
             crate::workbench::session::put_saved("profile", section);
         }

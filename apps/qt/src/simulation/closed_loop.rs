@@ -36,6 +36,7 @@ use std::{
 #[serde(default, deny_unknown_fields)]
 pub(crate) struct Options {
     pub receiver_mode: ReceiverMode,
+    pub all_profiles: bool,
     pub duration_ms: u64,
     pub max_iterations: usize,
     pub max_runtime_ms: u64,
@@ -45,6 +46,7 @@ impl Default for Options {
     fn default() -> Self {
         Self {
             receiver_mode: ReceiverMode::SuppliedChannel,
+            all_profiles: true,
             duration_ms: 3,
             max_iterations: 50,
             max_runtime_ms: 300_000,
@@ -139,11 +141,155 @@ fn publish(result: Option<Arc<ResultData>>) {
     RESULT.with(|stored| *stored.borrow_mut() = result);
 }
 
+enum WorkerMessage {
+    Profile(
+        Box<ResultData>,
+        Box<docsis_ofdm_fec::profile::candidate::CapturedProfile>,
+    ),
+    Rejected(u8, u8, String),
+    Finished(String),
+}
+#[derive(Clone)]
+pub(crate) struct SweepPlan {
+    transmission: TransmissionSettings,
+    inputs: Inputs,
+    profiles: Vec<docsis_ofdm_fec::profile::candidate::CapturedProfile>,
+}
+/// Validates every profile before admission without retaining duplicate channel frames.
+/// # Arguments
+/// * `transmission`, `inputs`, `options` - Accepted immutable run configuration.
+/// # Returns
+/// A finite sweep plan with common source/channel settings and sorted profile IDs.
+/// # Errors
+/// Rejects any incompatible profile or a sweep exceeding 32 profiles/262144 assignments.
+pub(crate) fn prepare_sweep(
+    transmission: &TransmissionSettings,
+    inputs: &Inputs,
+    options: &Options,
+) -> Result<SweepPlan, String> {
+    let mut profiles = if options.all_profiles && !inputs.profiles.is_empty() {
+        inputs.profiles.clone()
+    } else {
+        inputs.profile.iter().cloned().collect()
+    };
+    profiles.sort_by_key(|p| p.profile_id);
+    if profiles
+        .windows(2)
+        .any(|pair| pair[0].profile_id == pair[1].profile_id)
+    {
+        return Err("Duplicate captured profile identity.".into());
+    }
+    if profiles.is_empty()
+        || profiles.len() > crate::instruments::receiver::performance::MAX_PROFILES
+        || profiles.iter().map(|p| p.assignments.len()).sum::<usize>() > 262144
+    {
+        return Err("Choose 1–32 profiles with at most 262144 assignments for a sweep.".into());
+    }
+    let mut candidate = inputs.clone();
+    for profile in &profiles {
+        candidate.profile = Some(profile.clone());
+        prepare(transmission, &candidate, options)
+            .map_err(|e| format!("Profile {}: {e}", profile.profile_id))?;
+    }
+    Ok(SweepPlan {
+        transmission: transmission.clone(),
+        inputs: inputs.clone(),
+        profiles,
+    })
+}
+fn run_one(
+    settings: &ChannelRunSettings,
+    runtime_ms: u64,
+    stop: &AtomicBool,
+    gate: &AtomicBool,
+    progress: &AtomicU64,
+) -> Result<ResultData, String> {
+    let mut stages = vec![
+        TestPointId::ChannelOutput,
+        TestPointId::RxFramed,
+        TestPointId::RxUseful,
+        TestPointId::RxFft,
+        TestPointId::RxChannelEstimate,
+        TestPointId::PayloadLdpcInput,
+    ];
+    stages.extend(crate::transmitter_instruments::capture::STAGES);
+    let mut probe = TestPointProbe::new(ProbeConfig {
+        selections: stages
+            .into_iter()
+            .map(|stage| ProbeSelection {
+                stage,
+                elements: 0..16384,
+                source_symbols: None,
+                channel_symbols: None,
+            })
+            .collect(),
+        max_events: 10000,
+        max_elements_per_event: 16384,
+        max_total_elements: 1_048_576,
+    })
+    .map_err(|e| e.to_string())?;
+    probe.set_phase_filter(Some(RunPhase::Observation));
+    for stage in crate::transmitter_instruments::capture::STAGES {
+        probe
+            .limit_stage_events(
+                stage,
+                if stage == TestPointId::PlcMessage {
+                    64
+                } else if stage == TestPointId::TxOverlap {
+                    4
+                } else {
+                    1
+                },
+            )
+            .map_err(|e| e.to_string())?;
+    }
+    probe
+        .set_stage_phase_filter(TestPointId::PlcMessage, None)
+        .map_err(|e| e.to_string())?;
+    probe
+        .set_stage_phase_filter(TestPointId::PlcIq, None)
+        .map_err(|e| e.to_string())?;
+    probe
+        .set_stage_phase_filter(TestPointId::PlcPreamble, None)
+        .map_err(|e| e.to_string())?;
+    for (stage, events) in [
+        (TestPointId::ChannelOutput, 12),
+        (TestPointId::RxFramed, 4),
+        (TestPointId::RxUseful, 1),
+        (TestPointId::RxFft, 1),
+        (TestPointId::RxChannelEstimate, 4),
+        (TestPointId::PayloadLdpcInput, 1),
+    ] {
+        probe
+            .limit_stage_events(stage, events)
+            .map_err(|e| e.to_string())?;
+    }
+    let mut observations = Observations::default();
+    let job = run_channel_controlled(
+        settings,
+        &ChannelJobLimits {
+            max_runtime_ms: runtime_ms,
+            max_retained_words: 64,
+        },
+        stop,
+        gate,
+        &mut probe,
+        &mut observations,
+        |p| {
+            progress.store(p.completed_source_symbols, Ordering::Relaxed);
+        },
+    )
+    .map_err(|e| e.to_string())?;
+    Ok(ResultData { job, observations })
+}
 struct Worker {
     cancel: Arc<AtomicBool>,
     paused: Arc<AtomicBool>,
     done: Arc<AtomicU64>,
-    receiver: mpsc::Receiver<Result<ResultData, String>>,
+    receiver: mpsc::Receiver<WorkerMessage>,
+    profile_index: Arc<AtomicU64>,
+    profile_id: Arc<AtomicU64>,
+    profile_count: usize,
     stale: bool,
 }
 #[derive(Default)]
@@ -151,6 +297,7 @@ pub(crate) struct Model {
     pub options: Option<Options>,
     pub verify: bool,
     request: Option<ChannelRunSettings>,
+    plan: Option<SweepPlan>,
     worker: Option<Worker>,
     error: String,
     token: u64,
@@ -247,8 +394,10 @@ impl Model {
             worker.stale = true;
         }
         self.request = None;
+        self.plan = None;
         self.error.clear();
         publish(None);
+        crate::instruments::receiver::performance::clear();
         self.token = self.token.wrapping_add(1);
     }
     /// Validates current accepted inputs against the saved receiver configuration.
@@ -260,10 +409,16 @@ impl Model {
             let request = serde_json::from_str::<TransmissionSettings>(settings)
                 .map_err(|e| e.to_string())
                 .and_then(|settings| {
-                    prepare(&settings, &crate::workbench::session::snapshot(), options)
+                    let inputs = crate::workbench::session::snapshot();
+                    let plan = prepare_sweep(&settings, &inputs, options)?;
+                    let request = prepare(&settings, &inputs, options)?;
+                    Ok((plan, request))
                 });
             match request {
-                Ok(request) => self.request = Some(request),
+                Ok((plan, request)) => {
+                    self.request = Some(request);
+                    self.plan = Some(plan);
+                }
                 Err(error) => self.error = error,
             }
         }
@@ -284,92 +439,53 @@ impl Model {
         let cancel = Arc::new(AtomicBool::new(false));
         let paused = Arc::new(AtomicBool::new(false));
         let done = Arc::new(AtomicU64::new(0));
+        crate::instruments::receiver::performance::clear();
+        let plan = self.plan.clone();
+        let profile_count = plan.as_ref().map_or(1, |p| p.profiles.len());
+        let catalog = plan
+            .as_ref()
+            .map(|p| p.profiles.clone())
+            .unwrap_or_else(|| {
+                settings
+                    .playback
+                    .as_ref()
+                    .map(|p| vec![p.profile.clone()])
+                    .unwrap_or_default()
+            });
+        crate::instruments::receiver::performance::begin(&catalog);
+        let profile_index = Arc::new(AtomicU64::new(0));
+        let profile_id = Arc::new(AtomicU64::new(0));
+        let (ordinal, identity) = (profile_index.clone(), profile_id.clone());
         let (sender, receiver) = mpsc::sync_channel(1);
         let (stop, gate, progress) = (cancel.clone(), paused.clone(), done.clone());
-        let spawned = std::thread::Builder::new()
-            .name("merlin-closed-loop".into())
-            .spawn(move || {
-                let run = || -> Result<ResultData, String> {
-                    let mut stages = vec![
-                        TestPointId::ChannelOutput,
-                        TestPointId::RxFramed,
-                        TestPointId::RxUseful,
-                        TestPointId::RxFft,
-                        TestPointId::RxChannelEstimate,
-                        TestPointId::PayloadLdpcInput,
-                    ];
-                    stages.extend(crate::transmitter_instruments::capture::STAGES);
-                    let mut probe = TestPointProbe::new(ProbeConfig {
-                        selections: stages
-                            .into_iter()
-                            .map(|stage| ProbeSelection {
-                                stage,
-                                elements: 0..16384,
-                                source_symbols: None,
-                                channel_symbols: None,
-                            })
-                            .collect(),
-                        max_events: 10000,
-                        max_elements_per_event: 16384,
-                        max_total_elements: 1_048_576,
-                    })
-                    .map_err(|e| e.to_string())?;
-                    probe.set_phase_filter(Some(RunPhase::Observation));
-                    for stage in crate::transmitter_instruments::capture::STAGES {
-                        probe
-                            .limit_stage_events(
-                                stage,
-                                if stage == TestPointId::PlcMessage {
-                                    64
-                                } else if stage == TestPointId::TxOverlap {
-                                    4
-                                } else {
-                                    1
-                                },
-                            )
-                            .map_err(|e| e.to_string())?;
-                    }
-                    probe
-                        .set_stage_phase_filter(TestPointId::PlcMessage, None)
-                        .map_err(|e| e.to_string())?;
-                    probe
-                        .set_stage_phase_filter(TestPointId::PlcIq, None)
-                        .map_err(|e| e.to_string())?;
-                    probe
-                        .set_stage_phase_filter(TestPointId::PlcPreamble, None)
-                        .map_err(|e| e.to_string())?;
-                    for (stage, events) in [
-                        (TestPointId::ChannelOutput, 12),
-                        (TestPointId::RxFramed, 4),
-                        (TestPointId::RxUseful, 1),
-                        (TestPointId::RxFft, 1),
-                        (TestPointId::RxChannelEstimate, 4),
-                        (TestPointId::PayloadLdpcInput, 1),
-                    ] {
-                        probe
-                            .limit_stage_events(stage, events)
-                            .map_err(|e| e.to_string())?;
-                    }
-                    let mut observations = Observations::default();
-                    let job = run_channel_controlled(
-                        &settings,
-                        &ChannelJobLimits {
-                            max_runtime_ms: options.max_runtime_ms,
-                            max_retained_words: 64,
-                        },
-                        &stop,
-                        &gate,
-                        &mut probe,
-                        &mut observations,
-                        |p| {
-                            progress.store(p.completed_source_symbols, Ordering::Relaxed);
-                        },
-                    )
-                    .map_err(|e| e.to_string())?;
-                    Ok(ResultData { job, observations })
+        let spawned = std::thread::Builder::new().name("merlin-profile-sweep".into()).spawn(move || {
+            let mut elapsed=0_u64;
+            for index in 0..profile_count {
+                if stop.load(Ordering::Relaxed) || elapsed>=options.max_runtime_ms {break;}
+                progress.store(0,Ordering::Relaxed);ordinal.store(index as u64,Ordering::Relaxed);
+                let prepared=if let Some(plan)=&plan {
+                    let profile=plan.profiles[index].clone();
+                    let mut inputs=plan.inputs.clone();inputs.profile=Some(profile.clone());
+                    (profile,prepare(&plan.transmission,&inputs,&options))
+                } else {
+                    let Some(profile)=settings.playback.as_ref().map(|p|p.profile.clone()) else {break;};
+                    (profile,Ok(settings.clone()))
                 };
-                let _ = sender.send(run());
-            });
+                let (profile,prepared)=prepared;identity.store(u64::from(profile.profile_id),Ordering::Relaxed);
+                match prepared.and_then(|request|run_one(&request,options.max_runtime_ms-elapsed,&stop,&gate,&progress)) {
+                    Ok(result)=>{
+                        elapsed=elapsed.saturating_add(result.job.elapsed_ms);
+                        let halt=matches!(result.job.status,docsis_ofdm_fec::simulation::channel::ChannelJobStatus::Cancelled|docsis_ofdm_fec::simulation::channel::ChannelJobStatus::RuntimeExceeded);
+                        if sender.send(WorkerMessage::Profile(Box::new(result),Box::new(profile))).is_err() {return;}
+                        if halt {break;}
+                    }
+                    Err(error)=>{if sender.send(WorkerMessage::Rejected(profile.profile_id,profile.key.channel_id,error)).is_err() {return;}}
+                }
+            }
+            let reason=if stop.load(Ordering::Relaxed) {"Profile sweep cancelled; unstarted profiles remain marked Not Started."}
+                else if elapsed>=options.max_runtime_ms {"Profile sweep active runtime budget reached."} else {""};
+            let _=sender.send(WorkerMessage::Finished(reason.into()));
+        });
         match spawned {
             Ok(_) => {
                 self.worker = Some(Worker {
@@ -377,6 +493,9 @@ impl Model {
                     paused,
                     done,
                     receiver,
+                    profile_index,
+                    profile_id,
+                    profile_count,
                     stale: false,
                 })
             }
@@ -405,23 +524,36 @@ impl Model {
             .map(|worker| worker.receiver.try_recv())
         {
             match message {
-                Ok(result) => {
-                    let worker = self.worker.take().expect("Tracked worker");
-                    if !worker.stale {
-                        match result {
-                            Ok(result) => {
-                                self.error = result
-                                    .job
-                                    .error
-                                    .as_ref()
-                                    .map(|e| e.to_string())
-                                    .unwrap_or_default();
-                                publish(Some(Arc::new(result)));
-                            }
-                            Err(error) => self.error = error,
-                        }
+                Ok(WorkerMessage::Profile(result, profile)) => {
+                    if !self.worker.as_ref().is_some_and(|w| w.stale) {
+                        crate::instruments::receiver::performance::retain(&profile, &result);
+                        self.error = result
+                            .job
+                            .error
+                            .as_ref()
+                            .map(ToString::to_string)
+                            .unwrap_or_default();
+                        publish(Some(Arc::new(*result)));
                         self.token = self.token.wrapping_add(1);
                     }
+                }
+                Ok(WorkerMessage::Rejected(id, channel, error)) => {
+                    if !self.worker.as_ref().is_some_and(|w| w.stale) {
+                        crate::instruments::receiver::performance::reject(
+                            id,
+                            channel,
+                            error.clone(),
+                        );
+                        self.error = error;
+                        self.token = self.token.wrapping_add(1);
+                    }
+                }
+                Ok(WorkerMessage::Finished(reason)) => {
+                    if !self.worker.as_ref().is_some_and(|w| w.stale) && !reason.is_empty() {
+                        self.error = reason;
+                    }
+                    self.worker = None;
+                    self.token = self.token.wrapping_add(1);
                 }
                 Err(mpsc::TryRecvError::Disconnected) => {
                     self.worker = None;
@@ -438,7 +570,7 @@ impl Model {
     pub(crate) fn state(&self) -> Value {
         let ready = self.request.is_some();
         let result = latest();
-        let summary=result.as_ref().map(|r|json!({"status":r.job.status,"elapsed_ms":r.job.elapsed_ms,
+        let summary=result.as_ref().map(|r|json!({"profile_id":r.job.settings.playback.as_ref().map(|p|p.profile.profile_id),"fec":r.job.summary.window.as_ref().map(|w|w.fec.snapshot()),"status":r.job.status,"elapsed_ms":r.job.elapsed_ms,
             "bits_tested":r.job.summary.comparison.bits_tested,"bit_errors":r.job.summary.comparison.bit_errors,
             "ber":r.job.summary.payload_ber,"recovered_payloads":r.job.summary.recovered_payloads,
             "ldpc_failures":r.job.summary.payload_ldpc_failures,"bch_failures":r.job.summary.payload_bch_failures,
@@ -447,6 +579,9 @@ impl Model {
         json!({"receiver_status":if ready {"complete"} else {"attention"},"verify_status":if self.verify {"complete"} else {"attention"},
             "reason":if !self.error.is_empty(){self.error.as_str()} else if ready {"Validated source/channel/receiver configuration ready."} else {"Configure Receiver after accepting OCD, DPD, PRBS-TX and RxMER."},
             "busy":self.worker.is_some(),"paused":self.worker.as_ref().is_some_and(|w|w.paused.load(Ordering::Relaxed)),
+            "profile_index":self.worker.as_ref().map_or(0,|w|w.profile_index.load(Ordering::Relaxed)+1),
+            "profile_id":self.worker.as_ref().map(|w|w.profile_id.load(Ordering::Relaxed)),
+            "profile_count":self.worker.as_ref().map_or(0,|w|w.profile_count),
             "completed_symbols":self.worker.as_ref().map_or(0,|w|w.done.load(Ordering::Relaxed)),
             "can_start":ready&&self.verify&&self.worker.is_none(),"has_result":result.is_some(),"result_token":self.token.to_string(),"result":summary,
             "options":self.options.clone().unwrap_or_default(),"accepted_options":self.options,"verified":self.verify})
@@ -461,8 +596,7 @@ impl Drop for Model {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test]
-    fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
+    fn accepted_inputs() -> (Inputs, TransmissionSettings) {
         use docsis_ofdm_fec::scenario::pnm_json::{import_profiles, import_rxmer, JsonCapture};
         use docsis_ofdm_fec::simulation::channel::measurement_playback::{
             PlaybackConfiguration, PlaybackMode,
@@ -495,6 +629,7 @@ mod tests {
                 config: PayloadSourceConfig::Prbs15,
                 seed: 32767,
             }),
+            profiles: vec![profile.clone()],
             profile: Some(profile),
             playback: Some(playback),
             response: None,
@@ -507,6 +642,11 @@ mod tests {
             },
         };
         let transmission = TransmissionSettings::default();
+        (inputs, transmission)
+    }
+    #[test]
+    fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
+        let (inputs, transmission) = accepted_inputs();
         let options = Options {
             duration_ms: 1,
             ..Default::default()
@@ -516,6 +656,7 @@ mod tests {
             options: Some(options),
             verify: true,
             request: Some(settings),
+            plan: None,
             worker: None,
             error: String::new(),
             token: 0,
@@ -709,6 +850,144 @@ mod tests {
         );
         assert_eq!(
             crate::instruments::receiver::selection::qam(&query)["available"],
+            false
+        );
+    }
+    #[test]
+    fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
+        let (mut inputs, transmission) = accepted_inputs();
+        inputs.profiles = docsis_ofdm_fec::scenario::pnm_json::import_profiles(
+            docsis_ofdm_fec::scenario::pnm_json::JsonCapture {
+                name: "profiles",
+                bytes: include_bytes!(
+                    "../../../../examples/measurements/single-channel/modulation_profile.json"
+                ),
+            },
+        )
+        .unwrap();
+        // Narrow the decoded test grid explicitly; production captures remain unchanged.
+        // This exercises every original profile ID/loading without a wide-channel decoder soak.
+        for profile in &mut inputs.profiles {
+            profile.assignments.truncate(1920);
+            profile.key.grid.sample_count = 1920;
+        }
+        inputs.profile = Some(
+            inputs
+                .profiles
+                .iter()
+                .find(|p| p.profile_id == 0)
+                .unwrap()
+                .clone(),
+        );
+        let playback = inputs.playback.as_mut().unwrap();
+        playback.profile = inputs.profile.clone().unwrap();
+        for frame in &mut playback.frames {
+            frame.key.grid.sample_count = 1920;
+            frame.mer_db.truncate(1920);
+        }
+        let options = Options {
+            duration_ms: 1,
+            max_iterations: 5,
+            ..Default::default()
+        };
+        let plan = prepare_sweep(&transmission, &inputs, &options).unwrap();
+        assert_eq!(
+            plan.profiles
+                .iter()
+                .map(|p| p.profile_id)
+                .collect::<Vec<_>>(),
+            vec![0, 1, 2, 3]
+        );
+        let mut model = Model {
+            options: Some(options.clone()),
+            verify: true,
+            request: Some(prepare(&transmission, &inputs, &options).unwrap()),
+            plan: Some(plan),
+            worker: None,
+            error: String::new(),
+            token: 0,
+        };
+        model.start();
+        let deadline = std::time::Instant::now() + Duration::from_secs(180);
+        while model.poll()["busy"] == true {
+            assert!(std::time::Instant::now() < deadline, "{}", model.state());
+            std::thread::sleep(Duration::from_millis(10));
+        }
+        let view = crate::instruments::receiver::performance::view(-1, 0, 0);
+        assert_eq!(view["profiles"].as_array().unwrap().len(), 4, "{view}");
+        assert_eq!(view["profile_id"], 3);
+        for id in 0..4 {
+            let view = crate::instruments::receiver::performance::view(id, 0, 0);
+            assert_eq!(view["status"], "complete", "{view}");
+            assert!(view["fec"]["total_cw"].as_u64().unwrap() > 0);
+            assert_eq!(
+                view["fec"]["total_cw"].as_u64().unwrap(),
+                view["fec"]["clean_cw"].as_u64().unwrap()
+                    + view["fec"]["ccw"].as_u64().unwrap()
+                    + view["fec"]["ufec"].as_u64().unwrap()
+            );
+            assert!(view["samples"].as_u64().unwrap() > 0);
+            assert!(
+                view["series"][1]["points"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|point| point["minimum_y"] == 1.0),
+                "Captured BPSK pilot reference must retain its 0 dB dip"
+            );
+            assert!(view["series"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .all(|s| s["points"].as_array().unwrap().len() <= 1024));
+            let zoom = crate::instruments::receiver::performance::view(id, 10, 4);
+            assert_eq!(zoom["start"], 10);
+            assert_eq!(zoom["count"], 4);
+        }
+        assert_eq!(inputs.profile.as_ref().unwrap().profile_id, 0);
+        assert_eq!(
+            latest()
+                .unwrap()
+                .job
+                .settings
+                .playback
+                .as_ref()
+                .unwrap()
+                .profile
+                .profile_id,
+            3
+        );
+        assert!(
+            prepare_sweep(
+                &transmission,
+                &inputs,
+                &Options {
+                    all_profiles: false,
+                    ..options.clone()
+                }
+            )
+            .unwrap()
+            .profiles
+            .len()
+                == 1
+        );
+        let legacy: Options = serde_json::from_str(r#"{"duration_ms":1}"#).unwrap();
+        assert!(legacy.all_profiles);
+        let saved = serde_json::to_string(&Options {
+            all_profiles: false,
+            ..options
+        })
+        .unwrap();
+        assert!(
+            !serde_json::from_str::<Options>(&saved)
+                .unwrap()
+                .all_profiles
+        );
+        inputs.profiles[1].profile_id = 0;
+        assert!(prepare_sweep(&transmission, &inputs, &legacy).is_err());
+        model.invalidate();
+        assert_eq!(
+            crate::instruments::receiver::performance::view(-1, 0, 0)["available"],
             false
         );
     }

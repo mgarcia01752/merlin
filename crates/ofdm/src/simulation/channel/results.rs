@@ -7,6 +7,7 @@ use crate::{
     simulation::source::{PrbsComparison, PrbsSeed},
     transmission::DurationTiming,
 };
+pub use fec_codec::statistics::{FecCounters, FecOutcome};
 use serde::Serialize;
 /// Distinct processing intervals; observation duration does not include the others.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -34,6 +35,8 @@ pub struct ChannelWordResult {
     pub ldpc_iterations: usize,
     pub bch_success: bool,
     pub bch_corrected_bits: u32,
+    /// Actual received hard decisions changed by LDPC.
+    pub ldpc_hard_decision_changes: usize,
 }
 /// Bounded result for one call, allowing consumers to store/export desired details.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -46,6 +49,8 @@ pub struct ChannelStep {
 /// Constant-size totals; completed words belong to returned steps, not this history.
 #[derive(Debug, Clone, Serialize)]
 pub struct ChannelSummary {
+    /// All completed payload attempts; observation-only totals live in window.fec.
+    pub fec: FecCounters,
     /// Finite file/fill progress; absent for the unchanged continuous PRBS path.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub file_source: Option<crate::simulation::source::file::FileSourceSummary>,

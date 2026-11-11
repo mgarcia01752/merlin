@@ -97,3 +97,5 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 - [Channel conditioning (UI-RF-01) and RF power follow-ups (RF-POWER-01)](rf-power-budget/design.md)
 
 - [Qt source organization (UI-ORG-01 / UI-ORG-02)](qt-source-organization/design.md)
+
+- [Receiver profile performance and independent profile runs](profile-performance/design.md)

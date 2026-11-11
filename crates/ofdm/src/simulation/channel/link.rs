@@ -37,6 +37,7 @@ const REFERENCE_CHANNEL_ID: u8 = 7;
 const REFERENCE_SOURCE_MAC: crate::types::MacAddress = [0, 0xca, 0, 0, 0, 1];
 #[derive(Debug, Clone, PartialEq, serde::Serialize)]
 pub struct LinkStats {
+    pub carrier_mer: Vec<super::performance::CarrierMer>,
     pub data_signal_power: f64,
     pub data_error_power: f64,
     pub compared_data_carriers: u64,
@@ -135,6 +136,7 @@ impl WaveformLink {
         });
         context.reference = SignalReference::OtherSubcarrierRms { rms: 1.0 };
         let calibrated_variances = channel.plan.llr_variance.clone();
+        let carrier_mer = vec![Default::default(); geometry.fft_samples()];
         Ok(Self {
             protected_constellation: None,
             calibrated_variances,
@@ -152,6 +154,7 @@ impl WaveformLink {
             block_samples,
             context,
             stats: LinkStats {
+                carrier_mer,
                 data_signal_power: 0.0,
                 data_error_power: 0.0,
                 compared_data_carriers: 0,
@@ -414,6 +417,7 @@ impl WaveformLink {
                 .max((sample[0] - expected[0]).hypot(sample[1] - expected[1]));
             self.stats.compared_bins += 1;
             if phase == RunPhase::Observation && physical.roles[bin] == PhysicalCarrierRole::Data {
+                self.stats.carrier_mer[bin].observe(*expected, *sample);
                 self.stats.data_signal_power +=
                     expected[0] * expected[0] + expected[1] * expected[1];
                 self.stats.data_error_power +=

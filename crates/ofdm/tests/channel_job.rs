@@ -122,6 +122,20 @@ fn whole_word_window_counts_exclude_crossing_and_completion_only_words() {
     assert_eq!(result.status, ChannelJobStatus::Complete);
     let window = result.summary.window.as_ref().unwrap();
     assert!(window.contained_words > 0);
+    assert_eq!(window.fec.total_codewords(), window.contained_words);
+    assert_eq!(
+        result.summary.fec.total_codewords(),
+        result.summary.recovered_payloads
+    );
+    assert_eq!(window.fec.uncorrectable_codewords(), 0);
+    assert_eq!(
+        result
+            .carrier_mer
+            .iter()
+            .map(|bin| bin.samples())
+            .sum::<u64>(),
+        result.summary.compared_data_carriers
+    );
     assert!(window.crossing_end_words > 0);
     assert!(window.outside_words > 0);
     assert_eq!(window.incomplete_starts_within, 0);
@@ -174,6 +188,10 @@ fn cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count() {
     assert_eq!(result.summary.comparison.bit_errors, 0);
     assert!(result.unrecovered_generated_payloads > 0);
     assert_eq!(result.retained_words.len(), 1);
+    assert_eq!(
+        result.summary.fec.total_codewords(),
+        result.summary.recovered_payloads
+    );
     assert_eq!(
         result.omitted_word_details + 1,
         result.summary.recovered_payloads

@@ -243,3 +243,8 @@ chooser at each signal boundary. See [channel inputs and instruments](channel-me
 and [additional tilt/cable loss](impairments/additional-loss.md).
 
 Desktop setup and **About → Check For Updates…**: [Ubuntu 22.04 desktop guide](install/ubuntu-desktop.md).
+
+Profile comparisons: [Receiver Profile Performance](receiver-profile-performance.md)
+shows measured MER, the ideal profile reference and independent per-profile FEC
+counters. Receiver configuration selects all imported profiles or the applied
+profile only, and saves this run mode with the WB.

@@ -312,3 +312,39 @@ linear PSD over an explicit inclusive bin band independently of any GUI viewport
 returning normalized power and optional rms dBmV/band-average6 MHz readings.
 `TransmitterPreview.layout` retains frozen occupied-band geometry for integration.
 See the [channel guide](../user/channel-measurements.md#launch-amplifier-attenuator-and-tappoints).
+
+## Reusable FEC counters and carrier MER
+
+`fec_codec::statistics::{FecCounters, FecOutcome}` (also re-exported at the codec
+root and `simulation::channel` in the OFDM crate) is the shared codeword accounting
+API. FecCounters owns private state; its public operations are `new`, `record`,
+`snapshot`, `total_codewords`, `corrected_codewords`, `uncorrectable_codewords`,
+`clean_codewords` and `undetected_errors`. FecOutcome classifies actual stage
+acceptance and LDPC/BCH corrections without using iteration counts or source
+truth as decoder status. Snapshots are copied values and serialize for adapters.
+No Qt, Python, filesystem or JSON parsing API is required to use the type.
+
+`LdpcResult::hard_decision_changes` exposes actual changed non-erased received
+sign decisions. Shortened decoding excludes restored synthetic coordinates.
+`ChannelSummary::fec` counts all completed words; `WindowTotals::fec` counts only
+whole-contained observation words, including their completion during drain.
+Both use the same type and getters. UFEC is a union of failed decoder stages;
+undetected source mismatches remain separate.
+
+```rust
+// `result` is a completed or partial ChannelJobResult.
+if let Some(window) = &result.summary.window {
+    let counters = window.fec.snapshot();
+    let total = counters.total_codewords();
+    let corrected = counters.corrected_codewords();
+    let uncorrectable = counters.uncorrectable_codewords();
+    assert_eq!(total, counters.clean_codewords() + corrected + uncorrectable);
+}
+```
+
+`simulation::channel::performance::CarrierMer` exposes `observe`, `samples`,
+`signal_power`, `error_power` and `mer_db`. `ChannelRun::carrier_mer` and
+`ChannelJobResult::carrier_mer` return physical-bin-indexed observation sums.
+Missing and zero-error observations do not become arbitrary finite MER values.
+These typed operations support ordinary Rust consumers and future Python class
+bindings. No Python binding or runtime has been introduced; those remain deferred.

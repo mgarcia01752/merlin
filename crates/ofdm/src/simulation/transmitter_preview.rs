@@ -79,8 +79,8 @@ impl TransmitterPreviewRequest {
         seed: u16,
     ) -> Result<Self, SimulationError> {
         settings.validate()?;
-        if profile.profile_id != 0 {
-            return Err(invalid("TX spectrum currently requires Profile A (ID 0), matching the live descriptor API."));
+        if profile.profile_id > 15 {
+            return Err(invalid("Captured data profile ID must be in 0..15; each independent preview uses bootstrap Profile A."));
         }
         let layout_settings = captured_layout(profile, settings)?;
         let layout = CarrierLayout::new(settings, &layout_settings)?;

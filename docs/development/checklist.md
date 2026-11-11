@@ -965,3 +965,16 @@ See [setup](setup.md) and [design](features/development-setup/design.md).
 - [x] **UI-DPD-VIEW-02** Adapt the full PNM Viewer modulation view with
   profile overlays, dB/bit loading, carrier filters/lanes and gross Profile BW.
   [Design](features/pnm-measurement-inputs/profile-view.md#ui-dpd-view-02-full-pnm-viewer-profile-inspection).
+
+## Receiver profile performance
+
+- [x] **RX-PERF-01** Run all accepted DPD profiles as independent sequential
+  experiments with common settings/seeds, bounded result retention, lifecycle
+  controls and WB-persisted run mode. Preserve profile-specific failures/results.
+- [x] **FEC-COUNTS-01** Add actual TotalCW, CCW, UFEC and clean-word accounting,
+  including LDPC-only correction evidence and observation-window semantics.
+- [x] **UI-RX-PERF-01** Add Receiver Profile Performance: measured MER and ideal
+  profile minimum MER overlay, profile selection and matching FEC counters.
+
+[Design](features/profile-performance/design.md). Core, Qt and native VM
+validation are complete; the user guide includes the current dark capture.

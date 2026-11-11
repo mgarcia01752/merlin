@@ -24,6 +24,11 @@ WorkbenchDialog {
     contentItem:ColumnLayout {
         spacing:10
         Label { objectName:"receiverFecStatus";text:dialog.statistics.available ? "Run "+dialog.statistics.status : dialog.statistics.reason || "Run the simulation first";color:dialog.theme.accent;font.bold:true;Layout.fillWidth:true;wrapMode:Text.WordWrap }
+        Label {
+            visible: dialog.statistics.available
+            text: "Observation · Profile " + dialog.value(dialog.statistics.profile_id) + " · TotalCW " + dialog.value((dialog.statistics.fec || {}).total_cw) + " · CCW " + dialog.value((dialog.statistics.fec || {}).ccw) + " · UFEC " + dialog.value((dialog.statistics.fec || {}).ufec)
+            color: dialog.theme.accent; font.bold: true; Layout.fillWidth: true
+        }
         GridLayout {
             visible:dialog.statistics.available;columns:3;columnSpacing:22;Layout.fillWidth:true
             Label { text:"Payload BCH / LDPC\nGenerated: "+dialog.value(dialog.statistics.generated)+"\nRecovered: "+dialog.value(dialog.statistics.payloads)+"\nLDPC failures: "+dialog.value(dialog.statistics.ldpc_failures)+"\nBCH failures: "+dialog.value(dialog.statistics.bch_failures)+"\nBCH corrected bits: "+dialog.value(dialog.statistics.bch_corrected_bits)+"\nMean LDPC iterations: "+dialog.value(dialog.statistics.mean_iterations);color:dialog.theme.text;Layout.fillWidth:true }

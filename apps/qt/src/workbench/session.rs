@@ -19,6 +19,7 @@ pub(crate) struct Inputs {
     pub power: docsis_ofdm_fec::signal_processing::channel::power::PowerConditioning,
     pub source: Option<AcceptedSource>,
     pub profile: Option<CapturedProfile>,
+    pub profiles: Vec<CapturedProfile>,
     pub playback:
         Option<docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackConfiguration>,
     pub response: Option<docsis_ofdm_fec::scenario::ChannelFrame>,
@@ -39,7 +40,18 @@ pub(crate) fn set_source(source: Option<AcceptedSource>) {
 /// # Arguments
 /// * `profile` - Validated captured assignments, or None after applied removal.
 pub(crate) fn set_profile(profile: Option<CapturedProfile>) {
-    INPUTS.with(|inputs| inputs.borrow_mut().profile = profile);
+    INPUTS.with(|inputs| {
+        let mut inputs = inputs.borrow_mut();
+        inputs.profiles = profile.iter().cloned().collect();
+        inputs.profile = profile;
+    });
+}
+
+/// Publishes all profiles from the accepted original capture, never editor drafts.
+/// # Arguments
+/// * `profiles` - Validated captured profiles in source identity order.
+pub(crate) fn set_profiles(profiles: Vec<CapturedProfile>) {
+    INPUTS.with(|inputs| inputs.borrow_mut().profiles = profiles);
 }
 
 /// Copies the current GUI-thread inputs for an independent immutable worker request.

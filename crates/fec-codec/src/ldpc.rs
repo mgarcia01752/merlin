@@ -29,6 +29,8 @@ pub struct LdpcCodec {
 /// Soft-decoder outcome, preserving failure decisions for BER analysis.
 pub struct LdpcResult {
     pub codeword: Vec<u8>,
+    /// Decisions changed relative to non-erased received LLR signs, not iteration count.
+    pub hard_decision_changes: usize,
     pub iterations: usize,
     pub success: bool,
 }
@@ -104,6 +106,12 @@ impl LdpcCodec {
             );
         }
         Ok(LdpcResult {
+            hard_decision_changes: output
+                .codeword
+                .iter()
+                .zip(llrs)
+                .filter(|(bit, llr)| **llr != 0.0 && **bit != u8::from(**llr < 0.0))
+                .count(),
             codeword: output.codeword,
             iterations: output.iterations,
             success,

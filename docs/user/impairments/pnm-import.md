@@ -83,4 +83,5 @@ provide aligned RxMER/channel JSON plus four profiles (256/1024/2048/4096-QAM).
 They include CLI import and noiseless channel requests for each profile. These
 are generated ideal inputs, not additional captured measurements. The fixed
 runner applies each selected loading as its internal Profile A; imported IDs
-remain unchanged, and measured-selector support remains restricted to ID 0.
+remain unchanged. Measured selectors now accept captured IDs0..15 for the same
+independent bootstrap Profile A mapping; this does not switch live wire IDs.

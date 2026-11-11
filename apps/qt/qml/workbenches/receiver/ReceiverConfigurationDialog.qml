@@ -26,11 +26,13 @@ WorkbenchDialog {
             columns: 2; columnSpacing: 18; rowSpacing: 10
             Label { text: "Receiver Correction"; color: theme.text }
             ComboBox { objectName: "receiverCorrection"; Layout.preferredWidth: 330; model: ["Supplied H · reference correction","Pilot-estimated H-hat"]; currentIndex: dialog.draft.receiver_mode === "pilot_estimated" ? 1 : 0; onActivated: function(index) { dialog.draft.receiver_mode=index===1 ? "pilot_estimated":"supplied_channel" } }
-            Label { text: "Observation Duration (ms)"; color: theme.text }
+            Label { text: "Profiles"; color: theme.text }
+            ComboBox { objectName: "runProfileMode"; model: ["All Imported Profiles · Separate Runs", "Applied Profile Only"]; currentIndex: dialog.draft.all_profiles === false ? 1 : 0; Layout.preferredWidth: 330; onActivated: function(index) { dialog.draft.all_profiles = index === 0 } }
+            Label { text: "Duration per Profile (ms)"; color: theme.text }
             SpinBox { objectName: "runDuration"; from:1; to:1000; editable:true; value:dialog.draft.duration_ms || 3; onValueModified: dialog.draft.duration_ms=value }
             Label { text: "Decoder Iteration Limit"; color: theme.text }
             SpinBox { from:1; to:100; editable:true; value:dialog.draft.max_iterations || 50; onValueModified: dialog.draft.max_iterations=value }
-            Label { text: "Active Host Budget (ms)"; color: theme.text }
+            Label { text: "Total Active Run Budget (ms)"; color: theme.text }
             SpinBox { from:1000; to:300000; stepSize:1000; editable:true; value:dialog.draft.max_runtime_ms || 300000; onValueModified: dialog.draft.max_runtime_ms=value }
             Label { text: "Noise Seed"; color: theme.text }
             SpinBox { from:0; to:2147483647; editable:true; value:dialog.draft.noise_seed === undefined ? 41 : dialog.draft.noise_seed; onValueModified: dialog.draft.noise_seed=value }

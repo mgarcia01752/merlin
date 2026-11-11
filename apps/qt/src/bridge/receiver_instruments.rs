@@ -57,6 +57,19 @@ pub mod bridge {
         /// Decoder/comparison counters or an explicit pre-run empty state.
         #[qinvokable]
         fn fec(self: &ReceiverInstruments) -> QString;
+        /// Queries one independent profile's measured MER and FEC performance.
+        /// # Arguments
+        /// * `profile_id` - Captured identity, or -1 for the latest completed profile.
+        /// * `start`, `count` - Carrier offsets; zero count restores Full Span.
+        /// # Returns
+        /// Bounded profile curve and scalar counters; no simulation is started.
+        #[qinvokable]
+        fn performance(
+            self: &ReceiverInstruments,
+            profile_id: i32,
+            start: i32,
+            count: i32,
+        ) -> QString;
         /// Selects a registered RX spectrum reference plane without generating data.
         /// # Arguments
         /// * `tap` - RX input, framed, useful or FFT-bin-power index.
@@ -136,6 +149,18 @@ fn spectrum_state(tap: i32) -> Value {
 }
 
 impl bridge::ReceiverInstruments {
+    /// Reads a profile performance snapshot independently of the latest detailed taps.
+    /// # Arguments
+    /// * `profile_id` - Captured identity or -1 for latest; never an array index.
+    /// * `start`, `count` - Nonnegative source offsets, zero count for Full Span.
+    /// # Returns
+    /// Bounded JSON, preserving accepted inputs and other instrument selections.
+    pub fn performance(&self, profile_id: i32, start: i32, count: i32) -> QString {
+        QString::from(
+            crate::instruments::receiver::performance::view(profile_id, start, count).to_string(),
+        )
+    }
+
     /// Queries known received-role selectors over the immutable retained result.
     /// # Arguments
     /// * `signal` - Data profile / NCP / PLC index.

@@ -7,3 +7,5 @@ pub(crate) mod diagnostics;
 pub(crate) mod selection;
 mod verification;
 pub(crate) mod views;
+
+pub(crate) mod performance;

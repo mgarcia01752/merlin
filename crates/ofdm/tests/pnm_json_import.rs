@@ -82,7 +82,7 @@ fn imports_real_current_decoder_shapes_hashes_and_exact_grid() {
         use_rxmer_noise: true,
         transitions: Vec::new(),
         frame_index: 0,
-        profile_id: 3,
+        profile_id: 16,
         channel_index: Some(0),
         tolerance_seconds: 90000,
         noise_seed: 41,
@@ -91,6 +91,18 @@ fn imports_real_current_decoder_shapes_hashes_and_exact_grid() {
         selection.apply(&scenario, &mut settings).unwrap_err().code,
         "UnsupportedMeasuredProfile"
     );
+    // Captured identities 0..3 become independent Profile A experiments.
+    for id in 0..4 {
+        let mut independent = settings.clone();
+        selection.profile_id = id;
+        selection.apply(&scenario, &mut independent).unwrap();
+        assert!(independent
+            .data_bit_loading
+            .as_ref()
+            .unwrap()
+            .iter()
+            .any(|bits| *bits >= 8));
+    }
     selection.profile_id = 0;
     selection.apply(&scenario, &mut settings).unwrap();
     assert!(selection.apply(&scenario, &mut settings).is_err()); // no second noise source

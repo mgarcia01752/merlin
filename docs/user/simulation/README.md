@@ -51,3 +51,5 @@ and the independent coding loop are not one continuous OFDM transmission.
 For the complete planned system, use the [architecture](../../architecture.md)
 and [checklist](../../development/checklist.md). Stage guides below explain what
 exists now without treating a successful component test as a complete receiver.
+
+- [FEC codeword counters](fec-counters.md): reusable decoder outcomes, scopes and snapshots.

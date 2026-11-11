@@ -39,8 +39,9 @@ enter inclusive **First/Last Bin** and **First/Last RX Symbol** bounds. **All**
 means all retained coordinates, and **Reset Filters** clears the filters. The
 shown bounds describe the actual retained data, not all transmitted history.
 An empty/invalid range clears the chart; different QAM orders are never pooled.
-The current transport admits Profile A/ID 0, so other profile IDs are not offered
-as runnable received metadata.
+Each independent run uses wire Profile A/ID0. The Receiver title identifies the
+original captured profile used for its loading; QAM metadata retains the actual
+wire identity. Profile Performance selects results by original captured ID.
 
 ![Matched NCP receive constellation and selectors](../images/workbench/receiver-qam-ncp-dark.png)
 
@@ -109,3 +110,12 @@ coding/profile set and initial host limits remain explicit implementation limits
 these instruments do not add arbitrary RF acquisition or external-interoperability
 claims. See the [design](../development/features/receiver-instruments/design.md)
 and [workbench guide](workbench.md). Dark screenshots are actual Ubuntu VM captures.
+
+## Profile performance and independent runs
+
+**Diagnostic Instruments → Profile Performance** combines measured receiver MER,
+the ideal profile reference and TotalCW/CCW/UFEC counters. Configure Receiver
+selects all imported profiles as separate runs by default. The performance
+selector reviews each result; other instruments remain labelled with the latest
+completed profile. See the [profile performance guide](receiver-profile-performance.md)
+for counter scope, Profile A mapping and sweep controls.

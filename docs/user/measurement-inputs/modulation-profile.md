@@ -74,7 +74,10 @@ simulation result. Applying requires the capture's spacing and carrier span to
 fit accepted OCD settings. Editing channel spacing/bandwidth in the UI remains
 pending; incompatible captures stay in the editor with a diagnostic.
 
-All four demo profiles can be inspected and selected as input. Simulation support
+All four demo profiles can be inspected and selected as input. Receiver
+configuration defaults to running all captured data profiles separately as
+bootstrap Profile A experiments; [Profile Performance](../receiver-profile-performance.md)
+retains their original captured IDs. Simulation support
 is checked when preparing the run; successfully importing a capture does not
 guarantee its assignments fit the supported transmit/receive configuration.
 

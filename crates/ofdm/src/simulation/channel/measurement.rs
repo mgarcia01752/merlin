@@ -133,8 +133,13 @@ impl MeasurementSelection {
         scenario: &ScenarioDocument,
         settings: &mut ChannelRunSettings,
     ) -> Result<(), SimulationError> {
-        if self.profile_id != 0 {
-            return Err(SimulationError::new("UnsupportedMeasuredProfile","Live payload transport currently requires ProfileA ID0; other profile selectors are unsupported."));
+        // Each independent captured-profile experiment advertises these assignments
+        // as bootstrap Profile A (wire ID0). The capture ID remains selection provenance.
+        if self.profile_id > 15 {
+            return Err(SimulationError::new(
+                "UnsupportedMeasuredProfile",
+                "Captured data profile ID must be in 0..15.",
+            ));
         }
 
         if !matches!(settings.impairments.noise, NoiseModel::Noiseless)

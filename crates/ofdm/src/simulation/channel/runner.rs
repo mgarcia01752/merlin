@@ -41,6 +41,12 @@ pub struct ChannelRun {
     summary: ChannelSummary,
 }
 impl ChannelRun {
+    /// Copies bounded observation MER power sums indexed by physical FFT bin.
+    /// # Returns
+    /// At most one FFT of entries; unmeasured bins retain zero samples.
+    pub fn carrier_mer(&self) -> Vec<super::performance::CarrierMer> {
+        self.link.stats.carrier_mer.clone()
+    }
     /// Creates a fresh validated session; actual PLC acquisition happens during stepping.
     ///
     /// # Arguments
@@ -105,6 +111,7 @@ impl ChannelRun {
             next_impairment_epoch: 0,
             playback,
             summary: ChannelSummary {
+                fec: Default::default(),
                 file_source,
                 measured_mer_db: None,
                 compared_data_carriers: 0,
@@ -563,6 +570,18 @@ impl ChannelRun {
                 let placement = window
                     .coordinates
                     .classify(word.first_source_symbol, word.last_source_symbol)?;
+                let fec_outcome = super::results::FecOutcome::from_decoder(
+                    word.decoded.ldpc.success,
+                    word.decoded.bch.success,
+                    word.decoded.ldpc.hard_decision_changes,
+                    word.decoded.bch.corrected_bits,
+                );
+                self.summary
+                    .fec
+                    .record(fec_outcome, comparison.bit_errors > 0);
+                if placement == super::accounting::WordPlacement::Contained {
+                    window.fec.record(fec_outcome, comparison.bit_errors > 0);
+                }
                 let during_drain = phase != ChannelPhase::Observation;
                 window.record(
                     placement,
@@ -585,6 +604,7 @@ impl ChannelRun {
                     ldpc_iterations: word.decoded.ldpc.iterations,
                     bch_success: word.decoded.bch.success,
                     bch_corrected_bits: word.decoded.bch.corrected_bits,
+                    ldpc_hard_decision_changes: word.decoded.ldpc.hard_decision_changes,
                 });
             }
             self.summary.comparison = self.verifier.totals().clone();

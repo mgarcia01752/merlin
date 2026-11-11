@@ -105,3 +105,11 @@ project if serialization/write fails. No application settings or source files ar
 written by simply opening a measurement or running the simulation.
 
 See the [receiver guide](receiver-workbench.md) and [development design](../development/features/qt-closed-loop/design.md).
+
+## Independent profile runs
+
+Receiver configuration defaults to all profiles in the accepted DPD capture,
+run separately in captured-ID order. Duration applies per profile; the active
+host budget covers the sweep. Choose Applied Profile Only for a single run.
+WB JSON stores this choice. See [Profile Performance](receiver-profile-performance.md)
+for counter definitions, bootstrap Profile A mapping, limits and result selection.

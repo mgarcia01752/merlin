@@ -262,7 +262,7 @@ Item {
             Layout.fillWidth: true; spacing: 10
             ColumnLayout {
                 Label { text: workbench.runState.busy ? (workbench.runState.paused ? "PAUSED" : "RUNNING") : "SIMULATION WORKBENCH"; color: theme.accent; font.pixelSize: 11; font.letterSpacing: 1.5 }
-                Label { text: workbench.runState.busy ? "Completed observation symbols: "+workbench.runState.completed_symbols : workbench.runState.result ? "Run "+workbench.runState.result.status+" · "+workbench.runState.result.bits_tested+" bits compared · "+workbench.runState.result.bit_errors+" bit errors" : workbench.runState.reason; color: theme.muted; font.pixelSize: 12 }
+                Label { text: workbench.runState.busy ? "Profile "+(workbench.runState.profile_id ?? "—")+" · "+(workbench.runState.profile_index || 1)+" / "+(workbench.runState.profile_count || 1)+" · Observation symbols: "+workbench.runState.completed_symbols : workbench.runState.result ? "Run "+workbench.runState.result.status+" · "+workbench.runState.result.bits_tested+" bits compared · "+workbench.runState.result.bit_errors+" bit errors" : workbench.runState.reason; color: theme.muted; font.pixelSize: 12 }
             }
             Item { Layout.fillWidth: true }
             Button {

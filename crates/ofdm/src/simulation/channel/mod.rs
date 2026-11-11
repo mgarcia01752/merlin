@@ -8,10 +8,13 @@ pub mod constellation;
 mod impairment;
 pub(crate) mod link;
 pub mod measurement;
+pub mod performance;
 pub mod results;
 pub mod runner;
 pub use config::ChannelRunSettings;
-pub use results::{ChannelPhase, ChannelStep, ChannelSummary, ChannelWordResult};
+pub use results::{
+    ChannelPhase, ChannelStep, ChannelSummary, ChannelWordResult, FecCounters, FecOutcome,
+};
 pub use runner::ChannelRun;
 
 pub mod accounting;

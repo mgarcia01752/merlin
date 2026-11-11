@@ -72,6 +72,8 @@ pub struct ChannelProgress {
 /// Shared typed result for complete and partial runs; no calculations belong in adapters.
 #[derive(Serialize)]
 pub struct ChannelJobResult {
+    /// Observation-only post-equalization MER indexed by physical FFT bin.
+    pub carrier_mer: Vec<super::performance::CarrierMer>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub recovered_file: Option<crate::simulation::source::file::RecoveredFile>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -245,6 +247,7 @@ fn run_with_clock(
     let constellation = session.take_constellation();
     let protected_constellation = session.take_protected_constellation();
     Ok(ChannelJobResult {
+        carrier_mer: session.carrier_mer(),
         recovered_file: session.recovered_file(),
         channel_estimate: session.channel_estimate().cloned(),
         protected_constellation,
