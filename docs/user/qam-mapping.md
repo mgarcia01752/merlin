@@ -2,8 +2,8 @@
 
 The public Rust mapper supports every downstream data order in the pinned PHY:
 16,64,128,256,512,1024,2048,4096,8192 and16384-QAM. BPSK and QPSK references are
-also available for future control-channel work; they do not become downstream
-payload modes. Data modulation starts with256-QAM for the upcoming channel path.
+also used for protected control paths; they do not become downstream payload
+modes. Supported full downstream data orders have their own coding-chain tests.
 
 The tables are reused from PNM Viewer Toolkit's preserved PyPNM resources.
 **PyPNM - Proactive Network Maintenance Toolkit** attribution and its LICENSE,
@@ -36,8 +36,9 @@ covers all sizes, rather than a16-element array. Existing `map_qam16` and
 For data orders16..16384, resource row index is the label. BPSK/QPSK resource
 rows require explicit build-time label permutations verified against PHY
 Figures99–100; the original resource files are unchanged.
-Do not sort points by amplitude or assume a
-generic square constellation:128,512,2048 and8192-QAM use non-square mappings.
+Do not reorder the label-indexed source table or assume a generic square
+constellation:128,512,2048 and8192-QAM use non-square mappings. Derived search
+indexes preserve the original bit-label partitions.
 
 For integer coordinates $a_l,b_l$ and constellation order $M$:
 
@@ -71,10 +72,37 @@ compute finite LLRs. It does not inject noise; zero variance is rejected.
 
 ## What is implemented
 
-Mapping and reference max-log demapping work through16K-QAM. The demapper searches
-all points, with work proportional to constellation size times bit count. It is
-a correctness reference; streaming high-order performance optimization remains
-separate from mapping correctness.
+Mapping and exact indexed max-log demapping work through16K-QAM. For verified
+Cartesian labels, the demapper searches the I and Q coordinate levels once each,
+then looks up the nearest allowed levels for each bit hypothesis. This changes
+per-cell work from O(M log M) to O(log M), including the log2(M) output bits.
+
+Cross-QAM keeps its original geometry through exact balanced spatial searches
+for each bit hypothesis. Search can still visit every point in the worst case;
+it is not a guaranteed logarithmic algorithm for irregular constellations.
+BPSK, QPSK,16-QAM and cross-128 retain small direct scans to avoid search overhead.
+
+Indexes are initialized once per supported order and shared safely between
+threads. They never change the mapper, labels, transmitted points, noise draws,
+LLR sign/scaling or clipping. Both I/Q squared terms are retained in the original
+arithmetic order before subtraction. Extreme-coordinate overflow checks fall
+back to the old full scan when an enclosing rectangle is inconclusive.
+
+The optimization reduces receiver computation during acquisition, observation,
+completion and drain; it does not shorten the interleaver or simulated duration.
+LDPC iterations and other stages can still dominate total run time.
+
+A reproducible kernel comparison is available as:
+
+```bash
+scripts/cargo-local.sh run -p docsis-ofdm-fec --release --locked \
+  --example qam_demapper_benchmark -- 4096
+```
+
+It checks matching output checksums and reports cold initialization plus median
+warm timings from three equivalent batches. These are kernel measurements, not
+promises of the same whole-simulation speedup. Detailed results and verification
+are recorded in the [performance design](../development/features/qam-demapper-performance/design.md).
 
 The full coding CLI still runs the original short8/9 uniform16-QAM experiment.
 All ten downstream orders now have their full uniform bit-interleaver and
@@ -101,3 +129,9 @@ pending.
 All256 ideal points recover their eight bits with zero errors. Tests also check
 soft-bit ordering, variance scaling, clipping and invalid inputs. The capability
 registry marks mapping experimental independently of full coding simulation.
+
+The indexed implementation is compared bit for bit with an independent full-scan
+oracle for every supported order, perturbed/edge/tie/outside samples, tiny/large
+variance, overflow and invalid inputs. Existing label/energy tests remain in
+place; numerical agreement with the old demapper is not external interoperability
+evidence.

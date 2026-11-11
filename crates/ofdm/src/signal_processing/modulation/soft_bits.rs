@@ -13,10 +13,24 @@ use crate::{
     types::{ofdm_modulation::ConstellationOrder, IqPair},
     SimulationError,
 };
+use std::sync::OnceLock;
+mod axis;
+mod index;
+mod search;
+use index::DemapIndex;
+
 const LLR_LIMIT: f64 = 100.0;
 const MAX_REFERENCE_BITS: usize = crate::types::ofdm_modulation::MAX_OFDM_BITS_PER_SYMBOL as usize;
 
-/// Computes max-log likelihoods for any supported reference through16K-QAM.
+static INDICES: [OnceLock<DemapIndex>; MAX_REFERENCE_BITS + 1] =
+    [const { OnceLock::new() }; MAX_REFERENCE_BITS + 1];
+
+/// Computes exact max-log likelihoods for any supported reference through16K-QAM.
+///
+/// Uses bounded, thread-safe lazy indexes over unchanged reference labels. Verified
+/// Cartesian tables need O(log M) work per cell; irregular tables use exact spatial
+/// searches whose worst case remains O(M log M). Control/16-QAM and cross-128
+/// tables retain direct scans to avoid search overhead. First use initializes any index.
 /// # Arguments
 /// * `order` - Physical constellation size, not an OSSI code.
 /// * `received` - Equalized unit-energy [I,Q]; no rescaling is applied.
@@ -53,7 +67,7 @@ pub fn qam16_llrs(received: IqPair, noise_power: f64) -> Result<[f64; 4], Simula
     Ok(output)
 }
 
-/// Fills caller-owned output through one shared brute-force max-log calculation.
+/// Fills caller-owned output using exact indexed bit-hypothesis minima.
 fn demap_into(
     reference: &QamReference,
     received: IqPair,
@@ -70,18 +84,39 @@ fn demap_into(
     }
     let bits = usize::from(reference.bit_loading);
     let mut distances = [[f64::INFINITY; 2]; MAX_REFERENCE_BITS];
+    // Tiny control tables and the small cross-128 table cost less to scan directly.
+    if reference.order <= 16 || reference.order == 128 {
+        full_scan(reference, received, &mut distances[..bits])?;
+    } else {
+        let index = INDICES[bits].get_or_init(|| DemapIndex::new(reference));
+        if index.finite_distances(received) {
+            index.distances(received, &mut distances[..bits]);
+        } else {
+            full_scan(reference, received, &mut distances[..bits])?;
+        }
+    }
+    for (value, hypotheses) in output.iter_mut().zip(&distances[..bits]) {
+        *value = ((hypotheses[1] - hypotheses[0]) / noise_power).clamp(-LLR_LIMIT, LLR_LIMIT);
+    }
+    Ok(())
+}
+
+// Keep the previous arithmetic and reject-on-any-overflow policy for extreme inputs.
+fn full_scan(
+    reference: &QamReference,
+    received: IqPair,
+    distances: &mut [[f64; 2]],
+) -> Result<(), SimulationError> {
+    let bits = usize::from(reference.bit_loading);
     for (label, point) in reference.iq.iter().enumerate() {
         let distance = (received[0] - point[0]).powi(2) + (received[1] - point[1]).powi(2);
         if !distance.is_finite() {
             return Err(invalid("I/Q distance exceeds finite demapping range."));
         }
-        for (bit, hypotheses) in distances[..bits].iter_mut().enumerate() {
+        for (bit, hypotheses) in distances.iter_mut().enumerate() {
             let value = (label >> (bits - 1 - bit)) & 1;
             hypotheses[value] = hypotheses[value].min(distance);
         }
-    }
-    for (value, hypotheses) in output.iter_mut().zip(&distances[..bits]) {
-        *value = ((hypotheses[1] - hypotheses[0]) / noise_power).clamp(-LLR_LIMIT, LLR_LIMIT);
     }
     Ok(())
 }

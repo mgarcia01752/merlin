@@ -107,3 +107,5 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 - [Readable FEC Monitor](fec-monitor/design.md): UI-FEC-02.
 
 - [Run elapsed time and profile progress](run-elapsed-time/design.md): UI-RUN-TIME-01.
+
+- [Exact indexed QAM demapping](qam-demapper-performance/design.md): QAM-PERF-01.

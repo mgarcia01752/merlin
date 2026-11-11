@@ -1019,3 +1019,9 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **UI-TERMS-02** Define interleaver depth/drain in the About-linked guide
   and require technical UI definitions through the UI-design skill.
   [Design](features/run-elapsed-time/design.md#ui-terms-02-processing-terminology).
+
+- [x] **QAM-PERF-01** Replace high-order exhaustive soft demapping with verified
+  axis lookups and exact cross-QAM search; preserve labels and numerical results.
+  Core/analysis and Qt checks pass; kernel benchmark and native Profile3 run
+  measured. Compiled Qt executable is ready.
+  [Design](features/qam-demapper-performance/design.md).

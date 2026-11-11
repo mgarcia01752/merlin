@@ -1886,3 +1886,19 @@ Technical UI/status terms are defined in the canonical
 [terminology guide](user/terminology.md), reached by About → Terminology.
 Interleaver depth/drain definitions distinguish implemented symbol delay from
 CPU/decoder-dependent elapsed time; new terms follow skills/ui-design.
+
+### Indexed QAM soft demapping (QAM-PERF-01)
+
+`signal_processing/modulation/soft_bits` derives bounded lazy search indexes from
+the unchanged embedded label-ordered reference. Complete Cartesian geometry and
+coordinate-separable bit labels are verified before using two axis binary searches
+and constant-time predecessor/successor lookups per output bit: O(log M) per cell.
+Irregular/coupled geometry uses exact balanced per-hypothesis spatial searches,
+with worst-case O(M log M) work. Small control/16-QAM/cross-128 scans remain direct.
+Preserve computed Euclidean minima, I-squared plus Q-squared order, variance, MSB
+ordering, clipping and error policy. Inconclusive extreme-coordinate finite bounds
+use the old exhaustive scan. Cache admission depends only on12 supported immutable
+references, never external capture sizes. No public API, mapping tables, FEC rules,
+RNG, run budgets, persistence or Qt numerical ownership changes.
+See [design](development/features/qam-demapper-performance/design.md) and
+[user guide](user/qam-mapping.md).

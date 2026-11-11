@@ -17,7 +17,8 @@ pub type QamScaleFactor = f64;
 
 /// Borrowed unit-average-energy coordinates indexed by cell-word label.
 ///
-/// Static tables are generated at build time; no runtime filesystem or cache.
+/// Static tables are generated at build time; reference lookup needs no runtime
+/// filesystem. Soft demapping separately caches bounded immutable search indexes.
 #[derive(Debug)]
 pub struct QamReference {
     /// Physical constellation size, distinct from a PNM modulation code.
