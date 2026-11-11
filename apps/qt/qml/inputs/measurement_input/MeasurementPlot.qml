@@ -14,6 +14,8 @@ ColumnLayout {
     required property var theme
     property var viewport: ({points: [], x_ticks: [], y_ticks: []})
     property string readout: ""
+    property var roleColors: ({})
+    function pointColor(point) { return roleColors[point.role] || theme.accent }
     signal viewportRequested(int start, int count)
     onViewportChanged: { readout = ""; canvas.requestPaint() }
     Label { text: chart.viewport.axis_label || "Measurement"; color: theme.muted; font.pixelSize: 12 }
@@ -49,11 +51,15 @@ ColumnLayout {
             for (const point of chart.viewport.points || []) {
                 if (point.y === null || point.minimum_y === null) { previous = null; continue }
                 const x = left + point.x * width, y = top + point.y * height
+                ctx.strokeStyle = chart.pointColor(point)
                 ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, top + point.minimum_y * height); ctx.stroke()
-                if (previous && !previous.gap && !point.gap) {
-                    ctx.beginPath(); ctx.moveTo(left + previous.x * width, top + previous.y * height); ctx.lineTo(x, y); ctx.stroke()
+                if (previous && !previous.gap && !point.gap && previous.role === point.role) {
+                    ctx.beginPath(); ctx.moveTo(left + previous.x * width, top + previous.y * height)
+                    if (chart.viewport.step) { ctx.lineTo(x, top + previous.y * height) }
+                    ctx.lineTo(x, y); ctx.stroke()
                 }
-                ctx.fillStyle = chart.theme.accent; ctx.fillRect(x - 1, y - 1, 2, 2)
+                const marker = chart.viewport.step ? 3 : 2
+                ctx.fillStyle = chart.pointColor(point); ctx.fillRect(x - marker / 2, y - marker / 2, marker, marker)
                 previous = point
             }
         }
@@ -64,7 +70,12 @@ ColumnLayout {
             onRangeRequested: function(start, count) { chart.viewportRequested(start, count) }
             onPointHovered: function(fraction) {
                 const points = chart.viewport.points || []
-                const index = Math.min(points.length - 1, Math.floor(fraction * points.length))
+                let index = -1
+                let distance = Infinity
+                for (let candidate = 0; candidate < points.length; candidate++) {
+                    const delta = Math.abs(points[candidate].x - fraction)
+                    if (delta < distance) { index = candidate; distance = delta }
+                }
                 chart.readout = index >= 0 ? points[index].readout : ""
             }
         }

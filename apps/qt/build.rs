@@ -64,6 +64,7 @@ fn main() {
                 "qml/about/LicenseDialog.qml",
                 "qml/inputs/ofdm_settings/OfdmSettingsDialog.qml",
                 "qml/inputs/profile_input/ProfileInputDialog.qml",
+                "qml/inputs/profile_input/ProfilePlotDialog.qml",
                 "qml/inputs/source_input/SourceInputDialog.qml",
                 "qml/instruments/spectrum/SpectrumAnalyzerDialog.qml",
                 "qml/instruments/spectrum/SpectrumPlot.qml",

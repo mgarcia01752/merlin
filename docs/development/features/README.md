@@ -49,7 +49,7 @@ from a fresh clone and are deliberately not Markdown link targets.
 | plc ldpc | [architecture](plc-ldpc/architecture.md) |
 | plc message blocks | [architecture](plc-message-blocks/architecture.md) |
 | plc randomization | [architecture](plc-randomization/architecture.md) · [validation](plc-randomization/validation.md) |
-| pnm measurement inputs | [README](pnm-measurement-inputs/README.md) |
+| pnm measurement inputs | [README](pnm-measurement-inputs/README.md), [visual DPD](pnm-measurement-inputs/profile-view.md) |
 | prbs source | [plan](prbs-source/plan.md) · [validation](prbs-source/validation.md) |
 | project architecture | [plan](project-architecture/plan.md) |
 | Python adapter (after Qt, planned) | [API-01 class proposal](python-adapter/design.md) |

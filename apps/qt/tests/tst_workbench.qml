@@ -35,6 +35,9 @@ Pane {
         function begin() { loaded = acceptedId >= 0; return view(acceptedId) }
         function demo() { loaded = true; return view(0) }
         function preview(id) { return view(id) }
+        function plot(id, start, count) {
+            return JSON.stringify({profile_id:id,total:100,start:count ? start : 0,count:count || 100,points:[{x:0,y:0.5,minimum_y:0.5,role:"data",readout:"Test carrier"}],roles:[{kind:"data",label:"Data"},{kind:"continuous_pilot",label:"Pilots"}],x_ticks:[],y_ticks:[],axis_label:"Bit Loading (Bits/Symbol)"})
+        }
         function stage(url) { return JSON.stringify({error: "Invalid test input"}) }
         function clear_draft() { loaded = false; return view(-1) }
         function apply(id, settings) { acceptedId = loaded ? id : -1; return "" }
@@ -352,6 +355,17 @@ Pane {
             tryCompare(dialog, "opened", true)
             compare(dialog.previewModel.profile_ids.length, 0)
             mouseClick(findChild(dialog, "profileLoadDemo"))
+            mouseClick(findChild(dialog, "profileView"))
+            tryCompare(dialog.plotPopup, "opened", true)
+            compare(dialog.plotPopup.selectedProfile,0)
+            compare(profileBackend.acceptedId,-1)
+            dialog.plotPopup.refresh(10,20)
+            compare(dialog.plotPopup.viewport.start,10)
+            compare(dialog.plotPopup.viewport.count,20)
+            mouseClick(findChild(dialog.plotPopup,"profilePlotFullSpan"))
+            compare(dialog.plotPopup.viewport.count,100)
+            dialog.plotPopup.close()
+            tryCompare(dialog.plotPopup,"visible",false)
             compare(dialog.previewModel.format, "Binary PNM")
             compare(profileBackend.acceptedId, -1)
             keyClick(Qt.Key_Escape)

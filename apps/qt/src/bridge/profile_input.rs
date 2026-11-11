@@ -50,6 +50,14 @@ pub mod bridge {
         /// Preview JSON or an error, without changing accepted input.
         #[qinvokable]
         fn preview(self: &ProfileInput, profile_id: i32) -> QString;
+        /// Projects the current draft without applying it or starting a run.
+        /// # Arguments
+        /// * `profile_id` - Captured profile ID, not an array index.
+        /// * `start`, `count` - Source offsets; zero count requests Full Span.
+        /// # Returns
+        /// Bounded plot JSON or a diagnostic preserving draft and accepted state.
+        #[qinvokable]
+        fn plot(self: &ProfileInput, profile_id: i32, start: i32, count: i32) -> QString;
         /// Stages removal; Cancel can still preserve the accepted input.
         /// # Returns
         /// Empty-input preview JSON.
@@ -89,6 +97,27 @@ fn response(result: Result<Value, String>) -> QString {
     })
 }
 impl bridge::ProfileInput {
+    /// Queries one role-aware viewport from the staged original capture.
+    /// # Arguments
+    /// * `profile_id` - Captured identity in 0..255.
+    /// * `start`, `count` - Nonnegative offsets; zero count restores full span.
+    /// # Returns
+    /// Bounded display JSON; invalid selection never mutates editor state.
+    pub fn plot(&self, profile_id: i32, start: i32, count: i32) -> QString {
+        response((|| {
+            let capture = self
+                .rust()
+                .draft
+                .as_ref()
+                .ok_or("Open a profile file first.")?;
+            crate::inputs::profile_input::plot::viewport(
+                capture,
+                u8::try_from(profile_id).map_err(|_| "Invalid profile ID.")?,
+                usize::try_from(start).map_err(|_| "Invalid start offset.")?,
+                usize::try_from(count).map_err(|_| "Invalid carrier count.")?,
+            )
+        })())
+    }
     /// Adopts already validated project captures without a file-picker round trip.
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
         if let Ok(model) =

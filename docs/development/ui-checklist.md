@@ -80,6 +80,9 @@ Develop the workbench left to right; OFDM Channel Descriptor (OCD) is the first 
 - [x] Keep OFDM Channel Descriptor (OCD) yellow while a validated modulation-profile input is
   unavailable; record WB-RULE-01/02 in the architecture and task design.
 - [x] Connect accepted/removed/rejected DPD input to Rust-backed DPD/OCD readiness.
+- [x] **UI-DPD-VIEW-01** Add View Profile with role colors, bounded bit-loading
+  plot, mouse zoom and Full Span; hide editor filenames and preserve originals.
+  [Design](features/pnm-measurement-inputs/profile-view.md).
 - [x] Connect accepted input/job states and dependency invalidation to readiness.
 - [x] Implement PRBS-TX configuration and supported Transmitter preview readiness.
   Full-loop Transmitter/job wiring uses the shared Rust engine. Source options are defined in the

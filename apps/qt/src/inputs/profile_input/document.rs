@@ -269,7 +269,6 @@ impl Capture {
         }
         rows.push(branch("provenance", "Input provenance", "", 0, &[]));
         for (key, label, value) in [
-            ("source", "Source file", self.name.clone()),
             ("format", "Detected format", self.format.into()),
             (
                 "bytes",

@@ -925,6 +925,12 @@ Local development scope only; existing push/release and security gates stay inta
 See [setup](setup.md) and [design](features/development-setup/design.md).
 
 
+## DPD visual inspection
+
+- [x] **UI-DPD-VIEW-01** Add a read-only profile plot from DPD using the shared
+  PNM Viewer-derived chart; hide filenames and document viewing/zoom behavior.
+  [Design](features/pnm-measurement-inputs/profile-view.md).
+
 ## Ubuntu 22.04 desktop delivery
 
 - [x] **UI-DEB-01** Build the amd64 Qt DEB with private runtime, examples,

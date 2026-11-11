@@ -19,6 +19,7 @@ WorkbenchDialog {
     property string rowDescription: "Open a binary PNM capture or supported decoded JSON, then choose a profile."
     readonly property var visibleRows: previewModel.rows.filter(row => row.ancestors.every(key => !collapsed[key]))
     signal inputApplied()
+    property alias plotPopup: profilePlot
     parent: Overlay.overlay
     anchors.centerIn: parent
     width: Math.min(960, parent ? parent.width - 40 : 960)
@@ -30,7 +31,7 @@ WorkbenchDialog {
         errorMessage = ""
         showResult(backend.begin())
     }
-    onClosed: backend.cancel()
+    onClosed: { profilePlot.close(); backend.cancel() }
     function showResult(document) {
         const result = JSON.parse(document)
         if (result.cancelled) {
@@ -62,7 +63,8 @@ WorkbenchDialog {
             Layout.fillWidth: true
             Button { objectName: "profileOpenFile"; text: "Open File…"; onClicked: dialog.showResult(dialog.backend.choose_file()) }
             Button { objectName: "profileLoadDemo"; text: "Load demo"; onClicked: dialog.showResult(dialog.backend.demo()) }
-            Label { text: dialog.previewModel.source_name || "No input selected"; color: theme.text; elide: Text.ElideMiddle; Layout.fillWidth: true }
+            Button { objectName: "profileView"; text: "View Profile…"; enabled: dialog.previewModel.profile_ids.length > 0; onClicked: profilePlot.open() }
+            Item { Layout.fillWidth: true }
             Label { objectName: "profileDetectedType"; text: dialog.previewModel.format ? "Detected: " + dialog.previewModel.format : ""; color: theme.accent }
         }
         Label { text: "PNM modulation-profile capture · Read-only inspection"; color: theme.muted; Layout.fillWidth: true }
@@ -130,6 +132,13 @@ WorkbenchDialog {
             }
         }
         Label { objectName: "profileInputError"; text: dialog.errorMessage; visible: text.length > 0; color: theme.text; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+    }
+    ProfilePlotDialog {
+        id: profilePlot
+        theme: dialog.theme
+        backend: dialog.backend
+        profileIds: dialog.previewModel.profile_ids
+        initialProfile: dialog.previewModel.selected_profile_id
     }
     footer: Pane {
         padding: 10

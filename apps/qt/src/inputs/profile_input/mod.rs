@@ -4,6 +4,7 @@
  */
 //! Profile draft/accepted state and independent project restoration.
 pub(crate) mod document;
+pub(crate) mod plot;
 use docsis_ofdm_fec::transmission::TransmissionSettings;
 use document::Capture;
 #[cfg(test)]
@@ -141,6 +142,53 @@ mod tests {
         }
         assert_eq!(binary.profiles.len(), 4);
         assert_eq!(binary.profiles[0].assignments.len(), 7480);
+    }
+    #[test]
+    fn profile_plot_preserves_source_grid_roles_and_bounds() {
+        let binary = Capture::decode("original.bin".into(), BINARY.to_vec()).unwrap();
+        let decoded = Capture::decode("decoded.json".into(), JSON.to_vec()).unwrap();
+        let full = plot::viewport(&binary, 0, 0, 0).unwrap();
+        assert_eq!(full, plot::viewport(&decoded, 0, 0, 0).unwrap());
+        assert!(full["points"].as_array().unwrap().len() <= 512 * 7);
+        assert!(full["roles"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|role| role["kind"] == "continuous_pilot"));
+        let zoomed = plot::viewport(&binary, 0, 20, 4).unwrap();
+        let profile = binary.profile(0).unwrap();
+        for point in zoomed["points"].as_array().unwrap() {
+            let index = point["bin"].as_u64().unwrap() as usize
+                - usize::from(profile.key.grid.first_subcarrier_index);
+            assert!((20..24).contains(&index));
+            assert_eq!(
+                point["frequency_hz"],
+                profile.key.grid.frequency(index).unwrap()
+            );
+            assert_eq!(point["bits"], json!(profile.assignments[index].bit_loading));
+        }
+        assert_eq!(zoomed["points"][0]["x"], 0.0);
+        assert_eq!(zoomed["points"][3]["x"], 1.0);
+        assert!(plot::viewport(&binary, 255, 0, 0).is_err());
+        assert!(plot::viewport(&binary, 0, usize::MAX, 2).is_err());
+        assert!(plot::viewport(&binary, 0, 7479, 2).is_err());
+        let rows = binary.preview(0).unwrap();
+        assert!(!rows["rows"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|row| row["key"] == "source"));
+        assert_eq!(binary.name, "original.bin");
+        let mut missing = binary.clone();
+        let mut profile = binary.profile(0).unwrap().clone();
+        profile.assignments[0].carrier_type =
+            docsis_ofdm_fec::types::modulation::CarrierType::Exclusion;
+        profile.assignments[0].bit_loading = None;
+        missing.profiles = std::sync::Arc::new(vec![profile]);
+        let marker = plot::viewport(&missing, 0, 0, 2).unwrap();
+        assert!(marker["points"][0]["bits"].is_null());
+        assert_eq!(marker["points"][0]["role"], "exclusion");
+        assert_eq!(marker["role_markers"], true);
     }
     #[test]
     fn staged_failures_removal_and_profile_rejection_preserve_accepted_input() {

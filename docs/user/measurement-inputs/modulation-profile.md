@@ -21,7 +21,25 @@ the draft, and unavailable integration reports an error without a Qt fallback.
 Loading alone does not change the accepted selection. Cancel/Escape
 preserves it. Remove input is also staged until Apply. Captures stay unchanged;
 this dialog does not export modified captures or start a run. Settings and inputs
-are currently in memory only.
+are included in saved workbench JSON; viewing and zoom are temporary.
+
+Use **View Profile…** to open the selected draft as a frequency plot before
+applying it. Choose another profile inside that window to compare its loading;
+this viewing choice does not change the profile selected for Apply. The vertical
+axis shows bits per symbol, and the horizontal axis shows the capture's original
+frequency grid. The legend distinguishes green data, yellow pilots, red PLC,
+gray exclusions, blue zero-loaded, purple reserved and orange unknown carriers.
+Roles without bit loading appear as baseline markers rather than zero-bit data.
+Hover for frequency, physical bin, role and loading. Full-span views group
+carriers with min/max values; zoom reveals individual carriers.
+
+Scroll over the plot to zoom around the pointer, drag horizontally to select a
+range, and press **Full Span** to restore the entire profile. X and Close dismiss
+the plot. Viewing never applies the draft or starts a simulation. The editor
+does not display the capture filename; original names, bytes and hashes remain
+stored with the workbench.
+
+![Visual modulation profile in dark mode](../../images/workbench/dpd-profile-plot-dark.png)
 
 ![Native DPD tree in dark mode](../../images/workbench/dpd-input-dark.png)
 
@@ -44,10 +62,9 @@ simulation result. Applying requires the capture's spacing and carrier span to
 fit accepted OCD settings. Editing channel spacing/bandwidth in the UI remains
 pending; incompatible captures stay in the editor with a diagnostic.
 
-All four demo profiles can be inspected and selected as input. This does not
-establish support for every profile in the future UI simulation path: job
-integration remains pending, and the existing measured-runner restrictions still
-apply. Final run validation will use the Rust job API.
+All four demo profiles can be inspected and selected as input. Simulation support
+is checked when preparing the run; successfully importing a capture does not
+guarantee its assignments fit the supported transmit/receive configuration.
 
 Input provenance records the SHA-256 and length of the **original selected file**.
 For binary input, the shared JSON importer also records the separately decoded

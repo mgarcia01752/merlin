@@ -724,6 +724,16 @@ and [development setup](development/setup.md).
 
 ### Reuse of the PNM Viewer Qt framework
 
+UI-DPD-VIEW-01 extends the shared PNM Viewer-derived MeasurementPlot to display
+the draft modulation profile's bit loading and distinct carrier-role colors.
+The separate View Profile dialog uses Rust-owned bounded role-aware min/max
+viewports on the exact captured grid, preserving absent loading as role markers.
+Profile browsing and mouse zoom are transient, independent of Apply/readiness
+and WB persistence. Capture filenames are hidden in the DPD editor while saved
+originals and provenance retain them. See the
+[design](development/features/pnm-measurement-inputs/profile-view.md) and
+[user guide](user/measurement-inputs/modulation-profile.md).
+
 Reuse suitable Qt shell, theme, dialog, navigation, Rust/Qt adapter and build
 patterns from `/home/dev01/Projects/PNM-Viewer-Toolkit`. The user authorized
 read-only reference inspection; all modifications stay in MERLIN. Select and
