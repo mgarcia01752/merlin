@@ -8,6 +8,19 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
 cd "${PROJECT_DIR}"
+SKIP_TEST=0
+case "${1:-}" in
+  '') ;;
+  --skip-test) SKIP_TEST=1; shift ;;
+  *) echo "Unknown validation option: $1" >&2; exit 2 ;;
+esac
+if [[ $# -ne 0 ]]; then
+  echo 'Unexpected validation arguments' >&2
+  exit 2
+fi
+if [[ "$SKIP_TEST" == 1 ]]; then
+  echo 'Local Rust tests and simulation smokes explicitly skipped; hosted CI remains required.'
+fi
 python3 tools/release/versions.py
 python3 -m unittest discover -s tools/release -p 'test_*.py'
 python3 -m unittest discover -s tools/git/tests -p 'test_*.py'
@@ -21,6 +34,11 @@ command -v shellcheck >/dev/null
 shellcheck "${SHELL_SCRIPTS[@]}"
 "${SCRIPT_DIR}/cargo-local.sh" fmt --all -- --check
 "${SCRIPT_DIR}/cargo-local.sh" clippy --workspace --all-targets --locked -- -D warnings
+if [[ "$SKIP_TEST" == 1 ]]; then
+  "${SCRIPT_DIR}/cargo-local.sh" build -p ofdm-fec-cli --release --locked
+  echo 'Local non-simulation checks passed; Rust tests and smokes were NOT run.'
+  exit 0
+fi
 "${SCRIPT_DIR}/cargo-local.sh" test --workspace --locked
 "${SCRIPT_DIR}/cargo-local.sh" test -p docsis-ofdm-fec --example prepare_rxmer_variants --locked
 "${SCRIPT_DIR}/cargo-local.sh" test -p docsis-ofdm-fec --no-default-features --locked

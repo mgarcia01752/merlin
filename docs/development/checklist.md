@@ -935,5 +935,7 @@ See [setup](setup.md) and [design](features/development-setup/design.md).
   installed/reinstall/remove results; verify this VM's interactive installed UI.
 - [x] **UI-DEB-03** Fix first-run scratch storage and SDK bootstrap failures;
   verify packaging tests in a fresh tracked checkout. Hosted rerun pending.
+- [x] **DEV-04** Add explicit local `--skip-test` with retained non-simulation
+  checks and Git guards. [Design](features/ubuntu-desktop/local-validation.md).
 - [x] **SECURITY-DEPS-02** Patch rand/cxx advisories and audit both graphs
   without suppression. [Design](features/ubuntu-desktop/design.md).

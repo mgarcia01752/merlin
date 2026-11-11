@@ -44,13 +44,25 @@ nothing. Python3, ShellCheck, and the pinned Rust toolchain are prerequisites.
 For automatic documentation-only pushes, the allowed paths are root `README.md`,
 Markdown files under `docs/`, and PNG/JPG/JPEG/SVG/WebP/GIF images under
 `docs/images/`. Changes to skills, AGENTS.md, fixtures, source, manifests, tools
-or workflows always require the full gate. Every outgoing commit is inspected,
+or workflows default to the full gate. Every outgoing commit is inspected,
 including merge-parent differences and both paths of renames; reverting code
 later does not make a range documentation-only. Initial pushes and release/tag
-modes always run the full gate. Git inspection errors stop the push.
+modes default to the full gate. Git inspection errors stop the push.
 
-Use the same ordinary push command for documentation changes; there is no manual
-unrestricted skip flag. Clean-tree, ancestry, unchanged-HEAD and non-force guards
+Use the same ordinary push command for documentation changes. Explicit
+`--skip-test` is available for branch, bump and existing-tag pushes when the
+user chooses to omit local Rust test suites and simulation smoke runs. It retains
+version consistency, Python tooling tests, shell/style checks, Clippy and the
+release CLI build; all clean-tree, ancestry, immutable-tag and atomic-push guards
+remain. Output explicitly reports omitted checks. GitHub CI, CodeQL, audits and
+installed-package release gates remain unchanged. Default behavior runs everything.
+
+```bash
+cd /home/dev01/Projects/merlin &&
+tools/git/git-push.sh --tag-patch --skip-test
+```
+
+This option does not claim skipped tests passed. Clean-tree, ancestry, unchanged-HEAD and non-force guards
 still apply. This shortcut affects local validation only; GitHub CI is unchanged.
 For full-gate pushes, missing checks remain failures.
 
@@ -75,7 +87,7 @@ tools/git/git-push.sh --tag-patch
 
 Use --tag-minor or --tag-major for those components. Release modes require clean
 master and consistent committed metadata. They inspect origin, reject collisions,
-bump, validate the candidate, commit only version files, annotate the tag and
+bump, validate the candidate with the selected local checks, commit only version files, annotate the tag and
 atomically push master plus that tag. They never force-push or overwrite a tag.
 Add --dry-run to preview without a bump/build/commit/tag/push; it still reads origin.
 

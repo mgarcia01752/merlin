@@ -14,9 +14,11 @@ Use tools/bump-version.sh --bump major|minor|patch for local version edits.
 Tags are vMAJOR.MINOR.PATCH. Bumping does not authorize committing or pushing.
 
 Combined tools/git/git-push.sh --tag-patch|--tag-minor|--tag-major requires clean
-master and matching metadata. It bumps, runs all local checks, commits only the
+master and matching metadata. It bumps, runs the selected local checks, commits only the
 version files, creates an annotated tag and atomically pushes master plus that
-tag. No force-push, validation skip or blanket git push --tags is allowed.
+tag. Explicit `--skip-test` omits local Rust tests/smokes, retaining version,
+tooling, style, Clippy, release build and Git guards. Report omitted tests;
+hosted release gates remain mandatory. No force-push or blanket git push --tags.
 --force only permits a fresh bump from an already published clean HEAD; it
 retains validation, collision checks and non-force atomic pushes. Do not default
 to --force or use it to bypass a pending local release.

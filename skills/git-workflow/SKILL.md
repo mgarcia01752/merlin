@@ -32,10 +32,12 @@ origin and nondiverged ancestry. The helper automatically skips the local
 build/test gate only when every outgoing commit changes root README.md, Markdown
 under docs/, or approved documentation images under docs/images/. It inspects
 per-commit merge/rename paths, so code reverted later still requires full checks.
-Initial pushes, mixed changes and all tag/releases use the full gate. No manual
-skip flag is supported; Git inspection failures stop the push. GitHub CI is
+Initial pushes, mixed changes and all tag/releases default to the full gate.
+User-authorized `--skip-test` omits only local Rust tests and simulation smokes;
+retain tooling tests, version/style/Clippy, release build and Git guards. Report
+the omitted checks explicitly. Git inspection failures stop the push. GitHub CI is
 unchanged. The captured commit and clean tree must remain unchanged throughout.
-Do not bypass the helper's classification or use Git force-push. No feature-branch push is authorized
+Do not bypass Git guards or use Git force-push. No feature-branch push is authorized
 by the helper. Use toolkit-release for explicit version/tag modes.
 
 A new empty repository needs its initial reviewed commit and origin before a

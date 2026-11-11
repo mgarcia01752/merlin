@@ -17,7 +17,7 @@ REMOTE="origin"
 # Arguments are unused unless described above; failures stop this script.
 usage() {
   cat <<'EOF'
-Usage: git-push.sh [MODE] [--dry-run] [--force]
+Usage: git-push.sh [MODE] [--dry-run] [--force] [--skip-test]
 
 Modes (choose one):
   --master, --branch  Push main/master only (also the default).
@@ -27,6 +27,7 @@ Modes (choose one):
   --tag TAG           Validate and push an existing tag at HEAD.
   --dry-run           Preview a release; no version edits, builds or push.
   --force             Allow a bump from an already published clean HEAD.
+  --skip-test         Omit local Rust tests/smokes; retain other checks.
 
 Release modes require clean master, matching VERSION metadata and origin.
 They atomically push master and only the selected tag; never publish directly.
@@ -38,7 +39,8 @@ Safety checks:
   - The origin remote must exist.
   - The local branch must not be behind or diverged from origin.
   - Documentation-only outgoing ranges skip the local build/test gate.
-  - All other changes and all releases require the full local gate.
+  - Other changes/releases default to the full local gate.
+  - Explicit --skip-test omits local Rust tests/smokes only.
   - Branch, commit and working tree must stay unchanged during checks.
   - Force-push is never used.
 EOF
@@ -55,6 +57,7 @@ PUSH_MODE=""
 RELEASE_ARGS=()
 DRY_RUN=0
 FORCE_RELEASE=0
+SKIP_TEST=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --master|--branch|--tag-major|--tag-minor|--tag-patch|--tag)
@@ -75,6 +78,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     --dry-run) DRY_RUN=1 ;;
     --force) FORCE_RELEASE=1 ;;
+    --skip-test) SKIP_TEST=1 ;;
     -h|--help) usage; exit 0 ;;
     *) die "Unknown argument: $1 (see --help)" ;;
   esac
@@ -87,6 +91,9 @@ if [[ "$FORCE_RELEASE" == 1 ]]; then
   esac
 fi
 if [[ ${#RELEASE_ARGS[@]} -gt 0 ]]; then
+  if [[ "$SKIP_TEST" == 1 ]]; then
+    RELEASE_ARGS+=(--skip-test)
+  fi
   if [[ "$FORCE_RELEASE" == 1 ]]; then
     RELEASE_ARGS+=(--force)
   fi
@@ -144,7 +151,11 @@ if [[ "${validation_scope}" == "docs" ]]; then
   echo "Documentation-only outgoing commits; skipping local build/test checks."
 else
   echo "Validating ${branch} before push..."
-  bash "${PROJECT_DIR}/scripts/check-before-push.sh"
+  CHECK_ARGS=()
+  if [[ "$SKIP_TEST" == 1 ]]; then
+    CHECK_ARGS+=(--skip-test)
+  fi
+  bash "${PROJECT_DIR}/scripts/check-before-push.sh" "${CHECK_ARGS[@]}"
 fi
 if [[ "$(git -C "${PROJECT_DIR}" rev-parse HEAD)" != "${validated_commit}" ||
       "$(git -C "${PROJECT_DIR}" branch --show-current)" != "${branch}" ||

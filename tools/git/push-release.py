@@ -52,7 +52,7 @@ def remote_refs(*references):
                 (line.split() for line in output.splitlines()))
 
 
-def release(part, existing_tag, dry_run, force=False):
+def release(part, existing_tag, dry_run, force=False, skip_test=False):
     """Prepare a bumped release or push an existing tag at HEAD.
 
     part selects major/minor/patch; existing_tag selects recovery without a bump.
@@ -62,6 +62,7 @@ def release(part, existing_tag, dry_run, force=False):
     to version files, commits, tags or remote refs. Real releases validate the
     exact candidate tree before committing and atomically uploading both refs.
     Failures retain local changes/commits/tags and never reset or overwrite refs.
+    skip_test omits local Rust tests/smokes only; hosted checks remain mandatory.
     """
     if Path(git('rev-parse', '--show-toplevel').stdout.strip()).resolve() != ROOT:
         raise RuntimeError('The release helper must belong to the checkout root')
@@ -129,8 +130,10 @@ def release(part, existing_tag, dry_run, force=False):
         changes = []
     expected_status = git('status', '--porcelain', '--untracked-files=all').stdout
     candidate = {name: (ROOT / name).read_bytes() for name in changes}
-    print('Running all local checks on the release candidate...', flush=True)
-    subprocess.run(['bash', str(ROOT / 'scripts/check-before-push.sh')], cwd=ROOT, check=True)
+    print('Running local checks on the release candidate...', flush=True)
+    check_arguments = ['--skip-test'] if skip_test else []
+    subprocess.run(['bash', str(ROOT / 'scripts/check-before-push.sh'), *check_arguments],
+                   cwd=ROOT, check=True)
     ensure_checkout(starting_commit, expected_status)
     if any((ROOT / name).read_bytes() != content for name, content in candidate.items()):
         raise RuntimeError('Version files changed during validation; review before retrying')
@@ -157,7 +160,8 @@ def release(part, existing_tag, dry_run, force=False):
         git('push', '--atomic', '--no-follow-tags', '--recurse-submodules=no', 'origin',
             f'{release_commit}:{branch_ref}', f'{tag_object}:{tag_ref}')
     except RuntimeError as error:
-        recovery = shlex.join(['bash', str(ROOT / 'tools/git/git-push.sh'), '--tag', tag])
+        recovery = shlex.join(['bash', str(ROOT / 'tools/git/git-push.sh'), '--tag', tag,
+                              *check_arguments])
         raise RuntimeError(f'{error}\nLocal release commit and tag are retained. '
                            f'Inspect origin before retrying without a bump:\n{recovery}') from error
     print(f'Pushed {tag}; this helper does not publish GitHub Releases')
@@ -170,13 +174,16 @@ def main():
     modes.add_argument('--bump', choices=('major', 'minor', 'patch'))
     modes.add_argument('--tag', help='Push an existing matching tag at HEAD without bumping')
     parser.add_argument('--dry-run', action='store_true')
+    parser.add_argument('--skip-test', action='store_true',
+                        help='Omit local Rust tests/smokes; retain other checks and hosted CI')
     parser.add_argument('--force', action='store_true',
                         help='Allow a bump from an already published clean HEAD; all checks still run')
     arguments = parser.parse_args()
     if arguments.force and not arguments.bump:
         parser.error('--force requires --bump')
     try:
-        release(arguments.bump, arguments.tag, arguments.dry_run, arguments.force)
+        release(arguments.bump, arguments.tag, arguments.dry_run, arguments.force,
+                arguments.skip_test)
     except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError) as error:
         parser.exit(1, f'ERROR: {error}\nReview any local release state; nothing is reset automatically.\n')
 

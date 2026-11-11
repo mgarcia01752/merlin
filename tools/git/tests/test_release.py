@@ -44,6 +44,7 @@ class ReleaseTests(unittest.TestCase):
         (self.root / 'scripts/check-before-push.sh').write_text('''#!/bin/bash
 set -euo pipefail
 cat VERSION >> "$RELEASE_TEST_TRACE"
+if [[ $# -gt 0 ]]; then printf '%s\\n' "$@" >> "$RELEASE_TEST_TRACE"; fi
 python3 tools/release/versions.py
 case "$RELEASE_TEST_MODE" in
   fail) exit 17 ;;
@@ -99,6 +100,25 @@ esac
         """Publish the synthetic baseline so force tests start at a stable tag."""
         self.git('tag', '-a', 'v0.1.0', '-m', 'Published baseline')
         self.git('push', 'origin', 'refs/tags/v0.1.0')
+
+    def test_skip_test_reaches_gate_and_preserves_atomic_release(self):
+        """Explicit test omission still validates and pushes matching objects."""
+        result = self.run_helper('--tag-patch', '--skip-test')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.trace.read_text(), '0.1.1\n--skip-test\n')
+        self.assertEqual(self.git('rev-parse', 'v0.1.1^{commit}', remote=True).stdout.strip(),
+                         self.git('rev-parse', 'HEAD').stdout.strip())
+        result = self.run_helper('--tag', 'v0.1.1', '--skip-test')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('Nothing to push', result.stdout)
+
+    def test_skip_test_still_blocks_failed_remaining_checks(self):
+        """Omitting Rust tests cannot bypass a failing retained validation gate."""
+        self.environment['RELEASE_TEST_MODE'] = 'fail'
+        result = self.run_helper('--tag-patch', '--skip-test')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(self.trace.read_text(), '0.1.1\n--skip-test\n')
+        self.assert_origin_unchanged()
 
     def test_force_published_release_bumps_and_validates_again(self):
         """Allow consecutive clean releases without rewriting existing tags."""

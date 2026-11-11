@@ -1,5 +1,7 @@
 # Ubuntu desktop delivery and update notification
 
+Local release iteration: [DEV-04 explicit test omission](local-validation.md).
+
 ## UI-DEB-01: Ubuntu 22.04 amd64 DEB
 
 Build the native Qt desktop on Ubuntu 22.04 with the pinned Rust/Qt SDKs.

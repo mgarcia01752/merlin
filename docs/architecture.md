@@ -1725,6 +1725,10 @@ Provision the pinned SDK before requiring its explicit path, and initialize
 ignored test scratch storage on fresh checkouts. The first v0.1.0 hosted run
 failed at those two bootstrap boundaries; local fixes pass focused checks,
 while successful hosted packaging and installation remain pending.
+For local-only iteration, explicit `--skip-test` retains static/tooling/build
+checks and all Git guards while omitting Rust tests and simulation smokes.
+Hosted release validation is unchanged; see
+[DEV-04](development/features/ubuntu-desktop/local-validation.md).
 
 UI-UPDATE-01 keeps public stable-release discovery in the GPL application adapter
 under `platform/updates`, outside DSP/domain crates. One bounded worker queries
