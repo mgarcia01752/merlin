@@ -70,3 +70,10 @@ CodeQL/dependency checks. Tag publication waits for both CLI and desktop checks.
 Run install/reinstall/remove tests only on disposable CI runners unless the user
 explicitly requests local installation. Report package bytes, installed footprint,
 external prerequisites and hosted/installed verification limits separately.
+
+Explicit `--resume` with a bump mode accepts only a complete, exact unstaged
+version-only candidate reconstructed from HEAD. It reruns selected checks and
+finishes the same version without resets or a second bump. Reject unrelated,
+staged, partial, redirected or mismatched files. Use `--tag` after a release
+commit/tag exists; `--force` never serves as dirty-tree recovery. Commit source
+and helper changes separately before leaving only the pending version edits.

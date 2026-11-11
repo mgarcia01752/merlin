@@ -112,3 +112,23 @@ The local checkout is `/home/dev01/Projects/merlin`, with `master` as the
 integration/release branch. The original implementation branch is retained.
 Configure origin only after the actual repository URL is supplied; the GitHub
 owner profile alone is not a repository URL.
+
+## Resume an interrupted version bump
+
+Use `--resume` with the same bump mode when validation stopped before the
+release commit was created:
+
+```bash
+cd /home/dev01/Projects/merlin &&
+tools/git/git-push.sh --tag-patch --resume
+```
+
+The helper reconstructs the candidate from committed metadata and accepts only
+the exact complete unstaged version bump. It reruns the selected checks and
+pushes that same version, never a second bump. It rejects unrelated edits,
+staged work, partial/mismatched metadata, redirects and tag collisions without
+restoring or discarding files. Commit helper/source changes separately before
+resuming; the only pending edits must be the original version bump. `--dry-run`
+previews without writes or validation execution; explicit `--skip-test` retains
+its existing meaning. After a release commit/tag exists, use `--tag vX.Y.Z`
+instead. Ordinary push and `--force` retain their existing clean-tree guards.

@@ -9,10 +9,11 @@ from pathlib import Path
 import shlex
 import subprocess
 import sys
+import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tools/release'))
-from versions import bumped, synchronize, validate
+from versions import LOCKS, MANIFESTS, bumped, synchronize, validate
 
 
 def git(*arguments, check=True):
@@ -52,7 +53,38 @@ def remote_refs(*references):
                 (line.split() for line in output.splitlines()))
 
 
-def release(part, existing_tag, dry_run, force=False, skip_test=False):
+def resume_candidate(commit, part):
+    """Recognize only a complete unstaged candidate derived from committed metadata.
+
+    commit identifies the immutable base; part selects the requested bump.
+    Return the base version and expected porcelain status. Reject unrelated,
+    staged, partial, redirected or altered files without modifying the checkout.
+    """
+    if git('diff', '--cached', '--name-only').stdout:
+        raise RuntimeError('--resume requires an unchanged index; review staged work first')
+    current = validate(git('show', f'{commit}:VERSION').stdout.strip())
+    version = bumped(current, part)
+    names = ('VERSION', *MANIFESTS, *LOCKS)
+    with tempfile.TemporaryDirectory(prefix='merlin-resume-') as temporary:
+        candidate_root = Path(temporary)
+        for name in names:
+            destination = candidate_root / name
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_text(git('show', f'{commit}:{name}').stdout, encoding='utf-8')
+        if synchronize(candidate_root, current):
+            raise RuntimeError('Committed version metadata is inconsistent; cannot resume')
+        synchronize(candidate_root, version, write=True)
+        for name in names:
+            actual = ROOT / name
+            if (actual.is_symlink() or actual.resolve() != actual
+                    or actual.read_bytes() != (candidate_root / name).read_bytes()):
+                raise RuntimeError(f'--resume requires exact {version} version edits: {name}')
+    expected = ''.join(f' M {name}\n' for name in sorted(names))
+    ensure_checkout(commit, expected)
+    return current, expected
+
+
+def release(part, existing_tag, dry_run, force=False, skip_test=False, resume=False):
     """Prepare a bumped release or push an existing tag at HEAD.
 
     part selects major/minor/patch; existing_tag selects recovery without a bump.
@@ -63,18 +95,23 @@ def release(part, existing_tag, dry_run, force=False, skip_test=False):
     exact candidate tree before committing and atomically uploading both refs.
     Failures retain local changes/commits/tags and never reset or overwrite refs.
     skip_test omits local Rust tests/smokes only; hosted checks remain mandatory.
+    resume recognizes an exact unstaged interrupted bump and reruns all selected checks.
     """
     if Path(git('rev-parse', '--show-toplevel').stdout.strip()).resolve() != ROOT:
         raise RuntimeError('The release helper must belong to the checkout root')
     if git('branch', '--show-current').stdout.strip() != 'master':
         raise RuntimeError('Release modes require master, matching the tag CI ancestry rule')
     starting_commit = git('rev-parse', 'HEAD').stdout.strip()
-    ensure_checkout(starting_commit)
+    initial_status = ''
+    if resume:
+        current, initial_status = resume_candidate(starting_commit, part)
+    ensure_checkout(starting_commit, initial_status)
     if git('config', '--bool', '--get', 'remote.origin.mirror', check=False).stdout.strip() == 'true':
         raise RuntimeError('Refusing origin configured as a mirror')
-    current = validate((ROOT / 'VERSION').read_text(encoding='utf-8').strip())
-    if git('show', 'HEAD:VERSION').stdout.strip() != current or synchronize(ROOT, current):
-        raise RuntimeError('Commit consistent VERSION, Cargo manifests and lockfiles before releasing')
+    if not resume:
+        current = validate((ROOT / 'VERSION').read_text(encoding='utf-8').strip())
+        if git('show', 'HEAD:VERSION').stdout.strip() != current or synchronize(ROOT, current):
+            raise RuntimeError('Commit consistent VERSION, Cargo manifests and lockfiles before releasing')
     version = validate(existing_tag.removeprefix('v')) if existing_tag else bumped(current, part)
     tag = f'v{version}'
     if existing_tag and (existing_tag != tag or version != current):
@@ -103,19 +140,19 @@ def release(part, existing_tag, dry_run, force=False, skip_test=False):
     else:
         published_current = refs.get(current_ref + '^{}', refs.get(current_ref))
         published_head = published_current == starting_commit
-        if published_head and not force:
+        if published_head and not force and not resume:
             print(f'Nothing to release: HEAD is already published as v{current}')
             return
         local_current = git('rev-parse', '--verify', current_ref + '^{commit}', check=False)
         if (local_current.returncode == 0 and local_current.stdout.strip() == starting_commit
-                and not (force and published_head)):
+                and not ((force or resume) and published_head)):
             raise RuntimeError(f'HEAD is already tagged v{current}; use git-push.sh --tag v{current} instead of bumping again')
         if local_tag.returncode == 0 or tag_ref in refs:
             raise RuntimeError(f'Tag {tag} already exists; never move a release tag')
         if (git('log', '-1', '--format=%s').stdout.strip() == f'Feature: Release DOCSIS OFDM Channel Sim v{current}'
-                and not (force and published_head)):
+                and not ((force or resume) and published_head)):
             raise RuntimeError(f'HEAD is a release commit without its tag; review and create v{current}, then use --tag v{current}')
-    ensure_checkout(starting_commit)
+    ensure_checkout(starting_commit, initial_status)
     print(f'DOCSIS OFDM Channel Sim {current} -> {version}; master; tag {tag}', flush=True)
     if dry_run:
         print('Dry run: no bump, checks, commit, tag or push performed')
@@ -124,8 +161,12 @@ def release(part, existing_tag, dry_run, force=False, skip_test=False):
     if not existing_tag:
         git('var', 'GIT_AUTHOR_IDENT')
         git('var', 'GIT_COMMITTER_IDENT')
-        ensure_checkout(starting_commit)
-        changes = ['VERSION', *synchronize(ROOT, version, write=True)]
+        ensure_checkout(starting_commit, initial_status)
+        if resume:
+            changes = ['VERSION', *MANIFESTS, *LOCKS]
+            print(f'Resuming exact {tag} candidate; rerunning selected checks.', flush=True)
+        else:
+            changes = ['VERSION', *synchronize(ROOT, version, write=True)]
     else:
         changes = []
     expected_status = git('status', '--porcelain', '--untracked-files=all').stdout
@@ -176,14 +217,18 @@ def main():
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--skip-test', action='store_true',
                         help='Omit local Rust tests/smokes; retain other checks and hosted CI')
+    parser.add_argument('--resume', action='store_true',
+                        help='Resume an exact unstaged interrupted bump; rerun selected checks')
     parser.add_argument('--force', action='store_true',
                         help='Allow a bump from an already published clean HEAD; all checks still run')
     arguments = parser.parse_args()
     if arguments.force and not arguments.bump:
         parser.error('--force requires --bump')
+    if arguments.resume and not arguments.bump:
+        parser.error('--resume requires --bump')
     try:
         release(arguments.bump, arguments.tag, arguments.dry_run, arguments.force,
-                arguments.skip_test)
+                arguments.skip_test, arguments.resume)
     except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError) as error:
         parser.exit(1, f'ERROR: {error}\nReview any local release state; nothing is reset automatically.\n')
 

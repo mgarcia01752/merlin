@@ -17,7 +17,7 @@ REMOTE="origin"
 # Arguments are unused unless described above; failures stop this script.
 usage() {
   cat <<'EOF'
-Usage: git-push.sh [MODE] [--dry-run] [--force] [--skip-test]
+Usage: git-push.sh [MODE] [--dry-run] [--force] [--skip-test] [--resume]
 
 Modes (choose one):
   --master, --branch  Push main/master only (also the default).
@@ -28,13 +28,15 @@ Modes (choose one):
   --dry-run           Preview a release; no version edits, builds or push.
   --force             Allow a bump from an already published clean HEAD.
   --skip-test         Omit local Rust tests/smokes; retain other checks.
+  --resume            Resume an exact interrupted bump; rerun checks.
 
 Release modes require clean master, matching VERSION metadata and origin.
+--resume permits only the exact unstaged pending version bump.
 They atomically push master and only the selected tag; never publish directly.
 Existing-tag mode does not bump, commit or create a tag.
 
 Safety checks:
-  - The working tree must have no tracked or untracked changes.
+  - No pending changes, except exact version-only edits with --resume.
   - The current branch must be main or master.
   - The origin remote must exist.
   - The local branch must not be behind or diverged from origin.
@@ -58,6 +60,7 @@ RELEASE_ARGS=()
 DRY_RUN=0
 FORCE_RELEASE=0
 SKIP_TEST=0
+RESUME_RELEASE=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --master|--branch|--tag-major|--tag-minor|--tag-patch|--tag)
@@ -79,11 +82,18 @@ while [[ $# -gt 0 ]]; do
     --dry-run) DRY_RUN=1 ;;
     --force) FORCE_RELEASE=1 ;;
     --skip-test) SKIP_TEST=1 ;;
+    --resume) RESUME_RELEASE=1 ;;
     -h|--help) usage; exit 0 ;;
     *) die "Unknown argument: $1 (see --help)" ;;
   esac
   shift
 done
+if [[ "$RESUME_RELEASE" == 1 ]]; then
+  case "$PUSH_MODE" in
+    --tag-major|--tag-minor|--tag-patch) RELEASE_ARGS+=(--resume) ;;
+    *) die "--resume requires --tag-patch, --tag-minor or --tag-major" ;;
+  esac
+fi
 if [[ "$FORCE_RELEASE" == 1 ]]; then
   case "$PUSH_MODE" in
     --tag-major|--tag-minor|--tag-patch) ;;

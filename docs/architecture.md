@@ -1931,3 +1931,10 @@ FAQ. About → FAQ opens the index. Rust derives timing advice from the actual
 playback plan; unknown errors retain their original message without advice.
 Spectrum acquisition details appear below the axes and can be hidden with
 **Details**, independently of warnings and power readings.
+
+### Interrupted release candidate recovery
+
+The release helper owns explicit `--resume` admission. It reconstructs an exact
+version-only candidate from HEAD in temporary storage, preserves checkout bytes
+and reruns selected validation before commit/tag/atomic push. All normal Git
+guards remain; committed-tag recovery still uses `--tag`.

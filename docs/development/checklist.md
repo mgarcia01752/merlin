@@ -1049,3 +1049,7 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **UI-SA-DETAILS-01** Move acquisition metadata below spectrum axes
   with a Details checkbox; preserve chart data, warnings and power.
   [Design](features/contextual-help/design.md#ui-sa-details-01-spectrum-acquisition-readout).
+
+- [x] **RELEASE-RESUME-01** Explicit version-only interrupted-bump recovery
+  with unchanged index, exact candidate validation and no second bump.
+  [Design](features/release-resume/design.md).

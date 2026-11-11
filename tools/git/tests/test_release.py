@@ -216,6 +216,82 @@ esac
         self.assertEqual(self.git('tag', '--list').stdout, '')
         self.assert_origin_unchanged()
 
+    def test_resume_failed_candidate_reruns_checks_without_second_bump(self):
+        """Recover the exact failed version and publish it only after revalidation."""
+        self.environment['RELEASE_TEST_MODE'] = 'fail'
+        self.assertNotEqual(self.run_helper('--tag-patch').returncode, 0)
+        self.environment['RELEASE_TEST_MODE'] = 'pass'
+        result = self.run_helper('--tag-patch', '--resume')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('Resuming exact v0.1.1', result.stdout)
+        self.assertEqual(self.trace.read_text(), '0.1.1\n0.1.1\n')
+        self.assertEqual(self.git('rev-parse', 'v0.1.1^{commit}', remote=True).stdout.strip(),
+                         self.git('rev-parse', 'HEAD').stdout.strip())
+        self.assertEqual(self.git('status', '--porcelain').stdout, '')
+
+    def test_resume_published_base_keeps_exact_pending_candidate(self):
+        """A pending forced bump resumes without treating the old tag as a no-op."""
+        self.publish_baseline()
+        synchronize(self.root, '0.1.1', write=True)
+        result = self.run_helper('--tag-patch', '--resume')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('Resuming exact v0.1.1', result.stdout)
+        self.assertEqual(self.trace.read_text(), '0.1.1\n')
+        self.assertEqual(self.git('rev-parse', 'v0.1.1^{commit}', remote=True).stdout.strip(),
+                         self.git('rev-parse', 'HEAD').stdout.strip())
+
+    def test_resume_dry_run_and_repeated_failure_preserve_candidate(self):
+        """Preview and failed resumed validation cannot discard or publish edits."""
+        synchronize(self.root, '0.1.1', write=True)
+        before = self.git('diff').stdout
+        result = self.run_helper('--tag-patch', '--resume', '--dry-run')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.git('diff').stdout, before)
+        self.assertFalse(self.trace.exists())
+        self.environment['RELEASE_TEST_MODE'] = 'fail'
+        result = self.run_helper('--tag-patch', '--resume', '--skip-test')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(self.trace.read_text(), '0.1.1\n--skip-test\n')
+        self.assertEqual(self.git('diff').stdout, before)
+        self.assert_origin_unchanged()
+
+    def test_resume_rejects_unrelated_partial_and_staged_edits(self):
+        """Only exact full unstaged candidate metadata may enter resumed checks."""
+        synchronize(self.root, '0.1.1', write=True)
+        for name in ['README.md', 'crates/ofdm/Cargo.toml', 'untracked']:
+            with self.subTest(name=name):
+                path = self.root / name
+                original = path.read_bytes() if path.exists() else None
+                with path.open('a') as stream:
+                    stream.write('user edit\n')
+                before = self.git('diff').stdout
+                result = self.run_helper('--tag-patch', '--resume', '--force')
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(self.git('diff').stdout, before)
+                if original is None:
+                    path.unlink()
+                else:
+                    path.write_bytes(original)
+        self.git('add', 'VERSION')
+        self.assertNotEqual(self.run_helper('--tag-patch', '--resume').returncode, 0)
+        self.git('reset', '--', 'VERSION')
+        (self.root / 'VERSION').write_text('0.1.0\n')
+        self.assertNotEqual(self.run_helper('--tag-patch', '--resume').returncode, 0)
+        self.assertFalse(self.trace.exists())
+        self.assert_origin_unchanged()
+
+    def test_resume_rejects_clean_wrong_mode_and_tag_collision(self):
+        """Recovery cannot create a new candidate or overwrite an existing tag."""
+        self.assertNotEqual(self.run_helper('--tag-patch', '--resume').returncode, 0)
+        synchronize(self.root, '0.1.1', write=True)
+        self.assertNotEqual(self.run_helper('--tag-minor', '--resume').returncode, 0)
+        self.git('tag', 'v0.1.1')
+        result = self.run_helper('--tag-patch', '--resume')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('already exists', result.stderr)
+        self.assertFalse(self.trace.exists())
+        self.assert_origin_unchanged()
+
     def test_check_side_effects_stop_before_commit(self):
         """Reject unrelated changes and edits within expected version files."""
         self.environment['RELEASE_TEST_MODE'] = 'version-change'
@@ -372,7 +448,8 @@ esac
 
     def test_invalid_modes_and_missing_tags_do_not_modify_checkout(self):
         """Reject conflicting/invalid modes and nonmatching or missing tag identities."""
-        for arguments in [('--tag-patch', '--tag-minor'), ('--tag',), ('--dry-run',),
+        for arguments in [('--resume',), ('--master', '--resume'),
+                          ('--tag', 'v0.1.0', '--resume'), ('--tag-patch', '--tag-minor'), ('--tag',), ('--dry-run',),
                           ('--tag', 'bad'), ('--tag', 'v0.2.0'), ('--tag', 'v0.1.0'),
                           ('--force',), ('--master', '--force'), ('--tag', 'v0.1.0', '--force')]:
             with self.subTest(arguments=arguments):

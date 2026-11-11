@@ -48,3 +48,10 @@ by the helper. Use toolkit-release for explicit version/tag modes.
 
 A new empty repository needs its initial reviewed commit and origin before a
 push can succeed. Do not create either merely because tooling was requested.
+
+Explicit `--resume` with a bump mode accepts only a complete, exact unstaged
+version-only candidate reconstructed from HEAD. It reruns selected checks and
+finishes the same version without resets or a second bump. Reject unrelated,
+staged, partial, redirected or mismatched files. Use `--tag` after a release
+commit/tag exists; `--force` never serves as dirty-tree recovery. Commit source
+and helper changes separately before leaving only the pending version edits.

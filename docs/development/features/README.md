@@ -113,3 +113,5 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 - [Received QAM scatter dots](qam-markers/design.md): UI-QAM-DOTS-01.
 
 - [Contextual help and spectrum details](contextual-help/design.md): UI-HELP-01, UI-SA-DETAILS-01.
+
+- [Interrupted release recovery](release-resume/design.md): RELEASE-RESUME-01.
