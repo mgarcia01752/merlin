@@ -885,10 +885,62 @@ Pane {
                 }
             }
         }
+        function test_workbench_configuration_entry_choices() {
+            workbench.hasProject = false
+            const configure = findChild(workbench, "configureWorkbench")
+            const settings = workbench.configurationPopup
+            const entry = workbench.entryPopup
+            verify(configure.enabled)
+            mouseClick(configure)
+            tryCompare(entry, "opened", true)
+            compare(settings.visible, false)
+            mouseClick(findChild(entry, "cancelWorkbenchChoice"))
+            tryCompare(entry, "visible", false)
+            compare(workbench.hasProject, false)
+            mouseClick(configure)
+            tryCompare(entry, "opened", true)
+            closeWithX(entry)
+            compare(workbench.hasProject, false)
+            for (const response of [{cancelled:true}, {error:"Invalid WB"}]) {
+                fileBackend.openResponse = response
+                mouseClick(configure)
+                tryCompare(entry, "opened", true)
+                mouseClick(findChild(entry, "openWorkbenchChoice"))
+                tryCompare(entry, "visible", false)
+                compare(workbench.hasProject, false)
+                compare(settings.visible, false)
+                keyClick(Qt.Key_Escape)
+            }
+            mouseClick(configure)
+            tryCompare(entry, "opened", true)
+            mouseClick(findChild(entry, "createWorkbenchChoice"))
+            tryCompare(settings, "opened", true)
+            compare(workbench.hasProject, true)
+            closeWithX(settings)
+            workbench.hasProject = false
+            fileBackend.openResponse = {opened:true, path:"test.merlin.json",
+                transmission:JSON.parse(backend.current()),
+                receiver:runBackend.acceptedRunOptions, verified:false, dark:true}
+            mouseClick(configure)
+            tryCompare(entry, "opened", true)
+            mouseClick(findChild(entry, "openWorkbenchChoice"))
+            tryCompare(settings, "opened", true)
+            compare(workbench.hasProject, true)
+            closeWithX(settings)
+            fileBackend.openResponse = {cancelled:true}
+            runBackend.busy = true
+            workbench.pollRun()
+            workbench.configureProject()
+            compare(entry.visible, false)
+            compare(settings.visible, false)
+            verify(!configure.enabled)
+            runBackend.busy = false
+            workbench.pollRun()
+        }
         function test_workbench_configuration_lifecycle_and_profile_selection() {
             workbench.hasProject=false
             compare(findChild(workbench,"configureWorkbench").text,"Configure WorkBench")
-            compare(findChild(workbench,"configureWorkbench").enabled,false)
+            compare(findChild(workbench,"configureWorkbench").enabled,true)
             fileBackend.openResponse={cancelled:true};workbench.openProject()
             compare(workbench.hasProject,false)
             workbench.saveProject(false);compare(workbench.hasProject,false)

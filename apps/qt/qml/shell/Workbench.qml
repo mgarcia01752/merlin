@@ -28,6 +28,12 @@ Item {
     required property var fileBackend
     property bool hasProject: false
     property alias configurationPopup: wbConfig
+    property alias entryPopup: workbenchEntry
+    function configureProject() {
+        if (runState.busy) { return }
+        if (hasProject) { wbConfig.open() }
+        else { workbenchEntry.open() }
+    }
     function requestNewProject() {
         if (runState.busy) { return }
         if (hasProject) { newConfirmation.open() }
@@ -37,6 +43,7 @@ Item {
         if (runState.busy) { return }
         const result=JSON.parse(fileBackend.new_workbench())
         if (result.created) { adoptProject(result);fileMessage="New workbench" }
+        return !!result.created
     }
     property string fileMessage: ""
     function openProject() {
@@ -46,6 +53,7 @@ Item {
         if (!result.opened) { return }
         adoptProject(result)
         fileMessage="Opened "+result.path
+        return true
     }
     function adoptProject(result) {
         hasProject=true
@@ -310,24 +318,34 @@ Item {
                     ToolTip.text: workbench.runState.timing ? "Time since last completed processing step: " + workbench.runState.timing.progress_age_text : ""
                 }
             }
-            Button {
+            WorkbenchActionButton {
+                theme: workbench.theme
                 objectName: "configureWorkbench"
                 text: "Configure WorkBench"
-                enabled: workbench.hasProject && !workbench.runState.busy
-                onClicked: wbConfig.open()
+                enabled: !workbench.runState.busy
+                onClicked: workbench.configureProject()
                 ToolTip.visible: hovered
-                ToolTip.text: workbench.hasProject ? "Select profiles and run settings" : "Create or open a workbench first"
+                ToolTip.text: workbench.hasProject ? "Select profiles and run settings" : "Create or open a workbench"
             }
-            Button {
+            WorkbenchActionButton {
+                theme: workbench.theme
+                primary: true
+                Layout.preferredWidth: 104
                 objectName: "startButton"; text: "▶  Start"
                 enabled: workbench.hasProject && workbench.allBlocksComplete && workbench.runState.can_start
                 onClicked: { workbench.runBackend.start();workbench.pollRun() }
                 Accessible.name: "Start simulation"
                 Accessible.description: !workbench.allBlocksComplete ? "Every workbench block must be green before starting." : "Wait for the current simulation to finish before starting another."
             }
-            Button { objectName: "stopButton"; text: "■  Stop"; enabled: workbench.runState.busy; onClicked: workbench.runBackend.stop(); Accessible.name: "Stop simulation" }
-            Button { objectName: "pauseButton"; text: workbench.runState.paused ? "▶  Resume" : "Ⅱ  Pause"; enabled: workbench.runState.busy; onClicked: { workbench.runBackend.pause();workbench.pollRun() } Accessible.name: "Pause simulation" }
+            WorkbenchActionButton { theme: workbench.theme; Layout.preferredWidth: 104; objectName: "stopButton"; text: "■  Stop"; enabled: workbench.runState.busy; onClicked: workbench.runBackend.stop(); Accessible.name: "Stop simulation" }
+            WorkbenchActionButton { theme: workbench.theme; Layout.preferredWidth: 104; objectName: "pauseButton"; text: workbench.runState.paused ? "▶  Resume" : "Ⅱ  Pause"; enabled: workbench.runState.busy; onClicked: { workbench.runBackend.pause();workbench.pollRun() } Accessible.name: workbench.runState.paused ? "Resume simulation" : "Pause simulation" }
         }
+    }
+    WorkbenchEntryDialog {
+        id: workbenchEntry
+        theme: workbench.theme
+        onCreateRequested: { if (workbench.newProject()) wbConfig.open() }
+        onOpenRequested: { if (workbench.openProject()) wbConfig.open() }
     }
     WorkbenchConfigurationDialog {
         id: wbConfig; theme: workbench.theme; backend: workbench.runBackend

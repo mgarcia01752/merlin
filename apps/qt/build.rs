@@ -56,6 +56,8 @@ fn main() {
                 "qml/Main.qml",
                 "qml/shell/Workbench.qml",
                 "qml/components/WorkbenchDialog.qml",
+                "qml/components/WorkbenchActionButton.qml",
+                "qml/shell/WorkbenchEntryDialog.qml",
                 "qml/components/ApplyCancelFooter.qml",
                 "qml/shell/WorkbenchMenuBar.qml",
                 "qml/shell/SettingsDialog.qml",

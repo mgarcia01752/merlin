@@ -1822,7 +1822,11 @@ Configure WB sits before Start on the main lower control row. File New creates
 an explicit blank WB; successful Open/recovery or first Save activates one. Cancellation or
 failed Open does not change activation or accepted state. New resets accepted
 inputs, run/comparison state and Save destination after confirmation for an
-active WB. The button is disabled before activation and during a run.
+active WB. Configure WorkBench stays enabled while idle. Without an active WB it
+opens a Create New/Open Existing chooser, continuing to configuration only after
+successful activation. Native Open cancellation/failure never opens configuration.
+Rounded shared action buttons use equal run-control widths and heights, balanced
+spacing and theme-aware focus/hover/disabled states (UI-WB-CONTROLS-01).
 
 Run/Profiles tabs edit duration per profile, shared host budget, noise seed and
 captured profile-ID checkboxes. Receiver owns correction mode and iteration

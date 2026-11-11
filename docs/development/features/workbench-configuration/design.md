@@ -5,7 +5,9 @@ consolidation/APT recovery remains pending (CI-DESKTOP-QA-01).
 
 Put Configure WB before Start on the main lower control row. File New creates
 an explicit blank WB; successful Open/recovery or first Save activates one. Failed/canceled
-Open preserves state. Disable configuration before New/Open and during a run.
+Open preserves state. Configuration is disabled during a run.
+UI-WB-CONTROLS-01 below replaces the original pre-activation disabled state
+with a Create/Open entry chooser.
 Receiver keeps correction mode/iteration limit; WB owns duration, total budget,
 noise seed and profile checkboxes (Select All/Clear). Configuration can be saved
 before all input blocks are green. Start still requires full validated inputs,
@@ -110,3 +112,29 @@ The rebuilt Qt executable was checked on the native VM desktop. Updated dark
 guide captures show the main button, WB Run/Profiles, receiver, amplifier,
 attenuator and loss editors. Native logs contain no Qt/QML diagnostics.
 No non-Qt simulation rebuild or full core test run was needed for this UI change.
+
+## UI-WB-CONTROLS-01: Workbench actions and entry flow
+
+Use a shared rounded action button for Configure WorkBench and the three run
+controls. Match heights, run-button widths, spacing, theme colors, hover, keyboard
+focus and disabled states. Start is the primary action; Stop and Pause remain
+secondary and retain their existing worker guards.
+
+When idle, Configure WorkBench opens settings for an active WB. Without one,
+a dedicated Create/Open dialog offers Create New and Open Existing, with X and
+Cancel. Only successful creation/opening continues to configuration. A canceled
+or rejected native Open leaves accepted state unchanged and never opens settings.
+Reuse existing Rust file operations; no new persistence fields or DSP changes.
+QML owns only presentation and navigation. Keep every popup in its own file.
+
+Validate activation, both entry choices, canceled/failed Open, dismissal, busy
+guards and existing profile drafts with QML tests. Build the native executable
+and inspect dark screenshots at normal/minimum window sizes.
+
+Validation: formatting, warnings-denied Clippy, all 40 adapter tests and all
+40 QML checks pass. The final native executable is built. Actual Ubuntu VM
+captures verify the rounded controls, equal chooser buttons, native Open
+cancellation, Create New continuing into settings, and a readable 960×640
+minimum window. The native log has no diagnostics. Updated dark screenshots
+are in the user guide; minimum-size and creation-flow evidence stays local under
+`docs/development/local/visual-workspace/`. No simulation or WB schema changed.

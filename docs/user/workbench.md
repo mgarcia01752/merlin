@@ -11,7 +11,8 @@ The [Transmitter workbench](transmitter-workbench.md) provides staged test point
 an SA beside TX Output, and OCD/DPD message inspection.
 
 Use **File → New** or **Open…** to activate a WB. **Configure WorkBench**, beside
-Start, stays disabled until a WB is created/opened and while a simulation runs. Its Run/Profiles
+Start, offers **Create New** or **Open Existing…** if no WB is active, then opens
+settings after successful creation/opening. It is disabled during a simulation. Its Run/Profiles
 tabs set duration, total budget, noise seed and profile checkboxes. You can
 configure a partial WB while blocks are yellow; Start still requires all green
 and a nonempty compatible profile selection. See

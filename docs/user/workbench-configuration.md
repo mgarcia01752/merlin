@@ -2,8 +2,16 @@
 
 Choose **File → New** to create a blank workbench, or **File → Open…** to load
 one. **Configure WorkBench** sits immediately before Start at the lower right. It is
-disabled before creating/opening a WB and during a simulation. A successful
-first Save also creates and activates a WB. A canceled or failed Open
+available while idle: without an active WB, it asks you to **Create New** or
+**Open Existing…**, then opens settings. Cancel or X dismisses the choice; a
+canceled or failed Open does not open settings. It is disabled during a simulation.
+The rounded control row highlights Start and keeps Stop and Pause equally sized.
+
+![Workbench controls](../images/workbench/workbench-controls-dark.png)
+
+![Create or open a workbench](../images/workbench/workbench-entry-dark.png)
+
+A successful first Save also creates and activates a WB. A canceled or failed Open
 preserves the current WB. New asks before clearing an active WB; save first to
 keep your edits.
 

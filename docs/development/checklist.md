@@ -1025,3 +1025,8 @@ validation are complete; the user guide includes the current dark capture.
   Core/analysis and Qt checks pass; kernel benchmark and native Profile3 run
   measured. Compiled Qt executable is ready.
   [Design](features/qam-demapper-performance/design.md).
+
+- [x] **UI-WB-CONTROLS-01** Rounded main WB actions and idle Configure
+  entry chooser: Create New/Open Existing continue only after activation; native
+  cancellation/failure preserves state.
+  [Design](features/workbench-configuration/design.md#ui-wb-controls-01-workbench-actions-and-entry-flow).
