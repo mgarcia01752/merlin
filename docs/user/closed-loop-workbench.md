@@ -116,3 +116,27 @@ all/applied behavior. Selected profiles run separately in captured-ID order.
 Duration applies per profile; the active host budget covers the selection.
 WB JSON stores the selected IDs. See [Profile Performance](receiver-profile-performance.md)
 for counter definitions, bootstrap Profile A mapping, limits and result selection.
+
+## Elapsed time and slow profiles
+
+The lower-left status shows **Elapsed HH:MM:SS** while a simulation runs, and
+keeps the final time after completion, Stop or failure. **Profile HH:MM:SS**
+measures the current profile separately. A new Start resets both; accepting new
+configuration clears the old timing. These are wall-clock times, including
+pauses and CPU scheduling waits. They are separate from simulated duration and
+the active run budget. Timing is transient and is not stored in WB JSON.
+
+![Running elapsed time](../images/workbench/workbench-running-elapsed-dark.png)
+
+The progress line shows the processing phase and recovered payload count.
+**[Draining](terminology.md#interleaver-drain)** can continue after the observation-symbol count stops increasing.
+The receiver still has interleaved data to process. Hover this line to see time
+since the last completed processing step. Updates occur between steps, so a
+long decoder step can keep counts stationary while elapsed time continues.
+Stop, Pause and the active runtime limit also take effect at step boundaries.
+
+![Final elapsed time](../images/workbench/workbench-completed-elapsed-dark.png)
+
+An advancing timer shows the UI is responsive; it does not prove the decoder is
+making progress or identify another process as the cause. Use the phase, last
+completed step, FEC iteration histogram and system process usage together.

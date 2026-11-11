@@ -201,7 +201,8 @@ Pane {
         property bool paused:false
         property var acceptedRunOptions: ({receiver_mode:"supplied_channel",all_profiles:false,selected_profile_ids:null,duration_ms:3,max_iterations:50,max_runtime_ms:300000,noise_seed:41})
         property var lastResult: null
-        function data() { return {receiver_status:configured ? "complete":"attention",verify_status:verified ? "complete":"attention",reason:"Configure accepted receiver and independent source comparison before running.",busy:busy,paused:paused,can_start:configured&&verified&&!busy,has_result:!!lastResult,result:lastResult,result_token:lastResult ? "1":"0",available_profile_ids:profileBackend.acceptedId>=0 ? [0,1]:[],applied_profile_id:profileBackend.acceptedId,options:acceptedRunOptions,accepted_options:configured ? acceptedRunOptions:null,verified:verified} }
+        property var timing: null
+        function data() { return {timing:timing,completed_symbols:23,profile_id:3,profile_index:4,profile_count:4,receiver_status:configured ? "complete":"attention",verify_status:verified ? "complete":"attention",reason:"Configure accepted receiver and independent source comparison before running.",busy:busy,paused:paused,can_start:configured&&verified&&!busy,has_result:!!lastResult,result:lastResult,result_token:lastResult ? "1":"0",available_profile_ids:profileBackend.acceptedId>=0 ? [0,1]:[],applied_profile_id:profileBackend.acceptedId,options:acceptedRunOptions,accepted_options:configured ? acceptedRunOptions:null,verified:verified} }
         function configure(settings) { return JSON.stringify(data()) }
         function poll() { return JSON.stringify(data()) }
         function apply(options,settings) { acceptedRunOptions=JSON.parse(options);configured=true;return "" }
@@ -783,6 +784,27 @@ Pane {
             keyClick(Qt.Key_Escape); tryCompare(qam, "visible", false)
             keyClick(Qt.Key_Escape); tryCompare(receiver, "visible", false)
             compare(findChild(workbench, "receiverBlock").blockStatus, "attention")
+        }
+        function test_run_elapsed_survives_completion_pause_and_stationary_symbols() {
+            runBackend.busy = true
+            runBackend.timing = {elapsed_text:"00:01:05",profile_elapsed_text:"00:00:42",phase:"Draining",recovered_payloads:12,progress_age_text:"00:00:03"}
+            workbench.pollRun()
+            const elapsed = findChild(workbench,"runElapsed")
+            const progress = findChild(workbench,"runProgress")
+            verify(elapsed.visible)
+            verify(elapsed.text.indexOf("Elapsed 00:01:05") >= 0)
+            verify(elapsed.text.indexOf("Profile 00:00:42") >= 0)
+            verify(progress.text.indexOf("Draining") >= 0)
+            verify(progress.text.indexOf("Recovered: 12") >= 0)
+            runBackend.paused = true;workbench.pollRun()
+            runBackend.timing = Object.assign({},runBackend.timing,{elapsed_text:"00:01:10"})
+            workbench.pollRun()
+            verify(elapsed.text.indexOf("00:01:10") >= 0)
+            runBackend.busy = false;runBackend.paused = false
+            workbench.pollRun()
+            compare(elapsed.text,"Elapsed 00:01:10")
+            runBackend.timing = null;workbench.pollRun()
+            compare(elapsed.visible,false)
         }
         function test_fec_overview_profiles_tabs_and_partial_empty_states() {
             const dialog = workbench.receiverPopup.fecPopup

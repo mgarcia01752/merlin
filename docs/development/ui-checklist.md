@@ -340,3 +340,12 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
   per-profile selection and separate control/codeword tabs. Adapter/QML checks
   and native simulation/visual checks pass; compiled Qt executable is ready.
   [Design](features/fec-monitor/design.md).
+
+- [x] **UI-RUN-TIME-01** Show live/final wall elapsed time, per-profile timing,
+  actual phase and recovery progress. Clock/lifecycle, adapter and QML checks
+  pass; native bounded Profile3 timing/CPU sample and screenshots verified.
+  [Design](features/run-elapsed-time/design.md).
+
+- [x] **UI-TERMS-02** Define interleaver depth/drain in the About-linked guide
+  and require technical UI definitions through the UI-design skill.
+  [Design](features/run-elapsed-time/design.md#ui-terms-02-processing-terminology).

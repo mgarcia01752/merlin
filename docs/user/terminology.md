@@ -45,6 +45,8 @@ See the [workbench](workbench.md), [source editor](source-input.md) and
 | Flat guard time | In MERLIN's timing panel, the cyclic-prefix interval remaining after the configured roll-off interval. It is an ideal timing budget, not guaranteed echo protection. |
 | Pilot | A known reference signal used for tasks such as tracking and channel estimation. Continuous and scattered pilots occupy different patterns. |
 | Interleaving | Reorders bits or cells to spread localized impairments. Bit interleaving and time/frequency cell interleaving operate on different objects. |
+| Interleaver depth | How many OFDM-symbol periods the time interleaver spreads cells across. More depth increases its delayed history and the drain needed at the end. |
+| Interleaver drain / Draining | Flushes delayed cells through the interleaver/deinterleaver after the observation and queued-payload completion. The receiver can still recover original payloads while observation-symbol count stays fixed. See [details](#interleaver-drain). |
 
 See [transmission settings](transmission.md), [waveform stages](waveform/README.md)
 and the [Spectrum Analyzer](spectrum-analyzer.md).
@@ -103,8 +105,33 @@ and [receiver channel estimation](receiver-estimation/README.md).
 | PSD | Power Spectral Density: power per unit frequency. MERLIN's time-sample SA uses normalized dB/Hz, not calibrated RF dBm or dBmV. |
 | ENBW | Equivalent Noise Bandwidth: the effective noise bandwidth of the FFT window. It differs from the frequency spacing between FFT bins. |
 | Capture frequency mapping | Labels baseband bins using the capture's frequency origin. It does not upconvert the simulated signal. |
-| Observation duration | Source observation interval configured in Receiver / Run. Acquisition and completion/drain can add processing beyond that interval. |
+| Observation duration | Source observation interval configured in Configure WorkBench. Acquisition and completion/drain can add processing beyond that interval. |
 
 See [FEC](fec-codec.md), [run/results](closed-loop-workbench.md) and the
 [Spectrum Analyzer guide](spectrum-analyzer.md). Return to the
 [documentation index](../README.md).
+
+## Interleaver drain
+
+An interleaver deliberately delays some cells so neighboring source data travels
+in different OFDM symbols. When the requested observation ends, some original
+data can still be inside those delay lines. **Interleaver drain** sends the
+remaining delayed cells through the receive path so that data can be recovered.
+It does not create another observation interval or fabricate new source payloads.
+
+For an already active stream, MERLIN's current time-interleaver model uses
+**depth minus one drain symbols**: depth 16 needs 15 drain symbols, while depth 1
+needs none. Increasing depth therefore increases this drain tail. This is the
+implemented model, separate from waveform-tail samples and the earlier completion
+phase that finishes placing already queued payload words.
+
+The **simulated duration** of that tail depends on symbol timing. The **wall time**
+to process it also depends on decoder iterations, modulation/profile loading,
+channel conditions and CPU availability. Twice the depth does not imply exactly
+twice the wall time. While Draining, the observation-symbol counter stays fixed;
+recovered payloads and elapsed time can continue increasing.
+
+See [elapsed time and slow profiles](closed-loop-workbench.md#elapsed-time-and-slow-profiles)
+and [FEC Monitor](fec-monitor.md). Implementation references:
+[paired delay](../../crates/ofdm/src/signal_processing/interleaving/settings.rs) and
+[payload drain](../../crates/ofdm/src/simulation/payload/transmitter.rs).

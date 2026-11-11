@@ -4,3 +4,4 @@
  */
 //! Qt application run admission and bounded worker lifecycle.
 pub(crate) mod closed_loop;
+mod run_timing;

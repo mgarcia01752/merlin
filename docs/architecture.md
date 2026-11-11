@@ -1866,3 +1866,23 @@ whole signal snapshots for this instrument. Zero/unavailable and partial results
 remain explicit; no source, decoder, run admission or WB persistence changes.
 See [design](development/features/fec-monitor/design.md) and
 [user guide](user/fec-monitor.md).
+
+### Run wall timing (UI-RUN-TIME-01)
+
+A shared monotonic Rust RunTiming object records sweep/profile wall durations,
+last completed-step age, phase and decoded-word count. The worker marks actual
+profile boundaries/completion; late UI polling cannot extend a completed time.
+The main WB displays formatted wall times via its existing poll, independently
+of simulated duration and the core active-time budget. Pause keeps wall time
+advancing. Completion/Stop/failure freeze it; new Start or accepted input changes
+reset it. Retention is bounded to the admitted32 profiles and remains transient.
+Progress callbacks occur after steps; observation count excludes interleaver
+drain. Never interpret an advancing UI timer as proof of decoder progress or
+CPU contention. No core processing, cancellation boundaries or WB schema change.
+See [design](development/features/run-elapsed-time/design.md) and
+[user guide](user/closed-loop-workbench.md#elapsed-time-and-slow-profiles).
+
+Technical UI/status terms are defined in the canonical
+[terminology guide](user/terminology.md), reached by About → Terminology.
+Interleaver depth/drain definitions distinguish implemented symbol delay from
+CPU/decoder-dependent elapsed time; new terms follow skills/ui-design.

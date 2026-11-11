@@ -21,3 +21,14 @@ Close. Keep keyboard access and disabled states intact.
 Follow the broader UI rules in [coding-style](../coding-style/SKILL.md), including
 per-window QML files, symmetry, native file pickers and current dark user-guide
 screenshots. Review existing Apply buttons when changing this shared pattern.
+
+## Technical terms and definitions
+
+When adding or changing technical UI/status wording, update the existing
+[terminology guide](../../docs/user/terminology.md) with a short plain-language
+definition and link to the relevant user guide. Reuse About → Terminology; do
+not create competing glossaries. Explain what the user observes and distinguish
+simulated duration, symbol counts and wall elapsed time. For example, document
+interleaver drain and how depth changes its tail without promising proportional
+wall runtime. Trace implementation-specific numbers to code; do not label them
+as specification requirements without specification evidence.

@@ -286,10 +286,30 @@ Item {
         RowLayout {
             Layout.fillWidth: true; spacing: 10
             ColumnLayout {
-                Label { text: workbench.runState.busy ? (workbench.runState.paused ? "PAUSED" : "RUNNING") : "SIMULATION WORKBENCH"; color: theme.accent; font.pixelSize: 11; font.letterSpacing: 1.5 }
-                Label { text: workbench.runState.busy ? "Profile "+(workbench.runState.profile_id ?? "—")+" · "+(workbench.runState.profile_index || 1)+" / "+(workbench.runState.profile_count || 1)+" · Observation symbols: "+workbench.runState.completed_symbols : workbench.runState.result ? "Run "+workbench.runState.result.status+" · "+workbench.runState.result.bits_tested+" bits compared · "+workbench.runState.result.bit_errors+" bit errors" : workbench.runState.reason; color: theme.muted; font.pixelSize: 12 }
+                Layout.fillWidth: true; Layout.minimumWidth: 0; spacing: 4
+                RowLayout {
+                    Layout.fillWidth: true; spacing: 12
+                    Label { text: workbench.runState.busy ? (workbench.runState.paused ? "PAUSED" : "RUNNING") : "SIMULATION WORKBENCH"; color: theme.accent; font.pixelSize: 11; font.letterSpacing: 1.5 }
+                    Label {
+                        objectName: "runElapsed"
+                        visible: !!workbench.runState.timing
+                        text: workbench.runState.timing ? "Elapsed " + workbench.runState.timing.elapsed_text + (workbench.runState.busy ? " · Profile " + workbench.runState.timing.profile_elapsed_text : "") : ""
+                        color: theme.text; font.pixelSize: 12
+                        Layout.fillWidth: true; wrapMode: Text.WordWrap
+                        MouseArea { id: elapsedHover; anchors.fill: parent; hoverEnabled: true }
+                        ToolTip.visible: elapsedHover.containsMouse
+                        ToolTip.text: "Wall time includes pauses and CPU scheduling waits. The run budget uses active time."
+                    }
+                }
+                Label {
+                    objectName: "runProgress"
+                    text: workbench.runState.busy ? "Profile " + (workbench.runState.profile_id ?? "—") + " · " + (workbench.runState.profile_index || 1) + " / " + (workbench.runState.profile_count || 1) + (workbench.runState.timing ? " · " + workbench.runState.timing.phase : "") + " · Symbols: " + workbench.runState.completed_symbols + (workbench.runState.timing ? " · Recovered: " + workbench.runState.timing.recovered_payloads : "") : workbench.runState.result ? "Run " + workbench.runState.result.status + " · " + workbench.runState.result.bits_tested + " bits compared · " + workbench.runState.result.bit_errors + " bit errors" : workbench.runState.reason
+                    color: theme.muted; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap
+                    MouseArea { id: progressHover; anchors.fill: parent; hoverEnabled: true }
+                    ToolTip.visible: progressHover.containsMouse && workbench.runState.busy && !!workbench.runState.timing
+                    ToolTip.text: workbench.runState.timing ? "Time since last completed processing step: " + workbench.runState.timing.progress_age_text : ""
+                }
             }
-            Item { Layout.fillWidth: true }
             Button {
                 objectName: "configureWorkbench"
                 text: "Configure WorkBench"

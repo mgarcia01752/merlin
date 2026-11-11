@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Frozen request admission and one bounded closed-loop worker.
+use super::run_timing::RunTiming;
 use crate::workbench::session::Inputs;
 use docsis_ofdm_fec::{
     scenario::document::ScenarioDocument,
@@ -254,6 +255,7 @@ fn run_one(
     stop: &AtomicBool,
     gate: &AtomicBool,
     progress: &AtomicU64,
+    timing: &RunTiming,
 ) -> Result<ResultData, String> {
     let mut stages = vec![
         TestPointId::ChannelOutput,
@@ -328,6 +330,7 @@ fn run_one(
         &mut observations,
         |p| {
             progress.store(p.completed_source_symbols, Ordering::Relaxed);
+            timing.progress(p.phase, p.recovered_payloads);
         },
     )
     .map_err(|e| e.to_string())?;
@@ -350,6 +353,7 @@ pub(crate) struct Model {
     request: Option<ChannelRunSettings>,
     plan: Option<SweepPlan>,
     worker: Option<Worker>,
+    timing: Option<Arc<RunTiming>>,
     error: String,
     token: u64,
 }
@@ -446,6 +450,7 @@ impl Model {
         }
         self.request = None;
         self.plan = None;
+        self.timing = None;
         self.error.clear();
         publish(None);
         crate::instruments::receiver::performance::clear();
@@ -486,6 +491,7 @@ impl Model {
             return;
         };
         self.error.clear();
+        self.timing = None;
         publish(None);
         self.token = self.token.wrapping_add(1);
         let options = self.options.clone().unwrap_or_default();
@@ -511,10 +517,13 @@ impl Model {
         let (ordinal, identity) = (profile_index.clone(), profile_id.clone());
         let (sender, receiver) = mpsc::sync_channel(1);
         let (stop, gate, progress) = (cancel.clone(), paused.clone(), done.clone());
+        let timing = Arc::new(RunTiming::new());
+        let worker_timing = timing.clone();
         let spawned = std::thread::Builder::new().name("merlin-profile-sweep".into()).spawn(move || {
             let mut elapsed=0_u64;
             for index in 0..profile_count {
                 if stop.load(Ordering::Relaxed) || elapsed>=options.max_runtime_ms {break;}
+                worker_timing.begin_profile();
                 progress.store(0,Ordering::Relaxed);ordinal.store(index as u64,Ordering::Relaxed);
                 let prepared=if let Some(plan)=&plan {
                     let profile=plan.profiles[index].clone();
@@ -525,22 +534,26 @@ impl Model {
                     (profile,Ok(settings.clone()))
                 };
                 let (profile,prepared)=prepared;identity.store(u64::from(profile.profile_id),Ordering::Relaxed);
-                match prepared.and_then(|request|run_one(&request,options.max_runtime_ms-elapsed,&stop,&gate,&progress)) {
+                let outcome = prepared.and_then(|request|run_one(&request,options.max_runtime_ms-elapsed,&stop,&gate,&progress,&worker_timing));
+                worker_timing.end_profile(profile.profile_id);
+                match outcome {
                     Ok(result)=>{
                         elapsed=elapsed.saturating_add(result.job.elapsed_ms);
                         let halt=matches!(result.job.status,docsis_ofdm_fec::simulation::channel::ChannelJobStatus::Cancelled|docsis_ofdm_fec::simulation::channel::ChannelJobStatus::RuntimeExceeded);
-                        if sender.send(WorkerMessage::Profile(Box::new(result),Box::new(profile))).is_err() {return;}
+                        if sender.send(WorkerMessage::Profile(Box::new(result),Box::new(profile))).is_err() {worker_timing.finish();return;}
                         if halt {break;}
                     }
-                    Err(error)=>{if sender.send(WorkerMessage::Rejected(profile.profile_id,profile.key.channel_id,error)).is_err() {return;}}
+                    Err(error)=>{if sender.send(WorkerMessage::Rejected(profile.profile_id,profile.key.channel_id,error)).is_err() {worker_timing.finish();return;}}
                 }
             }
             let reason=if stop.load(Ordering::Relaxed) {"Profile sweep cancelled; unstarted profiles remain marked Not Started."}
                 else if elapsed>=options.max_runtime_ms {"Profile sweep active runtime budget reached."} else {""};
+            worker_timing.finish();
             let _=sender.send(WorkerMessage::Finished(reason.into()));
         });
         match spawned {
             Ok(_) => {
+                self.timing = Some(timing);
                 self.worker = Some(Worker {
                     cancel,
                     paused,
@@ -609,6 +622,9 @@ impl Model {
                     self.token = self.token.wrapping_add(1);
                 }
                 Err(mpsc::TryRecvError::Disconnected) => {
+                    if let Some(timing) = &self.timing {
+                        timing.finish();
+                    }
                     self.worker = None;
                     self.error = "Receiver worker disconnected.".into();
                 }
@@ -632,6 +648,7 @@ impl Model {
             "plc_frames":r.job.summary.plc_frames,"unrecovered":r.job.unrecovered_generated_payloads}));
         json!({"receiver_status":if ready {"complete"} else {"attention"},"verify_status":if self.verify {"complete"} else {"attention"},
             "reason":if !self.error.is_empty(){self.error.as_str()} else if ready {"Validated source/channel/receiver configuration ready."} else {"Configure WB and Receiver after accepting OCD, DPD, PRBS-TX and RxMER."},
+            "timing":self.timing.as_ref().map(|timing|timing.snapshot()),
             "busy":self.worker.is_some(),"paused":self.worker.as_ref().is_some_and(|w|w.paused.load(Ordering::Relaxed)),
             "profile_index":self.worker.as_ref().map_or(0,|w|w.profile_index.load(Ordering::Relaxed)+1),
             "profile_id":self.worker.as_ref().map(|w|w.profile_id.load(Ordering::Relaxed)),
@@ -712,6 +729,7 @@ mod tests {
             request: Some(settings),
             plan: None,
             worker: None,
+            timing: None,
             error: String::new(),
             token: 0,
         };
@@ -721,6 +739,14 @@ mod tests {
             assert!(std::time::Instant::now() < deadline);
             std::thread::sleep(Duration::from_millis(10));
         }
+        let timing = model.state()["timing"].clone();
+        assert!(timing["elapsed_ms"].as_u64().unwrap() > 0);
+        assert_eq!(
+            model.state()["timing"],
+            timing,
+            "Completed elapsed time must be frozen"
+        );
+        assert_eq!(timing["profiles"].as_array().unwrap().len(), 1);
         let result = latest().expect("Actual result must be retained");
         assert!(
             result.job.summary.comparison.bits_tested > 0,
@@ -889,6 +915,7 @@ mod tests {
             .iter()
             .all(|point| point["count"] == "0"));
         model.invalidate();
+        assert!(model.state()["timing"].is_null());
         assert!(latest().is_none());
         assert_eq!(
             crate::transmitter_instruments::stage(0, 0)["available"],
@@ -959,6 +986,7 @@ mod tests {
             request: Some(prepare(&transmission, &inputs, &options).unwrap()),
             plan: Some(plan),
             worker: None,
+            timing: None,
             error: String::new(),
             token: 0,
         };
@@ -971,6 +999,10 @@ mod tests {
         let view = crate::instruments::receiver::performance::view(-1, 0, 0);
         assert_eq!(view["profiles"].as_array().unwrap().len(), 4, "{view}");
         assert_eq!(view["profile_id"], 3);
+        let timing = model.state()["timing"].clone();
+        assert_eq!(timing["profiles"].as_array().unwrap().len(), 4);
+        assert_eq!(timing["profiles"][3]["profile_id"], 3);
+        assert_eq!(model.state()["timing"], timing);
         for id in 0..4 {
             let view = crate::instruments::receiver::performance::view(id, 0, 0);
             assert_eq!(view["status"], "complete", "{view}");
