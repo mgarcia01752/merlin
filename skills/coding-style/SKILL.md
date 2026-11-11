@@ -312,6 +312,17 @@ defaults, malformed/versioned input rejection and restored run-request values
 with scoped tests. Update architecture, task design, checklist and user guide
 alongside the implementation; keep planned persistence explicitly pending.
 
+## Main WB run configuration
+
+Keep run-wide duration, budget, noise seed and captured profile-ID checkboxes in
+Configure WB beside Start. Keep correction mode and decoder iterations in Receiver.
+Enable Configure WB only after File New, a successful first Save, Open or update recovery;
+keep it disabled during a simulation. Partial input setup may be configured/saved,
+but Start requires all-green inputs and at least one compatible selected profile.
+Preserve the other dialog's accepted fields when applying either editor. Save/Open
+and recovery use the same validated profile-ID list; preserve legacy all/applied
+semantics explicitly rather than silently changing an opened WB's run selection.
+
 ## Reusing the PNM Viewer Qt framework
 
 For MERLIN UI work, inspect reusable shell, theme, dialogs, navigation, adapter
@@ -343,6 +354,9 @@ compilation and the executable may need relinking; never reuse stale artifacts
 as validation of changed code.
 
 ## Qt window and dialog organization
+
+Apply [ui-design](../ui-design/SKILL.md) for simple labels and the shared
+lower-right Apply then Cancel action row in draft editors.
 
 Use the operating system's native file/folder picker for Open, Save and directory
 selection. Do not use Qt Quick's fallback file browser, a Qt Widgets file dialog,

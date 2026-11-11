@@ -40,7 +40,9 @@ unchanged. The captured commit and clean tree must remain unchanged throughout.
 The default local gate schedules Rust tests with `scripts/test-local.sh all`,
 four nextest processes by default; `MERLIN_TEST_THREADS` overrides the budget.
 Preserve doctests/example/analysis coverage and serialized timing-sensitive
-cases. Qt remains separate and hosted workflows retain their own test commands.
+cases. Qt remains separate; hosted native validation uses the same pinned runner.
+Master and Release share validation through ci.yml; release-only compilation
+and packaging do not replace tests or security gates.
 Do not bypass Git guards or use Git force-push. No feature-branch push is authorized
 by the helper. Use toolkit-release for explicit version/tag modes.
 

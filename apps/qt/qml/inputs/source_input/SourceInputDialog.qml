@@ -212,22 +212,16 @@ WorkbenchDialog {
             Layout.fillWidth: true; wrapMode: Text.WordWrap
         }
     }
-    footer: Pane {
-        padding: 10
-        background: Item {}
-        contentItem: RowLayout {
-            Item { Layout.fillWidth: true }
-            Button { objectName: "sourceCancel"; text: "Cancel"; onClicked: dialog.close() }
-            Button {
-                objectName: "sourceApply"; text: "Apply"
-                onClicked: {
-                    dialog.errorMessage = dialog.backend.apply(JSON.stringify(dialog.draft))
-                    if (dialog.errorMessage.length === 0) {
-                        dialog.sourceApplied()
-                        dialog.close()
-                    }
-                }
+    footer: ApplyCancelFooter {
+        applyObjectName: "sourceApply"
+        cancelObjectName: "sourceCancel"
+        onApplied: {
+            dialog.errorMessage = dialog.backend.apply(JSON.stringify(dialog.draft))
+            if (dialog.errorMessage.length === 0) {
+                dialog.sourceApplied()
+                dialog.close()
             }
         }
+        onCancelled: dialog.reject()
     }
 }

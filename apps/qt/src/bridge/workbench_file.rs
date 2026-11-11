@@ -21,6 +21,11 @@ pub mod bridge {
         #[qobject]
         #[qml_element]
         type WorkbenchFile = super::WorkbenchFileRust;
+        /// Creates a blank WB and clears the prior Save destination and accepted inputs.
+        /// # Returns
+        /// Reload metadata with default settings and no configured run or inputs.
+        #[qinvokable]
+        fn new_workbench(self: Pin<&mut WorkbenchFile>) -> QString;
         /// Selects and completely validates a project before replacing accepted inputs.
         /// # Returns
         /// Bounded reload metadata or a diagnostic; cancellation preserves current state.
@@ -106,6 +111,17 @@ fn adopt_project(project: Project) -> Result<serde_json::Value, String> {
 }
 
 impl bridge::WorkbenchFile {
+    /// Creates an explicit blank WB without saving or overwriting any file.
+    /// # Returns
+    /// Default settings for editor reload, with no accepted inputs or run options.
+    pub fn new_workbench(mut self: core::pin::Pin<&mut Self>) -> QString {
+        workbench_session::restore(Default::default(), Default::default());
+        crate::platform::input_file::clear_original_paths();
+        self.as_mut().rust_mut().path = None;
+        QString::from(json!({"created":true,"transmission":docsis_ofdm_fec::transmission::TransmissionSettings::default(),
+            "receiver":null,"verified":false,"dark":null}).to_string())
+    }
+
     /// Stores a private recovery WB without overwriting a user-selected file.
     /// # Arguments
     /// * `settings`, `receiver` - Accepted configuration JSON, each at most 4096 bytes.
@@ -124,7 +140,7 @@ impl bridge::WorkbenchFile {
                 return Err("Recovery configuration exceeds limits.".into());
             }
             let project = Project {
-                schema_version: 1,
+                schema_version: 2,
                 application: "MERLIN".into(),
                 transmission: serde_json::from_str(&settings.to_string())
                     .map_err(|error| error.to_string())?,
@@ -243,7 +259,7 @@ impl bridge::WorkbenchFile {
                 }
             }
             let project = Project {
-                schema_version: 1,
+                schema_version: 2,
                 application: "MERLIN".into(),
                 transmission: serde_json::from_str(&settings.to_string())
                     .map_err(|e| e.to_string())?,

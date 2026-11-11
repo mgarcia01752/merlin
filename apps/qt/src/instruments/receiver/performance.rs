@@ -27,6 +27,7 @@ struct Entry {
     pending: u64,
     points: Vec<Point>,
     error: Option<String>,
+    fec_details: Option<Value>,
 }
 thread_local! { static ENTRIES: RefCell<Vec<Entry>> = const {RefCell::new(Vec::new())}; }
 /// Clears all transient profile results after new accepted input or Start.
@@ -40,6 +41,7 @@ pub(crate) fn begin(profiles: &[CapturedProfile]) {
     clear();
     for profile in profiles.iter().take(MAX_PROFILES) {
         insert(Entry {
+            fec_details: None,
             id: profile.profile_id,
             channel: profile.key.channel_id,
             status: "not_started".into(),
@@ -94,6 +96,7 @@ pub(crate) fn retain(profile: &CapturedProfile, result: &ResultData) {
         .collect();
     let job = &result.job;
     let entry = Entry {
+        fec_details: Some(super::fec::snapshot(result)),
         id: profile.profile_id,
         channel: profile.key.channel_id,
         status: serde_json::to_value(job.status)
@@ -120,6 +123,7 @@ pub(crate) fn retain(profile: &CapturedProfile, result: &ResultData) {
 /// * `error` - Bounded setup diagnostic.
 pub(crate) fn reject(id: u8, channel: u8, error: String) {
     insert(Entry {
+        fec_details: None,
         id,
         channel,
         status: "failed".into(),
@@ -165,5 +169,54 @@ pub(crate) fn view(id: i32, start: i32, count: i32) -> Value {
             "summary":format!("Frequency selection: {:.3} – {:.3} MHz",f64::from(first)/1e6,f64::from(last)/1e6),
             "x_ticks":(0..=4).map(|i|json!({"x":f64::from(i)/4.0,"label":format!("{:.3}",(f64::from(first)+f64::from(i)/4.0*f64::from(last-first))/1e6)})).collect::<Vec<_>>(),
             "y_ticks":(0..=4).map(|i|json!({"x":f64::from(i)/4.0,"label":format!("{:.1}",maximum-f64::from(i)/4.0*(maximum-minimum))})).collect::<Vec<_>>()})
+    })
+}
+
+/// Reads one bounded retained FEC summary without selecting other instruments.
+/// # Arguments
+/// * `id` - Captured profile identity; -1 follows the most recently finished run.
+/// # Returns
+/// Actual per-profile graphs and records, or explicit unstarted/failed state.
+pub(crate) fn fec_view(id: i32) -> Value {
+    ENTRIES.with(|entries| {
+        let entries = entries.borrow();
+        let profiles = entries
+            .iter()
+            .map(|entry| json!({"id":entry.id,"status":entry.status}))
+            .collect::<Vec<_>>();
+        let selected = entries
+            .iter()
+            .find(|entry| i32::from(entry.id) == id)
+            .or_else(|| {
+                if id < 0 {
+                    entries
+                        .iter()
+                        .rev()
+                        .find(|entry| entry.status != "not_started")
+                        .or_else(|| entries.first())
+                } else {
+                    None
+                }
+            });
+        let mut result = selected.map_or_else(
+            || {
+                if id < 0 && entries.is_empty() {
+                    super::diagnostics::fec()
+                } else {
+                    json!({"available":false,"reason":"This profile has no retained FEC result."})
+                }
+            },
+            |entry| {
+                entry.fec_details.clone().unwrap_or_else(|| json!({
+                "available":false,"profile_id":entry.id,"status":entry.status,
+                "reason":entry.error.clone().unwrap_or_else(||"This profile has not run.".into())
+            }))
+            },
+        );
+        if let Some(entry) = selected {
+            result["profile_id"] = json!(entry.id);
+        }
+        result["profiles"] = json!(profiles);
+        result
     })
 }

@@ -40,7 +40,7 @@ WorkbenchDialog {
     closePolicy: Popup.CloseOnEscape
     contentItem: ColumnLayout {
         spacing: 14
-        RowLayout { Layout.fillWidth:true; Label { text: "Receiver Signal Path"; font.pixelSize:19; font.bold:true; color:dialog.theme.text; Layout.fillWidth:true } Button { objectName:"receiverFecShortcut"; text:"FEC Statistics"; onClicked:fec.open() } Button { objectName:"receiverConfigure"; text:"Configure Receiver / Run…"; onClicked:dialog.configurationRequested() } }
+        RowLayout { Layout.fillWidth:true; Label { text: "Receiver Signal Path"; font.pixelSize:19; font.bold:true; color:dialog.theme.text; Layout.fillWidth:true } Button { objectName:"receiverFecShortcut"; text:"FEC Statistics"; onClicked:fec.open() } Button { objectName:"receiverConfigure"; text:"Configure Receiver…"; onClicked:dialog.configurationRequested() } }
         Rectangle {
             Layout.fillWidth: true; Layout.preferredHeight: 142
             color: dialog.theme.background; radius: 12; border.color: dialog.theme.line

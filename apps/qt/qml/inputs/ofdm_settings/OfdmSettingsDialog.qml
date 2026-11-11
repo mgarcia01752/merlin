@@ -173,16 +173,16 @@ WorkbenchDialog {
         }
         Label { objectName: "ofdmValidationError"; text: dialog.errorMessage; visible: text.length > 0; color: theme.text; Layout.fillWidth: true; wrapMode: Text.WordWrap }
     }
-    footer: DialogButtonBox {
+    footer: ApplyCancelFooter {
+        applyObjectName: "ofdmApply"
+        onApplied: dialog.applyDraft()
+        onCancelled: dialog.reject()
         Button {
             text: "Reset defaults"
-            DialogButtonBox.buttonRole: DialogButtonBox.ResetRole
             onClicked: {
                 dialog.draft = JSON.parse(dialog.backend.defaults())
                 dialog.errorMessage = ""
             }
         }
-        Button { text: "Cancel"; DialogButtonBox.buttonRole: DialogButtonBox.RejectRole; onClicked: dialog.close() }
-        Button { objectName: "ofdmApply"; text: "Apply"; DialogButtonBox.buttonRole: DialogButtonBox.ApplyRole; onClicked: dialog.applyDraft() }
     }
 }

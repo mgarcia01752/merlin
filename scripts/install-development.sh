@@ -127,8 +127,9 @@ for name in ('local', 'local/cargo', 'local/rustup', 'local/merlin-cargo'):
         raise SystemExit(f'Refusing setup through an external tool directory: {name}')
 PY
 if [[ ${#MISSING_PACKAGES[@]} -gt 0 ]]; then
-  sudo apt-get update
-  sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${MISSING_PACKAGES[@]}"
+  # shellcheck source=scripts/apt-development.sh
+  source "${SCRIPT_DIR}/apt-development.sh"
+  apt_development_packages "${MISSING_PACKAGES[@]}"
 fi
 mkdir -p "${PROJECT_DIR}/local"
 TEMP_DIR="$(mktemp -d "${PROJECT_DIR}/local/development-install.XXXXXX")"

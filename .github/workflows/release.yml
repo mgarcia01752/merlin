@@ -1,11 +1,11 @@
-# Copyright 2026 DOCSIS OFDM Channel Sim contributors
+# Copyright 2026 MERLIN contributors
 # SPDX-License-Identifier: Apache-2.0
-
-name: Native MERLIN release
-on:
+name: Release
+'on':
   push:
-    tags: ['v*']
-  workflow_dispatch:
+    tags:
+      - v*
+  workflow_dispatch: null
 permissions:
   contents: read
 jobs:
@@ -26,24 +26,13 @@ jobs:
     uses: ./.github/workflows/ci.yml
     permissions:
       contents: read
-  codeql:
-    needs: version
-    uses: ./.github/workflows/codeql.yml
-    permissions:
-      contents: read
       security-events: write
-  dependency-security:
-    needs: version
-    uses: ./.github/workflows/dependency-security.yml
-    permissions:
-      contents: read
-  desktop:
-    needs: version
-    uses: ./.github/workflows/ubuntu-desktop.yml
-    permissions:
-      contents: read
+    with:
+      release: true
   publish:
-    needs: [version, validate, codeql, dependency-security, desktop]
+    needs:
+      - version
+      - validate
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -54,9 +43,7 @@ jobs:
           pattern: merlin-assets-*
           path: dist/native
       - name: Verify and collect successful native packages
-        run: >-
-          python3 tools/packaging/collect_release.py --source dist/native --output dist/release
-          --expected-artifacts merlin-assets-linux-x64 merlin-assets-desktop-ubuntu22-amd64
+        run: python3 tools/packaging/collect_release.py --source dist/native --output dist/release --expected-artifacts merlin-assets-linux-x64 merlin-assets-desktop-ubuntu22-amd64
       - name: Publish tested CLI and Ubuntu desktop release
         env:
           GH_TOKEN: ${{ github.token }}

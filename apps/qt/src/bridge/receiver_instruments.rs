@@ -57,6 +57,14 @@ pub mod bridge {
         /// Decoder/comparison counters or an explicit pre-run empty state.
         #[qinvokable]
         fn fec(self: &ReceiverInstruments) -> QString;
+        /// Reads a retained FEC result independently of other instrument selections.
+        /// # Arguments
+        /// * `profile_id` - Captured identity, or -1 to follow the latest result.
+        /// # Returns
+        /// Bounded decoder charts and rows, including explicit unavailable states.
+        #[qinvokable]
+        fn fec_profile(self: &ReceiverInstruments, profile_id: i32) -> QString;
+
         /// Queries one independent profile's measured MER and FEC performance.
         /// # Arguments
         /// * `profile_id` - Captured identity, or -1 for the latest completed profile.
@@ -219,6 +227,15 @@ impl bridge::ReceiverInstruments {
     /// Bounded counters and completed-word rows; no engine state changes.
     pub fn fec(&self) -> QString {
         QString::from(diagnostics::fec().to_string())
+    }
+
+    /// Reads one retained profile's decoder summary without running the simulation.
+    /// # Arguments
+    /// * `profile_id` - Captured identity, or -1 for the latest finished result.
+    /// # Returns
+    /// Bounded FEC counters, graph values, records and profile catalog JSON.
+    pub fn fec_profile(&self, profile_id: i32) -> QString {
+        QString::from(crate::instruments::receiver::performance::fec_view(profile_id).to_string())
     }
 
     /// Maps a presentation choice to the core's registered test-point identity.

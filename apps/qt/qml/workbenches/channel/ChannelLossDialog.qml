@@ -38,10 +38,9 @@ WorkbenchDialog {
     width:Math.min(780,parent ? parent.width-40 : 780)
     height:Math.min(590,parent ? parent.height-40 : 590)
     modal:true
-    footer:DialogButtonBox {
-        Button { text:"Apply";objectName:"channelLossApply";enabled:!dialog.busy && !dialog.error;DialogButtonBox.buttonRole:DialogButtonBox.ApplyRole;onClicked:{dialog.error=dialog.backend.loss_apply(JSON.stringify(dialog.document()),dialog.settingsBackend.current());if (!dialog.error) {dialog.modelApplied();dialog.close()} } }
-        Button { text:"Close";DialogButtonBox.buttonRole:DialogButtonBox.RejectRole }
-        onRejected:dialog.close()
+    footer: ApplyCancelFooter {
+        applyObjectName: "channelLossApply";applyEnabled:!dialog.busy && !dialog.error;onApplied:{dialog.error=dialog.backend.loss_apply(JSON.stringify(dialog.document()),dialog.settingsBackend.current());if (!dialog.error) {dialog.modelApplied();dialog.close()} }
+        onCancelled: dialog.reject()
     }
     contentItem:ColumnLayout {
         spacing:12

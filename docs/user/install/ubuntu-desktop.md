@@ -6,9 +6,9 @@ runnable example bundles, including channel 193 `multi-rxmer-2`.
 
 ## Get the installer
 
-For development builds, open GitHub **Actions → Ubuntu 22.04 desktop DEB → Run
-workflow**, select the intended branch, and download the successful run's
-`merlin-assets-desktop-ubuntu22-amd64` artifact. Extract its ZIP to obtain the DEB
+For packaged builds, open GitHub **Actions → Release** and download the successful
+version-tag run's `merlin-assets-desktop-ubuntu22-amd64` artifact. **Master** runs
+shared validation; optimized installers are produced by **Release**. Extract its ZIP to obtain the DEB
 and `SHA256SUMS`. The workflow must first be committed and pushed; local workflow
 files alone are not an executed GitHub build.
 

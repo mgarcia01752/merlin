@@ -308,6 +308,12 @@ self-contained workbench persistence.
 The diagram block and popup use the full name OFDM Channel Descriptor (OCD).
 This editor label does not imply complete OCD message import/export support.
 Each dialog has its own QML file and focused Rust adapter where needed.
+Draft editors share `components/ApplyCancelFooter.qml`: equally sized Apply then
+Cancel buttons in one lower-right row with matching margins. Explicit layout
+preserves this order across platforms. Secondary actions stay left; validation
+and draft ownership remain with each editor. Cancel rejects without applying.
+See [UI design skill](../skills/ui-design/SKILL.md).
+
 All MERLIN popup dialogs inherit a shared title header with an upper-right
 circular X, while retaining footer Close/Cancel controls. X rejects the current
 popup without applying drafts or closing its parent; native file pickers retain
@@ -1735,7 +1741,7 @@ recursive ELF dependency inspection select runtime resources; observed system
 libraries are mapped to explicit DEB prerequisites. Build on Ubuntu 22.04 with
 Rust 1.85.1 and locked sources. No external Python/Qt SDK is needed after setup.
 
-`.github/workflows/ubuntu-desktop.yml` supports manual artifact builds and a
+The desktop job in shared `.github/workflows/ci.yml` supports validation and a
 reusable tag-release job. It validates, packages and exercises offline startup,
 all WB imports, hashes and runtime dependencies; disposable CI runners then
 install/reinstall/remove before uploading the DEB and SHA256SUMS. Existing tag
@@ -1802,7 +1808,61 @@ Completed/partial performance curves and counters remain selectable per captured
 ID. Other instruments retain and identify the latest completed profile's detailed
 snapshot. Stop/budget expiry preserves completed entries and marks unstarted
 profiles explicitly. WB receiver options persist all-profiles/applied-only mode;
-legacy missing fields default to all profiles. Results remain transient.
+legacy missing fields preserve all-profile behavior. New WBs initially use the
+applied profile, with explicit captured-ID checkbox subsets in the main WB
+configuration. Results remain transient.
 `CarrierMer` stores per-physical-bin observation signal/error powers in the core;
 `ChannelJobResult` exposes them through the same Rust API as other results.
 Python bindings remain deferred; neither FEC accounting nor MER depends on Qt.
+
+
+### Main WB configuration and explicit profile selection (UI-WB-CONFIG-01)
+
+Configure WB sits before Start on the main lower control row. File New creates
+an explicit blank WB; successful Open/recovery or first Save activates one. Cancellation or
+failed Open does not change activation or accepted state. New resets accepted
+inputs, run/comparison state and Save destination after confirmation for an
+active WB. The button is disabled before activation and during a run.
+
+Run/Profiles tabs edit duration per profile, shared host budget, noise seed and
+captured profile-ID checkboxes. Receiver owns correction mode and iteration
+limit. Both dialogs merge through the same Rust Options snapshot, preserving
+other fields. Configuration validation accepts partial setup; frozen-request
+admission still requires compatible inputs and a nonempty selection. The main
+Start additionally requires an active WB and every block green.
+
+Schema2 writes selected IDs under receiver.selected_profile_ids; global run and
+receiver settings share this persisted model despite their separate UI dialogs.
+None means the documented applied/all legacy policy; an empty list is accepted
+configuration but cannot run. New defaults use applied-only; schema1 files keep
+previous all/applied semantics. Unknown/duplicate IDs, unsupported versions and
+invalid limits reject before atomic adoption. Only selected profile layouts are
+admitted for the bounded independent sweep; the applied DPD capture stays intact.
+See [design](development/features/workbench-configuration/design.md) and
+[user guide](user/workbench-configuration.md).
+
+### Shared Master and Release validation (CI-CONSOLIDATE-01)
+
+Only ci.yml (Master) and release.yml (Release) remain. Master owns preflight,
+CodeQL, both-lock RustSec, Qt checks and native Ubuntu22/24/26 tests with the
+four-process pinned nextest runner and retained doctests/example/analysis phases.
+Release verifies its tag and calls that same workflow with release=true, adding
+optimized builds, packages and installed lifecycle checks. Publication waits for
+all shared jobs and exact artifacts/checksums. The initial desktop failure in
+run43061645839 was Azure mirror DNS/connectivity during APT setup, before Qt
+compilation. Strict refresh plus bounded setup retries and CI-only HTTPS mirror
+preference address that path; successful hosted recovery remains unverified.
+
+### FEC Monitor presentation (UI-FEC-02)
+
+The receiver FEC provider constructs bounded per-profile snapshots during the
+existing result-retention step. Observation-window FecCounters remain separate
+from whole-run iteration, recovery and verification totals. Rust supplies outcome
+fractions, exact histogram bins with trimmed unused range and recovery partitions
+that distinguish rejection, source mismatch and unfinished payloads. QML presents
+Overview/Control Channels/Codewords tabs and a profile selector independently of
+other instruments. Retain at most64 word records and32 profiles; never clone
+whole signal snapshots for this instrument. Zero/unavailable and partial results
+remain explicit; no source, decoder, run admission or WB persistence changes.
+See [design](development/features/fec-monitor/design.md) and
+[user guide](user/fec-monitor.md).

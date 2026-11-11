@@ -9,6 +9,7 @@ MenuBar {
     id: bar
     required property var theme
     property bool fileActionsEnabled: true
+    signal newRequested()
     signal openRequested()
     signal saveRequested(bool saveAs)
     signal globalSettingsRequested()
@@ -19,6 +20,10 @@ MenuBar {
     background: Rectangle { color: bar.theme.panel }
     Menu {
         title: "&File"
+        MenuItem {
+            objectName: "newWorkbench"
+            action: Action { text: "New"; shortcut: StandardKey.New; enabled: bar.fileActionsEnabled; onTriggered: bar.newRequested() }
+        }
         MenuItem {
             objectName: "openWorkbenchConfig"
             action: Action { text: "Open…"; shortcut: StandardKey.Open; enabled: bar.fileActionsEnabled; onTriggered: bar.openRequested() }

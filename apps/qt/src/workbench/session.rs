@@ -61,6 +61,27 @@ pub(crate) fn snapshot() -> Inputs {
     INPUTS.with(|inputs| inputs.borrow().clone())
 }
 
+/// Reads bounded profile identities without cloning captured assignments or RxMER arrays.
+/// # Returns
+/// Sorted unique captured IDs and the currently applied ID, if any.
+pub(crate) fn profile_catalog() -> (Vec<u8>, Option<u8>) {
+    INPUTS.with(|current| {
+        let inputs = current.borrow();
+        let mut ids = inputs
+            .profiles
+            .iter()
+            .chain(inputs.profile.iter())
+            .map(|profile| profile.profile_id)
+            .collect::<Vec<_>>();
+        ids.sort_unstable();
+        ids.dedup();
+        (
+            ids,
+            inputs.profile.as_ref().map(|profile| profile.profile_id),
+        )
+    })
+}
+
 /// Publishes accepted RxMER playback inputs for independent worker snapshots.
 /// # Arguments
 /// * `playback` - Original frames and explicit combination/schedule, or removal.

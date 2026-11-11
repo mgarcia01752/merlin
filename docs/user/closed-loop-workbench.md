@@ -6,19 +6,21 @@ engine. Instrument selections do not determine readiness.
 
 ## Configure and run
 
-1. Apply an OCD-compatible **DPD Profile 0**. The current live transport supports
-   Profile A ID 0; importing other profiles does not make them runnable. Load demo
-   prefers Profile 0 when available. Apply PRBS-TX or an exact-byte file source.
+1. Use **File → New** or **Open…**. Apply an OCD-compatible DPD and PRBS-TX
+   or an exact-byte file source. Each selected captured profile runs separately
+   through bootstrap wire Profile A (ID0), retaining its captured identity.
 2. Apply compatible RxMER input(s). Channel Estimate defaults to **flat H=1+0i**;
-   optionally apply a real response file. RxMER sits above Channel Simulator; DS Channel Est. connects to both channel and receiver.
-3. Open **Receiver → Configure Receiver / Run…**. Choose supplied-H reference
-   correction or pilot-estimated H-hat, observation duration and finite decoder/
-   host limits. Apply validates the entire accepted request and makes Receiver green.
-4. Open **PRBS-RX → Enable Comparison**. It uses the independent original PRBS/file
-   source. When all nine blocks are green and the worker is idle, Start is enabled.
-5. Close dialogs and click **Start**. Progress appears below the diagram. **Stop**
-   retains completed comparisons; **Pause / Resume** preserves the same engine at
-   completed OFDM-step boundaries and excludes paused time from the host budget.
+   optionally apply a real response file.
+3. Use main **Configure WorkBench** beside Start. Set duration per profile, total run
+   budget and noise seed. In **Profiles**, check the profiles to run. New WBs
+   initially select the applied profile; at least one is required for Start.
+4. Use **Receiver → Configure Receiver…** for correction mode and decoder
+   iteration limit. WB/Receiver options can be accepted before all inputs are
+   present; readiness becomes green only after full request validation.
+5. Open **PRBS-RX → Enable Comparison**. When all blocks are green, the WB is
+   active and the worker is idle, Start is enabled. **Stop** retains completed
+   comparisons; **Pause / Resume** preserves the current session and excludes
+   paused time from the shared host budget.
 
 The initial UI duration is 3 ms, with 1–1000 ms allowed. This is source observation
 time: acquisition/completion/drain add work. A sequence's final transition must
@@ -108,8 +110,9 @@ See the [receiver guide](receiver-workbench.md) and [development design](../deve
 
 ## Independent profile runs
 
-Receiver configuration defaults to all profiles in the accepted DPD capture,
-run separately in captured-ID order. Duration applies per profile; the active
-host budget covers the sweep. Choose Applied Profile Only for a single run.
-WB JSON stores this choice. See [Profile Performance](receiver-profile-performance.md)
+Main **Configure WorkBench → Profiles** selects captured profiles with checkboxes.
+New WBs use the applied profile initially; legacy WBs preserve their saved
+all/applied behavior. Selected profiles run separately in captured-ID order.
+Duration applies per profile; the active host budget covers the selection.
+WB JSON stores the selected IDs. See [Profile Performance](receiver-profile-performance.md)
 for counter definitions, bootstrap Profile A mapping, limits and result selection.

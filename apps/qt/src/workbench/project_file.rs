@@ -66,7 +66,7 @@ impl Project {
     /// # Errors
     /// Rejects version drift, unknown sections, malformed originals or invalid settings.
     pub(crate) fn validate(&self) -> Result<crate::workbench::session::Inputs, String> {
-        if self.schema_version != 1
+        if ![1, 2].contains(&self.schema_version)
             || self.application != "MERLIN"
             || self.sections.len() > 5
             || self.sections.keys().any(|k| {
@@ -111,12 +111,10 @@ impl Project {
             )?,
         };
         if let Some(options) = &self.receiver {
-            if !(1..=1000).contains(&options.duration_ms)
-                || !(1..=100).contains(&options.max_iterations)
-                || !(1..=300000).contains(&options.max_runtime_ms)
-            {
-                return Err("Invalid saved receiver/run limits".into());
+            if self.schema_version == 1 && options.selected_profile_ids.is_some() {
+                return Err("Explicit profile selection requires workbench schema 2.".into());
             }
+            options.validate(&inputs)?;
         }
         Ok(inputs)
     }
@@ -126,8 +124,10 @@ impl Project {
     /// # Returns
     /// Unit after sync and atomic rename; old contents survive serialization/write failure.
     /// # Errors
-    /// Reports serialization, file-size, filesystem or nonregular destination errors.
+    /// Rejects invalid configuration before writing; also reports serialization,
+    /// file-size, filesystem or nonregular destination errors.
     pub(crate) fn write(&self, path: &Path) -> Result<(), String> {
+        self.validate()?;
         if crate::platform::input_file::is_original(path) {
             return Err("Project Save cannot overwrite an imported original input.".into());
         }
@@ -209,6 +209,56 @@ pub(crate) fn check_file(path: &Path) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn version_two_profile_selection_roundtrips_and_legacy_remains_explicit() {
+        let original = std::fs::read(
+            Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("../../examples/workbench/single/workbench.merlin.json"),
+        )
+        .unwrap();
+        let mut project: Project = serde_json::from_slice(&original).unwrap();
+        project.validate().unwrap();
+        project.schema_version = 2;
+        project.receiver.as_mut().unwrap().selected_profile_ids = Some(vec![1, 3]);
+        let restored: Project =
+            serde_json::from_slice(&serde_json::to_vec(&project).unwrap()).unwrap();
+        restored.validate().unwrap();
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../docs/development/local/workbench-configuration");
+        std::fs::create_dir_all(&root).unwrap();
+        let destination = root.join(format!(
+            "selection-roundtrip-{}.merlin.json",
+            std::process::id()
+        ));
+        project.write(&destination).unwrap();
+        let saved = std::fs::read(&destination).unwrap();
+        let loaded: Project = serde_json::from_slice(&saved).unwrap();
+        assert_eq!(
+            loaded.receiver.as_ref().unwrap().selected_profile_ids,
+            Some(vec![1, 3])
+        );
+        project.receiver.as_mut().unwrap().selected_profile_ids = Some(vec![15]);
+        assert!(project.write(&destination).is_err());
+        assert_eq!(std::fs::read(&destination).unwrap(), saved);
+        std::fs::remove_file(&destination).unwrap();
+        project.receiver.as_mut().unwrap().selected_profile_ids = Some(vec![1, 3]);
+        let plan = crate::simulation::closed_loop::prepare_sweep(
+            &restored.transmission,
+            &restored.validate().unwrap(),
+            restored.receiver.as_ref().unwrap(),
+        )
+        .unwrap();
+        let _ = plan;
+        project.schema_version = 1;
+        assert!(project.validate().is_err());
+        project.schema_version = 99;
+        assert!(project.validate().is_err());
+        project.schema_version = 2;
+        project.receiver.as_mut().unwrap().selected_profile_ids = Some(vec![15]);
+        assert!(project.validate().is_err());
+        project.receiver.as_mut().unwrap().selected_profile_ids = Some(vec![]);
+        project.validate().unwrap();
+    }
     #[test]
     fn curated_workbenches_restore_matching_originals_and_prepare_full_requests() {
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../examples/workbench");

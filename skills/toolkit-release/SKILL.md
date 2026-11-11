@@ -51,8 +51,12 @@ Report native platform and interoperability evidence separately from tag creatio
 
 ## Ubuntu 22.04 desktop
 
-Use `.github/workflows/ubuntu-desktop.yml` for manual artifact builds or the
-reusable desktop job of the version-tag release. Only Ubuntu 22.04 amd64 desktop
+Keep exactly two workflow entry points: Master (`ci.yml`) and Release
+(`release.yml`). Release calls the shared Master workflow with its release
+input enabled. Shared validation includes Qt, three Ubuntu native jobs, CodeQL
+and both-lock RustSec; optimized compilation, packaging, installed lifecycle
+and publication are release-only. Do not recreate standalone security/desktop
+workflows or bypass any shared validation. Only Ubuntu 22.04 amd64 desktop
 delivery is in scope now. Keep the existing CLI ownership separate. Build Qt via
 `scripts/qt-desktop.sh`, then package with `tools/packaging/desktop.py` and verify
 with `desktop_smoke.py`; include private Qt runtime, full notices, icon and all

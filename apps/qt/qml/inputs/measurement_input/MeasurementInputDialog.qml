@@ -78,9 +78,8 @@ WorkbenchDialog {
         }
         Label { text: dialog.errorMessage || dialog.admission.error || dialog.admission.summary || ""; color: dialog.errorMessage || dialog.admission.error ? theme.statusError : theme.accent; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 12 }
     }
-    footer: DialogButtonBox {
-        Button { text: "Cancel"; DialogButtonBox.buttonRole: DialogButtonBox.RejectRole }
-        Button { objectName: "measurementApply"; text: "Apply"; DialogButtonBox.buttonRole: DialogButtonBox.ApplyRole; onClicked: { dialog.errorMessage = backend.apply(dialog.rxmer, JSON.stringify(dialog.options), dialog.settingsBackend.current()); if (!dialog.errorMessage.length) { dialog.measurementApplied(); dialog.close() } } }
-        onRejected: dialog.close()
+    footer: ApplyCancelFooter {
+        applyObjectName: "measurementApply";   onApplied: { dialog.errorMessage = backend.apply(dialog.rxmer, JSON.stringify(dialog.options), dialog.settingsBackend.current()); if (!dialog.errorMessage.length) { dialog.measurementApplied(); dialog.close() } }
+        onCancelled: dialog.reject()
     }
 }

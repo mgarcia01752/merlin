@@ -29,10 +29,9 @@ WorkbenchDialog {
     title:"Receiver Input Attenuator"
     parent:Overlay.overlay;anchors.centerIn:parent;width:Math.min(620,parent ? parent.width-40 : 620)
     modal:true
-    footer:DialogButtonBox {
-        Button {objectName:"channelAttenuatorApply";text:"Apply";enabled:!dialog.busy && attenuation.acceptableInput && (!noise.checked || density.acceptableInput);DialogButtonBox.buttonRole:DialogButtonBox.ApplyRole;onClicked:dialog.applyDraft()}
-        Button {text:"Close";DialogButtonBox.buttonRole:DialogButtonBox.RejectRole}
-        onRejected:dialog.close()
+    footer: ApplyCancelFooter {
+        applyObjectName: "channelAttenuatorApply";applyEnabled:!dialog.busy && attenuation.acceptableInput && (!noise.checked || density.acceptableInput);onApplied:dialog.applyDraft()
+        onCancelled: dialog.reject()
     }
     contentItem:ColumnLayout {
         spacing:12

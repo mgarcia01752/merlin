@@ -36,7 +36,7 @@ class DesktopTests(unittest.TestCase):
             self.assertEqual(sentinel.read_text(), 'keep')
 
     def test_workflow_and_update_metadata_share_baseline_asset_name(self):
-        workflow = (ROOT / '.github/workflows/ubuntu-desktop.yml').read_text()
+        workflow = (ROOT / '.github/workflows/ci.yml').read_text()
         self.assertIn('runs-on: ubuntu-22.04', workflow)
         self.assertIn('desktop_smoke.py --installed', workflow)
         self.assertIn('sudo apt-get remove -y merlin', workflow)
@@ -45,7 +45,10 @@ class DesktopTests(unittest.TestCase):
         self.assertIn('ubuntu22.04_amd64.deb', source)
         self.assertIn('ubuntu22.04_amd64.deb', (ROOT / 'tools/packaging/desktop.py').read_text())
         release = (ROOT / '.github/workflows/release.yml').read_text()
-        self.assertIn('dependency-security, desktop', release)
+        self.assertIn('uses: ./.github/workflows/ci.yml', release)
+        self.assertIn('release: true', release)
+        self.assertIn('dependency-security:', workflow)
+        self.assertIn('desktop:', workflow)
         self.assertIn('merlin-assets-desktop-ubuntu22-amd64', release)
 
 

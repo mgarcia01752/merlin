@@ -36,7 +36,9 @@ use std::{
 #[serde(default, deny_unknown_fields)]
 pub(crate) struct Options {
     pub receiver_mode: ReceiverMode,
+    #[serde(default = "legacy_all_profiles")]
     pub all_profiles: bool,
+    pub selected_profile_ids: Option<Vec<u8>>,
     pub duration_ms: u64,
     pub max_iterations: usize,
     pub max_runtime_ms: u64,
@@ -46,12 +48,50 @@ impl Default for Options {
     fn default() -> Self {
         Self {
             receiver_mode: ReceiverMode::SuppliedChannel,
-            all_profiles: true,
+            all_profiles: false,
+            selected_profile_ids: None,
             duration_ms: 3,
             max_iterations: 50,
             max_runtime_ms: 300_000,
             noise_seed: 41,
         }
+    }
+}
+fn legacy_all_profiles() -> bool {
+    true
+}
+impl Options {
+    /// Checks accepted limits and selected captured identities without requiring all inputs.
+    /// # Arguments
+    /// * `inputs` - Current accepted profile catalog; empty before DPD import.
+    /// # Errors
+    /// Rejects invalid limits, repeated or absent captured IDs and excessive selections.
+    pub(crate) fn validate(&self, inputs: &Inputs) -> Result<(), String> {
+        if !(1..=1000).contains(&self.duration_ms)
+            || !(1..=100).contains(&self.max_iterations)
+            || !(1..=300000).contains(&self.max_runtime_ms)
+        {
+            return Err("Invalid workbench run limits.".into());
+        }
+        if let Some(ids) = &self.selected_profile_ids {
+            let mut unique = std::collections::BTreeSet::new();
+            for id in ids {
+                if *id > 15 || !unique.insert(*id) {
+                    return Err("Choose unique captured profile IDs from 0 to 15.".into());
+                }
+                if !inputs
+                    .profiles
+                    .iter()
+                    .chain(inputs.profile.iter())
+                    .any(|profile| profile.profile_id == *id)
+                {
+                    return Err(format!(
+                        "Selected profile {id} is not present in the accepted DPD."
+                    ));
+                }
+            }
+        }
+        Ok(())
     }
 }
 #[derive(Default)]
@@ -167,8 +207,19 @@ pub(crate) fn prepare_sweep(
     inputs: &Inputs,
     options: &Options,
 ) -> Result<SweepPlan, String> {
-    let mut profiles = if options.all_profiles && !inputs.profiles.is_empty() {
+    options.validate(inputs)?;
+    let catalog = if inputs.profiles.is_empty() {
+        inputs.profile.iter().cloned().collect::<Vec<_>>()
+    } else {
         inputs.profiles.clone()
+    };
+    let mut profiles = if let Some(ids) = &options.selected_profile_ids {
+        catalog
+            .into_iter()
+            .filter(|profile| ids.contains(&profile.profile_id))
+            .collect()
+    } else if options.all_profiles {
+        catalog
     } else {
         inputs.profile.iter().cloned().collect()
     };
@@ -411,7 +462,9 @@ impl Model {
                 .and_then(|settings| {
                     let inputs = crate::workbench::session::snapshot();
                     let plan = prepare_sweep(&settings, &inputs, options)?;
-                    let request = prepare(&settings, &inputs, options)?;
+                    let mut selected_inputs = inputs.clone();
+                    selected_inputs.profile = plan.profiles.first().cloned();
+                    let request = prepare(&settings, &selected_inputs, options)?;
                     Ok((plan, request))
                 });
             match request {
@@ -568,6 +621,7 @@ impl Model {
     /// # Returns
     /// Receiver/comparison configuration, busy state and bounded scientific summary.
     pub(crate) fn state(&self) -> Value {
+        let (profile_ids, applied_profile_id) = crate::workbench::session::profile_catalog();
         let ready = self.request.is_some();
         let result = latest();
         let summary=result.as_ref().map(|r|json!({"profile_id":r.job.settings.playback.as_ref().map(|p|p.profile.profile_id),"fec":r.job.summary.window.as_ref().map(|w|w.fec.snapshot()),"status":r.job.status,"elapsed_ms":r.job.elapsed_ms,
@@ -577,14 +631,14 @@ impl Model {
             "mean_iterations":r.job.summary.payload_mean_ldpc_iterations,"ncp_fields":r.job.summary.accepted_ncp_fields,
             "plc_frames":r.job.summary.plc_frames,"unrecovered":r.job.unrecovered_generated_payloads}));
         json!({"receiver_status":if ready {"complete"} else {"attention"},"verify_status":if self.verify {"complete"} else {"attention"},
-            "reason":if !self.error.is_empty(){self.error.as_str()} else if ready {"Validated source/channel/receiver configuration ready."} else {"Configure Receiver after accepting OCD, DPD, PRBS-TX and RxMER."},
+            "reason":if !self.error.is_empty(){self.error.as_str()} else if ready {"Validated source/channel/receiver configuration ready."} else {"Configure WB and Receiver after accepting OCD, DPD, PRBS-TX and RxMER."},
             "busy":self.worker.is_some(),"paused":self.worker.as_ref().is_some_and(|w|w.paused.load(Ordering::Relaxed)),
             "profile_index":self.worker.as_ref().map_or(0,|w|w.profile_index.load(Ordering::Relaxed)+1),
             "profile_id":self.worker.as_ref().map(|w|w.profile_id.load(Ordering::Relaxed)),
             "profile_count":self.worker.as_ref().map_or(0,|w|w.profile_count),
             "completed_symbols":self.worker.as_ref().map_or(0,|w|w.done.load(Ordering::Relaxed)),
             "can_start":ready&&self.verify&&self.worker.is_none(),"has_result":result.is_some(),"result_token":self.token.to_string(),"result":summary,
-            "options":self.options.clone().unwrap_or_default(),"accepted_options":self.options,"verified":self.verify})
+            "available_profile_ids":profile_ids,"applied_profile_id":applied_profile_id,"options":self.options.clone().unwrap_or_default(),"accepted_options":self.options,"verified":self.verify})
     }
 }
 impl Drop for Model {
@@ -886,6 +940,7 @@ mod tests {
             frame.mer_db.truncate(1920);
         }
         let options = Options {
+            all_profiles: true,
             duration_ms: 1,
             max_iterations: 5,
             ..Default::default()
@@ -926,6 +981,18 @@ mod tests {
                     + view["fec"]["ccw"].as_u64().unwrap()
                     + view["fec"]["ufec"].as_u64().unwrap()
             );
+            let fec = crate::instruments::receiver::performance::fec_view(id);
+            assert_eq!(fec["profile_id"], id);
+            assert_eq!(fec["fec"], view["fec"]);
+            assert!(fec["words"].as_array().unwrap().len() <= 64);
+            assert!(fec["iterations"]["points"].as_array().unwrap().len() <= 101);
+            let recovery_total: u64 = fec["recovery"]["segments"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|segment| segment["count"].as_u64().unwrap())
+                .sum();
+            assert_eq!(recovery_total, fec["generated"].as_u64().unwrap());
             assert!(view["samples"].as_u64().unwrap() > 0);
             assert!(
                 view["series"][1]["points"]
@@ -944,6 +1011,10 @@ mod tests {
             assert_eq!(zoom["start"], 10);
             assert_eq!(zoom["count"], 4);
         }
+        assert_eq!(
+            crate::instruments::receiver::performance::fec_view(15)["available"],
+            false
+        );
         assert_eq!(inputs.profile.as_ref().unwrap().profile_id, 0);
         assert_eq!(
             latest()
@@ -990,5 +1061,55 @@ mod tests {
             crate::instruments::receiver::performance::view(-1, 0, 0)["available"],
             false
         );
+    }
+    #[test]
+    fn selected_profiles_are_ordered_validated_and_persisted_without_running() {
+        let (mut inputs, transmission) = accepted_inputs();
+        let profile = inputs.profile.as_ref().unwrap().clone();
+        inputs.profiles = (0..4)
+            .map(|id| {
+                let mut value = profile.clone();
+                value.profile_id = id;
+                value
+            })
+            .collect();
+        let selected = Options {
+            selected_profile_ids: Some(vec![3, 1]),
+            ..Default::default()
+        };
+        let plan = prepare_sweep(&transmission, &inputs, &selected).unwrap();
+        assert_eq!(
+            plan.profiles
+                .iter()
+                .map(|profile| profile.profile_id)
+                .collect::<Vec<_>>(),
+            vec![1, 3]
+        );
+        let restored: Options =
+            serde_json::from_slice(&serde_json::to_vec(&selected).unwrap()).unwrap();
+        assert_eq!(restored.selected_profile_ids, Some(vec![3, 1]));
+        for ids in [vec![], vec![1, 1], vec![9], vec![16]] {
+            let options = Options {
+                selected_profile_ids: Some(ids),
+                ..Default::default()
+            };
+            assert!(prepare_sweep(&transmission, &inputs, &options).is_err());
+        }
+        let applied = prepare_sweep(&transmission, &inputs, &Options::default()).unwrap();
+        assert_eq!(applied.profiles.len(), 1);
+        let legacy: Options = serde_json::from_str(r#"{"duration_ms":3}"#).unwrap();
+        assert_eq!(
+            prepare_sweep(&transmission, &inputs, &legacy)
+                .unwrap()
+                .profiles
+                .len(),
+            4
+        );
+        let partial = Options {
+            selected_profile_ids: Some(vec![]),
+            ..Default::default()
+        };
+        partial.validate(&Inputs::default()).unwrap();
+        assert!(prepare_sweep(&transmission, &Inputs::default(), &partial).is_err());
     }
 }

@@ -48,6 +48,7 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 theme: theme
                 fileActionsEnabled: !workbench.runState.busy && !updates.state.installing
+                onNewRequested: workbench.requestNewProject()
                 onOpenRequested: workbench.openProject()
                 onSaveRequested: function(saveAs) { workbench.saveProject(saveAs) }
                 onGlobalSettingsRequested: { if (!updates.state.installing) workbench.settingsPopup.open() }

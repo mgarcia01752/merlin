@@ -32,6 +32,7 @@ Pane {
         function view(id) {
             return JSON.stringify({source_name: loaded ? "test.bin" : "", format: loaded ? "Binary PNM" : "", profile_ids: loaded ? [0, 1] : [], selected_profile_id: loaded ? id : -1, rows: loaded ? [{key: "profiles", label: "Profiles", value: "2 available", depth: 0, ancestors: [], branch: true, description: "Test capture"}, {key: "profile_0", label: "Profile 0", value: "Test assignments", depth: 1, ancestors: ["profiles"], branch: true, profile_id: 0, description: "Test profile"}] : []})
         }
+        function reload() {}
         function begin() { loaded = acceptedId >= 0; return view(acceptedId) }
         function demo() { loaded = true; return view(0) }
         function preview(id) { return view(id) }
@@ -61,6 +62,7 @@ Pane {
         property bool fileSelected: false
         property bool acceptedFile: false
         function fileView() { return {selected: fileSelected, name: fileSelected ? "test.bin" : "", bytes: fileSelected ? 2 : null, bits: fileSelected ? 16 : null, sha256: fileSelected ? "test-hash" : ""} }
+        function reload() {}
         function begin() { fileSelected = acceptedFile; return JSON.stringify({options: acceptedOptions, file: fileView()}) }
         function choose_file() { fileSelected = true; return JSON.stringify(fileView()) }
         function describe(document) {
@@ -126,6 +128,7 @@ Pane {
             return JSON.stringify({error:valid ? "" : "Invalid length",points:[],chart:[],band:"640–827 MHz",low_gain:"−4 dB",high_gain:"−5 dB",tilt:"−1 dB"})
         }
         function loss_apply(document,settings) {const error=JSON.parse(loss_preview(document,settings)).error;if(!error){loss=JSON.parse(document)};return error}
+        function reload() {}
         property bool acceptedRx: false
         property bool draftRx: false
         property bool flat: true
@@ -172,6 +175,14 @@ Pane {
         }
         function response(document) { lastQuery=JSON.parse(document);return JSON.stringify({available:retainedCells,points:[],x_ticks:[],y_ticks:[],snapshots:[10],reason:"Response test",summary:"Actual response query"}) }
         function slicer(document,decoderInput) { lastQuery=JSON.parse(document);lastDecoderInput=decoderInput;return JSON.stringify({available:retainedCells,rows:[],llr:{count:retainedCells ? 8 : 0},histogram:{points:[],x_ticks:[],y_ticks:[]},detail:"Actual soft query"}) }
+        property var fecOverride: null
+        function fec_profile(id) {
+            if (fecOverride !== null) { return JSON.stringify(fecOverride) }
+            const selected = id < 0 ? 3 : id
+            const total = selected === 3 ? 122 : 21
+            const allocation = {total:total,segments:[{key:"clean",label:"Clean",count:0,fraction:0},{key:"corrected",label:"Corrected",count:total,fraction:1},{key:"failed",label:"Uncorrectable",count:0,fraction:0}]}
+            return JSON.stringify({available:retainedCells,status:"complete",profile_id:selected,profiles:[{id:0,status:"complete"},{id:3,status:"complete"}],fec:{total_cw:total,ccw:total,ufec:0},outcomes:allocation,recovery:{total:125,segments:[{key:"clean",label:"Recovered",count:125,fraction:1}]},recovered:125,generated:125,compared_bits:1779000,bit_errors:0,ber:0,mean_iterations:1.032,iterations:{maximum:121,points:[{iteration:1,count:121,fraction:1},{iteration:2,count:4,fraction:4/121}]},words:[{receive_sequence:0,first_source_symbol:1,last_source_symbol:1,ldpc_success:true,ldpc_iterations:1,bch_success:true,bch_corrected_bits:0,comparison:{bit_errors:0}},{receive_sequence:1,first_source_symbol:2,last_source_symbol:2,ldpc_success:false,ldpc_iterations:100,bch_success:false,bch_corrected_bits:0,comparison:{bit_errors:7}}],omitted_words:61})
+        }
         function fec() {return JSON.stringify({available:retainedCells,status:"complete",words:[],verification_charts:{recovery:{points:[]},word_errors:{points:[]},omitted:0,uncompared_retained:0},histogram:{points:[],x_ticks:[],y_ticks:[]}})}
         function performance(id,start,count) {
             if (!retainedCells) return JSON.stringify({available:false,profiles:[],reason:"Run the simulation first."})
@@ -188,27 +199,35 @@ Pane {
         property bool verified:false
         property bool busy:false
         property bool paused:false
+        property var acceptedRunOptions: ({receiver_mode:"supplied_channel",all_profiles:false,selected_profile_ids:null,duration_ms:3,max_iterations:50,max_runtime_ms:300000,noise_seed:41})
         property var lastResult: null
-        function data() { return {receiver_status:configured ? "complete":"attention",verify_status:verified ? "complete":"attention",reason:"Configure accepted receiver and independent source comparison before running.",busy:busy,paused:paused,can_start:configured&&verified&&!busy,has_result:!!lastResult,result:lastResult,result_token:lastResult ? "1":"0",options:{receiver_mode:"supplied_channel",duration_ms:3,max_iterations:50,max_runtime_ms:300000,noise_seed:41},verified:verified} }
+        function data() { return {receiver_status:configured ? "complete":"attention",verify_status:verified ? "complete":"attention",reason:"Configure accepted receiver and independent source comparison before running.",busy:busy,paused:paused,can_start:configured&&verified&&!busy,has_result:!!lastResult,result:lastResult,result_token:lastResult ? "1":"0",available_profile_ids:profileBackend.acceptedId>=0 ? [0,1]:[],applied_profile_id:profileBackend.acceptedId,options:acceptedRunOptions,accepted_options:configured ? acceptedRunOptions:null,verified:verified} }
         function configure(settings) { return JSON.stringify(data()) }
         function poll() { return JSON.stringify(data()) }
-        function apply(options,settings) { configured=true;return "" }
+        function apply(options,settings) { acceptedRunOptions=JSON.parse(options);configured=true;return "" }
         function verify() { verified=true }
         function start() { busy=true }
         function stop() { busy=false;paused=false }
         function pause() { paused=!paused }
-        function restore(options,verify,settings) { configured=options!=="null";verified=verify }
+        function restore(options,verify,settings) { configured=options!=="null";verified=verify;if(configured) acceptedRunOptions=JSON.parse(options);else acceptedRunOptions={receiver_mode:"supplied_channel",all_profiles:false,selected_profile_ids:null,duration_ms:3,max_iterations:50,max_runtime_ms:300000,noise_seed:41} }
     }
     QtObject {
         id: fileBackend
-        function open() { return JSON.stringify({cancelled:true}) }
-        function save(saveAs,settings,receiver,verified,dark) { return JSON.stringify({cancelled:true}) }
+        property var openResponse: ({cancelled:true})
+        function new_workbench() {
+            profileBackend.acceptedId=-1;sourceBackend.acceptedSource=false;measurementBackend.acceptedRx=false
+            return JSON.stringify({created:true,transmission:JSON.parse(backend.defaults()),receiver:null,verified:false,dark:null})
+        }
+        function open() { return JSON.stringify(openResponse) }
+        property var saveResponse: ({cancelled:true})
+        function save(saveAs,settings,receiver,verified,dark) { return JSON.stringify(saveResponse) }
     }
     WorkbenchMenuBar {
         id: appMenu
         property url openedTerminology: ""
         onTerminologyRequested: function(target) { openedTerminology=target }
         anchors.top: parent.top; width: parent.width; theme: theme
+        onNewRequested: workbench.requestNewProject()
         onGlobalSettingsRequested: workbench.settingsPopup.open()
         onAboutRequested: workbench.aboutPopup.open()
     }
@@ -764,6 +783,132 @@ Pane {
             keyClick(Qt.Key_Escape); tryCompare(qam, "visible", false)
             keyClick(Qt.Key_Escape); tryCompare(receiver, "visible", false)
             compare(findChild(workbench, "receiverBlock").blockStatus, "attention")
+        }
+        function test_fec_overview_profiles_tabs_and_partial_empty_states() {
+            const dialog = workbench.receiverPopup.fecPopup
+            workbench.receiverPopup.open();tryCompare(workbench.receiverPopup,"opened",true)
+            dialog.profileId = -1
+            receiverBackend.retainedCells = true
+            dialog.open();tryCompare(dialog,"opened",true)
+            compare(findChild(findChild(dialog,"fecCounters").itemAt(0),"fecCounter_total_cw").text,"122")
+            compare(findChild(dialog,"fecIterationChart").histogram.points.length,2)
+            const choice = findChild(dialog,"fecProfileChoice")
+            choice.currentIndex = 0;choice.activated(0)
+            compare(findChild(findChild(dialog,"fecCounters").itemAt(0),"fecCounter_total_cw").text,"21")
+            compare(dialog.statistics.profile_id,0)
+            mouseClick(findChild(dialog,"fecWordsTab"));wait(30)
+            compare(findChild(dialog,"receiverFecWords").count,2)
+            mouseClick(findChild(dialog,"fecErrorsOnly"));wait(30)
+            compare(findChild(dialog,"receiverFecWords").count,1)
+            mouseClick(findChild(dialog,"fecControlTab"));wait(30)
+            mouseClick(findChild(dialog,"fecOverviewTab"));wait(30)
+            receiverBackend.fecOverride = {available:true,status:"cancelled",profile_id:0,fec:{total_cw:0,ccw:0,ufec:0},iterations:{points:[],maximum:0},words:[]}
+            dialog.refresh()
+            verify(findChild(dialog,"receiverFecStatus").text.indexOf("Partial")>=0)
+            compare(findChild(findChild(dialog,"fecCounters").itemAt(0),"fecCounter_total_cw").text,"0")
+            receiverBackend.fecOverride = {available:false,reason:"No results",words:[]}
+            dialog.refresh()
+            compare(findChild(findChild(dialog,"fecCounters").itemAt(0),"fecCounter_total_cw").text,"—")
+            compare(findChild(dialog,"fecIterationChart").histogram.points.length,0)
+            closeWithX(dialog);closeWithX(workbench.receiverPopup)
+            receiverBackend.fecOverride = null
+            dialog.profileId = -1
+        }
+        function test_apply_cancel_footers_align_and_reject() {
+            const editors = [
+                [workbench.configurationPopup, "wbConfigurationApply", "dialogCancel"],
+                [workbench.receiverConfigPopup, "receiverConfigApply", "dialogCancel"],
+                [workbench.ofdmPopup, "ofdmApply", "dialogCancel"],
+                [workbench.profilePopup, "profileApply", "dialogCancel"],
+                [workbench.sourcePopup, "sourceApply", "sourceCancel"],
+                [workbench.rxmerPopup, "measurementApply", "dialogCancel"],
+                [workbench.channelPopup.lossPopup, "channelLossApply", "dialogCancel"],
+                [workbench.channelPopup.amplifierPopup, "channelAmplifierApply", "dialogCancel"],
+                [workbench.channelPopup.attenuatorPopup, "channelAttenuatorApply", "dialogCancel"]
+            ]
+            for (const editor of editors) {
+                const dialog = editor[0]
+                const channelEditor = editor[1].indexOf("channel") === 0
+                if (channelEditor) {
+                    workbench.channelPopup.open()
+                    tryCompare(workbench.channelPopup, "opened", true)
+                    if (editor[1] === "channelLossApply") {
+                        workbench.channelPopup.modelPopup.open()
+                        tryCompare(workbench.channelPopup.modelPopup, "opened", true)
+                    }
+                }
+                dialog.open()
+                tryCompare(dialog, "opened", true)
+                const apply = findChild(dialog, editor[1])
+                const cancel = findChild(dialog, editor[2])
+                verify(apply !== null)
+                verify(cancel !== null)
+                compare(apply.text, "Apply")
+                compare(cancel.text, "Cancel")
+                compare(apply.parent, cancel.parent)
+                compare(apply.y, cancel.y)
+                compare(apply.width, cancel.width)
+                compare(apply.height, cancel.height)
+                compare(cancel.x - apply.x - apply.width, 10)
+                const corner = cancel.mapToItem(dialog.footer, cancel.width, cancel.height)
+                compare(Math.round(dialog.footer.width - corner.x), 10)
+                compare(Math.round(dialog.footer.height - corner.y), 10)
+                mouseClick(cancel)
+                tryCompare(dialog, "visible", false)
+                if (channelEditor) {
+                    if (editor[1] === "channelLossApply") {
+                        closeWithX(workbench.channelPopup.modelPopup)
+                    }
+                    closeWithX(workbench.channelPopup)
+                }
+            }
+        }
+        function test_workbench_configuration_lifecycle_and_profile_selection() {
+            workbench.hasProject=false
+            compare(findChild(workbench,"configureWorkbench").text,"Configure WorkBench")
+            compare(findChild(workbench,"configureWorkbench").enabled,false)
+            fileBackend.openResponse={cancelled:true};workbench.openProject()
+            compare(workbench.hasProject,false)
+            workbench.saveProject(false);compare(workbench.hasProject,false)
+            fileBackend.saveResponse={saved:true,path:"created.merlin.json"};workbench.saveProject(false)
+            compare(workbench.hasProject,true);keyClick(Qt.Key_Escape)
+            workbench.hasProject=false;fileBackend.saveResponse={cancelled:true}
+            fileBackend.openResponse={error:"Invalid WB"};workbench.openProject()
+            compare(workbench.hasProject,false)
+            keyClick(Qt.Key_Escape)
+            findChild(appMenu,"newWorkbench").action.trigger()
+            compare(workbench.hasProject,true)
+            compare(findChild(workbench,"configureWorkbench").enabled,true)
+            compare(workbench.allBlocksComplete,false)
+            profileBackend.acceptedId=0;workbench.refreshProfileState()
+            mouseClick(findChild(workbench,"configureWorkbench"))
+            const dialog=workbench.configurationPopup
+            tryCompare(dialog,"opened",true)
+            mouseClick(findChild(dialog,"wbProfilesTab"));wait(50)
+            compare(dialog.selectedIds.join(","),"0")
+            mouseClick(findChild(dialog,"wbSelectAllProfiles"))
+            compare(dialog.selectedIds.join(","),"0,1")
+            mouseClick(findChild(dialog,"wbProfileChecks").itemAt(0))
+            compare(dialog.selectedIds.join(","),"1")
+            mouseClick(findChild(dialog,"wbConfigurationApply"))
+            tryCompare(dialog,"visible",false)
+            compare(runBackend.acceptedRunOptions.selected_profile_ids.join(","),"1")
+            mouseClick(findChild(workbench,"configureWorkbench"))
+            tryCompare(dialog,"opened",true)
+            compare(dialog.selectedIds.join(","),"1")
+            mouseClick(findChild(dialog,"wbProfilesTab"));wait(50)
+            mouseClick(findChild(dialog,"wbClearProfiles"))
+            compare(dialog.selectedIds.length,0)
+            mouseClick(findChild(dialog,"dialogCancel"));tryCompare(dialog,"visible",false)
+            compare(runBackend.acceptedRunOptions.selected_profile_ids.join(","),"1")
+            runBackend.busy=true;workbench.pollRun()
+            compare(findChild(workbench,"configureWorkbench").enabled,false)
+            runBackend.busy=false;workbench.pollRun()
+            const state={opened:true,path:"test.merlin.json",transmission:JSON.parse(backend.current()),receiver:runBackend.acceptedRunOptions,verified:false,dark:true}
+            workbench.hasProject=false;fileBackend.openResponse=state;workbench.openProject()
+            compare(workbench.hasProject,true)
+            compare(findChild(workbench,"configureWorkbench").enabled,true)
+            fileBackend.openResponse={cancelled:true}
         }
         function test_receiver_configuration_comparison_and_run_controls() {
             mouseClick(findChild(workbench,"receiverBlock"))

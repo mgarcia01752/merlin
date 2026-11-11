@@ -32,10 +32,9 @@ WorkbenchDialog {
     title:"Launch Amplifier"
     parent:Overlay.overlay;anchors.centerIn:parent;width:Math.min(620,parent ? parent.width-40 : 620)
     modal:true
-    footer:DialogButtonBox {
-        Button {objectName:"channelAmplifierApply";text:"Apply";enabled:!dialog.busy && gain.acceptableInput && (!calibrated.checked || reference.acceptableInput) && (!targetMode.checked || target.acceptableInput);DialogButtonBox.buttonRole:DialogButtonBox.ApplyRole;onClicked:dialog.applyDraft()}
-        Button {text:"Close";DialogButtonBox.buttonRole:DialogButtonBox.RejectRole}
-        onRejected:dialog.close()
+    footer: ApplyCancelFooter {
+        applyObjectName: "channelAmplifierApply";applyEnabled:!dialog.busy && gain.acceptableInput && (!calibrated.checked || reference.acceptableInput) && (!targetMode.checked || target.acceptableInput);onApplied:dialog.applyDraft()
+        onCancelled: dialog.reject()
     }
     contentItem:ColumnLayout {
         spacing:12

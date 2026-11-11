@@ -101,3 +101,7 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 - [Receiver profile performance and independent profile runs](profile-performance/design.md)
 
 - [Automatic Ubuntu updates](automatic-updates/design.md): UI-UPDATE-02.
+
+- [WB configuration and shared CI](workbench-configuration/design.md): UI-WB-CONFIG-01, CI-CONSOLIDATE-01 and CI-DESKTOP-APT-01.
+
+- [Readable FEC Monitor](fec-monitor/design.md): UI-FEC-02.

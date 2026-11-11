@@ -1,7 +1,7 @@
 # Receiver Workbench
 
 Click **Receiver** for the processing path and instruments. Use **Configure
-Receiver / Run…**, accept the inputs and enable PRBS-RX comparison, then use main
+Receiver…**, accept the inputs and enable PRBS-RX comparison, then use main
 Start. Instruments inspect the same retained complete/partial run and never
 advance the simulation. Each popup has X and its existing Close/Cancel controls.
 See the [run/save guide](closed-loop-workbench.md).
@@ -11,19 +11,12 @@ See the [run/save guide](closed-loop-workbench.md).
 ## FEC statistics
 
 Open **Receiver → FEC Statistics** in the upper-right header, or **FEC Monitor**
-in the Diagnostic Instruments row. Both open the same window. After a run it shows:
+in the Diagnostic Instruments row. Both open the same window.
 
-- Payload words generated/recovered, LDPC/BCH failures, BCH corrected bits and mean
-  LDPC iterations, with the actual iteration-count distribution.
-- CRC-accepted NCP fields and total NCP LDPC iterations; PLC frames, iterations
-  and compared bit errors. These are separate control and payload paths.
-- Independent payload compared bits, bit errors, BER, codeword errors and
-  unrecovered generated words.
-- The first 64 retained completed word outcomes, source-symbol intervals,
-  iterations and correction/error decisions; omitted-row count is explicit.
-
-No compared bits means unavailable BER. A cancelled/failed run retains completed
-outcomes; missing control-decode observations are not invented failure counts.
+Select a completed profile, then use **Overview**, **Control Channels** or
+**Codewords**. Overview shows TotalCW/CCW/UFEC, codeword outcomes, actual LDPC
+iteration bars and whole-run payload recovery. Details and counting scopes are
+explained in the [FEC Monitor guide](fec-monitor.md).
 
 ![Actual FEC statistics](../images/workbench/receiver-fec-dark.png)
 
@@ -114,8 +107,8 @@ and [workbench guide](workbench.md). Dark screenshots are actual Ubuntu VM captu
 ## Profile performance and independent runs
 
 **Diagnostic Instruments → Profile Performance** combines measured receiver MER,
-the ideal profile reference and TotalCW/CCW/UFEC counters. Configure Receiver
-selects all imported profiles as separate runs by default. The performance
+the ideal profile reference and TotalCW/CCW/UFEC counters. The main **Configure WorkBench → Profiles** tab selects which imported profiles run
+separately. Receiver configuration retains correction mode and iteration limit. The performance
 selector reviews each result; other instruments remain labelled with the latest
 completed profile. See the [profile performance guide](receiver-profile-performance.md)
 for counter scope, Profile A mapping and sweep controls.

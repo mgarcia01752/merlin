@@ -10,6 +10,13 @@ the Spectrum Analyzer, QAM, channel response/echo and RxMER instrument guides.
 The [Transmitter workbench](transmitter-workbench.md) provides staged test points,
 an SA beside TX Output, and OCD/DPD message inspection.
 
+Use **File → New** or **Open…** to activate a WB. **Configure WorkBench**, beside
+Start, stays disabled until a WB is created/opened and while a simulation runs. Its Run/Profiles
+tabs set duration, total budget, noise seed and profile checkboxes. You can
+configure a partial WB while blocks are yellow; Start still requires all green
+and a nonempty compatible profile selection. See
+[WB configuration](workbench-configuration.md).
+
 The native Qt workbench starts with the single-channel system diagram. Click
 OFDM Channel Descriptor (OCD), PRBS-TX, Transmitter, Channel Simulator, Receiver, PRBS-RX or one
 of the measurement-input blocks to open its section dialog. Close the dialog
@@ -68,7 +75,7 @@ The standard menu bar at the top is **File | Settings | About**.
 Choose **About → Terminology…** to open the [terminology guide](terminology.md)
 on MERLIN's GitHub page in your default browser. This online guide requires
 internet access; license documents remain available offline. File contains
-**Open…**, **Save** and **Save As…** for self-contained `*.merlin.json` workbenches.
+**New**, **Open…**, **Save** and **Save As…** for self-contained `*.merlin.json` workbenches.
 Original PNM/payload bytes and accepted block settings are embedded; see the
 [run/save guide](closed-loop-workbench.md). Load individual captures in their dialogs.
 About shows the active icon, compiled version, MERLIN's expanded name and project
@@ -248,3 +255,10 @@ Profile comparisons: [Receiver Profile Performance](receiver-profile-performance
 shows measured MER, the ideal profile reference and independent per-profile FEC
 counters. Receiver configuration selects all imported profiles or the applied
 profile only, and saves this run mode with the WB.
+
+Configuration dialogs place **Apply** then **Cancel** together at the lower
+right. Apply accepts the draft; Cancel and the title X leave accepted settings
+unchanged. Read-only instruments use Close.
+
+See the [FEC Monitor](fec-monitor.md) for decoder outcomes, recovery and retained
+codeword records.

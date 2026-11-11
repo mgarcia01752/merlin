@@ -140,13 +140,17 @@ WorkbenchDialog {
         profileIds: dialog.previewModel.profile_ids
         initialProfile: dialog.previewModel.selected_profile_id
     }
-    footer: Pane {
-        padding: 10
-        background: Item {}
-        contentItem: RowLayout {
-        spacing: 10
+    footer: ApplyCancelFooter {
+        applyObjectName: "profileApply"
+        onApplied: {
+            dialog.errorMessage = dialog.backend.apply(dialog.previewModel.selected_profile_id, dialog.settingsBackend.current())
+            if (dialog.errorMessage.length === 0) {
+                dialog.inputApplied()
+                dialog.close()
+            }
+        }
+        onCancelled: dialog.reject()
         Button { objectName: "profileRemove"; text: "Remove input"; enabled: dialog.previewModel.profile_ids.length > 0; onClicked: dialog.showResult(dialog.backend.clear_draft()) }
-        Item { Layout.fillWidth: true }
         ComboBox {
             objectName: "profileChoice"
             implicitWidth: 160
@@ -156,18 +160,6 @@ WorkbenchDialog {
             enabled: count > 0
             Accessible.name: "Selected modulation profile"
             onActivated: function(index) { dialog.chooseProfile(dialog.previewModel.profile_ids[index]) }
-        }
-        Button { text: "Cancel"; onClicked: dialog.close() }
-        Button {
-            objectName: "profileApply"; text: "Apply"; 
-            onClicked: {
-                dialog.errorMessage = dialog.backend.apply(dialog.previewModel.selected_profile_id, dialog.settingsBackend.current())
-                if (dialog.errorMessage.length === 0) {
-                    dialog.inputApplied()
-                    dialog.close()
-                }
-            }
-        }
         }
     }
 }

@@ -987,3 +987,26 @@ validation are complete; the user guide includes the current dark capture.
   [Design](features/automatic-updates/design.md).
 - [ ] **UI-UPDATE-QA-01** Validate a real installed upgrade, authentication
   cancellation, APT failure and automatic restart on disposable Ubuntu 22.04.
+
+## Main workbench configuration and shared CI
+
+- [x] **UI-WB-CONFIG-01** Main Configure WB with Run/Profiles tabs, explicit
+  New/Open activation, subset persistence/migration and Receiver-only controls.
+  Adapter/QML checks and native visual/Save As/Open verification pass.
+- [x] **CI-CONSOLIDATE-01** Implement two entry points sharing all validation,
+  parallel native tests and release-only packages; static validation passes.
+- [x] **CI-DESKTOP-APT-01** Implement strict refresh, bounded retry and CI mirror
+  preference; fake-command retry tests and shell validation pass.
+- [ ] **CI-DESKTOP-QA-01** Verify shared hosted validation, successful APT setup,
+  release packaging/installed lifecycle and publication on a new authorized tag.
+
+[Design](features/workbench-configuration/design.md).
+
+- [x] **UI-DIALOG-ACTIONS-01** Share lower-right Apply then Cancel actions
+  across all nine draft editors; simplify labels and preserve cancellation.
+  [Design](features/workbench-configuration/design.md#ui-dialog-actions-01-consistent-editor-actions).
+
+- [x] **UI-FEC-02** Implement the approved FEC overview, actual iteration bars,
+  per-profile selection and separate control/codeword tabs. Adapter/QML checks
+  and native simulation/visual checks pass; compiled Qt executable is ready.
+  [Design](features/fec-monitor/design.md).

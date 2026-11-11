@@ -269,14 +269,5 @@ pub(crate) fn fec() -> Value {
     let Some(result) = latest() else {
         return empty("Run the closed loop, then open FEC Monitor.");
     };
-    let summary = &result.job.summary;
-    let x: Vec<_> = (0..summary.payload_ldpc_iterations.len())
-        .map(|i| i as f64)
-        .collect();
-    let y: Vec<_> = summary
-        .payload_ldpc_iterations
-        .iter()
-        .map(|v| Some(*v as f64))
-        .collect();
-    json!({"profile_id":result.job.settings.playback.as_ref().map(|p|p.profile.profile_id),"fec":summary.window.as_ref().map(|w|w.fec.snapshot()),"verification_charts":super::verification::charts(&result.job),"histogram":curve(&x,&y,"Payload word count","LDPC iterations"),"available":true,"status":result.job.status,"payloads":summary.recovered_payloads,"generated":summary.generated_payloads,"ldpc_failures":summary.payload_ldpc_failures,"bch_failures":summary.payload_bch_failures,"mean_iterations":summary.payload_mean_ldpc_iterations,"iteration_histogram":summary.payload_ldpc_iterations,"bch_corrected_bits":summary.bch_corrected_bits,"codeword_errors":summary.payload_codeword_errors,"ncp_fields":summary.accepted_ncp_fields,"ncp_iterations":summary.ncp_ldpc_iterations,"plc_frames":summary.plc_frames,"plc_iterations":summary.plc_ldpc_iterations,"plc_bit_errors":summary.plc_bit_errors,"compared_bits":summary.comparison.bits_tested,"bit_errors":summary.comparison.bit_errors,"ber":summary.payload_ber,"unrecovered":result.job.unrecovered_generated_payloads,"words":result.job.retained_words,"omitted_words":result.job.omitted_word_details,"error":result.job.error})
+    super::fec::snapshot(&result)
 }

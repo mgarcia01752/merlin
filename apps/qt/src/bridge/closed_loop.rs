@@ -99,13 +99,10 @@ impl bridge::ClosedLoop {
             }
             let options = serde_json::from_str::<model::Options>(&options.to_string())
                 .map_err(|e| e.to_string())?;
-            let transmission =
+            let transmission: docsis_ofdm_fec::transmission::TransmissionSettings =
                 serde_json::from_str(&settings.to_string()).map_err(|e| e.to_string())?;
-            model::prepare_sweep(
-                &transmission,
-                &crate::workbench::session::snapshot(),
-                &options,
-            )?;
+            transmission.validate().map_err(|error| error.to_string())?;
+            options.validate(&crate::workbench::session::snapshot())?;
             Ok(options)
         };
         match prepare() {

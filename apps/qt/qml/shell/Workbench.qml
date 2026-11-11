@@ -13,6 +13,7 @@ import "../inputs/profile_input"
 import "../inputs/source_input"
 import "../workbenches/channel"
 import "../workbenches/receiver"
+import "../workbenches/workbench"
 import "../workbenches/transmitter"
 import "../workbenches/verification"
 
@@ -25,6 +26,18 @@ Item {
     required property var aboutBackend
     required property var measurementBackend
     required property var fileBackend
+    property bool hasProject: false
+    property alias configurationPopup: wbConfig
+    function requestNewProject() {
+        if (runState.busy) { return }
+        if (hasProject) { newConfirmation.open() }
+        else { newProject() }
+    }
+    function newProject() {
+        if (runState.busy) { return }
+        const result=JSON.parse(fileBackend.new_workbench())
+        if (result.created) { adoptProject(result);fileMessage="New workbench" }
+    }
     property string fileMessage: ""
     function openProject() {
         if (runState.busy) { return }
@@ -35,10 +48,11 @@ Item {
         fileMessage="Opened "+result.path
     }
     function adoptProject(result) {
+        hasProject=true
         settingsBackend.apply(JSON.stringify(result.transmission))
         profileBackend.reload();sourceBackend.reload();measurementBackend.reload()
         runBackend.restore(JSON.stringify(result.receiver),result.verified,settingsBackend.current())
-        theme.dark=result.dark
+        if (result.dark !== null && result.dark !== undefined) { theme.dark=result.dark }
         refreshProfileState();refreshSourceState();pollRun()
     }
     function restoreUpdate() {
@@ -53,7 +67,7 @@ Item {
         if (runState.busy) { return }
         const result=JSON.parse(fileBackend.save(saveAs,settingsBackend.current(),JSON.stringify(runState.accepted_options || null),runState.verified,theme.dark))
         if (result.error) { fileMessage=result.error;fileFeedback.open() }
-        else if (result.saved) { fileMessage="Saved "+result.path;fileFeedback.open() }
+        else if (result.saved) { hasProject=true;fileMessage="Saved "+result.path;fileFeedback.open() }
     }
     required property var runBackend
     property var runState: ({receiver_status:"attention",verify_status:"attention",reason:"Configure Receiver",busy:false,can_start:false,paused:false,options:{},verified:false})
@@ -277,8 +291,16 @@ Item {
             }
             Item { Layout.fillWidth: true }
             Button {
+                objectName: "configureWorkbench"
+                text: "Configure WorkBench"
+                enabled: workbench.hasProject && !workbench.runState.busy
+                onClicked: wbConfig.open()
+                ToolTip.visible: hovered
+                ToolTip.text: workbench.hasProject ? "Select profiles and run settings" : "Create or open a workbench first"
+            }
+            Button {
                 objectName: "startButton"; text: "▶  Start"
-                enabled: workbench.allBlocksComplete && workbench.runState.can_start
+                enabled: workbench.hasProject && workbench.allBlocksComplete && workbench.runState.can_start
                 onClicked: { workbench.runBackend.start();workbench.pollRun() }
                 Accessible.name: "Start simulation"
                 Accessible.description: !workbench.allBlocksComplete ? "Every workbench block must be green before starting." : "Wait for the current simulation to finish before starting another."
@@ -286,6 +308,19 @@ Item {
             Button { objectName: "stopButton"; text: "■  Stop"; enabled: workbench.runState.busy; onClicked: workbench.runBackend.stop(); Accessible.name: "Stop simulation" }
             Button { objectName: "pauseButton"; text: workbench.runState.paused ? "▶  Resume" : "Ⅱ  Pause"; enabled: workbench.runState.busy; onClicked: { workbench.runBackend.pause();workbench.pollRun() } Accessible.name: "Pause simulation" }
         }
+    }
+    WorkbenchConfigurationDialog {
+        id: wbConfig; theme: workbench.theme; backend: workbench.runBackend
+        settingsBackend: workbench.settingsBackend; runState: workbench.runState
+        onConfigurationApplied: workbench.pollRun()
+    }
+    WorkbenchDialog {
+        id: newConfirmation; theme: workbench.theme; title: "New Workbench"
+        parent: Overlay.overlay; anchors.centerIn: parent; modal: true
+        standardButtons: Dialog.Yes | Dialog.Cancel
+        onAccepted: workbench.newProject()
+        contentItem: Label { text: "Create a blank workbench? Save your current WB first to keep changes."; color:workbench.theme.text; wrapMode:Text.WordWrap }
+        width: Math.min(480, parent ? parent.width-40 : 480)
     }
     RxmerInputDialog {
         id: rxmerDialog; theme: workbench.theme; backend: workbench.measurementBackend; settingsBackend: workbench.settingsBackend

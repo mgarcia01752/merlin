@@ -7,11 +7,11 @@ results remain available while later profiles run.
 
 ## Run every imported profile
 
-In **Configure Receiver / Run**, choose **All Imported Profiles · Separate Runs**
-(the default) or **Applied Profile Only**. Observation duration applies to each
+In the main **Configure WorkBench → Profiles** tab, check the captured profiles to run.
+Use **Select All** or **Clear** to change the list. New WBs initially select only
+the applied profile. Older WBs retain their saved all/applied selection. Observation duration applies to each
 profile. The active host budget is shared by the whole sweep; paused time is
-excluded. These choices are saved in workbench JSON. Older workbenches default
-to all imported profiles when this option is absent.
+excluded. These choices are saved in workbench JSON. See [WB configuration](workbench-configuration.md).
 
 Each job starts fresh with the same accepted source, PRBS/noise seeds, OCD,
 channel estimate, amplifier, attenuator, cable loss and RxMER playback starting

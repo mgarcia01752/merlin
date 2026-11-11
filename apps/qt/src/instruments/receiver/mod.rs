@@ -4,6 +4,7 @@
  */
 //! Receiver instrument providers behind the root CXX-Qt bridge.
 pub(crate) mod diagnostics;
+pub(crate) mod fec;
 pub(crate) mod selection;
 mod verification;
 pub(crate) mod views;

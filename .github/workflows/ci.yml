@@ -1,18 +1,25 @@
-# Copyright 2026 DOCSIS OFDM Channel Sim contributors
+# Copyright 2026 MERLIN contributors
 # SPDX-License-Identifier: Apache-2.0
-
-name: Rust validation
-on:
+name: Master
+'on':
   push:
-    branches: [main, master]
-  pull_request:
-  workflow_dispatch:
+    branches:
+      - main
+      - master
+  pull_request: null
+  workflow_dispatch: null
   workflow_call:
+    inputs:
+      release:
+        description: Build and package a validated release tag
+        type: boolean
+        default: false
+  schedule:
+    - cron: 17 11 * * 1
 permissions:
   contents: read
-# Tag validation must finish even if another branch run starts.
 concurrency:
-  group: rust-${{ github.workflow }}-${{ github.ref }}
+  group: validation-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref_type != 'tag' }}
 env:
   CARGO_TERM_COLOR: always
@@ -29,7 +36,8 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install pinned Rust components
-        run: rustup toolchain install 1.85.1 --profile minimal --component rustfmt --component clippy
+        run: |
+          rustup toolchain install 1.85.1 --profile minimal --component rustfmt --component clippy
       - uses: actions/cache@v5
         with:
           path: |
@@ -45,6 +53,7 @@ jobs:
           python -m unittest discover -s tools/git/tests -p 'test_*.py'
           python -m unittest discover -s tools/packaging -p 'test_*.py'
           python -m unittest discover -s tools/validation -p 'test_*.py'
+          python -m unittest discover -s tools/development/tests -p 'test_*.py'
           bash -n scripts/check-before-push.sh
           shellcheck scripts/*.sh tools/git/*.sh tools/bump-version.sh
           cargo fmt --all -- --check
@@ -75,31 +84,138 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install pinned Rust
-        run: rustup toolchain install 1.85.1 --profile minimal
+        run: |
+          rustup toolchain install 1.85.1 --profile minimal
       - uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
+
+            local/test-tools
           key: native-${{ matrix.name }}-1.85.1-${{ hashFiles('Cargo.lock') }}
           restore-keys: native-${{ matrix.name }}-1.85.1-
-      - name: Science and feature-boundary tests
+      - name: Simulation and feature-boundary tests
         run: |
-          cargo test --workspace --locked
-          cargo test -p docsis-ofdm-fec --no-default-features --locked
-          cargo test -p docsis-ofdm-fec --example prepare_rxmer_variants --locked
+          MERLIN_TEST_THREADS=4 scripts/test-local.sh all
       - name: Build and exercise native CLI
         run: |
-          cargo build -p ofdm-fec-cli --release --locked
-          python tools/packaging/native_smoke.py --binary target/release/${{ matrix.executable }}
+          cargo build -p ofdm-fec-cli --locked ${{ inputs.release && '--release' || '' }}
+          python tools/packaging/native_smoke.py --binary target/${{ inputs.release && 'release' || 'debug' }}/${{ matrix.executable }}
       - name: Build archive and native installer after successful tests
-        if: github.ref_type == 'tag' && matrix.os == 'ubuntu-22.04'
-        run: python tools/packaging/package.py --binary target/release/${{ matrix.executable }} --output dist/${{ matrix.name }} --native
+        if: inputs.release && github.ref_type == 'tag' && matrix.os == 'ubuntu-22.04'
+        run: |
+          python tools/packaging/package.py --binary target/release/${{ matrix.executable }} --output dist/${{ matrix.name }} --native
       - uses: actions/upload-artifact@v6
-        if: github.ref_type == 'tag' && matrix.os == 'ubuntu-22.04'
+        if: inputs.release && github.ref_type == 'tag' && matrix.os == 'ubuntu-22.04'
         with:
           name: merlin-assets-${{ matrix.name }}
           path: dist/${{ matrix.name }}/
           if-no-files-found: error
           retention-days: 7
+  codeql:
+    name: Rust source analysis
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v5
+      - name: Initialize Rust CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: rust
+          build-mode: none
+          queries: security-extended
+      - name: Analyze and upload findings
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:rust
+  dependency-security:
+    name: RustSec dependency audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - name: Audit Cargo.lock against RustSec
+        run: |
+          scripts/security-audit.sh
+      - name: Retain dependency audit report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: rustsec-audit-report
+          path: local/security-audit/*report.json
+          if-no-files-found: warn
+          retention-days: 7
+  desktop:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 75
+    env:
+      QT_SDK_DIR: ${{ github.workspace }}/local/qt/6.8.3/gcc_64
+      CARGO_HOME: ${{ github.workspace }}/local/merlin-cargo
+      CARGO_INCREMENTAL: '0'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/cache@v5
+        with:
+          path: |
+            local/cargo
+            local/rustup
+            local/merlin-cargo
+            local/qt
+            local/qt-tools
+            local/release-sources
+            apps/qt/target
+          key: desktop-ubuntu22-qt6.8.3-rust1.85.1-${{ hashFiles('apps/qt/Cargo.lock', 'Cargo.lock', 'tools/development/qt_sdk.py') }}
+          restore-keys: desktop-ubuntu22-qt6.8.3-rust1.85.1-
+      - name: Prefer reachable Ubuntu HTTPS mirrors on this runner
+        run: |
+          if [[ -f /etc/apt/apt-mirrors.txt ]]; then
+            printf '%s\n' https://archive.ubuntu.com/ubuntu https://security.ubuntu.com/ubuntu | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          fi
+      - name: Prepare pinned Ubuntu development tools
+        run: |
+          env -u QT_SDK_DIR ./install.sh --development
+      - name: Validate versions, packaging and desktop
+        run: |
+          scripts/qt-desktop.sh check
+      - name: Build optimized desktop
+        run: |
+          export PATH="$QT_SDK_DIR/bin:$PWD/local/cargo/bin:$PATH"
+          export QMAKE="$QT_SDK_DIR/bin/qmake"
+          export LD_LIBRARY_PATH="$QT_SDK_DIR/lib"
+          export RUSTUP_HOME="$PWD/local/rustup"
+          scripts/cargo-local.sh build --manifest-path apps/qt/Cargo.toml --release --locked
+        if: inputs.release && github.ref_type == 'tag'
+      - name: Build native desktop DEB and checksums
+        run: |
+          export PATH="$PWD/local/cargo/bin:$PATH"
+          export RUSTUP_HOME="$PWD/local/rustup"
+          python3 tools/packaging/desktop.py --binary apps/qt/target/release/merlin-qt \
+            --qt-sdk "$QT_SDK_DIR" --output dist/desktop
+          python3 tools/packaging/desktop_smoke.py --deb dist/desktop/*.deb --output dist/desktop-check
+        if: inputs.release && github.ref_type == 'tag'
+      - name: Install, reinstall and remove on disposable runner
+        run: |
+          sudo apt-get install -y ./dist/desktop/*.deb
+          python3 tools/packaging/desktop_smoke.py --installed
+          sudo apt-get install --reinstall -y ./dist/desktop/*.deb
+          python3 tools/packaging/desktop_smoke.py --installed
+          sudo apt-get remove -y merlin
+          test ! -e /usr/bin/merlin
+          test ! -e /usr/lib/merlin
+          test ! -e /usr/share/applications/merlin.desktop
+          test ! -e /usr/share/icons/hicolor/256x256/apps/merlin.png
+        if: inputs.release && github.ref_type == 'tag'
+      - uses: actions/upload-artifact@v6
+        with:
+          name: merlin-assets-desktop-ubuntu22-amd64
+          path: dist/desktop/
+          if-no-files-found: error
+          retention-days: 14
+        if: inputs.release && github.ref_type == 'tag'

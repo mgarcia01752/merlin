@@ -77,6 +77,7 @@ No setup invocation or system package installation is implied by ordinary UI wor
 
 Validation scope:
 
+Apply skills/ui-design for Qt editor actions and layout.
 For UI-only work, use scripts/qt-desktop.sh build/check and targeted Qt tests.
 Do not rebuild or retest the non-Qt workspace on every UI iteration. Broaden
 validation when simulation/shared code, dependency contracts, or integration
@@ -98,7 +99,10 @@ Local full Rust validation uses `scripts/test-local.sh all`: checksum-pinned
 nextest runs independent cases in separate processes, four concurrently by
 default. Set `MERLIN_TEST_THREADS` to override the 1..32 process budget. Preserve
 doctests, examples and analysis-only coverage and the serialized pause case.
-Qt/QML checks remain separate. Hosted workflows retain their own commands.
+Qt/QML checks remain separate. Hosted native jobs use the same bounded runner.
+Keep only Master (ci.yml) and Release (release.yml) entry points. Release calls
+shared validation and adds optimized packaging/publication; preserve every
+test, CodeQL, audit and installed lifecycle gate.
 See docs/development/features/parallel-local-tests/design.md for measurement.
 
 The initial toolkit version is 0.1.0. Source packages and VERSION must agree.

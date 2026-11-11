@@ -17,11 +17,13 @@ QA-06/07 CLI tooling and the Ubuntu desktop workflow are prepared locally.
 Hosted results are separate evidence; this task does not push or execute them. Local Linux results do not establish native
 Windows/macOS runtime or installer support. See the [group design](features/completion-group/design.md).
 
-`.github/workflows/ci.yml` runs a lean Linux preflight (versions, tooling tests,
+The only entry points are Master (`.github/workflows/ci.yml`) and Release
+(`.github/workflows/release.yml`). Master runs a Linux preflight (versions, tooling tests,
 ShellCheck, formatting and Clippy), then native tests on Ubuntu 22.04,
 24.04 and 26.04 x64. Windows/macOS workflow execution is deferred. Matrix failures do not cancel
-other platforms. Every platform runs all workspace tests, the no-default-feature
-boundary and fixture-preparation tests, builds the CLI and exercises version/help,
+other platforms. Every platform uses the pinned nextest runner with four concurrent test
+processes for workspace, no-default-feature and fixture-preparation tests,
+retains doctests, builds the CLI and exercises version/help,
 invalid input, JSON export and no-clobber behavior. Rust1.85.1 and locked
 Cargo dependencies are shared with local development.
 
@@ -59,18 +61,18 @@ Ubuntu run evidence and verify installation/upgrade/uninstallation on each targe
 Windows/macOS builders and guides remain prepared for later work.
 A locally generated MSI XML or a passing Linux build does not satisfy that check.
 
-Tagged publication also requires the reusable CodeQL and RustSec workflows to
+Tagged publication also requires the shared CodeQL and RustSec jobs to
 pass. See [security checks](security.md) for schedules, permissions and reports.
 
 
 ## Ubuntu 22.04 desktop DEB (UI-DEB-01)
 
-The separately runnable `.github/workflows/ubuntu-desktop.yml` builds the native
-Qt desktop on Ubuntu 22.04 amd64, retaining pinned SDK/Cargo caches. It packages
+The shared Master workflow checks the native Qt desktop on Ubuntu 22.04 amd64,
+retaining pinned SDK/Cargo caches. Release enables optimized compilation and packages
 with `tools/packaging/desktop.py`, checks the extracted runtime with
 `desktop_smoke.py`, then installs/reinstalls/removes on a disposable runner before
-uploading the artifact. The version-tag release calls this job and waits for its
-success before collecting both CLI and desktop assets. The desktop package is
+uploading the artifact. The version-tag release calls shared validation and waits for every job
+to succeed before collecting both CLI and desktop assets. The desktop package is
 `merlin`; it does not overwrite ownership of `merlin-ofdm`.
 
 The desktop runtime owns `/usr/lib/merlin`, its `/usr/bin/merlin` launcher and
@@ -85,3 +87,12 @@ See the [design/evidence](features/ubuntu-desktop/design.md) and
 is read-only application validation, not permission to install on the user's VM.
 The notification checks only stable GitHub releases; manual CI artifacts do not
 trigger it. Other desktop operating systems remain deferred for this phase.
+
+
+CI setup uses complete APT index refreshes and at most three package-setup
+attempts, refreshing again after a failed download. Only the disposable desktop
+runner prefers archive.ubuntu.com/security.ubuntu.com HTTPS in its mirror list;
+local setup does not change user mirrors. Run43061645839 failed before desktop
+compilation on Azure mirror DNS/connectivity and python3-pil download (APT100).
+The consolidation/retry changes need new hosted evidence; the previous failure
+is not reported as resolved remotely. [Design](features/workbench-configuration/design.md).
