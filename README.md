@@ -19,21 +19,16 @@
 [![Ubuntu LTS targets: 22.04, 24.04, 26.04 x64](https://img.shields.io/badge/Ubuntu_LTS-22.04%20%7C%2024.04%20%7C%2026.04-E95420?logo=ubuntu&logoColor=white)](docs/development/native-delivery.md)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-Simulate a single downstream DOCSIS OFDM channel, recover its payload through
-actual BCH/LDPC decoding, and measure how impairments affect bit errors and decoder
-work. Run an ideal reference or use decoded RxMER, downstream channel estimates
-and an applied modulation profile. All signal processing and FEC run in Rust.
+MERLIN simulates the **downstream PHY of a CMTS for a single DOCSIS OFDM
+channel**, from payload encoding to waveform generation and receiver recovery.
+It combines BCH/LDPC coding, profile-based QAM modulation, interleaving,
+PLC/NCP signaling and pilots with configurable channel impairments.
 
-MERLIN simulates the **downstream PHY transmit functions of a CMTS for a single
-DOCSIS OFDM channel**. It encodes payloads with BCH/LDPC, applies profile-based
-QAM modulation and interleaving, and generates PLC/NCP signaling, pilots and the
-OFDM waveform. The channel model applies noise and channel-response impairments;
-the receiver processes the resulting samples, corrects the channel response and
-decodes the payload. Independent comparison with the original source measures
-recovered-bit errors, while decoder statistics show failures, corrections and
-iteration counts. This is a PHY simulation with actual waveform generation and
-payload recovery; full CMTS MAC services and multi-channel operation are outside
-its scope.
+Run an ideal reference or use captured RxMER, downstream channel estimates and
+an applied modulation profile. Compare recovered data with the original source
+to measure bit errors, decoding failures, corrections and iteration counts.
+All signal processing and FEC run in Rust. Full CMTS MAC services and
+multi-channel operation are outside the simulator's scope.
 
 ## Workbench overview
 
