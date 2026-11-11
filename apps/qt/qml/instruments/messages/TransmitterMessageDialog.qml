@@ -27,7 +27,7 @@ WorkbenchDialog {
             Layout.fillWidth:true
             Label { text:"Message";color:dialog.theme.text }
             ComboBox { objectName:"txMessageSelection";Layout.fillWidth:true;model:(dialog.document.messages || []).map(function(p){return p.name+" · frame "+Math.floor(p.symbol/128)});currentIndex:dialog.selectedIndex;onActivated:function(index){dialog.selectedIndex=index} }
-            Button { objectName:"txMessageBytes";text:dialog.showBytes ? "TLV Tree" : "Bytes";onClicked:dialog.showBytes=!dialog.showBytes }
+            WorkbenchActionButton { theme: dialog.theme; objectName:"txMessageBytes";text:dialog.showBytes ? "TLV Tree" : "Bytes";onClicked:dialog.showBytes=!dialog.showBytes }
         }
         Label { text:dialog.document.reason || "";visible:text.length>0;color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap }
         Label { visible:dialog.packet.name!==undefined;text:(dialog.packet.status || "")+" · "+(dialog.packet.integrity || "");color:dialog.packet.completed_frame ? dialog.theme.accent : dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap }

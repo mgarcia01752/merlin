@@ -44,8 +44,8 @@ WorkbenchDialog {
             }
         }
         RowLayout {
-            Button { objectName:"txPreviousPage";text:"Previous";enabled:dialog.pageOffset>0;onClicked:{dialog.pageOffset=Math.max(0,dialog.pageOffset-(dialog.stageIndex<3 ? 2048 : 64));dialog.refresh()} }
-            Button { objectName:"txNextPage";text:"Next";enabled:dialog.observation.available && dialog.observation.end<dialog.observation.retained;onClicked:{dialog.pageOffset=dialog.observation.end;dialog.refresh()} }
+            WorkbenchActionButton { theme: dialog.theme; objectName:"txPreviousPage";text:"Previous";enabled:dialog.pageOffset>0;onClicked:{dialog.pageOffset=Math.max(0,dialog.pageOffset-(dialog.stageIndex<3 ? 2048 : 64));dialog.refresh()} }
+            WorkbenchActionButton { theme: dialog.theme; objectName:"txNextPage";text:"Next";enabled:dialog.observation.available && dialog.observation.end<dialog.observation.retained;onClicked:{dialog.pageOffset=dialog.observation.end;dialog.refresh()} }
             Label { text:dialog.observation.available ? dialog.pageOffset+"–"+(dialog.observation.end-1) : "";color:dialog.theme.muted }
             Item { Layout.fillWidth:true }
         }

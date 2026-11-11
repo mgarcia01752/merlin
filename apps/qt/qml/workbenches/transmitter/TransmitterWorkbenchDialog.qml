@@ -62,18 +62,18 @@ WorkbenchDialog {
                         Layout.fillWidth:true;Layout.preferredWidth:1;Layout.minimumWidth:0;spacing:8
                         RowLayout {
                             Layout.fillWidth:true;spacing:1
-                            ReceiverChip { theme:dialog.theme;text:modelData;stage:true;Layout.preferredHeight:72;onClicked: index===6 ? dialog.openSpectrum(0) : dialog.openStage([0,1,2,4,5,6][index]) }
+                            StageChip { theme:dialog.theme;text:modelData;Layout.preferredHeight:72;onClicked: index===6 ? dialog.openSpectrum(0) : dialog.openStage([0,1,2,4,5,6][index]) }
                             Label { visible:index<6;text:"→";color:dialog.theme.muted;font.pixelSize:15 }
                         }
                         ReceiverChip {
                             id:tap
                             objectName:"txStageTap"+index
                             theme:dialog.theme;text:["● Bits","● LDPC Word","● Bits / Labels","● Mapped I/Q","● Ordered Cells","● Physical Bins","● TX Output"][index]
-                            Layout.preferredHeight:36
+                            Layout.preferredHeight:38
                             onClicked:index===6 ? dialog.openSpectrum(0) : dialog.openStage([0,1,2,4,5,6][index])
                         }
                         Rectangle { visible:index===6;Layout.alignment:Qt.AlignHCenter;width:1;height:10;color:dialog.theme.accent }
-                        ReceiverChip { id:outputSa;visible:index===6;objectName:index===6 ? "txOutputSa" : "";theme:dialog.theme;text:"Spectrum Analyzer";Layout.preferredHeight:36;onClicked:dialog.openSpectrum(0) }
+                        ReceiverChip { id:outputSa;visible:index===6;objectName:index===6 ? "txOutputSa" : "";theme:dialog.theme;text:"Spectrum Analyzer";Layout.preferredHeight:38;onClicked:dialog.openSpectrum(0) }
                         Item { visible:index!==6;Layout.preferredHeight:54 }
                     }
                 }

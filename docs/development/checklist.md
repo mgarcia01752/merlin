@@ -1030,3 +1030,11 @@ validation are complete; the user guide includes the current dark capture.
   entry chooser: Create New/Open Existing continue only after activation; native
   cancellation/failure preserves state.
   [Design](features/workbench-configuration/design.md#ui-wb-controls-01-workbench-actions-and-entry-flow).
+
+## Shared action buttons
+
+- [x] **UI-BUTTONS-01** Apply the approved shared rounded action style across
+  all frames, including standard dialog and Apply/Cancel buttons. Preserve
+  roles, keyboard behavior, themes and specialized diagram controls; require
+  the component through the UI skill.
+  [Design](features/workbench-configuration/design.md#ui-buttons-01-shared-action-buttons-across-the-desktop).

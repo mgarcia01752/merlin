@@ -136,7 +136,8 @@ WorkbenchDialog {
                     columns: 2; columnSpacing: 12; rowSpacing: 8
                     Layout.fillWidth: true; visible: dialog.fileMode && fileBranch.checked
                     FieldLabel { text: "File selection" }
-                    Button {
+                    WorkbenchActionButton {
+                        theme: dialog.theme
                         objectName: "sourceOpenFile"; text: "Open file…"
                         onClicked: dialog.chooseFile()
                         onActiveFocusChanged: if (activeFocus) { dialog.help("Exact-byte file", "Choose a file up to 16 MiB. All bytes, including line endings and zeros, are preserved.") }
@@ -213,6 +214,7 @@ WorkbenchDialog {
         }
     }
     footer: ApplyCancelFooter {
+        theme: dialog.theme
         applyObjectName: "sourceApply"
         cancelObjectName: "sourceCancel"
         onApplied: {

@@ -8,6 +8,7 @@ import QtQuick.Layouts
 
 Pane {
     id: footer
+    required property var theme
     default property alias secondaryActions: secondary.data
     property string applyObjectName: ""
     property string cancelObjectName: "dialogCancel"
@@ -21,16 +22,19 @@ Pane {
         spacing: 10
         RowLayout { id: secondary; spacing: 10 }
         Item { Layout.fillWidth: true }
-        Button {
+        WorkbenchActionButton {
+            theme: footer.theme
             id: applyButton
             objectName: footer.applyObjectName
             text: "Apply"
+            primary: true
             enabled: footer.applyEnabled
             Layout.preferredWidth: Math.max(80, implicitWidth, cancelButton.implicitWidth)
             Layout.preferredHeight: Math.max(implicitHeight, cancelButton.implicitHeight)
             onClicked: footer.applied()
         }
-        Button {
+        WorkbenchActionButton {
+            theme: footer.theme
             id: cancelButton
             objectName: footer.cancelObjectName
             text: "Cancel"

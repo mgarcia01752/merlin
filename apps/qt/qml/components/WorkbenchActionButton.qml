@@ -9,10 +9,11 @@ Button {
     id: control
     required property var theme
     property bool primary: false
-    implicitWidth: Math.max(96, contentItem.implicitWidth + 32)
-    implicitHeight: 38
-    leftPadding: 16
-    rightPadding: 16
+    property bool compact: false
+    implicitWidth: Math.max(compact ? 32 : 96, contentItem.implicitWidth + leftPadding + rightPadding)
+    implicitHeight: compact ? 30 : 38
+    leftPadding: compact ? 10 : 16
+    rightPadding: compact ? 10 : 16
     hoverEnabled: true
     focusPolicy: Qt.StrongFocus
     font.pixelSize: 13

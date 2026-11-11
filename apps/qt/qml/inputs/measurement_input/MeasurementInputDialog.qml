@@ -36,13 +36,13 @@ WorkbenchDialog {
     contentItem: ColumnLayout {
         spacing: 10
         RowLayout {
-            Button { objectName: "measurementOpen"; text: dialog.rxmer ? "Open file(s)…" : "Open file…"; onClicked: dialog.setMetadata(backend.choose_files(dialog.rxmer)) }
-            Button { objectName: "measurementDemo"; visible: !dialog.rxmer; text: "Load demo"; onClicked: dialog.setMetadata(backend.demo(false, 0)) }
-            Button { text: dialog.rxmer ? "Clear" : "Flat / unity"; onClicked: dialog.setMetadata(backend.edit(dialog.rxmer, -1, 0)) }
-            Button { visible: dialog.rxmer; text: "Remove"; enabled: viewer.selectedIndex >= 0; onClicked: dialog.setMetadata(backend.edit(true, viewer.selectedIndex, 0)) }
-            Button { visible: dialog.rxmer; text: "↑"; Accessible.name: "Move capture earlier"; enabled: viewer.selectedIndex > 0; onClicked: dialog.setMetadata(backend.edit(true, viewer.selectedIndex, -1)) }
-            Button { visible: dialog.rxmer; text: "↓"; Accessible.name: "Move capture later"; enabled: viewer.selectedIndex >= 0 && viewer.selectedIndex < dialog.metadata.files.length - 1; onClicked: dialog.setMetadata(backend.edit(true, viewer.selectedIndex, 1)) }
-            Button { visible: dialog.rxmer; text: "Sort by capture time"; onClicked: dialog.setMetadata(backend.edit(true, 0, 2)) }
+            WorkbenchActionButton { theme: dialog.theme; objectName: "measurementOpen"; text: dialog.rxmer ? "Open file(s)…" : "Open file…"; onClicked: dialog.setMetadata(backend.choose_files(dialog.rxmer)) }
+            WorkbenchActionButton { theme: dialog.theme; objectName: "measurementDemo"; visible: !dialog.rxmer; text: "Load demo"; onClicked: dialog.setMetadata(backend.demo(false, 0)) }
+            WorkbenchActionButton { theme: dialog.theme; text: dialog.rxmer ? "Clear" : "Flat / unity"; onClicked: dialog.setMetadata(backend.edit(dialog.rxmer, -1, 0)) }
+            WorkbenchActionButton { theme: dialog.theme; visible: dialog.rxmer; text: "Remove"; enabled: viewer.selectedIndex >= 0; onClicked: dialog.setMetadata(backend.edit(true, viewer.selectedIndex, 0)) }
+            WorkbenchActionButton { theme: dialog.theme; visible: dialog.rxmer; text: "↑"; compact: true; Accessible.name: "Move capture earlier"; enabled: viewer.selectedIndex > 0; onClicked: dialog.setMetadata(backend.edit(true, viewer.selectedIndex, -1)) }
+            WorkbenchActionButton { theme: dialog.theme; visible: dialog.rxmer; text: "↓"; compact: true; Accessible.name: "Move capture later"; enabled: viewer.selectedIndex >= 0 && viewer.selectedIndex < dialog.metadata.files.length - 1; onClicked: dialog.setMetadata(backend.edit(true, viewer.selectedIndex, 1)) }
+            WorkbenchActionButton { theme: dialog.theme; visible: dialog.rxmer; text: "Sort by capture time"; onClicked: dialog.setMetadata(backend.edit(true, 0, 2)) }
             Item { Layout.fillWidth: true }
         }
         RowLayout {
@@ -79,6 +79,7 @@ WorkbenchDialog {
         Label { text: dialog.errorMessage || dialog.admission.error || dialog.admission.summary || ""; color: dialog.errorMessage || dialog.admission.error ? theme.statusError : theme.accent; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 12 }
     }
     footer: ApplyCancelFooter {
+        theme: dialog.theme
         applyObjectName: "measurementApply";   onApplied: { dialog.errorMessage = backend.apply(dialog.rxmer, JSON.stringify(dialog.options), dialog.settingsBackend.current()); if (!dialog.errorMessage.length) { dialog.measurementApplied(); dialog.close() } }
         onCancelled: dialog.reject()
     }

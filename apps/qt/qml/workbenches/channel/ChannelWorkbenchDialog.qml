@@ -82,15 +82,15 @@ WorkbenchDialog {
             }
             Connection {anchors.fill:parent;theme:dialog.theme;fromX:stage.modelCenter;fromY:stage.topY+stage.blockHeight;toX:stage.modelCenter;toY:stage.rowY}
             Connection {anchors.fill:parent;theme:dialog.theme;fromX:stage.modelCenter;fromY:stage.bottomY;toX:stage.modelCenter;toY:stage.rowY+stage.blockHeight}
-            ReceiverChip {objectName:"channelRxmer";theme:dialog.theme;stage:true;text:"RxMER";x:stage.modelX;y:stage.topY;width:stage.modelWidth;height:stage.blockHeight;onClicked:dialog.rxmerRequested()}
-            ReceiverChip {objectName:"channelInput";theme:dialog.theme;stage:true;text:"Channel Input";x:stage.inputX;y:stage.rowY;width:stage.blockWidth;height:stage.blockHeight;onClicked:dialog.openTap(0)}
+            StageChip {objectName:"channelRxmer";theme:dialog.theme;text:"RxMER";x:stage.modelX;y:stage.topY;width:stage.modelWidth;height:stage.blockHeight;onClicked:dialog.rxmerRequested()}
+            StageChip {objectName:"channelInput";theme:dialog.theme;text:"Channel Input";x:stage.inputX;y:stage.rowY;width:stage.blockWidth;height:stage.blockHeight;onClicked:dialog.openTap(0)}
             Button {objectName:"channelTapBefore";x:stage.tp1X;y:stage.centerY-stage.tpSize/2;width:stage.tpSize;height:stage.tpSize;text:"TP";Accessible.name:"TapPoint Before Amplifier";onClicked:dialog.openTap(0);background:Rectangle {radius:width/2;color:dialog.theme.panel;border.color:dialog.theme.accent} }
             ConditioningSymbol {objectName:"channelAmplifier";theme:dialog.theme;x:stage.ampX;y:stage.rowY;width:stage.symbolWidth;height:stage.blockHeight;valueText:dialog.power.amplifier_target_dbmv_per_6mhz===null || dialog.power.amplifier_target_dbmv_per_6mhz===undefined ? Number(dialog.power.amplifier_gain_db || 0)+" dB" : "Level Target";onClicked:amplifier.open()}
             Button {objectName:"channelTapAfter";x:stage.tp2X;y:stage.centerY-stage.tpSize/2;width:stage.tpSize;height:stage.tpSize;text:"TP";Accessible.name:"TapPoint After Amplifier";onClicked:dialog.openTap(1);background:Rectangle {radius:width/2;color:dialog.theme.panel;border.color:dialog.theme.accent} }
-            ReceiverChip {objectName:"channelModel";theme:dialog.theme;stage:true;text:"Channel Model";x:stage.modelX;y:stage.rowY;width:stage.modelWidth;height:stage.blockHeight;onClicked:model.open()}
+            StageChip {objectName:"channelModel";theme:dialog.theme;text:"Channel Model";x:stage.modelX;y:stage.rowY;width:stage.modelWidth;height:stage.blockHeight;onClicked:model.open()}
             ConditioningSymbol {objectName:"channelAttenuator";theme:dialog.theme;amplifier:false;x:stage.attenX;y:stage.rowY;width:stage.symbolWidth;height:stage.blockHeight;valueText:Number(dialog.power.attenuation_db || 0)+" dB";onClicked:attenuator.open()}
-            ReceiverChip {objectName:"channelOutput";theme:dialog.theme;stage:true;text:"Channel Output";x:stage.outputX;y:stage.rowY;width:stage.blockWidth;height:stage.blockHeight;onClicked:dialog.openTap(2)}
-            ReceiverChip {objectName:"channelEstimate";theme:dialog.theme;stage:true;text:"DS Channel Estimate";x:stage.modelX;y:stage.bottomY;width:stage.modelWidth;height:stage.blockHeight;onClicked:dialog.responseRequested()}
+            StageChip {objectName:"channelOutput";theme:dialog.theme;text:"Channel Output";x:stage.outputX;y:stage.rowY;width:stage.blockWidth;height:stage.blockHeight;onClicked:dialog.openTap(2)}
+            StageChip {objectName:"channelEstimate";theme:dialog.theme;text:"DS Channel Estimate";x:stage.modelX;y:stage.bottomY;width:stage.modelWidth;height:stage.blockHeight;onClicked:dialog.responseRequested()}
         }
     }
     ChannelConfigurationDialog {id:model;theme:dialog.theme;configuration:dialog.configuration;onRxmerRequested:dialog.rxmerRequested();onResponseRequested:dialog.responseRequested();onLossRequested:loss.open()}

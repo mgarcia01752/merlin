@@ -39,6 +39,7 @@ WorkbenchDialog {
     height:Math.min(590,parent ? parent.height-40 : 590)
     modal:true
     footer: ApplyCancelFooter {
+        theme: dialog.theme
         applyObjectName: "channelLossApply";applyEnabled:!dialog.busy && !dialog.error;onApplied:{dialog.error=dialog.backend.loss_apply(JSON.stringify(dialog.document()),dialog.settingsBackend.current());if (!dialog.error) {dialog.modelApplied();dialog.close()} }
         onCancelled: dialog.reject()
     }

@@ -22,6 +22,30 @@ Follow the broader UI rules in [coding-style](../coding-style/SKILL.md), includi
 per-window QML files, symmetry, native file pickers and current dark user-guide
 screenshots. Review existing Apply buttons when changing this shared pattern.
 
+## Required action-button style
+
+Use `apps/qt/qml/components/WorkbenchActionButton.qml` for ordinary action
+buttons in every frame: inputs, workbenches, instruments, settings and About.
+Reuse its rounded corners, theme colors, sizing, padding and hover/pressed/focus/
+disabled states; do not introduce plain `Button` controls or copied decorations
+for actions. Use the regular size by default, with equal dimensions for peer
+actions and consistent spacing. Use the shared compact variant only for dense
+symbol controls or the fixed-size menu update chip.
+
+`WorkbenchDialog` supplies styled standard Close/Yes/Cancel buttons. Draft
+editors use `ApplyCancelFooter` with the owning theme and preserve Apply then
+Cancel. Keep existing signal handlers, button roles, shortcuts, focus behavior,
+validation and disabled guards. Never make appearance changes alter accepted
+settings. Native OS file pickers retain their native buttons.
+
+Diagram blocks, TP circles, stage symbols, tree disclosures, tabs and selection
+controls retain their distinct functional shapes. Profile/carrier toggle buttons
+reuse the action base while retaining checked state and legend colors. The
+Update chip retains its green identity and menu size. Ordinary instrument action
+chips use the shared style rather than the stage decoration. Verify dark/light,
+keyboard and disabled states, narrow layouts and native screenshots after a
+migration; update the relevant user guides.
+
 ## Technical terms and definitions
 
 When adding or changing technical UI/status wording, update the existing

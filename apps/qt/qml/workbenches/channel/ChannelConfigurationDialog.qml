@@ -25,13 +25,13 @@ WorkbenchDialog {
             return "Additional Loss: Off"
         }
         color:dialog.theme.text }
-        Button { objectName:"channelConfigureLoss";text:"Additional Tilt / Cable Loss…";onClicked:dialog.lossRequested() }
+        WorkbenchActionButton { theme: dialog.theme; objectName:"channelConfigureLoss";text:"Additional Tilt / Cable Loss…";onClicked:dialog.lossRequested() }
         Label { text: "RxMER"; color: theme.accent; font.bold: true }
         Label { text: dialog.configuration.rxmer ? dialog.configuration.rxmer.reason : "Configure RxMER"; color: theme.text; Layout.fillWidth: true; wrapMode: Text.WordWrap }
-        Button { text: "Configure RxMER…"; onClicked: { dialog.close(); dialog.rxmerRequested() } }
+        WorkbenchActionButton { theme: dialog.theme; text: "Configure RxMER…"; onClicked: { dialog.close(); dialog.rxmerRequested() } }
         Label { text: "Channel response H"; color: theme.accent; font.bold: true }
         Label { text: dialog.configuration.flat ? "Flat / unity · H = 1 + 0i per subcarrier · 0 dB / 0°" : "Imported channel-response capture"; color: theme.text; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         Label { text: dialog.configuration.response ? dialog.configuration.response.reason : "Apply DPD to define the grid"; color: theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap }
-        Button { text: "Configure channel response…"; onClicked: { dialog.close(); dialog.responseRequested() } }
+        WorkbenchActionButton { theme: dialog.theme; text: "Configure channel response…"; onClicked: { dialog.close(); dialog.responseRequested() } }
     }
 }

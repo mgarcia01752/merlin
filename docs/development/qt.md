@@ -45,7 +45,11 @@ apps/qt/
 Inputs use their Rust owner names; workbenches compose editors/instruments.
 Instrument windows and their charts live together. Shared Qt components remain
 under components; signal-processing algorithms stay in the independent core.
-Each window retains its own QML file. Relative directory imports make dependencies
+Each window retains its own QML file. Ordinary actions use
+`components/WorkbenchActionButton.qml`, including shared dialog button-box
+delegates and themed Apply/Cancel footers. `ReceiverChip` wraps that action for
+instrument navigation; `StageChip` retains the decorated diagram symbol.
+See the required [UI skill](../../skills/ui-design/SKILL.md). Relative directory imports make dependencies
 explicit and let local QtTest fixtures run without the compiled Rust module.
 
 Register every QML file in build.rs, preserving the Main.qml embedded entry URL.

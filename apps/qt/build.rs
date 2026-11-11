@@ -97,6 +97,7 @@ fn main() {
                 "qml/instruments/messages/TransmitterMessageDialog.qml",
                 "qml/components/TlvTreeGrid.qml",
                 "qml/components/ReceiverChip.qml",
+                "qml/components/StageChip.qml",
                 "qml/workbenches/receiver/ReceiverConfigurationDialog.qml",
                 "qml/workbenches/workbench/WorkbenchConfigurationDialog.qml",
                 "qml/workbenches/verification/VerificationDialog.qml",

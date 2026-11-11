@@ -34,6 +34,7 @@ WorkbenchDialog {
         Label { objectName:"receiverConfigError"; text:dialog.errorMessage; color:theme.statusError; Layout.fillWidth:true; wrapMode:Text.WordWrap }
     }
     footer: ApplyCancelFooter {
+        theme: dialog.theme
         applyObjectName: "receiverConfigApply"
         onApplied: {
             dialog.errorMessage = backend.apply(JSON.stringify(dialog.draft), settingsBackend.current())

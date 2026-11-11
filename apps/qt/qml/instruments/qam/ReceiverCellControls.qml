@@ -5,6 +5,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../../components"
 ColumnLayout {
     id: controls
     required property var theme
@@ -39,7 +40,7 @@ ColumnLayout {
         Label { visible:controls.signalIndex===2;text:"PLC Part";color:controls.theme.text }
         ComboBox { objectName:"receiverPlcPart";visible:controls.signalIndex===2;model:["Data","Preamble"];currentIndex:controls.plcPartIndex;onActivated:function(index){controls.plcPartIndex=index} }
         Item { Layout.fillWidth:true }
-        Button { text:"Reset Filters";onClicked:controls.resetFilters() }
+        WorkbenchActionButton { theme: controls.theme; text:"Reset Filters";onClicked:controls.resetFilters() }
     }
     RowLayout {
         Layout.fillWidth:true

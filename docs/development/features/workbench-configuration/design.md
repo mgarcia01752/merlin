@@ -138,3 +138,41 @@ cancellation, Create New continuing into settings, and a readable 960×640
 minimum window. The native log has no diagnostics. Updated dark screenshots
 are in the user guide; minimum-size and creation-flow evidence stays local under
 `docs/development/local/visual-workspace/`. No simulation or WB schema changed.
+
+## UI-BUTTONS-01: Shared action buttons across the desktop
+
+Status: implemented and locally validated. Extend the approved rounded WB action style to ordinary
+buttons throughout inputs, workbenches, instruments, settings and About. Reuse
+`WorkbenchActionButton` instead of copying decorations. `WorkbenchDialog` owns
+standard Close/Yes/Cancel delegates; `ApplyCancelFooter` owns equal Apply/Cancel
+actions and receives the caller's theme. Keep action signals, validation, native
+file pickers, keyboard focus, default roles and cancellation behavior intact.
+
+Use the regular height for actions; a compact variant allows dense symbol-only
+actions and the existing update chip. Diagram blocks, TP circles, stage chips,
+tabs and tree disclosures retain their domain shapes. Ordinary instrument chips
+share the action base. Profile/carrier toggles retain role colors and checked
+state with the same rounded geometry. The Update chip keeps its required green
+identity and menu-row size. No DSP, accepted state or WB schema changes.
+
+Check representative dialogs, standard Close/Yes/Cancel roles, Apply/Cancel
+alignment, keyboard and light/dark states with QML tests. Run Qt checks and leave
+the native executable built. Review native dark screenshots at regular/minimum
+sizes and refresh affected user-guide captures. Require the shared component in
+the UI skill; validate its canonical file and both discovery links.
+
+Validation: final `scripts/qt-desktop.sh check` passes formatting, warnings-denied
+Clippy, all 40 adapter tests, native build and all 45 QML checks. Shared-button
+tests cover keyboard/disabled actions in both themes and exactly-once standard
+Yes/Cancel/Close roles; the minimum-window test verifies header X and footer
+bounds after resizing. Qt forwards button-box roles automatically, so the shared
+footer does not connect a second acceptance/rejection handler.
+
+Actual Ubuntu VM captures verify dark input, TX/RX/channel, Settings, About,
+configuration and comparison frames, plus a light-theme entry dialog and fresh
+960×640 DPD/RxMER windows. Updated guide images use the dark captures; local
+evidence and native logs stay under `docs/development/local/visual-workspace/`.
+All three native validation logs are empty. An actual Profile3 run completed
+with 1,779,000 compared bits and zero errors. The current executable is built;
+no core tests, installer lifecycle or other-OS validation was needed or claimed
+for this presentation-only change. The UI skill and both discovery links validate.

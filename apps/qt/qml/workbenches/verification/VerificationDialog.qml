@@ -66,7 +66,8 @@ WorkbenchDialog {
                         visible: dialog.runState.verified
                         text: "✓  Comparison Enabled"; color: dialog.theme.statusComplete; font.bold: true
                     }
-                    Button {
+                    WorkbenchActionButton {
+                        theme: dialog.theme
                         objectName: "verificationApply"; text: "Enable Comparison"
                         visible: !dialog.runState.verified; enabled: !dialog.runState.busy
                         onClicked: { dialog.backend.verify(); dialog.configurationApplied() }

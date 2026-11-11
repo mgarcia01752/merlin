@@ -30,6 +30,7 @@ WorkbenchDialog {
     parent:Overlay.overlay;anchors.centerIn:parent;width:Math.min(620,parent ? parent.width-40 : 620)
     modal:true
     footer: ApplyCancelFooter {
+        theme: dialog.theme
         applyObjectName: "channelAttenuatorApply";applyEnabled:!dialog.busy && attenuation.acceptableInput && (!noise.checked || density.acceptableInput);onApplied:dialog.applyDraft()
         onCancelled: dialog.reject()
     }

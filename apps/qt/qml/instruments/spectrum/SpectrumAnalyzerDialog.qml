@@ -60,7 +60,7 @@ WorkbenchDialog {
             Label { visible: dialog.tapOptions.length > 0; text: "Test Point"; color: dialog.theme.text }
             ComboBox { visible: dialog.tapOptions.length > 0; objectName: "saTestPoint"; model: dialog.tapOptions; currentIndex: dialog.selectedTap; Layout.preferredWidth: 280; onActivated: function(index) { dialog.tapRequested(index) } }
             Item { Layout.fillWidth: true }
-            Button { objectName: "saFullSpan"; text: "Full Span"; enabled: dialog.state.has_result; onClicked: dialog.showView(0, 0) }
+            WorkbenchActionButton { theme: dialog.theme; objectName: "saFullSpan"; text: "Full Span"; enabled: dialog.state.has_result; onClicked: dialog.showView(0, 0) }
         }
         RowLayout {
             Layout.fillWidth: true
@@ -103,14 +103,16 @@ WorkbenchDialog {
         padding: 10
         contentItem: RowLayout {
             spacing: 10
-            Button {
+            WorkbenchActionButton {
+                theme: dialog.theme
                 objectName: "saGenerate"; text: "Run simulation"
                 enabled: dialog.state.can_generate; onClicked: backend.generate()
                 ToolTip.visible: hovered
                 ToolTip.text: dialog.generateDescription + "\n" + (dialog.viewport.error || dialog.state.message || dialog.state.reason)
                 Accessible.description: dialog.generateDescription
             }
-            Button {
+            WorkbenchActionButton {
+                theme: dialog.theme
                 objectName: "saCancel"; text: "Cancel preview"
                 visible: dialog.state.busy || false
                 onClicked: backend.cancel()
@@ -118,7 +120,7 @@ WorkbenchDialog {
                 ToolTip.text: "Cancel this TX preview. The main simulation uses Stop on the workbench."
             }
             Item { Layout.fillWidth: true }
-            Button { objectName: "saClose"; text: "Close"; onClicked: dialog.close() }
+            WorkbenchActionButton { theme: dialog.theme; objectName: "saClose"; text: "Close"; onClicked: dialog.close() }
         }
     }
 }

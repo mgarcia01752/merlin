@@ -34,17 +34,18 @@ Item {
         control.state=JSON.parse(control.backend.poll())
         if (control.state.restarted) { Qt.quit() }
     } }
-    Button {
+    WorkbenchActionButton {
+        theme: control.theme
         objectName:"updateAvailable"
         anchors.right:parent.right;anchors.top:parent.top
         visible:!!(control.state.available || control.state.installing)
         text:"Update";font.bold:true
         enabled:control.canUpdate && !control.state.busy
-        height:28;implicitWidth:80
+        compact:true;height:28;implicitWidth:80
         Accessible.name:"A MERLIN update is available"
         onClicked:control.installUpdate()
         contentItem: Label { text:parent.text; color:"white"; font.bold:true; horizontalAlignment:Text.AlignHCenter; verticalAlignment:Text.AlignVCenter }
-        background: Rectangle { radius:4; color:parent.hovered ? "#2ea043" : "#238636"; border.color:parent.activeFocus ? "white" : "#2ea043"; border.width:parent.activeFocus ? 2 : 1 }
+        background: Rectangle { radius:9; color:parent.hovered ? "#2ea043" : "#238636"; border.color:parent.activeFocus ? "white" : "#2ea043"; border.width:parent.activeFocus ? 2 : 1 }
         ToolTip.visible: hovered
         ToolTip.text: control.canUpdate ? "Install the available update and restart MERLIN" : "Stop the simulation before updating"
     }

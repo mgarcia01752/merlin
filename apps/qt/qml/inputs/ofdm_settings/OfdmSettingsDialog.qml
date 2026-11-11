@@ -174,10 +174,12 @@ WorkbenchDialog {
         Label { objectName: "ofdmValidationError"; text: dialog.errorMessage; visible: text.length > 0; color: theme.text; Layout.fillWidth: true; wrapMode: Text.WordWrap }
     }
     footer: ApplyCancelFooter {
+        theme: dialog.theme
         applyObjectName: "ofdmApply"
         onApplied: dialog.applyDraft()
         onCancelled: dialog.reject()
-        Button {
+        WorkbenchActionButton {
+            theme: dialog.theme
             text: "Reset defaults"
             onClicked: {
                 dialog.draft = JSON.parse(dialog.backend.defaults())

@@ -1827,6 +1827,13 @@ opens a Create New/Open Existing chooser, continuing to configuration only after
 successful activation. Native Open cancellation/failure never opens configuration.
 Rounded shared action buttons use equal run-control widths and heights, balanced
 spacing and theme-aware focus/hover/disabled states (UI-WB-CONTROLS-01).
+UI-BUTTONS-01 extends `WorkbenchActionButton` to ordinary actions across inputs,
+instruments and shell frames. `WorkbenchDialog` supplies standard button-box
+delegates, preserving automatic role forwarding; `ApplyCancelFooter` receives
+the caller's theme. `ReceiverChip` composes the shared action style, while
+`StageChip` owns diagram-only stage decoration. Compact controls and the green
+Update chip retain constrained sizes; native pickers and specialized tabs,
+tree disclosures, diagram blocks and TP shapes keep their interaction semantics.
 
 Run/Profiles tabs edit duration per profile, shared host budget, noise seed and
 captured profile-ID checkboxes. Receiver owns correction mode and iteration

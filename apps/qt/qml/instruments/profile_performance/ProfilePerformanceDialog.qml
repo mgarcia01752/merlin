@@ -39,7 +39,7 @@ WorkbenchDialog {
                 onActivated: function(index) { dialog.profileId=profiles[index].id; dialog.refresh(0,0) }
             }
             Label { text: dialog.runState.busy ? "Running Profile " + (dialog.runState.profile_id ?? "—") : dialog.statusLabel(dialog.viewport.status); color: dialog.theme.accent; Layout.fillWidth: true }
-            Button { objectName: "performanceFullSpan"; text: "Full Span"; onClicked: dialog.refresh(0,0) }
+            WorkbenchActionButton { theme: dialog.theme; objectName: "performanceFullSpan"; text: "Full Span"; onClicked: dialog.refresh(0,0) }
         }
         RowLayout {
             Layout.fillWidth: true; spacing: 12

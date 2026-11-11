@@ -76,8 +76,8 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.bottomMargin: 7
         Label { text: "TLV Fields"; color: grid.theme.accent; font.bold: true; Layout.fillWidth: true }
-        Button { objectName: "tlvExpandAll"; text: "Expand All"; enabled: grid.nodes.length > 0; onClicked: grid.expandAll(true) }
-        Button { objectName: "tlvCollapseAll"; text: "Collapse All"; enabled: grid.nodes.length > 0; onClicked: grid.expandAll(false) }
+        WorkbenchActionButton { theme: grid.theme; objectName: "tlvExpandAll"; text: "Expand All"; enabled: grid.nodes.length > 0; onClicked: grid.expandAll(true) }
+        WorkbenchActionButton { theme: grid.theme; objectName: "tlvCollapseAll"; text: "Collapse All"; enabled: grid.nodes.length > 0; onClicked: grid.expandAll(false) }
     }
     Rectangle {
         Layout.fillWidth: true

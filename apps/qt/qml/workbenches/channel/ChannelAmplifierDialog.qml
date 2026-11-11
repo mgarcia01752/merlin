@@ -33,6 +33,7 @@ WorkbenchDialog {
     parent:Overlay.overlay;anchors.centerIn:parent;width:Math.min(620,parent ? parent.width-40 : 620)
     modal:true
     footer: ApplyCancelFooter {
+        theme: dialog.theme
         applyObjectName: "channelAmplifierApply";applyEnabled:!dialog.busy && gain.acceptableInput && (!calibrated.checked || reference.acceptableInput) && (!targetMode.checked || target.acceptableInput);onApplied:dialog.applyDraft()
         onCancelled: dialog.reject()
     }

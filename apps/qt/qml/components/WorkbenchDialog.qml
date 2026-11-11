@@ -9,6 +9,16 @@ import QtQuick.Layouts
 Dialog {
     id: dialog
     required property var theme
+    footer: DialogButtonBox {
+        standardButtons: dialog.standardButtons
+        visible: count > 0
+        alignment: Qt.AlignRight
+        spacing: 10
+        padding: 10
+        background: Item {}
+        delegate: WorkbenchActionButton { theme: dialog.theme }
+        // Dialog forwards button-box roles automatically.
+    }
     header: RowLayout {
         spacing: 8
         Label {

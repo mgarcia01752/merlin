@@ -61,9 +61,9 @@ WorkbenchDialog {
         spacing: 10
         RowLayout {
             Layout.fillWidth: true
-            Button { objectName: "profileOpenFile"; text: "Open File…"; onClicked: dialog.showResult(dialog.backend.choose_file()) }
-            Button { objectName: "profileLoadDemo"; text: "Load demo"; onClicked: dialog.showResult(dialog.backend.demo()) }
-            Button { objectName: "profileView"; text: "View Profile…"; enabled: dialog.previewModel.profile_ids.length > 0; onClicked: profilePlot.open() }
+            WorkbenchActionButton { theme: dialog.theme; objectName: "profileOpenFile"; text: "Open File…"; onClicked: dialog.showResult(dialog.backend.choose_file()) }
+            WorkbenchActionButton { theme: dialog.theme; objectName: "profileLoadDemo"; text: "Load demo"; onClicked: dialog.showResult(dialog.backend.demo()) }
+            WorkbenchActionButton { theme: dialog.theme; objectName: "profileView"; text: "View Profile…"; enabled: dialog.previewModel.profile_ids.length > 0; onClicked: profilePlot.open() }
             Item { Layout.fillWidth: true }
             Label { objectName: "profileDetectedType"; text: dialog.previewModel.format ? "Detected: " + dialog.previewModel.format : ""; color: theme.accent }
         }
@@ -141,6 +141,7 @@ WorkbenchDialog {
         initialProfile: dialog.previewModel.selected_profile_id
     }
     footer: ApplyCancelFooter {
+        theme: dialog.theme
         applyObjectName: "profileApply"
         onApplied: {
             dialog.errorMessage = dialog.backend.apply(dialog.previewModel.selected_profile_id, dialog.settingsBackend.current())
@@ -150,7 +151,7 @@ WorkbenchDialog {
             }
         }
         onCancelled: dialog.reject()
-        Button { objectName: "profileRemove"; text: "Remove input"; enabled: dialog.previewModel.profile_ids.length > 0; onClicked: dialog.showResult(dialog.backend.clear_draft()) }
+        WorkbenchActionButton { theme: dialog.theme; objectName: "profileRemove"; text: "Remove input"; enabled: dialog.previewModel.profile_ids.length > 0; onClicked: dialog.showResult(dialog.backend.clear_draft()) }
         ComboBox {
             objectName: "profileChoice"
             implicitWidth: 160

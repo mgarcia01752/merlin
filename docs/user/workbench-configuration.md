@@ -6,6 +6,9 @@ available while idle: without an active WB, it asks you to **Create New** or
 **Open Existing…**, then opens settings. Cancel or X dismisses the choice; a
 canceled or failed Open does not open settings. It is disabled during a simulation.
 The rounded control row highlights Start and keeps Stop and Pause equally sized.
+The same action style appears in inputs, instrument windows, settings and About,
+including Close and the aligned Apply/Cancel row. Existing actions and shortcuts
+work as before; disabled actions remain unavailable.
 
 ![Workbench controls](../images/workbench/workbench-controls-dark.png)
 

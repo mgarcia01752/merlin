@@ -35,11 +35,13 @@ WorkbenchDialog {
     standardButtons: Dialog.Close
     onOpened: { selectedProfile = initialProfile; selectedIds = [initialProfile]; selectedRoles = allRoles.slice(); metric = 0; refresh(0, 0) }
     ProfileBandwidthDialog { id: bandwidth; theme: dialog.theme; profiles: dialog.viewport.profiles || []; selectedIds: dialog.selectedIds }
-    component ProfileToggle: Button {
+    component ProfileToggle: WorkbenchActionButton {
+        theme: dialog.theme
         id: toggle
         property color traceColor: dialog.theme.accent
         property bool showIndicator: true
-        implicitWidth: 108; implicitHeight: 30
+        compact: true
+        implicitWidth: 108
         checkable: true; padding: 8
         contentItem: Row {
             spacing: 6
@@ -47,7 +49,7 @@ WorkbenchDialog {
             Label { text: toggle.text; color: dialog.theme.text; font.pixelSize: 12 }
         }
         background: Rectangle {
-            radius: 5; color: toggle.checked ? dialog.theme.accentSoft : dialog.theme.button
+            radius: 9; color: toggle.checked ? dialog.theme.accentSoft : dialog.theme.button
             border.color: toggle.checked ? toggle.traceColor : dialog.theme.line
             border.width: toggle.activeFocus ? 2 : 1
             opacity: toggle.enabled ? 1 : 0.4
@@ -61,14 +63,15 @@ WorkbenchDialog {
                 model: ["Channel  " + (dialog.viewport.channel ?? "—"), "MAC  " + (dialog.viewport.mac || "—")]
                 Label { required property string modelData; text: modelData; color: dialog.theme.text; padding: 8; background: Rectangle { radius: height/2; color: dialog.theme.button; border.color: dialog.theme.line } }
             }
-            Button {
+            WorkbenchActionButton {
+                theme: dialog.theme
                 objectName: "profileBandwidthChip"
                 text: "Profile BW  " + (dialog.selectedIds.length === 1 ? (dialog.viewport.profiles || []).filter(p => dialog.selectedIds.indexOf(p.id) >= 0).map(p => p.id + " · " + p.bandwidth_text).join("") : dialog.selectedIds.length + " profiles") + "  ⌄"
                 Layout.maximumWidth: 490
                 onClicked: bandwidth.open()
             }
             Item { Layout.fillWidth: true }
-            Button { objectName: "profilePlotFullSpan"; text: "Full Span"; onClicked: dialog.refresh(0, 0) }
+            WorkbenchActionButton { theme: dialog.theme; objectName: "profilePlotFullSpan"; text: "Full Span"; onClicked: dialog.refresh(0, 0) }
         }
         GridLayout {
             columns: 2; columnSpacing: 10; rowSpacing: 6; Layout.fillWidth: true

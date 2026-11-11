@@ -47,11 +47,11 @@ WorkbenchDialog {
         }
     }
     footer: DialogButtonBox {
-        Button {
+        WorkbenchActionButton {
+            theme: dialog.theme
             objectName: "cancelWorkbenchChoice"
             text: "Cancel"
             DialogButtonBox.buttonRole: DialogButtonBox.RejectRole
         }
-        onRejected: dialog.reject()
     }
 }

@@ -51,8 +51,8 @@ WorkbenchDialog {
                 spacing:12
                 RowLayout {
                     Label { text:"Profiles to Run";color:dialog.theme.accent;font.bold:true;Layout.fillWidth:true }
-                    Button { objectName:"wbSelectAllProfiles";text:"Select All";enabled:dialog.profileIds.length>0;onClicked:dialog.selectedIds=dialog.profileIds.slice() }
-                    Button { objectName:"wbClearProfiles";text:"Clear";enabled:dialog.profileIds.length>0;onClicked:dialog.selectedIds=[] }
+                    WorkbenchActionButton { theme: dialog.theme; objectName:"wbSelectAllProfiles";text:"Select All";enabled:dialog.profileIds.length>0;onClicked:dialog.selectedIds=dialog.profileIds.slice() }
+                    WorkbenchActionButton { theme: dialog.theme; objectName:"wbClearProfiles";text:"Clear";enabled:dialog.profileIds.length>0;onClicked:dialog.selectedIds=[] }
                 }
                 ScrollView {
                     Layout.fillWidth:true
@@ -80,6 +80,7 @@ WorkbenchDialog {
         Label { objectName:"wbConfigurationError";text:dialog.errorMessage;color:dialog.theme.statusError;Layout.fillWidth:true;wrapMode:Text.WordWrap }
     }
     footer: ApplyCancelFooter {
+        theme: dialog.theme
         applyObjectName: "wbConfigurationApply"
         applyEnabled: !dialog.runState.busy
         onApplied: {

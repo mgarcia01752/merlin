@@ -885,6 +885,29 @@ Pane {
                 }
             }
         }
+        function test_profile_dialog_bounds_at_minimum_window() {
+            const host = window.Window.window
+            const previous = [host.width, host.height, window.width, window.height]
+            const popup = workbench.profilePopup
+            try {
+                popup.open(); tryCompare(popup, "opened", true); popup.close()
+                host.width = 960; host.height = 640
+                window.width = 960; window.height = 640
+                popup.open(); tryCompare(popup, "opened", true); wait(200)
+                const close = findChild(popup.header, "popupCloseButton")
+                const top = close.mapToItem(host.contentItem, 0, 0)
+                const bottom = popup.footer.mapToItem(host.contentItem, popup.footer.width, popup.footer.height)
+                verify(top.x >= 0 && top.y >= 0)
+                verify(top.x + close.width <= host.width)
+                verify(bottom.y <= host.height)
+                closeWithX(popup)
+            } finally {
+                popup.close()
+                host.width = previous[0]; host.height = previous[1]
+                window.width = previous[2]; window.height = previous[3]
+                wait(200)
+            }
+        }
         function test_workbench_configuration_entry_choices() {
             workbench.hasProject = false
             const configure = findChild(workbench, "configureWorkbench")

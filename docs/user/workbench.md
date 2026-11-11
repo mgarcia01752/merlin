@@ -18,6 +18,12 @@ configure a partial WB while blocks are yellow; Start still requires all green
 and a nonempty compatible profile selection. See
 [WB configuration](workbench-configuration.md).
 
+Actions throughout the workbench and its windows share rounded buttons with
+consistent spacing and visible keyboard focus. Apply accepts an editor's draft;
+Cancel or X discards it. Close dismisses a viewer. Tabs, diagram symbols and
+capture-tree arrows retain their own shapes. See
+[workbench configuration](workbench-configuration.md) for the shared controls.
+
 The native Qt workbench starts with the single-channel system diagram. Click
 OFDM Channel Descriptor (OCD), PRBS-TX, Transmitter, Channel Simulator, Receiver, PRBS-RX or one
 of the measurement-input blocks to open its section dialog. Close the dialog

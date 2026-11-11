@@ -349,3 +349,11 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
 - [x] **UI-TERMS-02** Define interleaver depth/drain in the About-linked guide
   and require technical UI definitions through the UI-design skill.
   [Design](features/run-elapsed-time/design.md#ui-terms-02-processing-terminology).
+
+## Shared action buttons
+
+- [x] **UI-BUTTONS-01** Apply the approved shared rounded action style across
+  all frames, including standard dialog and Apply/Cancel buttons. Preserve
+  roles, keyboard behavior, themes and specialized diagram controls; require
+  the component through the UI skill.
+  [Design](features/workbench-configuration/design.md#ui-buttons-01-shared-action-buttons-across-the-desktop).
