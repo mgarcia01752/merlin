@@ -58,6 +58,13 @@ pub mod bridge {
         /// Bounded plot JSON or a diagnostic preserving draft and accepted state.
         #[qinvokable]
         fn plot(self: &ProfileInput, profile_id: i32, start: i32, count: i32) -> QString;
+        /// Inspects independent profile overlays without changing the draft.
+        /// # Arguments
+        /// * `request` - JSON profile IDs, carrier roles, metric and range.
+        /// # Returns
+        /// Bounded display metadata or an error; accepted state is untouched.
+        #[qinvokable]
+        fn inspect(self: &ProfileInput, request: &QString) -> QString;
         /// Stages removal; Cancel can still preserve the accepted input.
         /// # Returns
         /// Empty-input preview JSON.
@@ -97,6 +104,23 @@ fn response(result: Result<Value, String>) -> QString {
     })
 }
 impl bridge::ProfileInput {
+    /// Queries the full modulation viewer using a bounded transient selection.
+    /// # Arguments
+    /// * `request` - JSON selection; never persisted or applied.
+    /// # Returns
+    /// Bounded metadata/overlays, or a diagnostic preserving all editor state.
+    pub fn inspect(&self, request: &QString) -> QString {
+        response(
+            self.rust()
+                .draft
+                .as_ref()
+                .ok_or_else(|| "Open a profile file first.".into())
+                .and_then(|capture| {
+                    crate::inputs::profile_input::plot::inspect(capture, &request.to_string())
+                }),
+        )
+    }
+
     /// Queries one role-aware viewport from the staged original capture.
     /// # Arguments
     /// * `profile_id` - Captured identity in 0..255.

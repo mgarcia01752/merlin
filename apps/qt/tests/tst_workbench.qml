@@ -38,6 +38,14 @@ Pane {
         function plot(id, start, count) {
             return JSON.stringify({profile_id:id,total:100,start:count ? start : 0,count:count || 100,points:[{x:0,y:0.5,minimum_y:0.5,role:"data",readout:"Test carrier"}],roles:[{kind:"data",label:"Data"},{kind:"continuous_pilot",label:"Pilots"}],x_ticks:[],y_ticks:[],axis_label:"Bit Loading (Bits/Symbol)"})
         }
+        function inspect(request) {
+            const r = JSON.parse(request), v = JSON.parse(plot(0,r.start,r.count))
+            v.series = r.profiles.map(id => ({id:id,points:[{x:0,y:0.5,minimum_y:0.5,gap:false,readout:"Test carrier"}]}))
+            v.profiles = [0,1].map(id => ({id:id,bandwidth_text:"100.000 Mbit/s",bandwidth_bps:100000000}))
+            v.roles = [{kind:"data",label:"Data",count:90},{kind:"continuous_pilot",label:"Pilots",count:10}]
+            v.lanes = ["continuous_pilot"]; v.markers = []; v.channel=34; v.mac="00:ca:00:00:00:01"
+            return JSON.stringify(v)
+        }
         function stage(url) { return JSON.stringify({error: "Invalid test input"}) }
         function clear_draft() { loaded = false; return view(-1) }
         function apply(id, settings) { acceptedId = loaded ? id : -1; return "" }
@@ -364,6 +372,23 @@ Pane {
             compare(dialog.plotPopup.viewport.count,20)
             mouseClick(findChild(dialog.plotPopup,"profilePlotFullSpan"))
             compare(dialog.plotPopup.viewport.count,100)
+            mouseClick(findChild(dialog.plotPopup,"modulationAllProfiles"))
+            compare(dialog.plotPopup.selectedIds.length,2)
+            wait(50)
+            mouseClick(findChild(dialog.plotPopup,"profileToggleRepeater").itemAt(1))
+            compare(dialog.plotPopup.selectedIds.length,1)
+            wait(50)
+            mouseClick(findChild(dialog.plotPopup,"carrierToggleRepeater").itemAt(0))
+            compare(dialog.plotPopup.selectedRoles.indexOf("data"),-1)
+            mouseClick(findChild(dialog.plotPopup,"modulationAllCarriers"))
+            compare(dialog.plotPopup.selectedRoles.length,7)
+            dialog.plotPopup.metric=1
+            dialog.plotPopup.refreshRange()
+            compare(profileBackend.acceptedId,-1)
+            mouseClick(findChild(dialog.plotPopup,"profileBandwidthChip"))
+            const bw = findChild(dialog.plotPopup,"profileBandwidthDialog")
+            tryCompare(bw,"opened",true)
+            bw.close()
             dialog.plotPopup.close()
             tryCompare(dialog.plotPopup,"visible",false)
             compare(dialog.previewModel.format, "Binary PNM")

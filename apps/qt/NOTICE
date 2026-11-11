@@ -31,3 +31,8 @@ apps/qt/qml/RxMerCollectionTree.qml and RxMerBitLoadingChart.qml in the same
 pinned viewer revision. Their GPL copyright notices remain in the adapted files.
 The same Apache-2.0 pnm dependency decodes RxMER and channel-response files.
 No network services, Python processing or viewer runtime is used.
+
+The modulation-profile viewer adapts ModulationControls.qml, MeasurementToggle.qml,
+ProfileBandwidth.qml and MeasurementChart.qml from apps/qt/qml in the same
+pinned reference revision. GPL copyrights are preserved. MERLIN supplies its
+own bounded adapter and uses shared Rust Shannon math on validated profiles.

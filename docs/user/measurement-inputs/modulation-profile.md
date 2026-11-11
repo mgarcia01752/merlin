@@ -23,15 +23,23 @@ preserves it. Remove input is also staged until Apply. Captures stay unchanged;
 this dialog does not export modified captures or start a run. Settings and inputs
 are included in saved workbench JSON; viewing and zoom are temporary.
 
-Use **View Profile…** to open the selected draft as a frequency plot before
-applying it. Choose another profile inside that window to compare its loading;
-this viewing choice does not change the profile selected for Apply. The vertical
-axis shows bits per symbol, and the horizontal axis shows the capture's original
-frequency grid. The legend distinguishes green data, yellow pilots, red PLC,
-gray exclusions, blue zero-loaded, purple reserved and orange unknown carriers.
-Roles without bit loading appear as baseline markers rather than zero-bit data.
-Hover for frequency, physical bin, role and loading. Full-span views group
-carriers with min/max values; zoom reveals individual carriers.
+Use **View Profile…** to inspect the capture with the PNM Viewer layout.
+Channel and MAC chips identify the capture. Toggle individual **Profiles** to
+overlay their colored traces; **All** enables every profile. These selections
+never change the profile chosen for Apply. Carrier buttons filter Data, Pilots,
+PLC, Excluded, Zero-loaded, Reserved and Unknown; unavailable roles are disabled.
+Special carrier roles also appear in separate colored lanes beneath the plot.
+
+**Y Axis** selects **dB** (ideal Shannon minimum MER) or **Bit loading**
+(bits per symbol). The dB trace is a theoretical reference, not measured RxMER
+or a receiver requirement. **Profile BW** opens per-profile gross data rates:
+data-carrier bits multiplied by subcarrier spacing, before cyclic-prefix, FEC
+and other overhead. It is not net payload throughput.
+
+The horizontal axis preserves the capture's original frequency grid. Hover for
+profile, frequency and value. Full-span views retain bounded extrema and break
+lines across missing or filtered carriers; zoom resolves individual carriers.
+Roles without loading remain markers, not invented zero-bit data.
 
 Scroll over the plot to zoom around the pointer, drag horizontally to select a
 range, and press **Full Span** to restore the entire profile. X and Close dismiss
@@ -40,6 +48,10 @@ does not display the capture filename; original names, bytes and hashes remain
 stored with the workbench.
 
 ![Visual modulation profile in dark mode](../../images/workbench/dpd-profile-plot-dark.png)
+
+![Multiple profile overlays](../../images/workbench/dpd-profile-overlays-dark.png)
+
+![Profile bandwidth details](../../images/workbench/dpd-profile-bandwidth-dark.png)
 
 ![Native DPD tree in dark mode](../../images/workbench/dpd-input-dark.png)
 

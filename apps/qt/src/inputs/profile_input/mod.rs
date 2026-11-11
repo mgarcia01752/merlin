@@ -191,6 +191,68 @@ mod tests {
         assert_eq!(marker["role_markers"], true);
     }
     #[test]
+    fn profile_inspection_overlays_metrics_and_filters_preserve_capture() {
+        let binary = Capture::decode("original.bin".into(), BINARY.to_vec()).unwrap();
+        let decoded = Capture::decode("decoded.json".into(), JSON.to_vec()).unwrap();
+        let request = json!({"profiles":[0,1],"roles":["data","continuous_pilot","plc"],"metric":0,"start":0,"count":0});
+        let view = plot::inspect(&binary, &request.to_string()).unwrap();
+        assert_eq!(view, plot::inspect(&decoded, &request.to_string()).unwrap());
+        assert_eq!(view["series"].as_array().unwrap().len(), 2);
+        assert!(view["series"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|s| s["points"].as_array().unwrap().len() <= 1024));
+        assert!(view["markers"].as_array().unwrap().len() <= 2048 * 6);
+        let profile = binary.profile(0).unwrap();
+        let expected: u64 = profile
+            .assignments
+            .iter()
+            .filter(|a| a.carrier_type == docsis_ofdm_fec::types::modulation::CarrierType::Data)
+            .filter_map(|a| a.bit_loading)
+            .map(u64::from)
+            .sum::<u64>()
+            * u64::from(profile.key.grid.spacing_hz);
+        assert_eq!(view["profiles"][0]["bandwidth_bps"], expected);
+        let mut r = request.clone();
+        r["start"] = json!(20);
+        r["count"] = json!(4);
+        r["profiles"] = json!([0]);
+        let db = plot::inspect(&binary, &r.to_string()).unwrap();
+        r["metric"] = json!(1);
+        let bits = plot::inspect(&binary, &r.to_string()).unwrap();
+        for (d, b) in db["series"][0]["points"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(bits["series"][0]["points"].as_array().unwrap())
+        {
+            if let Some(y) = b["y"].as_f64() {
+                let loading = (15.0 * (1.0 - y)).round();
+                let expected = 10.0 * (2.0_f64.powf(loading) - 1.0).log10();
+                assert!((45.0 * (1.0 - d["y"].as_f64().unwrap()) - expected).abs() < 1e-10);
+            }
+        }
+        r["roles"] = json!([]);
+        let empty = plot::inspect(&binary, &r.to_string()).unwrap();
+        assert!(empty["series"][0]["points"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|p| p["y"].is_null()));
+        r["profiles"] = json!([]);
+        assert!(plot::inspect(&binary, &r.to_string()).unwrap()["series"]
+            .as_array()
+            .unwrap()
+            .is_empty());
+        r["profiles"] = json!([255]);
+        assert!(plot::inspect(&binary, &r.to_string()).is_err());
+        r["profiles"] = json!([0]);
+        r["start"] = json!(usize::MAX);
+        assert!(plot::inspect(&binary, &r.to_string()).is_err());
+        assert_eq!(binary.name, "original.bin");
+    }
+    #[test]
     fn staged_failures_removal_and_profile_rejection_preserve_accepted_input() {
         let mut model = ProfileModel::default();
         model

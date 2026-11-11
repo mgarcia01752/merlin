@@ -37,3 +37,37 @@ Actual native dark editor and profile windows were inspected and captured as
 `dpd-input-dark.png` and `dpd-profile-plot-dark.png` in the user guide. Native
 startup emitted no diagnostics. The development executable is rebuilt; this does
 not replace the installed v0.1.1 application. No non-Qt workspace suite was run.
+
+## UI-DPD-VIEW-02: Full PNM Viewer profile inspection
+
+Adapt the viewer's ModulationControls, MeasurementToggle, ProfileBandwidth and MeasurementChart
+modulation overlays from revision 5fbd5561f3e06b73486546b5ffa520279080a5eb
+(GPL-3.0-only), preserving attribution. Replace the initial single-trace view
+with independent profile toggles, carrier filters, dB/bit-loading metrics,
+channel/MAC chips, gross data-rate details and separate special-carrier lanes.
+Rust owns checked frequency ranges, shared Shannon math, gross-rate arithmetic
+and bounded role-aware projections. QML owns transient selections and rendering.
+No draft application, simulation, WB schema change or viewer subprocess occurs.
+Empty selections retain axes; missing loading remains absent. Full Span and
+mouse navigation share the existing gesture component. Each popup has X/Close.
+Verify binary/JSON parity, rate/metric calculations, filters, bounded overlays,
+range rejection and unchanged accepted state, then capture the actual dark VM UI.
+
+Implementation uses ProfilePlotDialog, dedicated ProfileChart and
+ProfileBandwidthDialog, and a bounded ProfileInput.inspect JSON query. Shared
+MERLIN Shannon math provides the same ideal reference as the viewer. Data-only
+rates use the original grid spacing. The display shares 2,048 frequency groups
+across selected profiles (minimum eight per profile), with at most six special
+role markers per group. Groups preserve extrema and break joins at missing or
+filtered carriers. Original files and accepted WB selections remain unchanged.
+The reference export action is outside this inspection change; no export button
+is displayed. Existing binary/range import support is unchanged.
+
+Validation: Qt formatting and warnings-denied Clippy pass; all 28 adapter tests
+and 32 QML checks pass. New coverage checks binary/JSON parity, bounded overlays,
+shared metric values, gross rates, empty role/profile selections, rejected ranges,
+profile/carrier toggles, Full Span, bandwidth popup and unchanged acceptance.
+Actual Ubuntu VM inspection confirms the single/multi-profile layouts, popup
+and wheel zoom without startup diagnostics. Dark screenshots in the user guide
+were refreshed, including overlays and bandwidth details. The latest native
+Qt executable is built; non-Qt suites and installed packages were not rebuilt.

@@ -215,8 +215,9 @@ for a source-checkout path. Detection uses file contents, not the extension.
 Expand File information, Channel information and Profiles. Choose a profile from
 the dropdown or its tree row; inspect numbered **Range** entries and select rows
 for details. Input provenance is separately expandable. Values are read-only.
-**View Profile…** opens bit loading versus frequency with a carrier-role legend,
-mouse zoom and **Full Span**. Its profile selector only changes the viewed trace;
+**View Profile…** opens the PNM Viewer layout with profile overlays, dB/bit-loading
+selection, carrier filters/lanes, gross Profile BW, mouse zoom and **Full Span**.
+Profile toggles only change the viewed traces;
 it does not apply a profile or run the simulation. Filenames are hidden here;
 original file identities remain in saved WB provenance.
 

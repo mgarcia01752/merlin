@@ -731,13 +731,15 @@ Filename filtering is only presentation: Rust still validates complete WB
 contents before adoption and preserves the current session on Cancel/error.
 See the [workbench-file design](development/features/qt-closed-loop/design.md#ui-wb-open-01-main-open-file-filter).
 
-UI-DPD-VIEW-01 extends the shared PNM Viewer-derived MeasurementPlot to display
-the draft modulation profile's bit loading and distinct carrier-role colors.
-The separate View Profile dialog uses Rust-owned bounded role-aware min/max
-viewports on the exact captured grid, preserving absent loading as role markers.
-Profile browsing and mouse zoom are transient, independent of Apply/readiness
-and WB persistence. Capture filenames are hidden in the DPD editor while saved
-originals and provenance retain them. See the
+UI-DPD-VIEW-02 replaces the initial single-trace profile plot with the PNM
+Viewer modulation layout: independent multi-profile overlays, dB/bit-loading
+selection, carrier filters, channel/MAC chips, gross Profile BW and role lanes.
+Rust owns checked coordinates, shared ideal Shannon math, data-only gross-rate
+arithmetic and bounded extrema; QML owns transient filters and rendering.
+Missing/filtered carriers break trace joins. Special roles retain separate lanes.
+Viewing is independent of Apply/readiness and WB persistence; originals retain
+filenames and provenance while the editor hides filenames. Each popup keeps
+X/Close and the plot supports mouse navigation and Full Span. See the
 [design](development/features/pnm-measurement-inputs/profile-view.md) and
 [user guide](user/measurement-inputs/modulation-profile.md).
 

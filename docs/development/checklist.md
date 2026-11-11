@@ -957,3 +957,7 @@ See [setup](setup.md) and [design](features/development-setup/design.md).
   checks and Git guards. [Design](features/ubuntu-desktop/local-validation.md).
 - [x] **SECURITY-DEPS-02** Patch rand/cxx advisories and audit both graphs
   without suppression. [Design](features/ubuntu-desktop/design.md).
+
+- [x] **UI-DPD-VIEW-02** Adapt the full PNM Viewer modulation view with
+  profile overlays, dB/bit loading, carrier filters/lanes and gross Profile BW.
+  [Design](features/pnm-measurement-inputs/profile-view.md#ui-dpd-view-02-full-pnm-viewer-profile-inspection).

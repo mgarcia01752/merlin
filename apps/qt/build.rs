@@ -65,6 +65,8 @@ fn main() {
                 "qml/inputs/ofdm_settings/OfdmSettingsDialog.qml",
                 "qml/inputs/profile_input/ProfileInputDialog.qml",
                 "qml/inputs/profile_input/ProfilePlotDialog.qml",
+                "qml/inputs/profile_input/ProfileChart.qml",
+                "qml/inputs/profile_input/ProfileBandwidthDialog.qml",
                 "qml/inputs/source_input/SourceInputDialog.qml",
                 "qml/instruments/spectrum/SpectrumAnalyzerDialog.qml",
                 "qml/instruments/spectrum/SpectrumPlot.qml",
