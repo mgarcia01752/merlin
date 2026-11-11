@@ -176,7 +176,7 @@ mod tests {
         let manifest: Value =
             serde_json::from_slice(&std::fs::read(root.join("manifest.json")).unwrap()).unwrap();
         let bundles = manifest["bundles"].as_array().unwrap();
-        assert_eq!(bundles.len(), 2);
+        assert_eq!(bundles.len(), 3);
         assert_eq!(manifest["planned"][0]["id"], "multi-rxmer-dschan");
         for bundle in bundles {
             let path = root.join(bundle["workbench"].as_str().unwrap());
@@ -184,10 +184,21 @@ mod tests {
             let inputs = project.validate().unwrap();
             let profile = inputs.profile.as_ref().unwrap();
             let playback = inputs.playback.as_ref().unwrap();
-            let response = inputs.response.as_ref().unwrap();
-            assert_eq!(profile.key, response.key);
+            if let Some(response) = inputs.response.as_ref() {
+                assert_eq!(profile.key, response.key);
+            } else {
+                assert_eq!(bundle["id"], "multi-rxmer-2");
+                assert!(bundle["channel_estimate"].is_null());
+            }
             assert!(playback.frames.iter().all(|frame| frame.key == profile.key));
-            assert_eq!(profile.key.grid.sample_count, 7480);
+            assert_eq!(
+                profile.key.grid.sample_count,
+                if bundle["id"] == "multi-rxmer-2" {
+                    7600
+                } else {
+                    7480
+                }
+            );
             assert_eq!(profile.key.grid.spacing_hz, 25000);
             let prepared = crate::simulation::closed_loop::prepare(
                 &project.transmission,
@@ -244,14 +255,20 @@ mod tests {
             let captures = measurements["rxmer"].as_array().unwrap();
             let paths = bundle["rxmer"].as_array().unwrap();
             assert_eq!(captures.len(), paths.len());
-            assert_eq!(captures.len(), if bundle["id"] == "single" { 1 } else { 5 });
-            let mut originals = vec![
-                (
-                    &project.sections["profile"]["file"],
-                    &bundle["modulation_profile"],
-                ),
-                (&measurements["response"], &bundle["channel_estimate"]),
-            ];
+            let expected_count = match bundle["id"].as_str().unwrap() {
+                "single" => 1,
+                "multi-rxmer" => 5,
+                "multi-rxmer-2" => 132,
+                other => panic!("Unknown example {other}"),
+            };
+            assert_eq!(captures.len(), expected_count);
+            let mut originals = vec![(
+                &project.sections["profile"]["file"],
+                &bundle["modulation_profile"],
+            )];
+            if !measurements["response"].is_null() {
+                originals.push((&measurements["response"], &bundle["channel_estimate"]));
+            }
             originals.extend(captures.iter().zip(paths));
             for (stored, relative) in originals {
                 let (name, bytes) = decode(stored).unwrap();
@@ -268,7 +285,19 @@ mod tests {
                     std::fs::read(path.parent().unwrap().join(entry["file"].as_str().unwrap()))
                         .unwrap();
                 assert_eq!(entry["bytes"], bytes.len());
-                assert_eq!(entry["sha256"], format!("{:x}", Sha256::digest(bytes)));
+                assert_eq!(entry["sha256"], format!("{:x}", Sha256::digest(&bytes)));
+                if bundle["id"] == "multi-rxmer-2" {
+                    assert_eq!(&bytes[11..17], &[0, 202, 0, 0, 0, 1]);
+                    let mut upstream = bytes;
+                    let address = entry["upstream_mac_address"].as_str().unwrap();
+                    for (index, octet) in address.split(':').enumerate() {
+                        upstream[11 + index] = u8::from_str_radix(octet, 16).unwrap();
+                    }
+                    assert_eq!(
+                        entry["upstream_sha256"],
+                        format!("{:x}", Sha256::digest(upstream))
+                    );
+                }
             }
             assert!(path.parent().unwrap().join("LICENSE").is_file());
             assert!(path.parent().unwrap().join("NOTICE").is_file());

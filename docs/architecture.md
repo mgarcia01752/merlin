@@ -381,13 +381,18 @@ unity gain/attenuation and relative units. Restored settings feed the run reques
 
 ### Curated workbench examples and Open location
 
-`examples/workbench/manifest.json` inventories two runnable bundles: `single`
+`examples/workbench/manifest.json` inventories three runnable bundles: `single`
 (one DPD, one RxMER, one supplied DS channel estimate) and `multi-rxmer` (one DPD,
-five compatible RxMER inputs, one estimate). Each contains original files and a
-self-contained WB with hashes, provenance and licenses. They share exact modem,
-channel, frequency grid and DPD coverage; production Rust project/request
+five compatible RxMER inputs, one estimate), plus `multi-rxmer-2` (channel 193,
+132 pre-collected RxMER files, companion DPD, flat/unity response because no
+matching DS channel estimate is available). Each contains original files and a
+self-contained WB with hashes, provenance and licenses. Each bundle matches modem,
+channel, frequency grid and DPD coverage internally; production Rust project/request
 validation checks compatibility. Original epochs remain unchanged; multi-RxMER
-uses average residual power for synthetic alternatives, not invented time history.
+uses average residual power by default. The channel 193 source has irregular
+acquisition intervals and a long gap; fixed-symbol hold/interpolation playback
+is an explicit simulation clock. Selection/restore/playback permit 256 files,
+while retaining 64 MiB original bytes and 4,000,000 decoded carrier values.
 
 All native Open dialogs start in this examples root. Rust locates it relative
 to installed resources or the marked source checkout; the isolated native picker
@@ -484,6 +489,12 @@ layout. Click the right-pointing amplifier triangle or variable-resistor/diagona
 arrow attenuator to edit a draft. Apply accepts; X/Close cancel. Defaults are0 dB
 gain,0 dB attenuation and Tilt Off. TP circles before/after amplification open the
 shared SA/QAM instrument chooser; output instruments follow receiver attenuation.
+UI-RF-02 expands this diagram with the available application client area, using
+24 px dialog edge insets and32 px balanced inner drawing margins. Matching blocks
+retain readable dimensions; remaining width is distributed evenly among the six
+connector gaps. Matching RxMER/DS-estimate branches stay centered over/below the
+model, with equal vertical clearances. Larger/maximized windows provide more
+spacing rather than centering a fixed narrow canvas.
 No dedicated SA block or branch exists. All three channel taps use one QAM window;
 output selectors expose actual raw RX cells, while input taps use retained TX
 physical bins. Post-amplifier data uses the exact core scalar gain at that boundary.

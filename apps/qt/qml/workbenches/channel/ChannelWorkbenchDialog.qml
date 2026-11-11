@@ -49,22 +49,25 @@ WorkbenchDialog {
     }
     title:"Channel Simulator Workbench"
     parent:Overlay.overlay;anchors.centerIn:parent
-    width:Math.min(1100,parent ? parent.width-40 : 1100)
-    height:Math.min(560,parent ? parent.height-40 : 560)
+    width:parent ? parent.width-48 : 1100
+    height:parent ? parent.height-48 : 640
     modal:true;standardButtons:Dialog.Close
     contentItem:Item {
         Item {
-            id:stage;anchors.centerIn:parent;width:900;height:380
-            scale:Math.min(1,parent.width/width,parent.height/height)
-            readonly property real blockWidth:110
-            readonly property real gap:16
-            readonly property real tpSize:36
-            readonly property real symbolWidth:70
-            readonly property real modelWidth:130
-            readonly property real pathWidth:2*blockWidth+modelWidth+2*tpSize+2*symbolWidth+6*gap
-            readonly property real pathLeft:(width-pathWidth)/2
-            readonly property real rowY:155
-            readonly property real centerY:195
+            id:stage;objectName:"channelStage";anchors.fill:parent
+            readonly property real edgeMargin:32
+            readonly property real blockWidth:Math.max(132,Math.min(176,width*0.13))
+            readonly property real blockHeight:96
+            readonly property real tpSize:40
+            readonly property real symbolWidth:84
+            readonly property real modelWidth:blockWidth
+            readonly property real pathWidth:width-2*edgeMargin
+            readonly property real gap:(pathWidth-3*blockWidth-2*tpSize-2*symbolWidth)/6
+            readonly property real pathLeft:edgeMargin
+            readonly property real centerY:height/2
+            readonly property real rowY:centerY-blockHeight/2
+            readonly property real topY:edgeMargin
+            readonly property real bottomY:height-edgeMargin-blockHeight
             readonly property real inputX:pathLeft
             readonly property real tp1X:inputX+blockWidth+gap
             readonly property real ampX:tp1X+tpSize+gap
@@ -77,17 +80,17 @@ WorkbenchDialog {
                 model:[[stage.inputX+stage.blockWidth,stage.tp1X],[stage.tp1X+stage.tpSize,stage.ampX],[stage.ampX+stage.symbolWidth,stage.tp2X],[stage.tp2X+stage.tpSize,stage.modelX],[stage.modelX+stage.modelWidth,stage.attenX],[stage.attenX+stage.symbolWidth,stage.outputX]]
                 delegate:Connection {required property var modelData;anchors.fill:parent;theme:dialog.theme;fromX:modelData[0];fromY:stage.centerY;toX:modelData[1];toY:stage.centerY}
             }
-            Connection {anchors.fill:parent;theme:dialog.theme;fromX:stage.modelCenter;fromY:82;toX:stage.modelCenter;toY:stage.rowY}
-            Connection {anchors.fill:parent;theme:dialog.theme;fromX:stage.modelCenter;fromY:308;toX:stage.modelCenter;toY:235}
-            ReceiverChip {objectName:"channelRxmer";theme:dialog.theme;stage:true;text:"RxMER";x:stage.modelX;y:2;width:stage.modelWidth;height:80;onClicked:dialog.rxmerRequested()}
-            ReceiverChip {objectName:"channelInput";theme:dialog.theme;stage:true;text:"Channel Input";x:stage.inputX;y:stage.rowY;width:stage.blockWidth;height:80;onClicked:dialog.openTap(0)}
+            Connection {anchors.fill:parent;theme:dialog.theme;fromX:stage.modelCenter;fromY:stage.topY+stage.blockHeight;toX:stage.modelCenter;toY:stage.rowY}
+            Connection {anchors.fill:parent;theme:dialog.theme;fromX:stage.modelCenter;fromY:stage.bottomY;toX:stage.modelCenter;toY:stage.rowY+stage.blockHeight}
+            ReceiverChip {objectName:"channelRxmer";theme:dialog.theme;stage:true;text:"RxMER";x:stage.modelX;y:stage.topY;width:stage.modelWidth;height:stage.blockHeight;onClicked:dialog.rxmerRequested()}
+            ReceiverChip {objectName:"channelInput";theme:dialog.theme;stage:true;text:"Channel Input";x:stage.inputX;y:stage.rowY;width:stage.blockWidth;height:stage.blockHeight;onClicked:dialog.openTap(0)}
             Button {objectName:"channelTapBefore";x:stage.tp1X;y:stage.centerY-stage.tpSize/2;width:stage.tpSize;height:stage.tpSize;text:"TP";Accessible.name:"TapPoint Before Amplifier";onClicked:dialog.openTap(0);background:Rectangle {radius:width/2;color:dialog.theme.panel;border.color:dialog.theme.accent} }
-            ConditioningSymbol {objectName:"channelAmplifier";theme:dialog.theme;x:stage.ampX;y:stage.rowY;width:stage.symbolWidth;height:80;valueText:dialog.power.amplifier_target_dbmv_per_6mhz===null || dialog.power.amplifier_target_dbmv_per_6mhz===undefined ? Number(dialog.power.amplifier_gain_db || 0)+" dB" : "Level Target";onClicked:amplifier.open()}
+            ConditioningSymbol {objectName:"channelAmplifier";theme:dialog.theme;x:stage.ampX;y:stage.rowY;width:stage.symbolWidth;height:stage.blockHeight;valueText:dialog.power.amplifier_target_dbmv_per_6mhz===null || dialog.power.amplifier_target_dbmv_per_6mhz===undefined ? Number(dialog.power.amplifier_gain_db || 0)+" dB" : "Level Target";onClicked:amplifier.open()}
             Button {objectName:"channelTapAfter";x:stage.tp2X;y:stage.centerY-stage.tpSize/2;width:stage.tpSize;height:stage.tpSize;text:"TP";Accessible.name:"TapPoint After Amplifier";onClicked:dialog.openTap(1);background:Rectangle {radius:width/2;color:dialog.theme.panel;border.color:dialog.theme.accent} }
-            ReceiverChip {objectName:"channelModel";theme:dialog.theme;stage:true;text:"Channel Model";x:stage.modelX;y:stage.rowY;width:stage.modelWidth;height:80;onClicked:model.open()}
-            ConditioningSymbol {objectName:"channelAttenuator";theme:dialog.theme;amplifier:false;x:stage.attenX;y:stage.rowY;width:stage.symbolWidth;height:80;valueText:Number(dialog.power.attenuation_db || 0)+" dB";onClicked:attenuator.open()}
-            ReceiverChip {objectName:"channelOutput";theme:dialog.theme;stage:true;text:"Channel Output";x:stage.outputX;y:stage.rowY;width:stage.blockWidth;height:80;onClicked:dialog.openTap(2)}
-            ReceiverChip {objectName:"channelEstimate";theme:dialog.theme;stage:true;text:"DS Channel Estimate";x:stage.modelX;y:308;width:stage.modelWidth;height:80;onClicked:dialog.responseRequested()}
+            ReceiverChip {objectName:"channelModel";theme:dialog.theme;stage:true;text:"Channel Model";x:stage.modelX;y:stage.rowY;width:stage.modelWidth;height:stage.blockHeight;onClicked:model.open()}
+            ConditioningSymbol {objectName:"channelAttenuator";theme:dialog.theme;amplifier:false;x:stage.attenX;y:stage.rowY;width:stage.symbolWidth;height:stage.blockHeight;valueText:Number(dialog.power.attenuation_db || 0)+" dB";onClicked:attenuator.open()}
+            ReceiverChip {objectName:"channelOutput";theme:dialog.theme;stage:true;text:"Channel Output";x:stage.outputX;y:stage.rowY;width:stage.blockWidth;height:stage.blockHeight;onClicked:dialog.openTap(2)}
+            ReceiverChip {objectName:"channelEstimate";theme:dialog.theme;stage:true;text:"DS Channel Estimate";x:stage.modelX;y:stage.bottomY;width:stage.modelWidth;height:stage.blockHeight;onClicked:dialog.responseRequested()}
         }
     }
     ChannelConfigurationDialog {id:model;theme:dialog.theme;configuration:dialog.configuration;onRxmerRequested:dialog.rxmerRequested();onResponseRequested:dialog.responseRequested();onLossRequested:loss.open()}

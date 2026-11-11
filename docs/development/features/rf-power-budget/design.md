@@ -274,3 +274,43 @@ live under `qml/workbenches/channel/`; shared tap QAM under `qml/instruments/qam
   docs/development/local/qt-source-organization/. The latest executable is
   apps/qt/target/debug/merlin-qt (26229920 bytes). Other platforms and installed
   lifecycle behavior were not revalidated for this change.
+
+
+## UI-RF-02: Responsive channel workbench spacing
+
+Status: implemented and validated on Ubuntu22.04 x64 / Qt6.8.3.
+
+The fixed900 px drawing and fixed16 px gaps left the signal path cramped inside
+larger windows. The Channel Simulator dialog now fills the available application
+client area with24 px outer insets. Its drawing fills the dialog content, keeping
+32 px balanced inner margins. Stage blocks share a responsive132–176 px width
+and96 px height, TP circles are40 px, and conditioning symbols are84 px wide.
+The six horizontal connector gaps divide the remaining width equally. No scaled
+fixed canvas remains. Upper/lower measurement blocks have the same size and equal
+clearances around Channel Model; signal-path centers remain aligned. Captions
+stay centered below their symbols. Dialogs, navigation and accepted settings
+retain their current behavior; DSP, persistence and input contracts do not change.
+
+Extend the existing geometry/navigation check across960x640,1240x780 and1680x1000:
+confirm balanced margins, matching gaps, readable minimum clearances and use of
+the available width. Run QML checks and build the Qt executable with retained
+artifacts. Review actual VM rendering at normal/maximized and minimum sizes,
+refresh the affected user-guide captures and validate documentation/skill links.
+No non-Qt workspace or backend retest is needed for this layout-only change.
+
+
+UI-RF-02 validation: all29 QML checks pass, including the extended resize checks
+at960x640,1240x780 and1680x1000. The native Qt executable builds with cached
+artifacts; no backend or non-Qt workspace tests were rerun for this layout-only
+change. A separate VM instance opened the shipped single WB and rendered the
+expanded diagram at the available maximized1210x736 size and minimum960x640.
+Native X11 window-state inspection confirmed maximization; the VM compositor
+already constrained the default window to the same available work area. Injected
+WM keyboard shortcuts were ineffective under Wayland, so the isolated test used
+an explicit EWMH window-state request. The diagram, captions, edges, connectors,
+X and footer Close were inspected without clipping or Qt/QML warnings. Existing
+user windows and state were preserved, and the temporary instance was closed.
+The current dark guide overview was refreshed from that native capture. Skill
+validation/discovery links, documentation paths and diff whitespace pass. Logs
+and minimum/maximized captures remain ignored under
+`docs/development/local/channel-layout/`. Other OSes remain untested.

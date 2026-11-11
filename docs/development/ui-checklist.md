@@ -13,6 +13,9 @@ See the [task design](features/visual-workspace/design.md). The initial shell is
 
 - [x] **UI-EXAMPLES-01** Curate single/multi-RxMER WB bundles with compatible
   originals, hashes and notices. [Design](features/workbench-examples/design.md).
+- [x] **UI-EXAMPLES-02** Add channel 193 `multi-rxmer-2`: 132 original RxMER
+  files, companion DPD, flat response and bounded 256-file support.
+  [Design](features/workbench-examples/design.md#ui-examples-02-channel-193-measured-rxmer-collection).
 - [x] **UI-OPEN-01** Default native Open to relocatable example resources.
   [Design](features/workbench-examples/design.md).
 - [ ] **INSTALL-EXAMPLES-01** Ship and validate the runnable inventory in future
@@ -132,6 +135,10 @@ Integrate input blocks as their owning sections are developed left to right.
 - [ ] Apply replacements to the next run; preserve active inputs and original bytes.
 
 ## UI-03: Observations and analyzers
+
+- [x] **UI-RF-02** Expand the channel workbench to available window space with
+  balanced edge margins, equal growing gaps and matching measurement branches.
+  [Design](features/rf-power-budget/design.md#ui-rf-02-responsive-channel-workbench-spacing).
 
 - [x] **UI-RF-01** Implement amplifier/attenuator dialogs, scalar Rust conditioning,
   shared TP SA/QAM, optional electrical calibration/independent receiver noise and

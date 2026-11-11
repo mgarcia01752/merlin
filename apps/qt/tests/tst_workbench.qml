@@ -853,6 +853,21 @@ Pane {
             compare(amp.x-before.x-before.width,after.x-amp.x-amp.width)
             compare(before.y+before.height/2,amp.y+amp.height/2)
             compare(after.y+after.height/2,amp.y+amp.height/2)
+            const originalWidth=window.width,originalHeight=window.height
+            for (const size of [[960,640],[1240,780],[1680,1000]]) {
+                window.width=size[0];window.height=size[1];wait(30)
+                const stage=findChild(dialog,"channelStage")
+                const blocks=[findChild(dialog,"channelInput"),before,amp,after,findChild(dialog,"channelModel"),findChild(dialog,"channelAttenuator"),findChild(dialog,"channelOutput")]
+                const gaps=blocks.slice(1).map(function(block,index){return block.x-blocks[index].x-blocks[index].width})
+                verify(Math.min.apply(null,gaps)>=24,"Room for connectors and captions at "+size[0])
+                for(const gap of gaps){verify(Math.abs(gap-gaps[0])<0.1)}
+                verify(Math.abs(blocks[0].x-(stage.width-blocks[6].x-blocks[6].width))<0.1)
+                verify((blocks[6].x+blocks[6].width-blocks[0].x)/stage.width>0.85,"Use the available width")
+                compare(findChild(dialog,"channelRxmer").width,findChild(dialog,"channelEstimate").width)
+                const upper=findChild(dialog,"channelRxmer"),model=findChild(dialog,"channelModel"),lower=findChild(dialog,"channelEstimate")
+                verify(Math.abs(model.y-upper.y-upper.height-(lower.y-model.y-model.height))<0.1)
+            }
+            window.width=originalWidth;window.height=originalHeight;wait(30)
             mouseClick(after);tryCompare(dialog.instrumentPopup,"opened",true)
             compare(dialog.tapIndex,1)
             mouseClick(findChild(dialog.instrumentPopup,"channelQam"));tryCompare(dialog.inputQamPopup,"opened",true)

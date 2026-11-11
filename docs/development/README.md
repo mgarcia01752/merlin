@@ -18,6 +18,9 @@ cable evidence and response/noise policy.
 The [Qt source organization](features/qt-source-organization/design.md) records
 QML feature folders, instrument providers and the CXX-Qt bridge constraint.
 
+The [workbench example design](features/workbench-examples/design.md) covers
+the channel 193 collection in `multi-rxmer-2`, portable WBs and input bounds.
+
 The separate [UI checklist](ui-checklist.md) tracks the Qt workbench.
 [Qt setup and VM validation](qt.md) covers the initial native shell.
 
@@ -75,3 +78,5 @@ Receiver instrument completion: [design](features/receiver-instruments/design.md
 Channel conditioning and shared TapPoint instruments (UI-RF-01):
 [design and validation](features/rf-power-budget/design.md#ui-rf-01-implemented-scalar-conditioning-and-channel-instruments) ·
 [user guide](../user/channel-measurements.md#launch-amplifier-attenuator-and-tappoints).
+
+[Responsive channel workspace (UI-RF-02)](features/rf-power-budget/design.md#ui-rf-02-responsive-channel-workbench-spacing) uses available window space with balanced margins and equal gaps.

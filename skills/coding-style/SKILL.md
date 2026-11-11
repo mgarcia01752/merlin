@@ -410,6 +410,13 @@ clearance** between visible icon/block boundaries; equal center distances alone
 create uneven gaps. Size equivalent blocks and TP circles consistently, and
 center the complete group within balanced outer margins.
 
+Workbench diagrams should use the available dialog width with balanced edge
+padding. Derive equal connector clearances from the remaining width after sizing
+the blocks and symbols; avoid a fixed narrow drawing centered inside a much wider
+window. A maximized VM window should provide more breathing room, not preserve
+cramped fixed coordinates. Keep labels and controls readable at the supported
+minimum size, with symmetric branch clearances as the window grows.
+
 Align stage centers, TP centers and signal connectors on the same axis. Center
 branch blocks and connectors on their owning stage; use equal branch lengths and
 matching block dimensions for corresponding upper/lower inputs. Prefer straight

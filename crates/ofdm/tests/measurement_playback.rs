@@ -6,7 +6,7 @@
 use docsis_ofdm_fec::{
     scenario::pnm_json::{import_channel, import_profiles, import_rxmer, JsonCapture},
     simulation::channel::measurement_playback::{
-        validate_response, MeasurementPlayback, PlaybackMode,
+        validate_response, MeasurementPlayback, PlaybackMode, MAX_PLAYBACK_FRAMES,
     },
     transmission::TransmissionSettings,
 };
@@ -119,5 +119,49 @@ fn invalid_identity_missing_data_schedule_and_response_are_rejected() {
     let mut invalid = first.clone();
     invalid.mer_db[0] = Some(f64::NAN);
     assert!(new(vec![invalid], PlaybackMode::Single, 1).is_err());
-    assert!(new(vec![first; 65], PlaybackMode::Average, 1).is_err());
+    assert!(new(
+        vec![first; MAX_PLAYBACK_FRAMES + 1],
+        PlaybackMode::Average,
+        1
+    )
+    .is_err());
+}
+
+#[test]
+fn capture_count_boundary_preserves_the_existing_value_budget() {
+    let (profile, frame) = fixtures();
+    let settings = TransmissionSettings::default();
+    assert_eq!(MAX_PLAYBACK_FRAMES, 256);
+    let accepted = MeasurementPlayback::new(
+        &settings,
+        &profile,
+        vec![frame.clone(); MAX_PLAYBACK_FRAMES],
+        PlaybackMode::Average,
+        1000,
+        90000,
+    );
+    assert!(accepted.is_ok());
+    assert!(MeasurementPlayback::new(
+        &settings,
+        &profile,
+        vec![frame.clone(); MAX_PLAYBACK_FRAMES + 1],
+        PlaybackMode::Average,
+        1000,
+        90000,
+    )
+    .is_err());
+    let mut oversized = frame;
+    oversized.mer_db.resize(16_000, Some(30.0));
+    assert!(MeasurementPlayback::new(
+        &settings,
+        &profile,
+        vec![oversized; MAX_PLAYBACK_FRAMES],
+        PlaybackMode::Average,
+        1000,
+        90000,
+    )
+    .err()
+    .unwrap()
+    .to_string()
+    .contains("4-million-value"));
 }

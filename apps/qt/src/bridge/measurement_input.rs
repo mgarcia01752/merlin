@@ -41,7 +41,7 @@ pub mod bridge {
         /// Stages a bounded list of local file URLs atomically.
         /// # Arguments
         /// * `rxmer` - Expected capture kind.
-        /// * `urls` - JSON array with at most 64 local URLs.
+        /// * `urls` - JSON array with at most 256 local URLs.
         /// # Returns
         /// Draft metadata or structured diagnostic.
         #[qinvokable]
@@ -192,8 +192,10 @@ impl MeasurementInputsRust {
         json!({"files":self.model.files(rxmer,profile.as_ref()),"options":options,"flat":!rxmer&&self.model.draft_response.is_none()})
     }
     fn stage_urls(&mut self, rxmer: bool, urls: Vec<String>) -> Result<(), String> {
-        if urls.len() > 64 {
-            return Err("Select at most 64 files.".into());
+        if urls.len()
+            > docsis_ofdm_fec::simulation::channel::measurement_playback::MAX_PLAYBACK_FRAMES
+        {
+            return Err("Select at most 256 files.".into());
         }
         if urls.is_empty() {
             return Ok(());

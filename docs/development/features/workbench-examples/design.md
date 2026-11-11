@@ -90,3 +90,44 @@ Local evidence is under `docs/development/local/workbench-examples/` and
 INSTALL-EXAMPLES-01 and CH-EST-PLAYBACK-01 remain unchecked. Local staged path
 validation does not establish installed-OS behavior, pristine offline setup,
 multi-response playback or runtime support on the other target OS versions.
+
+## UI-EXAMPLES-02: Channel 193 measured RxMER collection
+
+Add `multi-rxmer-2` from the pinned public PyPNM demo: all 132 channel 193
+RxMER binaries and its companion modulation profile. Preserve original epochs,
+Git blob identities, source/current SHA-256 and upstream notices. The profile
+header retains an unsanitized MAC while all RxMER headers use the demo alias;
+normalize all bundled copies to `00:ca:00:00:00:01`. Only the evidenced six-byte
+MAC field changes; reverse reconstruction must reproduce each source hash.
+Verify grid/device/channel association and selected profile through the existing
+Rust importer and full request preparation. No matching DS channel estimate is
+available; persist `response: null` (flat/unity), never substitute channel 34.
+
+Raise the shared capture-count limit from 64 to 256 across core playback,
+project restore, staging and native selection; retain 64 MiB original-input and
+4,000,000 carrier-value limits. Validate the new count boundary and this actual
+collection. Default to average linear residual power: original captures include
+a long gap, and fixed-symbol playback is an explicit simulation clock rather
+than the irregular acquisition cadence. Include installer inventory and a guide.
+
+
+UI-EXAMPLES-02 is complete. The collection restores all 132 distinct RxMER
+captures with Profile A/ID 0 and a common 7,600-position/25 kHz grid spanning
+835.000–1024.975 MHz. Original PNM header epochs span 1764820676–1764824335;
+the profile epoch is 1764824372 (37 seconds after the last RxMER). An explicit
+7,200-second association tolerance covers the collection. Original timestamps
+are slightly earlier than filename times. The gap is preserved in the source
+history; average-power mode does not invent a playback cadence.
+
+Validation: all 23 Qt adapter tests pass, including full request preparation
+for all three bundles, every grid/identity, embedded-versus-loose bytes and
+reconstruction of all 133 upstream SHA-256 values after undoing only the MAC
+alias. All three focused core playback tests pass, covering 256 accepted versus
+257 rejected captures and the unchanged four-million-value limit. All six
+packaging resource tests and 29 QML checks pass; Qt and focused core Clippy
+and formatting pass.
+The Qt executable is rebuilt. Native interaction automation did not establish
+Open/restore on this VM; no screenshot from that attempt is used as evidence.
+No whole-workspace test run, installer or publication was performed. Logs and
+unchanged upstream originals remain under ignored
+`docs/development/local/multi-rxmer-2/`.

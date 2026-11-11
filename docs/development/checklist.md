@@ -704,6 +704,10 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 ### Qt simulation workbench
 
+- [x] **UI-RF-02** Expand the channel workbench to available window space with
+  balanced edge margins, equal growing gaps and matching measurement branches.
+  [Design](features/rf-power-budget/design.md#ui-rf-02-responsive-channel-workbench-spacing).
+
 - [x] **UI-RF-01** Implement amplifier/attenuator dialogs, scalar Rust conditioning,
   shared TP SA/QAM, optional electrical calibration/independent receiver noise and
   versioned WB persistence. Scoped tests and native VM checks pass.
@@ -763,6 +767,9 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 - [x] **UI-EXAMPLES-01** Organize matching single/multi-RxMER bundles, each with
   a portable WB and original captures. [Design](features/workbench-examples/design.md).
+- [x] **UI-EXAMPLES-02** Add channel 193 `multi-rxmer-2`: 132 original RxMER
+  files, companion DPD, flat response and bounded 256-file support.
+  [Design](features/workbench-examples/design.md#ui-examples-02-channel-193-measured-rxmer-collection).
 - [x] **UI-OPEN-01** Default native Open to installed/source example resources,
   independently of the launch directory. [Design](features/workbench-examples/design.md).
 

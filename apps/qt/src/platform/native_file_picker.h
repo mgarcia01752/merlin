@@ -53,8 +53,8 @@ inline QString chooseNativeSelection(const QString &title, bool multiple, bool s
     QString result;
     if (selection.response == GTK_RESPONSE_ACCEPT) {
         GSList *uris = gtk_file_chooser_get_uris(GTK_FILE_CHOOSER(chooser));
-        if (g_slist_length(uris) > 64) {
-            result = QStringLiteral("ERROR: Select at most 64 files.");
+        if (g_slist_length(uris) > 256) {
+            result = QStringLiteral("ERROR: Select at most 256 files.");
         } else {
             for (GSList *item = uris; item != nullptr; item = item->next) {
                 if (!result.isEmpty()) {

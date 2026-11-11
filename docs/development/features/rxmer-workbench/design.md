@@ -213,7 +213,7 @@ never falsifies capture timestamps, and exposes bounded Rust-generated chart vie
 The adapter retains accepted settings for future full channel dispatch, which is
 explicitly not connected in this task. Channel block opens the same frozen-input
 summary/editor; green represents valid configuration, not a running loop.
-Native multi-select uses the existing isolated GTK helper. Limits: 64 input files,
+Native multi-select uses the existing isolated GTK helper. Limits: 256 input files (UI-EXAMPLES-02),
 64 MiB original bytes combined, 4 million decoded carrier values; each file ≤16 MiB.
 Reference Qt tree/Canvas patterns come from the pinned viewer revision already
 recorded above; adapted GPL components preserve PNM Viewer copyrights.

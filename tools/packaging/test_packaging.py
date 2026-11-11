@@ -54,7 +54,7 @@ class PackageTests(unittest.TestCase):
                 self.assertTrue((resources / name).is_file(), name)
             examples = resources / "examples/workbench"
             manifest = json.loads((examples / "manifest.json").read_text())
-            self.assertEqual(len(manifest["bundles"]), 2)
+            self.assertEqual(len(manifest["bundles"]), 3)
             for bundle in manifest["bundles"]:
                 workbench = examples / bundle["workbench"]
                 self.assertTrue(workbench.is_file())

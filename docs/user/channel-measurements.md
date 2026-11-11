@@ -94,7 +94,7 @@ with actual payload/PLC QAM and channel-output SA observations. The TX SA's loca
 Receiver Apply checks that the playback transition span fits the selected run
 duration; a valid editor schedule can still be too long for that request.
 
-The editor accepts at most 64 RxMER files, 64 MiB original RxMER bytes and four
+The editor accepts at most 256 RxMER files, 64 MiB original RxMER bytes and four
 million decoded carrier values. One response file has a separate 16 MiB ceiling;
 each input file is at most 16 MiB. Originals/full arrays remain in Rust; each chart
 returns at most 1024 min/max groups, preserving narrow extrema and missing-data
@@ -143,6 +143,11 @@ and **Tilt Off**, so no initial setup is required. Tilt and additional cable los
 remain under **Channel Model → Additional Loss**.
 
 ![Channel Simulator with amplifier, attenuator and TapPoints](../images/workbench/channel-inputs-ready-dark.png)
+
+The channel workspace expands with the application window. Maximize MERLIN for
+more space: the diagram uses the available width with balanced outer margins,
+equal gaps and aligned connectors. RxMER and DS Channel Estimate remain centered
+above and below Channel Model. Controls stay readable at the minimum window size.
 
 The circles marked **TP** mean **TapPoint**. Click either to select **Spectrum**
 or **QAM** before or after the amplifier. Channel Input also opens the first tap;

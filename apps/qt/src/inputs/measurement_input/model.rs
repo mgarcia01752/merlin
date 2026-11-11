@@ -11,7 +11,8 @@ use docsis_ofdm_fec::{
         FrequencyGrid,
     },
     simulation::channel::measurement_playback::{
-        validate_response, MeasurementPlayback, PlaybackMode, MAX_PLAYBACK_VALUES,
+        validate_response, MeasurementPlayback, PlaybackMode, MAX_PLAYBACK_FRAMES,
+        MAX_PLAYBACK_VALUES,
     },
     transmission::TransmissionSettings,
 };
@@ -93,7 +94,7 @@ impl Model {
             response_tolerance: u32,
         }
         let saved: Saved = serde_json::from_value(value.clone()).map_err(|e| e.to_string())?;
-        if saved.rxmer.len() > 64 {
+        if saved.rxmer.len() > MAX_PLAYBACK_FRAMES {
             return Err("Too many saved RxMER inputs".into());
         }
         saved
@@ -186,7 +187,7 @@ impl Model {
             Vec::new()
         };
         next.extend(captures);
-        if next.len() > 64
+        if next.len() > MAX_PLAYBACK_FRAMES
             || (!rxmer && next.len() != 1)
             || next
                 .iter()
@@ -199,7 +200,7 @@ impl Model {
                 .sum::<usize>()
                 > MAX_PLAYBACK_VALUES
         {
-            return Err("Selection exceeds 64 files, 64 MiB or 4 million carrier values.".into());
+            return Err("Selection exceeds 256 files, 64 MiB or 4 million carrier values.".into());
         }
         let mut hashes = std::collections::HashSet::new();
         if next

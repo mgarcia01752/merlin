@@ -19,7 +19,7 @@ use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
 /// Application bound on selected captures, independent of protocol limits.
-pub const MAX_PLAYBACK_FRAMES: usize = 64;
+pub const MAX_PLAYBACK_FRAMES: usize = 256;
 /// Shared temporal observation safety limit.
 pub const MAX_PLAYBACK_VALUES: usize = 4_000_000;
 
@@ -141,7 +141,7 @@ impl MeasurementPlayback {
             || frames.iter().map(|frame| frame.mer_db.len()).sum::<usize>() > MAX_PLAYBACK_VALUES
         {
             return Err(invalid(
-                "Choose 1–64 captures within the 4-million-value limit.",
+                "Choose 1–256 captures within the 4-million-value limit.",
             ));
         }
         if (mode == PlaybackMode::Single && frames.len() != 1)
