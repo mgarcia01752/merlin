@@ -20,6 +20,7 @@ from a fresh clone and are deliberately not Markdown link targets.
 
 | Work area | Records |
 | --- | --- |
+| parallel local tests | [design](parallel-local-tests/design.md) |
 | user-facing UI wording | [design](ui-copy/design.md) |
 | Ubuntu desktop/update notification | [design](ubuntu-desktop/design.md) |
 | workbench example bundles | [design](workbench-examples/design.md) |

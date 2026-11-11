@@ -65,7 +65,7 @@ impl bridge::WorkbenchFile {
         let load =
             || -> Result<Option<(PathBuf, Project, crate::workbench::session::Inputs)>, String> {
                 let Some(uri) =
-                    crate::platform::native_file_picker::choose("Open MERLIN Workbench")?
+                    crate::platform::native_file_picker::choose_workbench("Open MERLIN Workbench")?
                 else {
                     return Ok(None);
                 };

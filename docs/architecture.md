@@ -724,6 +724,13 @@ and [development setup](development/setup.md).
 
 ### Reuse of the PNM Viewer Qt framework
 
+UI-WB-OPEN-01 gives main File → Open / Ctrl+O a distinct OS-native chooser mode
+with an active `*.merlin.json` filter. The examples-root resolver and directory
+navigation remain; individual measurement/source input pickers are unaffected.
+Filename filtering is only presentation: Rust still validates complete WB
+contents before adoption and preserves the current session on Cancel/error.
+See the [workbench-file design](development/features/qt-closed-loop/design.md#ui-wb-open-01-main-open-file-filter).
+
 UI-DPD-VIEW-01 extends the shared PNM Viewer-derived MeasurementPlot to display
 the draft modulation profile's bit loading and distinct carrier-role colors.
 The separate View Profile dialog uses Rust-owned bounded role-aware min/max
@@ -1739,6 +1746,11 @@ For local-only iteration, explicit `--skip-test` retains static/tooling/build
 checks and all Git guards while omitting Rust tests and simulation smokes.
 Hosted release validation is unchanged; see
 [DEV-04](development/features/ubuntu-desktop/local-validation.md).
+Default local Rust validation now uses a bounded process-per-test runner,
+four workers on this PC, with independent QAM/width cases separately scheduled.
+Doc/example/analysis phases and timing-sensitive serialization preserve coverage;
+Qt checks remain separate. This changes local scheduling, not hosted commands
+or simulation state. See [DEV-05](development/features/parallel-local-tests/design.md).
 
 UI-UPDATE-01 keeps public stable-release discovery in the GPL application adapter
 under `platform/updates`, outside DSP/domain crates. One bounded worker queries

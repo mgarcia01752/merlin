@@ -5,6 +5,16 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
 
 # Simulation testing
 
+Local full validation uses `scripts/test-local.sh all` with checksum-pinned
+nextest and four process-isolated workers; `MERLIN_TEST_THREADS` overrides the
+1..32 budget. Split independent parameter matrices into separately named tests
+instead of hiding expensive cases in one loop. Preserve assertions, source
+seeds, private temporary outputs and all combinations. Keep genuinely dependent
+steps inside their case; serialize shared resources and timing-sensitive cases
+with explicit profile overrides. Preserve doctests, examples and analysis-only
+coverage. Qt/QML runs separately. Measure full-suite wall time and failures;
+parallelism is not a successful-test cache or permission to omit coverage.
+
 - Minimum acceptance is MERLIN-only closed-loop verification: original source →
   MERLIN TX → configured channel → MERLIN RX → original-bit comparison. The user
   explicitly excluded external interoperability as a prerequisite. Do not block

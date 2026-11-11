@@ -41,6 +41,11 @@ The validation gate includes version consistency, Python helper tests, Bash
 syntax/ShellCheck, rustfmt, Clippy, all workspace tests, analysis-only tests,
 a release CLI build and an actual seeded simulation smoke run. It installs
 nothing. Python3, ShellCheck, and the pinned Rust toolchain are prerequisites.
+Local Rust test phases use `scripts/test-local.sh all`, with four nextest workers
+by default; `MERLIN_TEST_THREADS` sets the process budget. Doctests, preparation
+example and analysis-only coverage remain. First use fetches a checksum-pinned
+runner into ignored local storage; no system installation is performed.
+Hosted workflows retain their commands. See [parallel local validation](features/parallel-local-tests/design.md).
 For automatic documentation-only pushes, the allowed paths are root `README.md`,
 Markdown files under `docs/`, and PNG/JPG/JPEG/SVG/WebP/GIF images under
 `docs/images/`. Changes to skills, AGENTS.md, fixtures, source, manifests, tools

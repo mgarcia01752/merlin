@@ -85,3 +85,27 @@ flowchart LR
 ```
 
 See [validation](validation.md) and [user workflow](../../../user/closed-loop-workbench.md).
+
+## UI-WB-OPEN-01: Main Open file filter
+
+File → Open (including Ctrl+O) must use the OS-native workbench chooser with
+an active `*.merlin.json` filter. Keep directory navigation and the existing
+installed/development examples root. Use a distinct internal chooser mode,
+not a title-string heuristic, so DPD, source, RxMER and channel-estimate pickers
+keep their current behavior. GTK owns the filter; Rust still validates selected
+bytes and preserves accepted state on cancellation/rejection. The filter is a
+navigation aid, not a replacement for content/schema/checksum validation.
+
+Own changes in native_file_picker and WorkbenchFile, with helper dispatch in
+main. No DSP or WB schema changes. Verify the actual native main Open on this VM,
+including a single-example directory containing PNM/metadata alongside its WB,
+and update the user guide with a dark screenshot. Build/check only Qt.
+
+Implemented and verified on the Ubuntu VM: actual main Ctrl+O launches the
+distinct native workbench mode. In `examples/workbench/single`, the chooser
+shows only `workbench.merlin.json`, hiding its seven other PNM/metadata/license
+files. Folder navigation works and Cancel returns to the same parent window.
+The updated dark native screenshot is linked from the example guide. All 27
+adapter tests and 32 QML checks pass, alongside Qt Clippy, formatting and
+whitespace checks. The current development executable is built. No core suite
+was repeated, and the installed package was not replaced.

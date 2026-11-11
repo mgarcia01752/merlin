@@ -44,12 +44,18 @@ fn main() {
     // process, so the two toolkits cannot consume each other's pending UI events.
     if matches!(
         std::env::args().nth(1).as_deref(),
-        Some("--native-file-picker" | "--native-file-picker-multiple" | "--native-save-picker")
+        Some(
+            "--native-file-picker"
+                | "--native-file-picker-multiple"
+                | "--native-save-picker"
+                | "--native-workbench-picker"
+        )
     ) {
         platform::native_file_picker::run_helper(
             &std::env::args().nth(2).unwrap_or_default(),
             std::env::args().nth(1).as_deref() == Some("--native-file-picker-multiple"),
             std::env::args().nth(1).as_deref() == Some("--native-save-picker"),
+            std::env::args().nth(1).as_deref() == Some("--native-workbench-picker"),
         );
         return;
     }

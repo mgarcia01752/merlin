@@ -1,5 +1,9 @@
 # Development setup on Ubuntu
 
+Local full tests use `scripts/test-local.sh all`. First use downloads a pinned,
+checksum-verified nextest binary into ignored local storage; no extra host
+package or global installation is required. See [parallel validation](build.md#parallel-local-tests).
+
 Initial targets are Ubuntu 22.04, 24.04 and 26.04 x64. The current VM is Ubuntu
 22.04; clean-machine provisioning and native runtime on 24.04/26.04 remain
 unverified. Run from a MERLIN checkout as your normal user:

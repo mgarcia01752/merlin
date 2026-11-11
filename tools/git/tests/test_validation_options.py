@@ -25,7 +25,8 @@ class ValidationOptionTests(unittest.TestCase):
             (root / 'tools/git').mkdir(parents=True)
             (root / 'bin').mkdir()
             shutil.copy2(ROOT / 'scripts/check-before-push.sh', root / 'scripts/check-before-push.sh')
-            for name in ('tools/bump-version.sh', 'tools/git/git-save.sh', 'tools/git/git-push.sh'):
+            for name in ('tools/bump-version.sh', 'tools/git/git-save.sh', 'tools/git/git-push.sh',
+                         'scripts/test-local.sh'):
                 (root / name).write_text('#!/bin/bash\n')
             stub = '#!/bin/bash\nprintf "%s\\n" "$*" >> "$GATE_TRACE"\n'
             for name in ('scripts/cargo-local.sh', 'bin/python3', 'bin/shellcheck'):

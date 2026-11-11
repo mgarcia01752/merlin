@@ -41,6 +41,8 @@ docs/development/
 
 The proposed [content-based build/test cache](features/build-cache/design.md)
 defines fast development iteration; implementation has not started.
+Local full tests use the [parallel runner](features/parallel-local-tests/design.md)
+with four process-isolated tests at a time. This is scheduling, not result caching.
 
 ## Working on a feature
 

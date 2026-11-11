@@ -925,6 +925,18 @@ Local development scope only; existing push/release and security gates stay inta
 See [setup](setup.md) and [design](features/development-setup/design.md).
 
 
+## Parallel local validation
+
+- [x] **DEV-05** Schedule independent Rust tests across local CPUs with a pinned
+  runner, complete test-phase coverage and measured full-suite results.
+  [Design](features/parallel-local-tests/design.md).
+
+## Workbench file filtering
+
+- [x] **UI-WB-OPEN-01** Filter main Open / Ctrl+O to workbench JSON in the
+  OS-native chooser, preserving folders and input-block selection behavior.
+  [Design](features/qt-closed-loop/design.md#ui-wb-open-01-main-open-file-filter).
+
 ## DPD visual inspection
 
 - [x] **UI-DPD-VIEW-01** Add a read-only profile plot from DPD using the shared

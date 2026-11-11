@@ -2,6 +2,9 @@
 
 Native **File → Open** and individual input-file pickers start in the curated
 examples folder. Open a scenario directory and choose `workbench.merlin.json`.
+The main **File → Open…** filter is **MERLIN Workbenches (*.merlin.json)**.
+It hides binary captures and metadata JSON while preserving folder navigation.
+The input-block file pickers remain separate.
 You can also select that directory's original PNM files in the owning blocks.
 Save/Save As keep the operating system's normal destination selection.
 
@@ -61,4 +64,4 @@ must verify file hashes, offline restore and default Open location after moving
 the application and launching it from an unrelated directory. When example
 resources are absent, native Open remains usable with the OS default location.
 
-![Native Open starts in the curated examples folder](../images/workbench/open-examples-native-dark.png)
+![Native Open filters workbench files in an example bundle](../images/workbench/open-examples-native-dark.png)

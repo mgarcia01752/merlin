@@ -10,6 +10,7 @@ mod bridge {
         type QString = cxx_qt_lib::QString;
         include!("platform/native_file_picker.h");
         fn chooseNativeFile(title: &QString) -> QString;
+        fn chooseNativeWorkbench(title: &QString) -> QString;
         fn chooseNativeFiles(title: &QString) -> QString;
         fn chooseNativeSave(title: &QString) -> QString;
     }
@@ -24,6 +25,17 @@ mod bridge {
 /// Reports unavailable OS-native picker integration.
 pub(crate) fn choose(title: &str) -> Result<Option<String>, String> {
     select(title, false)
+}
+
+/// Opens a workbench through the native chooser with an active filename filter.
+/// # Arguments
+/// * `title` - Main File Open title; never used to determine the filter.
+/// # Returns
+/// Selected local URI or cancellation; directories remain navigable.
+/// # Errors
+/// Reports missing integration or chooser failure; content validation stays separate.
+pub(crate) fn choose_workbench(title: &str) -> Result<Option<String>, String> {
+    select_mode(title, "--native-workbench-picker")
 }
 
 /// Selects multiple original inputs through the same isolated OS-native picker.
@@ -95,14 +107,17 @@ fn select_mode(title: &str, mode: &str) -> Result<Option<String>, String> {
 /// * `title` - Bounded picker title supplied by the parent application.
 /// * `multiple` - Whether the native dialog permits multiple selected files.
 /// * `save` - Select a destination and confirm overwriting through GTK.
+/// * `workbench` - Filter the main Open chooser to *.merlin.json.
 /// # Returns
 /// Writes only a URI, empty cancellation or error marker to the internal pipe.
 /// GTK owns transient selection; no input bytes or scientific data are processed.
-pub(crate) fn run_helper(title: &str, multiple: bool, save: bool) {
+pub(crate) fn run_helper(title: &str, multiple: bool, save: bool, workbench: bool) {
     use std::io::Write;
     let selected = if title.len() <= 512 {
         if save {
             bridge::chooseNativeSave(&cxx_qt_lib::QString::from(title)).to_string()
+        } else if workbench {
+            bridge::chooseNativeWorkbench(&cxx_qt_lib::QString::from(title)).to_string()
         } else if multiple {
             bridge::chooseNativeFiles(&cxx_qt_lib::QString::from(title)).to_string()
         } else {

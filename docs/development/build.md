@@ -5,7 +5,7 @@ locally; macOS and Windows runtime/build validation remains outstanding.
 
 ```bash
 ./scripts/cargo-local.sh fmt --all -- --check
-./scripts/cargo-local.sh test --workspace --locked
+./scripts/test-local.sh all
 ./scripts/cargo-local.sh run -p fec-codec --example codec_loop --locked
 ./scripts/cargo-local.sh run -p docsis-ofdm-fec --example qam256_codec_loop --locked
 ./scripts/cargo-local.sh run -p docsis-ofdm-fec --example symbol_packing --locked
@@ -18,7 +18,6 @@ locally; macOS and Windows runtime/build validation remains outstanding.
 ./scripts/cargo-local.sh run -p docsis-ofdm-fec --example plc_randomization --locked
 ./scripts/cargo-local.sh run -p docsis-ofdm-fec --example plc_channel --locked
 ./scripts/cargo-local.sh clippy --workspace --all-targets --locked -- -D warnings
-./scripts/cargo-local.sh test -p docsis-ofdm-fec --no-default-features --locked
 ./scripts/cargo-local.sh build -p ofdm-fec-cli --release --locked
 ```
 
@@ -60,6 +59,38 @@ no operating-system packages or separate installation step are required.
 See [logging configuration](logging.md).
 
 ## Channel job and constrained-VM validation
+
+### Parallel local tests
+
+`scripts/test-local.sh all` runs workspace tests, doctests, the preparation
+example tests and the no-default-features analysis suite. It uses cargo-nextest
+0.9.151 with four test processes by default, independently scheduling tests
+across binaries. The 16 uniform QAM/spacing cases and eight CLI width/profile
+cases are separate tests with unchanged assertions. Each CLI case owns its
+temporary output directory. A pause/timing-sensitive test takes the full worker
+budget; Qt/QML checks remain in their separate native validation path.
+
+```bash
+scripts/test-local.sh all
+MERLIN_TEST_THREADS=8 scripts/test-local.sh all
+scripts/test-local.sh workspace -E 'binary(uniform_profile_orders)'
+scripts/test-local.sh list
+```
+
+The default full pre-push/release gate calls this runner automatically. Existing
+`--skip-test` behavior is unchanged. First use downloads the exact SHA-256-pinned
+Linux x64 musl runner into `local/test-tools/`; it does not install globally or
+change Rust/Cargo versions. Cached archives are reverified on every launch.
+Tests still execute every time; successful results are not cached. Cargo retains
+and reuses build artifacts. Worker overrides accept 1..32; start at four on this
+eight-CPU VM and increase only after measuring CPU/memory pressure.
+
+Nextest prints individual results and slow-case times. The latest completed
+phase's JUnit report is `target/nextest/local/junit.xml`; retain the full console
+log when measuring all phases. See the [design and measured validation](features/parallel-local-tests/design.md).
+The measured four-worker run on this PC completed all 460 tests in 5m19s,
+including example/analysis compilation after the initial workspace inventory
+build. This is the Rust test command's time, not the entire pre-push gate.
 
 The [channel CLI](../user/channel-runner/cli.md) and
 [probe export](../user/simulation/probe-export.md) use the same Rust APIs as tests.

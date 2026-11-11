@@ -231,6 +231,9 @@ See [supported profile files and limits](measurement-inputs/modulation-profile.m
 ## Workbench configuration files
 
 Use **File → Open…**, **Save** or **Save As…** for self-contained JSON workbenches.
+The main Open chooser filters to **MERLIN Workbenches (*.merlin.json)**,
+so example PNM files and metadata are hidden while folders stay navigable.
+Individual input-block pickers keep their own selection behavior.
 The [run/save guide](closed-loop-workbench.md#save-and-reopen) describes stored
 settings, embedded PNM files, limits and atomic replacement behavior.
 

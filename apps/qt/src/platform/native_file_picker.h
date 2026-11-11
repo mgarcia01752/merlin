@@ -16,8 +16,13 @@
  * Return a local file URI, empty on Cancel, or an error marker on unavailable
  * native integration. No Qt file dialog or custom browser fallback is used.
  * GTK owns the selection UI only; Rust reads and validates selected bytes.
+ * @param title Native window title, independent of filter selection.
+ * @param multiple Whether more than one file may be selected.
+ * @param save Whether to choose a destination with overwrite confirmation.
+ * @param workbench Whether to show only *.merlin.json files and directories.
+ * @return Selected URI(s), empty cancellation, or an explicit error marker.
  */
-inline QString chooseNativeSelection(const QString &title, bool multiple, bool save = false) {
+inline QString chooseNativeSelection(const QString &title, bool multiple, bool save = false, bool workbench = false) {
 #ifdef __linux__
     // Match XCB/XWayland so the native chooser shares the application's display.
     if (qgetenv("QT_QPA_PLATFORM") == "xcb") {
@@ -34,6 +39,13 @@ inline QString chooseNativeSelection(const QString &title, bool multiple, bool s
     auto *chooser = gtk_file_chooser_native_new(titleBytes.constData(), nullptr,
         save ? GTK_FILE_CHOOSER_ACTION_SAVE : GTK_FILE_CHOOSER_ACTION_OPEN, save ? "Save" : "Open", "Cancel");
     gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), multiple);
+    if (workbench) {
+        auto *filter = gtk_file_filter_new();
+        gtk_file_filter_set_name(filter, "MERLIN Workbenches (*.merlin.json)");
+        gtk_file_filter_add_pattern(filter, "*.merlin.json");
+        gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser), filter);
+        gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(chooser), filter);
+    }
     const auto initialDirectory = qgetenv("MERLIN_NATIVE_OPEN_DIRECTORY");
     if (!save && !initialDirectory.isEmpty()) {
         gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser), initialDirectory.constData());
@@ -77,6 +89,15 @@ inline QString chooseNativeSelection(const QString &title, bool multiple, bool s
 /** Open a single-file native chooser; preserve the existing adapter contract. */
 inline QString chooseNativeFile(const QString &title) {
     return chooseNativeSelection(title, false);
+}
+/**
+ * Open the main workbench chooser with an active *.merlin.json filter.
+ * Directories remain navigable; this does not interpret or validate file bytes.
+ * @param title User-facing native Open title.
+ * @return Local URI, empty cancellation, or an integration error marker.
+ */
+inline QString chooseNativeWorkbench(const QString &title) {
+    return chooseNativeSelection(title, false, false, true);
 }
 /** Open the same OS-native chooser with bounded multi-selection enabled. */
 inline QString chooseNativeFiles(const QString &title) {

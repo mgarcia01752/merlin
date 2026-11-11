@@ -26,7 +26,8 @@ python3 -m unittest discover -s tools/release -p 'test_*.py'
 python3 -m unittest discover -s tools/git/tests -p 'test_*.py'
 python3 -m unittest discover -s tools/packaging -p 'test_*.py'
 python3 -m unittest discover -s tools/validation -p 'test_*.py'
-SHELL_SCRIPTS=(scripts/cargo-local.sh scripts/check-before-push.sh tools/bump-version.sh tools/git/git-save.sh tools/git/git-push.sh)
+python3 -m unittest discover -s tools/testing -p 'test_*.py'
+SHELL_SCRIPTS=(scripts/cargo-local.sh scripts/check-before-push.sh scripts/test-local.sh tools/bump-version.sh tools/git/git-save.sh tools/git/git-push.sh)
 for script in "${SHELL_SCRIPTS[@]}"; do
   bash -n "${script}"
 done
@@ -39,9 +40,7 @@ if [[ "$SKIP_TEST" == 1 ]]; then
   echo 'Local non-simulation checks passed; Rust tests and smokes were NOT run.'
   exit 0
 fi
-"${SCRIPT_DIR}/cargo-local.sh" test --workspace --locked
-"${SCRIPT_DIR}/cargo-local.sh" test -p docsis-ofdm-fec --example prepare_rxmer_variants --locked
-"${SCRIPT_DIR}/cargo-local.sh" test -p docsis-ofdm-fec --no-default-features --locked
+"${SCRIPT_DIR}/test-local.sh" all
 "${SCRIPT_DIR}/cargo-local.sh" build -p ofdm-fec-cli --release --locked
 SMOKE_DIRECTORY="$(mktemp -d)"
 trap 'rm -rf -- "${SMOKE_DIRECTORY}"' EXIT

@@ -94,6 +94,13 @@ scripts/cargo-local.sh clippy --workspace --all-targets --locked -- -D warnings
 scripts/cargo-local.sh test -p docsis-ofdm-fec --no-default-features --locked
 ```
 
+Local full Rust validation uses `scripts/test-local.sh all`: checksum-pinned
+nextest runs independent cases in separate processes, four concurrently by
+default. Set `MERLIN_TEST_THREADS` to override the 1..32 process budget. Preserve
+doctests, examples and analysis-only coverage and the serialized pause case.
+Qt/QML checks remain separate. Hosted workflows retain their own commands.
+See docs/development/features/parallel-local-tests/design.md for measurement.
+
 The initial toolkit version is 0.1.0. Source packages and VERSION must agree.
 Native CLI package builders/workflows are prepared locally. Cross-platform
 runtime, native installer lifecycles and remote publication remain unverified.

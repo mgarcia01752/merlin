@@ -18,6 +18,9 @@ See the [task design](features/visual-workspace/design.md). The initial shell is
   [Design](features/workbench-examples/design.md#ui-examples-02-channel-193-measured-rxmer-collection).
 - [x] **UI-OPEN-01** Default native Open to relocatable example resources.
   [Design](features/workbench-examples/design.md).
+- [x] **UI-WB-OPEN-01** Filter main Open / Ctrl+O to `*.merlin.json` while
+  retaining folders and independent input pickers; verify native VM behavior.
+  [Design](features/qt-closed-loop/design.md#ui-wb-open-01-main-open-file-filter).
 - [ ] **INSTALL-EXAMPLES-01** Ship and validate the runnable inventory in future
   native desktop installers, including installed-OS Open/restore behavior.
 - [ ] **CH-EST-PLAYBACK-01** Define varying channel-estimate collections before

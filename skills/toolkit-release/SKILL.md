@@ -19,6 +19,9 @@ version files, creates an annotated tag and atomically pushes master plus that
 tag. Explicit `--skip-test` omits local Rust tests/smokes, retaining version,
 tooling, style, Clippy, release build and Git guards. Report omitted tests;
 hosted release gates remain mandatory. No force-push or blanket git push --tags.
+The local full gate uses `scripts/test-local.sh all` with four process-isolated
+workers by default (`MERLIN_TEST_THREADS` overrides). Preserve analysis-only,
+example and doctest phases; hosted workflow commands remain independent.
 --force only permits a fresh bump from an already published clean HEAD; it
 retains validation, collision checks and non-force atomic pushes. Do not default
 to --force or use it to bypass a pending local release.

@@ -1,0 +1,17 @@
+# Copyright 2026 MERLIN contributors
+# SPDX-License-Identifier: Apache-2.0
+
+[profile.local]
+test-threads = 4
+retries = 0
+fail-fast = false
+slow-timeout = { period = "60s" }
+
+[profile.local.junit]
+path = "junit.xml"
+
+# This pause/resume test uses real sleeps and deliberately compares run state.
+# Give it the whole execution budget to avoid unrelated CPU contention.
+[[profile.local.overrides]]
+filter = 'test(=paused_run_resumes_without_restarting_science_and_stop_works_while_paused)'
+threads-required = "num-test-threads"

@@ -37,6 +37,10 @@ User-authorized `--skip-test` omits only local Rust tests and simulation smokes;
 retain tooling tests, version/style/Clippy, release build and Git guards. Report
 the omitted checks explicitly. Git inspection failures stop the push. GitHub CI is
 unchanged. The captured commit and clean tree must remain unchanged throughout.
+The default local gate schedules Rust tests with `scripts/test-local.sh all`,
+four nextest processes by default; `MERLIN_TEST_THREADS` overrides the budget.
+Preserve doctests/example/analysis coverage and serialized timing-sensitive
+cases. Qt remains separate and hosted workflows retain their own test commands.
 Do not bypass Git guards or use Git force-push. No feature-branch push is authorized
 by the helper. Use toolkit-release for explicit version/tag modes.
 

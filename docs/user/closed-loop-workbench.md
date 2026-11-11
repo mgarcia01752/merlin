@@ -88,9 +88,13 @@ The version-1 JSON stores:
 - Exact original payload and PNM/decoded-JSON bytes as base64, with byte counts
   and SHA-256. Source paths are not needed to reopen the workbench.
 
-**File → Open…** (`Ctrl+O`) validates the complete file before replacing accepted
-state, then reloads all editors. It never starts a run automatically. Cancel or
-malformed data preserves the current project. Cross-input incompatibilities are
+**File → Open…** (`Ctrl+O`) uses a native file filter showing only
+`*.merlin.json` workbenches, while directories remain navigable. Choose
+`workbench.merlin.json` inside an example bundle; raw PNM and provenance files
+are hidden. The filename filter does not
+replace content validation. Open validates the complete file before replacing
+accepted state, then reloads all editors. It never starts a run automatically.
+Cancel or malformed data preserves the current project. Cross-input incompatibilities are
 restored as editable readiness diagnostics. Open/Save are disabled while a worker
 is active; Stop and wait for completion before changing projects.
 
