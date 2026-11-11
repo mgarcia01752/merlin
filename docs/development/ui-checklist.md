@@ -287,5 +287,7 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
   and global startup preference. [Design](features/ubuntu-desktop/design.md).
 - [ ] **UI-DEB-02** Retain successful hosted Ubuntu 22.04 build and disposable
   installed/reinstall/remove results; verify this VM's interactive installed UI.
+- [x] **UI-DEB-03** Fix first-run scratch storage and SDK bootstrap failures;
+  verify packaging tests in a fresh tracked checkout. Hosted rerun pending.
 - [x] **SECURITY-DEPS-02** Patch rand/cxx advisories and audit both graphs
   without suppression. [Design](features/ubuntu-desktop/design.md).

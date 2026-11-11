@@ -1721,6 +1721,10 @@ all WB imports, hashes and runtime dependencies; disposable CI runners then
 install/reinstall/remove before uploading the DEB and SHA256SUMS. Existing tag
 publication waits for desktop, CLI, CodeQL and audits. Only Ubuntu 22.04 x64
 desktop delivery is targeted now; configured jobs are not hosted-run evidence.
+Provision the pinned SDK before requiring its explicit path, and initialize
+ignored test scratch storage on fresh checkouts. The first v0.1.0 hosted run
+failed at those two bootstrap boundaries; local fixes pass focused checks,
+while successful hosted packaging and installation remain pending.
 
 UI-UPDATE-01 keeps public stable-release discovery in the GPL application adapter
 under `platform/updates`, outside DSP/domain crates. One bounded worker queries

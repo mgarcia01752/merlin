@@ -60,6 +60,25 @@ not an ignored advisory or a toolchain upgrade.
 
 ## Validation and remaining acceptance
 
+### UI-DEB-03: Fresh-runner bootstrap recovery
+
+The first v0.1.0 hosted run (42955022923) passed version and RustSec checks
+but failed before native validation: packaging tests assumed ignored local
+storage already existed, and the desktop workflow supplied an explicit SDK path
+before provisioning it. Create test scratch storage explicitly and unset the
+SDK override only during provisioning, retaining the pinned path for later
+checks/builds. Preserve the SDK helper's rejection of incomplete external SDKs.
+Validate packaging tests in an isolated fresh tracked-file checkout and check
+workflow setup ordering without installing packages or downloading SDKs.
+Hosted recovery and installed lifecycle acceptance remain pending a new tag;
+do not move the existing v0.1.0 tag.
+
+Local recovery checks pass: all nine packaging tests in both the working tree
+and an isolated tracked-file checkout with no preexisting ignored local storage;
+all three development setup tests and diff whitespace checks. No compilation
+or system installation was needed. The workflow provisioning command clears
+only the SDK override for that process; subsequent steps retain the job's path.
+
 UI-DEB-01 and UI-UPDATE-01 are implemented. Native Ubuntu 22.04 / Qt 6.8.3
 renders the actual update dialog correctly, including the live no-release-yet
 response, startup checkbox, retry, X and Close. The guide includes the actual

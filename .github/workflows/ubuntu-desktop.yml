@@ -34,7 +34,7 @@ jobs:
           key: desktop-ubuntu22-qt6.8.3-rust1.85.1-${{ hashFiles('apps/qt/Cargo.lock', 'Cargo.lock', 'tools/development/qt_sdk.py') }}
           restore-keys: desktop-ubuntu22-qt6.8.3-rust1.85.1-
       - name: Prepare pinned Ubuntu development tools
-        run: ./install.sh --development
+        run: env -u QT_SDK_DIR ./install.sh --development
       - name: Validate versions, packaging and desktop
         run: |
           python3 tools/release/versions.py

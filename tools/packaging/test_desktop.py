@@ -12,9 +12,22 @@ from common import ROOT
 from notices import notice_files
 
 
+def scratch_directory():
+    """Create isolated test storage, including its ignored fresh-checkout parent.
+
+    Returns:
+        TemporaryDirectory owned and cleaned by the caller's context manager.
+    Raises:
+        OSError if checkout-local scratch storage cannot be created.
+    """
+    area = ROOT / 'docs/development/local'
+    area.mkdir(parents=True, exist_ok=True)
+    return tempfile.TemporaryDirectory(dir=area)
+
+
 class DesktopTests(unittest.TestCase):
     def test_existing_output_is_never_replaced(self):
-        with tempfile.TemporaryDirectory(dir=ROOT / 'docs/development/local') as directory:
+        with scratch_directory() as directory:
             output = Path(directory)
             sentinel = output / 'keep'
             sentinel.write_text('keep')
@@ -27,6 +40,7 @@ class DesktopTests(unittest.TestCase):
         self.assertIn('runs-on: ubuntu-22.04', workflow)
         self.assertIn('desktop_smoke.py --installed', workflow)
         self.assertIn('sudo apt-get remove -y merlin', workflow)
+        self.assertIn('env -u QT_SDK_DIR ./install.sh --development', workflow)
         source = (ROOT / 'apps/qt/src/platform/updates/release.rs').read_text()
         self.assertIn('ubuntu22.04_amd64.deb', source)
         self.assertIn('ubuntu22.04_amd64.deb', (ROOT / 'tools/packaging/desktop.py').read_text())
@@ -37,7 +51,7 @@ class DesktopTests(unittest.TestCase):
 
 class LicenseTests(unittest.TestCase):
     def test_reuse_license_directory_keeps_text_and_attribution(self):
-        with tempfile.TemporaryDirectory(dir=ROOT / 'docs/development/local') as directory:
+        with scratch_directory() as directory:
             root = Path(directory)
             (root / 'LICENSES').mkdir()
             (root / 'LICENSES/MIT.txt').write_text('Full MIT license text')
