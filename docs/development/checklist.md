@@ -166,6 +166,10 @@ Guide: [Symbol packing](../user/symbol-packing.md).
 - [x] **PACK-02** Bounded coded-bit packing against inverse-frequency profiles,
   variable-width mapping, zero loading and last-cell padding without TX IDs in RX.
 
+- [x] **PACK-03** Gate simulation-only packer state in analysis builds;
+  validate without warning suppression.
+  [Design](features/symbol-packing/design.md).
+
 ## Next Codeword Pointer signaling
 
 Guide: [NCP signaling](../user/ncp.md).

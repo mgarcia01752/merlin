@@ -28,6 +28,7 @@ pub(super) struct QueuedWord {
 pub struct SymbolPacker {
     settings: PackingSettings,
     bit_loading: Option<Vec<u8>>,
+    #[cfg(feature = "simulation")]
     coded_bits: usize,
     queue: VecDeque<QueuedWord>,
     next_word_id: CodewordId,
@@ -47,6 +48,7 @@ impl SymbolPacker {
         Ok(Self {
             settings,
             bit_loading: None,
+            #[cfg(feature = "simulation")]
             coded_bits: super::model::QAM256_CODEWORD_CELLS * 8,
             queue: VecDeque::new(),
             next_word_id: 0,

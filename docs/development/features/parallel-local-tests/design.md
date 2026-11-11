@@ -66,8 +66,9 @@ measurement includes 11.37 s example compilation and 17.21 s analysis-only
 compilation. Workspace binaries had already been built during inventory
 validation (67 s, separate from the timed command). Average aggregate CPU use
 was 336%; the pause case passed under its exclusive worker override. The two
-slow-test notices are progress reports, not timeouts or failures. The existing
-analysis-only dead-code warning for SymbolPacker.coded_bits remains unsuppressed.
+slow-test notices are progress reports, not timeouts or failures. That run emitted an
+analysis-only dead-code warning for SymbolPacker.coded_bits; PACK-03 later gates
+the simulation-only state without suppressing diagnostics.
 
 The user's 32-minute report is a historical baseline, not a same-commit controlled
 benchmark. This measurement covers the full Rust test phases, not the complete
