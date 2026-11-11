@@ -156,7 +156,10 @@ any prerequisite gaps rather than substituting unrelated work.
 Ubuntu 22.04 amd64 is the current native desktop package target. Follow
 skills/toolkit-release and the Ubuntu desktop design for DEB/workflow work.
 Keep update HTTP, metadata checks and global preferences in the application
-adapter, separate from simulation and WB JSON. Use a quiet bounded worker and
-OS-browser release-page handoff. Desktop delivery on other platforms is deferred;
+adapter, separate from simulation and WB JSON. Use a quiet bounded worker and a right-aligned Update chip on the main
+menu row. The installed Ubuntu 22.04 app downloads a verified DEB, requests
+polkit authentication, installs and restarts as the desktop user. Source
+checkouts must never elevate or install packages. Preserve accepted WB settings
+for restart; keep failures visible and the original process open. Desktop delivery on other platforms is deferred;
 development support and existing CLI validation are separate. Audit both locks
 without suppressions; only report installed/hosted behavior with actual evidence.

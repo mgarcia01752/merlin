@@ -11,7 +11,8 @@ WorkbenchDialog {
         required property var state
         signal checkRequested()
         signal preferenceRequested(bool enabled)
-        signal releaseRequested(url target)
+        signal installRequested()
+        property bool canInstall: true
         parent:Overlay.overlay;anchors.centerIn:parent
         width:Math.min(560,parent ? parent.width-48 : 560)
         modal:true;standardButtons:Dialog.Close
@@ -24,9 +25,9 @@ WorkbenchDialog {
             }
             RowLayout {
                 Button {objectName:"checkUpdates";text:dialog.state.busy ? "Checking…" : "Check For Updates";enabled:!dialog.state.busy;onClicked:dialog.checkRequested()}
-                Button {objectName:"openUpdateRelease";text:"View Release";visible:dialog.state.available;onClicked:dialog.releaseRequested(dialog.state.url)}
+                Button {objectName:"installUpdate";text:"Update";visible:dialog.state.available;enabled:dialog.canInstall && !dialog.state.busy;onClicked:dialog.installRequested()}
             }
-            Label {visible:dialog.state.available;text:"Download the Ubuntu 22.04 package from the release page.";Layout.fillWidth:true;wrapMode:Text.WordWrap;color:dialog.theme.muted}
+            Label {visible:dialog.state.available;text:"Ubuntu may request administrator approval. MERLIN restarts after installation.";Layout.fillWidth:true;wrapMode:Text.WordWrap;color:dialog.theme.muted}
         }
     }
 

@@ -34,18 +34,31 @@ folder; packaged examples are read-only system resources.
 
 ## Update notification
 
-MERLIN checks once in the background shortly after startup. A green **Update
-Available** indicator appears only for a newer stable release carrying the
-Ubuntu 22.04 amd64 desktop package. Click it, or use **About → Check For Updates…**.
-You can also open it directly with `merlin --check-updates`.
-The update dialog offers **Check For Updates**, **View Release**, and a
-**Check For Updates At Startup** preference. X and Close dismiss the dialog.
+MERLIN checks once in the background shortly after startup. A green **Update**
+chip appears at the right of the **File | Settings | About** menu row when a
+newer stable Ubuntu 22.04 amd64 desktop release is available. Click **Update**
+to start downloading and verifying it. Ubuntu asks for administrator approval;
+after installation MERLIN restarts automatically as your normal desktop user.
+You do not need to download a DEB manually or click Update a second time.
 
-**View Release** opens the project release page in your OS browser. Download
-its DEB and SHA256SUMS, verify the checksum, and use the same `sudo apt install`
-command with the newer filename. Updates do not download or install silently,
-close a workbench, or restart the application. Save your WB before replacing
-an installed version; reopen MERLIN after installation.
+Accepted workbench settings and embedded inputs are saved in a private recovery
+WB before updating and restored after restart. Unapplied editor changes and
+simulation results are not restored. The recovery file is
+`$XDG_STATE_HOME/merlin/update-recovery/workbench.merlin.json`, normally under
+`~/.local/state/`. It remains available to open manually if restart fails.
+Save may ask for a destination after restart. Updating is disabled during a simulation. Source builds show update information
+but cannot install system packages.
+
+**About → Check For Updates…** or `merlin --check-updates` opens the separate
+status/preferences dialog. It offers **Check For Updates**, **Update** and
+**Check For Updates At Startup**. X and Close dismiss the status dialog while
+installation continues; the main app stays open until installation completes.
+Failed downloads, verification or canceled authentication keep MERLIN open. If
+APT reports a partial failure, repair the installed package before retrying;
+there is no automatic rollback.
+
+Older MERLIN builds with the browser-only update flow need one manual upgrade
+to a version containing this feature. Subsequent upgrades use the Update chip.
 
 Only published stable releases trigger the indicator. A newer development
 artifact in GitHub Actions does not. Offline or failed checks leave the

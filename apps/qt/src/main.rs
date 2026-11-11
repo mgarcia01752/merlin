@@ -20,6 +20,20 @@ fn main() {
     let arguments = std::env::args().skip(1).collect::<Vec<_>>();
     if arguments
         .first()
+        .is_some_and(|argument| argument == "--install-update")
+    {
+        let result = arguments
+            .get(1)
+            .ok_or("Provide the update directory.".to_string())
+            .and_then(|path| platform::updates::install::elevated(std::path::Path::new(path)));
+        if let Err(message) = result {
+            eprintln!("{message}");
+            std::process::exit(1);
+        }
+        return;
+    }
+    if arguments
+        .first()
         .is_some_and(|argument| argument == "--version")
     {
         println!("MERLIN {}", env!("CARGO_PKG_VERSION"));

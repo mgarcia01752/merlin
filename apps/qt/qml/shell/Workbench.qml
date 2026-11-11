@@ -31,12 +31,23 @@ Item {
         const result=JSON.parse(fileBackend.open())
         if (result.error) { fileMessage=result.error;fileFeedback.open();return }
         if (!result.opened) { return }
+        adoptProject(result)
+        fileMessage="Opened "+result.path
+    }
+    function adoptProject(result) {
         settingsBackend.apply(JSON.stringify(result.transmission))
         profileBackend.reload();sourceBackend.reload();measurementBackend.reload()
         runBackend.restore(JSON.stringify(result.receiver),result.verified,settingsBackend.current())
         theme.dark=result.dark
         refreshProfileState();refreshSourceState();pollRun()
-        fileMessage="Opened "+result.path
+    }
+    function restoreUpdate() {
+        const result=JSON.parse(fileBackend.restore_update())
+        if (result.error) { fileMessage=result.error;fileFeedback.open();return }
+        if (result.opened) { adoptProject(result) }
+    }
+    function saveUpdateRecovery() {
+        return JSON.parse(fileBackend.save_update_recovery(settingsBackend.current(),JSON.stringify(runState.accepted_options || null),runState.verified,theme.dark))
     }
     function saveProject(saveAs) {
         if (runState.busy) { return }

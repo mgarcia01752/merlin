@@ -99,3 +99,5 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 - [Qt source organization (UI-ORG-01 / UI-ORG-02)](qt-source-organization/design.md)
 
 - [Receiver profile performance and independent profile runs](profile-performance/design.md)
+
+- [Automatic Ubuntu updates](automatic-updates/design.md): UI-UPDATE-02.

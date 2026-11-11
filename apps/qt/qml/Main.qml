@@ -4,6 +4,7 @@
  */
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 import Merlin.Workbench
 import "shell"
 import "theme"
@@ -28,19 +29,42 @@ ApplicationWindow {
     WorkbenchFile { id: workbenchFile }
     TransmitterAnalyzer { id: transmitterAnalyzer }
     Theme { id: theme; onDarkChanged: branding.update_icon(dark) }
-    Component.onCompleted: { branding.update_icon(theme.dark); if (Qt.application.arguments.indexOf("--smoke-test")>=0) Qt.callLater(Qt.quit); else if (Qt.application.arguments.indexOf("--check-updates")>=0) Qt.callLater(function(){updates.showUpdates();updates.refresh()}) }
+    Component.onCompleted: { branding.update_icon(theme.dark); if (Qt.application.arguments.indexOf("--restore-update")>=0) Qt.callLater(function(){workbench.restoreUpdate()}); if (Qt.application.arguments.indexOf("--smoke-test")>=0) Qt.callLater(Qt.quit); else if (Qt.application.arguments.indexOf("--check-updates")>=0) Qt.callLater(function(){updates.showUpdates();updates.refresh()}) }
     ThemePalette { targetControl: window; theme: theme }
     color: theme.background
-    menuBar: WorkbenchMenuBar {
-        theme: theme
-        fileActionsEnabled: !workbench.runState.busy
-        onOpenRequested: workbench.openProject()
-        onSaveRequested: function(saveAs) { workbench.saveProject(saveAs) }
-        onGlobalSettingsRequested: workbench.settingsPopup.open()
-        onAboutRequested: workbench.aboutPopup.open()
-        onUpdatesRequested: updates.showUpdates()
-        onTerminologyRequested: function(target) { Qt.openUrlExternally(target) }
+    onClosing: function(close) {
+        if (updates.state.installing) {
+            close.accepted = false
+            updates.showUpdates()
+        }
     }
-    UpdateNotification { id:updates; z:20;anchors.top:parent.top;anchors.right:parent.right;anchors.margins:16;width:180;height:36;theme:theme;backend:updateInfo;startupCheck:Qt.application.arguments.indexOf("--check-updates")<0;onReleaseRequested:function(target){Qt.openUrlExternally(target)} }
-    Workbench { id: workbench; anchors.fill: parent; theme: theme; settingsBackend: ofdmSettings; profileBackend: profileInput; sourceBackend: sourceInput; transmitterBackend: transmitterAnalyzer; measurementBackend: measurementInputs; aboutBackend: aboutInfo; receiverBackend: receiverInstruments; runBackend: closedLoop; fileBackend: workbenchFile }
+    menuBar: Item {
+        implicitHeight: Math.max(topMenu.implicitHeight, 32)
+        Rectangle { anchors.fill: parent; color: theme.panel }
+        RowLayout {
+            anchors.fill: parent; spacing: 12
+            WorkbenchMenuBar {
+                id: topMenu
+                Layout.fillWidth: true
+                theme: theme
+                fileActionsEnabled: !workbench.runState.busy && !updates.state.installing
+                onOpenRequested: workbench.openProject()
+                onSaveRequested: function(saveAs) { workbench.saveProject(saveAs) }
+                onGlobalSettingsRequested: { if (!updates.state.installing) workbench.settingsPopup.open() }
+                onAboutRequested: workbench.aboutPopup.open()
+                onUpdatesRequested: updates.showUpdates()
+                onTerminologyRequested: function(target) { Qt.openUrlExternally(target) }
+            }
+            UpdateNotification {
+                id: updates
+                Layout.preferredWidth: 80; Layout.preferredHeight: 28
+                Layout.rightMargin: 12
+                theme: theme; backend: updateInfo
+                canUpdate: !workbench.runState.busy
+                prepareUpdate: function() { return workbench.saveUpdateRecovery() }
+                startupCheck: Qt.application.arguments.indexOf("--check-updates")<0
+            }
+        }
+    }
+    Workbench { id: workbench; enabled: !updates.state.installing; anchors.fill: parent; theme: theme; settingsBackend: ofdmSettings; profileBackend: profileInput; sourceBackend: sourceInput; transmitterBackend: transmitterAnalyzer; measurementBackend: measurementInputs; aboutBackend: aboutInfo; receiverBackend: receiverInstruments; runBackend: closedLoop; fileBackend: workbenchFile }
 }

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Application-global preferences and a bounded release-check worker.
+pub(crate) mod install;
 mod release;
 use serde_json::{json, Value};
 use std::io::Read;
@@ -16,6 +17,7 @@ pub(crate) struct Model {
     pending: Option<Receiver<Result<Value, String>>>,
     state: Value,
     preferences: Option<PathBuf>,
+    progress: Option<std::sync::Arc<std::sync::Mutex<String>>>,
 }
 impl Default for Model {
     fn default() -> Self {
@@ -46,6 +48,7 @@ impl Default for Model {
             .unwrap_or(true);
         Self {
             pending: None,
+            progress: None,
             preferences,
             state: json!({"enabled":enabled,"busy":false,"available":false,"status":"Check for a newer MERLIN release.","url":""}),
         }
@@ -67,10 +70,45 @@ impl Model {
         }
         self.state.clone()
     }
+    /// Starts a verified download/install worker once after WB recovery was saved.
+    /// # Returns
+    /// Current state; repeated clicks during a worker are ignored.
+    pub(crate) fn install(&mut self) -> Value {
+        if self.pending.is_none() && self.state["available"] == true {
+            if !install::supported() {
+                self.state["status"] = json!(
+                    "Automatic installation requires the installed Ubuntu 22.04 application."
+                );
+                return self.state.clone();
+            }
+            let (sender, receiver) = mpsc::sync_channel(1);
+            let progress =
+                std::sync::Arc::new(std::sync::Mutex::new("Preparing update…".to_string()));
+            self.progress = Some(progress.clone());
+            self.pending = Some(receiver);
+            self.state["busy"] = json!(true);
+            self.state["installing"] = json!(true);
+            self.state["status"] = json!("Preparing update…");
+            std::thread::spawn(move || {
+                let result = install::update(|message| {
+                    if let Ok(mut current) = progress.lock() {
+                        *current = message;
+                    }
+                }).map(|()| json!({"busy":false,"available":false,"installed":true,"status":"Update installed. Restarting…"}));
+                let _ = sender.send(result);
+            });
+        }
+        self.state.clone()
+    }
     /// Polls completion without blocking or waiting for a network deadline.
     /// # Returns
     /// Bounded display state with the persisted preference included.
     pub(crate) fn poll(&mut self) -> Value {
+        if let Some(progress) = &self.progress {
+            if let Ok(message) = progress.lock() {
+                self.state["status"] = json!(*message);
+            }
+        }
         if let Some(receiver) = &self.pending {
             match receiver.try_recv() {
                 Ok(result) => {
@@ -80,8 +118,20 @@ impl Model {
                     );
                     self.state["enabled"] = enabled;
                     self.pending = None;
+                    self.progress = None;
+                    if self.state["installed"] == true {
+                        match install::restart() {
+                            Ok(()) => self.state["restarted"] = json!(true),
+                            Err(message) => {
+                                self.state["status"] =
+                                    json!(format!("Update installed; reopen MERLIN. {message}"))
+                            }
+                        }
+                    }
                 }
                 Err(TryRecvError::Disconnected) => {
+                    self.progress = None;
+                    self.state["installing"] = json!(false);
                     self.state["busy"] = json!(false);
                     self.state["status"] = json!("Update check ended. Try again later.");
                     self.pending = None;
@@ -133,6 +183,7 @@ mod tests {
         let mut model = Model {
             pending: Some(receiver),
             preferences: None,
+            progress: None,
             state: json!({"enabled":false,"busy":true}),
         };
         assert_eq!(model.poll()["busy"], true);

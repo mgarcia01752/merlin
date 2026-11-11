@@ -1757,14 +1757,25 @@ or simulation state. See [DEV-05](development/features/parallel-local-tests/desi
 
 UI-UPDATE-01 keeps public stable-release discovery in the GPL application adapter
 under `platform/updates`, outside DSP/domain crates. One bounded worker queries
-GitHub; QML polls plain status without blocking simulation. A green indicator
-and About action open the separate update dialog. Numeric versions, stable flags,
+GitHub; QML polls plain status without blocking simulation. A single green Update chip sits at the right of the File/Settings/About row.
+Its click starts the update directly; About offers manual checks in a separate
+progress/preferences dialog. Numeric versions, stable flags,
 exact project/tag URLs, baseline asset name/size and SHA-256 metadata are checked.
 Only a newer compatible stable desktop release produces a notification.
 Manual workflow artifacts do not. Startup failures are quiet; manual retries
 show concise status. The application-global startup preference is persisted
-outside WB JSON. The user opens the release page and installs its DEB normally;
-there is no automatic download, elevation, application replacement or restart.
+outside WB JSON. UI-UPDATE-02 adds verified streaming download (300 MB bound, 15-minute copy
+deadline, allowlisted HTTPS redirects) and installed Ubuntu 22.04-only polkit
+installation. Before Qt starts, the elevated installed executable copies the
+caller-owned regular DEB into private root staging, rechecks size/hash and
+package/version/architecture, rejects non-upgrades and calls APT with no removals.
+The GUI stays unprivileged and open on failure. On success it launches the new
+installed app as the desktop user and exits. Accepted WB settings are first
+saved privately under the application state directory and restored on restart;
+results and unapplied drafts are not recovered. Updates cannot begin during a
+simulation. Checkouts cannot install. Global update state remains outside WB
+JSON. Installed lifecycle validation remains pending; see the
+[automatic update design](development/features/automatic-updates/design.md).
 
 Audits cover both Cargo lockfiles without suppression. SECURITY-DEPS-02 patches
 rand to 0.9.5 and cxx/cxx-gen to 1.0.195/0.7.195 while retaining Rust 1.85.1 and

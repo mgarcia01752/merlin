@@ -20,6 +20,11 @@ pub mod bridge {
         /// Current plain display state as bounded JSON.
         #[qinvokable]
         fn check(self: Pin<&mut UpdateInfo>) -> QString;
+        /// Starts the installed Ubuntu update after recovery succeeds.
+        /// # Returns
+        /// Bounded progress state, or an installation diagnostic.
+        #[qinvokable]
+        fn install(self: Pin<&mut UpdateInfo>) -> QString;
         /// Polls bounded status without waiting for the worker.
         /// # Returns
         /// Current status and startup preference as bounded JSON.
@@ -45,6 +50,12 @@ impl bridge::UpdateInfo {
     /// Bounded status without source measurements or credentials.
     pub fn check(mut self: core::pin::Pin<&mut Self>) -> QString {
         QString::from(self.as_mut().rust_mut().model.start().to_string())
+    }
+    /// Starts the verified install worker without blocking the UI thread.
+    /// # Returns
+    /// Bounded status; source checkouts never install system packages.
+    pub fn install(mut self: core::pin::Pin<&mut Self>) -> QString {
+        QString::from(self.as_mut().rust_mut().model.install().to_string())
     }
     /// Polls completion on the UI thread without blocking.
     /// # Returns

@@ -644,7 +644,12 @@ Rust owns HTTP, version/asset checks, deadlines and application-global preferenc
 persistence; QML displays bounded state. Keep update preferences outside WB JSON.
 Offline/check failures must leave editing and simulation usable. Keep the update
 dialog in its own QML file, retain X and Close, and document any new controls.
-The current notification opens the release page; it does not silently download,
-install or restart. Release assets must match the exact Ubuntu baseline, version,
+Put the single green Update chip on the right of the File/Settings/About row,
+matching OSCAR-UI colors, padding and radius. A click starts the automatic
+download/verify/authenticate/install/restart flow directly; do not route it to
+a browser or require a second Update click. Keep the separate dialog for
+progress, errors and startup preferences. Use normal Ubuntu authentication;
+never elevate source checkouts or run the restarted UI as root. Preserve
+accepted WB settings for recovery and block updates during simulation. Release assets must match the exact Ubuntu baseline, version,
 project URL, size bound and SHA-256 metadata. Audit core and Qt locks without
 advisory suppression before release; document and test dependency upgrades.

@@ -22,6 +22,8 @@ background startup query, a green Update indicator only for a newer stable
 release with a matching Ubuntu 22.04 amd64 desktop DEB, and explicit retry in
 About. No automatic download or installation. The dialog opens the validated
 project release page in the OS browser; the user installs its DEB normally.
+This original handoff is superseded by
+[UI-UPDATE-02 automatic updates](../automatic-updates/design.md).
 Rust owns HTTP, version comparison and metadata validation; QML only presents
 bounded status. Reject drafts/prereleases, foreign URLs, mismatched filenames,
 missing SHA-256 digests and unreasonable asset sizes. Network failures must not

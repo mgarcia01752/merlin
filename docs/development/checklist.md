@@ -978,3 +978,12 @@ See [setup](setup.md) and [design](features/development-setup/design.md).
 
 [Design](features/profile-performance/design.md). Core, Qt and native VM
 validation are complete; the user guide includes the current dark capture.
+
+## Automatic Ubuntu desktop updates
+
+- [x] **UI-UPDATE-02** Right-aligned Update chip and automatic Ubuntu
+  download/verify/polkit install/restart with WB recovery. Local adapter/QML,
+  package identity and native recovery checks pass.
+  [Design](features/automatic-updates/design.md).
+- [ ] **UI-UPDATE-QA-01** Validate a real installed upgrade, authentication
+  cancellation, APT failure and automatic restart on disposable Ubuntu 22.04.

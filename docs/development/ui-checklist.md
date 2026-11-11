@@ -308,3 +308,12 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
   selection, MER/profile overlays, TotalCW/CCW/UFEC, mouse zoom and Full Span.
   Requires RX-PERF-01 independent jobs and FEC-COUNTS-01 actual core counters.
   [Design](features/profile-performance/design.md).
+
+## Automatic Ubuntu desktop updates
+
+- [x] **UI-UPDATE-02** Right-aligned Update chip and automatic Ubuntu
+  download/verify/polkit install/restart with WB recovery. Local adapter/QML,
+  package identity and native recovery checks pass.
+  [Design](features/automatic-updates/design.md).
+- [ ] **UI-UPDATE-QA-01** Validate a real installed upgrade, authentication
+  cancellation, APT failure and automatic restart on disposable Ubuntu 22.04.

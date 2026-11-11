@@ -36,3 +36,10 @@ The modulation-profile viewer adapts ModulationControls.qml, MeasurementToggle.q
 ProfileBandwidth.qml and MeasurementChart.qml from apps/qt/qml in the same
 pinned reference revision. GPL copyrights are preserved. MERLIN supplies its
 own bounded adapter and uses shared Rust Shannon math on validated profiles.
+
+The Ubuntu automatic updater adapts the staging, hash verification and privilege
+boundaries of PNM Viewer Toolkit apps/viewer/src/updates/ubuntu/{download,install}.rs
+(GPL-3.0-only), inspected from the local reference tree on 2026-11-11.
+Copyright 2026 PNM Viewer contributors; original notices are retained.
+The Update chip visually follows OSCAR-UI UpgradeChip.java (Apache-2.0);
+MERLIN implements the QML presentation independently.

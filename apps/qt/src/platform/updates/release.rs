@@ -2,7 +2,7 @@
  * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: GPL-3.0-only
  */
-//! Read-only stable-release metadata; no download or installation side effects.
+//! Read-only trusted stable-release metadata for the update worker.
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::{io::Read, time::Duration};
@@ -27,7 +27,14 @@ struct Asset {
     digest: Option<String>,
 }
 
-fn version(value: &str) -> Result<[u64; 3], String> {
+/// Validates exactly three numeric release components.
+/// # Arguments
+/// * `value` - Numeric version with an optional leading v.
+/// # Returns
+/// Comparable major/minor/patch components.
+/// # Errors
+/// Rejects missing, overflowing, prefixed-zero or nonnumeric components.
+pub(super) fn version(value: &str) -> Result<[u64; 3], String> {
     let fields = value
         .strip_prefix('v')
         .unwrap_or(value)
@@ -103,7 +110,7 @@ pub(crate) fn parse(installed: &str, bytes: &[u8]) -> Result<Value, String> {
         );
     }
     Ok(
-        json!({"busy":false,"available":true,"status":format!("MERLIN {number} is available. Installed: {installed}."),"url":page,"version":number}),
+        json!({"busy":false,"available":true,"status":format!("MERLIN {number} is available. Installed: {installed}."),"url":page,"version":number,"package_url":url,"size":candidates[0].size,"sha256":candidates[0].digest.as_ref().unwrap().trim_start_matches("sha256:").to_ascii_lowercase()}),
     )
 }
 
