@@ -60,6 +60,14 @@ WorkbenchDialog {
             Label { visible: dialog.tapOptions.length > 0; text: "Test Point"; color: dialog.theme.text }
             ComboBox { visible: dialog.tapOptions.length > 0; objectName: "saTestPoint"; model: dialog.tapOptions; currentIndex: dialog.selectedTap; Layout.preferredWidth: 280; onActivated: function(index) { dialog.tapRequested(index) } }
             Item { Layout.fillWidth: true }
+            CheckBox {
+                id: detailsToggle
+                objectName: "saDetailsToggle"
+                text: "Details"
+                checked: true
+                ToolTip.visible: hovered
+                ToolTip.text: "Show acquisition details below the plot"
+            }
             WorkbenchActionButton { theme: dialog.theme; objectName: "saFullSpan"; text: "Full Span"; enabled: dialog.state.has_result; onClicked: dialog.showView(0, 0) }
         }
         RowLayout {
@@ -83,7 +91,7 @@ WorkbenchDialog {
             }
             Item { Layout.fillWidth: true }
         }
-        SpectrumPlot { id: plot; theme: dialog.theme; viewport: dialog.viewport; overlayText: dialog.viewport.summary || ""; zoomEnabled: dialog.state.has_result; onViewportRequested: function(start, count) { dialog.showView(start, count) } Layout.fillWidth: true; Layout.fillHeight: true }
+        SpectrumPlot { id: plot; theme: dialog.theme; viewport: dialog.viewport; detailsText: dialog.viewport.summary || ""; showDetails: detailsToggle.checked; zoomEnabled: dialog.state.has_result; onViewportRequested: function(start, count) { dialog.showView(start, count) } Layout.fillWidth: true; Layout.fillHeight: true }
         Label { objectName:"saChannelPower";visible:!!dialog.viewport.channel_power_text;text:dialog.viewport.channel_power_text || "";color:dialog.theme.accent;Layout.fillWidth:true;wrapMode:Text.WordWrap }
         Label {visible:!!dialog.viewport.level_warning;text:dialog.viewport.level_warning || "";color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
         Label {visible:!!dialog.viewport.error;text:dialog.viewport.error || "";color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}

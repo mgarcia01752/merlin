@@ -4,6 +4,7 @@
  */
 //! Frozen request admission and one bounded closed-loop worker.
 use super::run_timing::RunTiming;
+use crate::help::{AdmissionError, Diagnostic};
 use crate::workbench::session::Inputs;
 use docsis_ofdm_fec::{
     scenario::document::ScenarioDocument,
@@ -32,6 +33,9 @@ use std::{
     },
     time::Duration,
 };
+
+/// Upper bound of the editable per-profile observation duration, in milliseconds.
+pub(crate) const MAX_DURATION_MS: u64 = 1000;
 
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(default, deny_unknown_fields)]
@@ -68,7 +72,7 @@ impl Options {
     /// # Errors
     /// Rejects invalid limits, repeated or absent captured IDs and excessive selections.
     pub(crate) fn validate(&self, inputs: &Inputs) -> Result<(), String> {
-        if !(1..=1000).contains(&self.duration_ms)
+        if !(1..=MAX_DURATION_MS).contains(&self.duration_ms)
             || !(1..=100).contains(&self.max_iterations)
             || !(1..=300000).contains(&self.max_runtime_ms)
         {
@@ -207,7 +211,7 @@ pub(crate) fn prepare_sweep(
     transmission: &TransmissionSettings,
     inputs: &Inputs,
     options: &Options,
-) -> Result<SweepPlan, String> {
+) -> Result<SweepPlan, AdmissionError> {
     options.validate(inputs)?;
     let catalog = if inputs.profiles.is_empty() {
         inputs.profile.iter().cloned().collect::<Vec<_>>()
@@ -241,7 +245,7 @@ pub(crate) fn prepare_sweep(
     for profile in &profiles {
         candidate.profile = Some(profile.clone());
         prepare(transmission, &candidate, options)
-            .map_err(|e| format!("Profile {}: {e}", profile.profile_id))?;
+            .map_err(|error| error.with_profile(profile.profile_id))?;
     }
     Ok(SweepPlan {
         transmission: transmission.clone(),
@@ -355,6 +359,7 @@ pub(crate) struct Model {
     worker: Option<Worker>,
     timing: Option<Arc<RunTiming>>,
     error: String,
+    diagnostic: Option<Box<Diagnostic>>,
     token: u64,
 }
 /// Prepares one complete supported source-to-compare request with shared core validation.
@@ -370,8 +375,8 @@ pub(crate) fn prepare(
     transmission: &TransmissionSettings,
     inputs: &Inputs,
     options: &Options,
-) -> Result<ChannelRunSettings, String> {
-    if !(1..=1000).contains(&options.duration_ms) {
+) -> Result<ChannelRunSettings, AdmissionError> {
+    if !(1..=MAX_DURATION_MS).contains(&options.duration_ms) {
         return Err("UI duration must be 1–1000 ms.".into());
     }
     ChannelJobLimits {
@@ -394,7 +399,10 @@ pub(crate) fn prepare(
         .ok_or("Apply RxMER before configuring Receiver.")?;
     let mut playback = playback.clone();
     playback.profile = profile.clone();
-    playback.prepare(transmission).map_err(|e| e.to_string())?;
+    let playback_span = playback
+        .prepare(transmission)
+        .map_err(|e| e.to_string())?
+        .span();
     let scenario = ScenarioDocument {
         schema_version: 1,
         protocol: ProtocolScope::Docsis31,
@@ -438,7 +446,9 @@ pub(crate) fn prepare(
             ..Default::default()
         },
     );
-    settings.validate().map_err(|e| e.to_string())?;
+    settings
+        .validate()
+        .map_err(|error| AdmissionError::from_run(error, &settings, playback_span))?;
     Ok(settings)
 }
 impl Model {
@@ -452,6 +462,7 @@ impl Model {
         self.plan = None;
         self.timing = None;
         self.error.clear();
+        self.diagnostic = None;
         publish(None);
         crate::instruments::receiver::performance::clear();
         self.token = self.token.wrapping_add(1);
@@ -463,7 +474,7 @@ impl Model {
         self.invalidate();
         if let Some(options) = &self.options {
             let request = serde_json::from_str::<TransmissionSettings>(settings)
-                .map_err(|e| e.to_string())
+                .map_err(|e| AdmissionError::from(e.to_string()))
                 .and_then(|settings| {
                     let inputs = crate::workbench::session::snapshot();
                     let plan = prepare_sweep(&settings, &inputs, options)?;
@@ -477,7 +488,10 @@ impl Model {
                     self.request = Some(request);
                     self.plan = Some(plan);
                 }
-                Err(error) => self.error = error,
+                Err(error) => {
+                    self.error = error.message;
+                    self.diagnostic = error.diagnostic;
+                }
             }
         }
     }
@@ -491,6 +505,7 @@ impl Model {
             return;
         };
         self.error.clear();
+        self.diagnostic = None;
         self.timing = None;
         publish(None);
         self.token = self.token.wrapping_add(1);
@@ -534,7 +549,7 @@ impl Model {
                     (profile,Ok(settings.clone()))
                 };
                 let (profile,prepared)=prepared;identity.store(u64::from(profile.profile_id),Ordering::Relaxed);
-                let outcome = prepared.and_then(|request|run_one(&request,options.max_runtime_ms-elapsed,&stop,&gate,&progress,&worker_timing));
+                let outcome = prepared.map_err(|error|error.to_string()).and_then(|request|run_one(&request,options.max_runtime_ms-elapsed,&stop,&gate,&progress,&worker_timing));
                 worker_timing.end_profile(profile.profile_id);
                 match outcome {
                     Ok(result)=>{
@@ -648,7 +663,7 @@ impl Model {
             "plc_frames":r.job.summary.plc_frames,"unrecovered":r.job.unrecovered_generated_payloads}));
         json!({"receiver_status":if ready {"complete"} else {"attention"},"verify_status":if self.verify {"complete"} else {"attention"},
             "reason":if !self.error.is_empty(){self.error.as_str()} else if ready {"Validated source/channel/receiver configuration ready."} else {"Configure WB and Receiver after accepting OCD, DPD, PRBS-TX and RxMER."},
-            "timing":self.timing.as_ref().map(|timing|timing.snapshot()),
+            "diagnostic":self.diagnostic,"timing":self.timing.as_ref().map(|timing|timing.snapshot()),
             "busy":self.worker.is_some(),"paused":self.worker.as_ref().is_some_and(|w|w.paused.load(Ordering::Relaxed)),
             "profile_index":self.worker.as_ref().map_or(0,|w|w.profile_index.load(Ordering::Relaxed)+1),
             "profile_id":self.worker.as_ref().map(|w|w.profile_id.load(Ordering::Relaxed)),
@@ -731,6 +746,7 @@ mod tests {
             worker: None,
             timing: None,
             error: String::new(),
+            diagnostic: None,
             token: 0,
         };
         model.start();
@@ -988,6 +1004,7 @@ mod tests {
             worker: None,
             timing: None,
             error: String::new(),
+            diagnostic: None,
             token: 0,
         };
         model.start();

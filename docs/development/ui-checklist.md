@@ -357,3 +357,8 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
   roles, keyboard behavior, themes and specialized diagram controls; require
   the component through the UI skill.
   [Design](features/workbench-configuration/design.md#ui-buttons-01-shared-action-buttons-across-the-desktop).
+
+- [x] UI-HELP-01: Stable playback diagnostic with actual minimum-duration
+  advice, hover/focus tooltip, keyboard/click offline FAQ and About entry.
+- [x] UI-SA-DETAILS-01: Acquisition readout below axes; Details toggle
+  preserves spectrum data, channel power and warning visibility.

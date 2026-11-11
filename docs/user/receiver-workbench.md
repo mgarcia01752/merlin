@@ -22,6 +22,12 @@ explained in the [FEC Monitor guide](fec-monitor.md).
 
 ## QAM analyzer and retained selectors
 
+Received I/Q uses circular dots at the actual retained coordinates, before hard
+decisions. These are scatter markers, not intensity bins. Channel impairments
+can shift, rotate or spread the points; changing their marker shape does not
+change those samples. High-order QAM can still have a square overall footprint.
+The display limit reports when only a subset of retained cells is shown.
+
 **Signal** selects Data Profile, NCP, PLC, Continuous Pilots or Scattered Pilots.
 **QAM View** selects Raw, Equalized or Paired independently. For PLC, choose Data
 or Preamble. These groups retain their different modulation and pilot boost.

@@ -124,7 +124,12 @@ fn actual_channel_playback_preserves_rng_fec_epochs_and_rejects_out_of_run_sched
         original
     );
     settings.playback.as_mut().unwrap().interval_symbols = u64::MAX / 2;
-    assert!(settings.validate().is_err());
+    let error = settings.validate().unwrap_err();
+    assert_eq!(error.code, "PlaybackObservationTooShort");
+    assert_eq!(
+        error.message,
+        "Playback final transition exceeds the observation window."
+    );
 }
 #[test]
 fn phase_filter_does_not_spend_the_observation_budget_on_warmup() {

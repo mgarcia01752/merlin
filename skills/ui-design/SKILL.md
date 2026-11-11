@@ -56,3 +56,18 @@ simulated duration, symbol counts and wall elapsed time. For example, document
 interleaver drain and how depth changes its tail without promising proportional
 wall runtime. Trace implementation-specific numbers to code; do not label them
 as specification requirements without specification evidence.
+
+## Contextual help and optional chart details
+
+Known warning/error states must provide actionable hover and keyboard-focus
+help, linked by stable diagnostic code to the shared
+[help catalog](../../resources/help/diagnostics.json) and bundled
+[FAQ](../../docs/user/faq.md). Keep the original message visible; unknown
+errors must not receive guessed advice. Support click and Enter/Space/F1
+access to offline details through About → FAQ. Compute context and valid
+recommendations in Rust from the actual accepted settings, including boundary
+and UI-limit checks. Help must never alter validation or apply settings.
+
+Keep optional acquisition metadata outside the plotting area, below its axes.
+Provide a simple Details checkbox to hide it without changing data, warnings,
+power readings or navigation. Test placement, hiding and keyboard access.

@@ -8,6 +8,8 @@ Canvas {
     id:plot
     required property var theme
     required property var observation
+    property bool receivedSamples: false
+    onReceivedSamplesChanged: requestPaint()
     function roleColor(role) {
         if (role === "data") {
             return theme.qamData
@@ -43,7 +45,9 @@ Canvas {
                 const x = left + point.x * edge
                 const y = top + point.y * edge
                 ctx.fillStyle = roleColor(point.role)
-                if (point.role === "ncp") {
+                if (plot.receivedSamples) {
+                    ctx.beginPath(); ctx.arc(x, y, 2, 0, 2 * Math.PI); ctx.fill()
+                } else if (point.role === "ncp") {
                     ctx.beginPath(); ctx.arc(x, y, 3.5, 0, 2 * Math.PI); ctx.fill()
                 } else if (point.role === "filler") {
                     ctx.beginPath(); ctx.moveTo(x, y - 3); ctx.lineTo(x + 3, y)

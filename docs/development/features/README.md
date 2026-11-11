@@ -109,3 +109,7 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 - [Run elapsed time and profile progress](run-elapsed-time/design.md): UI-RUN-TIME-01.
 
 - [Exact indexed QAM demapping](qam-demapper-performance/design.md): QAM-PERF-01.
+
+- [Received QAM scatter dots](qam-markers/design.md): UI-QAM-DOTS-01.
+
+- [Contextual help and spectrum details](contextual-help/design.md): UI-HELP-01, UI-SA-DETAILS-01.

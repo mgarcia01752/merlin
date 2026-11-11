@@ -124,7 +124,8 @@ impl ChannelRunSettings {
             }
             let plan = playback.prepare(&self.transmission)?;
             if plan.span().0 >= timing.complete_symbols && plan.span().0 != 0 {
-                return Err(invalid(
+                return Err(SimulationError::new(
+                    "PlaybackObservationTooShort",
                     "Playback final transition exceeds the observation window.",
                 ));
             }

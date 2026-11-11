@@ -27,6 +27,8 @@ Item {
     required property var measurementBackend
     required property var fileBackend
     property bool hasProject: false
+    property alias faqPopup: faqDialog
+    function openHelp(code) { faqDialog.showEntry(code, code ? runState.diagnostic : null) }
     property alias configurationPopup: wbConfig
     property alias entryPopup: workbenchEntry
     function configureProject() {
@@ -309,13 +311,14 @@ Item {
                         ToolTip.text: "Wall time includes pauses and CPU scheduling waits. The run budget uses active time."
                     }
                 }
-                Label {
+                ContextualStatus {
+                    theme: workbench.theme
+                    diagnostic: workbench.runState.diagnostic || null
+                    onHelpRequested: function(code) { workbench.openHelp(code) }
                     objectName: "runProgress"
-                    text: workbench.runState.busy ? "Profile " + (workbench.runState.profile_id ?? "—") + " · " + (workbench.runState.profile_index || 1) + " / " + (workbench.runState.profile_count || 1) + (workbench.runState.timing ? " · " + workbench.runState.timing.phase : "") + " · Symbols: " + workbench.runState.completed_symbols + (workbench.runState.timing ? " · Recovered: " + workbench.runState.timing.recovered_payloads : "") : workbench.runState.result ? "Run " + workbench.runState.result.status + " · " + workbench.runState.result.bits_tested + " bits compared · " + workbench.runState.result.bit_errors + " bit errors" : workbench.runState.reason
-                    color: theme.muted; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.WordWrap
-                    MouseArea { id: progressHover; anchors.fill: parent; hoverEnabled: true }
-                    ToolTip.visible: progressHover.containsMouse && workbench.runState.busy && !!workbench.runState.timing
-                    ToolTip.text: workbench.runState.timing ? "Time since last completed processing step: " + workbench.runState.timing.progress_age_text : ""
+                    text: workbench.runState.diagnostic ? workbench.runState.reason : workbench.runState.busy ? "Profile " + (workbench.runState.profile_id ?? "—") + " · " + (workbench.runState.profile_index || 1) + " / " + (workbench.runState.profile_count || 1) + (workbench.runState.timing ? " · " + workbench.runState.timing.phase : "") + " · Symbols: " + workbench.runState.completed_symbols + (workbench.runState.timing ? " · Recovered: " + workbench.runState.timing.recovered_payloads : "") : workbench.runState.result ? "Run " + workbench.runState.result.status + " · " + workbench.runState.result.bits_tested + " bits compared · " + workbench.runState.result.bit_errors + " bit errors" : workbench.runState.reason
+                    font.pixelSize: 12; Layout.fillWidth: true
+                    activityTooltip: workbench.runState.busy && workbench.runState.timing ? "Time since last completed processing step: " + workbench.runState.timing.progress_age_text : ""
                 }
             }
             WorkbenchActionButton {
@@ -378,6 +381,7 @@ Item {
     ReceiverWorkbenchDialog { id: receiverDialog; theme: workbench.theme; backend: workbench.receiverBackend; runState: workbench.runState; onConfigurationRequested: receiverConfig.open() }
     ReceiverConfigurationDialog { id: receiverConfig; theme: workbench.theme; backend: workbench.runBackend; settingsBackend: workbench.settingsBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
     VerificationDialog { id: verificationDialog; theme: workbench.theme; backend: workbench.runBackend; diagnosticsBackend: workbench.receiverBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
+    FaqDialog { id: faqDialog; theme: workbench.theme; backend: workbench.aboutBackend }
     WorkbenchFileFeedback { id: fileFeedback; theme:workbench.theme; message:workbench.fileMessage }
     SettingsDialog { id: settingsDialog; theme: workbench.theme }
     AboutDialog { id: aboutDialog; theme: workbench.theme; backend: workbench.aboutBackend; iconRoot: workbench.iconRoot }

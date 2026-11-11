@@ -1038,3 +1038,14 @@ validation are complete; the user guide includes the current dark capture.
   roles, keyboard behavior, themes and specialized diagram controls; require
   the component through the UI skill.
   [Design](features/workbench-configuration/design.md#ui-buttons-01-shared-action-buttons-across-the-desktop).
+
+- [x] **UI-QAM-DOTS-01** Circular received-I/Q markers and channel-output
+  display-limit note; preserve TX role shapes and actual sample coordinates.
+  [Design](features/qam-markers/design.md#ui-qam-dots-01-received-iq-marker-shape).
+
+- [x] **UI-HELP-01** Stable playback diagnostic, computed timing advice,
+  hover/focus help and bundled offline FAQ. Unknown messages remain intact.
+  [Design](features/contextual-help/design.md).
+- [x] **UI-SA-DETAILS-01** Move acquisition metadata below spectrum axes
+  with a Details checkbox; preserve chart data, warnings and power.
+  [Design](features/contextual-help/design.md#ui-sa-details-01-spectrum-acquisition-readout).

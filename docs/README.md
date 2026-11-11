@@ -8,6 +8,8 @@
 | [Rust API Guide](reference/public-api.md) | Simulation entry points, typed inputs, results and stage APIs |
 | [Python Guide](user/python/README.md) | Binding roadmap; implementation is deferred until after the UI |
 
+[FAQ](user/faq.md): contextual run messages and suggested fixes, also available offline under About → FAQ.
+
 [Terminology](user/terminology.md): definitions used by the workbench and analyzers.
 
 ## Command line

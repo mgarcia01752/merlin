@@ -13,7 +13,8 @@ ColumnLayout {
     property var viewport: ({points: [], x_ticks: [], y_ticks: []})
     property int selectedIndex: 0
     property bool zoomEnabled: false
-    property string overlayText: ""
+    property string detailsText: ""
+    property bool showDetails: true
     signal viewportRequested(int start, int count)
     readonly property var selectedPoint: viewport.points.length > 0 ? viewport.points[Math.max(0, Math.min(selectedIndex, viewport.points.length - 1))] : null
     readonly property real selectedFraction: selectedPoint ? selectedPoint.x : 0.5
@@ -106,22 +107,6 @@ ColumnLayout {
                 Keys.onRightPressed: chart.selectedIndex = Math.min(chart.viewport.points.length - 1, chart.selectedIndex + 1)
             }
         }
-        Rectangle {
-            objectName: "saMetadataOverlay"
-            visible: chart.overlayText.length > 0
-            anchors.right: parent.right; anchors.top: parent.top
-            anchors.rightMargin: plot.rightMargin + 8
-            anchors.topMargin: plot.topMargin + 8
-            width: Math.max(0, Math.min(metadata.implicitWidth + 16, parent.width - plot.leftMargin - plot.rightMargin - 16))
-            height: metadata.implicitHeight + 12
-            color: chart.theme.panel; border.color: chart.theme.line; radius: 5; opacity: 0.94
-            Label {
-                id: metadata
-                x: 8; y: 6; width: parent.width - 16
-                text: chart.overlayText; color: chart.theme.accent
-                font.pixelSize: 11; wrapMode: Text.WordWrap
-            }
-        }
         Label {
             anchors.centerIn: parent
             width: parent.width - 80
@@ -133,4 +118,23 @@ ColumnLayout {
         }
     }
     Label { text: chart.viewport.frequency_label || "Baseband frequency offset (MHz)"; color: theme.muted; Layout.alignment: Qt.AlignHCenter }
+    Rectangle {
+        objectName: "saAcquisitionDetails"
+        visible: chart.showDetails && chart.detailsText.length > 0
+        Layout.fillWidth: true
+        implicitHeight: metadata.implicitHeight + 16
+        color: chart.theme.panel
+        border.color: chart.theme.line
+        radius: 6
+        Label {
+            id: metadata
+            anchors.fill: parent
+            anchors.margins: 8
+            text: chart.detailsText
+            textFormat: Text.PlainText
+            color: chart.theme.accent
+            font.pixelSize: 11
+            wrapMode: Text.WordWrap
+        }
+    }
 }

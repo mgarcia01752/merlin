@@ -64,6 +64,8 @@ fn main() {
                 "qml/shell/UpdateNotification.qml",
                 "qml/shell/UpdateDialog.qml",
                 "qml/about/AboutDialog.qml",
+                "qml/about/FaqDialog.qml",
+                "qml/components/ContextualStatus.qml",
                 "qml/about/LicenseDialog.qml",
                 "qml/inputs/ofdm_settings/OfdmSettingsDialog.qml",
                 "qml/inputs/profile_input/ProfileInputDialog.qml",

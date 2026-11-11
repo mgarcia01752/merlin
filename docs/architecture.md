@@ -1913,3 +1913,21 @@ references, never external capture sizes. No public API, mapping tables, FEC rul
 RNG, run budgets, persistence or Qt numerical ownership changes.
 See [design](development/features/qam-demapper-performance/design.md) and
 [user guide](user/qam-mapping.md).
+
+### Received QAM markers (UI-QAM-DOTS-01)
+
+Channel-output and receiver raw/equalized I/Q use circular scatter markers.
+The shared TX scatter keeps ideal role shapes and accepts a presentation-only
+received-sample flag at the output tap. Rust owns coordinates and bounded sample
+selection; dots do not represent density or hard decisions. The output tap shows
+the retained/displayed count limit.
+
+### Contextual help and spectrum details
+
+Contextual run help uses stable core error codes and the bundled
+`resources/help/diagnostics.json` catalog. Hover or focus a known workbench
+message for its suggested fix; click or press Enter/Space/F1 for the offline
+FAQ. About → FAQ opens the index. Rust derives timing advice from the actual
+playback plan; unknown errors retain their original message without advice.
+Spectrum acquisition details appear below the axes and can be hidden with
+**Details**, independently of warnings and power readings.

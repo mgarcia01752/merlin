@@ -27,7 +27,8 @@ WorkbenchDialog {
             SpinBox {objectName:"tapQamLastBin";from:-1;to:8191;value:-1;editable:true;textFromValue:function(v){return v<0 ? "All" : v.toString()};valueFromText:function(t){return t==="All" ? -1 : Number(t)};onValueModified:{selection.lastBin=value;dialog.refresh()}}
             Item {Layout.fillWidth:true}
         }
-        TransmitterScatter {theme:dialog.theme;observation:dialog.observation;Layout.fillWidth:true;Layout.fillHeight:true}
+        TransmitterScatter {objectName:"tapQamScatter";theme:dialog.theme;observation:dialog.observation;receivedSamples:dialog.tap===2;Layout.fillWidth:true;Layout.fillHeight:true}
+        Label {objectName:"tapQamDisplayLimit";visible:dialog.tap===2 && dialog.observation.available && dialog.observation.retained>dialog.observation.points.length;text:"Showing "+(dialog.observation.points || []).length+" of "+dialog.observation.retained+" retained cells.";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:12}
         Label {visible:!!dialog.observation.extent;text:"Raw I/Q Axis: ±"+Number(dialog.observation.extent || 0).toPrecision(4)+" normalized units";color:dialog.theme.muted}
         Label {visible:!dialog.observation.available;text:dialog.observation.reason || "Run the simulation to retain this TapPoint.";color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
     }

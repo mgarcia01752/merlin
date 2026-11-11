@@ -269,3 +269,14 @@ unchanged. Read-only instruments use Close.
 
 See the [FEC Monitor](fec-monitor.md) for decoder outcomes, recovery and retained
 codeword records.
+
+## Help and chart details
+
+Hover or focus a known workbench
+message for its suggested fix; click or press Enter/Space/F1 for the offline
+[FAQ](faq.md). About → FAQ opens the offline index. Duration suggestions
+use the current playback settings.
+Spectrum acquisition details appear below the axes and can be hidden with
+**Details**, independently of warnings and power readings.
+
+![Offline FAQ with actual playback timing advice](../images/workbench/playback-faq-dark.png)

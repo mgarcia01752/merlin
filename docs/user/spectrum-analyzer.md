@@ -20,7 +20,8 @@ loop. Opening the SA while the main run is busy never starts another preview.
 cancels that preview, preserving accepted inputs and any previous completed
 snapshot. Use **Stop** on the main workbench to stop the full simulation.
 Sample rate, FFT length, window, averaging and bin/ENBW details appear as a compact
-overlay inside the plot; mouse zoom and Full Span continue to work beneath it.
+strip below the frequency axis. Clear **Details** to hide this readout;
+mouse zoom and Full Span keep working. Warnings and Channel Power stay visible.
 
 ![Actual shared SA showing TX baseband output](../images/workbench/sa-tx-baseband-dark.png)
 

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 mod bridge;
+mod help;
 mod inputs;
 mod instruments;
 mod platform;

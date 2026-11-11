@@ -15,6 +15,7 @@ MenuBar {
     signal globalSettingsRequested()
     signal aboutRequested()
     signal updatesRequested()
+    signal faqRequested()
     readonly property url terminologyUrl: "https://github.com/mgarcia01752/merlin/blob/master/docs/user/terminology.md"
     signal terminologyRequested(url target)
     background: Rectangle { color: bar.theme.panel }
@@ -45,6 +46,7 @@ MenuBar {
         title: "&About"
         MenuItem { objectName:"updatesAction";text:"Check For Updates…";onTriggered:bar.updatesRequested() }
         MenuItem { objectName: "aboutAction"; text: "About MERLIN…"; onTriggered: bar.aboutRequested() }
+        MenuItem { objectName: "faqAction"; text: "FAQ…"; onTriggered: bar.faqRequested(); Accessible.description: "Open the bundled MERLIN FAQ offline." }
         MenuItem {
             objectName: "terminologyAction"
             text: "Terminology…"

@@ -53,6 +53,7 @@ ApplicationWindow {
                 onSaveRequested: function(saveAs) { workbench.saveProject(saveAs) }
                 onGlobalSettingsRequested: { if (!updates.state.installing) workbench.settingsPopup.open() }
                 onAboutRequested: workbench.aboutPopup.open()
+                onFaqRequested: workbench.openHelp("")
                 onUpdatesRequested: updates.showUpdates()
                 onTerminologyRequested: function(target) { Qt.openUrlExternally(target) }
             }

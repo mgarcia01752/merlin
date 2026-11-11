@@ -348,3 +348,8 @@ if let Some(window) = &result.summary.window {
 Missing and zero-error observations do not become arbitrary finite MER values.
 These typed operations support ordinary Rust consumers and future Python class
 bindings. No Python binding or runtime has been introduced; those remain deferred.
+
+Channel admission reports `PlaybackObservationTooShort` when a nonzero final
+playback transition is at or beyond the observation's complete-symbol count.
+The validation condition is unchanged; consumers can use this stable error
+code rather than matching the English message.

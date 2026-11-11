@@ -118,6 +118,12 @@ positions. Output Spectrum uses channel-output samples at RX input; output QAM
 uses actual received FFT cells **before equalization**, with the existing received
 role/profile/bin/symbol selectors. Empty selections stay unavailable.
 
+Received I/Q uses circular dots at the actual retained coordinates, before hard
+decisions. These are scatter markers, not intensity bins. Channel impairments
+can shift, rotate or spread the points; changing their marker shape does not
+change those samples. High-order QAM can still have a square overall footprint.
+The display limit reports when only a subset of retained cells is shown.
+
 ![Raw Channel Output QAM](../images/workbench/channel-output-qam-dark.png)
 
 There is no separate SA block. Opening an instrument does not run the simulation;

@@ -64,7 +64,9 @@ WorkbenchDialog {
                                 ctx.fillText("I",left+edge-10,top+edge/2-6);ctx.fillText("Q",left+edge/2+6,top+12)
                                 ctx.fillStyle=dialog.theme.accent
                                 for (const point of dialog.observation.points || []) {
-                                    ctx.fillRect(left+(raw ? point.raw_x : point.eq_x)*edge-1,top+(raw ? point.raw_y : point.eq_y)*edge-1,2,2)
+                                    const x = left + (raw ? point.raw_x : point.eq_x) * edge
+                                    const y = top + (raw ? point.raw_y : point.eq_y) * edge
+                                    ctx.beginPath(); ctx.arc(x, y, 1.5, 0, 2 * Math.PI); ctx.fill()
                                 }
                             }
                         }

@@ -27,12 +27,27 @@ pub mod bridge {
         /// Bounded title/text JSON; unknown keys return an explicit diagnostic.
         #[qinvokable]
         fn license_document(self: &AboutInfo, key: &QString) -> QString;
+        /// Returns a whitelisted offline FAQ topic or the complete index.
+        /// # Arguments
+        /// * `code` - Known diagnostic code; empty selects the index.
+        /// # Returns
+        /// Bounded title/Markdown JSON, with an error for unknown topic keys.
+        #[qinvokable]
+        fn faq_document(self: &AboutInfo, code: &QString) -> QString;
     }
 }
 /// Stateless About-dialog adapter, independent of scientific state.
 #[derive(Default)]
 pub struct AboutInfoRust;
 impl bridge::AboutInfo {
+    /// Adapts a bundled FAQ topic without filesystem or network access.
+    /// # Arguments
+    /// * `code` - Empty for the index or a recognized diagnostic code.
+    /// # Returns
+    /// Bounded title/Markdown JSON; unknown keys never become file paths.
+    pub fn faq_document(&self, code: &QString) -> QString {
+        QString::from(crate::help::faq_document(&code.to_string()).to_string())
+    }
     /// Reports the build's package version without I/O.
     /// # Returns
     /// Same version as the compiled Qt package.

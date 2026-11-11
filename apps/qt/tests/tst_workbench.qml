@@ -160,6 +160,7 @@ Pane {
     QtObject {
         id: aboutBackend
         function version() { return "0.1.0" }
+        function faq_document(code) { return JSON.stringify({title:code ? "RxMER playback needs a longer run":"MERLIN FAQ",text:"## RxMER playback needs a longer run\nChoose a duration covering all captures."}) }
         function license_document(key) { return JSON.stringify({title:key === "gpl" ? "GNU General Public License v3" : "Apache License 2.0",text:key === "gpl" ? "GNU GENERAL PUBLIC LICENSE" : "Apache License"}) }
     }
     QtObject {
@@ -202,7 +203,8 @@ Pane {
         property var acceptedRunOptions: ({receiver_mode:"supplied_channel",all_profiles:false,selected_profile_ids:null,duration_ms:3,max_iterations:50,max_runtime_ms:300000,noise_seed:41})
         property var lastResult: null
         property var timing: null
-        function data() { return {timing:timing,completed_symbols:23,profile_id:3,profile_index:4,profile_count:4,receiver_status:configured ? "complete":"attention",verify_status:verified ? "complete":"attention",reason:"Configure accepted receiver and independent source comparison before running.",busy:busy,paused:paused,can_start:configured&&verified&&!busy,has_result:!!lastResult,result:lastResult,result_token:lastResult ? "1":"0",available_profile_ids:profileBackend.acceptedId>=0 ? [0,1]:[],applied_profile_id:profileBackend.acceptedId,options:acceptedRunOptions,accepted_options:configured ? acceptedRunOptions:null,verified:verified} }
+        property var diagnostic: null
+        function data() { return {diagnostic:diagnostic,timing:timing,completed_symbols:23,profile_id:3,profile_index:4,profile_count:4,receiver_status:configured ? "complete":"attention",verify_status:verified ? "complete":"attention",reason:"Configure accepted receiver and independent source comparison before running.",busy:busy,paused:paused,can_start:configured&&verified&&!busy,has_result:!!lastResult,result:lastResult,result_token:lastResult ? "1":"0",available_profile_ids:profileBackend.acceptedId>=0 ? [0,1]:[],applied_profile_id:profileBackend.acceptedId,options:acceptedRunOptions,accepted_options:configured ? acceptedRunOptions:null,verified:verified} }
         function configure(settings) { return JSON.stringify(data()) }
         function poll() { return JSON.stringify(data()) }
         function apply(options,settings) { acceptedRunOptions=JSON.parse(options);configured=true;return "" }
@@ -231,6 +233,7 @@ Pane {
         onNewRequested: workbench.requestNewProject()
         onGlobalSettingsRequested: workbench.settingsPopup.open()
         onAboutRequested: workbench.aboutPopup.open()
+        onFaqRequested: workbench.openHelp("")
     }
     Workbench {
         id: workbench
@@ -522,6 +525,34 @@ Pane {
             sourceBackend.acceptedOptions = ({mode: "prbs15", seed: 32767, append: false, target_bits: 0, fill_seed: 32767})
             workbench.refreshSourceState()
         }
+        function test_contextual_help_hover_keyboard_and_offline_faq() {
+            runBackend.diagnostic={code:"PlaybackObservationTooShort",tooltip:"Current duration: 3 ms. Set duration to at least 43 ms."}
+            workbench.pollRun()
+            const status=findChild(workbench,"runProgress")
+            compare(status.hasHelp,true)
+            mouseMove(status,10,status.height/2)
+            const tooltip=findChild(status,"contextualStatusTooltip")
+            tryCompare(tooltip,"visible",true)
+            verify(tooltip.text.indexOf("43 ms")>=0)
+            mouseClick(status,10,status.height/2)
+            tryCompare(workbench.faqPopup,"opened",true)
+            verify(workbench.faqPopup.contextText.indexOf("3 ms")>=0)
+            verify(workbench.faqPopup.documentText.indexOf("all captures")>=0)
+            workbench.faqPopup.close()
+            tryCompare(workbench.faqPopup,"opened",false)
+            status.forceActiveFocus()
+            keyClick(Qt.Key_Return)
+            tryCompare(workbench.faqPopup,"opened",true)
+            workbench.faqPopup.close()
+            tryCompare(workbench.faqPopup,"opened",false)
+            runBackend.diagnostic=null
+            workbench.pollRun()
+            compare(status.hasHelp,false)
+            workbench.openHelp("")
+            tryCompare(workbench.faqPopup,"opened",true)
+            compare(workbench.faqPopup.contextText,"")
+            workbench.faqPopup.close()
+        }
         function test_transmitter_readiness_analyzer_zoom_and_invalidation() {
             sourceBackend.acceptedSource = true
             profileBackend.acceptedId = 0
@@ -543,9 +574,17 @@ Pane {
             transmitterBackend.finish()
             tryVerify(() => dialog.viewport.points.length === 3)
             tryCompare(findChild(dialog.footer,"saCancel"),"visible",false)
-            const metadataOverlay=findChild(dialog,"saMetadataOverlay")
-            verify(metadataOverlay!==null)
-            compare(metadataOverlay.visible,true)
+            const details=findChild(dialog,"saAcquisitionDetails")
+            verify(details!==null)
+            compare(details.visible,true)
+            const canvas=findChild(dialog,"saCanvas")
+            verify(details.mapToItem(window,0,0).y >= canvas.mapToItem(window,0,canvas.height).y)
+            const toggle=findChild(dialog,"saDetailsToggle")
+            mouseClick(toggle)
+            compare(details.visible,false)
+            compare(dialog.viewport.points.length,3)
+            mouseClick(toggle)
+            compare(details.visible,true)
             compare(findChild(dialog, "saReadout"), null)
             compare(findChild(dialog, "saStatus"), null)
             const timingPanel = findChild(dialog, "saTimingPanel")
@@ -1110,6 +1149,7 @@ Pane {
             mouseClick(findChild(dialog,"channelInput"));tryCompare(dialog.instrumentPopup,"opened",true)
             mouseClick(findChild(dialog.instrumentPopup,"channelQam"));tryCompare(dialog.inputQamPopup,"opened",true)
             compare(dialog.inputQamPopup.observation.available,false)
+            compare(findChild(dialog.inputQamPopup,"tapQamScatter").receivedSamples,false)
             closeWithX(dialog.inputQamPopup)
             mouseClick(findChild(dialog,"channelInput"));tryCompare(dialog.instrumentPopup,"opened",true)
             compare(dialog.output,false)
@@ -1119,6 +1159,7 @@ Pane {
             compare(dialog.output,true)
             mouseClick(findChild(dialog.instrumentPopup,"channelQam"));tryCompare(dialog.outputQamPopup,"opened",true)
             compare(dialog.outputQamPopup.tap,2)
+            compare(findChild(dialog.outputQamPopup,"tapQamScatter").receivedSamples,true)
             compare(findChild(dialog.outputQamPopup,"receiverQamView").visible,false)
             closeWithX(dialog.outputQamPopup)
             mouseClick(findChild(dialog,"channelModel"));tryCompare(dialog.modelPopup,"opened",true)
@@ -1175,6 +1216,7 @@ Pane {
             compare(dialog.tapIndex,1)
             mouseClick(findChild(dialog.instrumentPopup,"channelQam"));tryCompare(dialog.inputQamPopup,"opened",true)
             compare(dialog.inputQamPopup.tap,1)
+            compare(findChild(dialog.inputQamPopup,"tapQamScatter").receivedSamples,false)
             closeWithX(dialog.inputQamPopup)
             measurementBackend.power={amplifier_gain_db:0,attenuation_db:0,input_data_level_dbmv_per_6mhz:null,amplifier_target_dbmv_per_6mhz:null,receiver_noise_dbmv_hz:null}
             closeWithX(dialog)
