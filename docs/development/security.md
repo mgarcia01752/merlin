@@ -4,7 +4,7 @@
 security-extended queries and build-mode none. It uploads findings to GitHub's
 Security / Code scanning view without repeating the full simulation build.
 [Dependency security](../../.github/workflows/dependency-security.yml) checks
-Cargo.lock against the current RustSec advisory database with cargo-audit 0.22.2.
+both core and desktop Cargo.lock files against the current RustSec advisory database with cargo-audit 0.22.2.
 
 Both workflows run on main/master pushes, pull requests, weekly and manually.
 Release publication waits for both checks as well as native validation. Findings
@@ -24,7 +24,8 @@ scripts/security-audit.sh
 The script needs Bash, curl, tar, sha256sum and network access. It verifies the
 pinned SHA256 of the official static Linux musl binary before extraction and
 execution. Downloads stay under ignored `local/security-tools/`; the report is
-`local/security-audit/report.json`. No host packages are installed, and Cargo.lock
+`local/security-audit/report.json` for core and
+`local/security-audit/qt-report.json` for desktop. No host packages are installed, and Cargo.lock
 is unchanged. Cached archives are verified again on every invocation. Updating
 the audit tool requires updating its version and checksum together.
 
@@ -32,3 +33,10 @@ Security checks run independently of ordinary CI, including documentation pushes
 They are not added to the local push gate. CodeQL's first execution and upload
 permissions must be verified on GitHub after this change is pushed. The
 [SEC-01 design](features/security-checks/design.md) records ownership and validation.
+
+
+The Ubuntu desktop delivery work patches RUSTSEC-2026-0097 with rand 0.9.5
+and the newly audited desktop finding RUSTSEC-2026-0202 with cxx 1.0.195 and
+matching cxx-gen 0.7.195. Both graphs report zero vulnerability and unsoundness
+findings in the local 2026-11-10 audit; no suppressions are used. See
+[SECURITY-DEPS-02](features/ubuntu-desktop/design.md#security-deps-02-release-dependency-audit).

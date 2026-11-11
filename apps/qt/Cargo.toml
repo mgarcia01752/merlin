@@ -9,7 +9,7 @@ license = "GPL-3.0-only"
 
 [dependencies]
 base64 = "=0.22.1"
-cxx = "=1.0.158"
+cxx = "=1.0.195"
 cxx-qt = "=0.7.3"
 cxx-qt-lib = { version = "=0.7.3", features = ["qt_gui", "qt_qml"] }
 
@@ -17,8 +17,9 @@ docsis-ofdm-fec = { path = "../../crates/ofdm", default-features = false, featur
 serde_json = "=1.0.145"
 serde = { version = "=1.0.228", features = ["derive"] }
 sha2 = "=0.10.9"
+ureq = { version = "=2.12.1", default-features = false, features = ["tls"] }
 pnm = { git = "https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git", rev = "5fbd5561f3e06b73486546b5ffa520279080a5eb", version = "=0.3.6" }
 
 [build-dependencies]
-cxx-gen = "=0.7.158"
+cxx-gen = "=0.7.195"
 cxx-qt-build = "=0.7.3"

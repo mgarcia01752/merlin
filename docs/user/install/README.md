@@ -40,3 +40,5 @@ notices; neither is a runtime dependency of the installed CLI. Omitting `--nativ
 portable archive and checksums. Packaging installs nothing and refuses existing
 output directories. Full native build execution on each target remains required
 before claiming support on that platform.
+
+Ubuntu 22.04 workbench: [desktop DEB and update notification](ubuntu-desktop.md).

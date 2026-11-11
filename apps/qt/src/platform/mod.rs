@@ -6,3 +6,5 @@
 pub(crate) mod example_directory;
 pub(crate) mod input_file;
 pub(crate) mod native_file_picker;
+
+pub(crate) mod updates;

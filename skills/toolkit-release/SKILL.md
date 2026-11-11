@@ -40,5 +40,24 @@ helpers instead of duplicating packaging in workflow shell. Preserve full licens
 notices and public examples. Install nothing while testing package generation.
 Use docs/development/native-delivery.md for exact stage ownership and the
 per-OS docs/user/install/ guides for installer/upgrade/uninstall instructions.
-Future GUI installers and Python packaging need their own explicitly scoped work.
+The Ubuntu desktop path below has its own scoped task; Python packaging remains deferred.
 Report native platform and interoperability evidence separately from tag creation.
+
+
+## Ubuntu 22.04 desktop
+
+Use `.github/workflows/ubuntu-desktop.yml` for manual artifact builds or the
+reusable desktop job of the version-tag release. Only Ubuntu 22.04 amd64 desktop
+delivery is in scope now. Keep the existing CLI ownership separate. Build Qt via
+`scripts/qt-desktop.sh`, then package with `tools/packaging/desktop.py` and verify
+with `desktop_smoke.py`; include private Qt runtime, full notices, icon and all
+curated examples. Retain caches and require exact VERSION/Cargo metadata.
+
+A manual workflow uploads the DEB and SHA256SUMS as an artifact; notification
+requires a newer stable GitHub release carrying
+`merlin_VERSION_ubuntu22.04_amd64.deb` and its GitHub SHA-256 asset digest.
+Do not publish from manual builds, mutate existing public releases or bypass
+CodeQL/dependency checks. Tag publication waits for both CLI and desktop checks.
+Run install/reinstall/remove tests only on disposable CI runners unless the user
+explicitly requests local installation. Report package bytes, installed footprint,
+external prerequisites and hosted/installed verification limits separately.

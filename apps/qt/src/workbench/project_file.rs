@@ -167,6 +167,42 @@ impl Project {
     }
 }
 
+/// Validates a package-check WB through the same import and request APIs as Open.
+/// # Arguments
+/// * `path` - Local JSON document; input is bounded to the normal project limit.
+/// # Returns
+/// Unit when all imported inputs and full simulation request are admissible.
+/// # Errors
+/// Reports nonregular/oversized files, invalid JSON or invalid configuration.
+pub(crate) fn check_file(path: &Path) -> Result<(), String> {
+    use std::io::Read;
+    let file = std::fs::File::open(path).map_err(|error| error.to_string())?;
+    if !file
+        .metadata()
+        .map_err(|error| error.to_string())?
+        .is_file()
+    {
+        return Err("Choose a regular workbench file.".into());
+    }
+    let mut bytes = Vec::new();
+    file.take(MAX_PROJECT_BYTES as u64 + 1)
+        .read_to_end(&mut bytes)
+        .map_err(|error| error.to_string())?;
+    if bytes.len() > MAX_PROJECT_BYTES {
+        return Err("Workbench exceeds input limits.".into());
+    }
+    let project: Project = serde_json::from_slice(&bytes).map_err(|error| error.to_string())?;
+    let inputs = project.validate()?;
+    let options = project
+        .receiver
+        .as_ref()
+        .ok_or("Example has no receiver configuration.")?;
+    let request = crate::simulation::closed_loop::prepare(&project.transmission, &inputs, options)
+        .map_err(|error| error.to_string())?;
+    request.validate().map_err(|error| error.to_string())?;
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

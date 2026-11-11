@@ -25,6 +25,6 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: rustsec-audit-report
-          path: local/security-audit/report.json
+          path: local/security-audit/*report.json
           if-no-files-found: warn
           retention-days: 7

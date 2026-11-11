@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/KDAB/cxx-qt",
+  "commit": "72c2c93026501436d9a2e17a64a9a1dce31abd0e",
+  "files": {
+    "LICENSE-MIT.txt": "b85dcd3e453d05982552c52b5fc9e0bdd6d23c6f8e844b984a88af32570b0cc0",
+    "LICENSE-APACHE.txt": "074e6e32c86a4c0ef8b3ed25b721ca23aca83df277cd88106ef7177c354615ff"
+  }
+}

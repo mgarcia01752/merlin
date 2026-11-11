@@ -1,19 +1,20 @@
-# Native validation and CLI delivery
+# Native validation and delivery
 
-## Future desktop examples (INSTALL-EXAMPLES-01)
+## Desktop examples (INSTALL-EXAMPLES-01)
 
 Desktop installers must deliver `examples/workbench/manifest.json` and every
 runnable bundle's exact PNM files, self-contained WB, provenance, LICENSE and
-NOTICE. Keep `single` and `multi-rxmer` runnable; `multi-rxmer-dschan` is deferred
+NOTICE. Keep `single`, `multi-rxmer` and `multi-rxmer-2` runnable; `multi-rxmer-dschan` is deferred
 and excluded from the runnable inventory. Native Open must resolve examples from
 the installed executable/resources, not the launch working directory. Test
 relocation, offline WB validation, all resource hashes and installed picker
-behavior. The current CLI resource-staging test verifies bundle inclusion only;
-it does not validate desktop installation. See the
+behavior. The Ubuntu 22.04 desktop builder now includes these resources and validates
+all three WBs through the production Rust import/request APIs. Installed lifecycle
+verification is configured on disposable runners and needs hosted evidence. See the
 [design](features/workbench-examples/design.md) and [user guide](../user/workbench-examples.md).
 
-QA-06/07 tooling is prepared locally. No remote is configured in this checkout;
-workflows are not pushed or executed. Local Linux results do not establish native
+QA-06/07 CLI tooling and the Ubuntu desktop workflow are prepared locally.
+Hosted results are separate evidence; this task does not push or execute them. Local Linux results do not establish native
 Windows/macOS runtime or installer support. See the [group design](features/completion-group/design.md).
 
 `.github/workflows/ci.yml` runs a lean Linux preflight (versions, tooling tests,
@@ -60,3 +61,27 @@ A locally generated MSI XML or a passing Linux build does not satisfy that check
 
 Tagged publication also requires the reusable CodeQL and RustSec workflows to
 pass. See [security checks](security.md) for schedules, permissions and reports.
+
+
+## Ubuntu 22.04 desktop DEB (UI-DEB-01)
+
+The separately runnable `.github/workflows/ubuntu-desktop.yml` builds the native
+Qt desktop on Ubuntu 22.04 amd64, retaining pinned SDK/Cargo caches. It packages
+with `tools/packaging/desktop.py`, checks the extracted runtime with
+`desktop_smoke.py`, then installs/reinstalls/removes on a disposable runner before
+uploading the artifact. The version-tag release calls this job and waits for its
+success before collecting both CLI and desktop assets. The desktop package is
+`merlin`; it does not overwrite ownership of `merlin-ofdm`.
+
+The desktop runtime owns `/usr/lib/merlin`, its `/usr/bin/merlin` launcher and
+desktop icon/entry. Full Qt/Cargo/ICU notices and public resources are included.
+Private libraries use launcher-relative paths; system ELF dependencies are mapped
+to actual DEB package owners on the Ubuntu 22.04 builder. Runtime startup needs
+neither the build checkout nor an external Qt SDK. Installer size, installed file
+bytes and declared prerequisites are reported independently.
+
+See the [design/evidence](features/ubuntu-desktop/design.md) and
+[Ubuntu desktop user guide](../user/install/ubuntu-desktop.md). Local extraction
+is read-only application validation, not permission to install on the user's VM.
+The notification checks only stable GitHub releases; manual CI artifacts do not
+trigger it. Other desktop operating systems remain deferred for this phase.

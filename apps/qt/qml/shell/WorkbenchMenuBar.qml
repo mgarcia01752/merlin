@@ -13,6 +13,7 @@ MenuBar {
     signal saveRequested(bool saveAs)
     signal globalSettingsRequested()
     signal aboutRequested()
+    signal updatesRequested()
     readonly property url terminologyUrl: "https://github.com/mgarcia01752/merlin/blob/master/docs/user/terminology.md"
     signal terminologyRequested(url target)
     background: Rectangle { color: bar.theme.panel }
@@ -37,6 +38,7 @@ MenuBar {
     }
     Menu {
         title: "&About"
+        MenuItem { objectName:"updatesAction";text:"Check For Updates…";onTriggered:bar.updatesRequested() }
         MenuItem { objectName: "aboutAction"; text: "About MERLIN…"; onTriggered: bar.aboutRequested() }
         MenuItem {
             objectName: "terminologyAction"

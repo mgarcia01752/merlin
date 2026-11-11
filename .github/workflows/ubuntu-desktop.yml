@@ -1,0 +1,75 @@
+# Copyright 2026 MERLIN contributors
+# SPDX-License-Identifier: Apache-2.0
+name: Ubuntu 22.04 desktop DEB
+on:
+  workflow_dispatch:
+  workflow_call:
+permissions:
+  contents: read
+concurrency:
+  group: desktop-22-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: false
+jobs:
+  desktop:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    env:
+      QT_SDK_DIR: ${{ github.workspace }}/local/qt/6.8.3/gcc_64
+      CARGO_HOME: ${{ github.workspace }}/local/merlin-cargo
+      CARGO_INCREMENTAL: '0'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/cache@v5
+        with:
+          path: |
+            local/cargo
+            local/rustup
+            local/merlin-cargo
+            local/qt
+            local/qt-tools
+            local/release-sources
+            apps/qt/target
+          key: desktop-ubuntu22-qt6.8.3-rust1.85.1-${{ hashFiles('apps/qt/Cargo.lock', 'Cargo.lock', 'tools/development/qt_sdk.py') }}
+          restore-keys: desktop-ubuntu22-qt6.8.3-rust1.85.1-
+      - name: Prepare pinned Ubuntu development tools
+        run: ./install.sh --development
+      - name: Validate versions, packaging and desktop
+        run: |
+          python3 tools/release/versions.py
+          python3 -m unittest discover -s tools/packaging -p 'test_*.py'
+          scripts/qt-desktop.sh check
+      - name: Audit both locked dependency graphs
+        run: scripts/security-audit.sh
+      - name: Build optimized desktop
+        run: |
+          export PATH="$QT_SDK_DIR/bin:$PWD/local/cargo/bin:$PATH"
+          export QMAKE="$QT_SDK_DIR/bin/qmake"
+          export LD_LIBRARY_PATH="$QT_SDK_DIR/lib"
+          export RUSTUP_HOME="$PWD/local/rustup"
+          scripts/cargo-local.sh build --manifest-path apps/qt/Cargo.toml --release --locked
+      - name: Build native desktop DEB and checksums
+        run: |
+          export PATH="$PWD/local/cargo/bin:$PATH"
+          export RUSTUP_HOME="$PWD/local/rustup"
+          python3 tools/packaging/desktop.py --binary apps/qt/target/release/merlin-qt \
+            --qt-sdk "$QT_SDK_DIR" --output dist/desktop
+          python3 tools/packaging/desktop_smoke.py --deb dist/desktop/*.deb --output dist/desktop-check
+      - name: Install, reinstall and remove on disposable runner
+        run: |
+          sudo apt-get install -y ./dist/desktop/*.deb
+          python3 tools/packaging/desktop_smoke.py --installed
+          sudo apt-get install --reinstall -y ./dist/desktop/*.deb
+          python3 tools/packaging/desktop_smoke.py --installed
+          sudo apt-get remove -y merlin
+          test ! -e /usr/bin/merlin
+          test ! -e /usr/lib/merlin
+          test ! -e /usr/share/applications/merlin.desktop
+          test ! -e /usr/share/icons/hicolor/256x256/apps/merlin.png
+      - uses: actions/upload-artifact@v6
+        with:
+          name: merlin-assets-desktop-ubuntu22-amd64
+          path: dist/desktop/
+          if-no-files-found: error
+          retention-days: 14

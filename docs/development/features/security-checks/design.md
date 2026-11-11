@@ -23,9 +23,17 @@ before remote execution. Validate YAML, trigger/permission/publication wiring,
 Bash syntax/ShellCheck and an actual local dependency audit; CodeQL itself needs
 GitHub execution.
 
-Local validation: workflow triggers, permissions and release dependencies pass
+Initial local validation: workflow triggers, permissions and release dependencies pass
 structural checks; Bash syntax, ShellCheck and documentation links pass. The
 static musl tool works on Ubuntu 22.04 and cached archives are reverified.
 RustSec reports zero vulnerability-class advisories and one unsoundness advisory,
 RUSTSEC-2026-0097 in rand 0.9.2. The audit intentionally fails on that finding;
 no suppression or dependency change is included. CodeQL execution is pending CI.
+
+
+SECURITY-DEPS-02 extends the audit to the desktop lockfile. The original rand
+finding is patched with 0.9.5; the additional cxx unsoundness finding
+RUSTSEC-2026-0202 is patched with cxx 1.0.195/cxx-gen 0.7.195. Current local
+core and desktop audits report zero vulnerability/unsoundness findings with
+no suppressions. Both JSON reports are retained by the security workflow.
+See the [desktop delivery record](../ubuntu-desktop/design.md).

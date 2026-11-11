@@ -141,3 +141,14 @@ explicit recurrence, seed/bit order and independent post-decode verification.
 When the user says "next", implement the next unfinished item in the official
 checklist/architecture in dependency order. Keep its status accurate and report
 any prerequisite gaps rather than substituting unrelated work.
+
+
+## Current desktop delivery scope
+
+Ubuntu 22.04 amd64 is the current native desktop package target. Follow
+skills/toolkit-release and the Ubuntu desktop design for DEB/workflow work.
+Keep update HTTP, metadata checks and global preferences in the application
+adapter, separate from simulation and WB JSON. Use a quiet bounded worker and
+OS-browser release-page handoff. Desktop delivery on other platforms is deferred;
+development support and existing CLI validation are separate. Audit both locks
+without suppressions; only report installed/hosted behavior with actual evidence.

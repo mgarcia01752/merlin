@@ -627,3 +627,24 @@ formatting and syntax checks suffice. Follow AGENTS.md for project commands.
 Verify SPDX scope and position without relabeling upstream material. Validate
 this skill and both discovery links after edits. Keep one canonical copy.
 
+
+
+## Desktop delivery and update notifications
+
+For the current desktop delivery phase, target Ubuntu 22.04 amd64. Package Qt
+privately with the application; preserve LGPL/GPL and third-party source notices,
+round desktop icons, user guides and every runnable workbench bundle. Keep
+installer builders under `tools/packaging/`; workflows orchestrate those helpers.
+Use read-only extracted-package checks locally and disposable CI runners for
+install/reinstall/remove checks. Do not report configured workflows as hosted
+validation or an extracted package as an installed application.
+
+Follow OSCAR-UI's quiet background stable-release check and update indicator.
+Rust owns HTTP, version/asset checks, deadlines and application-global preference
+persistence; QML displays bounded state. Keep update preferences outside WB JSON.
+Offline/check failures must leave editing and simulation usable. Keep the update
+dialog in its own QML file, retain X and Close, and document any new controls.
+The current notification opens the release page; it does not silently download,
+install or restart. Release assets must match the exact Ubuntu baseline, version,
+project URL, size bound and SHA-256 metadata. Audit core and Qt locks without
+advisory suppression before release; document and test dependency upgrades.

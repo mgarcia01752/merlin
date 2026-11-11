@@ -21,6 +21,7 @@ from a fresh clone and are deliberately not Markdown link targets.
 | Work area | Records |
 | --- | --- |
 | user-facing UI wording | [design](ui-copy/design.md) |
+| Ubuntu desktop/update notification | [design](ubuntu-desktop/design.md) |
 | workbench example bundles | [design](workbench-examples/design.md) |
 | recovered-data panel | [design](verification-panel/design.md) |
 | mouse chart navigation | [design](mouse-zoom/design.md) |

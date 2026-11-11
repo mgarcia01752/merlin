@@ -1703,3 +1703,37 @@ Python does not implement DSP/FEC or require Qt. Prefer simple owned inputs and
 dictionary results initially; decide cancellation, callbacks and array ownership
 before exposing more advanced sessions. No binding exists yet.
 See the [API-01 class proposal](development/features/python-adapter/design.md).
+
+
+## Ubuntu 22.04 desktop delivery and release notification
+
+UI-DEB-01 adds a native amd64 `merlin` DEB separately from `merlin-ofdm` CLI
+ownership. `tools/packaging/desktop.py` stages a private Qt 6.8.3 runtime under
+`/usr/lib/merlin`, a `/usr/bin/merlin` launcher, desktop entry/icon, public guides,
+all runnable example bundles and complete Cargo/Qt notices. Qt's scanner and
+recursive ELF dependency inspection select runtime resources; observed system
+libraries are mapped to explicit DEB prerequisites. Build on Ubuntu 22.04 with
+Rust 1.85.1 and locked sources. No external Python/Qt SDK is needed after setup.
+
+`.github/workflows/ubuntu-desktop.yml` supports manual artifact builds and a
+reusable tag-release job. It validates, packages and exercises offline startup,
+all WB imports, hashes and runtime dependencies; disposable CI runners then
+install/reinstall/remove before uploading the DEB and SHA256SUMS. Existing tag
+publication waits for desktop, CLI, CodeQL and audits. Only Ubuntu 22.04 x64
+desktop delivery is targeted now; configured jobs are not hosted-run evidence.
+
+UI-UPDATE-01 keeps public stable-release discovery in the GPL application adapter
+under `platform/updates`, outside DSP/domain crates. One bounded worker queries
+GitHub; QML polls plain status without blocking simulation. A green indicator
+and About action open the separate update dialog. Numeric versions, stable flags,
+exact project/tag URLs, baseline asset name/size and SHA-256 metadata are checked.
+Only a newer compatible stable desktop release produces a notification.
+Manual workflow artifacts do not. Startup failures are quiet; manual retries
+show concise status. The application-global startup preference is persisted
+outside WB JSON. The user opens the release page and installs its DEB normally;
+there is no automatic download, elevation, application replacement or restart.
+
+Audits cover both Cargo lockfiles without suppression. SECURITY-DEPS-02 patches
+rand to 0.9.5 and cxx/cxx-gen to 1.0.195/0.7.195 while retaining Rust 1.85.1 and
+CXX-Qt 0.7.3. See the [design and validation](development/features/ubuntu-desktop/design.md)
+and [desktop user guide](user/install/ubuntu-desktop.md).

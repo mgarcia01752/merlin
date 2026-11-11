@@ -42,6 +42,7 @@ fn main() {
             rust_files: &[
                 "src/bridge/branding.rs",
                 "src/bridge/about_info.rs",
+                "src/bridge/update_info.rs",
                 "src/bridge/ofdm_settings.rs",
                 "src/bridge/profile_input.rs",
                 "src/bridge/source_input.rs",
@@ -57,6 +58,8 @@ fn main() {
                 "qml/components/WorkbenchDialog.qml",
                 "qml/shell/WorkbenchMenuBar.qml",
                 "qml/shell/SettingsDialog.qml",
+                "qml/shell/UpdateNotification.qml",
+                "qml/shell/UpdateDialog.qml",
                 "qml/about/AboutDialog.qml",
                 "qml/about/LicenseDialog.qml",
                 "qml/inputs/ofdm_settings/OfdmSettingsDialog.qml",

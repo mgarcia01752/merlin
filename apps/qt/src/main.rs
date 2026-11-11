@@ -17,6 +17,29 @@ pub(crate) use instruments::{spectrum as spectrum_view, transmitter as transmitt
 /// # Panics
 /// Terminates if Qt cannot construct its application or engine.
 fn main() {
+    let arguments = std::env::args().skip(1).collect::<Vec<_>>();
+    if arguments
+        .first()
+        .is_some_and(|argument| argument == "--version")
+    {
+        println!("MERLIN {}", env!("CARGO_PKG_VERSION"));
+        return;
+    }
+    if arguments
+        .first()
+        .is_some_and(|argument| argument == "--check-workbench")
+    {
+        let check = || -> Result<(), String> {
+            let path = arguments.get(1).ok_or("Provide a workbench JSON path.")?;
+            workbench::project_file::check_file(std::path::Path::new(path))
+        };
+        if let Err(message) = check() {
+            eprintln!("{message}");
+            std::process::exit(1);
+        }
+        println!("Workbench inputs accepted.");
+        return;
+    }
     // GTK's native chooser runs before Qt starts, in a separate presentation-only
     // process, so the two toolkits cannot consume each other's pending UI events.
     if matches!(

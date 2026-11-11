@@ -1,11 +1,20 @@
-MERLIN is a standalone single-channel DOCSIS OFDM simulation core and Rust CLI.
-This release packages `ofdm-fec`; it does not include a Qt application.
+MERLIN is a standalone single-channel DOCSIS OFDM simulation toolkit with a native
+workbench and standalone `ofdm-fec` CLI.
 
-This release targets Ubuntu 22.04, 24.04 and 26.04 x64:
+## Ubuntu 22.04 desktop
 
-- [Ubuntu install, upgrade and uninstall](https://github.com/@REPOSITORY@/blob/@TAG@/docs/user/install/linux.md)
+`merlin_@VERSION@_ubuntu22.04_amd64.deb` installs the native workbench, private Qt
+runtime, rounded desktop icon, user guides and all curated workbench examples.
 
-Verify downloads against `SHA256SUMS`. Native installers and matching portable
-archives include examples, documentation and licenses. Installers are unsigned;
-review your OS approval prompts and organizational policy. Passing native CI
-checks does not establish DOCSIS device interoperability.
+[Desktop installation and update notification](https://github.com/@REPOSITORY@/blob/@TAG@/docs/user/install/ubuntu-desktop.md).
+
+## Standalone CLI
+
+The separate CLI archive and `merlin-ofdm` DEB target Ubuntu 22.04, 24.04 and
+26.04 x64. Desktop delivery on 24.04/26.04 remains deferred for this phase.
+
+[CLI installation, upgrade and removal](https://github.com/@REPOSITORY@/blob/@TAG@/docs/user/install/linux.md).
+
+Verify downloads against `SHA256SUMS`. Packages include public examples,
+documentation and full license notices. Passing CI does not establish DOCSIS
+device interoperability.

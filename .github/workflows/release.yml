@@ -1,7 +1,7 @@
 # Copyright 2026 DOCSIS OFDM Channel Sim contributors
 # SPDX-License-Identifier: Apache-2.0
 
-name: Native CLI release
+name: Native MERLIN release
 on:
   push:
     tags: ['v*']
@@ -37,8 +37,13 @@ jobs:
     uses: ./.github/workflows/dependency-security.yml
     permissions:
       contents: read
+  desktop:
+    needs: version
+    uses: ./.github/workflows/ubuntu-desktop.yml
+    permissions:
+      contents: read
   publish:
-    needs: [version, validate, codeql, dependency-security]
+    needs: [version, validate, codeql, dependency-security, desktop]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -51,8 +56,8 @@ jobs:
       - name: Verify and collect successful native packages
         run: >-
           python3 tools/packaging/collect_release.py --source dist/native --output dist/release
-          --expected-artifacts merlin-assets-linux-x64
-      - name: Publish tested CLI release
+          --expected-artifacts merlin-assets-linux-x64 merlin-assets-desktop-ubuntu22-amd64
+      - name: Publish tested CLI and Ubuntu desktop release
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}

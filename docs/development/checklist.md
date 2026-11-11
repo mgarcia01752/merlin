@@ -923,3 +923,15 @@ Local development scope only; existing push/release and security gates stay inta
 - [ ] **DEV-03** Validate complete provisioning on pristine Ubuntu 22.04/24.04/26.04.
 
 See [setup](setup.md) and [design](features/development-setup/design.md).
+
+
+## Ubuntu 22.04 desktop delivery
+
+- [x] **UI-DEB-01** Build the amd64 Qt DEB with private runtime, examples,
+  notices and local package validation. [Design](features/ubuntu-desktop/design.md).
+- [x] **UI-UPDATE-01** Add background stable-release notification, About retry
+  and global startup preference. [Design](features/ubuntu-desktop/design.md).
+- [ ] **UI-DEB-02** Retain successful hosted Ubuntu 22.04 build and disposable
+  installed/reinstall/remove results; verify this VM's interactive installed UI.
+- [x] **SECURITY-DEPS-02** Patch rand/cxx advisories and audit both graphs
+  without suppression. [Design](features/ubuntu-desktop/design.md).
