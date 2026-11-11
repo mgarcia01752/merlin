@@ -22,9 +22,9 @@ windows group by instrument; Rust instrument providers retain cohesive TX/RX
 ownership under `src/instruments/{transmitter,receiver,spectrum}`. The transmitter/spectrum root module paths remain available through re-exports
 in main.rs, rather than duplicate implementations. CXX-Qt0.7.3 requires all Rust
 QObject bridge files for one QML module to share one directory (its build-time
-guard references QTBUG-93443). Keep receiver_instruments.rs and
+guard references QTBUG-93443). The initial UI-ORG-01 kept receiver_instruments.rs and
 transmitter_analyzer.rs in src/ with the other QObject bridges, importing the
-grouped providers. Core algorithms remain unchanged.
+grouped providers. UI-ORG-02 below relocates all bridges together. Core algorithms remain unchanged.
 
 Move all existing files once, preserving names and licenses. Update build.rs QML
 registration and preserve the same-directory Rust bridge paths. Use explicit relative directory imports for
@@ -37,8 +37,9 @@ Keep one window per QML file; group related charts/controls with their feature o
 instrument. Mirror Rust responsibilities where practical, rather than forcing
 one folder per file or duplicating a common data provider for each chart.
 
-This task implements organization only. UI-INSTR-01's shared TP QAM window/data
-routing and RF-POWER-01's amplifier/attenuator/calibration remain pending.
+This task implements organization only. Shared TP QAM routing and channel
+conditioning were separate follow-up tasks; UI-RF-01 has since implemented them.
+See the [power implementation record](../rf-power-budget/design.md).
 
 Validation: compare registration against all source files, run existing QML
 navigation tests, Qt formatting/Clippy/adapter tests and native build, then launch
@@ -80,3 +81,62 @@ upstream reference paths/hashes in reuse-provenance records remain unchanged.
   were needed for file organization.
 - Skill validation and both discovery links pass. Maintained links, registration,
   resource references and diff whitespace pass. Other OS versions remain untested.
+
+
+## UI-ORG-02: Organize the remaining Rust Qt adapter
+
+Status: implemented and validated on Ubuntu22.04 x64 with Qt6.8.3.
+
+The reviewed root mixed ten QObject adapters with file access, persistence,
+accepted session state and input models. Group those responsibilities without
+changing QML type names, accepted state, dialog behavior or saved JSON. Leave
+large cohesive models intact; line count alone does not justify splitting them.
+
+- `src/bridge/`: all ten QObject files, registered together in the same QML module.
+- `src/inputs/`: source/profile/measurement models, original-byte decoders,
+  saved-state restoration and additional-loss editor preview.
+- `src/workbench/`: accepted session and self-contained project JSON validation/I/O.
+- `src/simulation/`: closed-loop admission, worker lifecycle and retained result.
+- `src/platform/`: bounded local file reads, example discovery, native file picker
+  and native icon/picker headers.
+- `src/instruments/`: existing grouped TX/RX/spectrum providers, unchanged ownership.
+
+Extract profile draft/accepted state from its QObject into a Qt-independent model
+and move its existing validation tests with it. Move source and measurement
+restoration to their input owners. Project validation must not call QObject
+modules. Keep module wiring explicit; no duplicate implementations or empty
+forwarding files. Existing instrument aliases remain for established consumers;
+other internal uses point to canonical owners.
+
+Update build.rs bridge/native-picker registrations, C++ includes, embedded
+resource paths, current source references, Qt guide and coding-style guidance.
+Preserve the Main.qml resource URL and all original embedded bytes. Historical
+upstream provenance paths/hashes remain historical evidence.
+
+Validate existing adapter tests (including independent binary/JSON parsing,
+failed-draft preservation and saved-project validation), formatting, Clippy, QML
+checks and native build. Inspect a temporary VM instance for startup/type/import
+warnings without closing an existing user session. No core code or input-format
+contract changed; no non-Qt workspace test is required. No user-visible layout
+changed, so existing user-guide screenshots remain current.
+
+
+### UI-ORG-02 completed validation
+
+- Formatting and warnings-denied Clippy pass. All23 existing Qt adapter tests
+  pass after relocation, including source/profile draft preservation, binary/JSON
+  validation, self-contained workbench restoration and actual closed-loop results.
+- All28 QML checks pass without warnings; the native executable builds with the
+  retained cache/profile. No non-Qt workspace suite was run.
+- All ten bridges are registered exactly once in their common directory. Main is
+  the only root Rust source. All13 distinct embedded file targets and SHA-256
+  hashes match before/after; saved-input/model modules contain no Qt bridge imports.
+- A separate temporary VM instance opened input editors, TX/channel/RX workbenches
+  and About, with no Qt/QML warnings. The rendered dark About/icon/workbench was
+  inspected. Existing user processes and accepted state were preserved; the
+  temporary instance was closed after verification.
+- Updated documentation links, source references, skill validation/discovery links
+  and diff whitespace pass. Local logs and the native review capture live under
+  ignored `docs/development/local/qt-source-organization/`.
+- Built executable: `apps/qt/target/debug/merlin-qt`,25960656 bytes. Other target
+  platforms and installed-package behavior were not retested for this refactor.

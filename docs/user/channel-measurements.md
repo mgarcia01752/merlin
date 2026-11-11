@@ -134,25 +134,82 @@ response, preserving the imported files. These settings save in the WB JSON.
 See the [staging design](../development/features/channel-workbench/design.md)
 and [additional-loss design](../development/features/channel-tilt/design.md).
 
-## Planned launch amplifier, attenuator and TapPoints
+## Launch amplifier, attenuator and TapPoints
 
-The proposed power-budget layout keeps both conditioning controls inside Channel
-Simulator. Click the amplifier triangle or variable-attenuator symbol itself to
-open settings; there are no separate Configure buttons or blocks. Planned defaults
-are **0 dB gain**, **0 dB attenuation** and **Tilt Off**, requiring no initial setup.
-Zero dB means unchanged level, not0 dBmV absolute power. Receiver AGC is separate.
+Click the **amplifier triangle** to set gain, or the **variable attenuator** to
+set receiver-input attenuation. Each opens its own editor. **Apply** accepts;
+**X / Close** discards changes. Defaults are **0 dB gain**, **0 dB attenuation**
+and **Tilt Off**, so no initial setup is required. Tilt and additional cable loss
+remain under **Channel Model → Additional Loss**.
 
-Circular **TP** (TapPoint) controls sit before and after the amplifier. Clicking a
-TP opens an **SA / QAM** chooser for that point. Both routes reuse shared
-instrument windows, with the selected tap named in the title. There is no
-standalone SA block or junction branch. Output instruments remain at receiver
-input after attenuation. The compact layout uses equal gaps between neighboring
-icons, centered captions, straight connectors and matching upper/lower input
-blocks at equal distances from Channel Model.
+![Channel Simulator with amplifier, attenuator and TapPoints](../images/workbench/channel-inputs-ready-dark.png)
 
-![Proposed amplifier and TapPoint layout, not a runtime screenshot](../images/workbench/channel-power-staging-proposal-dark.png)
+The circles marked **TP** mean **TapPoint**. Click either to select **Spectrum**
+or **QAM** before or after the amplifier. Channel Input also opens the first tap;
+Channel Output opens instruments at receiver input, after attenuation. These
+routes use the same SA and channel QAM windows with their selected boundary in
+the title. Input QAM shows retained physical FFT bins; output QAM shows actual
+received FFT cells before equalization, with received role/bin/symbol selectors.
+After-amplifier points include the accepted gain; automatic axis scaling keeps
+them visible and the displayed axis extent reports their actual scale.
 
-The planned SA calculates total **Channel Power** at its selected tap in dBmV,
-separately from the6 MHz equivalent level. Its integration bandwidth is explicit
-and independent of display zoom. These controls and absolute RF-power checks are
-**not implemented**; see the [power-budget plan](../development/features/rf-power-budget/design.md).
+![Raw received QAM at channel output](../images/workbench/channel-output-qam-dark.png)
+
+### Electrical reference and amplifier target
+
+Leave **TX Electrical Reference** unchecked for an ordinary relative experiment.
+To obtain electrical readings, enable it in the amplifier editor and enter the
+nominal **Input Data Level (dBmV / 6 MHz)** before amplification. This is an
+explicit model reference, not a level inferred from a PNM capture. Imported
+channel estimates remain relative multipliers.
+
+Use **Gain (dB)**, or select **Set Output Data Level** for a target nominal DATA
+level after amplification. The target requires a reference and must resolve to
+0–60 dB gain. The reference/target range and gain bounds are model controls, not
+a universal DOCSIS CMTS output-power specification. Receiver attenuation accepts
+0–60 dB. Receiver AGC and physical overload/clipping are separate, unmodeled effects.
+
+![Launch amplifier settings](../images/workbench/channel-amplifier-dark.png)
+
+### Independent receiver noise
+
+The attenuator editor optionally enables **Add Independent Receiver Noise** with
+a density in **dBmV/Hz**. This requires the TX electrical reference. It adds a
+fixed frequency-bin noise floor after attenuation, in addition to the supplied RxMER residual.
+Account for noise already represented by RxMER; leave this option off when the
+measured residual is the entire intended receiver budget. Removing calibration
+while independent noise is enabled is rejected until noise is explicitly disabled.
+
+With independent noise enabled, increasing cable loss or attenuation lowers SNR;
+matched equalization cannot undo that loss. With it off, the existing post-EQ
+RxMER model can retain the same MER despite cable attenuation. Actual samples
+and decoding determine recovery; a level warning does not invent bit errors.
+
+![Receiver input attenuation and independent noise](../images/workbench/channel-attenuator-dark.png)
+
+### Channel Power and saved workbenches
+
+The SA reports **Channel Power** integrated over the fixed occupied channel band,
+including actual pilot energy, internal gaps and noise. It separately shows the
+band-average **dBmV / 6 MHz** level and integration bandwidth. Mouse zoom and
+**Full Span** change the display, not that power integral. Without calibration,
+power is explicitly relative; with a TX reference it is in **dBmV** and PSD is
+in **dBmV/Hz**. The channel-output SA warns outside the−12…+12 dBmV/6 MHz
+band-average operating target. This is not a per-subband or composite RF-port
+compliance measurement.
+
+![Calibrated Channel Power after the amplifier](../images/workbench/channel-power-sa-dark.png)
+
+**File → Save / Save As / Open** preserve accepted gain, attenuation, target,
+TX reference, independent noise and existing tilt/cable choices along with the
+original PNM inputs. Supported older workbenches default missing power controls
+to0 dB gain/attenuation with no electrical reference or added noise, preserving
+existing tilt/cable settings. Unsupported versions or invalid values reject the
+load without changing the current WB. Derived power readings, zoom, tap selection
+and unapplied drafts are not saved.
+
+See the [model and implementation record](../development/features/rf-power-budget/design.md#ui-rf-01-implemented-scalar-conditioning-and-channel-instruments)
+for normalization assumptions and remaining RF front-end work.
+
+CLI users can use the same conditioning model with the
+[standalone channel-power example](../../examples/channel-power.json).

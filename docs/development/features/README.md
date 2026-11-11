@@ -92,6 +92,6 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 
 - [Additional channel tilt (WAVE-CH-TILT-01, implemented)](channel-tilt/design.md)
 
-- [Absolute downstream power budget (RF-POWER-01, planned)](rf-power-budget/design.md)
+- [Channel conditioning (UI-RF-01) and RF power follow-ups (RF-POWER-01)](rf-power-budget/design.md)
 
-- [Qt source organization (UI-ORG-01)](qt-source-organization/design.md)
+- [Qt source organization (UI-ORG-01 / UI-ORG-02)](qt-source-organization/design.md)

@@ -46,7 +46,8 @@ impl ImpairedChannel {
             NoiseModel::Awgn { sample_power } => sample_power,
             _ => 0.0,
         };
-        let synthesis = if matches!(settings.noise, NoiseModel::Rxmer { .. })
+        let synthesis = if settings.power != Default::default()
+            || matches!(settings.noise, NoiseModel::Rxmer { .. })
             || settings.response.is_some()
             || settings.additional_loss
                 != crate::signal_processing::channel::additional_loss::AdditionalLoss::Off

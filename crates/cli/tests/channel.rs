@@ -114,3 +114,34 @@ fn channel_rejects_explicit_frame_option_including_zero() {
     assert!(!result.status.success());
     assert!(!output.exists());
 }
+
+#[test]
+fn channel_power_settings_use_the_shared_rust_contract() {
+    let temp = tempfile::tempdir().unwrap();
+    let input = temp.path().join("input.json");
+    let output = temp.path().join("output.json");
+    let mut request: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(example("channel-probes.json")).unwrap()).unwrap();
+    request.as_object_mut().unwrap().remove("probes");
+    request["impairments"] = serde_json::json!({"power":{"amplifier_gain_db":6.0,"attenuation_db":6.0,"input_data_level_dbmv_per_6mhz":0.0}});
+    std::fs::write(&input, serde_json::to_vec(&request).unwrap()).unwrap();
+    let run = Command::new(env!("CARGO_BIN_EXE_ofdm-fec"))
+        .args(["channel", "--input"])
+        .arg(&input)
+        .arg("--output")
+        .arg(&output)
+        .output()
+        .unwrap();
+    assert!(
+        run.status.success(),
+        "{}",
+        String::from_utf8_lossy(&run.stderr)
+    );
+    let result: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(output).unwrap()).unwrap();
+    assert_eq!(
+        result["settings"]["impairments"]["power"]["amplifier_gain_db"],
+        6.0
+    );
+    assert_eq!(result["summary"]["comparison"]["bit_errors"], 0);
+}

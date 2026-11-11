@@ -84,6 +84,9 @@ WorkbenchDialog {
             Item { Layout.fillWidth: true }
         }
         SpectrumPlot { id: plot; theme: dialog.theme; viewport: dialog.viewport; overlayText: dialog.viewport.summary || ""; zoomEnabled: dialog.state.has_result; onViewportRequested: function(start, count) { dialog.showView(start, count) } Layout.fillWidth: true; Layout.fillHeight: true }
+        Label { objectName:"saChannelPower";visible:!!dialog.viewport.channel_power_text;text:dialog.viewport.channel_power_text || "";color:dialog.theme.accent;Layout.fillWidth:true;wrapMode:Text.WordWrap }
+        Label {visible:!!dialog.viewport.level_warning;text:dialog.viewport.level_warning || "";color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
+        Label {visible:!!dialog.viewport.error;text:dialog.viewport.error || "";color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
         SymbolTimingPanel {
             id: timingPanel
             objectName: "saTimingPanel"

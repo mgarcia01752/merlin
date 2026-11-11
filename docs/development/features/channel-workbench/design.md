@@ -69,3 +69,10 @@ explicitly labeled design mockups, not runtime evidence.
   sections in a self-contained workbench file.
 - User guide screenshots and relative links updated; diff whitespace checked.
   Other Ubuntu versions and installed-package behavior were not exercised here.
+
+
+UI-RF-01 subsequently extends this basic workspace with clickable amplifier and
+attenuator symbols, inline TP selectors, shared raw QAM, calculated Channel Power,
+optional calibration/noise and versioned WB persistence. Current runtime captures
+and instructions are in the [channel guide](../../../user/channel-measurements.md#launch-amplifier-attenuator-and-tappoints);
+see the [implementation record](../rf-power-budget/design.md).

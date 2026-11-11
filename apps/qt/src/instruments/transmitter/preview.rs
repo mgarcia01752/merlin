@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! GUI-thread lifecycle and viewport formatting over immutable Rust worker results.
-use crate::workbench_session::Inputs;
+use crate::workbench::session::Inputs;
 use docsis_ofdm_fec::{
     simulation::transmitter_preview::{TransmitterPreview, TransmitterPreviewRequest},
     transmission::TransmissionSettings,
@@ -219,7 +219,7 @@ impl Analyzer {
             timing::symbol_timing, WaveformGeometry,
         };
         let prepare = || -> Result<Value, String> {
-            let completed = crate::closed_loop::model::latest();
+            let completed = crate::simulation::closed_loop::latest();
             let settings = completed
                 .as_ref()
                 .map(|result| &result.job.settings.transmission)
@@ -261,9 +261,13 @@ impl Analyzer {
             .result
             .as_ref()
             .ok_or("Generate a TX sample snapshot first.")?;
-        let spectrum = &result.spectrum;
-        crate::spectrum_view::viewport(
-            spectrum,
+        let layout = docsis_ofdm_fec::transmission::layout::CarrierLayout::new(
+            &result.settings,
+            &result.layout,
+        )
+        .map_err(|e| e.to_string())?;
+        crate::instruments::channel::channel_viewport(
+            result.spectrum.clone(),
             start,
             count,
             capture_axis,
@@ -272,6 +276,8 @@ impl Analyzer {
                 result.samples.len(),
                 result.first_sample
             ),
+            &layout,
+            &Default::default(),
         )
     }
 }
@@ -285,7 +291,7 @@ impl Drop for Analyzer {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::workbench_session::AcceptedSource;
+    use crate::workbench::session::AcceptedSource;
     use docsis_ofdm_fec::{
         scenario::pnm_json::{import_profiles, JsonCapture},
         simulation::source::PayloadSourceConfig,

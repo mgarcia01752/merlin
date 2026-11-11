@@ -244,7 +244,7 @@ the native dark popup on the VM and update the user guide. Persistence, other
 editors and execution remain pending.
 
 Implemented editor boundary: `OfdmSettingsDialog.qml` owns transient draft
-presentation; `src/ofdm_settings.rs` owns accepted in-memory settings and delegates
+presentation; `src/bridge/ofdm_settings.rs` owns accepted in-memory settings and delegates
 to core validation/timing. `SectionPreviewDialog.qml` owns remaining generic
 previews. The registry is embedded by Rust with `include_str!`; no runtime source
 checkout or registry filesystem access is required. Other navigation, persistence,

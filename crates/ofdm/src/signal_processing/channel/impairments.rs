@@ -40,18 +40,22 @@ pub struct ChannelImpairments {
     /// Explicit synthetic magnitude response composed without rewriting captures.
     #[serde(default)]
     pub additional_loss: super::additional_loss::AdditionalLoss,
+    /// Scalar conditioning and optional explicitly calibrated independent RX noise.
+    #[serde(default)]
+    pub power: super::power::PowerConditioning,
 }
 /// Direct numerical inspection boundary for the complete frozen physical FFT grid.
 pub struct ImpairmentPlan {
     pub response: Vec<IqPair>,
     pub residual_power: Vec<f64>,
+    pub receiver_noise_power: f64,
     pub llr_variance: Vec<f64>,
 }
 impl ImpairmentPlan {
     /// Applies H times signal-plus-residual at the public frequency-domain boundary.
     /// # Arguments
     /// * `bins` - Complete physical bins; original input remains unchanged.
-    /// * `roles` - Physical carrier roles; excluded bins receive no added noise.
+    /// * `roles` - Carrier roles; RxMER excludes nulled bins, independent RX noise does not.
     /// * `rng` - Dedicated caller-owned Gaussian stream, advanced only for nonzero powers.
     /// # Returns
     /// Owned altered bins before IFFT/CP/window synthesis. Pilot boost is not
@@ -66,7 +70,9 @@ impl ImpairmentPlan {
         rng: &mut impl rand::Rng,
     ) -> Result<Vec<Option<IqPair>>, SimulationError> {
         let count = self.response.len();
-        if bins.len() != count
+        if !self.receiver_noise_power.is_finite()
+            || self.receiver_noise_power < 0.0
+            || bins.len() != count
             || roles.len() != count
             || self.residual_power.len() != count
             || self.llr_variance.len() != count
@@ -106,6 +112,13 @@ impl ImpairmentPlan {
                     return Err(invalid("Channel response multiplication overflow."));
                 }
             }
+            if self.receiver_noise_power > 0.0 {
+                crate::signal_processing::noise::awgn::add_awgn(
+                    point,
+                    self.receiver_noise_power,
+                    rng,
+                );
+            }
         }
         Ok(altered)
     }
@@ -131,6 +144,7 @@ impl ChannelImpairments {
             return Err(invalid("Invalid LLR reference variance."));
         }
         self.additional_loss.validate()?;
+        self.power.validate()?;
         let active: Vec<_> = layout
             .static_roles()
             .iter()
@@ -147,12 +161,14 @@ impl ChannelImpairments {
         let count = settings.subcarrier_spacing.fft_samples() as usize;
         let mut plan = ImpairmentPlan {
             response: vec![[1.0, 0.0]; count],
+            receiver_noise_power: self.power.receiver_noise_power(),
             residual_power: vec![0.0; count],
             llr_variance: vec![reference_variance; count],
         };
         if let NoiseModel::Awgn { sample_power } = self.noise {
             super::awgn::SampleAwgn::new(sample_power, self.seed, 0)?;
-            if self.response.is_some()
+            if self.power != super::power::PowerConditioning::default()
+                || self.response.is_some()
                 || self.additional_loss != super::additional_loss::AdditionalLoss::Off
             {
                 return Err(invalid("Sample AWGN with supplied response is not supported; use explicit RxMER reference plane."));
@@ -227,6 +243,26 @@ impl ChannelImpairments {
                     *component *= gain;
                 }
             }
+        }
+        let scalar = self.power.net_amplitude();
+        for (bin, role) in layout.static_roles().iter().enumerate() {
+            if *role == PhysicalCarrierRole::Excluded {
+                continue;
+            }
+            for component in &mut plan.response[bin] {
+                *component *= scalar;
+            }
+            let h2 = plan.response[bin][0].powi(2) + plan.response[bin][1].powi(2);
+            if plan.receiver_noise_power > 0.0 {
+                plan.llr_variance[bin] = plan.residual_power[bin] + plan.receiver_noise_power / h2;
+            }
+        }
+        if !plan.receiver_noise_power.is_finite()
+            || plan.receiver_noise_power > super::MAX_NORMALIZED_NOISE_POWER
+        {
+            return Err(invalid(
+                "Independent receiver noise exceeds normalized numerical limits.",
+            ));
         }
         KnownReferenceEqualizer::new(&plan.response, 1.0)?;
         Ok(plan)

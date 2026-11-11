@@ -70,3 +70,8 @@ There is no longer a separate root development workspace.
 [Security checks](security.md) describe CodeQL, RustSec and local dependency audits.
 
 Receiver instrument completion: [design](features/receiver-instruments/design.md) · [user guide](../user/receiver-workbench.md).
+
+
+Channel conditioning and shared TapPoint instruments (UI-RF-01):
+[design and validation](features/rf-power-budget/design.md#ui-rf-01-implemented-scalar-conditioning-and-channel-instruments) ·
+[user guide](../user/channel-measurements.md#launch-amplifier-attenuator-and-tappoints).

@@ -4,7 +4,7 @@
  */
 //! Presentation queries over shared immutable response, likelihood and decoder results.
 use super::selection::{select, Query};
-use crate::closed_loop::model::latest;
+use crate::simulation::closed_loop::latest;
 use docsis_ofdm_fec::{
     signal_processing::{
         modulation::slice_symbol,

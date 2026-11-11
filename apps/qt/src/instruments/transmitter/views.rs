@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Small presentation pages over retained TX samples, bits and cells.
-use crate::closed_loop::model::latest;
+use crate::simulation::closed_loop::latest;
 use docsis_ofdm_fec::{
     signal_processing::waveform::spectrum::estimate, simulation::test_points::TestPointId,
 };
@@ -138,12 +138,19 @@ pub(crate) fn spectrum(tap: i32, start: i32, count: i32, capture_axis: bool) -> 
             samples,
         )
         .map_err(|e| e.to_string())?;
-        crate::spectrum_view::viewport(
-            &spectrum,
+        let layout = docsis_ofdm_fec::transmission::layout::CarrierLayout::new(
+            &result.job.settings.transmission,
+            &result.job.settings.layout,
+        )
+        .map_err(|e| e.to_string())?;
+        crate::instruments::channel::channel_viewport(
+            spectrum,
             start,
             count,
             capture_axis,
             "TX complex baseband · before channel",
+            &layout,
+            &result.job.settings.impairments.power,
         )
     };
     get().unwrap_or_else(|error| json!({"error":error,"points":[],"x_ticks":[],"y_ticks":[]}))

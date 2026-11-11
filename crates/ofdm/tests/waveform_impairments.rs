@@ -126,6 +126,7 @@ fn real_waveform_awgn_recovers_payload_and_reports_mer_iterations() {
         },
         response: None,
         additional_loss: Default::default(),
+        power: Default::default(),
     };
     let noisy = run(&settings);
     assert_eq!(noisy.phase, ChannelPhase::Finished);
@@ -156,6 +157,7 @@ fn per_carrier_rxmer_and_complex_response_pass_through_samples_and_equalization(
         },
         response: None,
         additional_loss: Default::default(),
+        power: Default::default(),
     };
     let unity = run(&settings);
     settings.impairments.response = Some(response);
@@ -194,6 +196,7 @@ fn noisy_failed_control_preserves_partial_science_without_fake_zero_ber() {
         noise: NoiseModel::Awgn { sample_power: 10.0 },
         response: None,
         additional_loss: Default::default(),
+        power: Default::default(),
     };
     let result = run_channel(
         &config,
@@ -222,6 +225,7 @@ fn exhausted_channel_probes_do_not_change_noisy_scientific_outcomes() {
         },
         response: None,
         additional_loss: Default::default(),
+        power: Default::default(),
     };
     let baseline = run(&config);
     let mut session = ChannelRun::new(&config).unwrap();
@@ -276,4 +280,22 @@ fn additional_cable_loss_alone_synthesizes_full_attenuation_and_recovers_payload
     let recovered = run(&settings);
     assert_eq!(recovered.comparison.bit_errors, 0);
     assert!(recovered.recovered_payloads > 0);
+}
+
+#[test]
+fn independent_receiver_floor_reduces_mer_after_attenuation_and_gain_restores_it() {
+    let mut settings = settings();
+    settings.impairments.power.input_data_level_dbmv_per_6mhz = Some(0.0);
+    settings.impairments.power.receiver_noise_dbmv_hz = Some(-110.0);
+    let baseline = run(&settings).measured_mer_db.unwrap();
+    settings.impairments.power.attenuation_db = 10.0;
+    let weak = run(&settings).measured_mer_db.unwrap();
+    assert!(
+        (baseline - weak - 10.0).abs() < 0.5,
+        "baseline={baseline}, weak={weak}"
+    );
+    settings.impairments.power.amplifier_gain_db = 10.0;
+    let restored = run(&settings);
+    assert!((restored.measured_mer_db.unwrap() - baseline).abs() < 1e-8);
+    assert_eq!(restored.comparison.bit_errors, 0);
 }

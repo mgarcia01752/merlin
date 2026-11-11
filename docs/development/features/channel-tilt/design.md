@@ -105,7 +105,9 @@ See the [user guide](../../../user/impairments/additional-loss.md).
 
 ## Absolute power follow-up
 
-[RF-POWER-01](../rf-power-budget/design.md) records the missing TX launch level,
-CM input budget and receiver noise/front-end model. A1000 ft relative-loss run
-cannot establish acceptable absolute input power. The user's ±12 dBmV target
-requires a6 MHz equivalent reference; total integrated channel power is separate.
+[UI-RF-01 / RF-POWER-01](../rf-power-budget/design.md) now implements explicit
+TX electrical references, scalar gain/attenuation, independent receiver noise,
+shared TP instruments and power persistence. A1000 ft relative-loss run alone
+still cannot establish acceptable absolute input power. The user's±12 dBmV
+operating target uses a6 MHz equivalent reference; total integrated power is
+separate. Detailed RF-port and physical receiver front-end modeling remain pending.

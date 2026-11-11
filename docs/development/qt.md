@@ -5,7 +5,9 @@ transmitter/channel/receiver stage navigation, SA/QAM and decoder instruments,
 closed-loop Start/Stop/Pause and self-contained workbench Open/Save.
 See the [UI checklist](ui-checklist.md) and
 [architecture](../architecture.md) for supported behavior and remaining work.
-The RF amplifier/attenuator and absolute-power extensions remain planned.
+Channel conditioning, shared TP instruments, optional electrical references and
+WB persistence are implemented; detailed physical RF front-end limits remain
+follow-up work. See [UI-RF-01](features/rf-power-budget/design.md).
 
 ## Source organization
 
@@ -23,9 +25,18 @@ apps/qt/
 │   └── instruments/           spectrum, qam, response, slicer, fec,
 │                              messages, stages
 └── src/
-    ├── main.rs                Startup and stable module re-exports
-    ├── *.rs                   QObject bridges and application/input owners
+    ├── main.rs                Startup and module wiring
+    ├── bridge/                All ten QObject adapters, one QML module
+    ├── inputs/
+    │   ├── channel_model.rs   Additional-loss editor model
+    │   ├── profile_input/     Decoder, draft/accepted state, restoration
+    │   ├── source_input/      Source model and restoration
+    │   └── measurement_input/ Shared capture models and restoration
+    ├── workbench/             Accepted session and project JSON persistence
+    ├── simulation/            Closed-loop admission and bounded worker
+    ├── platform/              Native picker, icon header, files and examples
     └── instruments/
+        ├── channel/           TP routing, calibrated SA and shared raw QAM
         ├── receiver/          Received-cell/response/decoder providers
         ├── transmitter/       Preview, retained stages and message providers
         └── spectrum/          Shared spectrum viewport formatting
@@ -39,9 +50,12 @@ explicit and let local QtTest fixtures run without the compiled Rust module.
 
 Register every QML file in build.rs, preserving the Main.qml embedded entry URL.
 Pinned CXX-Qt0.7.3 permits one directory of Rust QObject bridge files per QML
-module, so the bridges stay together in src/ and import grouped providers.
-Do not move an individual QObject bridge into an instrument directory. Existing
-root Rust instrument paths are retained through re-exports where possible.
+module, so the bridges stay together in `src/bridge/` and import grouped providers.
+Do not move an individual QObject bridge into an instrument directory. The existing
+root instrument aliases remain; other private modules use canonical owner paths.
+Project validation calls restoration helpers under inputs, with no dependency
+on QObject bridges. Native C++ headers stay in platform; build.rs includes src
+and registers the native picker separately from the QML module.
 See the [organization design](features/qt-source-organization/design.md).
 
 ## Build and launch in the VM

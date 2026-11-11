@@ -51,6 +51,8 @@ pub struct TransmitterPreviewRequest {
 pub struct TransmitterPreview {
     /// Frozen settings that produced this sample snapshot.
     pub settings: TransmissionSettings,
+    /// Frozen occupied-band geometry for independent integration and display.
+    pub layout: CarrierLayoutSettings,
     pub samples: Vec<IqPair>,
     pub first_sample: u64,
     pub generated_source_bits: u64,
@@ -221,6 +223,7 @@ impl TransmitterPreviewRequest {
         check()?;
         Ok(TransmitterPreview {
             settings: self.settings.clone(),
+            layout: self.layout.clone(),
             samples,
             first_sample: (warmup * geometry.stride_samples()) as u64,
             generated_source_bits: source.position(),

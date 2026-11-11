@@ -29,7 +29,7 @@ focused core observer/channel tests cover the necessary integration changes.
 chip/SA controls. Stage, QAM, scatter and message views are separate QML files.
 The existing TransmitterAnalyzer bridge adds bounded query methods; focused
 `instruments/transmitter/{capture,views,messages}.rs` modules own presentation
-admission and finite copied data. `closed_loop/model.rs` composes TX capture into
+admission and finite copied data. `simulation/closed_loop.rs` composes TX capture into
 the existing immutable result, discarded on input changes or a new run.
 
 The core channel link now invokes the existing physical-bin and PLC observation

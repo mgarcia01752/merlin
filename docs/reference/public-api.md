@@ -301,3 +301,14 @@ the existing Rust slicer rather than implementing DSP in QML.
 models, explicit units and bounded gain evaluation. `ChannelImpairments.additional_loss`
 composes the magnitude with measured H while preserving originals and the existing
 post-equalization RxMER reference plane. See the [model guide](../user/impairments/additional-loss.md).
+
+
+`signal_processing::channel::power::PowerConditioning` exposes typed scalar gain,
+attenuation, optional nominal DATA electrical reference/output target and optional
+independent receiver noise. `ChannelImpairments.power` composes these with H and
+additional loss; playback preserves them. Independent noise is added after H and
+attenuation and included in LLR variance. `channel_power` integrates full-resolution
+linear PSD over an explicit inclusive bin band independently of any GUI viewport,
+returning normalized power and optional rms dBmV/band-average6 MHz readings.
+`TransmitterPreview.layout` retains frozen occupied-band geometry for integration.
+See the [channel guide](../user/channel-measurements.md#launch-amplifier-attenuator-and-tappoints).

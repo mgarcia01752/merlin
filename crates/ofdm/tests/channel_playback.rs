@@ -51,6 +51,14 @@ fn actual_channel_playback_preserves_rng_fec_epochs_and_rejects_out_of_run_sched
         docsis_ofdm_fec::signal_processing::channel::additional_loss::AdditionalLoss::Manual {
             tilt_db: -6.0,
         };
+    let conditioning = docsis_ofdm_fec::signal_processing::channel::power::PowerConditioning {
+        amplifier_gain_db: 6.0,
+        attenuation_db: 6.0,
+        input_data_level_dbmv_per_6mhz: Some(0.0),
+        receiver_noise_dbmv_hz: Some(-120.0),
+        ..Default::default()
+    };
+    settings.impairments.power = conditioning.clone();
     MeasurementSelection {
         use_rxmer_noise: true,
         transitions: vec![],
@@ -77,6 +85,7 @@ fn actual_channel_playback_preserves_rng_fec_epochs_and_rejects_out_of_run_sched
             tilt_db: -6.0
         }
     );
+    assert_eq!(settings.impairments.power, conditioning);
     let baseline = run_channel(
         &settings,
         &ChannelJobLimits::default(),

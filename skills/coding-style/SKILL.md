@@ -285,6 +285,33 @@ unavailable values explicit, and regenerate the linked JSON examples. Expose
 Rust-derived metadata to UI components rather than reading values back from
 exported JSON or recomputing them for chips/tables.
 
+## Workbench configuration persistence
+
+Every accepted block setting that affects the simulation must be part of the
+versioned WB JSON contract. Adding a UI control is not complete until Save,
+Save As and Open round-trip its accepted value through the same Rust-owned model
+used to prepare a run. Do not leave simulation parameters only in QML state or
+maintain separate saved and execution defaults. Cancelled/unapplied drafts,
+results, calculated instrument readings and transient zoom/tap selections are
+not accepted configuration.
+
+For Channel Simulator changes, persist launch-amplifier gain, receiver-side
+attenuation, tilt mode/value, additional cable model/length/unit and any exposed
+power calibration, level target or reference-band/unit choices. Preserve existing
+RxMER/channel-estimate originals, provenance and playback options. Defaults for
+new or explicitly supported older workbenches are0 dB gain,0 dB attenuation and
+Tilt Off; they must not require an extra acceptance step. Do not silently reset
+existing accepted tilt/cable settings during migration.
+
+Version the affected section when its contract changes. Rust validates finite
+values, units, ranges and supported versions before atomically adopting the
+whole workbench; failed loads preserve current state. Never discard unknown
+settings to appear compatible. Use an explicit migration for supported old
+versions and reject unsupported versions. Cover nondefault round trips, legacy
+defaults, malformed/versioned input rejection and restored run-request values
+with scoped tests. Update architecture, task design, checklist and user guide
+alongside the implementation; keep planned persistence explicitly pending.
+
 ## Reusing the PNM Viewer Qt framework
 
 For MERLIN UI work, inspect reusable shell, theme, dialogs, navigation, adapter
@@ -348,14 +375,24 @@ own file, with its dedicated charts/controls nearby. Use `components` for contro
 shared across features; do not accumulate a new flat catch-all folder.
 
 Keep Qt-facing instrument adapters under `apps/qt/src/instruments/`, with cohesive
-TX/RX providers and shared spectrum formatting. Align QML and Rust by feature and
+TX/RX providers, channel TP routing and shared spectrum formatting. Align QML and Rust by feature and
 responsibility where practical; do not force one-to-one directory mirroring or
 split a shared provider merely to match chart names. Core algorithms remain in
 the existing independent Rust libraries. Preserve established Rust module paths
 with re-exports during moves, not duplicate code or empty forwarding files.
 Pinned CXX-Qt0.7.3 requires all QObject bridge files for the same QML module to
-share one directory: keep these bridge files under src/ and import grouped
-instrument providers. Do not move only some bridges to feature subfolders.
+share one directory: keep all QObject bridges together under `src/bridge/` and
+import the relevant input models, simulation worker and instrument providers.
+Do not move individual bridges into feature folders. Keep `main.rs` focused on
+startup and module wiring. Group input models/restoration under `src/inputs/`,
+accepted state/project persistence under `src/workbench/`, run admission and worker
+lifecycle under `src/simulation/`, and local file/desktop integration under
+`src/platform/`. Keep native interop headers with their platform implementation.
+Persistence validates saved inputs through their Rust models, never through
+QObject bridges. These folders organize the Qt adapter; core DSP stays separate.
+Use canonical private module paths; retain compatibility re-exports only where
+an established consumer requires them. Do not add one-file folders merely to
+mirror QML, or split cohesive models based on line count alone.
 
 For file moves, update build.rs registration, bridge paths, QML directory imports,
 resource includes, tests and maintained source references together. Keep local

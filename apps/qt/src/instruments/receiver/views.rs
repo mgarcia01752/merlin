@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Bounded views of real retained receiver observations.
-use crate::closed_loop::model::latest;
+use crate::simulation::closed_loop::latest;
 use docsis_ofdm_fec::{
     scenario::{measurement_view::measurement_view, FrequencyGrid},
     signal_processing::waveform::spectrum::{density_db, estimate},
@@ -32,12 +32,19 @@ pub(crate) fn spectrum(
             samples,
         )
         .map_err(|e| e.to_string())?;
-        return crate::spectrum_view::viewport(
-            &spectrum,
+        let layout = docsis_ofdm_fec::transmission::layout::CarrierLayout::new(
+            &settings.transmission,
+            &settings.layout,
+        )
+        .map_err(|e| e.to_string())?;
+        return crate::instruments::channel::channel_viewport(
+            spectrum,
             start,
             count,
             capture_axis,
             "Retained contiguous RX samples from the completed/partial run",
+            &layout,
+            &settings.impairments.power,
         );
     }
     let values: Vec<_> = samples

@@ -18,6 +18,7 @@ pub const MAX_SPECTRUM_AVERAGES: usize = 32;
 pub const MAX_SPECTRUM_POINTS: usize = 2048;
 
 /// Full-resolution centered PSD; powers are normalized sample units squared/Hz.
+#[derive(Clone)]
 pub struct PowerSpectrum {
     pub zero_frequency_hz: u32,
     pub spacing_hz: u32,

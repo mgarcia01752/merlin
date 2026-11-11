@@ -45,7 +45,9 @@ Changing accepted inputs clears old observations; run again to inspect the new
 For model details and data provenance see the
 [design](../../development/features/channel-tilt/design.md).
 
-Absolute TX launch power and CM input-power checks are not implemented. The
-normalized constellation does not establish whether a1000 ft link reaches an
-acceptable RF level. A receiver target expressed per6 MHz must not be confused
-with total OFDM channel power. See the [planned power budget](../../development/features/rf-power-budget/design.md).
+A normalized constellation alone does not establish whether a1000 ft link
+reaches an acceptable RF level. The [Channel Simulator power controls](../channel-measurements.md#launch-amplifier-attenuator-and-tappoints)
+now provide an explicit TX reference, gain/attenuation, optional independent
+receiver noise and calculated Channel Power. Without that reference, experiments
+remain relative. A6 MHz equivalent level is separate from total channel power;
+detailed RF-port capability and receiver overload modeling remain follow-up work.

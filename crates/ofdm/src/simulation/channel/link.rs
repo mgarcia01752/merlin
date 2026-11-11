@@ -245,7 +245,9 @@ impl WaveformLink {
                 return Err(invalid("Invalid playback residual power."));
             }
             powers[bin] = power;
-            variances[bin] = power;
+            let h = self.channel.plan.response[bin];
+            let h2 = h[0] * h[0] + h[1] * h[1];
+            variances[bin] = power + self.channel.plan.receiver_noise_power / h2;
         }
         self.channel.plan.residual_power = powers;
         self.channel.plan.llr_variance = variances.clone();

@@ -217,6 +217,7 @@ impl MeasurementSelection {
         };
         let impairments = ChannelImpairments {
             additional_loss: settings.impairments.additional_loss.clone(),
+            power: settings.impairments.power.clone(),
             seed: self.noise_seed,
             noise: if self.use_rxmer_noise {
                 NoiseModel::Rxmer {
@@ -260,6 +261,7 @@ impl MeasurementSelection {
             let mut next_settings = settings.clone();
             next_settings.impairments = ChannelImpairments {
                 additional_loss: settings.impairments.additional_loss.clone(),
+                power: settings.impairments.power.clone(),
                 ..Default::default()
             };
             next_settings.impairment_timeline.clear();

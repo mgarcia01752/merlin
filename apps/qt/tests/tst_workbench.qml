@@ -101,6 +101,13 @@ Pane {
     QtObject {
         id: measurementBackend
         property var loss: ({mode:"off"})
+        property var power: ({amplifier_gain_db:0,attenuation_db:0,input_data_level_dbmv_per_6mhz:null,amplifier_target_dbmv_per_6mhz:null,receiver_noise_dbmv_hz:null})
+        function power_current(){return JSON.stringify(power)}
+        function power_apply(document){const draft=JSON.parse(document);if(draft.amplifier_gain_db<0 || draft.attenuation_db<0){return "Invalid gain"};power=draft;return ""}
+        function tap_state(tap){return JSON.stringify({has_result:false,can_generate:false,tap_name:["Before Amplifier","After Amplifier","Channel Output / RX Input"][tap],reason:"No retained data",result_token:""})}
+        function tap_spectrum(tap,start,count,axis){return JSON.stringify({points:[],total:8192,start:start,count:count || 8192,channel_power_text:"Channel Power: Test"})}
+        function tap_qam(tap,query){return JSON.stringify({available:false,points:[],reason:"No retained data"})}
+
         function loss_current() {return JSON.stringify(loss)}
         function loss_preview(document,settings) {
             const options=JSON.parse(document)
@@ -808,7 +815,7 @@ Pane {
             mouseClick(findChild(dialog,"channelOutput"));tryCompare(dialog.instrumentPopup,"opened",true)
             compare(dialog.output,true)
             mouseClick(findChild(dialog.instrumentPopup,"channelQam"));tryCompare(dialog.outputQamPopup,"opened",true)
-            compare(dialog.outputQamPopup.viewIndex,0)
+            compare(dialog.outputQamPopup.tap,2)
             compare(findChild(dialog.outputQamPopup,"receiverQamView").visible,false)
             closeWithX(dialog.outputQamPopup)
             mouseClick(findChild(dialog,"channelModel"));tryCompare(dialog.modelPopup,"opened",true)
@@ -826,6 +833,33 @@ Pane {
             compare(measurementBackend.loss.length,100)
             measurementBackend.loss={mode:"off"}
             closeWithX(dialog.modelPopup);closeWithX(dialog)
+        }
+        function test_channel_power_controls_cancel_apply_and_tap_symmetry() {
+            const dialog=workbench.channelPopup
+            dialog.open();tryCompare(dialog,"opened",true)
+            mouseClick(findChild(dialog,"channelAmplifier"));tryCompare(dialog.amplifierPopup,"opened",true)
+            findChild(dialog.amplifierPopup,"channelAmplifierGain").text="12"
+            closeWithX(dialog.amplifierPopup)
+            compare(measurementBackend.power.amplifier_gain_db,0)
+            mouseClick(findChild(dialog,"channelAmplifier"));tryCompare(dialog.amplifierPopup,"opened",true)
+            findChild(dialog.amplifierPopup,"channelAmplifierGain").text="12"
+            mouseClick(findChild(dialog.amplifierPopup,"channelAmplifierApply"));tryCompare(dialog.amplifierPopup,"visible",false)
+            compare(measurementBackend.power.amplifier_gain_db,12)
+            mouseClick(findChild(dialog,"channelAttenuator"));tryCompare(dialog.attenuatorPopup,"opened",true)
+            findChild(dialog.attenuatorPopup,"channelAttenuation").text="6"
+            mouseClick(findChild(dialog.attenuatorPopup,"channelAttenuatorApply"));tryCompare(dialog.attenuatorPopup,"visible",false)
+            compare(measurementBackend.power.attenuation_db,6)
+            const before=findChild(dialog,"channelTapBefore"),amp=findChild(dialog,"channelAmplifier"),after=findChild(dialog,"channelTapAfter")
+            compare(amp.x-before.x-before.width,after.x-amp.x-amp.width)
+            compare(before.y+before.height/2,amp.y+amp.height/2)
+            compare(after.y+after.height/2,amp.y+amp.height/2)
+            mouseClick(after);tryCompare(dialog.instrumentPopup,"opened",true)
+            compare(dialog.tapIndex,1)
+            mouseClick(findChild(dialog.instrumentPopup,"channelQam"));tryCompare(dialog.inputQamPopup,"opened",true)
+            compare(dialog.inputQamPopup.tap,1)
+            closeWithX(dialog.inputQamPopup)
+            measurementBackend.power={amplifier_gain_db:0,attenuation_db:0,input_data_level_dbmv_per_6mhz:null,amplifier_target_dbmv_per_6mhz:null,receiver_noise_dbmv_hz:null}
+            closeWithX(dialog)
         }
         function test_render() {
             theme.dark = true

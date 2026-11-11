@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Bounded immutable selection of actual matched receiver cells.
-use crate::closed_loop::model::{latest, ResultData};
+use crate::simulation::closed_loop::{latest, ResultData};
 use docsis_ofdm_fec::types::IqPair;
 use serde::Deserialize;
 use serde_json::{json, Value};

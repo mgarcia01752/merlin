@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Message inspection reuses the validated PLC frame, MAC and descriptor decoders.
-use crate::closed_loop::model::latest;
+use crate::simulation::closed_loop::latest;
 use docsis_ofdm_fec::transmission::plc::{
     descriptors, mac_packets::OCD_MESSAGE_TYPE, reassembly::PlcMessageReassembler, PlcMessageFrame,
 };

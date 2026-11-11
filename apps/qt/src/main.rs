@@ -3,27 +3,16 @@
  * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: GPL-3.0-only
  */
-mod about_info;
-mod branding;
-mod channel_model;
-mod closed_loop;
-mod example_directory;
-mod input_file;
+mod bridge;
+mod inputs;
 mod instruments;
-mod measurement_input;
-mod native_file_picker;
-mod ofdm_settings;
-mod profile_input;
-mod project_file;
-mod receiver_instruments;
-mod source_input;
-mod transmitter_analyzer;
-mod workbench_file;
-mod workbench_session;
+mod platform;
+mod simulation;
+mod workbench;
 use cxx_qt_lib::{QGuiApplication, QQmlApplicationEngine, QString, QUrl};
 pub(crate) use instruments::{spectrum as spectrum_view, transmitter as transmitter_instruments};
 
-/// Starts the native workbench; scientific jobs are not connected in this increment.
+/// Starts the native workbench and its Rust simulation adapters.
 ///
 /// # Panics
 /// Terminates if Qt cannot construct its application or engine.
@@ -34,7 +23,7 @@ fn main() {
         std::env::args().nth(1).as_deref(),
         Some("--native-file-picker" | "--native-file-picker-multiple" | "--native-save-picker")
     ) {
-        native_file_picker::run_helper(
+        platform::native_file_picker::run_helper(
             &std::env::args().nth(2).unwrap_or_default(),
             std::env::args().nth(1).as_deref() == Some("--native-file-picker-multiple"),
             std::env::args().nth(1).as_deref() == Some("--native-save-picker"),

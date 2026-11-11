@@ -133,16 +133,23 @@ Integrate input blocks as their owning sections are developed left to right.
 
 ## UI-03: Observations and analyzers
 
-- [ ] **RF-POWER-01** Add clickable amplifier/attenuator symbols opening their
-  own dialogs, default0 dB gain/loss and Tilt Off. Inline TP circles before/after
-  the amplifier open shared SA/QAM windows; remove the dedicated SA card/branch.
-  SA calculates Channel Power separately from6 MHz equivalent level. Requires
-  calibrated boundaries and a defined noise/limit policy.
+- [x] **UI-RF-01** Implement amplifier/attenuator dialogs, scalar Rust conditioning,
+  shared TP SA/QAM, optional electrical calibration/independent receiver noise and
+  versioned WB persistence. Scoped tests and native VM checks pass.
+  [Design](features/rf-power-budget/design.md#ui-rf-01-implemented-scalar-conditioning-and-channel-instruments).
+
+- [ ] **RF-POWER-01** Complete RF-port loading/capability, per-subband limits and
+  physical receiver overload/AGC modeling. Scalar gain/attenuation, explicit power
+  references, TP instruments and WB persistence are implemented by UI-RF-01.
   [Design](features/rf-power-budget/design.md).
+- [x] **UI-ORG-02** Group all QObject bridges, input models, workbench state,
+  simulation lifecycle and platform integration; decouple saved-input restoration
+  from Qt bridges. [Design](features/qt-source-organization/design.md#ui-org-02-organize-the-remaining-rust-qt-adapter).
+
 - [x] **UI-ORG-01** Group QML and Rust instrument providers by responsibility,
   preserving UI behavior and updating registration/imports/resource references.
   [Design](features/qt-source-organization/design.md).
-- [ ] **UI-INSTR-01** Share TP QAM presentation across sources with explicit tap
+- [x] **UI-INSTR-01** Share channel TP QAM presentation across sources with explicit tap
   providers. Folder organization is tracked separately under UI-ORG-01.
   [Plan](features/rf-power-budget/design.md#shared-instrument-organization-proposal).
 

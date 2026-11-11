@@ -8,6 +8,7 @@ pub mod additional_loss;
 pub mod awgn;
 #[cfg(feature = "simulation")]
 pub mod impairments;
+pub mod power;
 pub mod reference;
 /// Application bound on normalized complex sample/bin noise power, not a DOCSIS limit.
 pub const MAX_NORMALIZED_NOISE_POWER: f64 = 1000.0;

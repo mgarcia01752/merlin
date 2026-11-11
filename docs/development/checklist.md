@@ -704,18 +704,26 @@ See the [implementation record](features/pilot-channel-estimation/implementation
 
 ### Qt simulation workbench
 
-- [ ] **RF-POWER-01** Define and implement calibrated TX/RX levels, explicit
-  6 MHz/total power references, TP-selected SA Channel Power, receiver
-  noise/front-end limits and WB persistence.
-  Distinguish the ±12 dBmV operating target from normative limits; resolve the
-  proposed60 dBmV transmitter reference. [Design](features/rf-power-budget/design.md).
+- [x] **UI-RF-01** Implement amplifier/attenuator dialogs, scalar Rust conditioning,
+  shared TP SA/QAM, optional electrical calibration/independent receiver noise and
+  versioned WB persistence. Scoped tests and native VM checks pass.
+  [Design](features/rf-power-budget/design.md#ui-rf-01-implemented-scalar-conditioning-and-channel-instruments).
 
+- [ ] **RF-POWER-01** Complete RF-port loading/capability, per-subband electrical
+  limits and physical receiver overload/AGC modeling. Scalar conditioning,
+  optional reference/noise, calibrated TP Channel Power and WB persistence are
+  implemented by UI-RF-01;60 dBmV is not a universal normative CMTS ceiling.
+  [Design](features/rf-power-budget/design.md).
+
+- [x] **UI-ORG-02** Group all QObject bridges, input models, workbench state,
+  simulation lifecycle and platform integration; decouple saved-input restoration
+  from Qt bridges. [Design](features/qt-source-organization/design.md#ui-org-02-organize-the-remaining-rust-qt-adapter).
 
 - [x] **UI-ORG-01** Group QML windows/components and Rust instrument providers
   by responsibility; update registration, imports, resource references and
   coding-style guidance. [Design](features/qt-source-organization/design.md).
 
-- [ ] **UI-INSTR-01** Complete shared TP QAM presentation and tap-specific data
+- [x] **UI-INSTR-01** Share one channel TP QAM presentation with tap-specific data
   providers. Instrument-folder organization is handled by UI-ORG-01. [Plan](features/rf-power-budget/design.md#shared-instrument-organization-proposal).
 
 - [x] **WAVE-CH-TILT-01** Implement manual tilt and full additional cable loss

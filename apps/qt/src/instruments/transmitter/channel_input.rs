@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Actual pre-channel physical bins; no reconstruction from received or ideal data.
-use crate::closed_loop::model::latest;
+use crate::simulation::closed_loop::latest;
 use docsis_ofdm_fec::{
     simulation::test_points::TestPointId,
     transmission::layout::{CarrierLayout, PhysicalCarrierRole},

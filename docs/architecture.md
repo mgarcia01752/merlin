@@ -366,6 +366,19 @@ old results, and never starts a simulation automatically. Rejected loads preserv
 the current workbench. Saving does not overwrite original PNM captures. Generated
 results, caches and worker state are not configuration.
 
+Channel Simulator power controls extend this same contract:
+Save/Save As/Open restore accepted launch gain, receiver-side attenuation,
+tilt/cable mode and parameters, and any exposed level/calibration/reference-band
+choices with explicit units. New workbenches and supported legacy files missing
+the new controls default to0 dB gain,0 dB attenuation and Tilt Off, while preserving
+existing accepted additional-loss settings. The frozen run request must use those
+restored values, rather than QML defaults. Version and migrate the affected
+section explicitly; validate before atomic adoption and preserve state on failure.
+Computed Channel Power and transient TP/SA/QAM navigation are not configuration.
+UI-RF-01 implements this extension in `sections.channel_power` schema1 while
+preserving `sections.channel_model` schema1. Legacy missing power sections select
+unity gain/attenuation and relative units. Restored settings feed the run request.
+
 ### Curated workbench examples and Open location
 
 `examples/workbench/manifest.json` inventories two runnable bundles: `single`
@@ -466,25 +479,36 @@ WB `channel_model` section defaults to Off when absent. See the
 [model, limits and evidence](development/features/channel-tilt/design.md) and
 [user guide](user/impairments/additional-loss.md).
 
-RF-POWER-01 is the planned absolute-power follow-up. Current normalized I/Q and
-relative H do not establish transmitter launch power or CM input sensitivity.
-Add explicit TX/RX6 MHz equivalent levels and separately integrated channel power,
-calibration, imported-H reference policy and receiver noise/front-end limits.
-The user's ±12 dBmV/6 MHz target is an engineering margin inside the pinned
-PHY input level range, not total channel power. The proposed60 dBmV TX limit
-needs a bandwidth and port-capability definition. Keep existing RxMER conditioning
-explicit and avoid double-counting noise. No absolute-power controls or calibrated
-SA units are implemented. The proposed channel workspace places a clickable
-right-pointing amplifier triangle before Channel Model and a variable resistive
-attenuator with a diagonal adjustment arrow after it. Circular TP (TapPoint)
-selectors before and after the amplifier open an SA/QAM chooser for that plane;
-there is no dedicated SA block or branch. Output instruments stay after the
-attenuator, and receiver AGC stays separate. Clicking the amplifier/attenuator
-symbols opens their dialogs directly. Defaults are0 dB gain,0 dB attenuation and
-Tilt Off, without initial setup or an extra readiness gate at those defaults.
-The SA will calculate integrated Channel Power at its selected tap, with explicit
-bandwidth and calibrated dBmV units, separately from6 MHz equivalent power.
-Display zoom must not change this integral. These controls remain planned.
+UI-RF-01 implements the Channel Simulator amplifier/attenuator and inline TP
+layout. Click the right-pointing amplifier triangle or variable-resistor/diagonal-
+arrow attenuator to edit a draft. Apply accepts; X/Close cancel. Defaults are0 dB
+gain,0 dB attenuation and Tilt Off. TP circles before/after amplification open the
+shared SA/QAM instrument chooser; output instruments follow receiver attenuation.
+No dedicated SA block or branch exists. All three channel taps use one QAM window;
+output selectors expose actual raw RX cells, while input taps use retained TX
+physical bins. Post-amplifier data uses the exact core scalar gain at that boundary.
+
+The Rust PowerConditioning model owns scalar gain/attenuation, optional TX DATA
+reference in dBmV/6 MHz, alternative amplifier output target and optional independent
+receiver noise density after attenuation. Calibration is opt-in; legacy normalized
+runs remain relative. The reference maps unit-power DATA FFT cells through the
+unitary204.8 MS/s waveform convention to rms mV², without a hidden factor of two.
+Imported H remains a relative multiplier. RxMER remains post-EQ residual; an
+explicit independent receiver floor is additional, never automatically enabled.
+Noise/response playback preserves both settings and correct LLR variances. Gain,
+cable loss and attenuation affect actual synthesized RX samples and decoding.
+
+Time-domain channel and completed-run TX/RX SA routes calculate Channel Power by
+integrating full-resolution linear PSD over a fixed occupied channel band. Actual
+pilot energy, internal gaps and noise remain included. Total dBmV, band-average
+6 MHz equivalent level and bandwidth are separate; zoom never changes integration.
+Relative runs report normalized power. Calibrated channel output warns outside
+the user's±12 dBmV/6 MHz band-average operating target without fabricating FEC
+failure. See the [implementation and model assumptions](development/features/rf-power-budget/design.md#ui-rf-01-implemented-scalar-conditioning-and-channel-instruments).
+
+RF-POWER-01 remains partial: detailed RF-port loading/capability, per-subband
+limits, ADC overload/clipping, receiver AGC and wideband composite input are not
+modeled. The proposed60 dBmV is not treated as a universal normative CMTS ceiling.
 
 UI layouts and diagrams follow visual symmetry, centerline alignment and a shared
 spacing scale. Adjacent visible block/icon edges have equal clearance; matching
@@ -499,12 +523,20 @@ messages and stages. Input directories use the corresponding Rust owner names.
 Qt-facing instrument providers now live under `apps/qt/src/instruments/`, with
 cohesive transmitter/receiver and shared spectrum modules. Existing root Rust
 paths are retained through re-exports or the existing QObject bridges. Pinned
-CXX-Qt requires those bridge files to stay together under src/ for this QML module.
+CXX-Qt requires those bridge files to stay together for this QML module.
+UI-ORG-02 moves all ten into `src/bridge/`, with independent input models and
+restoration under `src/inputs/`, accepted state/persistence under `src/workbench/`,
+run admission/worker under `src/simulation/`, and filesystem/desktop interop under
+`src/platform/`. Saved-project validation calls the input models directly, without
+a QObject dependency. Main remains bootstrap/module wiring; native interop headers
+live beside their platform adapter. This changes ownership paths, not UI behavior
+or the workbench JSON contract.
 File moves preserve registered QML type names, imports, embedded resources and
 visible behavior. See the [organization design](development/features/qt-source-organization/design.md).
 
-UI-INSTR-01's common TP QAM window/provider routing remains pending: the current
-SA is shared, while TX/input and receiver QAM wrappers remain separate. Core
+UI-INSTR-01 now supplies one channel TP QAM window and provider routing for all
+three channel boundaries. The SA is shared. Dedicated TX and paired receiver QAM
+workbench tools retain their existing specialized wrappers. Core
 numerical algorithms stay in their existing Rust modules. RF power extensions
 remain in the [power-budget plan](development/features/rf-power-budget/design.md).
 

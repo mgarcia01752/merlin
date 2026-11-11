@@ -24,7 +24,7 @@ fn main() {
         }
     }
     CxxQtBuilder::new()
-        .file("src/native_file_picker.rs")
+        .file("src/platform/native_file_picker.rs")
         .qrc("branding.qrc")
         .cc_builder(|builder| {
             builder.include("src");
@@ -40,16 +40,16 @@ fn main() {
         .qml_module(QmlModule {
             uri: "Merlin.Workbench",
             rust_files: &[
-                "src/branding.rs",
-                "src/about_info.rs",
-                "src/ofdm_settings.rs",
-                "src/profile_input.rs",
-                "src/source_input.rs",
-                "src/measurement_input.rs",
-                "src/receiver_instruments.rs",
-                "src/closed_loop.rs",
-                "src/workbench_file.rs",
-                "src/transmitter_analyzer.rs",
+                "src/bridge/branding.rs",
+                "src/bridge/about_info.rs",
+                "src/bridge/ofdm_settings.rs",
+                "src/bridge/profile_input.rs",
+                "src/bridge/source_input.rs",
+                "src/bridge/measurement_input.rs",
+                "src/bridge/receiver_instruments.rs",
+                "src/bridge/closed_loop.rs",
+                "src/bridge/workbench_file.rs",
+                "src/bridge/transmitter_analyzer.rs",
             ],
             qml_files: &[
                 "qml/Main.qml",
@@ -74,8 +74,11 @@ fn main() {
                 "qml/inputs/measurement_input/ChannelResponseDialog.qml",
                 "qml/workbenches/channel/ChannelConfigurationDialog.qml",
                 "qml/workbenches/channel/ChannelWorkbenchDialog.qml",
+                "qml/workbenches/channel/ChannelAmplifierDialog.qml",
+                "qml/workbenches/channel/ChannelAttenuatorDialog.qml",
+                "qml/workbenches/channel/ConditioningSymbol.qml",
+                "qml/instruments/qam/TapQamDialog.qml",
                 "qml/workbenches/channel/ChannelInstrumentDialog.qml",
-                "qml/instruments/qam/ChannelInputQamDialog.qml",
                 "qml/workbenches/channel/ChannelLossDialog.qml",
                 "qml/workbenches/receiver/ReceiverWorkbenchDialog.qml",
                 "qml/workbenches/transmitter/TransmitterWorkbenchDialog.qml",
