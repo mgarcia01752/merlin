@@ -1014,7 +1014,11 @@ channel, synthetic echoes and explicit reconstruction of CM response coefficient
 The independent receiver must derive correction and reliability from received
 samples and declared bootstrap inputs, without applied H, configured tap delays or
 exact simulator noise powers. Channel truth remains a separate diagnostic input.
-Existing diagonal/calibrated modes remain explicit reference baselines. No sample
+Existing diagonal/calibrated modes remain explicit reference baselines.
+Homegrown Channel Estimation (HGCE) is disabled by default and configured in
+Receiver Configuration. Its setting is independent of channel impairments;
+accepted changes apply to the next run.
+Existing saved receiver-mode choices remain compatible. No sample
 filter, new independent noise estimator or UI is implemented by this plan; see the
 [design and acceptance gates](development/features/independent-channel-estimation/design.md).
 

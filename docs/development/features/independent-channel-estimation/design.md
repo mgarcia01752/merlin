@@ -39,6 +39,12 @@ flowchart LR
 
 ## Boundaries and contracts
 
+- **Homegrown Channel Estimation (HGCE) is disabled by default.** Its enable
+  control and estimator settings belong in **Receiver Configuration**, not
+  Channel Model. New workbenches and requests without the new HGCE setting use
+  Off; existing saved receiver-mode selections retain their previous meaning.
+  Off preserves the existing receiver correction behavior; it does not disable
+  channel impairments or mean that all receiver correction is bypassed.
 - Channel configuration chooses the existing diagonal model or the new sample
   filter explicitly. Preserve old saved WBs and reference behavior by default.
 - Sample-filter source chooses synthetic paths or reconstructed CM response.
@@ -132,6 +138,17 @@ drain. Validate settings before changing an accepted WB. Keep cancellation and
 runtime checks between bounded blocks and preserve partial results on failure.
 Rust owns bounded filter/estimator state; Qt renders it.
 
+Expose **Homegrown Channel Estimation (HGCE)** as an Off-by-default control in
+Receiver Configuration. Enable its estimator settings only when HGCE is On.
+Apply validates and saves the selection; Cancel discards pending edits. Accepted
+changes take effect on the next run, without switching an active receiver midway
+through processing. Persist HGCE enablement and settings in the WB and shared
+Rust/CLI contracts; omission defaults to Off. When On, HGCE owns correction and
+received-only reliability estimation, with no simultaneous supplied-H correction
+or silent fallback. An estimation failure produces an actionable diagnostic.
+Keep existing explicit pilot-estimated requests compatible; HGCE adds the planned
+independent mode rather than reinterpreting saved settings.
+
 Expose Channel Model source/settings separately from receiver correction mode.
 Show three aligned graphs: applied/estimated magnitude, phase, and impulse
 response. Truth comparison is optional diagnostics only. Mark delay reference,
@@ -155,6 +172,10 @@ frequency response, separate from the implementation under test. Cover:
 - Original source-bit comparison and actual MER/FEC outcomes; demapper estimates
   are not ground truth. Failed and partial runs retain honest outcomes.
 - Old diagonal/reference requests and saved WBs preserve their existing results.
+- New/omitted HGCE settings are Off; On/Off and estimator settings survive WB
+  save/reopen. Apply/Cancel and next-run activation behave as documented. Enabling
+  channel echoes never implicitly enables HGCE, and HGCE failure never silently
+  switches to supplied channel truth.
 - Selected real CM captures meet declared reconstruction tolerances; report
   measurement-conditioned simulation, not original field-noise replay.
 

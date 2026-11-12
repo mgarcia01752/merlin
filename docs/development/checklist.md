@@ -631,6 +631,8 @@ See the [implementation record](features/pilot-channel-estimation/implementation
   reliability and deep-null policies against actual channel memory.
 - [ ] **CH-EST-RX-11** Integrate shared Rust/CLI/WB settings and bounded applied-H
   versus estimated-H diagnostics without exposing truth to receiver decisions.
+  HGCE defaults to Off, with enablement/settings in Receiver Configuration;
+  preserve saved modes and validate Apply/Cancel, persistence and next-run use.
 - [ ] **CH-EST-RX-12** Verify analytic echoes, real waveform/FEC recovery, input
   isolation, resource limits and unchanged legacy modes; document scope.
 
