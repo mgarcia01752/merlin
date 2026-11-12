@@ -621,6 +621,22 @@ WAVE-RX-05 now provides bounded nonideal acquisition. Bounded CP sample-offset s
 is implemented independently; CLI operation retains known timing/PLC phase.
 See the [implementation record](features/pilot-channel-estimation/implementation.md).
 
+- [ ] **CH-EST-RX-07** Define independent RX inputs, noise policy and bounded
+  sample-filter contracts; audit all simulator-assisted receiver inputs.
+- [ ] **CH-EST-RX-08** Add continuous synthetic echo/delay filtering with persistent
+  sample history, explicit tail accounting and bounded efficient processing.
+- [ ] **CH-EST-RX-09** Reconstruct a bounded causal filter from CM coefficients
+  with explicit band/gap/delay policies and measured approximation errors.
+- [ ] **CH-EST-RX-10** Validate/refine pilot estimation, timing, received-only
+  reliability and deep-null policies against actual channel memory.
+- [ ] **CH-EST-RX-11** Integrate shared Rust/CLI/WB settings and bounded applied-H
+  versus estimated-H diagnostics without exposing truth to receiver decisions.
+- [ ] **CH-EST-RX-12** Verify analytic echoes, real waveform/FEC recovery, input
+  isolation, resource limits and unchanged legacy modes; document scope.
+
+These planned extensions preserve the implemented MODEL-05 baseline. See the
+[independent receiver and channel-memory plan](features/independent-channel-estimation/design.md).
+
 - [x] **MODEL-06** Measurement-driven channel runs using the applied modulation
   profile, missing-carrier policy, temporal frames and actual FEC outcomes.
   - [x] Select one captured frame/profile/response with explicit epoch tolerance,

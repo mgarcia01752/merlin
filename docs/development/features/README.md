@@ -134,3 +134,5 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 - [Restore workbench inputs](restore-workbench-inputs/design.md): UI-INPUT-RESTORE-01.
 
 - [Run-specific QAM results and TX-reference MER](qam-run-results/design.md): UI-QAM-RUNS-02.
+
+- [Independent receiver estimation through a channel with memory](independent-channel-estimation/design.md): CH-EST-RX-07..12 (planned).

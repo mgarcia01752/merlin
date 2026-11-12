@@ -1009,6 +1009,15 @@ is outside the minimum model.
 
 ## Receiver Channel Estimation (CH-EST-RX) and pilot/PLC analyzers
 
+Planned **CH-EST-RX-07..12** extend this foundation with a continuous sample-filter
+channel, synthetic echoes and explicit reconstruction of CM response coefficients.
+The independent receiver must derive correction and reliability from received
+samples and declared bootstrap inputs, without applied H, configured tap delays or
+exact simulator noise powers. Channel truth remains a separate diagnostic input.
+Existing diagonal/calibrated modes remain explicit reference baselines. No sample
+filter, new independent noise estimator or UI is implemented by this plan; see the
+[design and acceptance gates](development/features/independent-channel-estimation/design.md).
+
 Channel Estimation (CH-EST) names the processing function; the RX or TX suffix
 identifies its direction. Receiver Channel Estimation (CH-EST-RX) estimates H
 from received pilots; CH-EST-TX is reserved for transmitter-side work.
