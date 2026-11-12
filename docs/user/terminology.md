@@ -88,7 +88,7 @@ See [QAM processing](qam-processing/README.md) and [receiver instruments](receiv
 | Run Profile | The captured profile ID used by one independent simulation run. It is separate from the current on-wire Profile A/ID0. |
 | RxMER | Receive Modulation Error Ratio: per-subcarrier signal-to-modulation-error power ratio, commonly expressed in dB. MERLIN uses it to model residual error power; it does not reconstruct measured I/Q from RxMER. |
 | Channel estimate H | Complex frequency response across subcarriers. Flat/unity H = 1 + 0i means no gain/phase change; H = 0 + 0i would suppress the signal. |
-| Receiver estimate H-hat | Channel response estimated from received pilots, distinct from the supplied reference H. |
+| Receiver estimate Ĥ (H-hat) | Channel response estimated from received pilots, distinct from applied H. The response Display selector calls it MCE Estimate for MCE runs and Pilot Estimate for legacy pilot-estimated runs. See the [MCE guide](receiver-estimation/mce.md). |
 | Pilot-assisted estimation | Uses independently known pilot symbols to estimate the received channel; it is not arbitrary blind RF acquisition. |
 | FIR | Finite impulse response: a filter formed from a finite set of delayed, weighted samples. MERLIN's [waveform channel](impairments/waveform-filter.md) retains those delays between OFDM symbols. |
 | Equalization | Applies a correction based on channel response to reduce its effect on received constellation points. |

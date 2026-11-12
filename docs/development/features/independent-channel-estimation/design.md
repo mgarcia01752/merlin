@@ -224,3 +224,17 @@ The user-selected display acronym is **MCE — MERLIN Channel Estimation**.
 Add only a small MCE chip to the existing main Receiver block, visible when
 enabled; preserve its dimensions, layout and centered Receiver heading.
 The renamed mode remains disabled by default in Receiver Configuration.
+
+### CH-EST-RX-11: Clarify MCE diagram routing and display selection
+
+When accepted MCE is enabled, hide only the supplied-H branch into Receiver.
+Retain DS Channel Est. to Channel Simulator and the received-signal connection.
+QML owns this presentation; scientific inputs and saved settings remain unchanged.
+Rename Response to Display, with Applied Channel (H), MCE Estimate (Ĥ), and
+Compare Channel / MCE. Retained legacy results use Pilot Estimate instead of MCE;
+retained result metadata takes precedence over next-run settings.
+
+Validation: Qt check passes (formatting, Clippy, 66 adapter tests, 58 QML tests
+and native build). Tests cover accepted-mode routing, preserved channel paths,
+restored reference routing and retained MCE/legacy display labels. Actual Ubuntu
+dark screenshots confirm the diagram and comparison view; guide images updated.

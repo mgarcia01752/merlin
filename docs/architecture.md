@@ -1024,7 +1024,11 @@ MCE states: Off uses reference 1/H correction; On uses independently estimated
 Existing saved receiver-mode choices remain compatible. `merlin_estimated` uses
 receiver-generated pilots and temporal continuous-pilot differences, never exact
 channel/noise inputs. A small MCE chip indicates enablement without moving the
-centered Receiver heading. Training/Tracking describes 128-symbol history readiness,
+centered Receiver heading. When MCE is enabled, the diagram hides the direct
+supplied-H branch to Receiver, retaining the channel impairment and signal paths.
+The response Display selector names MCE or legacy pilot estimates from retained
+result metadata rather than relabeling old results with next-run settings.
+Training/Tracking describes 128-symbol history readiness,
 not certified accuracy. Apply is blocked during a run; draft Cancel/X preserves
 accepted settings. Rust settings/results are shared by CLI and Qt; Python is deferred.
 

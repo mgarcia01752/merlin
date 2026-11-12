@@ -1398,6 +1398,8 @@ Pane {
             const heading=findChild(block,"blockHeading")
             const headingY=heading.y,headingHeight=heading.height
             compare(chip.visible,false)
+            compare(findChild(workbench,"estimateReceiverBranch").visible,true)
+            compare(findChild(workbench,"estimateReceiverConnection").visible,true)
             mouseClick(block);tryCompare(workbench.receiverPopup,"opened",true)
             mouseClick(findChild(workbench.receiverPopup,"receiverConfigure"))
             const dialog=workbench.receiverConfigPopup
@@ -1417,6 +1419,10 @@ Pane {
             mouseClick(findChild(dialog,"receiverConfigApply"));tryCompare(dialog,"visible",false)
             compare(chip.visible,true)
             compare(block.indicatorText,"MCE")
+            compare(findChild(workbench,"estimateReceiverBranch").visible,false)
+            compare(findChild(workbench,"estimateReceiverConnection").visible,false)
+            compare(findChild(workbench,"estimateChannelConnection").visible,true)
+            compare(findChild(workbench,"channelReceiverConnection").visible,true)
             compare(heading.y,headingY);compare(heading.height,headingHeight)
             compare(heading.horizontalAlignment,Text.AlignHCenter)
             compare(runBackend.acceptedRunOptions.mce.averaging_symbols,24)
@@ -1430,6 +1436,21 @@ Pane {
             keyClick(Qt.Key_Escape);tryCompare(workbench.receiverPopup,"visible",false)
             runBackend.acceptedRunOptions=saved;runBackend.configured=wasConfigured;workbench.pollRun()
             compare(chip.visible,false)
+            compare(findChild(workbench,"estimateReceiverBranch").visible,true)
+            compare(findChild(workbench,"estimateReceiverConnection").visible,true)
+        }
+        function test_response_display_labels_follow_retained_mode() {
+            const dialog=workbench.receiverPopup.responsePopup
+            const savedResponse=dialog.response
+            const selector=findChild(dialog,"receiverResponseSource")
+            dialog.response={available:true,mce:{tracking:true},points:[],x_ticks:[],y_ticks:[]}
+            compare(selector.model[0],"Applied Channel (H)")
+            compare(selector.model[1],"MCE Estimate (Ĥ)")
+            compare(selector.model[2],"Compare Channel / MCE")
+            dialog.response={available:true,points:[],x_ticks:[],y_ticks:[]}
+            compare(selector.model[1],"Pilot Estimate (Ĥ)")
+            compare(selector.model[2],"Compare Channel / Pilots")
+            dialog.response=savedResponse
         }
         function test_waveform_channel_apply_and_cancel_preserve_receiver_mode() {
             const saved=JSON.parse(JSON.stringify(runBackend.acceptedRunOptions))

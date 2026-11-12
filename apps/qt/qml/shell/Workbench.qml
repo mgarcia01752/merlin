@@ -237,14 +237,15 @@ Item {
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 260; fromY: 230; toX: 260; toY: 350; arrowHead: false }
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 260; fromY: 290; toX: 325; toY: 290 }
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 520; fromY: 290; toX: 630; toY: 290 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 825; fromY: 290; toX: 935; toY: 290 }
+                Connection { objectName: "channelReceiverConnection"; anchors.fill: parent; theme: workbench.theme; fromX: 825; fromY: 290; toX: 935; toY: 290 }
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 422.5; fromY: 155; toX: 422.5; toY: 245 }
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 1032.5; fromY: 245; toX: 1032.5; toY: 155 }
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 727.5; fromY: 155; toX: 727.5; toY: 245 }
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 880; fromY: 425; toX: 880; toY: 380; arrowHead: false }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 727.5; fromY: 380; toX: 1032.5; toY: 380; arrowHead: false }
+                Connection { objectName: "estimateChannelConnection"; anchors.fill: parent; theme: workbench.theme; fromX: 727.5; fromY: 380; toX: 880; toY: 380; arrowHead: false }
+                Connection { objectName: "estimateReceiverBranch"; visible: receiverBlock.indicatorText !== "MCE"; anchors.fill: parent; theme: workbench.theme; fromX: 880; fromY: 380; toX: 1032.5; toY: 380; arrowHead: false }
                 Connection { anchors.fill: parent; theme: workbench.theme; fromX: 727.5; fromY: 380; toX: 727.5; toY: 335 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 1032.5; fromY: 380; toX: 1032.5; toY: 335 }
+                Connection { objectName: "estimateReceiverConnection"; visible: receiverBlock.indicatorText !== "MCE"; anchors.fill: parent; theme: workbench.theme; fromX: 1032.5; fromY: 380; toX: 1032.5; toY: 335 }
                 WorkbenchBlock {
                     id: ofdmBlock; objectName: "ofdmBlock"; x: 47.5; y: 185; width: 195; height: 90
                     theme: workbench.theme; heading: "OFDM Channel\nDescriptor\n(OCD)"

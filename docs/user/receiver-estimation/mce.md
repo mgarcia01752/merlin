@@ -13,6 +13,10 @@ existing layout. Cancel and the title X discard draft changes. Settings persist
 with the workbench and take effect on the next run; Apply is disabled while a
 simulation is active. Stop the current run before changing accepted settings.
 
+With MCE enabled, the direct DS Channel Est. connection into Receiver is hidden.
+The connection to Channel Simulator remains: supplied H still impairs the signal.
+The signal connection from Channel Simulator to Receiver stays visible.
+
 ![Main workbench with the MCE chip and centered Receiver heading](../../images/workbench/mce-workbench-dark.png)
 
 ![Actual Receiver Configuration with MCE enabled](../../images/workbench/mce-receiver-configuration-dark.png)
@@ -80,9 +84,14 @@ fail explicitly. The receiver never silently switches to supplied H.
 ## Inspecting results
 
 Run the workbench, then open **Receiver → Channel Response / Echo**. Select
-**Compare H / H-hat** for applied and estimated responses side by side. Choose
+**Display → Compare Channel / MCE** for applied and estimated responses side by side. Choose
 Gain, Wrapped Phase or Impulse / Echo; each panel labels its own vertical scale.
 Impulse plots are band-limited and peak-normalized, not physical echo guarantees.
+The **Display** selector offers **Applied Channel (H)** and **MCE Estimate (Ĥ)**.
+It selects a graph; enable MCE in Receiver Configuration. Retained legacy
+pilot-estimated runs show **Pilot Estimate (Ĥ)** and **Compare Channel / Pilots**.
+Labels follow the retained run even when next-run settings change.
+
 The scalar MCE status reports its received-pilot raw noise proxy. QAM shows actual
 TX-reference MER; FEC Monitor shows TotalCW, CCW and UFEC. High MER alone is not
 proof of successful payload recovery.

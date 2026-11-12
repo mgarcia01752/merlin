@@ -633,6 +633,8 @@ See the [implementation record](features/pilot-channel-estimation/implementation
   versus estimated-H diagnostics without exposing truth to receiver decisions.
   MCE defaults to Off, with enablement/settings in Receiver Configuration;
   preserve saved modes and validate Apply/Cancel, persistence and next-run use.
+  Hide the direct supplied-H diagram branch for MCE; retain channel paths.
+  Label response Display choices using the retained MCE or legacy pilot result.
   Verify supplied H impairs both MCE states identically; Off uses reference
   correction and On uses received-pilot estimates without supplied H in RX.
 - [x] **CH-EST-RX-12** Verify analytic echoes, real waveform/FEC recovery, input

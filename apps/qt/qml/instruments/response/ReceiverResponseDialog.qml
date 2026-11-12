@@ -12,6 +12,9 @@ WorkbenchDialog {
     required property var backend
     property var runState: ({})
     property var response: ({points:[],x_ticks:[],y_ticks:[]})
+    // Retained results describe the last run, independently of next-run settings.
+    readonly property bool mceResult: response.available ? response.mce !== undefined : runState.options?.receiver_mode === "merlin_estimated"
+    readonly property string estimateLabel: mceResult ? "MCE Estimate (Ĥ)" : "Pilot Estimate (Ĥ)"
     property string seenToken:""
     property int sourceIndex:0
     property int snapshotIndex:0
@@ -27,8 +30,8 @@ WorkbenchDialog {
     contentItem:ColumnLayout {
         spacing:10
         RowLayout {
-            Label { text:"Response";color:dialog.theme.text }
-            ComboBox { objectName:"receiverResponseSource";model:["Applied Reference H","Receiver H-hat","Compare H / H-hat"];currentIndex:dialog.sourceIndex;Layout.preferredWidth:215;onActivated:function(index){dialog.sourceIndex=index;dialog.snapshotIndex=0;dialog.refresh()} }
+            Label { text:"Display";color:dialog.theme.text }
+            ComboBox { objectName:"receiverResponseSource";model:["Applied Channel (H)",dialog.estimateLabel,dialog.mceResult ? "Compare Channel / MCE" : "Compare Channel / Pilots"];currentIndex:dialog.sourceIndex;Layout.preferredWidth:240;onActivated:function(index){dialog.sourceIndex=index;dialog.snapshotIndex=0;dialog.refresh()} }
             Label { text:"View";color:dialog.theme.text }
             ComboBox { objectName:"receiverResponseView";model:["Gain","Wrapped Phase","Real","Imaginary","Impulse / Echo"];currentIndex:dialog.viewIndex;Layout.preferredWidth:165;onActivated:function(index){dialog.viewIndex=index;dialog.refresh()} }
             Label { text:"VF (%)";color:dialog.theme.text }
@@ -45,12 +48,12 @@ WorkbenchDialog {
             Layout.fillWidth:true;Layout.fillHeight:true;spacing:16
             ColumnLayout {
                 Layout.fillWidth:true;Layout.fillHeight:true;Layout.preferredWidth:1;Layout.minimumWidth:0
-                Label {visible:dialog.sourceIndex===2;text:"Applied H";color:dialog.theme.text}
+                Label {visible:dialog.sourceIndex===2;text:"Applied Channel (H)";color:dialog.theme.text}
                 SpectrumPlot { theme:dialog.theme;viewport:dialog.response;Layout.fillWidth:true;Layout.fillHeight:true }
             }
             ColumnLayout {
                 visible:dialog.sourceIndex===2;Layout.fillWidth:true;Layout.fillHeight:true;Layout.preferredWidth:1;Layout.minimumWidth:0
-                Label {text:"Receiver H-hat · independent vertical scale";color:dialog.theme.text;Layout.fillWidth:true;wrapMode:Text.WordWrap}
+                Label {text:dialog.estimateLabel+" · independent vertical scale";color:dialog.theme.text;Layout.fillWidth:true;wrapMode:Text.WordWrap}
                 SpectrumPlot {objectName:"receiverResponseComparison";theme:dialog.theme;viewport:dialog.response.comparison || {points:[],x_ticks:[],y_ticks:[]};Layout.fillWidth:true;Layout.fillHeight:true}
             }
         }
