@@ -33,6 +33,16 @@ applies the supplied response H to the channel, but pilot-mode construction neve
 passes H to the receiver. Channel noise budgets remain simulation calibration;
 this is not an implementation of blind modem noise estimation.
 
+The planned **Homegrown Channel Estimation (HGCE)** option extends this foundation
+with continuous channel-memory tests and received-only reliability estimation.
+It will be disabled by default and configured in Receiver Configuration. Supplied
+H will impair the signal in both states: the default reference workflow uses
+supplied 1/H when Off, while HGCE On derives 1/H-hat from received pilots without
+access to H. The toggle does not change the channel impairment. This new control
+is not implemented; existing explicit receiver-mode requests keep their meaning.
+See the [planned receiver behavior](../receiver-workbench.md#planned-hgce-receiver-option)
+and [implementation plan](../../development/features/independent-channel-estimation/design.md).
+
 The CLI runner retains explicit sample timing and PLC phase. The separate timing
 API can search an unknown bounded sample offset with known numerology/PLC phase.
 It does not discover arbitrary carrier frequency, numerology or PLC frame phase;

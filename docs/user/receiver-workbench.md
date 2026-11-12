@@ -100,6 +100,25 @@ click, Enter, Space or F1.
 
 ## Channel response and echo
 
+### Planned HGCE receiver option
+
+**Homegrown Channel Estimation (HGCE)** is planned, not yet an implemented
+receiver control. It will default to Off and be configured in Receiver
+Configuration, with accepted changes saved in the WB and applied on the next run.
+
+| HGCE | Channel simulator | Receiver correction |
+| --- | --- | --- |
+| Off (default reference workflow) | Applies supplied DS response H. | Uses supplied H to calculate 1/H. |
+| On | Applies the same supplied DS response H. | Estimates H-hat from received pilots and applies 1/H-hat, without access to supplied H. |
+
+HGCE changes how the receiver corrects the signal; it does not turn channel
+distortion on or off. Known DOCSIS pilots make this pilot-assisted estimation,
+not fully blind reception. Existing explicitly selected receiver modes remain
+compatible. See the [HGCE plan](../development/features/independent-channel-estimation/design.md)
+for continuous-waveform filtering, received-only noise estimation and validation.
+
+### Current response instrument
+
 Open **CH-EST / Equalizer** or **Channel Response / Echo**. Select **Applied
 Reference H** for the channel's supplied/unity response, or **Receiver H-hat**
 for actual pilot-estimated snapshots. H-hat requires a run with pilot-estimated

@@ -27,16 +27,25 @@ would amplify that noise again and double-count measured degradation. H-only run
 can select noiseless residuals; measured CLI requests may omit response selection
 to use unity H. Zero, unavailable or nonrepresentable active gains reject.
 
-The supplied H is independently copied into the existing known-reference receiver.
-It is not estimated from transmitter payload truth. The channel and receiver own
+In supplied-channel reference mode, H is independently copied into the receiver
+to calculate correction 1/H. In existing pilot-estimated mode, the channel still
+applies H, but the receiver derives its own H-hat from received pilots and uses
+1/H-hat instead. Neither estimator uses transmitter payload truth. The channel and receiver own
 separate transform/window/framing state, and channel input/output plus RX FFT and
 equalized test points expose the resulting stages.
+
+The planned **HGCE** control keeps that separation: Off uses the default supplied-H
+reference workflow; On uses independent received-pilot estimation. Supplied H
+impairs the signal in both cases. HGCE will default to Off in Receiver Configuration;
+it is not implemented by this documentation update. See the
+[receiver guide](../receiver-workbench.md#planned-hgce-receiver-option).
 
 The implementation does not convolve arbitrary H across a continuous waveform.
 It applies the diagonal response before per-symbol synthesis; it does not model
 channel-memory leakage, ISI/ICI, unknown timing or multipath exceeding the cyclic
-prefix. Blind estimation and nonideal equalization remain open in MODEL-05 and
-WAVE-RX-05. Constant complex and actual frequency-varying captured responses are
+prefix. Pilot estimation and bounded acquisition exist separately; continuous
+channel-memory filtering is part of the [planned HGCE extension](../../development/features/independent-channel-estimation/design.md).
+Constant complex and actual frequency-varying captured responses are
 tested without claiming those broader receiver capabilities.
 
 ## Paired constellation observation

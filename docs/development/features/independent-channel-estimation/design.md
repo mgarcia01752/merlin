@@ -45,6 +45,14 @@ flowchart LR
   Off; existing saved receiver-mode selections retain their previous meaning.
   Off preserves the existing receiver correction behavior; it does not disable
   channel impairments or mean that all receiver correction is bypassed.
+- For the planned default reference workflow, the channel applies supplied H
+  whether HGCE is Off or On. Off uses supplied H to calculate reference correction
+  1/H; On estimates H-hat from received pilots and corrects with 1/H-hat, without
+  access to supplied H. Toggling HGCE must not change the applied channel or noise
+  realization for otherwise identical settings and seed. Existing explicitly
+  selected legacy receiver modes remain compatible rather than being silently
+  remapped by an omitted HGCE field. No response input means the selected channel
+  model's explicit unity/synthetic response, not a receiver-estimation result.
 - Channel configuration chooses the existing diagonal model or the new sample
   filter explicitly. Preserve old saved WBs and reference behavior by default.
 - Sample-filter source chooses synthetic paths or reconstructed CM response.

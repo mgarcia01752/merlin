@@ -1018,6 +1018,9 @@ Existing diagonal/calibrated modes remain explicit reference baselines.
 Homegrown Channel Estimation (HGCE) is disabled by default and configured in
 Receiver Configuration. Its setting is independent of channel impairments;
 accepted changes apply to the next run.
+In the planned default reference workflow, supplied H impairs the channel in both
+HGCE states: Off uses reference 1/H correction; On uses independently estimated
+1/H-hat. HGCE changes receiver correction, not the applied response or seeded noise.
 Existing saved receiver-mode choices remain compatible. No sample
 filter, new independent noise estimator or UI is implemented by this plan; see the
 [design and acceptance gates](development/features/independent-channel-estimation/design.md).
