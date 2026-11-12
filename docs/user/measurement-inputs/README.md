@@ -43,3 +43,7 @@ the demo's provenance before using these inputs as evidence.
 The Qt [DPD profile-file dialog](modulation-profile.md) additionally accepts the
 binary modulation-profile capture directly through a pinned in-process Rust
 decoder. The CLI three-capture importer continues to consume decoded JSON.
+
+The native [RxMER Designer](rxmer-designer.md) creates clearly labeled designed
+copies or synthetic flat sequences, with per-effect capture scopes and a shared
+original/designed preview. Both RxMER charts shade the profile-derived PLC region.

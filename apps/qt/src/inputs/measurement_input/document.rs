@@ -33,6 +33,7 @@ pub(crate) struct Capture {
     pub hash: String,
     pub decoded_hash: String,
     pub measurement: Measurement,
+    pub designer: Option<Arc<super::designer::Origin>>,
 }
 impl Capture {
     /// Decodes a single original input, detecting contents rather than extensions.
@@ -47,6 +48,11 @@ impl Capture {
     pub(crate) fn decode(name: String, bytes: Vec<u8>, rxmer: bool) -> Result<Self, String> {
         if bytes.len() > MAX_INPUT_BYTES {
             return Err("Input exceeds 16 MiB.".into());
+        }
+        if rxmer && detect(&bytes) == InputFormat::JsonText {
+            if let Some(capture) = super::designer::decode(json_bytes(&bytes))? {
+                return Ok(capture);
+            }
         }
         let (format,decoded)=match detect(&bytes) {
             InputFormat::BinaryPnm=>{
@@ -96,6 +102,7 @@ impl Capture {
             hash,
             decoded_hash: format!("{:x}", Sha256::digest(&decoded)),
             measurement,
+            designer: None,
         })
     }
     /// Borrows the exact capture association key without reconstructing coordinates.

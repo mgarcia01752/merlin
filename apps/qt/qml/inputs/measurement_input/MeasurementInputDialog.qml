@@ -19,6 +19,8 @@ WorkbenchDialog {
     property var selectionStatus: ({})
     property var admission: ({})
     signal measurementApplied()
+    signal contextHelpRequested(string code)
+    property alias designerPopup: designer
     parent: Overlay.overlay; anchors.centerIn: parent
     width: Math.min(1120, parent ? parent.width - 40 : 1120)
     height: Math.min(720, parent ? parent.height - 40 : 720)
@@ -54,7 +56,13 @@ WorkbenchDialog {
         if (checked) { next.push(identity) }
         updateOption("selected_captures",next)
     }
-    onClosed: viewer.stopPreview()
+    RxmerDesignerDialog {
+        id: designer
+        onContextHelpRequested:function(code){dialog.contextHelpRequested(code)}
+        theme: dialog.theme; backend: dialog.backend; parentOptions: dialog.options
+        onStaged: function(metadata) { dialog.setMetadata(JSON.stringify(metadata), true) }
+    }
+    onClosed: { viewer.stopPreview();designer.close() }
     function restoreWorkbench() {
         setMetadata(backend.begin(rxmer), true)
         canRestoreWorkbench = !rxmer || metadata.files.length > 0
@@ -116,6 +124,7 @@ WorkbenchDialog {
         }
         RowLayout {
             visible:dialog.rxmer
+            WorkbenchActionButton { theme: dialog.theme; objectName: "rxmerDesignerOpen"; visible: dialog.rxmer; text: "RxMER Designer"; enabled: !designer.working; onClicked: designer.open() }
             WorkbenchActionButton { theme:dialog.theme;objectName:"selectAllCaptures";text:"Select All";enabled:dialog.options.mode !== "single";onClicked:dialog.updateOption("selected_captures",null) }
             WorkbenchActionButton { theme:dialog.theme;objectName:"clearCaptureSelection";text:"Clear Selection";onClicked:dialog.updateOption("selected_captures",[]) }
             WorkbenchActionButton { theme:dialog.theme;objectName:"fitCaptureSelection";text:"Use First "+Math.min(dialog.metadata.files.length,dialog.selectionStatus.capacity || 0);enabled:dialog.selectionStatus.capacity > 0 && dialog.metadata.files.length > 0;onClicked:dialog.updateOption("selected_captures",dialog.metadata.files.slice(0,dialog.selectionStatus.capacity).map(file => file.sha256)) }

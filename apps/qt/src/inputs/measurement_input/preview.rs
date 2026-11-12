@@ -46,6 +46,7 @@ impl Model {
         value["frame_count"] = json!(captures.len());
         value["source_index"] = json!(source_index);
         value["capture_time"] = json!(capture.epoch());
+        value["synthetic_time"] = json!(frame.source.file_kind == "merlin_synthetic_rxmer");
         value["sha256"] = json!(capture.hash);
         Ok(value)
     }

@@ -25,7 +25,7 @@ Item {
         for (const file of files) {
             rows.push({kind: "file", index: file.index, label: file.name, detail: file.frequency, compatible: file.compatible, identity: file.sha256})
             if (expanded[file.index]) {
-                for (const detail of [file.mac + " · channel " + file.channel, file.frequency, "Capture epoch " + file.capture_time, file.format + " · " + file.bytes + " bytes", file.reason, "SHA-256 " + file.sha256]) {
+                for (const detail of [file.mac + " · channel " + file.channel, file.frequency, (file.synthetic_time ? "Synthetic association epoch " : "Capture epoch ") + file.capture_time, file.format + " · " + file.bytes + " bytes", file.reason, "SHA-256 " + file.sha256]) {
                     rows.push({kind: "detail", index: file.index, label: detail, detail: detail})
                 }
             }

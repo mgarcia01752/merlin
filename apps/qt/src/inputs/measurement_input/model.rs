@@ -425,7 +425,7 @@ impl Model {
         json!(captures.iter().enumerate().map(|(index,capture)| {
             let grid=&capture.key().grid;
             let compatible=profile.map(|profile|profile.key==*capture.key());
-            json!({"index":index,"name":capture.name,"format":capture.format,"bytes":capture.original.len(),"sha256":capture.hash,"decoded_sha256":capture.decoded_hash,"capture_time":capture.epoch(),"channel":capture.key().channel_id,"mac":capture.key().mac_address.iter().map(|octet|format!("{octet:02x}")).collect::<Vec<_>>().join(":"),"frequency":format!("{:.3}–{:.3} MHz · {} Hz · {} carriers",f64::from(grid.frequency(0).unwrap_or(0))/1e6,f64::from(grid.frequency(grid.sample_count-1).unwrap_or(0))/1e6,grid.spacing_hz,grid.sample_count),"compatible":compatible,"reason":match compatible {Some(true)=>"Exact DPD grid/identity match",Some(false)=>"Device/channel/frequency grid differs from DPD",None=>"Apply DPD to check compatibility"}})
+            json!({"index":index,"name":capture.name,"format":capture.format,"designed":capture.designer.is_some(),"synthetic_time":matches!(&capture.measurement,Measurement::Rxmer(frame) if frame.source.file_kind=="merlin_synthetic_rxmer"),"bytes":capture.original.len(),"sha256":capture.hash,"decoded_sha256":capture.decoded_hash,"capture_time":capture.epoch(),"channel":capture.key().channel_id,"mac":capture.key().mac_address.iter().map(|octet|format!("{octet:02x}")).collect::<Vec<_>>().join(":"),"frequency":format!("{:.3}–{:.3} MHz · {} Hz · {} carriers",f64::from(grid.frequency(0).unwrap_or(0))/1e6,f64::from(grid.frequency(grid.sample_count-1).unwrap_or(0))/1e6,grid.spacing_hz,grid.sample_count),"compatible":compatible,"reason":match compatible {Some(true)=>"Exact DPD grid/identity match",Some(false)=>"Device/channel/frequency grid differs from DPD",None=>"Apply DPD to check compatibility"}})
         }).collect::<Vec<_>>())
     }
     /// Produces a shared bounded chart for an original capture or effective playback.
@@ -524,7 +524,21 @@ impl Model {
         };
         let view = measurement_view(&grid, &values, start, count, units)
             .map_err(|error| error.to_string())?;
-        serde_json::to_value(view).map_err(|error| error.to_string())
+        let mut view = serde_json::to_value(view).map_err(|error| error.to_string())?;
+        if rxmer {
+            super::plc::annotate(
+                &mut view,
+                &grid,
+                profile.filter(|profile| {
+                    index < 0
+                        || self
+                            .draft_rx
+                            .get(index as usize)
+                            .is_some_and(|capture| capture.key() == &profile.key)
+                }),
+            );
+        }
+        Ok(view)
     }
 }
 

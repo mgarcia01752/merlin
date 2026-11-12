@@ -28,6 +28,7 @@
 - [QAM processing and decisions](user/qam-processing/README.md)
 - [Modulation support](reference/ofdm-support.md)
 - [PNM inputs](user/measurement-inputs/README.md)
+- [RxMER Designer](user/measurement-inputs/rxmer-designer.md)
 - [Impairment models](user/impairments/README.md)
 - [JSON contracts](reference/documents.md)
 

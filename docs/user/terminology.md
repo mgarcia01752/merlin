@@ -184,3 +184,15 @@ symbol. Adjacent symbols overlap during the roll-off interval: one window fades
 out while the next fades in. Their weights add to one over that shared interval;
 this does not mean the RF signal amplitude or power is constant.
 See [symbol timing](spectrum-analyzer.md#symbol-timing-and-cable-echo-budget).
+
+### RxMER Designer
+
+An editor for deliberately designed MER profiles or capture sequences. It retains
+original baselines and stores the recipe separately from measured source data.
+A **capture** is one frequency array; a **subcarrier** is one frequency position
+inside that array. **Crest spacing** is the frequency separation between adjacent
+ripple peaks. The echo-distance helper assumes a round-trip cable cavity; it
+infers spacing only. A **synthetic notch** is a reduction in MER over a band,
+not a cellular waveform or a phase response. The **PLC region** is one continuous
+chart band from the first to the last PLC carrier in the accepted modulation
+profile. See [RxMER Designer](measurement-inputs/rxmer-designer.md).

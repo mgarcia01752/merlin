@@ -54,3 +54,29 @@ disabled and otherwise serializes the shared Rust paired-result schema1.
 Selection/count/status and per-pair raw/corrected I/Q plus physical/source
 coordinates are documented in the [paired-constellation guide](../user/impairments/paired-constellation.md).
 This is an optional channel-analysis output, not a change to decoded PNM JSON.
+
+## Qt RxMER Designer envelopes
+
+The Qt measurement adapter accepts its own **MERLIN-designed RxMER** JSON in
+addition to original PNM/decoded captures. This is an application format, not a
+PNM file-format version and not an input to the CLI's PNM JSON importer.
+
+| Field | Contract |
+| --- | --- |
+| `merlin_rxmer_designer` | Native envelope version, currently `1`; other versions reject. |
+| `baseline` | Tagged `mode`: `imported` retains the original WB-encoded file object; `flat` retains exact `key`, `anchor_epoch`, validity mask and `baseline_db`. |
+| `recipe` | Typed tilt, ripple, notch and value-edit rules from the shared Rust designer API. |
+| `capture_index`, `capture_count` | One-based collection position and total count used by inclusive effect scopes. |
+
+Imported baselines retain the existing name/byte-length/SHA-256/base64 integrity
+contract. Nested designer envelopes reject. Flat epochs are explicit synthetic
+association anchors, not measured acquisition times. On decode Rust recomputes
+designed values from baseline and recipe, assigns designed/synthetic provenance,
+and retains the actual envelope bytes and hash. No derived sample array is trusted
+from a saved file. Unknown fields, invalid scopes, unsupported values and existing
+16 MiB per-file / 64 MiB collection limits remain enforced. WB schema and section
+layout are unchanged; these envelopes occupy ordinary embedded measurement slots.
+
+See [RxMER Designer](../user/measurement-inputs/rxmer-designer.md), its
+[design](../development/features/rxmer-designer/design.md) and the
+[typed envelope adapter](../../apps/qt/src/inputs/measurement_input/designer.rs).

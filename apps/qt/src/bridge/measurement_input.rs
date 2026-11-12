@@ -21,6 +21,26 @@ pub mod bridge {
         #[qobject]
         #[qml_element]
         type MeasurementInputs = super::MeasurementInputsRust;
+        /// Snapshots original baselines and restores Designer controls.
+        #[qinvokable]
+        fn designer_begin(self: Pin<&mut MeasurementInputs>) -> QString;
+        /// Returns a bounded shared-axis before/after frequency preview.
+        #[qinvokable]
+        fn designer_preview(self: &MeasurementInputs, document: &QString, position: i32)
+            -> QString;
+        /// Generates a complete replacement draft on a cancellable Rust worker.
+        #[qinvokable]
+        fn designer_stage(
+            self: Pin<&mut MeasurementInputs>,
+            document: &QString,
+            options: &QString,
+        ) -> QString;
+        /// Polls actual batch progress and stages only current complete results.
+        #[qinvokable]
+        fn designer_poll(self: Pin<&mut MeasurementInputs>) -> QString;
+        /// Cancels pending generation without changing the parent draft.
+        #[qinvokable]
+        fn designer_cancel(self: Pin<&mut MeasurementInputs>);
         /// Queries one selected original for capture-preview animation.
         /// # Arguments
         /// * `options` - Bounded draft selected identities and controls.
@@ -188,7 +208,9 @@ pub mod bridge {
 /// One GUI-thread owner with separate accepted/draft inputs for both shared viewers.
 #[derive(Default)]
 pub struct MeasurementInputsRust {
-    model: Model,
+    pub(super) model: Model,
+    pub(super) designer: Option<crate::inputs::measurement_input::designer::Session>,
+    pub(super) designer_work: Option<super::rxmer_designer::Work>,
 }
 
 fn parse<T: serde::de::DeserializeOwned>(document: &str) -> Result<T, String> {
@@ -205,7 +227,7 @@ fn parse_selection<T: serde::de::DeserializeOwned>(document: &str) -> Result<T, 
     serde_json::from_str(document).map_err(|error| error.to_string())
 }
 impl MeasurementInputsRust {
-    fn metadata(&self, rxmer: bool) -> Value {
+    pub(super) fn metadata(&self, rxmer: bool) -> Value {
         let profile = crate::workbench::session::snapshot().profile;
         let mut options = self.model.options.clone();
         if !rxmer {
@@ -250,8 +272,8 @@ impl MeasurementInputsRust {
             let plan = Model::playback(&self.model.draft_rx, options, settings, profile.as_ref())?;
             let (symbols, ms) = plan.span();
             let summary = match options.mode {
-                docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Single => "Static per-carrier RxMER · one original capture held for the run".into(),
-                docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Average => format!("Static equal-weight error-power average · {} original captures · no temporal playback",plan.frames().len()),
+                docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Single => "Static per-carrier RxMER · one capture held for the run".into(),
+                docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Average => format!("Static equal-weight error-power average · {} captures · no temporal playback",plan.frames().len()),
                 _ => format!("Interval {:.3} ms · final transition at symbol {} ({:.3} ms) · hold final capture",plan.interval_milliseconds(),symbols,ms),
             };
             Ok(json!({"error":"","summary":summary}))
@@ -288,9 +310,24 @@ impl bridge::MeasurementInputs {
             let position = usize::try_from(position).map_err(|_| "Invalid capture position.")?;
             let start = usize::try_from(start).map_err(|_| "Invalid viewport start.")?;
             let count = usize::try_from(count).map_err(|_| "Invalid viewport count.")?;
-            self.rust()
+            let mut value = self
+                .rust()
                 .model
-                .preview_frame(&options, position, start, count)
+                .preview_frame(&options, position, start, count)?;
+            let profile = crate::workbench::session::snapshot().profile;
+            if let Some(capture) = value["source_index"]
+                .as_u64()
+                .and_then(|index| self.rust().model.draft_rx.get(index as usize))
+            {
+                super::super::inputs::measurement_input::plc::annotate(
+                    &mut value,
+                    &capture.key().grid,
+                    profile
+                        .as_ref()
+                        .filter(|profile| &profile.key == capture.key()),
+                );
+            }
+            Ok::<_, String>(value)
         })();
         QString::from(
             result

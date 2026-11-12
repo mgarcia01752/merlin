@@ -9,6 +9,7 @@ pub mod modulation;
 pub mod noise;
 pub mod ofdm;
 pub mod pilots;
+pub mod rxmer_designer;
 pub mod shannon;
 
 pub mod channel;

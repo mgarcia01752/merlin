@@ -79,3 +79,13 @@ The finite causal filter exceeds the declared complex-response approximation err
 
 See [MCE receiver behavior](receiver-estimation/mce.md) and
 [waveform channel filtering](impairments/waveform-filter.md).
+
+## RxMER Designer recipe is outside supported limits
+
+Check the named field and its units. Capture ranges are one-based and inclusive;
+frequency replacements must use exact carrier centers on the loaded profile grid.
+Keep the notch inside the source frequency band and its edge width no greater
+than half its bandwidth. Combined effects must leave designed MER within−30 to
+120dB. Reduce depth or tilt when necessary. The Designer rejects invalid results
+without clipping or changing original captures. See the
+[RxMER Designer guide](measurement-inputs/rxmer-designer.md).

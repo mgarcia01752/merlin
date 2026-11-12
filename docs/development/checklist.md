@@ -1174,3 +1174,14 @@ validation are complete; the user guide includes the current dark capture.
   14 scoped core cases, 65 adapter tests and 55 QML checks pass, with core/Qt
   Clippy, no-default-feature MER tests and the latest native build.
   [Design](features/qam-run-results/design.md).
+
+## RxMER Designer
+
+- [x] **RXMER-DESIGN-01** Bounded Rust recipe, immutable designed envelopes,
+  profile-derived flat sequences, per-effect capture scopes, before/after preview,
+  cancellable batch staging, WB roundtrip and continuous first-to-last PLC region
+  in main RxMER and Designer charts. Full local Rust, 73 adapter and 63 QML
+  checks pass, with core/Qt Clippy, the latest build and native dark/light
+  inspection. Three native profiles compare 4,710,792 bits with zero errors.
+  [Design](features/rxmer-designer/design.md) ·
+  [Guide](../user/measurement-inputs/rxmer-designer.md).

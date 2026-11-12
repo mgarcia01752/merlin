@@ -66,6 +66,17 @@
       "suggestion": "Keep the per-subcarrier model, or review maximum delay and causal shift in Echo / Delay. Do not increase fit tolerances simply to hide a poor reconstruction.",
       "over_limit_suggestion": "",
       "note": "Continuous filtering preserves history between symbols. A CM capture does not uniquely establish absolute propagation delay."
+    },
+    {
+      "code": "RxmerDesignerInvalid",
+      "title": "RxMER Designer recipe is outside supported limits",
+      "faq_heading": "RxMER Designer recipe is outside supported limits",
+      "faq_anchor": "rxmer-designer-recipe-is-outside-supported-limits",
+      "summary": "The Designer requires bounded frequency and capture ranges and finite MER edits.",
+      "context": "",
+      "suggestion": "Check one-based inclusive capture ranges, exact carrier-center frequencies for value edits, and notch width inside the source band. Reduce effect depths when combined MER exceeds the supported range.",
+      "over_limit_suggestion": "",
+      "note": "Designed MER must stay within -30 to 120 dB. No clipping or changes to original inputs occur."
     }
   ]
 }

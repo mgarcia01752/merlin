@@ -53,7 +53,7 @@ RowLayout {
         Layout.fillWidth: true; Layout.fillHeight: true
         RowLayout {
             Layout.fillWidth: true
-            Label { text: viewer.animationActive ? "Capture preview · "+(playbackControls.frameIndex+1)+" / "+playbackControls.frameCount : viewer.selectedIndex < 0 ? (viewer.rxmer ? "Effective residual model" : "Channel response") : "Original capture " + (viewer.selectedIndex + 1); color: theme.accent; Layout.fillWidth: true }
+            Label { text: viewer.animationActive ? "Capture preview · "+(playbackControls.frameIndex+1)+" / "+playbackControls.frameCount : viewer.selectedIndex < 0 ? (viewer.rxmer ? "Effective residual model" : "Channel response") : ((viewer.files[viewer.selectedIndex] || {}).designed ? "Designed capture " : "Original capture ") + (viewer.selectedIndex + 1); color: theme.accent; Layout.fillWidth: true }
             ComboBox { objectName: "measurementMetric"; visible: !viewer.rxmer; model: ["Gain (dB)", "Phase (degrees)", "Real H", "Imaginary H"]; onActivated: function(index) { viewer.metric = index; viewer.reset() } }
             WorkbenchActionButton { theme: viewer.theme; objectName: "measurementFullSpan"; text: "Full Span"; onClicked: viewer.reset() }
         }
@@ -75,7 +75,7 @@ RowLayout {
         }
         Label {
             visible:viewer.rxmer;Layout.fillWidth:true;Layout.minimumWidth:0;font.pixelSize:11;color:viewer.theme.muted;wrapMode:Text.WordWrap
-            text:(viewer.animationActive && viewer.viewport.capture_time !== undefined ? "Capture UTC: "+new Date(viewer.viewport.capture_time*1000).toISOString().replace("T"," ").replace(".000Z","")+" · " : "")+"Capture preview speed is independent of the simulation interval."
+            text:(viewer.animationActive && viewer.viewport.capture_time !== undefined ? (viewer.viewport.synthetic_time ? "Synthetic association epoch: " : "Capture UTC: ")+new Date(viewer.viewport.capture_time*1000).toISOString().replace("T"," ").replace(".000Z","")+" · " : "")+"Capture preview speed is independent of the simulation interval."
         }
     }
 }

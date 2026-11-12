@@ -46,6 +46,25 @@ ColumnLayout {
                 ctx.fillStyle = chart.theme.muted; ctx.textAlign = tick.x === 0 ? "left" : tick.x === 1 ? "right" : "center"
                 ctx.fillText(tick.label, x, top + height + 20)
             }
+            for (const band of chart.viewport.bands || []) {
+                ctx.fillStyle = Qt.rgba(0.95, 0.74, 0.25, 0.16)
+                ctx.fillRect(left + band.first * width, top, (band.last - band.first) * width, height)
+                ctx.fillStyle = chart.theme.muted; ctx.textAlign = "left"
+                ctx.fillText(band.label, Math.min(left + band.first * width + 3, left + width - 25), top + 12)
+            }
+            // Both curves use Rust's shared axis; the original is a dashed muted trace.
+            ctx.strokeStyle = chart.theme.muted; ctx.lineWidth = 1; ctx.setLineDash([4,4])
+            let comparisonPrevious = null
+            for (const point of chart.viewport.comparison || []) {
+                if (point.y === null || point.minimum_y === null) {comparisonPrevious=null;continue}
+                const x=left+point.x*width, y=top+point.y*height
+                ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,top+point.minimum_y*height);ctx.stroke()
+                if (comparisonPrevious && !comparisonPrevious.gap && !point.gap) {
+                    ctx.beginPath();ctx.moveTo(left+comparisonPrevious.x*width,top+comparisonPrevious.y*height);ctx.lineTo(x,y);ctx.stroke()
+                }
+                comparisonPrevious=point
+            }
+            ctx.setLineDash([])
             ctx.strokeStyle = chart.theme.accent; ctx.lineWidth = 1.2
             let previous = null
             for (const point of chart.viewport.points || []) {

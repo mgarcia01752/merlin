@@ -387,7 +387,7 @@ Item {
         width: Math.min(480, parent ? parent.width-40 : 480)
     }
     RxmerInputDialog {
-        id: rxmerDialog; runOptions:workbench.runState.accepted_options || null; theme: workbench.theme; backend: workbench.measurementBackend; settingsBackend: workbench.settingsBackend
+        id: rxmerDialog; onContextHelpRequested:function(code){workbench.openHelp(code)}; runOptions:workbench.runState.accepted_options || null; theme: workbench.theme; backend: workbench.measurementBackend; settingsBackend: workbench.settingsBackend
         onMeasurementApplied: workbench.refreshMeasurements()
     }
     ChannelResponseDialog {

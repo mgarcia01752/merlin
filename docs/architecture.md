@@ -2167,3 +2167,29 @@ capture, archives advertise their actual retained population, and accepted input
 changes/Start clear both histories. Spectrum and channel-response instruments retain latest-run scope; FEC and
 Profile Performance keep their existing per-profile selection.
 See the [design](development/features/qam-run-results/design.md) for resource caps.
+
+### RXMER-DESIGN-01: designed RxMER and profile PLC overlays
+
+`signal_processing::rxmer_designer` owns the bounded, deterministic dB editing
+recipe. It preserves exact frequency grids and absent values and does not model
+RF phase, infer VSWR-to-MER depth, consume RNG draws or replace playback rules.
+The Qt Rust measurement adapter retains immutable imported baselines, or an
+explicit flat template derived from the accepted profile. A version1 MERLIN
+JSON envelope carries baseline provenance, recipe and collection position. It is
+not a PNM binary schema. Existing bounded measurement sections embed these records
+in WB files and the existing playback path consumes the derived frames normally.
+
+The GUI holds only recipe controls, scalar metadata and bounded before/after
+curves on a common axis. Rust generates batches with capture progress and
+cancellation; only complete batches with unchanged draft/profile identities are
+staged. Parent Apply remains the scientific admission boundary. Designer and
+parent Cancel retain their separate accepted-state guarantees. Reopening a
+coherent collection restores its original baseline and recipe without compounding.
+
+Rust derives one continuous PLC overlay from the first and last PLC assignments
+in the accepted modulation profile. It is clipped to the source viewport and
+omitted for incompatible identity/grid. QML shades beneath the curves; no carrier
+positions are inferred from measurement magnitudes. Main RxMER, animation and
+Designer use the same overlay helper. See the
+[design](development/features/rxmer-designer/design.md) and
+[user guide](user/measurement-inputs/rxmer-designer.md).

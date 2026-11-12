@@ -1,0 +1,37 @@
+# RXMER-DESIGN-01 validation
+
+Local host: Ubuntu 22.04 x86_64, pinned Rust 1.85.1 and Qt 6.8.3 gcc_64.
+Hosted/native Windows and macOS validation was not performed for this change.
+
+- `scripts/test-local.sh all`: 386 workspace tests, 136 analysis-only tests and
+  four example tests pass, with doctest phases preserved. The four new numerical
+  cases independently anchor signed tilt, cosine crest spacing, distance units,
+  inclusive 10–20-of-50 scope, notch edges, exact replacements, gaps and rejection.
+- Workspace formatting and all-target warnings-denied Clippy pass.
+- `scripts/qt-desktop.sh check` plus the final QML rerun: 73 adapter tests and
+  63 QML checks pass, plus
+  warnings-denied Qt Clippy and the latest executable build.
+- Adapter coverage includes native-envelope and WB roundtrip, retained source
+  identity/time, repeated Apply without compounding, synthetic provenance,
+  cancellation of already completed success, stale draft/profile rejection,
+  remapped selections and exact PLC-region clipping, including one-carrier zoom.
+- A designed 48 dB flat frame produces `10^(-48/10)` residual error power through
+  the existing playback planner. A real closed-loop FEC job compares recovered
+  bits and reports zero bit errors; it does not substitute a chart-only model.
+
+Native desktop interaction used a loaded channel 193 workbench. The Designer
+created 50 flat 48 dB captures with −4 dB tilt, 2 dB peak-to-peak ripple at 20 MHz spacing,
+and an 18 dB, 10 MHz-wide notch with 1 MHz cosine edges applied only to captures 10–20.
+Capture 15 visibly contains the notch; capture 1 does not. The same single shaded
+PLC region appears in Designer and main RxMER. Parent replay admission correctly
+rejects 50 captures at 1000-symbol intervals in a 1 ms CWB; capacity advice remains
+active. Applying Average instead permits the configured three-profile native
+run: 4,710,792 compared bits, zero bit errors. This is a synthetic MERLIN
+closed-loop check, not external modem interoperability evidence.
+
+Dark/light native inspection and keyboard source selection cover the actual
+window. Dark user-guide captures live under `docs/images/workbench/`; ignored
+local screenshots, logs and the bounded native driver remain under
+`docs/development/local/independent-channel-estimation/` and
+`docs/development/local/rxmer-designer/`. No original fixture or source capture
+was overwritten. Designer debug logs report stage counts without capture arrays.

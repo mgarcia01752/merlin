@@ -1,5 +1,7 @@
 # Feature development records
 
+- [RxMER Designer](rxmer-designer/design.md) · [validation](rxmer-designer/validation.md)
+
 - [Graphical transmitter test points](transmitter-graphs/design.md)
 
 - [Responsive workbench loading](responsive-workbench-open/design.md)
