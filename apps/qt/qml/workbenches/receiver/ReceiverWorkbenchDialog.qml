@@ -18,6 +18,7 @@ WorkbenchDialog {
     required property var backend
     required property var runState
     property string seenToken: ""
+    signal contextHelpRequested(string code)
     signal configurationRequested()
     onRunStateChanged: { if (runState.result_token !== seenToken) { seenToken=runState.result_token || ""; qam.refresh(); selectTap(selectedTap) } }
     property alias qamPopup: qam
@@ -102,9 +103,9 @@ WorkbenchDialog {
         Item { Layout.fillHeight: true }
         Label { visible: !dialog.runState.result && !dialog.runState.can_start && !dialog.runState.busy; text: dialog.runState.reason || "Configure Receiver and enable PRBS-RX before starting."; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 12 }
     }
-    ReceiverQamDialog { id: qam; theme: dialog.theme; backend: dialog.backend }
+    ReceiverQamDialog { id: qam;onContextHelpRequested:function(code){dialog.contextHelpRequested(code)}; theme: dialog.theme; backend: dialog.backend }
     ReceiverResponseDialog { id:response;theme:dialog.theme;backend:dialog.backend;runState:dialog.runState }
-    ReceiverSlicerDialog { id:slicer;theme:dialog.theme;backend:dialog.backend;runState:dialog.runState }
+    ReceiverSlicerDialog { id:slicer;onContextHelpRequested:function(code){dialog.contextHelpRequested(code)};theme:dialog.theme;backend:dialog.backend;runState:dialog.runState }
     ProfilePerformanceDialog { id:performance;theme:dialog.theme;backend:dialog.backend;runState:dialog.runState }
     ReceiverFecDialog { id:fec;theme:dialog.theme;backend:dialog.backend;runState:dialog.runState }
     QtObject {

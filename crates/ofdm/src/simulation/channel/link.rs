@@ -66,6 +66,8 @@ pub(crate) struct WaveformLink {
         Option<crate::signal_processing::receiver::channel_estimation::ChannelEstimate>,
     context: ProbeContext,
     pub stats: LinkStats,
+    /// Bounded optional TX diagnostic grid; not supplied to any receiver stage.
+    pub reference_bins: Option<Vec<Option<IqPair>>>,
     pub protected_constellation: Option<super::protected_constellation::ProtectedConstellation>,
 }
 impl WaveformLink {
@@ -139,6 +141,7 @@ impl WaveformLink {
         let carrier_mer = vec![Default::default(); geometry.fft_samples()];
         Ok(Self {
             protected_constellation: None,
+            reference_bins: None,
             calibrated_variances,
             raw_plc_frame: Vec::new(),
             channel_estimate: None,
@@ -333,6 +336,9 @@ impl WaveformLink {
             .symbol_iq(index)
             .ok_or_else(|| invalid("Missing reference PLC column."))?;
         let physical = assemble(&self.layout, index, reduced, plc, 1.0)?;
+        if let Some(reference) = &mut self.reference_bins {
+            reference.clone_from(&physical.bins);
+        }
         let transmitted = self.tx.transmit(&physical)?;
         let mut context = self.context(phase);
         context.channel_symbol_index = Some(index);
@@ -405,6 +411,21 @@ impl WaveformLink {
         }
         if let Some(capture) = &mut self.protected_constellation {
             capture.observe(&received, &self.layout)?;
+            for stream in [
+                &mut capture.plc_data,
+                &mut capture.plc_preamble,
+                &mut capture.continuous_pilots,
+                &mut capture.scattered_pilots,
+            ] {
+                for pair in stream
+                    .pairs
+                    .iter_mut()
+                    .rev()
+                    .take_while(|pair| pair.channel_symbol_index == received.symbol_index)
+                {
+                    pair.reference_iq = physical.bins[usize::from(pair.physical_bin)];
+                }
+            }
         }
         observation::observe_receive(&received, &self.geometry, &context, probe, observer)?;
         for (bin, (sample, expected)) in received.equalized.iter().zip(&physical.bins).enumerate() {

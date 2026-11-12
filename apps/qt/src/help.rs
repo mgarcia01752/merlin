@@ -194,6 +194,18 @@ fn playback_help(timing: DurationTiming, span: (u64, f64), current_ms: u64) -> O
 /// # Arguments
 /// * `code` - Empty for the index, or a recognized diagnostic code; never a file path.
 /// # Returns
+/// Supplies static catalog help for a known state without inventing numeric context.
+/// # Arguments
+/// * `code` - Exact registered diagnostic code.
+/// # Returns
+/// Bounded tooltip/link metadata, or null for an unknown state.
+pub(crate) fn static_diagnostic(code: &str) -> Value {
+    match entry(code) {
+        Some(entry) => json!({"code":entry.code,"title":entry.title,"faq_anchor":entry.faq_anchor,
+            "tooltip":format!("{}\n{}\n{}",entry.summary,entry.suggestion,entry.note)}),
+        None => Value::Null,
+    }
+}
 /// Bounded title/Markdown JSON. Unknown keys report unavailable help without I/O.
 pub(crate) fn faq_document(code: &str) -> Value {
     if FAQ.len() <= 65536 {
@@ -229,6 +241,20 @@ mod tests {
         let milliseconds = last as f64 * f64::from(timing.symbol_period_samples) * 1000.0
             / f64::from(timing.sample_rate_hz);
         playback_help(timing, (last, milliseconds), 3).unwrap()
+    }
+    #[test]
+    fn unavailable_qam_help_is_registered_and_unknown_states_stay_unclassified() {
+        let diagnostic = static_diagnostic("QamRunUnavailable");
+        assert_eq!(diagnostic["code"], "QamRunUnavailable");
+        assert!(diagnostic["tooltip"]
+            .as_str()
+            .unwrap()
+            .contains("Configure WorkBench"));
+        assert!(faq_document("QamRunUnavailable")["text"]
+            .as_str()
+            .unwrap()
+            .contains("Run Profile"));
+        assert!(static_diagnostic("UnknownQamState").is_null());
     }
     #[test]
     fn catalog_targets_are_unique_and_bundled() {

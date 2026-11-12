@@ -9,6 +9,7 @@ import "../../components"
 WorkbenchDialog {
     id:dialog
     required property var backend
+    signal contextHelpRequested(string code)
     property int tap:0
     property string tapName:"Before Amplifier"
     property var observation:({available:false,points:[]})
@@ -30,15 +31,16 @@ WorkbenchDialog {
         Label {
             objectName:"tapQamMer"
             visible:dialog.tap===2
-            text:(dialog.observation.mer || {}).text || "MER unavailable"
+            text:(dialog.observation.reference_mer || {}).text || "TX-reference MER unavailable"
             color:dialog.theme.accent
             HoverHandler {id:merHover}
             ToolTip.visible:merHover.hovered
-            ToolTip.text:(dialog.observation.mer || {}).help || "Select retained cells to calculate MER."
+            ToolTip.text:(dialog.observation.reference_mer || {}).help || "Select retained cells to calculate MER."
         }
+        Label {visible:dialog.tap===2;text:(dialog.observation.mer || {}).text || "";color:dialog.theme.muted;font.pixelSize:11;Layout.fillWidth:true;wrapMode:Text.WordWrap}
         TransmitterScatter {objectName:"tapQamScatter";theme:dialog.theme;observation:dialog.observation;receivedSamples:true;Layout.fillWidth:true;Layout.fillHeight:true}
         Label {objectName:"tapQamDisplayLimit";visible:dialog.tap===2 && dialog.observation.available && dialog.observation.retained>dialog.observation.points.length;text:"Showing "+(dialog.observation.points || []).length+" of "+dialog.observation.retained+" retained cells.";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:12}
         Label {visible:!!dialog.observation.extent;text:"Raw I/Q Axis: ±"+Number(dialog.observation.extent || 0).toPrecision(4)+" normalized units";color:dialog.theme.muted}
-        Label {visible:!dialog.observation.available;text:dialog.observation.reason || "Run the simulation to retain this TapPoint.";color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
+        ContextualStatus {theme:dialog.theme;diagnostic:dialog.observation.diagnostic || null;onHelpRequested:function(code){dialog.contextHelpRequested(code)};visible:!dialog.observation.available;text:dialog.observation.reason || "Run the simulation to retain this TapPoint.";color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
     }
 }

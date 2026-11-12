@@ -10,3 +10,5 @@ mod verification;
 pub(crate) mod views;
 
 pub(crate) mod performance;
+
+pub(crate) mod qam_history;

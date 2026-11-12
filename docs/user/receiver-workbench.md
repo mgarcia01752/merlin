@@ -33,7 +33,7 @@ The display limit reports when only a subset of retained cells is shown.
 or Preamble. These groups retain their different modulation and pilot boost.
 The paired panels use matching received cells and equal I/Q scale.
 
-Select an available received profile and one modulation order, then optionally
+Select an available **Run Profile** and one modulation order, then optionally
 enter inclusive **First/Last Bin** and **First/Last RX Symbol** bounds. **All**
 means all retained coordinates, and **Reset Filters** clears the filters. The
 shown bounds describe the actual retained data, not all transmitted history.
@@ -56,25 +56,47 @@ Changing a filter cannot retrieve data outside these retained windows.
 
 ## Calculated MER
 
-Channel Output / RX Input and Receiver QAM show **MER estimate** for the current
-role, profile, modulation, bin and RX-symbol selection. Raw and Equalized panels
-report separate readings. All selected retained cells contribute, including cells
-beyond the 2,048 displayed points. Smaller dots make the received spread visible.
+Channel Output / RX Input and Receiver QAM show **MER (TX reference)** for
+Raw and Equalized separately. Each received sample is compared with the actual
+transmitted symbol at the same physical bin and time. The reference is diagnostic
+only; the receiver never receives it. All retained cells matching the filters
+contribute, including cells beyond the 2,048 rendered dots.
 
-The calculator uses the nearest ideal constellation point for each received
-sample: **MER = 10 log10(total reference power / total squared I/Q error)**.
-Pilot references include their known amplitude boost. No gain, phase or channel
-correction is fitted by this calculation; the Raw reading includes those effects.
-This is an estimate from the simulated I/Q, separate from imported RxMER and
-TX-reference Profile Performance measurements. Severe noise and incorrect nearest
-point decisions can make estimated MER too optimistic. Hover the reading for help.
+The formula is **MER = 10 log10(total TX reference power / total squared I/Q
+error)**. The smaller **Nearest-point estimate** uses the PNM Viewer method:
+compare each sample with the nearest ideal point. Dense QAM and wrong decisions
+can make that estimate much too high even when the received points look badly
+spread. It does not replace TX-reference MER or imported RxMER. Raw includes
+uncorrected channel gain/phase; Equalized includes the actual receiver correction.
+Zero error is perfect reference; missing samples/references are unavailable.
 
-Exact zero error displays **perfect reference**; missing or invalid selections
-show **MER unavailable**. Changing filters recalculates the reading without
-running the simulation. Mixed unclassified TX-bin views before/after the amplifier
-have smaller dots but no MER reading without the required reference metadata.
+**Run Profile** selects the original captured profile from a separate simulation
+run. Each run currently uses wire Profile A/ID0, which is a different identity.
+The Wire Profile filter is shown only if more than one wire ID was received.
+Choose the desired profiles in Configure WorkBench and run them; imported IDs
+without results show **No Result**. Opening a WB alone does not create results.
+
+Latest Run keeps its full capture. Earlier runs retain at most 8,192 data cells,
+1,024 NCP cells and 1,024 per protected stream; MER uses the entire retained
+selection, not just displayed dots. Counts show the actual retained population.
+Changing Run Profile resets cell filters and queries that run without replaying
+it. Slicer/LLR follows the same choice. Spectrum and channel-response instruments use the latest run; FEC and Profile
+Performance retain their own profile selectors. Start and new accepted inputs
+clear these transient QAM results.
+
+For `multi-rxmer-2`, the captured profiles are 0, 3 and 4. Its 132-capture Average
+mode models roughly 45 dB raw MER; a native run measured 44.93 dB Raw and 43.95 dB
+Equalized. That is already a finite impairment relative to an ideal transmitter.
+It does not automatically add another loss on top of the supplied RxMER.
+Averaging uses linear error powers, and individual bins can be worse than the
+whole selected constellation reading.
+
+Missing-run messages provide hover/focus help and open the offline FAQ with
+click, Enter, Space or F1.
 
 ![Calculated raw and equalized constellation MER](../images/workbench/receiver-qam-mer-dark.png)
+
+![Earlier captured profile selected independently](../images/workbench/receiver-qam-earlier-profile-dark.png)
 
 ## Channel response and echo
 

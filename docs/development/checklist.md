@@ -1134,3 +1134,11 @@ validation are complete; the user guide includes the current dark capture.
   Qt Clippy, 62 Rust tests, 55 QML checks and native build pass; actual Ubuntu
   dark/light views verify restoration from an opened WB.
   [Design](features/restore-workbench-inputs/design.md).
+
+- [x] **UI-QAM-RUNS-02** Add captured Run Profile selection and bounded QAM
+  history, keeping wire IDs distinct. Show matched TX-reference MER alongside
+  nearest-point estimates; verify channel193 impairment, transport invariance,
+  archive identity/bounds, missing states, filters and native dark/light views.
+  14 scoped core cases, 65 adapter tests and 55 QML checks pass, with core/Qt
+  Clippy, no-default-feature MER tests and the latest native build.
+  [Design](features/qam-run-results/design.md).

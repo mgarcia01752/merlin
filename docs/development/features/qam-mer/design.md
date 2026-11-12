@@ -1,5 +1,9 @@
 # UI-QAM-MER-01 — Calculated constellation MER
 
+The later [run-specific QAM change](../qam-run-results/design.md) adds actual
+TX-reference MER as the primary reading. This nearest-point calculator remains
+as a separate estimate.
+
 Bring the PNM Viewer Toolkit constellation MER implementation into MERLIN's
 Apache-2.0 scientific library. Keep original copyright attribution and NOTICE.
 The read-only source is `crates/core/src/pnm/analysis/constellation/mer.rs` in

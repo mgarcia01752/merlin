@@ -106,3 +106,16 @@ fn boosted_pilots_and_full_selection_are_not_rescaled_or_display_sampled() {
     assert!((reading.error_power.unwrap() - 81.92).abs() < 1e-9);
     assert!((reading.mer_db.unwrap() - 23.010299956639813).abs() < 1e-9);
 }
+
+#[test]
+fn tx_reference_does_not_hide_wrong_decisions() {
+    let actual = docsis_ofdm_fec::signal_processing::modulation::mer::calculate_mer_pairs([(
+        [-0.99, 0.0],
+        [1.0, 0.0],
+    )]);
+    let nearest = MerCalculator::new(2, 1.0)
+        .unwrap()
+        .calculate([[-0.99, 0.0]]);
+    assert!((actual.mer_db.unwrap() + 5.977061528194134).abs() < 1e-10);
+    assert!((nearest.mer_db.unwrap() - 40.0).abs() < 1e-10);
+}

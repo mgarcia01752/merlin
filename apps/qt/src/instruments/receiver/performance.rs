@@ -32,6 +32,7 @@ struct Entry {
 thread_local! { static ENTRIES: RefCell<Vec<Entry>> = const {RefCell::new(Vec::new())}; }
 /// Clears all transient profile results after new accepted input or Start.
 pub(crate) fn clear() {
+    super::qam_history::clear();
     ENTRIES.with(|entries| entries.borrow_mut().clear());
 }
 /// Registers the finite profile catalog so unstarted jobs remain visible after Stop.
@@ -39,6 +40,7 @@ pub(crate) fn clear() {
 /// * `profiles` - Prevalidated captured identities, bounded by MAX_PROFILES.
 pub(crate) fn begin(profiles: &[CapturedProfile]) {
     clear();
+    super::qam_history::begin(profiles);
     for profile in profiles.iter().take(MAX_PROFILES) {
         insert(Entry {
             fec_details: None,
@@ -68,6 +70,7 @@ fn insert(entry: Entry) {
 /// * `profile` - Exact applied profile for this independent run.
 /// * `result` - Actual completed or partial job, including observation power sums.
 pub(crate) fn retain(profile: &CapturedProfile, result: &ResultData) {
+    super::qam_history::retain(profile.profile_id, result);
     let points = profile
         .assignments
         .iter()

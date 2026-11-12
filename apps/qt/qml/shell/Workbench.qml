@@ -33,7 +33,7 @@ Item {
     property bool configureAfterOpen: false
     property var loadState: ({loading:false, phase:"", elapsed_ms:0, cancelling:false})
     property alias faqPopup: faqDialog
-    function openHelp(code) { faqDialog.showEntry(code, code ? runState.diagnostic : null) }
+    function openHelp(code) { faqDialog.showEntry(code, runState.diagnostic && runState.diagnostic.code===code ? runState.diagnostic : null) }
     property alias configurationPopup: wbConfig
     property alias entryPopup: workbenchEntry
     function configureProject() {
@@ -392,13 +392,14 @@ Item {
         onMeasurementApplied: workbench.refreshMeasurements()
     }
     ChannelWorkbenchDialog {
+        onContextHelpRequested:function(code){workbench.openHelp(code)}
         id: channelDialog; theme: workbench.theme; configuration: workbench.measurementState
         measurementBackend:workbench.measurementBackend;settingsBackend:workbench.settingsBackend;transmitterBackend:workbench.transmitterBackend;receiverBackend:workbench.receiverBackend;runState:workbench.runState
         onModelApplied:workbench.refreshMeasurements()
         onRxmerRequested: rxmerDialog.open()
         onResponseRequested: responseDialog.open()
     }
-    ReceiverWorkbenchDialog { id: receiverDialog; theme: workbench.theme; backend: workbench.receiverBackend; runState: workbench.runState; onConfigurationRequested: receiverConfig.open() }
+    ReceiverWorkbenchDialog { id: receiverDialog;onContextHelpRequested:function(code){workbench.openHelp(code)}; theme: workbench.theme; backend: workbench.receiverBackend; runState: workbench.runState; onConfigurationRequested: receiverConfig.open() }
     ReceiverConfigurationDialog { id: receiverConfig; theme: workbench.theme; backend: workbench.runBackend; settingsBackend: workbench.settingsBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
     VerificationDialog { id: verificationDialog; theme: workbench.theme; backend: workbench.runBackend; diagnosticsBackend: workbench.receiverBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
     FaqDialog { id: faqDialog; theme: workbench.theme; backend: workbench.aboutBackend }

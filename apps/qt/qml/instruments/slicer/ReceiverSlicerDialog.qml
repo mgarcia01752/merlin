@@ -10,6 +10,7 @@ import "../qam"
 import "../spectrum"
 WorkbenchDialog {
     id:dialog
+    signal contextHelpRequested(string code)
     required property var backend
     property var runState: ({})
     property string seenToken:""
@@ -19,6 +20,7 @@ WorkbenchDialog {
     function refresh(){if (!backend || !selection || updating){return};diagnosticState=JSON.parse(backend.slicer(JSON.stringify(selection.query()),decoderInput));if (backend.qam_selected){selection.metadata=JSON.parse(backend.qam_selected(JSON.stringify(selection.query())))}}
     function useSelection(query) {
         updating=true
+        selection.runProfile=query.run_profile===undefined ? -1 : query.run_profile
         selection.signalIndex=query.signal;selection.plcPartIndex=query.part;selection.profile=query.profile;selection.order=query.order
         selection.firstBin=query.first_bin;selection.lastBin=query.last_bin;selection.firstSymbol=query.first_symbol;selection.lastSymbol=query.last_symbol
         updating=false;refresh()
@@ -38,7 +40,7 @@ WorkbenchDialog {
             Item { Layout.fillWidth:true }
         }
         ReceiverCellControls { id:selection;theme:dialog.theme;visible:!dialog.decoderInput;showView:false;Layout.fillWidth:true;onSelectionChanged:dialog.refresh() }
-        Label { visible:text.length>0;text:!dialog.diagnosticState.available ? dialog.diagnosticState.reason || "No data for this selection." : dialog.diagnosticState.llr && dialog.diagnosticState.llr.count===0 ? "No LLR data for this signal." : "";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:11 }
+        ContextualStatus { theme:dialog.theme;diagnostic:dialog.diagnosticState.diagnostic || null;onHelpRequested:function(code){dialog.contextHelpRequested(code)};visible:text.length>0;text:!dialog.diagnosticState.available ? dialog.diagnosticState.reason || "No data for this selection." : dialog.diagnosticState.llr && dialog.diagnosticState.llr.count===0 ? "No LLR data for this signal." : "";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:11 }
         SpectrumPlot { theme:dialog.theme;viewport:dialog.diagnosticState.histogram || ({points:[],x_ticks:[],y_ticks:[],error:dialog.diagnosticState.reason});Layout.fillWidth:true;Layout.fillHeight:true;Layout.minimumHeight:100 }
         Label { visible:!dialog.decoderInput;text:"Physical decisions · matched receive coordinates · actual post-descrambling LLRs";color:dialog.theme.accent;font.bold:true }
         ListView {

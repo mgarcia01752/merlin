@@ -82,6 +82,9 @@ See [QAM processing](qam-processing/README.md) and [receiver instruments](receiv
 | NCP | Next Codeword Pointer: control signaling that identifies codeword placement and related transport information. NCP is distinct from payload data. |
 | TLV | Type-Length-Value: a tagged field containing its type, value length and value bytes. Decoded child fields in the inspector are not necessarily nested TLVs. |
 | PNM | Proactive Network Maintenance. MERLIN uses supported existing PNM captures as simulation inputs. |
+| TX-reference MER | Modulation error ratio calculated against the actual transmitted symbol at the same physical bin and time. In the QAM analyzer the reference is diagnostic only; it is never supplied to the receiver. |
+| Nearest-point estimate | MER calculated using the nearest ideal constellation point instead of the actual transmitted symbol. Dense QAM and wrong decisions can make it too optimistic. |
+| Run Profile | The captured profile ID used by one independent simulation run. It is separate from the current on-wire Profile A/ID0. |
 | RxMER | Receive Modulation Error Ratio: per-subcarrier signal-to-modulation-error power ratio, commonly expressed in dB. MERLIN uses it to model residual error power; it does not reconstruct measured I/Q from RxMER. |
 | Channel estimate H | Complex frequency response across subcarriers. Flat/unity H = 1 + 0i means no gain/phase change; H = 0 + 0i would suppress the signal. |
 | Receiver estimate H-hat | Channel response estimated from received pilots, distinct from the supplied reference H. |

@@ -79,6 +79,9 @@ impl ChannelRun {
         {
             link.use_pilot_estimation(&settings.layout)?;
         }
+        if settings.constellation.is_some() {
+            link.reference_bins = Some(Vec::new());
+        }
         link.protected_constellation = settings
             .protected_constellation
             .as_ref()
@@ -622,7 +625,11 @@ impl ChannelRun {
             self.summary.rx_warmup_symbols += 1;
         }
         if let Some(collector) = &mut self.constellation {
-            collector.observe(&received, &decoded)?;
+            collector.observe(
+                &received,
+                &decoded,
+                self.link.reference_bins.as_deref().unwrap_or(&[]),
+            )?;
         }
         let grid = self
             .grid

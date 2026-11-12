@@ -138,7 +138,12 @@ pub(crate) fn qam(tap: i32, document: &str) -> Value {
             }
             return Ok(view);
         }
-        let selected = crate::instruments::receiver::selection::select(&result, &query)?;
+        let archived = crate::instruments::receiver::selection::archive(&query, &result)?;
+        let selected = crate::instruments::receiver::selection::select_run(
+            &result,
+            archived.as_deref(),
+            &query,
+        )?;
         let points = selected.cells.iter().take(2048).collect::<Vec<_>>();
         let extent = points
             .iter()
@@ -148,7 +153,9 @@ pub(crate) fn qam(tap: i32, document: &str) -> Value {
             * 1.1;
         let samples:Vec<_>=points.iter().map(|p|json!({"i":p.raw[0],"q":p.raw[1],"x":0.5+p.raw[0]/(2.0*extent),"y":0.5-p.raw[1]/(2.0*extent),"index":p.bin,"symbol":p.symbol,"role":match query.signal {0=>"data",1=>"ncp",2=>"plc",_=>"pilot"}})).collect();
         let mer = crate::instruments::receiver::selection::mer(&selected, true);
+        let reference_mer = crate::instruments::receiver::selection::reference_mer(&selected, true);
         let mut view = selected.metadata;
+        view["reference_mer"] = reference_mer;
         view["mer"] = mer;
         view["selected"] = json!(selected.cells.len());
         view["points"] = json!(samples);
@@ -156,7 +163,7 @@ pub(crate) fn qam(tap: i32, document: &str) -> Value {
         view["extent"] = json!(extent);
         Ok(view)
     };
-    get().unwrap_or_else(|reason| json!({"available":false,"points":[],"reason":reason}))
+    get().unwrap_or_else(|reason| json!({"available":false,"points":[],"runs":crate::instruments::receiver::qam_history::catalog(),"reason":reason,"diagnostic":if tap==2 && crate::instruments::receiver::selection::Query::parse(document).is_ok_and(|query|query.run_profile>=0) {crate::help::static_diagnostic("QamRunUnavailable")} else {Value::Null}}))
 }
 
 /// Formats any time-domain SA route with one fixed channel band and electrical reference.

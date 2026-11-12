@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Presentation queries over shared immutable response, likelihood and decoder results.
-use super::selection::{select, Query};
+use super::selection::{archive, select_run, Query};
 use crate::simulation::closed_loop::latest;
 use docsis_ofdm_fec::{
     signal_processing::{
@@ -212,8 +212,20 @@ pub(crate) fn response(document: &str) -> Result<Value, String> {
 pub(crate) fn slicer(document: &str, decoder_input: bool) -> Result<Value, String> {
     let query = Query::parse(document)?;
     let result = latest().ok_or("Run the closed loop to inspect decisions and LLRs.")?;
+    let archived = match archive(&query, &result) {
+        Ok(snapshot) => snapshot,
+        Err(reason) => {
+            return Ok(
+                json!({"available":false,"rows":[],"reason":reason,"diagnostic":crate::help::static_diagnostic("QamRunUnavailable")}),
+            )
+        }
+    };
     if decoder_input {
-        let values = &result.observations.decoder_llrs;
+        let values = archived
+            .as_ref()
+            .map_or(&result.observations.decoder_llrs, |snapshot| {
+                &snapshot.decoder_llrs
+            });
         let statistics = llr_statistics(values).map_err(|e| e.to_string())?;
         let x: Vec<_> = (0..statistics.histogram.len())
             .map(|i| {
@@ -228,10 +240,10 @@ pub(crate) fn slicer(document: &str, decoder_input: bool) -> Result<Value, Strin
             .map(|v| Some(*v as f64))
             .collect();
         return Ok(
-            json!({"available":!values.is_empty(),"rows":[],"llr":statistics,"histogram":curve(&x,&y,"Retained LLR count","LLR · log P(0)/P(1)"),"reason":"No payload LDPC-input LLRs retained for this run.","detail":format!("Actual rx.bits.inverse · first retained word {:?} · {} coding-order LLRs. Cell/window selectors apply to the cell view, not this separately retained codeword.",result.observations.decoder_word,values.len())}),
+            json!({"available":!values.is_empty(),"rows":[],"llr":statistics,"histogram":curve(&x,&y,"Retained LLR count","LLR · log P(0)/P(1)"),"reason":"No payload LDPC-input LLRs retained for this run.","detail":format!("Actual rx.bits.inverse · first retained word {:?} · {} coding-order LLRs. Cell/window selectors apply to the cell view, not this separately retained codeword.",archived.as_ref().map_or(result.observations.decoder_word,|snapshot|snapshot.decoder_word),values.len())}),
         );
     }
-    let selection = select(&result, &query)?;
+    let selection = select_run(&result, archived.as_deref(), &query)?;
     let mut rows = Vec::new();
     for cell in selection.cells.iter().take(128) {
         let point = [cell.eq[0] / cell.amplitude, cell.eq[1] / cell.amplitude];

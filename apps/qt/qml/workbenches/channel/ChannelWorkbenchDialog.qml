@@ -11,6 +11,7 @@ import "../../instruments/spectrum"
 WorkbenchDialog {
     id:dialog
     required property var configuration
+    signal contextHelpRequested(string code)
     required property var measurementBackend
     required property var settingsBackend
     required property var transmitterBackend
@@ -98,7 +99,7 @@ WorkbenchDialog {
     ChannelAmplifierDialog {id:amplifier;theme:dialog.theme;backend:dialog.measurementBackend;busy:dialog.runState.busy;onModelApplied:dialog.settingsApplied()}
     ChannelAttenuatorDialog {id:attenuator;theme:dialog.theme;backend:dialog.measurementBackend;busy:dialog.runState.busy;onModelApplied:dialog.settingsApplied()}
     ChannelInstrumentDialog {id:instruments;theme:dialog.theme;output:dialog.output;title:dialog.tapName+" · Instruments";onSpectrumRequested:dialog.openSpectrum();onQamRequested:dialog.openQam()}
-    TapQamDialog {id:qam;theme:dialog.theme;backend:dialog.measurementBackend}
+    TapQamDialog {id:qam;onContextHelpRequested:function(code){dialog.contextHelpRequested(code)};theme:dialog.theme;backend:dialog.measurementBackend}
     QtObject {
         id:spectrumProxy
         function cancel(){}

@@ -1839,8 +1839,8 @@ active runtime budget across jobs. All imported data profiles must validate
 before admission. Each captured loading becomes the independent experiment's
 bootstrap ProfileA (wire ID0); this does not imply live on-wire switching.
 Completed/partial performance curves and counters remain selectable per captured
-ID. Other instruments retain and identify the latest completed profile's detailed
-snapshot. Stop/budget expiry preserves completed entries and marks unstarted
+ID. QAM and slicer retain bounded per-run snapshots; spectrum and channel-response
+instruments identify the latest completed profile’s detailed snapshot. Stop/budget expiry preserves completed entries and marks unstarted
 profiles explicitly. WB receiver options persist all-profiles/applied-only mode;
 legacy missing fields preserve all-profile behavior. New WBs initially use the
 applied profile, with explicit captured-ID checkbox subsets in the main WB
@@ -2076,11 +2076,13 @@ changes refresh timing without serializing plots on every polling tick. VF
 affects only distance estimates. Core windowing, simulation results and WB JSON
 are unchanged. See the [design](development/features/symbol-timing-popup/design.md).
 
-### Constellation MER (UI-QAM-MER-01)
+### Nearest-point MER estimator (UI-QAM-MER-01)
 
 The Apache core `signal_processing::modulation::mer` adapts PNM Viewer's power
 accumulator and nearest-reference row search. Its typed `MerCalculator` and
 paired `calculate_mer` operation are independent of Qt and future bindings.
+QAM retains this as a secondary estimate; UI-QAM-RUNS-02 supplies the primary
+matched TX-reference reading.
 Receiver and channel-output QAM adapters calculate over all filtered retained
 cells before the scatter cap. Raw and equalized estimates remain separate;
 known pilot amplitude is explicit, and received gain/phase are never fitted.
@@ -2100,3 +2102,20 @@ action without accepted captures; channel response can restore flat/unity.
 Production hard-coded demo loaders are removed. File Open and bundled example
 workbenches remain available. See the
 [design](development/features/restore-workbench-inputs/design.md).
+
+### Run-specific QAM and reference MER (UI-QAM-RUNS-02)
+
+Payload/NCP paired diagnostic transport now retains optional matched physical
+TX references; protected pairs attach references after reception. Neither path
+supplies TX truth to a receiver stage. The core streaming paired MER operation
+measures original received-reference error; the nearest-point estimate remains
+separate and may be optimistic under dense/noisy QAM.
+
+`receiver/qam_history` retains bounded compact per-run constellations and decoder
+LLRs, keyed by original captured profile ID, separately from wire ID0. No full
+job/waveform archive is retained. Exact run selection serves QAM/channel-output/
+slicer; unavailable choices never fall back. Latest keeps its full original
+capture, archives advertise their actual retained population, and accepted input
+changes/Start clear both histories. Spectrum and channel-response instruments retain latest-run scope; FEC and
+Profile Performance keep their existing per-profile selection.
+See the [design](development/features/qam-run-results/design.md) for resource caps.

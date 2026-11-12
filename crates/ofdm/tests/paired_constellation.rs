@@ -123,6 +123,11 @@ fn both_spacings_pair_real_bins_in_receive_order_and_trace_payload_coordinates()
         let permutation = FrequencyInterleaver::new(spacing, reference.settings().cells()).unwrap();
         let origin = result.summary.payload_origin_symbol.unwrap();
         for pair in &capture.pairs {
+            let transmitted_reference = pair
+                .reference_iq
+                .expect("Actual physical TX reference must follow inverse coordinate transport");
+            assert!((pair.after_equalization[0] - transmitted_reference[0]).abs() < 1e-10);
+            assert!((pair.after_equalization[1] - transmitted_reference[1]).abs() < 1e-10);
             assert!((origin..origin + result.summary.timing.complete_symbols)
                 .contains(&pair.source_symbol_index));
             assert_eq!(pair.profile_id, 0);

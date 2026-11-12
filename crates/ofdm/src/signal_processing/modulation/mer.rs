@@ -134,6 +134,21 @@ pub fn calculate_mer(soft: &[IqPair], hard: &[IqPair]) -> MerResult {
     powers.finish(soft.len())
 }
 
+/// Calculates MER from a bounded stream of matched received/reference I/Q pairs.
+/// # Arguments
+/// * `pairs` - Actual received sample followed by its known corresponding TX symbol.
+/// # Returns
+/// Typed power sums and explicit status; all supplied pairs contribute, without fitting.
+/// This remains independent of Qt, receiver decisions and transport ownership.
+pub fn calculate_mer_pairs(pairs: impl IntoIterator<Item = (IqPair, IqPair)>) -> MerResult {
+    let mut powers = Powers::default();
+    for (received, reference) in pairs {
+        powers.push(Some(received), Some(reference));
+    }
+    let count = powers.sample_count;
+    powers.finish(count)
+}
+
 // Index actual reference rows rather than assuming a square constellation or
 // fixed symbol spacing. Cross-QAM rows have different lengths/missing corners.
 struct ReferenceRow {

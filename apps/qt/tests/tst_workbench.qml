@@ -180,7 +180,7 @@ Pane {
     QtObject {
         id: aboutBackend
         function version() { return "0.1.0" }
-        function faq_document(code) { return JSON.stringify({title:code ? "RxMER playback needs a longer run":"MERLIN FAQ",text:"## RxMER playback needs a longer run\nChoose a duration covering all captures."}) }
+        function faq_document(code) { if(code==="QamRunUnavailable"){return JSON.stringify({title:"QAM profile has no retained result",text:"Select the desired Run Profile and Start."})};return JSON.stringify({title:code ? "RxMER playback needs a longer run":"MERLIN FAQ",text:"## RxMER playback needs a longer run\nChoose a duration covering all captures."}) }
         function license_document(key) { return JSON.stringify({title:key === "gpl" ? "GNU General Public License v3" : "Apache License 2.0",text:key === "gpl" ? "GNU GENERAL PUBLIC LICENSE" : "Apache License"}) }
     }
     QtObject {
@@ -191,8 +191,8 @@ Pane {
         function qam_selected(document) {
             lastQuery=JSON.parse(document)
             if (!retainedCells) { return qam(lastQuery.signal,lastQuery.view,lastQuery.part) }
-            const available=(lastQuery.first_bin<0 || lastQuery.first_bin<=320) && (lastQuery.last_bin<0 || lastQuery.last_bin>=320)
-            return JSON.stringify({available:available,reason:available ? "Actual test observations" : "No cells match",points:available ? [{raw_x:0.4,raw_y:0.4,eq_x:0.5,eq_y:0.5}] : [],profiles:[0],orders:[256],first_bin:320,last_bin:320,first_symbol:10,last_symbol:10,retained:1,raw_mer:{text:available ? "MER estimate: 30.00 dB · 1 cells" : "MER unavailable · no selected cells"},equalized_mer:{text:available ? "MER estimate: 40.00 dB · 1 cells" : "MER unavailable · no selected cells"},detail:"Retained test result"})
+            const available=lastQuery.run_profile!==7 && (lastQuery.first_bin<0 || lastQuery.first_bin<=320) && (lastQuery.last_bin<0 || lastQuery.last_bin>=320)
+            return JSON.stringify({available:available,diagnostic:lastQuery.run_profile===7 ? {code:"QamRunUnavailable",tooltip:"Select the profile in Configure WorkBench and run it."} : null,reason:available ? "Actual test observations" : "No cells match",points:available ? [{raw_x:0.4,raw_y:0.4,eq_x:0.5,eq_y:0.5}] : [],profiles:[0],orders:[256],first_bin:320,last_bin:320,first_symbol:10,last_symbol:10,retained:1,runs:[{id:0,available:true},{id:3,available:true},{id:7,available:false}],raw_reference_mer:{text:available ? "MER (TX reference): 30.00 dB · 1 cells" : "TX-reference MER unavailable"},equalized_reference_mer:{text:available ? "MER (TX reference): 40.00 dB · 1 cells" : "TX-reference MER unavailable"},raw_mer:{text:available ? "MER estimate: 30.00 dB · 1 cells" : "MER unavailable · no selected cells"},equalized_mer:{text:available ? "MER estimate: 40.00 dB · 1 cells" : "MER unavailable · no selected cells"},detail:"Retained test result"})
         }
         function response(document) { lastQuery=JSON.parse(document);return JSON.stringify({available:retainedCells,points:[],x_ticks:[],y_ticks:[],snapshots:[10],reason:"Response test",summary:"Actual response query"}) }
         function slicer(document,decoderInput) { lastQuery=JSON.parse(document);lastDecoderInput=decoderInput;return JSON.stringify({available:retainedCells,rows:[],llr:{count:retainedCells ? 8 : 0},histogram:{points:[],x_ticks:[],y_ticks:[]},detail:"Actual soft query"}) }
@@ -1470,18 +1470,31 @@ Pane {
             compare(qam.observation.points.length,1)
             verify(findChild(qam,"receiverProfile").enabled)
             tryVerify(function(){return findVisualItem(qam.contentItem,"receiverEqualizedMer")!==null})
-            compare(findVisualItem(qam.contentItem,"receiverEqualizedMer").text,"MER estimate: 40.00 dB · 1 cells")
+            compare(findVisualItem(qam.contentItem,"receiverEqualizedMer").text,"MER (TX reference): 40.00 dB · 1 cells")
+            const runChoice=findChild(qam,"receiverRunProfile")
+            compare(runChoice.model.length,4)
+            runChoice.currentIndex=2;runChoice.activated(2)
+            compare(receiverBackend.lastQuery.run_profile,3)
             const qamView=findChild(qam,"receiverQamView")
             qamView.currentIndex=2;qamView.activated(2)
             tryVerify(function(){return findVisualItem(qam.contentItem,"receiverRawMer")!==null})
-            compare(findVisualItem(qam.contentItem,"receiverRawMer").text,"MER estimate: 30.00 dB · 1 cells")
+            compare(findVisualItem(qam.contentItem,"receiverRawMer").text,"MER (TX reference): 30.00 dB · 1 cells")
             const first=findChild(qam,"receiverFirstBin")
             first.value=400;first.valueModified()
             compare(receiverBackend.lastQuery.first_bin,400)
             compare(qam.observation.points.length,0)
-            compare(findVisualItem(qam.contentItem,"receiverRawMer").text,"MER unavailable · no selected cells")
+            compare(findVisualItem(qam.contentItem,"receiverRawMer").text,"TX-reference MER unavailable")
             qam.selectionControls.resetFilters()
             compare(qam.observation.points.length,1)
+            runChoice.currentIndex=3;runChoice.activated(3)
+            compare(qam.observation.available,false)
+            const missingRun=findVisualItem(qam.contentItem,"receiverQamUnavailable")
+            verify(missingRun.hasHelp)
+            missingRun.forceActiveFocus();keyClick(Qt.Key_F1)
+            tryCompare(workbench.faqPopup,"opened",true)
+            compare(workbench.faqPopup.title,"QAM profile has no retained result")
+            closeWithX(workbench.faqPopup)
+            qam.selectionControls.resetFilters()
             qam.viewIndex=1
             closeWithX(qam);compare(receiver.opened,true)
             receiver.responsePopup.open();tryCompare(receiver.responsePopup,"opened",true)

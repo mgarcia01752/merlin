@@ -25,6 +25,7 @@ struct Coordinate {
     bin: SubcarrierIdx,
     before: IqPair,
     after: IqPair,
+    reference: Option<IqPair>,
 }
 struct CoordinateStream {
     origin: u64,
@@ -100,6 +101,7 @@ impl ConstellationCollector {
     /// # Arguments
     /// * `waveform` - Actual same-symbol raw FFT and corrected bins.
     /// * `payload` - Independent receiver outcome and accepted payload data-position ranks.
+    /// * `references` - Optional physical TX grid, used only by diagnostic retention.
     /// # Returns
     /// Unit after finite pairwise admission; no decoder or RNG inputs are changed.
     /// # Errors
@@ -108,6 +110,7 @@ impl ConstellationCollector {
         &mut self,
         waveform: &ReceivedSymbol,
         payload: &PayloadReceiveSymbol,
+        references: &[Option<IqPair>],
     ) -> Result<(), SimulationError> {
         if self.complete() {
             return Ok(());
@@ -130,6 +133,7 @@ impl ConstellationCollector {
                     bin,
                     before: waveform.bins[usize::from(bin)],
                     after: waveform.equalized[usize::from(bin)],
+                    reference: references.get(usize::from(bin)).copied().flatten(),
                 })
             })
             .collect();
@@ -194,6 +198,7 @@ impl ConstellationCollector {
                                         modulation_order: 1u16 << soft.llrs.len(),
                                         before_equalization: coordinate.before,
                                         after_equalization: coordinate.after,
+                                        reference_iq: coordinate.reference,
                                         llrs: soft.llrs.clone(),
                                     },
                                 );
@@ -234,6 +239,7 @@ impl ConstellationCollector {
                                         modulation_order,
                                         before_equalization: coordinate.before,
                                         after_equalization: coordinate.after,
+                                        reference_iq: coordinate.reference,
                                         llrs: soft.llrs.clone(),
                                     },
                                 );

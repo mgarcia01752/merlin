@@ -8,9 +8,20 @@
       "faq_anchor": "rxmer-playback-needs-a-longer-run",
       "summary": "The last RxMER capture transition must fit inside the source observation window.",
       "context": "Final transition: {final_transition_ms} ms (symbol {final_transition_symbol}). Current duration: {current_duration_ms} ms.",
-      "suggestion": "Set Configure WorkBench → Run → Duration per Profile to at least {minimum_duration_ms} ms, or reduce OFDM symbols between captures / the capture count.",
+      "suggestion": "Set Configure WorkBench \u2192 Run \u2192 Duration per Profile to at least {minimum_duration_ms} ms, or reduce OFDM symbols between captures / the capture count.",
       "over_limit_suggestion": "This sequence needs at least {minimum_duration_ms} ms, above the {maximum_duration_ms} ms duration limit. Reduce OFDM symbols between captures / the capture count, or use Single capture / Average mode.",
       "note": "Increasing the active run budget does not extend the observation window."
+    },
+    {
+      "code": "QamRunUnavailable",
+      "title": "QAM profile has no retained result",
+      "faq_heading": "QAM profile has no retained result",
+      "faq_anchor": "qam-profile-has-no-retained-result",
+      "summary": "Imported profile IDs are separate from completed simulation results.",
+      "context": "",
+      "suggestion": "In Configure WorkBench, select the desired profiles, apply the configuration and run them. Wait for the selected run to complete, then choose its Run Profile in the analyzer.",
+      "over_limit_suggestion": "",
+      "note": "Opening a WB does not run it. Start or accepted input changes clear transient results. Missing results never use another profile\u2019s samples."
     }
   ]
 }

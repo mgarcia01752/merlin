@@ -132,3 +132,5 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 - [Calculated constellation MER](qam-mer/design.md): UI-QAM-MER-01.
 
 - [Restore workbench inputs](restore-workbench-inputs/design.md): UI-INPUT-RESTORE-01.
+
+- [Run-specific QAM results and TX-reference MER](qam-run-results/design.md): UI-QAM-RUNS-02.

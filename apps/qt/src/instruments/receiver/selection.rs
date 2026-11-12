@@ -12,6 +12,7 @@ use std::collections::BTreeSet;
 #[derive(Clone, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub(crate) struct Query {
+    pub run_profile: i32,
     pub signal: usize,
     pub view: usize,
     pub part: usize,
@@ -25,6 +26,7 @@ pub(crate) struct Query {
 impl Default for Query {
     fn default() -> Self {
         Self {
+            run_profile: -1,
             signal: 0,
             view: 1,
             part: 0,
@@ -50,7 +52,8 @@ impl Query {
             return Err("Receiver selection exceeds bounds.".into());
         }
         let query: Self = serde_json::from_str(document).map_err(|e| e.to_string())?;
-        if query.signal > 4
+        if !(-1..=255).contains(&query.run_profile)
+            || query.signal > 4
             || query.view > 2
             || query.part > 1
             || query.profile < -1
@@ -76,6 +79,7 @@ impl Query {
 pub(crate) struct Cell<'a> {
     pub raw: &'a IqPair,
     pub eq: &'a IqPair,
+    pub reference: Option<IqPair>,
     pub llrs: &'a [f64],
     pub bin: u16,
     pub frequency: u32,
@@ -98,12 +102,26 @@ pub(crate) struct Selected<'a> {
 /// # Errors
 /// Reports unsupported modulation/profile or no retained selected cells without stale samples.
 pub(crate) fn select<'a>(result: &'a ResultData, query: &Query) -> Result<Selected<'a>, String> {
+    select_streams(
+        result.job.constellation.as_ref(),
+        result.job.protected_constellation.as_ref(),
+        query,
+    )
+}
+fn select_streams<'a>(
+    data: Option<&'a docsis_ofdm_fec::simulation::channel::constellation::ConstellationResult>,
+    protected: Option<
+        &'a docsis_ofdm_fec::simulation::channel::protected_constellation::ProtectedConstellation,
+    >,
+    query: &Query,
+) -> Result<Selected<'a>, String> {
     let mut cells = Vec::new();
     if query.signal == 0 {
-        if let Some(data) = &result.job.constellation {
+        if let Some(data) = data {
             cells.extend(data.pairs.iter().map(|p| Cell {
                 raw: &p.before_equalization,
                 eq: &p.after_equalization,
+                reference: p.reference_iq,
                 llrs: &p.llrs,
                 bin: p.physical_bin,
                 frequency: p.frequency_hz,
@@ -115,10 +133,11 @@ pub(crate) fn select<'a>(result: &'a ResultData, query: &Query) -> Result<Select
             }));
         }
     } else if query.signal == 1 {
-        if let Some(data) = &result.job.constellation {
+        if let Some(data) = data {
             cells.extend(data.ncp_pairs.iter().map(|p| Cell {
                 raw: &p.before_equalization,
                 eq: &p.after_equalization,
+                reference: p.reference_iq,
                 llrs: &p.llrs,
                 bin: p.physical_bin,
                 frequency: p.frequency_hz,
@@ -129,7 +148,7 @@ pub(crate) fn select<'a>(result: &'a ResultData, query: &Query) -> Result<Select
                 amplitude: 1.0,
             }));
         }
-    } else if let Some(data) = &result.job.protected_constellation {
+    } else if let Some(data) = protected {
         let (stream, order, amplitude) = match query.signal {
             2 if query.part == 0 => (&data.plc_data, 16, 1.0),
             2 => (&data.plc_preamble, 2, 1.0),
@@ -139,6 +158,7 @@ pub(crate) fn select<'a>(result: &'a ResultData, query: &Query) -> Result<Select
         cells.extend(stream.pairs.iter().map(|p| Cell {
             raw: &p.before_equalization,
             eq: &p.after_equalization,
+            reference: p.reference_iq,
             llrs: &[],
             bin: p.physical_bin,
             frequency: p.frequency_hz,
@@ -180,6 +200,77 @@ pub(crate) fn select<'a>(result: &'a ResultData, query: &Query) -> Result<Select
     });
     Ok(Selected { cells, metadata })
 }
+/// Borrows a requested archived run; latest keeps its full capture resolution.
+pub(crate) fn archive(
+    query: &Query,
+    result: &ResultData,
+) -> Result<Option<std::sync::Arc<super::qam_history::Snapshot>>, String> {
+    let latest_id = result
+        .job
+        .settings
+        .playback
+        .as_ref()
+        .map(|playback| i32::from(playback.profile.profile_id));
+    if query.run_profile < 0 || latest_id == Some(query.run_profile) {
+        return Ok(None);
+    }
+    super::qam_history::get(query.run_profile).map(Some)
+}
+/// Selects original coordinates from one identified run, never pooling independent runs.
+pub(crate) fn select_run<'a>(
+    result: &'a ResultData,
+    snapshot: Option<&'a super::qam_history::Snapshot>,
+    query: &Query,
+) -> Result<Selected<'a>, String> {
+    let mut selected = if let Some(snapshot) = snapshot {
+        select_streams(snapshot.data.as_ref(), snapshot.protected.as_ref(), query)?
+    } else {
+        select(result, query)?
+    };
+    selected.metadata["runs"] = super::qam_history::catalog();
+    selected.metadata["run_profile"] =
+        json!(snapshot.map(|snapshot| snapshot.id).or_else(|| result
+            .job
+            .settings
+            .playback
+            .as_ref()
+            .map(|playback| playback.profile.profile_id)));
+    selected.metadata["latest_run_profile"] = json!(result
+        .job
+        .settings
+        .playback
+        .as_ref()
+        .map(|playback| playback.profile.profile_id));
+    selected.metadata["archived"] = json!(snapshot.is_some());
+    Ok(selected)
+}
+/// Measures actual complex error against matched TX symbols, never slicer decisions.
+pub(crate) fn reference_mer(selection: &Selected<'_>, raw: bool) -> Value {
+    if selection.cells.is_empty() || selection.cells.iter().any(|cell| cell.reference.is_none()) {
+        return json!({"text":"TX-reference MER unavailable"});
+    }
+    let result = docsis_ofdm_fec::signal_processing::modulation::mer::calculate_mer_pairs(
+        selection.cells.iter().map(|cell| {
+            (
+                if raw { *cell.raw } else { *cell.eq },
+                cell.reference.unwrap(),
+            )
+        }),
+    );
+    let text = if let Some(db) = result.mer_db {
+        format!(
+            "MER (TX reference): {db:.2} dB · {} cells",
+            result.sample_count
+        )
+    } else if result.error_power == Some(0.0)
+        && result.signal_power.is_some_and(|power| power > 0.0)
+    {
+        "MER (TX reference): perfect reference".into()
+    } else {
+        "TX-reference MER unavailable".into()
+    };
+    json!({"text":text,"result":result,"help":"Measured against the actual transmitted I/Q at the same physical bin and symbol. TX reference is diagnostic only and is never passed to the receiver. Uses all cells in this retained selection."})
+}
 /// Calculates decision-directed MER over all selected retained cells.
 /// # Arguments
 /// * `selection` - One modulation/role with its actual reference amplitude.
@@ -205,11 +296,11 @@ pub(crate) fn mer(selection: &Selected<'_>, raw: bool) -> Value {
             },
         ));
     let text = if let Some(db) = result.mer_db {
-        format!("MER estimate: {db:.2} dB · {} cells", result.sample_count)
+        format!("Nearest-point estimate: {db:.2} dB")
     } else if result.calculation_status
         == docsis_ofdm_fec::signal_processing::modulation::mer::MerStatus::PerfectReference
     {
-        format!("MER: perfect reference · {} cells", result.sample_count)
+        "Nearest-point estimate: perfect reference".to_string()
     } else {
         "MER unavailable".to_string()
     };
@@ -224,9 +315,15 @@ pub(crate) fn mer(selection: &Selected<'_>, raw: bool) -> Value {
 /// At most 2048 matched points, available bounds and explicit empty-state diagnostics.
 pub(crate) fn qam(query: &Query) -> Value {
     let Some(result) = latest() else {
-        return json!({"available":false,"points":[],"profiles":[],"orders":[],"reason":"Run the closed loop to retain receiver observations."});
+        return json!({"available":false,"points":[],"profiles":[],"orders":[],"runs":super::qam_history::catalog(),"reason":"Run the closed loop to retain receiver observations."});
     };
-    let selection = match select(&result, query) {
+    let archived = match archive(query, &result) {
+        Ok(value) => value,
+        Err(reason) => {
+            return json!({"available":false,"points":[],"runs":super::qam_history::catalog(),"reason":reason,"diagnostic":crate::help::static_diagnostic("QamRunUnavailable")})
+        }
+    };
+    let selection = match select_run(&result, archived.as_deref(), query) {
         Ok(s) => s,
         Err(e) => return json!({"available":false,"points":[],"reason":e}),
     };
@@ -241,7 +338,11 @@ pub(crate) fn qam(query: &Query) -> Value {
     let points:Vec<_>=selection.cells.iter().take(2048).map(|p|json!({"raw_x":0.5+p.raw[0]/(2.0*extent),"raw_y":0.5-p.raw[1]/(2.0*extent),"eq_x":0.5+p.eq[0]/(2.0*extent),"eq_y":0.5-p.eq[1]/(2.0*extent),"bin":p.bin,"symbol":p.symbol,"source_symbol":p.source,"frequency_hz":p.frequency})).collect();
     let raw_mer = mer(&selection, true);
     let equalized_mer = mer(&selection, false);
+    let raw_reference_mer = reference_mer(&selection, true);
+    let equalized_reference_mer = reference_mer(&selection, false);
     let mut state = selection.metadata;
+    state["raw_reference_mer"] = raw_reference_mer;
+    state["equalized_reference_mer"] = equalized_reference_mer;
     state["raw_mer"] = raw_mer;
     state["equalized_mer"] = equalized_mer;
     state["selected"] = json!(selection.cells.len());
@@ -270,6 +371,7 @@ mod tests {
             .map(|index| Cell {
                 raw: if index < 2048 { &ideal } else { &noisy },
                 eq: &ideal,
+                reference: Some(ideal),
                 llrs: &[],
                 bin: 320,
                 frequency: 100_000_000,

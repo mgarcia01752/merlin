@@ -18,6 +18,9 @@ pub struct ConstellationPair {
     pub modulation_order: u16,
     pub before_equalization: IqPair,
     pub after_equalization: IqPair,
+    /// Matched physical TX symbol for diagnostics only; never an RX input.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reference_iq: Option<IqPair>,
     /// Actual post-descrambling receiver cell LLRs, before inverse bit processing.
     pub llrs: Vec<f64>,
 }
@@ -32,6 +35,9 @@ pub struct NcpConstellationPair {
     pub modulation_order: u16,
     pub before_equalization: IqPair,
     pub after_equalization: IqPair,
+    /// Matched physical TX symbol for diagnostics only; never an RX input.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reference_iq: Option<IqPair>,
     /// Actual NCP-hypothesis LLRs for the accepted field, after descrambling.
     pub llrs: Vec<f64>,
 }

@@ -13,6 +13,7 @@ ColumnLayout {
     property int signalIndex: 0
     property int viewIndex: 1
     property int plcPartIndex: 0
+    property int runProfile: -1
     property int profile: -1
     property int order: 0
     property int firstBin: -1
@@ -22,13 +23,14 @@ ColumnLayout {
     property bool showView: true
     property bool resetting: false
     signal selectionChanged()
-    function query() { return {signal:signalIndex,view:viewIndex,part:plcPartIndex,profile:profile,order:order,first_bin:firstBin,last_bin:lastBin,first_symbol:firstSymbol,last_symbol:lastSymbol} }
-    function resetFilters() {
-        resetting=true;profile=-1;order=0;firstBin=-1;lastBin=-1;firstSymbol=-1;lastSymbol=-1;resetting=false
+    function query() { return {run_profile:runProfile,signal:signalIndex,view:viewIndex,part:plcPartIndex,profile:profile,order:order,first_bin:firstBin,last_bin:lastBin,first_symbol:firstSymbol,last_symbol:lastSymbol} }
+    function resetFilters(resetRun) {
+        resetting=true;if(resetRun!==false){runProfile=-1};profile=-1;order=0;firstBin=-1;lastBin=-1;firstSymbol=-1;lastSymbol=-1;resetting=false
         selectionChanged()
     }
-    onSignalIndexChanged: resetFilters()
-    onPlcPartIndexChanged: resetFilters()
+    onRunProfileChanged: if(!resetting) resetFilters(false)
+    onSignalIndexChanged: resetFilters(false)
+    onPlcPartIndexChanged: resetFilters(false)
     onViewIndexChanged: { if (!resetting) { selectionChanged() } }
     spacing: 8
     RowLayout {
@@ -44,9 +46,20 @@ ColumnLayout {
     }
     RowLayout {
         Layout.fillWidth:true
-        Label { visible:controls.signalIndex===0;text:"Received Profile";color:controls.theme.muted }
+        Label {text:"Run Profile";color:controls.theme.muted}
         ComboBox {
-            objectName:"receiverProfile";visible:controls.signalIndex===0
+            objectName:"receiverRunProfile"
+            readonly property var runs:controls.metadata.runs || []
+            model:[controls.metadata.latest_run_profile===undefined || controls.metadata.latest_run_profile===null ? "Latest Run" : "Latest Run · Profile "+controls.metadata.latest_run_profile].concat(runs.map(function(run){return "Profile "+run.id+(run.available ? "" : " · No Result")}))
+            currentIndex:controls.runProfile<0 ? 0 : runs.findIndex(function(run){return run.id===controls.runProfile})+1
+            Layout.preferredWidth:190
+            onActivated:function(index){controls.runProfile=index===0 ? -1 : runs[index-1].id}
+            ToolTip.visible:hovered || activeFocus
+            ToolTip.text:"Captured profile ID from a separate simulation run. Select profiles in Configure WorkBench before running them."
+        }
+        Label { visible:controls.signalIndex===0 && (controls.metadata.profiles || []).length>1;text:"Wire Profile";color:controls.theme.muted }
+        ComboBox {
+            objectName:"receiverProfile";visible:controls.signalIndex===0 && (controls.metadata.profiles || []).length>1
             model:["All received"].concat((controls.metadata.profiles || []).map(function(id){return "Profile "+id}))
             enabled:(controls.metadata.profiles || []).length>0
             currentIndex:controls.profile<0 ? 0 : (controls.metadata.profiles || []).indexOf(controls.profile)+1

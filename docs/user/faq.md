@@ -33,3 +33,21 @@ uses the same observation duration independently.
 Only known diagnostic codes have contextual help. An unfamiliar message remains
 visible in its original form; MERLIN does not guess a fix from its wording.
 Include the message and the affected settings when reporting an issue.
+
+## QAM profile has no retained result
+
+Run Profile lists original captured profile IDs. **No Result** means that this
+workbench has no retained QAM snapshot for that run. Opening a WB imports its
+configuration and captures; it does not create simulation results.
+
+Open **Configure WorkBench**, select the desired profiles, Apply and Start.
+Wait for the selected run to finish, then select its Run Profile in QAM. A run
+that failed or was stopped before retaining samples may have no constellation.
+Start and accepted input changes clear old transient results. The analyzer never
+substitutes another profile's samples. The on-wire Profile A/ID0 is a separate
+identity and does not restrict which independent captured run you can inspect.
+
+**MER (TX reference)** compares actual transmitted and received I/Q. The
+**Nearest-point estimate** may remain high in a dense/noisy constellation because
+wrong nearby decisions hide the actual error; inspect the primary TX-reference
+reading to see the modeled RxMER impairment.

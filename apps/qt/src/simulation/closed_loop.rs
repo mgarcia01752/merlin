@@ -739,6 +739,75 @@ mod tests {
         (inputs, transmission)
     }
     #[test]
+    fn channel193_rxmer_controls_tx_reference_mer_while_nearest_points_are_optimistic() {
+        let bytes = std::fs::read(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("../../examples/workbench/multi-rxmer-2/workbench.merlin.json"),
+        )
+        .unwrap();
+        let project: crate::workbench::project_file::Project =
+            serde_json::from_slice(&bytes).unwrap();
+        let mut inputs = project.validate().unwrap();
+        assert_eq!(inputs.playback.as_ref().unwrap().frames.len(), 132);
+        inputs.profile = inputs.profiles.last().cloned();
+        let options = Options {
+            max_iterations: 5,
+            max_runtime_ms: 60000,
+            ..project.receiver.unwrap()
+        };
+        for impaired in [false, true] {
+            if impaired {
+                for frame in &mut inputs.playback.as_mut().unwrap().frames {
+                    for mer in frame.mer_db.iter_mut().flatten() {
+                        *mer = 20.0;
+                    }
+                }
+            }
+            let settings = prepare(&project.transmission, &inputs, &options).unwrap();
+            let result = run_one(
+                &settings,
+                60000,
+                &AtomicBool::new(false),
+                &AtomicBool::new(false),
+                &AtomicU64::new(0),
+                &RunTiming::new(),
+            )
+            .unwrap();
+            let query = crate::instruments::receiver::selection::Query::default();
+            let selected =
+                crate::instruments::receiver::selection::select(&result, &query).unwrap();
+            let raw = crate::instruments::receiver::selection::reference_mer(&selected, true);
+            let playback = settings.playback.as_ref().unwrap();
+            let residual = playback.prepare(&settings.transmission).unwrap().at(0);
+            let expected_error = selected
+                .cells
+                .iter()
+                .map(|cell| {
+                    residual.power
+                        [usize::from(cell.bin - playback.profile.key.grid.first_subcarrier_index)]
+                    .unwrap()
+                })
+                .sum::<f64>();
+            let expected_raw = 10.0
+                * (raw["result"]["signal_power"].as_f64().unwrap().log10()
+                    - expected_error.log10());
+            assert!((raw["result"]["mer_db"].as_f64().unwrap() - expected_raw).abs() < 0.3);
+            let measured = crate::instruments::receiver::selection::reference_mer(&selected, false);
+            let estimated = crate::instruments::receiver::selection::mer(&selected, false);
+            let actual = measured["result"]["mer_db"].as_f64().unwrap();
+            let nearest = estimated["result"]["mer_db"].as_f64().unwrap();
+            eprintln!(
+                "channel193 injected20dB={impaired} TX-reference={actual:.3} nearest={nearest:.3}"
+            );
+            assert!(nearest >= actual - 0.05);
+            if impaired {
+                assert!((actual - 20.0).abs() < 1.0, "{measured}");
+                assert!(nearest > actual + 10.0);
+            }
+        }
+    }
+
+    #[test]
     fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         let (inputs, transmission) = accepted_inputs();
         let options = Options {
@@ -963,6 +1032,7 @@ mod tests {
         model.invalidate();
         assert!(model.state()["timing"].is_null());
         assert!(latest().is_none());
+        assert!(crate::instruments::receiver::qam_history::get(0).is_err());
         assert_eq!(
             crate::transmitter_instruments::stage(0, 0)["available"],
             false
@@ -1060,6 +1130,22 @@ mod tests {
                     + view["fec"]["ccw"].as_u64().unwrap()
                     + view["fec"]["ufec"].as_u64().unwrap()
             );
+            let qam = crate::instruments::receiver::selection::qam(
+                &crate::instruments::receiver::selection::Query {
+                    run_profile: id,
+                    ..Default::default()
+                },
+            );
+            assert_eq!(qam["run_profile"], id, "{qam}");
+            assert!(qam["available"].as_bool().unwrap(), "{qam}");
+            assert!(
+                qam["raw_reference_mer"]["result"]["sample_count"]
+                    .as_u64()
+                    .unwrap()
+                    > 0
+            );
+            assert_eq!(qam["runs"].as_array().unwrap().len(), 4);
+            assert!(qam["retained"].as_u64().unwrap() <= 65536);
             let fec = crate::instruments::receiver::performance::fec_view(id);
             assert_eq!(fec["profile_id"], id);
             assert_eq!(fec["fec"], view["fec"]);
@@ -1094,6 +1180,21 @@ mod tests {
             crate::instruments::receiver::performance::fec_view(15)["available"],
             false
         );
+        let missing = crate::instruments::receiver::selection::qam(
+            &crate::instruments::receiver::selection::Query {
+                run_profile: 15,
+                ..Default::default()
+            },
+        );
+        assert_eq!(missing["available"], false);
+        assert!(missing["points"].as_array().unwrap().is_empty());
+        for id in 0..4 {
+            let snapshot = crate::instruments::receiver::qam_history::get(id).unwrap();
+            assert_eq!(i32::from(snapshot.id), id);
+            let data = snapshot.data.as_ref().unwrap();
+            assert!(data.pairs.len() <= 8192 && data.ncp_pairs.len() <= 1024);
+            assert!(data.pairs.iter().all(|pair| pair.reference_iq.is_some()));
+        }
         assert_eq!(inputs.profile.as_ref().unwrap().profile_id, 0);
         assert_eq!(
             latest()

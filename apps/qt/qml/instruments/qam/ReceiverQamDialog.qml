@@ -10,6 +10,7 @@ import "../../components"
 WorkbenchDialog {
     id: dialog
     required property var backend
+    signal contextHelpRequested(string code)
     property bool rawOnly: false
     property alias signalIndex: selection.signalIndex
     property alias viewIndex: selection.viewIndex
@@ -47,14 +48,22 @@ WorkbenchDialog {
                         Label {
                             id:merReading
                             objectName:modelData.indexOf("Raw")===0 ? "receiverRawMer" : "receiverEqualizedMer"
-                            readonly property var reading:modelData.indexOf("Raw")===0 ? (dialog.observation.raw_mer || {}) : (dialog.observation.equalized_mer || {})
-                            text:reading.text || "MER unavailable"
+                            readonly property var reading:modelData.indexOf("Raw")===0 ? (dialog.observation.raw_reference_mer || {}) : (dialog.observation.equalized_reference_mer || {})
+                            text:reading.text || "TX-reference MER unavailable"
                             color:dialog.theme.accent
                             Layout.fillWidth:true
                             wrapMode:Text.WordWrap
                             HoverHandler {id:merHover}
                             ToolTip.visible:merHover.hovered
                             ToolTip.text:merReading.reading.help || "Select retained cells to calculate MER."
+                        }
+                        Label {
+                            text:((modelData.indexOf("Raw")===0 ? dialog.observation.raw_mer : dialog.observation.equalized_mer) || {}).text || ""
+                            color:dialog.theme.muted;font.pixelSize:11
+                            Layout.fillWidth:true;wrapMode:Text.WordWrap
+                            HoverHandler {id:estimateHover}
+                            ToolTip.visible:estimateHover.hovered
+                            ToolTip.text:"Nearest ideal point estimate. Dense constellations and incorrect decisions can make it too high, even when received symbols are badly impaired."
                         }
                         Canvas {
                             id: scatter
@@ -82,7 +91,7 @@ WorkbenchDialog {
                                 }
                             }
                         }
-                        Label { objectName: "receiverQamUnavailable"; visible: !dialog.observation.available; text: dialog.observation.reason || "No retained receiver results"; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; horizontalAlignment: Text.AlignHCenter }
+                        ContextualStatus { theme:dialog.theme;diagnostic:dialog.observation.diagnostic || null;onHelpRequested:function(code){dialog.contextHelpRequested(code)};objectName: "receiverQamUnavailable"; visible: !dialog.observation.available; text: dialog.observation.reason || "No retained receiver results"; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; horizontalAlignment: Text.AlignHCenter }
                         Item { visible: !dialog.observation.available; Layout.fillHeight: true }
                         Label { text: dialog.observation.available ? dialog.observation.points.length+" cells · I / Q" : "No I/Q data"; color: dialog.theme.muted; Layout.alignment: Qt.AlignHCenter; font.pixelSize: 11 }
                     }

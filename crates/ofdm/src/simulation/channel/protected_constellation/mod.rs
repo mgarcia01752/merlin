@@ -61,6 +61,9 @@ pub struct ProtectedPair {
     pub plc_phase: u8,
     pub before_equalization: IqPair,
     pub after_equalization: IqPair,
+    /// Physical TX diagnostic reference, separate from all receiver operations.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reference_iq: Option<IqPair>,
     pub receiver_estimate_ready: bool,
     pub used_in_current_fit: bool,
     pub prior_channel_prediction: Option<IqPair>,
@@ -187,6 +190,7 @@ impl ProtectedConstellation {
                 plc_phase: (symbol % PLC_FRAME_SYMBOLS) as u8,
                 before_equalization: received.bins[bin],
                 after_equalization: received.equalized[bin],
+                reference_iq: None,
                 receiver_estimate_ready: received
                     .channel_estimate
                     .as_ref()
