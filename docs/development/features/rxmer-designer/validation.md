@@ -66,3 +66,12 @@ and both compact controls. Light-mode layout was also inspected. No scientific c
 The seven Designer QML checks pass after ordering decrease before increase.
 The native Qt application is rebuilt; the guide text and capture reflect the
 low-to-high order. No numeric, validation or persistence behavior changes.
+
+## RXMER-DESIGN-05: Flip action
+
+All 66 QML checks pass. The Flip case covers −5 ↔ +5 dB, fractional magnitude,
+limit values, disabled zero/invalid values, keyboard activation and retained
+zoom. The native Qt executable is rebuilt; the guide explains the visible Flip
+button and signed slope direction. The scientific recipe and persistence format
+are unchanged. Native inspection confirms the positive and negative slopes
+reverse when Flip is clicked.

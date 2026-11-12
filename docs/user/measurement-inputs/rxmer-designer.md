@@ -10,7 +10,10 @@ an association anchor; it is not a measured acquisition time.
 Enable the effects you need. The tilt text box remains editable; its **↓ / ↑**
 buttons or the field’s Up/Down keys adjust the current value by exactly **1 dB**.
 Fractional typed values remain supported. Steps beyond ±60 dB or from invalid
-text are disabled.
+text are disabled. Press **Flip** beside the arrows to reverse the tilt direction
+by changing its sign: **−5 dB ↔ +5 dB**. Positive tilt raises the high-frequency
+edge; negative tilt lowers it. Flip preserves magnitude, capture scope and zoom,
+and is disabled for zero or invalid text.
 
 The preview overlays the original dashed curve and
 the designed solid curve on the same RxMER axis. A single shaded **PLC** region

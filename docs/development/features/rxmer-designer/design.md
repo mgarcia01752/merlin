@@ -81,3 +81,12 @@ boundaries and invalid drafts, then rebuild the native UI and update its capture
 Order the tilt actions left to right as decrease (↓), then increase (↑), next
 to the editable value. This is a presentation ordering change. Verify both
 controls remain connected to their signed 1 dB actions and rebuild the UI.
+
+## RXMER-DESIGN-05: reverse tilt direction
+
+Add an explicit Flip action beside the editable value and 1 dB controls. It
+negates a valid nonzero draft tilt (−5 ↔ +5 dB), refreshes the current preview,
+and retains magnitude, capture scope and zoom. Disable it for zero or invalid
+text. Existing Rust recipe validation and low-frequency anchoring remain the
+scientific authority. Verify both directions, fractional magnitude, bounds,
+keyboard activation and retained zoom; rebuild and capture the native window.

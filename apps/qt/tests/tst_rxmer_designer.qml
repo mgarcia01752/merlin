@@ -26,6 +26,22 @@ Pane {
     TestCase {
         name:"RxmerDesigner";when:windowShown
         function cleanup(){dialog.close();wait(100)}
+        function test_flip_reverses_signed_tilt_without_changing_magnitude_or_zoom(){
+            dialog.open();tryCompare(dialog,"visible",true)
+            findChild(dialog,"designerTilt").checked=true
+            const field=findChild(dialog,"designerTiltDb"), flip=findChild(dialog,"designerTiltFlip")
+            verify(flip)
+            mouseClick(findChild(dialog,"designerZoomPlc"))
+            field.text="-5";mouseClick(flip);compare(field.text,"5");compare(backend.lastRequest.recipe.tilt.tilt_db,5)
+            flip.forceActiveFocus();keyClick(Qt.Key_Space);compare(field.text,"-5")
+            compare(dialog.viewStart,4000);compare(dialog.viewCount,80)
+            field.text="-2.5";mouseClick(flip);compare(field.text,"2.5")
+            field.text="60";mouseClick(flip);compare(field.text,"-60")
+            field.text="0";verify(!flip.enabled)
+            field.text="";verify(!flip.enabled)
+            field.text="invalid";verify(!flip.enabled)
+            field.text="61";verify(!flip.enabled)
+        }
         function test_tilt_steps_keep_text_entry_keyboard_and_limits(){
             dialog.open();tryCompare(dialog,"visible",true)
             const field=findChild(dialog,"designerTiltDb"), up=findChild(dialog,"designerTiltUp"), down=findChild(dialog,"designerTiltDown")

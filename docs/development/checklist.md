@@ -1201,3 +1201,9 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **RXMER-DESIGN-04** Order tilt buttons low to high: decrease, then
   increase. Existing Designer QML checks and native build pass.
   [Design](features/rxmer-designer/design.md#rxmer-design-04-low-to-high-button-order).
+
+- [x] **RXMER-DESIGN-05** Add an explicit Flip button to reverse signed
+  tilt while keeping magnitude, scope and zoom. Verify both directions,
+  keyboard activation, fractional values, zero and invalid drafts;
+  66 QML checks and the rebuilt native Qt application pass.
+  [Design](features/rxmer-designer/design.md#rxmer-design-05-reverse-tilt-direction).
