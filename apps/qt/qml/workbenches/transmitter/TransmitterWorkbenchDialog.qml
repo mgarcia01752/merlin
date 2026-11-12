@@ -26,28 +26,51 @@ WorkbenchDialog {
     onUsePreviewChanged: if (!usePreview && backend) { backend.cancel() }
     property var retainedState: ({has_result:false,can_generate:false,busy:false})
     property string seenToken: ""
+    property string seenPreviewToken: ""
+    property var graphicalStages: []
+    property var outputPreview: ({points:[]})
+    property bool outputAvailable: false
+    function refreshPreviews() {
+        graphicalStages=JSON.parse(backend.stage_previews())
+        const completed=runState.has_result
+        outputAvailable=completed || transmitterState.has_result
+        outputPreview=outputAvailable ? JSON.parse(completed ? backend.view_tap(3,0,0,false) : backend.view(0,0,false)) : ({points:[]})
+    }
+    onTransmitterStateChanged: {
+        const token=transmitterState.result_token || ""
+        if (visible && token!==seenPreviewToken) {seenPreviewToken=token;refreshPreviews()}
+    }
     function refreshSpectrum() { if (backend) { retainedState=JSON.parse(backend.spectrum_tap(selectedTap === 0 ? 3 : selectedTap-1)) } }
     function openSpectrum(index) { selectedTap=index;refreshSpectrum();spectrum.clearView();spectrum.open() }
-    function openStage(index) { stageInspector.stageIndex=index;stageInspector.open() }
+    function openStage(index) { stageInspector.stageIndex=index===2 && graphicalStages.length>2 ? graphicalStages[2].stage_index : index;stageInspector.open() }
     onRunStateChanged: {
         if (seenToken !== (runState.result_token || "")) {
-            seenToken=runState.result_token || "";refreshSpectrum()
+            seenToken=runState.result_token || "";refreshSpectrum();if(visible){refreshPreviews()}
             if (stageInspector.visible) { stageInspector.refresh() }
             if (qam.visible) { qam.refresh() }
             if (messages.visible) { messages.refresh() }
         }
     }
-    onOpened: refreshSpectrum()
+    onOpened: {refreshSpectrum();refreshPreviews()}
     title: "Transmitter Workbench"
     parent: Overlay.overlay; anchors.centerIn: parent
     width: Math.min(1160,parent ? parent.width-40 : 1160)
-    height: Math.min(570,parent ? parent.height-40 : 570)
+    height: Math.min(620,parent ? parent.height-40 : 620)
     modal:true;standardButtons:Dialog.Close
-    contentItem: ColumnLayout {
-        spacing:16
-        Label { text:"Transmitter Signal Path";font.pixelSize:19;font.bold:true;color:dialog.theme.text }
+    contentItem: ScrollView {
+      id:txScroll;clip:true
+      ColumnLayout {
+        width:txScroll.availableWidth
+        spacing:12
+        RowLayout {
+            Layout.fillWidth:true;spacing:12
+            Label {text:"Transmitter Signal Path";font.pixelSize:19;font.bold:true;color:dialog.theme.text;Layout.fillWidth:true}
+            Label {text:"Mapped I/Q:";color:dialog.theme.muted;font.pixelSize:11}
+            Label {text:"● Data";color:dialog.theme.qamData;font.pixelSize:11}
+            Label {text:"● NCP";color:dialog.theme.qamNcp;font.pixelSize:11}
+        }
         Rectangle {
-            Layout.fillWidth:true;Layout.preferredHeight:204
+            Layout.fillWidth:true;Layout.preferredHeight:246
             radius:12;color:dialog.theme.background;border.color:dialog.theme.line
             RowLayout {
                 anchors.fill:parent;anchors.margins:12;spacing:5
@@ -58,23 +81,22 @@ WorkbenchDialog {
                         required property int index
                         required property string modelData
                         property alias tapButton:tap
-                        property alias outputSaButton:outputSa
                         Layout.fillWidth:true;Layout.preferredWidth:1;Layout.minimumWidth:0;spacing:8
                         RowLayout {
                             Layout.fillWidth:true;spacing:1
                             StageChip { theme:dialog.theme;text:modelData;Layout.preferredHeight:72;onClicked: index===6 ? dialog.openSpectrum(0) : dialog.openStage([0,1,2,4,5,6][index]) }
                             Label { visible:index<6;text:"→";color:dialog.theme.muted;font.pixelSize:15 }
                         }
-                        ReceiverChip {
+                        TransmitterGraphCard {
                             id:tap
                             objectName:"txStageTap"+index
-                            theme:dialog.theme;text:["● Bits","● LDPC Word","● Bits / Labels","● Mapped I/Q","● Ordered Cells","● Physical Bins","● TX Output"][index]
-                            Layout.preferredHeight:38
+                            theme:dialog.theme;text:["Bits","LDPC Word","Bits / Labels","Mapped I/Q","Ordered Cells","Physical Bins","SA"][index]
+                            caption:["Source bits","Coded bits","Bit / label view","Constellation","Cell sequence","Carrier map","TX Output"][index]
+                            Layout.fillWidth:true;Layout.preferredHeight:127
+                            observation:index===6 ? {available:dialog.outputAvailable} : dialog.graphicalStages.length>index ? dialog.graphicalStages[index].observation : ({available:false})
+                            spectrum:index===6;spectrumView:dialog.outputPreview
                             onClicked:index===6 ? dialog.openSpectrum(0) : dialog.openStage([0,1,2,4,5,6][index])
                         }
-                        Rectangle { visible:index===6;Layout.alignment:Qt.AlignHCenter;width:1;height:10;color:dialog.theme.accent }
-                        ReceiverChip { id:outputSa;visible:index===6;objectName:index===6 ? "txOutputSa" : "";theme:dialog.theme;text:"Spectrum Analyzer";Layout.preferredHeight:38;onClicked:dialog.openSpectrum(0) }
-                        Item { visible:index!==6;Layout.preferredHeight:54 }
                     }
                 }
             }
@@ -96,7 +118,7 @@ WorkbenchDialog {
             ReceiverChip { objectName:"txMessageInspector";theme:dialog.theme;text:"Message Inspector";onClicked:messages.open() }
             ReceiverChip { objectName:"txBitInspector";theme:dialog.theme;text:"Bit / Codeword Inspector";onClicked:dialog.openStage(0) }
         }
-        Item { Layout.fillHeight:true }
+      }
     }
     TransmitterStageDialog { id:stageInspector;theme:dialog.theme;backend:dialog.backend }
     TransmitterQamDialog { id:qam;theme:dialog.theme;backend:dialog.backend }

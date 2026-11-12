@@ -1997,3 +1997,32 @@ About menu contains About MERLIN, FAQ and Terminology. Manual checking lives
 inside About MERLIN and routes through the existing Rust-backed update adapter;
 the green automatic Update chip is unchanged. About emits fixed project/issue
 URLs for Main to open externally, without automatically submitting reports.
+
+### Graphical transmitter test points
+
+UI-TX-GRAPH-01 preserves the seven upper processing blocks and replaces the lower
+text chips with equal clickable graph cards. Rust `instruments/transmitter/graphs`
+projects retained source bits, coded-bit rasters, interleaved bits/labels,
+constellations, ordered I/Q and physical bin power/layout roles. QML shares one
+graph renderer between previews and the full inspector; exact values remain
+under Details. Source/interleaved bits show 128-bit pages, LDPC rasters 2048-bit
+pages, labels/ordered cells 64-element pages. Physical graphs show the full
+retained single-symbol span with at most 2048 power extrema and 1024 role bands;
+Details still page through exact bins. Missing history remains absent.
+
+Ordered-cell comparisons use separate captured source/channel symbol identities
+and common amplitude limits, not an inferred complete permutation. The physical
+map uses `CarrierLayout::symbol_roles` with the actual snapshot symbol and frozen
+run settings; Data locations may carry transported NCP. Relative bin power is
+not calibrated channel power or PSD. Mapped Data/NCP retain green/red roles.
+SA, captioned TX Output, opens the existing shared analyzer; the redundant lower
+Spectrum Analyzer chip is removed. Preview queries run only on dialog open or
+result-token changes. Existing retained limits, simulation inputs and WB JSON
+are unchanged. See the [design](development/features/transmitter-graphs/design.md)
+and [user guide](user/transmitter-workbench.md).
+
+Channel readiness preparation uses the pure
+`inputs::channel_model::preview_inputs` helper with the supplied input snapshot.
+Background workbench loading must not consult GUI thread-local sessions; the
+GUI-only preview wrapper delegates to the same implementation. A restored valid
+workbench can therefore enable Start immediately after model adoption.

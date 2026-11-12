@@ -25,6 +25,8 @@ Canvas {
         }
         return theme.qamUnknown
     }
+    onAvailableChanged:if (available) requestPaint()
+    onVisibleChanged:if (visible) requestPaint()
     onObservationChanged:requestPaint()
     onWidthChanged:requestPaint()
     onHeightChanged:requestPaint()

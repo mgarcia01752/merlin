@@ -799,6 +799,18 @@ mod tests {
         assert!(mapped["points"].as_array().unwrap().len() <= 2048);
         let bins = crate::transmitter_instruments::stage(6, 0);
         assert_eq!(bins["total"], 8192);
+        assert_eq!(source["graph"]["kind"], "bits");
+        assert_eq!(coded["graph"]["kind"], "raster");
+        assert_eq!(coded["graph"]["points"].as_array().unwrap().len(), 2048);
+        assert_eq!(page["graph"]["points"][0]["index"], 2048);
+        assert_eq!(mapped["graph"]["kind"], "constellation");
+        assert_eq!(bins["graph"]["kind"], "physical");
+        assert!(bins["graph"]["points"].as_array().unwrap().len() <= 2048);
+        let previews = crate::transmitter_instruments::stage_previews();
+        assert_eq!(previews.as_array().unwrap().len(), 6);
+        assert_eq!(previews[0]["observation"]["graph"]["kind"], "bits");
+        assert!(previews.to_string().len() < 1_500_000);
+        assert!(previews[0]["observation"]["rows"].is_null());
         let input = crate::transmitter_instruments::channel_input::qam(-1, -1);
         assert_eq!(input["available"], true, "{input}");
         let point = &input["points"][0];

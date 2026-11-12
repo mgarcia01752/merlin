@@ -63,7 +63,23 @@ pub(crate) fn preview(
     loss: &AdditionalLoss,
     settings: &TransmissionSettings,
 ) -> Result<Value, String> {
-    let inputs = crate::workbench::session::snapshot();
+    preview_inputs(loss, settings, &crate::workbench::session::snapshot())
+}
+
+/// Builds the same channel preview from an explicit independent input snapshot.
+/// # Arguments
+/// * `loss` - Proposed additional channel response.
+/// * `settings` - Accepted OCD geometry.
+/// * `inputs` - Restored or GUI-owned inputs; no thread-local reads occur.
+/// # Returns
+/// Bounded gain/effective-response presentation from those exact inputs.
+/// # Errors
+/// Preserves profile, response, geometry and additional-loss validation errors.
+pub(crate) fn preview_inputs(
+    loss: &AdditionalLoss,
+    settings: &TransmissionSettings,
+    inputs: &crate::workbench::session::Inputs,
+) -> Result<Value, String> {
     let profile = inputs
         .profile
         .as_ref()
@@ -72,7 +88,7 @@ pub(crate) fn preview(
         .and_then(|config| CarrierLayout::new(settings, &config))
         .map_err(|error| error.to_string())?;
     let plan = ChannelImpairments {
-        response: inputs.response,
+        response: inputs.response.clone(),
         additional_loss: loss.clone(),
         ..Default::default()
     }

@@ -21,5 +21,8 @@ QtObject {
     readonly property color qamNcp: dark ? "#ff7078" : "#b52635"
     readonly property color qamFiller: dark ? "#f3cb56" : "#936400"
     readonly property color qamUnknown: dark ? "#b5c5d7" : "#566c7e"
+    readonly property color txPlc: dark ? "#6badff" : "#255eb7"
+    readonly property color txContinuousPilot: dark ? "#f3cb56" : "#936400"
+    readonly property color txScatteredPilot: dark ? "#d29aff" : "#8248aa"
     readonly property color button: dark ? "#19293e" : "#f6f9fb"
 }

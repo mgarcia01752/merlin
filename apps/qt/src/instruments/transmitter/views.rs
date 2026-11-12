@@ -63,7 +63,12 @@ pub(crate) fn stage(index: i32, offset: i32) -> Value {
                 | TestPointId::PayloadInterleavedBits
         );
         let stride = if bits { 32 } else { 1 };
-        let end = (offset + 64 * stride).min(values.len());
+        let page_size = if matches!(index, 0 | 2) {
+            128
+        } else {
+            64 * stride
+        };
+        let end = (offset + page_size).min(values.len());
         let rows: Vec<_> = values[offset..end]
             .chunks(stride)
             .enumerate()
@@ -87,11 +92,54 @@ pub(crate) fn stage(index: i32, offset: i32) -> Value {
                 .get(&TestPointId::PayloadMapped),
         );
         let scatter = super::qam_points::scatter(values, snapshot.offset, roles.as_deref(), id);
+        let graph = super::graphs::project(
+            index,
+            snapshot,
+            offset,
+            end,
+            result
+                .observations
+                .tx
+                .snapshots
+                .get(&TestPointId::PayloadMapped),
+            &result.job.settings,
+        );
         Ok(
-            json!({"available":true,"name":NAMES[index],"tap":id,"rows":rows,"points":scatter["points"],"offset":offset,"end":end,"retained":values.len(),"total":snapshot.total,"symbol":snapshot.symbol,"phase":snapshot.phase,"extent":scatter["extent"],"iq_count":scatter["iq_count"],"role_counts":scatter["role_counts"],"missing":values.iter().filter(|v|v.is_null()).count(),"reason":""}),
+            json!({"graph":graph,"available":true,"name":NAMES[index],"tap":id,"rows":rows,"points":scatter["points"],"offset":offset,"end":end,"retained":values.len(),"total":snapshot.total,"symbol":snapshot.symbol,"phase":snapshot.phase,"extent":scatter["extent"],"iq_count":scatter["iq_count"],"role_counts":scatter["role_counts"],"missing":values.iter().filter(|v|v.is_null()).count(),"reason":""}),
         )
     };
     get().unwrap_or_else(|reason|json!({"available":false,"rows":[],"points":[],"reason":reason,"offset":0,"end":0,"retained":0}))
+}
+
+/// Collects six graphical cards from retained boundaries without starting a run.
+/// # Returns
+/// Six finite graph documents; exact row tables remain behind the full inspector.
+/// Bit/label alternatives retain their actual boundary index; absence is explicit.
+pub(crate) fn stage_previews() -> Value {
+    let mut cards = Vec::new();
+    for index in [0, 1, 2, 4, 5, 6] {
+        let mut selected = index;
+        let mut observation = stage(index, 0);
+        if index == 2 && observation["available"] != true {
+            let labels = stage(3, 0);
+            if labels["available"] == true {
+                observation = labels;
+                selected = 3;
+            }
+        }
+        observation
+            .as_object_mut()
+            .map(|value| value.remove("rows"));
+        if let Some(points) = observation["graph"]["points"].as_array_mut() {
+            for point in points {
+                if let Some(point) = point.as_object_mut() {
+                    point.remove("readout");
+                }
+            }
+        }
+        cards.push(json!({"stage_index":selected,"observation":observation}));
+    }
+    json!(cards)
 }
 
 /// Describes one retained TX waveform tap without calculating a spectrum.

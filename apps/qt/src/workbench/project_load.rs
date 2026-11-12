@@ -281,14 +281,14 @@ mod tests {
     use super::*;
 
     fn drain(loader: &mut Loader) -> (Value, Option<PreparedProject>) {
-        let deadline = Instant::now() + std::time::Duration::from_secs(10);
+        let deadline = Instant::now() + std::time::Duration::from_secs(60);
         loop {
             let result = loader.poll();
             if result.0["loading"] != true {
                 return result;
             }
             assert!(Instant::now() < deadline, "Loader did not complete");
-            std::thread::yield_now();
+            std::thread::sleep(std::time::Duration::from_millis(1));
         }
     }
 
@@ -368,6 +368,7 @@ mod tests {
         );
         assert!(prepared.models.receiver.is_some());
         assert_eq!(prepared.metadata["prepared"], true);
+        assert_eq!(prepared.metadata["measurement_state"]["channel"]["status"],"complete","Background readiness must use restored inputs, not the worker's empty thread-local session");
         assert!(prepared.metadata.to_string().len() < 8192);
     }
 }

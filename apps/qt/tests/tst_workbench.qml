@@ -93,7 +93,11 @@ Pane {
         function generate() { if (ready) { busy = true } }
         function cancel() { busy = false }
         function finish() { busy = false; resultAvailable = true; token = String(Number(token) + 1) }
-        function stage(index,offset) { return JSON.stringify({available:true,rows:[{index:offset,value:"1010"}],points:[{x:0.5,y:0.5,role:"data"},{x:0.6,y:0.6,role:"ncp"}],role_counts:{data:1,ncp:1},symbol:128,phase:"Observation",retained:4096,total:4096,offset:offset,end:Math.min(4096,offset+2048),iq_count:1,missing:0}) }
+        property bool stageCaptured: true
+        function stage(index,offset) { if (!stageCaptured) return JSON.stringify({available:false,points:[],rows:[],reason:"Use Start to capture TX stages",retained:0,end:0}); return JSON.stringify({graph:{kind:["bits","raster","bits","labels","constellation","sequence","physical","constellation","constellation"][index],points:[{x:0,y:0.2,value:1},{x:0.5,y:0.8,value:0},{x:1,y:0.2,value:1}],columns:64,rows:1,x_label:"Index",y_label:"Test boundary",first:"0",last:"127",extent:1.1},available:true,rows:[{index:offset,value:"1010"}],points:[{x:0.5,y:0.5,role:"data"},{x:0.6,y:0.6,role:"ncp"}],role_counts:{data:1,ncp:1},symbol:128,phase:"Observation",retained:4096,total:4096,offset:offset,end:Math.min(4096,offset+2048),iq_count:1,missing:0}) }
+        function stage_previews() {
+            return JSON.stringify([0,1,2,4,5,6].map(index => ({stage_index:index,observation:JSON.parse(stage(index,0))})))
+        }
         function messages() {
             const packet = {name:"OCD",type:49,channel:34,profile:null,change_count:0,source:"00:ca:00:00:00:01",bytes:40,symbol:0,completed_frame:true,status:"Carried in completed TX PLC frame",integrity:"HCS / FCS valid",tlvs:[{name:"Cyclic Prefix",value:"512 samples",kind:1,length:1,offset:28,hex:"02",children:[{name:"Encoded Value",value:"512 samples",offset:30,length:1,hex:"02"},{name:"Value Bytes",value:"02",offset:30,length:1,hex:"02"}]}],hex_rows:[{offset:"0000",hex:"C2 00"}]}
             const dpd = Object.assign({}, packet, {name:"DPD",type:50,profile:0,tlvs:[{name:"Subcarrier Assignment",value:"0–8191 · 256-QAM",kind:5,length:5,offset:29,hex:"28 00 00 1F FF",children:[{name:"First Subcarrier",value:"0",offset:32,length:2,hex:"00 00"}]}]})
@@ -699,7 +703,7 @@ Pane {
             const transmitter = workbench.transmitterPopup
             tryCompare(transmitter, "opened", true)
             compare(transmitterBackend.busy, false)
-            mouseClick(transmitter.stageRepeater.itemAt(6).outputSaButton)
+            mouseClick(transmitter.stageRepeater.itemAt(6).tapButton)
             const dialog = transmitter.spectrumPopup
             tryCompare(dialog, "opened", true)
             compare(transmitterBackend.busy, true)
@@ -794,6 +798,57 @@ Pane {
             compare(timingPanel.timing.points.length, 0)
             compare(basebandAxis.enabled,false)
             compare(captureAxis.enabled,false)
+        }
+        function test_transmitter_graphs_empty_keyboard_and_minimum_layout() {
+            const host=window.Window.window
+            const previous=[host.width,host.height,window.width,window.height,theme.dark]
+            const tx=workbench.transmitterPopup
+            try {
+                host.width=960;host.height=640;window.width=960;window.height=640
+                transmitterBackend.stageCaptured=false
+                for(const dark of [true,false]) {
+                    theme.dark=dark;tx.open();tryCompare(tx,"opened",true)
+                    waitForRendering(tx.contentItem)
+                    const first=tx.stageRepeater.itemAt(0).tapButton,last=tx.stageRepeater.itemAt(6).tapButton
+                    compare(first.observation.available,false)
+                    verify(first.enabled)
+                    verify(last.mapToItem(tx.contentItem,0,0).x+last.width<=tx.contentItem.width+1)
+                    first.forceActiveFocus();keyClick(Qt.Key_Space)
+                    tryCompare(tx.stagePopup,"opened",true)
+                    compare(tx.stagePopup.observation.available,false)
+                    closeWithX(tx.stagePopup);closeWithX(tx)
+                }
+            } finally {
+                tx.close();transmitterBackend.stageCaptured=true
+                theme.dark=previous[4];window.width=previous[2];window.height=previous[3];host.width=previous[0];host.height=previous[1]
+            }
+        }
+        function test_transmitter_graph_cards_and_details() {
+            const tx=workbench.transmitterPopup
+            tx.open();tryCompare(tx,"opened",true)
+            compare(tx.stageRepeater.count,7)
+            const widths=[]
+            for (let index=0;index<7;index++) {
+                const card=tx.stageRepeater.itemAt(index).tapButton
+                widths.push(card.width)
+                compare(card.height,127)
+                verify(card.caption.length>0)
+            }
+            for(const width of widths) verify(Math.abs(width-widths[0])<2)
+            compare(tx.stageRepeater.itemAt(6).tapButton.text,"SA")
+            compare(tx.stageRepeater.itemAt(6).tapButton.caption,"TX Output")
+            compare(findChild(tx,"txOutputSa"),null)
+            mouseClick(tx.stageRepeater.itemAt(1).tapButton)
+            tryCompare(tx.stagePopup,"opened",true)
+            const graph=findChild(tx.stagePopup,"txStageGraph")
+            compare(graph.graph.kind,"raster")
+            const details=findChild(tx.stagePopup,"txStageDetails")
+            compare(details.checked,false)
+            mouseClick(details);compare(details.checked,true)
+            closeWithX(tx.stagePopup)
+            mouseClick(tx.stageRepeater.itemAt(6).tapButton)
+            tryCompare(tx.spectrumPopup,"opened",true)
+            closeWithX(tx.spectrumPopup);closeWithX(tx)
         }
         function test_transmitter_stage_message_and_qam_navigation() {
             mouseClick(findChild(workbench,"transmitterBlock"))

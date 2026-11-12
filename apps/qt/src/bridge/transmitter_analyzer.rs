@@ -59,6 +59,11 @@ pub mod bridge {
         /// At most64 rows and2048 scatter points, or explicit unavailability.
         #[qinvokable]
         fn stage(self: &TransmitterAnalyzer, stage: i32, offset: i32) -> QString;
+        /// Queries six bounded graphical test-point cards from retained results.
+        /// # Returns
+        /// Graph data and explicit missing states; no simulation is started.
+        #[qinvokable]
+        fn stage_previews(self: &TransmitterAnalyzer) -> QString;
         /// Selects actual physical TX bins before channel application.
         /// # Arguments
         /// * `first` - Inclusive physical bin, -1 for no lower bound.
@@ -113,6 +118,12 @@ impl bridge::TransmitterAnalyzer {
     /// Small JSON page with original metadata and finite scatter points.
     pub fn stage(&self, stage: i32, offset: i32) -> QString {
         QString::from(crate::transmitter_instruments::stage(stage, offset).to_string())
+    }
+    /// Returns actual retained graphical previews without scientific recomputation.
+    /// # Returns
+    /// Six bounded graphs with indices/provenance and no exact-value tables.
+    pub fn stage_previews(&self) -> QString {
+        QString::from(crate::transmitter_instruments::stage_previews().to_string())
     }
     /// Selects an immutable physical-bin window without running a simulation.
     /// # Arguments

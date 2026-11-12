@@ -1,5 +1,7 @@
 # Feature development records
 
+- [Graphical transmitter test points](transmitter-graphs/design.md)
+
 - [Responsive workbench loading](responsive-workbench-open/design.md)
 - [RxMER capture selection and CWB capacity](rxmer-selection/design.md)
 

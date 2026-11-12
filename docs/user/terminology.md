@@ -148,3 +148,14 @@ See [RxMER selection](channel-measurements.md#choose-captures-for-the-next-run).
 **CWB (Configure WorkBench)** contains the accepted run duration and profile
 selection. Replay capacity uses its duration for one profile; a sweep runs that
 window separately for each selected profile.
+
+## Bit raster and carrier map
+
+A **bit raster** displays consecutive bits in rows, using different colors for
+zero and one. Read left to right, then top to bottom; the transmitter's LDPC view
+shows coded bits rather than a recovery or error-rate measurement.
+
+A **carrier map** shows the physical OFDM subcarriers and their assigned roles
+for one symbol. Its Data locations may carry transported NCP. The transmitter
+map overlays relative bin power; it is not a time waterfall or an RF PSD estimate.
+See [transmitter graphs](transmitter-workbench.md).

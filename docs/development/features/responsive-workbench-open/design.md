@@ -57,3 +57,16 @@ No OS timeout settings, simulation outputs or installed package were changed.
 Local-only logs, intermediate screenshots and the owned-process native helper
 are under `docs/development/local/responsive-workbench-open/`; they are absent
 from fresh clones. [User guide](../../../user/workbench.md#workbench-configuration-files).
+
+## Prepared channel readiness follow-up — 2026-11-11
+
+Native transmitter-graph verification found channel readiness was prepared
+using a helper that consulted GUI thread-local input state. That state is empty
+on the loader worker, so a valid workbench could be adopted with Start disabled.
+`channel_model::preview_inputs` now validates the explicitly supplied immutable
+input model; GUI preview delegates to the same helper with its current inputs.
+The real 132-capture worker test asserts complete channel readiness. A fresh
+native workbench Open followed by Start and completed profile-0 simulation
+passes without reapplying an input. The complete Qt suite passes 54 Rust tests
+and 53 QML checks. This changes readiness preparation, not persisted settings
+or simulation semantics.

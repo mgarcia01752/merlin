@@ -27,11 +27,21 @@ WorkbenchDialog {
             Label { text:"Test Point";color:dialog.theme.text }
             ComboBox { objectName:"txStageSelection";Layout.fillWidth:true;model:["Source Bits · PRBS-TX","LDPC Codeword","Interleaved Bits","Cell Labels","Mapped Cells · Data / NCP","Interleaved Cells · Data / NCP","Physical FFT Bins","PLC Data I/Q","PLC Preamble I/Q"];currentIndex:dialog.stageIndex;onActivated:function(index){dialog.stageIndex=index;dialog.pageOffset=0;dialog.refresh()} }
         }
-        Label { visible:dialog.observation.available;text:"Symbol: "+(dialog.observation.symbol===null ? "—" : dialog.observation.symbol)+" · "+(dialog.observation.phase || "")+" · Captured: "+dialog.observation.retained+" / "+dialog.observation.total;color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap }
+        Label { visible:dialog.observation.available;text:"Symbol: "+(dialog.observation.symbol===null ? "—" : dialog.observation.symbol)+" · "+(dialog.observation.phase || "")+" · Captured: "+dialog.observation.retained+" / "+dialog.observation.total+" · Missing: "+(dialog.observation.missing || 0);color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap }
         Label { visible:!dialog.observation.available;text:dialog.observation.reason || "";color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap }
-        Label { text:"Index                         Value";color:dialog.theme.accent;font.bold:true }
+        TransmitterStageLegend {theme:dialog.theme;graph:dialog.observation.graph || ({});observation:dialog.observation;Layout.fillWidth:true}
+        Label {visible:(dialog.observation.graph || {}).omitted_bands>0;text:"Role-band display limit reached · omitted "+(dialog.observation.graph || {}).omitted_bands;color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
+        ColumnLayout {
+            Layout.fillWidth:true;Layout.fillHeight:true;spacing:10
+            Label { visible:!!(dialog.observation.graph || {}).before;text:((dialog.observation.graph || {}).before || {}).title || "";color:dialog.theme.muted }
+            TransmitterStagePlot { visible:!!(dialog.observation.graph || {}).before;Layout.fillWidth:true;Layout.fillHeight:true;theme:dialog.theme;observation:dialog.observation;graph:((dialog.observation.graph || {}).before || ({})) }
+            Label { visible:!!(dialog.observation.graph || {}).before;text:(dialog.observation.graph || {}).title || "";color:dialog.theme.muted }
+            TransmitterStagePlot {objectName:"txStageGraph";Layout.fillWidth:true;Layout.fillHeight:true;theme:dialog.theme;observation:dialog.observation}
+        }
+        CheckBox {id:details;objectName:"txStageDetails";text:"Details";checked:false}
+        Label { visible:details.checked;text:"Index                         Value";color:dialog.theme.accent;font.bold:true }
         ListView {
-            Layout.fillWidth:true;Layout.fillHeight:true;clip:true;spacing:3
+            visible:details.checked;Layout.fillWidth:true;Layout.preferredHeight:130;clip:true;spacing:3
             model:dialog.observation.rows || [];ScrollBar.vertical:ScrollBar {}
             delegate:Rectangle {
                 required property var modelData
@@ -44,7 +54,7 @@ WorkbenchDialog {
             }
         }
         RowLayout {
-            WorkbenchActionButton { theme: dialog.theme; objectName:"txPreviousPage";text:"Previous";enabled:dialog.pageOffset>0;onClicked:{dialog.pageOffset=Math.max(0,dialog.pageOffset-(dialog.stageIndex<3 ? 2048 : 64));dialog.refresh()} }
+            WorkbenchActionButton { theme: dialog.theme; objectName:"txPreviousPage";text:"Previous";enabled:dialog.pageOffset>0;onClicked:{dialog.pageOffset=Math.max(0,dialog.pageOffset-(dialog.stageIndex===1 ? 2048 : dialog.stageIndex===0 || dialog.stageIndex===2 ? 128 : 64));dialog.refresh()} }
             WorkbenchActionButton { theme: dialog.theme; objectName:"txNextPage";text:"Next";enabled:dialog.observation.available && dialog.observation.end<dialog.observation.retained;onClicked:{dialog.pageOffset=dialog.observation.end;dialog.refresh()} }
             Label { text:dialog.observation.available ? dialog.pageOffset+"–"+(dialog.observation.end-1) : "";color:dialog.theme.muted }
             Item { Layout.fillWidth:true }

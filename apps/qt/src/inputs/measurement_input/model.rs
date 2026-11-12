@@ -173,7 +173,12 @@ impl Model {
             .as_ref()
             .map_err(Clone::clone)
             .and_then(|settings| {
-                crate::inputs::channel_model::preview(&inputs.additional_loss, settings).map(|_| ())
+                crate::inputs::channel_model::preview_inputs(
+                    &inputs.additional_loss,
+                    settings,
+                    inputs,
+                )
+                .map(|_| ())
             });
         let channel = if rx.is_ok() && response.is_ok() && loss.is_ok() {
             json!({"status":"complete","reason":"RxMER, channel response and additional loss are configured."})

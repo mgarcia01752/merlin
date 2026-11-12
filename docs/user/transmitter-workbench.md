@@ -1,7 +1,7 @@
 # Transmitter workbench
 
-Click **Transmitter** to open its signal path. Each rounded stage has a selectable
-test point below it. Opening this workbench does not start a run or change inputs.
+Click **Transmitter** to open its signal path. Each upper stage has a clickable graph preview
+below it. The upper processing blocks retain their original layout. Opening this workbench does not start a run or change inputs.
 The **Source · PRBS-TX** chip identifies the source configuration block.
 Its inspector names the boundary **Source Bits · PRBS-TX**: generated PRBS15 or
 accepted file bits with optional fill, before BCH/LDPC encoding.
@@ -11,8 +11,8 @@ See the [source editor](source-input.md) and [terminology](terminology.md).
 
 ![Source bits from the accepted PRBS-TX configuration](../images/workbench/transmitter-source-dark.png)
 
-Click **Spectrum Analyzer**, directly below **TX Output**, to see complex-baseband
-output before the channel. The Test Point selector also offers IFFT, cyclic-prefix
+Click **SA**, captioned **TX Output**, to see complex-baseband output before the
+channel. Its preview shows the actual retained output spectrum. The Test Point selector also offers IFFT, cyclic-prefix
 and window boundaries. After main **Start**, the SA uses that run's actual TX
 samples. Before a full run, TX Output can generate the existing transmitter-only
 preview with **Run simulation**; that preview does not populate other inspectors.
@@ -22,13 +22,41 @@ Wheel/drag zoom and **Full Span** use the shared analyzer controls.
 
 Use main **Start** to capture the other stages. Missing data is reported explicitly.
 Click **Bits**, **LDPC Word**, **Bits / Labels**, **Mapped I/Q**, **Ordered Cells**
-or **Physical Bins** to inspect a bounded page with original indices and symbol
-identity. **Previous / Next** navigate captured values. Nulls and pilot placeholders
+or **Physical Bins** to open its graphical stage inspector with original indices and symbol identity.
+**Details** reveals exact values; **Previous / Next** navigate captured pages. Nulls and pilot placeholders
 remain distinct from zero-valued samples. The coding boundary is the LDPC word;
 a separate BCH-word snapshot is not currently captured. **NCP / Pilots** opens
 their shared physical frame-bin view.
 
+| Preview | Full graph |
+| --- | --- |
+| Bits | Digital 0/1 trace, 128 consecutive bits per page. |
+| LDPC Word | A raster of 2048 coded bits: 64 columns read left to right, then down. |
+| Bits / Labels | Actual interleaved bits or label-value strip, depending on the captured boundary. The selector offers both. |
+| Mapped I/Q | Transmitted constellation with Data green and NCP red. |
+| Ordered Cells | Separate before/after I/Q sequences against cell index, on a common amplitude scale. |
+| Physical Bins | Relative bin-power envelope and colored carrier-role band for one captured symbol. |
+| SA · TX Output | Existing Spectrum Analyzer, with its IFFT/CP/window/output selector. |
+
+The LDPC raster distinguishes zero and one; it does not invent an information /
+parity boundary absent from the retained snapshot. Bit/label views keep their
+actual indices and do not assume fixed modulation or reconstructed bit groups.
+Ordered-cell graphs identify the source and channel symbols separately. Their
+comparison is not a complete per-cell interleaver permutation or time history.
+
+Physical Bin colors distinguish Data locations, PLC, continuous/scattered pilots
+and excluded bins. Data locations can carry transported NCP. Missing samples
+remain gaps; excluded zeros remain zeros. Power is the captured bin's I² + Q² in
+relative sample units, not a PSD or a calibrated channel-power measurement. The
+map shows the full retained span independently of the exact-value Details page;
+hover for actual bin, frequency, power and role. No multi-symbol waterfall is
+shown. Preview cards use captured data and show No capture until it is available.
+
 ![Actual captured LDPC bits](../images/workbench/transmitter-stage-dark.png)
+
+![Before/after cell sequences with missing startup history](../images/workbench/transmitter-ordered-cells-dark.png)
+
+![Captured physical-bin power and carrier roles](../images/workbench/transmitter-physical-bins-dark.png)
 
 **QAM Analyzer** displays mapped or interleaved Data/NCP cells, PLC data, or the
 PLC preamble. Data/NCP views include their combined cells and filler; they are not

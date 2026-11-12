@@ -379,3 +379,9 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
 - [x] **UI-RXMER-ANIM-01** PNM Viewer-style selected-capture animation,
   Play/Pause/step/slider/speed, bounded original viewports and lifecycle cleanup.
   [Design](features/rxmer-selection/design.md#ui-rxmer-anim-01--animated-capture-preview).
+
+- [x] **UI-TX-GRAPH-01** Graphical transmitter test-point cards and full stage
+  graphs, optional exact Details, role legends and shared SA navigation.
+  Verified bounded real graphs, missing history and native dark/light layouts;
+  54 Rust adapter tests and 53 QML checks pass.
+  [Design](features/transmitter-graphs/design.md).
