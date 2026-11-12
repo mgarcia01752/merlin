@@ -7,9 +7,17 @@
 import shutil
 import subprocess
 from common import architecture, version
+from asset_names import asset_name
 
 
 def build(payload, output, scratch):
+    """Build a canonical Ubuntu CLI DEB while preserving merlin-ofdm identity.
+
+    payload is the staged CLI tree; output is an owned artifact directory;
+    scratch is caller-owned temporary storage. Native packaging tools must be
+    available on this host. Return None; propagate tool and filesystem failures.
+    No package is installed or published.
+    """
     root = scratch / "deb"
     shutil.copytree(payload, root / "usr")
     control = root / "DEBIAN"
@@ -24,4 +32,4 @@ def build(payload, output, scratch):
         " Rust OFDM, BCH/LDPC and measurement-driven channel experiments.\n",
         encoding="utf-8")
     subprocess.run(["dpkg-deb", "--root-owner-group", "--build", str(root),
-                    str(output / f"merlin-ofdm_{version()}_{arch}.deb")], check=True)
+                    str(output / asset_name("cli", version(), "ubuntu22.04", arch, "deb"))], check=True)

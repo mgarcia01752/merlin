@@ -26,6 +26,8 @@ Item {
     required property var aboutBackend
     required property var measurementBackend
     required property var fileBackend
+    signal updatesRequested()
+    signal externalLinkRequested(url target)
     property bool hasProject: false
     property alias faqPopup: faqDialog
     function openHelp(code) { faqDialog.showEntry(code, code ? runState.diagnostic : null) }
@@ -384,7 +386,7 @@ Item {
     FaqDialog { id: faqDialog; theme: workbench.theme; backend: workbench.aboutBackend }
     WorkbenchFileFeedback { id: fileFeedback; theme:workbench.theme; message:workbench.fileMessage }
     SettingsDialog { id: settingsDialog; theme: workbench.theme }
-    AboutDialog { id: aboutDialog; theme: workbench.theme; backend: workbench.aboutBackend; iconRoot: workbench.iconRoot }
+    AboutDialog { id: aboutDialog; theme: workbench.theme; backend: workbench.aboutBackend; iconRoot: workbench.iconRoot; onUpdatesRequested: workbench.updatesRequested(); onLinkRequested: function(target) { workbench.externalLinkRequested(target) } }
     OfdmSettingsDialog {
         id: ofdmDialog
         theme: workbench.theme

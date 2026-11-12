@@ -9,9 +9,11 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
 cd "${PROJECT_DIR}"
 SKIP_TEST=0
+TEST_QUICK=0
 case "${1:-}" in
   '') ;;
   --skip-test) SKIP_TEST=1; shift ;;
+  --test-quick) TEST_QUICK=1; shift ;;
   *) echo "Unknown validation option: $1" >&2; exit 2 ;;
 esac
 if [[ $# -ne 0 ]]; then
@@ -40,7 +42,11 @@ if [[ "$SKIP_TEST" == 1 ]]; then
   echo 'Local non-simulation checks passed; Rust tests and smokes were NOT run.'
   exit 0
 fi
-"${SCRIPT_DIR}/test-local.sh" all
+TEST_ARGS=()
+if [[ "$TEST_QUICK" == 1 ]]; then
+  TEST_ARGS+=(--test-quick)
+fi
+"${SCRIPT_DIR}/test-local.sh" all "${TEST_ARGS[@]}"
 "${SCRIPT_DIR}/cargo-local.sh" build -p ofdm-fec-cli --release --locked
 SMOKE_DIRECTORY="$(mktemp -d)"
 trap 'rm -rf -- "${SMOKE_DIRECTORY}"' EXIT
@@ -94,4 +100,8 @@ PY_IMPAIRMENTS
   --recovered-file "${SMOKE_DIRECTORY}/recovered-message.txt"
 cmp examples/payloads/message.txt "${SMOKE_DIRECTORY}/recovered-message.txt"
 python3 tools/release/versions.py
-echo 'All local pre-push checks passed.'
+if [[ "$TEST_QUICK" == 1 ]]; then
+  echo 'Quick local pre-push checks passed; named sweep cases were NOT run.'
+else
+  echo 'All local pre-push checks passed.'
+fi

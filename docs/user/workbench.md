@@ -10,7 +10,7 @@ the Spectrum Analyzer, QAM, channel response/echo and RxMER instrument guides.
 The [Transmitter workbench](transmitter-workbench.md) provides staged test points,
 an SA beside TX Output, and OCD/DPD message inspection.
 
-Use **File → New** or **Open…** to activate a WB. **Configure WorkBench**, beside
+Use **File → New** or **Open** to activate a WB. **Configure WorkBench**, beside
 Start, offers **Create New** or **Open Existing…** if no WB is active, then opens
 settings after successful creation/opening. It is disabled during a simulation. Its Run/Profiles
 tabs set duration, total budget, noise seed and profile checkboxes. You can
@@ -75,18 +75,20 @@ Native file pickers use the operating system's own window controls.
 
 Dialogs show concise, task-focused text. Bottom notes appear for errors,
 missing/partial data, import details, display limits or important measurement
-assumptions. About keeps product, version and license information; implementation
+assumptions. About keeps product, version and useful project actions; implementation
 details and development-status messages are omitted.
 
 The standard menu bar at the top is **File | Settings | About**.
-Choose **About → Terminology…** to open the [terminology guide](terminology.md)
+Choose **About → Terminology** to open the [terminology guide](terminology.md)
 on MERLIN's GitHub page in your default browser. This online guide requires
-internet access; license documents remain available offline. File contains
-**New**, **Open…**, **Save** and **Save As…** for self-contained `*.merlin.json` workbenches.
+internet access. File contains
+**New**, **Open**, **Save** and **Save As** for self-contained `*.merlin.json` workbenches.
 Original PNM/payload bytes and accepted block settings are embedded; see the
 [run/save guide](closed-loop-workbench.md). Load individual captures in their dialogs.
 About shows the active icon, compiled version, MERLIN's expanded name and project
-link. License/NOTICE links open bundled text offline. Title bars use consistent
+link. Matching **Project on GitHub**, **Report Issue** and **Check For Updates**
+buttons open the project, issue form and existing update dialog. The issue form
+opens in your browser for you to complete. Title bars use consistent
 initial capitals and the light/dark icons share transparent rounded corners.
 
 ![About menu with online Terminology link](../images/workbench/about-menu-dark.png)
@@ -212,8 +214,8 @@ values. **Reset defaults** changes the draft to MERLIN's application defaults;
 press Apply to accept them. These defaults are not mandated by the specification.
 See [transmission settings](transmission.md) for the supported values and units.
 
-Accepted settings are saved with **File → Save / Save As…** and restored with
-**Open…**. The bundled `resources/registry/ofdm-settings.json` describes editor
+Accepted settings are saved with **File → Save / Save As** and restored with
+**Open**. The bundled `resources/registry/ofdm-settings.json` describes editor
 fields; the workbench JSON stores accepted values and original input bytes.
 See the [run/save guide](closed-loop-workbench.md#save-and-reopen).
 
@@ -245,7 +247,7 @@ See [supported profile files and limits](measurement-inputs/modulation-profile.m
 
 ## Workbench configuration files
 
-Use **File → Open…**, **Save** or **Save As…** for self-contained JSON workbenches.
+Use **File → Open**, **Save** or **Save As** for self-contained JSON workbenches.
 The main Open chooser filters to **MERLIN Workbenches (*.merlin.json)**,
 so example PNM files and metadata are hidden while folders stay navigable.
 Individual input-block pickers keep their own selection behavior.
@@ -256,7 +258,7 @@ Channel Simulator provides staged input/model/output navigation and a Spectrum/Q
 chooser at each signal boundary. See [channel inputs and instruments](channel-measurements.md)
 and [additional tilt/cable loss](impairments/additional-loss.md).
 
-Desktop setup and **About → Check For Updates…**: [Ubuntu 22.04 desktop guide](install/ubuntu-desktop.md).
+Desktop setup and **About → About MERLIN → Check For Updates**: [Ubuntu 22.04 desktop guide](install/ubuntu-desktop.md).
 
 Profile comparisons: [Receiver Profile Performance](receiver-profile-performance.md)
 shows measured MER, the ideal profile reference and independent per-profile FEC

@@ -6,45 +6,72 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../components"
+
 WorkbenchDialog {
     id: dialog
     required property var backend
     property string iconRoot: "qrc:/branding/"
-    property alias licensesPopup: licenses
+    signal updatesRequested()
+    signal linkRequested(url target)
     title: "About MERLIN"
-    parent: Overlay.overlay; anchors.centerIn: parent
-    width: Math.min(610, parent ? parent.width - 48 : 610)
-    modal: true; standardButtons: Dialog.Close
+    parent: Overlay.overlay
+    anchors.centerIn: parent
+    width: Math.min(650, parent ? parent.width - 48 : 650)
+    modal: true
+    standardButtons: Dialog.Close
     contentItem: ColumnLayout {
-        spacing: 16
+        spacing: 20
         RowLayout {
-            spacing: 18
-            Image { objectName: "aboutIcon"; source: dialog.iconRoot + (dialog.theme.dark ? "merlin-icon-dark.png" : "merlin-icon-light.png"); Layout.preferredWidth: 76; Layout.preferredHeight: 76; fillMode: Image.PreserveAspectFit; sourceSize.width: 152; sourceSize.height: 152 }
+            spacing: 20
+            Image {
+                objectName: "aboutIcon"
+                source: dialog.iconRoot + (dialog.theme.dark ? "merlin-icon-dark.png" : "merlin-icon-light.png")
+                Layout.preferredWidth: 80
+                Layout.preferredHeight: 80
+                fillMode: Image.PreserveAspectFit
+                sourceSize.width: 160
+                sourceSize.height: 160
+            }
             ColumnLayout {
-                Label { text: "MERLIN"; color: dialog.theme.accent; font.pixelSize: 27; font.bold: true }
-                Label { text: "DOCSIS OFDM Simulation Toolkit"; color: dialog.theme.text; font.pixelSize: 15 }
+                Layout.fillWidth: true
+                spacing: 6
+                Label { text: "MERLIN"; color: dialog.theme.accent; font.pixelSize: 28; font.bold: true }
+                Label { text: "DOCSIS OFDM Simulation Toolkit"; color: dialog.theme.text; font.pixelSize: 15; Layout.fillWidth: true; wrapMode: Text.WordWrap }
                 Label { objectName: "aboutVersion"; text: "Version " + dialog.backend.version(); color: dialog.theme.muted }
             }
         }
-        Label { Layout.fillWidth: true; text: "Modulation, Encoding, Reception, Link Impairments & Noise"; wrapMode: Text.WordWrap; color: dialog.theme.text }
-        Label { Layout.fillWidth: true; text: "Standalone DOCSIS downstream OFDM simulation."; wrapMode: Text.WordWrap; color: dialog.theme.muted }
         Label {
-            objectName: "aboutProjectLink"
-            text: '<a style="color: ' + dialog.theme.accent + ';" href="https://github.com/mgarcia01752/merlin">MERLIN on GitHub</a>'
-            textFormat: Text.RichText; linkColor: dialog.theme.accent
-            onLinkActivated: function(link) { Qt.openUrlExternally(link) }
-            Accessible.name: "Open MERLIN GitHub project"
+            Layout.fillWidth: true
+            text: "Modulation, Encoding, Reception, Link Impairments & Noise"
+            wrapMode: Text.WordWrap
+            color: dialog.theme.muted
         }
         Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: dialog.theme.line }
-        Label { text: "Licenses &amp; Acknowledgements"; textFormat: Text.RichText; color: dialog.theme.text; font.bold: true }
-        Label {
-            objectName: "aboutLicenseLinks"
-            Layout.fillWidth: true; wrapMode: Text.WordWrap; textFormat: Text.RichText
-            text: 'Desktop: <a style="color: ' + dialog.theme.accent + ';" href="gpl">GPL-3.0-only</a><br/>Reusable libraries: <a style="color: ' + dialog.theme.accent + ';" href="apache">Apache-2.0</a><br/><a style="color: ' + dialog.theme.accent + ';" href="notice">MERLIN Notices</a> · <a style="color: ' + dialog.theme.accent + ';" href="pnm">PNM Decoder Notices</a>'
-            color: dialog.theme.muted; linkColor: dialog.theme.accent
-            onLinkActivated: function(key) { licenses.showDocument(key) }
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 10
+            WorkbenchActionButton {
+                theme: dialog.theme
+                objectName: "aboutProjectButton"
+                text: "Project on GitHub"
+                Layout.fillWidth: true; Layout.preferredWidth: 1
+                onClicked: dialog.linkRequested("https://github.com/mgarcia01752/merlin")
+            }
+            WorkbenchActionButton {
+                theme: dialog.theme
+                objectName: "aboutReportIssue"
+                text: "Report Issue"
+                Layout.fillWidth: true; Layout.preferredWidth: 1
+                onClicked: dialog.linkRequested("https://github.com/mgarcia01752/merlin/issues/new")
+                Accessible.description: "Open the MERLIN issue form on GitHub"
+            }
+            WorkbenchActionButton {
+                theme: dialog.theme
+                objectName: "aboutCheckUpdates"
+                text: "Check For Updates"
+                Layout.fillWidth: true; Layout.preferredWidth: 1
+                onClicked: { dialog.close(); dialog.updatesRequested() }
+            }
         }
-        Label { Layout.fillWidth: true; text: "Includes contributions from PNM Viewer. See notices for attribution."; wrapMode: Text.WordWrap; color: dialog.theme.muted; font.pixelSize: 12 }
     }
-    LicenseDialog { id: licenses; theme: dialog.theme; backend: dialog.backend }
 }

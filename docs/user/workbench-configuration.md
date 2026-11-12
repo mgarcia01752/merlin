@@ -1,6 +1,6 @@
 # Workbench configuration
 
-Choose **File → New** to create a blank workbench, or **File → Open…** to load
+Choose **File → New** to create a blank workbench, or **File → Open** to load
 one. **Configure WorkBench** sits immediately before Start at the lower right. It is
 available while idle: without an active WB, it asks you to **Create New** or
 **Open Existing…**, then opens settings. Cancel or X dismisses the choice; a

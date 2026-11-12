@@ -82,6 +82,14 @@ esac
                 self.assertNotEqual(result.returncode, 0)
                 self.assertNotIn('push ', trace)
 
+    def test_quick_selection_keeps_validation_and_failure_guards(self):
+        """Branch quick mode must reach the gate and never bypass a failure."""
+        for mode in ('pass', 'fail'):
+            result, trace = self.exercise(mode, '--test-quick')
+            self.assertTrue(trace.startswith('validate\n--test-quick\n'))
+            self.assertEqual(result.returncode == 0, mode == 'pass')
+            self.assertEqual('push ' in trace, mode == 'pass')
+
     def test_changed_checkout_blocks_push(self):
         """Reject commit or file changes after otherwise successful checks."""
         for mode in ("changed", "dirty"):

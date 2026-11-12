@@ -346,15 +346,16 @@ The application has a standard top **File | Settings | About** menu bar above
 workbench branding, rather than content-area navigation buttons. Settings →
 Global opens appearance preferences; About → About MERLIN opens project details.
 The instruction banner and standalone theme button are removed.
-**File → Open…**, **Save** and **Save As…** use standard labels and shortcuts
+**File → Open**, **Save** and **Save As** use standard labels and shortcuts
 and operate through the OS-native file chooser and Rust persistence adapter; individual capture inputs remain in
 their corresponding block dialogs. **Settings → Global → Light/Dark mode**
 applies the shared theme immediately to all windows; explicit workbench saves
 also retain that choice.
 Settings is separate from OFDM transmission configuration. About presents
-MERLIN's expanded name, purpose, component licenses and acknowledgements.
-About includes the active rounded icon, compiled version and project link.
-Bundled GPL, Apache and NOTICE links open a separate offline document viewer.
+MERLIN's expanded name, concise purpose, active icon and compiled version.
+Matching project, issue-report and manual-update buttons route through Main.
+About omits the standalone sentence and license/acknowledgement lists; all
+required license and NOTICE texts remain bundled with distributions.
 Each dialog owns its own QML file. See UI-SHELL-02 in the
 [workbench design](development/features/visual-workspace/design.md).
 
@@ -558,7 +559,7 @@ workbench tools retain their existing specialized wrappers. Core
 numerical algorithms stay in their existing Rust modules. RF power extensions
 remain in the [power-budget plan](development/features/rf-power-budget/design.md).
 
-UI-DOC-02 adds About → Terminology… linking the maintained
+UI-DOC-02 adds About → Terminology linking the maintained
 `docs/user/terminology.md` on the repository's GitHub master branch. The menu emits
 an explicit URL and the desktop shell opens the system browser; this optional
 online documentation does not affect offline simulation or bundled licenses.
@@ -1938,3 +1939,30 @@ The release helper owns explicit `--resume` admission. It reconstructs an exact
 version-only candidate from HEAD in temporary storage, preserves checkout bytes
 and reruns selected validation before commit/tag/atomic push. All normal Git
 guards remain; committed-tag recovery still uses `--tag`.
+
+### Explicit quick local validation
+
+`--test-quick` flows through branch/release helpers to the shared local gate and
+nextest launcher. `tools/testing/quick-tests.json` owns 21 exact sweep omissions;
+the Python selector creates a scoped package/binary/test filter. Unlisted tests
+run by default. Representative waveform and CLI cases, docs, example, analysis,
+smokes and Git guards remain. Hosted CI/full default are unchanged. Checkout
+failures reuse candidate recognition to print a safe resume command; unrelated
+edits receive read-only inspection commands.
+
+### Release asset identity
+
+The Python asset-name helper owns component/version/target/architecture filenames.
+Package IDs stay merlin and merlin-ofdm. Desktop releases provide an identical
+legacy alias for installed pre-migration updaters; new Rust adapters prefer exact
+canonical metadata and permit only the exact trusted legacy fallback. Signature,
+URL, size, digest, duplicate and installed-package checks remain. Workflow
+installation selects the canonical file rather than every DEB.
+
+### Focused About and dropdown labels (UI-ABOUT-01)
+
+Menu labels use plain text without ellipses, retaining standard shortcuts.
+About menu contains About MERLIN, FAQ and Terminology. Manual checking lives
+inside About MERLIN and routes through the existing Rust-backed update adapter;
+the green automatic Update chip is unchanged. About emits fixed project/issue
+URLs for Main to open externally, without automatically submitting reports.

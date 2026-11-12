@@ -96,3 +96,14 @@ local setup does not change user mirrors. Run43061645839 failed before desktop
 compilation on Azure mirror DNS/connectivity and python3-pil download (APT100).
 The consolidation/retry changes need new hosted evidence; the previous failure
 is not reported as resolved remotely. [Design](features/workbench-configuration/design.md).
+
+## Canonical asset filenames
+
+All new deliverables use `merlin-COMPONENT_VERSION_TARGET_ARCH.EXT` through
+`tools/packaging/asset_names.py`. Desktop Ubuntu: merlin-desktop; CLI: merlin-cli.
+Use ubuntu22.04 for DEBs, linux for portable Linux archives and amd64 for x64
+filenames. Installed package identities and paths remain unchanged. A byte-identical
+legacy desktop filename is retained for older automatic updaters and checksummed
+separately; new clients prefer canonical metadata. CI installs/tests the canonical
+DEB once. Existing public releases are immutable. Prepared non-Linux builders
+share naming but have no new native verification claim.

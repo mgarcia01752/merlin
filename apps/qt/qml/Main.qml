@@ -54,7 +54,6 @@ ApplicationWindow {
                 onGlobalSettingsRequested: { if (!updates.state.installing) workbench.settingsPopup.open() }
                 onAboutRequested: workbench.aboutPopup.open()
                 onFaqRequested: workbench.openHelp("")
-                onUpdatesRequested: updates.showUpdates()
                 onTerminologyRequested: function(target) { Qt.openUrlExternally(target) }
             }
             UpdateNotification {
@@ -68,5 +67,21 @@ ApplicationWindow {
             }
         }
     }
-    Workbench { id: workbench; enabled: !updates.state.installing; anchors.fill: parent; theme: theme; settingsBackend: ofdmSettings; profileBackend: profileInput; sourceBackend: sourceInput; transmitterBackend: transmitterAnalyzer; measurementBackend: measurementInputs; aboutBackend: aboutInfo; receiverBackend: receiverInstruments; runBackend: closedLoop; fileBackend: workbenchFile }
+    Workbench {
+        id: workbench
+        enabled: !updates.state.installing
+        anchors.fill: parent
+        theme: theme
+        settingsBackend: ofdmSettings
+        profileBackend: profileInput
+        sourceBackend: sourceInput
+        transmitterBackend: transmitterAnalyzer
+        measurementBackend: measurementInputs
+        aboutBackend: aboutInfo
+        receiverBackend: receiverInstruments
+        runBackend: closedLoop
+        fileBackend: workbenchFile
+        onUpdatesRequested: { updates.showUpdates(); updates.refresh() }
+        onExternalLinkRequested: function(target) { Qt.openUrlExternally(target) }
+    }
 }

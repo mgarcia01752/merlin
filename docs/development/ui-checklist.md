@@ -362,3 +362,6 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
   advice, hover/focus tooltip, keyboard/click offline FAQ and About entry.
 - [x] UI-SA-DETAILS-01: Acquisition readout below axes; Details toggle
   preserves spectrum data, channel power and warning visibility.
+
+- [x] UI-ABOUT-01: Plain dropdown labels and compact About actions, including
+  manual update checks and issue-form link; dark/light native review complete.

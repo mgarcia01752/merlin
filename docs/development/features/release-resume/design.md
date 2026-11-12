@@ -20,3 +20,23 @@ previously published base, dry run, repeated failed checks, skip-test forwarding
 unrelated/staged/partial edits, wrong modes and tag collisions. Bash syntax,
 ShellCheck, skill validation and diff whitespace checks pass. No real commit,
 tag or push was executed; pre-existing version edits remain untouched.
+
+## RELEASE-RESUME-02: Actionable failure output
+
+After the active release has finished, improve checkout-change diagnostics.
+Keep the original error and nonzero exit. Reuse exact candidate recognition
+before printing a copyable `git-push.sh --tag-<mode> --resume` command; preserve
+explicit skip-test/dry-run choices without forwarding force. For unrelated,
+staged or altered work, show read-only status/diff commands instead of guessing
+a recovery action. Error reporting performs no edits, resets, commits or pushes.
+Test plain/force interrupted retries, argument propagation and unsafe candidates
+against disposable remotes; existing release guards remain authoritative.
+
+Validation of RELEASE-RESUME-02: disposable-remote tests verify plain/force
+retry hints at patch/minor/major, quoted checkout paths, selection propagation,
+failed-gate advice and no guessed resume for unrelated/staged/altered work.
+The original error and nonzero exit remain; no real release action was executed.
+
+RELEASE-RESUME-02 completion: all 52 current Git-helper tests pass, plus the
+focused plain retry regression at all three bump modes. Recovery commands
+include `--test-quick` when selected and never discard files or bypass checks.

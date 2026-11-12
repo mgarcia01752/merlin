@@ -156,3 +156,11 @@ scripts/cargo-local.sh test -p docsis-ofdm-fec --no-default-features --locked
 
 Report tested host/toolchain and unverified targets. Passing Linux tests do not
 establish Windows/macOS runtime validation or modem receiver equivalence.
+
+Explicit `--test-quick` selects the reviewed local subset via
+`tools/testing/quick-tests.json`, skipping 21 named expensive sweep cases while
+retaining representative recoveries and other tests. Keep doctests, preparation
+example, analysis-only checks, release smokes, static/tooling checks and Git
+guards. Full remains default; hosted CI is unchanged. Reject combining it with
+`--skip-test`; preserve the selected mode through `--resume` and printed retry
+commands. Report omissions and do not equate subset success with full coverage.

@@ -9,6 +9,7 @@ from pathlib import Path
 import unittest
 from desktop import package
 from common import ROOT
+from asset_names import asset_name
 from notices import notice_files
 
 
@@ -43,13 +44,27 @@ class DesktopTests(unittest.TestCase):
         self.assertIn('env -u QT_SDK_DIR ./install.sh --development', workflow)
         source = (ROOT / 'apps/qt/src/platform/updates/release.rs').read_text()
         self.assertIn('ubuntu22.04_amd64.deb', source)
-        self.assertIn('ubuntu22.04_amd64.deb', (ROOT / 'tools/packaging/desktop.py').read_text())
+        self.assertIn('merlin-desktop_', source)
+        self.assertEqual(asset_name('desktop', '0.1.5', 'ubuntu22.04', 'amd64', 'deb'),
+                         'merlin-desktop_0.1.5_ubuntu22.04_amd64.deb')
+        self.assertIn('desktop_alias(artifact, version())', (ROOT / 'tools/packaging/desktop.py').read_text())
+        self.assertNotIn('dist/desktop/*.deb', workflow)
+        self.assertIn('dist/desktop/merlin-desktop_*.deb', workflow)
         release = (ROOT / '.github/workflows/release.yml').read_text()
         self.assertIn('uses: ./.github/workflows/ci.yml', release)
         self.assertIn('release: true', release)
         self.assertIn('dependency-security:', workflow)
         self.assertIn('desktop:', workflow)
         self.assertIn('merlin-assets-desktop-ubuntu22-amd64', release)
+
+    def test_install_guide_uses_generic_local_apt_path(self):
+        """Avoid stale fixed versions and repository-style package lookups."""
+        guide = (ROOT / 'docs/user/install/ubuntu-desktop.md').read_text()
+        self.assertIn('sudo apt install ./PACKAGE.deb', guide)
+        self.assertIn('exact', guide)
+        self.assertIn('Unable to locate package', guide)
+        self.assertNotIn('merlin_0.1.0_ubuntu22.04_amd64.deb', guide)
+
 
 
 class LicenseTests(unittest.TestCase):

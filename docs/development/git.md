@@ -132,3 +132,32 @@ resuming; the only pending edits must be the original version bump. `--dry-run`
 previews without writes or validation execution; explicit `--skip-test` retains
 its existing meaning. After a release commit/tag exists, use `--tag vX.Y.Z`
 instead. Ordinary push and `--force` retain their existing clean-tree guards.
+
+## Quick local tests
+
+```bash
+cd /home/dev01/Projects/merlin &&
+tools/git/git-push.sh --tag-patch --test-quick
+```
+
+`--test-quick` runs the reviewed local subset, omitting 21 named parameter-sweep
+cases. It retains 64/16384-QAM waveform recovery at both spacings, CLI recovery
+at 24 MHz/profile 0 and 90 MHz/profile 3, all other tests, doctests, preparation
+examples, analysis-only checks and release simulation smokes. Static/tooling
+checks, release compilation and all Git guards remain. Full is the default and
+hosted CI is unchanged. Quick success does not establish omitted-case coverage.
+
+The exact package/binary/test exclusions and reasons live in
+[quick-tests.json](../../tools/testing/quick-tests.json). Newly added tests run
+unless explicitly reviewed into that manifest. The launcher prints omissions;
+`--skip-test` and `--test-quick` cannot be combined. Local-only use:
+
+```bash
+cd /home/dev01/Projects/merlin &&
+scripts/test-local.sh all --test-quick
+```
+
+For an exact interrupted bump, use `--tag-patch --resume --test-quick`. On a
+recognized pending candidate, errors now print the appropriate copyable resume
+command, preserving quick/skip-test/preview selections. Other edits receive
+read-only status/diff commands. No error handler changes the checkout.

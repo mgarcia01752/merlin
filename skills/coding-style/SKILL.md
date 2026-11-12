@@ -497,13 +497,15 @@ Reuse `ChartNavigation.qml` for viewport gestures; Rust still owns samples,
 decimation and analysis. Zoom must never start a simulation or alter accepted
 inputs. Ignore empty/out-of-axes gestures and clear stale ranges on new inputs.
 
-Use a standard top menu bar and conventional File labels Open…, Save, Save As…
+Use a standard top menu bar and conventional File labels Open, Save, Save As
 with their standard shortcuts. Window/dialog title bars use initial capitals for
 significant words; preserve acronyms and proper names (RxMER, DOCSIS, OFDM,
 PRBS-TX, MERLIN). Do not apply title capitalization to ordinary descriptions.
 About shows the active theme's application icon, compiled version, project link,
-and clickable bundled license/NOTICE documents for offline use. Keep desktop
-and reusable-library licenses distinct. Light/dark icons share the same rounded
+and matching Project on GitHub, Report Issue and Check For Updates actions.
+Do not show license/acknowledgement lists or standalone wording in About.
+Preserve bundled desktop/library licenses and NOTICE files in distributions.
+Dropdown/menu labels never use ellipses; retain their actions and shortcuts. Light/dark icons share the same rounded
 outer silhouette and transparent corners, following the approved outer border;
 preserve interior artwork and use those assets consistently in desktop/side/About.
 

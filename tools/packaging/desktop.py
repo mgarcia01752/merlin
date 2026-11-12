@@ -13,6 +13,7 @@ import shutil
 import subprocess
 
 from common import ROOT, checksums, copy_tree, version
+from asset_names import asset_name, desktop_alias
 from notices import collect_notices
 from qt_runtime import deploy
 from qt_notices import qt_notices, qt
@@ -155,10 +156,11 @@ def package(binary, sdk, output):
         'Description: MERLIN DOCSIS OFDM Simulation Toolkit\n'
         ' Native single-channel downstream OFDM simulation workbench.\n', encoding='utf-8')
     (control / 'control').chmod(0o644)
-    artifact = output / f'merlin_{version()}_ubuntu22.04_amd64.deb'
+    artifact = output / asset_name('desktop', version(), 'ubuntu22.04', 'amd64', 'deb')
     subprocess.run(['dpkg-deb', '--root-owner-group', '-Zxz', '--build', str(stage), str(artifact)], check=True)
     # Checksums inventory contains deliverables only; staging is retained separately.
     stage.rename(output.parent / (output.name + '-stage'))
+    desktop_alias(artifact, version())
     checksums(output)
     print(json.dumps({'deb': str(artifact), 'installer_bytes': artifact.stat().st_size,
                       'installed_bytes': installed_kib * 1024, 'external_prerequisites': dependency_text}))

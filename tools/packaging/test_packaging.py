@@ -104,6 +104,11 @@ class ReleaseCollectionTests(unittest.TestCase):
     def test_release_links_use_exact_tag_and_repository(self):
         from release_notes import render
         contents = render("example/MERLIN", f"v{version()}")
+        self.assertNotIn("@VERSION@", contents)
+        self.assertIn(f"sudo apt install ./merlin-desktop_{version()}_ubuntu22.04_amd64.deb", contents)
+        self.assertIn(f"merlin-cli_{version()}_linux_amd64.tar.gz", contents)
+        self.assertIn("compatibility copy", contents)
+        self.assertNotIn("merlin_0.1.0_", contents)
         self.assertNotIn("@TAG@", contents)
         self.assertNotIn("@REPOSITORY@", contents)
         self.assertNotIn("/docs/user/install/windows.md", contents)

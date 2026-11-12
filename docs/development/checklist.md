@@ -1053,3 +1053,21 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **RELEASE-RESUME-01** Explicit version-only interrupted-bump recovery
   with unchanged index, exact candidate validation and no second bump.
   [Design](features/release-resume/design.md).
+
+- [x] **RELEASE-RESUME-02** Print the exact recovery command for recognized
+  pending candidates; retain original errors and show inspection for other work.
+  [Design](features/release-resume/design.md#release-resume-02-actionable-failure-output).
+- [x] **DEV-TEST-QUICK-01** Explicit local subset with reviewed sweep omissions,
+  representative recovery cases, full default and unchanged hosted coverage.
+  Verified 471 tests in 132.02 seconds; 21 named sweep cases omitted.
+  [Design](features/quick-local-tests/design.md).
+
+- [x] **RELEASE-ASSET-01** Shared canonical names, unchanged package IDs,
+  legacy desktop updater compatibility and generic local APT instructions.
+  Verified 14 packaging, 45 adapter and 46 QML tests; native Qt build passes.
+  [Design](features/release-asset-names/design.md).
+
+- [x] **UI-ABOUT-01** Simplify About, move manual updates into it, add report
+  action and remove dropdown ellipses. Verified 45 adapter and 47 QML tests,
+  native build and actual dark/light captures; manual update routing passes.
+  [Design](features/about-menu/design.md).

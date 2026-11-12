@@ -14,7 +14,6 @@ MenuBar {
     signal saveRequested(bool saveAs)
     signal globalSettingsRequested()
     signal aboutRequested()
-    signal updatesRequested()
     signal faqRequested()
     readonly property url terminologyUrl: "https://github.com/mgarcia01752/merlin/blob/master/docs/user/terminology.md"
     signal terminologyRequested(url target)
@@ -27,7 +26,7 @@ MenuBar {
         }
         MenuItem {
             objectName: "openWorkbenchConfig"
-            action: Action { text: "Open…"; shortcut: StandardKey.Open; enabled: bar.fileActionsEnabled; onTriggered: bar.openRequested() }
+            action: Action { text: "Open"; shortcut: StandardKey.Open; enabled: bar.fileActionsEnabled; onTriggered: bar.openRequested() }
             Accessible.description: "Open a self-contained MERLIN workbench JSON file."
         }
         MenuItem {
@@ -35,21 +34,20 @@ MenuBar {
             action: Action { text: "Save"; shortcut: StandardKey.Save; enabled: bar.fileActionsEnabled; onTriggered: bar.saveRequested(false) }
             Accessible.description: "Save accepted block settings and original inputs in workbench JSON."
         }
-        MenuItem { objectName: "saveWorkbenchAs"; action: Action { text: "Save As…"; shortcut: StandardKey.SaveAs; enabled: bar.fileActionsEnabled; onTriggered: bar.saveRequested(true) }
+        MenuItem { objectName: "saveWorkbenchAs"; action: Action { text: "Save As"; shortcut: StandardKey.SaveAs; enabled: bar.fileActionsEnabled; onTriggered: bar.saveRequested(true) }
             Accessible.description: "Save accepted block settings and original inputs in workbench JSON." }
     }
     Menu {
         title: "&Settings"
-        MenuItem { objectName: "globalSettingsAction"; text: "Global…"; onTriggered: bar.globalSettingsRequested() }
+        MenuItem { objectName: "globalSettingsAction"; text: "Global"; onTriggered: bar.globalSettingsRequested() }
     }
     Menu {
         title: "&About"
-        MenuItem { objectName:"updatesAction";text:"Check For Updates…";onTriggered:bar.updatesRequested() }
-        MenuItem { objectName: "aboutAction"; text: "About MERLIN…"; onTriggered: bar.aboutRequested() }
-        MenuItem { objectName: "faqAction"; text: "FAQ…"; onTriggered: bar.faqRequested(); Accessible.description: "Open the bundled MERLIN FAQ offline." }
+        MenuItem { objectName: "aboutAction"; text: "About MERLIN"; onTriggered: bar.aboutRequested() }
+        MenuItem { objectName: "faqAction"; text: "FAQ"; onTriggered: bar.faqRequested(); Accessible.description: "Open the bundled MERLIN FAQ offline." }
         MenuItem {
             objectName: "terminologyAction"
-            text: "Terminology…"
+            text: "Terminology"
             onTriggered: bar.terminologyRequested(bar.terminologyUrl)
             Accessible.description: "Open MERLIN terminology on GitHub in the default browser."
         }

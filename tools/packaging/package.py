@@ -11,9 +11,17 @@ import shutil
 import tempfile
 from pathlib import Path
 from common import ROOT, architecture, checksums, stage, version
+from asset_names import asset_name
 
 
 def package(binary, output, native=False):
+    """Stage a matching-version CLI and produce canonical native-host assets.
+
+    binary is the tested executable; output must be absent. native additionally
+    invokes this host's installer builder. Return None after checksums exist.
+    Reject redirects, clobbering and version mismatch; propagate build failures
+    after removing the owned incomplete output. Install/publish nothing.
+    """
     if binary.is_symlink():
         raise ValueError("Package binary cannot be a symlink")
     binary = binary.resolve(strict=True)
@@ -31,7 +39,9 @@ def package(binary, output, native=False):
         with tempfile.TemporaryDirectory(prefix="merlin-package-", dir=output.parent) as directory:
             scratch = Path(directory)
             os_name = "macos" if system == "darwin" else system
-            basename = f"merlin-{version()}-{os_name}-{architecture()}"
+            extension = "zip" if system == "windows" else "tar.gz"
+            basename = asset_name("cli", version(), os_name, architecture(), extension)
+            basename = basename.removesuffix("." + extension)
             payload = stage(binary, scratch / basename)
             archive = "zip" if system == "windows" else "gztar"
             shutil.make_archive(str(output / basename), archive, root_dir=scratch, base_dir=basename)

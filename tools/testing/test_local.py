@@ -33,7 +33,7 @@ class LocalRunnerTests(unittest.TestCase):
             (root / 'bin').mkdir()
             shutil.copy2(ROOT / 'scripts/test-local.sh', root / 'scripts/test-local.sh')
             python = root / 'bin/python3'
-            python.write_text('#!/bin/sh\nprintf "%s/bin/cargo-nextest\\n" "$FAKE_ROOT"\n')
+            python.write_text('#!/bin/sh\ncase "$1" in */quick_tests.py) echo "not(test(=omitted_sweep))" ;; *) printf "%s/bin/cargo-nextest\\n" "$FAKE_ROOT" ;; esac\n')
             python.chmod(0o755)
             cargo = root / 'scripts/cargo-local.sh'
             cargo.write_text('#!/bin/sh\nprintf "%s\\n" "$*" >> "$TRACE"\nexit "$FAILURE"\n')
@@ -63,6 +63,22 @@ class LocalRunnerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('--test-threads 2 -E binary(uniform_profile_orders)', commands[0])
         result, commands = self.exercise('all', failure='17')
+        self.assertEqual(result.returncode, 17)
+        self.assertEqual(len(commands), 1)
+
+    def test_quick_selection_reaches_all_nextest_phases_only(self):
+        """Filter sweep cases without dropping docs, examples or analysis."""
+        result, commands = self.exercise('all', '--test-quick')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(len(commands), 5)
+        for index in (0, 2, 3):
+            self.assertIn('-E not(test(=omitted_sweep))', commands[index])
+        self.assertEqual(commands[1], 'test --workspace --doc --locked')
+        self.assertEqual(commands[4], 'test -p docsis-ofdm-fec --no-default-features --doc --locked')
+        result, commands = self.exercise('all', '--test-quick', '-E', 'all()')
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(commands, [])
+        result, commands = self.exercise('all', '--test-quick', failure='17')
         self.assertEqual(result.returncode, 17)
         self.assertEqual(len(commands), 1)
 

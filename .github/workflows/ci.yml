@@ -198,13 +198,13 @@ jobs:
           export RUSTUP_HOME="$PWD/local/rustup"
           python3 tools/packaging/desktop.py --binary apps/qt/target/release/merlin-qt \
             --qt-sdk "$QT_SDK_DIR" --output dist/desktop
-          python3 tools/packaging/desktop_smoke.py --deb dist/desktop/*.deb --output dist/desktop-check
+          python3 tools/packaging/desktop_smoke.py --deb dist/desktop/merlin-desktop_*.deb --output dist/desktop-check
         if: inputs.release && github.ref_type == 'tag'
       - name: Install, reinstall and remove on disposable runner
         run: |
-          sudo apt-get install -y ./dist/desktop/*.deb
+          sudo apt-get install -y ./dist/desktop/merlin-desktop_*.deb
           python3 tools/packaging/desktop_smoke.py --installed
-          sudo apt-get install --reinstall -y ./dist/desktop/*.deb
+          sudo apt-get install --reinstall -y ./dist/desktop/merlin-desktop_*.deb
           python3 tools/packaging/desktop_smoke.py --installed
           sudo apt-get remove -y merlin
           test ! -e /usr/bin/merlin

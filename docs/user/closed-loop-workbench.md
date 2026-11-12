@@ -6,7 +6,7 @@ engine. Instrument selections do not determine readiness.
 
 ## Configure and run
 
-1. Use **File → New** or **Open…**. Apply an OCD-compatible DPD and PRBS-TX
+1. Use **File → New** or **Open**. Apply an OCD-compatible DPD and PRBS-TX
    or an exact-byte file source. Each selected captured profile runs separately
    through bootstrap wire Profile A (ID0), retaining its captured identity.
 2. Apply compatible RxMER input(s). Channel Estimate defaults to **flat H=1+0i**;
@@ -76,7 +76,7 @@ outcomes remain simulation results, distinct from invalid setup or job failure.
 
 ## Save and reopen
 
-Use the standard **File → Save** (`Ctrl+S`) or **Save As…** (`Ctrl+Shift+S`). The
+Use the standard **File → Save** (`Ctrl+S`) or **Save As** (`Ctrl+Shift+S`). The
 first Save asks for a native OS destination; later Save replaces that project
 atomically. Save As selects a new destination. Use a `*.merlin.json` filename;
 a missing suffix is appended for a new destination. Existing-file replacement
@@ -90,7 +90,7 @@ The version-1 JSON stores:
 - Exact original payload and PNM/decoded-JSON bytes as base64, with byte counts
   and SHA-256. Source paths are not needed to reopen the workbench.
 
-**File → Open…** (`Ctrl+O`) uses a native file filter showing only
+**File → Open** (`Ctrl+O`) uses a native file filter showing only
 `*.merlin.json` workbenches, while directories remain navigable. Choose
 `workbench.merlin.json` inside an example bundle; raw PNM and provenance files
 are hidden. The filename filter does not

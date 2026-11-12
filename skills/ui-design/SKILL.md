@@ -71,3 +71,17 @@ and UI-limit checks. Help must never alter validation or apply settings.
 Keep optional acquisition metadata outside the plotting area, below its axes.
 Provide a simple Details checkbox to hide it without changing data, warnings,
 power readings or navigation. Test placement, hiding and keyboard access.
+
+## Required dropdown labels and About layout
+
+Dropdown/menu item labels must not end with or contain `…` or `...`. Use short
+plain labels such as Open, Save As, Global, About MERLIN, FAQ and Terminology.
+Preserve existing keyboard shortcuts and actions; don't add ellipses to imply
+that another window opens. Progress text outside menus may retain its wording.
+
+About contains product/icon/version, concise purpose and matching rounded
+Project on GitHub, Report Issue and Check For Updates buttons. Manual updates
+start there; keep the green automatic Update chip in the main menu row. Report
+Issue opens the fixed project issue form, never automatically submits content.
+Keep license/acknowledgement lists and standalone/implementation descriptions
+out of About; retain all required bundled licenses and notices in distribution.

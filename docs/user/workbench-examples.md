@@ -2,7 +2,7 @@
 
 Native **File → Open** and individual input-file pickers start in the curated
 examples folder. Open a scenario directory and choose `workbench.merlin.json`.
-The main **File → Open…** filter is **MERLIN Workbenches (*.merlin.json)**.
+The main **File → Open** filter is **MERLIN Workbenches (*.merlin.json)**.
 It hides binary captures and metadata JSON while preserving folder navigation.
 The input-block file pickers remain separate.
 You can also select that directory's original PNM files in the owning blocks.

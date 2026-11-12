@@ -17,7 +17,7 @@ REMOTE="origin"
 # Arguments are unused unless described above; failures stop this script.
 usage() {
   cat <<'EOF'
-Usage: git-push.sh [MODE] [--dry-run] [--force] [--skip-test] [--resume]
+Usage: git-push.sh [MODE] [--dry-run] [--force] [--skip-test] [--resume] [--test-quick]
 
 Modes (choose one):
   --master, --branch  Push main/master only (also the default).
@@ -29,6 +29,7 @@ Modes (choose one):
   --force             Allow a bump from an already published clean HEAD.
   --skip-test         Omit local Rust tests/smokes; retain other checks.
   --resume            Resume an exact interrupted bump; rerun checks.
+  --test-quick        Run representative tests; omit named sweep cases.
 
 Release modes require clean master, matching VERSION metadata and origin.
 --resume permits only the exact unstaged pending version bump.
@@ -60,6 +61,7 @@ RELEASE_ARGS=()
 DRY_RUN=0
 FORCE_RELEASE=0
 SKIP_TEST=0
+TEST_QUICK=0
 RESUME_RELEASE=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -82,12 +84,16 @@ while [[ $# -gt 0 ]]; do
     --dry-run) DRY_RUN=1 ;;
     --force) FORCE_RELEASE=1 ;;
     --skip-test) SKIP_TEST=1 ;;
+    --test-quick) TEST_QUICK=1 ;;
     --resume) RESUME_RELEASE=1 ;;
     -h|--help) usage; exit 0 ;;
     *) die "Unknown argument: $1 (see --help)" ;;
   esac
   shift
 done
+if [[ "$SKIP_TEST" == 1 && "$TEST_QUICK" == 1 ]]; then
+  die "Choose --skip-test or --test-quick, not both"
+fi
 if [[ "$RESUME_RELEASE" == 1 ]]; then
   case "$PUSH_MODE" in
     --tag-major|--tag-minor|--tag-patch) RELEASE_ARGS+=(--resume) ;;
@@ -103,6 +109,9 @@ fi
 if [[ ${#RELEASE_ARGS[@]} -gt 0 ]]; then
   if [[ "$SKIP_TEST" == 1 ]]; then
     RELEASE_ARGS+=(--skip-test)
+  fi
+  if [[ "$TEST_QUICK" == 1 ]]; then
+    RELEASE_ARGS+=(--test-quick)
   fi
   if [[ "$FORCE_RELEASE" == 1 ]]; then
     RELEASE_ARGS+=(--force)
@@ -164,6 +173,9 @@ else
   CHECK_ARGS=()
   if [[ "$SKIP_TEST" == 1 ]]; then
     CHECK_ARGS+=(--skip-test)
+  fi
+  if [[ "$TEST_QUICK" == 1 ]]; then
+    CHECK_ARGS+=(--test-quick)
   fi
   bash "${PROJECT_DIR}/scripts/check-before-push.sh" "${CHECK_ARGS[@]}"
 fi

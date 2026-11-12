@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "groups": [
+    {
+      "package": "docsis-ofdm-fec",
+      "binary": "uniform_profile_orders",
+      "reason": "Full modulation-order by spacing waveform sweep; keep 64/16384 QAM at both spacings.",
+      "tests": [
+        "khz25_qam128_recovers_through_live_plc_ncp_and_waveform",
+        "khz25_qam512_recovers_through_live_plc_ncp_and_waveform",
+        "khz25_qam1024_recovers_through_live_plc_ncp_and_waveform",
+        "khz25_qam2048_recovers_through_live_plc_ncp_and_waveform",
+        "khz25_qam4096_recovers_through_live_plc_ncp_and_waveform",
+        "khz25_qam8192_recovers_through_live_plc_ncp_and_waveform",
+        "khz50_qam128_recovers_through_live_plc_ncp_and_waveform",
+        "khz50_qam512_recovers_through_live_plc_ncp_and_waveform",
+        "khz50_qam1024_recovers_through_live_plc_ncp_and_waveform",
+        "khz50_qam2048_recovers_through_live_plc_ncp_and_waveform",
+        "khz50_qam4096_recovers_through_live_plc_ncp_and_waveform",
+        "khz50_qam8192_recovers_through_live_plc_ncp_and_waveform"
+      ]
+    },
+    {
+      "package": "ofdm-fec-cli",
+      "binary": "pnm_import",
+      "reason": "Full CLI width/profile sweep; keep 24 MHz profile 0 and 90 MHz profile 3.",
+      "tests": [
+        "synthetic_24mhz_profile_1_loads_through_import_and_channel",
+        "synthetic_24mhz_profile_2_loads_through_import_and_channel",
+        "synthetic_24mhz_profile_3_loads_through_import_and_channel",
+        "synthetic_90mhz_profile_0_loads_through_import_and_channel",
+        "synthetic_90mhz_profile_1_loads_through_import_and_channel",
+        "synthetic_90mhz_profile_2_loads_through_import_and_channel"
+      ]
+    },
+    {
+      "package": "docsis-ofdm-fec",
+      "binary": "channel_widths",
+      "reason": "Full internal width/profile recovery sweep; representative CLI recoveries remain.",
+      "tests": [
+        "synthetic_widths_import_four_profiles_and_recover_noiseless_payloads"
+      ]
+    },
+    {
+      "package": "docsis-ofdm-fec",
+      "binary": "receiver_search",
+      "reason": "Full width/spacing/offset/reflection and phase sweeps; individual acquisition tests remain.",
+      "tests": [
+        "both_spacings_three_widths_integer_offsets_and_reflected_channels_acquire",
+        "encoded_block_recovers_after_acquired_equalization_for_all_widths_and_spacings"
+      ]
+    }
+  ]
+}

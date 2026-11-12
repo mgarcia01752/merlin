@@ -58,6 +58,18 @@ pub(super) fn version(value: &str) -> Result<[u64; 3], String> {
     Ok(parts)
 }
 
+/// Lists exact supported desktop filenames in preference order.
+/// # Arguments
+/// * `number` - Already validated numeric release version.
+/// # Returns
+/// Canonical desktop name, followed by the compatibility name for older clients.
+pub(super) fn desktop_asset_names(number: &str) -> [String; 2] {
+    [
+        format!("merlin-desktop_{number}_ubuntu22.04_amd64.deb"),
+        format!("merlin_{number}_ubuntu22.04_amd64.deb"),
+    ]
+}
+
 /// Validates one bounded stable release and selects its exact baseline DEB.
 /// # Arguments
 /// * `installed` - Compiled numeric application version.
@@ -87,12 +99,18 @@ pub(crate) fn parse(installed: &str, bytes: &[u8]) -> Result<Value, String> {
         return Ok(json!({"busy":false,"available":false,"status":"You are up to date.","url":""}));
     }
     let number = release.tag_name.trim_start_matches('v');
-    let name = format!("merlin_{number}_ubuntu22.04_amd64.deb");
+    let names = desktop_asset_names(number);
+    // Prefer canonical metadata. Invalid/duplicate canonical entries never fall back.
+    let name = if release.assets.iter().any(|asset| asset.name == names[0]) {
+        &names[0]
+    } else {
+        &names[1]
+    };
     let url = format!("{PROJECT}/releases/download/{}/{name}", release.tag_name);
     let candidates = release
         .assets
         .iter()
-        .filter(|asset| asset.name == name)
+        .filter(|asset| asset.name == *name)
         .collect::<Vec<_>>();
     let valid = candidates.len() == 1
         && candidates.iter().all(|asset| {
@@ -153,7 +171,7 @@ pub(crate) fn check(installed: &str) -> Result<Value, String> {
 mod tests {
     use super::*;
     fn metadata() -> Value {
-        json!({"draft":false,"prerelease":false,"tag_name":"v0.2.0","html_url":format!("{PROJECT}/releases/tag/v0.2.0"),"assets":[{"name":"merlin_0.2.0_ubuntu22.04_amd64.deb","browser_download_url":format!("{PROJECT}/releases/download/v0.2.0/merlin_0.2.0_ubuntu22.04_amd64.deb"),"size":1000,"digest":format!("sha256:{}","a".repeat(64))}]})
+        json!({"draft":false,"prerelease":false,"tag_name":"v0.2.0","html_url":format!("{PROJECT}/releases/tag/v0.2.0"),"assets":[{"name":"merlin-desktop_0.2.0_ubuntu22.04_amd64.deb","browser_download_url":format!("{PROJECT}/releases/download/v0.2.0/merlin-desktop_0.2.0_ubuntu22.04_amd64.deb"),"size":1000,"digest":format!("sha256:{}","a".repeat(64))}]})
     }
     #[test]
     fn stable_baseline_asset_and_numeric_versions() {
@@ -174,6 +192,37 @@ mod tests {
             assert!(parse("0.1.0", &serde_json::to_vec(&bad).unwrap()).is_err());
         }
     }
+    #[test]
+    fn canonical_is_preferred_and_legacy_support_cannot_mask_invalid_metadata() {
+        let mut data = metadata();
+        let mut legacy = data["assets"][0].clone();
+        legacy["name"] = json!("merlin_0.2.0_ubuntu22.04_amd64.deb");
+        legacy["browser_download_url"] = json!(format!(
+            "{PROJECT}/releases/download/v0.2.0/merlin_0.2.0_ubuntu22.04_amd64.deb"
+        ));
+        data["assets"].as_array_mut().unwrap().push(legacy.clone());
+        let parsed = parse("0.1.4", &serde_json::to_vec(&data).unwrap()).unwrap();
+        assert_eq!(parsed["available"], true);
+        assert!(parsed["package_url"]
+            .as_str()
+            .unwrap()
+            .contains("/merlin-desktop_"));
+        data["assets"][0]["digest"] = json!("unverified");
+        assert_eq!(
+            parse("0.1.4", &serde_json::to_vec(&data).unwrap()).unwrap()["available"],
+            false
+        );
+        data["assets"] = json!([legacy.clone()]);
+        let parsed = parse("0.1.3", &serde_json::to_vec(&data).unwrap()).unwrap();
+        assert_eq!(parsed["available"], true);
+        assert!(parsed["package_url"].as_str().unwrap().contains("/merlin_"));
+        data["assets"].as_array_mut().unwrap().push(legacy);
+        assert_eq!(
+            parse("0.1.3", &serde_json::to_vec(&data).unwrap()).unwrap()["available"],
+            false
+        );
+    }
+
     #[test]
     fn foreign_missing_duplicate_and_unverified_assets_never_notify() {
         for pointer in [

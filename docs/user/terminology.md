@@ -1,6 +1,6 @@
 # MERLIN terminology
 
-Open this guide from **About → Terminology…** in the workbench. That menu opens
+Open this guide from **About → Terminology** in the workbench. That menu opens
 this Markdown page on GitHub in your default browser and requires internet access.
 Definitions below describe the terms used in MERLIN; linked guides explain the
 supported implementation and its limits.

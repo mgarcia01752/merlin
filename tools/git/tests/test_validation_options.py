@@ -17,8 +17,8 @@ ROOT = Path(__file__).resolve().parents[3]
 class ValidationOptionTests(unittest.TestCase):
     """Verify retained checks and omitted expensive commands independently."""
 
-    def test_skip_test_keeps_static_tooling_and_build_checks(self):
-        """Run the actual gate and inspect every dispatched validation command."""
+    def exercise_gate(self, option):
+        """Run the real gate with a selected mode and inert command doubles."""
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / 'scripts').mkdir()
@@ -29,14 +29,14 @@ class ValidationOptionTests(unittest.TestCase):
                          'scripts/test-local.sh'):
                 (root / name).write_text('#!/bin/bash\n')
             stub = '#!/bin/bash\nprintf "%s\\n" "$*" >> "$GATE_TRACE"\n'
-            for name in ('scripts/cargo-local.sh', 'bin/python3', 'bin/shellcheck'):
+            for name in ('scripts/cargo-local.sh', 'scripts/test-local.sh', 'bin/python3', 'bin/shellcheck', 'bin/cmp'):
                 path = root / name
                 path.write_text(stub)
                 path.chmod(0o755)
             trace = root / 'trace'
             environment = dict(os.environ, PATH=f"{root / 'bin'}:{os.environ['PATH']}",
                                GATE_TRACE=str(trace))
-            result = subprocess.run(['bash', str(root / 'scripts/check-before-push.sh'), '--skip-test'],
+            result = subprocess.run(['bash', str(root / 'scripts/check-before-push.sh'), option],
                                     env=environment, capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stderr)
             commands = trace.read_text().splitlines()
@@ -45,11 +45,24 @@ class ValidationOptionTests(unittest.TestCase):
             self.assertIn('fmt --all -- --check', commands)
             self.assertIn('clippy --workspace --all-targets --locked -- -D warnings', commands)
             self.assertIn('build -p ofdm-fec-cli --release --locked', commands)
-            self.assertFalse(any(command.startswith(('test ', 'run ')) for command in commands))
-            self.assertIn('were NOT run', result.stdout)
+            if option == '--skip-test':
+                self.assertFalse(any(command.startswith(('test ', 'run ')) for command in commands))
+                self.assertIn('were NOT run', result.stdout)
+            else:
+                self.assertIn('all --test-quick', commands)
+                self.assertTrue(any(command.startswith('run ') for command in commands))
+                self.assertIn('named sweep cases were NOT run', result.stdout)
             trace.unlink()
             for arguments in (['--unknown'], ['--skip-test', '--unknown']):
                 result = subprocess.run(['bash', str(root / 'scripts/check-before-push.sh'), *arguments],
                                         env=environment, capture_output=True, text=True)
                 self.assertEqual(result.returncode, 2)
                 self.assertFalse(trace.exists())
+
+    def test_skip_test_keeps_static_tooling_and_build_checks(self):
+        """Explicit omission preserves checks and does not run Rust or smokes."""
+        self.exercise_gate('--skip-test')
+
+    def test_quick_keeps_rust_phase_release_build_and_all_smokes(self):
+        """Quick selection reaches the runner and cannot skip remaining gates."""
+        self.exercise_gate('--test-quick')

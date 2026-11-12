@@ -6,23 +6,45 @@ runnable example bundles, including channel 193 `multi-rxmer-2`.
 
 ## Get the installer
 
-For packaged builds, open GitHub **Actions → Release** and download the successful
-version-tag run's `merlin-assets-desktop-ubuntu22-amd64` artifact. **Master** runs
-shared validation; optimized installers are produced by **Release**. Extract its ZIP to obtain the DEB
-and `SHA256SUMS`. The workflow must first be committed and pushed; local workflow
-files alone are not an executed GitHub build.
+Download the **desktop DEB** and `SHA256SUMS` from the matching GitHub release.
+Canonical filenames are `merlin-desktop_VERSION_ubuntu22.04_amd64.deb`.
+The command-line DEB and portable CLI archive are separate downloads; neither is
+needed to run the desktop application. Older releases such as 0.1.4 use
+`merlin_VERSION_ubuntu22.04_amd64.deb`; use the filename actually downloaded.
 
-Stable version-tag releases also include the desktop DEB after all required
-checks pass. Manual workflow artifacts are not stable published releases.
+Release workflow artifacts are another source for tested packages: extract the
+`merlin-assets-desktop-ubuntu22-amd64` ZIP first. Manual workflow artifacts are
+not stable published releases and do not trigger update notification.
 
-In the extracted artifact directory, verify the checksum and install:
+## Install or upgrade with APT
+
+Open a terminal in the folder containing the downloaded DEB and `SHA256SUMS`.
+For example, if both are in Downloads:
 
 ```bash
-sha256sum --check SHA256SUMS
-sudo apt install ./merlin_0.1.0_ubuntu22.04_amd64.deb
+cd ~/Downloads
+ls -1 -- *.deb
+sha256sum --ignore-missing --check SHA256SUMS
 ```
 
-Use the version actually downloaded. Start **MERLIN Simulation Workbench** from
+Use this generic local-package command, replacing **PACKAGE.deb** with the exact
+desktop DEB filename listed above:
+
+```bash
+sudo apt install ./PACKAGE.deb
+```
+
+Keep the **`./`** prefix: it tells APT to install a file from the current folder.
+An absolute path, such as `/home/USER/Downloads/PACKAGE.deb`, also works. Quote
+paths containing spaces. Use the same command to upgrade to a newer downloaded
+DEB; APT installs the required dependencies.
+
+If APT reports **Unable to locate package**, check that the command includes
+`./`. If it reports a missing or unsupported file, check the current directory
+and exact filename with `pwd` and `ls -1 -- *.deb`. Do not copy a version number
+from an older guide or pass the downloaded ZIP directly to APT.
+
+Start **MERLIN Simulation Workbench** from
 the desktop application menu or run `merlin`. Run the application as your normal
 user. The initial install may need network access to obtain Ubuntu dependencies;
 viewing examples and running simulations work offline after setup. Python, Rust
@@ -49,7 +71,7 @@ simulation results are not restored. The recovery file is
 Save may ask for a destination after restart. Updating is disabled during a simulation. Source builds show update information
 but cannot install system packages.
 
-**About → Check For Updates…** or `merlin --check-updates` opens the separate
+**About → About MERLIN → Check For Updates** or `merlin --check-updates` opens the separate
 status/preferences dialog. It offers **Check For Updates**, **Update** and
 **Check For Updates At Startup**. X and Close dismiss the status dialog while
 installation continues; the main app stays open until installation completes.

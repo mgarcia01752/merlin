@@ -35,13 +35,16 @@ impl Plan {
     fn validate(&self) -> Result<(), String> {
         release::version(&self.version)?;
         if self.version.starts_with('v')
-            || self.package_url
-                != format!(
-                    "{}/releases/download/v{}/merlin_{}_ubuntu22.04_amd64.deb",
-                    release::PROJECT,
-                    self.version,
-                    self.version
-                )
+            || !release::desktop_asset_names(&self.version)
+                .iter()
+                .any(|name| {
+                    self.package_url
+                        == format!(
+                            "{}/releases/download/v{}/{name}",
+                            release::PROJECT,
+                            self.version
+                        )
+                })
             || !(1..=MAX_PACKAGE).contains(&self.size)
             || self.sha256.len() != 64
             || !self.sha256.bytes().all(|byte| byte.is_ascii_hexdigit())
@@ -404,7 +407,7 @@ mod tests {
         Plan {
             version: "0.2.0".into(),
             package_url: format!(
-                "{}/releases/download/v0.2.0/merlin_0.2.0_ubuntu22.04_amd64.deb",
+                "{}/releases/download/v0.2.0/merlin-desktop_0.2.0_ubuntu22.04_amd64.deb",
                 release::PROJECT
             ),
             size: 3,
@@ -424,6 +427,14 @@ mod tests {
     #[test]
     fn identity_and_redirects_are_restricted() {
         plan().validate().unwrap();
+        let mut legacy = plan();
+        legacy.package_url = legacy.package_url.replace("/merlin-desktop_", "/merlin_");
+        legacy.validate().unwrap();
+        for replacement in ["merlin-cli_", "merlin-desktop_0.9.9_", "../merlin-desktop_"] {
+            let mut wrong = plan();
+            wrong.package_url = wrong.package_url.replace("merlin-desktop_", replacement);
+            assert!(wrong.validate().is_err());
+        }
         for address in [
             "http://github.com/file",
             "https://evil.invalid/file",

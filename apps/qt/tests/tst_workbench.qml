@@ -241,6 +241,8 @@ Pane {
         theme: theme; settingsBackend: backend; profileBackend: profileBackend; sourceBackend: sourceBackend; transmitterBackend: transmitterBackend; measurementBackend: measurementBackend; aboutBackend: aboutBackend; receiverBackend: receiverBackend; runBackend: runBackend; fileBackend: fileBackend
         iconRoot: Qt.resolvedUrl("../../../docs/images/logo/").toString()
     }
+    SignalSpy { id: aboutUpdateSpy; target: workbench; signalName: "updatesRequested" }
+    SignalSpy { id: aboutLinkSpy; target: workbench; signalName: "externalLinkRequested" }
     Component {
         id: statusBlockComponent
         WorkbenchBlock { width: 170; height: 90 }
@@ -471,11 +473,28 @@ Pane {
             compare(workbench.aboutPopup.title, "About MERLIN")
             verify(findChild(workbench.aboutPopup, "aboutIcon") !== null)
             compare(findChild(workbench.aboutPopup, "aboutVersion").text, "Version 0.1.0")
-            workbench.aboutPopup.licensesPopup.showDocument("gpl")
-            tryCompare(workbench.aboutPopup.licensesPopup, "opened", true)
-            verify(findChild(workbench.aboutPopup.licensesPopup, "licenseDocumentText").text.indexOf("GNU") >= 0)
-            closeWithX(workbench.aboutPopup.licensesPopup)
-            compare(workbench.aboutPopup.opened, true)
+            compare(findChild(workbench.aboutPopup,"aboutLicenseLinks"),null)
+            compare(findChild(appMenu,"updatesAction"),null)
+            for (const name of ["openWorkbenchConfig","saveWorkbenchAs","globalSettingsAction","aboutAction","faqAction","terminologyAction"]) {
+                const item=findChild(appMenu,name)
+                verify(!item.text.includes("…") && !item.text.includes("..."))
+            }
+            aboutLinkSpy.clear()
+            mouseClick(findChild(workbench.aboutPopup,"aboutReportIssue"))
+            compare(aboutLinkSpy.count,1)
+            compare(String(aboutLinkSpy.signalArguments[0][0]),"https://github.com/mgarcia01752/merlin/issues/new")
+            mouseClick(findChild(workbench.aboutPopup,"aboutProjectButton"))
+            compare(aboutLinkSpy.count,2)
+            compare(String(aboutLinkSpy.signalArguments[1][0]),"https://github.com/mgarcia01752/merlin")
+            const issue=findChild(workbench.aboutPopup,"aboutReportIssue")
+            const update=findChild(workbench.aboutPopup,"aboutCheckUpdates")
+            compare(Math.round(issue.width),Math.round(update.width))
+            aboutUpdateSpy.clear()
+            mouseClick(update)
+            compare(aboutUpdateSpy.count,1)
+            tryCompare(workbench.aboutPopup,"opened",false)
+            workbench.aboutPopup.open()
+            tryCompare(workbench.aboutPopup,"opened",true)
             closeWithX(workbench.aboutPopup)
             mouseClick(appMenu.itemAt(2))
             mouseClick(findChild(appMenu,"terminologyAction"))
@@ -578,7 +597,7 @@ Pane {
             verify(details!==null)
             compare(details.visible,true)
             const canvas=findChild(dialog,"saCanvas")
-            verify(details.mapToItem(window,0,0).y >= canvas.mapToItem(window,0,canvas.height).y)
+            tryVerify(() => details.mapToItem(window,0,0).y >= canvas.mapToItem(window,0,canvas.height).y)
             const toggle=findChild(dialog,"saDetailsToggle")
             mouseClick(toggle)
             compare(details.visible,false)
@@ -922,6 +941,37 @@ Pane {
                     }
                     closeWithX(workbench.channelPopup)
                 }
+            }
+        }
+        function test_about_actions_fit_minimum_window_in_both_themes() {
+            const host=window.Window.window
+            const previous=[host.width,host.height,window.width,window.height,theme.dark]
+            const popup=workbench.aboutPopup
+            try {
+                host.width=960;host.height=640;window.width=960;window.height=640
+                for (const dark of [true,false]) {
+                    theme.dark=dark
+                    popup.open();tryCompare(popup,"opened",true);wait(100)
+                    const footer=popup.footer.mapToItem(host.contentItem,popup.footer.width,popup.footer.height)
+                    verify(footer.x<=host.width && footer.y<=host.height)
+                    const actions=["aboutProjectButton","aboutReportIssue","aboutCheckUpdates"].map(name=>findChild(popup,name))
+                    for (const action of actions) {
+                        const position=action.mapToItem(host.contentItem,0,0)
+                        verify(position.x>=0 && position.y>=0)
+                        verify(position.x+action.width<=host.width)
+                        verify(action.width>=action.contentItem.implicitWidth+action.leftPadding+action.rightPadding)
+                        compare(Math.round(action.height),38)
+                    }
+                    aboutLinkSpy.clear()
+                    actions[1].forceActiveFocus();keyClick(Qt.Key_Space)
+                    compare(aboutLinkSpy.count,1)
+                    closeWithX(popup)
+                }
+            } finally {
+                popup.close();theme.dark=previous[4]
+                host.width=previous[0];host.height=previous[1]
+                window.width=previous[2];window.height=previous[3]
+                wait(100)
             }
         }
         function test_profile_dialog_bounds_at_minimum_window() {

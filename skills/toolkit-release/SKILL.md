@@ -64,7 +64,8 @@ curated examples. Retain caches and require exact VERSION/Cargo metadata.
 
 A manual workflow uploads the DEB and SHA256SUMS as an artifact; notification
 requires a newer stable GitHub release carrying
-`merlin_VERSION_ubuntu22.04_amd64.deb` and its GitHub SHA-256 asset digest.
+`merlin-desktop_VERSION_ubuntu22.04_amd64.deb` and its GitHub SHA-256 asset digest
+(the exact legacy desktop name remains a supported compatibility fallback).
 Do not publish from manual builds, mutate existing public releases or bypass
 CodeQL/dependency checks. Tag publication waits for both CLI and desktop checks.
 Run install/reinstall/remove tests only on disposable CI runners unless the user
@@ -77,3 +78,32 @@ finishes the same version without resets or a second bump. Reject unrelated,
 staged, partial, redirected or mismatched files. Use `--tag` after a release
 commit/tag exists; `--force` never serves as dirty-tree recovery. Commit source
 and helper changes separately before leaving only the pending version edits.
+
+Explicit `--test-quick` selects the reviewed local subset via
+`tools/testing/quick-tests.json`, skipping 21 named expensive sweep cases while
+retaining representative recoveries and other tests. Keep doctests, preparation
+example, analysis-only checks, release smokes, static/tooling checks and Git
+guards. Full remains default; hosted CI is unchanged. Reject combining it with
+`--skip-test`; preserve the selected mode through `--resume` and printed retry
+commands. Report omissions and do not equate subset success with full coverage.
+
+## Required release asset naming
+
+Use `tools/packaging/asset_names.py` for all distributable filenames:
+`merlin-COMPONENT_VERSION_TARGET_ARCH.EXT`. COMPONENT is desktop or cli; VERSION
+is MAJOR.MINOR.PATCH; ARCH is amd64 or arm64 (normalize internal x64 to amd64).
+Ubuntu DEBs use ubuntu22.04; portable Linux archives use linux; prepared macOS
+and Windows CLI formats use macos/windows. Keep SHA256SUMS unchanged. Preserve
+installed package IDs merlin/merlin-ofdm, executable paths and installer IDs.
+
+Publish an identical `merlin_VERSION_ubuntu22.04_amd64.deb` compatibility alias
+until older installed updater clients are explicitly retired. Checksum both.
+Prefer canonical desktop metadata in new updaters, allow only the exact legacy
+fallback, and never hide malformed canonical metadata by falling back. CI must
+install/smoke only the canonical desktop DEB. Never rename published assets.
+
+Installation guides use generic `sudo apt install ./PACKAGE.deb` instructions
+and explain replacing the placeholder with the downloaded file. Render exact
+release-version commands in release notes; retain the ./ local-file prefix.
+Validate naming, package identity, alias byte/checksum equality, updater matching
+and download URL validation together before changing this convention.

@@ -115,3 +115,9 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 - [Contextual help and spectrum details](contextual-help/design.md): UI-HELP-01, UI-SA-DETAILS-01.
 
 - [Interrupted release recovery](release-resume/design.md): RELEASE-RESUME-01.
+
+- [Quick local test subset](quick-local-tests/design.md): DEV-TEST-QUICK-01.
+
+- [Release asset filenames](release-asset-names/design.md): RELEASE-ASSET-01.
+
+- [About and dropdown menu cleanup](about-menu/design.md): UI-ABOUT-01.

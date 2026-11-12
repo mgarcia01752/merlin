@@ -55,3 +55,11 @@ finishes the same version without resets or a second bump. Reject unrelated,
 staged, partial, redirected or mismatched files. Use `--tag` after a release
 commit/tag exists; `--force` never serves as dirty-tree recovery. Commit source
 and helper changes separately before leaving only the pending version edits.
+
+Explicit `--test-quick` selects the reviewed local subset via
+`tools/testing/quick-tests.json`, skipping 21 named expensive sweep cases while
+retaining representative recoveries and other tests. Keep doctests, preparation
+example, analysis-only checks, release smokes, static/tooling checks and Git
+guards. Full remains default; hosted CI is unchanged. Reject combining it with
+`--skip-test`; preserve the selected mode through `--resume` and printed retry
+commands. Report omissions and do not equate subset success with full coverage.

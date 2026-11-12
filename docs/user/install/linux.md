@@ -6,11 +6,14 @@ Download the matching `.deb` and `SHA256SUMS` from the release assets.
 
 ```bash
 sha256sum --ignore-missing --check SHA256SUMS
-sudo apt install ./merlin-ofdm_<version>_amd64.deb
+sudo apt install ./PACKAGE.deb
 ofdm-fec --version
 ```
 
-Replace `<version>` with the downloaded three-component version. Verify checksums
+Replace `PACKAGE.deb` with the downloaded CLI DEB filename
+(`merlin-cli_VERSION_ubuntu22.04_amd64.deb` for new releases). Keep `./` so APT
+uses the local file. Earlier releases used `merlin-ofdm_VERSION_amd64.deb`;
+use the actual filename rather than copying an old version. Verify checksums
 before installing; checksums detect changed downloads, not publisher identity.
 Upgrade with the same `apt install` command for a newer package. Uninstall:
 

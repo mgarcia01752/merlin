@@ -112,6 +112,19 @@ esac
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('Nothing to push', result.stdout)
 
+    def test_quick_tests_reach_release_gate_and_recovery_hint(self):
+        """Keep quick selection through interrupted admission and validation."""
+        self.environment['RELEASE_TEST_MODE'] = 'fail'
+        result = self.run_helper('--tag-patch', '--test-quick')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('--tag-patch --resume --test-quick', result.stderr)
+        self.environment['RELEASE_TEST_MODE'] = 'pass'
+        result = self.run_helper('--tag-patch', '--resume', '--test-quick')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.trace.read_text(), '0.1.1\n--test-quick\n0.1.1\n--test-quick\n')
+        self.assertEqual(self.git('rev-parse', 'v0.1.1^{commit}', remote=True).stdout.strip(),
+                         self.git('rev-parse', 'HEAD').stdout.strip())
+
     def test_skip_test_still_blocks_failed_remaining_checks(self):
         """Omitting Rust tests cannot bypass a failing retained validation gate."""
         self.environment['RELEASE_TEST_MODE'] = 'fail'
@@ -214,6 +227,68 @@ esac
         self.assertEqual((self.root / 'VERSION').read_text().strip(), '0.1.1')
         self.assertEqual(self.git('rev-parse', 'HEAD').stdout.strip(), self.start)
         self.assertEqual(self.git('tag', '--list').stdout, '')
+        self.assert_origin_unchanged()
+
+    def test_interrupted_retry_prints_copyable_resume_command(self):
+        """Report an exact same-mode retry without changing files or origin."""
+        for mode, version in [('--tag-patch', '0.1.1'), ('--tag-minor', '0.2.0'),
+                              ('--tag-major', '1.0.0')]:
+            with self.subTest(mode=mode):
+                synchronize(self.root, version, write=True)
+                before = self.git('diff').stdout
+                plain = self.run_helper(mode)
+                self.assertNotEqual(plain.returncode, 0)
+                self.assertIn(f'tools/git/git-push.sh {mode} --resume', plain.stderr)
+                self.assertNotIn('--skip-test', plain.stderr)
+                result = self.run_helper(mode, '--force', '--skip-test', '--dry-run')
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('Branch, commit or working tree changed', result.stderr)
+                self.assertIn(f'cd \'{self.root}\' &&', result.stderr)
+                self.assertIn(f'tools/git/git-push.sh {mode} --resume --skip-test --dry-run',
+                              result.stderr)
+                self.assertNotIn('--force', result.stderr)
+                self.assertEqual(self.git('diff').stdout, before)
+                self.assertFalse(self.trace.exists())
+                self.assert_origin_unchanged()
+
+    def test_unsafe_pending_edits_print_inspection_without_resume_advice(self):
+        """Do not recommend recovery for unrelated, staged or altered candidates."""
+        synchronize(self.root, '0.1.1', write=True)
+        for mutation in ['unrelated', 'staged', 'metadata']:
+            with self.subTest(mutation=mutation):
+                if mutation == 'unrelated':
+                    (self.root / 'untracked').write_text('User work')
+                elif mutation == 'staged':
+                    self.git('add', 'VERSION')
+                else:
+                    with (self.root / 'Cargo.lock').open('a') as stream:
+                        stream.write('# user edit\n')
+                before = self.git('diff').stdout
+                staged = self.git('diff', '--cached').stdout
+                result = self.run_helper('--tag-patch')
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('git status --short && git diff', result.stderr)
+                self.assertNotIn(' --resume', result.stderr)
+                self.assertEqual(self.git('diff').stdout, before)
+                self.assertEqual(self.git('diff', '--cached').stdout, staged)
+                if mutation == 'unrelated':
+                    (self.root / 'untracked').unlink()
+                elif mutation == 'staged':
+                    self.git('reset', '--', 'VERSION')
+                else:
+                    synchronize(self.root, '0.1.0', write=True)
+                    self.git('restore', '--', 'Cargo.lock')
+                    synchronize(self.root, '0.1.1', write=True)
+        self.assertFalse(self.trace.exists())
+        self.assert_origin_unchanged()
+
+    def test_failed_validation_reports_same_version_retry(self):
+        """A failed gate reports resume without pretending validation succeeded."""
+        self.environment['RELEASE_TEST_MODE'] = 'fail'
+        result = self.run_helper('--tag-patch')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('tools/git/git-push.sh --tag-patch --resume', result.stderr)
+        self.assertEqual(self.trace.read_text(), '0.1.1\n')
         self.assert_origin_unchanged()
 
     def test_resume_failed_candidate_reruns_checks_without_second_bump(self):
@@ -448,7 +523,8 @@ esac
 
     def test_invalid_modes_and_missing_tags_do_not_modify_checkout(self):
         """Reject conflicting/invalid modes and nonmatching or missing tag identities."""
-        for arguments in [('--resume',), ('--master', '--resume'),
+        for arguments in [('--tag-patch', '--test-quick', '--skip-test'),
+                          ('--test-quick', '--skip-test'), ('--resume',), ('--master', '--resume'),
                           ('--tag', 'v0.1.0', '--resume'), ('--tag-patch', '--tag-minor'), ('--tag',), ('--dry-run',),
                           ('--tag', 'bad'), ('--tag', 'v0.2.0'), ('--tag', 'v0.1.0'),
                           ('--force',), ('--master', '--force'), ('--tag', 'v0.1.0', '--force')]:

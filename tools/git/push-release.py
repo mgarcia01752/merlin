@@ -30,6 +30,10 @@ def git(*arguments, check=True):
     return result
 
 
+class CheckoutChangedError(RuntimeError):
+    """Identify a checkout guard failure without matching its display wording."""
+
+
 def ensure_checkout(commit, status=''):
     """Reject changes to the expected master commit or working-tree state.
 
@@ -39,7 +43,7 @@ def ensure_checkout(commit, status=''):
     if (git('rev-parse', 'HEAD').stdout.strip() != commit
             or git('branch', '--show-current').stdout.strip() != 'master'
             or git('status', '--porcelain', '--untracked-files=all').stdout != status):
-        raise RuntimeError('Branch, commit or working tree changed; review local state before retrying')
+        raise CheckoutChangedError('Branch, commit or working tree changed; review local state before retrying')
 
 
 def remote_refs(*references):
@@ -84,7 +88,7 @@ def resume_candidate(commit, part):
     return current, expected
 
 
-def release(part, existing_tag, dry_run, force=False, skip_test=False, resume=False):
+def release(part, existing_tag, dry_run, force=False, skip_test=False, resume=False, test_quick=False):
     """Prepare a bumped release or push an existing tag at HEAD.
 
     part selects major/minor/patch; existing_tag selects recovery without a bump.
@@ -96,6 +100,7 @@ def release(part, existing_tag, dry_run, force=False, skip_test=False, resume=Fa
     Failures retain local changes/commits/tags and never reset or overwrite refs.
     skip_test omits local Rust tests/smokes only; hosted checks remain mandatory.
     resume recognizes an exact unstaged interrupted bump and reruns all selected checks.
+    test_quick omits only the reviewed local sweep cases; full tests stay default.
     """
     if Path(git('rev-parse', '--show-toplevel').stdout.strip()).resolve() != ROOT:
         raise RuntimeError('The release helper must belong to the checkout root')
@@ -172,7 +177,11 @@ def release(part, existing_tag, dry_run, force=False, skip_test=False, resume=Fa
     expected_status = git('status', '--porcelain', '--untracked-files=all').stdout
     candidate = {name: (ROOT / name).read_bytes() for name in changes}
     print('Running local checks on the release candidate...', flush=True)
-    check_arguments = ['--skip-test'] if skip_test else []
+    check_arguments = []
+    if skip_test:
+        check_arguments.append('--skip-test')
+    elif test_quick:
+        check_arguments.append('--test-quick')
     subprocess.run(['bash', str(ROOT / 'scripts/check-before-push.sh'), *check_arguments],
                    cwd=ROOT, check=True)
     ensure_checkout(starting_commit, expected_status)
@@ -208,6 +217,33 @@ def release(part, existing_tag, dry_run, force=False, skip_test=False, resume=Fa
     print(f'Pushed {tag}; this helper does not publish GitHub Releases')
 
 
+def recovery_hint(arguments):
+    """Suggest a read-only inspection or an exactly recognized bump retry.
+
+    arguments contains the parsed release options. Return copyable shell text;
+    preserve selected test/preview flags. Never mutate files or query origin.
+    Unknown, staged or unrelated edits cannot receive a resume recommendation.
+    """
+    prefix = f'cd {shlex.quote(str(ROOT))} &&\n'
+    if arguments.bump and not arguments.resume:
+        try:
+            commit = git('rev-parse', 'HEAD').stdout.strip()
+            resume_candidate(commit, arguments.bump)
+        except (OSError, ValueError, RuntimeError):
+            pass
+        else:
+            command = ['tools/git/git-push.sh', f'--tag-{arguments.bump}', '--resume']
+            if arguments.skip_test:
+                command.append('--skip-test')
+            if arguments.test_quick:
+                command.append('--test-quick')
+            if arguments.dry_run:
+                command.append('--dry-run')
+            return ('Exact pending version bump detected. Resume with:\n'
+                    + prefix + shlex.join(command) + '\n')
+    return 'Inspect local changes before retrying:\n' + prefix + 'git status --short && git diff\n'
+
+
 def main():
     """Parse one explicit release mode; report failures without discarding work."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -215,7 +251,10 @@ def main():
     modes.add_argument('--bump', choices=('major', 'minor', 'patch'))
     modes.add_argument('--tag', help='Push an existing matching tag at HEAD without bumping')
     parser.add_argument('--dry-run', action='store_true')
-    parser.add_argument('--skip-test', action='store_true',
+    testing = parser.add_mutually_exclusive_group()
+    testing.add_argument('--test-quick', action='store_true',
+                         help='Run representative tests; omit reviewed sweep cases')
+    testing.add_argument('--skip-test', action='store_true',
                         help='Omit local Rust tests/smokes; retain other checks and hosted CI')
     parser.add_argument('--resume', action='store_true',
                         help='Resume an exact unstaged interrupted bump; rerun selected checks')
@@ -228,9 +267,12 @@ def main():
         parser.error('--resume requires --bump')
     try:
         release(arguments.bump, arguments.tag, arguments.dry_run, arguments.force,
-                arguments.skip_test, arguments.resume)
+                arguments.skip_test, arguments.resume, arguments.test_quick)
     except (OSError, ValueError, RuntimeError, subprocess.CalledProcessError) as error:
-        parser.exit(1, f'ERROR: {error}\nReview any local release state; nothing is reset automatically.\n')
+        hint = ''
+        if isinstance(error, (CheckoutChangedError, subprocess.CalledProcessError)):
+            hint = recovery_hint(arguments)
+        parser.exit(1, f'ERROR: {error}\n{hint}Review any local release state; nothing is reset automatically.\n')
 
 
 if __name__ == '__main__':
