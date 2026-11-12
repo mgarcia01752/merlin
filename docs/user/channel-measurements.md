@@ -283,3 +283,14 @@ keyboard, for help. It changes the preview only, not simulation timing or
 capture selection.
 
 ![Capture configuration with concise labels](../images/workbench/rxmer-capture-configuration-dark.png)
+
+### Constellation MER
+
+The Channel Output / RX Input QAM Analyzer shows a decision-directed **MER
+estimate** over every retained cell matching its filters, before reducing points
+for display. It shares the Receiver Raw calculation; Receiver Equalized reports
+its own corrected-plane estimate. Hover the reading for its purpose and limits.
+See [calculated MER](receiver-workbench.md#calculated-mer). All channel QAM views
+use smaller circular dots to show the spread.
+
+![Calculated channel-output MER](../images/workbench/channel-qam-mer-dark.png)

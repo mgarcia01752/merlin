@@ -192,7 +192,7 @@ Pane {
             lastQuery=JSON.parse(document)
             if (!retainedCells) { return qam(lastQuery.signal,lastQuery.view,lastQuery.part) }
             const available=(lastQuery.first_bin<0 || lastQuery.first_bin<=320) && (lastQuery.last_bin<0 || lastQuery.last_bin>=320)
-            return JSON.stringify({available:available,reason:available ? "Actual test observations" : "No cells match",points:available ? [{raw_x:0.4,raw_y:0.4,eq_x:0.5,eq_y:0.5}] : [],profiles:[0],orders:[256],first_bin:320,last_bin:320,first_symbol:10,last_symbol:10,retained:1,detail:"Retained test result"})
+            return JSON.stringify({available:available,reason:available ? "Actual test observations" : "No cells match",points:available ? [{raw_x:0.4,raw_y:0.4,eq_x:0.5,eq_y:0.5}] : [],profiles:[0],orders:[256],first_bin:320,last_bin:320,first_symbol:10,last_symbol:10,retained:1,raw_mer:{text:available ? "MER estimate: 30.00 dB · 1 cells" : "MER unavailable · no selected cells"},equalized_mer:{text:available ? "MER estimate: 40.00 dB · 1 cells" : "MER unavailable · no selected cells"},detail:"Retained test result"})
         }
         function response(document) { lastQuery=JSON.parse(document);return JSON.stringify({available:retainedCells,points:[],x_ticks:[],y_ticks:[],snapshots:[10],reason:"Response test",summary:"Actual response query"}) }
         function slicer(document,decoderInput) { lastQuery=JSON.parse(document);lastDecoderInput=decoderInput;return JSON.stringify({available:retainedCells,rows:[],llr:{count:retainedCells ? 8 : 0},histogram:{points:[],x_ticks:[],y_ticks:[]},detail:"Actual soft query"}) }
@@ -1382,20 +1382,37 @@ Pane {
             mouseClick(findChild(dialog,"popupCloseButton"));tryCompare(dialog,"visible",false)
             receiver.close();receiverBackend.retainedCells=false
         }
+        function findVisualItem(root, name) {
+            if (root.objectName===name) return root
+            for (const child of root.children || []) {
+                const found=findVisualItem(child,name)
+                if (found) return found
+            }
+            return null
+        }
         function test_receiver_retained_filters_response_soft_and_fec_navigation() {
             const receiver=workbench.receiverPopup
             receiverBackend.retainedCells=true
+            receiver.qamPopup.viewIndex=1
             receiver.open();tryCompare(receiver,"opened",true)
             mouseClick(findChild(receiver,"receiverDataQam"));tryCompare(receiver.qamPopup,"opened",true)
             const qam=receiver.qamPopup
             compare(qam.observation.points.length,1)
             verify(findChild(qam,"receiverProfile").enabled)
+            tryVerify(function(){return findVisualItem(qam.contentItem,"receiverEqualizedMer")!==null})
+            compare(findVisualItem(qam.contentItem,"receiverEqualizedMer").text,"MER estimate: 40.00 dB · 1 cells")
+            const qamView=findChild(qam,"receiverQamView")
+            qamView.currentIndex=2;qamView.activated(2)
+            tryVerify(function(){return findVisualItem(qam.contentItem,"receiverRawMer")!==null})
+            compare(findVisualItem(qam.contentItem,"receiverRawMer").text,"MER estimate: 30.00 dB · 1 cells")
             const first=findChild(qam,"receiverFirstBin")
             first.value=400;first.valueModified()
             compare(receiverBackend.lastQuery.first_bin,400)
             compare(qam.observation.points.length,0)
+            compare(findVisualItem(qam.contentItem,"receiverRawMer").text,"MER unavailable · no selected cells")
             qam.selectionControls.resetFilters()
             compare(qam.observation.points.length,1)
+            qam.viewIndex=1
             closeWithX(qam);compare(receiver.opened,true)
             receiver.responsePopup.open();tryCompare(receiver.responsePopup,"opened",true)
             const view=findChild(receiver.responsePopup,"receiverResponseView")
@@ -1430,7 +1447,8 @@ Pane {
             qamChoice.forceActiveFocus();keyClick(Qt.Key_Space)
             tryCompare(dialog.inputQamPopup,"opened",true)
             compare(dialog.inputQamPopup.observation.available,false)
-            compare(findChild(dialog.inputQamPopup,"tapQamScatter").receivedSamples,false)
+            compare(findChild(dialog.inputQamPopup,"tapQamScatter").receivedSamples,true)
+            compare(findChild(dialog.inputQamPopup,"tapQamScatter").receivedPointRadius,0.85)
             closeWithX(dialog.inputQamPopup)
             mouseClick(findChild(dialog,"channelInput"));tryCompare(dialog.instrumentPopup,"opened",true)
             compare(dialog.output,false)
@@ -1497,7 +1515,8 @@ Pane {
             compare(dialog.tapIndex,1)
             mouseClick(findChild(dialog.instrumentPopup,"channelQam"));tryCompare(dialog.inputQamPopup,"opened",true)
             compare(dialog.inputQamPopup.tap,1)
-            compare(findChild(dialog.inputQamPopup,"tapQamScatter").receivedSamples,false)
+            compare(findChild(dialog.inputQamPopup,"tapQamScatter").receivedSamples,true)
+            compare(findChild(dialog.inputQamPopup,"tapQamScatter").receivedPointRadius,0.85)
             closeWithX(dialog.inputQamPopup)
             measurementBackend.power={amplifier_gain_db:0,attenuation_db:0,input_data_level_dbmv_per_6mhz:null,amplifier_target_dbmv_per_6mhz:null,receiver_noise_dbmv_hz:null}
             closeWithX(dialog)

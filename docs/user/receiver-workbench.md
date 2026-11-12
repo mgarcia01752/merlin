@@ -54,6 +54,28 @@ at most 2,048 selected pairs are displayed. Protected captures cover the first
 actual source and receive coordinates for the configured observation interval.
 Changing a filter cannot retrieve data outside these retained windows.
 
+## Calculated MER
+
+Channel Output / RX Input and Receiver QAM show **MER estimate** for the current
+role, profile, modulation, bin and RX-symbol selection. Raw and Equalized panels
+report separate readings. All selected retained cells contribute, including cells
+beyond the 2,048 displayed points. Smaller dots make the received spread visible.
+
+The calculator uses the nearest ideal constellation point for each received
+sample: **MER = 10 log10(total reference power / total squared I/Q error)**.
+Pilot references include their known amplitude boost. No gain, phase or channel
+correction is fitted by this calculation; the Raw reading includes those effects.
+This is an estimate from the simulated I/Q, separate from imported RxMER and
+TX-reference Profile Performance measurements. Severe noise and incorrect nearest
+point decisions can make estimated MER too optimistic. Hover the reading for help.
+
+Exact zero error displays **perfect reference**; missing or invalid selections
+show **MER unavailable**. Changing filters recalculates the reading without
+running the simulation. Mixed unclassified TX-bin views before/after the amplifier
+have smaller dots but no MER reading without the required reference metadata.
+
+![Calculated raw and equalized constellation MER](../images/workbench/receiver-qam-mer-dark.png)
+
 ## Channel response and echo
 
 Open **CH-EST / Equalizer** or **Channel Response / Echo**. Select **Applied

@@ -5,6 +5,7 @@
 //! Constellation references, bit ordering and soft demapping.
 #[cfg(feature = "simulation")]
 pub mod interleaving;
+pub mod mer;
 pub mod qam;
 pub mod randomization;
 pub mod slicing;

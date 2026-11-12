@@ -4,7 +4,7 @@
  */
 //! Bounded immutable selection of actual matched receiver cells.
 use crate::simulation::closed_loop::{latest, ResultData};
-use docsis_ofdm_fec::types::IqPair;
+use docsis_ofdm_fec::{signal_processing::modulation::mer::MerCalculator, types::IqPair};
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::collections::BTreeSet;
@@ -180,7 +180,44 @@ pub(crate) fn select<'a>(result: &'a ResultData, query: &Query) -> Result<Select
     });
     Ok(Selected { cells, metadata })
 }
-/// Queries bounded actual scatter points for a validated selection, without running science.
+/// Calculates decision-directed MER over all selected retained cells.
+/// # Arguments
+/// * `selection` - One modulation/role with its actual reference amplitude.
+/// * `raw` - Before equalization when true, otherwise after correction.
+/// # Returns
+/// Typed core statistics plus presentation labels; never a display-point estimate.
+pub(crate) fn mer(selection: &Selected<'_>, raw: bool) -> Value {
+    let Some(first) = selection.cells.first() else {
+        return json!({"text":"MER unavailable · no selected cells"});
+    };
+    let calculator = match MerCalculator::new(first.order, first.amplitude) {
+        Ok(calculator) => calculator,
+        Err(error) => return json!({"text":"MER unavailable", "reason":error.to_string()}),
+    };
+    let result =
+        calculator.calculate(selection.cells.iter().map(
+            |cell| {
+                if raw {
+                    *cell.raw
+                } else {
+                    *cell.eq
+                }
+            },
+        ));
+    let text = if let Some(db) = result.mer_db {
+        format!("MER estimate: {db:.2} dB · {} cells", result.sample_count)
+    } else if result.calculation_status
+        == docsis_ofdm_fec::signal_processing::modulation::mer::MerStatus::PerfectReference
+    {
+        format!("MER: perfect reference · {} cells", result.sample_count)
+    } else {
+        "MER unavailable".to_string()
+    };
+    json!({"text":text,"result":result,
+        "method":"nearest_reference_euclidean",
+        "help":"Decision-directed estimate over all selected retained cells. Severe noise may make it optimistic. No gain or phase fitting; raw values include channel distortion. This is not the imported RxMER reading."})
+}
+/// Queries bounded actual scatter points for a validated selection, with core MER statistics.
 /// # Arguments
 /// * `query` - Signal/profile/modulation and inclusive bin/symbol bounds.
 /// # Returns
@@ -202,7 +239,12 @@ pub(crate) fn qam(query: &Query) -> Value {
         .fold(1.0_f64, f64::max)
         * 1.1;
     let points:Vec<_>=selection.cells.iter().take(2048).map(|p|json!({"raw_x":0.5+p.raw[0]/(2.0*extent),"raw_y":0.5-p.raw[1]/(2.0*extent),"eq_x":0.5+p.eq[0]/(2.0*extent),"eq_y":0.5-p.eq[1]/(2.0*extent),"bin":p.bin,"symbol":p.symbol,"source_symbol":p.source,"frequency_hz":p.frequency})).collect();
+    let raw_mer = mer(&selection, true);
+    let equalized_mer = mer(&selection, false);
     let mut state = selection.metadata;
+    state["raw_mer"] = raw_mer;
+    state["equalized_mer"] = equalized_mer;
+    state["selected"] = json!(selection.cells.len());
     state["available"] = json!(!points.is_empty());
     state["points"] = json!(points);
     state["reason"] = json!(if state["retained"] == 0 {
@@ -214,4 +256,55 @@ pub(crate) fn qam(query: &Query) -> Value {
     state["raw_tap"] = json!("rx.fft.bins");
     state["equalized_tap"] = json!("rx.equalized.iq");
     state
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn mer_uses_selected_cells_beyond_display_cap_and_separate_reference_planes() {
+        let ideal = [1.0, 0.0];
+        let noisy = [1.0, 0.1];
+        let cells = (0..4096)
+            .map(|index| Cell {
+                raw: if index < 2048 { &ideal } else { &noisy },
+                eq: &ideal,
+                llrs: &[],
+                bin: 320,
+                frequency: 100_000_000,
+                source: None,
+                symbol: index,
+                profile: Some(0),
+                order: 2,
+                amplitude: 1.0,
+            })
+            .collect();
+        let selection = Selected {
+            cells,
+            metadata: json!({}),
+        };
+        let raw = mer(&selection, true);
+        assert_eq!(raw["result"]["sample_count"], 4096);
+        assert!((raw["result"]["mer_db"].as_f64().unwrap() - 23.010299956639813).abs() < 1e-9);
+        assert_eq!(
+            mer(&selection, false)["result"]["calculation_status"],
+            "perfect_reference"
+        );
+        let filtered = Selected {
+            cells: selection.cells.into_iter().skip(2048).collect(),
+            metadata: json!({}),
+        };
+        assert!((mer(&filtered, true)["result"]["mer_db"].as_f64().unwrap() - 20.0).abs() < 1e-9);
+        assert!(mer(
+            &Selected {
+                cells: vec![],
+                metadata: json!({})
+            },
+            true
+        )["text"]
+            .as_str()
+            .unwrap()
+            .contains("no selected cells"));
+    }
 }

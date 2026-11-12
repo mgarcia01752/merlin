@@ -9,6 +9,7 @@ Canvas {
     required property var theme
     required property var observation
     property bool receivedSamples: false
+    readonly property real receivedPointRadius: 0.85
     onReceivedSamplesChanged: requestPaint()
     function roleColor(role) {
         if (role === "data") {
@@ -48,7 +49,7 @@ Canvas {
                 const y = top + point.y * edge
                 ctx.fillStyle = roleColor(point.role)
                 if (plot.receivedSamples) {
-                    ctx.beginPath(); ctx.arc(x, y, 2, 0, 2 * Math.PI); ctx.fill()
+                    ctx.beginPath(); ctx.arc(x, y, receivedPointRadius, 0, 2 * Math.PI); ctx.fill()
                 } else if (point.role === "ncp") {
                     ctx.beginPath(); ctx.arc(x, y, 3.5, 0, 2 * Math.PI); ctx.fill()
                 } else if (point.role === "filler") {

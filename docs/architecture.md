@@ -2075,3 +2075,17 @@ when no result remains; every view labels its source. Configuration revision
 changes refresh timing without serializing plots on every polling tick. VF
 affects only distance estimates. Core windowing, simulation results and WB JSON
 are unchanged. See the [design](development/features/symbol-timing-popup/design.md).
+
+### Constellation MER (UI-QAM-MER-01)
+
+The Apache core `signal_processing::modulation::mer` adapts PNM Viewer's power
+accumulator and nearest-reference row search. Its typed `MerCalculator` and
+paired `calculate_mer` operation are independent of Qt and future bindings.
+Receiver and channel-output QAM adapters calculate over all filtered retained
+cells before the scatter cap. Raw and equalized estimates remain separate;
+known pilot amplitude is explicit, and received gain/phase are never fitted.
+This decision-directed estimate can overstate MER under severe noise; it is
+neither imported RxMER nor the existing TX-truth per-carrier diagnostic.
+QML displays labels/status and smaller markers without changing simulation or
+WB persistence. Mixed unclassified TX-bin snapshots do not imply a valid MER.
+See the [design](development/features/qam-mer/design.md).

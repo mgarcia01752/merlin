@@ -30,3 +30,8 @@ recorded in crates/ofdm/resources/qam-table/provenance.json.
 The separate MERLIN Qt workbench under apps/qt is GPL-3.0-only. It adapts
 PNM Viewer Qt presentation infrastructure; see apps/qt/LICENSE and apps/qt/NOTICE
 for attribution. Independent scientific libraries retain Apache-2.0.
+
+The constellation MER power accumulator and nearest-reference row search in
+crates/ofdm/src/signal_processing/modulation/mer.rs adapt PNM Viewer Toolkit's
+Apache-2.0 pnm/analysis/constellation/mer.rs. Original contributor notices are
+preserved; MERLIN supplies its own references and typed calculator interface.

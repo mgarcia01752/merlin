@@ -147,7 +147,10 @@ pub(crate) fn qam(tap: i32, document: &str) -> Value {
             .fold(1e-9_f64, f64::max)
             * 1.1;
         let samples:Vec<_>=points.iter().map(|p|json!({"i":p.raw[0],"q":p.raw[1],"x":0.5+p.raw[0]/(2.0*extent),"y":0.5-p.raw[1]/(2.0*extent),"index":p.bin,"symbol":p.symbol,"role":match query.signal {0=>"data",1=>"ncp",2=>"plc",_=>"pilot"}})).collect();
+        let mer = crate::instruments::receiver::selection::mer(&selected, true);
         let mut view = selected.metadata;
+        view["mer"] = mer;
+        view["selected"] = json!(selected.cells.len());
         view["points"] = json!(samples);
         view["available"] = json!(!points.is_empty());
         view["extent"] = json!(extent);

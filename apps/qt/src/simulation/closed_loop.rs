@@ -892,6 +892,16 @@ mod tests {
         let query = crate::instruments::receiver::selection::Query::default();
         let scatter = crate::instruments::receiver::selection::qam(&query);
         assert_eq!(scatter["available"], true);
+        assert_eq!(
+            scatter["raw_mer"]["result"]["sample_count"],
+            scatter["selected"]
+        );
+        assert_eq!(
+            scatter["equalized_mer"]["result"]["sample_count"],
+            scatter["selected"]
+        );
+        let channel_qam = crate::instruments::channel::qam(2, "{}");
+        assert_eq!(channel_qam["mer"], scatter["raw_mer"]);
         let control = result
             .job
             .constellation

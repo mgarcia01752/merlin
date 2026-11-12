@@ -414,3 +414,10 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
   Verified both FFTs, all CP/RP pairs, keyboard/resize and native dark/light UI;
   61 Rust tests, 54 QML checks, Clippy and native build pass.
   [Design](features/symbol-timing-popup/design.md).
+
+- [x] **UI-QAM-MER-01** Reuse PNM Viewer's MER in a typed core calculator,
+  show separate raw/equalized estimates over every selected retained cell,
+  and reduce channel/receiver QAM marker size. Numeric/reference tests, 62
+  adapter tests, 54 QML checks, core/Qt Clippy and the native build pass.
+  Actual Ubuntu dark/light views verify both reference planes.
+  [Design](features/qam-mer/design.md).

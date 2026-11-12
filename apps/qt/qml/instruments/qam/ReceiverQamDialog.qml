@@ -44,6 +44,18 @@ WorkbenchDialog {
                     ColumnLayout {
                         anchors.fill: parent; anchors.margins: 18
                         Label { text: modelData; color: dialog.theme.text; font.bold: true }
+                        Label {
+                            id:merReading
+                            objectName:modelData.indexOf("Raw")===0 ? "receiverRawMer" : "receiverEqualizedMer"
+                            readonly property var reading:modelData.indexOf("Raw")===0 ? (dialog.observation.raw_mer || {}) : (dialog.observation.equalized_mer || {})
+                            text:reading.text || "MER unavailable"
+                            color:dialog.theme.accent
+                            Layout.fillWidth:true
+                            wrapMode:Text.WordWrap
+                            HoverHandler {id:merHover}
+                            ToolTip.visible:merHover.hovered
+                            ToolTip.text:merReading.reading.help || "Select retained cells to calculate MER."
+                        }
                         Canvas {
                             id: scatter
                             Layout.fillWidth:true; Layout.fillHeight:true
@@ -66,7 +78,7 @@ WorkbenchDialog {
                                 for (const point of dialog.observation.points || []) {
                                     const x = left + (raw ? point.raw_x : point.eq_x) * edge
                                     const y = top + (raw ? point.raw_y : point.eq_y) * edge
-                                    ctx.beginPath(); ctx.arc(x, y, 1.5, 0, 2 * Math.PI); ctx.fill()
+                                    ctx.beginPath(); ctx.arc(x, y, 0.85, 0, 2 * Math.PI); ctx.fill()
                                 }
                             }
                         }
