@@ -52,3 +52,11 @@ without inventing a wider PLC. Native Designer and main RxMER views, capture
 changes and Home reset were inspected; the main PLC view was also checked in
 light mode. Updated full-span and zoomed screenshots
 are linked in the user guide.
+
+## RXMER-DESIGN-03: tilt steps
+
+All 65 QML checks pass, including typed negative/fractional values, up/down button
+steps, Up/Down keys, bound-disabled controls and invalid/empty drafts. The native
+Qt executable is rebuilt. Native dark inspection confirms −5 → −4 → −5 button
+steps and immediate graph updates; the guide capture shows the editable field
+and both compact controls. Light-mode layout was also inspected. No scientific core or persistence changes were needed.

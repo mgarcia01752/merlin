@@ -66,3 +66,12 @@ region with bounded context; shading retains its true width. Slightly stronger
 fill and endpoint borders improve visibility at full span without widening data.
 Validate clipped curves, out-of-range requests, shortcut bounds, persistent zoom,
 Full Span and native narrow-PLC rendering. No scientific recipe changes.
+
+## RXMER-DESIGN-03: one-dB tilt controls
+
+Keep the editable signed tilt field and add shared compact up/down action buttons.
+Each enabled click or Up/Down key in the field changes the draft by exactly 1 dB
+and refreshes the preview. Preserve fractional typed values and zoom. Disable
+steps from invalid text or beyond the existing ±60 dB limits; Rust remains the
+scientific validation authority. Verify typed values, both directions, keyboard,
+boundaries and invalid drafts, then rebuild the native UI and update its capture.

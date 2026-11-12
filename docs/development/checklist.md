@@ -1192,3 +1192,8 @@ validation are complete; the user guide includes the current dark capture.
   64 QML checks and the latest native build pass; native zoom, capture
   changes and Home reset verified.
   [Design](features/rxmer-designer/design.md#rxmer-design-02-zoom-and-visible-plc-context).
+
+- [x] **RXMER-DESIGN-03** Add 1 dB tilt up/down buttons while retaining the
+  editable field and fractional values. Verify keyboard steps, invalid drafts
+  and existing limits; 65 QML checks and the native Qt build pass.
+  [Design](features/rxmer-designer/design.md#rxmer-design-03-one-db-tilt-controls).

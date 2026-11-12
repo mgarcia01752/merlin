@@ -26,6 +26,21 @@ Pane {
     TestCase {
         name:"RxmerDesigner";when:windowShown
         function cleanup(){dialog.close();wait(100)}
+        function test_tilt_steps_keep_text_entry_keyboard_and_limits(){
+            dialog.open();tryCompare(dialog,"visible",true)
+            const field=findChild(dialog,"designerTiltDb"), up=findChild(dialog,"designerTiltUp"), down=findChild(dialog,"designerTiltDown")
+            verify(field);verify(up);verify(down)
+            findChild(dialog,"designerTilt").checked=true
+            field.text="-5";mouseClick(up);compare(field.text,"-4");compare(backend.lastRequest.recipe.tilt.tilt_db,-4)
+            mouseClick(down);compare(field.text,"-5")
+            field.text="-5.5";field.forceActiveFocus();keyClick(Qt.Key_Up);compare(field.text,"-4.5")
+            keyClick(Qt.Key_Down);compare(field.text,"-5.5")
+            field.text="60";verify(!up.enabled);verify(down.enabled)
+            field.text="-60";verify(!down.enabled);verify(up.enabled)
+            field.text="";verify(!up.enabled);verify(!down.enabled)
+            field.text="invalid";verify(!up.enabled);verify(!down.enabled)
+            field.text="-7";field.forceActiveFocus();keyClick(Qt.Key_Tab);compare(backend.lastRequest.recipe.tilt.tilt_db,-7)
+        }
         function test_zoom_plc_navigation_and_capture_changes_keep_window(){
             dialog.open();tryCompare(dialog,"visible",true)
             mouseClick(findChild(dialog,"designerZoomPlc"))

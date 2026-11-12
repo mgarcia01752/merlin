@@ -7,7 +7,12 @@ an association anchor; it is not a measured acquisition time.
 
 ![RxMER Designer with a continuous PLC region](../../images/workbench/rxmer-designer-dark.png)
 
-Enable the effects you need. The preview overlays the original dashed curve and
+Enable the effects you need. The tilt text box remains editable; its **↑ / ↓**
+buttons or the field’s Up/Down keys adjust the current value by exactly **1 dB**.
+Fractional typed values remain supported. Steps beyond ±60 dB or from invalid
+text are disabled.
+
+The preview overlays the original dashed curve and
 the designed solid curve on the same RxMER axis. A single shaded **PLC** region
 runs from the first to the last PLC carrier in the accepted modulation profile.
 The main RxMER chart uses the same region, clipped when zoomed. At full span,

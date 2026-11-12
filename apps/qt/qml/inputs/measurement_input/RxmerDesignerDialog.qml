@@ -33,6 +33,13 @@ WorkbenchDialog {
             ripple:ripple.checked ? {scope:rippleScope.value(),peak_to_peak_db:Number(rippleDb.text),spacing:distanceMode.checked ? {mode:"echo_distance",distance_metres:Number(distance.text),velocity_factor:Number(vf.text)} : {mode:"frequency",spacing_hz:Math.round(Number(spacing.text)*1e6)}} : null,
             notch:notch.checked ? {scope:notchScope.value(),center_hz:Math.round(Number(center.text)*1e6),bandwidth_hz:Math.round(Number(bandwidth.text)*1e6),depth_db:Number(depth.text),edge_hz:Math.round(Number(edge.text)*1e6)} : null,edits:valueEdits}
     }
+    function canStepTilt(delta) {
+        const value=Number(tiltDb.text)
+        return tiltDb.text.trim().length>0 && Number.isFinite(value) && value>=-60 && value<=60 && value+delta>=-60 && value+delta<=60
+    }
+    function stepTilt(delta) {
+        if (canStepTilt(delta)) {tiltDb.text=String(Number(tiltDb.text)+delta);refresh()}
+    }
     function document() { return JSON.stringify({source:source.currentIndex === 0 ? "imported":"flat",capture_count:captureCount,baseline_db:Number(baseline.text),recipe:recipe()}) }
     function refresh() { if (!initializing && visible && !working) { viewport=JSON.parse(backend.designer_preview(document(),Math.round(preview.value),viewStart,viewCount));errorMessage=viewport.error || "";diagnostic=viewport.diagnostic || null } }
     function setWindow(start,count) {viewStart=start;viewCount=count;refresh()}
@@ -93,7 +100,26 @@ WorkbenchDialog {
                     Label {text:"Frequency effects";color:theme.accent;font.bold:true}
                     CheckBox {id:tilt;objectName:"designerTilt";text:"RxMER tilt";onToggled:dialog.refresh()}
                     RowLayout {Label {text:"High − low edge (dB)";color:theme.text}
-TextField {id:tiltDb;text:"-4";Layout.preferredWidth:80;onEditingFinished:dialog.refresh()} }
+                        TextField {
+                            id:tiltDb;objectName:"designerTiltDb";text:"-4";Layout.preferredWidth:80
+                            Accessible.name:"High minus low edge tilt in dB"
+                            onEditingFinished:dialog.refresh()
+                            Keys.onUpPressed:dialog.stepTilt(1)
+                            Keys.onDownPressed:dialog.stepTilt(-1)
+                        }
+                        WorkbenchActionButton {
+                            theme:dialog.theme;objectName:"designerTiltUp";text:"↑";compact:true
+                            enabled:dialog.canStepTilt(1);onClicked:dialog.stepTilt(1)
+                            Accessible.name:"Increase RxMER tilt by 1 dB"
+                            ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
+                        }
+                        WorkbenchActionButton {
+                            theme:dialog.theme;objectName:"designerTiltDown";text:"↓";compact:true
+                            enabled:dialog.canStepTilt(-1);onClicked:dialog.stepTilt(-1)
+                            Accessible.name:"Decrease RxMER tilt by 1 dB"
+                            ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
+                        }
+                    }
                     RxmerDesignScope {id:tiltScope;theme:dialog.theme;captureCount:dialog.captureCount;onEdited:dialog.refresh()}
                     Rectangle {Layout.fillWidth:true; height:1;color:theme.line}
                     CheckBox {id:ripple;objectName:"designerRipple";text:"Ripple";onToggled:dialog.refresh()}
