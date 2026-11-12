@@ -24,12 +24,31 @@ WorkbenchDialog {
     background: Rectangle { color:dialog.theme.background; border.color:dialog.theme.line; radius:12 }
     contentItem: ColumnLayout {
         spacing: 12
-        RowLayout {
-            spacing: 16
-            BusyIndicator { running:dialog.visible; Layout.preferredWidth:40; Layout.preferredHeight:40 }
-            Label { text:dialog.loadState.phase || "Opening workbench"; color:dialog.theme.text; wrapMode:Text.WordWrap; Layout.fillWidth:true }
+        Label {
+            objectName: "loadPhase"
+            text: dialog.loadState.phase || "Opening workbench"
+            color: dialog.theme.text
+            wrapMode: Text.WordWrap
+            Layout.fillWidth: true
         }
-        Label { objectName:"loadElapsed"; text:"Elapsed: "+((dialog.loadState.elapsed_ms || 0)/1000).toFixed(1)+" s"; color:dialog.theme.muted }
+        ProgressBar {
+            objectName: "loadProgress"
+            Layout.fillWidth: true
+            indeterminate: dialog.visible
+            Accessible.name: "Workbench loading activity"
+        }
+        Label {
+            objectName: "loadElapsed"
+            text: "Time since Open: " + ((dialog.loadState.elapsed_ms || 0) / 1000).toFixed(1) + " s"
+            color: dialog.theme.muted
+            Layout.fillWidth: true
+        }
+        Label {
+            text: "Includes file selection and validation."
+            color: dialog.theme.muted
+            wrapMode: Text.WordWrap
+            Layout.fillWidth: true
+        }
         Item { Layout.fillHeight:true }
         WorkbenchActionButton {
             objectName:"cancelLoadButton"; theme:dialog.theme; text:"Cancel"

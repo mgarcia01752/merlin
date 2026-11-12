@@ -118,23 +118,13 @@ WorkbenchDialog {
             ColumnLayout {
                 spacing: 14
                 Label { text: "Control Channels · Whole Run"; color: dialog.theme.accent; font.bold: true }
-                GridLayout {
-                    columns: 2; columnSpacing: 32; rowSpacing: 12; Layout.fillWidth: true
-                    Repeater {
-                        model: [
-                            ["NCP · CRC-accepted fields",dialog.statistics.ncp_fields],
-                            ["NCP · Total LDPC iterations",dialog.statistics.ncp_iterations],
-                            ["PLC · Frames",dialog.statistics.plc_frames],
-                            ["PLC · Total LDPC iterations",dialog.statistics.plc_iterations],
-                            ["PLC · Compared bit errors",dialog.statistics.plc_bit_errors]
-                        ]
-                        RowLayout {
-                            required property var modelData
-                            Layout.columnSpan: 2; Layout.fillWidth: true
-                            Label { text: modelData[0]; color: dialog.theme.muted; Layout.fillWidth: true }
-                            Label { text: dialog.value(modelData[1]); color: dialog.theme.text }
-                        }
-                    }
+                FecControlTable {
+                    objectName: "fecControlTable"
+                    theme: dialog.theme
+                    statistics: dialog.statistics
+                    Layout.fillWidth: true
+                    Layout.maximumWidth: 600
+                    Layout.alignment: Qt.AlignLeft
                 }
                 Item { Layout.fillHeight: true }
             }

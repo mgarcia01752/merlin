@@ -741,9 +741,11 @@ See the [workbench-file design](development/features/qt-closed-loop/design.md#ui
 
 UI-WB-OPEN-02 runs the main native chooser, bounded read, decoding, embedded
 original validation and editor/run preparation in one background worker. Qt
-polls a bounded completion channel and shows phase/elapsed/Cancel without
-waiting. Success publishes the complete accepted snapshot and transfers already
-prepared editor/request models on the GUI thread; it does not repeat capture
+polls a bounded completion channel and shows the current phase, an animated
+activity bar, Time since Open and Cancel without waiting. The timer includes
+file selection; the activity bar does not claim measured completion or time
+remaining (UI-WB-OPEN-03). Success publishes the complete accepted snapshot and
+transfers already prepared editor/request models on the GUI thread; it does not repeat capture
 imports or start a run. Errors and cooperative cancellation preserve the current
 session and Save destination; one worker stays tracked until completion.
 Update recovery uses the same loader. See the
@@ -2015,7 +2017,7 @@ and common amplitude limits, not an inferred complete permutation. The physical
 map uses `CarrierLayout::symbol_roles` with the actual snapshot symbol and frozen
 run settings; Data locations may carry transported NCP. Relative bin power is
 not calibrated channel power or PSD. Mapped Data/NCP retain green/red roles.
-SA, captioned TX Output, opens the existing shared analyzer; the redundant lower
+Spectrum Analyzer, captioned TX Output, opens the existing shared analyzer; the redundant lower
 Spectrum Analyzer chip is removed. Preview queries run only on dialog open or
 result-token changes. Existing retained limits, simulation inputs and WB JSON
 are unchanged. See the [design](development/features/transmitter-graphs/design.md)
@@ -2026,3 +2028,10 @@ Channel readiness preparation uses the pure
 Background workbench loading must not consult GUI thread-local sessions; the
 GUI-only preview wrapper delegates to the same implementation. A restored valid
 workbench can therefore enable Start immediately after model adoption.
+
+Instrument selection at all channel boundaries shares the graphical
+`instruments/selection/InstrumentChoice.qml` tiles: a spectrum navigation glyph
+and a constellation glyph with matching layout, focus and route behavior. These
+icons are navigation symbols rather than live measurements. FEC control-channel
+statistics use a compact, width-bounded Channel / Metric / Value table; the
+underlying whole-run counters are unchanged.

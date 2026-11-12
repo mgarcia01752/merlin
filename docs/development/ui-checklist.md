@@ -385,3 +385,16 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
   Verified bounded real graphs, missing history and native dark/light layouts;
   54 Rust adapter tests and 53 QML checks pass.
   [Design](features/transmitter-graphs/design.md).
+
+- [x] **UI-WB-OPEN-03** Show an animated loading activity bar and distinguish
+  Time since Open from file progress and simulation time; retain current phase
+  and cancellation. QML behavior, native rendering and build verified.
+  [Design](features/responsive-workbench-open/design.md#ui-wb-open-03--clear-loading-activity).
+
+- [x] **UI-CH-ICON-01** Shared graphical Spectrum Analyzer / QAM Analyzer choices
+  for every channel input, output and amplifier TapPoint. Verify equal icons,
+  keyboard routing and native rendering; 53 QML checks pass.
+  [Design](features/channel-workbench/design.md#ui-ch-icon-01--graphical-instrument-choices).
+- [x] **UI-FEC-TABLE-01** Compact Channel / Metric / Value grid for whole-run
+  control statistics, with aligned values and bounded width.
+  [Design](features/fec-monitor/design.md#ui-fec-table-01--compact-control-statistics).

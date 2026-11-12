@@ -157,7 +157,12 @@ Click **Channel Simulator** to open **Channel Input → Channel Model → Channe
 Output**, with separate **RxMER** and **DS Channel Estimate** input blocks.
 Click either measurement block to open its existing input frame.
 
-Click **Channel Input** or **Channel Output** to choose **Spectrum** or **QAM**.
+Click **Channel Input** or **Channel Output** to choose the side-by-side
+**Spectrum Analyzer** trace icon or **QAM Analyzer** constellation icon. The same
+graphical chooser is used at both amplifier TapPoints. Click an icon or focus
+it and press Space to open the instrument.
+
+![Graphical instrument chooser](../images/workbench/channel-instrument-icons-dark.png)
 Input Spectrum uses TX output samples; input QAM shows the retained physical TX
 FFT symbol with bin-range filters. It does not identify Data/NCP roles from point
 positions. Output Spectrum uses channel-output samples at RX input; output QAM

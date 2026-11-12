@@ -11,7 +11,7 @@ See the [source editor](source-input.md) and [terminology](terminology.md).
 
 ![Source bits from the accepted PRBS-TX configuration](../images/workbench/transmitter-source-dark.png)
 
-Click **SA**, captioned **TX Output**, to see complex-baseband output before the
+Click **Spectrum Analyzer**, captioned **TX Output**, to see complex-baseband output before the
 channel. Its preview shows the actual retained output spectrum. The Test Point selector also offers IFFT, cyclic-prefix
 and window boundaries. After main **Start**, the SA uses that run's actual TX
 samples. Before a full run, TX Output can generate the existing transmitter-only
@@ -36,7 +36,7 @@ their shared physical frame-bin view.
 | Mapped I/Q | Transmitted constellation with Data green and NCP red. |
 | Ordered Cells | Separate before/after I/Q sequences against cell index, on a common amplitude scale. |
 | Physical Bins | Relative bin-power envelope and colored carrier-role band for one captured symbol. |
-| SA · TX Output | Existing Spectrum Analyzer, with its IFFT/CP/window/output selector. |
+| Spectrum Analyzer · TX Output | Existing Spectrum Analyzer, with its IFFT/CP/window/output selector. |
 
 The LDPC raster distinguishes zero and one; it does not invent an information /
 parity boundary absent from the retained snapshot. Bit/label views keep their
@@ -58,8 +58,8 @@ shown. Preview cards use captured data and show No capture until it is available
 
 ![Captured physical-bin power and carrier roles](../images/workbench/transmitter-physical-bins-dark.png)
 
-**QAM Analyzer** displays mapped or interleaved Data/NCP cells, PLC data, or the
-PLC preamble. Data/NCP views include their combined cells and filler; they are not
+**Mapped I/Q** opens the transmitted constellation. Use the stage selector for
+interleaved Data/NCP cells, PLC data or the PLC preamble. Data/NCP views include their combined cells and filler; they are not
 payload-only classifications. Missing interleaver history is not plotted as zero.
 The view shows up to2048 actual points and reports the available count.
 
@@ -75,9 +75,8 @@ The first interleaved snapshot uses the same interleaver transport for role labe
 when the necessary history is unavailable, samples remain unclassified. Missing
 cells are not drawn. PLC Data/Preamble remain separate selections.
 
-![Actual transmitter mapped I/Q with Data and NCP legend](../images/workbench/transmitter-qam-dark.png)
+![Actual transmitter mapped I/Q with Data and NCP legend](../images/workbench/transmitter-mapped-dark.png)
 
-![Interleaved Data and NCP with missing startup cells preserved](../images/workbench/transmitter-qam-interleaved-dark.png)
 
 **OCD / DPD Messages** or **Message Inspector** opens actual packets reassembled
 from captured TX PLC frames. Select OCD, Profile A DPD or NCP DPD, expand TLVs for

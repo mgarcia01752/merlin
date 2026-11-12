@@ -70,3 +70,20 @@ native workbench Open followed by Start and completed profile-0 simulation
 passes without reapplying an input. The complete Qt suite passes 54 Rust tests
 and 53 QML checks. This changes readiness preparation, not persisted settings
 or simulation semantics.
+
+## UI-WB-OPEN-03 — Clear loading activity
+
+Replace the spinner with a full-width indeterminate progress bar and retain the
+actual loader phase. The bar conveys activity, not a measured percentage or
+remaining time: current preparation has no reliable total-work counter. Label
+the existing timer Time since Open, explicitly including file selection and
+validation. Keep modal cancellation and worker ownership unchanged. QML owns
+presentation only; no settings, JSON or simulation changes. Verify the loading
+bar, phase and elapsed labels, cancellation, native rendering and build.
+
+Validation: 53 QML checks pass, including current labels, compact table values,
+bounded widths and instrument keyboard routing. The native build passes. Actual
+Ubuntu dark screenshots confirm the updated layout; the transmitter cards also
+retain light-theme verification. Earlier in this same change, Qt formatting,
+Clippy and all 54 Rust adapter tests passed. No simulation or persisted settings
+were changed; installed packages and other platforms were not exercised.

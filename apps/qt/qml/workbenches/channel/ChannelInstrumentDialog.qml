@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../../components"
+import "../../instruments/selection"
 WorkbenchDialog {
     id: dialog
     property bool output: false
@@ -17,7 +18,7 @@ WorkbenchDialog {
     modal:true;standardButtons:Dialog.Close
     contentItem: RowLayout {
         spacing:16
-        ReceiverChip { objectName:"channelSpectrum";theme:dialog.theme;text:"Spectrum";onClicked:{dialog.close();dialog.spectrumRequested()} }
-        ReceiverChip { objectName:"channelQam";theme:dialog.theme;text:"QAM";onClicked:{dialog.close();dialog.qamRequested()} }
+        InstrumentChoice { objectName:"channelSpectrum";theme:dialog.theme;text:"Spectrum Analyzer";Layout.fillWidth:true;Layout.preferredWidth:1;onClicked:{dialog.close();dialog.spectrumRequested()} }
+        InstrumentChoice { objectName:"channelQam";theme:dialog.theme;text:"QAM Analyzer";constellation:true;Layout.fillWidth:true;Layout.preferredWidth:1;onClicked:{dialog.close();dialog.qamRequested()} }
     }
 }

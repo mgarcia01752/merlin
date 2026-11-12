@@ -90,7 +90,7 @@ WorkbenchDialog {
                         TransmitterGraphCard {
                             id:tap
                             objectName:"txStageTap"+index
-                            theme:dialog.theme;text:["Bits","LDPC Word","Bits / Labels","Mapped I/Q","Ordered Cells","Physical Bins","SA"][index]
+                            theme:dialog.theme;text:["Bits","LDPC Word","Bits / Labels","Mapped I/Q","Ordered Cells","Physical Bins","Spectrum Analyzer"][index]
                             caption:["Source bits","Coded bits","Bit / label view","Constellation","Cell sequence","Carrier map","TX Output"][index]
                             Layout.fillWidth:true;Layout.preferredHeight:127
                             observation:index===6 ? {available:dialog.outputAvailable} : dialog.graphicalStages.length>index ? dialog.graphicalStages[index].observation : ({available:false})
@@ -114,7 +114,6 @@ WorkbenchDialog {
         Label { text:"Diagnostic Instruments";color:dialog.theme.accent;font.bold:true }
         RowLayout {
             Layout.fillWidth:true
-            ReceiverChip { objectName:"txQam";theme:dialog.theme;text:"QAM Analyzer";onClicked:qam.open() }
             ReceiverChip { objectName:"txMessageInspector";theme:dialog.theme;text:"Message Inspector";onClicked:messages.open() }
             ReceiverChip { objectName:"txBitInspector";theme:dialog.theme;text:"Bit / Codeword Inspector";onClicked:dialog.openStage(0) }
         }

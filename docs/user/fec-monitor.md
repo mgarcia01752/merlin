@@ -29,6 +29,9 @@ source data; inspect compared bits and BER alongside the recovery bar.
 
 ## Control Channels
 
+A compact table keeps Channel, Metric and Value together. Each row reports one
+whole-run counter for NCP or PLC; missing values appear as a dash.
+
 The separate tab shows CRC-accepted NCP fields, total NCP LDPC iterations, PLC
 frames, total PLC LDPC iterations and compared PLC bit errors. These totals do
 not contribute to the payload outcome bar.

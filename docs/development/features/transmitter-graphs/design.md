@@ -67,3 +67,20 @@ were skipped. See the responsive Open design for ownership details.
 Local logs, the owned-process native helper and intermediate captures live in
 ignored `docs/development/local/transmitter-graphs/`; only the reviewed guide
 screenshots are tracked.
+
+### Spectrum Analyzer label follow-up — 2026-11-11
+
+Spell out Spectrum Analyzer on its preview card, retaining TX Output below it.
+The title stays on one line and scales within the card width instead of
+truncating or wrapping, including the supported minimum window width.
+
+Remove the duplicate QAM Analyzer action from Diagnostic Instruments. Mapped I/Q
+opens its constellation; the stage selector still provides other captured I/Q
+boundaries. The reusable analyzer component remains available internally.
+
+Validation: 53 QML checks pass, including current labels, compact table values,
+bounded widths and instrument keyboard routing. The native build passes. Actual
+Ubuntu dark screenshots confirm the updated layout; the transmitter cards also
+retain light-theme verification. Earlier in this same change, Qt formatting,
+Clippy and all 54 Rust adapter tests passed. No simulation or persisted settings
+were changed; installed packages and other platforms were not exercised.

@@ -46,3 +46,19 @@ current layout. Hosted CI and installed packaging are outside this local check.
 Final warnings-denied Qt Clippy and all three focused FEC provider tests pass.
 Rust formatting and changed documentation links pass. No non-Qt workspace
 rebuild or full core test run was needed.
+
+## UI-FEC-TABLE-01 — Compact control statistics
+
+Replace stretched label/value rows with a spreadsheet-style Channel / Metric /
+Value table, capped at 600 pixels and aligned left. Use shared row heights,
+column widths, header, subtle alternating rows and grid lines. Preserve whole-run
+statistics and missing values; this is presentation only. A focused
+`FecControlTable.qml` owns the grid. Validate values, bounded width, QML routes
+and native appearance; update the user guide screenshot.
+
+Validation: 53 QML checks pass, including current labels, compact table values,
+bounded widths and instrument keyboard routing. The native build passes. Actual
+Ubuntu dark screenshots confirm the updated layout; the transmitter cards also
+retain light-theme verification. Earlier in this same change, Qt formatting,
+Clippy and all 54 Rust adapter tests passed. No simulation or persisted settings
+were changed; installed packages and other platforms were not exercised.

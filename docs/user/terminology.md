@@ -159,3 +159,11 @@ A **carrier map** shows the physical OFDM subcarriers and their assigned roles
 for one symbol. Its Data locations may carry transported NCP. The transmitter
 map overlays relative bin power; it is not a time waterfall or an RF PSD estimate.
 See [transmitter graphs](transmitter-workbench.md).
+
+## Workbench loading activity
+
+An **activity bar** moves while a workbench opens. It indicates ongoing work
+without estimating a completion percentage. **Time since Open** counts real
+time, including file selection, reading and capture validation. It is separate
+from simulated duration and does not predict time remaining.
+See [opening workbenches](workbench.md#workbench-configuration-files).

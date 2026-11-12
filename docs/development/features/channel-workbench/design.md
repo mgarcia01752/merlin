@@ -76,3 +76,21 @@ attenuator symbols, inline TP selectors, shared raw QAM, calculated Channel Powe
 optional calibration/noise and versioned WB persistence. Current runtime captures
 and instructions are in the [channel guide](../../../user/channel-measurements.md#launch-amplifier-attenuator-and-tappoints);
 see the [implementation record](../rf-power-budget/design.md).
+
+## UI-CH-ICON-01 — Graphical instrument choices
+
+Use one reusable graphical tile for spectrum and constellation choices, with
+matching dimensions, icons above one-line labels, balanced spacing and keyboard
+focus. All Channel Input/Output and before/after-amplifier TapPoints use the same
+chooser, preserving their actual instrument data routes. The icons are navigation
+symbols, not measured previews. No new samples, settings or computations.
+QML owns this presentation in `instruments/selection/InstrumentChoice.qml`;
+validate all existing tap routes plus layout, keyboard access, both palettes and
+a native screenshot. Existing live transmitter preview cards remain live graphs.
+
+Validation: 53 QML checks pass, including current labels, compact table values,
+bounded widths and instrument keyboard routing. The native build passes. Actual
+Ubuntu dark screenshots confirm the updated layout; the transmitter cards also
+retain light-theme verification. Earlier in this same change, Qt formatting,
+Clippy and all 54 Rust adapter tests passed. No simulation or persisted settings
+were changed; installed packages and other platforms were not exercised.
