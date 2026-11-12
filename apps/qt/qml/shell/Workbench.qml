@@ -29,35 +29,51 @@ Item {
     signal updatesRequested()
     signal externalLinkRequested(url target)
     property bool hasProject: false
+    property bool loadingProject: false
+    property bool configureAfterOpen: false
+    property var loadState: ({loading:false, phase:"", elapsed_ms:0, cancelling:false})
     property alias faqPopup: faqDialog
     function openHelp(code) { faqDialog.showEntry(code, code ? runState.diagnostic : null) }
     property alias configurationPopup: wbConfig
     property alias entryPopup: workbenchEntry
     function configureProject() {
-        if (runState.busy) { return }
+        if (runState.busy || loadingProject) { return }
         if (hasProject) { wbConfig.open() }
         else { workbenchEntry.open() }
     }
     function requestNewProject() {
-        if (runState.busy) { return }
+        if (runState.busy || loadingProject) { return }
         if (hasProject) { newConfirmation.open() }
         else { newProject() }
     }
     function newProject() {
-        if (runState.busy) { return }
+        if (runState.busy || loadingProject) { return }
         const result=JSON.parse(fileBackend.new_workbench())
         if (result.created) { adoptProject(result);fileMessage="New workbench" }
         return !!result.created
     }
     property string fileMessage: ""
     function openProject() {
-        if (runState.busy) { return }
-        const result=JSON.parse(fileBackend.open())
-        if (result.error) { fileMessage=result.error;fileFeedback.open();return }
-        if (!result.opened) { return }
-        adoptProject(result)
-        fileMessage="Opened "+result.path
-        return true
+        if (runState.busy || loadingProject) { return }
+        beginOpen(JSON.parse(fileBackend.open()))
+    }
+    function beginOpen(result) {
+        if (result.error) { fileMessage=result.error;fileFeedback.open();configureAfterOpen=false;return }
+        loadState=result
+        loadingProject=!!result.loading
+        if (loadingProject) { loadingDialog.open() }
+    }
+    function pollOpen() {
+        if (!loadingProject) { return }
+        const result=JSON.parse(fileBackend.poll_open())
+        loadState=result
+        if (result.loading) { return }
+        if (result.opened) { adoptProject(result);fileMessage=result.path ? "Opened "+result.path : "Workbench restored" }
+        loadingProject=false
+        loadingDialog.close()
+        if (result.error) { fileMessage=result.error;fileFeedback.open() }
+        if (result.opened && configureAfterOpen) { wbConfig.open() }
+        configureAfterOpen=false
     }
     function adoptProject(result) {
         hasProject=true
@@ -65,18 +81,19 @@ Item {
         profileBackend.reload();sourceBackend.reload();measurementBackend.reload()
         runBackend.restore(JSON.stringify(result.receiver),result.verified,settingsBackend.current())
         if (result.dark !== null && result.dark !== undefined) { theme.dark=result.dark }
-        refreshProfileState();refreshSourceState();pollRun()
+        if (result.prepared) {
+            profileState=result.profile_state;sourceState=result.source_state;measurementState=result.measurement_state
+            refreshTransmitterState();pollRun()
+        } else { refreshProfileState();refreshSourceState();pollRun() }
     }
     function restoreUpdate() {
-        const result=JSON.parse(fileBackend.restore_update())
-        if (result.error) { fileMessage=result.error;fileFeedback.open();return }
-        if (result.opened) { adoptProject(result) }
+        beginOpen(JSON.parse(fileBackend.restore_update()))
     }
     function saveUpdateRecovery() {
         return JSON.parse(fileBackend.save_update_recovery(settingsBackend.current(),JSON.stringify(runState.accepted_options || null),runState.verified,theme.dark))
     }
     function saveProject(saveAs) {
-        if (runState.busy) { return }
+        if (runState.busy || loadingProject) { return }
         const result=JSON.parse(fileBackend.save(saveAs,settingsBackend.current(),JSON.stringify(runState.accepted_options || null),runState.verified,theme.dark))
         if (result.error) { fileMessage=result.error;fileFeedback.open() }
         else if (result.saved) { hasProject=true;fileMessage="Saved "+result.path;fileFeedback.open() }
@@ -199,6 +216,7 @@ Item {
             }
             Item {
                 id: diagram
+                enabled: !workbench.loadingProject
                 anchors.centerIn: parent
                 width: 1140; height: 580
                 scale: Math.min((parent.width - 24) / width, (parent.height - 20) / height)
@@ -327,7 +345,7 @@ Item {
                 theme: workbench.theme
                 objectName: "configureWorkbench"
                 text: "Configure WorkBench"
-                enabled: !workbench.runState.busy
+                enabled: !workbench.runState.busy && !workbench.loadingProject
                 onClicked: workbench.configureProject()
                 ToolTip.visible: hovered
                 ToolTip.text: workbench.hasProject ? "Select profiles and run settings" : "Create or open a workbench"
@@ -337,7 +355,7 @@ Item {
                 primary: true
                 Layout.preferredWidth: 104
                 objectName: "startButton"; text: "▶  Start"
-                enabled: workbench.hasProject && workbench.allBlocksComplete && workbench.runState.can_start
+                enabled: workbench.hasProject && workbench.allBlocksComplete && workbench.runState.can_start && !workbench.loadingProject
                 onClicked: { workbench.runBackend.start();workbench.pollRun() }
                 Accessible.name: "Start simulation"
                 Accessible.description: !workbench.allBlocksComplete ? "Every workbench block must be green before starting." : "Wait for the current simulation to finish before starting another."
@@ -350,7 +368,7 @@ Item {
         id: workbenchEntry
         theme: workbench.theme
         onCreateRequested: { if (workbench.newProject()) wbConfig.open() }
-        onOpenRequested: { if (workbench.openProject()) wbConfig.open() }
+        onOpenRequested: { workbench.configureAfterOpen=true;workbench.openProject() }
     }
     WorkbenchConfigurationDialog {
         id: wbConfig; theme: workbench.theme; backend: workbench.runBackend
@@ -366,7 +384,7 @@ Item {
         width: Math.min(480, parent ? parent.width-40 : 480)
     }
     RxmerInputDialog {
-        id: rxmerDialog; theme: workbench.theme; backend: workbench.measurementBackend; settingsBackend: workbench.settingsBackend
+        id: rxmerDialog; runOptions:workbench.runState.accepted_options || null; theme: workbench.theme; backend: workbench.measurementBackend; settingsBackend: workbench.settingsBackend
         onMeasurementApplied: workbench.refreshMeasurements()
     }
     ChannelResponseDialog {
@@ -384,6 +402,11 @@ Item {
     ReceiverConfigurationDialog { id: receiverConfig; theme: workbench.theme; backend: workbench.runBackend; settingsBackend: workbench.settingsBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
     VerificationDialog { id: verificationDialog; theme: workbench.theme; backend: workbench.runBackend; diagnosticsBackend: workbench.receiverBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
     FaqDialog { id: faqDialog; theme: workbench.theme; backend: workbench.aboutBackend }
+    WorkbenchLoadingDialog {
+        id: loadingDialog; theme: workbench.theme; loadState: workbench.loadState
+        onCancelRequested: workbench.fileBackend.cancel_open()
+    }
+    Timer { interval: 100; running: workbench.loadingProject; repeat: true; onTriggered: workbench.pollOpen() }
     WorkbenchFileFeedback { id: fileFeedback; theme:workbench.theme; message:workbench.fileMessage }
     SettingsDialog { id: settingsDialog; theme: workbench.theme }
     AboutDialog { id: aboutDialog; theme: workbench.theme; backend: workbench.aboutBackend; iconRoot: workbench.iconRoot; onUpdatesRequested: workbench.updatesRequested(); onLinkRequested: function(target) { workbench.externalLinkRequested(target) } }

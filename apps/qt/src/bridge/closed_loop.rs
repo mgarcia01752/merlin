@@ -128,6 +128,13 @@ impl bridge::ClosedLoop {
         verified: bool,
         settings: &QString,
     ) {
+        if let Some(model) =
+            crate::workbench::project_load::take(|prepared| prepared.receiver.take())
+        {
+            self.as_mut().rust_mut().model.invalidate();
+            self.as_mut().rust_mut().model = model;
+            return;
+        }
         if options.to_string().len() > 4096 {
             return;
         }

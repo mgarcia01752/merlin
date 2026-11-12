@@ -1071,3 +1071,17 @@ validation are complete; the user guide includes the current dark capture.
   action and remove dropdown ellipses. Verified 45 adapter and 47 QML tests,
   native build and actual dark/light captures; manual update routing passes.
   [Design](features/about-menu/design.md).
+
+## Responsive Open and RxMER selection
+
+- [x] **UI-WB-OPEN-02** Background native Open/recovery, prepared-model adoption,
+  loading stage/elapsed/Cancel, no repeated GUI imports; worker failure,
+  cancellation and native responsiveness verified.
+  [Design](features/responsive-workbench-open/design.md).
+- [x] **UI-RXMER-SELECT-01** Retain loaded originals and persist selected capture
+  identities; Single Shot/Replay controls and CWB-derived capacity. Verify
+  selection, legacy restore, strict boundaries and native layout.
+  [Design](features/rxmer-selection/design.md).
+- [x] **UI-RXMER-ANIM-01** PNM Viewer-style selected-capture animation,
+  Play/Pause/step/slider/speed, bounded original viewports and lifecycle cleanup.
+  [Design](features/rxmer-selection/design.md#ui-rxmer-anim-01--animated-capture-preview).

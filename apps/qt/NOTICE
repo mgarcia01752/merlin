@@ -43,3 +43,8 @@ boundaries of PNM Viewer Toolkit apps/viewer/src/updates/ubuntu/{download,instal
 Copyright 2026 PNM Viewer contributors; original notices are retained.
 The Update chip visually follows OSCAR-UI UpgradeChip.java (Apache-2.0);
 MERLIN implements the QML presentation independently.
+
+The capture-preview transport adapts RxMerPlaybackControls.qml from the local
+PNM Viewer Toolkit Qt working tree, inspected read-only on 2026-11-11. GPL-3.0-only
+notices remain in MeasurementPlaybackControls.qml. Source SHA-256 and adaptation
+are recorded in docs/development/features/rxmer-selection/design.md.

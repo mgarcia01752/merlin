@@ -3,10 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Native project Open/Save coordinator with validation before adoption.
-use crate::workbench::{
-    project_file::{Project, MAX_PROJECT_BYTES},
-    session as workbench_session,
-};
+use crate::workbench::{project_file::Project, session as workbench_session};
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::{QString, QUrl};
 use serde_json::json;
@@ -26,11 +23,19 @@ pub mod bridge {
         /// Reload metadata with default settings and no configured run or inputs.
         #[qinvokable]
         fn new_workbench(self: Pin<&mut WorkbenchFile>) -> QString;
-        /// Selects and completely validates a project before replacing accepted inputs.
+        /// Starts background project selection, validation and preparation.
         /// # Returns
-        /// Bounded reload metadata or a diagnostic; cancellation preserves current state.
+        /// Loading status or diagnostic; poll_open alone adopts completion.
         #[qinvokable]
         fn open(self: Pin<&mut WorkbenchFile>) -> QString;
+        /// Collects loading progress or adopts the fully prepared result.
+        /// # Returns
+        /// Bounded metadata; this never waits for a worker.
+        #[qinvokable]
+        fn poll_open(self: Pin<&mut WorkbenchFile>) -> QString;
+        /// Requests cooperative cancellation while preserving the current WB.
+        #[qinvokable]
+        fn cancel_open(self: &WorkbenchFile);
         /// Saves accepted settings in a private update-recovery WB.
         /// # Arguments
         /// * `settings`, `receiver` - Current accepted configuration JSON.
@@ -45,9 +50,9 @@ pub mod bridge {
             verified: bool,
             dark: bool,
         ) -> QString;
-        /// Restores the private recovery WB after an automatic restart.
+        /// Starts background recovery after an automatic restart.
         /// # Returns
-        /// Validated reload metadata or an error preserving current state.
+        /// Loading/error metadata; poll_open adopts only validated completion.
         #[qinvokable]
         fn restore_update(self: Pin<&mut WorkbenchFile>) -> QString;
         /// Saves accepted block state and embedded original input bytes atomically.
@@ -74,6 +79,7 @@ pub mod bridge {
 #[derive(Default)]
 pub struct WorkbenchFileRust {
     path: Option<PathBuf>,
+    loader: crate::workbench::project_load::Loader,
 }
 fn path(url: &str) -> Result<PathBuf, String> {
     QUrl::from(&QString::from(url))
@@ -101,20 +107,14 @@ fn recovery_path() -> Result<PathBuf, String> {
     Ok(directory.join("workbench.merlin.json"))
 }
 
-fn adopt_project(project: Project) -> Result<serde_json::Value, String> {
-    let inputs = project.validate()?;
-    let metadata = json!({"opened":true,"transmission":project.transmission,
-        "receiver":project.receiver,"verified":project.comparison_enabled,"dark":project.dark});
-    workbench_session::restore(inputs, project.sections);
-    crate::platform::input_file::clear_original_paths();
-    Ok(metadata)
-}
-
 impl bridge::WorkbenchFile {
     /// Creates an explicit blank WB without saving or overwriting any file.
     /// # Returns
     /// Default settings for editor reload, with no accepted inputs or run options.
     pub fn new_workbench(mut self: core::pin::Pin<&mut Self>) -> QString {
+        if self.rust().loader.is_loading() {
+            return QString::from("{\"error\":\"Wait for workbench loading to finish.\"}");
+        }
         workbench_session::restore(Default::default(), Default::default());
         crate::platform::input_file::clear_original_paths();
         self.as_mut().rust_mut().path = None;
@@ -135,6 +135,9 @@ impl bridge::WorkbenchFile {
         verified: bool,
         dark: bool,
     ) -> QString {
+        if self.rust().loader.is_loading() {
+            return QString::from("{\"error\":\"Wait for workbench loading to finish.\"}");
+        }
         let save = || -> Result<(), String> {
             if settings.to_string().len() > 4096 || receiver.to_string().len() > 4096 {
                 return Err("Recovery configuration exceeds limits.".into());
@@ -161,64 +164,45 @@ impl bridge::WorkbenchFile {
         )
     }
 
-    /// Adopts the private recovery WB after a successful update restart.
+    /// Starts private recovery without waiting for capture validation.
     /// # Returns
-    /// Validated settings for UI reload; errors leave the current WB untouched.
-    pub fn restore_update(self: core::pin::Pin<&mut Self>) -> QString {
-        let restore = || -> Result<serde_json::Value, String> {
-            let path = recovery_path()?;
-            let file = std::fs::File::open(path).map_err(|error| error.to_string())?;
-            use std::io::Read;
-            let mut bytes = Vec::new();
-            file.take(MAX_PROJECT_BYTES as u64 + 1)
-                .read_to_end(&mut bytes)
-                .map_err(|error| error.to_string())?;
-            if bytes.len() > MAX_PROJECT_BYTES {
-                return Err("Recovery workbench exceeds limits.".into());
-            }
-            let project = serde_json::from_slice(&bytes)
-                .map_err(|error| format!("Invalid recovery WB: {error}"))?;
-            adopt_project(project)
-        };
-        QString::from(
-            restore()
-                .unwrap_or_else(|error| json!({"error":error}))
-                .to_string(),
-        )
-    }
-
-    /// Opens original project bytes and adopts only a fully valid decoded document.
-    /// # Returns
-    /// Small reload metadata; all arrays remain in the Rust session.
-    pub fn open(mut self: core::pin::Pin<&mut Self>) -> QString {
-        let load =
-            || -> Result<Option<(PathBuf, Project, crate::workbench::session::Inputs)>, String> {
-                let Some(uri) =
-                    crate::platform::native_file_picker::choose_workbench("Open MERLIN Workbench")?
-                else {
-                    return Ok(None);
-                };
-                let (_, bytes) =
-                    crate::platform::input_file::read_untracked(&uri, MAX_PROJECT_BYTES)?;
-                let project: Project = serde_json::from_slice(&bytes)
-                    .map_err(|e| format!("Invalid workbench JSON: {e}"))?;
-                let inputs = project.validate()?;
-                Ok(Some((path(&uri)?, project, inputs)))
-            };
-        let result = match load() {
-            Ok(Some((path, project, inputs))) => {
-                let metadata = json!({"opened":true,"path":path.to_string_lossy(),"transmission":project.transmission,
-                    "receiver":project.receiver,"verified":project.comparison_enabled,"dark":project.dark});
-                workbench_session::restore(inputs, project.sections);
-                crate::platform::input_file::clear_original_paths();
-                self.as_mut().rust_mut().path = Some(path);
-                metadata
-            }
-            Ok(None) => json!({"cancelled":true}),
+    /// Loading metadata; poll_open preserves the current WB on any failure.
+    pub fn restore_update(mut self: core::pin::Pin<&mut Self>) -> QString {
+        let result = match recovery_path() {
+            Ok(path) => self.as_mut().rust_mut().loader.start(Some(path)),
             Err(error) => json!({"error":error}),
         };
         QString::from(result.to_string())
     }
+
+    /// Starts background Open without blocking Qt's window-event processing.
+    /// # Returns
+    /// Loading status or a diagnostic; completion is collected by poll_open.
+    pub fn open(mut self: core::pin::Pin<&mut Self>) -> QString {
+        QString::from(self.as_mut().rust_mut().loader.start(None).to_string())
+    }
+
+    /// Collects completed Open and publishes only a fully prepared project.
+    /// # Returns
+    /// Bounded loading/error/adoption metadata, never capture arrays.
+    pub fn poll_open(mut self: core::pin::Pin<&mut Self>) -> QString {
+        let (status, prepared) = self.as_mut().rust_mut().loader.poll();
+        let result = if let Some(prepared) = prepared {
+            if let Some(path) = &prepared.path {
+                self.as_mut().rust_mut().path = Some(path.clone());
+            }
+            prepared.adopt()
+        } else {
+            status
+        };
+        QString::from(result.to_string())
+    }
+
+    /// Cancels pending Open without waiting or replacing accepted inputs.
+    pub fn cancel_open(&self) {
+        self.rust().loader.cancel();
+    }
+
     /// Saves current accepted state without converting samples or depending on source paths.
     /// # Arguments
     /// * `save_as` - Prompt for a new destination even if Save already has one.
@@ -236,6 +220,9 @@ impl bridge::WorkbenchFile {
         verified: bool,
         dark: bool,
     ) -> QString {
+        if self.rust().loader.is_loading() {
+            return QString::from("{\"error\":\"Wait for workbench loading to finish.\"}");
+        }
         let save = || -> Result<Option<PathBuf>, String> {
             if settings.to_string().len() > 4096 || receiver.to_string().len() > 4096 {
                 return Err("Project options exceed bounds".into());

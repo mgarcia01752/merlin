@@ -472,12 +472,20 @@ impl Model {
     /// * `settings` - Current OCD document.
     pub(crate) fn configure(&mut self, settings: &str) {
         self.invalidate();
+        self.prepare_inputs(settings, &crate::workbench::session::snapshot());
+    }
+    /// Prepares requests from independent inputs without publishing GUI results.
+    /// # Arguments
+    /// * `settings` - Accepted OCD JSON.
+    /// * `inputs` - Frozen snapshot owned by the caller.
+    /// # Returns
+    /// Readiness is stored in this idle model; no simulation is started.
+    pub(crate) fn prepare_inputs(&mut self, settings: &str, inputs: &Inputs) {
         if let Some(options) = &self.options {
             let request = serde_json::from_str::<TransmissionSettings>(settings)
                 .map_err(|e| AdmissionError::from(e.to_string()))
                 .and_then(|settings| {
-                    let inputs = crate::workbench::session::snapshot();
-                    let plan = prepare_sweep(&settings, &inputs, options)?;
+                    let plan = prepare_sweep(&settings, inputs, options)?;
                     let mut selected_inputs = inputs.clone();
                     selected_inputs.profile = plan.profiles.first().cloned();
                     let request = prepare(&settings, &selected_inputs, options)?;

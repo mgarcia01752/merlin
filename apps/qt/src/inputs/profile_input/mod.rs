@@ -7,7 +7,6 @@ pub(crate) mod document;
 pub(crate) mod plot;
 use docsis_ofdm_fec::transmission::TransmissionSettings;
 use document::Capture;
-#[cfg(test)]
 use serde_json::json;
 use serde_json::Value;
 /// Profile editor state retains original bytes independently of Qt.
@@ -35,6 +34,31 @@ pub(crate) fn settings(document: &str) -> Result<TransmissionSettings, String> {
 }
 
 impl ProfileModel {
+    /// Queries profile readiness without changing accepted inputs.
+    /// # Arguments
+    /// * `document` - Bounded accepted OCD JSON.
+    /// # Returns
+    /// Scalar compatibility status and selected-profile summary.
+    pub(crate) fn state(&self, document: &str) -> Value {
+        match &self.accepted {
+            None => {
+                json!({"selected":false,"profile_status":"attention","ofdm_status":"attention","reason":"A validated modulation-profile PNM input is required.","summary":{}})
+            }
+            Some((capture, id)) => {
+                let diagnostic =
+                    settings(document).and_then(|settings| capture.compatible(*id, &settings));
+                match diagnostic {
+                    Ok(()) => {
+                        json!({"selected":true,"profile_status":"complete","ofdm_status":"complete","reason":"Profile input and accepted OCD settings are valid and compatible.","summary":{"profile_id":id.to_string(),"source_file":capture.name,"subcarrier_assignments":format!("{} assignments",capture.profile(*id).map(|profile|profile.assignments.len()).unwrap_or(0))}})
+                    }
+                    Err(error) => {
+                        json!({"selected":true,"profile_status":"error","ofdm_status":"error","reason":error,"summary":{}})
+                    }
+                }
+            }
+        }
+    }
+
     /// Reconstructs profile editor state from an embedded original capture.
     /// # Arguments
     /// * `value` - Saved file and selected profile ID, or null.
@@ -101,39 +125,6 @@ impl ProfileModel {
     }
 }
 
-/// Decodes an embedded original profile without mutating current state.
-/// # Arguments
-/// * `value` - Original bytes and selected profile ID.
-/// * `_settings` - Current numerology; cross-input errors remain readiness diagnostics.
-/// # Returns
-/// Typed profile, or None when unconfigured.
-/// # Errors
-/// Reports malformed bytes, digest or unavailable profile IDs.
-pub(crate) fn restore_profile(
-    value: &Value,
-    _settings: &TransmissionSettings,
-) -> Result<Option<docsis_ofdm_fec::profile::candidate::CapturedProfile>, String> {
-    let model = ProfileModel::from_saved(value)?;
-    model
-        .accepted
-        .map(|(capture, id)| capture.profile(id).cloned())
-        .transpose()
-}
-/// Restores all accepted captured profiles for an independent sweep.
-/// # Arguments
-/// * `value` - Saved original capture and applied selection, or null.
-/// # Returns
-/// All captured identities, empty only for an unconfigured input.
-/// # Errors
-/// Rejects invalid original bytes or saved profile identity.
-pub(crate) fn restore_profiles(
-    value: &Value,
-) -> Result<Vec<docsis_ofdm_fec::profile::candidate::CapturedProfile>, String> {
-    Ok(ProfileModel::from_saved(value)?
-        .accepted
-        .map(|(capture, _)| capture.profiles.as_ref().clone())
-        .unwrap_or_default())
-}
 #[cfg(test)]
 mod tests {
     use super::*;

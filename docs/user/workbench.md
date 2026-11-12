@@ -251,6 +251,12 @@ Use **File → Open**, **Save** or **Save As** for self-contained JSON workbench
 The main Open chooser filters to **MERLIN Workbenches (*.merlin.json)**,
 so example PNM files and metadata are hidden while folders stay navigable.
 Individual input-block pickers keep their own selection behavior.
+Open shows a loading window with the current stage and elapsed time while
+validating embedded captures. The application remains responsive. **Cancel**
+keeps the current workbench; an active preparation stage finishes in the
+background before the loader closes. Opening a file never starts a simulation.
+
+![Workbench loading](../images/workbench/workbench-loading-dark.png)
 The [run/save guide](closed-loop-workbench.md#save-and-reopen) describes stored
 settings, embedded PNM files, limits and atomic replacement behavior.
 

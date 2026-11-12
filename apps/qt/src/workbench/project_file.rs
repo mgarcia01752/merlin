@@ -20,6 +20,12 @@ pub(crate) struct Project {
     pub comparison_enabled: bool,
     pub dark: bool,
 }
+/// Decoded editors transferred with the same validated accepted snapshot.
+pub(crate) struct Editors {
+    pub source: crate::inputs::source_input::model::SourceModel,
+    pub profile: crate::inputs::profile_input::ProfileModel,
+    pub measurements: crate::inputs::measurement_input::model::Model,
+}
 /// Encodes original file bytes and their digest without storing a path dependency.
 /// # Arguments
 /// * `name` - Display basename.
@@ -66,6 +72,14 @@ impl Project {
     /// # Errors
     /// Rejects version drift, unknown sections, malformed originals or invalid settings.
     pub(crate) fn validate(&self) -> Result<crate::workbench::session::Inputs, String> {
+        self.prepare().map(|(inputs, _)| inputs)
+    }
+    /// Decodes originals once for both accepted inputs and editable state.
+    /// # Returns
+    /// Independent validated inputs and their source editor models.
+    /// # Errors
+    /// Preserves all project schema, capture, hash and configuration checks.
+    pub(crate) fn prepare(&self) -> Result<(crate::workbench::session::Inputs, Editors), String> {
         if ![1, 2].contains(&self.schema_version)
             || self.application != "MERLIN"
             || self.sections.len() > 5
@@ -83,26 +97,35 @@ impl Project {
             return Err("Unsupported workbench format/sections.".into());
         }
         self.transmission.validate().map_err(|e| e.to_string())?;
-        let source = crate::inputs::source_input::restore_source(
-            self.sections.get("source").unwrap_or(&Value::Null),
-        )?;
-        let profile = crate::inputs::profile_input::restore_profile(
-            self.sections.get("profile").unwrap_or(&Value::Null),
-            &self.transmission,
-        )?;
-        let measurements = crate::inputs::measurement_input::restore_measurements(
-            self.sections.get("measurements").unwrap_or(&Value::Null),
-            &self.transmission,
-            profile.as_ref(),
-        )?;
+        let editors = Editors {
+            source: crate::inputs::source_input::model::SourceModel::from_saved(
+                self.sections.get("source").unwrap_or(&Value::Null),
+            )?,
+            profile: crate::inputs::profile_input::ProfileModel::from_saved(
+                self.sections.get("profile").unwrap_or(&Value::Null),
+            )?,
+            measurements: crate::inputs::measurement_input::model::Model::from_saved(
+                self.sections.get("measurements").unwrap_or(&Value::Null),
+            )?,
+        };
+        let profile = editors
+            .profile
+            .accepted
+            .as_ref()
+            .map(|(capture, id)| capture.profile(*id).cloned())
+            .transpose()?;
+        let measurements = editors.measurements.published(profile.as_ref())?;
         let inputs = crate::workbench::session::Inputs {
             power: crate::inputs::channel_model::restore_power(
                 self.sections.get("channel_power").unwrap_or(&Value::Null),
             )?,
-            source,
-            profiles: crate::inputs::profile_input::restore_profiles(
-                self.sections.get("profile").unwrap_or(&Value::Null),
-            )?,
+            source: editors.source.snapshot(),
+            profiles: editors
+                .profile
+                .accepted
+                .as_ref()
+                .map(|(capture, _)| capture.profiles.as_ref().clone())
+                .unwrap_or_default(),
             profile,
             playback: measurements.playback,
             response: measurements.response,
@@ -116,7 +139,7 @@ impl Project {
             }
             options.validate(&inputs)?;
         }
-        Ok(inputs)
+        Ok((inputs, editors))
     }
     /// Atomically writes one reviewed workbench destination using a private sibling file.
     /// # Arguments

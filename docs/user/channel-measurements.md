@@ -46,14 +46,14 @@ Expand a tree row for identity, frequency, capture time, format and original has
 Select a row to inspect its original values, or **Effective RxMER / playback**
 to inspect the proposed combination. Duplicate byte-identical files reject.
 
-![Single RxMER input](../images/workbench/rxmer-single-dark.png)
+![Single Shot selection from a loaded collection](../images/workbench/rxmer-single-dark.png)
 
 | Mode | Effective model |
 | --- | --- |
-| Single capture | One per-carrier observation held for the run. Requires one file. |
+| Single Shot | One checked capture held for the run; other loaded captures remain available. |
 | Average | Equal-capture-weight mean of linear residual error power, held for the run. |
-| Sequence · hold | Hold each capture until the next explicit symbol boundary. |
-| Sequence · interpolate power | Linearly interpolate error power between adjacent captures at the selected symbol. |
+| Replay · hold | Hold each capture until the next explicit symbol boundary. |
+| Replay · interpolate power | Linearly interpolate error power between adjacent captures at the selected symbol. |
 
 The simulation uses normalized error power `v = 10^(-RxMER/10)`. Average and
 interpolation operate on v; the chart converts back with `-10 log10(v)`. They
@@ -71,10 +71,55 @@ implicit looping. Recorded capture times are separate from this playback clock.
 
 RxMER uses **Open file(s)…** for capture selection; Load demo and Add notch demo
 have been removed from its toolbar. The Channel Estimate editor retains its own
-Load demo action. Adding a second file requires selecting Average or
-one of the sequence modes. The combined chart always identifies the effective
+Load demo action. Checking multiple files requires Average or one of the Replay modes. The combined chart always identifies the effective
 residual model, not a new measured capture. RxMER does not establish real burst
 correlation or reconstruct measured I/Q.
+
+## Choose captures for the next run
+
+The loaded collection stays available. In **Single Shot**, use the radio button
+beside one capture. In **Replay**, check the captures to use; they play in the
+listed order. Clicking a filename only previews its original values. **Select
+All**, **Clear Selection** and **Use First N** change the draft selection.
+Unchecking a capture does not delete it. Apply saves the selection in the WB;
+Cancel preserves the accepted selection.
+
+The capacity line shows selected/loaded counts, CWB duration per profile and how
+many captures fit at the chosen OFDM-symbol interval. **Use First N** checks the
+first captures that fit. If too many are selected, reduce the selection or
+interval, or increase duration in **Configure WorkBench**. Apply is disabled
+until the current selection fits. If CWB is unconfigured, configure it to obtain
+a replay limit. Selecting more profiles repeats the experiment; it does not
+extend each profile's observation window. Average combines selected captures
+into one static residual model and has no temporal replay capacity limit beyond
+the collection resource limits.
+
+![RxMER selection and replay capacity](../images/workbench/rxmer-selection-dark.png)
+
+The last replay transition must occur before the last observation boundary.
+For N complete observation symbols and interval I, the maximum is
+`1 + floor((N - 1) / I)`, capped at 256 captures. For example, the 25 kHz/CP512
+configuration has 23 complete symbols in 1 ms: an interval of 1000 symbols
+allows one capture; an interval of 1 allows 23. The 64 MiB and four-million
+carrier-value collection limits also remain.
+
+## Animate the selected captures
+
+Use **Play** under the chart to view the checked originals in sequence, as in
+PNM Viewer. **Pause**, **Previous**, **Next** and the position slider let you
+inspect a particular capture. Select 1, 2, 4 or 8 **Frames/s**; the counter shows
+the current selected frame and total, and the capture UTC is displayed below.
+Playback stops at the last capture; Play at the end starts again from the first.
+The frequency zoom stays in place while frames advance.
+
+This is a capture preview. Its display speed does not change the simulation's
+OFDM-symbol interval, apply the draft or start a run. Average still supplies one
+static effective model to the simulation; Play previews its selected originals.
+Single Shot has only one selected frame. **Effective RxMER / playback** returns
+to the configured static/hold/interpolated model at **Preview symbol**. Changing
+selection/mode, inspecting a filename or closing the dialog pauses animation.
+
+![Animated capture preview](../images/workbench/rxmer-animation-dark.png)
 
 ## Readiness and current scope
 
@@ -91,8 +136,9 @@ viewers, accepted input state and reusable Rust combination/preview operations.
 Main Start dispatches the frozen configuration through the closed-loop worker,
 with actual payload/PLC QAM and channel-output SA observations. The TX SA's local
 **Run simulation** remains a separate preview before these impairments.
-Receiver Apply checks that the playback transition span fits the selected run
-duration; a valid editor schedule can still be too long for that request.
+The RxMER editor reports capacity against the current CWB duration. Changing CWB
+duration later revalidates the accepted schedule before Start; shorten the
+selection or interval if its final transition no longer fits.
 
 The editor accepts at most 256 RxMER files, 64 MiB original RxMER bytes and four
 million decoded carrier values. One response file has a separate 16 MiB ceiling;

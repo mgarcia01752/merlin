@@ -21,7 +21,36 @@ pub mod bridge {
         #[qobject]
         #[qml_element]
         type MeasurementInputs = super::MeasurementInputsRust;
-        /// Reloads accepted originals after an atomic project Open.
+        /// Queries one selected original for capture-preview animation.
+        /// # Arguments
+        /// * `options` - Bounded draft selected identities and controls.
+        /// * `position` - Selected-frame offset.
+        /// * `start`, `count` - Nonnegative viewport; zero count selects full span.
+        /// # Returns
+        /// At most 1024 buckets and scalar position/identity/time metadata.
+        #[qinvokable]
+        fn preview_frame(
+            self: &MeasurementInputs,
+            options: &QString,
+            position: i32,
+            start: i32,
+            count: i32,
+        ) -> QString;
+        /// Queries selection capacity from the accepted CWB duration and OCD.
+        /// # Arguments
+        /// * `options` - Bounded selected identities and playback controls.
+        /// * `settings` - Accepted OCD.
+        /// * `run_options` - Accepted CWB options, or null if unconfigured.
+        /// # Returns
+        /// Loaded/selected counts, capacity and actionable timing guidance.
+        #[qinvokable]
+        fn selection_status(
+            self: &MeasurementInputs,
+            options: &QString,
+            settings: &QString,
+            run_options: &QString,
+        ) -> QString;
+        /// Reloads accepted originals after atomic project Open.
         #[qinvokable]
         fn reload(self: Pin<&mut MeasurementInputs>);
         /// Starts a draft from the accepted measurement configuration.
@@ -176,11 +205,12 @@ fn parse<T: serde::de::DeserializeOwned>(document: &str) -> Result<T, String> {
     }
     serde_json::from_str(document).map_err(|error| error.to_string())
 }
-fn status(result: Result<(), String>, empty: bool) -> Value {
-    match result {
-        Ok(()) => json!({"status":"complete","reason":"Validated configuration accepted."}),
-        Err(error) => json!({"status":if empty {"attention"} else {"error"},"reason":error}),
+
+fn parse_selection<T: serde::de::DeserializeOwned>(document: &str) -> Result<T, String> {
+    if document.len() > 24 * 1024 {
+        return Err("RxMER selection exceeds 24 KiB.".into());
     }
+    serde_json::from_str(document).map_err(|error| error.to_string())
 }
 impl MeasurementInputsRust {
     fn metadata(&self, rxmer: bool) -> Value {
@@ -247,9 +277,97 @@ impl MeasurementInputsRust {
     }
 }
 impl bridge::MeasurementInputs {
+    /// Queries one original-capture animation frame without preparing a full replay.
+    /// # Arguments
+    /// * `options` - Draft selection, bounded to 24 KiB.
+    /// * `position` - Zero-based selected-frame position.
+    /// * `start`, `count` - Nonnegative carrier range; zero count is full span.
+    /// # Returns
+    /// Bounded chart and frame metadata, or a diagnostic preserving all inputs.
+    pub fn preview_frame(
+        &self,
+        options: &QString,
+        position: i32,
+        start: i32,
+        count: i32,
+    ) -> QString {
+        let result = (|| {
+            let options: Options = parse_selection(&options.to_string())?;
+            let position = usize::try_from(position).map_err(|_| "Invalid capture position.")?;
+            let start = usize::try_from(start).map_err(|_| "Invalid viewport start.")?;
+            let count = usize::try_from(count).map_err(|_| "Invalid viewport count.")?;
+            self.rust()
+                .model
+                .preview_frame(&options, position, start, count)
+        })();
+        QString::from(
+            result
+                .unwrap_or_else(|error| json!({"error":error,"points":[],"frame_count":0}))
+                .to_string(),
+        )
+    }
+
+    /// Queries how many checked captures fit the accepted CWB observation window.
+    /// # Arguments
+    /// * `options` - Draft identities and controls, at most 24 KiB.
+    /// * `settings`, `run_options` - Accepted bounded OCD/CWB documents.
+    /// # Returns
+    /// Scalar counts, capacity and timing advice without publishing any state.
+    pub fn selection_status(
+        &self,
+        options: &QString,
+        settings: &QString,
+        run_options: &QString,
+    ) -> QString {
+        let result = (|| -> Result<Value, String> {
+            let options: Options = parse_selection(&options.to_string())?;
+            let selection = options.selected(&self.rust().model.draft_rx);
+            let selection_error = selection.as_ref().err().cloned();
+            let selected = selection
+                .as_ref()
+                .map(|captures| captures.len())
+                .unwrap_or(0);
+            let loaded = self.rust().model.draft_rx.len();
+            let run: Option<crate::simulation::closed_loop::Options> =
+                parse(&run_options.to_string())?;
+            let Some(run) = run else {
+                return Ok(
+                    json!({"loaded":loaded,"selected":selected,"capacity":null,"error":selection_error,"fits":selected>0 && (options.mode != docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Single || selected==1),"summary":format!("{selected} selected / {loaded} loaded · Configure WorkBench to see replay capacity.")}),
+                );
+            };
+            let settings = parse::<TransmissionSettings>(&settings.to_string())?;
+            let capacity = options.capacity(&settings, run.duration_ms)?;
+            let symbols = settings
+                .duration_timing(std::time::Duration::from_millis(run.duration_ms))
+                .map_err(|error| error.to_string())?
+                .complete_symbols;
+            let fits = selected > 0 && selected <= capacity;
+            let temporal = matches!(options.mode, docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Hold | docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Interpolate);
+            let summary = if temporal {
+                format!("{selected} selected / {loaded} loaded · CWB: {} ms per profile ({symbols} symbols) · Up to {capacity} captures at {} symbols apart.{}",run.duration_ms,options.interval_symbols,if fits {""} else {" Select fewer captures, reduce the interval or increase CWB duration."})
+            } else {
+                format!("{selected} selected / {loaded} loaded · {}",if options.mode == docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Single {"Single Shot requires exactly one capture."} else {"Average combines selected captures; no temporal replay."})
+            };
+            Ok(
+                json!({"error":selection_error,"loaded":loaded,"selected":selected,"capacity":capacity,"fits":fits,"observation_symbols":symbols,"duration_ms":run.duration_ms,"summary":summary}),
+            )
+        })();
+        QString::from(
+            result
+                .unwrap_or_else(|error| json!({"error":error,"fits":false}))
+                .to_string(),
+        )
+    }
+
     /// Adopts original captures/options after complete project validation.
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
-        if let Ok(model) = Model::from_saved(&crate::workbench::session::saved("measurements")) {
+        if let Some(model) =
+            crate::workbench::project_load::take(|prepared| prepared.measurements.take())
+        {
+            self.as_mut().rust_mut().model = model;
+        } else if let Ok(model) =
+            Model::from_saved(&crate::workbench::session::saved("measurements"))
+        {
             self.as_mut().rust_mut().model = model;
         }
     }
@@ -381,7 +499,7 @@ impl bridge::MeasurementInputs {
     /// # Returns
     /// Summary or admission error, without accepting the draft.
     pub fn describe(&self, rxmer: bool, options: &QString, settings: &QString) -> QString {
-        let result = parse::<Options>(&options.to_string()).and_then(|options| {
+        let result = parse_selection::<Options>(&options.to_string()).and_then(|options| {
             parse::<TransmissionSettings>(&settings.to_string())
                 .and_then(|settings| self.rust().admission(rxmer, &options, &settings))
         });
@@ -400,7 +518,7 @@ impl bridge::MeasurementInputs {
     /// Bounded viewport or diagnostic with no stale points.
     pub fn view(&self, rxmer: bool, request: &QString, settings: &QString) -> QString {
         let profile = crate::workbench::session::snapshot().profile;
-        let result = parse::<ChartRequest>(&request.to_string()).and_then(|request| {
+        let result = parse_selection::<ChartRequest>(&request.to_string()).and_then(|request| {
             parse::<TransmissionSettings>(&settings.to_string()).and_then(|settings| {
                 self.rust()
                     .model
@@ -428,7 +546,7 @@ impl bridge::MeasurementInputs {
         options: &QString,
         settings: &QString,
     ) -> QString {
-        let result = parse::<Options>(&options.to_string()).and_then(|options| {
+        let result = parse_selection::<Options>(&options.to_string()).and_then(|options| {
             let settings = parse::<TransmissionSettings>(&settings.to_string())?;
             self.rust().admission(rxmer, &options, &settings)?;
             let model = &mut self.as_mut().rust_mut().model;
@@ -440,18 +558,16 @@ impl bridge::MeasurementInputs {
                 model.response_tolerance = options.tolerance_seconds;
             }
             if rxmer {
-                let profile = crate::workbench::session::snapshot().profile.ok_or("Missing DPD")?;
-                let frames = model.accepted_rx.iter().filter_map(|capture| match &capture.measurement {
-                    document::Measurement::Rxmer(frame) => Some(frame.as_ref().clone()), _ => None,
-                }).collect();
-                crate::workbench::session::set_playback(Some(docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackConfiguration {
-                    profile, frames, mode: model.options.mode, interval_symbols: model.options.interval_symbols.parse().map_err(|_| "Invalid interval")?,
-                    tolerance_seconds: model.options.tolerance_seconds,
-                }));
+                let profile = crate::workbench::session::snapshot().profile;
+                let published = model.published(profile.as_ref())?;
+                crate::workbench::session::set_playback(published.playback);
             } else {
-                crate::workbench::session::set_response(model.accepted_response.as_ref().and_then(|capture| match &capture.measurement {
-                    document::Measurement::Response(frame) => Some(frame.as_ref().clone()), _ => None,
-                }));
+                crate::workbench::session::set_response(model.accepted_response.as_ref().and_then(
+                    |capture| match &capture.measurement {
+                        document::Measurement::Response(frame) => Some(frame.as_ref().clone()),
+                        _ => None,
+                    },
+                ));
             }
             Ok(())
         });
@@ -520,50 +636,11 @@ impl bridge::MeasurementInputs {
             crate::workbench::session::set_playback(inputs.playback);
             crate::workbench::session::set_response(inputs.response);
         }
-        let rx = settings
-            .as_ref()
-            .map_err(Clone::clone)
-            .and_then(|settings| {
-                Model::playback(
-                    &model.accepted_rx,
-                    &model.options,
-                    settings,
-                    profile.as_ref(),
-                )
-                .map(|_| ())
-            });
-        let response = settings
-            .as_ref()
-            .map_err(Clone::clone)
-            .and_then(|settings| {
-                Model::response(
-                    model.accepted_response.as_ref(),
-                    settings,
-                    profile.as_ref(),
-                    model.response_tolerance,
-                )
-            });
-        let rx_status = status(
-            rx.clone(),
-            profile.is_none() || model.accepted_rx.is_empty(),
-        );
-        let response_status = status(response.clone(), profile.is_none());
-        let loss = settings
-            .as_ref()
-            .map_err(Clone::clone)
-            .and_then(|settings| {
-                crate::inputs::channel_model::preview(
-                    &crate::workbench::session::snapshot().additional_loss,
-                    settings,
-                )
-                .map(|_| ())
-            });
-        let channel = if rx.is_ok() && response.is_ok() && loss.is_ok() {
-            json!({"status":"complete","reason":"RxMER, channel response and additional loss are configured."})
-        } else {
-            json!({"status":if rx_status["status"]=="error"||response_status["status"]=="error"||(profile.is_some() && loss.is_err()) {"error"} else {"attention"},"reason":format!("{} {} {}",rx.err().unwrap_or_default(),response.err().unwrap_or_default(),loss.err().unwrap_or_default())})
-        };
-        QString::from(json!({"rxmer":rx_status,"response":response_status,"channel":channel,"flat":model.accepted_response.is_none(),"additional_loss":crate::workbench::session::snapshot().additional_loss}).to_string())
+        QString::from(
+            model
+                .state(settings, &crate::workbench::session::snapshot())
+                .to_string(),
+        )
     }
 }
 

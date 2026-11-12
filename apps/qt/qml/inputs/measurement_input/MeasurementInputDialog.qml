@@ -14,6 +14,8 @@ WorkbenchDialog {
     property var metadata: ({files: [], options: {mode: "single", interval_symbols: "1000", tolerance_seconds: 90000}})
     property var options: ({mode: "single", interval_symbols: "1000", tolerance_seconds: 90000})
     property string errorMessage: ""
+    property var runOptions: null
+    property var selectionStatus: ({})
     property var admission: ({})
     signal measurementApplied()
     parent: Overlay.overlay; anchors.centerIn: parent
@@ -23,15 +25,35 @@ WorkbenchDialog {
     function setMetadata(document, resetOptions) {
         metadata = JSON.parse(document)
         if (resetOptions) { options = Object.assign({}, metadata.options) }
+        else if (rxmer && options.selected_captures) {
+            const identities=metadata.files.map(file => file.sha256)
+            options=Object.assign({},options,{selected_captures:options.selected_captures.filter(identity => identities.indexOf(identity)>=0)})
+        }
         errorMessage = metadata.error || ""
         viewer.selectedIndex = -1
         refresh()
     }
     function refresh() {
+        if (rxmer) { selectionStatus=JSON.parse(backend.selection_status(JSON.stringify(options),settingsBackend.current(),JSON.stringify(runOptions))) }
         admission = JSON.parse(backend.describe(rxmer, JSON.stringify(options), settingsBackend.current()))
-        viewer.reset()
+        viewer.stopPreview();viewer.reset()
     }
     function updateOption(key, value) { errorMessage = ""; const next = Object.assign({}, options); next[key] = value; options = next; refresh() }
+    function chooseMode(mode) {
+        const next=Object.assign({},options,{mode:mode})
+        if (mode === "single" && metadata.files.length) {
+            next.selected_captures=[metadata.files[Math.max(0,viewer.selectedIndex)].sha256]
+        }
+        options=next;refresh()
+    }
+    function toggleCapture(identity, checked) {
+        if (options.mode === "single") { updateOption("selected_captures",[identity]);return }
+        const selected=options.selected_captures || metadata.files.map(file => file.sha256)
+        const next=selected.filter(value => value !== identity)
+        if (checked) { next.push(identity) }
+        updateOption("selected_captures",next)
+    }
+    onClosed: viewer.stopPreview()
     onOpened: setMetadata(backend.begin(rxmer), true)
     contentItem: ColumnLayout {
         spacing: 10
@@ -50,9 +72,9 @@ WorkbenchDialog {
             Label { text: "Mode"; color: theme.text }
             ComboBox {
                 objectName: "rxmerMode"; Layout.preferredWidth: 245
-                model: ["Single capture", "Average · linear error power", "Sequence · hold", "Sequence · interpolate power"]
+                model: ["Single Shot", "Average · linear error power", "Replay · hold", "Replay · interpolate power"]
                 currentIndex: ["single", "average", "hold", "interpolate"].indexOf(dialog.options.mode)
-                onActivated: function(index) { dialog.updateOption("mode", ["single", "average", "hold", "interpolate"][index]) }
+                onActivated: function(index) { dialog.chooseMode(["single", "average", "hold", "interpolate"][index]) }
             }
             Label { text: "OFDM symbols between captures"; color: theme.text }
             // Whole-input unsigned decimal text, 1–20 digits; no signs, units or separators.
@@ -70,16 +92,28 @@ WorkbenchDialog {
                 onEditingFinished: dialog.updateOption("tolerance_seconds", Number(text)) }
             Label { text: "Explicit application policy; original timestamps stay unchanged."; color: theme.muted; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         }
+        RowLayout {
+            visible:dialog.rxmer
+            WorkbenchActionButton { theme:dialog.theme;objectName:"selectAllCaptures";text:"Select All";enabled:dialog.options.mode !== "single";onClicked:dialog.updateOption("selected_captures",null) }
+            WorkbenchActionButton { theme:dialog.theme;objectName:"clearCaptureSelection";text:"Clear Selection";onClicked:dialog.updateOption("selected_captures",[]) }
+            WorkbenchActionButton { theme:dialog.theme;objectName:"fitCaptureSelection";text:"Use First "+Math.min(dialog.metadata.files.length,dialog.selectionStatus.capacity || 0);enabled:dialog.selectionStatus.capacity > 0 && dialog.metadata.files.length > 0;onClicked:dialog.updateOption("selected_captures",dialog.metadata.files.slice(0,dialog.selectionStatus.capacity).map(file => file.sha256)) }
+            Label { text:"Check captures to use; click a filename to preview.";color:theme.muted;wrapMode:Text.WordWrap;Layout.fillWidth:true;font.pixelSize:11 }
+        }
+        Label { visible:dialog.rxmer;text:dialog.selectionStatus.error || dialog.selectionStatus.summary || "";color:dialog.selectionStatus.error || dialog.selectionStatus.fits === false ? theme.statusAttention : theme.accent;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:12 }
         MeasurementViewer {
             id: viewer; objectName: "sharedMeasurementViewer"
             Layout.fillWidth: true; Layout.fillHeight: true
             theme: dialog.theme; backend: dialog.backend; settingsBackend: dialog.settingsBackend
+            onSelectionToggled:function(identity,checked) {dialog.toggleCapture(identity,checked)}
+            previewEnabled:dialog.visible
+            selectionCount:dialog.selectionStatus.selected || 0
             rxmer: dialog.rxmer; options: dialog.options; files: dialog.metadata.files || []
         }
         Label { text: dialog.errorMessage || dialog.admission.error || dialog.admission.summary || ""; color: dialog.errorMessage || dialog.admission.error ? theme.statusError : theme.accent; Layout.fillWidth: true; wrapMode: Text.WordWrap; font.pixelSize: 12 }
     }
     footer: ApplyCancelFooter {
         theme: dialog.theme
+        applyEnabled: !dialog.rxmer || dialog.selectionStatus.fits !== false
         applyObjectName: "measurementApply";   onApplied: { dialog.errorMessage = backend.apply(dialog.rxmer, JSON.stringify(dialog.options), dialog.settingsBackend.current()); if (!dialog.errorMessage.length) { dialog.measurementApplied(); dialog.close() } }
         onCancelled: dialog.reject()
     }

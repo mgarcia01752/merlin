@@ -13,13 +13,17 @@ Item {
     required property var theme
     property var files: []
     property int selectedIndex: -1
+    property bool selectionEnabled: false
+    property bool singleShot: false
+    property var selectedCaptures: null
+    signal selectionToggled(string identity, bool checked)
     property var expanded: ({})
     signal selected(int index)
     onFilesChanged: expanded = ({})
     function rows() {
         const rows = []
         for (const file of files) {
-            rows.push({kind: "file", index: file.index, label: file.name, detail: file.frequency, compatible: file.compatible})
+            rows.push({kind: "file", index: file.index, label: file.name, detail: file.frequency, compatible: file.compatible, identity: file.sha256})
             if (expanded[file.index]) {
                 for (const detail of [file.mac + " · channel " + file.channel, file.frequency, "Capture epoch " + file.capture_time, file.format + " · " + file.bytes + " bytes", file.reason, "SHA-256 " + file.sha256]) {
                     rows.push({kind: "detail", index: file.index, label: detail, detail: detail})
@@ -43,6 +47,21 @@ Item {
                     text: tree.expanded[modelData.index] ? "▾" : "▸"
                     onClicked: { const next = Object.assign({}, tree.expanded); next[modelData.index] = !next[modelData.index]; tree.expanded = next }
                     Accessible.name: "Expand capture metadata"
+                }
+                CheckBox {
+                    objectName: "captureCheck"+modelData.index
+                    visible: tree.selectionEnabled && !tree.singleShot && modelData.kind === "file"
+                    checked: tree.selectedCaptures === null || tree.selectedCaptures.indexOf(modelData.identity) >= 0
+                    Accessible.name: "Use capture "+(modelData.index+1)
+                    onClicked: tree.selectionToggled(modelData.identity, checked)
+                }
+                RadioButton {
+                    objectName: "captureSingle"+modelData.index
+                    visible: tree.selectionEnabled && tree.singleShot && modelData.kind === "file"
+                    autoExclusive:false
+                    checked: tree.selectedCaptures === null ? tree.files.length === 1 : tree.selectedCaptures.indexOf(modelData.identity) >= 0
+                    Accessible.name: "Single Shot capture "+(modelData.index+1)
+                    onClicked: tree.selectionToggled(modelData.identity, true)
                 }
                 Label { visible: modelData.kind === "file"; text: "●"; font.pixelSize: 10; color: modelData.compatible === true ? tree.theme.statusComplete : modelData.compatible === false ? tree.theme.statusError : tree.theme.statusAttention }
                 ItemDelegate {

@@ -365,3 +365,17 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
 
 - [x] UI-ABOUT-01: Plain dropdown labels and compact About actions, including
   manual update checks and issue-form link; dark/light native review complete.
+
+## Responsive Open and RxMER selection
+
+- [x] **UI-WB-OPEN-02** Background native Open/recovery, prepared-model adoption,
+  loading stage/elapsed/Cancel, no repeated GUI imports; worker failure,
+  cancellation and native responsiveness verified.
+  [Design](features/responsive-workbench-open/design.md).
+- [x] **UI-RXMER-SELECT-01** Retain loaded originals and persist selected capture
+  identities; Single Shot/Replay controls and CWB-derived capacity. Verify
+  selection, legacy restore, strict boundaries and native layout.
+  [Design](features/rxmer-selection/design.md).
+- [x] **UI-RXMER-ANIM-01** PNM Viewer-style selected-capture animation,
+  Play/Pause/step/slider/speed, bounded original viewports and lifecycle cleanup.
+  [Design](features/rxmer-selection/design.md#ui-rxmer-anim-01--animated-capture-preview).

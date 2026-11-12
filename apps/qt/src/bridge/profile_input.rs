@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! DPD input lifecycle and filesystem adapter; all scientific validation is Rust.
+use crate::inputs::profile_input::document;
 pub use crate::inputs::profile_input::ProfileModel as ProfileInputRust;
-use crate::inputs::profile_input::{document, settings};
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 use document::MAX_INPUT_BYTES;
@@ -144,9 +144,12 @@ impl bridge::ProfileInput {
     }
     /// Adopts already validated project captures without a file-picker round trip.
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
-        if let Ok(model) =
-            ProfileInputRust::from_saved(&crate::workbench::session::saved("profile"))
-        {
+        let model = crate::workbench::project_load::take(|prepared| prepared.profile.take())
+            .map(Ok)
+            .unwrap_or_else(|| {
+                ProfileInputRust::from_saved(&crate::workbench::session::saved("profile"))
+            });
+        if let Ok(model) = model {
             self.as_mut().rust_mut().draft = model.draft;
             self.as_mut().rust_mut().accepted = model.accepted;
         }
@@ -272,23 +275,7 @@ impl bridge::ProfileInput {
     /// # Returns
     /// State JSON used by the workbench and OCD profile summary.
     pub fn state(&self, document: &QString) -> QString {
-        let value = match &self.rust().accepted {
-            None => {
-                json!({"selected":false,"profile_status":"attention","ofdm_status":"attention","reason":"A validated modulation-profile PNM input is required.","summary":{}})
-            }
-            Some((capture, id)) => {
-                let diagnostic = settings(&document.to_string())
-                    .and_then(|settings| capture.compatible(*id, &settings));
-                match diagnostic {
-                    Ok(()) => {
-                        json!({"selected":true,"profile_status":"complete","ofdm_status":"complete","reason":"Profile input and accepted OCD settings are valid and compatible.","summary":{"profile_id":id.to_string(),"source_file":capture.name,"subcarrier_assignments":format!("{} assignments",capture.profile(*id).map(|profile|profile.assignments.len()).unwrap_or(0))}})
-                    }
-                    Err(error) => {
-                        json!({"selected":true,"profile_status":"error","ofdm_status":"error","reason":error,"summary":{}})
-                    }
-                }
-            }
-        };
+        let value = self.rust().state(&document.to_string());
         QString::from(value.to_string())
     }
 }

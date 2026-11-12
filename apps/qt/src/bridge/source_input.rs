@@ -66,7 +66,10 @@ pub struct SourceInputRust {
 impl bridge::SourceInput {
     /// Adopts already validated project source state on the GUI thread.
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
-        if let Ok(model) =
+        if let Some(model) = crate::workbench::project_load::take(|prepared| prepared.source.take())
+        {
+            self.as_mut().rust_mut().model = model;
+        } else if let Ok(model) =
             model::SourceModel::from_saved(&crate::workbench::session::saved("source"))
         {
             self.as_mut().rust_mut().model = model;

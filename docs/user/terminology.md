@@ -135,3 +135,16 @@ See [elapsed time and slow profiles](closed-loop-workbench.md#elapsed-time-and-s
 and [FEC Monitor](fec-monitor.md). Implementation references:
 [paired delay](../../crates/ofdm/src/signal_processing/interleaving/settings.rs) and
 [payload drain](../../crates/ofdm/src/simulation/payload/transmitter.rs).
+
+## Single Shot and Replay selection
+
+**Single Shot** holds one selected RxMER capture for each profile's run.
+**Replay** uses the checked captures in listed order at the configured OFDM-symbol
+interval. **Replay capacity** is how many capture transitions fit in the CWB
+observation duration per profile; loaded captures may exceed that number.
+Checking captures selects simulation inputs; clicking filenames previews them.
+See [RxMER selection](channel-measurements.md#choose-captures-for-the-next-run).
+
+**CWB (Configure WorkBench)** contains the accepted run duration and profile
+selection. Replay capacity uses its duration for one profile; a sweep runs that
+window separately for each selected profile.

@@ -25,6 +25,8 @@ pub(crate) struct Options {
     pub mode: PlaybackMode,
     pub interval_symbols: String,
     pub tolerance_seconds: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub selected_captures: Option<Vec<String>>,
 }
 impl Default for Options {
     fn default() -> Self {
@@ -32,6 +34,76 @@ impl Default for Options {
             mode: PlaybackMode::Single,
             interval_symbols: "1000".into(),
             tolerance_seconds: 90000,
+            selected_captures: None,
+        }
+    }
+}
+impl Options {
+    /// Resolves checked original identities in displayed playback order.
+    /// # Arguments
+    /// * `captures` - Current ordered collection, retaining unselected originals.
+    /// # Returns
+    /// References to the selected captures; legacy options select all.
+    /// # Errors
+    /// Rejects empty, duplicate, unknown or over-limit explicit selections.
+    pub(crate) fn selected<'input>(
+        &self,
+        captures: &'input [Capture],
+    ) -> Result<Vec<&'input Capture>, String> {
+        let Some(selected) = &self.selected_captures else {
+            return Ok(captures.iter().collect());
+        };
+        if selected.is_empty() || selected.len() > MAX_PLAYBACK_FRAMES {
+            return Err("Select at least one RxMER capture (maximum 256).".into());
+        }
+        let identities = selected.iter().collect::<std::collections::HashSet<_>>();
+        if identities.len() != selected.len() {
+            return Err("Duplicate RxMER selection.".into());
+        }
+        let captures = captures
+            .iter()
+            .filter(|capture| identities.contains(&capture.hash))
+            .collect::<Vec<_>>();
+        if captures.len() != selected.len() {
+            return Err("Selected RxMER capture is not in this collection.".into());
+        }
+        Ok(captures)
+    }
+
+    /// Calculates the number of captures reachable under accepted CWB timing.
+    /// # Arguments
+    /// * `settings` - Accepted OCD geometry.
+    /// * `duration_ms` - Accepted duration per profile, not a whole sweep.
+    /// # Returns
+    /// Temporal replay capacity, or the static-mode resource limit.
+    /// # Errors
+    /// Rejects invalid duration/timing, zero or overflowing replay intervals.
+    pub(crate) fn capacity(
+        &self,
+        settings: &TransmissionSettings,
+        duration_ms: u64,
+    ) -> Result<usize, String> {
+        if !(1..=crate::simulation::closed_loop::MAX_DURATION_MS).contains(&duration_ms) {
+            return Err("Configure a supported duration per profile.".into());
+        }
+        let symbols = settings
+            .duration_timing(std::time::Duration::from_millis(duration_ms))
+            .map_err(|error| error.to_string())?
+            .complete_symbols;
+        match self.mode {
+            PlaybackMode::Single => Ok(1),
+            PlaybackMode::Average => Ok(MAX_PLAYBACK_FRAMES),
+            _ => {
+                let interval = self
+                    .interval_symbols
+                    .parse::<u64>()
+                    .map_err(|_| "Enter an integer OFDM-symbol interval.")?;
+                if interval == 0 {
+                    return Err("Replay interval must be greater than zero.".into());
+                }
+                Ok(((symbols.saturating_sub(1) / interval).saturating_add(1))
+                    .min(MAX_PLAYBACK_FRAMES as u64) as usize)
+            }
         }
     }
 }
@@ -66,6 +138,51 @@ pub(crate) struct ChartRequest {
     pub options: Options,
 }
 impl Model {
+    /// Derives scalar readiness from independent accepted inputs.
+    /// # Arguments
+    /// * `settings` - Parsed OCD or its validation error.
+    /// * `inputs` - Frozen accepted inputs; no global publication occurs.
+    /// # Returns
+    /// Bounded RxMER, response and channel status for the workbench.
+    pub(crate) fn state(
+        &self,
+        settings: Result<TransmissionSettings, String>,
+        inputs: &crate::workbench::session::Inputs,
+    ) -> Value {
+        let profile = inputs.profile.as_ref();
+        let rx = settings
+            .as_ref()
+            .map_err(Clone::clone)
+            .and_then(|settings| {
+                Model::playback(&self.accepted_rx, &self.options, settings, profile).map(|_| ())
+            });
+        let response = settings
+            .as_ref()
+            .map_err(Clone::clone)
+            .and_then(|settings| {
+                Model::response(
+                    self.accepted_response.as_ref(),
+                    settings,
+                    profile,
+                    self.response_tolerance,
+                )
+            });
+        let rx_status = status(rx.clone(), profile.is_none() || self.accepted_rx.is_empty());
+        let response_status = status(response.clone(), profile.is_none());
+        let loss = settings
+            .as_ref()
+            .map_err(Clone::clone)
+            .and_then(|settings| {
+                crate::inputs::channel_model::preview(&inputs.additional_loss, settings).map(|_| ())
+            });
+        let channel = if rx.is_ok() && response.is_ok() && loss.is_ok() {
+            json!({"status":"complete","reason":"RxMER, channel response and additional loss are configured."})
+        } else {
+            json!({"status":if rx_status["status"]=="error"||response_status["status"]=="error"||(profile.is_some() && loss.is_err()) {"error"} else {"attention"},"reason":format!("{} {} {}",rx.err().unwrap_or_default(),response.err().unwrap_or_default(),loss.err().unwrap_or_default())})
+        };
+        json!({"rxmer":rx_status,"response":response_status,"channel":channel,"flat":self.accepted_response.is_none(),"additional_loss":inputs.additional_loss})
+    }
+
     /// Serializes accepted originals and controls, excluding drafts and result arrays.
     /// # Returns
     /// Self-contained Rust-owned persistence section.
@@ -114,6 +231,7 @@ impl Model {
         model.accepted_rx = model.draft_rx.clone();
         model.accepted_response = model.draft_response.clone();
         model.options = saved.options;
+        model.options.selected(&model.accepted_rx)?;
         model.response_tolerance = saved.response_tolerance;
         Ok(model)
     }
@@ -129,8 +247,9 @@ impl Model {
         profile: Option<&CapturedProfile>,
     ) -> Result<super::RestoredMeasurements, String> {
         let frames = self
-            .accepted_rx
-            .iter()
+            .options
+            .selected(&self.accepted_rx)?
+            .into_iter()
             .filter_map(|c| match &c.measurement {
                 Measurement::Rxmer(frame) => Some(frame.as_ref().clone()),
                 _ => None,
@@ -233,8 +352,9 @@ impl Model {
         profile: Option<&CapturedProfile>,
     ) -> Result<MeasurementPlayback, String> {
         let profile = profile.ok_or("Apply a compatible DPD before accepting RxMER.")?;
-        let frames = captures
-            .iter()
+        let frames = options
+            .selected(captures)?
+            .into_iter()
             .map(|capture| match &capture.measurement {
                 Measurement::Rxmer(frame) => Ok(frame.as_ref().clone()),
                 _ => Err("Expected RxMER input.".to_string()),
@@ -403,6 +523,13 @@ impl Model {
     }
 }
 
+fn status(result: Result<(), String>, empty: bool) -> Value {
+    match result {
+        Ok(()) => json!({"status":"complete","reason":"Validated configuration accepted."}),
+        Err(error) => json!({"status":if empty {"attention"} else {"error"},"reason":error}),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -427,6 +554,109 @@ mod tests {
             true,
         )
         .unwrap()
+    }
+    #[test]
+    fn selection_keeps_originals_and_round_trips_a_single_shot() {
+        let mut model = Model::default();
+        let first = baseline();
+        let second = Capture::decode(
+            "notch.json".into(),
+            include_bytes!(
+                "../../../../../examples/measurements/single-channel/rxmer-center-notch-12db.json"
+            )
+            .to_vec(),
+            true,
+        )
+        .unwrap();
+        let second_hash = second.hash.clone();
+        model.stage(vec![first, second], true).unwrap();
+        model.accepted_rx = model.draft_rx.clone();
+        model.options.selected_captures = Some(vec![second_hash.clone()]);
+        let restored = Model::from_saved(&model.export()).unwrap();
+        assert_eq!(restored.accepted_rx.len(), 2);
+        assert_eq!(
+            restored.options.selected_captures,
+            Some(vec![second_hash.clone()])
+        );
+        let profile = profile();
+        let published = restored
+            .published(Some(&profile))
+            .unwrap()
+            .playback
+            .unwrap();
+        assert_eq!(published.frames.len(), 1);
+        assert_eq!(
+            restored.options.selected(&restored.accepted_rx).unwrap()[0].hash,
+            second_hash
+        );
+        Model::playback(
+            &restored.accepted_rx,
+            &restored.options,
+            &TransmissionSettings::default(),
+            Some(&profile),
+        )
+        .unwrap();
+        let all = Options {
+            mode: PlaybackMode::Hold,
+            selected_captures: Some(
+                restored
+                    .accepted_rx
+                    .iter()
+                    .rev()
+                    .map(|capture| capture.hash.clone())
+                    .collect(),
+            ),
+            ..Default::default()
+        };
+        assert_eq!(
+            all.selected(&restored.accepted_rx).unwrap()[0].hash,
+            restored.accepted_rx[0].hash
+        );
+        assert_eq!(
+            Options::default()
+                .selected(&restored.accepted_rx)
+                .unwrap()
+                .len(),
+            2
+        );
+        for identities in [
+            vec![],
+            vec!["missing".into()],
+            vec![second_hash.clone(), second_hash],
+        ] {
+            let options = Options {
+                selected_captures: Some(identities),
+                ..Default::default()
+            };
+            assert!(options.selected(&restored.accepted_rx).is_err());
+        }
+    }
+
+    #[test]
+    fn replay_capacity_uses_strict_observation_boundary_and_mode() {
+        let settings = TransmissionSettings::default();
+        let symbols = settings
+            .duration_timing(std::time::Duration::from_millis(1))
+            .unwrap()
+            .complete_symbols;
+        assert!(symbols > 1);
+        let mut options = Options {
+            mode: PlaybackMode::Hold,
+            interval_symbols: (symbols - 1).to_string(),
+            ..Default::default()
+        };
+        assert_eq!(options.capacity(&settings, 1).unwrap(), 2);
+        options.interval_symbols = symbols.to_string();
+        assert_eq!(options.capacity(&settings, 1).unwrap(), 1);
+        options.interval_symbols = "0".into();
+        assert!(options.capacity(&settings, 1).is_err());
+        options.interval_symbols = u64::MAX.to_string();
+        assert_eq!(options.capacity(&settings, 1).unwrap(), 1);
+        options.mode = PlaybackMode::Single;
+        assert_eq!(options.capacity(&settings, 1).unwrap(), 1);
+        options.mode = PlaybackMode::Average;
+        assert_eq!(options.capacity(&settings, 1).unwrap(), MAX_PLAYBACK_FRAMES);
+        assert!(options.capacity(&settings, 0).is_err());
     }
     #[test]
     fn binary_json_shared_viewer_and_atomic_drafts_preserve_original_inputs() {

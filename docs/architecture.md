@@ -739,6 +739,37 @@ Filename filtering is only presentation: Rust still validates complete WB
 contents before adoption and preserves the current session on Cancel/error.
 See the [workbench-file design](development/features/qt-closed-loop/design.md#ui-wb-open-01-main-open-file-filter).
 
+UI-WB-OPEN-02 runs the main native chooser, bounded read, decoding, embedded
+original validation and editor/run preparation in one background worker. Qt
+polls a bounded completion channel and shows phase/elapsed/Cancel without
+waiting. Success publishes the complete accepted snapshot and transfers already
+prepared editor/request models on the GUI thread; it does not repeat capture
+imports or start a run. Errors and cooperative cancellation preserve the current
+session and Save destination; one worker stays tracked until completion.
+Update recovery uses the same loader. See the
+[responsive Open design](development/features/responsive-workbench-open/design.md).
+
+UI-RXMER-SELECT-01 retains all imported originals while optional SHA-256
+identities select Single Shot, Average or ordered Replay inputs. Missing
+selection retains legacy all-capture behavior; empty, unknown and duplicate
+explicit selections are rejected. Rust applies selection consistently to
+published inputs, effective preview and accepted run requests. The bounded
+selection query uses accepted CWB duration per profile and core OCD timing to
+report replay capacity `1 + floor((complete_symbols - 1) / interval_symbols)`.
+The measurement option/viewport IPC limit is 24 KiB for up to 256 identities;
+scalar OCD/power/run documents retain 4096-byte limits. Selected identities
+persist in the measurement options in WB JSON, with original bytes unchanged.
+See the [selection design](development/features/rxmer-selection/design.md).
+
+UI-RXMER-ANIM-01 adapts PNM Viewer's capture-preview transport with preserved
+GPL attribution. QML owns Play/Pause/step/slider and 1/2/4/8 display frames/s;
+Rust resolves the selected originals and returns at most 1024 chart buckets
+for one frame, with source index/time and selected position/count. Each tick
+avoids capture decoding and full playback-plan preparation. This original-frame
+preview preserves the frequency viewport and never applies configuration or
+starts a simulation. Its wall-clock speed is separate from synthetic OFDM
+playback timing. Editing, closing or reaching the last frame pauses animation.
+
 UI-DPD-VIEW-02 replaces the initial single-trace profile plot with the PNM
 Viewer modulation layout: independent multi-profile overlays, dB/bit-loading
 selection, carrier filters, channel/MAC chips, gross Profile BW and role lanes.

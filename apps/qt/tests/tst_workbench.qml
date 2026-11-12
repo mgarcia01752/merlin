@@ -129,16 +129,31 @@ Pane {
         }
         function loss_apply(document,settings) {const error=JSON.parse(loss_preview(document,settings)).error;if(!error){loss=JSON.parse(document)};return error}
         function reload() {}
+        property bool multiPreview: false
         property bool acceptedRx: false
         property bool draftRx: false
         property bool flat: true
         property bool draftFlat: true
-        function fileRows() { return draftRx ? [{index:0,name:"rxmer.bin",format:"Binary PNM",bytes:7508,capture_time:1380970,mac:"00:ca:00:00:00:01",channel:34,frequency:"640–827 MHz",sha256:"test",compatible:profileBackend.acceptedId >= 0,reason:"Test exact grid"}] : [] }
+        function fileRows() {
+            if (!draftRx) { return [] }
+            const first={index:0,name:"rxmer.bin",format:"Binary PNM",bytes:7508,capture_time:1380970,mac:"00:ca:00:00:00:01",channel:34,frequency:"640–827 MHz",sha256:"test",compatible:profileBackend.acceptedId >= 0,reason:"Test exact grid"}
+            return multiPreview ? [first,Object.assign({},first,{index:1,sha256:"test-1"}),Object.assign({},first,{index:2,sha256:"test-2"})] : [first]
+        }
         function metadata(rxmer) { return JSON.stringify({files:rxmer ? fileRows() : [],flat:draftFlat,options:{mode:"single",interval_symbols:"1000",tolerance_seconds:90000}}) }
         function begin(rxmer) { if (rxmer) { draftRx = acceptedRx } else { draftFlat = flat }; return metadata(rxmer) }
         function choose_files(rxmer) { return demo(rxmer,0) }
         function demo(rxmer,variant) { if (rxmer) { draftRx = true } else { draftFlat = false }; return metadata(rxmer) }
         function edit(rxmer,index,delta) { if (rxmer) { draftRx = false } else { draftFlat = true }; return metadata(rxmer) }
+        function selection_status(options,settings,runOptions) {
+            const selected=JSON.parse(options).selected_captures
+            return JSON.stringify({selected:selected ? selected.length : fileRows().length,capacity:2,fits:selected===null || selected===undefined || selected.length>0,summary:"Selected captures / CWB capacity"})
+        }
+        function preview_frame(options,position,start,count) {
+            const selected=JSON.parse(options).selected_captures
+            const rows=fileRows().filter(file => !selected || selected.indexOf(file.sha256)>=0)
+            const result=JSON.parse(view(true,JSON.stringify({start:start,count:count}),"{}"))
+            return JSON.stringify(Object.assign(result,{frame_index:position,frame_count:rows.length,source_index:rows[position].index,capture_time:rows[position].capture_time}))
+        }
         function describe(rxmer,options,settings) { return JSON.stringify({error:profileBackend.acceptedId < 0 ? "Apply DPD" : rxmer && !draftRx ? "Choose RxMER" : "",summary:"Interval 42.500 ms · final capture held"}) }
         function view(rxmer,request,settings) {
             const ready = profileBackend.acceptedId >= 0 && (!rxmer || draftRx)
@@ -221,7 +236,9 @@ Pane {
             profileBackend.acceptedId=-1;sourceBackend.acceptedSource=false;measurementBackend.acceptedRx=false
             return JSON.stringify({created:true,transmission:JSON.parse(backend.defaults()),receiver:null,verified:false,dark:null})
         }
-        function open() { return JSON.stringify(openResponse) }
+        function open() { return JSON.stringify({loading:true,phase:"Reading workbench",elapsed_ms:0}) }
+        function poll_open() { return JSON.stringify(openResponse) }
+        function cancel_open() { openResponse={cancelled:true} }
         property var saveResponse: ({cancelled:true})
         function save(saveAs,settings,receiver,verified,dark) { return JSON.stringify(saveResponse) }
     }
@@ -261,6 +278,105 @@ Pane {
             compare(button.Accessible.name, "Close " + dialog.title)
             mouseClick(button)
             tryCompare(dialog, "visible", false)
+        }
+        function test_loading_modal_stays_responsive_and_cancels_without_adoption() {
+            const prior=workbench.hasProject
+            fileBackend.openResponse={loading:true,phase:"Validating captures",elapsed_ms:1250}
+            workbench.openProject();workbench.pollOpen()
+            verify(workbench.loadingProject)
+            const dialog=findChild(workbench,"workbenchLoadingDialog")
+            tryCompare(dialog,"opened",true)
+            compare(findChild(dialog,"loadElapsed").text,"Elapsed: 1.3 s")
+            workbench.requestNewProject()
+            compare(workbench.hasProject,prior)
+            mouseClick(findChild(dialog,"cancelLoadButton"))
+            workbench.pollOpen()
+            compare(workbench.loadingProject,false)
+            compare(workbench.hasProject,prior)
+            tryCompare(dialog,"visible",false)
+            fileBackend.openResponse={cancelled:true}
+        }
+        function test_rxmer_preview_layout_is_stable_at_minimum_size() {
+            const host=window.Window.window
+            const previous=[host.width,host.height,window.width,window.height,theme.dark]
+            try {
+                host.width=960;host.height=640;window.width=960;window.height=640
+                measurementBackend.acceptedRx=true;measurementBackend.multiPreview=true;profileBackend.acceptedId=0
+                for (const dark of [true,false]) {
+                    theme.dark=dark
+                    const dialog=workbench.rxmerPopup
+                    dialog.open();tryCompare(dialog,"opened",true)
+                    dialog.chooseMode("hold")
+                    const viewer=findChild(dialog,"sharedMeasurementViewer")
+                    const controls=findChild(viewer,"measurementPlaybackControls")
+                    const tree=findChild(viewer,"measurementCaptureTree")
+                    waitForRendering(viewer)
+                    const paneWidth=tree.width
+                    viewer.showFrame(1);waitForRendering(viewer)
+                    compare(tree.width,paneWidth)
+                    const last=findChild(controls,"previewFrameCount")
+                    verify(last.mapToItem(viewer,0,0).x+last.width<=viewer.width+1)
+                    const slider=findChild(viewer,"rxmerPreviewPosition")
+                    verify(slider.mapToItem(dialog.contentItem,0,0).y+slider.height<=dialog.contentItem.height+1)
+                    closeWithX(dialog)
+                }
+            } finally {
+                workbench.rxmerPopup.close();measurementBackend.multiPreview=false;measurementBackend.acceptedRx=false;profileBackend.acceptedId=-1
+                theme.dark=previous[4];window.width=previous[2];window.height=previous[3];host.width=previous[0];host.height=previous[1]
+            }
+        }
+        function test_rxmer_capture_animation_step_pause_end_and_close() {
+            profileBackend.acceptedId=0
+            measurementBackend.acceptedRx=true;measurementBackend.multiPreview=true
+            const dialog=workbench.rxmerPopup
+            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.chooseMode("hold")
+            const viewer=findChild(dialog,"sharedMeasurementViewer")
+            const controls=findChild(viewer,"measurementPlaybackControls")
+            compare(controls.frameCount,3)
+            waitForRendering(viewer)
+            mouseClick(findChild(controls,"rxmerPreviewPlayPause"))
+            verify(controls.playing)
+            tryVerify(function(){return controls.frameIndex>0},2000)
+            mouseClick(findChild(controls,"rxmerPreviewPlayPause"))
+            verify(!controls.playing)
+            const paused=controls.frameIndex;wait(600);compare(controls.frameIndex,paused)
+            controls.jump(2);compare(controls.frameIndex,2)
+            mouseClick(findChild(controls,"rxmerPreviewPlayPause"))
+            compare(controls.frameIndex,0)
+            tryCompare(controls,"frameIndex",2,2500)
+            compare(controls.playing,false)
+            controls.jump(0);mouseClick(findChild(controls,"rxmerPreviewNextFrame"));compare(controls.frameIndex,1)
+            mouseClick(findChild(controls,"rxmerPreviewPreviousFrame"));compare(controls.frameIndex,0)
+            mouseClick(findChild(controls,"rxmerPreviewPlayPause"));verify(controls.playing)
+            closeWithX(dialog);compare(controls.playing,false)
+            measurementBackend.multiPreview=false;measurementBackend.acceptedRx=false
+            profileBackend.acceptedId=-1;workbench.refreshProfileState()
+        }
+        function test_rxmer_selection_draft_and_single_shot_controls() {
+            measurementBackend.acceptedRx=true
+            const dialog=workbench.rxmerPopup
+            dialog.open();tryCompare(dialog,"opened",true)
+            const tree=findChild(dialog,"measurementCaptureTree")
+            tree.forceLayout()
+            tryVerify(function(){return tree.itemAtIndex(0) !== null})
+            verify(findChild(tree.itemAtIndex(0),"captureSingle0").checked)
+            dialog.chooseMode("single")
+            compare(dialog.options.selected_captures.length,1)
+            compare(dialog.options.selected_captures[0],"test")
+            const before=dialog.options.selected_captures[0]
+            const viewer=findChild(dialog,"sharedMeasurementViewer")
+            viewer.selectedIndex=0;viewer.reset()
+            compare(dialog.options.selected_captures[0],before)
+            dialog.chooseMode("hold")
+            dialog.toggleCapture("test",false)
+            compare(dialog.options.selected_captures.length,0)
+            compare(findChild(dialog,"measurementApply").enabled,false)
+            mouseClick(findChild(dialog,"fitCaptureSelection"))
+            compare(dialog.options.selected_captures.length,1)
+            closeWithX(dialog)
+            verify(measurementBackend.acceptedRx)
+            measurementBackend.acceptedRx=false
         }
         function test_sections_data() {
             return [
@@ -1017,7 +1133,7 @@ Pane {
                 fileBackend.openResponse = response
                 mouseClick(configure)
                 tryCompare(entry, "opened", true)
-                mouseClick(findChild(entry, "openWorkbenchChoice"))
+                mouseClick(findChild(entry, "openWorkbenchChoice"));workbench.pollOpen()
                 tryCompare(entry, "visible", false)
                 compare(workbench.hasProject, false)
                 compare(settings.visible, false)
@@ -1035,7 +1151,7 @@ Pane {
                 receiver:runBackend.acceptedRunOptions, verified:false, dark:true}
             mouseClick(configure)
             tryCompare(entry, "opened", true)
-            mouseClick(findChild(entry, "openWorkbenchChoice"))
+            mouseClick(findChild(entry, "openWorkbenchChoice"));workbench.pollOpen()
             tryCompare(settings, "opened", true)
             compare(workbench.hasProject, true)
             closeWithX(settings)
@@ -1053,13 +1169,13 @@ Pane {
             workbench.hasProject=false
             compare(findChild(workbench,"configureWorkbench").text,"Configure WorkBench")
             compare(findChild(workbench,"configureWorkbench").enabled,true)
-            fileBackend.openResponse={cancelled:true};workbench.openProject()
+            fileBackend.openResponse={cancelled:true};workbench.openProject();workbench.pollOpen()
             compare(workbench.hasProject,false)
             workbench.saveProject(false);compare(workbench.hasProject,false)
             fileBackend.saveResponse={saved:true,path:"created.merlin.json"};workbench.saveProject(false)
             compare(workbench.hasProject,true);keyClick(Qt.Key_Escape)
             workbench.hasProject=false;fileBackend.saveResponse={cancelled:true}
-            fileBackend.openResponse={error:"Invalid WB"};workbench.openProject()
+            fileBackend.openResponse={error:"Invalid WB"};workbench.openProject();workbench.pollOpen()
             compare(workbench.hasProject,false)
             keyClick(Qt.Key_Escape)
             findChild(appMenu,"newWorkbench").action.trigger()
@@ -1073,6 +1189,7 @@ Pane {
             mouseClick(findChild(dialog,"wbProfilesTab"));wait(50)
             compare(dialog.selectedIds.join(","),"0")
             mouseClick(findChild(dialog,"wbSelectAllProfiles"))
+            waitForRendering(dialog.contentItem)
             compare(dialog.selectedIds.join(","),"0,1")
             mouseClick(findChild(dialog,"wbProfileChecks").itemAt(0))
             compare(dialog.selectedIds.join(","),"1")
@@ -1091,7 +1208,7 @@ Pane {
             compare(findChild(workbench,"configureWorkbench").enabled,false)
             runBackend.busy=false;workbench.pollRun()
             const state={opened:true,path:"test.merlin.json",transmission:JSON.parse(backend.current()),receiver:runBackend.acceptedRunOptions,verified:false,dark:true}
-            workbench.hasProject=false;fileBackend.openResponse=state;workbench.openProject()
+            workbench.hasProject=false;fileBackend.openResponse=state;workbench.openProject();workbench.pollOpen()
             compare(workbench.hasProject,true)
             compare(findChild(workbench,"configureWorkbench").enabled,true)
             fileBackend.openResponse={cancelled:true}

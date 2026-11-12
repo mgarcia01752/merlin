@@ -1,5 +1,8 @@
 # Feature development records
 
+- [Responsive workbench loading](responsive-workbench-open/design.md)
+- [RxMER capture selection and CWB capacity](rxmer-selection/design.md)
+
 - [Theme-aware README workbench diagram](readme-workbench-diagram/design.md)
 
 - [Transmitter workbench (UI-TX-03)](transmitter-workbench/design.md)

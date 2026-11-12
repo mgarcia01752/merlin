@@ -156,6 +156,13 @@ impl bridge::TransmitterAnalyzer {
     /// # Returns
     /// Status JSON; input changes cancel old jobs and invalidate stale samples.
     pub fn configure(mut self: core::pin::Pin<&mut Self>, settings: &QString) -> QString {
+        if let Some(model) =
+            crate::workbench::project_load::take(|prepared| prepared.transmitter.take())
+        {
+            self.as_mut().rust_mut().model.cancel();
+            self.as_mut().rust_mut().model = model;
+            return QString::from(self.rust().model.status().to_string());
+        }
         let inputs = crate::workbench::session::snapshot();
         let model = &mut self.as_mut().rust_mut().model;
         model.configure(&settings.to_string(), inputs);

@@ -47,7 +47,7 @@ ApplicationWindow {
                 id: topMenu
                 Layout.fillWidth: true
                 theme: theme
-                fileActionsEnabled: !workbench.runState.busy && !updates.state.installing
+                fileActionsEnabled: !workbench.runState.busy && !workbench.loadingProject && !updates.state.installing
                 onNewRequested: workbench.requestNewProject()
                 onOpenRequested: workbench.openProject()
                 onSaveRequested: function(saveAs) { workbench.saveProject(saveAs) }
@@ -61,7 +61,7 @@ ApplicationWindow {
                 Layout.preferredWidth: 80; Layout.preferredHeight: 28
                 Layout.rightMargin: 12
                 theme: theme; backend: updateInfo
-                canUpdate: !workbench.runState.busy
+                canUpdate: !workbench.runState.busy && !workbench.loadingProject
                 prepareUpdate: function() { return workbench.saveUpdateRecovery() }
                 startupCheck: Qt.application.arguments.indexOf("--check-updates")<0
             }
