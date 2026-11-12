@@ -19,14 +19,14 @@ Canvas {
     onVisibleChanged: if (visible) requestPaint()
     Connections { target:plot.theme; function onDarkChanged() { plot.requestPaint() } }
     Accessible.role: Accessible.Graphic
-    Accessible.name: detail ? "Adjacent symbol overlap" : "Two complete transmit windows"
+    Accessible.name: detail ? "Adjacent symbol overlap and usable guard" : "Two complete transmit windows"
     onPaint: {
         const context=getContext("2d");context.reset()
         const left=miniature ? 24 : 46, top=miniature ? 8 : 24
         const w=width-left-16,h=height-top-(miniature ? 24 : 46)
         if (w<=0 || h<=0 || !(graph.points || []).length) return
         for (const band of graph.bands || []) {
-            context.fillStyle=band.symbol===0 ? theme.accent : theme.statusAttention
+            context.fillStyle=band.kind==="guard" ? theme.accent : theme.statusAttention
             context.globalAlpha=.12
             context.fillRect(left+band.x*w,top,(band.end_x-band.x)*w,h)
         }
@@ -64,12 +64,27 @@ Canvas {
         if (!miniature) {
             context.textAlign="center";context.fillText("Time from symbol 1 start (µs)",left+w/2,height-5)
             context.textAlign="left";context.fillText("Window weight",left,12)
+            if (detail) {
+                for (const marker of graph.markers || []) {
+                    const x=left+marker.x*w
+                    context.textAlign="left"
+                    if (marker.label==="CP end / FFT start") {
+                        context.textAlign=marker.x>.65 ? "right" : "left"
+                        const labelX=x+(marker.x>.65 ? -5 : 5)
+                        context.fillText(marker.label,labelX,top+h*.32)
+                        context.fillText(marker.time_label,labelX,top+h*.32+15)
+                    }
+                }
+            }
             for (const label of graph.fft_labels || []) {
                 context.textAlign="center";context.fillText(label.text,left+label.x*w,top+h*.45)
             }
             for (const band of graph.bands || []) {
                 if ((band.end_x-band.x)*w>28) {
-                    context.textAlign="center";context.fillText("CP",left+(band.x+band.end_x)*w/2,top+h*.8)
+                    const label=band.label || ""
+                    if (context.measureText(label).width+8<(band.end_x-band.x)*w) {
+                        context.textAlign="center";context.fillText(label,left+(band.x+band.end_x)*w/2,top+h*.8)
+                    }
                 }
             }
         }

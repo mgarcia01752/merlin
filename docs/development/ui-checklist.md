@@ -408,7 +408,8 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
   [Design](features/responsive-workbench-open/design.md#ui-wb-open-04--quiet-loading-and-command-line-workbenches).
 
 - [x] **UI-SA-TIMING-02** Expand the compact timing plot into a resizable full
-  two-symbol and overlap view. Use actual core window weights, stable time axes,
+  two-symbol and overlap view. Distinguish overlap from usable guard and label
+  CP end / FFT start. Use actual core window weights, stable time axes,
   explicit result/current-configuration source and accepted-setting refresh.
   Verified both FFTs, all CP/RP pairs, keyboard/resize and native dark/light UI;
   61 Rust tests, 54 QML checks, Clippy and native build pass.

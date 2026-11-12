@@ -2064,7 +2064,8 @@ The shared SA timing panel opens a resizable Symbol Timing popup. A bounded
 Rust projection in `instruments/spectrum/symbol_timing.rs` reads the actual core
 TransmitWindow coefficients for two adjacent symbols and their overlap; QML
 only renders coordinates, labels and shading. The overview domain is fixed per
-FFT size, and overlap detail uses a fixed sample span relative to the second
+FFT size. Detail separates overlap from usable flat guard and labels CP end /
+FFT start; its fixed sample span includes the maximum CP relative to the second
 symbol start. Tapers retain exact half-sample weights and zero outside support.
 
 The transmitter analyzer retains accepted OCD geometry independently of sample

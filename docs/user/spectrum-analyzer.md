@@ -104,8 +104,10 @@ See [workbench readiness](workbench.md), [PRBS-TX](source-input.md) and
 Below the PSD, **Symbol Timing · Two Symbols** shows two complete transmit
 windows on one real time axis. Click the graph, or focus it and press Space or
 Enter, to open **Symbol Timing**. Drag the lower-right corner to resize the
-popup. It contains a full-duration view and an enlarged overlap view, with CP
-regions shaded. Symbol 1 is solid, Symbol 2 dashed, and the overlap sum dotted.
+popup. It contains a full-duration view and an enlarged CP view. Amber marks
+the overlap; teal marks the remaining usable flat guard. The labeled CP end
+is the FFT start, not the edge of the plot. Symbol 1 is solid, Symbol 2 dashed,
+and the overlap sum dotted.
 Hover for the displayed time and actual window weights. These are dimensionless
 weights, not the time-domain I/Q signal amplitude.
 
@@ -116,7 +118,10 @@ can be inspected without running payload simulation. Draft edits do not change
 the graph. The full time scale stays fixed for each FFT size; CP changes move
 symbol starts and roll-off changes alter the taper/overlap width. The detail
 view keeps a fixed span relative to the second-symbol start so roll-off changes
-remain visible. CP minus roll-off is the flat guard interval.
+remain visible. It includes the full CP and some FFT time after it. CP minus
+roll-off is the flat guard interval. With an 8192-sample FFT and CP512/RP128,
+the second symbol starts at 42.500 µs, overlap ends at 43.125 µs and the CP ends at 45.000 µs.
+The usable guard is therefore 1.875 µs; useful FFT time begins at 45.000 µs.
 
 ![Expanded symbol timing and overlap](../images/workbench/symbol-timing-expanded-dark.png)
 

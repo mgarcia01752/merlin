@@ -28,13 +28,13 @@ pub(crate) fn project(geometry: &WaveformGeometry) -> Value {
     let maximum_roll = usize::from(*ROLL_OFF_SAMPLES.last().unwrap());
     let margin = maximum_roll / 2;
     let detail_start = stride.saturating_sub(margin);
-    let detail_end = stride + maximum_roll + margin;
+    let detail_end = stride + usize::from(*CYCLIC_PREFIX_SAMPLES.last().unwrap()) + margin;
     json!({
         "prefix_us":microseconds(prefix),"roll_us":microseconds(roll),
         "fft_us":microseconds(geometry.fft_samples()),"symbol_us":microseconds(stride),
         "overview":plot(&window, geometry, 0, full_end),
         "detail":plot(&window, geometry, detail_start, detail_end),
-        "overlap_label":format!("Overlap {:.3} µs · {:.3}–{:.3} µs",microseconds(roll),microseconds(stride),microseconds(stride+roll)),
+        "overlap_label":format!("Overlap {:.3} µs · Usable guard {:.3} µs · CP end / FFT start {:.3} µs",microseconds(roll),microseconds(prefix-roll),microseconds(stride+prefix)),
         "origin_note":"Window weights, not RF signal amplitude."
     })
 }
@@ -93,18 +93,37 @@ fn plot(window: &TransmitWindow, geometry: &WaveformGeometry, start: usize, end:
         .collect::<Vec<_>>();
     let bands = [0, stride]
         .into_iter()
-        .enumerate()
-        .filter_map(|(symbol, origin)| {
-            let left = origin.max(start);
-            let right = (origin + prefix).min(end);
-            (right > left)
-                .then(|| json!({"x":coordinate(left),"end_x":coordinate(right),"symbol":symbol}))
+        .flat_map(|origin| {
+            [
+                (origin, origin + roll, "overlap", "Overlap"),
+                (origin + roll, origin + prefix, "guard", "Usable guard"),
+            ]
+            .into_iter()
+            .filter_map(move |(left, right, kind, label)| {
+                let left = left.max(start);
+                let right = right.min(end);
+                (right > left).then(|| {
+                    json!({"x":coordinate(left),"end_x":coordinate(right),
+                        "kind":kind,"label":label})
+                })
+            })
         })
         .collect::<Vec<_>>();
-    let markers = [prefix, stride, stride + roll, stride + prefix]
+    let markers = [0, stride]
         .into_iter()
-        .filter(|index| *index >= start && *index <= end)
-        .map(|index| json!({"x":coordinate(index)}))
+        .flat_map(|origin| {
+            [
+                (origin, "CP start"),
+                (origin + roll, "Overlap end"),
+                (origin + prefix, "CP end / FFT start"),
+            ]
+            .into_iter()
+            .filter(|(index, _)| *index >= start && *index <= end)
+            .map(|(index, label)| {
+                json!({"x":coordinate(index),"label":label,
+                    "time_label":format!("{:.3} µs",microseconds(index))})
+            })
+        })
         .collect::<Vec<_>>();
     let fft_labels = [0,stride].into_iter().filter_map(|origin| {
         let left = origin+prefix;
@@ -136,6 +155,25 @@ mod tests {
                     let geometry = WaveformGeometry::new(&settings).unwrap();
                     let report = project(&geometry);
                     let overview = &report["overview"];
+                    let detail = &report["detail"];
+                    let cp_end_us = microseconds(geometry.stride_samples() + usize::from(prefix));
+                    assert!(detail["end_us"].as_f64().unwrap() > cp_end_us);
+                    let guard = detail["bands"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .find(|band| band["kind"] == "guard")
+                        .unwrap();
+                    let span =
+                        detail["end_us"].as_f64().unwrap() - detail["start_us"].as_f64().unwrap();
+                    let guard_us =
+                        (guard["end_x"].as_f64().unwrap() - guard["x"].as_f64().unwrap()) * span;
+                    assert!((guard_us - f64::from(prefix - roll) / 204.8).abs() < 1e-12);
+                    assert!(detail["markers"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .any(|marker| marker["label"] == "CP end / FFT start"));
                     assert!(overview["points"].as_array().unwrap().len() <= 550);
                     assert!(
                         overview["end_us"].as_f64().unwrap()

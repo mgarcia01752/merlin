@@ -14,8 +14,8 @@ edits do not apply. Applying settings invalidates old results and refreshes the
 current timing projection without requiring payload simulation. VF changes only
 the cable-distance estimate. Keep timing and cable configuration read-only here.
 
-Return bounded overview/detail curves, labels, ticks and CP bands; no changes to
-simulation, core public APIs or WB JSON. Test all supported CP/RP pairs and both
+Return bounded overview/detail curves, labels, ticks and overlap/usable-guard
+bands; no changes to simulation, core public APIs or WB JSON. Test all supported CP/RP pairs and both
 FFTs, overlap complementarity from independent expectations, actual core sample
 identity, domains, configuration refresh, origin labels and VF invariance. Check
 QML navigation, keyboard, resize bounds and empty states, then native dark/light
@@ -27,7 +27,10 @@ The existing compact plot is now a full two-window overview and opens the
 resizable popup by click, Space or Enter. Separate graph and popup QML files
 share the same bounded Rust data. The overview domain is 100 µs for 8192 FFT
 samples and 60 µs for 4096; changing CP/RP does not rescale it. Overlap detail
-uses a 512-sample span relative to the second-symbol start.
+uses a fixed 1280-sample span relative to the second-symbol start, including
+the full maximum CP and a margin after FFT start. Amber marks overlap, teal
+marks usable flat guard (CP minus roll-off), and CP end / FFT start is labeled.
+The plot edge never represents an implicit CP boundary.
 
 ```mermaid
 flowchart LR

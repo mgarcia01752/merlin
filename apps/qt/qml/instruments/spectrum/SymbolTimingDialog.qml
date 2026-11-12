@@ -37,7 +37,7 @@ WorkbenchDialog {
         }
         Label {text:"Full duration · shared time scale";color:dialog.theme.text;font.bold:true}
         SymbolTimingPlot {objectName:"symbolTimingOverview";theme:dialog.theme;graph:dialog.windowData.overview || ({});Layout.fillWidth:true;Layout.fillHeight:true;Layout.minimumHeight:100}
-        Label {text:"Overlap · enlarged";color:dialog.theme.text;font.bold:true}
+        Label {text:"CP and usable guard · enlarged";color:dialog.theme.text;font.bold:true}
         SymbolTimingPlot {objectName:"symbolTimingOverlap";theme:dialog.theme;graph:dialog.windowData.detail || ({});detail:true;Layout.fillWidth:true;Layout.fillHeight:true;Layout.minimumHeight:100}
         Label {text:dialog.windowData.overlap_label || "";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap}
     }
