@@ -134,8 +134,8 @@ Apply validates the entire draft before replacing accepted state. Invalid edits
 and Cancel preserve accepted inputs. Replacing DPD or OCD revalidates dependent
 configuration; old incompatible inputs report an error instead of silently being
 realigned. Channel Simulator is green when both accepted RxMER and channel
-response and additional-loss configurations are valid. Opening Channel Model shows their summary
-and links back to the editors.
+response and additional-loss configurations are valid. Channel Model previews the
+accepted response; the existing RxMER and DS Channel Estimate blocks open their editors.
 
 
 Green means **configured**, not a running simulation. This task provides shared
@@ -189,10 +189,15 @@ There is no separate SA block. Opening an instrument does not run the simulation
 use the main workbench Start/Stop/Pause controls. After changing accepted settings,
 run again to populate current observations.
 
-Channel Model shows input summaries and opens the separate
-[Additional Tilt / Cable Loss editor](impairments/additional-loss.md). The default
-is Off. Manual tilt or full additional cable loss composes with the supplied
-response, preserving the imported files. These settings save in the WB JSON.
+Channel Model shows graphic **Tilt / Cable Loss** and **Echo / Delay** controls
+feeding **Combined Channel Response**. Click either card to edit; click the graph
+for a larger view. The graph uses accepted settings and works before Start.
+RxMER and DS Channel Estimate retain their existing workbench blocks; this window
+has no duplicate measurement controls. See [combined models](impairments/waveform-filter.md#combining-loss-and-echoes).
+
+Additional loss defaults to Off and saves with the WB. Manual tilt or full cable
+loss composes with the supplied response or with synthetic echoes, preserving
+all original files.
 
 ![Channel Simulator staging](../images/workbench/channel-inputs-ready-dark.png)
 
@@ -205,9 +210,9 @@ Click the **amplifier triangle** to set gain, or the **variable attenuator** to
 set receiver-input attenuation. Each opens its own editor. **Apply** accepts;
 **X / Close** discards changes. Defaults are **0 dB gain**, **0 dB attenuation**
 and **Tilt Off**, so no initial setup is required. Tilt and additional cable loss
-remain under **Channel Model → Additional Loss**.
+remain under **Channel Model → Tilt / Cable Loss**.
 
-**Channel Model → Waveform Channel** selects the default per-subcarrier response,
+**Channel Model → Echo / Delay** selects the default per-subcarrier response,
 synthetic integer-delay echoes or a bounded continuous FIR reconstructed from H.
 This is independent of MCE in Receiver Configuration. See the
 [waveform-filter guide](impairments/waveform-filter.md) for fit limits and supported combinations.

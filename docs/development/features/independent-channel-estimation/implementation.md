@@ -44,8 +44,8 @@ nulls do not invalidate reference or legacy-pilot correction on usable carriers.
 CM reconstruction uses explicit unity extension outside active simulation bins,
 causal shift and hard truncation. It checks absolute complex RMS/maximum error on
 active bins and reports discarded energy. Missing active observations still reject.
-Synthetic paths are an exclusive response source; imported H and additional tilt
-cannot be silently composed into them. Scalar power conditioning remains explicit.
+At initial implementation, synthetic paths rejected imported H and additional tilt.
+The later composition extension described below permits diagonal tilt/cable loss. Scalar power conditioning remains explicit.
 Response-epoch changes reject for continuous filters; static-H RxMER residual
 playback can continue without resetting filter/noise state.
 
@@ -97,3 +97,5 @@ noise estimation, adaptive time-domain equalization and fully blind acquisition
 remain separate work. Successful closed-loop tests do not establish those features.
 See the [receiver guide](../../../user/receiver-estimation/mce.md) and
 [filter guide](../../../user/impairments/waveform-filter.md) for current use/limits.
+
+The later [channel composition change](../channel-workbench/design.md#ui-ch-02--wave-ch-compose-01-graphic-model-controls-and-composition) permits diagonal tilt/cable loss before synthetic echoes. Imported H and echo paths remain alternative response sources.

@@ -18,7 +18,14 @@ use serde_json::{json, Value};
 fn empty(reason: &str) -> Value {
     json!({"available":false,"reason":reason,"error":reason,"points":[],"x_ticks":[],"y_ticks":[]})
 }
-fn curve(x: &[f64], values: &[Option<f64>], axis: &str, coordinate: &str) -> Value {
+/// Projects an ordered response into at most1024 min/max groups with gaps.
+/// # Arguments
+/// * `x` - Same-length increasing physical coordinates.
+/// * `values` - Optional numerical readings; None preserves an excluded gap.
+/// * `axis`, `coordinate` - Display labels and units for readings and coordinates.
+/// # Returns
+/// Small chart JSON with normalized points and independent physical tick labels.
+pub(crate) fn curve(x: &[f64], values: &[Option<f64>], axis: &str, coordinate: &str) -> Value {
     let minimum = values
         .iter()
         .flatten()
@@ -135,24 +142,16 @@ pub(crate) fn response(document: &str) -> Result<Value, String> {
         .map(|(symbol, _)| *symbol)
         .collect();
     let coefficients = if query.source == 0 {
-        let plan = settings
-            .impairments
-            .plan(&settings.transmission, &layout, settings.llr_variance)
-            .map_err(|e| e.to_string())?;
-        let active: Vec<_> = layout
-            .static_roles()
-            .iter()
-            .map(|role| *role != PhysicalCarrierRole::Excluded)
-            .collect();
-        settings
-            .channel_filter
-            .prepare(
-                settings.transmission.subcarrier_spacing,
-                &plan.response,
-                &active,
-            )
-            .map_err(|error| error.to_string())?
-            .map_or(plan.response, |filter| filter.response().to_vec())
+        docsis_ofdm_fec::signal_processing::channel::composition::prepare_channel(
+            &settings.transmission,
+            &layout,
+            &settings.impairments,
+            settings.llr_variance,
+            &settings.channel_filter,
+        )
+        .map_err(|error| error.to_string())?
+        .plan
+        .response
     } else {
         match result.observations.responses.get(query.snapshot) {
             Some((_, response)) => response.clone(),

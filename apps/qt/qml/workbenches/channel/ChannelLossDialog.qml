@@ -68,7 +68,7 @@ WorkbenchDialog {
         }
         RowLayout {
             Label { text:"━ Additional Gain";color:dialog.theme.accent }
-            Label { text:"━ Effective Response";color:dialog.theme.qamNcp }
+            Label { text:"━ Supplied H + Loss";color:dialog.theme.qamNcp }
         }
         Canvas {
             id:plot;objectName:"channelLossPlot";Layout.fillWidth:true;Layout.fillHeight:true

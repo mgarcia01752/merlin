@@ -227,6 +227,7 @@ Pane {
         function data() { return {diagnostic:diagnostic,timing:timing,completed_symbols:23,profile_id:3,profile_index:4,profile_count:4,receiver_status:configured ? "complete":"attention",verify_status:verified ? "complete":"attention",reason:"Configure accepted receiver and independent source comparison before running.",busy:busy,paused:paused,can_start:configured&&verified&&!busy,has_result:!!lastResult,result:lastResult,result_token:lastResult ? "1":"0",available_profile_ids:profileBackend.acceptedId>=0 ? [0,1]:[],applied_profile_id:profileBackend.acceptedId,options:acceptedRunOptions,accepted_options:configured ? acceptedRunOptions:null,verified:verified} }
         function configure(settings) { return JSON.stringify(data()) }
         function poll() { return JSON.stringify(data()) }
+        function channel_preview(settings){return JSON.stringify({available:true,points:[{x:0,y:0.5,readout:"Test low gain"},{x:1,y:0.6,readout:"Test high gain"}],x_ticks:[],y_ticks:[],axis_label:"Gain · dB",frequency_label:"Frequency (MHz)"})}
         function admission_help() { return "null" }
         function apply(options,settings) { acceptedRunOptions=JSON.parse(options);configured=true;return "" }
         function verify() { verified=true }
@@ -1630,14 +1631,30 @@ Pane {
             compare(findChild(dialog.outputQamPopup,"receiverQamView").visible,false)
             closeWithX(dialog.outputQamPopup)
             mouseClick(findChild(dialog,"channelModel"));tryCompare(dialog.modelPopup,"opened",true)
-            mouseClick(findChild(dialog.modelPopup,"channelConfigureLoss"));tryCompare(dialog.lossPopup,"opened",true)
+            const lossCard=findChild(dialog.modelPopup,"channelConfigureLoss")
+            const echoCard=findChild(dialog.modelPopup,"channelConfigureFilter")
+            waitForRendering(lossCard)
+            compare(lossCard.text,"Tilt / Cable Loss")
+            compare(echoCard.text,"Echo / Delay")
+            verify(Math.abs(lossCard.width-echoCard.width)<2)
+            compare(lossCard.height,echoCard.height)
+            verify(lossCard.height>=100)
+            const combined=findChild(dialog.modelPopup,"channelCombinedResponse")
+            mouseClick(combined);tryCompare(dialog.modelPopup.responsePopup,"opened",true)
+            compare(dialog.modelPopup.responsePopup.viewport.points.length,2)
+            closeWithX(dialog.modelPopup.responsePopup)
+            echoCard.forceActiveFocus();keyClick(Qt.Key_Space)
+            tryCompare(dialog.filterPopup,"opened",true)
+            compare(dialog.filterPopup.title,"Echo / Delay")
+            closeWithX(dialog.filterPopup)
+            waitForRendering(findChild(dialog.modelPopup,"channelConfigureLoss"));mouseClick(findChild(dialog.modelPopup,"channelConfigureLoss"));tryCompare(dialog.lossPopup,"opened",true)
             const mode=findChild(dialog.lossPopup,"channelLossMode")
             mode.currentIndex=2;mode.activated(2)
             const length=findChild(dialog.lossPopup,"channelCableLength")
             length.text="100";dialog.lossPopup.refresh()
             closeWithX(dialog.lossPopup)
             compare(measurementBackend.loss.mode,"off")
-            mouseClick(findChild(dialog.modelPopup,"channelConfigureLoss"));tryCompare(dialog.lossPopup,"opened",true)
+            findChild(dialog.modelPopup,"channelConfigureLoss").forceActiveFocus();keyClick(Qt.Key_Space);tryCompare(dialog.lossPopup,"opened",true)
             compare(mode.currentIndex,0)
             mode.currentIndex=2;mode.activated(2);length.text="100";dialog.lossPopup.refresh()
             mouseClick(findChild(dialog.lossPopup,"channelLossApply"));tryCompare(dialog.lossPopup,"visible",false)

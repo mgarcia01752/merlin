@@ -98,7 +98,7 @@ proof of successful payload recovery.
 
 ![Actual applied H and receiver H-hat comparison](../../images/workbench/mce-response-comparison-dark.png)
 
-[Waveform Channel](../impairments/waveform-filter.md) independently chooses the
+[Echo / Delay](../impairments/waveform-filter.md) independently chooses the
 existing per-subcarrier response or a continuous filter. MCE does not change the
 applied response, channel model, seed or noise realization. Echoes beyond the
 usable guard can cause interference that one-tap equalization cannot remove.

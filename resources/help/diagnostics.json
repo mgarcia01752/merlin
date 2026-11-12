@@ -52,7 +52,7 @@
       "faq_anchor": "waveform-channel-settings-are-unsupported",
       "summary": "The selected waveform filter does not meet the supported bounds or response-source policy.",
       "context": "",
-      "suggestion": "Use at most 2048 samples of memory. Synthetic echoes require Flat / unity input with additional loss Off. Use the per-subcarrier model for unsupported combinations.",
+      "suggestion": "Use at most 2048 samples of memory. Synthetic echoes require Flat / unity input; Tilt / Cable Loss can be applied before the echo filter. Use the per-subcarrier model for unsupported combinations.",
       "over_limit_suggestion": "",
       "note": "Continuous filtering preserves history between symbols. A CM capture does not uniquely establish absolute propagation delay."
     },
@@ -63,7 +63,7 @@
       "faq_anchor": "cm-waveform-filter-does-not-match-the-capture",
       "summary": "The finite causal filter exceeds the declared complex-response approximation errors.",
       "context": "",
-      "suggestion": "Keep the per-subcarrier model, or review maximum delay and causal shift in Waveform Channel. Do not increase fit tolerances simply to hide a poor reconstruction.",
+      "suggestion": "Keep the per-subcarrier model, or review maximum delay and causal shift in Echo / Delay. Do not increase fit tolerances simply to hide a poor reconstruction.",
       "over_limit_suggestion": "",
       "note": "Continuous filtering preserves history between symbols. A CM capture does not uniquely establish absolute propagation delay."
     }

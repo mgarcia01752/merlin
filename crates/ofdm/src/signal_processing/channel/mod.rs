@@ -7,6 +7,8 @@ pub mod additional_loss;
 #[cfg(feature = "simulation")]
 pub mod awgn;
 #[cfg(feature = "simulation")]
+pub mod composition;
+#[cfg(feature = "simulation")]
 pub mod filter;
 #[cfg(feature = "simulation")]
 pub mod impairments;

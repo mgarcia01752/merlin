@@ -68,14 +68,14 @@ See [MCE receiver behavior](receiver-estimation/mce.md) and
 
 ## Waveform channel settings are unsupported
 
-The selected waveform filter does not meet the supported bounds or response-source policy. Use at most 2048 samples of memory. Synthetic echoes require Flat / unity input with additional loss Off. Use the per-subcarrier model for unsupported combinations.
+The selected waveform filter does not meet the supported bounds or response-source policy. Use at most 2048 samples of memory. Synthetic echoes require Flat / unity input; Tilt / Cable Loss can be applied before the echo filter. Use the per-subcarrier model for unsupported combinations.
 
 See [MCE receiver behavior](receiver-estimation/mce.md) and
 [waveform channel filtering](impairments/waveform-filter.md).
 
 ## CM waveform filter does not match the capture
 
-The finite causal filter exceeds the declared complex-response approximation errors. Keep the per-subcarrier model, or review maximum delay and causal shift in Waveform Channel. Do not increase fit tolerances simply to hide a poor reconstruction.
+The finite causal filter exceeds the declared complex-response approximation errors. Keep the per-subcarrier model, or review maximum delay and causal shift in Echo / Delay. Do not increase fit tolerances simply to hide a poor reconstruction.
 
 See [MCE receiver behavior](receiver-estimation/mce.md) and
 [waveform channel filtering](impairments/waveform-filter.md).

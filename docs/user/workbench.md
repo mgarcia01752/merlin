@@ -268,7 +268,8 @@ The [run/save guide](closed-loop-workbench.md#save-and-reopen) describes stored
 settings, embedded PNM files, limits and atomic replacement behavior.
 
 Channel Simulator provides staged input/model/output navigation and a Spectrum/QAM
-chooser at each signal boundary. See [channel inputs and instruments](channel-measurements.md)
+chooser at each signal boundary. See [channel inputs and instruments](channel-measurements.md),
+[combined loss/echo preview](impairments/waveform-filter.md#combining-loss-and-echoes)
 and [additional tilt/cable loss](impairments/additional-loss.md).
 
 Desktop setup and **About → About MERLIN → Check For Updates**: [Ubuntu 22.04 desktop guide](install/ubuntu-desktop.md).

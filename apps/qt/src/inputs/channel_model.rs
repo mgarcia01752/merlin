@@ -168,6 +168,76 @@ pub(crate) fn preview_inputs(
     )
 }
 
+/// Previews accepted total gain without starting a run or reading retained results.
+/// # Arguments
+/// * `settings` - Accepted OCD grid and numerology.
+/// * `inputs` - Frozen accepted DPD, response, loss and power settings.
+/// * `filter` - Accepted continuous-filter policy, independently of receiver mode.
+/// # Returns
+/// At most1024 min/max groups, physical frequency/gain axes and known-code help.
+/// # Errors
+/// Rejects missing DPD, invalid models or unsupported composition without stale points.
+pub(crate) fn combined_preview(
+    settings: &TransmissionSettings,
+    inputs: &crate::workbench::session::Inputs,
+    filter: &docsis_ofdm_fec::signal_processing::channel::filter::ChannelFilterSettings,
+) -> Result<Value, crate::help::AdmissionError> {
+    use docsis_ofdm_fec::signal_processing::channel::composition::prepare_channel;
+    let profile = inputs
+        .profile
+        .as_ref()
+        .ok_or("Apply DPD to preview the channel response.")?;
+    let layout = captured_layout(profile, settings)
+        .and_then(|config| CarrierLayout::new(settings, &config))
+        .map_err(crate::help::AdmissionError::classified)?;
+    let prepared = prepare_channel(
+        settings,
+        &layout,
+        &ChannelImpairments {
+            response: inputs.response.clone(),
+            additional_loss: inputs.additional_loss.clone(),
+            power: inputs.power.clone(),
+            ..Default::default()
+        },
+        1.0,
+        filter,
+    )
+    .map_err(crate::help::AdmissionError::classified)?;
+    let active: Vec<_> = layout
+        .static_roles()
+        .iter()
+        .enumerate()
+        .filter(|(_, role)| **role != PhysicalCarrierRole::Excluded)
+        .map(|(bin, _)| bin)
+        .collect();
+    let low = *active.first().ok_or("No active channel carriers.")?;
+    let high = *active.last().ok_or("No active channel carriers.")?;
+    let mut frequency = Vec::new();
+    let mut gain = Vec::new();
+    for bin in low..=high {
+        frequency.push(
+            f64::from(
+                layout
+                    .frequency_hz(bin as u16)
+                    .ok_or("Missing channel frequency.")?,
+            ) / 1e6,
+        );
+        let iq = prepared.plan.response[bin];
+        gain.push(
+            (layout.static_roles()[bin] != PhysicalCarrierRole::Excluded)
+                .then(|| 20.0 * iq[0].hypot(iq[1]).log10()),
+        );
+    }
+    let mut view = crate::instruments::receiver::diagnostics::curve(
+        &frequency,
+        &gain,
+        "Gain · dB",
+        "Frequency (MHz)",
+    );
+    view["summary"] = json!("Accepted channel response · before receiver correction");
+    Ok(view)
+}
+
 /// Restores optional scalar conditioning without resetting legacy additional loss.
 /// # Arguments
 /// * `value` - Versioned channel_power section or null from a legacy WB.
@@ -209,6 +279,51 @@ pub(crate) fn saved_power(
 mod tests {
     use super::*;
     use docsis_ofdm_fec::signal_processing::channel::additional_loss::{CableModel, LengthUnit};
+    #[test]
+    fn combined_preview_is_bounded_and_preserves_admission_diagnostics() {
+        use docsis_ofdm_fec::signal_processing::channel::filter::{
+            ChannelFilterSettings, EchoPath,
+        };
+        let project: crate::workbench::project_file::Project = serde_json::from_slice(
+            include_bytes!("../../../../examples/workbench/single/workbench.merlin.json"),
+        )
+        .unwrap();
+        let original = project.validate().unwrap();
+        let mut inputs = original.clone();
+        inputs.response = None;
+        inputs.additional_loss = AdditionalLoss::Manual { tilt_db: -6.0 };
+        let filter = ChannelFilterSettings::Echoes {
+            paths: vec![
+                EchoPath {
+                    delay_samples: 0,
+                    gain: [1.0, 0.0],
+                },
+                EchoPath {
+                    delay_samples: 8,
+                    gain: [0.05, 0.02],
+                },
+            ],
+        };
+        let preview = combined_preview(&project.transmission, &inputs, &filter).unwrap();
+        assert_eq!(preview["available"], true);
+        assert_eq!(preview["axis_label"], "Gain · dB");
+        assert_eq!(preview["frequency_label"], "Frequency (MHz)");
+        let points = preview["points"].as_array().unwrap();
+        assert!(!points.is_empty() && points.len() <= 1024);
+        assert!(points
+            .iter()
+            .all(|point| point["y"].as_f64().is_some_and(f64::is_finite)));
+        assert!(original.response.is_some());
+        let error = combined_preview(&project.transmission, &original, &filter).unwrap_err();
+        assert!(error.diagnostic.is_some());
+        assert!(error
+            .message
+            .contains("Synthetic echoes require Flat / unity"));
+        inputs.profile = None;
+        let error = combined_preview(&project.transmission, &inputs, &filter).unwrap_err();
+        assert!(error.message.contains("Apply DPD"));
+        assert!(error.diagnostic.is_none());
+    }
     #[test]
     fn saved_models_preserve_units_and_legacy_off_without_accepting_version_drift() {
         assert_eq!(restore(&Value::Null).unwrap(), AdditionalLoss::Off);

@@ -143,26 +143,12 @@ impl ChannelRunSettings {
         if let Some(selection) = &self.constellation {
             selection.validate(&layout)?;
         }
-        let plan = self
-            .impairments
-            .plan(&self.transmission, &layout, self.llr_variance)?;
-        if matches!(
-            self.channel_filter,
-            crate::signal_processing::channel::filter::ChannelFilterSettings::Echoes { .. }
-        ) && (self.impairments.response.is_some()
-            || self.impairments.additional_loss != Default::default())
-        {
-            return Err(SimulationError::new("ChannelFilterInvalid","Synthetic echoes require unity input with no imported response or additional tilt."));
-        }
-        let active: Vec<_> = layout
-            .static_roles()
-            .iter()
-            .map(|role| *role != crate::transmission::layout::PhysicalCarrierRole::Excluded)
-            .collect();
-        self.channel_filter.prepare(
-            self.transmission.subcarrier_spacing,
-            &plan.response,
-            &active,
+        crate::signal_processing::channel::composition::prepare_channel(
+            &self.transmission,
+            &layout,
+            &self.impairments,
+            self.llr_variance,
+            &self.channel_filter,
         )?;
         if let Some(playback) = &self.playback {
             if !self.impairment_timeline.is_empty() {

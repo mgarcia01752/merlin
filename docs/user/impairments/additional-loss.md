@@ -1,6 +1,6 @@
 # Additional tilt and cable loss
 
-Open **Channel Simulator → Channel Model → Additional Tilt / Cable Loss…**.
+Open **Channel Simulator → Channel Model → Tilt / Cable Loss**.
 Choose a mode, inspect the preview and press **Apply**. Close or X discards edits.
 Use the main workbench **Start** to run the accepted model.
 
@@ -10,8 +10,10 @@ Use the main workbench **Start** to run the accepted model.
 | Manual Tilt | High-frequency minus low-frequency gain in dB; −6 dB means the high edge is6 dB lower, with the low edge anchored at0 dB |
 | Cable / Distance | Cable type, additional length and ft/m; applies full added attenuation, including low-frequency loss and frequency-dependent tilt |
 
-The preview plots **Additional Gain** and **Effective Response** over the accepted
+The preview plots **Additional Gain** and **Supplied H + Loss** over the accepted
 channel's physical frequency band. The grid reports low/high gain and total tilt.
+For the total response including synthetic echoes, use **Combined Channel Response**
+in the Channel Model window. Click that graph to enlarge it.
 Imported channel-response and RxMER files remain unchanged. Treat length as cable
 added to the supplied response, which may already include cable loss.
 

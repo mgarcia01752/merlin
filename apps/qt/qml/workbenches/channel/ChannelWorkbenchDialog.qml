@@ -96,7 +96,7 @@ WorkbenchDialog {
             StageChip {objectName:"channelEstimate";theme:dialog.theme;text:"DS Channel Estimate";x:stage.modelX;y:stage.bottomY;width:stage.modelWidth;height:stage.blockHeight;onClicked:dialog.responseRequested()}
         }
     }
-    ChannelConfigurationDialog {id:model;theme:dialog.theme;configuration:dialog.configuration;onRxmerRequested:dialog.rxmerRequested();onResponseRequested:dialog.responseRequested();onLossRequested:loss.open();onFilterRequested:filter.open()}
+    ChannelConfigurationDialog {id:model;theme:dialog.theme;configuration:dialog.configuration;backend:dialog.runBackend;settingsBackend:dialog.settingsBackend;runState:dialog.runState;onContextHelpRequested:function(code){dialog.contextHelpRequested(code)};onLossRequested:loss.open();onFilterRequested:filter.open()}
     ChannelFilterDialog {id:filter;onContextHelpRequested:function(code){dialog.contextHelpRequested(code)};theme:dialog.theme;backend:dialog.runBackend;settingsBackend:dialog.settingsBackend;runState:dialog.runState;onConfigurationApplied:dialog.modelApplied()}
     ChannelLossDialog {id:loss;theme:dialog.theme;backend:dialog.measurementBackend;settingsBackend:dialog.settingsBackend;busy:dialog.runState.busy;onModelApplied:dialog.settingsApplied()}
     ChannelAmplifierDialog {id:amplifier;theme:dialog.theme;backend:dialog.measurementBackend;busy:dialog.runState.busy;onModelApplied:dialog.settingsApplied()}

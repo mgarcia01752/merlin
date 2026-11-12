@@ -28,7 +28,7 @@ pub struct EchoPath {
 pub enum ChannelFilterSettings {
     #[default]
     Diagonal,
-    /// Synthetic paths only; imported response/tilt composition is rejected.
+    /// Synthetic paths; shared composition permits preceding diagonal loss.
     Echoes { paths: Vec<EchoPath> },
     /// Explicit unity extension of excluded bins, causal shift and hard truncation.
     /// This is a chosen band-limited reconstruction, not recovered physical truth.

@@ -2,7 +2,7 @@
 
 [Documentation index](../../README.md)
 
-Open **Channel Simulator → Channel Model → Waveform Channel**. The selected
+Open **Channel Simulator → Channel Model → Echo / Delay**. The selected
 response model is independent of MCE and persists with accepted run settings in
 the WB. Apply validates the draft; Cancel/X discards it. Stop an active run before
 applying changes.
@@ -12,12 +12,12 @@ applying changes.
 | Response model | Behavior |
 | --- | --- |
 | Per-subcarrier reference (default) | Existing synchronized diagonal H application. No continuous channel memory. |
-| Synthetic echo | Direct path plus integer-delay echo; existing additional paths are retained when editing the first echo. Uses Flat / unity input with Additional Loss Off. Amplifier and attenuator settings still apply. |
+| Synthetic echo | Direct path plus integer-delay echo; existing additional paths are retained when editing the first echo. Uses Flat / unity input. Tilt / Cable Loss and scalar conditioning are applied before the echo filter. |
 | CM capture · continuous FIR | Explicit finite causal reconstruction of supplied H, applied to continuous samples across symbol boundaries. |
 
 ```mermaid
 flowchart LR
-    TX["TX waveform and optional pre-channel RxMER residual"] --> FIR["Stateful complex FIR"]
+    TX["TX bins and optional pre-channel RxMER residual"] --> LOSS["Diagonal tilt / cable loss and conditioning"] --> FIR["Stateful complex FIR"]
     PATHS["Synthetic paths or reconstructed CM response"] --> FIR
     FIR --> NOISE["Optional independent receiver noise"] --> RX["Receiver samples"]
     TAIL["Finite zero-input filter tail"] --> FIR
@@ -36,6 +36,29 @@ use 8192-point FFT overlap-add in input chunks of at most 4096 samples, avoiding
 an unrestricted samples-times-filter-length loop. The filter flushes exactly L−1
 samples once. Results report this channel tail separately from transmitter window
 overlap and interleaver drain. Seeded noise state is not reset at boundaries.
+
+## Combining loss and echoes
+
+The Channel Model window has graphic **Tilt / Cable Loss** and **Echo / Delay**
+controls feeding **Combined Channel Response**. RxMER and DS Channel Estimate
+remain in their existing workbench blocks without duplicate controls here.
+Open either card to edit its
+settings. Click the combined graph for a larger view. It previews accepted
+configuration before receiver correction; it does not require Start or substitute
+for measured RxMER, received I/Q or an MCE estimate. Missing DPD or unsupported
+combinations show a diagnostic instead of a made-up trace.
+
+With synthetic echoes, the shared Rust planner composes
+\(H_{total}(k)=H_{loss}(k)H_{echo}(k)\), including scalar conditioning once.
+Magnitude-only loss is applied on the existing diagonal OFDM grid, then samples
+pass through the stateful echo filter. Loss adds no physical propagation delay;
+only the configured echo paths add memory. Imported H and synthetic echoes remain
+alternative response sources. With captured FIR, supplied H and additional loss
+are reconstructed together and still must pass the declared fit limits.
+
+![Channel Model graphic controls and combined response](../../images/workbench/channel-model-dark.png)
+
+![Enlarged combined channel response](../../images/workbench/channel-combined-response-dark.png)
 
 ## Reconstructing a CM response
 

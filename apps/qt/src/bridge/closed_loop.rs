@@ -31,6 +31,13 @@ pub mod bridge {
         /// Empty on success; an error preserves accepted receiver options.
         #[qinvokable]
         fn apply(self: Pin<&mut ClosedLoop>, options: &QString, settings: &QString) -> QString;
+        /// Returns accepted channel gain on the OCD grid without starting simulation.
+        /// # Arguments
+        /// * `settings` - Accepted OCD JSON, at most4096 bytes.
+        /// # Returns
+        /// At most1024 chart groups or an empty chart with optional known-code help.
+        #[qinvokable]
+        fn channel_preview(self: &ClosedLoop, settings: &QString) -> QString;
         /// Returns known guidance from the last Apply failure, without changing settings.
         /// # Returns
         /// Bounded diagnostic JSON or null for an unclassified error.
@@ -87,6 +94,29 @@ impl bridge::ClosedLoop {
                 .configure(&settings.to_string());
         }
         QString::from(self.rust().model.state().to_string())
+    }
+    /// Projects the current accepted channel model independently of retained runs.
+    /// # Arguments
+    /// * `settings` - Bounded OCD JSON; no capture arrays cross this boundary.
+    /// # Returns
+    /// Bounded gain viewport, or an original error with known-code contextual help.
+    pub fn channel_preview(&self, settings: &QString) -> QString {
+        let result = (|| {
+            if settings.to_string().len() > 4096 {
+                return Err(crate::help::AdmissionError::from(
+                    "Settings too large".to_string(),
+                ));
+            }
+            let transmission = serde_json::from_str(&settings.to_string())
+                .map_err(|error| crate::help::AdmissionError::from(error.to_string()))?;
+            let options = self.rust().model.options.clone().unwrap_or_default();
+            crate::inputs::channel_model::combined_preview(
+                &transmission,
+                &crate::workbench::session::snapshot(),
+                &options.channel_filter,
+            )
+        })();
+        QString::from(result.unwrap_or_else(|error|serde_json::json!({"available":false,"points":[],"x_ticks":[],"y_ticks":[],"error":error.message,"diagnostic":error.diagnostic})).to_string())
     }
     /// Applies supported receiver/run options only after validating the entire request.
     /// # Arguments

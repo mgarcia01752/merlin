@@ -383,6 +383,21 @@ existing accepted additional-loss settings. The frozen run request must use thos
 restored values, rather than QML defaults. Version and migrate the affected
 section explicitly; validate before atomic adoption and preserve state on failure.
 Computed Channel Power and transient TP/SA/QAM navigation are not configuration.
+### Channel composition preview (UI-CH-02 / WAVE-CH-COMPOSE-01)
+
+Channel Model contains graphic Tilt / Cable Loss and Echo / Delay controls with
+an enlargable Combined Channel Response graph. Duplicate measurement actions
+are removed from this window; RxMER and DS Channel Estimate keep their existing
+workbench blocks. Accepted previews do not start a run or reuse old results.
+`signal_processing/channel/composition` owns the shared immutable prepared plan
+for validation, waveform execution and Rust-rendered response projections.
+Synthetic echoes follow diagonal magnitude loss/conditioning; their complex
+responses multiply, with each effect applied once. The echo filter alone owns
+continuous memory and tail. Imported H remains exclusive with synthetic paths;
+captured FIR includes imported H/loss in its checked reconstruction. Existing
+sample-AWGN, fit, grid, active-null and static-filter bounds remain in force.
+See the [design](development/features/channel-workbench/design.md#ui-ch-02--wave-ch-compose-01-graphic-model-controls-and-composition).
+
 UI-RF-01 implements this extension in `sections.channel_power` schema1 while
 preserving `sections.channel_model` schema1. Legacy missing power sections select
 unity gain/attenuation and relative units. Restored settings feed the run request.

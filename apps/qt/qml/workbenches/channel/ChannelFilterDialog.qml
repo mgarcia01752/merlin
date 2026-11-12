@@ -36,7 +36,7 @@ WorkbenchDialog {
         memory.value=accepted.max_delay_samples ?? 512;shift.value=accepted.causal_shift_samples || 0
         errorMessage="";diagnostic=null
     }
-    title: "Waveform Channel"
+    title: "Echo / Delay"
     parent:Overlay.overlay;anchors.centerIn:parent
     width:Math.min(650,parent ? parent.width-40 : 650)
     modal:true;standardButtons:Dialog.NoButton
@@ -58,7 +58,7 @@ WorkbenchDialog {
             SpinBox {id:shift;visible:source.currentIndex===2;from:0;to:memory.value;editable:true}
         }
         Label {
-            text:source.currentIndex===1 ? "Direct path plus delayed echo. Existing additional paths are retained; this form edits the first echo. Use Flat / unity input with additional loss Off. Amplifier and attenuator settings still apply. Receiver correction is configured separately." : source.currentIndex===2 ? "Filters actual samples across symbols. Excluded bins use explicit unity extension; the finite response is shifted and truncated. Fits outside RMS 0.05 / maximum 0.5 complex error are rejected with default tolerances. This is a chosen reconstruction, not measured absolute path delay." : "Existing synchronized response per subcarrier. No continuous channel memory is modeled."
+            text:source.currentIndex===1 ? "Direct path plus delayed echo. Existing additional paths are retained; this form edits the first echo. Use Flat / unity input. Tilt / Cable Loss is applied before the echo filter. Amplifier and attenuator settings still apply. Receiver correction is configured separately." : source.currentIndex===2 ? "Filters actual samples across symbols. Excluded bins use explicit unity extension; the finite response is shifted and truncated. Fits outside RMS 0.05 / maximum 0.5 complex error are rejected with default tolerances. This is a chosen reconstruction, not measured absolute path delay." : "Existing synchronized response per subcarrier. No continuous channel memory is modeled."
             color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap
         }
         ContextualStatus {theme:dialog.theme;text:dialog.errorMessage;diagnostic:dialog.diagnostic;color:dialog.theme.statusError;Layout.fillWidth:true;onHelpRequested:function(code){dialog.contextHelpRequested(code)} }

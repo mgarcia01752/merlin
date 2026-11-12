@@ -21,6 +21,7 @@ use rand_chacha::ChaCha8Rng;
 pub(super) struct ImpairedChannel {
     pub plan: ImpairmentPlan,
     synthesis: Option<WaveformTransmitter>,
+    synthesis_response: Option<Vec<crate::types::IqPair>>,
     awgn: SampleAwgn,
     rng: ChaCha8Rng,
     filter: Option<crate::signal_processing::channel::filter::StreamingChannelFilter>,
@@ -45,56 +46,25 @@ impl ImpairedChannel {
         variance: f64,
         filter_settings: &crate::signal_processing::channel::filter::ChannelFilterSettings,
     ) -> Result<Self, SimulationError> {
-        let mut plan = settings.plan(geometry.settings(), layout, variance)?;
-        if matches!(
+        let prepared = crate::signal_processing::channel::composition::prepare_channel(
+            geometry.settings(),
+            layout,
+            settings,
+            variance,
             filter_settings,
-            crate::signal_processing::channel::filter::ChannelFilterSettings::Echoes { .. }
-        ) && (settings.response.is_some() || settings.additional_loss != Default::default())
-        {
-            return Err(SimulationError::new("ChannelFilterInvalid","Synthetic echoes are an exclusive response source; use unity input with no additional tilt."));
-        }
-        let active: Vec<_> = layout
-            .static_roles()
-            .iter()
-            .map(|role| *role != crate::transmission::layout::PhysicalCarrierRole::Excluded)
-            .collect();
-        let filter_plan = filter_settings.prepare(
-            geometry.settings().subcarrier_spacing,
-            &plan.response,
-            &active,
         )?;
-        let filter_diagnostics = filter_plan.as_ref().map(|plan| plan.diagnostics().clone());
-        let filter = filter_plan
+        let plan = prepared.plan;
+        let filter_diagnostics = prepared
+            .filter
+            .as_ref()
+            .map(|plan| plan.diagnostics().clone());
+        let filter = prepared
+            .filter
             .as_ref()
             .map(|plan| {
                 crate::signal_processing::channel::filter::StreamingChannelFilter::new(plan, 0)
             })
             .transpose()?;
-        if let Some(filter_plan) = &filter_plan {
-            plan.response = filter_plan.response().to_vec();
-            for (bin, gain) in plan.response.iter().enumerate() {
-                if active[bin] && gain[0].hypot(gain[1]) < 1e-6 {
-                    return Err(SimulationError::new(
-                        "ChannelFilterInvalid",
-                        "Realized channel has a deep null below the supported inverse floor.",
-                    ));
-                }
-            }
-            for (bin, gain) in plan.response.iter().enumerate() {
-                let inverse = 1.0 / (gain[0].powi(2) + gain[1].powi(2));
-                if active[bin] {
-                    plan.llr_variance[bin] = match settings.noise {
-                        NoiseModel::Awgn { sample_power } if sample_power > 0.0 => {
-                            sample_power * inverse
-                        }
-                        _ if plan.receiver_noise_power > 0.0 => {
-                            plan.residual_power[bin] + plan.receiver_noise_power * inverse
-                        }
-                        _ => plan.llr_variance[bin],
-                    };
-                }
-            }
-        }
         let sample_power = match settings.noise {
             NoiseModel::Awgn { sample_power } => sample_power,
             _ => 0.0,
@@ -114,6 +84,7 @@ impl ImpairedChannel {
             None
         };
         Ok(Self {
+            synthesis_response: prepared.synthesis_response,
             filter,
             filter_diagnostics,
             filter_tail_samples: 0,
@@ -149,7 +120,11 @@ impl ImpairedChannel {
             let mut altered = physical.clone();
             let plan = if self.filter.is_some() {
                 Some(ImpairmentPlan {
-                    response: vec![[1.0, 0.0]; self.plan.response.len()],
+                    response: self
+                        .synthesis_response
+                        .as_ref()
+                        .expect("continuous filter synthesis plan")
+                        .clone(),
                     receiver_noise_power: 0.0,
                     residual_power: self.plan.residual_power.clone(),
                     llr_variance: self.plan.llr_variance.clone(),

@@ -87,6 +87,8 @@ fn main() {
                 "qml/inputs/measurement_input/RxmerInputDialog.qml",
                 "qml/inputs/measurement_input/ChannelResponseDialog.qml",
                 "qml/workbenches/channel/ChannelConfigurationDialog.qml",
+                "qml/workbenches/channel/ChannelModelCard.qml",
+                "qml/workbenches/channel/ChannelResponsePreviewDialog.qml",
                 "qml/workbenches/channel/ChannelFilterDialog.qml",
                 "qml/workbenches/channel/ChannelWorkbenchDialog.qml",
                 "qml/workbenches/channel/ChannelAmplifierDialog.qml",

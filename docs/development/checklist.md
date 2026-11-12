@@ -762,6 +762,11 @@ and the
 - [x] **WAVE-CH-TILT-01** Implement manual tilt and full additional cable loss
   with Rust-owned composition, bounded preview, explicit RxMER/correction policy
   and versioned workbench persistence. [Design](features/channel-tilt/design.md).
+- [x] **UI-CH-02 / WAVE-CH-COMPOSE-01** Replace duplicate measurement controls
+  with graphic loss/echo cards and an accepted combined-response preview.
+  Compose diagonal loss with stateful echoes through one shared Rust plan;
+  validate analytic response, actual samples, payload recovery and native UI.
+  [Design](features/channel-workbench/design.md#ui-ch-02--wave-ch-compose-01-graphic-model-controls-and-composition).
 - [x] **UI-CH-01** Implement Channel Input/Model/Output staging, direct measurement
   input frames and Spectrum/QAM chooser at each signal boundary.
   [Design](features/channel-workbench/design.md).

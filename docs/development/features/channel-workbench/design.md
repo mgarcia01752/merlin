@@ -105,3 +105,49 @@ Keep both glyphs illustrative navigation symbols, with existing data routing.
 
 Refinement validation: all 53 QML checks and the native build pass. Reviewed
 the actual native dark chooser and updated the channel guide screenshot.
+
+## UI-CH-02 / WAVE-CH-COMPOSE-01: Graphic model controls and composition
+
+Implement the approved two-card layout: Tilt / Cable Loss and Echo / Delay feed
+a bounded Combined Channel Response preview. Remove duplicate RxMER and DS
+channel-estimate controls from this configuration dialog; keep their existing
+workbench blocks. Cards open existing draft editors, preserving Apply/Cancel,
+keyboard access and accepted settings. Combined preview is accepted configuration,
+not a retained received measurement, and works before Start when DPD is present.
+
+Shared Rust `channel/composition` prepares admission, execution and previews.
+For synthetic echoes, apply diagonal magnitude loss and scalar conditioning once
+before stateful convolution; total H = H_loss * H_echo. This engineering model
+adds no new normative DOCSIS behavior and does not convert magnitude-only cable
+loss into a measured phase or propagation delay. Keep sample-AWGN restrictions,
+imported-H/echo exclusivity, captured-FIR fit checks and finite tail bounds.
+Preserve the RxMER residual reference plane before total channel response.
+
+Test analytic complex frequency products, actual chunked waveform samples,
+reference/MCE payload recovery, unchanged default paths, preview consistency,
+invalid combinations and settings persistence. Run full Rust validation and Qt
+checks; inspect actual dark native views and refresh linked user guides.
+
+### UI-CH-02 / WAVE-CH-COMPOSE-01 validation
+
+Implemented and locally verified on Ubuntu22.04 x64, Rust1.85.1 and Qt6.8.3.
+Full validation passes: 382 workspace tests (236.261s nextest execution), 4 example
+tests, 132 analysis-only tests, doctests, formatting and warnings-denied Clippy.
+Qt check passes 67 adapter tests, 58 QML checks, Clippy and the native build.
+New tests independently anchor manual/cable attenuation and complex echo response,
+check real raw FFT samples against TX-reference products, and recover original
+payloads with reference/MCE correction. The scalar gain is applied exactly once.
+Preview tests cover bounded data, original imported-H rejection with known-code
+help, and unavailable DPD without guessed advice. UI tests exercise equal cards,
+mouse/keyboard entry, expanded plotting and draft Cancel/Apply.
+
+Actual native dark captures verify both cards, editors and expanded graph. A
+separate native cable100ft/echo8samples/RxMER/MCE run completes23 observation
+symbols and1,223,952 globally compared payload bits with zero errors. These totals
+include completion/drain, not just the observation window. Source WB/capture bytes
+remain untouched; the experiment uses an ignored local clone. This is MERLIN
+closed-loop evidence, not external modem or other-platform validation.
+
+Original sample-AWGN restrictions, imported-H/echo exclusivity, static-filter
+policy, fit tolerances and echo memory bounds remain enforced. No calibrated
+cable phase, inferred physical delay or automatic additional noise is introduced.
