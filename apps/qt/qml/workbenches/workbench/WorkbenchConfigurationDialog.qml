@@ -14,6 +14,7 @@ WorkbenchDialog {
     property var draft: ({})
     property var profileIds: []
     property var selectedIds: []
+    readonly property string noiseSeedHelp: "Chooses the simulated noise pattern.\nSame seed and configuration repeat the pattern.\nChange it for another pattern at the same target noise level.\nDoes not set noise strength or the PRBS data seed."
     property string errorMessage: ""
     signal configurationApplied()
     title: "Workbench Configuration"
@@ -44,8 +45,21 @@ WorkbenchDialog {
                 SpinBox { objectName:"wbRunDuration";from:1;to:1000;editable:true;value:dialog.draft.duration_ms || 3;onValueModified:dialog.draft.duration_ms=value }
                 Label { text:"Total Active Run Budget (ms)";color:dialog.theme.text }
                 SpinBox { from:1000;to:300000;stepSize:1000;editable:true;value:dialog.draft.max_runtime_ms || 300000;onValueModified:dialog.draft.max_runtime_ms=value }
-                Label { text:"Noise Seed";color:dialog.theme.text }
-                SpinBox { from:0;to:2147483647;editable:true;value:dialog.draft.noise_seed===undefined ? 41:dialog.draft.noise_seed;onValueModified:dialog.draft.noise_seed=value }
+                Label {
+                    text:"Noise Seed";color:dialog.theme.text
+                    HoverHandler { id:noiseSeedLabelHover }
+                    ToolTip.visible: noiseSeedLabelHover.hovered
+                    ToolTip.text: dialog.noiseSeedHelp
+                }
+                SpinBox {
+                    objectName:"wbNoiseSeed"
+                    from:0;to:2147483647;editable:true
+                    value:dialog.draft.noise_seed===undefined ? 41:dialog.draft.noise_seed
+                    onValueModified:dialog.draft.noise_seed=value
+                    ToolTip.visible: hovered || activeFocus
+                    ToolTip.text: dialog.noiseSeedHelp
+                    Accessible.description: dialog.noiseSeedHelp
+                }
             }
             ColumnLayout {
                 spacing:12

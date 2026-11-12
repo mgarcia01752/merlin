@@ -25,7 +25,12 @@ Set observation **Duration per Profile**, **Total Active Run Budget** and
 Each profile starts an independent simulation with the same accepted channel,
 source and seeds. Profile capacity can change the number of processed codewords.
 
-![Workbench run settings](../images/workbench/workbench-configuration-run-dark.png)
+**Noise Seed** chooses the simulated noise pattern. Keep the same seed and
+configuration to repeat a run; change the seed to try a different noise pattern
+at the same target noise level. It does not set noise strength or the PRBS data
+seed. Hover over the label or value, or focus the value with Tab, for this help.
+
+![Workbench run settings with Noise Seed help](../images/workbench/workbench-configuration-run-dark.png)
 
 ## Profiles
 

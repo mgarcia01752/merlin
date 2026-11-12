@@ -86,6 +86,7 @@ See [QAM processing](qam-processing/README.md) and [receiver instruments](receiv
 | TX-reference MER | Modulation error ratio calculated against the actual transmitted symbol at the same physical bin and time. In the QAM analyzer the reference is diagnostic only; it is never supplied to the receiver. |
 | Nearest-point estimate | MER calculated using the nearest ideal constellation point instead of the actual transmitted symbol. Dense QAM and wrong decisions can make it too optimistic. |
 | Run Profile | The captured profile ID used by one independent simulation run. It is separate from the current on-wire Profile A/ID0. |
+| Noise Seed | Starting value for the simulated noise generator. The same seed and configuration repeat the noise pattern; a different seed changes the pattern at the same target noise level. Separate from PRBS data generation. See [run settings](workbench-configuration.md#run). |
 | RxMER | Receive Modulation Error Ratio: per-subcarrier signal-to-modulation-error power ratio, commonly expressed in dB. MERLIN uses it to model residual error power; it does not reconstruct measured I/Q from RxMER. |
 | Channel estimate H | Complex frequency response across subcarriers. Flat/unity H = 1 + 0i means no gain/phase change; H = 0 + 0i would suppress the signal. |
 | Receiver estimate Ĥ (H-hat) | Channel response estimated from received pilots, distinct from applied H. The response Display selector calls it MCE Estimate for MCE runs and Pilot Estimate for legacy pilot-estimated runs. See the [MCE guide](receiver-estimation/mce.md). |

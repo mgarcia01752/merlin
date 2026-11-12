@@ -1018,6 +1018,8 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **UI-WB-CONFIG-01** Main Configure WB with Run/Profiles tabs, explicit
   New/Open activation, subset persistence/migration and Receiver-only controls.
   Adapter/QML checks and native visual/Save As/Open verification pass.
+- [x] **UI-WB-CONFIG-02** Explain Noise Seed on label/value hover and editor
+  focus, with accessible help, terminology and native guide screenshot.
 - [x] **CI-CONSOLIDATE-01** Implement two entry points sharing all validation,
   parallel native tests and release-only packages; static validation passes.
 - [x] **CI-DESKTOP-APT-01** Implement strict refresh, bounded retry and CI mirror

@@ -176,3 +176,19 @@ All three native validation logs are empty. An actual Profile3 run completed
 with 1,779,000 compared bits and zero errors. The current executable is built;
 no core tests, installer lifecycle or other-OS validation was needed or claimed
 for this presentation-only change. The UI skill and both discovery links validate.
+
+## UI-WB-CONFIG-02: Explain Noise Seed
+
+Explain the noise-only pseudorandom seed on hover over both its label and editor,
+and on keyboard focus in the editor. Use one shared explanation and accessibility
+text. The same configuration and seed repeat noise; another seed changes the
+noise realization at the same target level, independently of PRBS data. Preserve
+validation, accepted settings and Apply/Cancel. QML owns help presentation;
+Rust remains the source of noise generation. Validate with Qt checks and inspect
+the actual native dark tooltip; update the run guide and terminology.
+
+Validation: Qt formatting, warnings-denied Clippy, 66 adapter tests and 58 QML
+checks pass. Native executable rebuilt after the final compact help text change.
+Actual Ubuntu dark captures verify label hover and focused-value help; the run
+settings guide screenshot is refreshed. Architecture and official checklist
+reviewed; scientific ownership, WB schema and noise generation remain unchanged.
