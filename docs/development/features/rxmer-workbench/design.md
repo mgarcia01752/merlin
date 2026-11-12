@@ -7,6 +7,9 @@ I/Q and generalized observation selection remain pending.
 
 ## UI-RXMER-04: Remove demo actions from RxMER
 
+Historical step: the later [workbench restoration change](../restore-workbench-inputs/design.md)
+also removes the Channel Estimate/DPD demo actions and the production loaders.
+
 Remove Load demo and Add notch demo from the RxMER toolbar. Keep native
 Open file(s), collection controls, existing imports and accepted WB restoration.
 The shared Channel Estimate editor retains its own Load demo action. This is a

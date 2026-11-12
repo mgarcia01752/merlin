@@ -13,6 +13,7 @@ WorkbenchDialog {
     required property bool rxmer
     property var metadata: ({files: [], options: {mode: "single", interval_symbols: "1000", tolerance_seconds: 90000}})
     property var options: ({mode: "single", interval_symbols: "1000", tolerance_seconds: 90000})
+    property bool canRestoreWorkbench: false
     property string errorMessage: ""
     property var runOptions: null
     property var selectionStatus: ({})
@@ -54,13 +55,20 @@ WorkbenchDialog {
         updateOption("selected_captures",next)
     }
     onClosed: viewer.stopPreview()
-    onOpened: setMetadata(backend.begin(rxmer), true)
+    function restoreWorkbench() {
+        setMetadata(backend.begin(rxmer), true)
+        canRestoreWorkbench = !rxmer || metadata.files.length > 0
+    }
+    onOpened: restoreWorkbench()
     contentItem: ColumnLayout {
         spacing: 10
         RowLayout {
             WorkbenchActionButton { theme: dialog.theme; objectName: "measurementOpen"; text: dialog.rxmer ? "Open file(s)…" : "Open file…"; onClicked: dialog.setMetadata(backend.choose_files(dialog.rxmer)) }
-            WorkbenchActionButton { theme: dialog.theme; objectName: "measurementDemo"; visible: !dialog.rxmer; text: "Load demo"; onClicked: dialog.setMetadata(backend.demo(false, 0)) }
-            WorkbenchActionButton { theme: dialog.theme; text: dialog.rxmer ? "Clear" : "Flat / unity"; onClicked: dialog.setMetadata(backend.edit(dialog.rxmer, -1, 0)) }
+            WorkbenchActionButton { theme: dialog.theme; objectName: "measurementRestoreWorkbench"; text: "Restore Workbench"; enabled: dialog.canRestoreWorkbench; onClicked: dialog.restoreWorkbench()
+                ToolTip.visible: hovered || activeFocus
+                ToolTip.text: "Discard pending edits and restore this workbench’s last applied captures and options. Channel response may be flat / unity."
+                Accessible.description: ToolTip.text }
+            WorkbenchActionButton { theme: dialog.theme; objectName: "measurementClear"; text: dialog.rxmer ? "Clear" : "Flat / unity"; onClicked: dialog.setMetadata(backend.edit(dialog.rxmer, -1, 0)) }
             WorkbenchActionButton { theme: dialog.theme; visible: dialog.rxmer; text: "Remove"; enabled: viewer.selectedIndex >= 0; onClicked: dialog.setMetadata(backend.edit(true, viewer.selectedIndex, 0)) }
             WorkbenchActionButton { theme: dialog.theme; visible: dialog.rxmer; text: "↑"; compact: true; Accessible.name: "Move capture earlier"; enabled: viewer.selectedIndex > 0; onClicked: dialog.setMetadata(backend.edit(true, viewer.selectedIndex, -1)) }
             WorkbenchActionButton { theme: dialog.theme; visible: dialog.rxmer; text: "↓"; compact: true; Accessible.name: "Move capture later"; enabled: viewer.selectedIndex >= 0 && viewer.selectedIndex < dialog.metadata.files.length - 1; onClicked: dialog.setMetadata(backend.edit(true, viewer.selectedIndex, 1)) }

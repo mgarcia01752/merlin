@@ -34,7 +34,7 @@ Pane {
         }
         function reload() {}
         function begin() { loaded = acceptedId >= 0; return view(acceptedId) }
-        function demo() { loaded = true; return view(0) }
+        function choose_file() { loaded = true; return view(0) }
         function preview(id) { return view(id) }
         function plot(id, start, count) {
             return JSON.stringify({profile_id:id,total:100,start:count ? start : 0,count:count || 100,points:[{x:0,y:0.5,minimum_y:0.5,role:"data",readout:"Test carrier"}],roles:[{kind:"data",label:"Data"},{kind:"continuous_pilot",label:"Pilots"}],x_ticks:[],y_ticks:[],axis_label:"Bit Loading (Bits/Symbol)"})
@@ -146,8 +146,8 @@ Pane {
         }
         function metadata(rxmer) { return JSON.stringify({files:rxmer ? fileRows() : [],flat:draftFlat,options:{mode:"single",interval_symbols:"1000",tolerance_seconds:90000}}) }
         function begin(rxmer) { if (rxmer) { draftRx = acceptedRx } else { draftFlat = flat }; return metadata(rxmer) }
-        function choose_files(rxmer) { return demo(rxmer,0) }
-        function demo(rxmer,variant) { if (rxmer) { draftRx = true } else { draftFlat = false }; return metadata(rxmer) }
+        function choose_files(rxmer) { return loadFixture(rxmer) }
+        function loadFixture(rxmer) { if (rxmer) { draftRx = true } else { draftFlat = false }; return metadata(rxmer) }
         function edit(rxmer,index,delta) { if (rxmer) { draftRx = false } else { draftFlat = true }; return metadata(rxmer) }
         function selection_status(options,settings,runOptions) {
             const selected=JSON.parse(options).selected_captures
@@ -520,7 +520,7 @@ Pane {
             mouseClick(findChild(workbench, "profileBlock"))
             tryCompare(dialog, "opened", true)
             compare(dialog.previewModel.profile_ids.length, 0)
-            mouseClick(findChild(dialog, "profileLoadDemo"))
+            mouseClick(findChild(dialog, "profileOpenFile"))
             mouseClick(findChild(dialog, "profileView"))
             tryCompare(dialog.plotPopup, "opened", true)
             compare(dialog.plotPopup.selectedProfile,0)
@@ -556,7 +556,7 @@ Pane {
             compare(profileBackend.acceptedId, -1)
             mouseClick(findChild(workbench, "profileBlock"))
             tryCompare(dialog, "opened", true)
-            mouseClick(findChild(dialog, "profileLoadDemo"))
+            mouseClick(findChild(dialog, "profileOpenFile"))
             mouseClick(findChild(dialog, "profileApply"))
             tryCompare(dialog, "visible", false)
             compare(profileBackend.acceptedId, 0)
@@ -998,7 +998,7 @@ Pane {
             mouseClick(findChild(workbench, "rxmerBlock"))
             tryCompare(workbench.rxmerPopup, "opened", true)
             verify(findChild(workbench.rxmerPopup, "sharedMeasurementViewer") !== null)
-            compare(findChild(workbench.rxmerPopup, "measurementDemo").visible, false)
+            compare(findChild(workbench.rxmerPopup, "measurementRestoreWorkbench").visible, true)
             compare(findChild(workbench.rxmerPopup, "measurementNotchDemo"), null)
             mouseClick(findChild(workbench.rxmerPopup, "measurementOpen"))
             mouseClick(findChild(workbench.rxmerPopup, "measurementApply"))
@@ -1270,6 +1270,76 @@ Pane {
             verify(!configure.enabled)
             runBackend.busy = false
             workbench.pollRun()
+        }
+        function test_workbench_input_restore_discards_drafts_without_apply() {
+            const profile=workbench.profilePopup
+            const response=workbench.responsePopup
+            const rxmer=workbench.rxmerPopup
+            const previousProfile=profileBackend.acceptedId
+            const previousRx=measurementBackend.acceptedRx
+            const previousFlat=measurementBackend.flat
+            const previousMulti=measurementBackend.multiPreview
+            try {
+                profileBackend.acceptedId=-1
+                profile.open();tryCompare(profile,"opened",true)
+                compare(findChild(profile,"profileRestoreWorkbench").enabled,false)
+                closeWithX(profile)
+                profileBackend.acceptedId=1
+                profile.open();tryCompare(profile,"opened",true)
+                mouseClick(findChild(profile,"profileOpenFile"))
+                compare(profile.previewModel.selected_profile_id,0)
+                mouseClick(findChild(profile,"profileRestoreWorkbench"))
+                compare(profile.previewModel.selected_profile_id,1)
+                mouseClick(findChild(profile,"profileRemove"))
+                compare(profile.previewModel.profile_ids.length,0)
+                verify(findChild(profile,"profileRestoreWorkbench").enabled)
+                mouseClick(findChild(profile,"profileRestoreWorkbench"))
+                compare(profile.previewModel.selected_profile_id,1)
+                compare(profileBackend.acceptedId,1)
+                closeWithX(profile)
+
+                measurementBackend.flat=false
+                response.open();tryCompare(response,"opened",true)
+                compare(response.metadata.flat,false)
+                mouseClick(findChild(response,"measurementClear"))
+                response.updateOption("tolerance_seconds",25)
+                compare(response.metadata.flat,true)
+                mouseClick(findChild(response,"measurementRestoreWorkbench"))
+                compare(response.metadata.flat,false)
+                compare(response.options.tolerance_seconds,90000)
+                compare(measurementBackend.flat,false)
+                closeWithX(response)
+                measurementBackend.flat=true
+                response.open();tryCompare(response,"opened",true)
+                mouseClick(findChild(response,"measurementOpen"))
+                compare(response.metadata.flat,false)
+                mouseClick(findChild(response,"measurementRestoreWorkbench"))
+                compare(response.metadata.flat,true)
+                closeWithX(response)
+
+                measurementBackend.acceptedRx=false
+                rxmer.open();tryCompare(rxmer,"opened",true)
+                compare(findChild(rxmer,"measurementRestoreWorkbench").enabled,false)
+                closeWithX(rxmer)
+                measurementBackend.acceptedRx=true;measurementBackend.multiPreview=true
+                rxmer.open();tryCompare(rxmer,"opened",true)
+                compare(rxmer.metadata.files.length,3)
+                rxmer.updateOption("mode","hold")
+                mouseClick(findChild(rxmer,"measurementClear"))
+                compare(rxmer.metadata.files.length,0)
+                mouseClick(findChild(rxmer,"measurementRestoreWorkbench"))
+                compare(rxmer.metadata.files.length,3)
+                compare(rxmer.options.mode,"single")
+                compare(measurementBackend.acceptedRx,true)
+                closeWithX(rxmer)
+            } finally {
+                profile.close();response.close();rxmer.close()
+                profileBackend.acceptedId=previousProfile
+                measurementBackend.acceptedRx=previousRx
+                measurementBackend.flat=previousFlat
+                measurementBackend.multiPreview=previousMulti
+                workbench.refreshProfileState()
+            }
         }
         function test_workbench_configuration_lifecycle_and_profile_selection() {
             workbench.hasProject=false

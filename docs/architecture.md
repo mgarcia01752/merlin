@@ -2089,3 +2089,14 @@ neither imported RxMER nor the existing TX-truth per-carrier diagnostic.
 QML displays labels/status and smaller markers without changing simulation or
 WB persistence. Mixed unclassified TX-bin snapshots do not imply a valid MER.
 See the [design](development/features/qam-mer/design.md).
+
+### Restore workbench inputs (UI-INPUT-RESTORE-01)
+
+DPD, RxMER and Channel Estimate use the existing Rust draft `begin` operations
+for Restore Workbench. They recover accepted captures/options from the current
+workbench, including WB-file restoration, without rereading source paths or
+applying a pending draft. QML resets only transient views. DPD/RxMER disable the
+action without accepted captures; channel response can restore flat/unity.
+Production hard-coded demo loaders are removed. File Open and bundled example
+workbenches remain available. See the
+[design](development/features/restore-workbench-inputs/design.md).

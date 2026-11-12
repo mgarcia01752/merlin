@@ -421,3 +421,10 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
   adapter tests, 54 QML checks, core/Qt Clippy and the native build pass.
   Actual Ubuntu dark/light views verify both reference planes.
   [Design](features/qam-mer/design.md).
+
+- [x] **UI-INPUT-RESTORE-01** Replace demo actions with Restore Workbench in
+  DPD, Channel Estimate and RxMER; restore accepted data/options without Apply.
+  Remove production demo invokables; verify drafts, empty states and WB reload.
+  Qt Clippy, 62 Rust tests, 55 QML checks and native build pass; actual Ubuntu
+  dark/light views verify restoration from an opened WB.
+  [Design](features/restore-workbench-inputs/design.md).

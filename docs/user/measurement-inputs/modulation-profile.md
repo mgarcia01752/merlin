@@ -7,7 +7,7 @@ CM-OSSI 3.1 I27 §D.2.14.4.1, Table 80 (capture).
 
 ```mermaid
 flowchart LR
-    FILE["Original file / embedded demo"] --> DETECT["Rust content detector"]
+    FILE["Original file / accepted WB input"] --> DETECT["Rust content detector"]
     DETECT --> BINARY["Pinned Rust PNM decoder"]
     DETECT --> JSON["Decoded JSON"]
     BINARY --> JSON --> CHECK["Shared profile validator"]
@@ -15,8 +15,11 @@ flowchart LR
     DRAFT --> APPLY["Apply: check OCD compatibility"] --> ACCEPT["Accepted input / green DPD and OCD"]
 ```
 
-Choose **Open File** or **Load demo**, inspect the tree, choose a profile, then
-Apply. Open File uses the OS-native GTK picker on Ubuntu; cancellation preserves
+Choose **Open File**, inspect the tree, choose a profile, then Apply.
+**Restore Workbench** discards draft edits and restores the last applied capture
+and selected profile from this WB, including embedded inputs from an opened WB
+JSON file. It is disabled when the WB has no accepted profile. Restoration does
+not apply a new selection or reread the original source file. Open File uses the OS-native GTK picker on Ubuntu; cancellation preserves
 the draft, and unavailable integration reports an error without a Qt fallback.
 Loading alone does not change the accepted selection. Cancel/Escape
 preserves it. Remove input is also staged until Apply. Captures stay unchanged;

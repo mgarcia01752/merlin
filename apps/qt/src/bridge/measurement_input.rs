@@ -75,14 +75,6 @@ pub mod bridge {
         /// Draft metadata or structured diagnostic.
         #[qinvokable]
         fn stage(self: Pin<&mut MeasurementInputs>, rxmer: bool, urls: &QString) -> QString;
-        /// Loads an existing sanitized example through the same shared contract.
-        /// # Arguments
-        /// * `rxmer` - RxMER or response example.
-        /// * `variant` - Zero baseline, one RxMER notch alternative.
-        /// # Returns
-        /// Updated draft metadata; originals remain untouched.
-        #[qinvokable]
-        fn demo(self: Pin<&mut MeasurementInputs>, rxmer: bool, variant: i32) -> QString;
         /// Edits one draft list or switches the response to explicit flat/unity.
         /// # Arguments
         /// * `rxmer` - Draft kind.
@@ -414,43 +406,6 @@ impl bridge::MeasurementInputs {
                 .map_err(|error| error.to_string())
                 .and_then(|urls| self.as_mut().rust_mut().stage_urls(rxmer, urls))
         };
-        let mut metadata = self.rust().metadata(rxmer);
-        if let Err(error) = result {
-            metadata["error"] = json!(error);
-        }
-        QString::from(metadata.to_string())
-    }
-    /// Stages an immutable bundled demo through the production decoder/importer.
-    /// # Arguments
-    /// * `rxmer` - Example kind.
-    /// * `variant` - Baseline or notch example.
-    /// # Returns
-    /// Metadata with a diagnostic on failure.
-    pub fn demo(mut self: core::pin::Pin<&mut Self>, rxmer: bool, variant: i32) -> QString {
-        let (name, bytes): (&str, &[u8]) = if !rxmer {
-            (
-                "channel_estimation.json",
-                include_bytes!(
-                    "../../../../examples/measurements/single-channel/channel_estimation.json"
-                ),
-            )
-        } else if variant == 1 {
-            (
-                "rxmer-center-notch-12db.json",
-                include_bytes!(
-                    "../../../../examples/measurements/single-channel/rxmer-center-notch-12db.json"
-                ),
-            )
-        } else {
-            (
-                "rxmer-baseline.bin",
-                include_bytes!(
-                    "../../../../examples/measurements/rxmer-fec-stress/rxmer-baseline.bin"
-                ),
-            )
-        };
-        let result = Capture::decode(name.into(), bytes.to_vec(), rxmer)
-            .and_then(|capture| self.as_mut().rust_mut().model.stage(vec![capture], rxmer));
         let mut metadata = self.rust().metadata(rxmer);
         if let Err(error) = result {
             metadata["error"] = json!(error);

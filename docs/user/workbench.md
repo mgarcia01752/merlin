@@ -223,8 +223,10 @@ See the [run/save guide](closed-loop-workbench.md#save-and-reopen).
 
 Click the **Downstream Profile Descriptor (DPD)** block. **Open File** accepts a
 binary modulation-profile PNM capture (including `.bin`/`.pnm`) or supported
-decoded JSON. **Load demo** stages the sanitized embedded binary without searching
-for a source-checkout path. Detection uses file contents, not the extension.
+decoded JSON. **Restore Workbench** discards pending edits and restores the
+last applied capture and profile ID from the current WB, including a WB opened
+from JSON. It is disabled until a profile has been applied. Detection uses file
+contents, not the extension.
 
 ![Native DPD capture input tree](../images/workbench/dpd-input-dark.png)
 

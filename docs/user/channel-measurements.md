@@ -29,8 +29,10 @@ A linear response of 0 + 0i would suppress the signal.
 
 ![Flat channel response](../images/workbench/channel-response-flat-dark.png)
 
-Use **Open file…** for binary channel-estimate PNM or supported decoded JSON,
-or **Load demo** for the bundled decoded example. Select gain, wrapped phase,
+Use **Open file…** for binary channel-estimate PNM or supported decoded JSON.
+**Restore Workbench** discards draft edits and restores the WB’s last applied
+response and tolerance, including flat/unity or an input embedded in an opened
+WB file. It does not reread the original source file. Select gain, wrapped phase,
 real H or imaginary H in the shared viewer. Zero/missing active gains and
 incompatible grids reject Apply. **Flat / unity** returns the draft to the
 synthetic default; Cancel preserves the accepted configuration.
@@ -69,9 +71,14 @@ implicit looping. Recorded capture times are separate from this playback clock.
 
 ![Interpolated-power preview between the first two captures in the bundled collection](../images/workbench/rxmer-interpolation-dark.png)
 
-RxMER uses **Open file(s)…** for capture selection; Load demo and Add notch demo
-have been removed from its toolbar. The Channel Estimate editor retains its own
-Load demo action. Checking multiple files requires Average or one of the Replay modes. The combined chart always identifies the effective
+RxMER uses **Open file(s)…** for capture selection. **Restore Workbench** restores
+the last applied capture list, selected captures, playback options and tolerance,
+discarding pending edits. It is disabled when no RxMER input has been applied.
+Reopening the editor also restores those accepted values. Use the input editor’s
+Open action for example captures, or **File → Open** for a bundled WB. Editors
+no longer insert hard-coded demos.
+Checking multiple files requires Average or one of the Replay modes. The combined
+chart always identifies the effective
 residual model, not a new measured capture. RxMER does not establish real burst
 correlation or reconstruct measured I/Q.
 

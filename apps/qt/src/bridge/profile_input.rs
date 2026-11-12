@@ -38,11 +38,6 @@ pub mod bridge {
         /// Preview JSON; Cancel preserves the current draft.
         #[qinvokable]
         fn choose_file(self: Pin<&mut ProfileInput>) -> QString;
-        /// Stages the sanitized embedded binary demo without filesystem writes.
-        /// # Returns
-        /// Validated demo preview JSON or an error.
-        #[qinvokable]
-        fn demo(self: Pin<&mut ProfileInput>) -> QString;
         /// Queries the staged profile's bounded tree rows.
         /// # Arguments
         /// * `profile_id` - Available capture profile ID.
@@ -187,20 +182,6 @@ impl bridge::ProfileInput {
             Ok(None) => response(Ok(json!({"cancelled":true}))),
             Err(error) => response(Err(error)),
         }
-    }
-    /// Stages the same sanitized binary fixture identified by the demo provenance.
-    /// # Returns
-    /// Validated preview JSON; no files are written or automatically accepted.
-    pub fn demo(mut self: core::pin::Pin<&mut Self>) -> QString {
-        response(
-            self.as_mut().rust_mut().stage_bytes(
-                "modulation_profile.bin".into(),
-                include_bytes!(
-                    "../../../../examples/measurements/single-channel/modulation_profile.bin"
-                )
-                .to_vec(),
-            ),
-        )
     }
     /// Queries a bounded selected-profile tree from the staged capture.
     /// # Arguments

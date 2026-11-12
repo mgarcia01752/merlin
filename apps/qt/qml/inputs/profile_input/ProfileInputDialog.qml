@@ -13,6 +13,7 @@ WorkbenchDialog {
     required property var backend
     required property var settingsBackend
     property var previewModel: ({rows: [], profile_ids: [], selected_profile_id: -1, source_name: "", format: ""})
+    property bool canRestoreWorkbench: false
     property var collapsed: ({})
     property string errorMessage: ""
     property string rowTitle: "Selected profile"
@@ -26,10 +27,13 @@ WorkbenchDialog {
     height: Math.min(700, parent ? parent.height - 40 : 700)
     modal: true
     title: "Downstream Profile Descriptor (DPD)"
-    onOpened: {
+    onOpened: restoreWorkbench()
+    function restoreWorkbench() {
+        profilePlot.close()
         collapsed = ({provenance: true})
         errorMessage = ""
         showResult(backend.begin())
+        canRestoreWorkbench = previewModel.profile_ids.length > 0
     }
     onClosed: { profilePlot.close(); backend.cancel() }
     function showResult(document) {
@@ -62,7 +66,10 @@ WorkbenchDialog {
         RowLayout {
             Layout.fillWidth: true
             WorkbenchActionButton { theme: dialog.theme; objectName: "profileOpenFile"; text: "Open File…"; onClicked: dialog.showResult(dialog.backend.choose_file()) }
-            WorkbenchActionButton { theme: dialog.theme; objectName: "profileLoadDemo"; text: "Load demo"; onClicked: dialog.showResult(dialog.backend.demo()) }
+            WorkbenchActionButton { theme: dialog.theme; objectName: "profileRestoreWorkbench"; text: "Restore Workbench"; enabled: dialog.canRestoreWorkbench; onClicked: dialog.restoreWorkbench()
+                ToolTip.visible: hovered || activeFocus
+                ToolTip.text: "Discard pending edits and restore the last applied profile from this workbench."
+                Accessible.description: ToolTip.text }
             WorkbenchActionButton { theme: dialog.theme; objectName: "profileView"; text: "View Profile…"; enabled: dialog.previewModel.profile_ids.length > 0; onClicked: profilePlot.open() }
             Item { Layout.fillWidth: true }
             Label { objectName: "profileDetectedType"; text: dialog.previewModel.format ? "Detected: " + dialog.previewModel.format : ""; color: theme.accent }
@@ -112,7 +119,7 @@ WorkbenchDialog {
                             }
                         }
                     }
-                    Label { anchors.centerIn: parent; visible: dialog.previewModel.rows.length === 0; text: "Open File or Load demo to inspect profiles."; color: theme.muted }
+                    Label { anchors.centerIn: parent; visible: dialog.previewModel.rows.length === 0; text: "Open a profile file or restore the workbench input."; color: theme.muted }
                 }
             }
         }

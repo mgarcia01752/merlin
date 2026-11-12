@@ -130,3 +130,5 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 - [Full symbol timing popup](symbol-timing-popup/design.md): UI-SA-TIMING-02.
 
 - [Calculated constellation MER](qam-mer/design.md): UI-QAM-MER-01.
+
+- [Restore workbench inputs](restore-workbench-inputs/design.md): UI-INPUT-RESTORE-01.
