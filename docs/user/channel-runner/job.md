@@ -5,6 +5,30 @@ bounded retention. The underlying session still owns simulation sequencing and
 independent TX/RX state. Simulated observation duration does not set host execution
 speed or the wall-clock budget.
 
+## Workbench run stages
+
+After Start, each selected run profile passes through the following stages.
+
+| Stage | What it does |
+| --- | --- |
+| Preparing | Validates settings and creates the transmitter, channel and receiver. |
+| Acquiring | Transmits PLC signaling and establishes received configuration before payload processing. |
+| Observing | Runs the configured measurement period: transmits symbols, applies channel impairments and decodes the received signal. |
+| Completing | Finishes transmitting already queued payload codewords while the receiver continues decoding; no new source payloads are generated. |
+| Draining | Flushes delayed symbols from the transmit interleaver through the channel and receiver so pending decoding can finish. |
+| Finishing | Finalizes and collects transmitter/receiver results for display. |
+| Run complete | Processing has ended; results are available to inspect. |
+
+The sequence repeats for each selected profile. **Duration per Profile** sets
+the simulated **Observing** interval, not elapsed wall-clock time. Acquisition,
+completion and drain add processing outside that interval. A deeper interleaver
+requires more drain steps; the time taken also depends on decoding work and host
+performance. See [session sequencing](session.md) for the underlying state machine.
+
+Preparing and Finishing are workbench progress labels around the core phases;
+Run complete is the final job status. Cancellation, a runtime limit or an error
+can end a run before normal completion, as described below.
+
 ```mermaid
 flowchart TB
     REQUEST["Validate simulation settings and job limits"] --> SESSION["Create channel session"]
