@@ -159,7 +159,8 @@ Click either measurement block to open its existing input frame.
 
 Click **Channel Input** or **Channel Output** to choose the side-by-side
 **Spectrum Analyzer** trace icon or **QAM Analyzer** constellation icon. The same
-graphical chooser is used at both amplifier TapPoints. Click an icon or focus
+graphical chooser is used at both amplifier TapPoints. Each card shows its
+analyzer name above the graph icon; the window title identifies the tap. Click an icon or focus
 it and press Space to open the instrument.
 
 ![Graphical instrument chooser](../images/workbench/channel-instrument-icons-dark.png)
@@ -275,3 +276,10 @@ for normalization assumptions and remaining RF front-end work.
 
 CLI users can use the same conditioning model with the
 [standalone channel-power example](../../examples/channel-power.json).
+
+**Preview symbol** is the zero-based OFDM symbol index for the effective
+RxMER/playback preview. Hover the label or field, or focus the field with the
+keyboard, for help. It changes the preview only, not simulation timing or
+capture selection.
+
+![Capture configuration with concise labels](../images/workbench/rxmer-capture-configuration-dark.png)

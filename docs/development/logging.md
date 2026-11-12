@@ -91,3 +91,14 @@ on and off. Existing numerical tests remain required.
 Logging can change execution time. A run close to its wall-clock budget can
 complete a different number of words; completed results remain valid partial
 results. Logging must not change the math or RNG sequence for the same work.
+
+## Desktop logging
+
+The Qt executable now owns a separate stderr backend, with a quiet warn default.
+`--debug-ui` enables desktop debug records by default; RUST_LOG overrides this
+without controlling timer visibility. The background workbench loader records
+start/completion/cancellation and elapsed milliseconds. Terminal load failure is
+logged once with its lifecycle event; detailed validation errors remain in the
+UI. No capture bytes, arrays or capture paths are logged by the loader.
+See the maintained [desktop debug inventory](debugging.md) for controls and
+copy/paste examples. CLI behavior above is unchanged.

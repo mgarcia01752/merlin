@@ -94,3 +94,14 @@ Ubuntu dark screenshots confirm the updated layout; the transmitter cards also
 retain light-theme verification. Earlier in this same change, Qt formatting,
 Clippy and all 54 Rust adapter tests passed. No simulation or persisted settings
 were changed; installed packages and other platforms were not exercised.
+
+### Graph-card icon refinement — 2026-11-11
+
+Use the supplied transmitter spectrum-card visual for instrument selection:
+rounded themed card, one-line analyzer title above the framed graph, flat-topped
+OFDM spectrum glyph and a matching constellation card. Omit TX Output and other
+signal-boundary captions; the chooser title already identifies the selected tap.
+Keep both glyphs illustrative navigation symbols, with existing data routing.
+
+Refinement validation: all 53 QML checks and the native build pass. Reviewed
+the actual native dark chooser and updated the channel guide screenshot.

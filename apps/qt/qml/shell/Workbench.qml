@@ -164,7 +164,7 @@ Item {
                 anchors.right: parent.right; anchors.top: parent.top
                 width: 145; height: 78
                 fillMode: Image.PreserveAspectFit
-                source: workbench.iconRoot + (theme.dark ? "merlin-logo-dark.png" : "merlin-logo-light.png")
+                source: workbench.iconRoot + (theme.dark ? "merlin-logo-dark-transparent.png" : "merlin-logo-light.png")
             }
             Canvas {
                 id: headerPulse

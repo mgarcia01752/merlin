@@ -50,6 +50,11 @@ pub mod bridge {
             verified: bool,
             dark: bool,
         ) -> QString;
+        /// Consumes an optional CLI workbench after the GUI event loop is ready.
+        /// # Returns
+        /// Background loading metadata or an inactive result; no file chooser.
+        #[qinvokable]
+        fn startup(self: Pin<&mut WorkbenchFile>) -> QString;
         /// Starts background recovery after an automatic restart.
         /// # Returns
         /// Loading/error metadata; poll_open adopts only validated completion.
@@ -164,6 +169,17 @@ impl bridge::WorkbenchFile {
         )
     }
 
+    /// Starts the one-shot command-line workbench through the normal loader.
+    /// # Returns
+    /// Loading status, or an inactive document for ordinary desktop startup.
+    pub fn startup(mut self: core::pin::Pin<&mut Self>) -> QString {
+        let result = match crate::platform::startup::take_workbench() {
+            Some(source) => self.as_mut().rust_mut().loader.start_requested(source),
+            None => json!({"loading":false}),
+        };
+        QString::from(result.to_string())
+    }
+
     /// Starts private recovery without waiting for capture validation.
     /// # Returns
     /// Loading metadata; poll_open preserves the current WB on any failure.
@@ -188,9 +204,7 @@ impl bridge::WorkbenchFile {
     pub fn poll_open(mut self: core::pin::Pin<&mut Self>) -> QString {
         let (status, prepared) = self.as_mut().rust_mut().loader.poll();
         let result = if let Some(prepared) = prepared {
-            if let Some(path) = &prepared.path {
-                self.as_mut().rust_mut().path = Some(path.clone());
-            }
+            self.as_mut().rust_mut().path = prepared.path.clone();
             prepared.adopt()
         } else {
             status

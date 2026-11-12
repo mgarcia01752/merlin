@@ -9,22 +9,27 @@ import "../../components"
 WorkbenchActionButton {
     id: choice
     property bool constellation: false
-    implicitHeight: 132
+    implicitHeight: 112
     Accessible.name: text
     ToolTip.visible: hovered || visualFocus
     ToolTip.text: "Open " + text
-    background: Rectangle {
-        radius: 9
-        color: choice.down ? choice.theme.line : choice.hovered ? choice.theme.accentSoft : "transparent"
-        border.width: choice.visualFocus ? 2 : 1
-        border.color: choice.hovered || choice.visualFocus ? choice.theme.accent : "transparent"
-    }
     contentItem: Column {
         spacing: 8
+        Label {
+            width: parent.width
+            text: choice.text
+            color: choice.theme.text
+            font.bold: true
+            font.pixelSize: 12
+            fontSizeMode: Text.HorizontalFit
+            minimumPixelSize: 10
+            wrapMode: Text.NoWrap
+            horizontalAlignment: Text.AlignHCenter
+        }
         Canvas {
             id: icon
             width: parent.width
-            height: 84
+            height: 67
             onAvailableChanged: if (available) requestPaint()
             onVisibleChanged: if (visible) requestPaint()
             onWidthChanged: requestPaint()
@@ -33,20 +38,19 @@ WorkbenchActionButton {
                 const context = getContext("2d")
                 context.reset()
                 const size = Math.min(width, height) - 12
-                const left = (width - size) / 2
-                const top = (height - size) / 2
-                context.strokeStyle = choice.theme.muted
+                const left = 6
+                const top = 5
+                const plotWidth = width - 12
+                const plotHeight = height - 10
+                context.strokeStyle = choice.theme.line
                 context.lineWidth = 1
+                context.strokeRect(left, top, plotWidth, plotHeight)
                 context.beginPath()
                 if (choice.constellation) {
-                    context.moveTo(left, top + size / 2)
-                    context.lineTo(left + size, top + size / 2)
-                    context.moveTo(left + size / 2, top)
-                    context.lineTo(left + size / 2, top + size)
-                } else {
-                    context.moveTo(left, top)
-                    context.lineTo(left, top + size)
-                    context.lineTo(left + size, top + size)
+                    context.moveTo(left, top + plotHeight / 2)
+                    context.lineTo(left + plotWidth, top + plotHeight / 2)
+                    context.moveTo(left + plotWidth / 2, top)
+                    context.lineTo(left + plotWidth / 2, top + plotHeight)
                 }
                 context.stroke()
                 context.strokeStyle = choice.theme.accent
@@ -56,17 +60,17 @@ WorkbenchActionButton {
                     for (let row = 0; row < 4; row++) {
                         for (let column = 0; column < 4; column++) {
                             context.beginPath()
-                            context.arc(left + size * (0.2 + column * 0.2), top + size * (0.2 + row * 0.2), 2.5, 0, Math.PI * 2)
+                            context.arc(width / 2 + size * (column - 1.5) * 0.2, height / 2 + size * (row - 1.5) * 0.2, 2, 0, Math.PI * 2)
                             context.fill()
                         }
                     }
                 } else {
                     // A fixed spectrum navigation glyph, not a measured trace.
-                    const trace = [[0,0.86],[0.12,0.82],[0.2,0.85],[0.27,0.75],[0.34,0.78],[0.41,0.24],[0.47,0.63],[0.54,0.12],[0.61,0.65],[0.68,0.42],[0.74,0.77],[0.84,0.82],[1,0.85]]
+                    const trace = [[0,0.92],[0.025,0.73],[0.045,0.2],[0.065,0.18],[0.1,0.2],[0.15,0.18],[0.2,0.2],[0.25,0.18],[0.3,0.2],[0.35,0.18],[0.4,0.2],[0.45,0.18],[0.5,0.2],[0.55,0.18],[0.6,0.2],[0.65,0.18],[0.7,0.2],[0.75,0.18],[0.8,0.2],[0.85,0.18],[0.9,0.2],[0.935,0.18],[0.955,0.2],[0.975,0.73],[1,0.92]]
                     context.beginPath()
                     for (let index = 0; index < trace.length; index++) {
-                        const x = left + trace[index][0] * size
-                        const y = top + trace[index][1] * size
+                        const x = left + trace[index][0] * plotWidth
+                        const y = top + trace[index][1] * plotHeight
                         if (index === 0) {
                             context.moveTo(x, y)
                         } else {
@@ -76,16 +80,6 @@ WorkbenchActionButton {
                     context.stroke()
                 }
             }
-        }
-        Label {
-            width: parent.width
-            text: choice.text
-            color: choice.theme.text
-            font: choice.font
-            fontSizeMode: Text.HorizontalFit
-            minimumPixelSize: 10
-            wrapMode: Text.NoWrap
-            horizontalAlignment: Text.AlignHCenter
         }
     }
 }

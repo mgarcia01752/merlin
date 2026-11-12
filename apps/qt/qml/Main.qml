@@ -29,7 +29,7 @@ ApplicationWindow {
     WorkbenchFile { id: workbenchFile }
     TransmitterAnalyzer { id: transmitterAnalyzer }
     Theme { id: theme; onDarkChanged: branding.update_icon(dark) }
-    Component.onCompleted: { branding.update_icon(theme.dark); if (Qt.application.arguments.indexOf("--restore-update")>=0) Qt.callLater(function(){workbench.restoreUpdate()}); if (Qt.application.arguments.indexOf("--smoke-test")>=0) Qt.callLater(Qt.quit); else if (Qt.application.arguments.indexOf("--check-updates")>=0) Qt.callLater(function(){updates.showUpdates();updates.refresh()}) }
+    Component.onCompleted: { branding.update_icon(theme.dark); if (Qt.application.arguments.indexOf("--restore-update")>=0) Qt.callLater(function(){workbench.restoreUpdate()}); else Qt.callLater(function(){workbench.beginOpen(JSON.parse(workbenchFile.startup()))}); if (Qt.application.arguments.indexOf("--smoke-test")>=0) Qt.callLater(Qt.quit); else if (Qt.application.arguments.indexOf("--check-updates")>=0) Qt.callLater(function(){updates.showUpdates();updates.refresh()}) }
     ThemePalette { targetControl: window; theme: theme }
     color: theme.background
     onClosing: function(close) {

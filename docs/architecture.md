@@ -2031,7 +2031,29 @@ workbench can therefore enable Start immediately after model adoption.
 
 Instrument selection at all channel boundaries shares the graphical
 `instruments/selection/InstrumentChoice.qml` tiles: a spectrum navigation glyph
-and a constellation glyph with matching layout, focus and route behavior. These
+and a constellation glyph in matching rounded graph cards, with the analyzer
+name above each icon and no signal-boundary caption. Focus and routes are
+unchanged. These
 icons are navigation symbols rather than live measurements. FEC control-channel
 statistics use a compact, width-bounded Channel / Metric / Value table; the
 underlying whole-run counters are unchanged.
+
+### Command-line workbench startup and diagnostics
+
+UI-WB-OPEN-04 parses `--workbench FILE|-` before Qt starts and consumes the
+request once after the window is ready. File and standard-input reads share the
+bounded background loader and atomic adoption; file inputs retain their Save
+destination, stdin inputs clear it. Update recovery cannot be combined with an
+explicit startup workbench. Opening never starts a simulation.
+
+Normal loading shows only phase/activity/Cancel. `--debug-ui` enables the elapsed
+label and desktop debug records; RUST_LOG independently overrides stderr logging.
+The desktop owns its logger, with a quiet warn default. Lifecycle records contain
+events and scalar timing, not capture contents or paths. The maintained inventory
+is [desktop debug controls](development/debugging.md). WB JSON is unchanged.
+
+The dark workbench header uses a separate transparent logo asset to blend into
+the themed surface while retaining the original source. Workbench-level QAM
+legends are removed; symbol-role legends remain inside their instrument views.
+The capture editor retains its functions while generic instruction text is
+removed; Preview symbol supplies hover and keyboard-focus help instead.

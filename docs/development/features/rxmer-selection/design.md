@@ -99,3 +99,17 @@ interpolation images and add selection/animation examples to the
 Local-only scripts, derivative WB and additional screenshots/logs are under
 `docs/development/local/responsive-workbench-open/`; no installed release or
 simulation execution was part of the native preview verification.
+
+### Capture editor text cleanup — 2026-11-11
+
+Remove the generic timestamp-policy and selection/filename-preview instructions
+from the capture editor. All selection, preview and tolerance controls, handlers,
+validation and timestamp preservation remain unchanged.
+
+Preview symbol now offers the same help on label/field hover and field keyboard
+focus: zero-based effective RxMER/playback symbol index, preview only. The field
+and its editing handler remain unchanged.
+
+Validation: 53 QML checks pass. Native review confirms only the two labels were
+removed and Preview symbol hover help appears. Selection and preview handlers
+are unchanged. The help uses two short lines to avoid spanning the full window.

@@ -14,7 +14,7 @@ WorkbenchDialog {
     signal cancelRequested()
     title: "Open Workbench"
     width: Math.min(500, parent ? parent.width - 32 : 500)
-    height: 230
+    height: loadState.debug_ui ? 230 : 180
     x: parent ? (parent.width-width)/2 : 0
     y: parent ? (parent.height-height)/2 : 0
     modal: true
@@ -38,12 +38,14 @@ WorkbenchDialog {
             Accessible.name: "Workbench loading activity"
         }
         Label {
+            visible: !!dialog.loadState.debug_ui
             objectName: "loadElapsed"
             text: "Time since Open: " + ((dialog.loadState.elapsed_ms || 0) / 1000).toFixed(1) + " s"
             color: dialog.theme.muted
             Layout.fillWidth: true
         }
         Label {
+            visible: !!dialog.loadState.debug_ui
             text: "Includes file selection and validation."
             color: dialog.theme.muted
             wrapMode: Text.WordWrap

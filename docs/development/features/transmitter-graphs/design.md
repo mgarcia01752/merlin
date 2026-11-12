@@ -84,3 +84,20 @@ Ubuntu dark screenshots confirm the updated layout; the transmitter cards also
 retain light-theme verification. Earlier in this same change, Qt formatting,
 Clippy and all 54 Rust adapter tests passed. No simulation or persisted settings
 were changed; installed packages and other platforms were not exercised.
+
+### Header legend cleanup — 2026-11-11
+
+Remove the Mapped I/Q Data/NCP legend from the parent workbench header. Keep
+the role colors and legends in the actual QAM/constellation instrument views.
+
+### Header logo surface blending — 2026-11-11
+
+Use a separate transparent-background dark header logo so its navy rectangle
+does not appear against the workbench. Preserve the original source asset and
+light-theme selection. Add the new asset to branding resources and inspect the
+actual native header. The UI skill now requires icons to blend into their
+intended themed surface and keeps analyzer legends within their owning view.
+
+Native dark/light transmitter review passes after the legend cleanup. Native
+dark header review confirms the transparent logo has no surrounding rectangle.
+Updated user-guide screenshots; the UI skill and both discovery links validate.

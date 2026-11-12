@@ -131,46 +131,80 @@ impl Loader {
     /// # Returns
     /// Loading metadata, or a busy/spawn diagnostic; repeated Open is rejected.
     pub(crate) fn start(&mut self, recovery: Option<PathBuf>) -> Value {
+        self.start_source(
+            recovery.map(crate::platform::startup::WorkbenchSource::File),
+            false,
+        )
+    }
+
+    /// Starts a command-line file or redirected standard-input workbench.
+    /// # Arguments
+    /// * `source` - Owned input request; stdin never becomes a Save destination.
+    /// # Returns
+    /// Immediate loading status; validation and reads run on the single worker.
+    pub(crate) fn start_requested(
+        &mut self,
+        source: crate::platform::startup::WorkbenchSource,
+    ) -> Value {
+        self.start_source(Some(source), true)
+    }
+
+    fn start_source(
+        &mut self,
+        source: Option<crate::platform::startup::WorkbenchSource>,
+        remember_path: bool,
+    ) -> Value {
         self.start_with(move |stage, cancelled| {
-            let path = if let Some(path) = recovery.as_ref() {
-                path.clone()
-            } else {
-                let Some(uri) =
-                    crate::platform::native_file_picker::choose_workbench("Open MERLIN Workbench")?
-                else {
-                    return Ok(None);
-                };
-                cxx_qt_lib::QUrl::from(&cxx_qt_lib::QString::from(uri))
-                    .to_local_file()
-                    .map(|path| PathBuf::from(path.to_string()))
-                    .ok_or("Choose a local project path.")?
-            };
-            if cancelled.load(Ordering::Relaxed) {
-                return Ok(None);
-            }
-            stage.store(1, Ordering::Relaxed);
-            use std::io::Read;
-            if !std::fs::metadata(&path)
-                .map_err(|error| error.to_string())?
-                .is_file()
+            use crate::platform::startup::WorkbenchSource;
+            use std::io::IsTerminal;
+            let (mut reader, destination): (Box<dyn std::io::Read>, Option<PathBuf>) = match source
             {
-                return Err("Choose a regular workbench file.".into());
-            }
-            let file = std::fs::File::open(&path).map_err(|error| error.to_string())?;
-            let metadata = file.metadata().map_err(|error| error.to_string())?;
-            if !metadata.is_file() || metadata.len() > MAX_PROJECT_BYTES as u64 {
-                return Err("Choose a regular workbench file within the input limit.".into());
-            }
-            let mut bytes = Vec::new();
-            file.take(MAX_PROJECT_BYTES as u64 + 1)
-                .read_to_end(&mut bytes)
-                .map_err(|error| error.to_string())?;
-            if bytes.len() > MAX_PROJECT_BYTES {
-                return Err("Workbench exceeds input limits.".into());
-            }
-            if cancelled.load(Ordering::Relaxed) {
+                Some(WorkbenchSource::Stdin) => {
+                    if std::io::stdin().is_terminal() {
+                        return Err("Redirect workbench JSON with --workbench - < FILE.".into());
+                    }
+                    stage.store(1, Ordering::Relaxed);
+                    (Box::new(std::io::stdin()), None)
+                }
+                other => {
+                    let (path, remember) = if let Some(WorkbenchSource::File(path)) = other {
+                        (path, remember_path)
+                    } else {
+                        let Some(uri) = crate::platform::native_file_picker::choose_workbench(
+                            "Open MERLIN Workbench",
+                        )?
+                        else {
+                            return Ok(None);
+                        };
+                        let path = cxx_qt_lib::QUrl::from(&cxx_qt_lib::QString::from(uri))
+                            .to_local_file()
+                            .map(|path| PathBuf::from(path.to_string()))
+                            .ok_or("Choose a local project path.")?;
+                        (path, true)
+                    };
+                    if cancelled.load(Ordering::Relaxed) {
+                        return Ok(None);
+                    }
+                    stage.store(1, Ordering::Relaxed);
+                    if !std::fs::metadata(&path)
+                        .map_err(|error| error.to_string())?
+                        .is_file()
+                    {
+                        return Err("Choose a regular workbench file.".into());
+                    }
+                    let file = std::fs::File::open(&path).map_err(|error| error.to_string())?;
+                    let metadata = file.metadata().map_err(|error| error.to_string())?;
+                    if !metadata.is_file() || metadata.len() > MAX_PROJECT_BYTES as u64 {
+                        return Err(
+                            "Choose a regular workbench file within the input limit.".into()
+                        );
+                    }
+                    (Box::new(file), remember.then_some(path))
+                }
+            };
+            let Some(bytes) = read_bounded(&mut reader, cancelled, MAX_PROJECT_BYTES)? else {
                 return Ok(None);
-            }
+            };
             stage.store(2, Ordering::Relaxed);
             let project = serde_json::from_slice(&bytes)
                 .map_err(|error| format!("Invalid workbench JSON: {error}"))?;
@@ -179,8 +213,7 @@ impl Loader {
                 return Ok(None);
             }
             stage.store(3, Ordering::Relaxed);
-            PreparedProject::prepare(project, if recovery.is_some() { None } else { Some(path) })
-                .map(Some)
+            PreparedProject::prepare(project, destination).map(Some)
         })
     }
 
@@ -204,6 +237,7 @@ impl Loader {
                 let _ = sender.send(work(&progress, &stop));
             }) {
             Ok(_) => {
+                log::debug!("workbench_open_started");
                 self.job = Some(Job {
                     receiver,
                     cancelled,
@@ -244,12 +278,28 @@ impl Loader {
             .take()
             .expect("Completion requires a tracked loader");
         if job.cancelled.load(Ordering::Relaxed) {
+            log::debug!(
+                "workbench_open_cancelled elapsed_ms={}",
+                job.started.elapsed().as_millis()
+            );
             return (json!({"cancelled":true}), None);
         }
         match message {
-            Ok(Some(prepared)) => (json!({"loading":false}), Some(prepared)),
+            Ok(Some(prepared)) => {
+                log::debug!(
+                    "workbench_open_completed elapsed_ms={}",
+                    job.started.elapsed().as_millis()
+                );
+                (json!({"loading":false}), Some(prepared))
+            }
             Ok(None) => (json!({"cancelled":true}), None),
-            Err(error) => (json!({"error":error}), None),
+            Err(error) => {
+                log::error!(
+                    "workbench_open_failed elapsed_ms={}; see the loading error dialog",
+                    job.started.elapsed().as_millis()
+                );
+                (json!({"error":error}), None)
+            }
         }
     }
 
@@ -267,12 +317,39 @@ impl Loader {
                 _ => "Validating captures and preparing workbench",
             }
         };
-        json!({"loading":true,"phase":phase,"elapsed_ms":job.started.elapsed().as_millis() as u64,"cancelling":job.cancelled.load(Ordering::Relaxed)})
+        json!({"loading":true,"phase":phase,"elapsed_ms":job.started.elapsed().as_millis() as u64,"debug_ui":crate::platform::startup::debug_ui(),"cancelling":job.cancelled.load(Ordering::Relaxed)})
     }
 }
 impl Drop for Loader {
     fn drop(&mut self) {
         self.cancel();
+    }
+}
+
+fn read_bounded(
+    reader: &mut impl std::io::Read,
+    cancelled: &AtomicBool,
+    limit: usize,
+) -> Result<Option<Vec<u8>>, String> {
+    let mut bytes = Vec::new();
+    let mut chunk = [0u8; 64 * 1024];
+    loop {
+        if cancelled.load(Ordering::Relaxed) {
+            return Ok(None);
+        }
+        let capacity = chunk
+            .len()
+            .min(limit.saturating_sub(bytes.len()).saturating_add(1));
+        let count = reader
+            .read(&mut chunk[..capacity])
+            .map_err(|error| error.to_string())?;
+        if count == 0 {
+            return Ok(Some(bytes));
+        }
+        if bytes.len().saturating_add(count) > limit {
+            return Err("Workbench exceeds input limits.".into());
+        }
+        bytes.extend_from_slice(&chunk[..count]);
     }
 }
 
@@ -290,6 +367,44 @@ mod tests {
             assert!(Instant::now() < deadline, "Loader did not complete");
             std::thread::sleep(std::time::Duration::from_millis(1));
         }
+    }
+
+    #[test]
+    fn bounded_stream_preserves_bytes_limits_and_cancellation() {
+        let cancelled = AtomicBool::new(false);
+        assert_eq!(
+            read_bounded(&mut std::io::Cursor::new(b"{}"), &cancelled, 2)
+                .unwrap()
+                .unwrap(),
+            b"{}"
+        );
+        assert!(read_bounded(&mut std::io::Cursor::new(b"{} "), &cancelled, 2).is_err());
+        cancelled.store(true, Ordering::Relaxed);
+        assert!(
+            read_bounded(&mut std::io::Cursor::new(b"{}"), &cancelled, 2)
+                .unwrap()
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn command_line_file_preserves_destination_and_rejects_invalid_json() {
+        let mut loader = Loader::default();
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../../examples/workbench/single/workbench.merlin.json");
+        loader.start_requested(crate::platform::startup::WorkbenchSource::File(
+            path.clone(),
+        ));
+        let (status, prepared) = drain(&mut loader);
+        assert!(prepared.is_some(), "{status}");
+        assert_eq!(prepared.unwrap().path, Some(path));
+        loader.start_requested(crate::platform::startup::WorkbenchSource::File(
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml"),
+        ));
+        assert!(drain(&mut loader).0["error"]
+            .as_str()
+            .unwrap()
+            .starts_with("Invalid workbench JSON"));
     }
 
     #[test]

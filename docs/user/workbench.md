@@ -256,9 +256,10 @@ validating embedded captures. The application remains responsive. **Cancel**
 keeps the current workbench; an active preparation stage finishes in the
 background before the loader closes. Opening a file never starts a simulation.
 
-The bar indicates activity, not a completion percentage. **Time since Open**
-is real time since choosing Open, including file selection, reading and
-validation; it is not simulation time or an estimate of time remaining.
+The bar indicates activity, not a completion percentage. Timing is hidden during
+normal loading. Launch with **--debug-ui** to show **Time since Open**, which
+includes file selection, reading and validation; it is not simulation time or
+an estimate of time remaining. See the [debug controls](../development/debugging.md).
 
 ![Workbench loading](../images/workbench/workbench-loading-dark.png)
 The [run/save guide](closed-loop-workbench.md#save-and-reopen) describes stored
@@ -292,3 +293,36 @@ Spectrum acquisition details appear below the axes and can be hidden with
 **Details**, independently of warnings and power readings.
 
 ![Offline FAQ with actual playback timing advice](../images/workbench/playback-faq-dark.png)
+
+## Open a workbench from the command line
+
+Launch the built desktop with a workbench path to skip the file chooser:
+
+```bash
+cd /home/dev01/Projects/merlin &&
+./apps/qt/target/debug/merlin-qt \
+  --workbench examples/workbench/multi-rxmer-2/workbench.merlin.json
+```
+
+Or read its JSON from standard input:
+
+```bash
+cd /home/dev01/Projects/merlin &&
+./apps/qt/target/debug/merlin-qt --workbench - \
+  < examples/workbench/multi-rxmer-2/workbench.merlin.json
+```
+
+Use the VM desktop terminal and the same Qt environment as your normal
+[development launch](../development/qt.md). Standard input is consumed only
+when `--workbench -` is explicitly requested. File and stdin imports use the
+same background validation, capture checks and input limits as File → Open.
+A pipe must finish writing and close its stream before import can complete;
+cancellation takes effect when an active read or preparation stage returns.
+
+File input becomes the workbench Save destination. Standard input has no saved
+path, so first Save asks for one. Invalid input leaves the existing workbench
+unchanged and shows an error; opening never starts a simulation. Do not combine
+`--workbench` with automatic update recovery (`--restore-update`).
+
+Add `--debug-ui` for loading timing. Use `--help` for startup usage or
+`--check-workbench FILE` to validate without a desktop.

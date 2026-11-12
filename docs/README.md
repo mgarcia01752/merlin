@@ -41,4 +41,5 @@
 - [Build and test](development/build.md)
 - [Qt setup and VM validation](development/qt.md)
 - [Logging](development/logging.md)
+- [Desktop debug controls](development/debugging.md)
 - [Git and releases](development/git.md)

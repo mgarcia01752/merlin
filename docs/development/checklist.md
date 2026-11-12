@@ -1098,9 +1098,17 @@ validation are complete; the user guide includes the current dark capture.
   [Design](features/responsive-workbench-open/design.md#ui-wb-open-03--clear-loading-activity).
 
 - [x] **UI-CH-ICON-01** Shared graphical Spectrum Analyzer / QAM Analyzer choices
-  for every channel input, output and amplifier TapPoint. Verify equal icons,
+  for every channel input, output and amplifier TapPoint. Use matching graph
+  cards with titles above and no TX Output caption. Verify equal icons,
   keyboard routing and native rendering; 53 QML checks pass.
   [Design](features/channel-workbench/design.md#ui-ch-icon-01--graphical-instrument-choices).
 - [x] **UI-FEC-TABLE-01** Compact Channel / Metric / Value grid for whole-run
   control statistics, with aligned values and bounded width.
   [Design](features/fec-monitor/design.md#ui-fec-table-01--compact-control-statistics).
+
+- [x] **UI-WB-OPEN-04** Hide loading timing except --debug-ui; support startup
+  workbench paths and redirected stdin through bounded background validation.
+  Maintain debug-control documentation and lifecycle logging. Normal/debug
+  rendering, startup, Save destinations, errors and cancellation verified;
+  58 Rust tests, 53 QML checks and native Ubuntu launches pass.
+  [Design](features/responsive-workbench-open/design.md#ui-wb-open-04--quiet-loading-and-command-line-workbenches).

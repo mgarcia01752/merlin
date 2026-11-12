@@ -33,6 +33,7 @@ docs/development/
 ├── build.md                  Toolchain, validation and generated files
 ├── git.md                    Commit, push and release workflow
 ├── logging.md                Logging conventions and usage
+├── debugging.md              Maintained desktop debug controls
 ├── checklist-review.md       Supporting checklist audit
 ├── impairment-reference.md   Impairment-stage reference
 ├── features/<feature>/       Tracked plans, design notes and validation summaries

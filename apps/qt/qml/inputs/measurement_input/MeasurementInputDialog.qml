@@ -80,9 +80,24 @@ WorkbenchDialog {
             // Whole-input unsigned decimal text, 1–20 digits; no signs, units or separators.
             TextField { objectName: "rxmerInterval"; text: dialog.options.interval_symbols; Layout.preferredWidth: 115; enabled: dialog.options.mode === "hold" || dialog.options.mode === "interpolate"; validator: RegularExpressionValidator { regularExpression: /[0-9]{1,20}/ }
                 onEditingFinished: dialog.updateOption("interval_symbols", text) }
-            Label { text: "Preview symbol"; color: theme.text }
+            Label {
+                id: previewSymbolLabel
+                text: "Preview symbol"
+                color: theme.text
+                readonly property string helpText: "OFDM symbol index for the effective RxMER/playback preview (0 = first).\nPreview only; simulation settings and capture selection stay unchanged."
+                HoverHandler { id: previewSymbolHover }
+                ToolTip.visible: previewSymbolHover.hovered
+                ToolTip.delay: 500
+                ToolTip.text: helpText
+            }
             // Whole-input unsigned symbol offset, 1–20 digits; Rust checks u64 overflow.
-            TextField { objectName: "rxmerPreviewSymbol"; text: "0"; Layout.preferredWidth: 95; validator: RegularExpressionValidator { regularExpression: /[0-9]{1,20}/ }
+            TextField { objectName: "rxmerPreviewSymbol"; text: "0"; Layout.preferredWidth: 95
+                hoverEnabled: true
+                ToolTip.visible: hovered || activeFocus
+                ToolTip.delay: 500
+                ToolTip.text: previewSymbolLabel.helpText
+                Accessible.description: previewSymbolLabel.helpText
+                validator: RegularExpressionValidator { regularExpression: /[0-9]{1,20}/ }
                 onEditingFinished: { viewer.symbol = text; viewer.reset() } }
             Item { Layout.fillWidth: true }
         }
@@ -90,14 +105,12 @@ WorkbenchDialog {
             Label { text: "Capture association tolerance (seconds)"; color: theme.muted; font.pixelSize: 12 }
             TextField { objectName: "measurementTolerance"; text: String(dialog.options.tolerance_seconds); Layout.preferredWidth: 120; validator: IntValidator { bottom: 0; top: 2147483647 }
                 onEditingFinished: dialog.updateOption("tolerance_seconds", Number(text)) }
-            Label { text: "Explicit application policy; original timestamps stay unchanged."; color: theme.muted; font.pixelSize: 11; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         }
         RowLayout {
             visible:dialog.rxmer
             WorkbenchActionButton { theme:dialog.theme;objectName:"selectAllCaptures";text:"Select All";enabled:dialog.options.mode !== "single";onClicked:dialog.updateOption("selected_captures",null) }
             WorkbenchActionButton { theme:dialog.theme;objectName:"clearCaptureSelection";text:"Clear Selection";onClicked:dialog.updateOption("selected_captures",[]) }
             WorkbenchActionButton { theme:dialog.theme;objectName:"fitCaptureSelection";text:"Use First "+Math.min(dialog.metadata.files.length,dialog.selectionStatus.capacity || 0);enabled:dialog.selectionStatus.capacity > 0 && dialog.metadata.files.length > 0;onClicked:dialog.updateOption("selected_captures",dialog.metadata.files.slice(0,dialog.selectionStatus.capacity).map(file => file.sha256)) }
-            Label { text:"Check captures to use; click a filename to preview.";color:theme.muted;wrapMode:Text.WordWrap;Layout.fillWidth:true;font.pixelSize:11 }
         }
         Label { visible:dialog.rxmer;text:dialog.selectionStatus.error || dialog.selectionStatus.summary || "";color:dialog.selectionStatus.error || dialog.selectionStatus.fits === false ? theme.statusAttention : theme.accent;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:12 }
         MeasurementViewer {

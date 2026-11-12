@@ -85,3 +85,17 @@ start there; keep the green automatic Update chip in the main menu row. Report
 Issue opens the fixed project issue form, never automatically submits content.
 Keep license/acknowledgement lists and standalone/implementation descriptions
 out of About; retain all required bundled licenses and notices in distribution.
+
+## Icons on themed surfaces
+
+Use transparent backgrounds for logos and icons placed directly on themed
+surfaces. They should blend into dark and light modes without a visible image
+rectangle, halo or unintended border. Preserve the artwork and its intended
+proportions; check the actual rendered result in both themes. Intentional
+instrument cards, badges and diagram blocks retain their functional backgrounds.
+Keep symbol-color legends inside their owning analyzer, not repeated on the
+parent workbench.
+
+Maintain the [desktop debug inventory](../../docs/development/debugging.md)
+whenever introducing or changing debug switches, logging controls or their
+visible UI behavior. Normal UI keeps timing diagnostics out of the loading view.

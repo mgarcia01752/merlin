@@ -74,6 +74,24 @@ fn main() {
         );
         return;
     }
+    if arguments
+        .iter()
+        .any(|argument| argument == "--help" || argument == "-h")
+    {
+        println!("Usage: merlin-qt [--workbench FILE|-] [--debug-ui]\n\n  --workbench FILE  Open a workbench without a file chooser\n  --workbench -     Read workbench JSON from standard input\n  --debug-ui        Show loading elapsed time\n  --check-workbench FILE  Validate a workbench without opening the UI\n  --version        Print the application version\n\nExample: merlin-qt --workbench - < workbench.merlin.json");
+        return;
+    }
+    match platform::startup::parse(&arguments) {
+        Ok(options) => platform::startup::configure(options),
+        Err(message) => {
+            eprintln!("{message}");
+            std::process::exit(1);
+        }
+    }
+    if let Err(error) = platform::logging::initialize(platform::startup::debug_ui()) {
+        eprintln!("Cannot initialize logging: {error}");
+        std::process::exit(1);
+    }
     std::env::set_var("QT_QUICK_CONTROLS_STYLE", "Fusion");
     let mut application = QGuiApplication::new();
     application

@@ -65,9 +65,6 @@ WorkbenchDialog {
         RowLayout {
             Layout.fillWidth:true;spacing:12
             Label {text:"Transmitter Signal Path";font.pixelSize:19;font.bold:true;color:dialog.theme.text;Layout.fillWidth:true}
-            Label {text:"Mapped I/Q:";color:dialog.theme.muted;font.pixelSize:11}
-            Label {text:"● Data";color:dialog.theme.qamData;font.pixelSize:11}
-            Label {text:"● NCP";color:dialog.theme.qamNcp;font.pixelSize:11}
         }
         Rectangle {
             Layout.fillWidth:true;Layout.preferredHeight:246

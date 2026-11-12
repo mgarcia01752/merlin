@@ -87,3 +87,27 @@ Ubuntu dark screenshots confirm the updated layout; the transmitter cards also
 retain light-theme verification. Earlier in this same change, Qt formatting,
 Clippy and all 54 Rust adapter tests passed. No simulation or persisted settings
 were changed; installed packages and other platforms were not exercised.
+
+## UI-WB-OPEN-04 — Quiet loading and command-line workbenches
+
+Normal loading keeps the phase and activity bar; elapsed time and its explanation
+are visible only with `--debug-ui`. Add `--workbench FILE` and `--workbench -`
+for redirected stdin. Startup schedules the existing bounded background loader
+after the window is ready; no picker or automatic simulation. File input becomes
+the Save destination, while stdin has no destination and prompts on first Save.
+Retain existing schema/hash validation, input-size bounds, one worker and atomic
+adoption. Preserve update-recovery precedence by rejecting conflicting requests.
+Test argument validation, file/stdin preparation, size and malformed-input errors,
+normal/debug visibility and native startup. Document CLI help and launch examples.
+
+Implemented and validated: Qt formatting, warnings-denied Clippy, all 58 Rust
+adapter tests, 53 QML checks and native build pass. Native Ubuntu launches of
+the 132-capture example through both `--workbench FILE` and redirected stdin
+complete without a chooser or simulation. Normal loading hides the timer;
+`--debug-ui` shows it and emits start/completion timing. Invalid stdin shows
+a validation error and one error record. Headless help and missing-argument
+checks pass. RUST_LOG independently overrides the debug default.
+
+The desktop owns the stderr logger; its defaults and controls are recorded in
+`docs/development/debugging.md`, linked from the docs index. Existing CLI logging
+is unchanged. No installed-package or other-platform validation is claimed.

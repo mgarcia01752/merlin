@@ -290,7 +290,12 @@ Pane {
             verify(workbench.loadingProject)
             const dialog=findChild(workbench,"workbenchLoadingDialog")
             tryCompare(dialog,"opened",true)
-            compare(findChild(dialog,"loadElapsed").text,"Time since Open: 1.3 s")
+            const elapsed=findChild(dialog,"loadElapsed")
+            compare(elapsed.visible,false)
+            fileBackend.openResponse={loading:true,phase:"Validating captures",elapsed_ms:1250,debug_ui:true}
+            workbench.pollOpen()
+            compare(elapsed.visible,true)
+            compare(elapsed.text,"Time since Open: 1.3 s")
             compare(findChild(dialog,"loadPhase").text,"Validating captures")
             verify(findChild(dialog,"loadProgress").indeterminate)
             workbench.requestNewProject()
