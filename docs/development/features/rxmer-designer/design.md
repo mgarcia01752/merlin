@@ -75,3 +75,9 @@ and refreshes the preview. Preserve fractional typed values and zoom. Disable
 steps from invalid text or beyond the existing ±60 dB limits; Rust remains the
 scientific validation authority. Verify typed values, both directions, keyboard,
 boundaries and invalid drafts, then rebuild the native UI and update its capture.
+
+## RXMER-DESIGN-04: low-to-high button order
+
+Order the tilt actions left to right as decrease (↓), then increase (↑), next
+to the editable value. This is a presentation ordering change. Verify both
+controls remain connected to their signed 1 dB actions and rebuild the UI.

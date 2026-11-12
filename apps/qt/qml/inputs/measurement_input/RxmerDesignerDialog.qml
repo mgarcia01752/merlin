@@ -108,15 +108,15 @@ WorkbenchDialog {
                             Keys.onDownPressed:dialog.stepTilt(-1)
                         }
                         WorkbenchActionButton {
-                            theme:dialog.theme;objectName:"designerTiltUp";text:"↑";compact:true
-                            enabled:dialog.canStepTilt(1);onClicked:dialog.stepTilt(1)
-                            Accessible.name:"Increase RxMER tilt by 1 dB"
-                            ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
-                        }
-                        WorkbenchActionButton {
                             theme:dialog.theme;objectName:"designerTiltDown";text:"↓";compact:true
                             enabled:dialog.canStepTilt(-1);onClicked:dialog.stepTilt(-1)
                             Accessible.name:"Decrease RxMER tilt by 1 dB"
+                            ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
+                        }
+                        WorkbenchActionButton {
+                            theme:dialog.theme;objectName:"designerTiltUp";text:"↑";compact:true
+                            enabled:dialog.canStepTilt(1);onClicked:dialog.stepTilt(1)
+                            Accessible.name:"Increase RxMER tilt by 1 dB"
                             ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
                         }
                     }

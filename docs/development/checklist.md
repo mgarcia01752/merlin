@@ -1197,3 +1197,7 @@ validation are complete; the user guide includes the current dark capture.
   editable field and fractional values. Verify keyboard steps, invalid drafts
   and existing limits; 65 QML checks and the native Qt build pass.
   [Design](features/rxmer-designer/design.md#rxmer-design-03-one-db-tilt-controls).
+
+- [x] **RXMER-DESIGN-04** Order tilt buttons low to high: decrease, then
+  increase. Existing Designer QML checks and native build pass.
+  [Design](features/rxmer-designer/design.md#rxmer-design-04-low-to-high-button-order).

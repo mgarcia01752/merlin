@@ -7,7 +7,7 @@ an association anchor; it is not a measured acquisition time.
 
 ![RxMER Designer with a continuous PLC region](../../images/workbench/rxmer-designer-dark.png)
 
-Enable the effects you need. The tilt text box remains editable; its **↑ / ↓**
+Enable the effects you need. The tilt text box remains editable; its **↓ / ↑**
 buttons or the field’s Up/Down keys adjust the current value by exactly **1 dB**.
 Fractional typed values remain supported. Steps beyond ±60 dB or from invalid
 text are disabled.

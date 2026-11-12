@@ -60,3 +60,9 @@ steps, Up/Down keys, bound-disabled controls and invalid/empty drafts. The nativ
 Qt executable is rebuilt. Native dark inspection confirms −5 → −4 → −5 button
 steps and immediate graph updates; the guide capture shows the editable field
 and both compact controls. Light-mode layout was also inspected. No scientific core or persistence changes were needed.
+
+## RXMER-DESIGN-04: button order
+
+The seven Designer QML checks pass after ordering decrease before increase.
+The native Qt application is rebuilt; the guide text and capture reflect the
+low-to-high order. No numeric, validation or persistence behavior changes.
