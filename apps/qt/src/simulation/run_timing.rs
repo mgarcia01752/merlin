@@ -16,6 +16,7 @@ struct State {
     last_progress: Instant,
     phase: &'static str,
     recovered: u64,
+    mce: Option<bool>,
     profiles: Vec<(u8, u64)>,
 }
 
@@ -56,6 +57,7 @@ impl RunTiming {
                 last_progress: now,
                 phase: "Preparing",
                 recovered: 0,
+                mce: None,
                 profiles: Vec::new(),
             }),
         }
@@ -69,6 +71,7 @@ impl RunTiming {
         state.last_progress = now;
         state.phase = "Preparing";
         state.recovered = 0;
+        state.mce = None;
     }
 
     /// Records actual post-step progress without advancing the engine.
@@ -87,6 +90,13 @@ impl RunTiming {
             ChannelPhase::Finished => "Finishing",
         };
         state.recovered = recovered;
+    }
+    /// Records received-only MCE readiness; a full history is not an accuracy claim.
+    pub(crate) fn mce(&self, tracking: Option<bool>) {
+        self.state
+            .lock()
+            .unwrap_or_else(|error| error.into_inner())
+            .mce = tracking;
     }
 
     /// Retains a completed profile's wall duration, bounded by sweep admission.
@@ -132,6 +142,7 @@ impl RunTiming {
         json!({"elapsed_ms":elapsed,"elapsed_text":formatted(elapsed),
             "profile_elapsed_ms":profile,"profile_elapsed_text":formatted(profile),
             "phase":state.phase,"recovered_payloads":state.recovered,
+            "mce":state.mce.map(|tracking|if tracking {"Tracking"}else{"Training"}),
             "progress_age_text":formatted(millis(state.last_progress,end)),
             "profiles":state.profiles.iter().map(|(id,elapsed)|json!({"profile_id":id,"elapsed_ms":elapsed,"elapsed_text":formatted(*elapsed)})).collect::<Vec<_>>()})
     }

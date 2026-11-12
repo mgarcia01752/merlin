@@ -4,6 +4,8 @@
  */
 //! Receiver Channel Estimation (CH-EST-RX): independent pilot LS and bounded history.
 mod interpolation;
+mod reliability;
+pub use reliability::{MceSettings, ReceiverReliability, ReliabilityEstimator};
 mod model;
 mod pilot;
 pub use model::{ChannelEstimate, PilotEstimate, ReceiverMode};

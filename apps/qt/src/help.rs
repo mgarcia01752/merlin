@@ -53,6 +53,17 @@ pub(crate) struct AdmissionError {
     pub diagnostic: Option<Box<Diagnostic>>,
 }
 impl AdmissionError {
+    /// Preserves a stable core code for static help without numeric context.
+    /// # Arguments
+    /// * `error` - Original scientific validation failure.
+    /// # Returns
+    /// Same message and known catalog guidance, or no help for an unknown code.
+    pub(crate) fn classified(error: SimulationError) -> Self {
+        Self {
+            message: error.to_string(),
+            diagnostic: catalog_diagnostic(error.code).map(Box::new),
+        }
+    }
     /// Attaches help only to a recognized core diagnostic, without revalidating captures.
     /// # Arguments
     /// * `error` - Original core failure; its stable code selects the help entry.
@@ -75,7 +86,7 @@ impl AdmissionError {
                     playback_help(timing, span, current_ms)
                 })
         } else {
-            None
+            catalog_diagnostic(error.code)
         };
         Self {
             message: error.to_string(),
@@ -205,6 +216,21 @@ pub(crate) fn static_diagnostic(code: &str) -> Value {
             "tooltip":format!("{}\n{}\n{}",entry.summary,entry.suggestion,entry.note)}),
         None => Value::Null,
     }
+}
+/// Builds static known-error guidance without inventing measurement context.
+pub(crate) fn catalog_diagnostic(code: &str) -> Option<Diagnostic> {
+    let entry = entry(code)?;
+    Some(Diagnostic {
+        code: entry.code.clone(),
+        title: entry.title.clone(),
+        faq_anchor: entry.faq_anchor.clone(),
+        tooltip: format!("{}\n{}\n{}", entry.summary, entry.suggestion, entry.note),
+        current_duration_ms: 0,
+        final_transition_symbol: 0,
+        final_transition_ms: 0.0,
+        minimum_duration_ms: 0,
+        maximum_duration_ms: 0,
+    })
 }
 /// Bounded title/Markdown JSON. Unknown keys report unavailable help without I/O.
 pub(crate) fn faq_document(code: &str) -> Value {

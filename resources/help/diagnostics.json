@@ -8,7 +8,7 @@
       "faq_anchor": "rxmer-playback-needs-a-longer-run",
       "summary": "The last RxMER capture transition must fit inside the source observation window.",
       "context": "Final transition: {final_transition_ms} ms (symbol {final_transition_symbol}). Current duration: {current_duration_ms} ms.",
-      "suggestion": "Set Configure WorkBench \u2192 Run \u2192 Duration per Profile to at least {minimum_duration_ms} ms, or reduce OFDM symbols between captures / the capture count.",
+      "suggestion": "Set Configure WorkBench → Run → Duration per Profile to at least {minimum_duration_ms} ms, or reduce OFDM symbols between captures / the capture count.",
       "over_limit_suggestion": "This sequence needs at least {minimum_duration_ms} ms, above the {maximum_duration_ms} ms duration limit. Reduce OFDM symbols between captures / the capture count, or use Single capture / Average mode.",
       "note": "Increasing the active run budget does not extend the observation window."
     },
@@ -21,7 +21,51 @@
       "context": "",
       "suggestion": "In Configure WorkBench, select the desired profiles, apply the configuration and run them. Wait for the selected run to complete, then choose its Run Profile in the analyzer.",
       "over_limit_suggestion": "",
-      "note": "Opening a WB does not run it. Start or accepted input changes clear transient results. Missing results never use another profile\u2019s samples."
+      "note": "Opening a WB does not run it. Start or accepted input changes clear transient results. Missing results never use another profile’s samples."
+    },
+    {
+      "code": "MceInvalidSettings",
+      "title": "MCE settings are outside supported limits",
+      "faq_heading": "MCE settings are outside supported limits",
+      "faq_anchor": "mce-settings-are-outside-supported-limits",
+      "summary": "MCE needs finite receiver policies with bounded work.",
+      "context": "",
+      "suggestion": "Set averaging to 1–128 symbols. In Rust/CLI requests use a variance floor from 1e-12 to 1.",
+      "over_limit_suggestion": "",
+      "note": "MCE is pilot-assisted and retains explicit bootstrap timing assumptions; a ready history is not an accuracy guarantee."
+    },
+    {
+      "code": "MceEstimationFailed",
+      "title": "MCE could not estimate a usable channel",
+      "faq_heading": "MCE could not estimate a usable channel",
+      "faq_anchor": "mce-could-not-estimate-a-usable-channel",
+      "summary": "The receiver could not continue with valid received pilot estimates or bounded correction.",
+      "context": "",
+      "suggestion": "Review channel noise, echo strength and pilot coverage. Try a weaker impairment or compare with supplied-H reference correction; MCE never falls back automatically.",
+      "over_limit_suggestion": "",
+      "note": "MCE is pilot-assisted and retains explicit bootstrap timing assumptions; a ready history is not an accuracy guarantee."
+    },
+    {
+      "code": "ChannelFilterInvalid",
+      "title": "Waveform channel settings are unsupported",
+      "faq_heading": "Waveform channel settings are unsupported",
+      "faq_anchor": "waveform-channel-settings-are-unsupported",
+      "summary": "The selected waveform filter does not meet the supported bounds or response-source policy.",
+      "context": "",
+      "suggestion": "Use at most 2048 samples of memory. Synthetic echoes require Flat / unity input with additional loss Off. Use the per-subcarrier model for unsupported combinations.",
+      "over_limit_suggestion": "",
+      "note": "Continuous filtering preserves history between symbols. A CM capture does not uniquely establish absolute propagation delay."
+    },
+    {
+      "code": "ChannelFilterFitFailed",
+      "title": "CM waveform filter does not match the capture",
+      "faq_heading": "CM waveform filter does not match the capture",
+      "faq_anchor": "cm-waveform-filter-does-not-match-the-capture",
+      "summary": "The finite causal filter exceeds the declared complex-response approximation errors.",
+      "context": "",
+      "suggestion": "Keep the per-subcarrier model, or review maximum delay and causal shift in Waveform Channel. Do not increase fit tolerances simply to hide a poor reconstruction.",
+      "over_limit_suggestion": "",
+      "note": "Continuous filtering preserves history between symbols. A CM capture does not uniquely establish absolute propagation delay."
     }
   ]
 }

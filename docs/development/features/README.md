@@ -135,4 +135,4 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 
 - [Run-specific QAM results and TX-reference MER](qam-run-results/design.md): UI-QAM-RUNS-02.
 
-- [Independent receiver estimation through a channel with memory](independent-channel-estimation/design.md): CH-EST-RX-07..12 (planned).
+- [Independent receiver estimation through a channel with memory](independent-channel-estimation/design.md): CH-EST-RX-07..12 (implemented for bounded static channels).

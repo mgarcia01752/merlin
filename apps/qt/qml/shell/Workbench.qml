@@ -276,6 +276,8 @@ Item {
                 WorkbenchBlock {
                     id: receiverBlock; objectName: "receiverBlock"; x: 935; y: 245; width: 195; height: 90
                     theme: workbench.theme; heading: "Receiver"
+                    indicatorText: workbench.runState.options.receiver_mode === "merlin_estimated" ? "MCE" : ""
+                    indicatorDescription: "MERLIN Channel Estimation enabled. Estimates correction from received pilots."
                     blockStatus: workbench.runState.receiver_status
                     statusReason: workbench.runState.reason
                     onClicked: receiverDialog.open()
@@ -336,7 +338,7 @@ Item {
                     diagnostic: workbench.runState.diagnostic || null
                     onHelpRequested: function(code) { workbench.openHelp(code) }
                     objectName: "runProgress"
-                    text: workbench.runState.diagnostic ? workbench.runState.reason : workbench.runState.busy ? "Profile " + (workbench.runState.profile_id ?? "—") + " · " + (workbench.runState.profile_index || 1) + " / " + (workbench.runState.profile_count || 1) + (workbench.runState.timing ? " · " + workbench.runState.timing.phase : "") + " · Symbols: " + workbench.runState.completed_symbols + (workbench.runState.timing ? " · Recovered: " + workbench.runState.timing.recovered_payloads : "") : workbench.runState.result ? "Run " + workbench.runState.result.status + " · " + workbench.runState.result.bits_tested + " bits compared · " + workbench.runState.result.bit_errors + " bit errors" : workbench.runState.reason
+                    text: workbench.runState.diagnostic ? workbench.runState.reason : workbench.runState.busy ? "Profile " + (workbench.runState.profile_id ?? "—") + " · " + (workbench.runState.profile_index || 1) + " / " + (workbench.runState.profile_count || 1) + (workbench.runState.timing ? " · " + workbench.runState.timing.phase + (workbench.runState.timing.mce ? " · MCE " + workbench.runState.timing.mce : "") : "") + " · Symbols: " + workbench.runState.completed_symbols + (workbench.runState.timing ? " · Recovered: " + workbench.runState.timing.recovered_payloads : "") : workbench.runState.result ? "Run " + workbench.runState.result.status + " · " + workbench.runState.result.bits_tested + " bits compared · " + workbench.runState.result.bit_errors + " bit errors" : workbench.runState.reason
                     font.pixelSize: 12; Layout.fillWidth: true
                     activityTooltip: workbench.runState.busy && workbench.runState.timing ? "Time since last completed processing step: " + workbench.runState.timing.progress_age_text : ""
                 }
@@ -394,13 +396,14 @@ Item {
     ChannelWorkbenchDialog {
         onContextHelpRequested:function(code){workbench.openHelp(code)}
         id: channelDialog; theme: workbench.theme; configuration: workbench.measurementState
+        runBackend:workbench.runBackend
         measurementBackend:workbench.measurementBackend;settingsBackend:workbench.settingsBackend;transmitterBackend:workbench.transmitterBackend;receiverBackend:workbench.receiverBackend;runState:workbench.runState
         onModelApplied:workbench.refreshMeasurements()
         onRxmerRequested: rxmerDialog.open()
         onResponseRequested: responseDialog.open()
     }
     ReceiverWorkbenchDialog { id: receiverDialog;onContextHelpRequested:function(code){workbench.openHelp(code)}; theme: workbench.theme; backend: workbench.receiverBackend; runState: workbench.runState; onConfigurationRequested: receiverConfig.open() }
-    ReceiverConfigurationDialog { id: receiverConfig; theme: workbench.theme; backend: workbench.runBackend; settingsBackend: workbench.settingsBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
+    ReceiverConfigurationDialog { id: receiverConfig; onContextHelpRequested:function(code){workbench.openHelp(code)}; theme: workbench.theme; backend: workbench.runBackend; settingsBackend: workbench.settingsBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
     VerificationDialog { id: verificationDialog; theme: workbench.theme; backend: workbench.runBackend; diagnosticsBackend: workbench.receiverBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
     FaqDialog { id: faqDialog; theme: workbench.theme; backend: workbench.aboutBackend }
     WorkbenchLoadingDialog {

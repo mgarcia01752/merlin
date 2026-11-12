@@ -88,6 +88,22 @@ receiver-owned pilot references, bounded history and1/H-hat correction. The CLI
 keeps known timing/PLC phase. [Receiver design](../receiver-estimation/README.md)
 explains the separate CP timing API and remaining blind-acquisition limits.
 
+Select `receiver_mode: "merlin_estimated"` for [MCE](../receiver-estimation/mce.md):
+independent pilot correction plus received-only decoder reliability. Optional
+`mce` settings select `minimum_variance` and `averaging_symbols`; omitted mode
+preserves supplied-channel reference behavior. No MCE toggle changes supplied H
+or the channel's seeded noise. Optional `channel_filter` independently selects
+`diagonal`, `echoes` or `captured_fir`; see [filter policies](../impairments/waveform-filter.md).
+
+The tracked MCE example uses a weak 8-sample echo and sample AWGN:
+
+```bash
+./target/release/ofdm-fec channel --input examples/channel-mce.json --output mce-result.json
+```
+
+Choose a new output path. Results include optional `receiver_reliability` and
+`channel_filter` diagnostics, plus the existing estimate/MER/FEC results.
+
 Optional `protected_constellation` selects four bounded pilot/PLC pair streams.
 Results include optional `channel_estimate` and `protected_constellation` shared
 Rust fields; no CLI-side calculations are added. `rx.channel_estimation.response`

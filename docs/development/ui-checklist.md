@@ -239,6 +239,11 @@ are implemented. Unretained history and unsupported transport stay explicit.
 
 - [x] **UI-CH-EST-RX-01** Display supplied H and actual H-hat snapshots with
   response curves and band-limited impulse/echo diagnostics.
+- [x] **CH-EST-RX-11** Add Off-by-default MCE in Receiver Configuration and a
+  small main Receiver chip without moving its centered heading. Keep waveform
+  channel controls separate; preserve Apply/Cancel, WB settings and known-error
+  help. 66 adapter/57 QML checks and native dark/light views pass.
+  [Implementation](features/independent-channel-estimation/implementation.md).
 - [x] **UI-SLICER-01** Show selected physical decisions/residuals and actual
   NCP/payload cell LLRs plus the retained LDPC-input window.
 - [x] **UI-FEC-01** Add dedicated FEC statistics, iteration distribution and

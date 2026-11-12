@@ -58,7 +58,7 @@ impl ConstellationCollector {
                 status: ConstellationStatus::Unavailable,
                 collected_pairs: 0,
                 reference: "raw_receiver_iq_shared_unit_rms_no_display_normalization",
-                channel_coefficients: if mode==crate::signal_processing::receiver::channel_estimation::ReceiverMode::PilotEstimated {"pilot_estimated_h_receiver_reciprocal"}else{"response_h_receiver_reciprocal"},
+                channel_coefficients: if mode!=crate::signal_processing::receiver::channel_estimation::ReceiverMode::SuppliedChannel {"pilot_estimated_h_receiver_reciprocal"}else{"response_h_receiver_reciprocal"},
                 pairs: Vec::new(),
                 ncp_pairs: Vec::new(),
             },

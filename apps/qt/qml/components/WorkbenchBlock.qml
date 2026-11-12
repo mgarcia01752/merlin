@@ -15,12 +15,28 @@ Button {
     readonly property color statusColor: blockStatus === "complete" ? theme.statusComplete : blockStatus === "error" ? theme.statusError : theme.statusAttention
     property bool inputBlock: false
     property string pnmFileType: ""
+    property string indicatorText: ""
+    property string indicatorDescription: ""
     Accessible.name: heading
-    Accessible.description: statusLabel + ": " + statusReason + (pnmFileType ? ". CM PNM File: " + pnmFileType : "")
+    Accessible.description: statusLabel + ": " + statusReason + (pnmFileType ? ". CM PNM File: " + pnmFileType : "") + (indicatorText ? ". " + indicatorDescription : "")
     ToolTip.visible: hovered || visualFocus
     ToolTip.delay: 500
-    ToolTip.text: statusLabel + ": " + statusReason
+    ToolTip.text: statusLabel + ": " + statusReason + (indicatorText ? "\n" + indicatorDescription : "")
     hoverEnabled: true
+    Rectangle {
+        objectName: "blockModeIndicator"
+        visible: block.indicatorText.length > 0
+        anchors.top: parent.top; anchors.right: parent.right
+        anchors.topMargin: 6; anchors.rightMargin: 7
+        width: indicatorLabel.implicitWidth + 12; height: 18; radius: 4
+        color: block.theme.accentSoft
+        Text {
+            id: indicatorLabel
+            anchors.centerIn: parent
+            text: block.indicatorText; color: block.theme.accent
+            font.pixelSize: 10; font.weight: Font.DemiBold
+        }
+    }
     background: Rectangle {
         radius: 12
         gradient: Gradient {
@@ -39,6 +55,7 @@ Button {
     }
     contentItem: Item {
         Text {
+            objectName: "blockHeading"
             anchors.left: parent.left; anchors.right: parent.right
             anchors.top: parent.top; anchors.bottom: fileFootnote.top
             anchors.bottomMargin: block.pnmFileType ? 4 : 0

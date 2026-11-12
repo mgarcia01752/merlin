@@ -31,6 +31,11 @@ pub mod bridge {
         /// Empty on success; an error preserves accepted receiver options.
         #[qinvokable]
         fn apply(self: Pin<&mut ClosedLoop>, options: &QString, settings: &QString) -> QString;
+        /// Returns known guidance from the last Apply failure, without changing settings.
+        /// # Returns
+        /// Bounded diagnostic JSON or null for an unclassified error.
+        #[qinvokable]
+        fn admission_help(self: &ClosedLoop) -> QString;
         /// Restores already validated project receiver/comparison choices.
         /// # Arguments
         /// * `options` - Saved receiver options or null.
@@ -66,6 +71,7 @@ pub mod bridge {
 #[derive(Default)]
 pub struct ClosedLoopRust {
     pub(crate) model: model::Model,
+    admission_diagnostic: Option<Box<crate::help::Diagnostic>>,
 }
 impl bridge::ClosedLoop {
     /// Resolves accepted inputs and invalidates prior results.
@@ -93,7 +99,12 @@ impl bridge::ClosedLoop {
         options: &QString,
         settings: &QString,
     ) -> QString {
-        let prepare = || -> Result<model::Options, String> {
+        let prepare = || -> Result<model::Options, crate::help::AdmissionError> {
+            if self.rust().model.state()["busy"].as_bool() == Some(true) {
+                return Err(
+                    "Stop the simulation before changing receiver or channel settings.".into(),
+                );
+            }
             if options.to_string().len() > 4096 || settings.to_string().len() > 4096 {
                 return Err("Options too large".into());
             }
@@ -102,11 +113,20 @@ impl bridge::ClosedLoop {
             let transmission: docsis_ofdm_fec::transmission::TransmissionSettings =
                 serde_json::from_str(&settings.to_string()).map_err(|e| e.to_string())?;
             transmission.validate().map_err(|error| error.to_string())?;
+            options
+                .mce
+                .validate()
+                .map_err(crate::help::AdmissionError::classified)?;
             options.validate(&crate::workbench::session::snapshot())?;
+            let inputs = crate::workbench::session::snapshot();
+            if inputs.source.is_some() && inputs.profile.is_some() && inputs.playback.is_some() {
+                model::prepare(&transmission, &inputs, &options)?;
+            }
             Ok(options)
         };
         match prepare() {
             Ok(options) => {
+                self.as_mut().rust_mut().admission_diagnostic = None;
                 self.as_mut().rust_mut().model.options = Some(options);
                 self.as_mut()
                     .rust_mut()
@@ -114,8 +134,18 @@ impl bridge::ClosedLoop {
                     .configure(&settings.to_string());
                 QString::from("")
             }
-            Err(error) => QString::from(error),
+            Err(error) => {
+                let message = error.to_string();
+                self.as_mut().rust_mut().admission_diagnostic = error.diagnostic;
+                QString::from(message)
+            }
         }
+    }
+    /// Reads transient Apply help while preserving the accepted simulation state.
+    /// # Returns
+    /// Registered catalog metadata or null; never parses an error message for identity.
+    pub fn admission_help(&self) -> QString {
+        QString::from(serde_json::json!(self.rust().admission_diagnostic).to_string())
     }
     /// Restores saved receiver choices, deriving readiness from restored accepted inputs.
     /// # Arguments

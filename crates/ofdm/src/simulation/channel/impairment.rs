@@ -23,6 +23,9 @@ pub(super) struct ImpairedChannel {
     synthesis: Option<WaveformTransmitter>,
     awgn: SampleAwgn,
     rng: ChaCha8Rng,
+    filter: Option<crate::signal_processing::channel::filter::StreamingChannelFilter>,
+    pub filter_diagnostics: Option<crate::signal_processing::channel::filter::FilterDiagnostics>,
+    pub filter_tail_samples: usize,
 }
 impl ImpairedChannel {
     /// Freezes independent channel synthesis and noise state.
@@ -40,11 +43,65 @@ impl ImpairedChannel {
         layout: &CarrierLayout,
         settings: &ChannelImpairments,
         variance: f64,
+        filter_settings: &crate::signal_processing::channel::filter::ChannelFilterSettings,
     ) -> Result<Self, SimulationError> {
-        let plan = settings.plan(geometry.settings(), layout, variance)?;
+        let mut plan = settings.plan(geometry.settings(), layout, variance)?;
+        if matches!(
+            filter_settings,
+            crate::signal_processing::channel::filter::ChannelFilterSettings::Echoes { .. }
+        ) && (settings.response.is_some() || settings.additional_loss != Default::default())
+        {
+            return Err(SimulationError::new("ChannelFilterInvalid","Synthetic echoes are an exclusive response source; use unity input with no additional tilt."));
+        }
+        let active: Vec<_> = layout
+            .static_roles()
+            .iter()
+            .map(|role| *role != crate::transmission::layout::PhysicalCarrierRole::Excluded)
+            .collect();
+        let filter_plan = filter_settings.prepare(
+            geometry.settings().subcarrier_spacing,
+            &plan.response,
+            &active,
+        )?;
+        let filter_diagnostics = filter_plan.as_ref().map(|plan| plan.diagnostics().clone());
+        let filter = filter_plan
+            .as_ref()
+            .map(|plan| {
+                crate::signal_processing::channel::filter::StreamingChannelFilter::new(plan, 0)
+            })
+            .transpose()?;
+        if let Some(filter_plan) = &filter_plan {
+            plan.response = filter_plan.response().to_vec();
+            for (bin, gain) in plan.response.iter().enumerate() {
+                if active[bin] && gain[0].hypot(gain[1]) < 1e-6 {
+                    return Err(SimulationError::new(
+                        "ChannelFilterInvalid",
+                        "Realized channel has a deep null below the supported inverse floor.",
+                    ));
+                }
+            }
+            for (bin, gain) in plan.response.iter().enumerate() {
+                let inverse = 1.0 / (gain[0].powi(2) + gain[1].powi(2));
+                if active[bin] {
+                    plan.llr_variance[bin] = match settings.noise {
+                        NoiseModel::Awgn { sample_power } if sample_power > 0.0 => {
+                            sample_power * inverse
+                        }
+                        _ if plan.receiver_noise_power > 0.0 => {
+                            plan.residual_power[bin] + plan.receiver_noise_power * inverse
+                        }
+                        _ => plan.llr_variance[bin],
+                    };
+                }
+            }
+        }
         let sample_power = match settings.noise {
             NoiseModel::Awgn { sample_power } => sample_power,
             _ => 0.0,
+        } + if filter.is_some() {
+            plan.receiver_noise_power
+        } else {
+            0.0
         };
         let synthesis = if settings.power != Default::default()
             || matches!(settings.noise, NoiseModel::Rxmer { .. })
@@ -57,6 +114,9 @@ impl ImpairedChannel {
             None
         };
         Ok(Self {
+            filter,
+            filter_diagnostics,
+            filter_tail_samples: 0,
             plan,
             synthesis,
             awgn: SampleAwgn::new(sample_power, settings.seed, 0)?,
@@ -85,14 +145,34 @@ impl ImpairedChannel {
         physical: &PhysicalFrequencySymbol,
         original: &SampleBlock,
     ) -> Result<SampleBlock, SimulationError> {
-        if let Some(synthesis) = &mut self.synthesis {
+        let source = if let Some(synthesis) = &mut self.synthesis {
             let mut altered = physical.clone();
-            altered.bins = self
-                .plan
-                .apply_bins(&physical.bins, &physical.roles, &mut self.rng)?;
-            return Ok(synthesis.transmit(&altered)?.output);
+            let plan = if self.filter.is_some() {
+                Some(ImpairmentPlan {
+                    response: vec![[1.0, 0.0]; self.plan.response.len()],
+                    receiver_noise_power: 0.0,
+                    residual_power: self.plan.residual_power.clone(),
+                    llr_variance: self.plan.llr_variance.clone(),
+                })
+            } else {
+                None
+            };
+            altered.bins = plan.as_ref().unwrap_or(&self.plan).apply_bins(
+                &physical.bins,
+                &physical.roles,
+                &mut self.rng,
+            )?;
+            synthesis.transmit(&altered)?.output
+        } else {
+            original.clone()
+        };
+        if let Some(filter) = &mut self.filter {
+            self.awgn.transfer(&filter.transfer(&source)?)
+        } else if self.synthesis.is_some() {
+            Ok(source)
+        } else {
+            self.awgn.transfer(&source)
         }
-        self.awgn.transfer(original)
     }
     /// Drains channel waveform history without inventing another symbol.
     /// # Arguments
@@ -105,10 +185,23 @@ impl ImpairedChannel {
         &mut self,
         original: &SampleBlock,
     ) -> Result<SampleBlock, SimulationError> {
-        if let Some(synthesis) = &mut self.synthesis {
-            synthesis.finish()
+        let source = if let Some(synthesis) = &mut self.synthesis {
+            synthesis.finish()?
         } else {
-            self.awgn.transfer(original)
+            original.clone()
+        };
+        if let Some(filter) = &mut self.filter {
+            let filtered = filter.transfer(&source)?;
+            let tail = filter.finish()?;
+            self.filter_tail_samples = tail.samples().len();
+            let mut samples = filtered.samples().to_vec();
+            samples.extend_from_slice(tail.samples());
+            self.awgn
+                .transfer(&SampleBlock::new(filtered.start_index(), samples)?)
+        } else if self.synthesis.is_some() {
+            Ok(source)
+        } else {
+            self.awgn.transfer(&source)
         }
     }
 }

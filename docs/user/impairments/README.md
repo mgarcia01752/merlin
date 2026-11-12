@@ -18,6 +18,7 @@ flowchart LR
 | Component | Design |
 | --- | --- |
 | Seeded sample-domain Gaussian noise | [AWGN](awgn.md) |
+| Static sample delays and explicit CM response reconstruction | [Waveform channel filter](waveform-filter.md) |
 | Current decoder JSON adaptation | [PNM import](pnm-import.md) |
 | Carrier-wise residual synthesis and LLR calibration | [RxMER residuals](rxmer.md) |
 | Additional manual tilt and full cable loss | [Additional loss](additional-loss.md) |

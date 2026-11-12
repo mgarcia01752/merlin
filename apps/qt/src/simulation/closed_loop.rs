@@ -41,6 +41,8 @@ pub(crate) const MAX_DURATION_MS: u64 = 1000;
 #[serde(default, deny_unknown_fields)]
 pub(crate) struct Options {
     pub receiver_mode: ReceiverMode,
+    pub channel_filter: docsis_ofdm_fec::signal_processing::channel::filter::ChannelFilterSettings,
+    pub mce: docsis_ofdm_fec::signal_processing::receiver::channel_estimation::MceSettings,
     #[serde(default = "legacy_all_profiles")]
     pub all_profiles: bool,
     pub selected_profile_ids: Option<Vec<u8>>,
@@ -53,6 +55,8 @@ impl Default for Options {
     fn default() -> Self {
         Self {
             receiver_mode: ReceiverMode::SuppliedChannel,
+            channel_filter: Default::default(),
+            mce: Default::default(),
             all_profiles: false,
             selected_profile_ids: None,
             duration_ms: 3,
@@ -72,6 +76,10 @@ impl Options {
     /// # Errors
     /// Rejects invalid limits, repeated or absent captured IDs and excessive selections.
     pub(crate) fn validate(&self, inputs: &Inputs) -> Result<(), String> {
+        self.mce.validate().map_err(|error| error.to_string())?;
+        self.channel_filter
+            .validate()
+            .map_err(|error| error.to_string())?;
         if !(1..=MAX_DURATION_MS).contains(&self.duration_ms)
             || !(1..=100).contains(&self.max_iterations)
             || !(1..=300000).contains(&self.max_runtime_ms)
@@ -335,6 +343,11 @@ fn run_one(
         |p| {
             progress.store(p.completed_source_symbols, Ordering::Relaxed);
             timing.progress(p.phase, p.recovered_payloads);
+            timing.mce(
+                p.receiver_reliability
+                    .as_ref()
+                    .map(|status| status.tracking),
+            );
         },
     )
     .map_err(|e| e.to_string())?;
@@ -419,6 +432,8 @@ pub(crate) fn prepare(
     settings.duration = Duration::from_millis(options.duration_ms);
     settings.max_iterations = options.max_iterations;
     settings.receiver_mode = options.receiver_mode;
+    settings.channel_filter = options.channel_filter.clone();
+    settings.mce = options.mce.clone();
     settings.impairments.additional_loss = inputs.additional_loss.clone();
     settings.impairments.power = inputs.power.clone();
     MeasurementSelection {
@@ -622,6 +637,12 @@ impl Model {
                             .as_ref()
                             .map(ToString::to_string)
                             .unwrap_or_default();
+                        self.diagnostic = result
+                            .job
+                            .error
+                            .as_ref()
+                            .and_then(|error| crate::help::catalog_diagnostic(error.code))
+                            .map(Box::new);
                         publish(Some(Arc::new(*result)));
                         self.token = self.token.wrapping_add(1);
                     }
@@ -737,6 +758,45 @@ mod tests {
         };
         let transmission = TransmissionSettings::default();
         (inputs, transmission)
+    }
+    #[test]
+    fn mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance() {
+        let legacy: Options = serde_json::from_str("{}").unwrap();
+        assert_eq!(legacy.receiver_mode, ReceiverMode::SuppliedChannel);
+        let options = Options {
+            receiver_mode: ReceiverMode::MerlinEstimated,
+            duration_ms: 1,
+            max_iterations: 10,
+            ..Default::default()
+        };
+        let saved = serde_json::to_string(&options).unwrap();
+        let restored: Options = serde_json::from_str(&saved).unwrap();
+        assert_eq!(restored.receiver_mode, ReceiverMode::MerlinEstimated);
+        assert_eq!(restored.mce.averaging_symbols, 16);
+        let (inputs, transmission) = accepted_inputs();
+        let settings = prepare(&transmission, &inputs, &restored).unwrap();
+        let result = run_one(
+            &settings,
+            60000,
+            &AtomicBool::new(false),
+            &AtomicBool::new(false),
+            &AtomicU64::new(0),
+            &RunTiming::new(),
+        )
+        .unwrap();
+        assert!(matches!(
+            result.job.status,
+            docsis_ofdm_fec::simulation::channel::ChannelJobStatus::Complete
+        ));
+        assert!(result.job.receiver_reliability.as_ref().unwrap().tracking);
+        assert_eq!(result.job.summary.comparison.bit_errors, 0);
+        publish(Some(Arc::new(result)));
+        let response =
+            crate::instruments::receiver::diagnostics::response(r#"{"source":2}"#).unwrap();
+        assert_eq!(response["available"], true);
+        assert_eq!(response["comparison"]["available"], true);
+        assert_eq!(response["mce"]["tracking"], true);
+        publish(None);
     }
     #[test]
     fn channel193_rxmer_controls_tx_reference_mer_while_nearest_points_are_optimistic() {

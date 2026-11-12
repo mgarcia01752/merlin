@@ -30,23 +30,23 @@ to use unity H. Zero, unavailable or nonrepresentable active gains reject.
 In supplied-channel reference mode, H is independently copied into the receiver
 to calculate correction 1/H. In existing pilot-estimated mode, the channel still
 applies H, but the receiver derives its own H-hat from received pilots and uses
-1/H-hat instead. Neither estimator uses transmitter payload truth. The channel and receiver own
+1/H-hat instead. Neither estimator uses transmitter payload truth.
+The channel and receiver own
 separate transform/window/framing state, and channel input/output plus RX FFT and
 equalized test points expose the resulting stages.
 
-The planned **HGCE** control keeps that separation: Off uses the default supplied-H
-reference workflow; On uses independent received-pilot estimation. Supplied H
-impairs the signal in both cases. HGCE will default to Off in Receiver Configuration;
-it is not implemented by this documentation update. See the
-[receiver guide](../receiver-workbench.md#planned-hgce-receiver-option).
+**[MCE](../receiver-estimation/mce.md)** is Off by default in Receiver Configuration.
+Off uses the default supplied-H reference workflow; On uses received-pilot channel
+estimation and reliability. Supplied H impairs both modes identically. Existing
+pilot-estimated mode keeps its separate calibrated-noise contract.
 
-The implementation does not convolve arbitrary H across a continuous waveform.
-It applies the diagonal response before per-symbol synthesis; it does not model
-channel-memory leakage, ISI/ICI, unknown timing or multipath exceeding the cyclic
-prefix. Pilot estimation and bounded acquisition exist separately; continuous
-channel-memory filtering is part of the [planned HGCE extension](../../development/features/independent-channel-estimation/design.md).
-Constant complex and actual frequency-varying captured responses are
-tested without claiming those broader receiver capabilities.
+The default diagonal model applies H before per-symbol synthesis and does not
+model continuous channel-memory leakage, ISI/ICI or long echoes. The explicit
+[Waveform Channel filter](waveform-filter.md) adds static causal sample filtering,
+with synthetic paths or a bounded CM-response reconstruction. Reconstruction gaps,
+causal shift, truncation and fit errors are explicit; a finite band-limited capture
+is not a unique physical impulse response. MCE does not guarantee correction of
+echoes beyond the usable guard interval.
 
 ## Paired constellation observation
 

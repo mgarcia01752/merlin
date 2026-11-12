@@ -11,6 +11,8 @@ Return to the [documentation index](../README.md) for other guides.
 
 | Public module | Responsibility |
 | --- | --- |
+| `signal_processing::receiver::channel_estimation::{MceSettings,ReliabilityEstimator,ReceiverReliability}` | Received-only MCE reliability policy, bounded continuous-pilot differences and training/tracking summary; no supplied H or exact simulator noise inputs |
+| `signal_processing::channel::filter::{ChannelFilterSettings,ChannelFilterPlan,StreamingChannelFilter}` | Bounded static echo/CM reconstruction plans, coefficient/response/fit getters and persistent sample filtering |
 | `transmission::{TransmissionSettings, SubcarrierSpacing}` | Fixed single-channel numerology and PHY validation |
 | `transmission::{TransmissionTiming,DurationTiming}` | Legacy one-second schedule and checked64-bit duration/sample-clock planning |
 | `simulation::channel::{ChannelRun,ChannelRunSettings,ChannelSummary,ChannelStep}` | Frozen duration session, one-symbol stepping, independent PRBS comparison and bounded typed outcomes; shared bounded job/CLI lifecycle available |

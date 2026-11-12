@@ -64,7 +64,11 @@ impl ChannelRun {
             settings.receive_block_samples,
             &settings.impairments,
             settings.llr_variance,
-            settings.data_bit_loading.as_deref(),
+            super::link::LinkSetup {
+                data_loading: settings.data_bit_loading.as_deref(),
+                mode: settings.receiver_mode,
+                filter: &settings.channel_filter,
+            },
         )?;
         let playback = settings
             .playback
@@ -75,9 +79,9 @@ impl ChannelRun {
             link.residual_transition(&plan.at(0), &plan.frames()[0].key.grid)?;
         }
         if settings.receiver_mode
-            == crate::signal_processing::receiver::channel_estimation::ReceiverMode::PilotEstimated
+            == crate::signal_processing::receiver::channel_estimation::ReceiverMode::MerlinEstimated
         {
-            link.use_pilot_estimation(&settings.layout)?;
+            link.use_mce(settings.mce.clone())?;
         }
         if settings.constellation.is_some() {
             link.reference_bins = Some(Vec::new());
@@ -128,6 +132,7 @@ impl ChannelRun {
                 completion_symbols: 0,
                 interleaver_drain_symbols: 0,
                 waveform_tail_samples: 0,
+                channel_filter_tail_samples: 0,
                 total_transmitted_samples: 0,
                 rx_warmup_symbols: 0,
                 generated_payloads: 0,
@@ -198,6 +203,22 @@ impl ChannelRun {
         &self,
     ) -> Option<&crate::signal_processing::receiver::channel_estimation::ChannelEstimate> {
         self.link.channel_estimate.as_ref()
+    }
+    /// Borrows MCE's received-only reliability without advancing the channel.
+    /// # Returns
+    /// None when disabled or before the first received symbol.
+    pub fn receiver_reliability(
+        &self,
+    ) -> Option<&crate::signal_processing::receiver::channel_estimation::ReceiverReliability> {
+        self.link.reliability()
+    }
+    /// Borrows the applied channel filter fit without exposing truth to reception.
+    /// # Returns
+    /// None for the default frequency-diagonal model.
+    pub fn filter_diagnostics(
+        &self,
+    ) -> Option<&crate::signal_processing::channel::filter::FilterDiagnostics> {
+        self.link.filter_diagnostics()
     }
     /// Borrows acquisition-safe bounded pilot and PLC receive observations.
     /// # Returns
@@ -368,8 +389,10 @@ impl ChannelRun {
                         return Ok(Some(step));
                     }
                     self.summary.waveform_tail_samples = self.link.finish(probe, observer)?;
-                    self.summary.total_transmitted_samples +=
-                        self.summary.waveform_tail_samples as u64;
+                    self.summary.channel_filter_tail_samples = self.link.filter_tail_samples();
+                    self.summary.total_transmitted_samples += (self.summary.waveform_tail_samples
+                        + self.summary.channel_filter_tail_samples)
+                        as u64;
                     if self.summary.pending_payload_bits != 0
                         || self.summary.generated_payloads != self.summary.recovered_payloads
                         || self.source.position() != self.summary.comparison.bits_tested

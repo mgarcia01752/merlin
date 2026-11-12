@@ -108,12 +108,21 @@ pub(crate) fn response(document: &str) -> Result<Value, String> {
         return Err("Response selector exceeds bounds.".into());
     }
     let query: ResponseQuery = serde_json::from_str(document).map_err(|e| e.to_string())?;
-    if query.source > 1
+    if query.source > 2
         || query.view > 4
         || query.snapshot > 3
         || !(1..=100).contains(&query.velocity_percent)
     {
         return Err("Invalid response selector.".into());
+    }
+    if query.source == 2 {
+        let mut document: Value =
+            serde_json::from_str(document).map_err(|error| error.to_string())?;
+        document["source"] = json!(0);
+        let mut applied = response(&document.to_string())?;
+        document["source"] = json!(1);
+        applied["comparison"] = response(&document.to_string())?;
+        return Ok(applied);
     }
     let result = latest().ok_or("Run the closed loop to retain response observations.")?;
     let settings = &result.job.settings;
@@ -126,16 +135,29 @@ pub(crate) fn response(document: &str) -> Result<Value, String> {
         .map(|(symbol, _)| *symbol)
         .collect();
     let coefficients = if query.source == 0 {
-        settings
+        let plan = settings
             .impairments
             .plan(&settings.transmission, &layout, settings.llr_variance)
-            .map_err(|e| e.to_string())?
-            .response
+            .map_err(|e| e.to_string())?;
+        let active: Vec<_> = layout
+            .static_roles()
+            .iter()
+            .map(|role| *role != PhysicalCarrierRole::Excluded)
+            .collect();
+        settings
+            .channel_filter
+            .prepare(
+                settings.transmission.subcarrier_spacing,
+                &plan.response,
+                &active,
+            )
+            .map_err(|error| error.to_string())?
+            .map_or(plan.response, |filter| filter.response().to_vec())
     } else {
         match result.observations.responses.get(query.snapshot) {
             Some((_, response)) => response.clone(),
             None => {
-                let mut state=empty("No receiver H-hat snapshot. Select pilot-estimated correction and run again; supplied H is not an estimate.");
+                let mut state=empty("No receiver H-hat snapshot. Enable MCE or pilot-estimated correction and run again; supplied H is not an estimate.");
                 state["snapshots"] = json!(snapshots);
                 return Ok(state);
             }
@@ -189,16 +211,20 @@ pub(crate) fn response(document: &str) -> Result<Value, String> {
     let mut state = curve(&x, &values, axis, coordinate);
     state["snapshots"] = json!(snapshots);
     state["summary"] = json!(format!(
-        "{} · {} observed bins · correction {:?}",
+        "{} · {} observed bins · correction {}",
         if query.source == 0 {
             "Applied reference H (channel input)"
         } else {
             "Receiver pilot-estimated H-hat"
         },
         response.available_bins,
-        settings.receiver_mode
+        super::selection::correction_name(settings.receiver_mode)
     ));
     state["detail"]=json!(format!("Peak delay: {:.4} µs · extra path {:.2} ft · two-way spacing {:.2} ft · VF {:.2}. Band-limited estimate; not guaranteed echo protection.",response.peak_delay_microseconds,response.peak_extra_path_feet,response.peak_two_way_spacing_feet,f64::from(query.velocity_percent)/100.0));
+    if let Some(reliability) = &result.job.receiver_reliability {
+        state["mce"] = json!({"tracking":reliability.tracking,"raw_noise_power":reliability.raw_noise_power,"noise_text":format!("{:.3e}",reliability.raw_noise_power),"compared_pilots":reliability.compared_pilots});
+    }
+    state["filter"] = json!(result.job.channel_filter);
     Ok(state)
 }
 /// Returns exact received-cell slicing and actual post-descrambling soft values.

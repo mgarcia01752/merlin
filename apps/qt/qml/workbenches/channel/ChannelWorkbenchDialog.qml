@@ -17,10 +17,12 @@ WorkbenchDialog {
     required property var transmitterBackend
     required property var receiverBackend
     required property var runState
+    required property var runBackend
     signal rxmerRequested()
     signal responseRequested()
     signal modelApplied()
     property alias modelPopup:model
+    property alias filterPopup:filter
     property alias lossPopup:loss
     property alias amplifierPopup:amplifier
     property alias attenuatorPopup:attenuator
@@ -94,7 +96,8 @@ WorkbenchDialog {
             StageChip {objectName:"channelEstimate";theme:dialog.theme;text:"DS Channel Estimate";x:stage.modelX;y:stage.bottomY;width:stage.modelWidth;height:stage.blockHeight;onClicked:dialog.responseRequested()}
         }
     }
-    ChannelConfigurationDialog {id:model;theme:dialog.theme;configuration:dialog.configuration;onRxmerRequested:dialog.rxmerRequested();onResponseRequested:dialog.responseRequested();onLossRequested:loss.open()}
+    ChannelConfigurationDialog {id:model;theme:dialog.theme;configuration:dialog.configuration;onRxmerRequested:dialog.rxmerRequested();onResponseRequested:dialog.responseRequested();onLossRequested:loss.open();onFilterRequested:filter.open()}
+    ChannelFilterDialog {id:filter;onContextHelpRequested:function(code){dialog.contextHelpRequested(code)};theme:dialog.theme;backend:dialog.runBackend;settingsBackend:dialog.settingsBackend;runState:dialog.runState;onConfigurationApplied:dialog.modelApplied()}
     ChannelLossDialog {id:loss;theme:dialog.theme;backend:dialog.measurementBackend;settingsBackend:dialog.settingsBackend;busy:dialog.runState.busy;onModelApplied:dialog.settingsApplied()}
     ChannelAmplifierDialog {id:amplifier;theme:dialog.theme;backend:dialog.measurementBackend;busy:dialog.runState.busy;onModelApplied:dialog.settingsApplied()}
     ChannelAttenuatorDialog {id:attenuator;theme:dialog.theme;backend:dialog.measurementBackend;busy:dialog.runState.busy;onModelApplied:dialog.settingsApplied()}

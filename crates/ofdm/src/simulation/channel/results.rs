@@ -68,6 +68,8 @@ pub struct ChannelSummary {
     pub completion_symbols: u64,
     pub interleaver_drain_symbols: u64,
     pub waveform_tail_samples: usize,
+    /// Extra output samples used to flush the causal channel filter, not TX interleaving.
+    pub channel_filter_tail_samples: usize,
     pub total_transmitted_samples: u64,
     pub rx_warmup_symbols: u64,
     pub generated_payloads: u64,

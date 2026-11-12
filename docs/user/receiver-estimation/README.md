@@ -33,15 +33,13 @@ applies the supplied response H to the channel, but pilot-mode construction neve
 passes H to the receiver. Channel noise budgets remain simulation calibration;
 this is not an implementation of blind modem noise estimation.
 
-The planned **Homegrown Channel Estimation (HGCE)** option extends this foundation
-with continuous channel-memory tests and received-only reliability estimation.
-It will be disabled by default and configured in Receiver Configuration. Supplied
-H will impair the signal in both states: the default reference workflow uses
-supplied 1/H when Off, while HGCE On derives 1/H-hat from received pilots without
-access to H. The toggle does not change the channel impairment. This new control
-is not implemented; existing explicit receiver-mode requests keep their meaning.
-See the [planned receiver behavior](../receiver-workbench.md#planned-hgce-receiver-option)
-and [implementation plan](../../development/features/independent-channel-estimation/design.md).
+**[MERLIN Channel Estimation (MCE)](mce.md)** adds received-only decoder reliability
+and an Off-by-default control in Receiver Configuration. Supplied H impairs the
+signal in both states: the default workflow uses supplied 1/H when Off, while MCE
+On derives 1/H-hat from received pilots without access to H or simulated noise
+powers. The toggle does not change the channel impairment. Existing explicit
+receiver-mode requests retain their meaning. The [waveform channel filter](../impairments/waveform-filter.md)
+independently adds static continuous sample memory and bounded echo/CM-response models.
 
 The CLI runner retains explicit sample timing and PLC phase. The separate timing
 API can search an unknown bounded sample offset with known numerology/PLC phase.
@@ -60,4 +58,4 @@ target/release/ofdm-fec channel --input examples/channel-pilot-estimated.json \
 Use new output paths. Results include a final `channel_estimate`, optional
 `protected_constellation`, actual FEC outcomes and the effective settings. The
 same typed results are available from `ChannelRun`/`run_channel` without a CLI.
-Future Qt/Python adapters will consume these results rather than calculate DSP.
+Qt consumes these Rust results; future Python bindings will use the same APIs.

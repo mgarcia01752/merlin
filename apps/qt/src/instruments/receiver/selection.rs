@@ -9,6 +9,22 @@ use serde::Deserialize;
 use serde_json::{json, Value};
 use std::collections::BTreeSet;
 
+/// Names actual correction modes in instrument summaries without exposing Rust identifiers.
+/// # Arguments
+/// * `mode` - Actual frozen correction mode for the selected run.
+/// # Returns
+/// A short display label; no simulation state changes.
+pub(crate) fn correction_name(
+    mode: docsis_ofdm_fec::signal_processing::receiver::channel_estimation::ReceiverMode,
+) -> &'static str {
+    use docsis_ofdm_fec::signal_processing::receiver::channel_estimation::ReceiverMode;
+    match mode {
+        ReceiverMode::SuppliedChannel => "Supplied H",
+        ReceiverMode::PilotEstimated => "Pilot-estimated H-hat",
+        ReceiverMode::MerlinEstimated => "MCE",
+    }
+}
+
 #[derive(Clone, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub(crate) struct Query {
@@ -353,7 +369,7 @@ pub(crate) fn qam(query: &Query) -> Value {
     } else {
         "No retained cells match this coordinate/modulation selection."
     });
-    state["detail"]=json!(format!("{} selected / {} retained cells · at most 2048 displayed · {} QAM · correction {:?} · shared axes ±{extent:.3}. Coordinates are receive-channel symbols; unretained history is unavailable.",selection.cells.len(),state["retained"],state["selected_order"],result.job.settings.receiver_mode));
+    state["detail"]=json!(format!("{} selected / {} retained cells · at most 2048 displayed · {} QAM · correction {} · shared axes ±{extent:.3}. Coordinates are receive-channel symbols; unretained history is unavailable.",selection.cells.len(),state["retained"],state["selected_order"],correction_name(result.job.settings.receiver_mode)));
     state["raw_tap"] = json!("rx.fft.bins");
     state["equalized_tap"] = json!("rx.equalized.iq");
     state

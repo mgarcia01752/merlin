@@ -1009,21 +1009,34 @@ is outside the minimum model.
 
 ## Receiver Channel Estimation (CH-EST-RX) and pilot/PLC analyzers
 
-Planned **CH-EST-RX-07..12** extend this foundation with a continuous sample-filter
-channel, synthetic echoes and explicit reconstruction of CM response coefficients.
-The independent receiver must derive correction and reliability from received
+**MCE (CH-EST-RX-07..12)** extends this foundation with received-only reliability,
+a static continuous sample-filter channel, integer-delay echoes and explicit
+bounded reconstruction of CM response coefficients. The receiver derives correction and reliability from received
 samples and declared bootstrap inputs, without applied H, configured tap delays or
 exact simulator noise powers. Channel truth remains a separate diagnostic input.
 Existing diagonal/calibrated modes remain explicit reference baselines.
-Homegrown Channel Estimation (HGCE) is disabled by default and configured in
+MERLIN Channel Estimation (MCE) is disabled by default and configured in
 Receiver Configuration. Its setting is independent of channel impairments;
 accepted changes apply to the next run.
-In the planned default reference workflow, supplied H impairs the channel in both
-HGCE states: Off uses reference 1/H correction; On uses independently estimated
-1/H-hat. HGCE changes receiver correction, not the applied response or seeded noise.
-Existing saved receiver-mode choices remain compatible. No sample
-filter, new independent noise estimator or UI is implemented by this plan; see the
-[design and acceptance gates](development/features/independent-channel-estimation/design.md).
+In the default reference workflow, supplied H impairs the channel in both
+MCE states: Off uses reference 1/H correction; On uses independently estimated
+1/H-hat. MCE changes receiver correction, not the applied response or seeded noise.
+Existing saved receiver-mode choices remain compatible. `merlin_estimated` uses
+receiver-generated pilots and temporal continuous-pilot differences, never exact
+channel/noise inputs. A small MCE chip indicates enablement without moving the
+centered Receiver heading. Training/Tracking describes 128-symbol history readiness,
+not certified accuracy. Apply is blocked during a run; draft Cancel/X preserves
+accepted settings. Rust settings/results are shared by CLI and Qt; Python is deferred.
+
+`signal_processing/channel/filter` owns static sparse delay lines or dense 8K FFT
+overlap-add (4096 input samples per chunk, at most2049 coefficients/2048 delay samples).
+CM reconstruction explicitly uses unity extension of excluded bins, causal shift,
+truncation and active-bin fit limits; original captures remain unchanged. Channel
+memory tail accounting is separate from TX overlap and interleaver drain. Response
+epoch transitions reject for continuous filters; fractional delays remain deferred.
+The response instrument compares realized H with received H-hat only after reception.
+See the [design and validation record](development/features/independent-channel-estimation/design.md),
+[MCE guide](user/receiver-estimation/mce.md) and [filter guide](user/impairments/waveform-filter.md).
 
 Channel Estimation (CH-EST) names the processing function; the RX or TX suffix
 identifies its direction. Receiver Channel Estimation (CH-EST-RX) estimates H

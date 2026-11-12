@@ -12,12 +12,14 @@ WorkbenchDialog {
     signal rxmerRequested()
     signal responseRequested()
     signal lossRequested()
+    signal filterRequested()
     title: "Channel Model · Configuration"
     parent: Overlay.overlay; anchors.centerIn: parent
     width: Math.min(650, parent ? parent.width - 40 : 650)
     modal: true; standardButtons: Dialog.Close
     contentItem: ColumnLayout {
         spacing: 16
+        WorkbenchActionButton {theme:dialog.theme;objectName:"channelConfigureFilter";text:"Waveform Channel";onClicked:dialog.filterRequested()}
         Label { text: {
             const loss=dialog.configuration.additional_loss || {mode:"off"}
             if (loss.mode==="manual") {return "Additional Tilt: "+loss.tilt_db+" dB"}

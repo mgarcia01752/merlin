@@ -100,22 +100,25 @@ click, Enter, Space or F1.
 
 ## Channel response and echo
 
-### Planned HGCE receiver option
+### MCE receiver option
 
-**Homegrown Channel Estimation (HGCE)** is planned, not yet an implemented
-receiver control. It will default to Off and be configured in Receiver
-Configuration, with accepted changes saved in the WB and applied on the next run.
+**MERLIN Channel Estimation (MCE)** is Off by default in Receiver Configuration.
+Enable MCE and Apply to use received-pilot correction and decoder reliability on
+future runs. Cancel/X preserves accepted settings. Stop a running simulation
+before applying changes. The main Receiver block shows a small **MCE** chip when
+enabled; its heading stays centered and the existing block layout is preserved.
 
-| HGCE | Channel simulator | Receiver correction |
+| MCE | Channel simulator | Receiver correction |
 | --- | --- | --- |
 | Off (default reference workflow) | Applies supplied DS response H. | Uses supplied H to calculate 1/H. |
 | On | Applies the same supplied DS response H. | Estimates H-hat from received pilots and applies 1/H-hat, without access to supplied H. |
 
-HGCE changes how the receiver corrects the signal; it does not turn channel
-distortion on or off. Known DOCSIS pilots make this pilot-assisted estimation,
-not fully blind reception. Existing explicitly selected receiver modes remain
-compatible. See the [HGCE plan](../development/features/independent-channel-estimation/design.md)
-for continuous-waveform filtering, received-only noise estimation and validation.
+MCE changes receiver correction, not the applied response or seeded noise.
+Training builds a 128-symbol history, then the status shows Tracking; that is
+coverage, not an accuracy guarantee. This is pilot-assisted reception with known
+bootstrap timing. Existing explicit pilot-estimated mode remains compatible and
+retains its separate simulation noise calibration. See the [MCE guide](receiver-estimation/mce.md)
+for source citations, numerical choices, settings and limits.
 
 ### Current response instrument
 
@@ -124,6 +127,9 @@ Reference H** for the channel's supplied/unity response, or **Receiver H-hat**
 for actual pilot-estimated snapshots. H-hat requires a run with pilot-estimated
 correction; the UI never substitutes supplied H when no estimate was retained.
 Choose among up to four retained observation-symbol snapshots.
+**Compare H / H-hat** shows both responses side by side for Gain, Wrapped Phase
+or Impulse / Echo. Each panel labels its independent vertical scale; applied H
+uses the actual realized filter response when continuous filtering is selected.
 
 Views include gain, wrapped phase, real/imaginary H and the band-limited impulse
 response. Excluded/unknown frequency bins remain gaps in response curves and are

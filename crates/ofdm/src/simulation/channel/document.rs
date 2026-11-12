@@ -25,6 +25,12 @@ pub struct ChannelDocument {
     pub protected_constellation: Option<super::protected_constellation::ProtectedCaptureSelection>,
     #[serde(default)]
     pub receiver_mode: crate::signal_processing::receiver::channel_estimation::ReceiverMode,
+    /// Explicit static waveform channel; defaults to the legacy diagonal model.
+    #[serde(default)]
+    pub channel_filter: crate::signal_processing::channel::filter::ChannelFilterSettings,
+    /// Optional received-only MCE reliability settings.
+    #[serde(default)]
+    pub mce: crate::signal_processing::receiver::channel_estimation::MceSettings,
     pub constellation: Option<super::constellation::ConstellationSelection>,
     #[serde(default)]
     pub impairments: crate::signal_processing::channel::impairments::ChannelImpairments,
@@ -125,6 +131,8 @@ impl ChannelDocument {
             impairment_timeline: self.impairment_timeline.clone(),
             playback: self.playback.clone(),
             receiver_mode: self.receiver_mode,
+            channel_filter: self.channel_filter.clone(),
+            mce: self.mce.clone(),
             protected_constellation: self.protected_constellation.clone(),
             constellation: self.constellation.clone(),
             impairments: self.impairments.clone(),

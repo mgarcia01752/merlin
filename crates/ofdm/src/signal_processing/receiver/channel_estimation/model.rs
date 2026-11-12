@@ -11,6 +11,8 @@ pub enum ReceiverMode {
     #[default]
     SuppliedChannel,
     PilotEstimated,
+    /// Pilot correction and received-only reliability; supplied H/noise never enter RX.
+    MerlinEstimated,
 }
 /// One least-squares pilot estimate and its pre-update independent prediction.
 #[derive(Debug, Clone, Serialize)]

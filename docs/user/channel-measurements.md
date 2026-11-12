@@ -207,6 +207,11 @@ set receiver-input attenuation. Each opens its own editor. **Apply** accepts;
 and **Tilt Off**, so no initial setup is required. Tilt and additional cable loss
 remain under **Channel Model → Additional Loss**.
 
+**Channel Model → Waveform Channel** selects the default per-subcarrier response,
+synthetic integer-delay echoes or a bounded continuous FIR reconstructed from H.
+This is independent of MCE in Receiver Configuration. See the
+[waveform-filter guide](impairments/waveform-filter.md) for fit limits and supported combinations.
+
 ![Channel Simulator with amplifier, attenuator and TapPoints](../images/workbench/channel-inputs-ready-dark.png)
 
 The channel workspace expands with the application window. Maximize MERLIN for

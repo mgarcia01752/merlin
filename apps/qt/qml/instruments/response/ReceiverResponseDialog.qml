@@ -28,7 +28,7 @@ WorkbenchDialog {
         spacing:10
         RowLayout {
             Label { text:"Response";color:dialog.theme.text }
-            ComboBox { objectName:"receiverResponseSource";model:["Applied Reference H","Receiver H-hat"];currentIndex:dialog.sourceIndex;Layout.preferredWidth:215;onActivated:function(index){dialog.sourceIndex=index;dialog.snapshotIndex=0;dialog.refresh()} }
+            ComboBox { objectName:"receiverResponseSource";model:["Applied Reference H","Receiver H-hat","Compare H / H-hat"];currentIndex:dialog.sourceIndex;Layout.preferredWidth:215;onActivated:function(index){dialog.sourceIndex=index;dialog.snapshotIndex=0;dialog.refresh()} }
             Label { text:"View";color:dialog.theme.text }
             ComboBox { objectName:"receiverResponseView";model:["Gain","Wrapped Phase","Real","Imaginary","Impulse / Echo"];currentIndex:dialog.viewIndex;Layout.preferredWidth:165;onActivated:function(index){dialog.viewIndex=index;dialog.refresh()} }
             Label { text:"VF (%)";color:dialog.theme.text }
@@ -36,12 +36,25 @@ WorkbenchDialog {
             Item { Layout.fillWidth:true }
         }
         RowLayout {
-            visible:dialog.sourceIndex===1
+            visible:dialog.sourceIndex>0
             Label { text:"RX Symbol";color:dialog.theme.muted }
             ComboBox { objectName:"receiverResponseSnapshot";model:dialog.response.snapshots || [];currentIndex:dialog.snapshotIndex;enabled:model.length>0;onActivated:function(index){dialog.snapshotIndex=index;dialog.refresh()} }
         }
         Label { text:dialog.response.summary || dialog.response.reason || "";color:dialog.theme.accent;Layout.fillWidth:true;wrapMode:Text.WordWrap }
-        SpectrumPlot { theme:dialog.theme;viewport:dialog.response;Layout.fillWidth:true;Layout.fillHeight:true }
+        RowLayout {
+            Layout.fillWidth:true;Layout.fillHeight:true;spacing:16
+            ColumnLayout {
+                Layout.fillWidth:true;Layout.fillHeight:true;Layout.preferredWidth:1;Layout.minimumWidth:0
+                Label {visible:dialog.sourceIndex===2;text:"Applied H";color:dialog.theme.text}
+                SpectrumPlot { theme:dialog.theme;viewport:dialog.response;Layout.fillWidth:true;Layout.fillHeight:true }
+            }
+            ColumnLayout {
+                visible:dialog.sourceIndex===2;Layout.fillWidth:true;Layout.fillHeight:true;Layout.preferredWidth:1;Layout.minimumWidth:0
+                Label {text:"Receiver H-hat · independent vertical scale";color:dialog.theme.text;Layout.fillWidth:true;wrapMode:Text.WordWrap}
+                SpectrumPlot {objectName:"receiverResponseComparison";theme:dialog.theme;viewport:dialog.response.comparison || {points:[],x_ticks:[],y_ticks:[]};Layout.fillWidth:true;Layout.fillHeight:true}
+            }
+        }
+        Label {visible:dialog.response.mce!==undefined;text:dialog.response.mce ? "Latest MCE: "+(dialog.response.mce.tracking ? "Tracking" : "Training")+" · raw pilot noise estimate: "+dialog.response.mce.noise_text : "";color:dialog.theme.accent;Layout.fillWidth:true;wrapMode:Text.WordWrap}
         Label { text:dialog.response.detail || "";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:11 }
     }
 }

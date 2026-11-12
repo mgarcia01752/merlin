@@ -227,6 +227,7 @@ Pane {
         function data() { return {diagnostic:diagnostic,timing:timing,completed_symbols:23,profile_id:3,profile_index:4,profile_count:4,receiver_status:configured ? "complete":"attention",verify_status:verified ? "complete":"attention",reason:"Configure accepted receiver and independent source comparison before running.",busy:busy,paused:paused,can_start:configured&&verified&&!busy,has_result:!!lastResult,result:lastResult,result_token:lastResult ? "1":"0",available_profile_ids:profileBackend.acceptedId>=0 ? [0,1]:[],applied_profile_id:profileBackend.acceptedId,options:acceptedRunOptions,accepted_options:configured ? acceptedRunOptions:null,verified:verified} }
         function configure(settings) { return JSON.stringify(data()) }
         function poll() { return JSON.stringify(data()) }
+        function admission_help() { return "null" }
         function apply(options,settings) { acceptedRunOptions=JSON.parse(options);configured=true;return "" }
         function verify() { verified=true }
         function start() { busy=true }
@@ -1388,6 +1389,69 @@ Pane {
             compare(workbench.hasProject,true)
             compare(findChild(workbench,"configureWorkbench").enabled,true)
             fileBackend.openResponse={cancelled:true}
+        }
+        function test_mce_draft_cancel_apply_chip_and_channel_independence() {
+            const saved=JSON.parse(JSON.stringify(runBackend.acceptedRunOptions))
+            const wasConfigured=runBackend.configured
+            const block=findChild(workbench,"receiverBlock")
+            const chip=findChild(block,"blockModeIndicator")
+            const heading=findChild(block,"blockHeading")
+            const headingY=heading.y,headingHeight=heading.height
+            compare(chip.visible,false)
+            mouseClick(block);tryCompare(workbench.receiverPopup,"opened",true)
+            mouseClick(findChild(workbench.receiverPopup,"receiverConfigure"))
+            const dialog=workbench.receiverConfigPopup
+            tryCompare(dialog,"opened",true)
+            const toggle=findChild(dialog,"receiverMceEnabled")
+            compare(toggle.checked,false)
+            mouseClick(toggle)
+            compare(dialog.draft.receiver_mode,"merlin_estimated")
+            compare(findChild(dialog,"receiverCorrection").enabled,false)
+            mouseClick(findChild(dialog,"dialogCancel"));tryCompare(dialog,"visible",false)
+            compare(runBackend.acceptedRunOptions.receiver_mode,saved.receiver_mode)
+            compare(chip.visible,false)
+            dialog.open();tryCompare(dialog,"opened",true)
+            mouseClick(toggle)
+            findChild(dialog,"receiverMceAveraging").value=24
+            findChild(dialog,"receiverMceAveraging").valueModified()
+            mouseClick(findChild(dialog,"receiverConfigApply"));tryCompare(dialog,"visible",false)
+            compare(chip.visible,true)
+            compare(block.indicatorText,"MCE")
+            compare(heading.y,headingY);compare(heading.height,headingHeight)
+            compare(heading.horizontalAlignment,Text.AlignHCenter)
+            compare(runBackend.acceptedRunOptions.mce.averaging_symbols,24)
+            compare(JSON.stringify(runBackend.acceptedRunOptions.channel_filter),JSON.stringify(saved.channel_filter))
+            dialog.open();tryCompare(dialog,"opened",true)
+            compare(toggle.checked,true)
+            runBackend.busy=true;workbench.pollRun()
+            compare(findChild(dialog,"receiverConfigApply").enabled,false)
+            runBackend.busy=false;workbench.pollRun()
+            mouseClick(findChild(dialog,"dialogCancel"));tryCompare(dialog,"visible",false)
+            keyClick(Qt.Key_Escape);tryCompare(workbench.receiverPopup,"visible",false)
+            runBackend.acceptedRunOptions=saved;runBackend.configured=wasConfigured;workbench.pollRun()
+            compare(chip.visible,false)
+        }
+        function test_waveform_channel_apply_and_cancel_preserve_receiver_mode() {
+            const saved=JSON.parse(JSON.stringify(runBackend.acceptedRunOptions))
+            const channel=workbench.channelPopup
+            channel.open();tryCompare(channel,"opened",true)
+            const dialog=channel.filterPopup
+            dialog.open();tryCompare(dialog,"opened",true)
+            const source=findChild(dialog,"channelFilterSource")
+            source.currentIndex=1;source.activated(1)
+            compare(dialog.document().mode,"echoes")
+            mouseClick(findChild(dialog,"dialogCancel"));tryCompare(dialog,"visible",false)
+            compare(JSON.stringify(runBackend.acceptedRunOptions),JSON.stringify(saved))
+            dialog.open();tryCompare(dialog,"opened",true)
+            source.currentIndex=1;source.activated(1)
+            mouseClick(findChild(dialog,"channelFilterApply"));tryCompare(dialog,"visible",false)
+            compare(runBackend.acceptedRunOptions.receiver_mode,saved.receiver_mode)
+            compare(runBackend.acceptedRunOptions.channel_filter.mode,"echoes")
+            dialog.open();tryCompare(dialog,"opened",true)
+            compare(source.currentIndex,1)
+            mouseClick(findChild(dialog,"dialogCancel"));tryCompare(dialog,"visible",false)
+            keyClick(Qt.Key_Escape);tryCompare(channel,"visible",false)
+            runBackend.acceptedRunOptions=saved;workbench.pollRun()
         }
         function test_receiver_configuration_comparison_and_run_controls() {
             mouseClick(findChild(workbench,"receiverBlock"))

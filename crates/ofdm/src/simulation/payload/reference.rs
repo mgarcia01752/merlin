@@ -166,7 +166,11 @@ pub fn run_payload_waveform_with_source(
         experiment.receive_block_samples,
         &Default::default(),
         0.01,
-        None,
+        crate::simulation::channel::link::LinkSetup {
+            data_loading: None,
+            mode: Default::default(),
+            filter: &Default::default(),
+        },
     )?;
     let mut origin = 0;
     for frame in 0..MAX_ACQUISITION_FRAMES {

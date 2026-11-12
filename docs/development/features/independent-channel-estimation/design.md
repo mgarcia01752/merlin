@@ -1,6 +1,6 @@
 # Independent receiver estimation through a channel with memory
 
-Status: **planned; no implementation or receiver validation in this change**.
+Status: **implemented and validated for the bounded static-channel scope**.
 Tasks: CH-EST-RX-07 through CH-EST-RX-12. Existing CH-EST-RX-01..06 remain
 implemented for their documented synchronized, frequency-diagonal channel scope.
 
@@ -39,19 +39,19 @@ flowchart LR
 
 ## Boundaries and contracts
 
-- **Homegrown Channel Estimation (HGCE) is disabled by default.** Its enable
+- **MERLIN Channel Estimation (MCE) is disabled by default.** Its enable
   control and estimator settings belong in **Receiver Configuration**, not
-  Channel Model. New workbenches and requests without the new HGCE setting use
+  Channel Model. New workbenches and requests without the new MCE setting use
   Off; existing saved receiver-mode selections retain their previous meaning.
   Off preserves the existing receiver correction behavior; it does not disable
   channel impairments or mean that all receiver correction is bypassed.
 - For the planned default reference workflow, the channel applies supplied H
-  whether HGCE is Off or On. Off uses supplied H to calculate reference correction
+  whether MCE is Off or On. Off uses supplied H to calculate reference correction
   1/H; On estimates H-hat from received pilots and corrects with 1/H-hat, without
-  access to supplied H. Toggling HGCE must not change the applied channel or noise
+  access to supplied H. Toggling MCE must not change the applied channel or noise
   realization for otherwise identical settings and seed. Existing explicitly
   selected legacy receiver modes remain compatible rather than being silently
-  remapped by an omitted HGCE field. No response input means the selected channel
+  remapped by an omitted MCE field. No response input means the selected channel
   model's explicit unity/synthetic response, not a receiver-estimation result.
 - Channel configuration chooses the existing diagonal model or the new sample
   filter explicitly. Preserve old saved WBs and reference behavior by default.
@@ -124,7 +124,8 @@ Run the existing pilot estimator on the filtered samples. Verify initial timing,
 pilot coverage/age, common gain/phase and phase-slope handling rather than assuming
 old diagonal-channel tests establish performance with memory. Separate training,
 tracking, stale/insufficient coverage and loss of lock. A ready history alone is
-not an accuracy guarantee. Keep fitting and validation pilot sets disjoint.
+not an accuracy guarantee. Use independent payload truth and analytic responses to validate the pilot fit;
+never present a current fitted-pilot residual as independent accuracy evidence.
 
 Retain bounded complex interpolation first. Add alternative interpolation or
 regularized equalization only when independent tests demonstrate a need. Design
@@ -146,15 +147,15 @@ drain. Validate settings before changing an accepted WB. Keep cancellation and
 runtime checks between bounded blocks and preserve partial results on failure.
 Rust owns bounded filter/estimator state; Qt renders it.
 
-Expose **Homegrown Channel Estimation (HGCE)** as an Off-by-default control in
-Receiver Configuration. Enable its estimator settings only when HGCE is On.
+Expose **MERLIN Channel Estimation (MCE)** as an Off-by-default control in
+Receiver Configuration. Enable its estimator settings only when MCE is On.
 Apply validates and saves the selection; Cancel discards pending edits. Accepted
 changes take effect on the next run, without switching an active receiver midway
-through processing. Persist HGCE enablement and settings in the WB and shared
-Rust/CLI contracts; omission defaults to Off. When On, HGCE owns correction and
+through processing. Persist MCE enablement and settings in the WB and shared
+Rust/CLI contracts; omission defaults to Off. When On, MCE owns correction and
 received-only reliability estimation, with no simultaneous supplied-H correction
 or silent fallback. An estimation failure produces an actionable diagnostic.
-Keep existing explicit pilot-estimated requests compatible; HGCE adds the planned
+Keep existing explicit pilot-estimated requests compatible; MCE adds the planned
 independent mode rather than reinterpreting saved settings.
 
 Expose Channel Model source/settings separately from receiver correction mode.
@@ -180,9 +181,9 @@ frequency response, separate from the implementation under test. Cover:
 - Original source-bit comparison and actual MER/FEC outcomes; demapper estimates
   are not ground truth. Failed and partial runs retain honest outcomes.
 - Old diagonal/reference requests and saved WBs preserve their existing results.
-- New/omitted HGCE settings are Off; On/Off and estimator settings survive WB
+- New/omitted MCE settings are Off; On/Off and estimator settings survive WB
   save/reopen. Apply/Cancel and next-run activation behave as documented. Enabling
-  channel echoes never implicitly enables HGCE, and HGCE failure never silently
+  channel echoes never implicitly enables MCE, and MCE failure never silently
   switches to supplied channel truth.
 - Selected real CM captures meet declared reconstruction tolerances; report
   measurement-conditioned simulation, not original field-noise replay.
@@ -205,10 +206,21 @@ Reuse pinned pilot, waveform and acquisition evidence through existing guides.
 Channel reconstruction, interpolation and noise-estimation choices are engineering
 policies, not claimed mandatory CableLabs algorithms. Implementation must consult
 the applicable versioned PHY evidence before altering pilot/timing semantics.
-This planning change performs no new specification lookup or rendered-PDF check.
+The implementation rechecked the pinned PHY text for pilot purpose, periodicity,
+modulation and boost; citations are in the [MCE guide](../../../user/receiver-estimation/mce.md).
+No new rendered-PDF verification or external interoperability is claimed.
 
 Deliver in dependency order: independence contracts → synthetic sample channel →
 CM filter reconstruction → receiver validation/refinement → UI/CLI integration →
 full acceptance. Mark checklist tasks complete only with their supporting tests.
-For this change only documentation links, diff hygiene and existing ownership
-alignment are checked; all six implementation tasks remain unchecked.
+The implementation and its bounded support are recorded in
+[implementation and validation](implementation.md). Fractional delay, response
+epoch transitions, arbitrary blind acquisition, adaptive time-domain equalization
+and a spatial held-out pilot accuracy score remain outside this delivery.
+
+## Implementation decisions
+
+The user-selected display acronym is **MCE — MERLIN Channel Estimation**.
+Add only a small MCE chip to the existing main Receiver block, visible when
+enabled; preserve its dimensions, layout and centered Receiver heading.
+The renamed mode remains disabled by default in Receiver Configuration.

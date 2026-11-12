@@ -63,6 +63,9 @@ pub enum ChannelJobStatus {
 /// Small notification; callback latency counts toward the host-runtime budget.
 #[derive(Debug, Clone, Serialize)]
 pub struct ChannelProgress {
+    /// Received-only MCE training/tracking state; absent for reference modes.
+    pub receiver_reliability:
+        Option<crate::signal_processing::receiver::channel_estimation::ReceiverReliability>,
     pub phase: super::ChannelPhase,
     pub completed_source_symbols: u64,
     pub requested_source_symbols: u64,
@@ -72,6 +75,13 @@ pub struct ChannelProgress {
 /// Shared typed result for complete and partial runs; no calculations belong in adapters.
 #[derive(Serialize)]
 pub struct ChannelJobResult {
+    /// Applied-channel reconstruction diagnostics, never receiver input.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub channel_filter: Option<crate::signal_processing::channel::filter::FilterDiagnostics>,
+    /// Receiver-only noise/status summary; absent when MCE is disabled.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub receiver_reliability:
+        Option<crate::signal_processing::receiver::channel_estimation::ReceiverReliability>,
     /// Observation-only post-equalization MER indexed by physical FFT bin.
     pub carrier_mer: Vec<super::performance::CarrierMer>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -213,6 +223,7 @@ fn run_with_clock(
                 }
                 let summary = session.summary();
                 progress(ChannelProgress {
+                    receiver_reliability: session.receiver_reliability().cloned(),
                     phase: summary.phase,
                     completed_source_symbols: summary.observation_symbols,
                     requested_source_symbols: summary.timing.complete_symbols,
@@ -247,6 +258,8 @@ fn run_with_clock(
     let constellation = session.take_constellation();
     let protected_constellation = session.take_protected_constellation();
     Ok(ChannelJobResult {
+        channel_filter: session.filter_diagnostics().cloned(),
+        receiver_reliability: session.receiver_reliability().cloned(),
         carrier_mer: session.carrier_mer(),
         recovered_file: session.recovered_file(),
         channel_estimate: session.channel_estimate().cloned(),

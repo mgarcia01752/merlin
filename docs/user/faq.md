@@ -51,3 +51,31 @@ identity and does not restrict which independent captured run you can inspect.
 **Nearest-point estimate** may remain high in a dense/noisy constellation because
 wrong nearby decisions hide the actual error; inspect the primary TX-reference
 reading to see the modeled RxMER impairment.
+
+## MCE settings are outside supported limits
+
+MCE needs finite receiver policies with bounded work. Set averaging to 1–128 symbols. In Rust/CLI requests use a variance floor from 1e-12 to 1.
+
+See [MCE receiver behavior](receiver-estimation/mce.md) and
+[waveform channel filtering](impairments/waveform-filter.md).
+
+## MCE could not estimate a usable channel
+
+The receiver could not continue with valid received pilot estimates or bounded correction. Review channel noise, echo strength and pilot coverage. Try a weaker impairment or compare with supplied-H reference correction; MCE never falls back automatically.
+
+See [MCE receiver behavior](receiver-estimation/mce.md) and
+[waveform channel filtering](impairments/waveform-filter.md).
+
+## Waveform channel settings are unsupported
+
+The selected waveform filter does not meet the supported bounds or response-source policy. Use at most 2048 samples of memory. Synthetic echoes require Flat / unity input with additional loss Off. Use the per-subcarrier model for unsupported combinations.
+
+See [MCE receiver behavior](receiver-estimation/mce.md) and
+[waveform channel filtering](impairments/waveform-filter.md).
+
+## CM waveform filter does not match the capture
+
+The finite causal filter exceeds the declared complex-response approximation errors. Keep the per-subcarrier model, or review maximum delay and causal shift in Waveform Channel. Do not increase fit tolerances simply to hide a poor reconstruction.
+
+See [MCE receiver behavior](receiver-estimation/mce.md) and
+[waveform channel filtering](impairments/waveform-filter.md).

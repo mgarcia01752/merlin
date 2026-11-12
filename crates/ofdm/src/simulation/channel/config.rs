@@ -33,6 +33,12 @@ pub struct ChannelRunSettings {
     pub playback: Option<super::measurement_playback::PlaybackConfiguration>,
     pub protected_constellation: Option<super::protected_constellation::ProtectedCaptureSelection>,
     pub receiver_mode: crate::signal_processing::receiver::channel_estimation::ReceiverMode,
+    /// Explicit static waveform channel; defaults to the legacy diagonal model.
+    #[serde(default)]
+    pub channel_filter: crate::signal_processing::channel::filter::ChannelFilterSettings,
+    /// Received-only MCE reliability policy; inactive unless MCE is selected.
+    #[serde(default)]
+    pub mce: crate::signal_processing::receiver::channel_estimation::MceSettings,
     /// Optional bounded payload-only raw/corrected constellation observations.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub constellation: Option<super::constellation::ConstellationSelection>,
@@ -66,6 +72,8 @@ impl ChannelRunSettings {
             impairment_timeline: Vec::new(),
             playback: None,
             receiver_mode: Default::default(),
+            channel_filter: Default::default(),
+            mce: Default::default(),
             protected_constellation: None,
             constellation: None,
             impairments: Default::default(),
@@ -87,6 +95,25 @@ impl ChannelRunSettings {
     /// Rejects invalid settings, less than one symbol, duration above one hour,
     /// invalid PRBS seed/LLRs/iterations or unsupported sample block sizes.
     pub fn validate(&self) -> Result<DurationTiming, SimulationError> {
+        self.mce.validate()?;
+        self.channel_filter.validate()?;
+        if matches!(
+            self.channel_filter,
+            crate::signal_processing::channel::filter::ChannelFilterSettings::CapturedFir { .. }
+        ) && self.impairments.response.is_none()
+        {
+            return Err(SimulationError::new(
+                "ChannelFilterInvalid",
+                "Import a DS channel response before selecting captured FIR.",
+            ));
+        }
+        if !matches!(
+            self.channel_filter,
+            crate::signal_processing::channel::filter::ChannelFilterSettings::Diagonal
+        ) && !self.impairment_timeline.is_empty()
+        {
+            return Err(invalid("Continuous filters require a static channel response; measurement epochs are not supported."));
+        }
         if self.duration > Duration::from_secs(MAX_CHANNEL_DURATION_SECONDS)
             || !self.llr_variance.is_finite()
             || self.llr_variance <= 0.0
@@ -116,8 +143,27 @@ impl ChannelRunSettings {
         if let Some(selection) = &self.constellation {
             selection.validate(&layout)?;
         }
-        self.impairments
+        let plan = self
+            .impairments
             .plan(&self.transmission, &layout, self.llr_variance)?;
+        if matches!(
+            self.channel_filter,
+            crate::signal_processing::channel::filter::ChannelFilterSettings::Echoes { .. }
+        ) && (self.impairments.response.is_some()
+            || self.impairments.additional_loss != Default::default())
+        {
+            return Err(SimulationError::new("ChannelFilterInvalid","Synthetic echoes require unity input with no imported response or additional tilt."));
+        }
+        let active: Vec<_> = layout
+            .static_roles()
+            .iter()
+            .map(|role| *role != crate::transmission::layout::PhysicalCarrierRole::Excluded)
+            .collect();
+        self.channel_filter.prepare(
+            self.transmission.subcarrier_spacing,
+            &plan.response,
+            &active,
+        )?;
         if let Some(playback) = &self.playback {
             if !self.impairment_timeline.is_empty() {
                 return Err(invalid("Choose playback or measurement epochs, not both."));

@@ -20,6 +20,7 @@ supported implementation and its limits.
 | Transmitter (TX) | Encodes source bits, maps modulation cells and produces an OFDM waveform. |
 | Channel | Applies the configured response and noise between transmitter and receiver. |
 | Receiver (RX) | Processes received samples, recovers signaling and decodes payloads. |
+| MCE | MERLIN Channel Estimation: optional receiver-owned pilot channel estimation and received-only decoder reliability. Off by default in Receiver Configuration; an MCE chip on the main Receiver block indicates enablement. See the [MCE guide](receiver-estimation/mce.md). |
 | PRBS-RX / comparison | Independently compares decoded payload bits with the original accepted source. It does not feed expected bits into decoding. |
 | Test point (TP) | An inspectable boundary between processing stages. A selected instrument reads retained data from that boundary. |
 | Snapshot | A bounded retained observation, not the entire history of a simulation. A missing snapshot is not automatically a processing failure. |
@@ -88,6 +89,8 @@ See [QAM processing](qam-processing/README.md) and [receiver instruments](receiv
 | RxMER | Receive Modulation Error Ratio: per-subcarrier signal-to-modulation-error power ratio, commonly expressed in dB. MERLIN uses it to model residual error power; it does not reconstruct measured I/Q from RxMER. |
 | Channel estimate H | Complex frequency response across subcarriers. Flat/unity H = 1 + 0i means no gain/phase change; H = 0 + 0i would suppress the signal. |
 | Receiver estimate H-hat | Channel response estimated from received pilots, distinct from the supplied reference H. |
+| Pilot-assisted estimation | Uses independently known pilot symbols to estimate the received channel; it is not arbitrary blind RF acquisition. |
+| FIR | Finite impulse response: a filter formed from a finite set of delayed, weighted samples. MERLIN's [waveform channel](impairments/waveform-filter.md) retains those delays between OFDM symbols. |
 | Equalization | Applies a correction based on channel response to reduce its effect on received constellation points. |
 | Echo | A delayed copy of the signal. An impulse-response peak is not automatically a uniquely identified physical reflector. |
 | Velocity factor (VF) | Signal propagation speed in the cable divided by the speed of light. Reflector-distance estimates assume an out-and-back path. |

@@ -84,7 +84,11 @@ pub fn run_shortened_waveform(
         137,
         &Default::default(),
         0.01,
-        Some(loading),
+        crate::simulation::channel::link::LinkSetup {
+            data_loading: Some(loading),
+            mode: Default::default(),
+            filter: &Default::default(),
+        },
     )?;
     let mut origin = None;
     for index in 0..MAX_ACQUISITION_SYMBOLS {

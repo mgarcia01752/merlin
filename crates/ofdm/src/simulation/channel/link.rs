@@ -49,6 +49,11 @@ pub struct LinkStats {
     pub plc_ldpc_iterations: Vec<usize>,
     pub preambles_match: bool,
 }
+pub(crate) struct LinkSetup<'a> {
+    pub data_loading: Option<&'a [u8]>,
+    pub filter: &'a crate::signal_processing::channel::filter::ChannelFilterSettings,
+    pub mode: crate::signal_processing::receiver::channel_estimation::ReceiverMode,
+}
 pub(crate) struct WaveformLink {
     channel: super::impairment::ImpairedChannel,
     geometry: WaveformGeometry,
@@ -61,6 +66,8 @@ pub(crate) struct WaveformLink {
     received_plc: Vec<IqPair>,
     block_samples: usize,
     calibrated_variances: Vec<f64>,
+    reliability:
+        Option<crate::signal_processing::receiver::channel_estimation::ReliabilityEstimator>,
     raw_plc_frame: Vec<(usize, IqPair)>,
     pub channel_estimate:
         Option<crate::signal_processing::receiver::channel_estimation::ChannelEstimate>,
@@ -90,7 +97,7 @@ impl WaveformLink {
         block_samples: usize,
         impairments: &crate::signal_processing::channel::impairments::ChannelImpairments,
         variance: f64,
-        data_loading: Option<&[u8]>,
+        receiver: LinkSetup<'_>,
     ) -> Result<Self, SimulationError> {
         let geometry = WaveformGeometry::new(settings)?;
         let layout = CarrierLayout::new(settings, raw)?;
@@ -110,23 +117,46 @@ impl WaveformLink {
                 primary_capable: true,
                 ncp_bits: ncp.order().ilog2() as u8,
             },
-            data_loading,
+            receiver.data_loading,
         )?;
         let scheduler = PlcMessageScheduler::new(settings, &descriptors)?;
         let tx = WaveformTransmitter::new(&geometry, 0, 0);
-        let channel =
-            super::impairment::ImpairedChannel::new(&geometry, &layout, impairments, variance)?;
-        let rx = WaveformReceiver::new(
+        let channel = super::impairment::ImpairedChannel::new(
             &geometry,
-            raw,
-            ReceiveReference {
-                first_input_sample: 0,
-                first_symbol_sample: 0,
-                first_symbol_index: 0,
-                reference_rms: 1.0,
-                channel_response: channel.plan.response.clone(),
-            },
+            &layout,
+            impairments,
+            variance,
+            receiver.filter,
         )?;
+        let rx = if receiver.mode
+            == crate::signal_processing::receiver::channel_estimation::ReceiverMode::SuppliedChannel
+        {
+            WaveformReceiver::new(
+                &geometry,
+                raw,
+                ReceiveReference {
+                    first_input_sample: 0,
+                    first_symbol_sample: 0,
+                    first_symbol_index: 0,
+                    reference_rms: 1.0,
+                    channel_response: channel
+                        .plan
+                        .response
+                        .iter()
+                        .zip(layout.static_roles())
+                        .map(|(gain, role)| {
+                            if *role == PhysicalCarrierRole::Excluded {
+                                [1.0, 0.0]
+                            } else {
+                                *gain
+                            }
+                        })
+                        .collect(),
+                },
+            )?
+        } else {
+            WaveformReceiver::from_pilots(&geometry, raw, 0, 0, 0, 1.0)?
+        };
         let mut context = ProbeContext::new(
             "payload-waveform",
             "fixed-payload-reference",
@@ -143,6 +173,7 @@ impl WaveformLink {
             protected_constellation: None,
             reference_bins: None,
             calibrated_variances,
+            reliability: None,
             raw_plc_frame: Vec::new(),
             channel_estimate: None,
             channel,
@@ -171,19 +202,47 @@ impl WaveformLink {
             },
         })
     }
-    /// Selects receiver-owned pilot estimation before any sample is transferred.
+    /// Enables received-only reliability after installing the independent pilot RX.
     /// # Arguments
-    /// * `raw` - Independent receiver bootstrap carrier assignments.
+    /// * `settings` - Receiver numerical policy, with no channel truth.
     /// # Returns
-    /// Unit after replacing the unstarted reference receiver.
+    /// Unit after installing bounded reliability state.
     /// # Errors
-    /// Rejects receiver bootstrap settings; no channel response is supplied to RX.
-    pub(crate) fn use_pilot_estimation(
+    /// Rejects invalid settings before any received samples are consumed.
+    pub(crate) fn use_mce(
         &mut self,
-        raw: &CarrierLayoutSettings,
+        settings: crate::signal_processing::receiver::channel_estimation::MceSettings,
     ) -> Result<(), SimulationError> {
-        self.rx = WaveformReceiver::from_pilots(&self.geometry, raw, 0, 0, 0, 1.0)?;
+        self.reliability = Some(
+            crate::signal_processing::receiver::channel_estimation::ReliabilityEstimator::new(
+                self.geometry.fft_samples(),
+                settings,
+            )?,
+        );
+        self.calibrated_variances.fill(1e-8);
         Ok(())
+    }
+    /// Borrows receiver-only reliability without advancing samples.
+    /// # Returns
+    /// None when MCE is disabled or before its first accepted observation.
+    pub(crate) fn reliability(
+        &self,
+    ) -> Option<&crate::signal_processing::receiver::channel_estimation::ReceiverReliability> {
+        self.reliability.as_ref().and_then(|state| state.status())
+    }
+    /// Borrows the applied filter fit; diagnostic truth is never an RX input.
+    /// # Returns
+    /// None in the default diagonal model.
+    pub(crate) fn filter_diagnostics(
+        &self,
+    ) -> Option<&crate::signal_processing::channel::filter::FilterDiagnostics> {
+        self.channel.filter_diagnostics.as_ref()
+    }
+    /// Reports channel-memory tail separately from transmitter overlap/interleaver drain.
+    /// # Returns
+    /// Extra filter output samples, zero before finish or without a filter.
+    pub(crate) fn filter_tail_samples(&self) -> usize {
+        self.channel.filter_tail_samples
     }
     /// Changes one physical measurement epoch without resetting waveform or RNG state.
     /// # Arguments
@@ -206,7 +265,9 @@ impl WaveformLink {
         {
             self.rx.set_reference_response(&plan.response)?;
         }
-        self.calibrated_variances = plan.llr_variance.clone();
+        if self.reliability.is_none() {
+            self.calibrated_variances = plan.llr_variance.clone();
+        }
         self.channel.transition(plan);
         Ok(())
     }
@@ -257,7 +318,9 @@ impl WaveformLink {
         }
         self.channel.plan.residual_power = powers;
         self.channel.plan.llr_variance = variances.clone();
-        self.calibrated_variances = variances;
+        if self.reliability.is_none() {
+            self.calibrated_variances = variances;
+        }
         Ok(())
     }
     /// Borrows the actual PLC acquisition gate after received frame processing.
@@ -378,7 +441,13 @@ impl WaveformLink {
                 probe,
                 observer,
             )?;
-            completed.extend(self.rx.receive(&received)?);
+            completed.extend(self.rx.receive(&received).map_err(|error| {
+                if self.reliability.is_some() {
+                    SimulationError::new("MceEstimationFailed", error.message)
+                } else {
+                    error
+                }
+            })?);
         }
         if completed.len() != 1 {
             return Err(invalid(
@@ -389,13 +458,41 @@ impl WaveformLink {
             .pop()
             .ok_or_else(|| invalid("Missing completed RX symbol."))?;
         self.channel_estimate = received.channel_estimate.clone();
+        if let Some(reliability) = &mut self.reliability {
+            let estimate = received.channel_estimate.as_ref().ok_or_else(|| {
+                SimulationError::new("MceEstimationFailed", "MCE has no received pilot estimate.")
+            })?;
+            let raw = reliability.observe(estimate)?;
+            for (variance, inverse) in self
+                .calibrated_variances
+                .iter_mut()
+                .zip(&received.inverse_gain_power)
+            {
+                *variance = (raw * inverse).max(1e-12);
+                if !variance.is_finite() || *variance > 1e12 {
+                    return Err(SimulationError::new(
+                        "MceEstimationFailed",
+                        "MCE correction exceeds the receiver reliability bound.",
+                    ));
+                }
+            }
+        }
         if received.channel_estimate.is_some() {
             for (bin, role) in self.layout.static_roles().iter().enumerate() {
                 if *role == PhysicalCarrierRole::Plc {
                     self.raw_plc_frame.push((bin, received.bins[bin]));
                 }
             }
-            for (bin, calibrated) in self.calibrated_variances.iter_mut().enumerate() {
+            for (bin, calibrated) in self
+                .calibrated_variances
+                .iter_mut()
+                .enumerate()
+                .filter(|_| self.reliability.is_none())
+            {
+                if self.layout.static_roles()[bin] == PhysicalCarrierRole::Excluded {
+                    *calibrated = REFERENCE_VARIANCE;
+                    continue;
+                }
                 let gain = self.channel.plan.response[bin];
                 // Raw variance is a simulation calibration, not an H input to RX.
                 let raw =
@@ -529,12 +626,26 @@ impl WaveformLink {
         observation::observe_channel(&tail, false, &self.geometry, &context, probe, observer)?;
         let received = self.channel.finish(&tail)?;
         observation::observe_channel(&received, true, &self.geometry, &context, probe, observer)?;
-        if !self.rx.receive(&received)?.is_empty() {
+        if !self
+            .rx
+            .receive(&received)
+            .map_err(|error| {
+                if self.reliability.is_some() {
+                    SimulationError::new("MceEstimationFailed", error.message)
+                } else {
+                    error
+                }
+            })?
+            .is_empty()
+        {
             return Err(invalid(
                 "Waveform tail completed an unexpected payload period.",
             ));
         }
-        Ok(self.rx.pending_samples())
+        self.rx
+            .pending_samples()
+            .checked_sub(self.channel.filter_tail_samples)
+            .ok_or_else(|| invalid("Channel tail accounting underflow."))
     }
 
     /// Borrows frozen per-physical-bin post-equalization LLR calibration.
