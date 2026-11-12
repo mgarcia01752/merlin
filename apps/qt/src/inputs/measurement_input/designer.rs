@@ -360,6 +360,23 @@ impl Session {
         request: &Request,
         position: usize,
     ) -> Result<Value, AdmissionError> {
+        self.preview_window(request, position, 0, 0)
+    }
+    /// Produces bounded original/designed curves for one exact source window.
+    /// # Arguments
+    /// * `request`, `position` - Immutable recipe and one-based capture position.
+    /// * `start`, `samples` - Source offsets; zero samples restores full span.
+    /// # Returns
+    /// Shared-axis curves, clipped PLC band and original-coordinate navigation.
+    /// # Errors
+    /// Rejects invalid recipes, positions and out-of-grid viewports atomically.
+    pub(crate) fn preview_window(
+        &self,
+        request: &Request,
+        position: usize,
+        start: usize,
+        samples: usize,
+    ) -> Result<Value, AdmissionError> {
         let count = self.count(request)?;
         if position == 0 || position > count {
             return Err("Preview capture outside the collection.".into());
@@ -370,10 +387,11 @@ impl Session {
             .recipe
             .apply(grid, &origin.frame.mer_db, position, count)
             .map_err(AdmissionError::classified)?;
-        let before = measurement_view(grid, &origin.frame.mer_db, 0, 0, "RxMER (dB)")
+        let before = measurement_view(grid, &origin.frame.mer_db, start, samples, "RxMER (dB)")
             .map_err(|error| error.to_string())?;
-        let after = measurement_view(grid, &designed, 0, 0, "RxMER (dB)")
+        let after = measurement_view(grid, &designed, start, samples, "RxMER (dB)")
             .map_err(|error| error.to_string())?;
+        let window = after.start..after.start + after.count;
         // Reproject both normalized curves onto a common range from original dB values.
         let mut before = serde_json::to_value(before).map_err(|error| error.to_string())?;
         let mut after = serde_json::to_value(after).map_err(|error| error.to_string())?;
@@ -394,8 +412,8 @@ impl Session {
             let padding = ((high - low) * 0.1).max(1.0);
             (low - padding, high + padding)
         }
-        let (before_bottom, before_top) = limits(&origin.frame.mer_db);
-        let (after_bottom, after_top) = limits(&designed);
+        let (before_bottom, before_top) = limits(&origin.frame.mer_db[window.clone()]);
+        let (after_bottom, after_top) = limits(&designed[window]);
         let low = before_bottom.min(after_bottom);
         let high = before_top.max(after_top);
         for (view, (bottom, top)) in [
@@ -651,5 +669,45 @@ mod tests {
             result.error
         );
         assert_eq!(result.summary.comparison.bit_errors, 0);
+    }
+    #[test]
+    fn preview_zoom_uses_original_offsets_shared_axes_and_bounded_plc_window() {
+        let (session, _) = fixture();
+        let request = Request {
+            source: "flat".into(),
+            capture_count: 1,
+            baseline_db: 48.0,
+            recipe: Default::default(),
+        };
+        let full = session.preview(&request, 1).unwrap();
+        let start = full["plc_view"]["start"].as_u64().unwrap() as usize;
+        let count = full["plc_view"]["count"].as_u64().unwrap() as usize;
+        let zoom = session.preview_window(&request, 1, start, count).unwrap();
+        assert_eq!(zoom["start"], start);
+        assert_eq!(zoom["count"], count);
+        assert!(count < session.profile.key.grid.sample_count);
+        assert!(start + count <= session.profile.key.grid.sample_count);
+        let width = |view: &Value| {
+            view["bands"][0]["last"].as_f64().unwrap() - view["bands"][0]["first"].as_f64().unwrap()
+        };
+        assert!(width(&zoom) > width(&full) * 10.0);
+        assert_eq!(zoom["points"], zoom["comparison"]);
+        assert!(zoom["points"].as_array().unwrap().len() <= 1024);
+        assert_eq!(
+            zoom["x_ticks"][0]["label"],
+            format!(
+                "{:.3}",
+                f64::from(session.profile.key.grid.frequency(start).unwrap()) / 1e6
+            )
+        );
+        assert!(session.preview_window(&request, 1, usize::MAX, 2).is_err());
+        assert_eq!(
+            session.preview_window(&request, 1, 0, 0).unwrap()["count"],
+            full["count"]
+        );
+        assert!(full["plc_summary"]
+            .as_str()
+            .unwrap()
+            .contains("16 carriers"));
     }
 }

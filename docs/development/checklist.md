@@ -1185,3 +1185,10 @@ validation are complete; the user guide includes the current dark capture.
   inspection. Three native profiles compare 4,710,792 bits with zero errors.
   [Design](features/rxmer-designer/design.md) ·
   [Guide](../user/measurement-inputs/rxmer-designer.md).
+
+- [x] **RXMER-DESIGN-02** Connect Designer wheel/drag/keyboard zoom and Full
+  Span, add Zoom to PLC and first/last frequency context in both RxMER views,
+  and strengthen the true-width PLC shading. Qt Clippy, 74 adapter tests,
+  64 QML checks and the latest native build pass; native zoom, capture
+  changes and Home reset verified.
+  [Design](features/rxmer-designer/design.md#rxmer-design-02-zoom-and-visible-plc-context).

@@ -54,3 +54,15 @@ Validation: independent numerical anchors; scope boundaries 10–20 of 50;
 missing/gap preservation; invalid ranges and bounded work; repeatability; original
 and derived provenance; cancellation/stale-result safety; WB roundtrip; actual
 residual playback/FEC; Qt checks, native dark/light interaction and guide captures.
+
+## RXMER-DESIGN-02: zoom and visible PLC context
+
+Add shared wheel/drag/keyboard navigation to Designer previews, Full Span and
+Zoom to PLC actions to both RxMER views, and a Rust-formatted first/last PLC
+frequency readout. Rust clips and decimates both original/designed curves onto
+one requested source window and shared vertical scale. Capture/effect changes
+retain zoom; reopening resets it. The PLC shortcut frames the actual profile
+region with bounded context; shading retains its true width. Slightly stronger
+fill and endpoint borders improve visibility at full span without widening data.
+Validate clipped curves, out-of-range requests, shortcut bounds, persistent zoom,
+Full Span and native narrow-PLC rendering. No scientific recipe changes.

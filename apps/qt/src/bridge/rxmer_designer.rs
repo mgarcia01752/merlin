@@ -67,17 +67,26 @@ impl bridge::MeasurementInputs {
     /// # Arguments
     /// * `document` - Source controls and scientific recipe, at most24KiB.
     /// * `position` - One-based capture number.
+    /// * `start`, `count` - Nonnegative source viewport; zero count restores full span.
     /// # Returns
     /// Shared-axis frequency view, never a serialized capture collection.
-    pub fn designer_preview(&self, document: &QString, position: i32) -> QString {
+    pub fn designer_preview(
+        &self,
+        document: &QString,
+        position: i32,
+        start: i32,
+        count: i32,
+    ) -> QString {
         response((|| {
             self.rust()
                 .designer
                 .as_ref()
                 .ok_or("Open Designer first.")?
-                .preview(
+                .preview_window(
                     &request(document)?,
                     usize::try_from(position).map_err(|_| "Invalid capture position.")?,
+                    usize::try_from(start).map_err(|_| "Invalid viewport start.")?,
+                    usize::try_from(count).map_err(|_| "Invalid viewport count.")?,
                 )
         })())
     }

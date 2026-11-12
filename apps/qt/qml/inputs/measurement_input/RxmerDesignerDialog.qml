@@ -12,6 +12,8 @@ WorkbenchDialog {
     property var parentOptions: ({})
     property var information: ({})
     property var viewport: ({})
+    property int viewStart: 0
+    property int viewCount: 0
     property var valueEdits: []
     property bool initializing: false
     property bool working: false
@@ -32,8 +34,10 @@ WorkbenchDialog {
             notch:notch.checked ? {scope:notchScope.value(),center_hz:Math.round(Number(center.text)*1e6),bandwidth_hz:Math.round(Number(bandwidth.text)*1e6),depth_db:Number(depth.text),edge_hz:Math.round(Number(edge.text)*1e6)} : null,edits:valueEdits}
     }
     function document() { return JSON.stringify({source:source.currentIndex === 0 ? "imported":"flat",capture_count:captureCount,baseline_db:Number(baseline.text),recipe:recipe()}) }
-    function refresh() { if (!initializing && visible && !working) { viewport=JSON.parse(backend.designer_preview(document(),Math.round(preview.value)));errorMessage=viewport.error || "";diagnostic=viewport.diagnostic || null } }
+    function refresh() { if (!initializing && visible && !working) { viewport=JSON.parse(backend.designer_preview(document(),Math.round(preview.value),viewStart,viewCount));errorMessage=viewport.error || "";diagnostic=viewport.diagnostic || null } }
+    function setWindow(start,count) {viewStart=start;viewCount=count;refresh()}
     function restore() {
+        viewStart=0;viewCount=0
         initializing=true
         information=JSON.parse(backend.designer_begin())
         errorMessage=information.error || ""
@@ -134,8 +138,13 @@ TextField {id:editDb;text:"30";Layout.preferredWidth:75} }
             }
             ColumnLayout {
                 Layout.fillWidth:true;Layout.fillHeight:true
-                Label {text:"Original  ┄┄    Designed  ━━    PLC  ▰";color:theme.accent}
-                MeasurementPlot {theme:dialog.theme;viewport:dialog.viewport;Layout.fillWidth:true;Layout.fillHeight:true;onViewportRequested:{} }
+                RowLayout {
+                    Label {text:"Original ┄  Designed ━  PLC ▰";color:theme.accent;Layout.fillWidth:true}
+                    WorkbenchActionButton {theme:dialog.theme;objectName:"designerZoomPlc";text:"Zoom to PLC";enabled:!!dialog.viewport.plc_view && !dialog.working;onClicked:dialog.setWindow(dialog.viewport.plc_view.start,dialog.viewport.plc_view.count)}
+                    WorkbenchActionButton {theme:dialog.theme;objectName:"designerFullSpan";text:"Full Span";enabled:!dialog.working;onClicked:dialog.setWindow(0,0)}
+                }
+                MeasurementPlot {theme:dialog.theme;viewport:dialog.viewport;Layout.fillWidth:true;Layout.fillHeight:true;onViewportRequested:function(start,count){dialog.setWindow(start,count)} }
+                Label {text:dialog.viewport.plc_summary || "";color:theme.muted;font.pixelSize:11;Layout.fillWidth:true}
                 RowLayout {
                     Label {text:"Preview capture "+Math.round(preview.value)+" / "+dialog.captureCount;color:theme.text}
                     Slider {id:preview;objectName:"designerPreviewCapture";Layout.fillWidth:true;from:1;to:Math.max(1,dialog.captureCount);stepSize:1;enabled:!dialog.working;onMoved:dialog.refresh()}

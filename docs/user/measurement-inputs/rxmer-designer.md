@@ -10,8 +10,17 @@ an association anchor; it is not a measured acquisition time.
 Enable the effects you need. The preview overlays the original dashed curve and
 the designed solid curve on the same RxMER axis. A single shaded **PLC** region
 runs from the first to the last PLC carrier in the accepted modulation profile.
-The main RxMER chart uses the same region, clipped when zoomed. No PLC region is
-guessed from the RxMER shape; a missing or incompatible profile has no overlay.
+The main RxMER chart uses the same region, clipped when zoomed. At full span,
+a narrow PLC may cover only one or two pixels. Press **Zoom to PLC** in either
+view to frame it with nearby carriers. Scroll over the chart to zoom around the
+pointer, drag horizontally to select a range, or focus the chart and use **+ / −**.
+**Full Span** or **Home** restores the whole frequency band. The Designer keeps
+zoom when changing capture or effect controls. The first/last PLC frequency
+readout is below the chart; shading and border lines retain their true positions.
+
+![RxMER Designer zoomed to the PLC region](../../images/workbench/rxmer-designer-plc-zoom-dark.png)
+
+No PLC region is guessed from the RxMER shape; a missing or incompatible profile has no overlay.
 
 | Control | Effect |
 | --- | --- |
@@ -33,7 +42,7 @@ The supported limits are 256 captures, 4 million values, 32 value ranges, ±60 d
 reject without clipping or changing original input files. Hover or focus known
 recipe errors for help; click or press Enter/F1 to open the offline FAQ.
 
-![Main RxMER chart with the same PLC region and existing replay-capacity checks](../../images/workbench/rxmer-designer-main-dark.png)
+![Main RxMER chart with the same PLC region and zoom controls](../../images/workbench/rxmer-designer-main-dark.png)
 
 **Apply** builds the designed collection on a cancellable Rust worker and stages
 it in Capture Configuration. Progress counts completed captures. Then select the

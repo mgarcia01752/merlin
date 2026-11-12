@@ -16,6 +16,8 @@ use serde_json::{json, Value};
 /// Unit; incompatible/missing profiles leave the overlay empty.
 pub(crate) fn annotate(view: &mut Value, grid: &FrequencyGrid, profile: Option<&CapturedProfile>) {
     view["bands"] = json!([]);
+    view["plc_view"] = Value::Null;
+    view["plc_summary"] = json!("");
     let Some(profile) = profile.filter(|profile| profile.key.grid == *grid) else {
         return;
     };
@@ -33,6 +35,16 @@ pub(crate) fn annotate(view: &mut Value, grid: &FrequencyGrid, profile: Option<&
         .map(|(index, _)| index);
     let Some(first) = carriers.next() else { return };
     let last = carriers.next_back().unwrap_or(first);
+    let padding = (last - first + 1).max(8) * 2;
+    let zoom_start = first.saturating_sub(padding);
+    let zoom_end = (last + 1 + padding).min(grid.sample_count);
+    view["plc_view"] = json!({"start":zoom_start,"count":zoom_end-zoom_start});
+    view["plc_summary"] = json!(format!(
+        "PLC first–last: {:.3}–{:.3} MHz · {} carriers",
+        f64::from(grid.frequency(first).unwrap_or(0)) / 1e6,
+        f64::from(grid.frequency(last).unwrap_or(0)) / 1e6,
+        last - first + 1
+    ));
     if count == 1 {
         if (first..=last).contains(&start) {
             view["bands"] = json!([{"first":0.0,"last":1.0,"label":"PLC"}]);

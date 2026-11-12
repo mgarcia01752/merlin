@@ -26,8 +26,13 @@ pub mod bridge {
         fn designer_begin(self: Pin<&mut MeasurementInputs>) -> QString;
         /// Returns a bounded shared-axis before/after frequency preview.
         #[qinvokable]
-        fn designer_preview(self: &MeasurementInputs, document: &QString, position: i32)
-            -> QString;
+        fn designer_preview(
+            self: &MeasurementInputs,
+            document: &QString,
+            position: i32,
+            start: i32,
+            count: i32,
+        ) -> QString;
         /// Generates a complete replacement draft on a cancellable Rust worker.
         #[qinvokable]
         fn designer_stage(

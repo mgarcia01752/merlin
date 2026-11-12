@@ -35,3 +35,20 @@ local screenshots, logs and the bounded native driver remain under
 `docs/development/local/independent-channel-estimation/` and
 `docs/development/local/rxmer-designer/`. No original fixture or source capture
 was overwritten. Designer debug logs report stage counts without capture arrays.
+
+## RXMER-DESIGN-02: zoom and PLC visibility
+
+Qt check passes with 74 adapter tests and 64 QML checks, warnings-denied Clippy,
+formatting and a current executable. New coverage verifies source-offset cropping,
+shared original/designed axes, bounded PLC context, invalid viewport rejection,
+Zoom to PLC, retained capture zoom, wheel-equivalent navigation, Home and Full Span.
+The scientific core is unchanged; this change uses the Qt validation scope.
+
+On the native example workbench the PLC spans first/last carrier centers at
+932.800–933.175 MHz (16 carriers) within a 835.000–1024.975 MHz source grid. The
+full-band drawing is approximately one pixel wide. Zoom to PLC frames
+932.000–933.975 MHz and reveals one continuous shaded region with endpoint lines,
+without inventing a wider PLC. Native Designer and main RxMER views, capture
+changes and Home reset were inspected; the main PLC view was also checked in
+light mode. Updated full-span and zoomed screenshots
+are linked in the user guide.

@@ -2190,6 +2190,10 @@ Rust derives one continuous PLC overlay from the first and last PLC assignments
 in the accepted modulation profile. It is clipped to the source viewport and
 omitted for incompatible identity/grid. QML shades beneath the curves; no carrier
 positions are inferred from measurement magnitudes. Main RxMER, animation and
-Designer use the same overlay helper. See the
+Designer use the same overlay helper. Designer requests carry bounded source
+start/count coordinates through the Qt adapter, with both curves decimated and
+scaled together over that window. Zoom to PLC derives a clipped context window
+from the accepted profile; Full Span and shared pointer/keyboard navigation
+change only the view, and capture/recipe edits retain zoom. See the
 [design](development/features/rxmer-designer/design.md) and
 [user guide](user/measurement-inputs/rxmer-designer.md).

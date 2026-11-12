@@ -47,8 +47,11 @@ ColumnLayout {
                 ctx.fillText(tick.label, x, top + height + 20)
             }
             for (const band of chart.viewport.bands || []) {
-                ctx.fillStyle = Qt.rgba(0.95, 0.74, 0.25, 0.16)
+                ctx.fillStyle = Qt.rgba(0.95, 0.74, 0.25, 0.24)
                 ctx.fillRect(left + band.first * width, top, (band.last - band.first) * width, height)
+                ctx.strokeStyle = Qt.rgba(0.95,0.74,0.25,0.75);ctx.lineWidth=1
+                ctx.beginPath();ctx.moveTo(left+band.first*width,top);ctx.lineTo(left+band.first*width,top+height)
+                ctx.moveTo(left+band.last*width,top);ctx.lineTo(left+band.last*width,top+height);ctx.stroke()
                 ctx.fillStyle = chart.theme.muted; ctx.textAlign = "left"
                 ctx.fillText(band.label, Math.min(left + band.first * width + 3, left + width - 25), top + 12)
             }

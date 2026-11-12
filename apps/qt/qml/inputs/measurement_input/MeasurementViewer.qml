@@ -55,9 +55,11 @@ RowLayout {
             Layout.fillWidth: true
             Label { text: viewer.animationActive ? "Capture preview · "+(playbackControls.frameIndex+1)+" / "+playbackControls.frameCount : viewer.selectedIndex < 0 ? (viewer.rxmer ? "Effective residual model" : "Channel response") : ((viewer.files[viewer.selectedIndex] || {}).designed ? "Designed capture " : "Original capture ") + (viewer.selectedIndex + 1); color: theme.accent; Layout.fillWidth: true }
             ComboBox { objectName: "measurementMetric"; visible: !viewer.rxmer; model: ["Gain (dB)", "Phase (degrees)", "Real H", "Imaginary H"]; onActivated: function(index) { viewer.metric = index; viewer.reset() } }
+            WorkbenchActionButton {theme:viewer.theme;objectName:"measurementZoomPlc";visible:viewer.rxmer;enabled:!!viewer.viewport.plc_view;text:"Zoom to PLC";onClicked:viewer.refresh(viewer.viewport.plc_view.start,viewer.viewport.plc_view.count)}
             WorkbenchActionButton { theme: viewer.theme; objectName: "measurementFullSpan"; text: "Full Span"; onClicked: viewer.reset() }
         }
         MeasurementPlot { Layout.fillWidth: true; Layout.fillHeight: true; theme: viewer.theme; viewport: viewer.viewport; onViewportRequested: function(start, count) { viewer.refresh(start, count) } }
+        Label {visible:viewer.rxmer && text.length>0;text:viewer.viewport.plc_summary || "";color:viewer.theme.muted;font.pixelSize:11;Layout.fillWidth:true}
         MeasurementPlaybackControls {
             id:playbackControls;objectName:"measurementPlaybackControls"
             visible:viewer.rxmer;Layout.fillWidth:true;theme:viewer.theme

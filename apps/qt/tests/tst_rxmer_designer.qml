@@ -16,7 +16,7 @@ Pane {
         property int cancelled:0
         property bool pending:false
         function designer_begin(){return JSON.stringify({imported_count:50,first_hz:640000000,last_hz:827000000,spacing_hz:25000,request:{source:"imported",capture_count:50,baseline_db:48,recipe:{tilt:null,ripple:null,notch:null,edits:[]}}})}
-        function designer_preview(document,position){lastRequest=JSON.parse(document);return JSON.stringify({points:[{x:0,y:0.2,minimum_y:0.2,gap:false}],comparison:[{x:0,y:0.1,minimum_y:0.1,gap:false}],bands:[{first:0.4,last:0.41,label:"PLC"}],start:0,count:7481,total:7481,axis_label:"RxMER (dB)",summary:"Capture "+position,timeline:[]})}
+        function designer_preview(document,position,start,count){lastRequest=JSON.parse(document);return JSON.stringify({points:[{x:0,y:0.2,minimum_y:0.2,gap:false}],comparison:[{x:0,y:0.1,minimum_y:0.1,gap:false}],bands:[{first:0.4,last:0.41,label:"PLC"}],start:count ? start:0,count:count || 7481,total:7481,plc_view:{start:4000,count:80},plc_summary:"PLC first–last: 740.000–740.375 MHz · 16 carriers",axis_label:"RxMER (dB)",summary:"Capture "+position,timeline:[]})}
         function designer_stage(document,options){lastRequest=JSON.parse(document);pending=true;return JSON.stringify({running:true})}
         function designer_poll(){pending=false;return JSON.stringify({running:false,cancelled:true})}
         function designer_cancel(){cancelled++}
@@ -26,6 +26,20 @@ Pane {
     TestCase {
         name:"RxmerDesigner";when:windowShown
         function cleanup(){dialog.close();wait(100)}
+        function test_zoom_plc_navigation_and_capture_changes_keep_window(){
+            dialog.open();tryCompare(dialog,"visible",true)
+            mouseClick(findChild(dialog,"designerZoomPlc"))
+            compare(dialog.viewStart,4000);compare(dialog.viewport.count,80)
+            findChild(dialog,"designerPreviewCapture").value=15;dialog.refresh()
+            compare(dialog.viewport.count,80)
+            const navigation=findChild(dialog,"chartNavigation");verify(navigation)
+            navigation.zoom(0.5,0.5);compare(dialog.viewport.count,40)
+            navigation.forceActiveFocus();keyClick(Qt.Key_Home)
+            compare(dialog.viewStart,0);compare(dialog.viewCount,0);compare(dialog.viewport.count,7481)
+            mouseClick(findChild(dialog,"designerZoomPlc"))
+            mouseClick(findChild(dialog,"designerFullSpan"))
+            compare(dialog.viewCount,0)
+        }
         function test_restore_switches_between_range_and_all(){
             scopeProbe.restore({mode:"range",first:10,last:20})
             compare(scopeProbe.range,true);compare(scopeProbe.value().first,10);compare(scopeProbe.value().last,20)
