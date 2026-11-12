@@ -102,7 +102,7 @@ WorkbenchDialog {
             visible: dialog.showTiming
             theme: dialog.theme; backend: dialog.backend
             hasResult: dialog.showTiming && (dialog.state.has_result || false)
-            resultToken: dialog.state.result_token || ""
+            resultToken: (dialog.state.result_token || "")+"/"+(dialog.state.configuration_token || "")
         }
 
     }

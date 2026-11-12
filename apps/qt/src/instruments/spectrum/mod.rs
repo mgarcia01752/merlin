@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Shared spectrum viewport formatting; the core owns the actual PSD calculation.
+pub(crate) mod symbol_timing;
 use docsis_ofdm_fec::signal_processing::waveform::spectrum::{density_db, PowerSpectrum};
 use serde_json::{json, Value};
 /// Formats one bounded viewport over an immutable Rust spectrum.

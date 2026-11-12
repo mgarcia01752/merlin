@@ -2057,3 +2057,20 @@ the themed surface while retaining the original source. Workbench-level QAM
 legends are removed; symbol-role legends remain inside their instrument views.
 The capture editor retains its functions while generic instruction text is
 removed; Preview symbol supplies hover and keyboard-focus help instead.
+
+### Expanded symbol timing (UI-SA-TIMING-02)
+
+The shared SA timing panel opens a resizable Symbol Timing popup. A bounded
+Rust projection in `instruments/spectrum/symbol_timing.rs` reads the actual core
+TransmitWindow coefficients for two adjacent symbols and their overlap; QML
+only renders coordinates, labels and shading. The overview domain is fixed per
+FFT size, and overlap detail uses a fixed sample span relative to the second
+symbol start. Tapers retain exact half-sample weights and zero outside support.
+
+The transmitter analyzer retains accepted OCD geometry independently of sample
+generation and exposes a configuration revision. Timing uses completed-run
+settings, then transmitter-preview settings, or accepted current configuration
+when no result remains; every view labels its source. Configuration revision
+changes refresh timing without serializing plots on every polling tick. VF
+affects only distance estimates. Core windowing, simulation results and WB JSON
+are unchanged. See the [design](development/features/symbol-timing-popup/design.md).

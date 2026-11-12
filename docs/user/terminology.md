@@ -168,3 +168,11 @@ without estimating a completion percentage. In **--debug-ui** mode,
 time, including file selection, reading and capture validation. It is separate
 from simulated duration and does not predict time remaining.
 See [opening workbenches](workbench.md#workbench-configuration-files).
+
+## Transmit window overlap
+
+The **transmit window** weights the samples near the start and end of each OFDM
+symbol. Adjacent symbols overlap during the roll-off interval: one window fades
+out while the next fades in. Their weights add to one over that shared interval;
+this does not mean the RF signal amplitude or power is constant.
+See [symbol timing](spectrum-analyzer.md#symbol-timing-and-cable-echo-budget).

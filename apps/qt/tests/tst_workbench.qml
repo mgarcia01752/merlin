@@ -109,7 +109,8 @@ Pane {
         function poll() { return JSON.stringify({status: ready ? "complete" : "attention", reason: ready ? "Accepted source, profile and settings form a transmitter" : "Accept compatible OCD, DPD and PRBS-TX inputs to configure the transmitter.", tap_name: "TX Output", tap_id: "tx.overlap_add.samples", tap_description: "Complex baseband I/Q before channel", busy: busy, can_generate: ready && !busy, has_result: resultAvailable, result_token: token, progress: busy ? 0.5 : 0, message: ""}) }
         function timing(velocity) {
             if (!resultAvailable) { return JSON.stringify({points:[],ticks:[],error:"Run simulation"}) }
-            return JSON.stringify({points:[{x:0,coefficient:0},{x:0.2,coefficient:1},{x:1,coefficient:1}],ticks:[{x:0,label:"0"},{x:1,label:"3.125 µs"}],prefix_fraction:0.8,roll_off_fraction:0.2,overview:"CP 512 · FFT 8192 samples",roll_label:"δ 0.625 µs",guard_label:"Flat guard 1.875 µs",budget_label:"Ideal guard budget: 1.875 µs",extra_path:isNaN(velocity) ? "Unknown VF" : velocity === 0.87 ? "1604 ft" : "1512 ft",reflection_spacing:isNaN(velocity) ? "Unknown VF" : velocity === 0.87 ? "802 ft" : "756 ft"})
+            const graph={points:[{x:0,first:1,second:0,sum:null,readout:"0 µs"},{x:0.5,first:0.5,second:0.5,sum:1,readout:"Overlap"},{x:1,first:0,second:1,sum:null,readout:"100 µs"}],ticks:[{x:0,label:"0.000"},{x:1,label:"100.000"}],bands:[{x:0,end_x:0.05,symbol:0}],markers:[]}
+            return JSON.stringify({source:"Transmitter preview",window:{overview:graph,detail:graph,overlap_label:"Overlap 0.625 µs"},points:[{x:0,coefficient:0},{x:0.2,coefficient:1},{x:1,coefficient:1}],ticks:[{x:0,label:"0"},{x:1,label:"3.125 µs"}],prefix_fraction:0.8,roll_off_fraction:0.2,overview:"CP 512 · FFT 8192 samples",roll_label:"δ 0.625 µs",guard_label:"Flat guard 1.875 µs",budget_label:"Ideal guard budget: 1.875 µs",extra_path:isNaN(velocity) ? "Unknown VF" : velocity === 0.87 ? "1604 ft" : "1512 ft",reflection_spacing:isNaN(velocity) ? "Unknown VF" : velocity === 0.87 ? "802 ft" : "756 ft"})
         }
         function view(start, count, captureAxis) {
             return JSON.stringify({points: [{x:0,y:0.7,minimum_y:0.8,readout:"Test low bin"},{x:0.5,y:0.2,minimum_y:0.4,readout:"Test center bin"},{x:1,y:0.6,minimum_y:0.9,readout:"Test high bin"}],x_ticks:[{x:0,label:captureAxis ? "631.100" : "-102.400"},{x:1,label:captureAxis ? "835.875" : "102.375"}],y_ticks:[{y:0,label:"-60"},{y:1,label:"-160"}],start:start,count:count || 8192,total:8192,axis_label:"Normalized PSD",frequency_label:captureAxis ? "Capture mapping" : "Baseband frequency offset (MHz)",summary:"Test FFT metadata",detail:"Bounded fixture",trace_label:"Test envelope"})
@@ -713,6 +714,7 @@ Pane {
             mouseClick(transmitter.stageRepeater.itemAt(6).tapButton)
             const dialog = transmitter.spectrumPopup
             tryCompare(dialog, "opened", true)
+            // Timing popup navigation is exercised after the preview completes below.
             compare(transmitterBackend.busy, true)
             verify(findChild(dialog.footer,"saGenerate")!==null)
             compare(findChild(dialog.footer,"saCancel").text,"Cancel preview")
@@ -805,6 +807,33 @@ Pane {
             compare(timingPanel.timing.points.length, 0)
             compare(basebandAxis.enabled,false)
             compare(captureAxis.enabled,false)
+        }
+        function test_full_symbol_timing_popup_keyboard_and_resize() {
+            transmitterBackend.resultAvailable=true
+            transmitterBackend.token=String(Number(transmitterBackend.token)+1)
+            workbench.transmitterState=JSON.parse(transmitterBackend.poll())
+            const tx=workbench.transmitterPopup
+            tx.open();tryCompare(tx,"opened",true)
+            tx.openSpectrum(0)
+            tryCompare(tx.spectrumPopup,"opened",true)
+            const panel=findChild(tx.spectrumPopup,"saTimingPanel")
+            panel.refresh()
+            const expand=findChild(panel,"expandSymbolTiming")
+            verify(expand.enabled)
+            expand.forceActiveFocus();keyClick(Qt.Key_Space)
+            const timing=panel.timingPopup
+            tryCompare(timing,"opened",true)
+            compare(findChild(timing,"symbolTimingSource").text,"Transmitter preview")
+            verify(findChild(timing,"symbolTimingOverview").graph.points.length>0)
+            verify(findChild(timing,"symbolTimingOverlap").detail)
+            const grip=findChild(timing,"symbolTimingResize")
+            const before=timing.width
+            mouseDrag(grip,10,10,-40,-30)
+            const resized=timing.width
+            const maximum=timing.maximumWidth
+            closeWithX(timing);closeWithX(tx.spectrumPopup);closeWithX(tx)
+            verify(resized<before)
+            verify(resized<=maximum)
         }
         function test_transmitter_graphs_empty_keyboard_and_minimum_layout() {
             const host=window.Window.window

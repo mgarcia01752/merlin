@@ -26,6 +26,7 @@ struct Job {
 #[derive(Default)]
 pub(crate) struct Analyzer {
     revision: u64,
+    timing_settings: Option<TransmissionSettings>,
     result_token: u64,
     request: Option<TransmitterPreviewRequest>,
     job: Option<Job>,
@@ -46,26 +47,35 @@ impl Analyzer {
         self.revision = self.revision.wrapping_add(1);
         self.result = None;
         self.request = None;
+        self.timing_settings = None;
         self.error.clear();
         self.notice.clear();
-        let prepare = || -> Result<Option<TransmitterPreviewRequest>, String> {
-            if document.len() > 4096 {
-                return Err("OCD request exceeds 4096 bytes.".into());
-            }
-            let settings: TransmissionSettings =
-                serde_json::from_str(document).map_err(|error| error.to_string())?;
-            settings.validate().map_err(|error| error.to_string())?;
-            match (inputs.source, inputs.profile) {
-                (Some(source), Some(profile)) => {
-                    TransmitterPreviewRequest::new(&settings, &profile, source.config, source.seed)
-                        .map(Some)
-                        .map_err(|error| error.to_string())
+        let prepare =
+            || -> Result<(TransmissionSettings, Option<TransmitterPreviewRequest>), String> {
+                if document.len() > 4096 {
+                    return Err("OCD request exceeds 4096 bytes.".into());
                 }
-                _ => Ok(None),
-            }
-        };
+                let settings: TransmissionSettings =
+                    serde_json::from_str(document).map_err(|error| error.to_string())?;
+                settings.validate().map_err(|error| error.to_string())?;
+                let request = match (inputs.source, inputs.profile) {
+                    (Some(source), Some(profile)) => TransmitterPreviewRequest::new(
+                        &settings,
+                        &profile,
+                        source.config,
+                        source.seed,
+                    )
+                    .map(Some)
+                    .map_err(|error| error.to_string()),
+                    _ => Ok(None),
+                }?;
+                Ok((settings, request))
+            };
         match prepare() {
-            Ok(request) => self.request = request,
+            Ok((settings, request)) => {
+                self.timing_settings = Some(settings);
+                self.request = request;
+            }
             Err(error) => self.error = error,
         }
     }
@@ -191,7 +201,7 @@ impl Analyzer {
                 )
             })
             .unwrap_or_default();
-        json!({"status":status,"reason":reason,"tap_name":"TX Output","tap_id":"tx.overlap_add.samples","tap_description":"Complex baseband I/Q · post-prefix, window and overlap · before channel","busy":self.job.is_some(),"can_generate":self.request.is_some()&&self.job.is_none(),"has_result":self.result.is_some(),"result_token":self.result_token.to_string(),"progress":if total==0 {0.0} else {done as f64/total as f64},"message":if self.error.is_empty(){self.notice.as_str()} else {self.error.as_str()}})
+        json!({"status":status,"reason":reason,"tap_name":"TX Output","tap_id":"tx.overlap_add.samples","tap_description":"Complex baseband I/Q · post-prefix, window and overlap · before channel","busy":self.job.is_some(),"can_generate":self.request.is_some()&&self.job.is_none(),"has_result":self.result.is_some(),"result_token":self.result_token.to_string(),"configuration_token":self.revision.to_string(),"progress":if total==0 {0.0} else {done as f64/total as f64},"message":if self.error.is_empty(){self.notice.as_str()} else {self.error.as_str()}})
     }
 
     /// Formats a min/max spectrum viewport; large sample/FFT storage stays in Rust.
@@ -209,7 +219,7 @@ impl Analyzer {
         }
     }
 
-    /// Returns timing/window display data from completed result settings only.
+    /// Returns timing from completed samples or the accepted current OCD before a run.
     /// # Arguments
     /// * `velocity` - Nominal cable VF in (0,1]; NaN represents unknown input.
     /// # Returns
@@ -220,11 +230,18 @@ impl Analyzer {
         };
         let prepare = || -> Result<Value, String> {
             let completed = crate::simulation::closed_loop::latest();
-            let settings = completed
-                .as_ref()
-                .map(|result| &result.job.settings.transmission)
-                .or_else(|| self.result.as_ref().map(|result| &result.settings))
-                .ok_or("Run simulation to show symbol timing.")?;
+            let (settings, origin) = if let Some(result) = completed.as_ref() {
+                (&result.job.settings.transmission, "Completed run")
+            } else if let Some(result) = self.result.as_ref() {
+                (&result.settings, "Transmitter preview")
+            } else {
+                (
+                    self.timing_settings
+                        .as_ref()
+                        .ok_or("Apply an OFDM configuration to show symbol timing.")?,
+                    "Current configuration",
+                )
+            };
             let geometry = WaveformGeometry::new(settings).map_err(|error| error.to_string())?;
             let report = symbol_timing(
                 &geometry,
@@ -246,8 +263,8 @@ impl Analyzer {
                 json!({"x":1.0,"label":format!("{:.3} µs",report.zoom_us)}),
             ];
             Ok(
-                json!({"points":report.points,"prefix_fraction":report.prefix_fraction,"roll_off_fraction":report.roll_off_fraction,
-                "ticks":ticks,"overview":format!("CP {} · FFT {} samples / {:.1} µs · symbol {:.3} µs",report.prefix_samples,report.fft_samples,report.useful_us,report.symbol_us),
+                json!({"source":origin,"window":crate::instruments::spectrum::symbol_timing::project(&geometry),"points":report.points,"prefix_fraction":report.prefix_fraction,"roll_off_fraction":report.roll_off_fraction,
+                "ticks":ticks,"overview":format!("CP {} / {:.3} µs · FFT {} samples / {:.1} µs · symbol {:.3} µs",report.prefix_samples,report.prefix_us,report.fft_samples,report.useful_us,report.symbol_us),
                 "roll_label":format!("δ {:.3} µs",report.roll_off_us),"guard_label":format!("Flat guard {:.3} µs",report.guard_us),
                 "extra_path":format_distance(report.extra_path_feet),"reflection_spacing":format_distance(report.reflection_spacing_feet),
                 "budget_label":format!("Ideal guard budget: {:.3} µs",report.guard_us)}),
@@ -338,12 +355,39 @@ mod tests {
         model.configure(&settings, Inputs::default());
         wait(&mut model);
         assert!(model.result.is_none());
-        assert!(model.timing(0.82).get("error").is_some());
+        assert_eq!(model.timing(0.82)["source"], "Current configuration");
         assert_eq!(model.status()["status"], "attention");
         let mut unsupported = inputs();
         unsupported.profile.as_mut().unwrap().profile_id = 16;
         model.configure(&settings, unsupported);
         assert_eq!(model.status()["status"], "error");
+    }
+
+    #[test]
+    fn accepted_timing_refreshes_without_simulation_and_vf_changes_only_distance() {
+        let mut model = Analyzer::default();
+        let settings = TransmissionSettings::default();
+        model.configure(
+            &serde_json::to_string(&settings).unwrap(),
+            Inputs::default(),
+        );
+        let initial = model.timing(0.82);
+        assert_eq!(initial["source"], "Current configuration");
+        assert_eq!(initial["window"], model.timing(0.87)["window"]);
+        let changed = TransmissionSettings {
+            cyclic_prefix_samples: 1024,
+            roll_off_samples: 256,
+            ..settings
+        };
+        model.configure(&serde_json::to_string(&changed).unwrap(), Inputs::default());
+        let updated = model.timing(0.82);
+        assert_eq!(updated["window"]["symbol_us"], 45.0);
+        assert_eq!(updated["window"]["roll_us"], 1.25);
+        assert_ne!(
+            initial["window"]["overview"]["points"],
+            updated["window"]["overview"]["points"]
+        );
+        assert!(!model.status()["has_result"].as_bool().unwrap());
     }
 
     #[test]

@@ -406,3 +406,10 @@ Closed-loop execution/persistence: [design](features/qt-closed-loop/design.md) Â
   rendering, startup, Save destinations, errors and cancellation verified;
   58 Rust tests, 53 QML checks and native Ubuntu launches pass.
   [Design](features/responsive-workbench-open/design.md#ui-wb-open-04--quiet-loading-and-command-line-workbenches).
+
+- [x] **UI-SA-TIMING-02** Expand the compact timing plot into a resizable full
+  two-symbol and overlap view. Use actual core window weights, stable time axes,
+  explicit result/current-configuration source and accepted-setting refresh.
+  Verified both FFTs, all CP/RP pairs, keyboard/resize and native dark/light UI;
+  61 Rust tests, 54 QML checks, Clippy and native build pass.
+  [Design](features/symbol-timing-popup/design.md).

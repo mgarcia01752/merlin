@@ -77,6 +77,8 @@ fn main() {
                 "qml/instruments/spectrum/SpectrumPlot.qml",
                 "qml/components/ChartNavigation.qml",
                 "qml/instruments/spectrum/SymbolTimingPanel.qml",
+                "qml/instruments/spectrum/SymbolTimingPlot.qml",
+                "qml/instruments/spectrum/SymbolTimingDialog.qml",
                 "qml/inputs/measurement_input/MeasurementPlot.qml",
                 "qml/inputs/measurement_input/MeasurementCaptureTree.qml",
                 "qml/inputs/measurement_input/MeasurementPlaybackControls.qml",

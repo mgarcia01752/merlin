@@ -101,12 +101,24 @@ See [workbench readiness](workbench.md), [PRBS-TX](source-input.md) and
 
 ## Symbol timing and cable echo budget
 
-Below the PSD, the left panel shows the actual **transmit-window coefficient**
-near symbol start. This is a dimensionless window view, not the time-domain I/Q
-signal amplitude. The overview reports CP, useful FFT length/time and symbol
-cadence. Yellow marks the roll-off/overlap boundary; the CP-end marker identifies
-the useful FFT start. The flat guard label subtracts roll-off from CP duration.
-All values use the frozen settings that produced the displayed spectrum.
+Below the PSD, **Symbol Timing · Two Symbols** shows two complete transmit
+windows on one real time axis. Click the graph, or focus it and press Space or
+Enter, to open **Symbol Timing**. Drag the lower-right corner to resize the
+popup. It contains a full-duration view and an enlarged overlap view, with CP
+regions shaded. Symbol 1 is solid, Symbol 2 dashed, and the overlap sum dotted.
+Hover for the displayed time and actual window weights. These are dimensionless
+weights, not the time-domain I/Q signal amplitude.
+
+The source label identifies **Completed run**, **Transmitter preview** or
+**Current configuration**. Completed results retain the settings that produced
+their samples. After applying new settings, the accepted current configuration
+can be inspected without running payload simulation. Draft edits do not change
+the graph. The full time scale stays fixed for each FFT size; CP changes move
+symbol starts and roll-off changes alter the taper/overlap width. The detail
+view keeps a fixed span relative to the second-symbol start so roll-off changes
+remain visible. CP minus roll-off is the flat guard interval.
+
+![Expanded symbol timing and overlap](../images/workbench/symbol-timing-expanded-dark.png)
 
 Select **Belden 1694WB RG-6**, **CommScope P3 500** or **Custom cable / velocity
 factor** on the right. Custom VF must be greater than zero and at most one; an
@@ -129,7 +141,9 @@ one homogeneous cable and zero reserved receiver timing margin. It is not maximu
 plant reach, a general distance-to-fault measurement, or guaranteed echo
 protection. Actual echoes also depend on topology, strength and receiver behavior.
 
-Applying new accepted inputs clears the panel until a new snapshot completes.
+Applying new accepted inputs invalidates old sample results. The timing view
+then uses the accepted current OCD and updates when a new snapshot completes.
+Cable VF changes only the distance estimate, not symbol geometry.
 Full time-domain I/Q trace inspection remains pending. The
 [design and source evidence](../development/features/transmitter-spectrum/design.md#ui-sa-04-symbol-timing-and-cable-echo-budget)
 records the PHY derivation and manufacturer VF references.

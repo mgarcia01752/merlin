@@ -12,11 +12,12 @@ Rectangle {
     required property var backend
     required property bool hasResult
     required property string resultToken
+    property alias timingPopup:expanded
     property var timing: ({points: [], ticks: []})
     property real velocityFactor: cable.currentIndex === 0 ? 0.82 : cable.currentIndex === 1 ? 0.87 : (customVelocity.text.length ? Number(customVelocity.text) : NaN)
     function refresh() {
-        timing = hasResult ? JSON.parse(backend.timing(velocityFactor)) : ({points: [], ticks: []})
-        windowPlot.requestPaint()
+        timing = backend && typeof backend.timing === "function" ? JSON.parse(backend.timing(velocityFactor)) : ({points: [], ticks: []})
+
     }
     onHasResultChanged: refresh()
     onResultTokenChanged: refresh()
@@ -25,61 +26,34 @@ Rectangle {
     color: theme.panel; border.color: theme.line; radius: 6
     implicitHeight: cable.currentIndex === 2 ? 240 : 220
     Accessible.name: "Symbol timing and ideal cable echo budget"
+    SymbolTimingDialog {id:expanded;theme:panel.theme;timing:panel.timing}
     RowLayout {
         anchors.fill: parent; anchors.margins: 10; spacing: 18
         ColumnLayout {
             Layout.fillWidth: true; Layout.fillHeight: true; spacing: 5
-            Label { text: "Symbol start · transmit window coefficient"; color: theme.text; font.bold: true; font.pixelSize: 13 }
-            Label { text: panel.timing.overview || "Run simulation to display frozen symbol timing."; color: theme.muted; font.pixelSize: 11; Layout.fillWidth: true; elide: Text.ElideRight }
-            Canvas {
-                id: windowPlot
-                objectName: "saTimingPlot"
-                Layout.fillWidth: true; Layout.fillHeight: true
-                onWidthChanged: requestPaint()
-                onHeightChanged: requestPaint()
-                Connections { target: panel.theme; function onDarkChanged() { windowPlot.requestPaint() } }
-                Accessible.role: Accessible.Graphic
-                Accessible.name: "Transmit window at symbol start, not signal amplitude"
-                Accessible.description: panel.timing.guard_label || panel.timing.error || "No completed simulation"
-                onPaint: {
-                    const ctx = getContext("2d")
-                    ctx.reset()
-                    if (!panel.timing.points.length) { return }
-                    const left = 20, top = 8, width = windowPlot.width - 40, height = windowPlot.height - 28
-                    if (width <= 0 || height <= 0) { return }
-                    const roll = panel.timing.roll_off_fraction * width
-                    const prefix = panel.timing.prefix_fraction * width
-                    ctx.fillStyle = panel.theme.accentSoft
-                    ctx.fillRect(left, top, prefix, height)
-                    ctx.fillStyle = panel.theme.button
-                    ctx.fillRect(left, top, roll, height)
-                    ctx.strokeStyle = panel.theme.line
-                    ctx.beginPath(); ctx.moveTo(left, top); ctx.lineTo(left, top + height); ctx.lineTo(left + width, top + height); ctx.stroke()
-                    ctx.strokeStyle = panel.theme.statusAttention
-                    ctx.beginPath(); ctx.moveTo(left + roll, top); ctx.lineTo(left + roll, top + height); ctx.stroke()
-                    ctx.strokeStyle = panel.theme.muted
-                    ctx.beginPath(); ctx.moveTo(left + prefix, top); ctx.lineTo(left + prefix, top + height); ctx.stroke()
-                    ctx.strokeStyle = panel.theme.accent; ctx.lineWidth = 2
-                    ctx.beginPath()
-                    for (let index = 0; index < panel.timing.points.length; ++index) {
-                        const point = panel.timing.points[index]
-                        const x = left + point.x * width, y = top + (1 - point.coefficient) * height
-                        if (index === 0) { ctx.moveTo(x, y) } else { ctx.lineTo(x, y) }
-                    }
-                    ctx.stroke()
-                    ctx.fillStyle = panel.theme.muted; ctx.font = "11px sans-serif"
-                    ctx.textAlign = "right"; ctx.fillText("1", left - 5, top + 9); ctx.fillText("0", left - 5, top + height)
-                    const endLabel = panel.timing.ticks.length ? panel.timing.ticks[panel.timing.ticks.length - 1].label : ""
-                    const endLabelLeft = left + width - ctx.measureText(endLabel).width
-                    for (const tick of panel.timing.ticks) {
-                        ctx.textAlign = tick.x === 0 ? "left" : tick.x === 1 ? "right" : "center"
-                        let labelX = left + tick.x * width
-                        if (tick.x > 0 && tick.x < 1 && labelX + ctx.measureText(tick.label).width / 2 > endLabelLeft - 6) {
-                            ctx.textAlign = "right"
-                            labelX = Math.min(labelX, endLabelLeft - 6)
-                        }
-                        ctx.fillText(tick.label, labelX, top + height + 17)
-                    }
+            Label { text: "Symbol Timing · Two Symbols"; color: theme.text; font.bold: true; font.pixelSize: 13 }
+            Label { text: panel.timing.source ? panel.timing.source+" · "+panel.timing.overview : "Apply an OFDM configuration to display timing."; color: theme.muted; font.pixelSize: 11; Layout.fillWidth: true; elide: Text.ElideRight }
+            Item {
+                Layout.fillWidth:true;Layout.fillHeight:true
+                SymbolTimingPlot {
+                    id:windowPlot;objectName:"saTimingPlot"
+                    anchors.fill:parent;theme:panel.theme
+                    graph:(panel.timing.window || {}).overview || ({})
+                    miniature:true
+                }
+                Rectangle {anchors.fill:parent;color:"transparent";border.color:panel.theme.accent;border.width:1;visible:expand.activeFocus}
+                MouseArea {
+                    id:expand;objectName:"expandSymbolTiming"
+                    anchors.fill:parent;enabled:!!panel.timing.window
+                    hoverEnabled:true;cursorShape:Qt.PointingHandCursor
+                    activeFocusOnTab:true
+                    Accessible.role:Accessible.Button
+                    Accessible.name:"Expand Symbol Timing"
+                    onClicked:{forceActiveFocus();expanded.open()}
+                    Keys.onSpacePressed:expanded.open()
+                    Keys.onReturnPressed:expanded.open()
+                    ToolTip.visible:containsMouse || activeFocus
+                    ToolTip.text:"Open full symbol timing and overlap"
                 }
             }
             RowLayout {
@@ -88,7 +62,7 @@ Rectangle {
                 Item { Layout.fillWidth: true }
                 Label { text: panel.timing.guard_label || "Flat guard —"; color: theme.accent; font.pixelSize: 11 }
                 Item { Layout.fillWidth: true }
-                Label { text: "CP end → FFT start"; color: theme.muted; font.pixelSize: 11 }
+                Label { text: "Click graph to expand"; color: theme.muted; font.pixelSize: 11 }
             }
         }
         Rectangle { Layout.fillHeight: true; width: 1; color: theme.line }

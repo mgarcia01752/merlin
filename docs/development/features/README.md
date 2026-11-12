@@ -126,3 +126,5 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 - [Release asset filenames](release-asset-names/design.md): RELEASE-ASSET-01.
 
 - [About and dropdown menu cleanup](about-menu/design.md): UI-ABOUT-01.
+
+- [Full symbol timing popup](symbol-timing-popup/design.md): UI-SA-TIMING-02.
