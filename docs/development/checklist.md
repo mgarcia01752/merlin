@@ -1242,6 +1242,12 @@ validation are complete; the user guide includes the current dark capture.
   Verify file loggers with one local QML test; native cause remains pending.
   [Design](features/windows-desktop/design.md#ui-msi-04-retain-windows-qml-runner-diagnostics).
 
+- [x] **UI-MSI-05** Fit About actions to text/padding with equal widths and
+  responsive stacking; save QML screenshots relative to prepared output folders.
+  Both focused layout/render checks pass, including larger fonts and themes.
+  Windows rerun and native MSI/lifecycle remain pending under UI-MSI-02.
+  [Design](features/windows-desktop/design.md#ui-msi-05-portable-about-layout-and-screenshot-output).
+
 ### Example organization
 
 - [x] **EXAMPLES-01** Move standalone JSON requests/payload to `examples/cli/`,

@@ -72,3 +72,19 @@ keep MSI evidence conditional on release. Do not skip tests or alter assertions.
 Only focused local checks are requested; native runner behavior requires CI.
 Qt documents multiple output loggers in the
 [Qt Test options](https://doc.qt.io/qt-6.8/qtest-overview.html#options).
+
+## UI-MSI-05: portable About layout and screenshot output
+
+Run 43373385198 identifies two Windows QML failures: action widths smaller than
+text plus padding, and screenshot saving to an invalid `/D:/` path. Size About
+actions equally from the largest rounded text-based implicit width; stack the
+actions when the row cannot fit. Preserve labels, keyboard behavior and theme.
+Run screenshot capture from a prepared output directory on both platforms and
+save relative filenames instead of stripping file URL prefixes. Keep original
+layout/render assertions and verify larger fonts with focused QML tests only.
+The adapter/scientific core and hosted validation gates remain unchanged.
+
+Validation: both targeted QML functions pass locally, including 24-pixel fonts
+in both themes and actual PNG output. The dark About capture is inspected and
+linked from the updated user guide. Shell syntax/ShellCheck, native Qt build and
+offscreen startup smoke pass. Full suites were not rerun; Windows CI is pending.

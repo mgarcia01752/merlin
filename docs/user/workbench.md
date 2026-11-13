@@ -87,13 +87,18 @@ Original PNM/payload bytes and accepted block settings are embedded; see the
 [run/save guide](closed-loop-workbench.md). Load individual captures in their dialogs.
 About shows the active icon, compiled version, MERLIN's expanded name and project
 link. Matching **Project on GitHub**, **Report Issue** and **Check For Updates**
-buttons open the project, issue form and existing update dialog. The issue form
+buttons open the project, issue form and existing update dialog. The buttons
+keep equal widths large enough for their text and stack vertically when the
+window or font size leaves too little room for one row. The issue form
 opens in your browser for you to complete. Title bars use consistent
 initial capitals and the light/dark icons share transparent rounded corners.
 
 ![About menu with online Terminology link](../images/workbench/about-menu-dark.png)
 
 ![About MERLIN](../images/workbench/about-dark.png)
+
+Qt layout capture; the displayed version is example data.
+
 The instruction banner and standalone theme button have been removed.
 
 ![Global appearance settings](../images/workbench/settings-global-dark.png)

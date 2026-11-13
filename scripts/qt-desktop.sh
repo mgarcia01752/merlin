@@ -46,7 +46,7 @@ case "${ACTION}" in
     "${CARGO[@]}" test --manifest-path "${MANIFEST}" --locked
     "${CARGO[@]}" build --manifest-path "${MANIFEST}" --locked
     mkdir -p "${PROJECT_DIR}/docs/development/local/visual-workspace"
-    cd "${PROJECT_DIR}/apps/qt/tests"
+    cd "${PROJECT_DIR}/docs/development/local/visual-workspace"
     QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software "${QT_SDK_DIR}/bin/qmltestrunner" -input "${PROJECT_DIR}/apps/qt/tests"
     ;;
   run)

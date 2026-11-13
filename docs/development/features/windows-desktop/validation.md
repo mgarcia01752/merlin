@@ -87,3 +87,27 @@ A single existing QML layout test passes locally with both file loggers; the
 JUnit file parses as XML. No Rust rebuild/full suite was run. Windows PowerShell
 and GUI-process behavior remain pending native execution; this is a diagnostic
 change, not a claimed repair of the unidentified QML failure.
+
+## UI-MSI-05: confirmed QML layout/path repair
+
+Run 43373385198 fails the About action text-plus-padding width assertion and
+screenshot output to `/D:/...`; QML reports 66 passed and two failed. All 72
+Windows adapter tests, Ubuntu native/desktop jobs and security checks pass;
+MSI packaging/lifecycle and publication are skipped.
+
+About now rounds the largest implicit action width up, uses equal minimum
+widths and stacks the actions when three columns cannot fit. The existing
+layout check additionally exercises 24-pixel action fonts in both themes and
+keeps text/padding, screen-boundary and keyboard assertions. Its popup palette
+matches the application window; the refreshed dark user-guide image is rendered
+from the Qt test fixture (example version).
+
+Both native helpers prepare and select the screenshot output directory. QML
+saves relative filenames, avoiding file-URL conversion and Windows drive-prefix
+errors. Both focused About and render tests pass on Linux Qt6.8.3 (four passes
+including setup/cleanup); shell syntax/ShellCheck and diff checks pass. Full
+suites were not run. Windows execution and MSI/lifecycle remain pending CI.
+
+The Linux Qt desktop executable was rebuilt successfully in 1m58s and its
+offscreen `--smoke-test` exited successfully without output. This confirms local
+startup only; it is not Windows runtime or installer evidence.

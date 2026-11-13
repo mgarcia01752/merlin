@@ -63,6 +63,8 @@ if ($Action -eq 'check') {
     $env:QT_QPA_PLATFORM = 'offscreen'
     $env:QT_QUICK_BACKEND = 'software'
     $QmlLogs = "$Root/dist/windows-qml-logs"
+    $Screenshots = "$Root/docs/development/local/visual-workspace"
+    New-Item -ItemType Directory -Force -Path $Screenshots | Out-Null
     New-Item -ItemType Directory -Force -Path $QmlLogs | Out-Null
     # A GUI executable may not attach its test output to the Actions console.
     # Wait explicitly and retain both test loggers and startup stderr on failure.
@@ -71,7 +73,7 @@ if ($Action -eq 'check') {
         '-o', "`"$QmlLogs/results.xml,junitxml`"", '-v1')
     try {
         $QmlProcess = Start-Process -FilePath "$env:QT_SDK_DIR/bin/qmltestrunner.exe" `
-            -ArgumentList $QmlArguments -Wait -PassThru -NoNewWindow `
+            -ArgumentList $QmlArguments -WorkingDirectory $Screenshots -Wait -PassThru -NoNewWindow `
             -RedirectStandardOutput "$QmlLogs/stdout.txt" `
             -RedirectStandardError "$QmlLogs/stderr.txt"
         $QmlExit = $QmlProcess.ExitCode

@@ -47,29 +47,40 @@ WorkbenchDialog {
             color: dialog.theme.muted
         }
         Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: dialog.theme.line }
-        RowLayout {
+        GridLayout {
+            id: actions
             Layout.fillWidth: true
-            spacing: 10
+            property real minimumActionWidth: Math.ceil(Math.max(projectAction.implicitWidth,
+                reportAction.implicitWidth, updateAction.implicitWidth))
+            columns: width >= minimumActionWidth * 3 + columnSpacing * 2 ? 3 : 1
+            columnSpacing: 10
+            rowSpacing: 10
             WorkbenchActionButton {
                 theme: dialog.theme
+                id: projectAction
                 objectName: "aboutProjectButton"
                 text: "Project on GitHub"
-                Layout.fillWidth: true; Layout.preferredWidth: 1
+                Layout.fillWidth: true; Layout.minimumWidth: actions.minimumActionWidth
+                Layout.preferredWidth: actions.minimumActionWidth
                 onClicked: dialog.linkRequested("https://github.com/mgarcia01752/merlin")
             }
             WorkbenchActionButton {
                 theme: dialog.theme
+                id: reportAction
                 objectName: "aboutReportIssue"
                 text: "Report Issue"
-                Layout.fillWidth: true; Layout.preferredWidth: 1
+                Layout.fillWidth: true; Layout.minimumWidth: actions.minimumActionWidth
+                Layout.preferredWidth: actions.minimumActionWidth
                 onClicked: dialog.linkRequested("https://github.com/mgarcia01752/merlin/issues/new")
                 Accessible.description: "Open the MERLIN issue form on GitHub"
             }
             WorkbenchActionButton {
                 theme: dialog.theme
+                id: updateAction
                 objectName: "aboutCheckUpdates"
                 text: "Check For Updates"
-                Layout.fillWidth: true; Layout.preferredWidth: 1
+                Layout.fillWidth: true; Layout.minimumWidth: actions.minimumActionWidth
+                Layout.preferredWidth: actions.minimumActionWidth
                 onClicked: { dialog.close(); dialog.updatesRequested() }
             }
         }

@@ -1175,6 +1175,8 @@ Pane {
                 host.width=960;host.height=640;window.width=960;window.height=640
                 for (const dark of [true,false]) {
                     theme.dark=dark
+                    // Match Main.qml: its application window supplies popup palette roles.
+                    popup.palette=window.palette
                     popup.open();tryCompare(popup,"opened",true);wait(100)
                     const footer=popup.footer.mapToItem(host.contentItem,popup.footer.width,popup.footer.height)
                     verify(footer.x<=host.width && footer.y<=host.height)
@@ -1183,9 +1185,25 @@ Pane {
                         const position=action.mapToItem(host.contentItem,0,0)
                         verify(position.x>=0 && position.y>=0)
                         verify(position.x+action.width<=host.width)
-                        verify(action.width>=action.contentItem.implicitWidth+action.leftPadding+action.rightPadding)
+                        verify(action.width>=action.contentItem.implicitWidth+action.leftPadding+action.rightPadding,
+                            action.objectName + ": width=" + action.width + ", content=" + action.contentItem.implicitWidth)
+                        compare(Math.round(action.width), Math.round(actions[0].width))
                         compare(Math.round(action.height),38)
                     }
+                    if (dark)
+                        grabImage(popup.contentItem.parent).save("about-dark.png")
+                    for (const action of actions)
+                        action.font.pixelSize=24
+                    wait(100)
+                    for (const action of actions) {
+                        const position=action.mapToItem(host.contentItem,0,0)
+                        verify(position.x>=0 && position.x+action.width<=host.width)
+                        verify(action.width>=action.contentItem.implicitWidth+action.leftPadding+action.rightPadding)
+                        verify(position.y>=0 && position.y+action.height<=host.height)
+                    }
+                    for (const action of actions)
+                        action.font.pixelSize=13
+                    wait(100)
                     aboutLinkSpy.clear()
                     actions[1].forceActiveFocus();keyClick(Qt.Key_Space)
                     compare(aboutLinkSpy.count,1)
@@ -1711,17 +1729,17 @@ Pane {
             waitForRendering(workbench)
             compare(grabImage(workbench).width, workbench.width)
             wait(100)
-            grabImage(workbench).save(Qt.resolvedUrl("../../../docs/development/local/visual-workspace/workbench-dark.png").toString().replace("file://", ""))
+            grabImage(workbench).save("workbench-dark.png")
             theme.dark = false
             wait(100)
-            grabImage(workbench).save(Qt.resolvedUrl("../../../docs/development/local/visual-workspace/workbench-light.png").toString().replace("file://", ""))
+            grabImage(workbench).save("workbench-light.png")
             window.width = 960; window.height = 640
             wait(100)
             const block = findChild(workbench, "ofdmBlock")
             mouseClick(block)
             const dialog = workbench.ofdmPopup
             tryCompare(dialog, "opened", true)
-            grabImage(window.contentItem).save(Qt.resolvedUrl("../../../docs/development/local/visual-workspace/workbench-dialog.png").toString().replace("file://", ""))
+            grabImage(window.contentItem).save("workbench-dialog.png")
             dialog.close()
             tryCompare(dialog, "visible", false)
             window.width = 1240; window.height = 780; theme.dark = true
