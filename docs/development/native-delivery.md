@@ -59,7 +59,7 @@ under [install](../user/install/README.md).
 
 Before closing QA-06/07, push the prepared workflows when authorized, retain the
 Ubuntu run evidence and verify installation/upgrade/uninstallation on each target.
-The Windows desktop MSI path is now configured, with native validation pending;
+The Windows desktop MSI path passes automated native validation in v0.2.7;
 Windows CLI builders remain inactive and macOS stays deferred.
 A locally generated MSI XML or a passing Linux build does not satisfy that check.
 
@@ -130,7 +130,8 @@ Native installed tests run only on disposable Windows CI: default install,
 repair, removal, opted-in shortcut install and final uninstall, plus offline
 version/example/GUI probes with SDK paths removed. Keep diagnostic logs and
 installer/installed-byte reports separately from public release assets. Native
-Windows results and interactive appearance remain pending until actually run.
+Windows build/MSI/install/icon/runtime/repair/shortcut/uninstall passes in v0.2.7;
+interactive Windows 11 appearance and upgrade/downgrade remain pending.
 See the [design](features/windows-desktop/design.md),
 [build guide](windows-desktop.md) and [installation guide](../user/install/windows.md).
 

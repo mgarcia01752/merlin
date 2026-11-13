@@ -1228,13 +1228,18 @@ validation are complete; the user guide includes the current dark capture.
   preserve Ubuntu/security gates and exclude Windows CLI/macOS artifacts.
   [Design](features/windows-desktop/design.md) ·
   [Local validation](features/windows-desktop/validation.md).
-- [ ] **UI-MSI-02** Run native Windows build/MSI/lifecycle jobs and retain
-  installer-byte reports/logs. Interactively verify icons, wizard, pickers,
-  upgrade/downgrade and Windows 11 launch; native evidence is still pending.
+- [x] **UI-MSI-02** Run native Windows build/MSI/lifecycle jobs and retain
+  installer-byte reports/logs. v0.2.7 passes adapter/QML/build/MSI/default
+  install/icon/runtime/repair/shortcut/uninstall and complete publication.
+  [Hosted evidence](features/windows-desktop/validation.md#ui-msi-02-successful-native-release-validation).
+- [ ] **UI-MSI-09** Interactively verify icons, wizard, native pickers and
+  normal security prompts on Windows 11; verify upgrade/downgrade with user
+  data preservation. CI repair does not establish these interactive outcomes.
+  [Scope](features/windows-desktop/validation.md#ui-msi-09-remaining-interactive-and-upgrade-review).
 
 - [x] **UI-MSI-03** Normalize bundled FAQ line endings and verify all catalog
   sections under LF/CRLF after the first hosted Windows adapter failure.
-  All six focused FAQ tests pass; native MSI/lifecycle remains UI-MSI-02.
+  All six focused FAQ tests pass; native MSI/lifecycle passes in v0.2.7.
   [Design](features/windows-desktop/design.md#ui-msi-03-portable-offline-faq-lookup).
 
 - [x] **UI-MSI-04** Retain Windows QML text/JUnit/startup logs and exact exit
@@ -1245,24 +1250,24 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **UI-MSI-05** Fit About actions to text/padding with equal widths and
   responsive stacking; save QML screenshots relative to prepared output folders.
   Both focused layout/render checks pass, including larger fonts and themes.
-  Windows rerun and native MSI/lifecycle remain pending under UI-MSI-02.
+  Hosted native MSI/lifecycle passes in v0.2.7; UI-MSI-09 remains open.
   [Design](features/windows-desktop/design.md#ui-msi-05-portable-about-layout-and-screenshot-output).
 
 - [x] **UI-MSI-06** Preserve reviewed license resource bytes under Windows
   autocrlf checkout and report failing file/expected/actual hashes. Verify
   collection and rejection of altered licenses with isolated Git checkouts.
-  Windows rerun and native MSI/lifecycle remain pending under UI-MSI-02.
+  Hosted native MSI/lifecycle passes in v0.2.7; UI-MSI-09 remains open.
   [Design](features/windows-desktop/design.md#ui-msi-06-preserve-reviewed-notice-bytes-on-checkout).
 
 - [x] **UI-MSI-07** Use a filename-extension-bearing MSI icon identifier
   consistently for Installed apps and shortcuts. Preserve installed checks and
   record missing registry fields clearly; five focused packaging tests pass.
-  Native lifecycle acceptance remains under UI-MSI-02.
+  Native lifecycle acceptance passes in v0.2.7 under UI-MSI-02.
   [Design](features/windows-desktop/design.md#ui-msi-07-cache-a-valid-installed-apps-icon).
 
 - [x] **UI-MSI-08** Verify the registered MSI ProductIcon through Windows
   Installer metadata and compare cached icon bytes with the branded source.
-  Preserve installed lifecycle assertions; hosted confirmation remains pending.
+  Installed icon/hash and complete lifecycle checks pass in v0.2.7.
   [Design](features/windows-desktop/design.md#ui-msi-08-verify-the-registered-msi-product-icon).
 
 ### Example organization

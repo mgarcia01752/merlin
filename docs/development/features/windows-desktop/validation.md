@@ -158,3 +158,30 @@ metadata, smoke, repair, optional shortcut and uninstall checks. Evidence includ
 the queried product code and cached icon path. No native assertions are skipped.
 PowerShell/COM execution remains pending CI; no local system installation or
 full simulation/Qt suite is run.
+
+## UI-MSI-02: successful native release validation
+
+[v0.2.7 run 43482850185](https://github.com/mgarcia01752/merlin/actions/runs/43482850185)
+passes every required job and publishes the complete stable release. Windows
+passes 72 Rust adapter tests, 68 QML checks, native optimized compilation/MSI
+authoring, relocated smoke and default install, registered icon/hash checks,
+repair, opted-in shortcut installation and final uninstall while preserving a
+user workbench. The lifecycle log ends with
+`MERLIN_MSI_INSTALL_REPAIR_SHORTCUT_UNINSTALL_OK`.
+
+The published MSI is 65,445,984 bytes; staged installed files total 133,733,453
+bytes. Qt and MSVC CRT are bundled; Windows 10/11 x64 system libraries remain
+external prerequisites. The MSI is unsigned. The same run passes Ubuntu
+22.04/24.04/26.04 native checks, Ubuntu desktop lifecycle, CodeQL and RustSec.
+The release workflow completed in 16m57s; the local skip-test push took 1m32s.
+
+This is Windows Server 2022 CI evidence. Interactive Windows 11 icon/wizard/
+picker/security-prompt review and cross-version upgrade/downgrade remain open
+under UI-MSI-09. No interactive approval, signing or macOS support is claimed.
+
+## UI-MSI-09: remaining interactive and upgrade review
+
+Retain native Windows 11 review evidence for branded wizard/icons, native
+Open/Save/multiple pickers and normal security prompts. Exercise upgrade from
+an older installed release and reject downgrade without losing user files.
+These checks remain pending; successful CI repair is not upgrade evidence.

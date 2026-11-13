@@ -53,9 +53,11 @@ examples and final removal while preserving a user WB. It retains MSI logs.
 Do not run machine-changing tests on a normal development workstation.
 
 Local Linux Python/Qt checks validate source contracts and Linux regression
-behavior. Windows compilation/runtime, Common Item Dialog interaction, the MSI
-wizard appearance, SmartScreen behavior and upgrade/downgrade lifecycle still
-need native evidence. Signing, automatic Windows updates/restart and macOS are
+behavior. v0.2.7 passes hosted Windows compilation/runtime, MSI installation,
+registered icon/hash, repair, optional shortcut and uninstall checks. Common Item
+Dialog interaction, MSI wizard appearance, SmartScreen behavior and cross-version
+upgrade/downgrade still need interactive/native evidence. See the
+[hosted record](features/windows-desktop/validation.md#ui-msi-02-successful-native-release-validation). Signing, automatic Windows updates/restart and macOS are
 out of scope. Master/Release retain their existing Ubuntu/security gates and
 publish only after every required job succeeds; no push is implied by this work.
 

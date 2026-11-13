@@ -9,9 +9,10 @@ Windows CLI packages and macOS delivery are outside the current release scope.
 The MSI includes Qt, the Visual C++ runtime, public workbench examples and guides.
 Rust, Python, Qt and a source checkout are not needed to run it.
 
-The packaging and native CI checks are configured; Windows execution and installer
-appearance require a successful native run and interactive Windows review.
-Do not infer Windows validation from the local Linux checks.
+[v0.2.7](https://github.com/mgarcia01752/merlin/releases/tag/v0.2.7) passes native
+Windows CI build, MSI installation, icon/runtime, repair, shortcut and uninstall
+checks. Interactive Windows 11 appearance/security-prompt review and cross-version
+upgrade/downgrade checks remain pending. The MSI is unsigned.
 
 ## Install and launch
 

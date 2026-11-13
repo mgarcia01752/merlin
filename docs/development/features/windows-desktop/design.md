@@ -134,3 +134,11 @@ repair products. Native verification occurs only on disposable CI.
 References: [ProductInfo](https://learn.microsoft.com/en-us/windows/win32/msi/installer-productinfo),
 [MsiGetProductInfo](https://learn.microsoft.com/en-us/windows/win32/api/msi/nf-msi-msigetproductinfow)
 and [uninstall registry mapping](https://learn.microsoft.com/en-us/windows/win32/msi/uninstall-registry-key).
+
+## UI-MSI-02 and UI-MSI-09: native result and remaining review
+
+[v0.2.7 run 43482850185](https://github.com/mgarcia01752/merlin/actions/runs/43482850185)
+completes native build/MSI/default install/icon/runtime/repair/shortcut/uninstall
+checks and publishes the full stable release. This closes automated UI-MSI-02.
+UI-MSI-09 retains interactive Windows 11, upgrade/downgrade and security-prompt
+review. See the validation record for test counts, bytes and verification limits.

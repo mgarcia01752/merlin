@@ -177,7 +177,9 @@ Profile A/ID 0 transport limits remain explicit.
 
 Native File Open/Save/Save As use self-contained versioned workbench JSON with
 exact embedded input bytes and checksums. The VM is the interactive review target;
-Windows/macOS and other Ubuntu versions are not runtime-validated here. See the
+Windows Server 2022 CI validates v0.2.7 UI/MSI installation, repair and removal;
+interactive Windows 11 review and macOS remain unverified. All three Ubuntu
+native jobs pass, with desktop lifecycle checks on Ubuntu 22.04. See the
 [closed-loop design](features/qt-closed-loop/design.md),
 [validation](features/qt-closed-loop/validation.md),
 [user guide](../user/closed-loop-workbench.md) and

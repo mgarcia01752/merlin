@@ -8,8 +8,9 @@ Choose the desktop package for the simulation workbench:
 | Windows x64 desktop UI | [Desktop MSI](windows.md) |
 | Ubuntu 22.04, 24.04 and 26.04 x64 CLI | [CLI DEB or portable archive](linux.md) |
 
-Windows native CI and packaging are configured; compilation, installer and
-interactive Windows evidence remain pending. Windows CLI assets are excluded.
+Windows native build/MSI/install/repair/shortcut/uninstall checks pass in v0.2.7.
+Interactive Windows 11 and upgrade/downgrade review remain pending. Windows CLI
+assets are excluded.
 macOS delivery remains deferred.
 
 Release inventory includes the Ubuntu desktop and CLI DEBs, Linux CLI archive,

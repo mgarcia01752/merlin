@@ -2214,8 +2214,9 @@ use LOCALAPPDATA; verified Windows update notifications open the full MSI releas
 page. Installation and later launch retain normal Windows security prompts.
 The shared workflow adds native Windows adapter/QML checks; tag publication
 requires Windows MSI installed lifecycle checks alongside every existing
-Ubuntu/security gate. Native Windows validation is configured but still pending
-execution evidence. [Design](development/features/windows-desktop/design.md).
+Ubuntu/security gate. v0.2.7 passes hosted Windows adapter/QML/build/MSI and
+installed icon/runtime/repair/shortcut/uninstall checks. Interactive Windows 11
+and cross-version upgrade/downgrade review remain pending under UI-MSI-09. [Design](development/features/windows-desktop/design.md).
 
 ### EXAMPLES-01: separate CLI example requests
 
