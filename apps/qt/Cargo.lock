@@ -462,7 +462,7 @@ dependencies = [
 
 [[package]]
 name = "docsis-ofdm-fec"
-version = "0.2.6"
+version = "0.2.7"
 dependencies = [
  "fec-codec",
  "log",
@@ -534,7 +534,7 @@ checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
 
 [[package]]
 name = "fec-codec"
-version = "0.2.6"
+version = "0.2.7"
 dependencies = [
  "ldpc-toolbox",
  "log",
@@ -859,7 +859,7 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
 name = "merlin-qt"
-version = "0.2.6"
+version = "0.2.7"
 dependencies = [
  "base64",
  "cxx",
