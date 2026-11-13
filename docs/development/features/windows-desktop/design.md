@@ -88,3 +88,18 @@ Validation: both targeted QML functions pass locally, including 24-pixel fonts
 in both themes and actual PNG output. The dark About capture is inspected and
 linked from the updated user guide. Shell syntax/ShellCheck, native Qt build and
 offscreen startup smoke pass. Full suites were not rerun; Windows CI is pending.
+
+## UI-MSI-06: preserve reviewed notice bytes on checkout
+
+Run 43470708630 passes Windows adapter/QML validation and optimized compilation,
+but notice collection rejects a reviewed license checksum before MSI authoring.
+Git can convert tracked license LF bytes to CRLF on Windows. Pin packaging
+resource bytes with a scoped `-text` attribute; keep original provenance digests
+and exact-byte verification. Include source path and both hashes in errors.
+Reproduce with a disposable Git index under `core.autocrlf=true`, verify the
+complete notice collector succeeds with the attributes and rejects tampering.
+No full simulation/Qt suite or native packaging run is required locally.
+
+Local validation: both focused notice tests pass, including the reproduced
+unpinned checkout failure, exact pinned copied bytes and altered-byte rejection.
+Original reviewed resource bytes/digests are unchanged. Native MSI remains pending.

@@ -58,3 +58,9 @@ wizard appearance, SmartScreen behavior and upgrade/downgrade lifecycle still
 need native evidence. Signing, automatic Windows updates/restart and macOS are
 out of scope. Master/Release retain their existing Ubuntu/security gates and
 publish only after every required job succeeds; no push is implied by this work.
+
+Reviewed third-party notice resources under `tools/packaging/resources/` must
+retain their original bytes on every checkout. The scoped `.gitattributes` rule
+disables Git line-ending conversion there because provenance hashes verify the
+exact files. Never update a reviewed digest solely to accommodate checkout CRLF;
+a checksum failure reports the source path and expected/actual hashes.

@@ -66,8 +66,11 @@ def collect_notices(root, destination, manifest=None):
             if vcs["git"]["sha1"] != origin["commit"] or package["repository"].rstrip("/") != origin["repository"]:
                 raise ValueError("Reviewed dependency license origin changed")
             for name, digest in origin["files"].items():
-                if hashlib.sha256((source_directory / name).read_bytes()).hexdigest() != digest:
-                    raise ValueError("Reviewed dependency license checksum changed")
+                actual = hashlib.sha256((source_directory / name).read_bytes()).hexdigest()
+                if actual != digest:
+                    raise ValueError(
+                        f"Reviewed dependency license checksum changed: {reviewed}/{name} "
+                        f"(expected {digest}, got {actual})")
             files = notice_files(source_directory) + [source_directory / "provenance.json"]
         if not files and (package["name"], package["version"]) == ("pnm", "0.3.6"):
             source_directory = directory.parents[1]

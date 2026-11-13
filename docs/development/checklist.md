@@ -1248,6 +1248,12 @@ validation are complete; the user guide includes the current dark capture.
   Windows rerun and native MSI/lifecycle remain pending under UI-MSI-02.
   [Design](features/windows-desktop/design.md#ui-msi-05-portable-about-layout-and-screenshot-output).
 
+- [x] **UI-MSI-06** Preserve reviewed license resource bytes under Windows
+  autocrlf checkout and report failing file/expected/actual hashes. Verify
+  collection and rejection of altered licenses with isolated Git checkouts.
+  Windows rerun and native MSI/lifecycle remain pending under UI-MSI-02.
+  [Design](features/windows-desktop/design.md#ui-msi-06-preserve-reviewed-notice-bytes-on-checkout).
+
 ### Example organization
 
 - [x] **EXAMPLES-01** Move standalone JSON requests/payload to `examples/cli/`,

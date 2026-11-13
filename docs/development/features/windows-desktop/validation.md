@@ -111,3 +111,19 @@ suites were not run. Windows execution and MSI/lifecycle remain pending CI.
 The Linux Qt desktop executable was rebuilt successfully in 1m58s and its
 offscreen `--smoke-test` exited successfully without output. This confirms local
 startup only; it is not Windows runtime or installer evidence.
+
+## UI-MSI-06: Windows notice checksum failure
+
+[Run 43470708630](https://github.com/mgarcia01752/merlin/actions/runs/43470708630)
+passes all 72 Windows adapter tests, all 68 QML checks and optimized Windows
+compilation. Ubuntu/security checks pass. MSI staging fails in `collect_notices`
+with `Reviewed dependency license checksum changed`; installed lifecycle and
+publication are skipped. The previous About/screenshot fixes are confirmed.
+
+A disposable Git index reproduces the mismatch with `core.autocrlf=true`. The
+scoped `.gitattributes` rule preserves original packaging-resource bytes without
+modifying their provenance or weakening exact-byte checks. Error messages now
+identify the resource and expected/actual SHA-256 values. Two focused tests pass:
+actual Git checkout/complete collection with and without attributes, and rejection
+of altered license bytes. No Rust/Qt rebuild/full suite is needed for this change.
+Windows MSI packaging and installed lifecycle still require hosted evidence.
