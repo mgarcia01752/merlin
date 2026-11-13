@@ -25,7 +25,7 @@ Request the shared collector with:
 }
 ```
 
-This is a fragment; use [the complete example](../../../examples/channel-pilot-estimated.json).
+This is a fragment; use [the complete example](../../../examples/cli/channel-pilot-estimated.json).
 Counts are actual pairs, not OFDM symbols. Four streams each permit1..8192 pairs,
 so the combined hard bound is32768 pairs; the CLI additionally bounds output bytes.
 A finite half-open channel-symbol window is required. Defaults are2048 per stream

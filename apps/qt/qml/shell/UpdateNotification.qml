@@ -14,9 +14,14 @@ Item {
     property var state: ({enabled:true,busy:false,available:false,status:"",url:""})
     property alias popup: dialog
     property bool canUpdate: true
+    property var openRelease: function(url) { Qt.openUrlExternally(url) }
     property var prepareUpdate: function() { return {saved:true} }
     function installUpdate() {
         if (!canUpdate || state.busy) { return }
+        if (state.manual_update) {
+            openRelease(state.url)
+            return
+        }
         const recovery = prepareUpdate()
         if (recovery.error) {
             state = Object.assign({}, state, {status:recovery.error})
@@ -47,7 +52,7 @@ Item {
         contentItem: Label { text:parent.text; color:"white"; font.bold:true; horizontalAlignment:Text.AlignHCenter; verticalAlignment:Text.AlignVCenter }
         background: Rectangle { radius:9; color:parent.hovered ? "#2ea043" : "#238636"; border.color:parent.activeFocus ? "white" : "#2ea043"; border.width:parent.activeFocus ? 2 : 1 }
         ToolTip.visible: hovered
-        ToolTip.text: control.canUpdate ? "Install the available update and restart MERLIN" : "Stop the simulation before updating"
+        ToolTip.text: control.canUpdate ? (control.state.manual_update ? "Download the Windows MSI from Releases" : "Install the available update and restart MERLIN") : "Stop the simulation before updating"
     }
     UpdateDialog {
         id:dialog;theme:control.theme;state:control.state

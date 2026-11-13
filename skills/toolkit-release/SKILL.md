@@ -38,7 +38,8 @@ unless explicitly asked to execute. Adding release tooling is not authorization
 to release. Native CLI validation/release workflows are prepared under .github/workflows/.
 Initial workflows test Ubuntu 22.04, 24.04 and 26.04 x64, then publish the
 22.04-built archive, DEB and checksums after successful version-tag validation.
-Windows/macOS packaging helpers are retained but workflow execution is deferred. File presence does not establish
+Windows x64 desktop UI MSI validation/packaging is configured alongside Ubuntu.
+Windows CLI assets are excluded; macOS workflow execution remains deferred. File presence does not establish
 native execution or authorize a push. Keep QA-06/07 pending until target evidence
 exists. tools/packaging/ owns staging/builders/checksums/collection/notes; use those
 helpers instead of duplicating packaging in workflow shell. Preserve full license
@@ -56,8 +57,8 @@ Keep exactly two workflow entry points: Master (`ci.yml`) and Release
 input enabled. Shared validation includes Qt, three Ubuntu native jobs, CodeQL
 and both-lock RustSec; optimized compilation, packaging, installed lifecycle
 and publication are release-only. Do not recreate standalone security/desktop
-workflows or bypass any shared validation. Only Ubuntu 22.04 amd64 desktop
-delivery is in scope now. Keep the existing CLI ownership separate. Build Qt via
+workflows or bypass any shared validation. Ubuntu 22.04 amd64 and Windows x64 desktop
+delivery are in scope; macOS remains deferred. Keep the existing CLI ownership separate. Build Qt via
 `scripts/qt-desktop.sh`, then package with `tools/packaging/desktop.py` and verify
 with `desktop_smoke.py`; include private Qt runtime, full notices, icon and all
 curated examples. Retain caches and require exact VERSION/Cargo metadata.
@@ -107,3 +108,27 @@ and explain replacing the placeholder with the downloaded file. Render exact
 release-version commands in release notes; retain the ./ local-file prefix.
 Validate naming, package identity, alias byte/checksum equality, updater matching
 and download URL validation together before changing this convention.
+
+## Windows desktop UI MSI
+
+Use `scripts/windows/qt-desktop.ps1` and
+`tools/packaging/windows_desktop.py` on native Windows x64. The pinned build uses
+MSVC2022, Rust1.85.1, Qt6.8.3 and WiX3.14.1. Reproduce installer artwork with
+`tools/branding-windows.py`; preserve the existing logo and source provenance.
+Keep the desktop UpgradeCode separate from the dormant Windows CLI helper.
+Never publish a Windows CLI archive/MSI or macOS asset under this scope.
+
+Release collection requires `merlin-assets-desktop-windows-amd64` containing the
+canonical desktop MSI and SHA256SUMS. Retain all Ubuntu, CodeQL and RustSec gates.
+Run installed lifecycle checks only on disposable CI; local builds authorize no
+installation, signing or publication. Report native evidence and byte sizes
+separately. See [Windows build guide](../../docs/development/windows-desktop.md).
+
+## Example folder ownership
+
+Standalone CLI request/settings JSON and the sample payload belong under
+`examples/cli/` with purpose/use-case commands in its README. Desktop payloads
+copy the explicit workbench/measurement allowlist through desktop_payload.py
+and omit the CLI folder. CLI packages retain it. Keep workbench JSON, original
+capture bytes, provenance and licenses together; update references/tests when
+relocating examples. `examples/README.md` explains the folders.

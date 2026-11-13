@@ -85,6 +85,11 @@ fn select_mode(title: &str, mode: &str) -> Result<Option<String>, String> {
             command.env("MERLIN_NATIVE_OPEN_DIRECTORY", directory);
         }
     }
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        command.creation_flags(0x0800_0000); // CREATE_NO_WINDOW for the helper.
+    }
     let output = command
         .output()
         .map_err(|error| format!("Cannot open OS-native file picker: {error}"))?;

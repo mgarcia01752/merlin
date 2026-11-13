@@ -26,7 +26,7 @@ def smoke(binary):
     run("--unknown-option", success=False)
     with tempfile.TemporaryDirectory(prefix="merlin-native-") as directory:
         output = Path(directory) / "result.json"
-        arguments = ("simulate", "--input", ROOT / "examples/awgn.json", "--output", output)
+        arguments = ("simulate", "--input", ROOT / "examples/cli/awgn.json", "--output", output)
         run(*arguments)
         with output.open(encoding="utf-8") as source:
             json.load(source)

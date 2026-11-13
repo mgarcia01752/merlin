@@ -104,8 +104,9 @@ If a release upload fails, local state is retained. Inspect it and retry the sam
 tag with `tools/git/git-push.sh --tag vMAJOR.MINOR.PATCH`; do not bump again blindly.
 Version edits or commits made before a failed check are never reset automatically.
 
-Prepared tag workflows validate Ubuntu 22.04, 24.04 and 26.04 before publishing
-the tested Ubuntu 22.04 CLI archive, DEB and checksums. Remote execution remains
+Tag workflows validate Ubuntu 22.04, 24.04 and 26.04 plus the Windows x64
+desktop before publishing Linux CLI, Ubuntu desktop and Windows UI MSI assets
+and checksums. Windows CLI/macOS delivery is excluded. Remote execution remains
 unverified until the first push. See [native delivery](native-delivery.md).
 
 The local checkout is `/home/dev01/Projects/merlin`, with `master` as the

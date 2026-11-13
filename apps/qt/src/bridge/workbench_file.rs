@@ -92,6 +92,7 @@ fn path(url: &str) -> Result<PathBuf, String> {
         .map(|p| PathBuf::from(p.to_string()))
         .ok_or("Choose a local project path.".into())
 }
+#[cfg(target_os = "linux")]
 fn recovery_path() -> Result<PathBuf, String> {
     let base = std::env::var_os("XDG_STATE_HOME")
         .map(PathBuf::from)
@@ -110,6 +111,11 @@ fn recovery_path() -> Result<PathBuf, String> {
         return Err("Update recovery directory must be private.".into());
     }
     Ok(directory.join("workbench.merlin.json"))
+}
+
+#[cfg(not(target_os = "linux"))]
+fn recovery_path() -> Result<PathBuf, String> {
+    Err("Automatic update recovery is available on Ubuntu only.".into())
 }
 
 impl bridge::WorkbenchFile {

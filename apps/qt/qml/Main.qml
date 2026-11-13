@@ -17,6 +17,7 @@ ApplicationWindow {
     minimumHeight: 640
     visible: true
     title: "MERLIN — DOCSIS OFDM Simulation Toolkit"
+    Timer { id: smokeTimer; interval:750; onTriggered:Qt.quit() }
     Branding { id: branding }
     AboutInfo { id: aboutInfo }
     UpdateInfo { id: updateInfo }
@@ -29,7 +30,7 @@ ApplicationWindow {
     WorkbenchFile { id: workbenchFile }
     TransmitterAnalyzer { id: transmitterAnalyzer }
     Theme { id: theme; onDarkChanged: branding.update_icon(dark) }
-    Component.onCompleted: { branding.update_icon(theme.dark); if (Qt.application.arguments.indexOf("--restore-update")>=0) Qt.callLater(function(){workbench.restoreUpdate()}); else Qt.callLater(function(){workbench.beginOpen(JSON.parse(workbenchFile.startup()))}); if (Qt.application.arguments.indexOf("--smoke-test")>=0) Qt.callLater(Qt.quit); else if (Qt.application.arguments.indexOf("--check-updates")>=0) Qt.callLater(function(){updates.showUpdates();updates.refresh()}) }
+    Component.onCompleted: { branding.update_icon(theme.dark); if (Qt.application.arguments.indexOf("--restore-update")>=0) Qt.callLater(function(){workbench.restoreUpdate()}); else Qt.callLater(function(){workbench.beginOpen(JSON.parse(workbenchFile.startup()))}); if (Qt.application.arguments.indexOf("--smoke-test")>=0) smokeTimer.start(); else if (Qt.application.arguments.indexOf("--check-updates")>=0) Qt.callLater(function(){updates.showUpdates();updates.refresh()}) }
     ThemePalette { targetControl: window; theme: theme }
     color: theme.background
     onClosing: function(close) {
@@ -63,7 +64,7 @@ ApplicationWindow {
                 theme: theme; backend: updateInfo
                 canUpdate: !workbench.runState.busy && !workbench.loadingProject
                 prepareUpdate: function() { return workbench.saveUpdateRecovery() }
-                startupCheck: Qt.application.arguments.indexOf("--check-updates")<0
+                startupCheck: Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
             }
         }
     }

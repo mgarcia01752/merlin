@@ -25,9 +25,9 @@ WorkbenchDialog {
             }
             RowLayout {
                 WorkbenchActionButton { theme: dialog.theme;objectName:"checkUpdates";text:dialog.state.busy ? "Checking…" : "Check For Updates";enabled:!dialog.state.busy;onClicked:dialog.checkRequested()}
-                WorkbenchActionButton { theme: dialog.theme;objectName:"installUpdate";text:"Update";visible:dialog.state.available;enabled:dialog.canInstall && !dialog.state.busy;onClicked:dialog.installRequested()}
+                WorkbenchActionButton { theme: dialog.theme;objectName:"installUpdate";text:dialog.state.manual_update ? "Download MSI":"Update";visible:dialog.state.available;enabled:dialog.canInstall && !dialog.state.busy;onClicked:dialog.installRequested()}
             }
-            Label {visible:dialog.state.available;text:"Ubuntu may request administrator approval. MERLIN restarts after installation.";Layout.fillWidth:true;wrapMode:Text.WordWrap;color:dialog.theme.muted}
+            Label {visible:dialog.state.available;text:dialog.state.manual_update ? "Download and install the newer MSI, then launch MERLIN from the Start menu.":"Ubuntu may request administrator approval. MERLIN restarts after installation.";Layout.fillWidth:true;wrapMode:Text.WordWrap;color:dialog.theme.muted}
         }
     }
 

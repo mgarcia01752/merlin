@@ -92,6 +92,23 @@ class SetupTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 module.check_sdk(sdk)
 
+    def test_windows_qt_sdk_checks_native_executables(self):
+        """Windows SDK checks use .exe names and reject mismatched Qt versions."""
+        spec = importlib.util.spec_from_file_location("merlin_windows_qt_sdk", ROOT / "tools/development/qt_sdk.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        sdk = self.root / "windows-sdk"
+        for name in ("bin/qmake.exe", "bin/qmltestrunner.exe", "bin/qmlcachegen.exe",
+                     "qml/QtQuick/Controls/qmldir", "qml/QtQuick/Dialogs/qmldir"):
+            path = sdk / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.touch()
+        with patch.object(module.platform, "system", return_value="Windows"), \
+                patch.object(module.subprocess, "check_output", return_value="6.8.3\n") as probe:
+            module.check_sdk(sdk)
+            self.assertTrue(probe.call_args.args[0][0].endswith('qmake.exe'))
+
+
 
 if __name__ == "__main__":
     unittest.main()

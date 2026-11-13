@@ -5,7 +5,7 @@
 //! Actual channel command exposes the same bounded scientific pairs, never CLI calculations.
 use std::{path::PathBuf, process::Command};
 fn input() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../examples/channel-constellation.json")
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../examples/cli/channel-constellation.json")
 }
 #[test]
 fn paired_channel_cli_exports_default_count_and_preserves_existing_destinations() {

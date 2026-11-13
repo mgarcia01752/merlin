@@ -9,7 +9,7 @@ Build only the standalone driver with the pinned local toolchain:
 Run the one-second reference request:
 
 ```bash
-./target/release/ofdm-fec channel --input examples/channel.json --output channel-result.json
+./target/release/ofdm-fec channel --input examples/cli/channel.json --output channel-result.json
 ```
 
 The request omits `duration_ms`, so the default is1000ms. It uses an explicit
@@ -26,7 +26,7 @@ the LTE sweep kept away from the PLC neighborhood. Defaults remain noiseless.
 For a quick3ms run with bounded selected test-point export:
 
 ```bash
-./target/release/ofdm-fec channel --input examples/channel-probes.json --output channel-probes-result.json --probes-output channel-probes.jsonl
+./target/release/ofdm-fec channel --input examples/cli/channel-probes.json --output channel-probes-result.json --probes-output channel-probes.jsonl
 ```
 
 Every destination must be new. Existing result/probe files are never overwritten.
@@ -98,7 +98,7 @@ or the channel's seeded noise. Optional `channel_filter` independently selects
 The tracked MCE example uses a weak 8-sample echo and sample AWGN:
 
 ```bash
-./target/release/ofdm-fec channel --input examples/channel-mce.json --output mce-result.json
+./target/release/ofdm-fec channel --input examples/cli/channel-mce.json --output mce-result.json
 ```
 
 Choose a new output path. Results include optional `receiver_reliability` and
@@ -120,7 +120,7 @@ Measurement selection defaults to RxMER noise; `use_rxmer_noise=false` provides
 a static CE-only experiment. Noiseless imported temporal transitions are not
 supported by the current RxMER timeline contract.
 
-Complete examples are [synthetic pilot reception](../../../examples/channel-pilot-estimated.json)
+Complete examples are [synthetic pilot reception](../../../examples/cli/channel-pilot-estimated.json)
 and [measured CE-only pilot reception](../../../examples/measurements/single-channel/channel-pilot-estimated.json).
 The latter requires an imported scenario through `--scenario` as for other
 measurement-driven requests. All existing destination/input/output limits apply.

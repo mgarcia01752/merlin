@@ -3,7 +3,7 @@
 # Copyright 2026 MERLIN contributors
 # SPDX-License-Identifier: Apache-2.0
 #
-"""Provision or check the project-local, pinned Ubuntu x64 Qt SDK."""
+"""Provision or check the project-local, pinned Linux/Windows x64 Qt SDK."""
 import argparse
 import os
 from pathlib import Path
@@ -22,7 +22,7 @@ def sdk_path():
 
     Return a Path without creating directories, downloading or changing state.
     """
-    return Path(os.environ.get("QT_SDK_DIR", ROOT / "local/qt" / QT_VERSION / "gcc_64"))
+    return Path(os.environ.get("QT_SDK_DIR", ROOT / "local/qt" / QT_VERSION / ("msvc2022_64" if platform.system() == "Windows" else "gcc_64")))
 
 
 def check_sdk(path):
@@ -35,15 +35,17 @@ def check_sdk(path):
     Raises:
         ValueError or subprocess errors for missing/incompatible SDK components.
     """
-    for relative in ("bin/qmake", "bin/qmltestrunner",
+    suffix = ".exe" if platform.system() == "Windows" else ""
+    for relative in (f"bin/qmake{suffix}", f"bin/qmltestrunner{suffix}",
                      "qml/QtQuick/Controls/qmldir", "qml/QtQuick/Dialogs/qmldir"):
         if not (path / relative).is_file():
             raise ValueError(f"Qt SDK component missing: {path / relative}")
-    if not any((path / location).is_file() for location in ("bin/qmlcachegen", "libexec/qmlcachegen")):
+    if not any((path / location).is_file() for location in (f"bin/qmlcachegen{suffix}", f"libexec/qmlcachegen{suffix}")):
         raise ValueError(f"Qt QML compiler missing: {path}")
     environment = os.environ.copy()
+    environment["PATH"] = str(path / "bin") + os.pathsep + environment.get("PATH", "")
     environment["LD_LIBRARY_PATH"] = str(path / "lib") + os.pathsep + environment.get("LD_LIBRARY_PATH", "")
-    version = subprocess.check_output([str(path / "bin/qmake"), "-query", "QT_VERSION"],
+    version = subprocess.check_output([str(path / f"bin/qmake{suffix}"), "-query", "QT_VERSION"],
                                       text=True, env=environment).strip()
     if version != QT_VERSION:
         raise ValueError(f"Expected Qt {QT_VERSION}, found {version}")
@@ -68,13 +70,17 @@ def install_sdk():
         if not path.resolve().is_relative_to(ROOT.resolve()):
             raise ValueError(f"Refusing setup through an external path: {path}")
     tools = ROOT / "local/qt-tools"
-    python = tools / "bin/python"
+    windows = platform.system() == "Windows"
+    python = tools / ("Scripts/python.exe" if windows else "bin/python")
     if not python.is_file():
         venv.EnvBuilder(with_pip=True).create(tools)
     subprocess.run([str(python), "-m", "pip", "install", f"aqtinstall=={AQT_VERSION}"], check=True)
-    subprocess.run([str(python), "-m", "aqt", "install-qt", "linux", "desktop", QT_VERSION,
-                    "linux_gcc_64", "-O", str(ROOT / "local/qt"), "--archives",
-                    "qtbase", "qtdeclarative", "qtshadertools", "qtsvg", "qttools", "icu"], check=True)
+    archives = ["qtbase", "qtdeclarative", "qtshadertools", "qtsvg", "qttools"]
+    if not windows:
+        archives.append("icu")
+    subprocess.run([str(python), "-m", "aqt", "install-qt", "windows" if windows else "linux", "desktop", QT_VERSION,
+                    "win64_msvc2022_64" if windows else "linux_gcc_64", "-O", str(ROOT / "local/qt"), "--archives",
+                    *archives], check=True)
     check_sdk(selected)
 
 
@@ -87,14 +93,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=("check", "install", "dry-run"))
     args = parser.parse_args()
-    if platform.system() != "Linux" or platform.machine() != "x86_64":
-        parser.error("Initial SDK setup supports Linux x86_64 only")
+    if platform.system() not in ("Linux", "Windows") or platform.machine().lower() not in ("x86_64", "amd64"):
+        parser.error("SDK setup supports Linux/Windows x64 only")
     try:
         if args.action == "check":
             check_sdk(sdk_path())
             print(f"Qt {QT_VERSION} ready: {sdk_path()}")
         elif args.action == "dry-run":
-            print(f"Qt {QT_VERSION} gcc_64: {sdk_path()}; aqtinstall {AQT_VERSION} under local/qt-tools")
+            print(f"Qt {QT_VERSION} native x64: {sdk_path()}; aqtinstall {AQT_VERSION} under local/qt-tools")
         else:
             install_sdk()
     except (ValueError, OSError, subprocess.CalledProcessError) as error:

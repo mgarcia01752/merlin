@@ -292,7 +292,7 @@ See the [model and implementation record](../development/features/rf-power-budge
 for normalization assumptions and remaining RF front-end work.
 
 CLI users can use the same conditioning model with the
-[standalone channel-power example](../../examples/channel-power.json).
+[standalone channel-power example](../../examples/cli/channel-power.json).
 
 **Preview symbol** is the zero-based OFDM symbol index for the effective
 RxMER/playback preview. Hover the label or field, or focus the field with the

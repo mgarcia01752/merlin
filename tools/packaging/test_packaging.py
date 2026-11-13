@@ -50,7 +50,7 @@ class PackageTests(unittest.TestCase):
                 run.return_value.stdout = f"ofdm-fec {version()}\n"
                 payload = stage(binary, root / "payload")
             resources = payload / "share/merlin"
-            for name in ("LICENSE", "NOTICE", "fec-codec-LICENSE-MIT", "examples/awgn.json", "crates/ofdm/resources/qam-table/NOTICE"):
+            for name in ("LICENSE", "NOTICE", "fec-codec-LICENSE-MIT", "examples/cli/awgn.json", "crates/ofdm/resources/qam-table/NOTICE"):
                 self.assertTrue((resources / name).is_file(), name)
             examples = resources / "examples/workbench"
             manifest = json.loads((examples / "manifest.json").read_text())
@@ -111,7 +111,7 @@ class ReleaseCollectionTests(unittest.TestCase):
         self.assertNotIn("merlin_0.1.0_", contents)
         self.assertNotIn("@TAG@", contents)
         self.assertNotIn("@REPOSITORY@", contents)
-        self.assertNotIn("/docs/user/install/windows.md", contents)
+        self.assertIn("/docs/user/install/windows.md", contents)
         self.assertNotIn("/docs/user/install/macos.md", contents)
         self.assertIn(f"https://github.com/example/MERLIN/blob/v{version()}/docs/user/install/linux.md", contents)
         with self.assertRaises(ValueError):

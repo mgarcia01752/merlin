@@ -65,3 +65,12 @@ the application and launching it from an unrelated directory. When example
 resources are absent, native Open remains usable with the OS default location.
 
 ![Native Open filters workbench files in an example bundle](../images/workbench/open-examples-native-dark.png)
+
+## CLI requests versus workbench files
+
+Use `workbench.merlin.json` here for a ready-configured UI session. The separate
+[CLI examples](../../examples/cli/README.md) describe simulation requests for
+`ofdm-fec`; they are not saved workbench settings and desktop installers omit
+that folder. [Shared measurements](../../examples/measurements/README.md) contain
+capture inputs/provenance used by imports and tests. See the
+[examples index](../../examples/README.md) for each folder's purpose.

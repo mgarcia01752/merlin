@@ -43,7 +43,7 @@ fn terminal_errors_log_once_to_stderr_and_filters_do_not_change_exit_status() {
 fn filters_preserve_json_results_and_existing_destination_protection() {
     let directory = tempfile::tempdir().unwrap();
     let input = directory.path().join("settings.json");
-    let example = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../examples/awgn.json");
+    let example = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../examples/cli/awgn.json");
     let mut settings: serde_json::Value =
         serde_json::from_slice(&std::fs::read(example).unwrap()).unwrap();
     settings["codewords"] = 2.into();

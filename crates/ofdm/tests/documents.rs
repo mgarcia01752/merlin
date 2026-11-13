@@ -11,10 +11,12 @@ use std::sync::atomic::AtomicBool;
 #[test]
 fn candidate_round_trip_and_protected_roles() {
     let scenario: ScenarioDocument =
-        serde_json::from_str(include_str!("../../../examples/scenario.json")).unwrap();
+        serde_json::from_str(include_str!("../../../examples/cli/scenario.json")).unwrap();
     scenario.validate().unwrap();
-    let settings: EvaluationSettings =
-        serde_json::from_str(include_str!("../../../examples/conservative-16qam.json")).unwrap();
+    let settings: EvaluationSettings = serde_json::from_str(include_str!(
+        "../../../examples/cli/conservative-16qam.json"
+    ))
+    .unwrap();
     let frames: Vec<_> = scenario.frames.iter().collect();
     let mut candidate = generate_candidate(
         &frames,
@@ -50,7 +52,7 @@ fn candidate_round_trip_and_protected_roles() {
 #[test]
 fn bad_schemas_grids_and_nonfinite_values_are_rejected() {
     let mut scenario: ScenarioDocument =
-        serde_json::from_str(include_str!("../../../examples/scenario.json")).unwrap();
+        serde_json::from_str(include_str!("../../../examples/cli/scenario.json")).unwrap();
     scenario.schema_version = 2;
     assert!(scenario.validate().is_err());
     scenario.schema_version = 1;

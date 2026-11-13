@@ -1,44 +1,40 @@
-# Install the MERLIN CLI
+# Install MERLIN
 
-MERLIN currently provides `ofdm-fec`, a command-line program. A Qt application
-is not packaged. Initial release automation targets Ubuntu 22.04, 24.04 and 26.04 x64.
-Remote validation/publication awaits the first push; Windows/macOS are deferred.
+Choose the desktop package for the simulation workbench:
 
 | Platform | Install / uninstall |
 | --- | --- |
-| Ubuntu 22.04, 24.04 and 26.04 x64 | [DEB or portable archive](linux.md) |
-| Windows x64 (deferred) | [MSI or portable ZIP](windows.md) |
-| macOS Apple Silicon or Intel (deferred) | [PKG or portable archive](macos.md) |
+| Ubuntu 22.04 amd64 desktop | [Desktop DEB](ubuntu-desktop.md) |
+| Windows x64 desktop UI | [Desktop MSI](windows.md) |
+| Ubuntu 22.04, 24.04 and 26.04 x64 CLI | [CLI DEB or portable archive](linux.md) |
 
-The initial release contains one Ubuntu DEB, one matching portable archive and
-`SHA256SUMS`. Both binaries are built on Ubuntu 22.04 and tested on all three
-Ubuntu targets. Windows/macOS packaging helpers are retained for later work.
-The CLI, example inputs and applicable licenses are included in each package.
-Curated [workbench bundles](../workbench-examples.md) now live under
-`examples/workbench/`. Desktop installer delivery remains pending; its contract
-requires these bundles and a native Open default pointing to their installed
-resource directory. Current CLI staging includes them as resources, not a Qt app.
-Source builds remain independent of native installer tools:
+Windows native CI and packaging are configured; compilation, installer and
+interactive Windows evidence remain pending. Windows CLI assets are excluded.
+macOS delivery remains deferred.
+
+Release inventory includes the Ubuntu desktop and CLI DEBs, Linux CLI archive,
+Windows desktop MSI and `SHA256SUMS`. Publication requires every configured
+native/security job to pass. Download the exact asset for your platform from
+[Releases](https://github.com/mgarcia01752/merlin/releases), not a source archive.
+
+Desktop packages include Qt, curated [workbench bundles](../workbench-examples.md),
+documentation and full notices. Native Open starts at the installed examples.
+Keep user workbenches/exports in a writable folder outside the installation.
+The CLI has its own executable and bundled resources; it does not contain Qt.
+
+## Linux CLI source builds and development packages
 
 ```bash
 scripts/cargo-local.sh build -p ofdm-fec-cli --release --locked
-```
-
-Development package creation uses an already-built native binary whose reported
-version must match root `VERSION`. Pick a new output directory:
-
-```bash
 python3 tools/packaging/package.py --binary target/release/ofdm-fec \
   --output dist/local-package --native
 ```
 
-On Windows use `python` and `target/release/ofdm-fec.exe`. Native tooling is
-`dpkg-deb` on Linux, Apple's `pkgbuild` on macOS, or WiX3.14.1 on Windows
-(`WIX_BIN` selects its bin directory). Bash/Git Bash and the existing Cargo source
-cache are needed only during development packaging to collect pinned dependency
-notices; neither is a runtime dependency of the installed CLI. Omitting `--native` creates only the
-portable archive and checksums. Packaging installs nothing and refuses existing
-output directories. Full native build execution on each target remains required
-before claiming support on that platform.
+Packaging requires a version-matched binary and a fresh output directory.
+`dpkg-deb` builds the Linux CLI DEB; omit `--native` for an archive/checksums only.
+Python and a cached locked Cargo graph collect dependency notices during the
+build. These tools are not runtime dependencies of the installed CLI.
+Packaging does not install anything or replace existing outputs.
 
-Ubuntu 22.04 workbench: [desktop DEB and update notification](ubuntu-desktop.md).
+Native desktop builds: [Qt development](../../development/qt.md) ·
+[Windows build/MSI](../../development/windows-desktop.md).

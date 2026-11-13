@@ -55,10 +55,10 @@ python3 -m json.tool "${SMOKE_DIRECTORY}/shortened-waveform.json" >/dev/null
 "${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- --version
 "${SCRIPT_DIR}/cargo-local.sh" run -p fec-codec --example shortened_codec_loop --release --locked --quiet -- 6136
 "${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- simulate \
-  --input examples/awgn.json --output "${SMOKE_DIRECTORY}/awgn.json"
+  --input examples/cli/awgn.json --output "${SMOKE_DIRECTORY}/awgn.json"
 python3 -m json.tool "${SMOKE_DIRECTORY}/awgn.json" >/dev/null
 "${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- channel \
-  --input examples/channel-probes.json --output "${SMOKE_DIRECTORY}/channel.json" \
+  --input examples/cli/channel-probes.json --output "${SMOKE_DIRECTORY}/channel.json" \
   --probes-output "${SMOKE_DIRECTORY}/channel-probes.jsonl"
 python3 - "${SMOKE_DIRECTORY}/channel.json" "${SMOKE_DIRECTORY}/channel-probes.jsonl" <<'PY_CHANNEL'
 import json
@@ -78,7 +78,7 @@ PY_CHANNEL
   --input examples/measurements/single-channel/channel-constellation.json \
   --scenario "${SMOKE_DIRECTORY}/scenario.json" --output "${SMOKE_DIRECTORY}/measured.json"
 "${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- channel \
-  --input examples/channel-awgn.json --output "${SMOKE_DIRECTORY}/waveform-awgn.json"
+  --input examples/cli/channel-awgn.json --output "${SMOKE_DIRECTORY}/waveform-awgn.json"
 python3 - "${SMOKE_DIRECTORY}/measured.json" "${SMOKE_DIRECTORY}/waveform-awgn.json" <<'PY_IMPAIRMENTS'
 import json
 import sys
@@ -95,10 +95,10 @@ for path in sys.argv[1:]:
         assert len(result["constellation"]["pairs"]) == 8192
 PY_IMPAIRMENTS
 "${SCRIPT_DIR}/cargo-local.sh" run -p ofdm-fec-cli --release --locked --quiet -- channel \
-  --input examples/channel-file.json --payload-file examples/payloads/message.txt \
+  --input examples/cli/channel-file.json --payload-file examples/cli/payloads/message.txt \
   --output "${SMOKE_DIRECTORY}/file-result.json" \
   --recovered-file "${SMOKE_DIRECTORY}/recovered-message.txt"
-cmp examples/payloads/message.txt "${SMOKE_DIRECTORY}/recovered-message.txt"
+cmp examples/cli/payloads/message.txt "${SMOKE_DIRECTORY}/recovered-message.txt"
 python3 tools/release/versions.py
 if [[ "$TEST_QUICK" == 1 ]]; then
   echo 'Quick local pre-push checks passed; named sweep cases were NOT run.'

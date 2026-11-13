@@ -140,7 +140,7 @@ The [measured request](../../../examples/measurements/single-channel/channel-con
 uses3ms, the captured profile0, supplied H and the existing explicit90000-second
 capture tolerance. It exports8192 matched pairs. These capture timestamps differ;
 the tolerance is a demo choice, not an assumption of simultaneous measurements.
-A standalone noiseless [request](../../../examples/channel-constellation.json)
+A standalone noiseless [request](../../../examples/cli/channel-constellation.json)
 needs no scenario; run it through the same `channel` command without `--scenario`.
 
 ## Read the result

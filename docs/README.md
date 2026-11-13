@@ -16,6 +16,7 @@
 
 - [Channel CLI](user/channel-runner/cli.md)
 - [Other CLI experiments](cli.md)
+- [Windows desktop MSI](user/install/windows.md)
 - [Native CLI installation](user/install/README.md)
 
 ## Simulation and reference
@@ -44,3 +45,5 @@
 - [Logging](development/logging.md)
 - [Desktop debug controls](development/debugging.md)
 - [Git and releases](development/git.md)
+
+- [Example folder guide](../examples/README.md) · [CLI purposes and use cases](../examples/cli/README.md)

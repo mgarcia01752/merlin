@@ -8,7 +8,7 @@ use std::{
 };
 fn request() -> serde_json::Value {
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../examples/channel-pilot-estimated.json");
+        .join("../../examples/cli/channel-pilot-estimated.json");
     let mut value: serde_json::Value =
         serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();
     value["duration_ms"] = serde_json::json!(1);

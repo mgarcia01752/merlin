@@ -51,7 +51,7 @@ Run the tracked bounded example:
 
 ```bash
 scripts/cargo-local.sh build -p ofdm-fec-cli --release --locked
-target/release/ofdm-fec channel --input examples/channel-pilot-estimated.json \
+target/release/ofdm-fec channel --input examples/cli/channel-pilot-estimated.json \
   --output pilot-receiver-result.json
 ```
 

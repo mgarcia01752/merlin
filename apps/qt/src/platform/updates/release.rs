@@ -70,7 +70,7 @@ pub(super) fn desktop_asset_names(number: &str) -> [String; 2] {
     ]
 }
 
-/// Validates one bounded stable release and selects its exact baseline DEB.
+/// Validates one bounded stable release and selects its exact platform desktop installer.
 /// # Arguments
 /// * `installed` - Compiled numeric application version.
 /// * `bytes` - GitHub metadata, at most one MiB.
@@ -79,6 +79,10 @@ pub(super) fn desktop_asset_names(number: &str) -> [String; 2] {
 /// # Errors
 /// Rejects invalid versions, unpublished releases and foreign release URLs.
 pub(crate) fn parse(installed: &str, bytes: &[u8]) -> Result<Value, String> {
+    parse_platform(installed, bytes, cfg!(target_os = "windows"))
+}
+
+fn parse_platform(installed: &str, bytes: &[u8], windows: bool) -> Result<Value, String> {
     if bytes.len() as u64 > MAX_RESPONSE {
         return Err("Release response exceeds limits.".into());
     }
@@ -99,12 +103,16 @@ pub(crate) fn parse(installed: &str, bytes: &[u8]) -> Result<Value, String> {
         return Ok(json!({"busy":false,"available":false,"status":"You are up to date.","url":""}));
     }
     let number = release.tag_name.trim_start_matches('v');
-    let names = desktop_asset_names(number);
+    let names = if windows {
+        vec![format!("merlin-desktop_{number}_windows_amd64.msi")]
+    } else {
+        desktop_asset_names(number).to_vec()
+    };
     // Prefer canonical metadata. Invalid/duplicate canonical entries never fall back.
     let name = if release.assets.iter().any(|asset| asset.name == names[0]) {
         &names[0]
     } else {
-        &names[1]
+        names.last().unwrap()
     };
     let url = format!("{PROJECT}/releases/download/{}/{name}", release.tag_name);
     let candidates = release
@@ -124,7 +132,7 @@ pub(crate) fn parse(installed: &str, bytes: &[u8]) -> Result<Value, String> {
         });
     if !valid {
         return Ok(
-            json!({"busy":false,"available":false,"status":"No verified Ubuntu 22.04 desktop update is available.","url":""}),
+            json!({"busy":false,"available":false,"status":"No verified desktop update is available for this platform.","url":""}),
         );
     }
     Ok(
@@ -170,6 +178,33 @@ pub(crate) fn check(installed: &str) -> Result<Value, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn parse(installed: &str, bytes: &[u8]) -> Result<Value, String> {
+        super::parse_platform(installed, bytes, false)
+    }
+    #[test]
+    fn windows_requires_exact_verified_desktop_msi() {
+        let mut data = metadata();
+        assert_eq!(
+            super::parse_platform("0.1.0", &serde_json::to_vec(&data).unwrap(), true).unwrap()
+                ["available"],
+            false
+        );
+        let name = "merlin-desktop_0.2.0_windows_amd64.msi";
+        data["assets"][0]["name"] = json!(name);
+        data["assets"][0]["browser_download_url"] =
+            json!(format!("{PROJECT}/releases/download/v0.2.0/{name}"));
+        assert_eq!(
+            super::parse_platform("0.1.0", &serde_json::to_vec(&data).unwrap(), true).unwrap()
+                ["available"],
+            true
+        );
+        data["assets"][0]["digest"] = json!("unverified");
+        assert_eq!(
+            super::parse_platform("0.1.0", &serde_json::to_vec(&data).unwrap(), true).unwrap()
+                ["available"],
+            false
+        );
+    }
     fn metadata() -> Value {
         json!({"draft":false,"prerelease":false,"tag_name":"v0.2.0","html_url":format!("{PROJECT}/releases/tag/v0.2.0"),"assets":[{"name":"merlin-desktop_0.2.0_ubuntu22.04_amd64.deb","browser_download_url":format!("{PROJECT}/releases/download/v0.2.0/merlin-desktop_0.2.0_ubuntu22.04_amd64.deb"),"size":1000,"digest":format!("sha256:{}","a".repeat(64))}]})
     }

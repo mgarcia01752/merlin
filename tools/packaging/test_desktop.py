@@ -11,6 +11,7 @@ from desktop import package
 from common import ROOT
 from asset_names import asset_name
 from notices import notice_files
+from desktop_payload import copy_examples
 
 
 def scratch_directory():
@@ -27,6 +28,20 @@ def scratch_directory():
 
 
 class DesktopTests(unittest.TestCase):
+    def test_desktop_examples_exclude_cli_and_keep_runnable_workbenches(self):
+        """Desktop and CLI payloads must expose the correct example inventory."""
+        with scratch_directory() as directory:
+            destination = Path(directory) / 'examples'
+            copy_examples(destination)
+            self.assertEqual({path.name for path in destination.iterdir()},
+                             {'README.md', 'workbench', 'measurements'})
+            self.assertFalse((destination / 'cli').exists())
+            for name in ('single', 'multi-rxmer', 'multi-rxmer-2'):
+                self.assertTrue((destination / 'workbench' / name / 'workbench.merlin.json').is_file())
+            self.assertTrue((destination / 'measurements/single-channel/rxmer.json').is_file())
+            with self.assertRaises(FileExistsError):
+                copy_examples(destination)
+
     def test_existing_output_is_never_replaced(self):
         with scratch_directory() as directory:
             output = Path(directory)

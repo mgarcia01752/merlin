@@ -29,6 +29,13 @@ to measure bit errors, decoding failures, corrections and iteration counts.
 All signal processing and FEC run in Rust. Full CMTS MAC services and
 multi-channel operation are outside the simulator's scope.
 
+Install the desktop workbench: [Ubuntu DEB](docs/user/install/ubuntu-desktop.md) ·
+[Windows MSI](docs/user/install/windows.md). Windows native validation is pending;
+macOS is deferred.
+
+Example inputs: [CLI requests and use cases](examples/cli/README.md) ·
+[UI workbenches](examples/workbench/README.md) · [Example folder guide](examples/README.md).
+
 ## Workbench overview
 
 <p align="center">

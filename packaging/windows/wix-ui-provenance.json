@@ -1,0 +1,7 @@
+{
+  "source": "https://raw.githubusercontent.com/wixtoolset/wix3/wix3141rtm/src/ext/UIExtension/wixlib/WixUI_InstallDir.wxs",
+  "source_sha256": "d106e533e72fa9a7ed664d100c72c7bcc3de23f85a5cb747b28fe810c36145f3",
+  "license_source": "https://raw.githubusercontent.com/wixtoolset/wix3/wix3141rtm/LICENSE.TXT",
+  "license_sha256": "dfdf2048787635215a6baf3b9d461dee89a2904d246787258a44f072a98d4786",
+  "changes": "Insert MERLIN desktop-shortcut dialog after installation-directory validation."
+}

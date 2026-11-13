@@ -1,0 +1,12 @@
+Microsoft Visual C++ Runtime
+Copyright Microsoft Corporation. All rights reserved.
+
+App-local redistributable DLLs originate from the licensed Visual Studio 2022
+x64 Redist/MSVC/Microsoft.VC143.CRT directory on the native Windows builder.
+Redistribution is governed by that Visual Studio license and its REDIST list:
+https://learn.microsoft.com/en-us/visualstudio/releases/2022/redistribution
+https://visualstudio.microsoft.com/license-terms/
+Windows system DLLs are supplied by Windows and are not copied into this package.
+
+Qt is deployed from the pinned Qt 6.8.3 MSVC2022 x64 SDK. Complete Qt license
+and third-party notices, plus source provenance, accompany this file.

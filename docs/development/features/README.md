@@ -138,3 +138,9 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 - [Run-specific QAM results and TX-reference MER](qam-run-results/design.md): UI-QAM-RUNS-02.
 
 - [Independent receiver estimation through a channel with memory](independent-channel-estimation/design.md): CH-EST-RX-07..12 (implemented for bounded static channels).
+
+- [Windows desktop MSI](windows-desktop/design.md): native UI packaging, icons,
+  Windows adapter boundaries and CI lifecycle gates; macOS deferred.
+
+- [CLI versus desktop examples](example-layout/design.md): EXAMPLES-01,
+  documented use cases and separate desktop/CLI packaging inventories.

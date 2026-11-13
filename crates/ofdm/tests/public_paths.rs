@@ -7,7 +7,7 @@ use docsis_ofdm_fec::{profile, scenario, signal_processing, types::ProtocolScope
 #[test]
 fn scenario_and_profile_compatibility_imports_keep_the_same_types() {
     let scenario: scenario::document::ScenarioDocument =
-        serde_json::from_str(include_str!("../../../examples/scenario.json")).unwrap();
+        serde_json::from_str(include_str!("../../../examples/cli/scenario.json")).unwrap();
     let legacy: &profile::document::ScenarioDocument = &scenario;
     legacy.validate().unwrap();
     let key: &profile::model::ScenarioKey = &scenario.frames[0].key;

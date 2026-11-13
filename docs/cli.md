@@ -16,14 +16,18 @@ stage diagnostics or `RUST_LOG=off` for silence. JSON results and exit status ar
 independent of the filter. See [logging](development/logging.md) for module filters,
 log capture and severity/error ownership.
 
+CLI JSON requests now live under `examples/cli/`. See the
+[file-by-file purpose and use cases](../examples/cli/README.md); these requests
+are different from saved desktop workbench JSON.
+
 ## Seeded baseline
 
 ```bash
 ./scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- \
-  simulate --input examples/awgn.json --output awgn-result.json
+  simulate --input examples/cli/awgn.json --output awgn-result.json
 ```
 
-`examples/awgn.json` selects seed1, ten codewords, 30LDPC iterations, a ten-second
+`examples/cli/awgn.json` selects seed1, ten codewords, 30LDPC iterations, a ten-second
 trial budget and25dB MER. `noiseless: true` tests recovery without injected noise.
 Ctrl-C requests cancellation; completed trials are exported as a partial result.
 The budget is checked between codewords, so one bounded word may finish afterward.
@@ -36,8 +40,8 @@ Its names/hashes are synthetic metadata, not captured source authentication.
 
 ```bash
 ./scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- \
-  evaluate --input examples/scenario.json \
-  --settings examples/conservative-16qam.json --profile 0 \
+  evaluate --input examples/cli/scenario.json \
+  --settings examples/cli/conservative-16qam.json --profile 0 \
   --output candidate.json
 ```
 
@@ -55,7 +59,7 @@ not changed. Save the returned versioned document through the consumer adapter.
 
 ```bash
 ./scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- \
-  evaluate --input examples/scenario.json --candidate candidate.json \
+  evaluate --input examples/cli/scenario.json --candidate candidate.json \
   --output reevaluated-candidate.json
 ```
 
@@ -68,7 +72,7 @@ rate excludes cyclic prefix, FEC, pilots/PLC, MAC and other PHY overheads.
 
 ```bash
 ./scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- \
-  simulate --input examples/awgn.json --scenario examples/scenario.json \
+  simulate --input examples/cli/awgn.json --scenario examples/cli/scenario.json \
   --candidate candidate.json --frame 0 --output measured-model-result.json
 ```
 

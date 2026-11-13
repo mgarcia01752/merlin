@@ -6,7 +6,7 @@
 use std::{path::PathBuf, process::Command};
 fn example(name: &str) -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../examples")
+        .join("../../examples/cli")
         .join(name)
 }
 #[test]

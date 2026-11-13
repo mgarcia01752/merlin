@@ -18,7 +18,7 @@ From the repository root, choose new output paths:
 ```bash
 mkdir -p docs/development/local
 scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- channel \
-  --input examples/channel-awgn.json --output docs/development/local/awgn-channel.json
+  --input examples/cli/channel-awgn.json --output docs/development/local/awgn-channel.json
 
 scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- import-pnm \
   --input examples/measurements/single-channel/import.json \

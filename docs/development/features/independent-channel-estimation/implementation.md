@@ -68,7 +68,7 @@ receiver or a uniquely mandated DOCSIS algorithm.
 | Actual MCE waveform/FEC | Noisy echoes at both spacings, 8- and 256-sample delays recover bits; strong 2048-sample echoes produce actual degradation/failure. |
 | Independence | Changing only simulator LLR calibration leaves MCE outcomes identical. Switching reference/MCE preserves actual matched noisy channel samples. |
 | UI behavior | Default Off, draft cancellation, Apply, busy guard, averaging persistence, separate channel selection, chip visibility and unchanged heading geometry pass. |
-| CLI example | `examples/channel-mce.json` completes; estimated raw noise is approximately 9.56e-6 for injected 1e-5 sample noise, BER zero, 8 channel-tail samples. |
+| CLI example | `examples/cli/channel-mce.json` completes; estimated raw noise is approximately 9.56e-6 for injected 1e-5 sample noise, BER zero, 8 channel-tail samples. |
 | Native Ubuntu CM-driven MCE | 23 observation symbols, 1,223,952 globally compared payload bits, zero bit errors. Actual dark/light configuration, chip and H/H-hat views inspected. |
 
 The native count includes globally recovered payloads, including completion/drain;

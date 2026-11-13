@@ -51,6 +51,18 @@ Pane {
             updates.installUpdate();compare(backend.installs,0)
             compare(updates.state.status,"Recovery failed")
         }
+        function test_windows_download_skips_recovery_and_install(){
+            let recovered=false, opened=""
+            updates.prepareUpdate=function(){recovered=true;return {saved:true}}
+            updates.openRelease=function(url){opened=url}
+            updates.state={enabled:true,busy:false,available:true,manual_update:true,
+                url:"https://github.com/mgarcia01752/merlin/releases/tag/v0.2.0"}
+            updates.showUpdates();tryCompare(updates.popup,"opened",true)
+            const action=findChild(updates,"installUpdate")
+            compare(action.text,"Download MSI")
+            mouseClick(action)
+            compare(opened,updates.state.url);verify(!recovered);compare(backend.installs,0)
+        }
         function test_manual_check_and_preference(){
             updates.showUpdates();tryCompare(updates.popup,"opened",true)
             mouseClick(findChild(updates,"checkUpdates"))

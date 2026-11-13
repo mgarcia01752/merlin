@@ -38,7 +38,7 @@ rules remain deferred. File selection in Qt is planned, not implemented here.
   simulation summaries, metadata-only JSON, no-clobber and rejected input/target/
   seed/option combinations. Existing continuous PRBS tests remain unchanged.
 - The pre-push gate now includes a release file round trip using
-  `examples/channel-file.json` and a byte-for-byte `cmp` of the recovered message.
+  `examples/cli/channel-file.json` and a byte-for-byte `cmp` of the recovered message.
 - Full pre-push gate passes on the local Linux host:32 helper tests, Bash and
   ShellCheck, formatting, warnings-denied all-target Clippy, workspace tests,
   analysis-only tests, fixture example, release CLI build and all simulation
@@ -60,7 +60,7 @@ mandatory input alignment is introduced.
 
 ## Release demonstration
 
-The tracked `examples/channel-file.json` request and97-byte message produced a
+The tracked `examples/cli/channel-file.json` request and97-byte message produced a
 complete pilot-estimated channel run:776 original bits plus19,224 appended PRBS15
 bits,20,000 meaningful bits total, zero bit errors in both segments. The final
 information payload contained8,464 coding-padding bits, excluded from BER and

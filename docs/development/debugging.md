@@ -45,3 +45,9 @@ Startup workbench usage, standard-input semantics and Save behavior are in the
 No automatic simulation starts from command-line Open.
 
 ![Loading with debug timing enabled](../images/workbench/workbench-loading-debug-dark.png)
+
+Windows MSI diagnostics: run Windows Installer with `/L*V` as described in the
+[Windows install guide](../user/install/windows.md). Disposable native CI retains
+`dist/windows-installer-logs/` and the desktop byte-size report; no application
+log file is silently created. The existing `--smoke-test` now leaves the window
+open for 750 ms and suppresses startup update lookup for offline runtime checks.

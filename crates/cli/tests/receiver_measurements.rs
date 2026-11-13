@@ -7,8 +7,8 @@ use std::{path::PathBuf, process::Command};
 #[test]
 fn pilot_receiver_json_matches_shared_rust_and_preserves_no_clobber() {
     let temporary = tempfile::tempdir().unwrap();
-    let base =
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../examples/channel-constellation.json");
+    let base = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../examples/cli/channel-constellation.json");
     let mut request: serde_json::Value =
         serde_json::from_slice(&std::fs::read(base).unwrap()).unwrap();
     request["receiver_mode"] = serde_json::json!("pilot_estimated");

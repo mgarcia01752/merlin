@@ -700,7 +700,8 @@ and the
 ### Ubuntu builds and deferred cross-platform runtime
 
 - [ ] **QA-06** Validate Ubuntu 22.04, 24.04 and 26.04 x64 in CI.
-  Windows/macOS execution is deferred; Linux checks do not establish their support.
+  Windows desktop validation is configured under UI-MSI-01; native evidence
+  remains pending. macOS is deferred; Linux checks do not establish support.
   - [x] Prepare lean preflight, science tests and CLI smoke jobs for all three
     Ubuntu releases with pinned Rust and separate caches.
   - [ ] Push/run the workflows later and retain actual native results.
@@ -1218,3 +1219,23 @@ validation are complete; the user guide includes the current dark capture.
   Keep reversal, step controls and disabled guards; all 67 QML checks and
   the native build pass. Native direction changes verified.
   [Design](features/rxmer-designer/design.md#rxmer-design-07-direction-button-replaces-tilt-label).
+
+### Windows desktop UI delivery
+
+- [x] **UI-MSI-01** Implement Windows x64 desktop-only MSI staging and CI,
+  conditional native adapter/pickers, embedded icon, WiX artwork, Start menu
+  and unchecked optional desktop shortcut. Share public examples/notices;
+  preserve Ubuntu/security gates and exclude Windows CLI/macOS artifacts.
+  [Design](features/windows-desktop/design.md) ·
+  [Local validation](features/windows-desktop/validation.md).
+- [ ] **UI-MSI-02** Run native Windows build/MSI/lifecycle jobs and retain
+  installer-byte reports/logs. Interactively verify icons, wizard, pickers,
+  upgrade/downgrade and Windows 11 launch; native evidence is still pending.
+
+### Example organization
+
+- [x] **EXAMPLES-01** Move standalone JSON requests/payload to `examples/cli/`,
+  add file purposes/use cases/commands and an example-folder index, update
+  consumers and exclude CLI requests from desktop payloads. Keep measurement
+  data and workbenches separate; preserve all moved bytes.
+  [Design](features/example-layout/design.md).

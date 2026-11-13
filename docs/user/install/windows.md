@@ -1,25 +1,64 @@
-# Windows install and uninstall
+# Windows desktop installation
 
-Choose the x64 MSI, or the portable ZIP if no system installation is wanted.
-Download `SHA256SUMS` from the same release. In PowerShell, compare the reported
-hash with that installer's entry:
+[Installation index](README.md) · [Workbench guide](../workbench.md)
+
+Choose `merlin-desktop_VERSION_windows_amd64.msi` from the
+[MERLIN Releases](https://github.com/mgarcia01752/merlin/releases) assets.
+Replace VERSION with the release number. This is the Windows x64 desktop UI;
+Windows CLI packages and macOS delivery are outside the current release scope.
+The MSI includes Qt, the Visual C++ runtime, public workbench examples and guides.
+Rust, Python, Qt and a source checkout are not needed to run it.
+
+The packaging and native CI checks are configured; Windows execution and installer
+appearance require a successful native run and interactive Windows review.
+Do not infer Windows validation from the local Linux checks.
+
+## Install and launch
+
+1. Download the MSI and `SHA256SUMS` from the same release.
+2. In PowerShell, compare `Get-FileHash .\PACKAGE.msi -Algorithm SHA256` with
+   that exact filename's entry in `SHA256SUMS`.
+3. Close MERLIN, double-click the MSI and follow the prompts. Choose the install
+   folder and optionally **Create a desktop shortcut** (unchecked initially).
+4. Approve the normal Windows administrator prompt for installation.
+5. Open **Start → MERLIN**. The application runs as your normal desktop user.
+
+The default folder is `C:\Program Files\MERLIN`. Examples live under
+`files\examples\workbench`; Open starts there regardless of the launch folder.
+Store your own workbenches and exports in a writable folder such as Documents.
+Full notices are under `notices` in the installation directory.
+
+## If the MSI does not open
+
+The installer is currently unsigned. Verify its origin and checksum. Keep Windows
+security protections enabled and follow your organization's approval process.
+Do not disable SmartScreen/Defender, change execution policy, remove download
+security markings or run the application as administrator.
+
+PowerShell can start Windows Installer with a diagnostic log:
 
 ```powershell
-Get-FileHash .\merlin-<version>-windows-x64.msi -Algorithm SHA256
+$Msi = (Resolve-Path "$env:USERPROFILE\Downloads\PACKAGE.msi").Path
+Start-Process msiexec.exe -ArgumentList @('/i', "`"$Msi`"", '/L*V', "`"$env:TEMP\merlin-install.log`"") -Wait
+notepad "$env:TEMP\merlin-install.log"
 ```
 
-Open the MSI and approve the normal Windows administrator prompt. Reopen your
-terminal after installation, then run `ofdm-fec --version`. A newer MSI upgrades
-the matching installed product; there is no need to uninstall first. Older MSI
-versions are rejected. Windows/macOS native execution is pending the later CI run.
+Replace PACKAGE.msi with the exact downloaded filename. This command retains
+Windows approval prompts. Review logs for personal information before sharing;
+include the failure and nearby `Return value 3` lines in an issue report.
 
-The current installer is unsigned. Windows may show an unknown-publisher or
-SmartScreen warning. Confirm the release source and hash, and follow your
-organization's approval policy; no script-execution-policy or security-setting
-change is required. There is no desktop shortcut for this command-line program.
+## Upgrade, repair and uninstall
 
-Uninstall through **Settings → Apps → Installed apps → MERLIN OFDM CLI → Uninstall**.
-The MSI removes its machine PATH entry and installed resources. User-created
-simulation outputs remain yours. Portable ZIP copies are independent: extract,
-run `bin\ofdm-fec.exe`, and remove that extracted directory when finished.
-Examples and guides are in `share\merlin` beneath the installation directory.
+**About → Check For Updates** identifies the verified Windows desktop MSI.
+**Download MSI** opens the release page. Download the newer MSI, close MERLIN
+and run it; Windows Installer replaces the older desktop installation and rejects
+downgrades. Windows automatic download/install/restart is deferred.
+
+To repair, reopen the same-version MSI and choose **Repair**. To remove MERLIN,
+use **Settings → Apps → Installed apps → MERLIN → Uninstall**. MSI removes its
+runtime, bundled examples and shortcuts. User files outside the installation
+folder remain; do not put original captures or workbenches in Program Files.
+
+The release lists compressed installer bytes. Packaging reports installed file
+bytes separately. Windows system libraries remain external prerequisites;
+package size and installed behavior need measurements from the native run.

@@ -4,7 +4,7 @@ Public models are in `docsis_ofdm_fec::profile::{model,document,evaluation,simul
 The CLI uses serde representations directly; JSON additions belong to Rust.
 Unknown fields are rejected in versioned documents/settings rather than guessed.
 
-[scenario.json](../../examples/scenario.json) contains:
+[scenario.json](../../examples/cli/scenario.json) contains:
 
 - `schema_version: 1`, explicitly selected `protocol`, individual `frames`,
   optional captured `profiles` and `channels`.

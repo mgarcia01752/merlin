@@ -219,3 +219,76 @@ jobs:
           if-no-files-found: error
           retention-days: 14
         if: inputs.release && github.ref_type == 'tag'
+  windows-desktop:
+    name: Windows x64 desktop UI
+    needs: preflight
+    runs-on: windows-2022
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      QT_SDK_DIR: ${{ github.workspace }}/local/qt/6.8.3/msvc2022_64
+      CARGO_HOME: ${{ github.workspace }}/local/merlin-cargo
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - uses: actions/cache@v5
+        with:
+          path: |
+            local/qt
+            local/qt-tools
+            local/merlin-cargo
+            local/release-sources
+            apps/qt/target
+          key: desktop-windows-x64-qt6.8.3-rust1.85.1-${{ hashFiles('apps/qt/Cargo.lock', 'Cargo.lock', 'tools/development/qt_sdk.py') }}
+          restore-keys: desktop-windows-x64-qt6.8.3-rust1.85.1-
+      - name: Prepare pinned Rust and Qt tools
+        run: |
+          rustup toolchain install 1.85.1 --profile minimal --component rustfmt --component clippy
+          if ($LASTEXITCODE -ne 0) { throw 'Rust setup failed' }
+          ./scripts/windows/qt-desktop.ps1 setup
+      - name: Validate adapter, QML and native UI build
+        run: ./scripts/windows/qt-desktop.ps1 check
+      - name: Configure WiX 3.14.1
+        if: inputs.release && github.ref_type == 'tag'
+        run: |
+          $WixBin = Join-Path ${env:ProgramFiles(x86)} 'WiX Toolset v3.14/bin'
+          if (!(Test-Path "$WixBin/candle.exe") -or !(Test-Path "$WixBin/light.exe")) {
+            choco install wixtoolset --version=3.14.1 --yes --no-progress
+            if ($LASTEXITCODE -ne 0) { throw 'WiX installation failed' }
+          }
+          if (!(Test-Path "$WixBin/candle.exe") -or !(Test-Path "$WixBin/light.exe")) { throw 'WiX3 tools missing' }
+          $WixVersion = [version](Get-Item "$WixBin/candle.exe").VersionInfo.FileVersion
+          if ($WixVersion.Major -ne 3 -or $WixVersion.Minor -ne 14 -or $WixVersion.Build -ne 1) {
+            throw "Expected WiX 3.14.1, found $WixVersion"
+          }
+          "WIX_BIN=$WixBin" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Build and package Windows desktop MSI
+        if: inputs.release && github.ref_type == 'tag'
+        run: ./scripts/windows/qt-desktop.ps1 package
+      - name: Verify installed UI, repair and uninstall
+        if: inputs.release && github.ref_type == 'tag'
+        run: ./scripts/windows/test-installed.ps1
+      - name: Retain native packaging and installer evidence
+        if: always() && inputs.release && github.ref_type == 'tag'
+        uses: actions/upload-artifact@v6
+        with:
+          name: merlin-windows-installer-evidence
+          path: |
+            dist/windows-desktop-report.json
+            dist/windows-installer-logs/
+          if-no-files-found: warn
+          retention-days: 14
+      - uses: actions/upload-artifact@v6
+        if: inputs.release && github.ref_type == 'tag'
+        with:
+          name: merlin-assets-desktop-windows-amd64
+          path: dist/windows-desktop/
+          if-no-files-found: error
+          retention-days: 14

@@ -157,13 +157,25 @@ any prerequisite gaps rather than substituting unrelated work.
 
 ## Current desktop delivery scope
 
-Ubuntu 22.04 amd64 is the current native desktop package target. Follow
+Ubuntu 22.04 amd64 and Windows x64 are the native desktop package targets.
+Windows delivers only the Qt UI MSI; Windows CLI assets are excluded and macOS
+remains deferred. Follow the Windows desktop design/build guide and
 skills/toolkit-release and the Ubuntu desktop design for DEB/workflow work.
 Keep update HTTP, metadata checks and global preferences in the application
 adapter, separate from simulation and WB JSON. Use a quiet bounded worker and a right-aligned Update chip on the main
 menu row. The installed Ubuntu 22.04 app downloads a verified DEB, requests
 polkit authentication, installs and restarts as the desktop user. Source
 checkouts must never elevate or install packages. Preserve accepted WB settings
-for restart; keep failures visible and the original process open. Desktop delivery on other platforms is deferred;
+for restart; keep failures visible and the original process open. Windows uses
+a full MSI from Releases; automatic Windows installation/restart is deferred;
 development support and existing CLI validation are separate. Audit both locks
 without suppressions; only report installed/hosted behavior with actual evidence.
+
+## Example folders
+
+Keep standalone CLI JSON requests and sample payloads under `examples/cli/`,
+with a README explaining each file, use case and command. UI-ready saved
+workbenches belong in `examples/workbench/`; shared capture/provenance fixtures
+belong in `examples/measurements/`. Maintain `examples/README.md` as the index.
+Desktop packages exclude the CLI folder; standalone CLI packages retain it.
+Update commands, includes, tests and package inventories when paths change.

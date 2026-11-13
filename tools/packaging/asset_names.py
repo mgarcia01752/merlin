@@ -9,6 +9,7 @@ import shutil
 
 FORMATS = {
     ('desktop', 'ubuntu22.04'): {'deb'},
+    ('desktop', 'windows'): {'msi'},
     ('cli', 'ubuntu22.04'): {'deb'},
     ('cli', 'linux'): {'tar.gz'},
     ('cli', 'macos'): {'tar.gz', 'pkg'},

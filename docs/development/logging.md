@@ -10,7 +10,7 @@ progress is debug output; normal runs show concise command and completion record
 
 ```bash
 RUST_LOG=debug ./scripts/cargo-local.sh run -p ofdm-fec-cli --locked -- \
-  simulate --input examples/awgn.json --output debug-result.json
+  simulate --input examples/cli/awgn.json --output debug-result.json
 ```
 
 To see only simulation-module diagnostics and application errors:
@@ -18,7 +18,7 @@ To see only simulation-module diagnostics and application errors:
 ```bash
 RUST_LOG=error,docsis_ofdm_fec::simulation=debug \
   ./target/release/ofdm-fec simulate \
-  --input examples/awgn.json --output selected-result.json
+  --input examples/cli/awgn.json --output selected-result.json
 ```
 
 `RUST_LOG` accepts `error`, `warn`, `info`, `debug`, `trace` and `off`, plus
@@ -31,7 +31,7 @@ For an installed/built executable, append stderr to a local log:
 
 ```bash
 RUST_LOG=debug ./target/release/ofdm-fec simulate \
-  --input examples/awgn.json --output saved-result.json 2>>doft.log
+  --input examples/cli/awgn.json --output saved-result.json 2>>doft.log
 ```
 
 In PowerShell, set `$env:RUST_LOG = 'debug'` before launching the executable.

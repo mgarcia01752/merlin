@@ -103,16 +103,24 @@ mod tests {
     #[test]
     fn local_reads_preserve_bytes_and_reject_remote_oversize_and_nonregular_inputs() {
         let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-        let source = root.join("examples/payloads/message.txt");
-        let url = format!("file://{}", source.display());
+        let source = root.join("examples/cli/payloads/message.txt");
+        let url = url::Url::from_file_path(source.canonicalize().unwrap())
+            .unwrap()
+            .to_string();
         let (name, bytes) = read_local(&url, 1024).unwrap();
         assert_eq!(name, "message.txt");
         assert_eq!(
             bytes,
-            include_bytes!("../../../../examples/payloads/message.txt")
+            include_bytes!("../../../../examples/cli/payloads/message.txt")
         );
         assert!(read_local(&url, 1).is_err());
         assert!(read_local("https://example.invalid/payload.bin", 1024).is_err());
-        assert!(read_local(&format!("file://{}", root.display()), 1024).is_err());
+        assert!(read_local(
+            url::Url::from_directory_path(root.canonicalize().unwrap())
+                .unwrap()
+                .as_str(),
+            1024
+        )
+        .is_err());
     }
 }

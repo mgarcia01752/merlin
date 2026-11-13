@@ -56,7 +56,7 @@ returns the bounded partial/final result and stops only diagnostic retention.
 channel JSON request accepts `constellation`; the existing CLI serializes the same
 Rust result without calculating or renaming simulation fields.
 
-Complete requests are `examples/channel-constellation.json` (noiseless) and
+Complete requests are `examples/cli/channel-constellation.json` (noiseless) and
 `examples/measurements/single-channel/channel-constellation.json` (measured H,
 RxMER and profile0,700–727MHz). The measured3ms/seed41 run exported8192 pairs,
 compared3614928 payload bits with zero errors and produced the linked

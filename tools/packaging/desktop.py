@@ -12,11 +12,11 @@ import platform
 import shutil
 import subprocess
 
-from common import ROOT, checksums, copy_tree, version
+from common import ROOT, checksums, version
 from asset_names import asset_name, desktop_alias
-from notices import collect_notices
 from qt_runtime import deploy
-from qt_notices import qt_notices, qt
+from qt_notices import qt
+from desktop_payload import populate
 
 DEPENDENCIES = (
     'pkexec, libc6 (>= 2.35), libstdc++6, libgcc-s1, libgl1, libegl1, libopengl0, '
@@ -99,24 +99,7 @@ def package(binary, sdk, output):
     (payload / 'merlin-qt').chmod(0o755)
     dependencies = sorted(set(DEPENDENCIES.split(', ')) | set(system_packages(deploy(payload, sdk, ROOT / 'apps/qt/qml'))))
     dependency_text = ', '.join(dependencies)
-    files = payload / 'files'
-    files.mkdir()
-    copy_tree(ROOT / 'examples', files / 'examples')
-    for relative in ('docs/user', 'docs/reference', 'docs/images'):
-        destination = files / relative
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        copy_tree(ROOT / relative, destination)
-    shutil.copy2(ROOT / 'docs/architecture.md', files / 'docs/architecture.md')
-    notices = payload / 'notices'
-    notices.mkdir()
-    for source, name in [('apps/qt/LICENSE', 'LICENSE-GPL-3.0'), ('LICENSE', 'LICENSE-Apache-2.0'),
-                         ('apps/qt/NOTICE', 'NOTICE'), ('crates/fec-codec/LICENSE-MIT', 'fec-codec-LICENSE-MIT')]:
-        shutil.copy2(ROOT / source, notices / name)
-    copy_tree(ROOT / 'crates/ofdm/resources/qam-table', notices / 'qam-table')
-    collect_notices(ROOT, notices / 'cargo', manifest=ROOT / 'apps/qt/Cargo.toml')
-    qt_notices(notices / 'qt')
-    for name in ('icu-73.2-LICENSE', 'icu-73.2-provenance.json'):
-        shutil.copy2(ROOT / 'tools/packaging/resources' / name, notices / name)
+    populate(payload)
     launcher = stage / 'usr/bin/merlin'
     launcher.parent.mkdir(parents=True)
     launcher.write_text('#!/bin/sh\nset -eu\n'

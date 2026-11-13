@@ -37,7 +37,7 @@ time; failed source/noise callbacks also preserve later generator draws when the
 stage is used independently.
 
 The channel CLI uses source and received-payload selections in
-[the probe request](../../../examples/channel-probes.json). Test-point export is
+[the probe request](../../../examples/cli/channel-probes.json). Test-point export is
 also a public generic Rust writer adapter for future consumers. See
 [channel CLI](../channel-runner/cli.md), [stage observation](test-points.md), and
 [public APIs](../../reference/public-api.md).

@@ -43,8 +43,8 @@ jobs:
           pattern: merlin-assets-*
           path: dist/native
       - name: Verify and collect successful native packages
-        run: python3 tools/packaging/collect_release.py --source dist/native --output dist/release --expected-artifacts merlin-assets-linux-x64 merlin-assets-desktop-ubuntu22-amd64
-      - name: Publish tested CLI and Ubuntu desktop release
+        run: python3 tools/packaging/collect_release.py --source dist/native --output dist/release --expected-artifacts merlin-assets-linux-x64 merlin-assets-desktop-ubuntu22-amd64 merlin-assets-desktop-windows-amd64
+      - name: Publish tested Linux CLI and Ubuntu/Windows desktop release
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}

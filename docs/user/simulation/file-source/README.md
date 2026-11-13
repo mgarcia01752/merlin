@@ -41,14 +41,14 @@ Build once, then use new output paths:
 ```bash
 scripts/cargo-local.sh build -p ofdm-fec-cli --release --locked
 target/release/ofdm-fec channel \
-  --input examples/channel-file.json \
-  --payload-file examples/payloads/message.txt \
+  --input examples/cli/channel-file.json \
+  --payload-file examples/cli/payloads/message.txt \
   --output file-result.json \
   --recovered-file recovered-message.txt
-cmp examples/payloads/message.txt recovered-message.txt
+cmp examples/cli/payloads/message.txt recovered-message.txt
 ```
 
-The [complete request](../../../../examples/channel-file.json) uses pilot-derived
+The [complete request](../../../../examples/cli/channel-file.json) uses pilot-derived
 reception,1ms observation and a20,000-bit target with fill seed1. Any binary file
 within the bounds can replace the text path; file extensions are not interpreted.
 Set `"source": {"kind":"file"}` to send once without appended PRBS. Omitting

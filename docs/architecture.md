@@ -2197,3 +2197,32 @@ from the accepted profile; Full Span and shared pointer/keyboard navigation
 change only the view, and capture/recipe edits retain zoom. See the
 [design](development/features/rxmer-designer/design.md) and
 [user guide](user/measurement-inputs/rxmer-designer.md).
+
+### UI-MSI-01: Windows desktop delivery
+
+Windows x64 adds a Qt desktop MSI alongside the Ubuntu desktop and Linux CLI.
+No Windows CLI package is part of the release inventory; macOS remains deferred.
+`tools/packaging/desktop_payload.py` shares the existing public examples/docs
+and full Cargo/Qt notices between native desktop builders. Windows staging
+uses windeployqt, app-local MSVC CRT and WiX3 with stable desktop-only upgrade
+identity, executable/installer icons and optional unchecked desktop shortcut.
+The native Qt boundary conditionally links GTK on Linux and Windows Common Item
+Dialogs on Windows. Scientific libraries and capture ownership are unchanged.
+
+Linux APT update/recovery code is compiled only for Linux. Windows preferences
+use LOCALAPPDATA; verified Windows update notifications open the full MSI release
+page. Installation and later launch retain normal Windows security prompts.
+The shared workflow adds native Windows adapter/QML checks; tag publication
+requires Windows MSI installed lifecycle checks alongside every existing
+Ubuntu/security gate. Native Windows validation is configured but still pending
+execution evidence. [Design](development/features/windows-desktop/design.md).
+
+### EXAMPLES-01: separate CLI example requests
+
+Standalone CLI requests and their sample file payload live under `examples/cli/`
+with a file/use-case/command README. UI-ready saved state stays under
+`examples/workbench/`; measurement collections remain shared data under
+`examples/measurements/`. The top-level example index explains these distinctions.
+Desktop staging uses the explicit workbench/measurement allowlist and excludes
+CLI requests. CLI archives retain all public examples. No input schema or
+scientific bytes change. [Design](development/features/example-layout/design.md).

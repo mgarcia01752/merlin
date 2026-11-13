@@ -53,7 +53,7 @@ fn data_registry_covers_optional_16k_without_claiming_simulation() {
 #[test]
 fn both_protocol_scopes_allow_16k_analysis_with_an_explicit_device_cap() {
     let mut scenario: ScenarioDocument =
-        serde_json::from_str(include_str!("../../../examples/scenario.json")).unwrap();
+        serde_json::from_str(include_str!("../../../examples/cli/scenario.json")).unwrap();
     for frame in &mut scenario.frames {
         frame.mer_db[0] = Some(55.0);
     }

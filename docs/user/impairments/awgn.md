@@ -28,7 +28,7 @@ does not reseed or change output. Invalid/discontinuous calls reject before
 committing the candidate RNG or sample clock. State is constant-size across long
 runs; simulation callbacks observe completed channel input/output blocks.
 
-`examples/channel-awgn.json` selects power0.001, corresponding to approximately
+`examples/cli/channel-awgn.json` selects power0.001, corresponding to approximately
 30dB data MER at unity response. Actual diagnostic MER is measured from received
 symbols and need not equal the target exactly in a finite run. The initial sample
 AWGN mode requires unity H; use the explicitly post-equalization RxMER mode for

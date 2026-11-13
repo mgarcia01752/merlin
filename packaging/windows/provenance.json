@@ -1,0 +1,20 @@
+{
+  "source": "docs/images/logo/merlin-icon-dark.png",
+  "source_sha256": "c951e457d396d2bbbaab63e54da7b5c0381597d70d58f0c2cd26348e112d8234",
+  "ico_sizes": [
+    16,
+    20,
+    24,
+    32,
+    40,
+    48,
+    64,
+    128,
+    256
+  ],
+  "outputs": {
+    "merlin.ico": "e29ea7ea16244d16ccd0ddf594202d13db09bb92020540061297daf90c5f7f5a",
+    "dialog.bmp": "03b9ae9dc1df2f324eddfb288af38a8cb5a0e345645755e7b4a08a7ab94df581",
+    "banner.bmp": "5c7f9c50f5dbefef09a0ba74b7a8d06b8d8d88928c822a2fbca094b2310f1b87"
+  }
+}

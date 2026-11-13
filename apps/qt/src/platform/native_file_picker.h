@@ -4,6 +4,9 @@
  */
 #pragma once
 #include <QString>
+#ifdef _WIN32
+#include "windows_file_picker.h"
+#endif
 #ifdef __linux__
 #pragma push_macro("signals")
 #undef signals
@@ -81,6 +84,8 @@ inline QString chooseNativeSelection(const QString &title, bool multiple, bool s
     g_object_unref(chooser);
     g_main_loop_unref(selection.loop);
     return result;
+#elif defined(_WIN32)
+    return chooseWindowsSelection(title, multiple, save, workbench);
 #else
     return QStringLiteral("ERROR: OS-native file selection is implemented for Ubuntu only.");
 #endif

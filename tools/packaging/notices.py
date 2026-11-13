@@ -6,6 +6,7 @@
 """Collect complete Cargo dependency notices from pinned local source metadata."""
 import hashlib
 import json
+import platform
 import shutil
 import subprocess
 from pathlib import Path
@@ -25,7 +26,7 @@ def collect_notices(root, destination, manifest=None):
     Raises:
         ValueError for missing or unsafe notices; Cargo/copy errors propagate.
     """
-    cargo = ["bash", (root / "scripts/cargo-local.sh").as_posix()]
+    cargo = ["cargo", "+1.85.1"] if platform.system() == "Windows" else ["bash", (root / "scripts/cargo-local.sh").as_posix()]
     information = subprocess.run([*cargo, "-vV"], cwd=root, check=True,
                                  capture_output=True, text=True).stdout
     host = next(line.removeprefix("host: ") for line in information.splitlines() if line.startswith("host: "))

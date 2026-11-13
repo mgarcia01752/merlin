@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Application-global preferences and a bounded release-check worker.
+#[cfg(target_os = "linux")]
+pub(crate) mod install;
+#[cfg(not(target_os = "linux"))]
+#[path = "install_unavailable.rs"]
 pub(crate) mod install;
 mod release;
 use serde_json::{json, Value};
@@ -21,11 +25,17 @@ pub(crate) struct Model {
 }
 impl Default for Model {
     fn default() -> Self {
-        let preferences = std::env::var_os("XDG_CONFIG_HOME")
-            .map(PathBuf::from)
-            .filter(|path| path.is_absolute())
-            .or_else(|| std::env::var_os("HOME").map(|home| PathBuf::from(home).join(".config")))
-            .map(|base| base.join("merlin/preferences.json"));
+        let preferences = if cfg!(target_os = "windows") {
+            std::env::var_os("LOCALAPPDATA").map(PathBuf::from)
+        } else {
+            std::env::var_os("XDG_CONFIG_HOME")
+                .map(PathBuf::from)
+                .filter(|path| path.is_absolute())
+                .or_else(|| {
+                    std::env::var_os("HOME").map(|home| PathBuf::from(home).join(".config"))
+                })
+        }
+        .map(|base| base.join("merlin/preferences.json"));
         let enabled = preferences
             .as_ref()
             .and_then(|path| {
@@ -50,7 +60,7 @@ impl Default for Model {
             pending: None,
             progress: None,
             preferences,
-            state: json!({"enabled":enabled,"busy":false,"available":false,"status":"Check for a newer MERLIN release.","url":""}),
+            state: json!({"manual_update":cfg!(target_os = "windows"),"enabled":enabled,"busy":false,"available":false,"status":"Check for a newer MERLIN release.","url":""}),
         }
     }
 }
@@ -139,6 +149,7 @@ impl Model {
                 Err(TryRecvError::Empty) => {}
             }
         }
+        self.state["manual_update"] = json!(cfg!(target_os = "windows"));
         self.state.clone()
     }
     /// Atomically saves the global startup preference outside workbench files.
