@@ -1237,6 +1237,11 @@ validation are complete; the user guide includes the current dark capture.
   All six focused FAQ tests pass; native MSI/lifecycle remains UI-MSI-02.
   [Design](features/windows-desktop/design.md#ui-msi-03-portable-offline-faq-lookup).
 
+- [x] **UI-MSI-04** Retain Windows QML text/JUnit/startup logs and exact exit
+  status after run 43370737351 passes adapter tests but fails silently in QML.
+  Verify file loggers with one local QML test; native cause remains pending.
+  [Design](features/windows-desktop/design.md#ui-msi-04-retain-windows-qml-runner-diagnostics).
+
 ### Example organization
 
 - [x] **EXAMPLES-01** Move standalone JSON requests/payload to `examples/cli/`,

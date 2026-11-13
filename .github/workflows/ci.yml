@@ -255,6 +255,14 @@ jobs:
           ./scripts/windows/qt-desktop.ps1 setup
       - name: Validate adapter, QML and native UI build
         run: ./scripts/windows/qt-desktop.ps1 check
+      - name: Retain Windows QML diagnostics
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: merlin-windows-qml-evidence
+          path: dist/windows-qml-logs/
+          if-no-files-found: warn
+          retention-days: 14
       - name: Configure WiX 3.14.1
         if: inputs.release && github.ref_type == 'tag'
         run: |

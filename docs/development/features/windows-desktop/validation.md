@@ -69,3 +69,21 @@ tests filtered out), including explicit LF/CRLF regression coverage. Rust
 formatting and diff whitespace checks pass. The full Qt check was stopped at
 the user's request; no full Rust/QML suite or application rebuild was completed.
 The focused command compiled its test binary in 3m44s; tests took 0.01s.
+
+## UI-MSI-04: Windows QML failure needs startup/test logs
+
+[Run 43370737351](https://github.com/mgarcia01752/merlin/actions/runs/43370737351)
+passes all 72 Windows adapter tests, confirming the FAQ repair. QML exits
+without console output; the log records only `QML tests failed`. Ubuntu and
+security jobs pass, while MSI packaging/lifecycle and publication are skipped.
+No specific QML assertion or startup cause is established from that evidence.
+
+The Windows check now explicitly waits for the runner and captures text/JUnit,
+stdout/stderr and decimal/hex exit status under `dist/windows-qml-logs/`. CI
+uploads that directory even on failure for Master and Release. Checks still fail
+on a nonzero runner exit. No assertions or hosted validation gates are removed.
+
+A single existing QML layout test passes locally with both file loggers; the
+JUnit file parses as XML. No Rust rebuild/full suite was run. Windows PowerShell
+and GUI-process behavior remain pending native execution; this is a diagnostic
+change, not a claimed repair of the unidentified QML failure.

@@ -62,11 +62,34 @@ if ($Action -eq 'check') {
     }
     $env:QT_QPA_PLATFORM = 'offscreen'
     $env:QT_QUICK_BACKEND = 'software'
-    & "$env:QT_SDK_DIR/bin/qmltestrunner.exe" -input "$Root/apps/qt/tests"
-    if ($LASTEXITCODE -ne 0) {
-        throw 'QML tests failed'
+    $QmlLogs = "$Root/dist/windows-qml-logs"
+    New-Item -ItemType Directory -Force -Path $QmlLogs | Out-Null
+    # A GUI executable may not attach its test output to the Actions console.
+    # Wait explicitly and retain both test loggers and startup stderr on failure.
+    $QmlArguments = @('-input', "`"$Root/apps/qt/tests`"",
+        '-o', "`"$QmlLogs/results.txt,txt`"",
+        '-o', "`"$QmlLogs/results.xml,junitxml`"", '-v1')
+    try {
+        $QmlProcess = Start-Process -FilePath "$env:QT_SDK_DIR/bin/qmltestrunner.exe" `
+            -ArgumentList $QmlArguments -Wait -PassThru -NoNewWindow `
+            -RedirectStandardOutput "$QmlLogs/stdout.txt" `
+            -RedirectStandardError "$QmlLogs/stderr.txt"
+        $QmlExit = $QmlProcess.ExitCode
+        $QmlExitHex = '{0:X8}' -f [BitConverter]::ToUInt32([BitConverter]::GetBytes([int]$QmlExit), 0)
+        "QML runner exit: $QmlExit (0x$QmlExitHex)" |
+            Tee-Object -FilePath "$QmlLogs/exit.txt"
+        if ($QmlExit -ne 0) {
+            throw "QML tests failed: exit $QmlExit (0x$QmlExitHex); see dist/windows-qml-logs"
+        }
+    } finally {
+        foreach ($LogName in @('stdout.txt', 'stderr.txt', 'results.txt')) {
+            if (Test-Path "$QmlLogs/$LogName") {
+                Write-Host "QML $LogName"
+                Get-Content "$QmlLogs/$LogName"
+            }
+        }
+        Remove-Item Env:QT_QPA_PLATFORM
     }
-    Remove-Item Env:QT_QPA_PLATFORM
 }
 $BuildArgs = @('+1.85.1', 'build', '--manifest-path', $Manifest, '--locked')
 if ($Action -eq 'package') {

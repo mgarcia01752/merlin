@@ -60,3 +60,15 @@ unknown-code handling and offline-only behavior. Test every catalog section with
 both line endings, including final-section boundaries and the full index.
 Run only focused FAQ tests locally, as requested; Windows packaging/lifecycle
 remains pending a new hosted run. Hosted validation gates remain unchanged.
+
+## UI-MSI-04: retain Windows QML runner diagnostics
+
+Run 43370737351 passes all 72 Windows adapter tests, including the FAQ repair,
+but the QML runner exits without recorded test output. The root cause is not
+yet established. Explicitly wait for the GUI executable, capture stdout/stderr,
+and request Qt Test text/JUnit files. Print those logs and decimal/hex exit
+status before failing. Upload diagnostics on both Master and Release failures;
+keep MSI evidence conditional on release. Do not skip tests or alter assertions.
+Only focused local checks are requested; native runner behavior requires CI.
+Qt documents multiple output loggers in the
+[Qt Test options](https://doc.qt.io/qt-6.8/qtest-overview.html#options).
