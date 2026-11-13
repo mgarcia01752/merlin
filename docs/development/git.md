@@ -37,6 +37,13 @@ only the captured branch object. Documentation-only ranges skip the local
 build/test gate automatically; all other ranges run `scripts/check-before-push.sh`.
 Feature branches must be reviewed and merged locally before using this helper.
 
+The push helper ends with `Push command total time (--tag-patch): HHh MMm SSs
+(exit N)` using the selected mode (or `branch`). This includes local validation,
+builds, version/tag work and the network push, including failed commands. Dry-run
+and no-op commands report their own elapsed time too. Hosted CI runs separately
+and is not included. Nested unit tests also print their selected-phase total.
+See [command timing](features/command-timing/design.md).
+
 The validation gate includes version consistency, Python helper tests, Bash
 syntax/ShellCheck, rustfmt, Clippy, all workspace tests, analysis-only tests,
 a release CLI build and an actual seeded simulation smoke run. It installs

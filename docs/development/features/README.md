@@ -27,6 +27,7 @@ from a fresh clone and are deliberately not Markdown link targets.
 
 | Work area | Records |
 | --- | --- |
+| local command timing | [design](command-timing/design.md) |
 | parallel local tests | [design](parallel-local-tests/design.md) |
 | user-facing UI wording | [design](ui-copy/design.md) |
 | Ubuntu desktop/update notification | [design](ubuntu-desktop/design.md) |

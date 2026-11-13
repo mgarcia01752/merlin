@@ -12,6 +12,17 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
 REMOTE="origin"
+PUSH_STARTED_SECONDS=$SECONDS
+
+# Report complete wrapper time, including validation and delegated releases.
+# Return the original status so failed guards/tests still prevent the push.
+report_push_time() {
+  local status=$?
+  local elapsed=$((SECONDS - PUSH_STARTED_SECONDS))
+  printf '\nPush command total time (%s): %02dh %02dm %02ds (exit %d)\n' \
+    "${PUSH_MODE:-branch}" "$((elapsed / 3600))" "$((elapsed / 60 % 60))" "$((elapsed % 60))" "$status" >&2
+  return "$status"
+}
 
 # Print command usage to stdout without changing repository state.
 # Arguments are unused unless described above; failures stop this script.
@@ -91,6 +102,8 @@ while [[ $# -gt 0 ]]; do
   esac
   shift
 done
+trap report_push_time EXIT
+
 if [[ "$SKIP_TEST" == 1 && "$TEST_QUICK" == 1 ]]; then
   die "Choose --skip-test or --test-quick, not both"
 fi
@@ -119,7 +132,8 @@ if [[ ${#RELEASE_ARGS[@]} -gt 0 ]]; then
   if [[ "$DRY_RUN" == 1 ]]; then
     RELEASE_ARGS+=(--dry-run)
   fi
-  exec python3 "${SCRIPT_DIR}/push-release.py" "${RELEASE_ARGS[@]}"
+  python3 "${SCRIPT_DIR}/push-release.py" "${RELEASE_ARGS[@]}"
+  exit 0
 fi
 if [[ "$DRY_RUN" != 0 ]]; then
   die "--dry-run requires a release mode"

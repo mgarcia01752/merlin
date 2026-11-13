@@ -69,6 +69,8 @@ esac
         result, trace = self.exercise("fail")
         self.assertEqual(result.returncode, 17)
         self.assertEqual(trace, "validate\n")
+        self.assertIn("Push command total time (branch): ", result.stderr)
+        self.assertIn("(exit 17)", result.stderr)
 
     def test_explicit_skip_test_is_forwarded_without_bypassing_gate(self):
         """Branch pushes forward the option and retain failure handling."""

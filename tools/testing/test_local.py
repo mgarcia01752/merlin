@@ -17,13 +17,14 @@ ROOT = Path(__file__).resolve().parents[2]
 class LocalRunnerTests(unittest.TestCase):
     """Verify bounded workers, phase ordering and propagated failures."""
 
-    def exercise(self, *arguments, workers='4', failure='0'):
+    def exercise(self, *arguments, workers='4', failure='0', delay='0'):
         """Run the actual launcher against isolated command doubles.
 
         Args:
             arguments: Launcher phase and optional nextest selection arguments.
             workers: Test-worker environment override.
             failure: Exit status returned by the first fake Cargo command.
+            delay: Seconds spent by each fake Cargo command for elapsed checks.
         Returns:
             Process result and dispatched command lines; no actual tests run.
         """
@@ -36,15 +37,35 @@ class LocalRunnerTests(unittest.TestCase):
             python.write_text('#!/bin/sh\ncase "$1" in */quick_tests.py) echo "not(test(=omitted_sweep))" ;; *) printf "%s/bin/cargo-nextest\\n" "$FAKE_ROOT" ;; esac\n')
             python.chmod(0o755)
             cargo = root / 'scripts/cargo-local.sh'
-            cargo.write_text('#!/bin/sh\nprintf "%s\\n" "$*" >> "$TRACE"\nexit "$FAILURE"\n')
+            cargo.write_text('#!/bin/sh\nprintf "%s\\n" "$*" >> "$TRACE"\nsleep "$FAKE_DELAY"\nexit "$FAILURE"\n')
             cargo.chmod(0o755)
             trace = root / 'trace'
             environment = dict(os.environ, PATH=f"{root / 'bin'}:{os.environ['PATH']}",
                                FAKE_ROOT=str(root), TRACE=str(trace), FAILURE=failure,
-                               MERLIN_TEST_THREADS=workers)
+                               MERLIN_TEST_THREADS=workers, FAKE_DELAY=delay)
             result = subprocess.run(['bash', str(root / 'scripts/test-local.sh'), *arguments],
                                     env=environment, text=True, capture_output=True)
             return result, trace.read_text().splitlines() if trace.exists() else []
+
+    def test_elapsed_summary_includes_child_work_and_preserves_failure(self):
+        """End-to-end timing includes actual waits and retains the child's status."""
+        result, commands = self.exercise('example', delay='1.1')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        line = result.stderr.strip().splitlines()[-1]
+        self.assertTrue(line.startswith('Unit test total time (example): '), line)
+        duration = line.split(': ', 1)[1].split()[:3]
+        self.assertEqual([value[-1] for value in duration], ['h', 'm', 's'])
+        seconds = sum(int(value[:-1]) * factor for value, factor in zip(duration, (3600, 60, 1)))
+        self.assertGreaterEqual(seconds, 1)
+        self.assertIn('(exit 0)', line)
+        result, commands = self.exercise('all', failure='17')
+        self.assertEqual(result.returncode, 17)
+        self.assertIn('Unit test total time (all): ', result.stderr)
+        self.assertIn('(exit 17)', result.stderr)
+        for mode in ('--help', 'list'):
+            result, commands = self.exercise(mode)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertNotIn('Unit test total time', result.stderr)
 
     def test_all_phases_keep_doctests_examples_and_analysis(self):
         """Parallel scheduling preserves each formerly required test phase."""

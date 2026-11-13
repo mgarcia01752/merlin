@@ -85,6 +85,12 @@ Tests still execute every time; successful results are not cached. Cargo retains
 and reuses build artifacts. Worker overrides accept 1..32; start at four on this
 eight-CPU VM and increase only after measuring CPU/memory pressure.
 
+The runner ends with `Unit test total time (all): HHh MMm SSs (exit N)`
+(or the selected phase), including setup, compilation and every selected test
+and doctest. It reports normal success and failure exits; help and list requests
+do not print a test total. This measures elapsed command time, separate from
+simulation time and the Qt checks. See [command timing](features/command-timing/design.md).
+
 Nextest prints individual results and slow-case times. The latest completed
 phase's JUnit report is `target/nextest/local/junit.xml`; retain the full console
 log when measuring all phases. See the [design and measured validation](features/parallel-local-tests/design.md).

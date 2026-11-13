@@ -1239,3 +1239,11 @@ validation are complete; the user guide includes the current dark capture.
   consumers and exclude CLI requests from desktop payloads. Keep measurement
   data and workbenches separate; preserve all moved bytes.
   [Design](features/example-layout/design.md).
+
+### Command timing
+
+- [x] **TOOL-TIME-01** Report total elapsed hours/minutes/seconds and original
+  exit status for local unit tests and branch/release push commands. Include
+  compilation and delegated patch releases; retain existing validation guards.
+  Verify success, failure, elapsed waits and release dry-runs with isolated tests.
+  [Design](features/command-timing/design.md).

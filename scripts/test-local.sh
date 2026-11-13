@@ -8,6 +8,18 @@
 set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
+TEST_STARTED_SECONDS=$SECONDS
+
+# Report the complete selected test command duration on success or failure.
+# Preserve the original exit status; include setup, compilation and doctests.
+report_test_time() {
+  local status=$?
+  local elapsed=$((SECONDS - TEST_STARTED_SECONDS))
+  printf '\nUnit test total time (%s): %02dh %02dm %02ds (exit %d)\n' \
+    "$ACTION" "$((elapsed / 3600))" "$((elapsed / 60 % 60))" "$((elapsed % 60))" "$status" >&2
+  return "$status"
+}
+
 ACTION="${1:-all}"
 if [[ $# -gt 0 ]]; then shift; fi
 case "$ACTION" in
@@ -19,6 +31,9 @@ case "$ACTION" in
   all|workspace|analysis|example|list) ;;
   *) echo "Unknown local test phase: $ACTION" >&2; exit 2 ;;
 esac
+if [[ "$ACTION" != list ]]; then
+  trap report_test_time EXIT
+fi
 QUICK_TEST=0
 NEXT_ARGS=()
 for argument in "$@"; do
