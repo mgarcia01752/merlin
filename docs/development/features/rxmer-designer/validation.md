@@ -83,3 +83,11 @@ mouse toggling, retained tilt and capture range, omitted/restored preview recipe
 blocked stepping and independent sibling effects. The native Qt build passes;
 native dark inspection confirms the unchecked controls are dimmed and disabled,
 and checking tilt restores the controls. The guide capture is updated.
+
+## RXMER-DESIGN-07: direction button
+
+All 67 QML checks and the native Qt build pass. Direction tests verify both
+arrow labels follow the signed value, mouse and keyboard reversal retain
+magnitude and zoom, and inactive/zero/invalid drafts remain guarded. Native
+dark inspection confirms Low ← High at −4 dB and Low → High at +4 dB,
+with the corresponding preview slopes. The guide capture is updated.

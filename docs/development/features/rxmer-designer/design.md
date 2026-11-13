@@ -99,3 +99,13 @@ and keep Ripple and Notch independent. Guard stepping while tilt is off.
 Verify default disabled state, mouse toggling, retained values/scope and preview
 omission/restoration in QML; rebuild and inspect the native window. Scientific
 validation, persistence and Rust ownership remain unchanged.
+
+## RXMER-DESIGN-07: direction button replaces tilt label
+
+Replace the High − low edge label and separate Flip action with one compact
+direction button before the signed dB field. Display Low → High for positive
+values and Low ← High for negative values, pointing toward the higher MER edge.
+Clicking reverses the sign without changing magnitude, scope or zoom. Retain
+the signed field, dB unit, step actions and unchecked/invalid/zero guards. QML
+owns this presentation; Rust recipe semantics remain unchanged. Verify labels
+and keyboard/mouse reversal, rebuild and update the native guide capture.

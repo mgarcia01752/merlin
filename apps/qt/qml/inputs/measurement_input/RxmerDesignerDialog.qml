@@ -100,7 +100,15 @@ WorkbenchDialog {
                     Label {text:"Frequency effects";color:theme.accent;font.bold:true}
                     CheckBox {id:tilt;objectName:"designerTilt";text:"RxMER tilt";onToggled:dialog.refresh()}
                     RowLayout {enabled:tilt.checked;opacity:enabled ? 1:0.5
-                        Label {text:"High − low edge (dB)";color:theme.text}
+                        WorkbenchActionButton {
+                            theme:dialog.theme;objectName:"designerTiltDirection";text:Number(tiltDb.text)<0 ? "Low ← High":"Low → High";compact:true
+                            enabled:dialog.canStepTilt(0) && Number(tiltDb.text)!==0
+                            onClicked:{tiltDb.text=String(-Number(tiltDb.text));dialog.refresh()}
+                            Accessible.name:"Reverse RxMER tilt direction"
+                            ToolTip.visible:hovered || activeFocus
+                            ToolTip.text:"The arrow points toward the higher MER edge. Click to reverse direction, keeping the same magnitude. Positive dB raises the high-frequency edge; negative dB lowers it."
+                            Accessible.description:ToolTip.text
+                        }
                         TextField {
                             id:tiltDb;objectName:"designerTiltDb";text:"-4";Layout.preferredWidth:80
                             Accessible.name:"High minus low edge tilt in dB"
@@ -108,6 +116,7 @@ WorkbenchDialog {
                             Keys.onUpPressed:dialog.stepTilt(1)
                             Keys.onDownPressed:dialog.stepTilt(-1)
                         }
+                        Label {text:"dB";color:theme.text}
                         WorkbenchActionButton {
                             theme:dialog.theme;objectName:"designerTiltDown";text:"↓";compact:true
                             enabled:dialog.canStepTilt(-1);onClicked:dialog.stepTilt(-1)
@@ -120,15 +129,7 @@ WorkbenchDialog {
                             Accessible.name:"Increase RxMER tilt by 1 dB"
                             ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
                         }
-                        WorkbenchActionButton {
-                            theme:dialog.theme;objectName:"designerTiltFlip";text:"Flip";compact:true
-                            enabled:dialog.canStepTilt(0) && Number(tiltDb.text)!==0
-                            onClicked:{tiltDb.text=String(-Number(tiltDb.text));dialog.refresh()}
-                            Accessible.name:"Reverse RxMER tilt direction"
-                            ToolTip.visible:hovered || activeFocus
-                            ToolTip.text:"Reverse the slope: −5 dB ↔ +5 dB. Positive tilt raises the high-frequency edge; negative tilt lowers it."
-                            Accessible.description:ToolTip.text
-                        }
+
                     }
                     RxmerDesignScope {id:tiltScope;objectName:"designerTiltScope";enabled:tilt.checked;opacity:enabled ? 1:0.5;theme:dialog.theme;captureCount:dialog.captureCount;onEdited:dialog.refresh()}
                     Rectangle {Layout.fillWidth:true; height:1;color:theme.line}

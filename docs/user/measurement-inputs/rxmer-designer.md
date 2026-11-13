@@ -8,13 +8,16 @@ an association anchor; it is not a measured acquisition time.
 ![RxMER Designer with a continuous PLC region](../../images/workbench/rxmer-designer-dark.png)
 
 Enable the effects you need. When **RxMER tilt** is unchecked, its value,
-arrows, Flip and capture-range controls are disabled. Their settings are retained
-and restored when you check it again. With tilt enabled, the text box remains
-editable; its **↓ / ↑** buttons or the field’s Up/Down keys adjust the current value by exactly **1 dB**.
+arrows, direction button and capture-range controls are disabled. Their settings
+are retained and restored when you check it again. With tilt enabled, the text box remains
+editable; its **↓ / ↑** buttons or the field’s Up/Down keys adjust the current
+value by exactly **1 dB**.
 Fractional typed values remain supported. Steps beyond ±60 dB or from invalid
-text are disabled. Press **Flip** beside the arrows to reverse the tilt direction
+text are disabled. Press the **Low → High / Low ← High** button before the
+field to reverse the tilt direction
 by changing its sign: **−5 dB ↔ +5 dB**. Positive tilt raises the high-frequency
-edge; negative tilt lowers it. Flip preserves magnitude, capture scope and zoom,
+edge; negative tilt lowers it. The arrow points toward the higher MER edge.
+The direction button preserves magnitude, capture scope and zoom,
 and is disabled for zero or invalid text.
 
 The preview overlays the original dashed curve and

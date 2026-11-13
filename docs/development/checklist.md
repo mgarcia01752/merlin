@@ -1212,3 +1212,9 @@ validation are complete; the user guide includes the current dark capture.
   capture scope while RxMER tilt is unchecked; preserve drafts and keep
   other effects independent. All 67 QML checks and the native build pass.
   [Design](features/rxmer-designer/design.md#rxmer-design-06-disable-inactive-tilt-controls).
+
+- [x] **RXMER-DESIGN-07** Replace the tilt label and Flip action with a
+  Low → High / Low ← High direction button before the signed dB field.
+  Keep reversal, step controls and disabled guards; all 67 QML checks and
+  the native build pass. Native direction changes verified.
+  [Design](features/rxmer-designer/design.md#rxmer-design-07-direction-button-replaces-tilt-label).
