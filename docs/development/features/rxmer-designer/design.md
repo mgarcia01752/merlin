@@ -90,3 +90,12 @@ and retains magnitude, capture scope and zoom. Disable it for zero or invalid
 text. Existing Rust recipe validation and low-frequency anchoring remain the
 scientific authority. Verify both directions, fractional magnitude, bounds,
 keyboard activation and retained zoom; rebuild and capture the native window.
+
+## RXMER-DESIGN-06: disable inactive tilt controls
+
+Gate the tilt value/action row and capture scope on the RxMER tilt checkbox
+in RxmerDesignerDialog.qml. Dim inactive controls, preserve their draft values
+and keep Ripple and Notch independent. Guard stepping while tilt is off.
+Verify default disabled state, mouse toggling, retained values/scope and preview
+omission/restoration in QML; rebuild and inspect the native window. Scientific
+validation, persistence and Rust ownership remain unchanged.

@@ -26,6 +26,30 @@ Pane {
     TestCase {
         name:"RxmerDesigner";when:windowShown
         function cleanup(){dialog.close();wait(100)}
+        function test_unchecked_tilt_disables_controls_and_retains_draft(){
+            dialog.open();tryCompare(dialog,"visible",true)
+            const toggle=findChild(dialog,"designerTilt"), field=findChild(dialog,"designerTiltDb")
+            const scope=findChild(dialog,"designerTiltScope")
+            const up=findChild(dialog,"designerTiltUp"), down=findChild(dialog,"designerTiltDown"), flip=findChild(dialog,"designerTiltFlip")
+            verify(!toggle.checked);verify(toggle.enabled)
+            verify(!field.enabled);verify(!scope.enabled)
+            verify(!up.enabled);verify(!down.enabled);verify(!flip.enabled)
+            mouseClick(toggle)
+            verify(field.enabled);verify(scope.enabled);verify(up.enabled);verify(down.enabled);verify(flip.enabled)
+            field.text="-6";scope.restore({mode:"range",first:10,last:20});dialog.refresh()
+            mouseClick(toggle)
+            verify(!field.enabled);verify(!scope.enabled)
+            verify(!up.enabled);verify(!down.enabled);verify(!flip.enabled)
+            compare(backend.lastRequest.recipe.tilt,null)
+            dialog.stepTilt(1);compare(field.text,"-6")
+            verify(findChild(dialog,"designerRipple").enabled)
+            verify(findChild(dialog,"designerNotch").enabled)
+            mouseClick(toggle)
+            compare(field.text,"-6");verify(scope.enabled)
+            compare(backend.lastRequest.recipe.tilt.tilt_db,-6)
+            compare(backend.lastRequest.recipe.tilt.scope.first,10)
+            compare(backend.lastRequest.recipe.tilt.scope.last,20)
+        }
         function test_flip_reverses_signed_tilt_without_changing_magnitude_or_zoom(){
             dialog.open();tryCompare(dialog,"visible",true)
             findChild(dialog,"designerTilt").checked=true

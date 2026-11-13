@@ -75,3 +75,11 @@ zoom. The native Qt executable is rebuilt; the guide explains the visible Flip
 button and signed slope direction. The scientific recipe and persistence format
 are unchanged. Native inspection confirms the positive and negative slopes
 reverse when Flip is clicked.
+
+## RXMER-DESIGN-06: inactive tilt controls
+
+All 67 QML checks pass. The new interaction test covers initial disabled state,
+mouse toggling, retained tilt and capture range, omitted/restored preview recipe,
+blocked stepping and independent sibling effects. The native Qt build passes;
+native dark inspection confirms the unchecked controls are dimmed and disabled,
+and checking tilt restores the controls. The guide capture is updated.

@@ -1207,3 +1207,8 @@ validation are complete; the user guide includes the current dark capture.
   keyboard activation, fractional values, zero and invalid drafts;
   66 QML checks and the rebuilt native Qt application pass.
   [Design](features/rxmer-designer/design.md#rxmer-design-05-reverse-tilt-direction).
+
+- [x] **RXMER-DESIGN-06** Disable the tilt value, step/Flip actions and
+  capture scope while RxMER tilt is unchecked; preserve drafts and keep
+  other effects independent. All 67 QML checks and the native build pass.
+  [Design](features/rxmer-designer/design.md#rxmer-design-06-disable-inactive-tilt-controls).

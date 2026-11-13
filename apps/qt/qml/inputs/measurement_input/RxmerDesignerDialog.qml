@@ -35,7 +35,7 @@ WorkbenchDialog {
     }
     function canStepTilt(delta) {
         const value=Number(tiltDb.text)
-        return tiltDb.text.trim().length>0 && Number.isFinite(value) && value>=-60 && value<=60 && value+delta>=-60 && value+delta<=60
+        return tilt.checked && tiltDb.text.trim().length>0 && Number.isFinite(value) && value>=-60 && value<=60 && value+delta>=-60 && value+delta<=60
     }
     function stepTilt(delta) {
         if (canStepTilt(delta)) {tiltDb.text=String(Number(tiltDb.text)+delta);refresh()}
@@ -99,7 +99,8 @@ WorkbenchDialog {
                     width:parent.width;spacing:8
                     Label {text:"Frequency effects";color:theme.accent;font.bold:true}
                     CheckBox {id:tilt;objectName:"designerTilt";text:"RxMER tilt";onToggled:dialog.refresh()}
-                    RowLayout {Label {text:"High − low edge (dB)";color:theme.text}
+                    RowLayout {enabled:tilt.checked;opacity:enabled ? 1:0.5
+                        Label {text:"High − low edge (dB)";color:theme.text}
                         TextField {
                             id:tiltDb;objectName:"designerTiltDb";text:"-4";Layout.preferredWidth:80
                             Accessible.name:"High minus low edge tilt in dB"
@@ -129,7 +130,7 @@ WorkbenchDialog {
                             Accessible.description:ToolTip.text
                         }
                     }
-                    RxmerDesignScope {id:tiltScope;theme:dialog.theme;captureCount:dialog.captureCount;onEdited:dialog.refresh()}
+                    RxmerDesignScope {id:tiltScope;objectName:"designerTiltScope";enabled:tilt.checked;opacity:enabled ? 1:0.5;theme:dialog.theme;captureCount:dialog.captureCount;onEdited:dialog.refresh()}
                     Rectangle {Layout.fillWidth:true; height:1;color:theme.line}
                     CheckBox {id:ripple;objectName:"designerRipple";text:"Ripple";onToggled:dialog.refresh()}
                     RowLayout {Label {text:"Peak-to-peak (dB)";color:theme.text}
