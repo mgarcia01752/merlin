@@ -42,7 +42,11 @@ class WindowsDesktopTests(unittest.TestCase):
             self.assertEqual(product.attrib['UpgradeCode'], UPGRADE_CODE)
             self.assertNotEqual(UPGRADE_CODE, __import__('windows').UPGRADE_CODE)
             self.assertIsNotNone(product.find('w:MajorUpgrade', NAMESPACE))
-            self.assertEqual(product.find("w:Icon[@Id='ApplicationIcon']", NAMESPACE).attrib['SourceFile'], str(ARTWORK / 'merlin.ico'))
+            self.assertEqual(product.find("w:Icon[@Id='ApplicationIcon.ico']", NAMESPACE).attrib['SourceFile'], str(ARTWORK / 'merlin.ico'))
+            self.assertEqual(product.find("w:Property[@Id='ARPPRODUCTICON']", NAMESPACE).attrib['Value'],
+                             'ApplicationIcon.ico')
+            for shortcut in product.findall('.//w:Shortcut', NAMESPACE):
+                self.assertEqual(shortcut.attrib['Icon'], 'ApplicationIcon.ico')
             choice = product.find("w:Property[@Id='DESKTOP_SHORTCUT']", NAMESPACE)
             self.assertEqual(choice.attrib, {'Id': 'DESKTOP_SHORTCUT', 'Secure': 'yes'})
             self.assertEqual(product.find(".//w:Component[@Id='DesktopShortcut']/w:Condition", NAMESPACE).text,

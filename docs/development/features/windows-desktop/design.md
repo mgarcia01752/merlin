@@ -103,3 +103,19 @@ No full simulation/Qt suite or native packaging run is required locally.
 Local validation: both focused notice tests pass, including the reproduced
 unpinned checkout failure, exact pinned copied bytes and altered-byte rejection.
 Original reviewed resource bytes/digests are unchanged. Native MSI remains pending.
+
+## UI-MSI-07: cache a valid Installed apps icon
+
+Run 43476334867 creates and installs the MSI but lacks `DisplayIcon` in the
+uninstall registration. The authored Icon table identifier `ApplicationIcon`
+lacks a filename extension. Follow the
+[WiX icon guidance](https://docs.firegiant.com/wix3/tutorial/com-expression-syntax-miscellanea/add-or-remove-programs-entries/)
+and give the `.ico` resource an `.ico` identifier, consistently referenced by
+ARPPRODUCTICON and both shortcuts. Preserve product/component identity.
+Retain the icon assertion, handle missing registry properties explicitly under
+PowerShell strict mode and record registration fields with installer evidence.
+Validate icon references in focused MSI authoring tests; native installed
+registration/repair/removal remains a hosted acceptance requirement.
+
+Local verification: all five focused Windows packaging tests pass, including
+consistent `.ico` references. Native icon registration remains pending CI.

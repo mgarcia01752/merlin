@@ -74,9 +74,9 @@ def author(payload, destination, number):
     element(product, 'MajorUpgrade', Schedule='afterInstallInitialize',
             DowngradeErrorMessage='A newer MERLIN version is already installed.')
     element(product, 'MediaTemplate', EmbedCab='yes', CompressionLevel='high')
-    element(product, 'Property', Id='ARPPRODUCTICON', Value='ApplicationIcon')
+    element(product, 'Property', Id='ARPPRODUCTICON', Value='ApplicationIcon.ico')
     element(product, 'Property', Id='ARPURLINFOABOUT', Value='https://github.com/mgarcia01752/merlin')
-    element(product, 'Icon', Id='ApplicationIcon', SourceFile=str(ARTWORK / 'merlin.ico'))
+    element(product, 'Icon', Id='ApplicationIcon.ico', SourceFile=str(ARTWORK / 'merlin.ico'))
     element(product, 'Property', Id='WIXUI_INSTALLDIR', Value='INSTALLDIR')
     element(product, 'Property', Id='DESKTOP_SHORTCUT', Secure='yes')
     element(product, 'UIRef', Id='Merlin_InstallDir')
@@ -109,7 +109,7 @@ def author(payload, destination, number):
         if name == 'Desktop':
             element(component, 'Condition').text = 'DESKTOP_SHORTCUT = "1"'
         element(component, 'Shortcut', Id=name + 'Link', Directory=directory, Name='MERLIN',
-                Target='[INSTALLDIR]merlin-qt.exe', WorkingDirectory='INSTALLDIR', Icon='ApplicationIcon')
+                Target='[INSTALLDIR]merlin-qt.exe', WorkingDirectory='INSTALLDIR', Icon='ApplicationIcon.ico')
         if name == 'Menu':
             element(component, 'RemoveFolder', Id='RemoveApplicationMenu', Directory='ApplicationMenu', On='uninstall')
         element(component, 'RegistryValue', Root='HKCU', Key=r'Software\MERLIN\Installer',

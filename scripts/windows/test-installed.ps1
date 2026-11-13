@@ -49,8 +49,16 @@ function Assert-Installed {
     }
     $Registered = @(Get-ItemProperty 'HKLM:/Software/Microsoft/Windows/CurrentVersion/Uninstall/*' |
         Where-Object { $_.PSObject.Properties['DisplayName'] -and $_.DisplayName -eq 'MERLIN' })
-    if ($Registered.Count -ne 1 -or !$Registered[0].UninstallString -or !$Registered[0].DisplayIcon) {
-        throw 'Missing/ambiguous MSI registration or Installed apps icon'
+    $Registered | Select-Object PSPath, DisplayName, DisplayVersion, UninstallString, DisplayIcon |
+        ConvertTo-Json | Set-Content "$Logs/registration.json"
+    if ($Registered.Count -ne 1) {
+        throw 'Missing/ambiguous MSI registration'
+    }
+    foreach ($Property in @('UninstallString', 'DisplayIcon')) {
+        $Value = $Registered[0].PSObject.Properties[$Property]
+        if (!$Value -or [string]::IsNullOrWhiteSpace([string]$Value.Value)) {
+            throw "Missing MSI registration property: $Property (see registration.json)"
+        }
     }
     & python tools/packaging/windows_desktop.py --smoke $Install
     if ($LASTEXITCODE -ne 0) {

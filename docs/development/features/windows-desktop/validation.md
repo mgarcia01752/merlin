@@ -127,3 +127,18 @@ identify the resource and expected/actual SHA-256 values. Two focused tests pass
 actual Git checkout/complete collection with and without attributes, and rejection
 of altered license bytes. No Rust/Qt rebuild/full suite is needed for this change.
 Windows MSI packaging and installed lifecycle still require hosted evidence.
+
+## UI-MSI-07: installed icon registration
+
+[v0.2.5 run 43476334867](https://github.com/mgarcia01752/merlin/actions/runs/43476334867)
+passes notice verification, native MSI authoring and relocated smoke. The MSI
+is 65,450,080 bytes; staged installed files total 133,732,485 bytes. Initial
+native MSI installation succeeds, but installed verification finds no DisplayIcon.
+The retained installation log shows ARPPRODUCTICON and IconCreate referring to
+extensionless ApplicationIcon. Publication is skipped.
+
+The `.ico` identifier now follows WiX authoring guidance across Icon,
+ARPPRODUCTICON and both shortcuts. Missing properties still fail validation,
+with safe strict-mode access and a retained registration JSON record. All five
+focused Windows packaging tests pass. Native registration and the remaining
+repair/shortcut/uninstall checks require the next hosted release run.

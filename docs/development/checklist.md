@@ -1254,6 +1254,12 @@ validation are complete; the user guide includes the current dark capture.
   Windows rerun and native MSI/lifecycle remain pending under UI-MSI-02.
   [Design](features/windows-desktop/design.md#ui-msi-06-preserve-reviewed-notice-bytes-on-checkout).
 
+- [x] **UI-MSI-07** Use a filename-extension-bearing MSI icon identifier
+  consistently for Installed apps and shortcuts. Preserve installed checks and
+  record missing registry fields clearly; five focused packaging tests pass.
+  Native lifecycle acceptance remains under UI-MSI-02.
+  [Design](features/windows-desktop/design.md#ui-msi-07-cache-a-valid-installed-apps-icon).
+
 ### Example organization
 
 - [x] **EXAMPLES-01** Move standalone JSON requests/payload to `examples/cli/`,
