@@ -50,3 +50,22 @@ by these local authoring checks. CI also checks the actual WiX compiler version.
 The follow-up Windows smoke regression verifies uppercase environment keys after
 copying `os.environ`, removal of developer SDK paths and rejection of QML startup
 errors. This fixes the native SYSTEMROOT lookup before the first Windows run.
+
+## UI-MSI-03: first hosted Windows FAQ failure
+
+[Release run 43365042088](https://github.com/mgarcia01752/merlin/actions/runs/43365042088)
+passed version, preflight, CodeQL, RustSec, all three Ubuntu native jobs and
+Ubuntu desktop packaging/lifecycle. Windows compiled the adapter and ran 71
+tests: 69 passed and two FAQ tests failed on LF-only heading matching. MSI
+packaging/lifecycle did not run; publication was skipped.
+
+The repair normalizes bounded embedded FAQ text before section matching and
+adds regression coverage for every catalog entry and the index under LF/CRLF.
+Unknown codes and oversized input remain rejected. Native Windows validation
+and MSI lifecycle still require a successful new hosted run.
+
+Focused local verification: all six `help::tests::` tests pass (70 other adapter
+tests filtered out), including explicit LF/CRLF regression coverage. Rust
+formatting and diff whitespace checks pass. The full Qt check was stopped at
+the user's request; no full Rust/QML suite or application rebuild was completed.
+The focused command compiled its test binary in 3m44s; tests took 0.01s.

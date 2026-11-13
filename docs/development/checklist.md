@@ -1232,6 +1232,11 @@ validation are complete; the user guide includes the current dark capture.
   installer-byte reports/logs. Interactively verify icons, wizard, pickers,
   upgrade/downgrade and Windows 11 launch; native evidence is still pending.
 
+- [x] **UI-MSI-03** Normalize bundled FAQ line endings and verify all catalog
+  sections under LF/CRLF after the first hosted Windows adapter failure.
+  All six focused FAQ tests pass; native MSI/lifecycle remains UI-MSI-02.
+  [Design](features/windows-desktop/design.md#ui-msi-03-portable-offline-faq-lookup).
+
 ### Example organization
 
 - [x] **EXAMPLES-01** Move standalone JSON requests/payload to `examples/cli/`,

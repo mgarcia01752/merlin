@@ -49,3 +49,14 @@ Native Windows execution remains a separate unchecked acceptance item.
 EXAMPLES-01 narrows desktop example staging to `workbench/` and `measurements/`.
 CLI requests move to `examples/cli/` and remain only in source/CLI distributions.
 See [example layout](../example-layout/design.md) for the README and validation.
+
+## UI-MSI-03: portable offline FAQ lookup
+
+Release run 43365042088 passed Ubuntu/security checks but failed two Windows
+adapter FAQ tests before MSI packaging. Heading matching in `apps/qt/src/help.rs`
+assumed LF, while Windows embeds CRLF Markdown from checkout. Normalize CRLF
+inside the bounded FAQ renderer before matching headings; preserve the catalog,
+unknown-code handling and offline-only behavior. Test every catalog section with
+both line endings, including final-section boundaries and the full index.
+Run only focused FAQ tests locally, as requested; Windows packaging/lifecycle
+remains pending a new hosted run. Hosted validation gates remain unchanged.

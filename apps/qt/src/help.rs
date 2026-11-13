@@ -232,15 +232,29 @@ pub(crate) fn catalog_diagnostic(code: &str) -> Option<Diagnostic> {
         maximum_duration_ms: 0,
     })
 }
-/// Bounded title/Markdown JSON. Unknown keys report unavailable help without I/O.
+/// Returns bounded offline FAQ content with portable Markdown line endings.
+///
+/// # Arguments
+/// * `code` - Registered diagnostic code, or empty for the complete FAQ index.
+///
+/// # Returns
+/// Title and section Markdown as JSON, or an unavailable-help diagnostic for
+/// unknown codes, missing sections or an oversized embedded FAQ. No I/O occurs.
 pub(crate) fn faq_document(code: &str) -> Value {
-    if FAQ.len() <= 65536 {
+    faq_document_from_source(code, FAQ)
+}
+
+// Bound the embedded source before allocating and normalize checkout line endings.
+// Match sections identically on Windows and Unix without changing catalog keys.
+fn faq_document_from_source(code: &str, source: &str) -> Value {
+    if source.len() <= 65536 {
+        let faq = source.replace("\r\n", "\n");
         if code.is_empty() {
-            return json!({"title":"MERLIN FAQ", "text":FAQ});
+            return json!({"title":"MERLIN FAQ", "text":faq});
         }
         if let Some(entry) = entry(code) {
             let heading = format!("## {}\n", entry.faq_heading);
-            if let Some((_, tail)) = FAQ.split_once(&heading) {
+            if let Some((_, tail)) = faq.split_once(&heading) {
                 let section = tail.split_once("\n## ").map_or(tail, |(body, _)| body);
                 return json!({"title":entry.title,"text":section.trim(),"anchor":entry.faq_anchor});
             }
@@ -289,7 +303,9 @@ mod tests {
         for entry in &catalog().unwrap().entries {
             assert!(codes.insert(&entry.code));
             assert!(anchors.insert(&entry.faq_anchor));
-            assert!(FAQ.contains(&format!("## {}\n", entry.faq_heading)));
+            assert!(FAQ
+                .lines()
+                .any(|line| line == format!("## {}", entry.faq_heading)));
             assert_eq!(
                 entry.faq_heading.to_lowercase().replace(' ', "-"),
                 entry.faq_anchor
@@ -299,6 +315,31 @@ mod tests {
         assert!(faq_document("")["text"].as_str().unwrap().contains("## "));
         assert_eq!(faq_document("/etc/passwd")["error"], true);
     }
+    #[test]
+    fn faq_sections_support_windows_and_unix_line_endings() {
+        let unix = FAQ.replace("\r\n", "\n");
+        let windows = unix.replace('\n', "\r\n");
+        for code in std::iter::once("").chain(
+            catalog()
+                .unwrap()
+                .entries
+                .iter()
+                .map(|entry| entry.code.as_str()),
+        ) {
+            let expected = faq_document_from_source(code, &unix);
+            assert!(expected["error"].is_null(), "{code}");
+            assert_eq!(faq_document_from_source(code, &windows), expected, "{code}");
+            if !code.is_empty() {
+                assert!(!expected["text"].as_str().unwrap().contains("\n## "));
+            }
+        }
+        assert_eq!(faq_document_from_source("unknown", &windows)["error"], true);
+        assert_eq!(
+            faq_document_from_source("", &"x".repeat(65537))["error"],
+            true
+        );
+    }
+
     #[test]
     fn minimum_duration_obeys_whole_symbol_boundaries() {
         for (last, spacing, prefix, expected) in [
