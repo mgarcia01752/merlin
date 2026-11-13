@@ -142,3 +142,19 @@ ARPPRODUCTICON and both shortcuts. Missing properties still fail validation,
 with safe strict-mode access and a retained registration JSON record. All five
 focused Windows packaging tests pass. Native registration and the remaining
 repair/shortcut/uninstall checks require the next hosted release run.
+
+## UI-MSI-08: use MSI product metadata for icon verification
+
+[v0.2.6 run 43480254153](https://github.com/mgarcia01752/merlin/actions/runs/43480254153)
+passes native validation/package generation and installs successfully. The log
+shows ProductInfo(ProductIcon=ApplicationIcon.ico) and IconCreate, but uninstall
+registration lacks DisplayIcon. The prior filename fix was insufficient to
+resolve this verifier assumption. Publication is skipped.
+
+The lifecycle verifier now queries Windows Installer's ProductInfo ProductIcon
+for the registered product code, requires the cached icon and compares its hash
+with packaging/windows/merlin.ico. It retains registry uniqueness/uninstall
+metadata, smoke, repair, optional shortcut and uninstall checks. Evidence includes
+the queried product code and cached icon path. No native assertions are skipped.
+PowerShell/COM execution remains pending CI; no local system installation or
+full simulation/Qt suite is run.

@@ -119,3 +119,18 @@ registration/repair/removal remains a hosted acceptance requirement.
 
 Local verification: all five focused Windows packaging tests pass, including
 consistent `.ico` references. Native icon registration remains pending CI.
+
+## UI-MSI-08: verify the registered MSI product icon
+
+Run 43480254153 installs successfully and its log confirms ProductIcon and
+IconCreate for ApplicationIcon.ico; the uninstall registry lacks DisplayIcon.
+Do not treat an optional uninstall value as the MSI icon contract. Query the
+registered product code via Windows Installer ProductInfo(ProductIcon), require
+a cached icon file and compare its SHA-256 with the shipped branded ICO. Retain
+registration uniqueness, uninstall metadata, runtime/repair/shortcut/removal
+checks and record product/icon evidence. Querying metadata does not install or
+repair products. Native verification occurs only on disposable CI.
+
+References: [ProductInfo](https://learn.microsoft.com/en-us/windows/win32/msi/installer-productinfo),
+[MsiGetProductInfo](https://learn.microsoft.com/en-us/windows/win32/api/msi/nf-msi-msigetproductinfow)
+and [uninstall registry mapping](https://learn.microsoft.com/en-us/windows/win32/msi/uninstall-registry-key).

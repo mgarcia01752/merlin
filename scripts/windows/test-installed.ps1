@@ -54,11 +54,31 @@ function Assert-Installed {
     if ($Registered.Count -ne 1) {
         throw 'Missing/ambiguous MSI registration'
     }
-    foreach ($Property in @('UninstallString', 'DisplayIcon')) {
+    foreach ($Property in @('UninstallString')) {
         $Value = $Registered[0].PSObject.Properties[$Property]
         if (!$Value -or [string]::IsNullOrWhiteSpace([string]$Value.Value)) {
             throw "Missing MSI registration property: $Property (see registration.json)"
         }
+    }
+    # MSI owns its product icon cache; DisplayIcon is not required in Uninstall.
+    # Query the registered product rather than manufacturing a registry value.
+    $ProductCode = $Registered[0].PSChildName
+    $Installer = New-Object -ComObject WindowsInstaller.Installer
+    try {
+        $Icon = [string]$Installer.GetType().InvokeMember('ProductInfo',
+            [System.Reflection.BindingFlags]::GetProperty, $null, $Installer,
+            @($ProductCode, 'ProductIcon'))
+    } finally {
+        [System.Runtime.InteropServices.Marshal]::FinalReleaseComObject($Installer) | Out-Null
+    }
+    @{ProductCode=$ProductCode; ProductIcon=$Icon} | ConvertTo-Json |
+        Set-Content "$Logs/product-icon.json"
+    if ([string]::IsNullOrWhiteSpace($Icon) -or !(Test-Path -LiteralPath $Icon -PathType Leaf)) {
+        throw 'Missing registered MSI product icon (see product-icon.json)'
+    }
+    $ExpectedIcon = (Get-FileHash -LiteralPath "$Root/packaging/windows/merlin.ico").Hash
+    if ((Get-FileHash -LiteralPath $Icon).Hash -ne $ExpectedIcon) {
+        throw 'Registered MSI product icon differs from branded ICO'
     }
     & python tools/packaging/windows_desktop.py --smoke $Install
     if ($LASTEXITCODE -ne 0) {

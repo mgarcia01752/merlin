@@ -1260,6 +1260,11 @@ validation are complete; the user guide includes the current dark capture.
   Native lifecycle acceptance remains under UI-MSI-02.
   [Design](features/windows-desktop/design.md#ui-msi-07-cache-a-valid-installed-apps-icon).
 
+- [x] **UI-MSI-08** Verify the registered MSI ProductIcon through Windows
+  Installer metadata and compare cached icon bytes with the branded source.
+  Preserve installed lifecycle assertions; hosted confirmation remains pending.
+  [Design](features/windows-desktop/design.md#ui-msi-08-verify-the-registered-msi-product-icon).
+
 ### Example organization
 
 - [x] **EXAMPLES-01** Move standalone JSON requests/payload to `examples/cli/`,
