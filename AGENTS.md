@@ -166,8 +166,10 @@ adapter, separate from simulation and WB JSON. Use a quiet bounded worker and a 
 menu row. The installed Ubuntu 22.04 app downloads a verified DEB, requests
 polkit authentication, installs and restarts as the desktop user. Source
 checkouts must never elevate or install packages. Preserve accepted WB settings
-for restart; keep failures visible and the original process open. Windows uses
-a full MSI from Releases; automatic Windows installation/restart is deferred;
+for restart; keep failures visible and the original process open until handoff.
+Windows Update downloads and verifies the full stable MSI, saves accepted WB
+recovery and uses a normal-user helper to close/install/reopen through ordinary
+UAC for msiexec only. Native updater lifecycle/UAC verification remains pending;
 development support and existing CLI validation are separate. Audit both locks
 without suppressions; only report installed/hosted behavior with actual evidence.
 

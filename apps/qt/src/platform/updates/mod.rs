@@ -3,11 +3,16 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Application-global preferences and a bounded release-check worker.
+mod download;
 #[cfg(target_os = "linux")]
 pub(crate) mod install;
-#[cfg(not(target_os = "linux"))]
+#[cfg(not(any(target_os = "linux", target_os = "windows")))]
 #[path = "install_unavailable.rs"]
 pub(crate) mod install;
+#[cfg(any(target_os = "windows", test))]
+pub(crate) mod windows;
+#[cfg(target_os = "windows")]
+pub(crate) use windows as install;
 mod release;
 use serde_json::{json, Value};
 use std::io::Read;
@@ -56,11 +61,16 @@ impl Default for Model {
                 value.get("check_updates_at_startup")?.as_bool()
             })
             .unwrap_or(true);
+        let mut state = json!({"windows":cfg!(target_os = "windows"),"enabled":enabled,"busy":false,"available":false,"status":"Check for a newer MERLIN release.","url":""});
+        if let Some(message) = install::take_result() {
+            state["status"] = json!(message);
+            state["show_result"] = json!(true);
+        }
         Self {
             pending: None,
             progress: None,
             preferences,
-            state: json!({"manual_update":cfg!(target_os = "windows"),"enabled":enabled,"busy":false,"available":false,"status":"Check for a newer MERLIN release.","url":""}),
+            state,
         }
     }
 }
@@ -87,7 +97,7 @@ impl Model {
         if self.pending.is_none() && self.state["available"] == true {
             if !install::supported() {
                 self.state["status"] = json!(
-                    "Automatic installation requires the installed Ubuntu 22.04 application."
+                    "Automatic installation requires an installed MERLIN desktop application."
                 );
                 return self.state.clone();
             }
@@ -104,7 +114,7 @@ impl Model {
                     if let Ok(mut current) = progress.lock() {
                         *current = message;
                     }
-                }).map(|()| json!({"busy":false,"available":false,"installed":true,"status":"Update installed. Restarting…"}));
+                }).map(|()| json!({"busy":false,"available":false,"installed":!cfg!(target_os="windows"),"handoff_ready":cfg!(target_os="windows"),"status":"Finishing update handoff…"}));
                 let _ = sender.send(result);
             });
         }
@@ -129,12 +139,13 @@ impl Model {
                     self.state["enabled"] = enabled;
                     self.pending = None;
                     self.progress = None;
-                    if self.state["installed"] == true {
+                    if self.state["installed"] == true || self.state["handoff_ready"] == true {
                         match install::restart() {
                             Ok(()) => self.state["restarted"] = json!(true),
                             Err(message) => {
-                                self.state["status"] =
-                                    json!(format!("Update installed; reopen MERLIN. {message}"))
+                                self.state["status"] = json!(format!(
+                                    "Update could not finish automatically. {message}"
+                                ))
                             }
                         }
                     }
@@ -149,7 +160,7 @@ impl Model {
                 Err(TryRecvError::Empty) => {}
             }
         }
-        self.state["manual_update"] = json!(cfg!(target_os = "windows"));
+        self.state["windows"] = json!(cfg!(target_os = "windows"));
         self.state.clone()
     }
     /// Atomically saves the global startup preference outside workbench files.

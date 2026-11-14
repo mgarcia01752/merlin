@@ -160,3 +160,51 @@ Validation: five packaging smoke tests and both QML shading/contrast checks
 pass. Native Linux Qt build and startup smoke with absent and conflicting style
 environment hints report Fusion. Formatting and scoped Clippy pass. Windows
 interactive visual verification remains pending; the full suite was not run.
+
+## UI-WIN-UPDATE-01: Install a verified MSI from Update
+
+The user's request supersedes the earlier Windows in-app installation deferral.
+Update saves private accepted WB recovery, downloads the exact newer stable
+Windows MSI under LOCALAPPDATA with bounded HTTPS redirects/size/SHA-256 checks,
+and prepares a normal-user PowerShell handoff outside Program Files. Its
+preflight checks registered MSI ownership, package UpgradeCode/name/version/x64
+identity and hash before signaling ready. No source checkout may install.
+Only after ready does the app commit the handoff and quit. The helper waits for
+that process to exit, requests ordinary UAC for msiexec only, preserves install
+location/desktop shortcut preference, disables OS auto-reboot and records the
+exit code/log. Success or cancellation/failure reopens MERLIN unelevated with
+WB recovery and a bounded result notice. Restart-required results stay explicit.
+Never use execution-policy bypass, unblock files, suppress OS security or launch
+the application elevated. Failure before handoff keeps the original app open.
+
+Rust owns download, staging, recovery and state. A fixed embedded PowerShell
+script owns Windows Installer COM inspection, parent-exit coordination, UAC and
+normal-user relaunch. Inputs are JSON data, never interpolated command source.
+Keep Ubuntu installation behavior unchanged. Add focused metadata/download,
+handoff/status and QML tests plus native PowerShell contract checks. Local Linux
+validation cannot establish Windows UAC/upgrade/rollback/runtime behavior; record
+those as pending until actual native evidence exists.
+
+Sources: [Start-Process](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/start-process?view=powershell-5.1),
+[msiexec options](https://learn.microsoft.com/en-us/windows/win32/msi/standard-installer-command-line-options),
+[MSI return codes](https://learn.microsoft.com/en-us/windows/win32/msi/error-codes),
+[registered component paths](https://learn.microsoft.com/en-us/windows/win32/msi/installer-componentpath).
+Automation uses explicit property/method dispatch, matching the existing hosted
+MSI icon validation helper.
+
+Local validation: 12 focused updater Rust tests pass, including shared download
+limits/hash checks, exact Windows MSI metadata, bounded/BOM result parsing,
+source-run rejection, existing Ubuntu package identity and state failures. Four
+QML update tests pass (six including setup/cleanup): direct click, Windows WB
+recovery, run/recovery guards and preferences. Scoped Qt Clippy with warnings
+denied, formatting and native Linux build pass. The coding-style skill and both
+discovery links validate. The full test suite was not run.
+
+## UI-WIN-UPDATE-02: Native upgrade lifecycle verification
+
+Pending: run the prepared native PowerShell contract checks through Windows CI
+and test the installed upgrade/handoff on Windows. Explicitly exercise UAC
+approval/cancel, MSI failure and rollback, 3010 without forced reboot, normal-user
+relaunch, WB recovery, custom install location and desktop shortcut preservation.
+PowerShell is unavailable on this local Linux host, so these checks were not run
+locally. Earlier v0.2.7/v0.2.8 packaging results do not verify this new updater.

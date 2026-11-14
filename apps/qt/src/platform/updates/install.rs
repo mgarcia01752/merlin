@@ -4,15 +4,18 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Ubuntu update staging adapted from the viewer's GPL update architecture.
+use super::download::copy_verified;
+#[cfg(test)]
+use super::download::trusted;
 use super::release;
 use serde::{Deserialize, Serialize};
+#[cfg(test)]
 use sha2::{Digest, Sha256};
 use std::{
     fs::{self, File, OpenOptions},
-    io::{Read, Write},
+    io::Read,
     path::{Path, PathBuf},
     process::{Command, Stdio},
-    time::{Duration, Instant},
 };
 
 const LAUNCHER: &str = "/usr/bin/merlin";
@@ -96,57 +99,6 @@ pub(crate) fn supported() -> bool {
         })
 }
 
-fn trusted(address: &url::Url) -> bool {
-    address.scheme() == "https"
-        && address.username().is_empty()
-        && address.password().is_none()
-        && address.port().is_none()
-        && matches!(
-            address.host_str(),
-            Some(
-                "github.com"
-                    | "release-assets.githubusercontent.com"
-                    | "objects.githubusercontent.com"
-            )
-        )
-}
-
-fn copy_verified(
-    mut input: impl Read,
-    mut output: impl Write,
-    plan: &Plan,
-    progress: impl Fn(u64),
-) -> Result<(), String> {
-    let deadline = Instant::now() + Duration::from_secs(900);
-    let mut digest = Sha256::new();
-    let mut received = 0_u64;
-    let mut buffer = [0_u8; 65_536];
-    loop {
-        if Instant::now() >= deadline {
-            return Err("Update download timed out.".into());
-        }
-        let count = input.read(&mut buffer).map_err(|error| error.to_string())?;
-        if count == 0 {
-            break;
-        }
-        received += count as u64;
-        if received > plan.size {
-            return Err("Update exceeds its declared size.".into());
-        }
-        digest.update(&buffer[..count]);
-        output
-            .write_all(&buffer[..count])
-            .map_err(|error| error.to_string())?;
-        progress(received);
-    }
-    if received != plan.size
-        || format!("{:x}", digest.finalize()) != plan.sha256.to_ascii_lowercase()
-    {
-        return Err("Update size or SHA-256 verification failed.".into());
-    }
-    Ok(())
-}
-
 /// Downloads a fresh verified stable DEB and requests normal polkit installation.
 /// # Arguments
 /// * `progress` - Worker-thread status callback, never accesses Qt.
@@ -188,48 +140,15 @@ pub(crate) fn update(progress: impl Fn(String)) -> Result<(), String> {
     };
     plan.validate()?;
     let directory = Directory::new()?;
-    let agent = ureq::AgentBuilder::new()
-        .redirects(0)
-        .timeout_connect(Duration::from_secs(15))
-        .timeout_read(Duration::from_secs(20))
-        .build();
-    let mut address = url::Url::parse(&plan.package_url).map_err(|error| error.to_string())?;
-    let mut response = None;
-    for _ in 0..=5 {
-        if !trusted(&address) {
-            return Err("Untrusted update download redirect.".into());
-        }
-        let received = agent
-            .get(address.as_str())
-            .set("User-Agent", "MERLIN")
-            .call()
-            .map_err(|_| "Unable to download the update.")?;
-        match received.status() {
-            200 => {
-                response = Some(received);
-                break;
-            }
-            301 | 302 | 303 | 307 | 308 => {
-                address = address
-                    .join(
-                        received
-                            .header("Location")
-                            .ok_or("Missing update redirect.")?,
-                    )
-                    .map_err(|error| error.to_string())?;
-            }
-            _ => return Err("Unexpected update download response.".into()),
-        }
-    }
-    let response = response.ok_or("Too many update redirects.")?;
     let mut output =
         File::create(directory.0.join("update.deb")).map_err(|error| error.to_string())?;
-    copy_verified(response.into_reader(), &mut output, &plan, |received| {
-        progress(format!(
-            "Downloading update… {}%",
-            received * 100 / plan.size
-        ));
-    })?;
+    super::download::fetch(
+        &plan.package_url,
+        &mut output,
+        plan.size,
+        &plan.sha256,
+        &progress,
+    )?;
     output.sync_all().map_err(|error| error.to_string())?;
     fs::write(
         directory.0.join("plan.json"),
@@ -312,7 +231,13 @@ pub(crate) fn elevated(directory: &Path) -> Result<(), String> {
     let staging = Directory::new()?;
     let package = staging.0.join("update.deb");
     let mut output = File::create(&package).map_err(|error| error.to_string())?;
-    copy_verified(open("update.deb")?, &mut output, &plan, |_| {})?;
+    copy_verified(
+        open("update.deb")?,
+        &mut output,
+        plan.size,
+        &plan.sha256,
+        |_| {},
+    )?;
     output.sync_all().map_err(|error| error.to_string())?;
     validate_package(&package, &plan.version)?;
     let installed = Command::new("/usr/bin/dpkg-query")
@@ -400,6 +325,13 @@ pub(crate) fn restart() -> Result<(), String> {
     Ok(())
 }
 
+/// Returns no deferred installer result on this platform.
+/// # Returns
+/// None; Ubuntu installation reports completion in the existing process.
+pub(crate) fn take_result() -> Option<String> {
+    None
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -418,10 +350,10 @@ mod tests {
     fn bounded_hash_copy_rejects_corruption_truncation_and_overflow() {
         let plan = plan();
         let mut bytes = Vec::new();
-        copy_verified(&b"abc"[..], &mut bytes, &plan, |_| {}).unwrap();
+        copy_verified(&b"abc"[..], &mut bytes, plan.size, &plan.sha256, |_| {}).unwrap();
         assert_eq!(bytes, b"abc");
         for data in [&b"ab"[..], &b"abcd"[..], &b"abd"[..]] {
-            assert!(copy_verified(data, Vec::new(), &plan, |_| {}).is_err());
+            assert!(copy_verified(data, Vec::new(), plan.size, &plan.sha256, |_| {}).is_err());
         }
     }
     #[test]

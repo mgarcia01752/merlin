@@ -48,6 +48,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 $Manifest = "$Root/apps/qt/Cargo.toml"
 if ($Action -eq 'check') {
+    & "$PSScriptRoot/test-update.ps1"
     & cargo +1.85.1 fmt --manifest-path $Manifest -- --check
     if ($LASTEXITCODE -ne 0) {
         throw 'Rust formatting failed'

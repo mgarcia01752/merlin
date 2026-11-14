@@ -647,7 +647,8 @@ this skill and both discovery links after edits. Keep one canonical copy.
 
 ## Desktop delivery and update notifications
 
-For the current desktop delivery phase, target Ubuntu 22.04 amd64. Package Qt
+For the current desktop delivery phase, target Ubuntu 22.04 amd64 and Windows
+x64 UI. Package Qt
 privately with the application; preserve LGPL/GPL and third-party source notices,
 round desktop icons, user guides and every runnable workbench bundle. Keep
 installer builders under `tools/packaging/`; workflows orchestrate those helpers.
@@ -660,6 +661,11 @@ Rust owns HTTP, version/asset checks, deadlines and application-global preferenc
 persistence; QML displays bounded state. Keep update preferences outside WB JSON.
 Offline/check failures must leave editing and simulation usable. Keep the update
 dialog in its own QML file, retain X and Close, and document any new controls.
+Windows uses the same Update action with verified MSI download and a
+normal-user ready/commit handoff. Preserve accepted WB recovery, normal UAC for
+msiexec only, Internet-zone markings, install folder and shortcut choice. Never
+bypass execution policy, unblock downloads or launch MERLIN elevated. Check
+native cancellation/failure/restart behavior separately from Linux validation.
 Put the single green Update chip on the right of the File/Settings/About row,
 matching OSCAR-UI colors, padding and radius. A click starts the automatic
 download/verify/authenticate/install/restart flow directly; do not route it to

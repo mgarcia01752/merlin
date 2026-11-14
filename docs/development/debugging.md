@@ -54,3 +54,12 @@ open for 750 ms and suppresses startup update lookup for offline runtime checks.
 It prints `MERLIN_QT_STYLE=Fusion` after selecting controls through Qt's startup
 API. The Windows packaged smoke clears inherited `QT_QUICK_CONTROLS_STYLE` and
 requires this marker so shell defaults cannot mask an installed-style failure.
+
+Windows in-app update diagnostics: the helper retains
+`%LOCALAPPDATA%\merlin\updates\last-install.log` and a bounded `last-result.json`.
+The next startup consumes the result and displays it; `--restore-update` restores
+the accepted WB from `%LOCALAPPDATA%\merlin\update-recovery`. The native helper
+is embedded, has no user CLI, and does not change execution policy. Its ready/
+commit files live only in per-attempt staging and are removed after installation.
+A missing ready acknowledgement keeps the original process open. Native contracts
+run with `scripts/windows/test-update.ps1` without downloading or installing.

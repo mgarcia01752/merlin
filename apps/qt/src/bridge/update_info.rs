@@ -20,7 +20,7 @@ pub mod bridge {
         /// Current plain display state as bounded JSON.
         #[qinvokable]
         fn check(self: Pin<&mut UpdateInfo>) -> QString;
-        /// Starts the installed Ubuntu update after recovery succeeds.
+        /// Starts the installed desktop update after recovery succeeds.
         /// # Returns
         /// Bounded progress state, or an installation diagnostic.
         #[qinvokable]

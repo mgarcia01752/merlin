@@ -113,9 +113,24 @@ fn recovery_path() -> Result<PathBuf, String> {
     Ok(directory.join("workbench.merlin.json"))
 }
 
-#[cfg(not(target_os = "linux"))]
+#[cfg(target_os = "windows")]
 fn recovery_path() -> Result<PathBuf, String> {
-    Err("Automatic update recovery is available on Ubuntu only.".into())
+    let base = std::env::var_os("LOCALAPPDATA")
+        .map(PathBuf::from)
+        .filter(|path| path.is_absolute())
+        .ok_or("No private Windows application data directory.")?;
+    let directory = base.join("merlin/update-recovery");
+    std::fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
+    let metadata = std::fs::symlink_metadata(&directory).map_err(|error| error.to_string())?;
+    if !metadata.is_dir() || metadata.file_type().is_symlink() {
+        return Err("Update recovery must use a normal private directory.".into());
+    }
+    Ok(directory.join("workbench.merlin.json"))
+}
+
+#[cfg(not(any(target_os = "linux", target_os = "windows")))]
+fn recovery_path() -> Result<PathBuf, String> {
+    Err("Automatic update recovery requires a supported installed desktop.".into())
 }
 
 impl bridge::WorkbenchFile {

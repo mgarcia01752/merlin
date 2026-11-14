@@ -2210,8 +2210,16 @@ The native Qt boundary conditionally links GTK on Linux and Windows Common Item
 Dialogs on Windows. Scientific libraries and capture ownership are unchanged.
 
 Linux APT update/recovery code is compiled only for Linux. Windows preferences
-use LOCALAPPDATA; verified Windows update notifications open the full MSI release
-page. Installation and later launch retain normal Windows security prompts.
+and WB update recovery use LOCALAPPDATA. Update now downloads the exact verified
+stable MSI through the shared bounded HTTPS transport. A fixed normal-user
+PowerShell helper checks registered MSI/component ownership and package identity,
+waits for the original app to exit after a ready/commit handshake, elevates only
+msiexec through UAC and relaunches MERLIN normally with accepted WB recovery.
+The Internet-zone marker is retained; execution policies and OS security are
+unchanged. Installer codes/logs survive outside staging; cancellation/failure
+reopens the previous app when available. A 3010 result explicitly requests a
+later Windows restart, never an automatic reboot. Native Windows updater
+upgrade/UAC/cancel/recovery validation remains pending under UI-WIN-UPDATE-01.
 The shared workflow adds native Windows adapter/QML checks; tag publication
 requires Windows MSI installed lifecycle checks alongside every existing
 Ubuntu/security gate. The GPL platform adapter selects palette-aware Fusion

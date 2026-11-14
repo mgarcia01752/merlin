@@ -1299,3 +1299,13 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **SA-PLC-01** Shade the first–last PLC carrier region from the frozen
   waveform layout across shared TX/channel/RX PSD views, clipped to zoom.
   [Design](features/transmitter-spectrum/design.md#sa-plc-01-shade-the-frozen-plc-carrier-region).
+
+### Windows in-app MSI updates
+
+- [x] **UI-WIN-UPDATE-01** Replace the release-page action with verified
+  MSI download, normal UAC installation and unelevated WB recovery/restart.
+  [Design](features/windows-desktop/design.md#ui-win-update-01-install-a-verified-msi-from-update).
+- [ ] **UI-WIN-UPDATE-02** Verify the native Windows upgrade handoff, UAC
+  approval/cancel, MSI failure/rollback, 3010 handling, shortcut/location
+  preservation and unelevated WB recovery. Local Linux checks do not establish
+  these Windows installer lifecycle results.

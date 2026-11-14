@@ -33,3 +33,10 @@ pub(crate) fn elevated(_directory: &std::path::Path) -> Result<(), String> {
 pub(crate) fn restart() -> Result<(), String> {
     Err("Launch MERLIN from the Start menu after installation.".into())
 }
+
+/// Returns no deferred installer result on this platform.
+/// # Returns
+/// None; Ubuntu installation reports completion in the existing process.
+pub(crate) fn take_result() -> Option<String> {
+    None
+}

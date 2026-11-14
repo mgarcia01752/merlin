@@ -196,3 +196,10 @@ infers spacing only. A **synthetic notch** is a reduction in MER over a band,
 not a cellular waveform or a phase response. The **PLC region** is one continuous
 chart band from the first to the last PLC carrier in the accepted modulation
 profile. See [RxMER Designer](measurement-inputs/rxmer-designer.md).
+
+### MSI and UAC
+
+MSI is the Windows Installer package used to install or upgrade MERLIN. UAC
+(User Account Control) is Windows' administrator-approval prompt. MERLIN Update
+requests that approval only for the installer and reopens the app as your normal
+user. See [Windows installation and updates](install/windows.md).

@@ -50,10 +50,30 @@ include the failure and nearby `Return value 3` lines in an issue report.
 
 ## Upgrade, repair and uninstall
 
-**About → Check For Updates** identifies the verified Windows desktop MSI.
-**Download MSI** opens the release page. Download the newer MSI, close MERLIN
-and run it; Windows Installer replaces the older desktop installation and rejects
-downgrades. Windows automatic download/install/restart is deferred.
+**About → Check For Updates** checks for a newer stable desktop release.
+Press the green **Update** chip or **Update** in that dialog. MERLIN saves the
+accepted workbench for recovery, downloads the exact MSI and verifies its size,
+SHA-256, product identity and version. It closes only after the installer helper
+is ready. Approve the normal Windows administrator prompt; MSI displays progress
+and MERLIN reopens as your normal user with the saved workbench. Your install
+folder and desktop-shortcut choice are retained. Windows is never automatically
+rebooted; if installation needs a Windows restart, the result says so.
+
+A canceled administrator prompt or failed MSI reopens the previous application
+when it remains available, with the recovery workbench and an error message.
+Failures before handoff leave MERLIN open. Recovery contains accepted settings
+and inputs, not unsaved dialog drafts or simulation results. Updates are blocked
+while a simulation or WB load is active. Source/extracted copies cannot install.
+
+Older versions whose Update opens the release page need one manual MSI upgrade
+to a version containing this updater. The new handoff's Windows UAC, cancellation,
+upgrade and recovery lifecycle still require native verification.
+
+The installer log is `%LOCALAPPDATA%\merlin\updates\last-install.log`.
+The next launch consumes a bounded result from `last-result.json` in that folder.
+Recovery stays at `%LOCALAPPDATA%\merlin\update-recovery\workbench.merlin.json`.
+If MSI rollback leaves no runnable application, repair it with the full installer;
+the recovery file remains available. Keep Windows security protections enabled.
 
 To repair, reopen the same-version MSI and choose **Repair**. To remove MERLIN,
 use **Settings → Apps → Installed apps → MERLIN → Uninstall**. MSI removes its
