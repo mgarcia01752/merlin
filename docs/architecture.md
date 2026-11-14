@@ -2214,7 +2214,11 @@ use LOCALAPPDATA; verified Windows update notifications open the full MSI releas
 page. Installation and later launch retain normal Windows security prompts.
 The shared workflow adds native Windows adapter/QML checks; tag publication
 requires Windows MSI installed lifecycle checks alongside every existing
-Ubuntu/security gate. v0.2.7 passes hosted Windows adapter/QML/build/MSI and
+Ubuntu/security gate. The GPL platform adapter selects palette-aware Fusion
+controls through QQuickStyle before loading QML, independently of launch-shell
+style hints; native OS file pickers keep their native controls.
+
+v0.2.7 passes hosted Windows adapter/QML/build/MSI and
 installed icon/runtime/repair/shortcut/uninstall checks. Interactive Windows 11
 and cross-version upgrade/downgrade review remain pending under UI-MSI-09. [Design](development/features/windows-desktop/design.md).
 

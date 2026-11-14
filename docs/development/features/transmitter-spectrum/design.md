@@ -174,3 +174,20 @@ their own TransmissionSettings; display never borrows a newer draft. Independent
 core tests, Qt checks and actual VM normal/minimum-size review pass. See
 [validation](validation.md#ui-sa-04-integrated-timingwindow-and-cable-panel) and
 [user guide](../../../user/spectrum-analyzer.md#symbol-timing-and-cable-echo-budget).
+
+## SA-PLC-01: shade the frozen PLC carrier region
+
+Annotate all shared TX/channel/RX time-sample spectrum views from their frozen
+validated CarrierLayout. Rust finds the first and last PLC bins and clips their
+normalized coordinates to the exact viewport. This is one continuous first–last
+region, not individual carrier stripes or the surrounding PLC neighborhood.
+QML draws a translucent region below the trace with visible edge/PLC labeling,
+leaving PSD/power unchanged. Coordinates remain aligned under baseband/capture
+axis selection, zoom and pan. No profile/layout means no inferred shading.
+Verify full/partial/outside windows, both spacings, changed PLC placement and
+both themes through targeted Rust/QML checks.
+
+Validation: focused Rust PLC bounds and shared-axis integration checks pass,
+as do the QML shading/contrast checks, native Qt build, formatting and scoped
+Clippy. Coverage includes both carrier spacings and clipped/outside viewports.
+The full test suite was not run for this change.

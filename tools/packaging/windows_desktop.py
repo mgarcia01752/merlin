@@ -218,7 +218,7 @@ def smoke(payload):
         ValueError for a bad version; subprocess errors/timeouts propagate.
     """
     environment = os.environ.copy()
-    for key in ('QT_PLUGIN_PATH', 'QML_IMPORT_PATH', 'QML2_IMPORT_PATH', 'QMAKE', 'QT_SDK_DIR'):
+    for key in ('QT_PLUGIN_PATH', 'QML_IMPORT_PATH', 'QML2_IMPORT_PATH', 'QMAKE', 'QT_SDK_DIR', 'QT_QUICK_CONTROLS_STYLE'):
         environment.pop(key, None)
     environment['PATH'] = os.pathsep.join((str(Path(environment['SYSTEMROOT']) / 'System32'), environment['SYSTEMROOT']))
     environment['QT_QPA_PLATFORM'] = 'windows'
@@ -234,6 +234,8 @@ def smoke(payload):
         subprocess.run([str(binary), '--check-workbench', str(workbench)], env=environment, cwd=payload.parent, check=True, timeout=60)
     result = subprocess.run([str(binary), '--smoke-test'], env=environment, cwd=payload.parent,
                             check=True, timeout=45, text=True, capture_output=True)
+    if 'MERLIN_QT_STYLE=Fusion' not in result.stdout.splitlines():
+        raise ValueError('Packaged Qt controls did not select Fusion')
     if any(term in result.stderr for term in ('failed to load', 'is not installed', 'ReferenceError', 'TypeError', 'Cannot assign')):
         raise ValueError('Packaged QML startup failed: ' + result.stderr)
 

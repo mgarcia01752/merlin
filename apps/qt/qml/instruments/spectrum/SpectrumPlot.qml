@@ -65,6 +65,17 @@ ColumnLayout {
                 }
                 ctx.save()
                 ctx.beginPath(); ctx.rect(leftMargin, topMargin, width, height); ctx.clip()
+                for (const band of chart.viewport.bands || []) {
+                    const left = leftMargin + band.first * width
+                    const right = leftMargin + band.last * width
+                    ctx.fillStyle = Qt.rgba(0.95, 0.74, 0.25, chart.theme.dark ? 0.18 : 0.13)
+                    ctx.fillRect(left, topMargin, Math.max(1, right - left), height)
+                    ctx.strokeStyle = chart.theme.statusAttention
+                    ctx.beginPath(); ctx.moveTo(left, topMargin); ctx.lineTo(left, topMargin + height)
+                    ctx.moveTo(right, topMargin); ctx.lineTo(right, topMargin + height); ctx.stroke()
+                    ctx.fillStyle = chart.theme.statusAttention; ctx.textAlign = "left"
+                    ctx.fillText(band.label, Math.min(left + 4, leftMargin + width - 28), topMargin + 14)
+                }
                 ctx.strokeStyle = chart.theme.accent
                 ctx.globalAlpha = 0.3
                 ctx.beginPath()

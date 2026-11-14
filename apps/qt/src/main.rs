@@ -94,7 +94,14 @@ fn main() {
         eprintln!("Cannot initialize logging: {error}");
         std::process::exit(1);
     }
-    std::env::set_var("QT_QUICK_CONTROLS_STYLE", "Fusion");
+    let control_style = platform::application_style::configure();
+    if control_style != "Fusion" {
+        eprintln!("Cannot configure palette-aware Qt controls: {control_style}");
+        std::process::exit(1);
+    }
+    if arguments.iter().any(|argument| argument == "--smoke-test") {
+        println!("MERLIN_QT_STYLE={control_style}");
+    }
     let mut application = QGuiApplication::new();
     application
         .as_mut()

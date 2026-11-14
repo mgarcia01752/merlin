@@ -92,6 +92,7 @@ WorkbenchDialog {
             Item { Layout.fillWidth: true }
         }
         SpectrumPlot { id: plot; theme: dialog.theme; viewport: dialog.viewport; detailsText: dialog.viewport.summary || ""; showDetails: detailsToggle.checked; zoomEnabled: dialog.state.has_result; onViewportRequested: function(start, count) { dialog.showView(start, count) } Layout.fillWidth: true; Layout.fillHeight: true }
+        Label { objectName:"saPlcSummary";visible:!!dialog.viewport.plc_summary;text:dialog.viewport.plc_summary || "";color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap }
         Label { objectName:"saChannelPower";visible:!!dialog.viewport.channel_power_text;text:dialog.viewport.channel_power_text || "";color:dialog.theme.accent;Layout.fillWidth:true;wrapMode:Text.WordWrap }
         Label {visible:!!dialog.viewport.level_warning;text:dialog.viewport.level_warning || "";color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
         Label {visible:!!dialog.viewport.error;text:dialog.viewport.error || "";color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}

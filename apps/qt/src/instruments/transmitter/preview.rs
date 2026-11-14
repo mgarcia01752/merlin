@@ -412,6 +412,8 @@ mod tests {
         assert_eq!(capture["x_ticks"][0]["label"], "631.100");
         assert_eq!(baseband["points"].as_array().unwrap().len(), 2048);
         assert_eq!(baseband["points"][0]["y"], capture["points"][0]["y"]);
+        assert_eq!(baseband["bands"].as_array().unwrap().len(), 1);
+        assert_eq!(baseband["bands"], capture["bands"]);
         assert!(baseband.get("samples").is_none());
         assert!(model.view(-1, 20, false).get("error").is_some());
         let zoom = model.view(300, 40, false);

@@ -216,6 +216,7 @@ pub(crate) fn channel_viewport(
         }
     }
     let mut view = crate::spectrum_view::viewport(&spectrum, start, count, capture_axis, detail)?;
+    crate::spectrum_view::plc::annotate(&mut view, layout);
     if reading.dbmv.is_some() {
         view["axis_label"] = json!("PSD · dBmV/Hz");
         if let Some(points) = view["points"].as_array_mut() {

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Local file access, desktop integration and installed example discovery.
+pub(crate) mod application_style;
 pub(crate) mod example_directory;
 pub(crate) mod input_file;
 pub(crate) mod native_file_picker;

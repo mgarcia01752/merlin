@@ -124,16 +124,22 @@ class WindowsDesktopTests(unittest.TestCase):
             (examples / 'manifest.json').write_text(
                 json.dumps({'bundles': [{'workbench': 'one.merlin.json'}]}), encoding='utf-8')
             with patch.dict(os.environ, {'SYSTEMROOT': 'C:/Windows', 'PATH': 'developer-sdk',
-                                         'QT_PLUGIN_PATH': 'developer-plugins'}, clear=True), \
+                                         'QT_PLUGIN_PATH': 'developer-plugins', 'QT_QUICK_CONTROLS_STYLE': 'Windows'}, clear=True), \
                     patch('windows_desktop.subprocess.check_output', return_value=f'MERLIN {version()}\n'), \
                     patch('windows_desktop.subprocess.run') as run:
                 run.return_value.stderr = ''
+                run.return_value.stdout = 'MERLIN_QT_STYLE=Fusion\n'
                 smoke(payload)
                 for call in run.call_args_list:
                     environment = call.kwargs['env']
                     self.assertNotIn('developer-sdk', environment['PATH'])
                     self.assertNotIn('QT_PLUGIN_PATH', environment)
+                    self.assertNotIn('QT_QUICK_CONTROLS_STYLE', environment)
                     self.assertEqual(environment['QT_QPA_PLATFORM'], 'windows')
+                run.return_value.stdout = 'MERLIN_QT_STYLE=Windows\n'
+                with self.assertRaisesRegex(ValueError, 'did not select Fusion'):
+                    smoke(payload)
+                run.return_value.stdout = 'MERLIN_QT_STYLE=Fusion\n'
                 run.return_value.stderr = 'A required QML module is not installed'
                 with self.assertRaises(ValueError):
                     smoke(payload)

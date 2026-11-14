@@ -1285,3 +1285,13 @@ validation are complete; the user guide includes the current dark capture.
   compilation and delegated patch releases; retain existing validation guards.
   Verify success, failure, elapsed waits and release dry-runs with isolated tests.
   [Design](features/command-timing/design.md).
+
+### Windows control readability and spectrum PLC annotation
+
+- [x] **UI-WIN-THEME-01** Select Fusion through Qt's startup API; retain
+  readable analyzer dropdown/spin text in both themes. Packaged smoke clears
+  inherited style hints and verifies selection. Native Windows review pending.
+  [Design](features/windows-desktop/design.md#ui-win-theme-01-select-palette-aware-controls-through-qt).
+- [x] **SA-PLC-01** Shade the first–last PLC carrier region from the frozen
+  waveform layout across shared TX/channel/RX PSD views, clipped to zoom.
+  [Design](features/transmitter-spectrum/design.md#sa-plc-01-shade-the-frozen-plc-carrier-region).

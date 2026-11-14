@@ -142,3 +142,21 @@ completes native build/MSI/default install/icon/runtime/repair/shortcut/uninstal
 checks and publishes the full stable release. This closes automated UI-MSI-02.
 UI-MSI-09 retains interactive Windows 11, upgrade/downgrade and security-prompt
 review. See the validation record for test counts, bytes and verification limits.
+
+## UI-WIN-THEME-01: select palette-aware controls through Qt
+
+The installed Windows screenshot shows native white ComboBox/SpinBox surfaces
+with dark-theme foreground text. Rust startup currently sets a process environment
+variable; hosted launchers already set Fusion before process launch, masking the
+installed-path discrepancy. Configure Fusion through QQuickStyle before creating
+QGuiApplication/loading controls. Keep the Qt interop in the GPL platform adapter.
+Require the existing packaged startup smoke to run without inherited style hints
+and confirm the selected style; retain all QML startup error checks. Verify
+readability of enabled/disabled dropdowns and spin editors in both themes with
+focused QML checks. Native Windows visual confirmation remains required.
+Reference: [QQuickStyle](https://doc.qt.io/qt-6.8/qquickstyle.html).
+
+Validation: five packaging smoke tests and both QML shading/contrast checks
+pass. Native Linux Qt build and startup smoke with absent and conflicting style
+environment hints report Fusion. Formatting and scoped Clippy pass. Windows
+interactive visual verification remains pending; the full suite was not run.

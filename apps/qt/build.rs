@@ -21,6 +21,7 @@ fn main() {
     }
     CxxQtBuilder::new()
         .file("src/platform/native_file_picker.rs")
+        .file("src/platform/application_style.rs")
         .qrc("branding.qrc")
         .cc_builder(|builder| {
             builder.include("src");

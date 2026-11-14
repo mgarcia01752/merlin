@@ -25,6 +25,12 @@ mouse zoom and Full Span keep working. Warnings and Channel Power stay visible.
 
 ![Actual shared SA showing TX baseband output](../images/workbench/sa-tx-baseband-dark.png)
 
+The shaded **PLC** region spans the first through last PLC carrier in the frozen
+layout used for the displayed waveform. It follows zoom/pan and remains aligned
+when switching between baseband and capture-frequency labels. The surrounding
+PLC neighborhood is not shaded. On a full-span plot the band can be narrow; zoom
+over it for detail. No waveform/profile is changed by this annotation.
+
 The signal is **complex baseband**, centered at DC. There is no RF upconversion.
 Baseband describes the frequency range around zero; complex describes its I/Q
 representation, which retains amplitude and phase and distinguishes positive

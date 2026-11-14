@@ -51,3 +51,6 @@ Windows MSI diagnostics: run Windows Installer with `/L*V` as described in the
 `dist/windows-installer-logs/` and the desktop byte-size report; no application
 log file is silently created. The existing `--smoke-test` now leaves the window
 open for 750 ms and suppresses startup update lookup for offline runtime checks.
+It prints `MERLIN_QT_STYLE=Fusion` after selecting controls through Qt's startup
+API. The Windows packaged smoke clears inherited `QT_QUICK_CONTROLS_STYLE` and
+requires this marker so shell defaults cannot mask an installed-style failure.

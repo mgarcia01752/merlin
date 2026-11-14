@@ -22,6 +22,10 @@ explained in the [FEC Monitor guide](fec-monitor.md).
 
 ## QAM analyzer and retained selectors
 
+The application selects palette-aware controls directly at startup, including
+on Windows. Dark/light appearance applies to selector backgrounds, text,
+dropdown lists and number editors. Disabled controls retain readable muted text.
+
 Received I/Q uses circular dots at the actual retained coordinates, before hard
 decisions. These are scatter markers, not intensity bins. Channel impairments
 can shift, rotate or spread the points; changing their marker shape does not
