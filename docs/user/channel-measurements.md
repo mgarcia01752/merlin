@@ -48,7 +48,7 @@ Expand a tree row for identity, frequency, capture time, format and original has
 Select a row to inspect its original values, or **Effective RxMER / playback**
 to inspect the proposed combination. Duplicate byte-identical files reject.
 
-![Single Shot selection from a loaded collection](../images/workbench/rxmer-single-dark.png)
+![Single Shot RxMER capture with PLC shading](../images/workbench/rxmer-single-dark.png)
 
 | Mode | Effective model |
 | --- | --- |

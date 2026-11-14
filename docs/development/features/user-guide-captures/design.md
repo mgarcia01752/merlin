@@ -76,7 +76,7 @@ No source changed and no build or automated simulation suite was run.
 | [transmitter-message-bytes-dark.png](../../../images/workbench/transmitter-message-bytes-dark.png) | Refreshed native capture |
 | [transmitter-messages-dark.png](../../../images/workbench/transmitter-messages-dark.png) | Refreshed native capture |
 | [transmitter-output-sa-dark.png](../../../images/workbench/transmitter-output-sa-dark.png) | Current native capture retained |
-| [transmitter-qam-dark.png](../../../images/workbench/transmitter-qam-dark.png) | Refreshed native capture |
+| [receiver-qam-mer-dark.png](../../../images/workbench/receiver-qam-mer-dark.png) | Paired receiver view replaces the retired TX thumbnail |
 | [transmitter-stage-dark.png](../../../images/workbench/transmitter-stage-dark.png) | Refreshed native capture |
 | [transmitter-workbench-dark.png](../../../images/workbench/transmitter-workbench-dark.png) | Refreshed native capture |
 | [verification-results-dark.png](../../../images/workbench/verification-results-dark.png) | Refreshed native capture |

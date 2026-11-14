@@ -39,25 +39,27 @@ Example inputs: [CLI requests and use cases](examples/cli/README.md) ·
 ## Workbench overview
 
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/images/logo/merlin-toolkit-diagram-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="docs/images/logo/merlin-toolkit-diagram-light.png">
-    <img src="docs/images/logo/merlin-toolkit-diagram-light.png" alt="MERLIN workbench: OCD and DPD configure the transmitter; RxMER and DS channel estimates feed the channel and receiver; PRBS source data is recovered at PRBS-RX." width="1100">
-  </picture>
+  <a href="docs/user/workbench.md"><img src="docs/images/workbench/readme-workbench-dark.png" alt="Current MERLIN workbench with transmitter, channel, receiver and measurement inputs" width="1100"></a>
 </p>
 
-Illustrated system overview. See the [workbench guide](docs/user/workbench.md)
-for native UI screenshots, configuration and test-point instruments.
+Actual native workbench. See the [workbench guide](docs/user/workbench.md)
+for configuration and test-point instruments.
 
-## Signal analyzers
+## Signal analyzers and RxMER Designer
 
 Actual native UI captures. Select an image to open its guide.
 
 | Spectrum Analyzer | QAM Analyzer |
-| --- | --- |
-| [<img src="docs/images/workbench/sa-tx-baseband-dark.png" alt="OFDM spectrum with symbol timing and cable echo estimate" width="520">](docs/user/spectrum-analyzer.md) | [<img src="docs/images/workbench/transmitter-qam-dark.png" alt="Transmitter QAM constellation from captured mapped I/Q" width="520">](docs/user/transmitter-workbench.md) |
+| :---: | :---: |
+| [<img src="docs/images/workbench/sa-tx-baseband-dark.png" alt="OFDM spectrum with PLC shading, symbol timing and cable echo estimate" width="520">](docs/user/spectrum-analyzer.md) | [<img src="docs/images/workbench/receiver-qam-mer-dark.png" alt="Paired raw and equalized receiver constellations with calculated MER" width="520">](docs/user/receiver-workbench.md#qam-analyzer-and-retained-selectors) |
 | **Channel Response / Echo** | **RxMER** |
-| [<img src="docs/images/workbench/receiver-response-dark.png" alt="Receiver-estimated impulse response showing delayed channel energy" width="520">](docs/user/receiver-workbench.md#channel-response-and-echo) | [<img src="docs/images/workbench/rxmer-single-dark.png" alt="Measured RxMER versus subcarrier frequency" width="520">](docs/user/channel-measurements.md#rxmer-captures) |
+| [<img src="docs/images/workbench/receiver-response-dark.png" alt="Pilot-estimated channel impulse response" width="520">](docs/user/receiver-workbench.md#channel-response-and-echo) | [<img src="docs/images/workbench/rxmer-single-dark.png" alt="Loaded RxMER capture with PLC region and playback controls" width="520">](docs/user/channel-measurements.md#rxmer-captures) |
+
+<h3 align="center">RxMER Designer</h3>
+
+<p align="center">
+  <a href="docs/user/measurement-inputs/rxmer-designer.md"><img src="docs/images/workbench/rxmer-designer-dark.png" alt="RxMER Designer preview with tilt, ripple, a synthetic notch and PLC shading" width="1100"></a>
+</p>
 
 ## Measurements and demos
 

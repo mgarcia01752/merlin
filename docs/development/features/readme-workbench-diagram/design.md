@@ -1,5 +1,8 @@
 # DOC-BRAND-01: Theme-aware README workbench diagram
 
+Historical implementation, superseded by DOC-BRAND-05 below. The original
+illustrated overview assets have been removed in favor of native captures.
+
 Add the supplied `docs/images/logo/merlin-toolkit-diagram-dark.png` to README
 with a matching light PNG selected by a standard picture element. Preserve the
 dark original bytes and both images' aspect ratios; use a responsive1100px
@@ -59,3 +62,27 @@ Each thumbnail opens its instrument guide. Keep captions short and identify the
 images as actual native UI captures. No UI source or processing behavior changes.
 Validate image integrity, local paths, heading anchors and diff whitespace; no
 compilation or runtime tests are needed for reusing unchanged screenshots.
+
+## DOC-BRAND-05: Refresh the native screenshot gallery
+
+Replace the illustrated overview with a current native workbench capture,
+refresh the four analyzer images, and add RxMER Designer linked to its guide.
+Center the gallery titles above their images. Capture the built Qt application
+on the local Linux desktop using the shipped single-capture workbench; preserve
+the captured pixels and keep staging scripts/output under ignored local/.
+Replace shared analyzer assets in place so user-guide links stay valid;
+replace the retired transmitter QAM thumbnail with the paired receiver view,
+and remove obsolete illustrated overview files after checking references.
+Validation covers visual review, image decoding, maintained relative links and
+diff whitespace. No application code or full automated test suite is involved.
+
+Completed with six unedited 1210×736 native Linux/X11 captures from the current
+built Qt executable. The shipped single example completed all four profiles;
+the retained latest profile compared 1,779,000 bits with zero errors. The
+Designer screenshot previews a new flat 50-capture sequence with −4 dB tilt,
+2 dB ripple and an 18 dB synthetic notch. Draft edits were cancelled; no
+workbench or capture input files were saved. The two illustrated overview PNGs
+and retired TX QAM thumbnail were removed, and shared user-guide assets were
+replaced in place. Architecture ownership is unchanged. Image decoding,
+README/affected guide links, centered gallery markup and diff whitespace pass.
+The full automated suite was not run for this documentation-only refresh.

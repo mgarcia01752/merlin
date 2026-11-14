@@ -907,6 +907,10 @@ integration. It does not mean all the broader product items above are complete.
 
 ### Repository introduction
 
+- [x] **DOC-BRAND-05** Refresh the native README overview/analyzers, add
+  RxMER Designer, center gallery titles and remove obsolete image assets.
+  [Design](features/readme-workbench-diagram/design.md#doc-brand-05-refresh-the-native-screenshot-gallery).
+
 - [x] **DOC-BRAND-04** Link current SA, QAM, response/echo and RxMER
   screenshots from a compact README analyzer gallery.
   [Design](features/readme-workbench-diagram/design.md#doc-brand-04-analyzer-gallery).

@@ -5,7 +5,10 @@ loaded captures or choose **New flat sequence**. The flat sequence uses the exac
 profile grid and keeps excluded carriers unavailable. Its profile epoch is only
 an association anchor; it is not a measured acquisition time.
 
-![RxMER Designer with a continuous PLC region](../../images/workbench/rxmer-designer-dark.png)
+![RxMER Designer with tilt, ripple, a synthetic notch and PLC shading](../../images/workbench/rxmer-designer-dark.png)
+
+The preview above shows a new flat sequence with 50 captures and tilt, ripple
+and a synthetic notch enabled for all captures.
 
 Enable the effects you need. When **RxMER tilt** is unchecked, its value,
 arrows, direction button and capture-range controls are disabled. Their settings
