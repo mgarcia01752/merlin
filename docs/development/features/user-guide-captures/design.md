@@ -82,3 +82,26 @@ No source changed and no build or automated simulation suite was run.
 | [verification-results-dark.png](../../../images/workbench/verification-results-dark.png) | Refreshed native capture |
 | [workbench-header-dark.png](../../../images/workbench/workbench-header-dark.png) | Refreshed native capture |
 | [workbench-multi-rxmer-dark.png](../../../images/workbench/workbench-multi-rxmer-dark.png) | Refreshed native capture |
+
+## UI-DOC-02: Audit all tracked PNGs and refresh stale UI captures
+
+Audit all 99 tracked PNG assets, including the 82 workbench files, against the
+current Qt interface. Refresh outdated spectrum/timing, QAM/MER, RxMER/PLC and
+About captures from the built native application; specifically include
+sa-tx-mapped-dark.png and sa-mouse-zoom-dark.png. Keep actual scientific plots
+and clearly labeled historical design illustrations separate from native UI.
+Remove unused obsolete screenshots, reconcile references, and retain still-current
+shared assets instead of manufacturing different data for an unchanged window.
+Check any existing light-theme variants too; the current tracked inventory has
+light branding PNGs but no published light-theme native UI screenshots.
+
+Stage captures/automation under ignored local/png-refresh, preserve example/input
+files and capture native pixels without recoloring or UI mockups. Record one
+audit outcome per PNG and validate image integrity, maintained links and diff
+whitespace. This task does not change scientific code or authorize commit/push.
+
+### Completed audit
+
+See the [per-file PNG audit](png-audit.md) for all 99 original assets,
+including refreshed native screenshots, retained light branding, historical
+proposals, removed unused images and validation evidence.

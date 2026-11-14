@@ -1309,3 +1309,9 @@ validation are complete; the user guide includes the current dark capture.
   approval/cancel, MSI failure/rollback, 3010 handling, shortcut/location
   preservation and unelevated WB recovery. Local Linux checks do not establish
   these Windows installer lifecycle results.
+
+### Documentation PNG audit
+
+- [x] **UI-DOC-02** Review every tracked PNG and existing light variant;
+  refresh outdated native captures and reconcile obsolete images/references.
+  [Design](features/user-guide-captures/design.md#ui-doc-02-audit-all-tracked-pngs-and-refresh-stale-ui-captures).

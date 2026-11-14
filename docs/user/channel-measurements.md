@@ -10,7 +10,7 @@ select a range. **Full Span** resets the view. There are no +/- zoom buttons.
 Click the plot for keyboard +/- zoom and Home reset. Changing a capture or metric
 resets the range; zoom only queries retained input data.
 
-![Shared measurement mouse navigation](../images/workbench/measurement-mouse-zoom-dark.png)
+![RxMER measurement zoomed to the PLC region](../images/workbench/measurement-mouse-zoom-dark.png)
 
 Apply a DPD first. Inputs must match its device, channel, frequency origin,
 subcarrier spacing and complete source grid. Merely overlapping frequencies do
