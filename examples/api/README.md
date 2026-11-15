@@ -11,9 +11,12 @@ and assumptions are explained alongside the workflow.
 
 | Example | Purpose |
 | --- | --- |
+| [Saved WB in Python](python/workbench.py) | Load embedded captures and saved settings directly through Rust; run selected profiles without duplicate scientific constants. |
+| [Saved WB in Rust](rust/workbench.rs) | Use the same native loader and print owned per-profile batch reports. |
 | [Rust workflow](rust/high_level.rs) | Import a profile, derive OCD settings, add RxMER and a channel estimate independently, select one capture and inspect simulated results. |
 | [Python workflow](python/high_level.py) | Perform the same fixture-backed workflow using the installed native Python extension and print FEC counts and BER. |
 | [Python multi-RxMER collection](python/multi_rxmer.py) | Discover all profiles in the channel-193 capture and load its 132 RxMER binaries; run independent profile experiments using a Rust residual-power average, unity physical response and MCE receiver. |
+| [Python saved-UI comparison](python/multi_rxmer_ui.py) | Run the same collection workflow with PilotEstimated and all other settings matching the bundled multi-rxmer-2 workbench. |
 | [Rust selection policies](rust/policy_parity.rs) | Run `Each`, `Individual`, `AverageAll` and `InterpolateAt`; write actual reference results for the Python parity tests. |
 
 ## Run Rust
@@ -53,6 +56,18 @@ the saved WB seeds, decoder limit and OCD timing. The saved WB selects
 PilotEstimated; enable MCE in its receiver for comparable results. It loads the capture files directly; it is
 not a general desktop WB JSON importer. `high_level.py` retains the original
 single-capture workflow with an explicit measured channel estimate.
+
+To match the **unchanged saved UI workbench**, run the separate companion:
+
+```bash
+local/api-python-test/bin/python examples/api/python/multi_rxmer_ui.py
+```
+
+It reuses the same workflow with `ReceiverMode.PILOT_ESTIMATED`; the MCE
+walkthrough stays available separately. Both use the same profile discovery,
+132 captures, residual-power average, unity H, seeds, limits and timing.
+This matches the bundled saved WB; later UI edits require matching the shared
+constants and receiver choice. Neither script imports arbitrary WB JSON.
 
 `DPD.profile_ids_from_file()` discovers the catalog through Rust and returns
 validated `ProfileId` objects. If a DPD is already loaded, use `dpd.profile_ids`
@@ -101,3 +116,13 @@ The Rust parity generator accepts an optional receiver mode after its new output
 directory: `supplied_channel` (default), `pilot_estimated`, or `merlin_estimated`.
 Generate a separate directory for each; the Python parity test reads the recorded
 mode and compares Each/Individual/AverageAll/InterpolateAt under that same mode.
+
+
+For a saved WB with its own settings, use:
+
+```bash
+local/api-python-test/bin/python examples/api/python/workbench.py /path/to/workbench.merlin.json
+```
+
+See the [WB import guide](../../docs/user/python/workbench.md) for supported
+settings, structured failures and the equivalent Rust example.

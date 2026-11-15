@@ -50,9 +50,12 @@ INTERLEAVER_DEPTH = 16
 BER_FORMAT = ".3e"  # Scientific notation with four significant digits.
 
 
-def main():
+def main(receiver_mode=RECEIVER_MODE):
     """Run independent collection-backed profiles and display Rust outcomes.
 
+    Args:
+        receiver_mode: Native ReceiverMode; defaults to MCE. The UI companion
+            explicitly selects PilotEstimated while sharing every other setting.
     Returns:
         None after printing each profile's status, FEC counters, BER and wall time.
         Input captures and returned report objects remain unchanged.
@@ -111,7 +114,7 @@ def main():
     options = EvaluationOptions(
         rxmer_selection=RxMerSelection.average_all(),
         channel_selection=ChannelSelection.unity(),
-        receiver_mode=RECEIVER_MODE,
+        receiver_mode=receiver_mode,
         noise_seed=NoiseSeed(NOISE_SEED),
         prbs_seed=PrbsSeed(PRBS_SEED),
         observation=ObservationDuration(OBSERVATION_DURATION_MS),
@@ -127,7 +130,7 @@ def main():
     # configuration. The immutable capture objects are reused without editing.
     # The API retains the captured ID; engine bootstrap uses wire Profile A.
     print(f"Profiles: {[profile_id.value for profile_id in profile_ids]}; observation: {OBSERVATION_DURATION_MS} ms "
-          f"per profile; RxMER: AverageAll; channel: unity; receiver: {RECEIVER_MODE}")
+          f"per profile; RxMER: AverageAll; channel: unity; receiver: {receiver_mode}")
     total_started = perf_counter()
     for profile in profiles:
         ocd = OCD.from_profile(

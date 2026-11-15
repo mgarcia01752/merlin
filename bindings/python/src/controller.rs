@@ -32,6 +32,16 @@ pub(crate) struct PyMerlin {
     state: Arc<Mutex<Option<api::Merlin>>>,
 }
 impl PyMerlin {
+    /// Wraps an already validated Rust controller without changing its configuration.
+    /// # Arguments
+    /// * `sim` - Owned idle native controller, including original captured inputs.
+    /// # Returns
+    /// Python controller using the existing Busy and GIL-releasing execution path.
+    pub(crate) fn from_native(sim: api::Merlin) -> Self {
+        Self {
+            state: Arc::new(Mutex::new(Some(sim))),
+        }
+    }
     fn access<T>(
         &self,
         operation: impl FnOnce(&mut api::Merlin) -> api::ApiResult<T>,
@@ -58,7 +68,11 @@ impl PyMerlin {
     /// An owned BatchReport or a structured preflight error, with the controller restored.
     /// # Errors
     /// Preserves structured Rust validation errors and Python conversion failures.
-    fn execute(&self, py: Python<'_>, control: api::RunControl) -> PyResult<PyBatchReport> {
+    pub(crate) fn execute(
+        &self,
+        py: Python<'_>,
+        control: api::RunControl,
+    ) -> PyResult<PyBatchReport> {
         let mut sim = {
             let mut state = self.state.try_lock().map_err(|_| {
                 error(api::ApiError::new(

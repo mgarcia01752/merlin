@@ -2307,9 +2307,32 @@ use the same existing Rust receiver operations as Qt; no Python estimation or Qt
 orchestration enters the library. Reports retain the selected mode and accurate
 assumptions. The collection example now selects MCE while retaining the curated
 WB's other settings; the saved WB uses PilotEstimated. The regression comparison
-explicitly restores pilot mode to preserve its UI reference. See [receiver parity](development/features/high-level-api/design.md#api-receiver-01-match-receiver-correction-across-rust-python-and-qt).
+uses the separate multi_rxmer_ui.py entry point with pilot mode to preserve
+its UI reference. Both entry points share one workflow through an explicit
+receiver-mode argument; no mutable global override or duplicate engine is used. See [receiver parity](development/features/high-level-api/design.md#api-receiver-01-match-receiver-correction-across-rust-python-and-qt).
 
 The MCE typed variant is `MerlinChannelEstimated` (Python uppercase alias
 `MERLIN_CHANNEL_ESTIMATED`). Serde retains `merlin_estimated` as the canonical
 saved value and accepts `merlin_channel_estimated` as an input alias, preserving
 Qt and existing workbench/CLI compatibility without duplicate receiver modes.
+
+### Saved workbench API input
+
+The Apache `pnm-input::Workbench` loader independently decodes the saved WB
+schema 1/2 contract, validates embedded originals and preflights one existing
+high-level controller per selected profile. It depends on the Rust engine and
+PNM decoder only. No GPL Qt orchestration or Qt types enter the library. The
+Python `Workbench` adapter reuses those controllers and the existing GIL-releasing
+execution/cancellation path; it performs no scientific interpretation.
+
+Core `ProcessingOptions` carries existing MCE, channel-filter, additional-loss
+and power policies into the same engine jobs. Owned options/reports preserve
+those policies; Python exposes a copied inspection dictionary. WB bytes and
+capture provenance remain immutable. Loading never runs simulation. Results are
+one owned batch per profile, with identifiers scoped to each controller.
+
+This milestone imports accepted PRBS15 configurations with static single/average
+RxMER. File sources, timeline playback and incomplete editors fail explicitly;
+there is no silent fallback or arbitrary WB-setting approximation. See the
+[WB user/API contract](user/python/workbench.md) and
+[design](development/features/high-level-api/design.md#api-wb-01-native-saved-workbench-import).

@@ -106,3 +106,21 @@ Use `ReceiverMode::MerlinChannelEstimated` in Rust and
 `ReceiverMode.MERLIN_CHANNEL_ESTIMATED` in Python. Preserve existing WB/CLI/report
 JSON `merlin_estimated` and accept `merlin_channel_estimated` on input. Renaming
 must not change correction algorithms, decoder reliability or receiver defaults.
+
+## API-WB-01: saved workbench input
+
+- Provide native Rust and Python WB file/byte loaders, independently of Qt/CLI.
+  Read schema 1/2 accepted embedded captures and settings; verify lengths/hashes,
+  exact grids, explicit selections and bounded work before returning.
+- Preserve legacy/current profile selection precedence, static checked RxMER
+  single/average behavior, saved OCD, PRBS15 seed, receiver mode/MCE settings,
+  waveform channel filter, H/unity, association tolerance, loss/power and limits.
+- Keep original WB bytes and capture provenance; loading/preparing does not run.
+  Only run starts the existing engine. Return independent batches per profile,
+  retain controller scopes and preserve cancellation/partial/not-started results.
+- Reject unsupported sources/timeline modes, unknown fields and incomplete WBs
+  explicitly. Do not approximate saved behavior. General timeline playback and
+  file-source import are not implemented by this static PRBS15 loader.
+- Add a Python WB-path example without duplicate scientific constants, and a
+  compiling Rust example. Compare actual reports with the Rust engine and native
+  UI, test integrity/selection/limits/cancellation, and document platform evidence.

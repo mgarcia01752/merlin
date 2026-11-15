@@ -333,3 +333,36 @@ pilot UI regression comparison by overriding only the example receiver in that
 test; separately execute the default MCE example through the native extension.
 Other seeds, timing, profiles and input policies remain unchanged. No Rust API
 or receiver algorithm changes are needed: the shared mode is already exposed.
+
+### API-EXAMPLES-07: separate saved-UI comparison entry point
+
+Add multi_rxmer_ui.py as a documented runnable companion to the MCE walkthrough.
+Reuse its loading, Rust options and reporting through an explicit receiver_mode
+argument to main; do not duplicate the workflow or mutate module globals.
+The new entry point selects PilotEstimated to match the unchanged curated WB.
+Keep all other constants shared, test them against the WB and run the actual UI
+entry point against the independently observed UI FEC counters. This is a
+curated-fixture comparison, not arbitrary WB JSON import. Rust still owns all
+scientific behavior; no core/binding capability changes are needed.
+
+### API-WB-01: native saved-workbench import
+
+The Apache pnm-input adapter owns bounded WB schema 1/2 decoding, embedded
+original hash/length verification and conversion to existing high-level Rust
+controllers. Workbench loading prepares every selected profile without running
+simulation. Saved receiver selection, OCD, seeds, limits, static RxMER mode,
+selected hashes and physical H are authoritative; absent H means explicit unity.
+Expose typed ProcessingOptions in the core for existing MCE/filter/loss/power
+settings and preserve them through Python option snapshots. No Qt code or new
+engine is imported. PRBS15 static single/average configurations are supported;
+unsupported source/playback modes fail rather than being silently changed.
+
+Workbench owns original WB bytes and independent profile controllers. Rust run
+returns one owned BatchReport per saved profile, preserving controller scopes;
+shared cancellation preserves partial/not-started outcomes across controllers.
+Python Workbench uses those same Rust-loaded controllers and the existing GIL-
+releasing run adapter. File/byte loaders validate complete input before returning.
+Add a command-line Python example accepting a WB path with no scientific constants.
+Verify embedded integrity, limits, unsupported modes, schema/profile precedence,
+original ownership, no-run loading, actual engine/WB parity, Python cancellation
+and results. Record support boundaries and any unverified platforms explicitly.

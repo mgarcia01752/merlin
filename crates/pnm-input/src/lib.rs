@@ -18,6 +18,8 @@ use std::{
     path::Path,
 };
 pub mod rxmer_export;
+pub mod workbench;
+pub use workbench::Workbench;
 
 /// Stateless native decoder dispatch; classification is based only on contents.
 pub struct CaptureLoader;

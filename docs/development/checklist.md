@@ -1432,3 +1432,16 @@ validation are complete; the user guide includes the current dark capture.
   document the saved WB's different receiver mode. Run all three profiles with
   the native MCE API and preserve the pilot-mode UI comparison test.
   [Design](features/high-level-api/design.md#api-examples-06-use-mce-in-the-collection-walkthrough).
+
+- [x] **API-EXAMPLES-07** Add multi_rxmer_ui.py for the bundled saved WB's
+  pilot receiver. Share the MCE walkthrough through an explicit mode argument;
+  validate actual profile FEC against native UI anchors and shared WB settings.
+  [Design](features/high-level-api/design.md#api-examples-07-separate-saved-ui-comparison-entry-point).
+
+- [x] **API-WB-01** Add bounded saved-WB file/byte loading in Rust and Python
+  for accepted PRBS15/static single/average configurations. Preserve embedded
+  originals, saved receiver/channel settings and profile/capture selections;
+  preflight without running and return owned per-profile batches on explicit run.
+  Verify native Rust/Python/UI FEC parity, integrity, limits and cancellation.
+  [Design](features/high-level-api/design.md#api-wb-01-native-saved-workbench-import),
+  [user contract](../user/python/workbench.md).

@@ -13,6 +13,12 @@ claim about an existing release asset. The tested development target is Ubuntu
 For PyPNM or another consumer, see [downstream installation and version
 pinning](integration.md).
 
+## Load saved UI settings directly
+
+Use `Workbench.from_file(path)` to import embedded captures and saved scientific
+settings without duplicating constants. Only `run()` starts simulation. See the
+[saved-workbench guide](workbench.md), supported settings and runnable example.
+
 ## Build and install locally
 
 Build prerequisites are the repository's pinned Rust 1.85.1 toolchain and a
@@ -53,6 +59,16 @@ correction. The saved workbench uses PilotEstimated; enable MCE there to compare
 results and wall time per profile. The observation is 1 ms per profile; increase
 `OBSERVATION_DURATION_MS` for a longer run. See the [example notes](../../../examples/api/README.md) for
 scope and matched fixture settings.
+
+To reproduce the bundled saved workbench's pilot-estimated receiver instead:
+
+```bash
+local/api-python-test/bin/python examples/api/python/multi_rxmer_ui.py
+```
+
+This companion shares all other settings and reporting with the MCE example;
+it matches `examples/workbench/multi-rxmer-2/workbench.merlin.json` as saved.
+UI edits made later are not automatically imported into either script.
 
 For an already-loaded DPD, read its member directly:
 

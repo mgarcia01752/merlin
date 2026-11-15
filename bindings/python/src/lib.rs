@@ -10,6 +10,7 @@ mod quantities;
 mod receiver;
 mod reports;
 mod rxmer_export;
+mod workbench;
 use docsis_ofdm_fec::api;
 use pyo3::exceptions::PyException;
 use pyo3::prelude::*;
@@ -53,6 +54,7 @@ fn merlin(module: &Bound<'_, PyModule>) -> PyResult<()> {
     options::register(module)?;
     reports::register(module)?;
     controller::register(module)?;
+    workbench::register(module)?;
     Ok(())
 }
 

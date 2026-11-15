@@ -197,6 +197,7 @@ pub(crate) struct PyEvaluationOptions {
     channel_selection: Option<PyChannelSelection>,
     #[pyo3(get, set)]
     receiver_mode: PyReceiverMode,
+    processing: api::ProcessingOptions,
     #[pyo3(get, set)]
     observation: PyObservationDuration,
     #[pyo3(get, set)]
@@ -217,6 +218,7 @@ impl PyEvaluationOptions {
             rxmer_selection: self.rxmer_selection.0,
             channel_selection: self.channel_selection.as_ref().map(|v| v.0),
             receiver_mode: self.receiver_mode.native(),
+            processing: self.processing.clone(),
             observation: self.observation.0,
             noise_seed: self.noise_seed.0,
             prbs_seed: self.prbs_seed.0,
@@ -232,6 +234,7 @@ impl PyEvaluationOptions {
             rxmer_selection: PyRxMerSelection(value.rxmer_selection),
             channel_selection: value.channel_selection.map(PyChannelSelection),
             receiver_mode: value.receiver_mode.into(),
+            processing: value.processing.clone(),
             observation: PyObservationDuration(value.observation),
             noise_seed: PyNoiseSeed(value.noise_seed),
             prbs_seed: PyPrbsSeed(value.prbs_seed),
@@ -242,6 +245,25 @@ impl PyEvaluationOptions {
 }
 #[pymethods]
 impl PyEvaluationOptions {
+    /// Returns an independent dictionary of existing MCE/filter/loss/power settings.
+    /// # Arguments
+    /// * `py` - Interpreter used only for serialization of Rust-owned settings.
+    /// # Returns
+    /// Copied settings for inspection; editing the dictionary does not mutate options.
+    /// # Errors
+    /// Propagates serialization or Python allocation failures.
+    #[getter]
+    fn processing(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
+        crate::object_from_json(
+            py,
+            &serde_json::to_string(&self.processing).map_err(|e| {
+                crate::error(api::ApiError::new(
+                    api::ErrorCode::InvalidInput,
+                    e.to_string(),
+                ))
+            })?,
+        )
+    }
     /// Construct a Rust-backed value or request using the declared units and defaults.
     /// # Arguments
     /// * `rxmer_selection` - Typed static selection policy; None requests the Rust default Each.

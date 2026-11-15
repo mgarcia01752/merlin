@@ -162,3 +162,11 @@ The expanded MCE name is `MerlinChannelEstimated` in Rust and
 `ReceiverMode.MERLIN_CHANNEL_ESTIMATED` in Python. Saved WB/CLI/report JSON
 retains `merlin_estimated` for compatibility; input also accepts
 `merlin_channel_estimated`. This is a naming change only.
+
+## Load a saved workbench
+
+Use `pnm_input::Workbench::from_file(path)` to load embedded captures and saved
+settings directly, without restating scientific constants. Loading preflights
+but does not run; `workbench.run()` returns one owned batch per saved selected
+profile through the same engine. Python mirrors this as `Workbench.from_file`.
+See the [supported WB contract and Rust example](../python/workbench.md).

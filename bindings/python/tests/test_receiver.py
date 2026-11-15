@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 import re
 import runpy
+import sys
 import unittest
 
 import merlin as m
@@ -16,6 +17,9 @@ from test_api import configured
 
 ROOT = Path(__file__).resolve().parents[3]
 EXAMPLE = ROOT / "examples/api/python/multi_rxmer.py"
+UI_EXAMPLE = EXAMPLE.with_name("multi_rxmer_ui.py")
+# Both entry points share the sibling workflow, as when executed by filename.
+sys.path.insert(0, str(EXAMPLE.parent))
 WORKBENCH = ROOT / "examples/workbench/multi-rxmer-2/workbench.merlin.json"
 # Observed native release UI Profile Performance results for this exact WB.
 # These are software parity anchors, not modem interoperability vectors.
@@ -70,6 +74,8 @@ class ReceiverModeTests(unittest.TestCase):
             self.assertEqual(example[constant], workbench["receiver"][key])
         self.assertEqual(workbench["receiver"]["receiver_mode"], "pilot_estimated")
         self.assertEqual(example["RECEIVER_MODE"], m.ReceiverMode.MERLIN_CHANNEL_ESTIMATED)
+        ui_example = runpy.run_path(str(UI_EXAMPLE))
+        self.assertEqual(ui_example["RECEIVER_MODE"], m.ReceiverMode.PILOT_ESTIMATED)
         self.assertEqual(workbench["sections"]["measurements"]["options"]["mode"], "average")
         self.assertEqual(example["PROFILE_ASSOCIATION_TOLERANCE_SECONDS"],
                          workbench["sections"]["measurements"]["options"]["tolerance_seconds"])
@@ -79,10 +85,8 @@ class ReceiverModeTests(unittest.TestCase):
 
     def test_collection_actual_fec_matches_native_ui_reference(self):
         """Run every discovered profile and compare real counters, not estimates."""
-        example = runpy.run_path(str(EXAMPLE))
+        example = runpy.run_path(str(UI_EXAMPLE))
         output = io.StringIO()
-        # Preserve the independent native UI anchor under its saved pilot mode.
-        example["main"].__globals__["RECEIVER_MODE"] = m.ReceiverMode.PILOT_ESTIMATED
         with redirect_stdout(output):
             example["main"]()
         # Extract complete profile blocks from stdout, not whole-output validation.

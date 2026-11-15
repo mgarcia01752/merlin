@@ -293,3 +293,76 @@ No Rust/binding changes or rebuild are needed; MCE uses the already verified
 shared API and engine. Full simulation and platform suites are not rerun for
 this example-only change. Evidence resides under
 `docs/development/local/api-receiver-parity/mce-example-*`.
+
+## API-EXAMPLES-07: saved-UI companion
+
+The new multi_rxmer_ui.py executes the shared collection walkthrough with an
+explicit PilotEstimated mode. It matches the bundled saved WB without changing
+the MCE entry point or duplicating scientific orchestration. All three profiles
+complete with total/corrected/uncorrectable counts 83/0/0, 114/4/0 and 124/30/0;
+post-FEC BER is zero. Native example experiment time is 6.432s. All three Python
+receiver tests pass in 5.724s, including the actual companion's comparison with
+native UI anchors and the shared-settings drift check. The MCE default entry
+point is also rerun after introducing the receiver argument.
+
+No wheel/core/Qt rebuild is needed for this Python example-only change. The
+scripts match the bundled WB, not arbitrary later UI edits; no general WB JSON
+import or new platform support is claimed. Local logs reside under
+`docs/development/local/api-receiver-parity/ui-companion-*`.
+
+## API-WB-01: native saved-WB loading
+
+Implemented Rust-first in the Apache pnm-input adapter with core ProcessingOptions
+for existing MCE/filter/loss/power settings. File/byte imports verify bounded
+schema 1/2 originals and saved selections before returning idle controllers.
+The optional Python Workbench delegates to the same loader and existing native
+controller execution. A WB-path example supplies no scientific settings in Python.
+The saved PRBS15/static single/average subset and unsupported source/timeline
+modes are described in the [user contract](../../../user/python/workbench.md).
+
+Rust validation: 20 existing API tests and 4 export tests pass (48.08s and 0.12s);
+six WB tests pass in 104.68s, including actual all-profile FEC against native UI
+anchors. An additional resource-bound test passes in 0.16s, including sparse-file
+size rejection before allocation. Tests cover schema/profile precedence, selected
+capture hashes, idle loading, original-byte ownership, custom MCE/filter/loss/power,
+structured failures and shared cancellation. The single and multi-rxmer bundled
+WBs with measured H also import and preflight successfully. All 136 analysis-only
+tests pass; workspace/all-target Clippy, native adapter Clippy and formatting pass.
+The full default-feature physics suite was not rerun for this adapter/API change.
+
+A compiling optimized Rust WB example generated fresh baseline reports from the
+unchanged multi-rxmer-2 WB. The native Linux CPython 3.10 wheel was rebuilt with
+notices and installed only into the local test environment. Four Python WB tests
+pass in 26.329s, checking file/bytes, source removal, saved settings, immutable
+option snapshots, structured errors, independent result ownership, Rust report
+parity and another Python thread cancelling native work. Cancellation during
+preflight honestly returns NotStarted; after engine startup it returns Cancelled.
+Eight existing Python API tests pass in 1.476s and three receiver tests in 15.159s.
+
+The WB-path Python example completes Profiles 0/3/4 with total/corrected/UFEC
+83/0/0, 114/4/0 and 124/30/0, all zero post-FEC BER. It uses saved PilotEstimated,
+not the separate MCE walkthrough's default. Its measured experiment time is
+9.712s during concurrent validation/builds, not a performance benchmark.
+Detailed Rust/Python comparisons match status, FEC, all-completed FEC, profile
+performance, options and source provenance exactly. No counters are estimated.
+
+Evidence is local-only under docs/development/local/api-receiver-parity/wb-*.
+Other interpreter/platform wheels are unverified. No publication, commit, push
+or system-wide installation was performed. File payload source import, timeline
+playback and incomplete editor-only WB files remain explicitly unsupported.
+
+Final checks also pass: all 12 receiver/static-selection Python regression
+combinations (5.486s supplied, 4.665s pilot, 12.995s MCE), the Python export
+regression (0.042s), 454 relative documentation links, generated integration-guide
+freshness and diff whitespace. Optimized Qt rebuild passes in 4m22s; its saved
+wire contract and QML are unchanged. The WB processing forwarding test also
+verifies an actual saved echo-filter configuration and checked-capture subset.
+All seven WB tests have passed, with the six-test run plus targeted bound and
+updated processing cases recorded separately. Earlier failed compilation/lint
+attempts and the over-specific cancellation assertion were fixed and rerun;
+only the successful final checks above establish completion.
+
+The only new dependency is exact base64 0.22.1 for embedded WB decoding. Cargo
+lockfiles were synchronized; Qt's targeted local-package update also refreshed
+existing dependency edges without adding/upgrading other package versions.
+The native wheel includes the project's existing legal notice collection.

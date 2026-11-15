@@ -405,3 +405,23 @@ The expanded MCE name is `MerlinChannelEstimated` in Rust and
 `ReceiverMode.MERLIN_CHANNEL_ESTIMATED` in Python. Saved WB/CLI/report JSON
 retains `merlin_estimated` for compatibility; input also accepts
 `merlin_channel_estimated`. This is a naming change only.
+
+## Saved workbench loader
+
+`pnm_input::Workbench::{from_file, from_bytes}` verifies supported self-contained
+WB schema 1/2, retains originals and preflights saved profile controllers without
+running them. `controllers()` borrows idle configured controllers;
+`into_controllers()` transfers them for manual API overrides. `original_document()`
+shares exact WB JSON. `run()` / `run_with_control()` return one owned BatchReport
+per selected profile, preserving independent controller scopes.
+
+`EvaluationOptions.processing: ProcessingOptions` copies existing MCE,
+channel-filter, additional-loss and power policies into engine jobs; defaults
+preserve prior behavior. Python option snapshots retain the same settings, with
+`processing` returning a copied inspection dictionary.
+
+Python `Workbench.from_file(path)` / `from_bytes(data)` call this Rust loader.
+`profile_ids` and `options` expose copied settings. `run()` / `run_with_control()`
+return a list of batches, release the GIL during simulation, and reject concurrent
+runs of the same WB with Busy. See the [WB contract](../user/python/workbench.md)
+for supported PRBS15/static modes, unsupported capabilities and finite bounds.

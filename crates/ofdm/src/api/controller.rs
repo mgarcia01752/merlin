@@ -67,6 +67,16 @@ impl Default for RunLimits {
         }
     }
 }
+/// Existing receiver and physical-channel policies, copied into each engine job.
+/// These are independent of measured H and RxMER selection; no calculations occur here.
+#[derive(Debug, Clone, Default, Serialize, serde::Deserialize)]
+#[serde(default, deny_unknown_fields)]
+pub struct ProcessingOptions {
+    pub mce: crate::signal_processing::receiver::channel_estimation::MceSettings,
+    pub channel_filter: crate::signal_processing::channel::filter::ChannelFilterSettings,
+    pub additional_loss: crate::signal_processing::channel::additional_loss::AdditionalLoss,
+    pub power: crate::signal_processing::channel::power::PowerConditioning,
+}
 /// Mutable request; the controller takes an independent validated copy.
 #[derive(Debug, Clone, Serialize)]
 pub struct EvaluationOptions {
@@ -74,6 +84,8 @@ pub struct EvaluationOptions {
     pub channel_selection: Option<ChannelSelection>,
     /// Receiver correction source, independent of the applied channel response.
     pub receiver_mode: ReceiverMode,
+    /// Owned existing numerical policies, including saved-workbench MCE tuning.
+    pub processing: ProcessingOptions,
     pub observation: ObservationDuration,
     pub noise_seed: NoiseSeed,
     pub prbs_seed: PrbsSeed,
@@ -89,6 +101,7 @@ impl Default for EvaluationOptions {
             rxmer_selection: RxMerSelection::Each,
             channel_selection: None,
             receiver_mode: ReceiverMode::SuppliedChannel,
+            processing: ProcessingOptions::default(),
             observation: ObservationDuration(100),
             noise_seed: NoiseSeed(41),
             prbs_seed: PrbsSeed(0x7fff),
@@ -613,6 +626,8 @@ impl Merlin {
             settings.duration = std::time::Duration::from_millis(self.options.observation.0);
             settings.prbs_seed = self.options.prbs_seed.0;
             settings.receiver_mode = self.options.receiver_mode;
+            settings.mce = self.options.processing.mce.clone();
+            settings.channel_filter = self.options.processing.channel_filter.clone();
             settings.max_iterations = self.options.limits.iterations.0;
             // Shared playback validation checks exact protected roles and coverage.
             let layout = crate::transmission::layout::CarrierLayout::new(
@@ -633,7 +648,8 @@ impl Merlin {
                 seed: self.options.noise_seed.0,
                 noise: NoiseModel::Rxmer { frame: effective },
                 response,
-                ..Default::default()
+                additional_loss: self.options.processing.additional_loss.clone(),
+                power: self.options.processing.power.clone(),
             };
             settings.validate()?;
             let weights = if mode == PlaybackMode::Average {
