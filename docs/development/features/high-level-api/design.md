@@ -163,3 +163,24 @@ AST and Rust executable-token comparisons against HEAD matched after resolving
 the named constants and removing documentation/optional trailing commas.
 Rustfmt and diff whitespace checks passed. The architecture was reviewed;
 no engine ownership or behavior changed.
+
+## API-EXAMPLES-03: channel-193 Python collection example
+
+Update the Python high-level walkthrough to consume the 132 RxMER binaries and
+companion DPD in examples/workbench/multi-rxmer-2. Select Profile A, 192 MHz,
+AverageAll in Rust residual power, explicit unity H, 7200-second DPD tolerance
+and 1 ms observation with a 300-second execution bound. Retain named constants,
+numbered explanations and actual FEC/BER reporting. Loading stays separate from
+run. Do not parse the desktop WB JSON in Python or claim pilot-estimated receiver
+parity: that setting is not exposed by the current high-level API. Keep the Rust
+single-capture example unchanged and explain the differing inputs in the index.
+Validate by executing the installed native Python extension on these originals;
+no engine/binding changes or wheel rebuild are needed.
+
+Validation: the installed Ubuntu x86_64 / CPython 3.10 native extension loaded
+all 132 original RxMER binaries and the companion DPD. The explicit run returned
+Complete with 83 codewords, 0 corrected, 0 uncorrectable and post-FEC BER 0.0.
+The load message precedes run. Syntax and import-only checks passed; importing
+the walkthrough does not invoke main. Documentation links and whitespace checks
+passed. Reviewed the architecture: existing Rust/adapter ownership is unchanged;
+no Rust, Qt or binding code changed and no full-suite rebuild was required.

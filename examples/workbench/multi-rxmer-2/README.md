@@ -38,3 +38,9 @@ See [provenance.json](provenance.json) for source/current hashes, Git blob IDs,
 identity transformation and original filenames, and retain [LICENSE](LICENSE)
 and [NOTICE](NOTICE). These are pre-collected demo observations, not MERLIN's
 synthetic RxMER stress variants. Decoder outcomes are not guaranteed error-free.
+
+The [Python API walkthrough](../../api/python/high_level.py) loads these same
+133 original PNM binaries directly: the profile plus 132 RxMER captures. It
+requests one residual-power `AverageAll` experiment with explicit unity H.
+It does not import the desktop WB JSON or reproduce its pilot-estimated
+receiver correction. See the [API examples](../../api/README.md) for the command.

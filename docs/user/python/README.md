@@ -39,6 +39,12 @@ local/api-python-test/bin/python -m pip install --no-index local/python-wheels/m
 local/api-python-test/bin/python examples/api/python/high_level.py
 ```
 
+The runnable walkthrough loads the modulation profile and all 132 RxMER
+binaries from `examples/workbench/multi-rxmer-2`. It requests one Rust
+residual-power average with explicit unity response. See the
+[example notes](../../../examples/api/README.md) for scope and desktop-WB
+differences; the short snippet below retains the single-capture workflow.
+
 Installing a compatible precompiled wheel needs neither Rust nor Qt. Building
 from source needs the Rust toolchain. A native `linux_x86_64` tag does not promise
 manylinux portability or support for another interpreter/OS.

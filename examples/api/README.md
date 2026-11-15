@@ -12,7 +12,7 @@ and assumptions are explained alongside the workflow.
 | Example | Purpose |
 | --- | --- |
 | [Rust workflow](rust/high_level.rs) | Import a profile, derive OCD settings, add RxMER and a channel estimate independently, select one capture and inspect simulated results. |
-| [Python workflow](python/high_level.py) | Perform the same fixture-backed workflow using the installed native Python extension and print FEC counts and BER. |
+| [Python workflow](python/high_level.py) | Average all 132 channel-193 RxMER captures from `workbench/multi-rxmer-2` in Rust, use explicit unity H and print actual FEC counts and BER. |
 | [Rust selection policies](rust/policy_parity.rs) | Run `Each`, `Individual`, `AverageAll` and `InterpolateAt`; write actual reference results for the Python parity tests. |
 
 ## Run Rust
@@ -25,7 +25,9 @@ scripts/cargo-local.sh run -p pnm-input --example high_level --locked
 
 Cargo registers these source files as examples of `pnm-input`. They use shared
 captures under `examples/workbench/single` and
-`examples/measurements/single-channel`; no captures are duplicated here.
+`examples/measurements/single-channel`; no captures are duplicated here. The
+Python walkthrough instead uses the original binary collection under
+`examples/workbench/multi-rxmer-2`.
 
 ## Run Python
 
@@ -36,6 +38,14 @@ root:
 ```bash
 local/api-python-test/bin/python examples/api/python/high_level.py
 ```
+
+This loads the companion modulation-profile binary and all 132 RxMER binaries
+from `examples/workbench/multi-rxmer-2`, then runs one `AverageAll` experiment
+with explicit unity H. Rust computes the average in residual power, preserving
+missing readings. The two-hour profile tolerance covers the collection.
+It does not load `workbench.merlin.json` or reproduce its pilot-estimated
+receiver setting, which is not exposed by this API. It never starts continuous
+playback or one experiment per capture; `Each` would request separate runs.
 
 The interpreter must have the compatible native `merlin-ofdm` wheel installed.
 A precompiled wheel needs neither Rust nor Qt. Python does not invoke the CLI.

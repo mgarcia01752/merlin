@@ -1366,3 +1366,9 @@ validation are complete; the user guide includes the current dark capture.
   headers, numbered walkthrough remarks and named configuration constants
   with units. Rust checking, Python execution and equivalence checks pass.
   [Design](features/high-level-api/design.md#api-examples-02-developer-walkthrough-comments).
+
+- [x] **API-EXAMPLES-03** Use the channel-193 multi-rxmer-2 binaries in
+  the Python walkthrough. Load all 132 RxMER captures, average in Rust and
+  run with explicit unity H. Document desktop-WB differences. Native run
+  completed with 83 codewords, 0 corrected/uncorrectable and BER 0.
+  [Design](features/high-level-api/design.md#api-examples-03-channel-193-python-collection-example).

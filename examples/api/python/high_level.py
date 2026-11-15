@@ -20,7 +20,7 @@ Loading/configuring inputs does not start simulation; sim.run() below does.
 from pathlib import Path
 from merlin import (
     DPD, OCD, Merlin, ProfileId, ProtocolScope, OcdOverrides, BandwidthHz,
-    RxMer, ChannelEstimate, EvaluationOptions, ChannelSelection,
+    RxMer, RxMerSelection, EvaluationOptions, ChannelSelection,
     ObservationDuration, AssociationTolerance, RunLimits, RuntimeLimit,
 )
 
@@ -28,23 +28,23 @@ from merlin import (
 # Example configuration. Change these values here when adapting the workflow.
 # These are caller choices, not settings inferred from the capture filenames.
 REPOSITORY_PARENT_INDEX = 3  # examples/api/python/ -> repository root.
-FIXTURE_DIRECTORY = "examples/workbench/single"
-PROFILE_FILENAME = "modulation-profile.bin"
-RXMER_FILENAME = "rxmer.bin"
-CHANNEL_ESTIMATE_FILENAME = "ds-channel-estimate.bin"
+FIXTURE_DIRECTORY = "examples/workbench/multi-rxmer-2"
+PROFILE_FILENAME = "ds_ofdm_modulation_profile_aabbccddeeff_193_1764824373.bin"
+RXMER_FILE_PATTERN = "ds_ofdm_rxmer_per_subcar_*.bin"
 OCCUPIED_BANDWIDTH_HZ = 192_000_000  # Explicit fixture configuration: 192 MHz.
 OBSERVATION_DURATION_MS = 1  # Source observation, excluding acquisition/drain.
-PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 90_000  # Fixture capture-time allowance.
+PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 7_200  # Fixture capture-time allowance.
 MAX_RUNTIME_MS = 300_000  # Per-experiment wall-clock limit: 300 seconds.
 
 
 def main():
-    """Run one fixture-backed experiment and display Rust-produced outcomes.
+    """Run one collection-backed experiment and display Rust-produced outcomes.
 
     Returns:
         None after printing each experiment's status, FEC counters and BER.
         Input captures and returned report objects remain unchanged.
     Raises:
+        FileNotFoundError if the configured folder contains no RxMER binaries.
         Native ApiError for invalid input, configuration or preflight failures.
         Once an experiment starts, partial/failed outcomes are represented by
         its entry status and any available report, so inspect both.
@@ -80,23 +80,27 @@ def main():
     sim = Merlin(ocd)
     sim.set_profile(profile)
 
-    # 5. Add RxMER and channel response independently.
-    # RxMER supplies measured receive MER by subcarrier, used by Rust's residual
-    # error model. The channel estimate supplies the complex frequency response H.
-    # They need not be captured simultaneously or added as matched pairs.
-    # add_channel_estimate returns an opaque ID belonging to this controller;
-    # the explicit policy below selects that response using the returned ID.
-    sim.add_rxmer(RxMer.from_file(root / RXMER_FILENAME))
-    channel = sim.add_channel_estimate(
-        ChannelEstimate.from_file(root / CHANNEL_ESTIMATE_FILENAME)
-    )
+    # 5. Load each original RxMER binary in the collection independently.
+    # Files are sorted for reproducible insertion order only. Rust decodes their
+    # real header timestamps and preserves original bytes/provenance; timestamps
+    # are never inferred from filenames. No scientific calculations run here.
+    # There is no matching channel estimate in this folder. Select synthetic
+    # unity explicitly below rather than borrowing another channel's response.
+    captures = sorted(root.glob(RXMER_FILE_PATTERN))
+    if not captures:
+        raise FileNotFoundError(f"No RxMER captures in {root}")
+    for capture in captures:
+        sim.add_rxmer(RxMer.from_file(capture))
+    print(f"Loaded {len(captures)} RxMER captures; simulation has not started.")
 
     # 6. Choose policies and separate source time from host execution time.
-    # - Default RxMER selection is Each: one independent experiment per capture.
-    #   There is one capture here, so this run requests one experiment. Other
-    #   modes are Individual, AverageAll and InterpolateAt; see the API guide.
-    # - Explicit channel selection reuses the chosen H, retaining its original
-    #   timestamp/provenance. It does not perform nearest-time matching.
+    # - AverageAll requests ONE experiment using all captures. Rust averages
+    #   residual power, preserves missing values and validates exact grids.
+    #   It does not average dB or simulate the collection's hour of history.
+    # - Unity is an explicit synthetic response, not a measured H. The desktop
+    #   WB uses pilot-estimated receiver correction; that receiver setting and
+    #   desktop WB JSON import are not exposed by the current high-level API.
+    #   This example shares the original captures, not every desktop setting.
     # - OBSERVATION_DURATION_MS requests source observation in milliseconds,
     #   excluding acquisition/completion/drain. It is not wall-clock duration.
     # - PROFILE_ASSOCIATION_TOLERANCE_SECONDS permits this fixture profile and
@@ -106,7 +110,8 @@ def main():
     # - MAX_RUNTIME_MS bounds host execution per experiment in milliseconds.
     #   A limit can yield a partial report instead of completion.
     sim.set_options(EvaluationOptions(
-        channel_selection=ChannelSelection.explicit(channel),
+        rxmer_selection=RxMerSelection.average_all(),
+        channel_selection=ChannelSelection.unity(),
         observation=ObservationDuration(OBSERVATION_DURATION_MS),
         profile_tolerance=AssociationTolerance(PROFILE_ASSOCIATION_TOLERANCE_SECONDS),
         limits=RunLimits(runtime=RuntimeLimit(MAX_RUNTIME_MS))))
