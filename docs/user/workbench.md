@@ -335,6 +335,9 @@ unchanged and shows an error; opening never starts a simulation. Do not combine
 Add `--debug-ui` for loading timing. Use `--help` for startup usage or
 `--check-workbench FILE` to validate without a desktop.
 
+The [receiver-mode guide](receiver-estimation/modes.md) compares all three
+Receiver Configuration choices and their channel/noise sources.
+
 The optional [MCE receiver](receiver-estimation/mce.md) estimates correction from
 received pilots. The separate [Waveform Channel](impairments/waveform-filter.md)
 models static sample delays and bounded CM-response reconstruction. Both remain

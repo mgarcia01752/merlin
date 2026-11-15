@@ -1,6 +1,6 @@
 # MCE implementation and validation
 
-Status: **complete for the bounded static-channel scope**, CH-EST-RX-07..12.
+Status: **complete for the bounded static-channel scope**, CH-EST-RX-07..13.
 The [design](design.md) preserves the intended boundaries and deferred extensions.
 
 ## Delivered behavior and ownership
@@ -99,3 +99,39 @@ See the [receiver guide](../../../user/receiver-estimation/mce.md) and
 [filter guide](../../../user/impairments/waveform-filter.md) for current use/limits.
 
 The later [channel composition change](../channel-workbench/design.md#ui-ch-02--wave-ch-compose-01-graphic-model-controls-and-composition) permits diagonal tilt/cable loss before synthetic echoes. Imported H and echo paths remain alternative response sources.
+
+## CH-EST-RX-13: receiver-mode wording and guide
+
+Receiver Configuration now uses one dropdown for Supplied CM channel estimate,
+Pilot-based channel estimation, and Pilot-based channel and noise estimation
+(MCE). The first mode remains default; saved mode values and engine algorithms
+are unchanged. Conditional MCE averaging, per-mode explanations and tooltips
+replace the checkbox plus correction selector. The
+[mode guide](../../../user/receiver-estimation/modes.md) explains both estimated
+modes' pilot source, separate noise-confidence handling, unity/reference behavior,
+128-symbol history, MCE smoothing and API/WB names. It is linked from the main
+documentation index, receiver guide and terminology. See the
+[design](design.md#ch-est-rx-13-explicit-three-mode-receiver-wording-and-documentation).
+
+Validation for CH-EST-RX-13: scripts/qt-desktop.sh check passes formatting,
+all-target adapter Clippy, all 82 Rust adapter tests (88.51s), native development
+build and all 76 QML checks (13.902s). QML tests exercise all three labels and
+mode transitions, conditional averaging, Cancel/Apply, busy guards, preserved
+channel settings, routing and the accepted MCE chip. Final optimized release
+build passes (2m52s). Native Ubuntu dark review confirms unclipped text and
+aligned controls; the MCE configuration screenshot is updated. The final supplied
+mode explanation clarifies that absence of a CM estimate does not disable added
+channel effects. The owned review process was closed without saving WB edits.
+
+The mode guide is linked from the central index, receiver pages and acronym
+reference. All checked relative documentation links and generated Python
+integration-guide freshness pass. Local logs/native review evidence reside under
+`docs/development/local/api-receiver-parity/receiver-mode-*`. Scientific algorithms,
+wire values and defaults are unchanged; no full non-Qt simulation suite rerun
+is needed for this presentation/documentation change. Windows runtime and other
+platforms were not verified during this task.
+
+
+Final confirmation completes successfully: Qt check exits zero with 82 adapter
+tests in 50.75s and 76 QML tests in 13.841s; the optimized release build also
+exits zero. No outstanding build/test process remains for this change.

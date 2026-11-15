@@ -233,6 +233,9 @@ conversion stay in Rust; no CLI process is used. See the
 
 ### Select receiver correction independently of the channel
 
+See the [plain-language receiver-mode comparison](../receiver-estimation/modes.md)
+for channel correction, decoder noise information, defaults and saved settings.
+
 ```python
 from merlin import EvaluationOptions, ChannelSelection, ReceiverMode
 

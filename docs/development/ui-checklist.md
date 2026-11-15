@@ -244,6 +244,11 @@ are implemented. Unretained history and unsupported transport stay explicit.
   channel controls separate; preserve Apply/Cancel, WB settings and known-error
   help. 66 adapter/57 QML checks and native dark/light views pass.
   [Implementation](features/independent-channel-estimation/implementation.md).
+- [x] **CH-EST-RX-13** Use the agreed three-mode dropdown and conditional MCE
+  averaging; document channel versus noise sources, unity/default behavior and
+  saved/API mode names. Preserve Apply/Cancel and accepted-mode indicators.
+  [Design](features/independent-channel-estimation/design.md#ch-est-rx-13-explicit-three-mode-receiver-wording-and-documentation),
+  [guide](../user/receiver-estimation/modes.md).
 - [x] **UI-SLICER-01** Show selected physical decisions/residuals and actual
   NCP/payload cell LLRs plus the retained LDPC-input window.
 - [x] **UI-FEC-01** Add dedicated FEC statistics, iteration distribution and

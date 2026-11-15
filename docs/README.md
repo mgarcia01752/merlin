@@ -26,6 +26,7 @@
 - [Transmission settings](user/transmission.md)
 - [FEC codec and equations](user/fec-codec.md)
 - [Codeword shortening](user/fec-shortening/README.md)
+- [Receiver modes: supplied CM estimate, pilot estimation and MCE](user/receiver-estimation/modes.md)
 - [QAM processing and decisions](user/qam-processing/README.md)
 - [Modulation support](reference/ofdm-support.md)
 - [PNM inputs](user/measurement-inputs/README.md)

@@ -5,6 +5,10 @@ Estimation (CH-EST-RX)** identifies its direction. Transmitter-side work uses
 CH-EST-TX. MERLIN now provides a receiver-derived pilot estimate alongside the
 existing supplied-channel reference receiver. All algorithms and results are Rust.
 
+Start with the **[receiver-mode comparison](modes.md)** for the three UI choices,
+what each estimates, noise confidence, default/unity behavior and saved-WB/API
+names. Both estimated modes use received pilots; MCE additionally estimates noise.
+
 ```mermaid
 flowchart LR
     S["Received time samples"] --> F["Framing / prefix removal / FFT"]
@@ -33,13 +37,14 @@ applies the supplied response H to the channel, but pilot-mode construction neve
 passes H to the receiver. Channel noise budgets remain simulation calibration;
 this is not an implementation of blind modem noise estimation.
 
-**[MERLIN Channel Estimation (MCE)](mce.md)** adds received-only decoder reliability
-and an Off-by-default control in Receiver Configuration. Supplied H impairs the
-signal in both states: the default workflow uses supplied 1/H when Off, while MCE
-On derives 1/H-hat from received pilots without access to H or simulated noise
-powers. The toggle does not change the channel impairment. Existing explicit
-receiver-mode requests retain their meaning. The [waveform channel filter](../impairments/waveform-filter.md)
-independently adds static continuous sample memory and bounded echo/CM-response models.
+**[MERLIN Channel Estimation (MCE)](mce.md)** adds received-only decoder reliability.
+Select **Pilot-based channel and noise estimation (MCE)** in the Receiver mode
+dropdown. The default is **Supplied CM channel estimate**. The separate
+**Pilot-based channel estimation** choice estimates channel correction while
+using simulator-calibrated decoder noise. Supplied channel estimates still
+impair the signal independently of the receiver mode. The
+[waveform channel filter](../impairments/waveform-filter.md) independently adds
+static continuous sample memory and bounded echo/CM-response models.
 
 The CLI runner retains explicit sample timing and PLC phase. The separate timing
 API can search an unknown bounded sample offset with known numerology/PLC phase.
@@ -58,4 +63,4 @@ target/release/ofdm-fec channel --input examples/cli/channel-pilot-estimated.jso
 Use new output paths. Results include a final `channel_estimate`, optional
 `protected_constellation`, actual FEC outcomes and the effective settings. The
 same typed results are available from `ChannelRun`/`run_channel` without a CLI.
-Qt consumes these Rust results; future Python bindings will use the same APIs.
+Qt consumes these Rust results; the native Python bindings use the same APIs.

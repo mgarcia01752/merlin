@@ -6,8 +6,9 @@ MCE lets the receiver estimate its own channel correction and decoder reliabilit
 from received pilots. It receives neither the imported CM channel coefficients
 nor the simulator's exact noise powers. All estimation and decoding run in Rust.
 
-Enable **Receiver → Configure Receiver → MERLIN Channel Estimation → MCE** and
-select **Apply**. MCE is **Off by default**. The small **MCE** chip appears on the
+Open **Receiver → Configure Receiver** and select **Pilot-based channel and
+noise estimation (MCE)** under **Receiver mode**, then select **Apply**. MCE is
+**Off by default**. The small **MCE** chip appears on the
 main Receiver block when enabled; the block and centered heading keep their
 existing layout. Cancel and the title X discard draft changes. Settings persist
 with the workbench and take effect on the next run; Apply is disabled while a
@@ -21,15 +22,13 @@ The signal connection from Channel Simulator to Receiver stays visible.
 
 ![Actual Receiver Configuration with MCE enabled](../../images/workbench/mce-receiver-configuration-dark.png)
 
-| MCE | Channel simulator | Receiver correction |
-| --- | --- | --- |
-| Off, default reference workflow | Applies supplied H. | Uses supplied H to calculate 1/H. |
-| On | Applies the same supplied H. | Estimates H-hat from received pilots and applies 1/H-hat. |
-
-Existing **Pilot-estimated H-hat** requests remain available as a separate legacy
-mode with simulation-calibrated noise. They do not enable the MCE chip. Switching
-MCE Off selects supplied-H reference correction; opening and cancelling the
-dialog does not change an existing mode.
+The [receiver-mode comparison](modes.md) describes all three choices together.
+Both pilot-based modes estimate channel correction from received pilots. The
+additional MCE function estimates decoder noise confidence; the channel-only
+mode still uses simulator-calibrated noise information. Selecting **Supplied CM
+channel estimate** restores known-response correction; absent a CM estimate,
+the CM response defaults to flat/unity. Added channel effects remain separate. Switching modes does not change which
+CM response impairs the signal. Opening and cancelling leaves the mode unchanged.
 
 ```mermaid
 flowchart LR

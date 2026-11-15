@@ -144,6 +144,9 @@ save helpers add no-overwrite publication and provenance. See the
 
 ## Receiver correction
 
+The [receiver-mode comparison](../receiver-estimation/modes.md) explains the
+three choices and their channel/noise sources using the UI names.
+
 `EvaluationOptions::with_receiver_mode(ReceiverMode::PilotEstimated)` selects
 received-pilot correction through the existing engine. `ReceiverMode` re-exports
 the engine's typed `SuppliedChannel`, `PilotEstimated` and `MerlinChannelEstimated`

@@ -19,31 +19,56 @@ WorkbenchDialog {
     function setMode(mode) { draft=Object.assign({},draft,{receiver_mode:mode}) }
     title: "Receiver Configuration"
     parent: Overlay.overlay; anchors.centerIn: parent
-    width: Math.min(650,parent ? parent.width - 40 : 650)
+    width: Math.min(820,parent ? parent.width - 40 : 820)
     modal: true; standardButtons: Dialog.NoButton
     onOpened: { draft=Object.assign({},runState.options); draft.mce=Object.assign({minimum_variance:1e-8,averaging_symbols:16},draft.mce || {}); errorMessage="";diagnostic=null }
     contentItem: ColumnLayout {
         spacing: 14
-        Label { text: "Configure receiver processing"; color: theme.accent; font.bold: true }
         GridLayout {
-            columns: 2; columnSpacing: 18; rowSpacing: 10
-            Label { text: "MERLIN Channel Estimation"; color: theme.text }
-            CheckBox {
-                objectName: "receiverMceEnabled"; text: "MCE"
-                checked: dialog.draft.receiver_mode === "merlin_estimated"
-                onToggled: dialog.setMode(checked ? "merlin_estimated" : "supplied_channel")
+            columns: 2; columnSpacing: 20; rowSpacing: 12
+            Layout.fillWidth: true
+            Label { text: "Receiver mode"; color: theme.text }
+            ComboBox {
+                objectName: "receiverCorrection"
+                Layout.fillWidth: true
+                Layout.preferredWidth: 480
+                model: ["Supplied CM channel estimate",
+                        "Pilot-based channel estimation",
+                        "Pilot-based channel and noise estimation (MCE)"]
+                currentIndex: dialog.draft.receiver_mode === "merlin_estimated" ? 2
+                            : dialog.draft.receiver_mode === "pilot_estimated" ? 1 : 0
+                onActivated: function(index) {
+                    dialog.setMode(["supplied_channel", "pilot_estimated", "merlin_estimated"][index])
+                }
                 ToolTip.visible: hovered || activeFocus
-                ToolTip.text: "Estimate the channel and decoder reliability from received pilots. Supplied H still impairs the channel; MCE never uses it for correction."
+                ToolTip.text: "Both pilot-based modes derive channel correction from received pilots. Only MCE also estimates noise for decoder confidence. Full pilot history spans 128 OFDM symbols; known symbol timing is still required."
             }
-            Label { text: "Receiver Correction"; color: theme.text }
-            ComboBox { objectName: "receiverCorrection"; enabled:dialog.draft.receiver_mode!=="merlin_estimated"; Layout.preferredWidth: 330; model: ["Supplied H · reference correction","Pilot-estimated H-hat"]; displayText:dialog.draft.receiver_mode==="merlin_estimated" ? "MCE · received pilots" : currentText; currentIndex: dialog.draft.receiver_mode === "pilot_estimated" ? 1 : 0; onActivated: function(index) { dialog.setMode(index===1 ? "pilot_estimated":"supplied_channel") } }
-            Label { text: "MCE Averaging (symbols)"; color:theme.text }
-            SpinBox { objectName:"receiverMceAveraging"; from:1;to:128;editable:true;enabled:dialog.draft.receiver_mode==="merlin_estimated";value:dialog.draft.mce ? dialog.draft.mce.averaging_symbols : 16;onValueModified:dialog.draft.mce.averaging_symbols=value }
-            Label { text: "Decoder Iteration Limit"; color: theme.text }
+            Label {
+                objectName: "receiverModeExplanation"
+                Layout.columnSpan: 2; Layout.fillWidth: true
+                wrapMode: Text.WordWrap; color: theme.muted
+                text: dialog.draft.receiver_mode === "merlin_estimated"
+                    ? "Estimates channel correction and noise from received pilots to set decoder confidence."
+                    : dialog.draft.receiver_mode === "pilot_estimated"
+                    ? "Estimates channel correction from received pilots. Decoder noise information comes from the simulator."
+                    : "Uses the supplied CM channel estimate, or a flat reference when absent. Added channel effects remain separate settings."
+            }
+            Label {
+                text: "MCE averaging (symbols)"; color: theme.text
+                visible: dialog.draft.receiver_mode === "merlin_estimated"
+            }
+            SpinBox {
+                objectName: "receiverMceAveraging"
+                visible: dialog.draft.receiver_mode === "merlin_estimated"
+                from: 1; to: 128; editable: true
+                value: dialog.draft.mce ? dialog.draft.mce.averaging_symbols : 16
+                onValueModified: dialog.draft.mce.averaging_symbols=value
+                ToolTip.visible: hovered || activeFocus
+                ToolTip.text: "Smooth the pilot-derived noise estimate over this many symbols. This does not change the 128-symbol full pilot-history span."
+            }
+            Label { text: "Decoder iteration limit"; color: theme.text }
             SpinBox { from:1; to:100; editable:true; value:dialog.draft.max_iterations || 50; onValueModified: dialog.draft.max_iterations=value }
-
         }
-        Label { text: "Supplied H impairs both modes. MCE estimates its own correction and reliability from received pilots; full training spans 128 symbols. Known symbol timing remains required."; color:theme.muted; Layout.fillWidth:true; wrapMode:Text.WordWrap }
         ContextualStatus { objectName:"receiverConfigError";theme:dialog.theme;text:dialog.errorMessage;diagnostic:dialog.diagnostic;color:dialog.theme.statusError;Layout.fillWidth:true;onHelpRequested:function(code){dialog.contextHelpRequested(code)} }
     }
     footer: ApplyCancelFooter {

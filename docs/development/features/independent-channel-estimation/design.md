@@ -238,3 +238,20 @@ Validation: Qt check passes (formatting, Clippy, 66 adapter tests, 58 QML tests
 and native build). Tests cover accepted-mode routing, preserved channel paths,
 restored reference routing and retained MCE/legacy display labels. Actual Ubuntu
 dark screenshots confirm the diagram and comparison view; guide images updated.
+
+## CH-EST-RX-13: explicit three-mode receiver wording and documentation
+
+Replace the MCE checkbox plus separate correction selector with one Receiver
+mode dropdown. Use the agreed labels Supplied CM channel estimate, Pilot-based
+channel estimation, and Pilot-based channel and noise estimation (MCE). Keep
+existing wire values and algorithms. Both estimated modes use received pilots;
+only MCE estimates decoder noise reliability independently of simulator powers.
+Show MCE averaging only for MCE; align the form and present a concise per-mode
+explanation. Tooltips hold training/known-timing details. Preserve Apply/Cancel,
+busy guards, accepted settings, mode chip and scientific configuration.
+
+Document all three modes together, CM-estimate impairment versus receiver
+correction, explicit unity behavior, noise confidence, API names and WB defaults.
+Explain that these are pilot-assisted modes, not fully blind RF discovery.
+Validate mode switching, cancellation, MCE settings and existing connections with
+Qt/QML checks; rebuild and capture the actual dark native dialog for the guide.

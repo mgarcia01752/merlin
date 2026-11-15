@@ -1038,7 +1038,12 @@ samples and declared bootstrap inputs, without applied H, configured tap delays 
 exact simulator noise powers. Channel truth remains a separate diagnostic input.
 Existing diagonal/calibrated modes remain explicit reference baselines.
 MERLIN Channel Estimation (MCE) is disabled by default and configured in
-Receiver Configuration. Its setting is independent of channel impairments;
+Receiver Configuration through one three-choice Receiver mode dropdown:
+Supplied CM channel estimate, Pilot-based channel estimation, and Pilot-based
+channel and noise estimation (MCE). Both estimated modes use the existing pilot
+channel estimator; MCE adds received-only noise reliability. The UI exposes MCE
+averaging only for MCE, with contextual explanations and tooltips. See the
+[mode comparison](user/receiver-estimation/modes.md). Its setting is independent of channel impairments;
 accepted changes apply to the next run.
 In the default reference workflow, supplied H impairs the channel in both
 MCE states: Off uses reference 1/H correction; On uses independently estimated

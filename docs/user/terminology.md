@@ -20,7 +20,7 @@ supported implementation and its limits.
 | Transmitter (TX) | Encodes source bits, maps modulation cells and produces an OFDM waveform. |
 | Channel | Applies the configured response and noise between transmitter and receiver. |
 | Receiver (RX) | Processes received samples, recovers signaling and decodes payloads. |
-| MCE | MERLIN Channel Estimation: optional receiver-owned pilot channel estimation and received-only decoder reliability. Off by default in Receiver Configuration; an MCE chip on the main Receiver block indicates enablement. See the [MCE guide](receiver-estimation/mce.md). |
+| MCE | MERLIN Channel Estimation: optional receiver-owned pilot channel estimation and received-only decoder reliability. Select Pilot-based channel and noise estimation (MCE) under Receiver mode; Supplied CM channel estimate is the default. An MCE chip on the main Receiver block indicates enablement. See the [MCE guide](receiver-estimation/mce.md). |
 | PRBS-RX / comparison | Independently compares decoded payload bits with the original accepted source. It does not feed expected bits into decoding. |
 | Test point (TP) | An inspectable boundary between processing stages. A selected instrument reads retained data from that boundary. |
 | Snapshot | A bounded retained observation, not the entire history of a simulation. A missing snapshot is not automatically a processing failure. |

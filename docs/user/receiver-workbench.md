@@ -107,15 +107,18 @@ click, Enter, Space or F1.
 ### MCE receiver option
 
 **MERLIN Channel Estimation (MCE)** is Off by default in Receiver Configuration.
+The [receiver-mode guide](receiver-estimation/modes.md) explains the three
+dropdown choices, including why both estimated modes use pilots.
 Enable MCE and Apply to use received-pilot correction and decoder reliability on
 future runs. Cancel/X preserves accepted settings. Stop a running simulation
 before applying changes. The main Receiver block shows a small **MCE** chip when
 enabled; its heading stays centered and the existing block layout is preserved.
 
-| MCE | Channel simulator | Receiver correction |
+| Receiver mode | Channel correction | Decoder noise information |
 | --- | --- | --- |
-| Off (default reference workflow) | Applies supplied DS response H. | Uses supplied H to calculate 1/H. |
-| On | Applies the same supplied DS response H. | Estimates H-hat from received pilots and applies 1/H-hat, without access to supplied H. |
+| Supplied CM channel estimate (default) | Supplied estimate; flat CM response when absent. | Simulator calibrated. |
+| Pilot-based channel estimation | Estimated from received pilots. | Simulator calibrated. |
+| Pilot-based channel and noise estimation (MCE) | Estimated from received pilots. | Estimated from received pilots. |
 
 MCE changes receiver correction, not the applied response or seeded noise.
 Training builds a 128-symbol history, then the status shows Tracking; that is

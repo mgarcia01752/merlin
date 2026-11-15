@@ -1450,3 +1450,9 @@ validation are complete; the user guide includes the current dark capture.
   saved-UI companion; retain the separate MCE walkthrough. Verify unchanged
   capture/settings payloads, package defaults and Rust/Python/native UI FEC.
   [Design](features/high-level-api/design.md#api-wb-02-align-bundled-workbenches-with-the-default-receiver).
+
+- [x] **CH-EST-RX-13** Unify receiver configuration in the agreed three-mode
+  dropdown, hide MCE averaging outside MCE and document channel/noise sources,
+  defaults, unity behavior, pilot history, API names and saved WB semantics.
+  [Design](features/independent-channel-estimation/design.md#ch-est-rx-13-explicit-three-mode-receiver-wording-and-documentation),
+  [user guide](../user/receiver-estimation/modes.md).
