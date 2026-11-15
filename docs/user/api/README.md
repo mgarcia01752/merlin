@@ -155,7 +155,7 @@ engine's existing default reliability settings in this high-level API.
 Preparation forwards the choice without running; owned report options preserve
 it after later controller edits and assumptions describe the selected receiver.
 Python mirrors this as `EvaluationOptions(receiver_mode=...)`. The collection
-walkthrough uses pilot estimation to match its saved workbench. See the
+walkthrough selects MCE; enable MCE in the saved workbench to compare results. See the
 [Python receiver example](../python/README.md#select-receiver-correction-independently-of-the-channel).
 
 The expanded MCE name is `MerlinChannelEstimated` in Rust and

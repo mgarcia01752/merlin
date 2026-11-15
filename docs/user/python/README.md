@@ -48,8 +48,8 @@ local/api-python-test/bin/python examples/api/python/multi_rxmer.py
 ```
 
 The collection example runs Profiles 0, 3 and 4 independently, each with the
-Rust residual-power average, explicit unity physical response and pilot-estimated
-receiver correction matching the saved workbench. It reports actual FEC
+Rust residual-power average, explicit unity physical response and MCE receiver
+correction. The saved workbench uses PilotEstimated; enable MCE there to compare. It reports actual FEC
 results and wall time per profile. The observation is 1 ms per profile; increase
 `OBSERVATION_DURATION_MS` for a longer run. See the [example notes](../../../examples/api/README.md) for
 scope and matched fixture settings.
@@ -233,8 +233,9 @@ Unity H can still be received through pilot-estimated correction. Selecting a
 mode does not run simulation. Accepted options and reports retain independent
 snapshots of the choice. All estimation/validation remains in Rust.
 
-The collection example explicitly matches the curated WB's correction mode,
-noise/PRBS seeds, decoder limit, average policy, duration and OCD timing. It does
+The collection example selects MCE and matches the curated WB's noise/PRBS
+seeds, decoder limit, average policy, duration and OCD timing. The saved WB
+selects PilotEstimated, so enable MCE there to match receiver behavior. It does
 not import arbitrary WB JSON; changing that WB requires updating the example's
 named constants. A fixture test guards drift. No change to the original
 single-capture example's receiver default is implied.

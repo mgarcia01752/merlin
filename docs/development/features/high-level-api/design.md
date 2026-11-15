@@ -324,3 +324,12 @@ an additional input spelling. No Qt layout or orchestration changes are needed.
 Update typed callers, examples, guides and tests together. Verify serde round
 trips, native Python option/report ownership and all selection-mode parity,
 then rebuild the Qt release executable to keep native callers current.
+
+### API-EXAMPLES-06: use MCE in the collection walkthrough
+
+Select MERLIN_CHANNEL_ESTIMATED in multi_rxmer.py. Keep the saved workbench
+unchanged and explicitly document its PilotEstimated difference. Preserve the
+pilot UI regression comparison by overriding only the example receiver in that
+test; separately execute the default MCE example through the native extension.
+Other seeds, timing, profiles and input policies remain unchanged. No Rust API
+or receiver algorithm changes are needed: the shared mode is already exposed.

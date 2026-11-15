@@ -1427,3 +1427,8 @@ validation are complete; the user guide includes the current dark capture.
   compatibility and accept the expanded input spelling; verify native Python
   options, all receiver/selection parity modes, MCE tests and Rust forwarding.
   [Design](features/high-level-api/design.md#api-receiver-02-expand-mce-in-typed-receiver-names).
+
+- [x] **API-EXAMPLES-06** Select MERLIN_CHANNEL_ESTIMATED in multi_rxmer.py;
+  document the saved WB's different receiver mode. Run all three profiles with
+  the native MCE API and preserve the pilot-mode UI comparison test.
+  [Design](features/high-level-api/design.md#api-examples-06-use-mce-in-the-collection-walkthrough).

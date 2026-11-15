@@ -275,3 +275,21 @@ serialized values are unchanged. The generated integration guide is current and
 relative documentation links resolve. No full simulation suite rerun or new
 platform certification is claimed for this naming-only change. Local evidence is under
 `docs/development/local/api-receiver-parity/rename-*`.
+
+## API-EXAMPLES-06: default collection MCE run
+
+multi_rxmer.py now selects ReceiverMode.MERLIN_CHANNEL_ESTIMATED. The native
+Linux CPython 3.10 example loads all 132 captures before running and completes
+Profiles 0, 3 and 4 in 4.786s total experiment time. Total/corrected/uncorrectable
+counts are respectively 83/0/0, 114/4/0 and 124/30/0, with zero post-FEC BER.
+These happen to match this fixture's pilot-mode counts; the modes still differ
+in decoder reliability estimation and need not agree on other inputs.
+
+The saved WB is unchanged and still selects PilotEstimated. Shared-settings
+tests now explicitly allow this receiver difference, and the native UI regression
+comparison explicitly selects pilot mode before comparing its recorded counts.
+All three Python receiver tests pass, including the retained pilot UI comparison.
+No Rust/binding changes or rebuild are needed; MCE uses the already verified
+shared API and engine. Full simulation and platform suites are not rerun for
+this example-only change. Evidence resides under
+`docs/development/local/api-receiver-parity/mce-example-*`.

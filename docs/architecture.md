@@ -2305,8 +2305,9 @@ through the existing receiver enum, independently of applied H selection. The
 supplied-channel default remains unchanged. PilotEstimated and MerlinChannelEstimated
 use the same existing Rust receiver operations as Qt; no Python estimation or Qt
 orchestration enters the library. Reports retain the selected mode and accurate
-assumptions. The collection example explicitly matches its curated WB settings;
-see [receiver parity](development/features/high-level-api/design.md#api-receiver-01-match-receiver-correction-across-rust-python-and-qt).
+assumptions. The collection example now selects MCE while retaining the curated
+WB's other settings; the saved WB uses PilotEstimated. The regression comparison
+explicitly restores pilot mode to preserve its UI reference. See [receiver parity](development/features/high-level-api/design.md#api-receiver-01-match-receiver-correction-across-rust-python-and-qt).
 
 The MCE typed variant is `MerlinChannelEstimated` (Python uppercase alias
 `MERLIN_CHANNEL_ESTIMATED`). Serde retains `merlin_estimated` as the canonical

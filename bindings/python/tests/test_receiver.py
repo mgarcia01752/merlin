@@ -54,8 +54,8 @@ class ReceiverModeTests(unittest.TestCase):
         sim.set_options(options)
         self.assertEqual(report.options.receiver_mode, m.ReceiverMode.PILOT_ESTIMATED)
 
-    def test_collection_configuration_matches_saved_workbench(self):
-        """Detect drift between the example constants and curated WB settings."""
+    def test_collection_configuration_preserves_wb_settings_except_receiver(self):
+        """Keep shared fixture settings while explicitly choosing MCE in Python."""
         example = runpy.run_path(str(EXAMPLE))  # Importing never runs main().
         workbench = json.loads(WORKBENCH.read_text())
         for constant, key in (("OCCUPIED_BANDWIDTH_HZ", "occupied_bandwidth_hz"),
@@ -69,7 +69,7 @@ class ReceiverModeTests(unittest.TestCase):
                               ("MAX_RUNTIME_MS", "max_runtime_ms")):
             self.assertEqual(example[constant], workbench["receiver"][key])
         self.assertEqual(workbench["receiver"]["receiver_mode"], "pilot_estimated")
-        self.assertEqual(example["RECEIVER_MODE"], m.ReceiverMode.PILOT_ESTIMATED)
+        self.assertEqual(example["RECEIVER_MODE"], m.ReceiverMode.MERLIN_CHANNEL_ESTIMATED)
         self.assertEqual(workbench["sections"]["measurements"]["options"]["mode"], "average")
         self.assertEqual(example["PROFILE_ASSOCIATION_TOLERANCE_SECONDS"],
                          workbench["sections"]["measurements"]["options"]["tolerance_seconds"])
@@ -81,6 +81,8 @@ class ReceiverModeTests(unittest.TestCase):
         """Run every discovered profile and compare real counters, not estimates."""
         example = runpy.run_path(str(EXAMPLE))
         output = io.StringIO()
+        # Preserve the independent native UI anchor under its saved pilot mode.
+        example["main"].__globals__["RECEIVER_MODE"] = m.ReceiverMode.PILOT_ESTIMATED
         with redirect_stdout(output):
             example["main"]()
         # Extract complete profile blocks from stdout, not whole-output validation.
