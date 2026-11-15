@@ -46,6 +46,22 @@ pub mod bridge {
         /// Cancels pending generation without changing the parent draft.
         #[qinvokable]
         fn designer_cancel(self: Pin<&mut MeasurementInputs>);
+        /// Preflights an immutable Designer export snapshot on a worker.
+        #[qinvokable]
+        fn designer_export_prepare(
+            self: Pin<&mut MeasurementInputs>,
+            document: &QString,
+            selection: &QString,
+        ) -> QString;
+        /// Polls bounded export validation/save progress.
+        #[qinvokable]
+        fn designer_export_poll(self: Pin<&mut MeasurementInputs>) -> QString;
+        /// Opens the native chooser and independently validates before publication.
+        #[qinvokable]
+        fn designer_export_save(self: Pin<&mut MeasurementInputs>, format: &QString) -> QString;
+        /// Cancels pending export without modifying accepted settings.
+        #[qinvokable]
+        fn designer_export_cancel(self: Pin<&mut MeasurementInputs>);
         /// Queries one selected original for capture-preview animation.
         /// # Arguments
         /// * `options` - Bounded draft selected identities and controls.
@@ -216,6 +232,7 @@ pub struct MeasurementInputsRust {
     pub(super) model: Model,
     pub(super) designer: Option<crate::inputs::measurement_input::designer::Session>,
     pub(super) designer_work: Option<super::rxmer_designer::Work>,
+    pub(super) designer_export: Option<super::rxmer_export::State>,
 }
 
 fn parse<T: serde::de::DeserializeOwned>(document: &str) -> Result<T, String> {

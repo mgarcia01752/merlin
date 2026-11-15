@@ -17,3 +17,4 @@ pub(crate) mod workbench_file;
 pub(crate) mod update_info;
 
 pub(crate) mod rxmer_designer;
+pub(crate) mod rxmer_export;

@@ -347,6 +347,46 @@ impl Session {
             frame,
         })
     }
+    /// Materializes only the requested export range on full original grids.
+    /// # Arguments
+    /// * `request` - Immutable source/recipe snapshot.
+    /// * `first`, `last` - Inclusive one-based source positions, independent of zoom.
+    /// * `cancel`, `completed` - Worker cancellation and actual capture progress.
+    /// # Returns
+    /// Owned complete RxMER frames without adopting a draft or running simulation.
+    /// # Errors
+    /// Rejects invalid ranges, recipes, work bounds or cancellation.
+    pub(crate) fn export_frames(
+        &self,
+        request: &Request,
+        first: usize,
+        last: usize,
+        cancel: &AtomicBool,
+        completed: &AtomicUsize,
+    ) -> Result<Vec<RxMerFrame>, String> {
+        let count = self.count(request).map_err(|error| error.message)?;
+        if first == 0 || first > last || last > count {
+            return Err("Choose an export range within the capture collection.".into());
+        }
+        let mut frames = Vec::with_capacity(last - first + 1);
+        for index in first..=last {
+            if cancel.load(Ordering::Relaxed) {
+                return Err("PNM export cancelled.".into());
+            }
+            let mut origin = self.origin(request, index - 1)?;
+            origin.record.recipe = request.recipe.clone();
+            origin.record.capture_index = index;
+            origin.record.capture_count = count;
+            let capture =
+                materialize(origin.record, origin.frame).map_err(|error| error.message)?;
+            let Measurement::Rxmer(frame) = capture.measurement else {
+                unreachable!()
+            };
+            frames.push((*frame).clone());
+            completed.store(index - first + 1, Ordering::Relaxed);
+        }
+        Ok(frames)
+    }
     /// Produces a shared-scale before/after viewport and profile-derived PLC region.
     /// # Arguments
     /// * `request` - Bounded source controls and recipe.
@@ -709,5 +749,59 @@ mod tests {
             .as_str()
             .unwrap()
             .contains("16 carriers"));
+    }
+    #[test]
+    fn pnm_export_range_uses_full_grid_and_guards_recipe_results() {
+        let (session, model) = fixture();
+        let mut request = session.request.clone();
+        request.source = "flat".into();
+        request.capture_count = 3;
+        request.baseline_db = 48.13;
+        let cancel = AtomicBool::new(false);
+        let completed = AtomicUsize::new(0);
+        let frames = session
+            .export_frames(&request, 2, 3, &cancel, &completed)
+            .unwrap();
+        assert_eq!(frames.len(), 2);
+        assert_eq!(
+            frames[0].key.grid.sample_count,
+            session.profile.key.grid.sample_count
+        );
+        assert_eq!(frames[0].capture_time, session.profile.capture_time);
+        let summary = pnm_input::rxmer_export::preflight(
+            &frames,
+            pnm_input::rxmer_export::RangePolicy::Reject,
+        )
+        .unwrap();
+        assert_eq!(summary.captures, 2);
+        assert!(summary.rounded > 0);
+        request.baseline_db = 70.0;
+        let frames = session
+            .export_frames(&request, 1, 1, &cancel, &completed)
+            .unwrap();
+        assert!(pnm_input::rxmer_export::preflight(
+            &frames,
+            pnm_input::rxmer_export::RangePolicy::Reject
+        )
+        .is_err());
+        assert!(
+            pnm_input::rxmer_export::preflight(
+                &frames,
+                pnm_input::rxmer_export::RangePolicy::Clamp
+            )
+            .unwrap()
+            .clipped
+                > 0
+        );
+        assert!(session
+            .export_frames(&request, 0, 1, &cancel, &completed)
+            .is_err());
+        assert!(session
+            .export_frames(&request, 1, 4, &cancel, &completed)
+            .is_err());
+        assert!(session
+            .export_frames(&request, 1, 1, &AtomicBool::new(true), &completed)
+            .is_err());
+        assert!(!model.draft_rx.is_empty());
     }
 }

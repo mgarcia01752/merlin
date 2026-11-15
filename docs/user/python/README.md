@@ -195,3 +195,21 @@ from scientific parity. See the [validation record](../../development/features/h
 for executed checks, wheel bytes/checksums and platform boundaries.
 
 Return to the [documentation index](../../README.md).
+
+### Save a loaded RxMER capture
+
+```python
+from pathlib import Path
+import merlin
+
+capture = merlin.RxMer.from_file(Path("capture.bin"))
+capture.save_json(Path("designed.json"))  # full precision and nulls
+capture.save_pnm(Path("designed.bin"))    # strict range, quarter-dB rounding
+print(capture.pnm_export_summary())
+```
+
+Both saves create a companion provenance JSON and reject existing destinations.
+`save_pnm(..., clamp=True)` explicitly opts into range clipping. `to_pnm_bytes()`
+and `to_json_bytes()` return owned bytes without file I/O. All validation and
+conversion stay in Rust; no CLI process is used. See the
+[export API](../../reference/public-api.md#rxmer-capture-export).

@@ -10,8 +10,13 @@ description = "Optional bounded native PNM and file adapter for MERLIN"
 docsis-ofdm-fec = { path = "../ofdm", features = ["high-level-api"] }
 pnm = { git = "https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git", rev = "5fbd5561f3e06b73486546b5ffa520279080a5eb", version = "=0.3.6" }
 
-[dev-dependencies]
+serde = { version = "=1.0.228", features = ["derive"] }
 serde_json = "=1.0.145"
+sha2 = "=0.10.9"
+tempfile = "=3.23.0"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+rustix = { version = "=1.1.6", features = ["fs"] }
 
 [[example]]
 name = "high_level"

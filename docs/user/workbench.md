@@ -308,7 +308,7 @@ Launch the built desktop with a workbench path to skip the file chooser:
 
 ```bash
 cd /home/dev01/Projects/merlin &&
-./apps/qt/target/debug/merlin-qt \
+./apps/qt/target/release/merlin-qt \
   --workbench examples/workbench/multi-rxmer-2/workbench.merlin.json
 ```
 
@@ -316,7 +316,7 @@ Or read its JSON from standard input:
 
 ```bash
 cd /home/dev01/Projects/merlin &&
-./apps/qt/target/debug/merlin-qt --workbench - \
+./apps/qt/target/release/merlin-qt --workbench - \
   < examples/workbench/multi-rxmer-2/workbench.merlin.json
 ```
 

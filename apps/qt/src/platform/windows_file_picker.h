@@ -18,9 +18,12 @@
  * @param multiple Permit at most 256 local files.
  * @param save Select a destination with native overwrite confirmation.
  * @param workbench Restrict Open to MERLIN workbench JSON.
+ * @param pnm Restrict capture output to its selected binary/JSON format.
+ * @param folder Select a collection parent directory.
+ * @param json Use decoded JSON instead of PNM binary.
  * @return Newline-separated local URIs, empty cancellation, or ERROR marker.
  */
-inline QString chooseWindowsSelection(const QString &title, bool multiple, bool save, bool workbench) {
+inline QString chooseWindowsSelection(const QString &title, bool multiple, bool save, bool workbench, bool pnm = false, bool folder = false, bool json = false) {
     using Microsoft::WRL::ComPtr;
     const HRESULT initialized = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
     if (FAILED(initialized)) {
@@ -39,7 +42,8 @@ inline QString chooseWindowsSelection(const QString &title, bool multiple, bool 
     status = chooser->GetOptions(&options);
     if (SUCCEEDED(status)) {
         options |= FOS_FORCEFILESYSTEM | FOS_PATHMUSTEXIST | FOS_NOCHANGEDIR;
-        options |= save ? FOS_OVERWRITEPROMPT : FOS_FILEMUSTEXIST;
+        if (folder) { options |= FOS_PICKFOLDERS; }
+        else { options |= save ? FOS_OVERWRITEPROMPT : FOS_FILEMUSTEXIST; }
         if (multiple && !save) {
             options |= FOS_ALLOWMULTISELECT;
         }
@@ -49,14 +53,14 @@ inline QString chooseWindowsSelection(const QString &title, bool multiple, bool 
     if (SUCCEEDED(status)) {
         status = chooser->SetTitle(caption.c_str());
     }
-    const COMDLG_FILTERSPEC filter[] = {{L"MERLIN Workbenches (*.merlin.json)", L"*.merlin.json"}};
+    const COMDLG_FILTERSPEC filter[] = {{pnm ? (json ? L"RxMER JSON (*.json)" : L"PNM RxMER (*.bin)") : L"MERLIN Workbenches (*.merlin.json)", pnm ? (json ? L"*.json" : L"*.bin") : L"*.merlin.json"}};
     if (SUCCEEDED(status) && (workbench || save)) {
         status = chooser->SetFileTypes(1, filter);
     }
     if (SUCCEEDED(status) && save) {
-        status = chooser->SetFileName(L"workbench.merlin.json");
+        status = chooser->SetFileName(pnm ? (json ? L"merlin_rxmer_designed.json" : L"merlin_rxmer_designed.bin") : L"workbench.merlin.json");
         if (SUCCEEDED(status)) {
-            status = chooser->SetDefaultExtension(L"merlin.json");
+            status = chooser->SetDefaultExtension(pnm ? (json ? L"json" : L"bin") : L"merlin.json");
         }
     }
     const auto initial = QString::fromUtf8(qgetenv("MERLIN_NATIVE_OPEN_DIRECTORY")).toStdWString();

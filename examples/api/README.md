@@ -90,3 +90,7 @@ See the [Rust API guide](../../docs/user/api/README.md),
 [Python API guide](../../docs/user/python/README.md) and
 [validation record](../../docs/development/features/high-level-api/validation.md).
 Return to the [examples index](../README.md).
+
+Python examples display BER in scientific notation, for example `1.234e-06`.
+Change `BER_FORMAT` at the top of each script to adjust display precision.
+Unavailable BER prints `unavailable`; numeric API results are unchanged.

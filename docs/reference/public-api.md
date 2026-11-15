@@ -371,3 +371,22 @@ Channel admission reports `PlaybackObservationTooShort` when a nonzero final
 playback transition is at or beyond the observation's complete-symbol count.
 The validation condition is unchanged; consumers can use this stable error
 code rather than matching the English message.
+
+## RxMER capture export
+
+The independent Apache `pnm-input::rxmer_export` module exposes `ExportFormat`
+(Pnm/Json), `RangePolicy` (Reject/Clamp), `ExportSummary` and structured
+`ExportError` (code, optional capture/subcarrier, message). `encode` and
+`encode_json` return owned bytes and summary from a borrowed validated
+`RxMerFrame`; `RxMer::frame()` exposes that immutable frame. `preflight` and
+`preflight_format` validate bounded collections. `save` defaults to binary;
+`save_with_format` adds an explicit format. Both accept new single/collection
+destinations, bounded provenance JSON, cancellation flag and capture progress.
+No simulation, Qt or Python is required. See rustdoc for exact signatures and
+[publication rules](../development/features/rxmer-designer/pnm-export-plan.md).
+
+Python `RxMer` mirrors these operations as `to_pnm_bytes(*, clamp=False)`,
+`pnm_export_summary(*, clamp=False)`, `save_pnm(path, *, clamp=False)`,
+`to_json_bytes()` and `save_json(path)`. The native adapter releases the interpreter
+lock. `ApiError` includes `export_code`, `capture` and `subcarrier`. JSON never
+clamps/rounds; byte conversion alone does not write a recipe manifest.

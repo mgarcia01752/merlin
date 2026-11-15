@@ -6,6 +6,8 @@ changed. Normal operation keeps loading details concise; diagnostics are opt-in.
 
 | Control | Behavior | Owner |
 | --- | --- | --- |
+| `scripts/qt-desktop.sh run` / `build` | Optimized release mode by default; not a logging switch. | `scripts/qt-desktop.sh` |
+| `scripts/qt-desktop.sh run-debug` / `build-debug` | Explicit unoptimized development build; does not enable debug printing. | `scripts/qt-desktop.sh` |
 | `--debug-ui` | Shows Time since Open in the loading dialog and enables desktop debug logs unless RUST_LOG overrides it. | `platform/startup.rs`, `platform/logging.rs`, `shell/WorkbenchLoadingDialog.qml` |
 | `RUST_LOG=warn` | Default desktop logging: warnings and errors on stderr. | `platform/logging.rs` |
 | `RUST_LOG=warn,merlin_qt::workbench::project_load=debug` | Workbench loading start, completion, cancellation and elapsed milliseconds. | `workbench/project_load.rs` |
@@ -20,7 +22,7 @@ Example from a configured VM desktop terminal:
 cd /home/dev01/Projects/merlin &&
 QT_QUICK_CONTROLS_STYLE=Fusion \
 LD_LIBRARY_PATH=/home/dev01/Projects/PNM-Viewer-Toolkit/local/qt/6.8.3/gcc_64/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} \
-./apps/qt/target/debug/merlin-qt --debug-ui \
+./apps/qt/target/release/merlin-qt --debug-ui \
   --workbench examples/workbench/multi-rxmer-2/workbench.merlin.json \
   2>>merlin-debug.log
 ```

@@ -136,3 +136,9 @@ Implementation/evidence: [feature design](../../development/features/high-level-
 and [validation](../../development/features/high-level-api/validation.md).
 The optional [Python API](../python/README.md) calls these same Rust operations
 through native bindings; see its local wheel setup and parity evidence.
+
+Capture export is independent of simulation: use
+`pnm_input::rxmer_export::encode(rxmer.frame(), RangePolicy::Reject)` for PNM
+bytes, or `encode_json(rxmer.frame())` for lossless decoded JSON. The shared
+save helpers add no-overwrite publication and provenance. See the
+[export API](../../reference/public-api.md#rxmer-capture-export).

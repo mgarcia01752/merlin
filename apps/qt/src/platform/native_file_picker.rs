@@ -13,6 +13,7 @@ mod bridge {
         fn chooseNativeWorkbench(title: &QString) -> QString;
         fn chooseNativeFiles(title: &QString) -> QString;
         fn chooseNativeSave(title: &QString) -> QString;
+        fn chooseNativePnm(title: &QString, collection: bool, json: bool) -> QString;
     }
 }
 
@@ -64,6 +65,24 @@ pub(crate) fn save(title: &str) -> Result<Option<String>, String> {
     select_mode(title, "--native-save-picker")
 }
 
+/// Selects a PNM save path or collection parent using OS-native presentation.
+/// # Arguments
+/// * `json` - JSON file filter/default name instead of binary; folders are shared.
+/// * `collection` - Select a parent directory for a new collection if true.
+/// # Returns
+/// Local destination URI or None on Cancel; no output is written by the picker.
+/// # Errors
+/// Reports unavailable integration or malformed native output.
+pub(crate) fn export_rxmer(collection: bool, json: bool) -> Result<Option<String>, String> {
+    if collection {
+        select_mode("Export RxMER collection", "--native-rxmer-folder-picker")
+    } else if json {
+        select_mode("Save RxMER JSON", "--native-rxmer-json-picker")
+    } else {
+        select_mode("Save PNM RxMER", "--native-rxmer-save-picker")
+    }
+}
+
 fn select(title: &str, multiple: bool) -> Result<Option<String>, String> {
     select_mode(
         title,
@@ -80,7 +99,13 @@ fn select_mode(title: &str, mode: &str) -> Result<Option<String>, String> {
     command
         .args([mode, title])
         .env_remove("MERLIN_NATIVE_OPEN_DIRECTORY");
-    if mode != "--native-save-picker" {
+    if !matches!(
+        mode,
+        "--native-save-picker"
+            | "--native-rxmer-save-picker"
+            | "--native-rxmer-folder-picker"
+            | "--native-rxmer-json-picker"
+    ) {
         if let Some(directory) = crate::platform::example_directory::locate(&executable) {
             command.env("MERLIN_NATIVE_OPEN_DIRECTORY", directory);
         }
@@ -113,13 +138,26 @@ fn select_mode(title: &str, mode: &str) -> Result<Option<String>, String> {
 /// * `multiple` - Whether the native dialog permits multiple selected files.
 /// * `save` - Select a destination and confirm overwriting through GTK.
 /// * `workbench` - Filter the main Open chooser to *.merlin.json.
+/// * `pnm` - RxMER measurement save workflow.
+/// * `folder` - Choose a collection parent directory.
+/// * `json` - Use the decoded JSON filename filter.
 /// # Returns
 /// Writes only a URI, empty cancellation or error marker to the internal pipe.
 /// GTK owns transient selection; no input bytes or scientific data are processed.
-pub(crate) fn run_helper(title: &str, multiple: bool, save: bool, workbench: bool) {
+pub(crate) fn run_helper(
+    title: &str,
+    multiple: bool,
+    save: bool,
+    workbench: bool,
+    pnm: bool,
+    folder: bool,
+    json: bool,
+) {
     use std::io::Write;
     let selected = if title.len() <= 512 {
-        if save {
+        if pnm {
+            bridge::chooseNativePnm(&cxx_qt_lib::QString::from(title), folder, json).to_string()
+        } else if save {
             bridge::chooseNativeSave(&cxx_qt_lib::QString::from(title)).to_string()
         } else if workbench {
             bridge::chooseNativeWorkbench(&cxx_qt_lib::QString::from(title)).to_string()

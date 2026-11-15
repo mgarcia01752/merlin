@@ -1243,11 +1243,21 @@ validation are complete; the user guide includes the current dark capture.
   editable values, keyboard and capture scope; same validation as above.
   [Design](features/rxmer-designer/design.md#rxmer-design-10-notch-field-steppers).
 
-- [ ] **RXMER-DESIGN-11** Plan and implement PNM 1.0 binary export with
-  crate-owned encoding, independent Designer/Rust guards, explicit range
-  conversion policy, metadata/provenance and bounded single/collection saves.
-  Planning only; implementation awaits review.
+- [x] **RXMER-DESIGN-11** Save PNM 1.0 binary or full-precision JSON with
+  crate-owned encoding, independent Designer/Rust guards, explicit binary range
+  conversion, metadata/provenance and bounded single/collection saves. Native
+  format popup/pickers, Python adapters and no-overwrite publication are covered
+  by 547 Rust, 82 Qt adapter and 76 QML checks; native dark/light and installed
+  viewer decoding pass. Windows runtime remains unverified.
   [Plan](features/rxmer-designer/pnm-export-plan.md).
+
+### Desktop build defaults
+
+- [x] **UI-BUILD-RELEASE-01** Default local build/run to optimized release,
+  preserve explicit debug actions and opt-in diagnostics. Shell/routing checks
+  and native release startup pass. Multi-RxMER UI completes three profiles in
+  00:00:07; keep checks in the development profile. Windows is unverified.
+  [Design](features/build-cache/design.md#ui-build-release-01-optimized-normal-desktop-launches).
 
 ### Windows desktop UI delivery
 
@@ -1402,3 +1412,8 @@ validation are complete; the user guide includes the current dark capture.
   decoding. Keep static discovery; 17 Rust API tests, 8 Python API tests,
   source-removal/ownership checks and four policy parity modes pass.
   [Design](features/high-level-api/design.md#api-input-03-retained-profile-id-member-on-loaded-dpd).
+
+- [x] **API-EXAMPLE-BER-01** Display Python example BER in scientific notation
+  using a named precision constant; keep numeric Rust/Python API values intact.
+  Both fixture-backed examples pass, retaining unavailable values explicitly.
+  [Design](features/high-level-api/design.md#api-example-ber-01-readable-python-ber-output).

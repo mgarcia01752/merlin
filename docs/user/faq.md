@@ -89,3 +89,11 @@ than half its bandwidth. Combined effects must leave designed MER within−30 to
 120dB. Reduce depth or tilt when necessary. The Designer rejects invalid results
 without clipping or changing original captures. See the
 [RxMER Designer guide](measurement-inputs/rxmer-designer.md).
+
+## Designed RxMER exceeds binary range
+
+PNM binary represents 0–63.5 dB in 0.25 dB steps. The Designer permits a wider
+finite range. Choose **Save → JSON** for full precision, adjust the recipe, or
+explicitly enable **Clamp to PNM range** and review clipping before choosing
+**PNM binary**. Missing readings remain missing. Saving exports the full grid,
+independent of zoom, and never applies the draft or starts simulation.

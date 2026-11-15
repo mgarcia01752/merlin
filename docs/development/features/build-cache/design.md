@@ -1,7 +1,8 @@
 # Content-based development build and test cache
 
-Status: **proposal only; no caching implementation or gate changes authorized by
-this document**. The user requested a plan before implementation. This plan serves
+Cache status: **proposal only; no caching implementation or gate changes
+authorized by this document**. Independent optimized launch defaults are
+implemented under UI-BUILD-RELEASE-01 below. The user requested a plan before implementation. This plan serves
 fast local iteration, initially on the Ubuntu development VM. It does not change
 signal-processing algorithms or replace Cargo's compiler/dependency tracking.
 
@@ -179,3 +180,41 @@ proposal may apply caching to those gates, but development cache hits do not byp
 them. Security scans depend on changing advisory/query data, so source-only hashes
 must not suppress RustSec/CodeQL execution. Interactive VM approval is not a cached
 automated test result.
+
+## UI-BUILD-RELEASE-01: optimized normal desktop launches
+
+Normal `scripts/qt-desktop.sh build` and `run` use Cargo `--release`, producing
+`apps/qt/target/release/merlin-qt`. Explicit `build-debug` / `run-debug` retain the
+existing development profile for iteration. `check` keeps its development-profile
+formatting/Clippy/tests/build/QML workflow; it does not set normal launch defaults.
+Both Cargo artifact caches remain intact. Packaging already uses release builds.
+
+Compiler profiles and diagnostic logging are independent. Normal logging remains
+warnings/errors; `--debug-ui` or `RUST_LOG` explicitly enables diagnostic logging.
+The helper does not set either, suppress useful errors or alter simulation inputs.
+Validate shell syntax/lint, command routing with a fake local toolchain, then
+build the native optimized executable and verify its startup/workbench validation.
+
+Validation for UI-BUILD-RELEASE-01 (Ubuntu 22.04 x86_64, Qt 6.8.3): shell
+syntax and ShellCheck passed. Isolated fake-toolchain routing confirmed default,
+build and run use `--release`; explicit debug actions and check do not. Check
+retains fmt/Clippy/tests/build/QML. The first native release build passed in
+307.24s; saved-workbench validation and native launch passed. No full test suite
+was repeated for this helper/documentation change; the prior Rust/Qt checks remain
+recorded under the RxMER export feature.
+
+The actual native release UI loaded the unchanged
+`examples/workbench/multi-rxmer-2/workbench.merlin.json`, confirmed all Profiles
+0/3/4 selected and a 1ms observation each, and ran the 132-capture average.
+The UI total timer froze at **00:00:07** (whole-second display). The final-profile
+status was complete, 1,807,464 bits compared and zero bit errors; that bit count
+is the last profile, not a sweep aggregate. Loading/compilation were excluded.
+A fresh native Python collection example then completed all three profiles in
+3.957s experiment time / 4.31s full process time. Both use release optimization;
+the UI retains instrument observations and uses pilot-estimated correction,
+whereas Python uses supplied unity. These are measured runs, not exact feature
+parity or a portable performance guarantee. Normal RUST_LOG was warn, without
+`--debug-ui` or debug prints. Task-local screenshots/identity/timing JSON are
+under ignored `docs/development/local/qt-release-default/`. The isolated review
+process was closed without saving/changing the source WB. Windows remains
+unverified for these checks.

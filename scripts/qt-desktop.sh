@@ -5,13 +5,15 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # Build, run or test the MERLIN Qt shell using an explicitly available SDK.
-# Arguments: run (default), build, check, lock. No SDK downloads or installations.
+# Arguments: run/build (release), run-debug/build-debug, check, lock.
+# No SDK downloads or system installations. Checks retain development profiles.
 set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
 ACTION="${1:-run}"
 if [[ "${ACTION}" == --help ]]; then
-  echo 'Usage: scripts/qt-desktop.sh [run|build|check|lock]'
+  echo 'Usage: scripts/qt-desktop.sh [run|build|run-debug|build-debug|check|lock]'
+  echo 'run/build use optimized release mode; debug builds require an explicit action.'
   echo 'Set QT_SDK_DIR to Qt 6.8.3 gcc_64; default: local/qt/6.8.3/gcc_64.'
   exit 0
 fi
@@ -37,9 +39,13 @@ export CARGO_PROFILE_DEV_DEBUG=0
 export CARGO_PROFILE_TEST_DEBUG=0
 MANIFEST="${PROJECT_DIR}/apps/qt/Cargo.toml"
 CARGO=("${SCRIPT_DIR}/cargo-local.sh")
+BUILD_PROFILE=(--release)
+case "${ACTION}" in
+  run-debug|build-debug) BUILD_PROFILE=() ;;
+esac
 case "${ACTION}" in
   lock) "${CARGO[@]}" generate-lockfile --manifest-path "${MANIFEST}" ;;
-  build) "${CARGO[@]}" build --manifest-path "${MANIFEST}" --locked ;;
+  build|build-debug) "${CARGO[@]}" build --manifest-path "${MANIFEST}" "${BUILD_PROFILE[@]}" --locked ;;
   check)
     "${CARGO[@]}" fmt --manifest-path "${MANIFEST}" -- --check
     "${CARGO[@]}" clippy --manifest-path "${MANIFEST}" --all-targets --locked -- -D warnings
@@ -49,7 +55,7 @@ case "${ACTION}" in
     cd "${PROJECT_DIR}/docs/development/local/visual-workspace"
     QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software "${QT_SDK_DIR}/bin/qmltestrunner" -input "${PROJECT_DIR}/apps/qt/tests"
     ;;
-  run)
+  run|run-debug)
     # The pinned development SDK uses XCB, including under XWayland sessions.
     export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-xcb}"
     if [[ -z "${DISPLAY:-}" && -z "${WAYLAND_DISPLAY:-}" ]]; then
@@ -63,7 +69,7 @@ case "${ACTION}" in
       echo 'Run from the VM desktop terminal, or configure display forwarding.' >&2
       exit 1
     fi
-    exec "${CARGO[@]}" run --manifest-path "${MANIFEST}" --locked
+    exec "${CARGO[@]}" run --manifest-path "${MANIFEST}" "${BUILD_PROFILE[@]}" --locked
     ;;
-  *) echo 'Expected run, build, check or lock.' >&2; exit 2 ;;
+  *) echo 'Expected run, build, run-debug, build-debug, check or lock.' >&2; exit 2 ;;
 esac

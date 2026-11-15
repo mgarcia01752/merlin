@@ -747,6 +747,13 @@ and [development setup](development/setup.md).
 
 ### Reuse of the PNM Viewer Qt framework
 
+Normal local Qt `build`/`run` helpers use optimized release binaries, as do
+packaging and Python wheels. Explicit `build-debug`/`run-debug` preserve fast
+unoptimized development iteration. Diagnostic logging remains opt-in and
+independent of compiler profile; normal logging retains warnings/errors.
+The `check` helper keeps its development-profile validation workflow. See the
+[desktop build guide](development/qt.md).
+
 UI-WB-OPEN-01 gives main File → Open / Ctrl+O a distinct OS-native chooser mode
 with an active `*.merlin.json` filter. The examples-root resolver and directory
 navigation remain; individual measurement/source input pickers are unaffected.
@@ -2195,6 +2202,17 @@ cancellation; only complete batches with unchanged draft/profile identities are
 staged. Parent Apply remains the scientific admission boundary. Designer and
 parent Cancel retain their separate accepted-state guarantees. Reopening a
 coherent collection restores its original baseline and recipe without compounding.
+
+`pnm-input::rxmer_export` owns guarded PNM 1.0 encoding and full-precision
+decoded-PNM JSON serialization, summaries and create-new filesystem publication.
+Designer Save materializes an immutable complete-grid recipe snapshot on a Rust
+worker and displays separate binary/JSON admission. Both the Designer preflight
+and crate write boundary validate. PNM alone has explicit quarter-dB rounding and
+reject/clamp conversion; JSON preserves finite values/nulls. Native pickers and
+QML never encode data. Single files get provenance sidecars; collections get one
+manifest. Export does not Apply or run simulation. Optional Python wraps the same
+crate operations. See the [save design](development/features/rxmer-designer/pnm-export-plan.md)
+for publication/cancellation/platform boundaries.
 
 Rust derives one continuous PLC overlay from the first and last PLC assignments
 in the accepted modulation profile. It is clipped to the source viewport and

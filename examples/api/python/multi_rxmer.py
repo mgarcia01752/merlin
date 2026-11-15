@@ -36,6 +36,7 @@ OCCUPIED_BANDWIDTH_HZ = 192_000_000  # Explicit fixture configuration: 192 MHz.
 OBSERVATION_DURATION_MS = 1  # Per profile; increase for a longer experiment.
 PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 7_200  # Fixture capture-time allowance.
 MAX_RUNTIME_MS = 300_000  # Per-experiment wall-clock limit: 300 seconds.
+BER_FORMAT = ".3e"  # Scientific notation with four significant digits.
 
 
 def main():
@@ -143,8 +144,8 @@ def main():
                 print("Total:", report.fec.total_codewords.value)
                 print("Corrected:", report.fec.corrected_codewords.value)
                 print("Uncorrectable:", report.fec.uncorrectable_codewords.value)
-                print("BER:", report.profile.post_fec_ber.value
-                      if report.profile.post_fec_ber is not None else None)
+                print("BER:", format(report.profile.post_fec_ber.value, BER_FORMAT)
+                      if report.profile.post_fec_ber is not None else "unavailable")
             else:
                 print("Observation-window FEC report unavailable.")
         print(f"Profile wall time: {elapsed:.3f} seconds")

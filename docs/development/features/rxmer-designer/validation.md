@@ -91,3 +91,44 @@ arrow labels follow the signed value, mouse and keyboard reversal retain
 magnitude and zoom, and inactive/zero/invalid drafts remain guarded. Native
 dark inspection confirms Low ← High at −4 dB and Low → High at +4 dB,
 with the corresponding preview slopes. The guide capture is updated.
+
+## RXMER-DESIGN-11: binary and JSON save
+
+Validated locally on Ubuntu 22.04 x86_64, Qt 6.8.3 and CPython 3.10. PNM field
+provenance was recorded under ignored
+`docs/development/local/rxmer-pnm-export/field-evidence.md`: clear I27 text and
+pinned Apache decoder evidence, without a rendered-PDF claim.
+
+- `scripts/test-local.sh all`: 407 workspace + 4 preparation-example + 136
+  analysis-only tests passed; no skips. Total including compilation/doctests:
+  **12m 44s**. The new exporter has four cases, including independent literal
+  header/payload anchors, 25/50 kHz pinned-reader roundtrips, half-step/range/null
+  rules, invalid/nonfinite inputs, original ownership, manifests, no-overwrite,
+  cancellation, all-or-nothing collection publication and full-precision JSON.
+  After final early size-admission hardening, all four exporter cases and
+  workspace Clippy were rerun successfully; native UI and wheel were rebuilt.
+- Workspace formatting/Clippy passed. Full `pnm-input` tests separately passed
+  21 cases in 63.05s including compilation; binding formatting/Clippy passed.
+- `scripts/qt-desktop.sh check`: 82 Rust adapter tests passed (125.01s), native
+  build passed and all 76 QML checks passed (26.286s). Focused Designer suite
+  passed 13 checks, including Rust-authoritative binary admission, JSON while
+  binary is blocked, capture range, stale preflight and unapplied draft state.
+  A final native build includes equal-width save actions; the latest executable
+  is available for VM review.
+- Local native Linux cp310 wheel built with notices/checksum and was installed
+  only in the project test environment. Eight lifecycle/API tests, one export
+  test and parity across Each/Individual/AverageAll/InterpolateAt passed.
+  Parity uses the preserved Rust policy baseline; engine calculations did not
+  change. Export tests independently assert payload bytes and structured guards.
+- Native VM dark/light inspection confirmed the popup and controls are readable.
+  Actual JSON and binary single-file saves created separate manifests without
+  applying the draft. Native All captures saved two complete 7600-value binaries
+  in a new folder. Installed `pnm-decode 0.3.6` decoded all generated binaries;
+  single JSON/binary identity, time, grid and samples matched exactly for the
+  quarter-dB fixture. Dark screenshots were updated. Review processes used
+  isolated configuration/data and were closed without accepting inputs.
+
+No Windows native compilation/runtime, MSI lifecycle, macOS or other Python ABI
+was tested. Collection publication returns unsupported outside Linux/Windows.
+The passing local checks do not establish modem interoperability or DOCSIS 4.0
+file-format equivalence. Nothing was committed, published or installed system-wide.

@@ -203,3 +203,12 @@ MSI is the Windows Installer package used to install or upgrade MERLIN. UAC
 (User Account Control) is Windows' administrator-approval prompt. MERLIN Update
 requests that approval only for the installer and reopens the app as your normal
 user. See [Windows installation and updates](install/windows.md).
+
+### RxMER export rounding and clamping
+
+**Rounding** stores designed RxMER in PNM binary's nearest quarter-dB step;
+positive half steps round upward. **Clamping** explicitly limits binary readings
+to 0–63.5 dB and reports changed samples. JSON keeps full-precision finite values
+and missing nulls. Neither operation changes the original data. A **provenance
+manifest** records sources, recipe and output hashes and identifies designed
+captures. See [Designer Save](measurement-inputs/rxmer-designer.md#save-designed-captures).

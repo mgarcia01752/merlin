@@ -121,7 +121,11 @@ WorkbenchDialog {
         if (information.request) { refresh() }
     }
     onOpened:restore()
-    onClosed: { if (working) { backend.designer_cancel() } }
+    onClosed: { pnmExport.close(); if (working) { backend.designer_cancel() } }
+    RxmerPnmExportDialog {
+        id:pnmExport;theme:dialog.theme;backend:dialog.backend
+        onContextHelpRequested:function(code){dialog.contextHelpRequested(code)}
+    }
     Timer {
         interval:80;repeat:true;running:dialog.working
         onTriggered: {
@@ -344,6 +348,8 @@ TextField {id:editDb;text:"30";Layout.preferredWidth:75} }
     footer:ApplyCancelFooter {
         theme:dialog.theme;applyObjectName:"designerApply";applyEnabled:!dialog.working && !!dialog.information.request && !dialog.errorMessage.length
         onApplied: {const result=JSON.parse(dialog.backend.designer_stage(dialog.document(),JSON.stringify(dialog.parentOptions)));dialog.errorMessage=result.error || "";dialog.diagnostic=result.diagnostic || null;dialog.completed=0;dialog.working=!!result.running}
+        WorkbenchActionButton {theme:dialog.theme;objectName:"designerExportPnm";text:"Save";enabled:!dialog.working && !!dialog.information.request && !dialog.errorMessage.length
+            onClicked:{pnmExport.documentSnapshot=dialog.document();pnmExport.captureCount=dialog.captureCount;pnmExport.previewCapture=Math.round(preview.value);pnmExport.open()}}
         onCancelled:dialog.reject()
     }
 }

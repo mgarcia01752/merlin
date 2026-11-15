@@ -1,13 +1,14 @@
-# RXMER-DESIGN-11: PNM binary export plan
+# RXMER-DESIGN-11: RxMER binary and JSON save design
 
-Status: proposed; no writer, export UI or bindings implemented. Review this plan
-before implementation. Existing Designer/WB persistence remains implemented as
-MERLIN JSON envelopes. See the [current design](design.md) and
-[user guide](../../../user/measurement-inputs/rxmer-designer.md).
+Status: implemented; validation results are recorded in [design](design.md).
+Designer/WB persistence remains an editable MERLIN envelope, separate from these
+capture exports. The approved binary plan was extended with **Save → PNM binary
+/ JSON → native file manager**. JSON uses the existing decoded PNM contract and
+retains full-precision finite values and nulls; binary retains the policy below.
 
-## Intended workflow
+## Workflow
 
-Add **Export PNM** as a secondary action in RxMER Designer, separate from the
+Provide **Save** as a secondary action in RxMER Designer, separate from the
 existing Apply/Cancel footer. Export uses an immutable snapshot of the current
 validated recipe and baselines, without starting simulation, accepting the
 parent draft or closing the Designer. Choose Preview capture, All captures or
@@ -15,9 +16,9 @@ an inclusive capture range. Effect capture scopes remain independent of export
 scope. Export always includes the complete original subcarrier grid; chart zoom
 is only a view and does not crop the exported data.
 
-- Preview capture: a native Save picker chooses one `.bin` destination.
+- Preview capture: a native Save picker chooses one `.bin` or `.json` destination.
 - All/range: choose an output directory; create a new export subdirectory with
-  one `.bin` per capture and stable sequence numbers preventing name collisions.
+  one `.bin` or `.json` per capture and stable sequence numbers preventing name collisions.
 - Show a Rust-generated summary before writing: capture/sample counts, format,
   valid range, missing readings, rounding impact and any clipping count.
 - Show bounded progress and allow cancellation for a collection. Publish the
@@ -33,8 +34,8 @@ reusable Apache-2.0 Rust encoder under `crates/pnm-input`, adjacent to the
 existing native binary/JSON adapter. Keep the current crate name; no repository
 or crate rename is part of this feature. Use a focused output module rather than
 expanding Qt orchestration or copying PNM Viewer source into the application.
-There is currently an RxMER decoder, not a reusable binary writer, in the pinned
-PNM dependency; this plan requires a new bounded encoder in MERLIN.
+The pinned PNM dependency supplies a decoder. MERLIN implements its own bounded
+encoder and existing-contract JSON serializer in `pnm-input::rxmer_export`.
 
 The crate owns typed export requests, metadata/domain validation, range policy,
 quantization, sentinel handling, PNM bytes and an owned conversion summary.
@@ -47,19 +48,18 @@ capture batches and cancellation through the crate API.
 Qt owns scope controls, displaying the returned summary, native pickers and
 progress. QML must not calculate encoded samples, clip values, construct headers
 or write files. The existing Rust recipe produces designed data before encoding.
-The optional Python adapter can expose the same crate export operation after
-Rust validation, using the same typed policy and structured errors; no Python
-encoder or CLI subprocess. Exact method names are proposed during implementation,
-not represented here as existing API functionality.
+The optional Python adapter exposes the same validated crate operations with
+matching policies and structured errors; no Python encoder or CLI subprocess.
+Implemented method names are listed below.
 
 ```mermaid
 flowchart LR
     DESIGN[Validated Rust recipe and immutable baselines] --> DATA[Full-grid designed RxMER]
     DATA --> CHECK[Rust crate export preflight]
     CHECK --> UI[Designer summary and export guards]
-    UI --> WRITE[Rust crate revalidation and binary encoding]
+    UI --> WRITE[Rust crate revalidation and binary or JSON encoding]
     WRITE --> STAGE[Bounded new-file staging and manifest]
-    STAGE --> OUTPUT[PNM binaries and provenance]
+    STAGE --> OUTPUT[Capture files and provenance]
     CALLER[Rust or Python caller] --> WRITE
 ```
 
@@ -68,7 +68,7 @@ flowchart LR
 The user explicitly requires both Designer and crate guards.
 
 1. **Designer:** query Rust preflight for the selected captures and current
-   recipe. Disable Export when metadata, bounds or output samples are invalid.
+   recipe. Disable the affected format when metadata, bounds or samples are invalid.
    Show the first affected capture/carrier and an actionable explanation. A
    changed recipe, source, profile, capture scope or policy invalidates the
    preflight result. Guard actual resulting samples, not just tilt/ripple/notch
@@ -131,7 +131,7 @@ standard binary without private header extensions. Separating the `.bin` from
 its manifest loses recipe/provenance context; the WB remains the editable record.
 The manifest stores provenance, not copied private source PDFs or extra captures.
 
-## Evidence and implementation prerequisites
+## Evidence
 
 - `CM-SP-CM-OSSIv3.1-I27-250219`, Annex D.2.8, PDF page 172: sample range,
   quarter-dB scale, missing sentinel and CM measurement clipping behavior.
@@ -147,10 +147,11 @@ The manifest stores provenance, not copied private source PDFs or extra captures
   The decoder uses format 1.0 and big-endian multibyte fields. This is pinned
   implementation evidence, distinct from normative field provenance.
 
-Before coding, record a complete writer field-evidence matrix covering common
+A complete writer field-evidence matrix was recorded covering common
 header identity/version, widths, order, endianness, lengths, bounds and payload
-semantics in MERLIN's ignored evidence workspace. Reconcile the text with the
-pinned reader; resolve any ambiguity before implementing affected fields. Do not
+semantics in `docs/development/local/rxmer-pnm-export/field-evidence.md` (ignored and absent
+from fresh clones). The text was reconciled with the
+pinned reader. Do not
 infer DOCSIS 4.0 equivalence or advertise other file-format versions from this
 review. Preserve applicable licenses/notices. All changes stay in MERLIN; PNM
 Viewer and PyPNM remain read-only references.
@@ -188,4 +189,33 @@ Acceptance checks:
 - Report actual timings and verified platforms. Decoder roundtrip and Viewer
   import are software compatibility evidence, not physical-modem validation.
 
-No implementation or commit/push/publication is authorized by this plan.
+The user subsequently authorized implementation, including JSON save. Commits,
+pushes and publication remain separately authorized actions.
+
+## Implemented API and publication details
+
+`encode`, `encode_json`, `preflight`, `preflight_format`, `save` and
+`save_with_format` accept existing `RxMerFrame` values. `ExportFormat` selects
+PNM/JSON; `RangePolicy` applies only to PNM. Errors retain stable code and optional
+capture/subcarrier context. `RxMer::frame()` exposes an immutable validated frame
+for these adapters. No Qt or Python dependency enters the crates.
+
+Single-file publication creates the sidecar first, then the data using no-clobber
+hard links on the destination volume. Failure removes only the created sidecar.
+This pair is not a portable two-path atomic transaction. Collections publish in
+one no-replace directory rename (safe rustix on Linux, native rename on Windows).
+Other platforms return unsupported for collection publication. Owned temporary
+staging is removed on ordinary failure/cancellation. Process termination or power
+loss may leave staging/a sidecar; original and existing files remain protected.
+
+The Qt worker validates an immutable full-grid recipe snapshot, retaining separate
+PNM and JSON admission and summaries. PNM range failure leaves JSON available.
+Native pickers use format-specific filters/default names; collection exports pick
+a parent folder and create a unique named child. Rust validates again at save.
+Cancel is checked before files/publication; an already-open native picker must
+also be dismissed. No selection changes or save errors apply or run the draft.
+
+Python `RxMer.to_pnm_bytes`, `pnm_export_summary`, `save_pnm`, `to_json_bytes` and
+`save_json` call the same Rust code with the interpreter lock released. Structured
+`ApiError` adds `export_code`, `capture` and `subcarrier`; output bytes/results own
+their data. Byte-only conversion does not create an external recipe manifest.

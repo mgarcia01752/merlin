@@ -78,6 +78,7 @@ fn main() {
                 "qml/instruments/spectrum/SymbolTimingDialog.qml",
                 "qml/inputs/measurement_input/MeasurementPlot.qml",
                 "qml/inputs/measurement_input/RxmerDesignerDialog.qml",
+                "qml/inputs/measurement_input/RxmerPnmExportDialog.qml",
                 "qml/inputs/measurement_input/RxmerDesignScope.qml",
                 "qml/inputs/measurement_input/MeasurementCaptureTree.qml",
                 "qml/inputs/measurement_input/MeasurementPlaybackControls.qml",

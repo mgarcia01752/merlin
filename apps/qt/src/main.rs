@@ -66,6 +66,9 @@ fn main() {
                 | "--native-file-picker-multiple"
                 | "--native-save-picker"
                 | "--native-workbench-picker"
+                | "--native-rxmer-save-picker"
+                | "--native-rxmer-json-picker"
+                | "--native-rxmer-folder-picker"
         )
     ) {
         platform::native_file_picker::run_helper(
@@ -73,6 +76,16 @@ fn main() {
             std::env::args().nth(1).as_deref() == Some("--native-file-picker-multiple"),
             std::env::args().nth(1).as_deref() == Some("--native-save-picker"),
             std::env::args().nth(1).as_deref() == Some("--native-workbench-picker"),
+            matches!(
+                std::env::args().nth(1).as_deref(),
+                Some(
+                    "--native-rxmer-save-picker"
+                        | "--native-rxmer-folder-picker"
+                        | "--native-rxmer-json-picker"
+                )
+            ),
+            std::env::args().nth(1).as_deref() == Some("--native-rxmer-folder-picker"),
+            std::env::args().nth(1).as_deref() == Some("--native-rxmer-json-picker"),
         );
         return;
     }

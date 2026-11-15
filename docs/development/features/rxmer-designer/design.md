@@ -161,9 +161,30 @@ instances were closed without applying drafts or changing user preferences.
 Qt owns these edit conveniences; Rust recipe admission and numerical models
 are unchanged, so no architecture ownership change was needed.
 
-## RXMER-DESIGN-11: PNM export (planned)
+## RXMER-DESIGN-11: binary and JSON save
 
-See the [PNM export plan](pnm-export-plan.md). Proposed conversion lives in a
-shared Rust crate with independent Designer and encoder guards, explicit range
-policy, retained metadata/provenance and single/collection save scopes. Static
-PNM files remain separate from editable WB envelopes. No export is implemented.
+The [save design](pnm-export-plan.md) records format evidence, conversion policy,
+metadata/provenance, limits and publication behavior. Designer **Save** opens a
+popup with preview/all/range scope and **PNM binary** / **JSON** actions, followed
+by the native file manager. JSON retains finite precision and nulls; PNM uses
+explicit quarter-dB rounding and reject/clamp policy. A binary range error does
+not block JSON. The stable range diagnostic links to the offline FAQ.
+
+`pnm-input::rxmer_export` owns both encoders and create-new publication. Qt's
+Rust worker materializes a complete immutable recipe snapshot without applying
+it; preflight controls both buttons and the crate revalidates at save. QML owns
+only controls, progress and returned summaries. Python methods reuse the same
+crate operation with structured errors and detached interpreter lock. Source
+bytes, exact grids, null positions, identity and timestamps remain unchanged.
+
+Single-file save publishes sidecar first, data last, cleaning its own sidecar on
+failure; two paths cannot be one portable atomic operation. Collection save uses
+no-replace directory publication on Linux/Windows. See the save design for crash
+and native-picker cancellation boundaries and unverified platforms.
+
+Validation: all 547 Rust tests, 82 Qt adapter tests and 76 QML checks passed;
+workspace/binding/Qt formatting and Clippy passed. Native dark/light, actual
+single JSON/binary and two-capture collection saves, and installed viewer decode
+were verified. Python export/lifecycle/selection parity passed with a rebuilt
+local cp310 Linux wheel. See [validation](validation.md#rxmer-design-11-binary-and-json-save)
+for timings, evidence boundaries and unverified targets.

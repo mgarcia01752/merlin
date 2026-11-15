@@ -15,6 +15,15 @@ Pane {
         property var lastRequest:null
         property int cancelled:0
         property bool pending:false
+        property bool exportAllowed:false
+        property bool exportSaved:false
+        property int exportSaves:0
+        property string exportFormat:""
+        property var exportSelection:null
+        function designer_export_prepare(document,selection){exportSelection=JSON.parse(selection);exportSaved=false;return JSON.stringify({running:true})}
+        function designer_export_poll(){return JSON.stringify(exportSaved ? {running:false,saved:true,path:"/fixture/export.bin",summary:{captures:1,samples:7600,missing:10,rounded:3,clipped:0}} : {running:false,can_export:exportAllowed,can_json:true,error:exportAllowed ? "":"Capture 1: carrier 296: outside PNM range.",summary:{captures:1,samples:7600,missing:10,rounded:3,clipped:0}})}
+        function designer_export_save(format){exportFormat=format;exportSaves++;exportSaved=true;return JSON.stringify({running:true})}
+        function designer_export_cancel(){}
         function designer_begin(){return JSON.stringify({imported_count:50,first_hz:640000000,last_hz:827000000,spacing_hz:25000,request:{source:"imported",capture_count:50,baseline_db:48,recipe:{tilt:null,ripple:null,notch:null,edits:[]}}})}
         function designer_preview(document,position,start,count){lastRequest=JSON.parse(document);return JSON.stringify({points:[{x:0,y:0.2,minimum_y:0.2,gap:false}],comparison:[{x:0,y:0.1,minimum_y:0.1,gap:false}],bands:[{first:0.4,last:0.41,label:"PLC"}],start:count ? start:0,count:count || 7481,total:7481,plc_view:{start:4000,count:80},plc_summary:"PLC first–last: 740.000–740.375 MHz · 16 carriers",axis_label:"RxMER (dB)",summary:"Capture "+position,timeline:[]})}
         function designer_stage(document,options){lastRequest=JSON.parse(document);pending=true;return JSON.stringify({running:true})}
@@ -142,6 +151,47 @@ Pane {
             depth.text="2.5";dialog.stepNotch(depth,1);compare(backend.lastRequest.recipe.notch.depth_db,3.5)
             findChild(dialog,"designerNotch").checked=false
             dialog.stepNotch(depth,1);compare(depth.text,"3.5")
+        }
+        function test_json_save_remains_available_outside_binary_range(){
+            backend.exportAllowed=false;backend.exportSaves=0
+            dialog.open();tryCompare(dialog,"visible",true)
+            mouseClick(findChild(dialog,"designerExportPnm"))
+            const popup=findChild(dialog,"rxmerPnmExportDialog")
+            tryCompare(popup,"canJson",true)
+            verify(!findChild(popup,"pnmExportSave").enabled)
+            mouseClick(findChild(popup,"jsonExportSave"))
+            tryCompare(popup,"savedPath","/fixture/export.bin")
+            compare(backend.exportFormat,"json");compare(backend.exportSaves,1)
+            popup.close();dialog.close()
+        }
+        function test_pnm_export_uses_rust_guard_and_keeps_draft(){
+            backend.exportAllowed=false;backend.exportSaves=0
+            dialog.open();tryCompare(dialog,"visible",true)
+            const previous=JSON.stringify(backend.lastRequest)
+            mouseClick(findChild(dialog,"designerExportPnm"))
+            const popup=findChild(dialog,"rxmerPnmExportDialog")
+            tryCompare(popup,"visible",true)
+            const save=findChild(popup,"pnmExportSave")
+            tryVerify(function(){return popup.message.indexOf("carrier 296")>=0})
+            verify(!save.enabled);compare(backend.exportSaves,0)
+            verify(findChild(popup,"jsonExportSave").enabled)
+            backend.exportAllowed=true
+            mouseClick(findChild(popup,"pnmExportClamp"))
+            verify(!save.enabled)
+            tryCompare(save,"enabled",true)
+            compare(backend.exportSelection.clamp,true)
+            const scope=findChild(popup,"pnmExportScope")
+            scope.currentIndex=2
+            findChild(popup,"pnmExportFirst").text="10";findChild(popup,"pnmExportLast").text="20"
+            verify(!save.enabled);tryCompare(save,"enabled",true)
+            compare(backend.exportSelection.first,10);compare(backend.exportSelection.last,20)
+            verify(backend.exportSelection.collection)
+            mouseClick(save);tryCompare(popup,"savedPath","/fixture/export.bin")
+            compare(backend.exportSaves,1);compare(backend.exportFormat,"pnm")
+            compare(JSON.stringify(backend.lastRequest),previous)
+            verify(!backend.pending)
+            mouseClick(findChild(popup,"pnmExportClose"));tryCompare(popup,"visible",false)
+            verify(dialog.visible)
         }
         function test_zoom_plc_navigation_and_capture_changes_keep_window(){
             dialog.open();tryCompare(dialog,"visible",true)

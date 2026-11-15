@@ -77,6 +77,17 @@
       "suggestion": "Check one-based inclusive capture ranges, exact carrier-center frequencies for value edits, and notch width inside the source band. Reduce effect depths when combined MER exceeds the supported range.",
       "over_limit_suggestion": "",
       "note": "Designed MER must stay within -30 to 120 dB. No clipping or changes to original inputs occur."
+    },
+    {
+      "code": "RxmerPnmExportRange",
+      "title": "Designed RxMER exceeds binary range",
+      "faq_heading": "Designed RxMER exceeds binary range",
+      "faq_anchor": "designed-rxmer-exceeds-binary-range",
+      "summary": "PNM binary stores finite RxMER from 0 to 63.5 dB in quarter-dB steps.",
+      "context": "",
+      "suggestion": "Save as JSON to retain full precision, adjust the Designer recipe, or explicitly enable Clamp to PNM range and review the reported clipping.",
+      "over_limit_suggestion": "",
+      "note": "JSON never clamps or rounds. Both formats preserve missing readings and the full subcarrier grid. Saving does not apply the draft or start simulation."
     }
   ]
 }

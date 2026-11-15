@@ -93,11 +93,43 @@ These controls edit an RxMER residual profile; the
 [measurement channel](../channel-measurements.md) converts the resulting total
 MER to residual error power once. They do not estimate a complex channel response.
 
-## Planned PNM binary export
+## Save designed captures
 
-Saving designed captures as PNM `.bin` files is [planned](../../development/features/rxmer-designer/pnm-export-plan.md),
-not implemented. The proposal keeps conversion and validation in a reusable
-Rust crate and guards export in both Designer and crate APIs. It covers one
-capture or a collection, quarter-dB quantization, explicit range handling and
-provenance alongside the binary. Current WB Save continues to store the editable
-MERLIN records described above.
+Choose **Save** in Designer. In the popup, select **Preview capture**, **All
+captures**, or an inclusive **Capture range**, then choose a format:
+
+- **PNM binary** opens the native file manager for a `.bin` destination. Values
+  round to the nearest 0.25 dB, with half steps upward. Values outside 0–63.5 dB
+  block this option unless you explicitly enable **Clamp to PNM range**. Review
+  the rounded/clipped counts and maximum change before saving.
+- **JSON** opens the native file manager for a `.json` destination. This is
+  decoded PNM-compatible JSON retaining full-precision finite values and missing
+  readings as `null`. It never rounds or clamps, including when binary export
+  would exceed its range. It can be opened again as an RxMER capture.
+
+Both save the **full original subcarrier grid**, regardless of chart zoom, and
+preserve device/channel identity, capture time and missing readings. Saving
+neither applies the draft nor starts simulation. It leaves the Designer open.
+
+![Save format and capture scope](../../images/workbench/rxmer-designer-save-dark.png)
+
+For a collection, the native file manager selects a parent folder. MERLIN creates
+a new subfolder with numbered capture files and `merlin-export.json`. A single
+file receives a `<filename>.merlin.json` provenance sidecar. Keep these manifests
+with the captures: they label generated data as synthetic/designed, record source
+hashes, recipe, selected positions and output hashes. JSON additionally includes
+an embedded generated-data label and source provenance; it is not a raw modem
+measurement. Existing files and folders are never overwritten.
+
+Conversion, validation and saving run in Rust with capture progress and
+cancellation. Both Designer and the reusable crate independently guard export.
+Invalid metadata, nonfinite values or excessive work block either format. The
+same 256-capture / four-million-value application limits apply. **Cancel** or X
+cancels the save operation without changing source files or accepted inputs.
+A native chooser must be dismissed separately if it is already open.
+
+PNM output supports file format 1.0 and 25/50 kHz grids. The field contract uses
+DOCSIS 3.1 CM-OSSI I27 D.2.8/Table 68 text evidence and the pinned Apache Rust
+reader's byte order; no DOCSIS 4.0 format equivalence is claimed. See the
+[export design and validation](../../development/features/rxmer-designer/pnm-export-plan.md).
+Workbench **Save** remains the editable recipe/baseline record described above.

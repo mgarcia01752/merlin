@@ -278,3 +278,12 @@ completed all three original profiles in 4.43s with previous counters intact.
 A loaded channel-193 Profile 3 exposes catalog [0, 3, 4] without selecting a
 different profile. Formatting, syntax, import-only, links and whitespace checks
 pass. Other Python/platform targets remain unverified; no publication occurred.
+
+### API-EXAMPLE-BER-01: readable Python BER output
+
+Both Python walkthroughs format available post-FEC BER using scientific
+notation (`.3e`, for example `1.234e-06`). A named `BER_FORMAT` constant near
+the configuration allows display precision changes. Unavailable BER remains
+explicitly unavailable. This changes presentation only: Rust still owns the
+numeric BER result and the Python API continues returning its numeric domain
+value. Validate by running both fixture-backed examples with the native wheel.

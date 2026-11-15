@@ -23,9 +23,12 @@
  * @param multiple Whether more than one file may be selected.
  * @param save Whether to choose a destination with overwrite confirmation.
  * @param workbench Whether to show only *.merlin.json files and directories.
+ * @param pnm Restrict capture output to its selected binary/JSON format.
+ * @param folder Select a parent folder for a new collection.
+ * @param json Use the decoded JSON filter and default filename.
  * @return Selected URI(s), empty cancellation, or an explicit error marker.
  */
-inline QString chooseNativeSelection(const QString &title, bool multiple, bool save = false, bool workbench = false) {
+inline QString chooseNativeSelection(const QString &title, bool multiple, bool save = false, bool workbench = false, bool pnm = false, bool folder = false, bool json = false) {
 #ifdef __linux__
     // Match XCB/XWayland so the native chooser shares the application's display.
     if (qgetenv("QT_QPA_PLATFORM") == "xcb") {
@@ -40,8 +43,14 @@ inline QString chooseNativeSelection(const QString &title, bool multiple, bool s
     } selection{g_main_loop_new(nullptr, false), GTK_RESPONSE_CANCEL};
     const auto titleBytes = title.toUtf8();
     auto *chooser = gtk_file_chooser_native_new(titleBytes.constData(), nullptr,
-        save ? GTK_FILE_CHOOSER_ACTION_SAVE : GTK_FILE_CHOOSER_ACTION_OPEN, save ? "Save" : "Open", "Cancel");
+        folder ? GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER : save ? GTK_FILE_CHOOSER_ACTION_SAVE : GTK_FILE_CHOOSER_ACTION_OPEN, save ? "Save" : "Open", "Cancel");
     gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(chooser), multiple);
+    if (pnm && !folder) {
+        auto *filter = gtk_file_filter_new();
+        gtk_file_filter_set_name(filter, json ? "RxMER JSON (*.json)" : "PNM RxMER (*.bin)");
+        gtk_file_filter_add_pattern(filter, json ? "*.json" : "*.bin");
+        gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(chooser), filter);
+    }
     if (workbench) {
         auto *filter = gtk_file_filter_new();
         gtk_file_filter_set_name(filter, "MERLIN Workbenches (*.merlin.json)");
@@ -54,7 +63,7 @@ inline QString chooseNativeSelection(const QString &title, bool multiple, bool s
         gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(chooser), initialDirectory.constData());
     }
     if (save) {
-        gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(chooser), "workbench.merlin.json");
+        gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(chooser), pnm ? (json ? "merlin_rxmer_designed.json" : "merlin_rxmer_designed.bin") : "workbench.merlin.json");
         gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(chooser), true);
     }
     gtk_native_dialog_set_modal(GTK_NATIVE_DIALOG(chooser), true);
@@ -85,7 +94,7 @@ inline QString chooseNativeSelection(const QString &title, bool multiple, bool s
     g_main_loop_unref(selection.loop);
     return result;
 #elif defined(_WIN32)
-    return chooseWindowsSelection(title, multiple, save, workbench);
+    return chooseWindowsSelection(title, multiple, save, workbench, pnm, folder, json);
 #else
     return QStringLiteral("ERROR: OS-native file selection is implemented for Ubuntu only.");
 #endif
@@ -112,4 +121,14 @@ inline QString chooseNativeFiles(const QString &title) {
 /** Select a project destination with native overwrite confirmation. */
 inline QString chooseNativeSave(const QString &title) {
     return chooseNativeSelection(title, false, true);
+}
+
+/** Select a capture destination; Rust owns all output and validation.
+ * @param title Native chooser caption.
+ * @param collection Choose a parent folder for new numbered files.
+ * @param json Choose decoded JSON instead of PNM binary.
+ * @return A local URI, empty cancellation, or an explicit error marker.
+ */
+inline QString chooseNativePnm(const QString &title, bool collection, bool json) {
+    return chooseNativeSelection(title, false, !collection, false, true, collection, json);
 }

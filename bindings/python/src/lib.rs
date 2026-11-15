@@ -8,6 +8,7 @@ mod inputs;
 mod options;
 mod quantities;
 mod reports;
+mod rxmer_export;
 use docsis_ofdm_fec::api;
 use pyo3::exceptions::PyException;
 use pyo3::prelude::*;

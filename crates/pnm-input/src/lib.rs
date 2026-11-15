@@ -17,6 +17,8 @@ use std::{
     io::{Read, Write},
     path::Path,
 };
+pub mod rxmer_export;
+
 /// Stateless native decoder dispatch; classification is based only on contents.
 pub struct CaptureLoader;
 fn decode(input: &NamedCapture, kind: u8) -> ApiResult<(NamedCapture, Option<DecoderContract>)> {

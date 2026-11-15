@@ -178,3 +178,11 @@ match the preserved Rust baseline. Workspace/adapter Clippy and formatting
 passed; the native Ubuntu/CPython 3.10 wheel was rebuilt locally. See
 [design validation](design.md#api-input-03-retained-profile-id-member-on-loaded-dpd)
 for timings. Other platforms remain unverified; no artifacts were published.
+
+## API-EXAMPLE-BER-01: scientific BER presentation
+
+Both Python fixture examples ran against the local native wheel. `high_level.py`
+completed in 2.52s and `multi_rxmer.py` completed all discovered profiles in 6.41s.
+Available zero BER prints `0.000e+00`; `.3e` also renders nonzero rates such as
+`1.234e-06`. Missing BER remains `unavailable`. This is example presentation only;
+Rust and Python result types/calculations are unchanged.

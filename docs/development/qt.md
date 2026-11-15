@@ -96,13 +96,24 @@ The VM is the interactive rendering/review target. Build success and offscreen
 rendering alone do not establish interactive approval or support on other OSes.
 Initial targets remain Ubuntu 22.04, 24.04 and 26.04 x64.
 
+Normal **build/run use optimized release mode**, matching the Python wheel's
+Rust optimization profile. Output is `apps/qt/target/release/merlin-qt`.
+Compiler debug mode is separate from printing: diagnostic logs are already
+opt-in; ordinary logging retains warnings/errors.
+
 ## Fast UI iteration
 
-Keep `apps/qt/target/` and the development Cargo cache between iterations.
+For an explicitly unoptimized development build, use
+`scripts/qt-desktop.sh build-debug` or `scripts/qt-desktop.sh run-debug`.
+These produce/use `apps/qt/target/debug/merlin-qt`; debug logging still requires
+`--debug-ui` or `RUST_LOG`. Keep `apps/qt/target/` and the development Cargo cache
+between iterations.
 The build helper uses stable profile settings; Cargo reuses unchanged compiled
 dependencies and rebuilds/relinks affected code. Embedded QML changes still need
 an application build before the VM executable reflects them. Leave that executable
-ready to run after each UI change. Do not routinely clean targets or change profile
+ready to run after each UI change. After `check`, run normal `build` before
+handoff so the default release executable also contains the latest changes.
+Do not routinely clean targets or change profile
 settings, which would discard useful build reuse.
 
 UI-only work uses Qt-focused build/tests. Non-Qt workspace compilation and tests
@@ -115,7 +126,7 @@ or integration behavior. Required push/release checks remain unchanged.
 scripts/qt-desktop.sh check
 ```
 
-Checks Rust formatting, warnings-denied Clippy, adapter tests/build and QML
+Checks development-profile Rust formatting, warnings-denied Clippy, adapter tests/build and QML
 navigation/theme/render tests using Qt's offscreen software renderer. QML tests
 cover all nine blocks, closing dialogs, run readiness/controls, theme
 switching and minimum-window navigation. Rendering outputs stay in ignored

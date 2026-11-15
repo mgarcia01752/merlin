@@ -14,3 +14,12 @@ GPL Qt input orchestration is not copied.
 
 See [user guide](../../docs/user/api/README.md) and the runnable
 [API examples](../../examples/api/README.md).
+
+`rxmer_export` adds independent capture output: PNM 1.0 binary with explicit
+quarter-dB rounding and reject/clamp policy, or existing-contract decoded JSON
+with full-precision finite samples and nulls. The byte encoders borrow validated
+`RxMerFrame`; `RxMer::frame()` exposes one from the high-level API. Bounded
+preflight/save helpers support new single files or collections, cancellation,
+progress and provenance manifests. They never overwrite inputs/destinations or
+run simulation. See the [save design](../../docs/development/features/rxmer-designer/pnm-export-plan.md)
+for format evidence, publication rules and platform boundaries.

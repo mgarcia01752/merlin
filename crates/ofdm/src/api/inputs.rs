@@ -496,6 +496,13 @@ macro_rules! measurement {
 measurement!(RxMer, import_rxmer, mer_db, RxMerFrame);
 measurement!(ChannelEstimate, import_channel, iq, ChannelFrame);
 impl RxMer {
+    /// Borrows the validated original-grid frame for native Rust adapters.
+    /// # Returns
+    /// Immutable complete identity, samples and source provenance for this
+    /// capture's lifetime. No parsing, simulation or source mutation occurs.
+    pub fn frame(&self) -> &RxMerFrame {
+        &self.frame
+    }
     /// Reads full-resolution values with explicit dB units and missing samples.
     /// # Returns
     /// Owned values; original storage is unchanged.
