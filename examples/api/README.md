@@ -53,7 +53,9 @@ setting, which is not exposed by this API. `high_level.py` retains the original
 single-capture workflow with an explicit measured channel estimate.
 
 `DPD.profile_ids_from_file()` discovers the catalog through Rust and returns
-validated `ProfileId` objects. The fixture currently contains 0, 3 and 4; no IDs
+validated `ProfileId` objects. If a DPD is already loaded, use `dpd.profile_ids`
+to read its retained catalog without accessing the file again. The fixture
+currently contains 0, 3 and 4; no IDs
 are hardcoded in the script. Each fresh controller resets the common default PRBS/noise
 seeds and prints its own actual FEC/BER and host execution time. The default
 `OBSERVATION_DURATION_MS = 1` requests only 1 ms of source observation per

@@ -1390,3 +1390,9 @@ validation are complete; the user guide includes the current dark capture.
   Rust-first shared API evolution; 16 Rust API tests, 7 Python API tests
   and all four selection-policy parity modes pass.
   [Design](features/high-level-api/design.md#api-input-02-discover-captured-profile-identities-in-rust).
+
+- [x] **API-INPUT-03** Retain the source profile catalog in loaded DPDs;
+  expose Rust profile_ids() and Python profile_ids without file access or
+  decoding. Keep static discovery; 17 Rust API tests, 8 Python API tests,
+  source-removal/ownership checks and four policy parity modes pass.
+  [Design](features/high-level-api/design.md#api-input-03-retained-profile-id-member-on-loaded-dpd).

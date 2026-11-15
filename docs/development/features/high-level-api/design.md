@@ -253,3 +253,28 @@ Rust formatting, Python syntax/import-only behavior, unchanged high_level.py,
 guide links and whitespace checks passed. No Qt/scientific algorithm change
 or publication. The verified wheel remains Ubuntu x86_64 / CPython 3.10 only;
 other Python/platform targets are unverified.
+
+## API-INPUT-03: retained profile-ID member on loaded DPD
+
+Keep static discovery unchanged. During DPD import, retain the complete validated
+sorted source catalog beside the selected profile. Expose Dpd::profile_ids() in
+Rust and read-only dpd.profile_ids in Python. Reading the member performs no I/O,
+JSON parsing or simulation. Created profiles expose their one ID; edited inputs
+retain the source catalog, independently of their selected-profile hypothesis.
+Include the member in DPD serialization and preserve clone/result ownership.
+Test the instance after its file is removed, list-copy isolation, created/edited
+behavior, and agreement with static binary/JSON discovery. No engine change.
+
+Validation: all 17 Rust API tests passed (43.78s tests; 60.81s command with
+compilation), including source-file deletion, serialization, static agreement
+and created/edited catalogs. Workspace Clippy passed (14.75s), adapter Clippy
+passed (7.08s), and the local CPython 3.10 Linux wheel rebuilt (36.79s) with
+notices and was installed only in the existing project-local environment.
+All 8 Python API tests passed (0.374s tests; 0.44s command), including source
+removal, read-only property, independent lists and created/edited members.
+All four Python selection modes match the preserved Rust engine baseline
+(3.98s command); scientific behavior is unchanged. The collection example
+completed all three original profiles in 4.43s with previous counters intact.
+A loaded channel-193 Profile 3 exposes catalog [0, 3, 4] without selecting a
+different profile. Formatting, syntax, import-only, links and whitespace checks
+pass. Other Python/platform targets remain unverified; no publication occurred.

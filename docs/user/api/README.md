@@ -58,7 +58,13 @@ application defaults when not explicitly supplied. Manual OCD plus
 `Dpd::from_ocd` creates a hypothesis; `with_modulation` edits data carriers while
 preserving original captured bytes and protected roles.
 
-Discover profiles before selecting one:
+For an already-loaded DPD, `dpd.profile_ids()` borrows the sorted validated
+catalog retained during import, independently of `dpd.profile_id()` (the
+selected profile). It performs no I/O or decoding. Created profiles list one ID;
+edited profiles retain their source catalog. Serialized DPDs include
+`profile_ids`. This metadata does not change the selected simulation profile.
+
+Static discovery remains available before selecting one:
 
 ```rust
 let input = read_capture("examples/workbench/single/modulation-profile.bin")?;

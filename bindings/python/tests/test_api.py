@@ -73,6 +73,28 @@ class NativeApiTests(unittest.TestCase):
             m.DPD.profile_ids_from_file(collection / "missing.bin")
         self.assertEqual(context.exception.code, m.ErrorCode.Io)
 
+    def test_loaded_dpd_member_retains_catalog_without_source_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "profile.bin"
+            path.write_bytes((FIXTURE / "modulation-profile.bin").read_bytes())
+            loaded = m.DPD.from_file(path, m.ProfileId(2))
+            static = m.DPD.profile_ids_from_file(path)
+            path.unlink()
+        self.assertEqual(loaded.profile_id.value, 2)
+        self.assertEqual([value.value for value in loaded.profile_ids], [0, 1, 2, 3])
+        self.assertEqual([value.value for value in static], [0, 1, 2, 3])
+        copied = loaded.profile_ids
+        copied.clear()
+        self.assertEqual([value.value for value in loaded.profile_ids], [0, 1, 2, 3])
+        with self.assertRaises(AttributeError):
+            loaded.profile_ids = []
+        created = m.DPD.from_ocd(configured()[0].ocd, m.ProfileId(3), m.DataModulation.Qam256)
+        self.assertEqual([value.value for value in created.profile_ids], [3])
+        edited = created.with_modulation(
+            m.CarrierRange(m.SubcarrierIndex(356), m.SubcarrierIndex(400)),
+            m.DataModulation.Qam64)
+        self.assertEqual([value.value for value in edited.profile_ids], [3])
+
     def test_content_detection_typed_values_and_provenance(self):
         binary = m.RxMer.from_file(FIXTURE / "rxmer.bin")
         decoded = m.RxMer.from_file(ROOT / "examples/measurements/single-channel/rxmer.json")

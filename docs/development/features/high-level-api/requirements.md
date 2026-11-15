@@ -81,3 +81,9 @@ These additional repository requirements govern ongoing delivery:
 - **REQ-API-PARITY-003:** New discovery operations MUST cover binary/decoded JSON
   agreement, ordering, empty/duplicate/invalid IDs and independent owned results
   across Rust and Python. File convenience wrappers remain adapter responsibilities.
+
+- **REQ-API-PARITY-004:** An already-loaded DPD MUST expose its retained profile
+  catalog as a Rust member accessor and Python property, without file access,
+  redecoding or simulation. Keep static discovery available. Distinguish the
+  complete source catalog from the selected profile ID; preserve immutable
+  ownership, created-profile singleton catalogs and edited-source catalogs.

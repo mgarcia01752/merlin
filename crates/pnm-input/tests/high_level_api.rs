@@ -146,10 +146,12 @@ fn defaults_derived_grid_overrides_and_immutable_edit() {
         )
         .unwrap();
     assert_eq!(changed.origin(), ProfileOrigin::Edited);
+    assert_eq!(changed.profile_ids(), p.profile_ids());
     assert_eq!(p.origin(), ProfileOrigin::Captured);
     assert_eq!(p.sources()[0].original_bytes(), PROFILE);
     let created = Dpd::from_ocd(&ocd, ProfileId::PROFILE_A, DataModulation::Qam256).unwrap();
     assert_eq!(created.origin(), ProfileOrigin::Created);
+    assert_eq!(created.profile_ids(), &[ProfileId::PROFILE_A]);
     assert!(created.sources().is_empty());
     let mut sim = Merlin::new(ocd);
     sim.set_profile(created).unwrap();
@@ -583,6 +585,10 @@ fn profile_catalog_discovery_matches_core_json_and_binary_without_selection() {
     for id in ids {
         let profile = CaptureLoader::profile(&collection, id).unwrap();
         assert_eq!(profile.profile_id(), id);
+        assert_eq!(
+            profile.profile_ids(),
+            CaptureLoader::profile_ids(&collection).unwrap()
+        );
         assert_eq!(profile.sources()[0].original_bytes(), collection.bytes());
     }
     assert_eq!(json.bytes(), original);
@@ -623,4 +629,37 @@ fn profile_catalog_rejects_malformed_empty_duplicate_and_out_of_domain_ids() {
         include_bytes!("../../../examples/workbench/single/modulation-profile.bin").to_vec();
     corrupt.truncate(20);
     assert!(CaptureLoader::profile_ids(&input("truncated", &corrupt)).is_err());
+}
+
+#[test]
+fn loaded_profile_catalog_survives_source_removal_and_serializes() {
+    let path = std::env::temp_dir().join(format!("merlin-dpd-member-{}.json", std::process::id()));
+    let mut file = std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(&path)
+        .unwrap();
+    std::io::Write::write_all(&mut file, PROFILE).unwrap();
+    drop(file);
+    let loaded = CaptureLoader::profile(
+        &pnm_input::read_capture(&path).unwrap(),
+        ProfileId::new(2).unwrap(),
+    )
+    .unwrap();
+    std::fs::remove_file(&path).unwrap();
+    assert_eq!(loaded.profile_id().value(), 2);
+    assert_eq!(
+        loaded
+            .profile_ids()
+            .iter()
+            .map(|id| id.value())
+            .collect::<Vec<_>>(),
+        vec![0, 1, 2, 3]
+    );
+    assert_eq!(
+        serde_json::to_value(&loaded).unwrap()["profile_ids"],
+        serde_json::json!([0, 1, 2, 3])
+    );
+    assert_eq!(loaded.clone().profile_ids(), loaded.profile_ids());
+    assert_eq!(loaded.sources()[0].original_bytes(), PROFILE);
 }

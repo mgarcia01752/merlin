@@ -166,3 +166,15 @@ A native Linux CPython 3.10 wheel was rebuilt with notices and installed only
 in the local test environment. See the [design validation](design.md#api-input-02-discover-captured-profile-identities-in-rust)
 for timings and example counters. Windows/macOS/other interpreters are unverified;
 no wheel was published and no system installation was performed.
+
+## Loaded DPD catalog member (API-INPUT-03)
+
+Static discovery remains available. Rust Dpd::profile_ids() and Python
+dpd.profile_ids expose the complete validated catalog retained during import,
+independently of the selected profile. Reading needs no file or decoding.
+17 Rust API tests and 8 Python API tests passed, including access after source
+removal, created/edited metadata and ownership. Four policy parity modes still
+match the preserved Rust baseline. Workspace/adapter Clippy and formatting
+passed; the native Ubuntu/CPython 3.10 wheel was rebuilt locally. See
+[design validation](design.md#api-input-03-retained-profile-id-member-on-loaded-dpd)
+for timings. Other platforms remain unverified; no artifacts were published.

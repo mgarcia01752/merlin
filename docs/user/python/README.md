@@ -53,7 +53,19 @@ results and wall time per profile. The observation is 1 ms per profile; increase
 `OBSERVATION_DURATION_MS` for a longer run. See the [example notes](../../../examples/api/README.md) for
 scope and desktop-WB differences.
 
-Discover available profiles through the shared Rust loader:
+For an already-loaded DPD, read its member directly:
+
+```python
+profile_ids = dpd.profile_ids
+print([profile_id.value for profile_id in profile_ids])
+```
+
+The full catalog was retained during loading, independently of `dpd.profile_id`
+(the selected profile). Reading it does not reopen or decode the file. Each
+access returns an independent list; modifying that list does not alter the DPD.
+Created DPDs list their one ID; edited DPDs retain their source catalog.
+
+Static discovery is also available through the shared Rust loader:
 
 ```python
 profile_ids = DPD.profile_ids_from_file(profile_path)

@@ -150,6 +150,7 @@ impl DataModulation {
 #[derive(Debug, Clone)]
 pub struct Dpd {
     pub(crate) profile: CapturedProfile,
+    profile_ids: Vec<ProfileId>,
     pub(crate) origin: ProfileOrigin,
     pub(crate) sources: Vec<CaptureProvenance>,
     pub(crate) bandwidth: Option<BandwidthHz>,
@@ -268,6 +269,11 @@ impl Dpd {
             name: decoded.name(),
             bytes: json(decoded)?,
         })?;
+        let mut profile_ids = profiles
+            .iter()
+            .map(|profile| ProfileId::new(profile.profile_id))
+            .collect::<ApiResult<Vec<_>>>()?;
+        profile_ids.sort_by_key(|id| id.value());
         let profile = profiles
             .into_iter()
             .find(|p| p.profile_id == id.0)
@@ -275,6 +281,7 @@ impl Dpd {
         let source = provenance(original, decoded, profile.capture_time, contract)?;
         Ok(Self {
             profile,
+            profile_ids,
             origin: ProfileOrigin::Captured,
             sources: vec![source],
             bandwidth: None,
@@ -285,6 +292,16 @@ impl Dpd {
     /// Selected original profile ID.
     pub fn profile_id(&self) -> ProfileId {
         ProfileId(self.profile.profile_id)
+    }
+    /// Borrows the validated profile catalog retained when this DPD was loaded.
+    ///
+    /// # Returns
+    /// Captured IDs in ascending order, independent of the selected profile.
+    /// Reading performs no file access, decoding or simulation. Created profiles
+    /// contain one ID; edited profiles preserve their original source catalog.
+    /// Values remain valid for this immutable DPD's lifetime.
+    pub fn profile_ids(&self) -> &[ProfileId] {
+        &self.profile_ids
     }
     /// Borrows the exact original frequency grid.
     /// # Returns
@@ -356,6 +373,7 @@ impl Dpd {
         };
         Ok(Self {
             profile,
+            profile_ids: vec![id],
             origin: ProfileOrigin::Created,
             sources: vec![],
             bandwidth: Some(*ocd.configuration.bandwidth().value()),
@@ -498,7 +516,7 @@ impl serde::Serialize for Dpd {
         &self,
         serializer: Serializer,
     ) -> Result<Serializer::Ok, Serializer::Error> {
-        serde_json::json!({"profile_id":self.profile_id(),"grid":self.grid(),
+        serde_json::json!({"profile_id":self.profile_id(),"profile_ids":self.profile_ids(),"grid":self.grid(),
             "carriers":self.profile.assignments,"origin":self.origin,
             "sources":self.sources,"established_bandwidth_hz":self.bandwidth})
         .serialize(serializer)

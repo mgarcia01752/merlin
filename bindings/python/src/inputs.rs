@@ -185,6 +185,21 @@ impl PyDpd {
     fn profile_id(&self) -> PyProfileId {
         PyProfileId(self.0.profile_id())
     }
+    /// Reads all profile identities retained by the already-loaded DPD.
+    ///
+    /// # Returns
+    /// An independent list of validated ProfileId values in ascending captured
+    /// order. No file is reopened or decoded and no simulation runs. Created
+    /// profiles have one ID; edited profiles retain their source catalog.
+    #[getter]
+    fn profile_ids(&self) -> Vec<PyProfileId> {
+        self.0
+            .profile_ids()
+            .iter()
+            .copied()
+            .map(PyProfileId)
+            .collect()
+    }
     /// Read origin from the native Rust snapshot.
     /// # Returns
     /// The Captured, Created or Edited profile-origin classification.

@@ -2265,6 +2265,10 @@ and separate original/intermediate provenance. Core `Dpd::profile_ids_from_bytes
 validates decoded catalogs and returns sorted `ProfileId` values;
 `CaptureLoader::profile_ids` adds native binary decoding. Python discovery
 delegates to this Rust path and never probes or parses profile inventories.
+Loaded DPDs retain the validated sorted catalog; Rust `profile_ids()` and Python
+`profile_ids` read that member without I/O or decoding, separately from the
+selected profile. Created profiles have a singleton catalog and edited profiles
+preserve their source catalog.
 No GPL Qt orchestration is copied.
 The separate optional Python adapter calls this same Rust API after its Rust
 validation gate. It releases the interpreter lock, preserves cooperative

@@ -264,7 +264,9 @@ file conveniences without Qt or Python. `Dpd::profile_ids_from_bytes` validates
 decoded JSON catalogs; `CaptureLoader::profile_ids` adds binary/JSON dispatch.
 Both return sorted owned `ProfileId` values without simulation. Python
 `DPD.profile_ids_from_file` and `profile_ids_from_bytes` delegate to this same
-Rust discovery and validation.
+Rust discovery and validation. Loaded `Dpd::profile_ids()` and Python
+`dpd.profile_ids` expose the catalog retained during import without further
+file access or decoding. The selected identity remains `profile_id`.
 
 The optional `bindings/python` workspace converts inputs and results for the
 same Rust API. See [working Rust usage](../user/api/README.md),
