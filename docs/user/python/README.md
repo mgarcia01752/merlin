@@ -126,33 +126,57 @@ manylinux portability or support for another interpreter/OS.
 ## Simple workflow
 
 ```python
+# Import capture loaders, validated values, run settings and the controller.
 from merlin import (
     DPD, OCD, Merlin, ProfileId, ProtocolScope, OcdOverrides,
     BandwidthHz, RxMer, EvaluationOptions, ChannelSelection,
     AssociationTolerance, ObservationDuration, RunLimits, RuntimeLimit,
 )
 
-OCCUPIED_BANDWIDTH_HZ = 192_000_000
+# Keep fixture settings explicit, with units in each constant name.
+OCCUPIED_BANDWIDTH_HZ = 192_000_000  # This fixture occupies 192 MHz.
+OBSERVATION_DURATION_MS = 1  # Source observation, excluding acquisition/drain.
+PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 90_000  # Fixture capture-time allowance.
+MAX_RUNTIME_MS = 300_000  # Limit each experiment to 300 seconds of host time.
 
+# Load Profile A's modulation assignments from the existing capture.
 profile = DPD.from_file(
     "examples/workbench/single/modulation-profile.bin", ProfileId.PROFILE_A)
+
+# Derive the DOCSIS 3.1 channel configuration and supply its known bandwidth.
 ocd = OCD.from_profile(ProtocolScope.DOCSIS31, profile,
     OcdOverrides(bandwidth=BandwidthHz(OCCUPIED_BANDWIDTH_HZ)))
+
+# Create a simulation controller without starting any simulation work.
 sim = Merlin(ocd)
+
+# Choose the modulation profile that the simulation will evaluate.
 sim.set_profile(profile)
+
+# Add measured RxMER; retain the returned identifier for later selection.
 first = sim.add_rxmer(RxMer.from_file("examples/workbench/single/rxmer.bin"))
+
+# Configure the experiment before running it; loading does not start a run.
 sim.set_options(EvaluationOptions(
+    # Use a flat channel response instead of an imported channel estimate.
     channel_selection=ChannelSelection.unity(),
-    observation=ObservationDuration(1),
-    profile_tolerance=AssociationTolerance(90_000),
-    limits=RunLimits(runtime=RuntimeLimit(300_000)),
+    # Set simulated source duration, independently of the host runtime limit.
+    observation=ObservationDuration(OBSERVATION_DURATION_MS),
+    # Allow this fixture's profile/RxMER timestamp difference without rewriting it.
+    profile_tolerance=AssociationTolerance(PROFILE_ASSOCIATION_TOLERANCE_SECONDS),
+    # Bound execution time; reaching the limit can leave a partial report.
+    limits=RunLimits(runtime=RuntimeLimit(MAX_RUNTIME_MS)),
 ))
 
-# Only this call starts simulation.
+# Only run() starts simulation; iterate over the returned experiment entries.
 for entry in sim.run():
+    # Read the owned report, which may be absent for an unsuccessful entry.
     report = entry.report
+    # Print FEC outcomes only when the report contains those measurements.
     if report is not None and report.fec is not None:
+        # Show codewords that the decoder could not correct.
         print(report.fec.uncorrectable_codewords.value)
+        # Show post-FEC bit error rate, preserving None when it is unavailable.
         print(report.profile.post_fec_ber.value
               if report.profile.post_fec_ber is not None else None)
 ```
