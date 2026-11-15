@@ -17,11 +17,9 @@ const MAX_RUNTIME_MS: u64 = 300_000;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_DIRECTORY);
     // Loading retains the complete inventory without starting simulation.
-    let mut sim = CaptureLoader::controller_from_profiles(
-        &read_capture(root.join("modulation-profile.bin"))?,
-        ProtocolScope::Docsis31,
-        OcdOverrides::default(),
-    )?;
+    let mut sim = CaptureLoader::controller_from_capture(&read_capture(
+        root.join("modulation-profile.bin"),
+    )?)?;
     println!("Loaded profiles: {:?}", sim.profile_ids());
     sim.add_rxmer(CaptureLoader::rxmer(&read_capture(
         root.join("rxmer.bin"),

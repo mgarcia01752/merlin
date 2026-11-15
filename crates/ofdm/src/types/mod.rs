@@ -39,10 +39,11 @@ pub mod units {
 
 pub mod ofdm_modulation;
 
-/// Supported interpretation is chosen explicitly; file versions cannot infer it.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+/// Supported interpretation defaults to DOCSIS 3.1; file versions cannot infer it.
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ProtocolScope {
+    #[default]
     Docsis31,
     Docsis40Fdd,
 }

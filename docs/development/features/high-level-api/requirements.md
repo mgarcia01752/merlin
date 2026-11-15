@@ -158,3 +158,7 @@ and security gates. Keep release filenames, compatibility and installation/hash
 verification in a separate [Python release guide](../../../user/python/releases.md),
 linked from Python installation and generated downstream integration documents.
 Configuration is not evidence of native Windows execution or published assets.
+
+API documentation and example changes cover both Rust and Python unless
+explicitly scoped otherwise. Default profile-capture loading uses DOCSIS 3.1;
+explicit protocol selection remains supported and file versions do not infer it.

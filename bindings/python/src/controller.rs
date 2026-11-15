@@ -166,22 +166,23 @@ impl PyMerlin {
     /// Load a profile capture and retain its complete inventory without simulation.
     /// # Arguments
     /// * `path` - Existing binary PNM or decoded JSON capture.
-    /// * `protocol`, `overrides` - Interpretation and optional channel settings.
+    /// * `protocol` - Optional interpretation; Rust defaults to DOCSIS 3.1.
+    /// * `overrides` - Optional channel settings.
     /// # Returns
     /// Controller with its first loaded profile selected and all IDs available.
     /// # Errors
     /// Raises structured file, decoding and Rust configuration errors.
     #[staticmethod]
-    #[pyo3(signature=(path,protocol,overrides=None))]
+    #[pyo3(signature=(path,protocol=None,overrides=None))]
     fn from_profile_file(
         path: PathBuf,
-        protocol: PyProtocolScope,
+        protocol: Option<PyProtocolScope>,
         overrides: Option<PyOcdOverrides>,
     ) -> PyResult<Self> {
         let capture = read_capture(path).map_err(error)?;
         CaptureLoader::controller_from_profiles(
             &capture,
-            protocol.native(),
+            protocol.map(PyProtocolScope::native).unwrap_or_default(),
             overrides.unwrap_or_default().native(),
         )
         .map(Self::from_native)

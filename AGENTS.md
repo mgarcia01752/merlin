@@ -35,6 +35,8 @@ Matched NCP/pilot I/Q and retained-data selectors, response/echo, slicer/LLR and
 detailed FEC instruments are implemented for the supported transport;
 The high-level Rust API under crates/ofdm/src/api and optional native Python
 adapter under bindings/python reuse the same engine. Keep both Qt-independent.
+API requests, including documentation and examples, cover both Rust and Python
+unless the user explicitly limits the language.
 Shared capabilities requested through Python must land in the public Rust API
 first with matching validation/domain semantics, then be exposed by Python.
 Discover capture inventories through Rust; do not hardcode profile catalogs in

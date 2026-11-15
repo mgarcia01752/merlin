@@ -45,11 +45,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // A capture may contain multiple profiles, so choose one explicitly.
     // CaptureLoader detects binary/JSON by content and calls the native decoder.
     // The immutable DPD retains original bytes, assignments and provenance.
-    let mut sim = CaptureLoader::controller_from_profiles(
-        &read_capture(root.join(PROFILE_FILENAME))?,
-        ProtocolScope::Docsis31,
-        OcdOverrides::default(),
-    )?;
+    let mut sim =
+        CaptureLoader::controller_from_capture(&read_capture(root.join(PROFILE_FILENAME))?)?;
 
     // 3. Select a retained profile without rereading its original capture.
     sim.select_profile(ProfileId::PROFILE_A)?;

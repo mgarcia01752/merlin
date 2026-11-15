@@ -605,3 +605,16 @@ example remains 82 total / 0 corrected / 0 uncorrectable / BER 0.000e+00.
 Direct Rust/Python all-profile FEC comparisons pass. Validation uses the rebuilt
 CPython 3.10 Linux wheel; this change has not been tested on Windows or newer
 Ubuntu runners, and no release was published.
+
+## API-PROTOCOL-01 — Default interpretation validation
+
+- Default capture loader matches explicit DOCSIS 3.1 OCD and profile inventory:
+  one Rust fixture test passed (0.26 s); all Rust examples compile.
+- Rebuilt and installed the CPython 3.10 Linux wheel into project-local test
+  environments; 10 Python API tests passed (10.01 s), including omitted and
+  explicit protocol loading.
+- Core/input and Python binding Clippy, formatting and Rust documentation with
+  warnings denied passed. Python API reference rebuilt (58 classes, 2.57 s).
+- Both changed Python examples completed: single capture reports 82 codewords;
+  all-profile example completes profiles 0, 1, 2 and 3.
+- No full repository suite or Windows runtime validation was performed.

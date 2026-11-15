@@ -257,6 +257,9 @@ class LoadedProfilesTests(unittest.TestCase):
     def test_inventory_selection_cancellation_and_single_run_parity(self):
         """Retain profiles and match all-profile outcomes to independent runs."""
         sim = m.Merlin.from_profile_file(FIXTURE / "modulation-profile.bin", m.ProtocolScope.DOCSIS31)
+        default_sim = m.Merlin.from_profile_file(FIXTURE / "modulation-profile.bin")
+        self.assertEqual([p.value for p in default_sim.profile_ids],
+                         [p.value for p in sim.profile_ids])
         ids = sim.profile_ids
         self.assertEqual([item.value for item in ids], [0, 1, 2, 3])
         sim.select_profile(ids[2])

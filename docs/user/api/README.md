@@ -14,6 +14,12 @@ the [generated Rust/Python reference](../../reference/api-reference.md).
 
 ## Rust workflow
 
+`CaptureLoader::controller_from_capture(&capture)` uses DOCSIS 3.1 with default
+OCD overrides. For explicit protocol or settings, retain
+`CaptureLoader::controller_from_profiles(&capture, protocol, overrides)`.
+The protocol default does not infer DOCSIS version from a PNM file version.
+Manual `Ocd::from_profile` construction still takes an explicit protocol.
+
 The complete fixture-backed example lives in
 [`run_single_capture.rs`](../../../examples/api/rust/run_single_capture.rs). Run it
 from the repository root:
@@ -26,10 +32,8 @@ scripts/cargo-local.sh run -p pnm-input --example run_single_capture --locked
 use docsis_ofdm_fec::api::*;
 use pnm_input::{CaptureLoader, read_capture};
 
-let mut sim = CaptureLoader::controller_from_profiles(
+let mut sim = CaptureLoader::controller_from_capture(
     &read_capture("examples/workbench/single/modulation-profile.bin")?,
-    ProtocolScope::Docsis31,
-    OcdOverrides::default(),
 )?;
 let first = sim.add_rxmer(CaptureLoader::rxmer(
     &read_capture("examples/workbench/single/rxmer.bin")?,

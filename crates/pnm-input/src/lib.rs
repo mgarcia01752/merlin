@@ -88,6 +88,18 @@ impl CaptureLoader {
         let (decoded, contract) = decode(input, 10)?;
         Dpd::from_decoded(input, &decoded, id, contract)
     }
+    /// Loads captured profiles with the default DOCSIS 3.1 interpretation.
+    /// # Arguments
+    /// * `input` - Original bounded binary PNM or decoded JSON capture.
+    /// # Returns
+    /// Idle controller with all profiles retained and default OCD overrides.
+    /// # Errors
+    /// Preserves decoding, ambiguous settings and resource-limit errors.
+    pub fn controller_from_capture(
+        input: &NamedCapture,
+    ) -> ApiResult<docsis_ofdm_fec::api::Merlin> {
+        Self::controller_from_profiles(input, Default::default(), Default::default())
+    }
     /// Loads all captured profiles into an idle single-channel controller.
     /// # Arguments
     /// * `input` - Original bounded binary PNM or decoded JSON capture.

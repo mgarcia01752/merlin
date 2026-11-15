@@ -549,3 +549,11 @@ the same engine dispatch and cancellation path as `run()`. Keep profile identity
 on every result, including not-started entries. Bound combined experiments to
 256 and total retained capture storage to 64 MiB. Preserve `set_profile()` and
 existing loaders. Python only adapts inputs and exposes the Rust operations.
+
+## API-PROTOCOL-01 — Default capture interpretation
+
+Use DOCSIS 3.1 as the Rust-owned default protocol, not as an inference from
+PNM file versions. Add a default capture-controller loader; preserve the
+explicit protocol/override loader. Python accepts an omitted protocol and
+uses the same Rust default. Loading remains idle. Update both language guides
+and fixture examples; compare default and explicit loading in tests.

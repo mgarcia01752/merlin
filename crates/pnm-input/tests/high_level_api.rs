@@ -878,3 +878,24 @@ fn loaded_profiles_preserve_selection_ids_and_cancelled_entries() {
     )
     .is_err());
 }
+
+#[test]
+fn default_capture_protocol_matches_explicit_loading() {
+    let capture = input(
+        "profiles",
+        include_bytes!("../../../examples/workbench/single/modulation-profile.bin"),
+    );
+    let default = CaptureLoader::controller_from_capture(&capture).unwrap();
+    let explicit = CaptureLoader::controller_from_profiles(
+        &capture,
+        ProtocolScope::Docsis31,
+        OcdOverrides::default(),
+    )
+    .unwrap();
+    assert_eq!(ProtocolScope::default(), ProtocolScope::Docsis31);
+    assert_eq!(default.profile_ids(), explicit.profile_ids());
+    assert_eq!(
+        format!("{:?}", default.ocd()),
+        format!("{:?}", explicit.ocd())
+    );
+}

@@ -7,7 +7,7 @@
 """Load one profile collection and run every retained profile explicitly."""
 from pathlib import Path
 from merlin import (
-    Merlin, ProtocolScope, RxMer, EvaluationOptions, ChannelSelection,
+    Merlin, RxMer, EvaluationOptions, ChannelSelection,
     AssociationTolerance, ObservationDuration, RunLimits, RuntimeLimit,
 )
 
@@ -22,7 +22,7 @@ def main():
     """Run all loaded profiles and print actual per-profile FEC outcomes."""
     root = Path(__file__).resolve().parents[REPOSITORY_PARENT_INDEX] / FIXTURE_DIRECTORY
     # Load once; the controller retains the profiles and resolves channel settings.
-    sim = Merlin.from_profile_file(root / "modulation-profile.bin", ProtocolScope.DOCSIS31)
+    sim = Merlin.from_profile_file(root / "modulation-profile.bin")
     print("Loaded profiles:", [profile_id.value for profile_id in sim.profile_ids])
     # Reuse one original RxMER capture for each profile in the collection.
     sim.add_rxmer(RxMer.from_file(root / "rxmer.bin"))

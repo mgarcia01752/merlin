@@ -207,3 +207,8 @@ available. No loading or selection operation runs simulation.
 local/api-python-test/bin/python examples/api/python/run_all_profiles.py
 scripts/cargo-local.sh run -p pnm-input --example run_all_profiles --locked
 ```
+
+The Rust and Python single-capture and all-profile examples use the default
+DOCSIS 3.1 interpretation. Advanced examples keep explicit protocol choices
+where they construct an OCD directly. File-format versions do not select a
+protocol automatically.

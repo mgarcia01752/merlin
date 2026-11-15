@@ -82,7 +82,7 @@ all-profile collection and designed-RxMER workflows. Neither API depends on Qt.
 Loaded profile collections
 --------------------------
 
-Use ``Merlin.from_profile_file(path, protocol)`` to retain all profiles and
+Use ``Merlin.from_profile_file(path)`` to retain all profiles and
 resolve channel settings. Inspect ``sim.profile_ids``, use
 ``sim.profile_by_id(profile_id)`` or ``sim.select_profile(profile_id)``, and call
 ``sim.run_all_profiles()`` only when ready to simulate. Entries expose

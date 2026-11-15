@@ -1545,3 +1545,8 @@ validation are complete; the user guide includes the current dark capture.
   IDs/lookup/selection and run_all_profiles with bounded preflight/cancellation.
   Keep legacy construction/setters. Rust/Python FEC parity and native examples
   pass locally; other native platforms remain unverified for this change.
+
+- [x] API-PROTOCOL-01: Share the DOCSIS 3.1 loading default between Rust
+  and Python; preserve explicit protocol selection and update both examples.
+  Fixture default/explicit parity, Rust example compilation and Python API
+  tests pass locally; other platforms remain unverified for this change.

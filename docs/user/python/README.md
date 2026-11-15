@@ -126,10 +126,16 @@ manylinux portability or support for another interpreter/OS.
 
 ## Simple workflow
 
+The file loader defaults to DOCSIS 3.1. Omit `protocol` for the normal workflow;
+`protocol=ProtocolScope.DOCSIS31` remains valid when an explicit choice is useful.
+Import `ProtocolScope` to select another supported scope. This is a default
+interpretation, not protocol detection from the capture file version. Existing
+manual `OCD.from_profile` construction still takes an explicit protocol.
+
 ```python
 # Import capture loaders, validated values, run settings and the controller.
 from merlin import (
-    Merlin, ProtocolScope,
+    Merlin,
     RxMer, EvaluationOptions, ChannelSelection,
     AssociationTolerance, ObservationDuration, RunLimits, RuntimeLimit,
 )
@@ -141,7 +147,7 @@ MAX_RUNTIME_MS = 300_000  # Limit each experiment to 300 seconds of host time.
 
 # Load the capture once; this object owns its profiles and resolved channel settings.
 sim = Merlin.from_profile_file(
-    "examples/workbench/single/modulation-profile.bin", ProtocolScope.DOCSIS31)
+    "examples/workbench/single/modulation-profile.bin")
 
 # Inspect the retained IDs; the first loaded profile is selected for run().
 print([profile_id.value for profile_id in sim.profile_ids])

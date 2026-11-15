@@ -2419,3 +2419,9 @@ first profile without simulation. All-profile execution preserves current
 selection and adds profile identity to every result, including not-started
 entries. Existing single-profile workflows remain valid. Bounds are 16 profiles,
 256 combined experiments and the existing 64 MiB retained capture budget.
+
+### API-PROTOCOL-01 — Default profile-capture loading
+
+Rust owns the DOCSIS 3.1 protocol default. The capture convenience loader and
+optional Python protocol argument share it; explicit protocol and OCD overrides
+remain supported. Loading never starts simulation.

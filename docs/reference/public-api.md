@@ -441,3 +441,8 @@ as `run`, preserving selection and returning `profile_id` on every entry.
 Python mirrors these methods with `Merlin.from_profile_file` for file loading.
 Bandwidth is derived only when the captured span fits one supported value;
 ambiguous captures and manual OCD construction retain explicit overrides.
+
+`ProtocolScope::default()` is `Docsis31`. The Rust capture convenience loader
+`CaptureLoader::controller_from_capture` uses that default and empty OCD overrides.
+Python `Merlin.from_profile_file(path, protocol=None, overrides=None)` uses the
+same Rust default when protocol is omitted. Explicit loading remains available.
