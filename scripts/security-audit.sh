@@ -29,12 +29,16 @@ fi
 printf '%s  %s\n' "${AUDIT_SHA256}" "${AUDIT_ARCHIVE}" | sha256sum --check --status
 tar -xzf "${AUDIT_ARCHIVE}" --directory "${AUDIT_DIRECTORY}" --strip-components=1
 AUDIT_STATUS=0
-for graph in core qt; do
+for graph in core qt python; do
   LOCKFILE="${PROJECT_DIR}/Cargo.lock"
   REPORT="${REPORT_DIRECTORY}/report.json"
   if [[ "$graph" == qt ]]; then
     LOCKFILE="${PROJECT_DIR}/apps/qt/Cargo.lock"
     REPORT="${REPORT_DIRECTORY}/qt-report.json"
+  fi
+  if [[ "$graph" == python ]]; then
+    LOCKFILE="${PROJECT_DIR}/bindings/python/Cargo.lock"
+    REPORT="${REPORT_DIRECTORY}/python-report.json"
   fi
   "${AUDIT_DIRECTORY}/cargo-audit" audit --file "$LOCKFILE" --deny unsound --json \
     > "$REPORT" || AUDIT_STATUS=$?

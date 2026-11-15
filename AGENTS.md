@@ -33,7 +33,8 @@ Pause/Resume, accepted Receiver/PRBS-RX readiness and actual payload/PLC QAM, RX
 and BER/FEC results. Native Open/Save/Save As persist self-contained workbench JSON.
 Matched NCP/pilot I/Q and retained-data selectors, response/echo, slicer/LLR and
 detailed FEC instruments are implemented for the supported transport;
-Python bindings are deferred until after UI-01 through UI-04.
+The high-level Rust API under crates/ofdm/src/api and optional native Python
+adapter under bindings/python reuse the same engine. Keep both Qt-independent.
 Dependencies point from CLI/future adapters to docsis-ofdm-fec to fec-codec.
 
 Apply skills/coding-style, skills/scientific-testing, and the applicable versioned
@@ -120,7 +121,8 @@ Begin Git command blocks with cd /home/dev01/Projects/merlin &&.
 
 VERSION is canonical. tools/bump-version.sh synchronizes every local package and
 Cargo.lock. Combined --tag-patch/--tag-minor/--tag-major modes require clean master,
-validate the bumped candidate, commit version files, annotate and atomically push.
+validate the bumped candidate, commit version files and the generated Python
+integration guide, annotate and atomically push.
 Ordinary branch pushes may automatically skip local builds/tests only for
 verified documentation-only outgoing commits; see skills/git-workflow. Initial
 pushes and tag/release modes default to full validation. Explicit `--skip-test`
@@ -181,3 +183,15 @@ workbenches belong in `examples/workbench/`; shared capture/provenance fixtures
 belong in `examples/measurements/`. Maintain `examples/README.md` as the index.
 Desktop packages exclude the CLI folder; standalone CLI packages retain it.
 Update commands, includes, tests and package inventories when paths change.
+
+## Downstream Python installation documentation
+
+Every guarded push must refresh or validate docs/user/python/integration.md
+through the separate tools/python/update_integration_doc.py script. Save includes
+the refresh; bump releases include it in the validated release commit. Branch
+pushes stop if refresh creates uncommitted changes. Dry runs and existing tags
+check without writing. Resume accepts only exact version-and-guide candidates.
+Edit tools/python/templates/integration.md.in, not the generated guide. Never infer
+published wheels, hashes or supported platforms from a version/tag alone.
+Keep generated/downloaded archives and wheels ignored; required source fixtures
+need an explicit reviewed exception.

@@ -89,9 +89,9 @@ not establish FDX behavior. OFDMA is a later scope.
 
 All FEC, DSP, channel models and numerical calculations are Rust, including
 algorithm dependencies. Simulation crates forbid unsafe code. The Qt
-presentation shell and future Python bindings use the public Rust APIs; neither
+presentation shell and optional native Python bindings use the public Rust APIs; neither
 owns numerical calculations. The Qt shell integrates bounded closed-loop jobs
-and receiver instruments; Python bindings remain pending. There is no
+and receiver instruments; optional native Python bindings are implemented. There is no
 device capture/control or network-service dependency.
 
 ## Downstream FEC shortening (FEC-03)
@@ -1045,7 +1045,7 @@ The response Display selector names MCE or legacy pilot estimates from retained
 result metadata rather than relabeling old results with next-run settings.
 Training/Tracking describes 128-symbol history readiness,
 not certified accuracy. Apply is blocked during a run; draft Cancel/X preserves
-accepted settings. Rust settings/results are shared by CLI and Qt; Python is deferred.
+accepted settings. Rust settings/results are shared by CLI and Qt; the optional Python adapter consumes the same high-level Rust API.
 
 `signal_processing/channel/filter` owns static sparse delay lines or dense 8K FFT
 overlap-add (4096 input samples per chunk, at most2049 coefficients/2048 delay samples).
@@ -1695,8 +1695,10 @@ observations and analytical screening distinct. No completed comparisons means
 no fabricated zero BER. The seeded baseline is reproducible on the tested build;
 external interoperability and untested platforms remain separate validation work.
 
-Future Python/Qt adapters call the same simulation APIs and test-point contracts.
-They do not implement DSP, codec math or simulation JSON post-processing. Native bindings and presentation remain later milestones. Native CLI packaging and
+Python/Qt adapters call the same simulation APIs and test-point contracts.
+They do not implement DSP, codec math or simulation JSON post-processing.
+Native Python bindings and Qt presentation reuse the existing Rust engine.
+Native CLI packaging and
 multi-OS validation/publication workflows are now prepared locally; only Linux can
 be verified on this host. Their remote execution is deferred, and the optional Qt
 application is not part of these CLI installers.
@@ -1801,17 +1803,22 @@ audit launcher verifies a pinned static tool in ignored local storage; it does
 not install system packages or change the simulation core or dependency graph.
 See [security checks](development/security.md).
 
-### Python adapter roadmap — after Qt
+### Optional native Python API
 
-API-01 follows UI-01 through UI-04. Start with a single proposed
-`MerlinSimulation` Python class with settings, source, optional decoded PNM
-measurements, work limits and the latest owned result. A separate optional PyO3
-adapter calls the same Rust validation and channel-job APIs as the CLI/Qt UI;
-Python does not implement DSP/FEC or require Qt. Prefer simple owned inputs and
-dictionary results initially; decide cancellation, callbacks and array ownership
-before exposing more advanced sessions. No binding exists yet.
-See the [API-01 class proposal](development/features/python-adapter/design.md).
+`bindings/python` is a separate PyO3/maturin workspace using the canonical
+`docsis_ofdm_fec::api` and `pnm-input` crates. It converts typed requests,
+loads supported files, dispatches synchronous Rust jobs without the interpreter
+lock and retains independently owned reports. Another thread or Ctrl-C requests
+cooperative cancellation; concurrent controller operations receive Busy.
+No scientific calculation is implemented in Python and no CLI subprocess is
+invoked. Mutable requests are copied at acceptance; scientific results are
+read-only, and JSON dictionaries are independent transport snapshots.
 
+Local development wheels target Ubuntu 22.04 x86_64 / CPython 3.10. Other targets
+remain unverified. Package distribution is `merlin-ofdm`, imported as `merlin`;
+these are local development artifacts, not a publication or release claim.
+See the [Python guide](user/python/README.md) and
+[current design](development/features/high-level-api/design.md).
 
 ## Ubuntu 22.04 desktop delivery and release notification
 
@@ -1895,7 +1902,8 @@ applied profile, with explicit captured-ID checkbox subsets in the main WB
 configuration. Results remain transient.
 `CarrierMer` stores per-physical-bin observation signal/error powers in the core;
 `ChannelJobResult` exposes them through the same Rust API as other results.
-Python bindings remain deferred; neither FEC accounting nor MER depends on Qt.
+The optional Python bindings expose these Rust reports; neither FEC accounting
+nor MER depends on Qt.
 
 
 ### Main WB configuration and explicit profile selection (UI-WB-CONFIG-01)
@@ -2239,3 +2247,28 @@ with a file/use-case/command README. UI-ready saved state stays under
 Desktop staging uses the explicit workbench/measurement allowlist and excludes
 CLI requests. CLI archives retain all public examples. No input schema or
 scientific bytes change. [Design](development/features/example-layout/design.md).
+
+### API-RUST-01: High-level Rust API and optional native adapters
+
+`crates/ofdm/src/api` provides a high-level API around existing scenario/profile validation,
+`MeasurementPlayback` residual-power preparation and `run_channel` jobs. It
+owns immutable inputs, OCD resolution, controller-scoped collections, static
+selection/preflight and owned scoped reports. Scientific processing remains in
+existing engine modules. Only `run` dispatches experiments. Existing CLI and Qt
+paths remain unchanged; neither is a dependency of this high-level API.
+
+`pnm-input` independently calls pinned Apache `pnm` 0.3.6 for supported
+binary/JSON profile, RxMER and channel-response conversion, with bounded I/O
+and separate original/intermediate provenance. No GPL Qt orchestration is copied.
+The separate optional Python adapter calls this same Rust API after its Rust
+validation gate. It releases the interpreter lock, preserves cooperative
+cancellation and owns independent result snapshots.
+[Design](development/features/high-level-api/design.md),
+[user guide](user/api/README.md),
+[runnable Rust/Python examples](../examples/api/README.md), and
+[downstream Python installation](user/python/integration.md). The separate
+`tools/python/update_integration_doc.py` generator refreshes installation pins
+on saves/pushes; bump releases include the generated guide in their validated
+commit and exact recovery contract. Existing-tag retries remain read-only.
+Local native validation and artifact evidence
+are recorded in the [feature validation report](development/features/high-level-api/validation.md).

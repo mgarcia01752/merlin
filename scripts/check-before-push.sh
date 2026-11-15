@@ -24,7 +24,9 @@ if [[ "$SKIP_TEST" == 1 ]]; then
   echo 'Local Rust tests and simulation smokes explicitly skipped; hosted CI remains required.'
 fi
 python3 tools/release/versions.py
+python3 tools/python/update_integration_doc.py --check
 python3 -m unittest discover -s tools/release -p 'test_*.py'
+python3 -m unittest discover -s tools/python -p 'test_*.py'
 python3 -m unittest discover -s tools/git/tests -p 'test_*.py'
 python3 -m unittest discover -s tools/packaging -p 'test_*.py'
 python3 -m unittest discover -s tools/validation -p 'test_*.py'

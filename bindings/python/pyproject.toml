@@ -1,0 +1,18 @@
+[build-system]
+requires = ["maturin==1.8.3"]
+build-backend = "maturin"
+
+[project]
+name = "merlin-ofdm"
+dynamic = ["version"]
+requires-python = ">=3.10"
+description = "Native Python access to MERLIN's high-level Rust simulation API"
+license = { text = "Apache-2.0" }
+classifiers = ["Programming Language :: Rust", "Programming Language :: Python :: 3"]
+
+[tool.maturin]
+bindings = "pyo3"
+module-name = "merlin"
+strip = true
+
+include = [{ path = "target/wheel-notices/**/*", format = "wheel" }]

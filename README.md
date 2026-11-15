@@ -75,7 +75,7 @@ Actual native UI captures. Select an image to open its guide.
 
 - [UI Guide](docs/user/workbench.md): configure and run the Qt workbench.
 - [Rust API Guide](docs/reference/public-api.md): use the simulation engine directly.
-- [Python Guide](docs/user/python/README.md): planned bindings and current status.
+- [Python Guide](docs/user/python/README.md): native bindings, local wheel setup and examples.
 
 See the [documentation index](docs/README.md) for CLI usage, simulation models,
 reference material and development guides.

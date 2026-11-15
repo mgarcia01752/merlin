@@ -30,7 +30,8 @@ not a guarantee established from parity checks alone.
 `TotalCW = CleanCW + CCW + UFEC`. A copied snapshot is unaffected by later
 updates. Counters saturate together at the integer limit to preserve the
 partition. New counters reset a scope; there is no public mutable field access.
-Getters return exact integers for Rust and future Python consumers.
+Rust getters return exact integer counts. The native Python API exposes checked
+count objects with explicit `.value` conversion to Python integers.
 
 LDPC compares decoded bits with nonzero received LLR signs. Exact zero LLRs have
 no hard-decision evidence and do not contribute to changed-bit counts.

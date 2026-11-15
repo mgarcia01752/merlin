@@ -723,14 +723,13 @@ and the
     run tag publication after the later workflow push.
   Guide: [installation](../user/install/README.md).
 
-### Optional Python adapter — after the Qt UI
+### Optional Python adapter
 
-- [ ] **API-01** After UI-01 through UI-04, add a separate optional Python adapter
-  preserving the Rust simulation core, buffer lifetimes and observation contracts.
-  Start with one `MerlinSimulation` class holding settings, source, measurements,
-  limits and the latest result. All signal processing remains Rust.
-  Proposed approach: PyO3 bindings and maturin packaging, independent of Qt/CLI.
-  Plan: [simple Python class](features/python-adapter/design.md).
+- [x] **API-01** Deliver optional Python access to the existing Rust simulation
+  engine. The 2026-11-14 handoff supersedes the original `MerlinSimulation`
+  sketch; implementation is tracked by API-RUST-01 and API-PY-01 below.
+  [Current design](features/high-level-api/design.md),
+  [historical proposal](features/python-adapter/design.md).
 
 ### Qt simulation workbench
 
@@ -1315,3 +1314,30 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **UI-DOC-02** Review every tracked PNG and existing light variant;
   refresh outdated native captures and reconcile obsolete images/references.
   [Design](features/user-guide-captures/design.md#ui-doc-02-audit-all-tracked-pngs-and-refresh-stale-ui-captures).
+
+### High-level simulation API
+
+- [x] **API-RUST-01** Implement and validate the canonical high-level Rust API, binary/JSON
+  adapters, independent selections and owned actual simulation reports.
+- [x] **API-PY-01** Bind the validated Rust API with PyO3/maturin and test native
+  wheels and parity on Ubuntu 22.04 x86_64 / CPython 3.10.
+  [Design](features/high-level-api/design.md),
+  [validation](features/high-level-api/validation.md). Other targets unverified.
+
+- [x] **API-EXAMPLES-01** Centralize runnable Rust and Python API examples
+  under `examples/api`, register Rust Cargo targets, and link setup/run
+  instructions from the examples index. Both workflows run successfully.
+  [Examples](../../examples/api/README.md),
+  [design](features/high-level-api/design.md#api-examples-01-central-rust-and-python-examples).
+
+- [x] **API-INTEGRATION-01** Document downstream Python dependency setup,
+  version/tag and wheel pins, optional extras and current availability;
+  validate exact-version installation in a fresh local environment.
+  [Integration guide](../user/python/integration.md).
+
+- [x] **API-INTEGRATION-02** Require a separate Python installation-guide
+  updater in save/push/release flows, include refreshes in release commits
+  and exact recovery, and block stale/invalid instructions. Disposable Git
+  workflow and generator tests pass. Ignore generated/downloaded archives.
+  [Requirements](features/high-level-api/requirements.md#mandatory-downstream-installation-document-maintenance),
+  [workflow](git.md#required-python-installation-guide-refresh).

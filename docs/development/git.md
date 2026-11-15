@@ -99,7 +99,7 @@ tools/git/git-push.sh --tag-patch
 
 Use --tag-minor or --tag-major for those components. Release modes require clean
 master and consistent committed metadata. They inspect origin, reject collisions,
-bump, validate the candidate with the selected local checks, commit only version files, annotate the tag and
+bump, validate the candidate with the selected local checks, commit version files and the generated Python integration guide, annotate the tag and
 atomically push master plus that tag. They never force-push or overwrite a tag.
 Add --dry-run to preview without a bump/build/commit/tag/push; it still reads origin.
 
@@ -136,7 +136,7 @@ the exact complete unstaged version bump. It reruns the selected checks and
 pushes that same version, never a second bump. It rejects unrelated edits,
 staged work, partial/mismatched metadata, redirects and tag collisions without
 restoring or discarding files. Commit helper/source changes separately before
-resuming; the only pending edits must be the original version bump. `--dry-run`
+resuming; the only pending edits must be the original version bump and generated guide. `--dry-run`
 previews without writes or validation execution; explicit `--skip-test` retains
 its existing meaning. After a release commit/tag exists, use `--tag vX.Y.Z`
 instead. Ordinary push and `--force` retain their existing clean-tree guards.
@@ -169,3 +169,37 @@ For an exact interrupted bump, use `--tag-patch --resume --test-quick`. On a
 recognized pending candidate, errors now print the appropriate copyable resume
 command, preserving quick/skip-test/preview selections. Other edits receive
 read-only status/diff commands. No error handler changes the checkout.
+
+## Required Python installation-guide refresh
+
+`tools/python/update_integration_doc.py` owns generation of the
+[downstream installation guide](../user/python/integration.md) from
+`tools/python/templates/integration.md.in` and matching VERSION/Python metadata.
+Edit the template, not generated Markdown. Its version pins and expected source
+release reference are refreshed without claiming that any asset is published.
+
+The save helper runs `--write` before staging, so a normal saved change includes
+its guide refresh. Plain push also runs `--write`, including docs-only and
+`--skip-test` pushes; if that creates a change, push stops for review and save.
+It never creates an extra branch commit on your behalf. Version-bump releases
+refresh the guide after changing versions and include it in the validated
+release commit. Exact `--resume` recovery now includes that generated guide.
+Existing-tag retries and release dry runs use read-only checks and reject stale
+committed instructions. The full validation gate checks the guide and runs its
+unit tests even when Rust tests are explicitly omitted.
+
+Manual refresh/check commands, which do not commit or push:
+
+```bash
+python3 tools/python/update_integration_doc.py --write
+python3 tools/python/update_integration_doc.py --check
+```
+
+Unchanged inputs produce no new diff or timestamp churn. Invalid metadata,
+redirected inputs/outputs and generation failures block the operation. Release
+publication, platform wheels and artifact checksums remain separate verified
+work; no wheel upload is implied by this documentation step.
+
+Generated/downloaded archives and wheels are ignored globally. Required source
+fixtures need an explicit narrow exception; no archive files were tracked when
+this policy was introduced.

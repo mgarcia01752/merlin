@@ -14,6 +14,22 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'tools/release'))
 from versions import LOCKS, MANIFESTS, bumped, synchronize, validate
+sys.path.insert(0, str(ROOT / 'tools/python'))
+from update_integration_doc import DOCUMENT, INPUTS, update
+
+
+def refresh_integration_document(write=False):
+    """Invoke the separate guide generator without adding Git side effects.
+
+    Args:
+        write: Refresh Markdown if true, otherwise reject a stale guide.
+    Returns:
+        None after the subprocess succeeds.
+    Raises:
+        CalledProcessError for stale, invalid or redirected guide inputs.
+    """
+    subprocess.run([sys.executable, str(ROOT / 'tools/python/update_integration_doc.py'),
+                    '--write' if write else '--check'], cwd=ROOT, check=True)
 
 
 def git(*arguments, check=True):
@@ -68,16 +84,19 @@ def resume_candidate(commit, part):
         raise RuntimeError('--resume requires an unchanged index; review staged work first')
     current = validate(git('show', f'{commit}:VERSION').stdout.strip())
     version = bumped(current, part)
-    names = ('VERSION', *MANIFESTS, *LOCKS)
+    names = ('VERSION', *MANIFESTS, *LOCKS, DOCUMENT)
     with tempfile.TemporaryDirectory(prefix='merlin-resume-') as temporary:
         candidate_root = Path(temporary)
-        for name in names:
+        for name in (*names, *INPUTS):
             destination = candidate_root / name
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_text(git('show', f'{commit}:{name}').stdout, encoding='utf-8')
         if synchronize(candidate_root, current):
             raise RuntimeError('Committed version metadata is inconsistent; cannot resume')
+        if update(candidate_root):
+            raise RuntimeError('Committed Python integration guide is stale; cannot resume')
         synchronize(candidate_root, version, write=True)
+        update(candidate_root, write=True)
         for name in names:
             actual = ROOT / name
             if (actual.is_symlink() or actual.resolve() != actual
@@ -117,6 +136,7 @@ def release(part, existing_tag, dry_run, force=False, skip_test=False, resume=Fa
         current = validate((ROOT / 'VERSION').read_text(encoding='utf-8').strip())
         if git('show', 'HEAD:VERSION').stdout.strip() != current or synchronize(ROOT, current):
             raise RuntimeError('Commit consistent VERSION, Cargo manifests and lockfiles before releasing')
+        refresh_integration_document()
     version = validate(existing_tag.removeprefix('v')) if existing_tag else bumped(current, part)
     tag = f'v{version}'
     if existing_tag and (existing_tag != tag or version != current):
@@ -168,10 +188,12 @@ def release(part, existing_tag, dry_run, force=False, skip_test=False, resume=Fa
         git('var', 'GIT_COMMITTER_IDENT')
         ensure_checkout(starting_commit, initial_status)
         if resume:
-            changes = ['VERSION', *MANIFESTS, *LOCKS]
+            changes = ['VERSION', *MANIFESTS, *LOCKS, DOCUMENT]
             print(f'Resuming exact {tag} candidate; rerunning selected checks.', flush=True)
         else:
             changes = ['VERSION', *synchronize(ROOT, version, write=True)]
+            refresh_integration_document(write=True)
+            changes.append(DOCUMENT)
     else:
         changes = []
     expected_status = git('status', '--porcelain', '--untracked-files=all').stdout
@@ -189,6 +211,7 @@ def release(part, existing_tag, dry_run, force=False, skip_test=False, resume=Fa
         raise RuntimeError('Version files changed during validation; review before retrying')
     if synchronize(ROOT, version):
         raise RuntimeError('Version metadata drifted during validation')
+    refresh_integration_document()
     if not existing_tag:
         git('add', '--', *changes)
         candidate_tree = git('write-tree').stdout.strip()

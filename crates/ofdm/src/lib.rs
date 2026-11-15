@@ -20,3 +20,6 @@ pub mod math {
     pub use crate::signal_processing::modulation::qam;
     pub use crate::signal_processing::{bit_loading, ofdm, shannon};
 }
+
+#[cfg(all(feature = "simulation", feature = "pnm-input"))]
+pub mod api;

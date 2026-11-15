@@ -4,6 +4,7 @@ Choose the folder for the task you want to perform:
 
 | Folder | What it contains | How to use it |
 | --- | --- | --- |
+| [api](api/README.md) | Runnable Rust and native Python API examples | Load captures, configure a simulation and inspect actual FEC/profile results. |
 | [cli](cli/README.md) | CLI simulation requests, candidate settings and sample payload | Pass a JSON file to the `ofdm-fec` command shown in its README. These are not saved UI settings. |
 | [workbench](workbench/README.md) | Ready-to-open desktop workbenches and original example captures | In MERLIN, use File → Open and select `workbench.merlin.json`. |
 | [measurements](measurements/README.md) | Shared measurement data, provenance and related import/analysis fixtures | Load compatible captures through the UI, or use the documented CLI import workflows. |
@@ -15,5 +16,5 @@ files, while provenance records describe their origins and hashes.
 
 The CLI requests formerly at the top of `examples/` now live under `cli/`.
 Desktop installers include the workbench/measurement collections and their
-licenses/notices, but omit the `cli/` folder. CLI distributions include all public
+licenses/notices, but omit the `cli/` and `api/` source folders. CLI distributions include all public
 examples. The examples are not automatically executed when the application starts.

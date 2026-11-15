@@ -1,7 +1,7 @@
 # Rust API Guide
 
 MERLIN exposes its simulation engine through public Rust APIs. The CLI and native
-Qt workbench reuse those APIs; planned Python bindings will adapt the same inputs
+Qt workbench reuse those APIs; optional native Python bindings adapt the same inputs
 and results. Signal processing remains in Rust.
 
 Use the [channel design guide](../user/channel-runner/README.md) for the run
@@ -94,9 +94,10 @@ errors and explicit ownership/lifetime contracts. Library functions must not exi
 the process, depend on GUI objects, require Python objects or emit results through
 console text. Consumers preserve missing values and original simulation results.
 
-Progress callbacks and cancellation are Rust job interfaces. A future binding
-will manage Python interpreter locking, callback delivery and buffer lifetimes.
-No Python dependency, binding package or stable C ABI is introduced now.
+Progress and cancellation remain Rust job interfaces. The separate optional
+Python adapter releases the interpreter lock during simulation and owns result
+snapshots; progress callbacks are deferred. No Python dependency enters the
+reusable core or CLI, and no stable C ABI is promised.
 
 See the [public-api skill](../../skills/public-api/SKILL.md) for API development
 requirements and [JSON contracts](documents.md) for the existing serialization.
@@ -251,12 +252,20 @@ It returns serializable per-word actual outcomes and independent error counts.
 See [component guides](../user/qam-processing/README.md) for lifecycle, math and
 bounds. No new general channel request schema or Python/Qt dependency is added.
 
-## Planned Python convenience class
+## High-level Rust API and native Python bindings
 
-After the Qt UI milestone, API-01 proposes one `MerlinSimulation` class wrapping
-the existing Rust operations. It holds settings, source, optional measurements,
-limits and the latest result. No Python package is available yet. See the
-[high-level class proposal](../development/features/python-adapter/design.md).
+Enable `high-level-api` on `docsis-ofdm-fec` to use `api::{Merlin,Dpd,Ocd,RxMer,
+ChannelEstimate,EvaluationOptions}`. Checked quantities and opaque IDs prevent
+unit/identity confusion. Inputs are independently loaded and preserved; static
+selection/preflight precedes explicit bounded `run()` calls. Owned FEC and
+profile summaries share observation-window scope; whole-run diagnostics are
+separately labeled. `pnm-input` adds direct native binary/JSON and bounded
+file conveniences without Qt or Python.
+
+The optional `bindings/python` workspace converts inputs and results for the
+same Rust API. See [working Rust usage](../user/api/README.md),
+[Python setup and examples](../user/python/README.md) and
+[acceptance/evidence](../development/features/high-level-api/requirements.md).
 
 ## Shared measurement inputs and playback
 
@@ -349,8 +358,8 @@ if let Some(window) = &result.summary.window {
 `signal_power`, `error_power` and `mer_db`. `ChannelRun::carrier_mer` and
 `ChannelJobResult::carrier_mer` return physical-bin-indexed observation sums.
 Missing and zero-error observations do not become arbitrary finite MER values.
-These typed operations support ordinary Rust consumers and future Python class
-bindings. No Python binding or runtime has been introduced; those remain deferred.
+These typed operations support ordinary Rust consumers and the optional native
+Python API. The reusable libraries retain no Python runtime dependency.
 
 Channel admission reports `PlaybackObservationTooShort` when a nonzero final
 playback transition is at or beyond the observation's complete-symbol count.

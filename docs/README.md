@@ -6,7 +6,7 @@
 | --- | --- |
 | [UI Guide](user/workbench.md) | Workbench configuration, instruments, runs and saved projects |
 | [Rust API Guide](reference/public-api.md) | Simulation entry points, typed inputs, results and stage APIs |
-| [Python Guide](user/python/README.md) | Binding roadmap; implementation is deferred until after the UI |
+| [Python Guide](user/python/README.md) | Native Rust bindings, wheel setup and [downstream installation](user/python/integration.md) |
 
 [FAQ](user/faq.md): contextual run messages and suggested fixes, also available offline under About → FAQ.
 
@@ -47,3 +47,5 @@
 - [Git and releases](development/git.md)
 
 - [Example folder guide](../examples/README.md) · [CLI purposes and use cases](../examples/cli/README.md)
+
+- [High-level Rust and Python API](user/api/README.md)

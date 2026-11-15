@@ -50,11 +50,11 @@ A new empty repository needs its initial reviewed commit and origin before a
 push can succeed. Do not create either merely because tooling was requested.
 
 Explicit `--resume` with a bump mode accepts only a complete, exact unstaged
-version-only candidate reconstructed from HEAD. It reruns selected checks and
+version-and-guide candidate reconstructed from HEAD. It reruns selected checks and
 finishes the same version without resets or a second bump. Reject unrelated,
 staged, partial, redirected or mismatched files. Use `--tag` after a release
 commit/tag exists; `--force` never serves as dirty-tree recovery. Commit source
-and helper changes separately before leaving only the pending version edits.
+and helper changes separately before leaving only the pending version/guide edits.
 
 Explicit `--test-quick` selects the reviewed local subset via
 `tools/testing/quick-tests.json`, skipping 21 named expensive sweep cases while
@@ -63,3 +63,16 @@ example, analysis-only checks, release smokes, static/tooling checks and Git
 guards. Full remains default; hosted CI is unchanged. Reject combining it with
 `--skip-test`; preserve the selected mode through `--resume` and printed retry
 commands. Report omissions and do not equate subset success with full coverage.
+
+## Mandatory downstream Python guide
+
+`tools/python/update_integration_doc.py` is the separate guide generator. Save
+and ordinary push invoke `--write`; a plain push stops if that produces an
+uncommitted change. Bump releases refresh the guide with the new VERSION and
+include it in the validated release commit. Exact `--resume` recognizes the
+generated guide as well as version metadata, reconstructed from committed
+inputs. Existing-tag retries and dry runs check without writing; stale guides
+and generator failures block pushes even with test omission or docs-only
+classification. Edit the tracked template rather than generated Markdown.
+Do not manufacture publication status, artifact checksums or platform evidence.
+See docs/development/features/high-level-api/requirements.md#mandatory-downstream-installation-document-maintenance.

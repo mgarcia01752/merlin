@@ -15,6 +15,8 @@ import unittest
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / 'tools/release'))
 from versions import LOCKS, MANIFESTS, synchronize
+sys.path.insert(0, str(ROOT / 'tools/python'))
+from update_integration_doc import DOCUMENT, INPUTS, update
 
 
 class ReleaseTests(unittest.TestCase):
@@ -33,11 +35,13 @@ class ReleaseTests(unittest.TestCase):
                                 GIT_CONFIG_NOSYSTEM='1', RELEASE_TEST_TRACE=str(self.trace),
                                 RELEASE_TEST_MODE='pass')
         for name in (*MANIFESTS, *LOCKS, 'tools/release/versions.py',
-                     'tools/git/git-push.sh', 'tools/git/push-release.py'):
+                     'tools/git/git-push.sh', 'tools/git/push-release.py',
+                     'tools/git/git-save.sh', 'tools/python/update_integration_doc.py', *INPUTS):
             target = self.root / name
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(ROOT / name, target)
-        synchronize(self.root, '0.1.0', write=True)
+        self.prepare_candidate('0.1.0')
+        (self.root / 'skills').mkdir()
         (self.root / '.gitignore').write_text('__pycache__/\n*.pyc\n')
         (self.root / 'README.md').write_text('Synthetic release fixture\n')
         (self.root / 'scripts').mkdir()
@@ -61,6 +65,11 @@ esac
         self.git('remote', 'add', 'origin', str(self.origin))
         self.git('push', 'origin', 'master')
         self.start = self.git('rev-parse', 'HEAD').stdout.strip()
+
+    def prepare_candidate(self, version):
+        """Prepare complete metadata and guide edits in this disposable checkout."""
+        synchronize(self.root, version, write=True)
+        update(self.root, write=True)
 
     def git(self, *arguments, check=True, remote=False):
         """Run real Git only in the disposable checkout or its local origin."""
@@ -87,6 +96,8 @@ esac
         self.assertEqual(self.trace.read_text(), '0.1.1\n')
         self.assertEqual((self.root / 'VERSION').read_text(), '0.1.1\n')
         self.assertEqual(synchronize(self.root, '0.1.1'), [])
+        self.assertFalse(update(self.root))
+        self.assertIn(DOCUMENT, self.git('diff-tree', '--no-commit-id', '--name-only', '-r', 'HEAD').stdout)
         commit = self.git('rev-parse', 'HEAD').stdout.strip()
         self.assertNotEqual(commit, self.start)
         self.assertEqual(self.git('status', '--porcelain').stdout, '')
@@ -242,7 +253,7 @@ esac
         for mode, version in [('--tag-patch', '0.1.1'), ('--tag-minor', '0.2.0'),
                               ('--tag-major', '1.0.0')]:
             with self.subTest(mode=mode):
-                synchronize(self.root, version, write=True)
+                self.prepare_candidate(version)
                 before = self.git('diff').stdout
                 plain = self.run_helper(mode)
                 self.assertNotEqual(plain.returncode, 0)
@@ -261,7 +272,7 @@ esac
 
     def test_unsafe_pending_edits_print_inspection_without_resume_advice(self):
         """Do not recommend recovery for unrelated, staged or altered candidates."""
-        synchronize(self.root, '0.1.1', write=True)
+        self.prepare_candidate('0.1.1')
         for mutation in ['unrelated', 'staged', 'metadata']:
             with self.subTest(mutation=mutation):
                 if mutation == 'unrelated':
@@ -286,7 +297,7 @@ esac
                 else:
                     synchronize(self.root, '0.1.0', write=True)
                     self.git('restore', '--', 'Cargo.lock')
-                    synchronize(self.root, '0.1.1', write=True)
+                    self.prepare_candidate('0.1.1')
         self.assertFalse(self.trace.exists())
         self.assert_origin_unchanged()
 
@@ -315,7 +326,7 @@ esac
     def test_resume_published_base_keeps_exact_pending_candidate(self):
         """A pending forced bump resumes without treating the old tag as a no-op."""
         self.publish_baseline()
-        synchronize(self.root, '0.1.1', write=True)
+        self.prepare_candidate('0.1.1')
         result = self.run_helper('--tag-patch', '--resume')
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('Resuming exact v0.1.1', result.stdout)
@@ -325,7 +336,7 @@ esac
 
     def test_resume_dry_run_and_repeated_failure_preserve_candidate(self):
         """Preview and failed resumed validation cannot discard or publish edits."""
-        synchronize(self.root, '0.1.1', write=True)
+        self.prepare_candidate('0.1.1')
         before = self.git('diff').stdout
         result = self.run_helper('--tag-patch', '--resume', '--dry-run')
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -340,8 +351,8 @@ esac
 
     def test_resume_rejects_unrelated_partial_and_staged_edits(self):
         """Only exact full unstaged candidate metadata may enter resumed checks."""
-        synchronize(self.root, '0.1.1', write=True)
-        for name in ['README.md', 'crates/ofdm/Cargo.toml', 'untracked']:
+        self.prepare_candidate('0.1.1')
+        for name in ['README.md', 'crates/ofdm/Cargo.toml', DOCUMENT, 'untracked']:
             with self.subTest(name=name):
                 path = self.root / name
                 original = path.read_bytes() if path.exists() else None
@@ -366,7 +377,7 @@ esac
     def test_resume_rejects_clean_wrong_mode_and_tag_collision(self):
         """Recovery cannot create a new candidate or overwrite an existing tag."""
         self.assertNotEqual(self.run_helper('--tag-patch', '--resume').returncode, 0)
-        synchronize(self.root, '0.1.1', write=True)
+        self.prepare_candidate('0.1.1')
         self.assertNotEqual(self.run_helper('--tag-minor', '--resume').returncode, 0)
         self.git('tag', 'v0.1.1')
         result = self.run_helper('--tag-patch', '--resume')
@@ -541,6 +552,35 @@ esac
                 self.assertNotEqual(result.returncode, 0)
                 self.assertEqual(self.git('status', '--porcelain').stdout, '')
                 self.assertFalse(self.trace.exists())
+        self.assert_origin_unchanged()
+
+    def test_save_helper_refreshes_guide_in_the_saved_commit(self):
+        """A normal explicit save includes guide refresh without pushing."""
+        synchronize(self.root, '0.1.1', write=True)
+        result = subprocess.run(
+            ['bash', str(self.root / 'tools/git/git-save.sh'), '--commit-msg',
+             'Feature: Save synthetic version change'],
+            cwd=self.base, env=self.environment, text=True, capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(update(self.root))
+        self.assertEqual(self.git('show', f'HEAD:{DOCUMENT}').stdout,
+                         (self.root / DOCUMENT).read_text())
+        self.assert_origin_unchanged()
+
+    def test_existing_tag_and_dry_run_reject_stale_committed_guide_without_writes(self):
+        """Read-only paths reject stale guides and preserve immutable tag content."""
+        with (self.root / DOCUMENT).open('a') as output:
+            output.write('stale user edit\n')
+        self.git('add', DOCUMENT)
+        self.git('commit', '-m', 'Synthetic stale guide')
+        self.git('tag', '-a', 'v0.1.0', '-m', 'Synthetic tag')
+        before = self.git('rev-parse', 'HEAD').stdout
+        for arguments in (('--tag', 'v0.1.0'), ('--tag-patch', '--dry-run')):
+            result = self.run_helper(*arguments)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('guide is stale', result.stderr)
+            self.assertEqual(self.git('rev-parse', 'HEAD').stdout, before)
+            self.assertEqual(self.git('status', '--porcelain').stdout, '')
         self.assert_origin_unchanged()
 
 

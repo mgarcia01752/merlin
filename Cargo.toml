@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/ofdm", "crates/fec-codec", "crates/cli"]
+members = ["crates/ofdm", "crates/fec-codec", "crates/cli", "crates/pnm-input"]
 resolver = "2"
 
 [workspace.dependencies]

@@ -43,12 +43,12 @@ Modes (choose one):
   --test-quick        Run representative tests; omit named sweep cases.
 
 Release modes require clean master, matching VERSION metadata and origin.
---resume permits only the exact unstaged pending version bump.
+--resume permits only the exact unstaged pending version/guide bump.
 They atomically push master and only the selected tag; never publish directly.
 Existing-tag mode does not bump, commit or create a tag.
 
 Safety checks:
-  - No pending changes, except exact version-only edits with --resume.
+  - No pending changes, except exact version/guide edits with --resume.
   - The current branch must be main or master.
   - The origin remote must exist.
   - The local branch must not be behind or diverged from origin.
@@ -157,6 +157,11 @@ esac
 
 if ! git -C "${PROJECT_DIR}" remote get-url "${REMOTE}" >/dev/null 2>&1; then
   die "Remote '${REMOTE}' is not configured"
+fi
+
+python3 "${PROJECT_DIR}/tools/python/update_integration_doc.py" --write
+if [[ -n "$(git -C "${PROJECT_DIR}" status --porcelain)" ]]; then
+  die "Python integration guide refreshed; review and commit it before pushing"
 fi
 
 remote_base=""

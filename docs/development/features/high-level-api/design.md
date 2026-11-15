@@ -1,0 +1,147 @@
+# API-RUST-01 / API-PY-01: Canonical high-level simulation API
+
+Implement the handoff requirements in dependency order: checked Rust inputs and
+OCD, independent collections and static selections, complete batch preflight,
+existing bounded channel jobs and owned scoped reports, then optional Python.
+The original six-document handoff is extracted without overwrites under ignored
+`docs/development/local/api-handoff/`. The supplied ZIP remains untouched.
+Requirements govern behavior; the baseline commit does not replace current HEAD.
+
+The Apache core owns `crates/ofdm/src/api/`. A separate Apache `pnm-input`
+adapter calls pinned Apache `pnm` 0.3.6 directly; GPL Qt orchestration is not
+copied. A separate PyO3 adapter delegates all validation/science to this high-level API.
+Core and CLI have no Qt/Python dependency. Existing low-level APIs remain.
+
+Loading retains original bytes and separate decoded provenance and never runs
+simulation. Controller IDs are scoped and opaque. Each run prepares the complete
+batch before dispatch, with fresh PRBS15 and noise seeds per experiment. Static
+average/interpolation uses residual power and exact original grids, never a
+synthetic playback clock. Cancellation stops dispatch and preserves partial and
+not-started entries. Window FEC and profile metrics share scope; whole-run
+statistics are separately labeled.
+
+Imported decoder profiles establish grid/roles but do not establish occupied
+bandwidth: require an explicit bandwidth unless typed input establishes it.
+Never treat data-carrier span as occupied bandwidth. CP/RP/depth defaults are
+512/128/16, marked as application assumptions. Profile timestamp tolerance is
+independent of explicit channel reuse. Input and report objects are immutable.
+
+Validation follows REQ-080..088 and REQ-114..116: fixture-backed binary/JSON
+imports, selection/power/null/grid/time/scoped-ID boundaries, defaults/overrides,
+engine parity, cancellation/runtime/ownership, then Rust/Python parity and local
+wheel installation. Keep platform evidence and remaining gaps explicit.
+
+## Status and evidence
+
+The Rust API and optional Python adapter are implemented. The Rust repository
+runner passed before Python implementation began. Final checks cover the renamed
+`pnm-input` crate and the installed, patched Python wheel. See the
+[validation record](validation.md) for executed commands, counts, durations,
+artifact integrity and platform boundaries.
+
+Current HEAD at implementation start matched the reference baseline:
+`3f23be1b3f9848dab73cf27239f3f2ed8409559e`. No reset/downgrade was performed.
+Handoff ZIP SHA-256:
+`7b65187c77282ad8c033e6b4219ac212ae16cf4f89f718d6b8e4c7ca9ca73652`.
+The pinned decoder's Cargo manifest and parser source declare Apache-2.0.
+Binary/JSON fixture pairs for all three capture kinds passed native imports.
+
+An initial full build exhausted disk capacity and was interrupted; that attempt
+is not validation evidence. Cargo removed stale core development outputs
+(31.8 GiB) and, following user cleanup authorization, old release outputs
+(577.5 MiB). Qt outputs, captures, toolchains and dependency caches were preserved.
+The restarted Rust runner passed in 15 min 48 s before Python work began.
+
+## API-PY-01: optional native adapter
+
+`bindings/python` is a separate optional Cargo workspace and maturin package.
+Python unit wrappers convert through checked Rust constructors. Inputs remain
+immutable and controllers take copied request snapshots. Native report views
+retain Arc-owned batches independently of controller lifetime. Defensive JSON
+dictionaries are transport snapshots, not mutable scientific state.
+
+A native worker calls `Merlin::run_with_control`; the waiting interpreter releases
+its lock and polls signals. Ctrl-C cancels cooperatively and returns partial
+science. Other controller accesses receive Busy. RunLimits request clones share
+request state for normal nested edits; acceptance/report getters create separate
+Rust snapshots. There are no Python algorithms or CLI subprocesses.
+
+```mermaid
+flowchart LR
+  Rust[Rust consumer] --> API[High-level Rust API]
+  Python[Python consumer] --> Native[Optional PyO3 adapter]
+  Native --> API
+  Loader[Optional native capture adapter] --> API
+  API --> Preflight[Freeze and preflight complete batch]
+  Preflight --> Jobs[Existing bounded Rust channel jobs]
+  Jobs --> Reports[Owned complete or partial reports]
+```
+
+The first PyO3 0.27.2 build passed functional tests but audit identified
+RUSTSEC-2026-0176/0177. It was replaced by pinned PyO3 0.30.1 (MSRV 1.85), with
+explicit `from_py_object` clone conversion at the language boundary. No advisory
+suppression is used. Delivery validation uses the patched wheel; the earlier local build is not
+a delivery artifact. Native wheels include the existing notice collector's complete
+locked graph, project NOTICE and embedded QAM/BCH licenses.
+
+## API-RUST-01 capture loader naming
+
+The optional capture-loading crate is named `pnm-input` under
+`crates/pnm-input`; Rust imports use `pnm_input`. It retains binary/JSON
+decoding, bounded file access and provenance responsibilities. The high-level
+API remains in `docsis_ofdm_fec::api`. This naming change preserves behavior.
+
+## API-EXAMPLES-01: central Rust and Python examples
+
+Keep runnable API source under `examples/api/rust` and `examples/api/python`,
+indexed from `examples/README.md`. Cargo registers the Rust files as
+`pnm-input` example targets; Python calls the installed native extension. Move
+the existing examples rather than maintaining copies. Both workflows retain
+the shared measurement/workbench fixtures and explicit `run()` boundary. The
+Rust policy example also provides the reference generator for parity tests.
+Check Cargo example targets, run both language workflows, and validate links.
+
+Validation: Cargo checked both relocated Rust example targets; the Rust and
+installed native Python `high_level` workflows completed successfully from
+the new locations. Rustfmt, changed-document links and `git diff --check`
+passed. No simulation code or fixture bytes changed.
+
+## API-INTEGRATION-01: downstream Python installation
+
+Document consuming the native wheel from a project such as PyPNM, with separate
+package/import names, exact version/asset pins, optional dependency resolution,
+source-tag builds and current unpublished status. Keep all instructions in
+MERLIN; do not modify PyPNM. Validate the concrete local pinned-wheel install in
+a fresh project-local environment. Published URLs, registry availability and
+cross-platform wheels remain future delivery work until verified.
+
+Validation: a fresh local `api-consumer` environment installed the exact
+`merlin-ofdm==0.2.9` wheel using offline binary-only wheelhouse resolution.
+Import and distribution-version checks passed. Document links and diff
+whitespace checks passed; no PyPNM files or release assets were changed.
+
+## API-INTEGRATION-02: mandatory push-time guide refresh
+
+Generate the downstream installation guide from a tracked template and validated
+VERSION/Python metadata using a separate `tools/python/update_integration_doc.py`
+script. Save and branch-push helpers invoke it; release bumps refresh and include
+the guide in the validated release commit. Existing-tag retries check without
+changing their immutable commit. Dry runs check without writing. Exact interrupted
+bump recovery includes the generated guide, rejects tampering/unrelated changes,
+and reconstructs expected content from committed template/metadata. Generation
+is deterministic and does not invent published assets, hashes or platform tests.
+Branch refreshes that change a clean checkout stop for review/commit; no hidden
+branch commits or weakened guards. Test with temporary checkouts/local origins.
+
+Validation: 55 Git helper tests passed in 29.134s using disposable checkouts
+and local-only origins; four generator tests passed in 0.016s. Coverage
+includes release-commit inclusion, save-time inclusion, ordinary/docs-only
+push invocation, stale/error failure, dry-run/tag immutability, exact resume
+and altered-guide rejection. No real checkout commit/tag/push was executed.
+No archive files were tracked; ignore checks cover supplied ZIPs, compressed
+tar files, wheels and 7z files without deleting local inputs.
+
+Final follow-up verification after the template naming/documentation changes:
+55 Git workflow tests passed in 27.198s, four generator tests in 0.032s and
+five release/version tests in 0.242s. ShellCheck, syntax, generated-doc checks,
+665 Markdown relative links, skill validation and diff checks passed.

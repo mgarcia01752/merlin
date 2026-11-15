@@ -64,4 +64,20 @@ __pycache__/
 *.pyc
 
 # Keep Cargo.lock, source resources and intentional PNM .bin fixtures tracked.
-# Archives are not globally ignored: they may be intentional demo inputs.
+# Generated/downloaded archives and Python distribution artifacts.
+# Add a narrow explicit exception only for a reviewed required source fixture.
+*.zip
+*.tar
+*.gz
+*.tgz
+*.bz2
+*.tbz
+*.tbz2
+*.xz
+*.txz
+*.zst
+*.tzst
+*.7z
+*.rar
+*.whl
+*.egg

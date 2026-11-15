@@ -15,7 +15,7 @@ Tags are vMAJOR.MINOR.PATCH. Bumping does not authorize committing or pushing.
 
 Combined tools/git/git-push.sh --tag-patch|--tag-minor|--tag-major requires clean
 master and matching metadata. It bumps, runs the selected local checks, commits only the
-version files, creates an annotated tag and atomically pushes master plus that
+version files and generated Python integration guide, creates an annotated tag and atomically pushes master plus that
 tag. Explicit `--skip-test` omits local Rust tests/smokes, retaining version,
 tooling, style, Clippy, release build and Git guards. Report omitted tests;
 hosted release gates remain mandatory. No force-push or blanket git push --tags.
@@ -74,11 +74,11 @@ explicitly requests local installation. Report package bytes, installed footprin
 external prerequisites and hosted/installed verification limits separately.
 
 Explicit `--resume` with a bump mode accepts only a complete, exact unstaged
-version-only candidate reconstructed from HEAD. It reruns selected checks and
+version-and-guide candidate reconstructed from HEAD. It reruns selected checks and
 finishes the same version without resets or a second bump. Reject unrelated,
 staged, partial, redirected or mismatched files. Use `--tag` after a release
 commit/tag exists; `--force` never serves as dirty-tree recovery. Commit source
-and helper changes separately before leaving only the pending version edits.
+and helper changes separately before leaving only the pending version/guide edits.
 
 Explicit `--test-quick` selects the reviewed local subset via
 `tools/testing/quick-tests.json`, skipping 21 named expensive sweep cases while
@@ -132,3 +132,16 @@ copy the explicit workbench/measurement allowlist through desktop_payload.py
 and omit the CLI folder. CLI packages retain it. Keep workbench JSON, original
 capture bytes, provenance and licenses together; update references/tests when
 relocating examples. `examples/README.md` explains the folders.
+
+## Mandatory downstream Python guide
+
+`tools/python/update_integration_doc.py` is the separate guide generator. Save
+and ordinary push invoke `--write`; a plain push stops if that produces an
+uncommitted change. Bump releases refresh the guide with the new VERSION and
+include it in the validated release commit. Exact `--resume` recognizes the
+generated guide as well as version metadata, reconstructed from committed
+inputs. Existing-tag retries and dry runs check without writing; stale guides
+and generator failures block pushes even with test omission or docs-only
+classification. Edit the tracked template rather than generated Markdown.
+Do not manufacture publication status, artifact checksums or platform evidence.
+See docs/development/features/high-level-api/requirements.md#mandatory-downstream-installation-document-maintenance.

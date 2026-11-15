@@ -24,6 +24,12 @@ class PushGateTests(unittest.TestCase):
             (root / "tools/git").mkdir(parents=True)
             (root / "scripts").mkdir()
             (root / "bin").mkdir()
+            (root / "tools/python").mkdir()
+            (root / "tools/python/update_integration_doc.py").write_text(
+                'import os, pathlib, sys\n'
+                'if os.environ["MODE"] == "doc-fail": sys.exit(23)\n'
+                'if os.environ["MODE"] == "doc-stale": pathlib.Path(os.environ["STATE"]).touch()\n'
+                'pathlib.Path(os.environ["DOC_TRACE"]).write_text("refreshed")\n')
             shutil.copy2(PROJECT / "tools/git/git-push.sh", root / "tools/git/git-push.sh")
             shutil.copy2(PROJECT / "tools/git/docs_only.py", root / "tools/git/docs_only.py")
             (root / "scripts/check-before-push.sh").write_text(
@@ -41,7 +47,7 @@ case "$1" in
     elif [[ "$MODE" == changed && -e "$STATE" ]]; then echo changed
     else echo validated; fi ;;
   status)
-    if [[ "$MODE" == dirty && -e "$STATE" ]]; then echo ' M source'; fi ;;
+    if [[ ( "$MODE" == dirty || "$MODE" == doc-stale ) && -e "$STATE" ]]; then echo ' M source'; fi ;;
   branch) echo master ;;
   remote) echo git@example.invalid:repo ;;
   ls-remote)
@@ -61,7 +67,10 @@ esac
             result = subprocess.run(["bash", str(root / "tools/git/git-push.sh"), *arguments],
                                     capture_output=True, text=True,
                                     env=dict(os.environ, PATH=f"{root / 'bin'}:{os.environ['PATH']}",
-                                             MODE=mode, TRACE=str(trace), STATE=str(root / "state")))
+                                             MODE=mode, TRACE=str(trace), STATE=str(root / "state"),
+                                             DOC_TRACE=str(root / "doc-trace")))
+            if mode not in ("doc-fail",):
+                self.assertTrue((root / "doc-trace").exists())
             return result, trace.read_text() if trace.exists() else ""
 
     def test_failed_checks_block_push(self):
@@ -123,3 +132,12 @@ esac
         result, trace = self.exercise("mixed")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(trace.startswith("validate\n"))
+
+    def test_document_refresh_and_generator_failures_block_push(self):
+        """Never push stale guide changes or bypass generator failures."""
+        for mode in ('doc-stale', 'doc-fail'):
+            result, trace = self.exercise(mode, '--skip-test')
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(trace, '')
+            if mode == 'doc-stale':
+                self.assertIn('review and commit', result.stderr)

@@ -1,3 +1,7 @@
+> Historical API-01 proposal. The user-authorized 2026-11-14 handoff supersedes
+> its proposed interface and deferral. Current implementation and acceptance
+> live under [API-RUST-01 / API-PY-01](../high-level-api/design.md).
+
 # API-01: simple Python adapter after Qt
 
 **TODO — proposed only. Begin after the Qt UI work (UI-01 through UI-04).**

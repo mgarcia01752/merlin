@@ -1,0 +1,22 @@
+[package]
+name = "pnm-input"
+version = "0.2.9"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "Optional bounded native PNM and file adapter for MERLIN"
+
+[dependencies]
+docsis-ofdm-fec = { path = "../ofdm", features = ["high-level-api"] }
+pnm = { git = "https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git", rev = "5fbd5561f3e06b73486546b5ffa520279080a5eb", version = "=0.3.6" }
+
+[dev-dependencies]
+serde_json = "=1.0.145"
+
+[[example]]
+name = "high_level"
+path = "../../examples/api/rust/high_level.rs"
+
+[[example]]
+name = "policy_parity"
+path = "../../examples/api/rust/policy_parity.rs"

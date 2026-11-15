@@ -1,0 +1,183 @@
+#
+# Copyright 2026 DOCSIS OFDM Channel Sim contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+"""Fixture-backed native lifecycle and conversion checks; no production science."""
+import json
+import os
+from pathlib import Path
+import signal
+import tempfile
+import threading
+import time
+import unittest
+import merlin as m
+
+ROOT = Path(__file__).resolve().parents[3]
+FIXTURE = ROOT / "examples/workbench/single"
+
+
+def configured():
+    """Create a validated controller without running simulation, returning its ID."""
+    dpd = m.DPD.from_file(FIXTURE / "modulation-profile.bin", m.ProfileId.PROFILE_A)
+    ocd = m.OCD.from_profile(m.ProtocolScope.DOCSIS31, dpd,
+                           m.OcdOverrides(bandwidth=m.BandwidthHz(192_000_000)))
+    sim = m.Merlin(ocd)
+    sim.set_profile(dpd)
+    first = sim.add_rxmer(m.RxMer.from_file(FIXTURE / "rxmer.bin"))
+    sim.set_options(m.EvaluationOptions(
+        channel_selection=m.ChannelSelection.unity(),
+        observation=m.ObservationDuration(1),
+        profile_tolerance=m.AssociationTolerance(90_000),
+        limits=m.RunLimits(runtime=m.RuntimeLimit(300_000))))
+    return sim, first
+
+
+class NativeApiTests(unittest.TestCase):
+    def test_content_detection_typed_values_and_provenance(self):
+        binary = m.RxMer.from_file(FIXTURE / "rxmer.bin")
+        decoded = m.RxMer.from_file(ROOT / "examples/measurements/single-channel/rxmer.json")
+        self.assertEqual([v.value if v else None for v in binary.values],
+                         [v.value if v else None for v in decoded.values])
+        self.assertNotEqual(binary.provenance["original_sha256"],
+                            binary.provenance["decoded_sha256"])
+        original = (FIXTURE / "modulation-profile.bin").read_bytes()
+        dpd = m.DPD.from_bytes("wrong.json", original, m.ProfileId.PROFILE_A)
+        self.assertEqual(dpd.profile_id.value, 0)
+        channel = m.ChannelEstimate.from_file(FIXTURE / "ds-channel-estimate.bin")
+        self.assertEqual(len(channel.response), channel.grid["sample_count"])
+        with self.assertRaises(m.ApiError):
+            m.RxMer.from_bytes("wrong.bin", original)
+        with self.assertRaises(m.ApiError) as context:
+            m.ProfileId(16)
+        self.assertEqual(context.exception.code, m.ErrorCode.InvalidInput)
+        with self.assertRaises(AttributeError):
+            m.ProfileId.PROFILE_A.value = 2
+
+    def test_defaults_owned_requests_scoped_ids_and_precancelled_batch(self):
+        sim, first = configured()
+        other, _ = configured()
+        with self.assertRaises(m.ApiError) as context:
+            other.get_rxmer(first)
+        self.assertEqual(context.exception.code, m.ErrorCode.InvalidIdentifier)
+        request = sim.options
+        request.limits.runtime = m.RuntimeLimit(1000)
+        self.assertEqual(request.limits.runtime.value, 1000)
+        self.assertEqual(sim.options.limits.runtime.value, 300_000)
+        sim.set_options(request)
+        request.limits.runtime = m.RuntimeLimit(2000)
+        self.assertEqual(sim.options.limits.runtime.value, 1000)
+        control = m.RunControl()
+        control.cancel()
+        batch = sim.run_with_control(control)
+        self.assertEqual(batch.status, m.BatchStatus.Cancelled)
+        self.assertTrue(all(entry.status == m.RunStatus.NotStarted and entry.report is None
+                            for entry in batch))
+
+    def test_manual_ocd_profile_creation_and_protected_edits(self):
+        sim, _ = configured()
+        snapshot = sim.ocd.to_dict()
+        request = m.OcdConfiguration.from_json(
+            json.dumps(snapshot["key"]), json.dumps(snapshot["layout"]),
+            m.OcdOverrides(bandwidth=m.BandwidthHz(192_000_000)))
+        ocd = m.OCD.create(m.ProtocolScope.DOCSIS31, request)
+        profile = m.DPD.from_ocd(ocd, m.ProfileId(3), m.DataModulation.Qam256)
+        edited = profile.with_modulation(
+            m.CarrierRange(m.SubcarrierIndex(356), m.SubcarrierIndex(400)),
+            m.DataModulation.Qam64)
+        self.assertEqual(profile.origin, "Created")
+        self.assertEqual(edited.origin, "Edited")
+        self.assertEqual(profile.sources, [])
+        self.assertIn("grid", ocd.configuration)
+        self.assertIn("layout", ocd.configuration)
+        for before, after in zip(profile.carriers, edited.carriers):
+            if before["carrier_type"] != "data":
+                self.assertEqual(before, after)
+        created = m.Merlin(ocd)
+        created.set_profile(edited)
+        created.add_rxmer(m.RxMer.from_file(FIXTURE / "rxmer.bin"))
+        created.set_options(m.EvaluationOptions(channel_selection=m.ChannelSelection.unity()))
+        control = m.RunControl()
+        control.cancel()
+        self.assertEqual(created.run_with_control(control).status, m.BatchStatus.Cancelled)
+
+    def test_runtime_partial_results_and_create_new_export(self):
+        sim, _ = configured()
+        sim.add_rxmer(m.RxMer.from_file(FIXTURE / "rxmer.bin"))
+        options = sim.options
+        options.limits.runtime = m.RuntimeLimit(1)
+        sim.set_options(options)
+        batch = sim.run()
+        self.assertEqual(len(batch), 2)
+        self.assertTrue(all(entry.status == m.RunStatus.RuntimeExceeded for entry in batch))
+        for entry in batch:
+            self.assertIsNotNone(entry.report)
+            self.assertIsNone(entry.report.profile)
+        original = batch.to_json()
+        copy = batch.to_dict()
+        copy["entries"].clear()
+        self.assertEqual(batch.to_json(), original)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "result.json"
+            batch.save_json(path)
+            with self.assertRaises(m.ApiError) as context:
+                batch.save_json(path)
+            self.assertEqual(context.exception.code, m.ErrorCode.Io)
+            self.assertEqual(path.read_text(), original)
+
+    def test_gil_release_busy_guard_and_cross_thread_cancellation(self):
+        sim, _ = configured()
+        options = sim.options
+        options.observation = m.ObservationDuration(100)
+        sim.set_options(options)
+        control = m.RunControl()
+        outcome = []
+        failures = []
+
+        def run():
+            """Dispatch native simulation and preserve any test-thread exception."""
+            try:
+                outcome.append(sim.run_with_control(control))
+            except BaseException as failure:
+                failures.append(failure)
+
+        worker = threading.Thread(target=run)
+        worker.start()
+        deadline = time.monotonic() + 10
+        busy = False
+        while time.monotonic() < deadline and worker.is_alive():
+            try:
+                sim.options
+            except m.ApiError as failure:
+                busy = failure.code == m.ErrorCode.Busy
+                if busy:
+                    break
+            time.sleep(0.005)
+        control.cancel()
+        worker.join(30)
+        self.assertFalse(worker.is_alive())
+        self.assertTrue(busy, "Python must remain runnable while native simulation owns the controller")
+        self.assertFalse(failures)
+        self.assertEqual(outcome[0].status, m.BatchStatus.Cancelled)
+        self.assertTrue(all(entry.status in (m.RunStatus.Cancelled, m.RunStatus.NotStarted)
+                            for entry in outcome[0]))
+        self.assertEqual(sim.options.observation.value, 100)
+
+    def test_ctrl_c_returns_owned_partial_batch(self):
+        sim, _ = configured()
+        options = sim.options
+        options.observation = m.ObservationDuration(100)
+        sim.set_options(options)
+        timer = threading.Timer(0.1, lambda: os.kill(os.getpid(), signal.SIGINT))
+        timer.start()
+        try:
+            batch = sim.run()
+        finally:
+            timer.cancel()
+            timer.join()
+        self.assertEqual(batch.status, m.BatchStatus.Cancelled)
+        self.assertTrue(any(entry.report is not None for entry in batch))
+
+
+if __name__ == "__main__":
+    unittest.main()
