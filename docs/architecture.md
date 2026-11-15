@@ -94,6 +94,17 @@ owns numerical calculations. The Qt shell integrates bounded closed-loop jobs
 and receiver instruments; optional native Python bindings are implemented. There is no
 device capture/control or network-service dependency.
 
+## Sparse control-channel encoding (FEC-SPARSE-01)
+
+`fec-codec/src/sparse_encoder.rs` owns a private immutable substitution plan for
+NCP/PLC systematic parity. It uses the existing sparse row/column adjacency and
+solves checks with one unknown parity bit. Setup, storage and encoding are
+O(rows + columns + nonzeros); the supported fixed matrices admit this order.
+Non-peelable systems return an error rather than falling back to dense Gaussian
+elimination. Payload LDPC retains its existing upstream staircase fast path.
+Decoders, normative matrices, public APIs and puncture/shorten ordering retain
+existing behavior. See the [design and measured validation](development/features/sparse-encoder/design.md).
+
 ## Downstream FEC shortening (FEC-03)
 
 `fec-codec/src/shortening/` implements variable original-length coding around the
@@ -2357,3 +2368,14 @@ RxMER. File sources, timeline playback and incomplete editors fail explicitly;
 there is no silent fallback or arbitrary WB-setting approximation. See the
 [WB user/API contract](user/python/workbench.md) and
 [design](development/features/high-level-api/design.md#api-wb-01-native-saved-workbench-import).
+
+### API-WHEEL-01: native Python release validation
+
+Release-only Ubuntu 22.04/Windows 2022 x64 jobs build CPython 3.10 wheels through
+the shared notice-preserving native helper. A development test harness installs
+one wheel into a clean temporary venv and executes the real single-capture API
+example outside the checkout, checking native identity and actual FEC/BER. This
+adds no simulation logic to Python or Qt dependencies. Only tested wheel/checksum
+artifacts enter release collection; both platforms and existing security/native
+gates are mandatory. Windows remains unverified until its hosted job passes.
+See the [separate wheel release guide](user/python/releases.md).

@@ -146,3 +146,15 @@ coverage and reject installed-version mismatch. Rebuild/reinstall the native
 wheel when its documentation changes even without a version bump. Keep generated
 HTML ignored and local; publication remains a separate authorized action.
 See the [build guide](../../../reference/api-reference.md).
+
+## Native wheel release gate
+
+Release tags must build and install CPython 3.10 x64 wheels on native Ubuntu
+22.04 and Windows 2022/MSVC runners and execute the actual single-capture Python
+API example in an isolated fresh environment. Require exact package/ABI/platform
+identity, complete notices and real fixture FEC/BER outcomes. Both checksummed
+wheel artifacts are mandatory before publication; retain all existing application
+and security gates. Keep release filenames, compatibility and installation/hash
+verification in a separate [Python release guide](../../../user/python/releases.md),
+linked from Python installation and generated downstream integration documents.
+Configuration is not evidence of native Windows execution or published assets.

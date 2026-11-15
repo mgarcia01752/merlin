@@ -537,3 +537,33 @@ artifacts are tracked. Existing full simulation/Qt suites were not rerun for
 source-documentation and generator changes. Other platforms, publication and
 hosted CI integration are not verified or enabled. Local evidence is under
 docs/development/local/api-reference/.
+
+## API-WHEEL-01: release-only native wheel validation
+
+Shared CI now enables a CPython 3.10 wheel matrix only for release tags, on
+Ubuntu 22.04 x64 and Windows 2022 x64/MSVC. Native build commands preserve Linux
+compatibility tags without passing them to Windows; locked notice collection
+and legal payloads are retained. The test harness verifies wheel identity/ABI,
+platform, notices and native import, then executes the actual single-capture
+example from outside the checkout in a fresh venv with isolated Python. It
+requires Complete/82 total/0 corrected/0 uncorrectable/BER 0.000e+00. Successful
+wheels alone are staged with SHA256SUMS; release collection requires both
+platform artifacts and retains existing CodeQL/RustSec/application gates.
+
+Linux validation rebuilt the wheel and installed it into a disposable clean
+venv. The native extension imported from that venv and the real fixture matched
+all expected FEC/BER fields. Build plus installed example passed in 6.58s; the
+installed-wheel phase took 4.54s. All 13 Python tooling tests passed in 0.067s
+and all 23 packaging tests passed in 0.487s, including wrong ABI/platform,
+missing notices, cancelled/incorrect results, missing wheel platform and
+modified checksum rejection. Workflow YAML parsing verified the release-only
+condition, two native targets and publication dependency/artifact requirements.
+
+Added a separate docs/user/python/releases.md guide with patterns, scope, gates
+and checksum/installation instructions; Python installation, generated downstream
+integration docs and release notes link it. No push, release or system install
+was performed. The Windows job is configured but has not run here; hosted
+Windows runtime/native artifact generation, both hosted release jobs and actual
+asset publication remain unverified. Full Rust/Qt suites were not repeated for
+Python packaging/workflow changes. Local logs/reports/wheel artifacts remain
+ignored under docs/development/local/python-wheel-release/.

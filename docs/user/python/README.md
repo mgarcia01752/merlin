@@ -39,6 +39,9 @@ Use `Workbench.from_file(path)` to import embedded captures and saved scientific
 settings without duplicating constants. Only `run()` starts simulation. See the
 [saved-workbench guide](workbench.md), supported settings and runnable example.
 
+For release wheel filenames, platform compatibility, checksum verification and
+required native tests, see the separate [Python wheel release guide](releases.md).
+
 ## Build and install locally
 
 Build prerequisites are the repository's pinned Rust 1.85.1 toolchain and a

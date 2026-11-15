@@ -50,6 +50,7 @@ jobs:
         run: |
           python tools/release/versions.py
           python -m unittest discover -s tools/release -p 'test_*.py'
+          python -m unittest discover -s tools/python -p 'test_*.py'
           python -m unittest discover -s tools/git/tests -p 'test_*.py'
           python -m unittest discover -s tools/packaging -p 'test_*.py'
           python -m unittest discover -s tools/validation -p 'test_*.py'
@@ -298,5 +299,74 @@ jobs:
         with:
           name: merlin-assets-desktop-windows-amd64
           path: dist/windows-desktop/
+          if-no-files-found: error
+          retention-days: 14
+
+  python-wheels:
+    name: Release Python wheel (${{ matrix.name }})
+    if: inputs.release && github.ref_type == 'tag'
+    needs: preflight
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: ubuntu22-x64
+            os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+          - name: windows-x64
+            os: windows-2022
+            target: x86_64-pc-windows-msvc
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+    env:
+      RUSTUP_TOOLCHAIN: 1.85.1
+      PYTHONPATH: ''
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.10'
+          architecture: x64
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: runner.os == 'Windows'
+        with:
+          arch: x64
+      - name: Install pinned Rust and wheel builder
+        run: |
+          rustup toolchain install 1.85.1 --profile minimal
+          python -m pip install --only-binary=:all: maturin==1.8.3
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            bindings/python/target
+          key: python-wheel-${{ matrix.name }}-cp310-rust1.85.1-${{ hashFiles('bindings/python/Cargo.lock') }}
+          restore-keys: python-wheel-${{ matrix.name }}-cp310-rust1.85.1-
+      - name: Fetch locked native wheel dependencies
+        run: cargo fetch --manifest-path bindings/python/Cargo.toml --locked --target ${{ matrix.target }}
+      - name: Build native wheel with dependency notices
+        run: python tools/python/build_wheel.py --out local/release-python-wheels
+      - name: Install wheel and run actual single-capture API example
+        run: |
+          python tools/python/smoke_wheel.py --wheel-dir local/release-python-wheels \
+            --output dist/python-wheel-${{ matrix.name }} \
+            --report dist/python-wheel-${{ matrix.name }}-test.json
+      - name: Retain wheel test evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: merlin-python-wheel-evidence-${{ matrix.name }}
+          path: dist/python-wheel-${{ matrix.name }}-test.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Retain only tested release wheels
+        uses: actions/upload-artifact@v6
+        with:
+          name: merlin-assets-python-${{ matrix.name }}
+          path: dist/python-wheel-${{ matrix.name }}/
           if-no-files-found: error
           retention-days: 14

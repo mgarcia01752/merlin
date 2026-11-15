@@ -49,6 +49,9 @@ defines fast development iteration; implementation has not started.
 Local full tests use the [parallel runner](features/parallel-local-tests/design.md)
 with four process-isolated tests at a time. This is scheduling, not result caching.
 
+The [sparse NCP/PLC encoder record](features/sparse-encoder/design.md) explains
+which dense setup was replaced, its supported matrix structure and isolated timings.
+
 ## Working on a feature
 
 1. Create a focused directory under `features/` for its plan and reviewable notes.

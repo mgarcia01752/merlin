@@ -12,6 +12,7 @@ pub mod ncp;
 pub mod parameters;
 pub mod plc;
 pub mod shortening;
+mod sparse_encoder;
 pub mod statistics;
 
 // Retain established root imports while implementation lives with each codec.

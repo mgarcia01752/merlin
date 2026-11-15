@@ -103,6 +103,30 @@ class ReleaseCollectionTests(unittest.TestCase):
                 collect(root / "inputs", root / "bad")
             self.assertFalse((root / "bad").exists())
 
+    def test_release_requires_both_checksummed_wheel_artifacts(self):
+        """Missing platforms and modified wheel bytes prevent release collection."""
+        from collect_release import collect
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            expected = ['python-ubuntu', 'python-windows']
+            linux = root / 'inputs/python-ubuntu'
+            windows = root / 'inputs/python-windows'
+            linux.mkdir(parents=True)
+            name = 'merlin_ofdm-1.2.3-cp310-cp310-linux_x86_64.whl'
+            (linux / name).write_bytes(b'wheel collection fixture')
+            checksums(linux)
+            with self.assertRaises(ValueError):
+                collect(root / 'inputs', root / 'missing', expected)
+            windows.mkdir()
+            win_name = 'merlin_ofdm-1.2.3-cp310-cp310-win_amd64.whl'
+            (windows / win_name).write_bytes(b'Windows collection fixture')
+            checksums(windows)
+            collect(root / 'inputs', root / 'valid', expected)
+            self.assertTrue((root / 'valid' / win_name).is_file())
+            (windows / win_name).write_bytes(b'tampered wheel')
+            with self.assertRaises(ValueError):
+                collect(root / 'inputs', root / 'tampered', expected)
+
     def test_release_links_use_exact_tag_and_repository(self):
         from release_notes import render
         contents = render("example/MERLIN", f"v{version()}")

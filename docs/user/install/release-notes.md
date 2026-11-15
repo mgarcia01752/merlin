@@ -10,6 +10,8 @@ The Linux CLI assets are optional; macOS remains deferred.
 | `merlin-cli_@VERSION@_ubuntu22.04_amd64.deb` | Standalone command-line toolkit installed by APT |
 | `merlin-cli_@VERSION@_linux_amd64.tar.gz` | Portable command-line toolkit; extract and run |
 | `merlin-desktop_@VERSION@_windows_amd64.msi` | Windows x64 desktop UI, private Qt/CRT, examples and guides |
+| `merlin_ofdm-@VERSION@-cp310-cp310-linux_x86_64.whl` | CPython 3.10 x64 native Rust API for Ubuntu 22.04 |
+| `merlin_ofdm-@VERSION@-cp310-cp310-win_amd64.whl` | CPython 3.10 x64 native Rust API for Windows |
 | `SHA256SUMS` | Checksums for verifying the downloaded assets |
 
 ## Ubuntu desktop install or upgrade
@@ -44,3 +46,11 @@ The CLI DEB/archive target Ubuntu 22.04, 24.04 and 26.04 x64. Desktop delivery o
 
 Packages include public examples, documentation and full license notices.
 Passing CI does not establish DOCSIS device interoperability.
+
+## Native Python API
+
+Python wheels are independent of the desktop installers and CLI. Each release
+wheel must pass a fresh-environment installation and the actual single-capture
+API example on its native Ubuntu/Windows runner. See the separate
+[Python wheel release and installation guide](https://github.com/@REPOSITORY@/blob/@TAG@/docs/user/python/releases.md)
+for compatibility, checksums and consumer installation.

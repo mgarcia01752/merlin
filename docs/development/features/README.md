@@ -147,3 +147,6 @@ Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/desi
 
 - [CLI versus desktop examples](example-layout/design.md): EXAMPLES-01,
   documented use cases and separate desktop/CLI packaging inventories.
+
+- [Sparse control-channel encoder](sparse-encoder/design.md): FEC-SPARSE-01,
+  isolated synthetic timings, substitution and independent NCP/PLC validation.

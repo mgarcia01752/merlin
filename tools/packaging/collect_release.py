@@ -24,7 +24,7 @@ def collect(source, destination, expected_artifacts=None):
             digest, name = line.split("  ", 1)
             if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", name) or Path(name).name != name or name in names or name in declared:
                 raise ValueError("Duplicate or unsafe native asset name")
-            if not name.endswith((".deb", ".pkg", ".msi", ".tar.gz", ".zip")):
+            if not name.endswith((".deb", ".pkg", ".msi", ".tar.gz", ".zip", ".whl")):
                 raise ValueError("Unexpected native release asset type")
             path = manifest.parent / name
             if path.is_symlink() or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != digest:

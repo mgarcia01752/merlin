@@ -7,12 +7,12 @@ use super::{
     matrix::mother_matrix,
     parameters::{PLC_INFORMATION_BITS, PLC_INFORMATION_BYTES, PLC_MOTHER_BITS},
 };
+use crate::sparse_encoder::SparseEncoder;
 use ldpc_toolbox::{
     decoder::{
         factory::{DecoderFactory, DecoderImplementation},
         LdpcDecoder,
     },
-    encoder::Encoder,
     sparse::SparseMatrix,
 };
 /// Parity outcome and decisions; success alone does not establish message CRC/truth.
@@ -39,7 +39,7 @@ impl PlcBlockResult {
 /// Reusable PLC encoder/soft decoder built from the pinned (480,288) matrix.
 /// No shortened-zero priors, payload BCH or NCP control matrix are used.
 pub struct PlcFecCodec {
-    pub(super) encoder: Encoder,
+    pub(super) encoder: SparseEncoder,
     pub(super) decoder: Box<dyn LdpcDecoder>,
     pub(super) matrix: SparseMatrix,
 }
@@ -48,10 +48,10 @@ impl PlcFecCodec {
     /// # Returns
     /// Independent safe Rust codec; does not alter global or caller state.
     /// # Errors
-    /// Reports a noninvertible parity matrix instead of a caller-input panic.
+    /// Reports an unsupported parity dependency instead of a caller-input panic.
     pub fn new() -> Result<Self, String> {
         let matrix = mother_matrix();
-        let encoder = Encoder::from_h(&matrix).map_err(|error| error.to_string())?;
+        let encoder = SparseEncoder::from_h(&matrix)?;
         let decoder = DecoderImplementation::HLPhif64.build_decoder(matrix.clone());
         log::debug!(
             "plc-codec-ready information-bits={PLC_INFORMATION_BITS} mother-bits={PLC_MOTHER_BITS}"

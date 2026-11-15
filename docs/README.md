@@ -49,6 +49,7 @@
 
 - [Example folder guide](../examples/README.md) · [CLI purposes and use cases](../examples/cli/README.md)
 
+- [Python wheel releases and native validation](user/python/releases.md)
 - [Generated Rust/Python API reference](reference/api-reference.md)
 - [High-level Rust and Python API](user/api/README.md)
 - [Matching Rust/Python examples](../examples/api/README.md), including the

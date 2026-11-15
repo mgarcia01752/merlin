@@ -35,6 +35,11 @@ This document is generated from a tracked template by
 it; release bumps include it in the release commit. Generation does not build
 wheels, publish assets, query registries or establish release availability.
 
+The separate [Python wheel release guide](releases.md) describes the configured
+Ubuntu/Windows CPython 3.10 asset names and installed-example release gates.
+Windows wheel execution and published availability still require successful
+native release evidence; configuration alone is not verification.
+
 ## Install the current local build
 
 The [build guide](README.md#build-and-install-locally) produces a wheel under

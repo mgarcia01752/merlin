@@ -1499,3 +1499,18 @@ validation are complete; the user guide includes the current dark capture.
   bracket links. Offline build, browser review and targeted native checks pass.
   [Design](features/high-level-api/design.md#api-doc-01-generated-high-level-rust-and-python-references),
   [build guide](../reference/api-reference.md).
+
+- [x] **API-WHEEL-01** Configure release-only native Ubuntu/Windows CPython
+  3.10 wheel builds, clean installed-example/FEC gates and required checksummed
+  release assets. Preserve security gates and link a separate Python release
+  guide from installation/integration docs. Local Linux wheel smoke passes;
+  hosted Windows execution remains unverified until the native job runs.
+  [Design](features/high-level-api/design.md#api-wheel-01-release-only-native-wheel-build-and-installed-example-gate),
+  [release guide](../user/python/releases.md).
+
+- [x] **FEC-SPARSE-01** Replace NCP/PLC dense encoder setup with private sparse
+  substitution; preserve the payload staircase path and all decoder behavior.
+  Baseline before integration, synthetic bit-exact/syndrome tests, independent
+  NCP/PLC basis oracles, 38 codec tests and focused API recovery pass. Report
+  isolated setup/encode timings separately from compilation and simulation.
+  [Design and validation](features/sparse-encoder/design.md).

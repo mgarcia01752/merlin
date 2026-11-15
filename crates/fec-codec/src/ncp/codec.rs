@@ -7,12 +7,12 @@ use super::{
     matrix::mother_matrix, KNOWN_ZERO_LLR, MOTHER_CODEWORD_BITS, MOTHER_INFORMATION_BITS,
     NCP_CODEWORD_BITS, NCP_INFORMATION_BITS, NCP_TRANSMITTED_COORDINATES,
 };
+use crate::sparse_encoder::SparseEncoder;
 use ldpc_toolbox::{
     decoder::{
         factory::{DecoderFactory, DecoderImplementation},
         LdpcDecoder,
     },
-    encoder::Encoder,
     gf2::GF2,
 };
 use ndarray::Array1;
@@ -26,7 +26,7 @@ pub struct NcpBlockResult {
 }
 /// Reusable (48,24) NCP codec built from the pinned (160,80) mother LDPC.
 pub struct NcpFecCodec {
-    encoder: Encoder,
+    encoder: SparseEncoder,
     decoder: Box<dyn LdpcDecoder>,
 }
 impl NcpFecCodec {
@@ -35,10 +35,10 @@ impl NcpFecCodec {
     /// # Returns
     /// Job-owned setup with the PHY Table19 matrix; no payload BCH is used.
     /// # Errors
-    /// Reports a noninvertible parity matrix instead of panicking.
+    /// Reports an unsupported parity dependency instead of panicking.
     pub fn new() -> Result<Self, String> {
         let matrix = mother_matrix();
-        let encoder = Encoder::from_h(&matrix).map_err(|error| error.to_string())?;
+        let encoder = SparseEncoder::from_h(&matrix)?;
         let decoder = DecoderImplementation::HLPhif64.build_decoder(matrix);
         Ok(Self { encoder, decoder })
     }

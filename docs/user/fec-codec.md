@@ -221,3 +221,16 @@ actual decoder outcomes and direct test points. This reuses the same16200-bit
 rate8/9 mother code. It does not add unsupported64800-bit downstream frames,
 change the legacy constructors above. QAM-03 now adds an explicit
 [shortened waveform reference](qam-processing/waveform.md) around these stages.
+
+## Control-channel encoder performance
+
+NCP and PLC codecs build a reusable sparse parity-substitution plan instead of
+a dense generator matrix. This changes setup/encoding cost while preserving
+codeword bits, decoder behavior and public methods. Construct once and reuse.
+Payload LDPC already uses an efficient staircase encoder.
+
+The private helper supports the fixed NCP/PLC matrix structure; it is not a
+general-purpose Gaussian solver. See the
+[synthetic method benchmark and validation](../development/features/sparse-encoder/design.md)
+for the runnable unit benchmark, timing results and limitations. Those numbers
+measure encoder methods only and do not predict end-to-end simulation speed.

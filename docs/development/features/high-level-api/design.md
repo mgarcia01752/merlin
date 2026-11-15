@@ -464,3 +464,23 @@ Refuse version mismatch and build offline after local dependency setup.
 Validate strict native builds, method/index coverage, documentation transforms,
 local links, no-run import and focused Python smoke tests after wheel rebuild.
 No hosting, publishing, Qt changes or system installations are authorized.
+
+### API-WHEEL-01: release-only native wheel build and installed-example gate
+
+Add a release-only matrix in the shared validation workflow for Ubuntu 22.04
+x64 and Windows 2022 x64 with CPython 3.10 and Rust 1.85.1/MSVC. Build through
+the existing notice-preserving maturin helper, extended to native Windows.
+Fetch the locked binding graph before offline notice collection. Install each
+wheel without dependencies/network into a fresh isolated venv, verify native
+module/version/platform tags and notices, then execute the actual
+examples/api/python/run_single_capture.py from outside the checkout. Require
+Complete and the known fixture's real FEC/BER counters; retain diagnostics.
+Only tested wheels are staged as merlin-assets-python-* artifacts with SHA256SUMS.
+Release collection requires both exact matrix artifacts and accepts checksummed
+wheels alongside existing CLI/DEB/MSI assets. Preserve CodeQL/RustSec/native gates.
+No wheel job runs on ordinary branch/PR builds. Keep Python release filenames,
+compatibility, installation/checksums and evidence limitations in a separate
+docs/user/python/releases.md linked from installation/integration guides and
+release notes. Validate Linux end to end and rejection tests; configured Windows
+workflow remains unverified until its native hosted job succeeds. No local
+push, publication or system-wide installation is part of this task.

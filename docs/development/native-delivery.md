@@ -144,3 +144,16 @@ remain under `examples/measurements/`. Desktop payloads explicitly exclude the
 CLI folder; CLI packages retain the full public inventory. The top-level
 [examples index](../../examples/README.md) distinguishes requests, saved settings,
 decoded data and provenance. [Design](features/example-layout/design.md).
+
+## Native Python release wheels (API-WHEEL-01)
+
+The reusable validation workflow enables its CPython 3.10 x64 wheel matrix only
+for release tags. Ubuntu 22.04 and Windows 2022/MSVC build the native extension
+with complete notices, install the wheel into a fresh isolated venv, and run
+`examples/api/python/run_single_capture.py` outside the checkout. Only passing
+wheels are uploaded as `merlin-assets-python-ubuntu22-x64` and
+`merlin-assets-python-windows-x64`, each with SHA256SUMS. Publication requires
+both artifacts alongside all existing application/security gates. Separate
+JSON test evidence is retained on failure/success. See the
+[Python wheel release guide](../user/python/releases.md); configured Windows
+wheel execution remains unverified until a native hosted run succeeds.
