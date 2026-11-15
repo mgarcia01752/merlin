@@ -25,7 +25,7 @@ fn load_is_idle_self_contained_and_preserves_saved_options_and_bytes() {
         [0, 3, 4]
     );
     for sim in wb.controllers() {
-        assert_eq!(sim.options().receiver_mode, ReceiverMode::PilotEstimated);
+        assert_eq!(sim.options().receiver_mode, ReceiverMode::SuppliedChannel);
         assert_eq!(sim.options().observation.value(), 1);
         assert_eq!(sim.options().noise_seed.value(), 41);
         assert_eq!(sim.options().prbs_seed.value(), 32767);
@@ -136,7 +136,7 @@ fn saved_profile_precedence_legacy_and_current_and_cancellation() {
 fn real_saved_workbench_fec_matches_independently_observed_native_ui() {
     let mut wb = Workbench::from_bytes(WB).unwrap();
     let reports = wb.run().unwrap();
-    for (batch, (total, corrected)) in reports.iter().zip([(83, 0), (114, 4), (124, 30)]) {
+    for (batch, (total, corrected)) in reports.iter().zip([(83, 0), (114, 5), (124, 19)]) {
         let report = batch.iter().next().unwrap().report().unwrap();
         let fec = report.fec().unwrap();
         assert_eq!(fec.total_codewords().value(), total);

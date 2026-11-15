@@ -366,3 +366,35 @@ The only new dependency is exact base64 0.22.1 for embedded WB decoding. Cargo
 lockfiles were synchronized; Qt's targeted local-package update also refreshed
 existing dependency edges without adding/upgrading other package versions.
 The native wheel includes the project's existing legal notice collection.
+
+## API-WB-02: supplied-channel bundled defaults
+
+All three runnable WB documents (single, multi-rxmer, multi-rxmer-2) now save
+receiver_mode supplied_channel. A structural comparison with HEAD confirms
+receiver_mode is the only changed setting in each WB: all embedded capture
+bytes, hashes and other settings are unchanged. The saved-UI Python companion
+selects SuppliedChannel; workbench.py imports it automatically. The separate
+MCE walkthrough retains its deliberate MCE selection. Earlier pilot-mode
+measurements in this report describe the previous saved configuration.
+
+Native release UI, Rust WB example and the native Python WB API now agree:
+
+| Profile | Total CW | Previous pilot corrected | Supplied corrected | Delta | UFEC |
+| --- | --- | --- | --- | --- | --- |
+| 0 | 83 | 0 | 0 | 0 | 0 |
+| 3 | 114 | 4 | 5 | +1 | 0 |
+| 4 | 124 | 30 | 19 | -11 | 0 |
+
+Every profile completes with zero post-FEC BER and zero UI undetected errors.
+Only receiver correction changed: supplied unity replaces the noisy pilot
+estimate for channel 193. Channel-34 bundles use their measured supplied H.
+All seven Rust WB tests pass in 63.98s.
+Four WB Python tests pass in 9.755s with fresh Rust report parity; three receiver
+tests pass in 5.034s, and six packaging tests pass in 0.710s. Packaging tests now
+guard SuppliedChannel for every runnable bundled WB. Workspace/all-target Clippy,
+formatting, generated integration-guide freshness and documentation links pass.
+The actual owned native UI process was reviewed and closed without saving edits.
+No wheel/Qt rebuild or full physics-suite rerun is needed for changed JSON,
+example choices and fixture references. Platform packaging/runtime outside the
+local Linux checks remains unverified. Evidence is local-only under
+`docs/development/local/api-receiver-parity/supplied-wb-*`.

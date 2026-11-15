@@ -94,8 +94,9 @@ These additional repository requirements govern ongoing delivery:
   before mirroring it in Python; retain the supplied-channel default.
 - Keep applied channel H and receiver correction independent. Loading/preparing
   or selecting a mode must not run simulation. Reports preserve chosen settings.
-- Match the collection example's pilot correction, seeds, iterations, duration,
-  average policy and OCD timing to its curated WB, with a fixture drift check.
+- Match the saved-UI collection companion's correction, seeds, iterations,
+  duration, average policy and OCD timing to its curated WB, with a fixture
+  drift check. Keep the separate MCE walkthrough explicitly labeled.
 - Compare actual observation-window FEC and independent bit comparison per profile;
   matching BER alone is insufficient. Keep all static selection modes, owned
   results and cancellation intact. Do not force agreement by changing counters.
@@ -124,3 +125,11 @@ must not change correction algorithms, decoder reliability or receiver defaults.
 - Add a Python WB-path example without duplicate scientific constants, and a
   compiling Rust example. Compare actual reports with the Rust engine and native
   UI, test integrity/selection/limits/cancellation, and document platform evidence.
+
+## API-WB-02: bundled receiver defaults
+
+All runnable WB examples must explicitly save SuppliedChannel, matching the
+new-configuration UI/API default. Preserve captures and all other settings.
+The saved-UI Python companion and WB loader must reproduce that saved choice;
+the separate MCE walkthrough remains MCE. Guard this policy in the packaged
+bundle inventory test and maintain current FEC references and user guides.

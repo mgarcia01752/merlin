@@ -47,7 +47,7 @@ the complete original WB independently of its input file.
 | Work limits | Use saved observation duration, decoder iterations, runtime budget and noise seed. |
 | Theme/comparison display | Presentation settings do not alter the API's simulated FEC reporting. |
 
-The bundled multi-rxmer-2 WB selects PilotEstimated, not MCE. Saving a new WB
+The bundled multi-rxmer-2 WB selects SuppliedChannel, not MCE. Saving a new WB
 with MCE selected changes the imported mode without editing Python constants.
 The loader does not silently substitute modes. Unknown fields and unsupported
 schema versions fail with structured `ApiError` diagnostics.

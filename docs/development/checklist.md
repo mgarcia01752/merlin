@@ -1445,3 +1445,8 @@ validation are complete; the user guide includes the current dark capture.
   Verify native Rust/Python/UI FEC parity, integrity, limits and cancellation.
   [Design](features/high-level-api/design.md#api-wb-01-native-saved-workbench-import),
   [user contract](../user/python/workbench.md).
+
+- [x] **API-WB-02** Set SuppliedChannel in all runnable bundled WBs and the
+  saved-UI companion; retain the separate MCE walkthrough. Verify unchanged
+  capture/settings payloads, package defaults and Rust/Python/native UI FEC.
+  [Design](features/high-level-api/design.md#api-wb-02-align-bundled-workbenches-with-the-default-receiver).

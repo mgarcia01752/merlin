@@ -3,7 +3,7 @@
 Open `workbench.merlin.json`: one modulation-profile PNM, five RxMER files and
 one DS channel-estimate PNM. The default combines RxMER as an equal-weight mean
 of linear residual error power. It does not average dB values or invent capture
-time evolution. The WB uses PRBS15 comparison and a 1 ms pilot-estimated run.
+time evolution. The WB uses PRBS15 comparison and a 1 ms supplied-channel run.
 
 Baseline and synthetic 12/11/10/9 dB stress variants share modem, channel, epoch
 and every frequency-grid coordinate. The variants deliberately change only

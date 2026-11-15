@@ -52,7 +52,7 @@
     }
   },
   "receiver": {
-    "receiver_mode": "pilot_estimated",
+    "receiver_mode": "supplied_channel",
     "duration_ms": 1,
     "max_iterations": 50,
     "max_runtime_ms": 300000,

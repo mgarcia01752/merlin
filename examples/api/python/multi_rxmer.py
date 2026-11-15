@@ -39,7 +39,7 @@ OBSERVATION_DURATION_MS = 1  # Per profile; increase for a longer experiment.
 PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 7_200  # Fixture capture-time allowance.
 MAX_RUNTIME_MS = 300_000  # Per-experiment wall-clock limit: 300 seconds.
 # MCE estimates channel correction and decoder noise confidence in Rust.
-# Other settings mirror the saved WB, which selects PilotEstimated instead.
+# Other settings mirror the saved WB, which selects SuppliedChannel instead.
 RECEIVER_MODE = ReceiverMode.MERLIN_CHANNEL_ESTIMATED
 NOISE_SEED = 41
 PRBS_SEED = 0x7FFF
@@ -55,7 +55,7 @@ def main(receiver_mode=RECEIVER_MODE):
 
     Args:
         receiver_mode: Native ReceiverMode; defaults to MCE. The UI companion
-            explicitly selects PilotEstimated while sharing every other setting.
+            explicitly selects SuppliedChannel while sharing every other setting.
     Returns:
         None after printing each profile's status, FEC counters, BER and wall time.
         Input captures and returned report objects remain unchanged.
@@ -100,7 +100,7 @@ def main(receiver_mode=RECEIVER_MODE):
     # - Unity selects a flat physical channel, not the receiver's correction mode.
     #   RECEIVER_MODE selects MCE: received-pilot channel estimation plus
     #   received-only noise estimation for decoder confidence, all in Rust.
-    #   The saved WB uses PilotEstimated; enable MCE there for a like-for-like run.
+    #   The saved WB uses SuppliedChannel; enable MCE there for a like-for-like run.
     #   Seeds, decoder limit and timing below explicitly match that same fixture.
     #   This script loads capture files; it is not a general desktop-WB importer.
     # - OBSERVATION_DURATION_MS requests source observation in milliseconds,

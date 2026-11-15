@@ -58,6 +58,8 @@ class PackageTests(unittest.TestCase):
             for bundle in manifest["bundles"]:
                 workbench = examples / bundle["workbench"]
                 self.assertTrue(workbench.is_file())
+                saved = json.loads(workbench.read_text())
+                self.assertEqual(saved["receiver"]["receiver_mode"], "supplied_channel")
                 self.assertTrue((workbench.parent / "LICENSE").is_file())
                 self.assertTrue((workbench.parent / "NOTICE").is_file())
                 provenance = json.loads((examples / bundle["provenance"]).read_text())

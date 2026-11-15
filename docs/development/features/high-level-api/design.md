@@ -366,3 +366,13 @@ Add a command-line Python example accepting a WB path with no scientific constan
 Verify embedded integrity, limits, unsupported modes, schema/profile precedence,
 original ownership, no-run loading, actual engine/WB parity, Python cancellation
 and results. Record support boundaries and any unverified platforms explicitly.
+
+### API-WB-02: align bundled workbenches with the default receiver
+
+Set SuppliedChannel explicitly in all three runnable WB files. Leave their
+embedded captures and other settings intact. Match the saved-UI Python companion
+and current user documentation to that choice; preserve the separate MCE example.
+Historical pilot measurements remain historical. Reverify actual WB/script FEC
+against the native UI, update current fixture anchors, and guard the packaged
+bundle inventory against future receiver-mode drift. No engine/API default or
+algorithm changes are needed; no wheel or Qt rebuild is required for JSON input.

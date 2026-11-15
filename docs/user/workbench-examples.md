@@ -16,7 +16,7 @@ Save/Save As keep the operating system's normal destination selection.
 | `multi-rxmer-dschan` | Reserved documentation only | Varying channel-estimate playback is deferred |
 
 The runnable WBs use Profile A/ID 0, a PRBS15 source, independent comparison and
-a 1 ms pilot-estimated receiver. Example validation uses the same Rust import and
+a 1 ms supplied-channel receiver. Example validation uses the same Rust import and
 full request preparation as the UI. This does not promise zero errors: the stress
 RxMER inputs deliberately increase residual error power. No simulation starts
 automatically when a WB is opened.
@@ -31,8 +31,8 @@ measured time evolution from their filenames or reorder them as capture history.
 `multi-rxmer-2` contains the pre-collected channel 193 RxMER series and its
 companion modulation profile from PyPNM. The source filename timestamps span
 about 61 minutes, including a roughly 46-minute gap. No companion channel
-estimate was found: the WB uses a flat/unity supplied response and pilot-estimated
-receiver correction. Average mode combines linear residual power across all
+estimate was found: the WB uses a flat/unity supplied response and supplied-channel
+receiver correction (unity makes no amplitude/phase change). Average mode combines linear residual power across all
 132 captures. Hold/interpolate modes use the configured OFDM-symbol interval;
 they do not reproduce the irregular acquisition cadence. Original header capture
 times remain unchanged. See the [bundle notes](../../examples/workbench/multi-rxmer-2/README.md).

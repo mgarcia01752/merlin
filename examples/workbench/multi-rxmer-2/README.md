@@ -2,14 +2,14 @@
 
 Open `workbench.merlin.json` to load 132 pre-collected RxMER captures and their
 companion modulation-profile PNM. The WB embeds every input and defaults to
-average linear residual power, Profile A/ID 0, PRBS15 and a 1 ms pilot-estimated
+average linear residual power, Profile A/ID 0, PRBS15 and a 1 ms supplied-channel
 receiver. No run starts automatically.
 
 The exact common grid has 7,600 positions at 25 kHz spacing, from 835.000 to
 1024.975 MHz (subcarrier zero 827.600 MHz, first index 296). Channel ID is 193.
 A two-hour DPD association tolerance explicitly covers the complete collection.
 No matching DS channel estimate was found: supplied response is flat/unity;
-receiver correction is estimated from pilots. The channel 34 estimate from the
+receiver correction uses the supplied unity response. The channel 34 estimate from the
 other examples is not substituted.
 
 Original PNM header capture times are:
@@ -45,5 +45,7 @@ discovers the profile catalog through Rust and runs independent experiments for
 every returned ID (currently 0, 3 and 4), each using a
 residual-power `AverageAll` and explicit unity H. FEC/BER and wall time are
 reported separately per profile.
-It does not import the desktop WB JSON or reproduce its pilot-estimated
-receiver correction. See the [API examples](../../api/README.md) for the command.
+The MCE walkthrough deliberately selects a different receiver. To use the saved
+WB's SuppliedChannel setting and other accepted configuration directly, run
+[workbench.py](../../api/python/workbench.py) with this WB path. See the
+[API examples](../../api/README.md) for commands.

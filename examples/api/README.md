@@ -16,7 +16,7 @@ and assumptions are explained alongside the workflow.
 | [Rust workflow](rust/high_level.rs) | Import a profile, derive OCD settings, add RxMER and a channel estimate independently, select one capture and inspect simulated results. |
 | [Python workflow](python/high_level.py) | Perform the same fixture-backed workflow using the installed native Python extension and print FEC counts and BER. |
 | [Python multi-RxMER collection](python/multi_rxmer.py) | Discover all profiles in the channel-193 capture and load its 132 RxMER binaries; run independent profile experiments using a Rust residual-power average, unity physical response and MCE receiver. |
-| [Python saved-UI comparison](python/multi_rxmer_ui.py) | Run the same collection workflow with PilotEstimated and all other settings matching the bundled multi-rxmer-2 workbench. |
+| [Python saved-UI comparison](python/multi_rxmer_ui.py) | Run the same collection workflow with SuppliedChannel and all other settings matching the bundled multi-rxmer-2 workbench. |
 | [Rust selection policies](rust/policy_parity.rs) | Run `Each`, `Individual`, `AverageAll` and `InterpolateAt`; write actual reference results for the Python parity tests. |
 
 ## Run Rust
@@ -53,7 +53,7 @@ experiment for each captured profile: **0, 3 and 4**, with explicit unity H. Rus
 missing readings. The two-hour profile tolerance covers the collection.
 It explicitly selects `ReceiverMode.MERLIN_CHANNEL_ESTIMATED` (MCE) and matches
 the saved WB seeds, decoder limit and OCD timing. The saved WB selects
-PilotEstimated; enable MCE in its receiver for comparable results. It loads the capture files directly; it is
+SuppliedChannel; enable MCE in its receiver for comparable results. It loads the capture files directly; it is
 not a general desktop WB JSON importer. `high_level.py` retains the original
 single-capture workflow with an explicit measured channel estimate.
 
@@ -63,7 +63,7 @@ To match the **unchanged saved UI workbench**, run the separate companion:
 local/api-python-test/bin/python examples/api/python/multi_rxmer_ui.py
 ```
 
-It reuses the same workflow with `ReceiverMode.PILOT_ESTIMATED`; the MCE
+It reuses the same workflow with `ReceiverMode.SUPPLIED_CHANNEL`; the MCE
 walkthrough stays available separately. Both use the same profile discovery,
 132 captures, residual-power average, unity H, seeds, limits and timing.
 This matches the bundled saved WB; later UI edits require matching the shared

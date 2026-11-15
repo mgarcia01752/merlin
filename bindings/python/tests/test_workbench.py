@@ -15,8 +15,8 @@ import merlin as m
 
 ROOT = Path(__file__).resolve().parents[3]
 WB = ROOT / "examples/workbench/multi-rxmer-2/workbench.merlin.json"
-# Independent native UI observation for the unchanged bundled WB.
-UI_FEC = [(83, 0, 0), (114, 4, 0), (124, 30, 0)]
+# Independent native UI observation for the current bundled WB.
+UI_FEC = [(83, 0, 0), (114, 5, 0), (124, 19, 0)]
 
 
 class WorkbenchTests(unittest.TestCase):
@@ -30,12 +30,12 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual([v.value for v in wb.profile_ids], [0, 3, 4])
         self.assertEqual([v.value for v in m.Workbench.from_bytes(WB.read_bytes()).profile_ids], [0, 3, 4])
         options = wb.options
-        self.assertEqual(options[0].receiver_mode, m.ReceiverMode.PILOT_ESTIMATED)
+        self.assertEqual(options[0].receiver_mode, m.ReceiverMode.SUPPLIED_CHANNEL)
         self.assertEqual(options[0].observation.value, 1)
         self.assertEqual(options[0].noise_seed.value, 41)
         self.assertEqual(options[0].processing["mce"]["averaging_symbols"], 16)
-        options[0].receiver_mode = m.ReceiverMode.SUPPLIED_CHANNEL
-        self.assertEqual(wb.options[0].receiver_mode, m.ReceiverMode.PILOT_ESTIMATED)
+        options[0].receiver_mode = m.ReceiverMode.PILOT_ESTIMATED
+        self.assertEqual(wb.options[0].receiver_mode, m.ReceiverMode.SUPPLIED_CHANNEL)
         control = m.RunControl()
         control.cancel()
         for batch in wb.run_with_control(control):
@@ -75,7 +75,7 @@ class WorkbenchTests(unittest.TestCase):
             rows.append((report.fec.total_codewords.value, report.fec.corrected_codewords.value,
                          report.fec.uncorrectable_codewords.value))
             self.assertEqual(report.profile.post_fec_ber.value, 0)
-            self.assertEqual(report.options.receiver_mode, m.ReceiverMode.PILOT_ESTIMATED)
+            self.assertEqual(report.options.receiver_mode, m.ReceiverMode.SUPPLIED_CHANNEL)
         self.assertEqual(rows, UI_FEC)
         baseline = os.environ.get("MERLIN_WB_PARITY")
         if baseline:

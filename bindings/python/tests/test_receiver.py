@@ -23,7 +23,7 @@ sys.path.insert(0, str(EXAMPLE.parent))
 WORKBENCH = ROOT / "examples/workbench/multi-rxmer-2/workbench.merlin.json"
 # Observed native release UI Profile Performance results for this exact WB.
 # These are software parity anchors, not modem interoperability vectors.
-UI_FEC_REFERENCE = [(0, 83, 0, 0), (3, 114, 4, 0), (4, 124, 30, 0)]
+UI_FEC_REFERENCE = [(0, 83, 0, 0), (3, 114, 5, 0), (4, 124, 19, 0)]
 
 
 class ReceiverModeTests(unittest.TestCase):
@@ -72,10 +72,10 @@ class ReceiverModeTests(unittest.TestCase):
                               ("MAX_LDPC_ITERATIONS", "max_iterations"),
                               ("MAX_RUNTIME_MS", "max_runtime_ms")):
             self.assertEqual(example[constant], workbench["receiver"][key])
-        self.assertEqual(workbench["receiver"]["receiver_mode"], "pilot_estimated")
+        self.assertEqual(workbench["receiver"]["receiver_mode"], "supplied_channel")
         self.assertEqual(example["RECEIVER_MODE"], m.ReceiverMode.MERLIN_CHANNEL_ESTIMATED)
         ui_example = runpy.run_path(str(UI_EXAMPLE))
-        self.assertEqual(ui_example["RECEIVER_MODE"], m.ReceiverMode.PILOT_ESTIMATED)
+        self.assertEqual(ui_example["RECEIVER_MODE"], m.ReceiverMode.SUPPLIED_CHANNEL)
         self.assertEqual(workbench["sections"]["measurements"]["options"]["mode"], "average")
         self.assertEqual(example["PROFILE_ASSOCIATION_TOLERANCE_SECONDS"],
                          workbench["sections"]["measurements"]["options"]["tolerance_seconds"])

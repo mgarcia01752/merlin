@@ -9,8 +9,8 @@
 Run from the repository root after installing the native merlin-ofdm wheel:
     local/api-python-test/bin/python examples/api/python/multi_rxmer_ui.py
 
-The saved WB selects PilotEstimated. The sibling multi_rxmer.py selects MCE
-by default; this companion explicitly chooses pilot estimation while reusing
+The saved WB selects SuppliedChannel. The sibling multi_rxmer.py selects MCE
+by default; this companion chooses supplied-channel correction while reusing
 its complete documented workflow, captures, seeds, timing, limits and output.
 
 Profiles are discovered through Rust and run independently. Rust handles all
@@ -23,7 +23,7 @@ from multi_rxmer import main as run_collection
 
 
 # Match examples/workbench/multi-rxmer-2/workbench.merlin.json.
-RECEIVER_MODE = ReceiverMode.PILOT_ESTIMATED
+RECEIVER_MODE = ReceiverMode.SUPPLIED_CHANNEL
 
 
 def main():
