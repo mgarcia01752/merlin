@@ -1,0 +1,102 @@
+{
+  "captures": [
+    {
+      "capture_time": 1380970,
+      "conversion": {
+        "bytes": 7508,
+        "captures": 1,
+        "clipped": 0,
+        "maximum_change_db": 0.12498974915016703,
+        "maximum_rounding_db": 0.12498974915016703,
+        "missing": 0,
+        "rounded": 7479,
+        "samples": 7480
+      },
+      "file": "merlin_rxmer_designed.bin",
+      "key": {
+        "channel_id": 34,
+        "grid": {
+          "first_subcarrier_index": 356,
+          "sample_count": 7480,
+          "spacing_hz": 25000,
+          "zero_frequency_hz": 631100000
+        },
+        "mac_address": [
+          0,
+          202,
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      "sha256": "fb30aa5e96d9e44791718950b732b6748a62c5a5e59a398f1b8783371ec1101c",
+      "source": {
+        "byte_length": 10536,
+        "capture_time": 1380970,
+        "file_kind": "merlin_designed_rxmer",
+        "format_major": 1,
+        "format_minor": 0,
+        "name": "Designed RxMER 001",
+        "sha256": "41960b7675159885fc05cd3b8fa1e4264ca200ec8f63b060368302dba6ad0a9e"
+      }
+    }
+  ],
+  "context": {
+    "baseline_sha256": [
+      "41960b7675159885fc05cd3b8fa1e4264ca200ec8f63b060368302dba6ad0a9e"
+    ],
+    "designer": {
+      "baseline_db": 48.0,
+      "capture_count": 1,
+      "recipe": {
+        "edits": [],
+        "notch": {
+          "bandwidth_hz": 10000000,
+          "center_hz": 766487500,
+          "depth_db": 6.0,
+          "edge_hz": 1000000,
+          "scope": {
+            "mode": "all"
+          }
+        },
+        "ripple": {
+          "peak_to_peak_db": 2.0,
+          "scope": {
+            "mode": "all"
+          },
+          "spacing": {
+            "mode": "frequency",
+            "spacing_hz": 20000000
+          }
+        },
+        "tilt": {
+          "scope": {
+            "mode": "all"
+          },
+          "tilt_db": -10.0
+        }
+      },
+      "source": "imported"
+    },
+    "first_capture": 1,
+    "last_capture": 1,
+    "profile_sha256": "974bb407bfe40637d0907b47ee50c378f6f37f1f92c8924246f973383747d67d"
+  },
+  "created_by": "MERLIN",
+  "merlin_pnm_export": 1,
+  "modem_measurement": false,
+  "output_format": "pnm",
+  "pnm_format": "1.0",
+  "range_policy": "reject",
+  "summary": {
+    "bytes": 7508,
+    "captures": 1,
+    "clipped": 0,
+    "maximum_change_db": 0.12498974915016703,
+    "maximum_rounding_db": 0.12498974915016703,
+    "missing": 0,
+    "rounded": 7479,
+    "samples": 7480
+  }
+}

@@ -38,3 +38,7 @@ path = "../../examples/api/rust/run_multi_rxmer_mce.rs"
 [[example]]
 name = "run_multi_rxmer_cm_chan_est"
 path = "../../examples/api/rust/run_multi_rxmer_cm_chan_est.rs"
+
+[[example]]
+name = "run_designed_rxmer"
+path = "../../examples/api/rust/run_designed_rxmer.rs"

@@ -19,13 +19,14 @@ and assumptions are explained alongside the workflow.
 | [Python saved-UI comparison](python/run_multi_rxmer_cm_chan_est.py) | Run the same collection workflow with SuppliedChannel and all other settings matching the bundled multi-rxmer-2 workbench. |
 | [Rust selection policies](rust/run_rxmer_selection_parity.rs) | Run `Each`, `Individual`, `AverageAll` and `InterpolateAt`; write actual reference results for the Python parity tests. |
 
-The same four workflows are available in both languages:
+The same workflows are available in both languages:
 
 | Workflow | Rust | Python |
 | --- | --- | --- |
 | Single capture | [run_single_capture.rs](rust/run_single_capture.rs) | [run_single_capture.py](python/run_single_capture.py) |
 | Multi-RxMER with MCE | [run_multi_rxmer_mce.rs](rust/run_multi_rxmer_mce.rs) | [run_multi_rxmer_mce.py](python/run_multi_rxmer_mce.py) |
 | Multi-RxMER with supplied CM channel estimate | [run_multi_rxmer_cm_chan_est.rs](rust/run_multi_rxmer_cm_chan_est.rs) | [run_multi_rxmer_cm_chan_est.py](python/run_multi_rxmer_cm_chan_est.py) |
+| Custom designed RxMER | [run_designed_rxmer.rs](rust/run_designed_rxmer.rs) | [run_designed_rxmer.py](python/run_designed_rxmer.py) |
 | Saved multi-RxMER CMCE workbench | [run_multi_rxmer_cmce_workbench.rs](rust/run_multi_rxmer_cmce_workbench.rs) | [run_multi_rxmer_cmce_workbench.py](python/run_multi_rxmer_cmce_workbench.py) |
 
 The two Rust collection entry points share the documented
@@ -150,3 +151,44 @@ See the [WB import guide](../../docs/user/python/workbench.md) for supported
 settings, structured failures and the equivalent Rust example. The bundled WB
 uses supplied CM channel estimation (CMCE); another input WB retains its saved
 receiver mode regardless of the script filename.
+
+## Custom designed RxMER
+
+Use the supplied [designed binary](../measurements/designed-rxmer/merlin_rxmer_designed.bin) with its
+[recipe and export provenance](../measurements/designed-rxmer/merlin_rxmer_designed.bin.merlin.json):
+
+```bash
+scripts/cargo-local.sh run -p pnm-input --example run_designed_rxmer --release --locked
+local/api-python-test/bin/python examples/api/python/run_designed_rxmer.py
+```
+
+Both examples discover and independently run every profile in
+`examples/workbench/single/modulation-profile.bin` (currently 0, 1, 2 and 3).
+This profile's decoded hash matches the sidecar's `profile_sha256` and its grid
+exactly matches the designed capture: channel 34, 7,480 bins, first bin 356,
+25 kHz spacing and 631.1 MHz frequency at bin zero. The multi-rxmer-2 profile
+is a different channel/grid and cannot be substituted.
+
+The designer sidecar declares a 48 dB baseline, -10 dB tilt, 2 dB peak-to-peak
+ripple with 20 MHz spacing, and a 6 dB notch centered at 766.4875 MHz. These are
+**synthetic designed values, not modem measurements**. The binary already
+contains the quantized result; the examples never reapply the recipe. Native
+binary loading preserves the original bytes/provenance but does not read or
+automatically attach the adjacent sidecar; keep that file with the example to
+retain its synthetic origin and recipe.
+
+The examples use explicit Individual selection, SuppliedChannel correction and
+unity physical response; no separate complex channel capture is loaded. Unity
+correction does not remove RxMER-driven residual noise. Named constants document
+192 MHz bandwidth, CP 512, roll-off 128, interleaver depth 16, noise seed 41,
+PRBS seed 0x7fff, 50 decoder iterations, 1 ms source observation per profile and
+a 300-second host budget per experiment. The 90,000-second profile association
+tolerance is specific to the different original fixture epochs; it changes
+neither timestamp. Loading does not run simulation; each explicit run returns
+actual status/FEC/BER, with unavailable results kept absent.
+
+With this exact fixture and the documented settings, the validated Rust and
+Python runs produced matching results: Profiles 0/1/2 had 82/102/112 corrected
+codewords and zero uncorrectable words; Profile 3 had 17 corrected and 105
+uncorrectable out of 122, with BER `1.282e-02`. All runs completed. These are
+software simulation results for this designed input, not modem performance claims.

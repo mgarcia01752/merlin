@@ -446,3 +446,44 @@ Single-capture and saved-WB counterparts already exist and are unchanged.
 No core API/Qt or scientific algorithms changed; no full Rust/Qt suites or
 other-platform runtime checks were repeated. Logs remain local-only under
 docs/development/local/api-collection-examples/.
+
+## API-EXAMPLES-11: custom designed RxMER
+
+Added Rust/Python run_designed_rxmer examples using the unchanged custom binary
+and the exact-grid-compatible single-bundle modulation profile. All four IDs
+are discovered through the Rust decoder. Individual selection, unity physical
+response, SuppliedChannel correction, seeds, timing and bounds match. The recipe
+is not applied again; binary loading does not automatically ingest its sidecar.
+Original and decoded profile hashes confirm the sidecar's source-profile linkage.
+
+Formatting, example Clippy and Python syntax checks passed. Independent native
+Rust/Python execution passed in 46.59s total (Rust 23.95s including Cargo startup/
+build, Python 22.64s). Actual source-observation FEC and displayed BER agree:
+
+| Profile | Total | Corrected | Uncorrectable | BER |
+| --- | --- | --- | --- | --- |
+| 0 | 82 | 82 | 0 | 0 |
+| 1 | 102 | 102 | 0 | 0 |
+| 2 | 112 | 112 | 0 | 0 |
+| 3 | 122 | 17 | 105 | 1.282e-02 |
+
+All runs completed; completion does not imply successful FEC. SHA256 checks
+confirmed binary and sidecar bytes unchanged. Import-only inspection using the
+local installed-extension interpreter produced no output/run. A first inspection
+using system Python failed to import merlin (not installed there); the project
+local interpreter succeeded. No new core API/decoder algorithms, full-suite or
+Qt checks were needed; other platforms remain unverified. Logs are local-only
+under docs/development/local/api-designed-example/.
+
+## API-EXAMPLES-12: shared designed-capture location
+
+Moved both user-supplied files into examples/measurements/designed-rxmer/
+without changing bytes. Added a collection README, linked the measurements
+index and updated Rust/Python paths and current guide links. The sidecar's
+unchanged sibling basename resolves correctly and its binary SHA256 matches.
+Both relocated examples passed in 42.99s total (Rust 22.40s including Cargo
+startup/build, Python 20.59s). All profile statuses/FEC/BER match the original
+location's logs exactly. Formatting, targeted example Clippy, generated-guide
+freshness and 451 relative documentation links passed. An initial formatting
+check caught the longer Rust constant line; cargo fmt corrected it and the final
+check passed. No engine changes or full-suite/Qt/platform checks were needed.

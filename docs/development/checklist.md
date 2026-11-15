@@ -1472,3 +1472,15 @@ validation are complete; the user guide includes the current dark capture.
   captured-profile discovery. Format/Clippy and exact native Rust/Python
   FEC/status/BER parity pass for all three profiles in both modes (20.60s).
   [Design](features/high-level-api/design.md#api-examples-10-equivalent-rust-and-python-collection-workflows).
+
+- [x] **API-EXAMPLES-11** Add matching designed-RxMER Rust/Python examples,
+  preserving custom binary/sidecar provenance and discovering all compatible
+  profiles. Formatting/Clippy and exact FEC/status/displayed-BER parity pass
+  in 46.59s; inputs are unchanged and Python import starts no simulation.
+  [Design](features/high-level-api/design.md#api-examples-11-custom-designed-rxmer-capture).
+
+- [x] **API-EXAMPLES-12** Move designed binary/sidecar into the shared
+  measurements collection with a README and updated examples/indexes.
+  Both native examples pass from the new paths (42.99s); result fields and
+  input hashes remain unchanged. Formatting, Clippy and links pass.
+  [Design](features/high-level-api/design.md#api-examples-12-place-designed-input-with-shared-capture-examples).

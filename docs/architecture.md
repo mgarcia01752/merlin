@@ -2324,6 +2324,12 @@ The MCE typed variant is `MerlinChannelEstimated` (Python uppercase alias
 saved value and accepts `merlin_channel_estimated` as an input alias, preserving
 Qt and existing workbench/CLI compatibility without duplicate receiver modes.
 
+The matching `run_designed_rxmer` Rust/Python examples use the custom synthetic
+RxMER binary under `examples/measurements/designed-rxmer/` directly against
+every discovered compatible single-bundle profile.
+They retain original bytes and keep the adjacent designer recipe as provenance;
+binary loading does not apply the recipe or automatically ingest the sidecar.
+
 ### Saved workbench API input
 
 The Apache `pnm-input::Workbench` loader independently decodes the saved WB

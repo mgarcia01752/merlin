@@ -18,3 +18,9 @@ The CLI requests formerly at the top of `examples/` now live under `cli/`.
 Desktop installers include the workbench/measurement collections and their
 licenses/notices, but omit the `cli/` and `api/` source folders. CLI distributions include all public
 examples. The examples are not automatically executed when the application starts.
+
+The custom [merlin_rxmer_designed.bin](measurements/designed-rxmer/merlin_rxmer_designed.bin) and its
+[export sidecar](measurements/designed-rxmer/merlin_rxmer_designed.bin.merlin.json) are synthetic RxMER
+Designer output, not a CM measurement. Matching Rust/Python walkthroughs and
+compatible profile selection are documented in the
+[API examples](api/README.md#custom-designed-rxmer).

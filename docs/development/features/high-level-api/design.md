@@ -420,3 +420,29 @@ reports and print status, FEC, BER and timing; do not duplicate engine operation
 Register Cargo targets and link a side-by-side example inventory. Validate
 formatting/Clippy and execute both languages in both modes, comparing per-profile
 status, FEC counts and BER. No new public API or Qt changes are required.
+
+### API-EXAMPLES-11: custom designed RxMER capture
+
+Add matching run_designed_rxmer Rust/Python examples using the user-supplied
+examples/measurements/designed-rxmer/merlin_rxmer_designed.bin. Preserve its
+original bytes and adjacent
+.merlin.json recipe/provenance. This is synthetic designer output, not a modem
+measurement; the binary alone does not carry that provenance declaration.
+Use the matching examples/workbench/single/modulation-profile.bin identified
+by its exact grid and the sidecar's decoded profile hash. Discover all captured
+profiles through Rust, run each independently with Individual selection, explicit
+unity physical channel and SuppliedChannel correction. Do not import an unrelated
+channel response or apply the designer recipe twice. Use named settings matching
+both languages, explicit 90,000-second fixture association tolerance and finite
+1ms observation/300s execution budgets. Validate independent language runs for
+per-profile status/FEC/BER parity, original hashes, formatting and example Clippy.
+
+### API-EXAMPLES-12: place designed input with shared capture examples
+
+Move the custom binary and unchanged adjacent provenance sidecar into
+examples/measurements/designed-rxmer/. Keep API source under examples/api and
+reuse the existing compatible single-workbench profile. Update path constants,
+current documentation links and measurement indexes. Add a focused collection
+README describing synthetic origin, export quantization and paired-example use.
+Verify original hashes, links and actual Rust/Python runs from the new location;
+no binary conversion, recipe edits or engine changes are required.
