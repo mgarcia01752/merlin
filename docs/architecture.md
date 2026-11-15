@@ -1884,7 +1884,9 @@ closed-loop experiment, resetting source/receiver/noise/playback state under
 identical configured conditions and seeds. It does not switch profiles mid-run.
 Receiver Profile Performance combines measured post-equalization MER,
 ideal profile minimum MER and per-profile TotalCW/CCW/UFEC counters, with bounded
-instrument retention and independent source verification. The reusable FecCounters type owns private counters and exposes getters and
+instrument retention and independent source verification. Retained assignment
+roles define a first-to-last PLC band; the Qt Rust adapter clips it to the
+requested viewport and QML paints it behind both curves. The reusable FecCounters type owns private counters and exposes getters and
 copyable snapshots. CCW includes actual LDPC hard-decision changes and BCH
 corrections, while source mismatches remain independently reported. See the
 [profile performance design](development/features/profile-performance/design.md).

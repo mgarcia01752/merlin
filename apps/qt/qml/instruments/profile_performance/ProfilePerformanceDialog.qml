@@ -61,6 +61,7 @@ WorkbenchDialog {
             Layout.fillWidth: true; spacing: 24
             Label { text: "━  Receiver MER"; color: dialog.theme.dark ? "#79b8ff" : "#2563b9" }
             Label { text: "━  Ideal Profile Minimum"; color: dialog.theme.dark ? "#45cf83" : "#187344" }
+            Label { text: "▰  PLC"; color: dialog.theme.dark ? "#f2bd40" : "#946a08"; visible: (dialog.viewport.bands || []).length>0 }
             Item { Layout.fillWidth: true }
             Label { text: "Undetected Errors: " + (dialog.viewport.fec ? dialog.viewport.fec.undetected_errors : "—"); color: dialog.theme.muted }
         }

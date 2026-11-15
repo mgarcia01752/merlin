@@ -179,3 +179,25 @@ undetected errors. The current dark screenshot is in the linked
 [user guide](../../../user/receiver-profile-performance.md). Native diagnostics
 were empty. The latest Qt executable is built. No commit, tag, push, installer
 publication or installed-package update was performed.
+
+## UI-RX-PERF-02: PLC region on performance plots
+
+Retain each assignment's PLC role beside the bounded performance points. Rust
+derives one continuous first-to-last PLC band for the selected result, clipped
+to the original-grid viewport. QML paints a translucent gold band behind both
+curves using the established measurement-plot style. No PLC is inferred from
+MER or the current applied profile. Missing PLC and nonoverlapping zooms show
+no band. Preserve counters, curves and navigation. Test disjoint assignments,
+clipping, profile independence and a one-point viewport; run Qt checks, rebuild
+and refresh the native dark performance screenshot.
+
+Validation: Qt formatting, warnings-denied Clippy, all 81 adapter tests
+(60.34s), native build and all 74 QML checks (11.757s) passed. Native VM
+verification used the existing captured channel-193 workbench with actual
+three-profile simulation results. The final profile completed with 124 TotalCW,
+34 CCW, 90 CleanCW, 0 UFEC and 0 undetected errors. First-to-last shading
+rendered at full span and after drag zoom in both dark/light themes. Refreshed
+the full-span guide capture and added a zoomed dark capture. Native diagnostics
+were empty. The isolated review process was closed without saving WB changes.
+The first Clippy attempt flagged test-module placement; it was corrected before
+the successful full check. Engine, MER and counter calculations are unchanged.

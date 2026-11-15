@@ -17,6 +17,7 @@ struct Point {
     mer: Option<f64>,
     ideal: Option<f64>,
     samples: u64,
+    plc: bool,
 }
 struct Entry {
     id: u8,
@@ -86,6 +87,7 @@ pub(crate) fn retain(profile: &CapturedProfile, result: &ResultData) {
                     .expect("Validated captured grid"),
                 mer: mer.and_then(|m| m.mer_db()),
                 samples: mer.map_or(0, |m| m.samples()),
+                plc: a.carrier_type == CarrierType::Plc,
                 ideal: if matches!(
                     a.carrier_type,
                     CarrierType::Data | CarrierType::ContinuousPilot | CarrierType::Plc
@@ -167,12 +169,28 @@ pub(crate) fn view(id: i32, start: i32, count: i32) -> Value {
             series.push(json!({"id":if ideal {0}else{1},"points":points}));
         }
         json!({"available":true,"profiles":profiles,"profile_id":entry.id,"channel":entry.channel,"status":entry.status,"fec":entry.fec,"ber":entry.ber,"unrecovered":entry.pending,"error":entry.error,
-            "total":total,"start":start,"count":count,"points":[{"x":0},{"x":1}],"series":series,"lanes":[],"markers":[],"axis_label":"MER (dB)",
+            "total":total,"start":start,"count":count,"points":[{"x":0},{"x":1}],"series":series,"bands":plc_bands(&entry.points,start,end),"lanes":[],"markers":[],"axis_label":"MER (dB)",
             "samples":entry.points.iter().map(|p|p.samples).sum::<u64>(),"scope":"Measured data-region cells · FEC: contained payload words · Each captured profile runs as Profile A (wire ID 0)",
             "summary":format!("Frequency selection: {:.3} – {:.3} MHz",f64::from(first)/1e6,f64::from(last)/1e6),
             "x_ticks":(0..=4).map(|i|json!({"x":f64::from(i)/4.0,"label":format!("{:.3}",(f64::from(first)+f64::from(i)/4.0*f64::from(last-first))/1e6)})).collect::<Vec<_>>(),
             "y_ticks":(0..=4).map(|i|json!({"x":f64::from(i)/4.0,"label":format!("{:.1}",maximum-f64::from(i)/4.0*(maximum-minimum))})).collect::<Vec<_>>()})
     })
+}
+
+// Coordinates use original carrier centers, independently of curve decimation.
+fn plc_bands(points: &[Point], start: usize, end: usize) -> Value {
+    let mut carriers = points.iter().enumerate().filter(|(_, point)| point.plc);
+    let Some((first, _)) = carriers.next() else {
+        return json!([]);
+    };
+    let last = carriers.next_back().map_or(first, |(index, _)| index);
+    if start >= end || last < start || first >= end {
+        return json!([]);
+    }
+    let denominator = (end - start - 1).max(1) as f64;
+    let left = (first.saturating_sub(start) as f64 / denominator).min(1.0);
+    let right = (last.saturating_sub(start) as f64 / denominator).min(1.0);
+    json!([{"first":left,"last":right,"label":"PLC"}])
 }
 
 /// Reads one bounded retained FEC summary without selecting other instruments.
@@ -222,4 +240,48 @@ pub(crate) fn fec_view(id: i32) -> Value {
         result["profiles"] = json!(profiles);
         result
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn plc_band_uses_selected_profile_centers_and_clips_without_decimation() {
+        let mut points: Vec<_> = (0..101)
+            .map(|index| Point {
+                hz: 100_000_000 + index * 25_000,
+                mer: None,
+                ideal: None,
+                samples: 0,
+                plc: index == 10 || index == 20,
+            })
+            .collect();
+        assert_eq!(
+            plc_bands(&points, 0, 101),
+            json!([{"first":0.1,"last":0.2,"label":"PLC"}])
+        );
+        assert_eq!(
+            plc_bands(&points, 15, 26),
+            json!([{"first":0.0,"last":0.5,"label":"PLC"}])
+        );
+        assert_eq!(
+            plc_bands(&points, 11, 20),
+            json!([{"first":0.0,"last":1.0,"label":"PLC"}])
+        );
+        assert_eq!(plc_bands(&points, 30, 40), json!([]));
+        assert_eq!(
+            plc_bands(&points, 20, 21),
+            json!([{"first":0.0,"last":0.0,"label":"PLC"}])
+        );
+        for point in &mut points {
+            point.plc = false;
+        }
+        assert_eq!(plc_bands(&points, 0, 101), json!([]));
+        points[50].plc = true;
+        assert_eq!(
+            plc_bands(&points, 0, 101),
+            json!([{"first":0.5,"last":0.5,"label":"PLC"}])
+        );
+    }
 }

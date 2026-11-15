@@ -44,6 +44,16 @@ ColumnLayout {
                 ctx.fillText(tick.label,left+tick.x*w,height-20)
             }
             ctx.textAlign = "center"; ctx.fillText("Frequency · MHz",left+w/2,height-3)
+            for (const band of chart.viewport.bands || []) {
+                const first=left+band.first*w, last=left+band.last*w
+                ctx.fillStyle=Qt.rgba(0.95,0.74,0.25,0.24)
+                ctx.fillRect(first,top,Math.max(1,last-first),h)
+                ctx.strokeStyle=Qt.rgba(0.95,0.74,0.25,0.75)
+                ctx.beginPath();ctx.moveTo(first,top);ctx.lineTo(first,top+h)
+                ctx.moveTo(last,top);ctx.lineTo(last,top+h);ctx.stroke()
+                ctx.fillStyle=chart.theme.muted;ctx.textAlign="left"
+                ctx.fillText(band.label,Math.min(first+3,left+w-25),top+12)
+            }
             for (const series of chart.viewport.series || []) {
                 ctx.strokeStyle = chart.profileColor(series.id); ctx.fillStyle = ctx.strokeStyle
                 let previous = null

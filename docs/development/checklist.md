@@ -1009,6 +1009,9 @@ See [setup](setup.md) and [design](features/development-setup/design.md).
   including LDPC-only correction evidence and observation-window semantics.
 - [x] **UI-RX-PERF-01** Add Receiver Profile Performance: measured MER and ideal
   profile minimum MER overlay, profile selection and matching FEC counters.
+- [x] **UI-RX-PERF-02** Shade the selected result’s first-to-last PLC region
+  behind both curves, clipping to the viewport. All 81 adapter and 74 QML
+  checks pass; native dark/light and zoom verified with real run results.
 
 [Design](features/profile-performance/design.md). Core, Qt and native VM
 validation are complete; the user guide includes the current dark capture.

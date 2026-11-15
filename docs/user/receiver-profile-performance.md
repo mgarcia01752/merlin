@@ -50,6 +50,11 @@ flowchart LR
   `10 log10(2^bits − 1)`, including captured pilot/PLC reference dips. It is not
   a normative DOCSIS receiver requirement.
   Use DPD's View Profile window for the separate bit-loading view.
+- **Gold shading — PLC:** one continuous region from the selected result’s
+  first to last PLC carrier, including the carriers between them. It uses that
+  run’s modulation profile and clips when zoomed. At full span a narrow PLC
+  region can look like a line; zoom in to see its width. The shading does not
+  change measured MER, ideal reference values or FEC counters.
 - **Frequency:** the original capture grid in MHz. Scroll to zoom, drag to select
   a range and use **Full Span** to restore it. Hover for bounded group extrema.
   Missing readings stay gaps; exact zero-error comparisons have no finite dB
@@ -87,3 +92,7 @@ See [Receiver Workbench](receiver-workbench.md),
 [FEC counter model](simulation/fec-counters.md),
 [FEC and MER Rust APIs](../reference/public-api.md) and
 [closed-loop controls](closed-loop-workbench.md).
+
+Zooming into PLC makes its narrow first-to-last region easier to see:
+
+![Receiver performance with PLC zoom](../images/workbench/receiver-profile-performance-plc-zoom-dark.png)
