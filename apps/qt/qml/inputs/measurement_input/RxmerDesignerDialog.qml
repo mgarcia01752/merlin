@@ -154,10 +154,11 @@ WorkbenchDialog {
         RowLayout {
             Layout.fillWidth:true;Layout.fillHeight:true;spacing:18
             ScrollView {
+                id:effectsScroll;objectName:"designerEffectsScroll"
                 Layout.preferredWidth:400;Layout.fillHeight:true;clip:true;enabled:!dialog.working
                 contentWidth:availableWidth
                 ColumnLayout {
-                    width:parent.width;spacing:8
+                    width:effectsScroll.availableWidth;spacing:8
                     Label {text:"Frequency effects";color:theme.accent;font.bold:true}
                     CheckBox {id:tilt;objectName:"designerTilt";text:"RxMER tilt";onToggled:dialog.refresh()}
                     RowLayout {enabled:tilt.checked;opacity:enabled ? 1:0.5
@@ -236,8 +237,16 @@ TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.r
                     RxmerDesignScope {id:rippleScope;theme:dialog.theme;captureCount:dialog.captureCount;onEdited:dialog.refresh()}
                     Rectangle {Layout.fillWidth:true;height:1;color:theme.line}
                     CheckBox {id:notch;objectName:"designerNotch";text:"LTE / 5G-style notch";onToggled:dialog.refresh();ToolTip.visible:hovered || activeFocus;ToolTip.text:"Synthetic reduction in MER over a frequency band, not an LTE or 5G waveform simulation."}
-                    GridLayout {columns:6
-                        Label {text:"Center MHz";color:theme.text}
+                    GridLayout {
+                        id:notchFields;objectName:"designerNotchFields"
+                        Layout.fillWidth:true
+                        // Native font metrics can make two groups exceed the editor's clip.
+                        readonly property real pairedWidth: Math.max(notchCenterLabel.implicitWidth,notchDepthLabel.implicitWidth)
+                            + center.Layout.preferredWidth + notchCenterSteps.implicitWidth
+                            + Math.max(notchWidthLabel.implicitWidth,notchEdgeLabel.implicitWidth)
+                            + bandwidth.Layout.preferredWidth + notchWidthSteps.implicitWidth + 5*columnSpacing
+                        columns:effectsScroll.availableWidth>=pairedWidth ? 6:3
+                        Label {id:notchCenterLabel;text:"Center MHz";color:theme.text}
                         TextField {
                             id:center;objectName:"designerNotchCenter";text:"";Layout.preferredWidth:75
                             Accessible.name:"Notch center in MHz"
@@ -246,14 +255,14 @@ TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.r
                             Keys.onDownPressed:dialog.stepNotch(center,-1)
                         }
                         StepButtons {
-                            theme:dialog.theme;namePrefix:"designerNotchCenter"
+                            id:notchCenterSteps;theme:dialog.theme;namePrefix:"designerNotchCenter"
                             canIncrease:dialog.canStepNotch(center,1);canDecrease:dialog.canStepNotch(center,-1)
                             increaseDescription:"Increase notch center by 1 MHz"
                             decreaseDescription:"Decrease notch center by 1 MHz"
                             onIncreaseRequested:dialog.stepNotch(center,1)
                             onDecreaseRequested:dialog.stepNotch(center,-1)
                         }
-                        Label {text:"Width MHz";color:theme.text}
+                        Label {id:notchWidthLabel;text:"Width MHz";color:theme.text}
                         TextField {
                             id:bandwidth;objectName:"designerNotchWidth";text:"10";Layout.preferredWidth:65
                             Accessible.name:"Notch width in MHz"
@@ -262,14 +271,14 @@ TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.r
                             Keys.onDownPressed:dialog.stepNotch(bandwidth,-1)
                         }
                         StepButtons {
-                            theme:dialog.theme;namePrefix:"designerNotchWidth"
+                            id:notchWidthSteps;theme:dialog.theme;namePrefix:"designerNotchWidth"
                             canIncrease:dialog.canStepNotch(bandwidth,1);canDecrease:dialog.canStepNotch(bandwidth,-1)
                             increaseDescription:"Increase notch width by 1 MHz"
                             decreaseDescription:"Decrease notch width by 1 MHz"
                             onIncreaseRequested:dialog.stepNotch(bandwidth,1)
                             onDecreaseRequested:dialog.stepNotch(bandwidth,-1)
                         }
-                        Label {text:"Depth dB";color:theme.text}
+                        Label {id:notchDepthLabel;text:"Depth dB";color:theme.text}
                         TextField {
                             id:depth;objectName:"designerNotchDepth";text:"18";Layout.preferredWidth:75
                             Accessible.name:"Notch depth in dB"
@@ -285,7 +294,7 @@ TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.r
                             onIncreaseRequested:dialog.stepNotch(depth,1)
                             onDecreaseRequested:dialog.stepNotch(depth,-1)
                         }
-                        Label {text:"Edge MHz";color:theme.text}
+                        Label {id:notchEdgeLabel;text:"Edge MHz";color:theme.text}
                         TextField {
                             id:edge;objectName:"designerNotchEdge";text:"1";Layout.preferredWidth:65
                             Accessible.name:"Notch edge in MHz"

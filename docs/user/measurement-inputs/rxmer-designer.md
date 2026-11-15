@@ -33,7 +33,9 @@ field’s Up/Down keys remain available. Arrows are disabled until the effect is
 enabled, and cannot step outside valid bounds. Crest-spacing arrows are inactive
 when the echo-distance helper is selected. A notch must remain inside the
 capture frequency range, with edge width no greater than half its total width.
-Changing a field preserves the capture range and chart zoom.
+Changing a field preserves the capture range and chart zoom. With larger fonts
+or a narrow editor, notch controls stack one label/field/arrow group per row so
+the arrows remain inside the visible editor.
 
 The preview overlays the original dashed curve and
 the designed solid curve on the same RxMER axis. A single shaded **PLC** region

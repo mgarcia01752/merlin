@@ -1519,3 +1519,8 @@ validation are complete; the user guide includes the current dark capture.
   and Bash for Ubuntu; fold shared smoke arguments portably. Local YAML and
   tooling checks pass; hosted patch verification remains pending.
   [Failure and fix](features/high-level-api/design.md#api-wheel-02-native-windows-shell-and-linker).
+
+- [x] **RXMER-DESIGN-12** Keep notch arrows clickable with native larger fonts
+  using measured-width layout reflow. All 82 adapter/77 QML checks and native
+  mouse stepping pass; refresh Designer images. Hosted Windows patch is pending.
+  [Design](features/rxmer-designer/design.md#rxmer-design-12-font-aware-notch-field-layout).

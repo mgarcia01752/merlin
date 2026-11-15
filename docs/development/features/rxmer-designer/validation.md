@@ -132,3 +132,24 @@ No Windows native compilation/runtime, MSI lifecycle, macOS or other Python ABI
 was tested. Collection publication returns unsupported outside Linux/Windows.
 The passing local checks do not establish modem interoperability or DOCSIS 4.0
 file-format equivalence. Nothing was committed, published or installed system-wide.
+
+## RXMER-DESIGN-12: native-font clipping regression
+
+[v0.3.0 release run](https://github.com/mgarcia01752/merlin/actions/runs/43696778449)
+failed the Windows notch width mouse step. Local Qt 6.8.3 reproduction with an
+18 px dialog font likewise left width at 10: its arrow was outside the clipped
+400 px editor. The responsive grid now selects one or two groups per row from
+actual available width and native font metrics. Its parent column uses the
+scroll view's available width directly, avoiding implicit-width feedback.
+
+The final `scripts/qt-desktop.sh check` passes formatting, warnings-denied
+Clippy, 82 Rust adapter tests (54.49 s), native build and 77 QML checks (13.27 s).
+Designer-only coverage passes all 14 cases, including both column counts,
+large-font/narrow-editor clip bounds and mouse stepping for center, width,
+depth and edge. Scientific calculations and all disabled/input guards are unchanged.
+A rebuilt native VM window also accepted width 10 → 11 → 10 using the mouse.
+Refreshed full-span and PLC-zoom dark screenshots show actual imported captures,
+−4 dB tilt, 2 dB ripple and an 18 dB/10 MHz notch. Originals were not overwritten;
+the review process closed without applying or saving the draft. Local logs are
+ignored under `docs/development/local/release-monitor/`. Hosted Windows validation
+requires the pending patch release; Linux success is not Windows verification.

@@ -2380,3 +2380,11 @@ adds no simulation logic to Python or Qt dependencies. Only tested wheel/checksu
 artifacts enter release collection; both platforms and existing security/native
 gates are mandatory. Windows remains unverified until its hosted job passes.
 See the [separate wheel release guide](user/python/releases.md).
+
+### Font-aware Designer notch controls (RXMER-DESIGN-12)
+
+The Qt Designer notch grid compares its available width with the measured label,
+field and arrow widths. It uses two groups per row when they fit, otherwise one
+group per row, keeping mouse targets within the clipped effects editor. This is
+presentation only; existing Rust validation, frequency units and recipe semantics
+are unchanged. [Design](development/features/rxmer-designer/design.md#rxmer-design-12-font-aware-notch-field-layout).

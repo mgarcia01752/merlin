@@ -188,3 +188,20 @@ single JSON/binary and two-capture collection saves, and installed viewer decode
 were verified. Python export/lifecycle/selection parity passed with a rebuilt
 local cp310 Linux wheel. See [validation](validation.md#rxmer-design-11-binary-and-json-save)
 for timings, evidence boundaries and unverified targets.
+
+## RXMER-DESIGN-12: font-aware notch field layout
+
+Release v0.3.0 Windows QML testing failed the notch width mouse step (10 remained
+10 instead of 11). Reproduced locally with an 18 px dialog font: the six-column
+notch grid extends its width arrow beyond the clipped 400 px editor. Preserve
+all validation and actions. Measure the two groups from label/field/arrow widths
+and grid spacing, then select six columns only when they fit; otherwise use
+three columns, one label/field/arrow group per row. Test the actual mouse actions
+and clip bounds at a larger font as well as the existing normal-font sequence.
+Run native Qt checks and retain layout screenshots. Scientific behavior is unchanged.
+
+The effects column is explicitly sized from ScrollView.availableWidth. Reflow
+uses that available width rather than the grid's own implicit width, avoiding a
+self-constraining layout. Regression coverage checks a 12 px font in a 600 px
+editor (six columns) and an 18 px font in a 350 px editor (three columns), then
+verifies visible arrow bounds and mouse steps on all four fields.

@@ -4,6 +4,7 @@
  */
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 import QtTest
 import "../qml/theme"
 import "../qml/inputs/measurement_input"
@@ -151,6 +152,36 @@ Pane {
             depth.text="2.5";dialog.stepNotch(depth,1);compare(backend.lastRequest.recipe.notch.depth_db,3.5)
             findChild(dialog,"designerNotch").checked=false
             dialog.stepNotch(depth,1);compare(depth.text,"3.5")
+        }
+        function test_notch_mouse_steps_fit_editor_with_large_font(){
+            const originalSize=dialog.font.pixelSize
+            const scroll=findChild(dialog,"designerEffectsScroll")
+            const originalWidth=scroll.Layout.preferredWidth
+            try {
+                dialog.font.pixelSize=12;scroll.Layout.preferredWidth=600
+                dialog.open();tryCompare(dialog,"visible",true)
+                verify(waitForRendering(dialog.contentItem))
+                compare(findChild(dialog,"designerNotchFields").columns,6)
+                dialog.font.pixelSize=18;scroll.Layout.preferredWidth=350
+                findChild(dialog,"designerNotch").checked=true
+                verify(waitForRendering(dialog.contentItem))
+                compare(findChild(dialog,"designerNotchFields").columns,3)
+                for (const name of ["Center","Width","Depth","Edge"]) {
+                    const field=findChild(dialog,"designerNotch"+name)
+                    const up=findChild(dialog,"designerNotch"+name+"Up")
+                    const down=findChild(dialog,"designerNotch"+name+"Down")
+                    verify(up.enabled);verify(down.enabled)
+                    const point=up.mapToItem(scroll,0,0)
+                    verify(point.x>=0 && point.x+up.width<=scroll.width,name+" arrow is horizontally clipped")
+                    verify(point.y>=0 && point.y+up.height<=scroll.height,name+" arrow is vertically clipped")
+                    const value=Number(field.text)
+                    mouseClick(up);compare(Number(field.text),value+1,name+" mouse increase")
+                    mouseClick(down);compare(Number(field.text),value,name+" mouse decrease")
+                }
+            } finally {
+                dialog.font.pixelSize=originalSize
+                scroll.Layout.preferredWidth=originalWidth
+            }
         }
         function test_json_save_remains_available_outside_binary_range(){
             backend.exportAllowed=false;backend.exportSaves=0
