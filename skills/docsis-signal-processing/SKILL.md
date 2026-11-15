@@ -30,3 +30,7 @@ description: Implement or review DOCSIS OFDM Channel Sim signal-processing and F
   tables/figures. Tests need independent evidence, not only reversible transforms.
 - Apply public-api and scientific-testing. All simulation JSON fields are Rust
   models/calculations shared by CLI and future adapters.
+
+For field RxMER/profile screening, FEC margin interpretation and empirical
+validation cases, use [docsis-pnm-rxmer-fec](../docsis-pnm-rxmer-fec/SKILL.md).
+Its PNM guidance supplements the versioned PHY evidence; it does not replace it.

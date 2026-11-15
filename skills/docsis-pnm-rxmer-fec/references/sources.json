@@ -1,0 +1,28 @@
+{
+  "extraction": "pdftotext -layout; UTF-8; form feeds replaced with 1-based PDF_PAGE markers",
+  "authority": "Original CableLabs PDF; text is a lookup representation, not a replacement.",
+  "sources": [
+    {
+      "document": "CM-GL-PNM-3.1-V02-210114",
+      "publication_date": "2021-01-14",
+      "pages": 175,
+      "pdf_sha256": "9935686beaee942677f60138f8ddc83ba7faadcc95fab5c7920bfb7699c87b2f",
+      "text_sha256": "191d6f64fd631157aca567971b42e1371f986128482a3d064c9ea6b4d5f599c8",
+      "local_pdf": "docs/development/local/specs/pnm-best-practices/CM-GL-PNM-3.1-V02-210114.pdf",
+      "text": "v02-full.txt",
+      "download": "https://www.cablelabs.com/specifications/CM-GL-PNM-3.1",
+      "direct_pdf": "https://account.cablelabs.com/server/alfresco/c021877d-cce7-434a-b3ac-9cc466d6c601"
+    },
+    {
+      "document": "CM-GL-PNM-3.1-V05-230927",
+      "publication_date": "2023-09-27",
+      "pages": 252,
+      "pdf_sha256": "4c5b457d848db4397c8ff036146cbee155b70e1df281ff5b544e77a217ccb3fd",
+      "text_sha256": "c11ef9a05f6772ddb42c9e3b54e83c043c07d78f2b7a80d9b5cb32a9e7efb92c",
+      "local_pdf": "docs/development/local/specs/pnm-best-practices/CM-GL-PNM-3.1-V05-230927.pdf",
+      "text": "v05-full.txt",
+      "download": "https://www.cablelabs.com/specifications/CM-GL-PNM-3.1",
+      "direct_pdf": null
+    }
+  ]
+}

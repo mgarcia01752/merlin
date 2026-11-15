@@ -1581,3 +1581,8 @@ validation are complete; the user guide includes the current dark capture.
 - [x] API-INSTALL-02: Accept newer host Python, match downloaded wheel ABI and
   configure shared CI/CD source-installer checks with version-only smoke.
 - [ ] Observe hosted installer results across the configured platform matrix.
+
+- [x] PNM-REF-01: Review V05/V02 RxMER/FEC guidance; add pinned text, PDF
+  download links and discoverable [reference skill](../../skills/docsis-pnm-rxmer-fec/SKILL.md).
+- [ ] Implement profile-relative carrier counts and verify field-capture FEC
+  behavior; reference-skill completion does not establish simulation validity.

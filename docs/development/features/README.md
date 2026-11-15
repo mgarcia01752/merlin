@@ -1,5 +1,7 @@
 # Feature development records
 
+- [PNM RxMER/FEC reference skill](pnm-reference-skill/design.md)
+
 - [Generated Rust and Basic Python API reference](../../reference/api-reference.md) · [design](high-level-api/design.md#api-doc-01-generated-high-level-rust-and-python-references)
 
 - [RxMER Designer](rxmer-designer/design.md) · [validation](rxmer-designer/validation.md) · [PNM export plan](rxmer-designer/pnm-export-plan.md)

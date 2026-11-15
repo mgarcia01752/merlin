@@ -92,3 +92,6 @@ Channel conditioning and shared TapPoint instruments (UI-RF-01):
 [Responsive channel workspace (UI-RF-02)](features/rf-power-budget/design.md#ui-rf-02-responsive-channel-workbench-spacing) uses available window space with balanced margins and equal gaps.
 
 [Ubuntu 22.04 desktop DEB and update notification](features/ubuntu-desktop/design.md) tracks packaging, application-global release checks and hosted acceptance.
+
+Use the [PNM RxMER/FEC skill](../../skills/docsis-pnm-rxmer-fec/SKILL.md) for
+reviewed CableLabs guidance, searchable V05/V02 text and original PDF links.
