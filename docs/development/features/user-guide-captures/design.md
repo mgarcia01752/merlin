@@ -105,3 +105,30 @@ whitespace. This task does not change scientific code or authorize commit/push.
 See the [per-file PNG audit](png-audit.md) for all 99 original assets,
 including refreshed native screenshots, retained light branding, historical
 proposals, removed unused images and validation evidence.
+
+## UI-DOC-03: receiver-mode and Designer documentation refresh
+
+Audit current receiver-mode and Designer guides against the latest native
+release executable. Replace the stale general Receiver Configuration screenshot
+with the current three-mode dropdown, add a native dropdown view where useful,
+and retain already-current MCE/Designer captures. Correct nearby text describing
+the visible capture state; link the new designed-input Rust/Python examples.
+Use the actual dark VM with disposable draft settings and close only the owned
+review process without saving any WB. No UI/core changes or rebuild are needed.
+Validate screenshot rendering, image integrity, guide links and documentation
+consistency; record the bounded audit outcome without claiming all images were
+recaptured or other operating systems tested.
+
+### UI-DOC-03 validation
+
+Replaced the stale general receiver image and added the native three-mode menu
+crop. Visually inspected the supplied dialog, mode menu, existing MCE dialog
+and four Designer/control/save screenshots. All 100 tracked/new PNGs passed
+integrity checks; 441 relative links in changed documents resolved (0.10s
+combined automated validation). Generated integration guide remains current and
+diff whitespace passes. Corrected the Designer caption and linked the custom
+input workflow from Designer, Rust/Python and central documentation.
+The owned native review process was closed without saving a WB. Architecture
+was reviewed; documentation/assets change no ownership or contracts, so no
+architecture edit or simulation/Qt test rerun is required. Windows appearance
+and other unrelated screenshots were not revalidated at runtime.

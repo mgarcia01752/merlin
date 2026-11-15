@@ -1484,3 +1484,9 @@ validation are complete; the user guide includes the current dark capture.
   Both native examples pass from the new paths (42.99s); result fields and
   input hashes remain unchanged. Formatting, Clippy and links pass.
   [Design](features/high-level-api/design.md#api-examples-12-place-designed-input-with-shared-capture-examples).
+
+- [x] **UI-DOC-03** Refresh the general Receiver Configuration PNG and add
+  a native three-choice dropdown capture. Review current MCE/Designer PNGs,
+  correct visible-state captions and link designed-input API examples.
+  [Design](features/user-guide-captures/design.md#ui-doc-03-receiver-mode-and-designer-documentation-refresh),
+  [audit](features/user-guide-captures/png-audit.md#ui-doc-03-receiver-mode-follow-up).

@@ -14,7 +14,7 @@ engine. Instrument selections do not determine readiness.
 3. Use main **Configure WorkBench** beside Start. Set duration per profile, total run
    budget and noise seed. In **Profiles**, check the profiles to run. New WBs
    initially select the applied profile; at least one is required for Start.
-4. Use **Receiver → Configure Receiver…** for correction mode and decoder
+4. Use **Receiver → Configure Receiver…** for receiver mode and decoder
    iteration limit. WB/Receiver options can be accepted before all inputs are
    present; readiness becomes green only after full request validation.
 5. Open **PRBS-RX → Enable Comparison**. When all blocks are green, the WB is
@@ -28,7 +28,12 @@ fit within this interval. For example, 1000 symbols at 25 kHz/CP512 need more th
 42.5 ms, so a 3 ms run correctly rejects that schedule. Timing uses the supported
 known-boundary bootstrap; this UI does not claim arbitrary RF acquisition.
 
-![Receiver and run configuration](../images/workbench/receiver-configuration-dark.png)
+The default **Supplied CM channel estimate** uses the supplied response, or a
+flat reference when absent. The other choices estimate channel correction from
+pilots, with MCE also estimating decoder noise confidence. See the
+[receiver-mode comparison](receiver-estimation/modes.md).
+
+![Current Receiver Configuration with the supplied CM mode](../images/workbench/receiver-configuration-dark.png)
 
 ![Ready workbench with accepted inputs](../images/workbench/workbench-header-dark.png)
 

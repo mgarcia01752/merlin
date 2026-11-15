@@ -7,8 +7,10 @@ an association anchor; it is not a measured acquisition time.
 
 ![RxMER Designer with tilt, ripple, a synthetic notch and PLC shading](../../images/workbench/rxmer-designer-dark.png)
 
-The preview above shows a new flat sequence with 50 captures and tilt, ripple
-and a synthetic notch enabled for all captures.
+The preview above shows two imported captures with tilt, ripple and a synthetic
+notch enabled for both. The stacked arrows sit beside each editable value, and
+**Save** is at the lower left. The separate main-chart screenshot below shows
+a generated 50-capture sequence with three captures selected.
 
 Enable the effects you need. When **RxMER tilt** is unchecked, its value,
 arrows, direction button and capture-range controls are disabled. Their settings
@@ -133,3 +135,14 @@ DOCSIS 3.1 CM-OSSI I27 D.2.8/Table 68 text evidence and the pinned Apache Rust
 reader's byte order; no DOCSIS 4.0 format equivalence is claimed. See the
 [export design and validation](../../development/features/rxmer-designer/pnm-export-plan.md).
 Workbench **Save** remains the editable recipe/baseline record described above.
+
+## Use a designed capture from Rust or Python
+
+The [designed-RxMER example collection](../../../examples/measurements/designed-rxmer/README.md)
+contains an exported PNM binary and its unchanged recipe/provenance sidecar.
+Matching [Rust and Python API examples](../../../examples/api/README.md#custom-designed-rxmer)
+load that binary, discover all profiles from its compatible modulation-profile
+capture and explicitly run each one. They use the encoded values directly;
+they neither reapply the recipe nor start simulation while loading. Native
+binary loading does not automatically read the sidecar, so keep it alongside
+the binary to preserve the synthetic-origin declaration and design settings.

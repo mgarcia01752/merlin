@@ -13,6 +13,23 @@ claim about an existing release asset. The tested development target is Ubuntu
 For PyPNM or another consumer, see [downstream installation and version
 pinning](integration.md).
 
+## Runnable examples
+
+The [matching Rust/Python example inventory](../../../examples/api/README.md)
+covers single capture, multi-RxMER with MCE or supplied-channel correction,
+saved-workbench settings and a custom designed RxMER input. For the latter:
+
+```bash
+local/api-python-test/bin/python examples/api/python/run_designed_rxmer.py
+```
+
+It loads the binary under `examples/measurements/designed-rxmer/` and runs all
+profiles from the compatible single-bundle profile. These are synthetic values,
+not modem observations; its adjacent sidecar retains the recipe and provenance.
+See the [collection notes](../../../examples/measurements/designed-rxmer/README.md)
+for grid compatibility and the [Designer guide](../measurement-inputs/rxmer-designer.md)
+for PNM/JSON saving and quantization.
+
 ## Load saved UI settings directly
 
 Use `Workbench.from_file(path)` to import embedded captures and saved scientific

@@ -133,3 +133,23 @@ documentation uses the same instrument state.
 - Checked maintained documentation links and removed-image references.
 - Ran `git diff --check`. No Rust or QML source changed; no full test suite run.
 - Linux capture evidence does not establish Windows installer or updater validation.
+
+## UI-DOC-03: receiver-mode follow-up
+
+This bounded follow-up supersedes the earlier receiver-configuration retention
+decision. Actual dark native Ubuntu captures from the current release executable
+were visually reviewed; no shipped workbench or input was saved/modified.
+
+| PNG | Outcome | Review |
+| --- | --- | --- |
+| receiver-configuration-dark.png | Refreshed | Replace obsolete two-mode dialog with the current supplied CM mode and shared Apply/Cancel actions. |
+| receiver-mode-options-dark.png | Added | Actual open dropdown showing all three receiver choices. |
+| mce-receiver-configuration-dark.png | Retained | Already shows the current three-mode selector with conditional MCE averaging. |
+| rxmer-designer-dark.png | Retained | Current stacked arrows and Save action; corrected the guide to describe two imported captures. |
+| rxmer-designer-plc-zoom-dark.png | Retained | Current stacked arrows, Save action and true first-to-last PLC span. |
+| rxmer-designer-main-dark.png | Retained | Separate generated 50-capture sequence, three selected within capacity. |
+| rxmer-designer-save-dark.png | Retained | Current PNM/JSON save choices and export conversion summary. |
+
+These captures verify Linux appearance only. No new UI source changes occurred
+and no rebuild/full Rust or Qt test suites were required. Existing MCE and
+Designer images were inspected rather than unnecessarily regenerated.

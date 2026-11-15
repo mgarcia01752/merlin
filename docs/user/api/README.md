@@ -177,8 +177,9 @@ See the [supported WB contract and Rust example](../python/workbench.md).
 ### Matching Rust and Python collection examples
 
 The [example inventory](../../../examples/api/README.md) provides the same
-single-capture, multi-RxMER MCE, multi-RxMER supplied CM channel estimate and
-saved-WB workflows in both languages. The collection walkthroughs discover all
+single-capture, multi-RxMER MCE, multi-RxMER supplied CM channel estimate,
+saved-WB and custom designed-RxMER workflows in both languages.
+The collection walkthroughs discover all
 captured profiles through Rust, preserve original captures and explicitly run
 each profile with matching policies, seeds, timing and bounds. Their FEC/BER
 values come from the shared simulation engine; no analytical replacements are used.

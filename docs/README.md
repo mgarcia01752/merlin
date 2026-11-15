@@ -50,3 +50,5 @@
 - [Example folder guide](../examples/README.md) · [CLI purposes and use cases](../examples/cli/README.md)
 
 - [High-level Rust and Python API](user/api/README.md)
+- [Matching Rust/Python examples](../examples/api/README.md), including the
+  [custom designed RxMER collection](../examples/measurements/designed-rxmer/README.md)

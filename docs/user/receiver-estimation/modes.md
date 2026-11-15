@@ -13,6 +13,10 @@ discards edits. Apply is unavailable while a simulation is active.
 | **Pilot-based channel estimation** | Estimates correction from received continuous and scattered pilots. | Uses simulator-calibrated noise power. |
 | **Pilot-based channel and noise estimation (MCE)** | Uses the same received-pilot channel-estimation path. | Also estimates noise from received pilots to set decoder confidence. |
 
+![All three receiver-mode choices](../../images/workbench/receiver-mode-options-dark.png)
+
+![Default supplied CM channel-estimate configuration](../../images/workbench/receiver-configuration-dark.png)
+
 ![Receiver Configuration with MCE selected and its averaging control visible](../../images/workbench/mce-receiver-configuration-dark.png)
 
 **Both pilot-based choices derive channel correction from pilots.** MCE does
