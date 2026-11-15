@@ -1572,3 +1572,8 @@ validation are complete; the user guide includes the current dark capture.
   UI and terminology. Add Rust/Python launch gain and CPA setters/getters;
   preserve saved JSON, validate finite bounds and reject changes atomically.
   Targeted Rust/Python and full Qt checks pass; platform scope remains Linux.
+
+- [x] API-INSTALL-01: Separate Python-only source/release installer with local
+  prerequisite checks and release checksum verification; see
+  [installer guide](../../scripts/python-api/README.md).
+- [ ] Validate Python installer end to end on native Windows and clean Ubuntu hosts.

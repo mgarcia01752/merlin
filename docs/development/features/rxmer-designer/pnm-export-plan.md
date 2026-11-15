@@ -154,7 +154,7 @@ from fresh clones). The text was reconciled with the
 pinned reader. Do not
 infer DOCSIS 4.0 equivalence or advertise other file-format versions from this
 review. Preserve applicable licenses/notices. All changes stay in MERLIN; PNM
-Viewer and PyPNM remain read-only references.
+Viewer remains a read-only reference.
 
 ## Delivery and acceptance
 

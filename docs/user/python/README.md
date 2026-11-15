@@ -12,7 +12,7 @@ claim about an existing release asset. The Ubuntu target is 22.04+ x86_64 with C
 remain unverified until hosted CI passes; other Python ABIs are not covered.
 
 For Python-only setup, start with [download and install the Python API](integration.md#quick-start-download-and-install-only-the-python-api).
-For PyPNM or another consumer, see [downstream installation and version
+For your application, see [downstream installation and version
 pinning](integration.md).
 
 The [generated Basic Python API reference](../../reference/api-reference.md) provides

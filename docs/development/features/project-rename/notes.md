@@ -38,7 +38,7 @@ Validation: path/skill links, Cargo metadata, version consistency, helper tests,
 formatting and workflow structure checks. Full Rust tests are preserved from
 the preceding validated commit; they must run again through the pre-push gate.
 
-README badges follow the compact Shields.io style used by PyPNM/OSCAR-UI:
+README badges follow the compact Shields.io style used by OSCAR-UI:
 development status, local version, CI state, pinned Rust, Ubuntu targets and
 license. CI is explicitly not run on GitHub. Replace its static badge with the
 actual repository workflow status once origin is confirmed and CI has run.

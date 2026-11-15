@@ -109,17 +109,17 @@ passed. No simulation code or fixture bytes changed.
 
 ## API-INTEGRATION-01: downstream Python installation
 
-Document consuming the native wheel from a project such as PyPNM, with separate
+Document consuming the native wheel from another Python project, with separate
 package/import names, exact version/asset pins, optional dependency resolution,
 source-tag builds and current unpublished status. Keep all instructions in
-MERLIN; do not modify PyPNM. Validate the concrete local pinned-wheel install in
+MERLIN. Validate the concrete local pinned-wheel install in
 a fresh project-local environment. Published URLs, registry availability and
 cross-platform wheels remain future delivery work until verified.
 
 Validation: a fresh local `api-consumer` environment installed the exact
 `merlin-ofdm==0.2.9` wheel using offline binary-only wheelhouse resolution.
 Import and distribution-version checks passed. Document links and diff
-whitespace checks passed; no PyPNM files or release assets were changed.
+whitespace checks passed; no external project files or release assets were changed.
 
 ## API-INTEGRATION-02: mandatory push-time guide refresh
 
@@ -605,3 +605,21 @@ the serialized key and accepting cpa_attenuation_db as an input alias.
 Test bounds, rejection atomicity, serialized compatibility and Python parity.
 The channel diagram uses CPA; its editor and accessibility label spell out
 Common Path Attenuator (CPA). The terminology page is the shared acronym index.
+
+## API-INSTALL-01 — Standalone Python API installer
+
+Provide scripts/python-api/install.py with no third-party bootstrap dependencies.
+Check host OS/x64, CPython 3.10 and venv/pip bootstrap, and reject unrelated
+existing destinations. Resolve a requested stable release tag through GitHub
+metadata, verify the exact platform wheel against SHA256SUMS, then install into
+an isolated environment and check import/version. Keep downloads and work bounded.
+Check/dry-run must not download or install. Ubuntu 22.04 prerequisites may be
+installed only with an explicit --install-prerequisites option; other systems
+receive actionable guidance. Never install the desktop, CLI or Qt. Mock network
+and subprocess boundaries in tests; native Windows execution remains unverified.
+
+`install.sh --install-pymerlin` delegates to `scripts/python-api/install-local.sh`
+and source mode in the shared installer. It checks the pinned Rust toolchain and
+linker, builds with pinned maturin through the existing notice-aware helper and
+installs into a private environment. Release mode remains compiler-free. Consumer
+documentation names no external application; borrowed-resource provenance stays.

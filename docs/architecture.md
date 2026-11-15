@@ -2457,3 +2457,10 @@ and Simulation setters validate candidate power snapshots before acceptance;
 Python dispatches directly to those methods. No DSP is duplicated, and existing
 JSON/Qt transport retains `attenuation_db`. Getter values are effective gain and
 accepted CPA loss; configuration never runs the engine.
+
+### Python-only installation
+
+`install.sh --install-pymerlin` delegates to `scripts/python-api/`; source builds
+reuse `tools/python/build_wheel.py`. Release installation verifies SHA256SUMS.
+Both routes install into a virtual environment and remain independent of Qt and
+the CLI. See the [installer guide](../scripts/python-api/README.md).

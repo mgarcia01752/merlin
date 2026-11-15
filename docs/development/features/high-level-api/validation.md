@@ -530,8 +530,8 @@ The first discovery attempt correctly rejected the Maturin package wrapper;
 support was then added for its verified native merlin.merlin extension as well
 as direct extension installs. Initial Sphinx underline warnings and two omitted
 result-quantity macro descriptions were corrected before final strict builds.
-An inherited PYTHONPATH exposed unrelated PyPNM metadata to the initial isolated
-pip resolver; subsequent setup/check/build commands clear it. PyPNM was not
+An inherited PYTHONPATH exposed unrelated package metadata to the initial isolated
+pip resolver; subsequent setup/check/build commands clear it. No external project was
 modified or used for documentation. No credentials, private inputs or compiled
 artifacts are tracked. Existing full simulation/Qt suites were not rerun for
 source-documentation and generator changes. Other platforms, publication and
@@ -678,3 +678,12 @@ was performed. Shared release checks are configured to retain per-example times.
 - Full Qt check passed: Clippy, 82 Rust tests (53.90 s), native debug build
   and 77 QML checks (13.58 s). The desktop executable is rebuilt.
 - Full core suite and Windows/macOS checks were not run for this change.
+
+## API-INSTALL-01: Python-only installer
+
+Four offline installer tests passed (0.005 s): stable tag validation, unrelated
+folder protection, dry-run mutation guards and wheel checksum acceptance/rejection.
+Four integration-guide generator tests passed (0.114 s). Shell syntax, source
+prerequisite check, guide freshness and diff whitespace checks passed. No system
+packages were installed. Full source compilation, public release downloads and
+native Windows installation remain unverified for this installer.
