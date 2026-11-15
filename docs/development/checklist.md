@@ -1417,3 +1417,10 @@ validation are complete; the user guide includes the current dark capture.
   using a named precision constant; keep numeric Rust/Python API values intact.
   Both fixture-backed examples pass, retaining unavailable values explicitly.
   [Design](features/high-level-api/design.md#api-example-ber-01-readable-python-ber-output).
+
+- [x] **API-RECEIVER-01** Expose existing receiver correction in Rust options
+  and mirror it in typed Python options/reports. Match the curated collection
+  example to Qt; all three profiles' FEC agree. Validate direct-engine parity,
+  all four RxMER policies across three receiver modes and independent ownership.
+  [Design](features/high-level-api/design.md#api-receiver-01-match-receiver-correction-across-rust-python-and-qt),
+  [validation and measured delta](features/high-level-api/validation.md#api-receiver-01-receiver-settings-and-ui-parity).

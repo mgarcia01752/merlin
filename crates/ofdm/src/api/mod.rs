@@ -9,6 +9,7 @@ mod error;
 mod inputs;
 mod reports;
 mod units;
+pub use crate::signal_processing::receiver::channel_estimation::ReceiverMode;
 pub use crate::transmission::SubcarrierSpacing;
 pub use crate::types::ProtocolScope;
 pub use configuration::*;

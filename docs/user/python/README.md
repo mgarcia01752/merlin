@@ -48,10 +48,11 @@ local/api-python-test/bin/python examples/api/python/multi_rxmer.py
 ```
 
 The collection example runs Profiles 0, 3 and 4 independently, each with the
-Rust residual-power average and explicit unity response. It reports actual FEC
+Rust residual-power average, explicit unity physical response and pilot-estimated
+receiver correction matching the saved workbench. It reports actual FEC
 results and wall time per profile. The observation is 1 ms per profile; increase
 `OBSERVATION_DURATION_MS` for a longer run. See the [example notes](../../../examples/api/README.md) for
-scope and desktop-WB differences.
+scope and matched fixture settings.
 
 For an already-loaded DPD, read its member directly:
 
@@ -213,3 +214,27 @@ Both saves create a companion provenance JSON and reject existing destinations.
 and `to_json_bytes()` return owned bytes without file I/O. All validation and
 conversion stay in Rust; no CLI process is used. See the
 [export API](../../reference/public-api.md#rxmer-capture-export).
+
+### Select receiver correction independently of the channel
+
+```python
+from merlin import EvaluationOptions, ChannelSelection, ReceiverMode
+
+options = EvaluationOptions(
+    channel_selection=ChannelSelection.unity(),
+    receiver_mode=ReceiverMode.PILOT_ESTIMATED,
+)
+```
+
+`ChannelSelection` chooses the applied physical response H. `ReceiverMode`
+chooses how the receiver corrects it: `SUPPLIED_CHANNEL` (the existing default),
+`PILOT_ESTIMATED`, or `MERLIN_ESTIMATED` (MCE with existing engine defaults).
+Unity H can still be received through pilot-estimated correction. Selecting a
+mode does not run simulation. Accepted options and reports retain independent
+snapshots of the choice. All estimation/validation remains in Rust.
+
+The collection example explicitly matches the curated WB's correction mode,
+noise/PRBS seeds, decoder limit, average policy, duration and OCD timing. It does
+not import arbitrary WB JSON; changing that WB requires updating the example's
+named constants. A fixture test guards drift. No change to the original
+single-capture example's receiver default is implied.

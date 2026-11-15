@@ -663,3 +663,104 @@ fn loaded_profile_catalog_survives_source_removal_and_serializes() {
     assert_eq!(loaded.clone().profile_ids(), loaded.profile_ids());
     assert_eq!(loaded.sources()[0].original_bytes(), PROFILE);
 }
+
+#[test]
+fn receiver_selection_is_independent_copied_and_forwarded_for_every_policy() {
+    let mut sim = controller();
+    let epoch = 1380970;
+    let first = sim.add_rxmer(rx(epoch, 40.0)).unwrap();
+    sim.add_rxmer(rx(epoch + 10, 42.0)).unwrap();
+    assert_eq!(sim.options().receiver_mode, ReceiverMode::SuppliedChannel);
+    for mode in [
+        ReceiverMode::SuppliedChannel,
+        ReceiverMode::PilotEstimated,
+        ReceiverMode::MerlinEstimated,
+    ] {
+        for selection in [
+            RxMerSelection::Each,
+            RxMerSelection::Individual(first),
+            RxMerSelection::AverageAll,
+            RxMerSelection::InterpolateAt(CaptureTime::new(epoch + 5).unwrap()),
+        ] {
+            let mut options = sim
+                .options()
+                .clone()
+                .with_receiver_mode(mode)
+                .with_rxmer_selection(selection);
+            sim.set_options(options.clone()).unwrap();
+            options.receiver_mode = ReceiverMode::SuppliedChannel;
+            assert_eq!(sim.options().receiver_mode, mode);
+            for prepared in sim.prepare().unwrap() {
+                assert_eq!(prepared.engine_settings().receiver_mode, mode);
+                assert!(prepared.engine_settings().impairments.response.is_none());
+            }
+        }
+    }
+}
+fn receiver_mode_matches_direct_engine(mode: ReceiverMode) {
+    let mut sim = controller();
+    sim.add_rxmer(RxMer::from_bytes(&input("rx", RX)).unwrap())
+        .unwrap();
+    let mut options = sim.options().clone().with_receiver_mode(mode);
+    options.observation = ObservationDuration::new(1).unwrap();
+    options.limits.runtime = RuntimeLimit::new(300_000).unwrap();
+    sim.set_options(options).unwrap();
+    let prepared = sim.prepare().unwrap();
+    let direct = run_channel(
+        prepared[0].engine_settings(),
+        &ChannelJobLimits {
+            max_runtime_ms: 300_000,
+            max_retained_words: 64,
+        },
+        &AtomicBool::new(false),
+        &mut TestPointProbe::disabled(),
+        &mut NoopObserver,
+        |_| {},
+    )
+    .unwrap();
+    let batch = sim.run().unwrap();
+    let report = batch.iter().next().unwrap().report().unwrap();
+    assert_eq!(report.options().receiver_mode, mode);
+    assert_eq!(report.diagnostics().unwrap().status, direct.status);
+    assert_eq!(
+        report.diagnostics().unwrap().summary.fec,
+        direct.summary.fec
+    );
+    assert_eq!(
+        report.diagnostics().unwrap().summary.comparison,
+        direct.summary.comparison
+    );
+    assert_eq!(
+        report
+            .diagnostics()
+            .unwrap()
+            .summary
+            .window
+            .as_ref()
+            .unwrap()
+            .fec,
+        direct.summary.window.as_ref().unwrap().fec
+    );
+    let before = batch.to_json().unwrap();
+    assert!(before.contains(if mode == ReceiverMode::PilotEstimated {
+        "Pilot-estimated correction"
+    } else {
+        "MCE uses received pilots"
+    }));
+    sim.set_options(
+        sim.options()
+            .clone()
+            .with_receiver_mode(ReceiverMode::SuppliedChannel),
+    )
+    .unwrap();
+    assert_eq!(report.options().receiver_mode, mode);
+    assert_eq!(batch.to_json().unwrap(), before);
+}
+#[test]
+fn pilot_estimated_api_matches_direct_engine_fec_and_owns_mode() {
+    receiver_mode_matches_direct_engine(ReceiverMode::PilotEstimated);
+}
+#[test]
+fn merlin_estimated_api_matches_direct_engine_fec_and_owns_mode() {
+    receiver_mode_matches_direct_engine(ReceiverMode::MerlinEstimated);
+}

@@ -186,3 +186,68 @@ completed in 2.52s and `multi_rxmer.py` completed all discovered profiles in 6.4
 Available zero BER prints `0.000e+00`; `.3e` also renders nonzero rates such as
 `1.234e-06`. Missing BER remains `unavailable`. This is example presentation only;
 Rust and Python result types/calculations are unchanged.
+
+## API-RECEIVER-01: receiver settings and UI parity
+
+The Rust API now exposes the existing ReceiverMode before its typed Python
+adapter. The supplied-channel default is unchanged. Pilot and MCE modes reuse
+existing engine implementations; high-level MCE uses engine defaults. The
+collection example selects PilotEstimated and explicitly matches the curated
+workbench's seeds, limits and timing. A fixture drift test checks these settings.
+
+A controlled A/B run of the same current example changed only RECEIVER_MODE
+from supplied-channel correction to pilot-estimated correction. Native release
+Qt was rebuilt and rerun against the unchanged multi-rxmer-2 WB; its Profile
+Performance counters match the new Python result for every discovered profile:
+
+| Profile | Total CW (both) | Previous Python corrected | Matched Python / Qt corrected | Delta | UFEC (both) |
+| --- | --- | --- | --- | --- | --- |
+| 0 | 83 | 0 | 0 | 0 | 0 |
+| 3 | 114 | 5 | 4 | -1 | 0 |
+| 4 | 124 | 19 | 30 | +11 | 0 |
+| All profiles | 321 | 24 | 34 | +10 | 0 |
+
+All profiles complete, with post-FEC BER zero and UI undetected errors zero.
+Clean codewords therefore change from 297 to 287. Previously Python corrected
+using the exact known unity response, whereas Qt estimated H-hat from noisy
+received pilots. The existing link chooses WaveformReceiver::new with supplied
+H or WaveformReceiver::from_pilots respectively. Different equalized samples
+change decoder inputs and corrected counts. Pilot correction is not guaranteed
+to increase each individual profile's count: Profile 3 decreases by one here.
+The explicit CP, roll-off, depth, seeds and iteration constants already matched
+the old defaults; exposing them removes ambiguity but did not cause this delta.
+The physical unity H, RxMER residual-power average and original captures remain
+identical. No scientific algorithm or reporting counter was replaced.
+
+A subsequent sequential run after validation/build contention ended measured
+4.174s supplied versus 4.553s pilot for total experiment time (+0.379s, about
+9.1%). This single pair is not a benchmark. The earlier UI/Python wall-time gap
+cannot be attributed entirely to this policy: UI timing, observations and host
+load differ. FEC agreement is verified independently of elapsed time.
+
+Validation on Ubuntu x86_64 / CPython 3.10:
+
+- Rust input/API tests: 20 API plus 4 export tests pass; 60.94s including compile,
+  with API tests taking 45.98s. Includes direct-engine pilot/MCE comparisons,
+  all receiver/static-policy forwarding combinations and independent report ownership.
+- Analysis-only core: all 136 tests pass with no default features; Qt/Python
+  dependencies remain absent. Workspace/all-target and Python-adapter Clippy,
+  formatting and no-default-features check pass. All 438 relative links in
+  changed documentation resolve, and the generated integration guide is current.
+- Native wheel rebuilt with notices and installed into the project-local test
+  environment. Eight existing API tests pass in 1.332s, three receiver tests in
+  27.504s, and one export test in 0.228s. Receiver tests include the actual
+  all-profile fixture run and compare observed UI counters.
+- Fresh Rust baselines and native Python comparisons pass for Each, Individual,
+  AverageAll and InterpolateAt under all three receiver policies (12 combinations).
+  Python parity tests take 4.011s supplied, 7.946s pilot and 7.542s MCE.
+- Optimized Qt build passes (4m04s); native UI run confirms each profile's FEC
+  and complete status. The owned review process was closed without saving the WB.
+
+Local-only logs, baseline JSON and native UI captures reside under
+`docs/development/local/api-receiver-parity/`. Concurrent validation influenced
+some wall times; they are execution evidence, not performance benchmarks.
+The full default-feature simulation suite was not rerun for this API forwarding
+change. Windows and other Python/platform targets remain unverified; nothing was
+published or installed system-wide. General WB JSON import and custom high-level
+MCE tuning remain outside this change.

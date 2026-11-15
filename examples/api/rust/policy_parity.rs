@@ -11,6 +11,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .nth(1)
             .ok_or("Supply a new parity output directory")?,
     );
+    let receiver = match std::env::args()
+        .nth(2)
+        .as_deref()
+        .unwrap_or("supplied_channel")
+    {
+        "supplied_channel" => ReceiverMode::SuppliedChannel,
+        "pilot_estimated" => ReceiverMode::PilotEstimated,
+        "merlin_estimated" => ReceiverMode::MerlinEstimated,
+        _ => {
+            return Err(
+                "Receiver mode must be supplied_channel, pilot_estimated or merlin_estimated"
+                    .into(),
+            )
+        }
+    };
     std::fs::create_dir(&output)?;
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../examples/measurements/single-channel");
@@ -67,6 +82,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ] {
         let mut options = EvaluationOptions::default()
             .with_rxmer_selection(selection)
+            .with_receiver_mode(receiver)
             .with_channel_selection(ChannelSelection::Explicit(channel))
             .with_profile_tolerance(AssociationTolerance::new(u32::MAX)?);
         options.observation = ObservationDuration::new(1)?;

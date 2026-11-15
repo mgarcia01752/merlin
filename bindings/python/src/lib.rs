@@ -7,6 +7,7 @@ mod controller;
 mod inputs;
 mod options;
 mod quantities;
+mod receiver;
 mod reports;
 mod rxmer_export;
 use docsis_ofdm_fec::api;
@@ -48,6 +49,7 @@ fn merlin(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add("ApiError", module.py().get_type::<ApiError>())?;
     quantities::register(module)?;
     inputs::register(module)?;
+    receiver::register(module)?;
     options::register(module)?;
     reports::register(module)?;
     controller::register(module)?;

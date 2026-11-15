@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Copied request objects and opaque controller-scoped identities.
-use crate::{api, quantities::*};
+use crate::{api, quantities::*, receiver::PyReceiverMode};
 use pyo3::prelude::*;
 /// Opaque RxMER identity; no integer construction or unscoped fallback.
 #[pyclass(from_py_object, frozen, module = "merlin", name = "RxMerId")]
@@ -196,6 +196,8 @@ pub(crate) struct PyEvaluationOptions {
     #[pyo3(get, set)]
     channel_selection: Option<PyChannelSelection>,
     #[pyo3(get, set)]
+    receiver_mode: PyReceiverMode,
+    #[pyo3(get, set)]
     observation: PyObservationDuration,
     #[pyo3(get, set)]
     noise_seed: PyNoiseSeed,
@@ -214,6 +216,7 @@ impl PyEvaluationOptions {
         api::EvaluationOptions {
             rxmer_selection: self.rxmer_selection.0,
             channel_selection: self.channel_selection.as_ref().map(|v| v.0),
+            receiver_mode: self.receiver_mode.native(),
             observation: self.observation.0,
             noise_seed: self.noise_seed.0,
             prbs_seed: self.prbs_seed.0,
@@ -228,6 +231,7 @@ impl PyEvaluationOptions {
         Self {
             rxmer_selection: PyRxMerSelection(value.rxmer_selection),
             channel_selection: value.channel_selection.map(PyChannelSelection),
+            receiver_mode: value.receiver_mode.into(),
             observation: PyObservationDuration(value.observation),
             noise_seed: PyNoiseSeed(value.noise_seed),
             prbs_seed: PyPrbsSeed(value.prbs_seed),
@@ -242,6 +246,7 @@ impl PyEvaluationOptions {
     /// # Arguments
     /// * `rxmer_selection` - Typed static selection policy; None requests the Rust default Each.
     /// * `channel_selection` - Explicit typed response policy; None remains unset and fails preflight.
+    /// * `receiver_mode` - Typed correction source; None retains supplied-channel default.
     /// * `observation` - Validated requested source duration, separate from host runtime.
     /// * `noise_seed` - Validated reproducible noise RNG seed.
     /// * `prbs_seed` - Validated nonzero fifteen-bit PRBS seed.
@@ -250,11 +255,12 @@ impl PyEvaluationOptions {
     /// # Returns
     /// A fresh Rust-backed value or request, with native defaults where documented.
     #[new]
-    #[pyo3(signature=(*,rxmer_selection=None,channel_selection=None,observation=None,noise_seed=None,prbs_seed=None,profile_tolerance=None,limits=None))]
+    #[pyo3(signature=(*,rxmer_selection=None,channel_selection=None,receiver_mode=None,observation=None,noise_seed=None,prbs_seed=None,profile_tolerance=None,limits=None))]
     #[allow(clippy::too_many_arguments)]
     fn new(
         rxmer_selection: Option<PyRxMerSelection>,
         channel_selection: Option<PyChannelSelection>,
+        receiver_mode: Option<PyReceiverMode>,
         observation: Option<PyObservationDuration>,
         noise_seed: Option<PyNoiseSeed>,
         prbs_seed: Option<PyPrbsSeed>,
@@ -266,6 +272,9 @@ impl PyEvaluationOptions {
             result.rxmer_selection = value;
         }
         result.channel_selection = channel_selection;
+        if let Some(value) = receiver_mode {
+            result.receiver_mode = value;
+        }
         if let Some(value) = observation {
             result.observation = value;
         }

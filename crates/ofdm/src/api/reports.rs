@@ -233,7 +233,19 @@ impl PerformanceReport {
                 }
                 value
             });
-        let assumptions=vec!["PRBS15 source; independent experiments reset source and noise seeds".into(),"RxMER conditions Gaussian residual power at the equalized reference plane; it does not uniquely reconstruct interference or predict a modem".into(),"Supplied H uses the existing known-reference equalizer; explicit unity is synthetic and explicit H may be reused across epochs".into(),"CP/RP/depth are application defaults where their origin is Defaulted, not measured modem settings".into(),"Captured profile ID is retained; fixed engine bootstrap uses wire Profile A".into()];
+        let receiver_assumption = match options.receiver_mode {
+            ReceiverMode::SuppliedChannel => "Supplied-channel correction uses the existing known-reference equalizer; explicit unity is synthetic",
+            ReceiverMode::PilotEstimated => "Pilot-estimated correction uses received pilots; supplied H impairs the channel and is not receiver correction input",
+            ReceiverMode::MerlinEstimated => "MCE uses received pilots and received-only reliability with the engine's default MCE policies; supplied H and noise power are not receiver inputs",
+        };
+        let assumptions = vec![
+            "PRBS15 source; independent experiments reset source and noise seeds".into(),
+            "RxMER conditions Gaussian residual power at the equalized reference plane; it does not uniquely reconstruct interference or predict a modem".into(),
+            receiver_assumption.into(),
+            "Channel selection controls applied H independently of receiver correction; explicit H may be reused across epochs".into(),
+            "CP/RP/depth are application defaults where their origin is Defaulted, not measured modem settings".into(),
+            "Captured profile ID is retained; fixed engine bootstrap uses wire Profile A".into(),
+        ];
         Self {
             status,
             sources,

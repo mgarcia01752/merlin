@@ -390,3 +390,15 @@ Python `RxMer` mirrors these operations as `to_pnm_bytes(*, clamp=False)`,
 `to_json_bytes()` and `save_json(path)`. The native adapter releases the interpreter
 lock. `ApiError` includes `export_code`, `capture` and `subcarrier`. JSON never
 clamps/rounds; byte conversion alone does not write a recipe manifest.
+
+## High-level receiver policy
+
+`api::ReceiverMode` re-exports the existing engine enum. Add it through
+`EvaluationOptions.receiver_mode` or `.with_receiver_mode(...)`;
+`SuppliedChannel` remains default, with `PilotEstimated` and `MerlinEstimated`
+also supported. Preparation copies it into `ChannelRunSettings.receiver_mode`.
+`ChannelSelection` still chooses applied H independently. MCE uses existing
+engine-default policies here; custom MCE tuning is not added in this milestone.
+Report options serialize the selected mode and assumptions distinguish supplied,
+pilot and MCE correction. Python exposes the same choice through `ReceiverMode`
+uppercase aliases and a typed mutable request property/constructor keyword.

@@ -28,6 +28,8 @@ class RustPythonParity(unittest.TestCase):
         first = sim.add_rxmer(first_capture)
         sim.add_rxmer(m.RxMer.from_file(directory / "second.json"))
         channel = sim.add_channel_estimate(m.ChannelEstimate.from_file(fixture / "channel_estimation.json"))
+        receiver_name = expected["each"]["entries"][0]["report"]["options"]["receiver_mode"]
+        receiver = getattr(m.ReceiverMode, receiver_name.upper())
         retained = []
         for name, policy in (
             ("each", m.RxMerSelection.each()),
@@ -37,6 +39,7 @@ class RustPythonParity(unittest.TestCase):
         ):
             sim.set_options(m.EvaluationOptions(
                 rxmer_selection=policy,
+                receiver_mode=receiver,
                 channel_selection=m.ChannelSelection.explicit(channel),
                 observation=m.ObservationDuration(1),
                 profile_tolerance=m.AssociationTolerance(0xffffffff),
@@ -50,6 +53,7 @@ class RustPythonParity(unittest.TestCase):
             for received, original in zip(actual["entries"], reference["entries"]):
                 self.assertEqual(received["status"], original["status"])
                 report, baseline = received["report"], original["report"]
+                self.assertEqual(report["options"]["receiver_mode"], receiver_name)
                 self.assertEqual(report["fec"], baseline["fec"])
                 self.assertEqual(report["all_completed_fec"], baseline["all_completed_fec"])
                 for key in ("compared_bits", "bit_errors", "profile_id", "scope"):

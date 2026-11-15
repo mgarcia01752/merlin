@@ -171,8 +171,9 @@ companion DPD in examples/workbench/multi-rxmer-2. Select Profile A, 192 MHz,
 AverageAll in Rust residual power, explicit unity H, 7200-second DPD tolerance
 and 1 ms observation with a 300-second execution bound. Retain named constants,
 numbered explanations and actual FEC/BER reporting. Loading stays separate from
-run. Do not parse the desktop WB JSON in Python or claim pilot-estimated receiver
-parity: that setting is not exposed by the current high-level API. Keep the Rust
+run. At this stage pilot-estimated receiver selection was not exposed;
+API-RECEIVER-01 below subsequently adds it and matches the curated WB.
+Do not parse desktop WB JSON in Python. Keep the Rust
 single-capture example unchanged and explain the differing inputs in the index.
 Validate by executing the installed native Python extension on these originals;
 no engine/binding changes or wheel rebuild are needed.
@@ -287,3 +288,28 @@ the configuration allows display precision changes. Unavailable BER remains
 explicitly unavailable. This changes presentation only: Rust still owns the
 numeric BER result and the Python API continues returning its numeric domain
 value. Validate by running both fixture-backed examples with the native wheel.
+
+### API-RECEIVER-01: match receiver correction across Rust, Python and Qt
+
+Expose the existing engine `ReceiverMode` in Rust `EvaluationOptions` with a
+`with_receiver_mode` builder, retaining SuppliedChannel as the default. Preparation
+copies the selected mode into the existing `ChannelRunSettings`; reports preserve
+it in owned options and use accurate receiver-specific assumptions. ChannelSelection
+still chooses applied H independently of receiver correction. PilotEstimated never
+receives supplied H as its correction; MerlinEstimated uses existing default MCE
+policies. No second estimator, Python calculations or Qt dependency is introduced.
+
+Mirror the typed mode and copied options in PyO3. Configure the multi-RxMER example
+with PilotEstimated to match its saved workbench, including the same OCD, source,
+noise seed, iterations, average policy and observation. Keep the original
+single-capture example's default mode. Validate static-mode forwarding and owned
+snapshots, direct-engine FEC parity, all selection modes through native Python,
+then compare each profile's actual UI/Python FEC counts. Preserve partial results,
+cancellation and strict source association. Record remaining discrepancies rather
+than changing counters to force agreement.
+
+
+Implemented and verified: the corrected-codeword delta is caused solely by
+supplied-channel versus received-pilot correction. All three matched Python
+profiles agree with the rebuilt native Qt UI. See the
+[validation table and checks](validation.md#api-receiver-01-receiver-settings-and-ui-parity).

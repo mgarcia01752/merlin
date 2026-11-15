@@ -2300,3 +2300,11 @@ on saves/pushes; bump releases include the generated guide in their validated
 commit and exact recovery contract. Existing-tag retries remain read-only.
 Local native validation and artifact evidence
 are recorded in the [feature validation report](development/features/high-level-api/validation.md).
+
+The public Rust `EvaluationOptions.receiver_mode` and matching PyO3 option pass
+through the existing receiver enum, independently of applied H selection. The
+supplied-channel default remains unchanged. PilotEstimated and MerlinEstimated
+use the same existing Rust receiver operations as Qt; no Python estimation or Qt
+orchestration enters the library. Reports retain the selected mode and accurate
+assumptions. The collection example explicitly matches its curated WB settings;
+see [receiver parity](development/features/high-level-api/design.md#api-receiver-01-match-receiver-correction-across-rust-python-and-qt).

@@ -23,6 +23,8 @@ from merlin import (
     DPD, OCD, Merlin, ProtocolScope, OcdOverrides, BandwidthHz,
     RxMer, RxMerSelection, EvaluationOptions, ChannelSelection,
     ObservationDuration, AssociationTolerance, RunLimits, RuntimeLimit,
+    ReceiverMode, NoiseSeed, PrbsSeed, IterationLimit,
+    CyclicPrefixSamples, RollOffSamples, InterleaverDepth,
 )
 
 
@@ -36,6 +38,14 @@ OCCUPIED_BANDWIDTH_HZ = 192_000_000  # Explicit fixture configuration: 192 MHz.
 OBSERVATION_DURATION_MS = 1  # Per profile; increase for a longer experiment.
 PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 7_200  # Fixture capture-time allowance.
 MAX_RUNTIME_MS = 300_000  # Per-experiment wall-clock limit: 300 seconds.
+# These choices mirror the saved multi-rxmer-2 workbench, without importing its UI.
+RECEIVER_MODE = ReceiverMode.PILOT_ESTIMATED
+NOISE_SEED = 41
+PRBS_SEED = 0x7FFF
+MAX_LDPC_ITERATIONS = 50
+CYCLIC_PREFIX_SAMPLES = 512
+ROLL_OFF_SAMPLES = 128
+INTERLEAVER_DEPTH = 16
 BER_FORMAT = ".3e"  # Scientific notation with four significant digits.
 
 
@@ -83,10 +93,11 @@ def main():
     # - AverageAll requests one experiment per profile using all captures.
     #   Rust averages residual power, preserves missing values and validates exact grids.
     #   It does not average dB or simulate the collection's hour of history.
-    # - Unity is an explicit synthetic response, not a measured H. The desktop
-    #   WB uses pilot-estimated receiver correction; that receiver setting and
-    #   desktop WB JSON import are not exposed by the current high-level API.
-    #   This example shares the original captures, not every desktop setting.
+    # - Unity selects a flat physical channel, not the receiver's correction mode.
+    #   RECEIVER_MODE independently selects received-pilot channel estimation,
+    #   matching the saved workbench. Rust performs estimation and equalization.
+    #   Seeds, decoder limit and timing below explicitly match that same fixture.
+    #   This script loads capture files; it is not a general desktop-WB importer.
     # - OBSERVATION_DURATION_MS requests source observation in milliseconds,
     #   excluding acquisition/completion/drain. It is not wall-clock duration.
     # - PROFILE_ASSOCIATION_TOLERANCE_SECONDS permits this fixture profile and
@@ -98,24 +109,31 @@ def main():
     options = EvaluationOptions(
         rxmer_selection=RxMerSelection.average_all(),
         channel_selection=ChannelSelection.unity(),
+        receiver_mode=RECEIVER_MODE,
+        noise_seed=NoiseSeed(NOISE_SEED),
+        prbs_seed=PrbsSeed(PRBS_SEED),
         observation=ObservationDuration(OBSERVATION_DURATION_MS),
         profile_tolerance=AssociationTolerance(PROFILE_ASSOCIATION_TOLERANCE_SECONDS),
-        limits=RunLimits(runtime=RuntimeLimit(MAX_RUNTIME_MS)))
+        limits=RunLimits(runtime=RuntimeLimit(MAX_RUNTIME_MS),
+                         iterations=IterationLimit(MAX_LDPC_ITERATIONS)))
 
     # 5. Create a fresh independent Rust controller for each profile.
     # Derive its OCD from that profile's grid and protected roles. Supply the
-    # known fixture bandwidth explicitly; omitted timing retains documented
-    # application defaults (CP 512, roll-off 128, interleaver depth 16).
-    # Each controller restarts the common default PRBS/noise seeds and owns its
+    # known fixture bandwidth and timing explicitly, matching the saved WB.
+    # Receiver correction and channel response remain separate Rust choices.
+    # Each controller restarts the common configured PRBS/noise seeds and owns its
     # configuration. The immutable capture objects are reused without editing.
     # The API retains the captured ID; engine bootstrap uses wire Profile A.
     print(f"Profiles: {[profile_id.value for profile_id in profile_ids]}; observation: {OBSERVATION_DURATION_MS} ms "
-          "per profile; RxMER: AverageAll; channel: unity")
+          f"per profile; RxMER: AverageAll; channel: unity; receiver: {RECEIVER_MODE}")
     total_started = perf_counter()
     for profile in profiles:
         ocd = OCD.from_profile(
             ProtocolScope.DOCSIS31, profile,
-            OcdOverrides(bandwidth=BandwidthHz(OCCUPIED_BANDWIDTH_HZ)),
+            OcdOverrides(bandwidth=BandwidthHz(OCCUPIED_BANDWIDTH_HZ),
+                         cyclic_prefix=CyclicPrefixSamples(CYCLIC_PREFIX_SAMPLES),
+                         roll_off=RollOffSamples(ROLL_OFF_SAMPLES),
+                         interleaver_depth=InterleaverDepth(INTERLEAVER_DEPTH)),
         )
         sim = Merlin(ocd)
         sim.set_profile(profile)

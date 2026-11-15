@@ -87,3 +87,15 @@ These additional repository requirements govern ongoing delivery:
   redecoding or simulation. Keep static discovery available. Distinguish the
   complete source catalog from the selected profile ID; preserve immutable
   ownership, created-profile singleton catalogs and edited-source catalogs.
+
+## API-RECEIVER-01: receiver correction parity
+
+- Expose the existing receiver correction policy through validated Rust options
+  before mirroring it in Python; retain the supplied-channel default.
+- Keep applied channel H and receiver correction independent. Loading/preparing
+  or selecting a mode must not run simulation. Reports preserve chosen settings.
+- Match the collection example's pilot correction, seeds, iterations, duration,
+  average policy and OCD timing to its curated WB, with a fixture drift check.
+- Compare actual observation-window FEC and independent bit comparison per profile;
+  matching BER alone is insufficient. Keep all static selection modes, owned
+  results and cancellation intact. Do not force agreement by changing counters.

@@ -13,7 +13,7 @@ and assumptions are explained alongside the workflow.
 | --- | --- |
 | [Rust workflow](rust/high_level.rs) | Import a profile, derive OCD settings, add RxMER and a channel estimate independently, select one capture and inspect simulated results. |
 | [Python workflow](python/high_level.py) | Perform the same fixture-backed workflow using the installed native Python extension and print FEC counts and BER. |
-| [Python multi-RxMER collection](python/multi_rxmer.py) | Discover all profiles in the channel-193 capture and load its 132 RxMER binaries; run independent profile experiments using a Rust residual-power average and explicit unity response. |
+| [Python multi-RxMER collection](python/multi_rxmer.py) | Discover all profiles in the channel-193 capture and load its 132 RxMER binaries; run independent profile experiments using a Rust residual-power average, unity physical response and matching pilot-estimated receiver. |
 | [Rust selection policies](rust/policy_parity.rs) | Run `Each`, `Individual`, `AverageAll` and `InterpolateAt`; write actual reference results for the Python parity tests. |
 
 ## Run Rust
@@ -48,15 +48,16 @@ This loads the companion modulation-profile binary and all 132 RxMER binaries
 from `examples/workbench/multi-rxmer-2`, then runs an independent `AverageAll`
 experiment for each captured profile: **0, 3 and 4**, with explicit unity H. Rust computes the average in residual power, preserving
 missing readings. The two-hour profile tolerance covers the collection.
-It does not import desktop WB JSON or reproduce its pilot-estimated receiver
-setting, which is not exposed by this API. `high_level.py` retains the original
+It explicitly selects `ReceiverMode.PILOT_ESTIMATED` and matches the saved WB
+seeds, decoder limit and OCD timing. It loads the capture files directly; it is
+not a general desktop WB JSON importer. `high_level.py` retains the original
 single-capture workflow with an explicit measured channel estimate.
 
 `DPD.profile_ids_from_file()` discovers the catalog through Rust and returns
 validated `ProfileId` objects. If a DPD is already loaded, use `dpd.profile_ids`
 to read its retained catalog without accessing the file again. The fixture
 currently contains 0, 3 and 4; no IDs
-are hardcoded in the script. Each fresh controller resets the common default PRBS/noise
+are hardcoded in the script. Each fresh controller resets the common configured PRBS/noise
 seeds and prints its own actual FEC/BER and host execution time. The default
 `OBSERVATION_DURATION_MS = 1` requests only 1 ms of source observation per
 profile. Increase that named constant for a longer experiment; execution speed
@@ -94,3 +95,8 @@ Return to the [examples index](../README.md).
 Python examples display BER in scientific notation, for example `1.234e-06`.
 Change `BER_FORMAT` at the top of each script to adjust display precision.
 Unavailable BER prints `unavailable`; numeric API results are unchanged.
+
+The Rust parity generator accepts an optional receiver mode after its new output
+directory: `supplied_channel` (default), `pilot_estimated`, or `merlin_estimated`.
+Generate a separate directory for each; the Python parity test reads the recorded
+mode and compares Each/Individual/AverageAll/InterpolateAt under that same mode.

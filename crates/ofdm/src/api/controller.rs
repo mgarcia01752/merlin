@@ -72,6 +72,8 @@ impl Default for RunLimits {
 pub struct EvaluationOptions {
     pub rxmer_selection: RxMerSelection,
     pub channel_selection: Option<ChannelSelection>,
+    /// Receiver correction source, independent of the applied channel response.
+    pub receiver_mode: ReceiverMode,
     pub observation: ObservationDuration,
     pub noise_seed: NoiseSeed,
     pub prbs_seed: PrbsSeed,
@@ -86,6 +88,7 @@ impl Default for EvaluationOptions {
         Self {
             rxmer_selection: RxMerSelection::Each,
             channel_selection: None,
+            receiver_mode: ReceiverMode::SuppliedChannel,
             observation: ObservationDuration(100),
             noise_seed: NoiseSeed(41),
             prbs_seed: PrbsSeed(0x7fff),
@@ -111,6 +114,15 @@ impl EvaluationOptions {
     /// Updated owned request.
     pub fn with_channel_selection(mut self, selection: ChannelSelection) -> Self {
         self.channel_selection = Some(selection);
+        self
+    }
+    /// Selects existing receiver correction without changing applied channel H.
+    /// # Arguments
+    /// * `mode` - Supplied H, received-pilot estimation, or existing MCE defaults.
+    /// # Returns
+    /// Updated owned request; selection does not prepare or run simulation.
+    pub fn with_receiver_mode(mut self, mode: ReceiverMode) -> Self {
+        self.receiver_mode = mode;
         self
     }
     /// Sets independent profile-time association policy.
@@ -600,6 +612,7 @@ impl Merlin {
                 ChannelRunSettings::new(self.ocd.transmission.clone(), self.ocd.layout.clone());
             settings.duration = std::time::Duration::from_millis(self.options.observation.0);
             settings.prbs_seed = self.options.prbs_seed.0;
+            settings.receiver_mode = self.options.receiver_mode;
             settings.max_iterations = self.options.limits.iterations.0;
             // Shared playback validation checks exact protected roles and coverage.
             let layout = crate::transmission::layout::CarrierLayout::new(

@@ -142,3 +142,19 @@ Capture export is independent of simulation: use
 bytes, or `encode_json(rxmer.frame())` for lossless decoded JSON. The shared
 save helpers add no-overwrite publication and provenance. See the
 [export API](../../reference/public-api.md#rxmer-capture-export).
+
+## Receiver correction
+
+`EvaluationOptions::with_receiver_mode(ReceiverMode::PilotEstimated)` selects
+received-pilot correction through the existing engine. `ReceiverMode` re-exports
+the engine's typed `SuppliedChannel`, `PilotEstimated` and `MerlinEstimated`
+choices; the existing default remains `SuppliedChannel`. Channel response
+selection is independent: explicit unity configures a flat applied H, while the
+receiver can still estimate its correction from received pilots. MCE uses the
+engine's existing default reliability settings in this high-level API.
+
+Preparation forwards the choice without running; owned report options preserve
+it after later controller edits and assumptions describe the selected receiver.
+Python mirrors this as `EvaluationOptions(receiver_mode=...)`. The collection
+walkthrough uses pilot estimation to match its saved workbench. See the
+[Python receiver example](../python/README.md#select-receiver-correction-independently-of-the-channel).
