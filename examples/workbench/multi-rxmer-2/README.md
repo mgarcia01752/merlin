@@ -39,7 +39,7 @@ identity transformation and original filenames, and retain [LICENSE](LICENSE)
 and [NOTICE](NOTICE). These are pre-collected demo observations, not MERLIN's
 synthetic RxMER stress variants. Decoder outcomes are not guaranteed error-free.
 
-The [Python API walkthrough](../../api/python/high_level.py) loads these same
+The [Python collection walkthrough](../../api/python/multi_rxmer.py) loads these same
 133 original PNM binaries directly: the profile plus 132 RxMER captures. It
 requests one residual-power `AverageAll` experiment with explicit unity H.
 It does not import the desktop WB JSON or reproduce its pilot-estimated

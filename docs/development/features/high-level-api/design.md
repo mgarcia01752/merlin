@@ -184,3 +184,18 @@ The load message precedes run. Syntax and import-only checks passed; importing
 the walkthrough does not invoke main. Documentation links and whitespace checks
 passed. Reviewed the architecture: existing Rust/adapter ownership is unchanged;
 no Rust, Qt or binding code changed and no full-suite rebuild was required.
+
+## API-EXAMPLES-04: keep collection walkthrough separate
+
+Restore high_level.py byte-for-byte from before API-EXAMPLES-03. Preserve the
+verified collection workflow as multi_rxmer.py with its own filename header and
+run command. Update example/setup links so users can choose either workflow.
+No API or simulation change. Validate both native scripts, import-only behavior
+and documentation links; review architecture and checklist for final scope.
+
+Validation: high_level.py exactly matches its pre-collection version and
+completed with 82 codewords in 2.56s. multi_rxmer.py loaded 132 captures and
+completed with 83 codewords in 1.02s. Both reported zero corrected and
+uncorrectable words and BER 0.0. Syntax, import-only behavior, changed links
+and diff checks passed. Architecture ownership is unchanged; no wheel rebuild
+or full Rust/Qt checks were required for this examples/documentation change.

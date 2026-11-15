@@ -1368,7 +1368,12 @@ validation are complete; the user guide includes the current dark capture.
   [Design](features/high-level-api/design.md#api-examples-02-developer-walkthrough-comments).
 
 - [x] **API-EXAMPLES-03** Use the channel-193 multi-rxmer-2 binaries in
-  the Python walkthrough. Load all 132 RxMER captures, average in Rust and
+  a Python collection walkthrough. Load all 132 RxMER captures, average in Rust and
   run with explicit unity H. Document desktop-WB differences. Native run
   completed with 83 codewords, 0 corrected/uncorrectable and BER 0.
   [Design](features/high-level-api/design.md#api-examples-03-channel-193-python-collection-example).
+
+- [x] **API-EXAMPLES-04** Restore the single-capture high_level.py and
+  keep the collection workflow in multi_rxmer.py. Both native examples,
+  exact restoration, import-only checks and documentation links pass.
+  [Design](features/high-level-api/design.md#api-examples-04-keep-collection-walkthrough-separate).
