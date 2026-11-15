@@ -7,4 +7,8 @@
 # Forward installer options to the shared Python implementation; no Qt setup.
 set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-exec python3 "${SCRIPT_DIR}/install.py" --source "$@"
+INSTALL_PYTHON="${MERLIN_INSTALL_PYTHON:-python3}"
+if [[ "${OS:-}" == Windows_NT && -z "${MERLIN_INSTALL_PYTHON:-}" ]]; then
+  INSTALL_PYTHON=python
+fi
+exec "$INSTALL_PYTHON" "${SCRIPT_DIR}/install.py" --source "$@"

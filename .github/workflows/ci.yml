@@ -309,6 +309,55 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+  python-installer:
+    name: Python installer (${{ matrix.os }}, Python ${{ matrix.python }})
+    needs: preflight
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            python: '3.10'
+          - os: ubuntu-24.04
+            python: '3.12'
+          - os: ubuntu-26.04
+            python: '3.14'
+          - os: windows-2022
+            python: '3.14'
+    env:
+      PYTHONPATH: ''
+      RUSTUP_TOOLCHAIN: 1.85.1
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+          architecture: x64
+      - name: Configure MSVC
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/windows/setup-msvc-ci.ps1
+      - name: Install pinned Rust
+        run: rustup toolchain install 1.85.1 --profile minimal
+      - name: Installer contract tests
+        run: python -m unittest discover -s scripts/python-api -p "test_*.py"
+      - name: Check Python-only installer requirements
+        shell: bash
+        run: ./install.sh --install-pymerlin --check
+      - name: Build and install only the Python API
+        shell: bash
+        run: ./install.sh --install-pymerlin --venv local/installer-ci
+      - name: Read installed version (no simulation)
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == Windows ]]; then
+            local/installer-ci/Scripts/python.exe -I -c 'import merlin; print(merlin.__version__)'
+          else
+            local/installer-ci/bin/python -I -c 'import merlin; print(merlin.__version__)'
+          fi
+
   python-wheels:
     name: Release Python wheel (${{ matrix.name }})
     if: inputs.release && github.ref_type == 'tag'

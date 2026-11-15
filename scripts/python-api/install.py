@@ -77,9 +77,9 @@ def host_platform():
         return "win_amd64"
     if sys.platform == "linux":
         info = ubuntu_info()
-        if info.get("ID") == "ubuntu" and info.get("VERSION_ID") in ("22.04", "24.04", "26.04"):
+        if info.get("ID") == "ubuntu":
             return "linux_x86_64"
-    raise ValueError("Supported targets: Ubuntu 22.04/24.04/26.04 x64 or Windows x64.")
+    raise ValueError("Supported targets: Ubuntu x64 or Windows x64.")
 
 
 def ubuntu_info():
@@ -103,17 +103,17 @@ def probe(command):
     """Inspect an interpreter using isolated Python execution.
 
     Args:
-        command: Interpreter command prefix, possibly py -3.10.
+        command: Interpreter command prefix, possibly py -3.
     Returns:
         Native interpreter capability dictionary.
     Raises:
         ValueError or subprocess errors for an unusable interpreter.
     """
     data = json.loads(run(command + ["-I", "-c", PROBE], capture=True).stdout)
-    if (data["version"] != [3, 10] or data["implementation"] != "CPython"
+    if (tuple(data["version"]) < (3, 10) or data["implementation"] != "CPython"
             or data["bits"] != 64 or data["machine"].lower() not in ("x86_64", "amd64")
             or not data["ssl"]):
-        raise ValueError("Require x64 CPython 3.10 with SSL support; another Python ABI cannot load cp310 wheels.")
+        raise ValueError("Require x64 CPython 3.10 or newer with SSL support.")
     return data
 
 
@@ -127,18 +127,16 @@ def find_python(explicit=None):
     Raises:
         ValueError with setup instructions when no compatible interpreter exists.
     """
-    candidates = [[explicit]] if explicit else [[sys.executable], ["python3.10"]]
+    candidates = [[explicit]] if explicit else [[sys.executable], ["python3"]]
     if not explicit and sys.platform == "win32":
-        candidates.insert(0, ["py", "-3.10"])
+        candidates.append(["py", "-3"])
     for command in candidates:
         try:
             return command, probe(command)
         except (OSError, ValueError, subprocess.SubprocessError, KeyError):
             continue
-    raise ValueError("CPython 3.10 x64 was not found. Install it and pass --python PATH. "
-                     "Ubuntu 22.04 can use --install-prerequisites; on Windows install "
-                     "64-bit CPython 3.10 with the Python launcher. Newer Ubuntu requires "
-                     "a separately provisioned Python 3.10; do not replace system Python.")
+    raise ValueError("CPython 3.10 or newer x64 was not found. Install Python and pass --python PATH. "
+                     "Ubuntu can use --install-prerequisites; keep system Python unchanged.")
 
 
 def environment_python(destination):
@@ -175,12 +173,12 @@ def check_destination(destination):
     data = probe([str(environment_python(destination))])
     if (Path(data["prefix"]).resolve() != destination.resolve()
             or data["prefix"] == data["base_prefix"] or not data["pip"]):
-        raise ValueError("Existing destination must be an isolated Python 3.10 venv with pip.")
+        raise ValueError("Existing destination must be an isolated Python 3.10+ venv with pip.")
     return True
 
 
 def install_prerequisites():
-    """Install Ubuntu 22.04 Python prerequisites only after the explicit flag.
+    """Install Ubuntu Python prerequisites only after the explicit flag.
 
     Returns:
         None after apt completes; does not install MERLIN globally.
@@ -188,10 +186,10 @@ def install_prerequisites():
         ValueError on other OS releases; subprocess errors on apt failure.
     """
     info = ubuntu_info()
-    if sys.platform != "linux" or info.get("ID") != "ubuntu" or info.get("VERSION_ID") != "22.04":
-        raise ValueError("Automatic apt prerequisites are supported only on Ubuntu 22.04.")
+    if sys.platform != "linux" or info.get("ID") != "ubuntu":
+        raise ValueError("Automatic apt prerequisites are supported on Ubuntu.")
     run(["sudo", "apt-get", "update"])
-    run(["sudo", "apt-get", "install", "-y", "python3.10", "python3.10-venv"])
+    run(["sudo", "apt-get", "install", "-y", "python3", "python3-venv", "python3-dev"])
 
 
 def download(url, destination, limit):
@@ -220,20 +218,21 @@ def download(url, destination, limit):
                 output.write(chunk)
 
 
-def verified_wheel(tag, version, suffix, directory):
+def verified_wheel(tag, version, suffix, directory, abi="cp310"):
     """Resolve published assets and verify a wheel before environment creation.
 
     Args:
         tag: Validated release tag.
         version: Matching numeric package version.
         suffix: Validated native wheel platform.
+        abi: Selected interpreter ABI, such as cp312.
         directory: Temporary download directory.
     Returns:
         Local wheel path after exact SHA-256 verification.
     Raises:
         ValueError for absent assets, draft releases or invalid checksums.
     """
-    name = "merlin_ofdm-{}-cp310-cp310-{}.whl".format(version, suffix)
+    name = "merlin_ofdm-{}-{}-{}-{}.whl".format(version, abi, abi, suffix)
     metadata = directory / "release.json"
     download("https://api.github.com/repos/{}/releases/tags/{}".format(REPOSITORY, tag), metadata, METADATA_LIMIT)
     release = json.loads(metadata.read_text())
@@ -282,9 +281,13 @@ def source_requirements():
         os.environ.setdefault("CARGO_HOME", str(root / "local/cargo"))
         os.environ.setdefault("RUSTUP_HOME", str(root / "local/rustup"))
         os.environ["PATH"] = str(local_cargo) + os.pathsep + os.environ.get("PATH", "")
-    if shutil.which("cargo") is None or shutil.which("cc") is None:
+    if shutil.which("cargo") is None or shutil.which("cl" if sys.platform == "win32" else "cc") is None:
         raise ValueError("Source builds need pinned Rust 1.85.1 and a C linker; see docs/development/build.md.")
-    run(["cargo", "+1.85.1", "--version"], capture=True)
+    if shutil.which("rustup") is None:
+        raise ValueError("Source builds require rustup with Rust 1.85.1 already installed.")
+
+    # rustup which locates installed tools without downloading a missing toolchain.
+    run(["rustup", "which", "--toolchain", "1.85.1", "cargo"], capture=True)
     return root
 
 
@@ -320,9 +323,9 @@ def main(argv=None):
     parser.add_argument("--source", action="store_true", help="Build only the Python API from this checkout")
     parser.add_argument("--tag", help="Release tag or version, e.g. v0.3.1")
     parser.add_argument("--venv", type=Path, default=Path(".venv-merlin"), help="Destination (default: .venv-merlin)")
-    parser.add_argument("--python", help="Path to an existing CPython 3.10 x64 interpreter")
+    parser.add_argument("--python", help="Path to an existing CPython 3.10+ x64 interpreter")
     parser.add_argument("--check", "--dry-run", dest="check", action="store_true", help="Check local requirements only; no network or installation")
-    parser.add_argument("--install-prerequisites", action="store_true", help="Explicitly permit apt Python prerequisites on Ubuntu 22.04")
+    parser.add_argument("--install-prerequisites", action="store_true", help="Explicitly permit apt Python prerequisites on Ubuntu")
     args = parser.parse_args(argv)
     if args.source and args.tag:
         parser.error("Choose --source or --tag, not both.")
@@ -343,8 +346,8 @@ def main(argv=None):
         install_prerequisites()
     command, capabilities = find_python(str(environment_python(destination)) if existing else args.python)
     if not existing and not (capabilities["venv"] and capabilities["ensurepip"]):
-        raise ValueError("Python 3.10 venv/pip bootstrap is missing. Ubuntu 22.04: use --install-prerequisites.")
-    print("Requirements passed: {} / CPython 3.10 x64".format(suffix), flush=True)
+        raise ValueError("Python 3.10+ venv/pip bootstrap is missing. Ubuntu: use --install-prerequisites.")
+    print("Requirements passed: {} / CPython {} x64".format(suffix, ".".join(map(str, capabilities["version"]))), flush=True)
     print("Release: {}; environment: {}".format(tag, destination), flush=True)
     if args.check:
         print("Check only: no changes made; remote release availability has not been checked.")
@@ -352,14 +355,14 @@ def main(argv=None):
     with tempfile.TemporaryDirectory(prefix="merlin-python-install-") as temporary:
         wheel = None
         if not args.source:
-            wheel = verified_wheel(tag, version, suffix, Path(temporary))
+            wheel = verified_wheel(tag, version, suffix, Path(temporary), "cp{}{}".format(*capabilities["version"]))
         if not existing:
             run(command + ["-I", "-m", "venv", str(destination)])
         python = str(environment_python(destination))
         if args.source:
             wheel = build_source(root, python, Path(temporary))
         run([python, "-I", "-m", "pip", "--isolated", "install", "--force-reinstall", "--no-index", "--only-binary=:all:", str(wheel)])
-        check = "from merlin import Simulation; import merlin; assert merlin.__version__ == {!r}; print('MERLIN', merlin.__version__, 'ready')".format(version)
+        check = "import merlin; assert merlin.__version__ == {!r}; print('MERLIN', merlin.__version__, 'ready')".format(version)
         run([python, "-I", "-c", check])
     print("Use this interpreter in your project: {}".format(python))
     return 0

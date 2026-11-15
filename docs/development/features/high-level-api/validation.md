@@ -687,3 +687,16 @@ Four integration-guide generator tests passed (0.114 s). Shell syntax, source
 prerequisite check, guide freshness and diff whitespace checks passed. No system
 packages were installed. Full source compilation, public release downloads and
 native Windows installation remain unverified for this installer.
+
+## API-INSTALL-02: Newer Python and CI/CD
+
+Six installer tests pass, covering newer Python acceptance, Ubuntu releases
+without an allowlist, cp310/cp312/cp314 asset selection and integrity checks.
+Four integration-guide tests pass. Shell syntax, YAML parsing and local
+prerequisite checks pass. The source installer built and installed the native
+CPython 3.10 wheel into local/installer-validation; optimized Rust compilation
+took 24.87 s and the version-only import reported MERLIN 0.3.1. No simulation
+or system installation was performed. Shared Master/Release jobs now cover
+Ubuntu 22.04/3.10, 24.04/3.12, 26.04/3.14 and Windows/3.14; hosted execution and
+public release downloads remain unverified. The read-only source preflight
+locates the installed Rust toolchain without triggering rustup downloads.

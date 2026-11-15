@@ -19,6 +19,32 @@ SPEC.loader.exec_module(installer)
 class InstallerTests(unittest.TestCase):
     """Cover mutation guards, release integrity and explicit source dispatch."""
 
+    def test_newer_python_versions(self):
+        """Accept modern CPython and reject unsupported runtimes.
+
+        Interpreter metadata is mocked without invoking an installation.
+        """
+        from types import SimpleNamespace
+        for version in ([3, 10], [3, 12], [3, 14], [3, 9]):
+            data = dict(version=version, implementation="CPython", bits=64,
+                        machine="x86_64", ssl=True)
+            with patch.object(installer, "run", return_value=SimpleNamespace(stdout=json.dumps(data))):
+                if version < [3, 10]:
+                    with self.assertRaises(ValueError):
+                        installer.probe(["python"])
+                else:
+                    self.assertEqual(installer.probe(["python"])["version"], version)
+
+    def test_ubuntu_has_no_release_allowlist(self):
+        """Allow Ubuntu release identities beyond the tested CI matrix.
+
+        This is installer acceptance, not a claim of future build compatibility.
+        """
+        with patch.object(installer.sys, "platform", "linux"), \
+             patch.object(installer.platform, "machine", return_value="x86_64"), \
+             patch.object(installer, "ubuntu_info", return_value={"ID": "ubuntu", "VERSION_ID": "28.04"}):
+            self.assertEqual(installer.host_platform(), "linux_x86_64")
+
     def test_tag_validation(self):
         """Accept stable tags and reject arbitrary paths or moving references.
 
@@ -48,7 +74,7 @@ class InstallerTests(unittest.TestCase):
         """
         with patch.object(installer, "host_platform", return_value="linux_x86_64"), \
              patch.object(installer, "check_destination", return_value=False), \
-             patch.object(installer, "find_python", return_value=(["python"], {"venv": True, "ensurepip": True})), \
+             patch.object(installer, "find_python", return_value=(["python"], {"venv": True, "ensurepip": True, "version": [3, 12]})), \
              patch.object(installer, "verified_wheel") as download, \
              patch.object(installer, "install_prerequisites") as apt:
             installer.main(["--tag", "v0.3.1", "--check", "--install-prerequisites"])
@@ -60,9 +86,9 @@ class InstallerTests(unittest.TestCase):
 
         Downloads are replaced by deterministic temporary fixtures.
         """
-        name = "merlin_ofdm-0.3.1-cp310-cp310-linux_x86_64.whl"
         original = b"test wheel bytes"
-        for payload in (original, b"corrupt"):
+        for abi, payload in (("cp310", original), ("cp312", original), ("cp314", original), ("cp314", b"corrupt")):
+            name = "merlin_ofdm-0.3.1-{}-{}-linux_x86_64.whl".format(abi, abi)
             def download(url, destination, limit):
                 """Write the requested fixture without network access.
 
@@ -76,10 +102,10 @@ class InstallerTests(unittest.TestCase):
                     destination.write_bytes(payload)
             with tempfile.TemporaryDirectory() as directory, patch.object(installer, "download", side_effect=download):
                 if payload == original:
-                    self.assertEqual(installer.verified_wheel("v0.3.1", "0.3.1", "linux_x86_64", Path(directory)).read_bytes(), original)
+                    self.assertEqual(installer.verified_wheel("v0.3.1", "0.3.1", "linux_x86_64", Path(directory), abi).read_bytes(), original)
                 else:
                     with self.assertRaisesRegex(ValueError, "mismatch"):
-                        installer.verified_wheel("v0.3.1", "0.3.1", "linux_x86_64", Path(directory))
+                        installer.verified_wheel("v0.3.1", "0.3.1", "linux_x86_64", Path(directory), abi)
 
 
 if __name__ == "__main__":

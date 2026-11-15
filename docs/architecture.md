@@ -2464,3 +2464,8 @@ accepted CPA loss; configuration never runs the engine.
 reuse `tools/python/build_wheel.py`. Release installation verifies SHA256SUMS.
 Both routes install into a virtual environment and remain independent of Qt and
 the CLI. See the [installer guide](../scripts/python-api/README.md).
+
+The source installer accepts host CPython 3.10+ without an Ubuntu release
+allowlist. Shared CI/CD validates source installation and a version-only import
+on Ubuntu 22.04/24.04/26.04 and Windows. This packaging path retains the Python
+adapter → Basic Rust API → engine boundary; no simulation is used by its smoke.

@@ -1577,3 +1577,7 @@ validation are complete; the user guide includes the current dark capture.
   prerequisite checks and release checksum verification; see
   [installer guide](../../scripts/python-api/README.md).
 - [ ] Validate Python installer end to end on native Windows and clean Ubuntu hosts.
+
+- [x] API-INSTALL-02: Accept newer host Python, match downloaded wheel ABI and
+  configure shared CI/CD source-installer checks with version-only smoke.
+- [ ] Observe hosted installer results across the configured platform matrix.

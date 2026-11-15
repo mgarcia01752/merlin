@@ -117,3 +117,12 @@ output, records each example's elapsed seconds under `examples`, and records
 summed example time under `example_elapsed_seconds`. Total `elapsed_seconds`
 also includes environment creation and installation. A failed example blocks
 asset staging; the timing record is still written.
+
+## Python-only installer validation
+
+The shared Master/Release workflow also exercises `install.sh --install-pymerlin`
+on Ubuntu 22.04/24.04/26.04 with CPython 3.10/3.12/3.14 respectively and Windows
+with CPython 3.14. The installer smoke reads `merlin.__version__`; it does not run
+a simulation. Existing wheel/example validation remains separate. These source
+build checks do not add new release-wheel assets or establish future Python
+compatibility. Hosted results remain required.

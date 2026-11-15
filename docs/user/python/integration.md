@@ -22,7 +22,17 @@ Use the [Python-only installer](../../../scripts/python-api/README.md) to check
 requirements and install a verified release wheel. From a source checkout,
 `./install.sh --install-pymerlin --check` checks prerequisites;
 `./install.sh --install-pymerlin` builds and installs only the Python API into
-`.venv-merlin`. Compilation uses the existing Rust wheel packaging helper.
+`.venv-merlin`, using host CPython 3.10 or newer on Ubuntu or Windows x64.
+No Ubuntu version is hardcoded. Compilation uses the existing Rust wheel packaging helper.
+For the source installer, Ubuntu prerequisites use the distribution's Python:
+
+```bash
+sudo apt update &&
+sudo apt install python3 python3-venv python3-dev
+```
+
+The source installer accepts Python 3.10 or newer. Published wheels below must
+match your interpreter; a `cp310` wheel still requires Python 3.10.
 
 
 ## Quick start: download and install only the Python API

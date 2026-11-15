@@ -623,3 +623,10 @@ and source mode in the shared installer. It checks the pinned Rust toolchain and
 linker, builds with pinned maturin through the existing notice-aware helper and
 installs into a private environment. Release mode remains compiler-free. Consumer
 documentation names no external application; borrowed-resource provenance stays.
+
+## API-INSTALL-02: Host Python and installer CI
+
+Source installation uses host CPython 3.10 or newer, with no Ubuntu release
+allowlist. Release downloads require a wheel matching the selected Python ABI.
+CI exercises source installation on Ubuntu and Windows with newer interpreters,
+then prints the installed version only. Existing simulation gates stay separate.
