@@ -173,3 +173,12 @@ settings directly, without restating scientific constants. Loading preflights
 but does not run; `workbench.run()` returns one owned batch per saved selected
 profile through the same engine. Python mirrors this as `Workbench.from_file`.
 See the [supported WB contract and Rust example](../python/workbench.md).
+
+### Matching Rust and Python collection examples
+
+The [example inventory](../../../examples/api/README.md) provides the same
+single-capture, multi-RxMER MCE, multi-RxMER supplied CM channel estimate and
+saved-WB workflows in both languages. The collection walkthroughs discover all
+captured profiles through Rust, preserve original captures and explicitly run
+each profile with matching policies, seeds, timing and bounds. Their FEC/BER
+values come from the shared simulation engine; no analytical replacements are used.

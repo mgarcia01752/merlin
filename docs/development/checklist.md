@@ -1466,3 +1466,9 @@ validation are complete; the user guide includes the current dark capture.
   update current guide links and commands. Formatting, example Clippy and
   all three release example executions pass (13.96s total).
   [Design](features/high-level-api/design.md#api-examples-09-matching-descriptive-rust-entry-points).
+
+- [x] **API-EXAMPLES-10** Provide matching Rust MCE and supplied-CM-channel
+  collection examples with a shared documented workflow, named settings and
+  captured-profile discovery. Format/Clippy and exact native Rust/Python
+  FEC/status/BER parity pass for all three profiles in both modes (20.60s).
+  [Design](features/high-level-api/design.md#api-examples-10-equivalent-rust-and-python-collection-workflows).

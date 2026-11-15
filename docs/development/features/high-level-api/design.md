@@ -406,3 +406,17 @@ run_rxmer_selection_parity and run_multi_rxmer_cmce_workbench; the WB continues
 to honor its saved receiver mode. No algorithms, Rust public APIs or scientific
 settings change. Validate formatting, example Clippy/builds and actual execution
 of all three workflows using the existing fixtures and a fresh parity directory.
+
+### API-EXAMPLES-10: equivalent Rust and Python collection workflows
+
+Add run_multi_rxmer_mce.rs and run_multi_rxmer_cm_chan_est.rs alongside the
+existing single-capture and saved-WB examples. Share one documented Rust
+example helper under rust/support, with named fixture/settings constants and
+an explicit receiver-mode argument. Decode the captured profile catalog through
+CaptureLoader, sort/load original RxMER binaries and run every discovered profile
+independently. Match Python's AverageAll residual-power policy, unity physical
+channel, seeds, timing, observation and execution bounds. Retain owned actual
+reports and print status, FEC, BER and timing; do not duplicate engine operations.
+Register Cargo targets and link a side-by-side example inventory. Validate
+formatting/Clippy and execute both languages in both modes, comparing per-profile
+status, FEC counts and BER. No new public API or Qt changes are required.

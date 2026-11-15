@@ -30,3 +30,11 @@ path = "../../examples/api/rust/run_rxmer_selection_parity.rs"
 [[example]]
 name = "run_multi_rxmer_cmce_workbench"
 path = "../../examples/api/rust/run_multi_rxmer_cmce_workbench.rs"
+
+[[example]]
+name = "run_multi_rxmer_mce"
+path = "../../examples/api/rust/run_multi_rxmer_mce.rs"
+
+[[example]]
+name = "run_multi_rxmer_cm_chan_est"
+path = "../../examples/api/rust/run_multi_rxmer_cm_chan_est.rs"

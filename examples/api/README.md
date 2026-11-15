@@ -4,7 +4,7 @@ These examples call MERLIN's high-level Rust API. Python uses the native
 extension over that same API. They load existing fixtures and run one channel;
 they are source examples, not desktop workbench files or CLI JSON requests.
 Loading does not run simulation. Only the explicit `run()` call starts it.
-Both `high_level` files include filename headers and numbered developer
+Both single-capture files include filename headers and numbered developer
 walkthroughs. Adjust the named constants at the top for fixture paths,
 bandwidth, observation duration, association tolerance and host runtime; units
 and assumptions are explained alongside the workflow.
@@ -19,6 +19,22 @@ and assumptions are explained alongside the workflow.
 | [Python saved-UI comparison](python/run_multi_rxmer_cm_chan_est.py) | Run the same collection workflow with SuppliedChannel and all other settings matching the bundled multi-rxmer-2 workbench. |
 | [Rust selection policies](rust/run_rxmer_selection_parity.rs) | Run `Each`, `Individual`, `AverageAll` and `InterpolateAt`; write actual reference results for the Python parity tests. |
 
+The same four workflows are available in both languages:
+
+| Workflow | Rust | Python |
+| --- | --- | --- |
+| Single capture | [run_single_capture.rs](rust/run_single_capture.rs) | [run_single_capture.py](python/run_single_capture.py) |
+| Multi-RxMER with MCE | [run_multi_rxmer_mce.rs](rust/run_multi_rxmer_mce.rs) | [run_multi_rxmer_mce.py](python/run_multi_rxmer_mce.py) |
+| Multi-RxMER with supplied CM channel estimate | [run_multi_rxmer_cm_chan_est.rs](rust/run_multi_rxmer_cm_chan_est.rs) | [run_multi_rxmer_cm_chan_est.py](python/run_multi_rxmer_cm_chan_est.py) |
+| Saved multi-RxMER CMCE workbench | [run_multi_rxmer_cmce_workbench.rs](rust/run_multi_rxmer_cmce_workbench.rs) | [run_multi_rxmer_cmce_workbench.py](python/run_multi_rxmer_cmce_workbench.py) |
+
+The two Rust collection entry points share the documented
+[collection walkthrough](rust/support/multi_rxmer.rs), including named settings
+and numbered loading/run/report steps. Both languages use the same captured
+profile catalog, original binaries, AverageAll policy, unity physical response,
+seeds, timing and runtime limits. The CM estimate example selects supplied-channel
+correction; this collection has no CM response capture, so its reference is unity.
+
 ## Run Rust
 
 From the repository root, with the pinned Rust toolchain configured:
@@ -30,6 +46,12 @@ scripts/cargo-local.sh run -p pnm-input --example run_single_capture --locked
 Cargo registers these source files as examples of `pnm-input`. They use shared
 captures under `examples/workbench/single` and
 `examples/measurements/single-channel`; no captures are duplicated here.
+The collection examples use `examples/workbench/multi-rxmer-2`:
+
+```bash
+scripts/cargo-local.sh run -p pnm-input --example run_multi_rxmer_mce --release --locked
+scripts/cargo-local.sh run -p pnm-input --example run_multi_rxmer_cm_chan_est --release --locked
+```
 
 ## Run Python
 

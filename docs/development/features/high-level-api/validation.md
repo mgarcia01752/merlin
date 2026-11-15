@@ -424,3 +424,25 @@ examples built and executed successfully in 13.96s total (2.47s, 5.41s and
 reference was generated for native Python comparison. The native parity test
 passed all four selection modes in 3.70s. Full Rust/Qt suites and
 other platforms were not rerun for these example-only changes.
+
+## API-EXAMPLES-10: matching Rust collection examples
+
+Added run_multi_rxmer_mce.rs and run_multi_rxmer_cm_chan_est.rs with matching
+Cargo targets. Both reuse support/multi_rxmer.rs, a numbered developer
+walkthrough with named settings matching Python. All 132 original RxMER captures
+and profiles discovered through CaptureLoader are loaded before explicit run.
+Rust retains the same AverageAll/unity policies and per-profile execution.
+
+Formatting and pnm-input example Clippy passed. Both optimized Rust examples
+and both corresponding Python scripts executed successfully in 20.60s total:
+Rust MCE 6.13s, Python MCE 4.78s, Rust supplied 5.69s, Python supplied 3.99s
+(including process/Cargo build startup). Independently parsed results matched
+exactly by profile/status/FEC/BER. Profiles 0/3/4 had totals 83/114/124; MCE
+corrected counts were 0/4/30, supplied counts 0/5/19. All completed with zero
+uncorrectable words and BER. The scripts reported loading without simulation
+before explicit run. Current example/user/architecture links were checked.
+
+Single-capture and saved-WB counterparts already exist and are unchanged.
+No core API/Qt or scientific algorithms changed; no full Rust/Qt suites or
+other-platform runtime checks were repeated. Logs remain local-only under
+docs/development/local/api-collection-examples/.
