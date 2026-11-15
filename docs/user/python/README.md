@@ -47,8 +47,10 @@ separate example using the modulation profile and 132 RxMER binaries from
 local/api-python-test/bin/python examples/api/python/multi_rxmer.py
 ```
 
-The collection example requests one Rust residual-power average with explicit
-unity response. See the [example notes](../../../examples/api/README.md) for
+The collection example runs Profiles 0, 3 and 4 independently, each with the
+Rust residual-power average and explicit unity response. It reports actual FEC
+results and wall time per profile. The observation is 1 ms per profile; increase
+`OBSERVATION_DURATION_MS` for a longer run. See the [example notes](../../../examples/api/README.md) for
 scope and desktop-WB differences.
 
 Installing a compatible precompiled wheel needs neither Rust nor Qt. Building

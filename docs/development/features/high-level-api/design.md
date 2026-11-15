@@ -199,3 +199,25 @@ completed with 83 codewords in 1.02s. Both reported zero corrected and
 uncorrectable words and BER 0.0. Syntax, import-only behavior, changed links
 and diff checks passed. Architecture ownership is unchanged; no wheel rebuild
 or full Rust/Qt checks were required for this examples/documentation change.
+
+## API-EXAMPLES-05: independent collection runs per captured profile
+
+The channel-193 file contains captured IDs 0, 3 and 4, verified through the
+existing Rust-backed DPD loader. Declare that fixture-specific selection as a
+named constant, without implying automatic catalog discovery. Load all selected
+profiles and original RxMER files before any run. Use a fresh Rust controller
+and profile-derived OCD for each independent experiment, reusing immutable
+observations and common options/seeds. Keep AverageAll, unity H and the explicit
+1 ms observation. Label actual FEC outputs by captured ID and report wall time
+separately using Python's monotonic clock. No science or counter calculation in
+Python and no artificial delay. Document one averaged experiment per profile,
+not one per capture, and preserve high_level.py. Validate all three native runs.
+
+Validation: native Ubuntu CPython 3.10 runs all completed. Profile 0: 83 total,
+0 corrected, 0 uncorrectable, BER 0.0 (0.698s). Profile 3: 114 total, 5 corrected,
+0 uncorrectable, BER 0.0 (2.256s). Profile 4: 124 total, 19 corrected,
+0 uncorrectable, BER 0.0 (0.878s). The three experiments took 3.873s; process
+wall time including loading was 4.10s. These are actual engine reports, not
+interoperability evidence or an expectation for other settings. Syntax/import,
+unchanged high_level.py and documentation checks pass. Reviewed architecture:
+no ownership or engine behavior changed, so no full Rust/Qt rebuild was needed.

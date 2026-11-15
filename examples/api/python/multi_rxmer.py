@@ -18,6 +18,7 @@ All input files are bundled examples. The script never modifies those files.
 Loading/configuring inputs does not start simulation; sim.run() below does.
 """
 from pathlib import Path
+from time import perf_counter
 from merlin import (
     DPD, OCD, Merlin, ProfileId, ProtocolScope, OcdOverrides, BandwidthHz,
     RxMer, RxMerSelection, EvaluationOptions, ChannelSelection,
@@ -30,18 +31,19 @@ from merlin import (
 REPOSITORY_PARENT_INDEX = 3  # examples/api/python/ -> repository root.
 FIXTURE_DIRECTORY = "examples/workbench/multi-rxmer-2"
 PROFILE_FILENAME = "ds_ofdm_modulation_profile_aabbccddeeff_193_1764824373.bin"
+PROFILE_IDS = (0, 3, 4)  # All profiles verified in this particular capture.
 RXMER_FILE_PATTERN = "ds_ofdm_rxmer_per_subcar_*.bin"
 OCCUPIED_BANDWIDTH_HZ = 192_000_000  # Explicit fixture configuration: 192 MHz.
-OBSERVATION_DURATION_MS = 1  # Source observation, excluding acquisition/drain.
+OBSERVATION_DURATION_MS = 1  # Per profile; increase for a longer experiment.
 PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 7_200  # Fixture capture-time allowance.
 MAX_RUNTIME_MS = 300_000  # Per-experiment wall-clock limit: 300 seconds.
 
 
 def main():
-    """Run one collection-backed experiment and display Rust-produced outcomes.
+    """Run independent collection-backed profiles and display Rust outcomes.
 
     Returns:
-        None after printing each experiment's status, FEC counters and BER.
+        None after printing each profile's status, FEC counters, BER and wall time.
         Input captures and returned report objects remain unchanged.
     Raises:
         FileNotFoundError if the configured folder contains no RxMER binaries.
@@ -56,31 +58,14 @@ def main():
         Path(__file__).resolve().parents[REPOSITORY_PARENT_INDEX] / FIXTURE_DIRECTORY
     )
 
-    # 2. Import the Downstream Profile Descriptor (DPD).
-    # A CM capture may contain multiple profiles, so select PROFILE_A explicitly.
-    # Rust detects binary/JSON from content, validates the selected profile and
-    # preserves original capture bytes, carrier assignments and provenance.
-    profile = DPD.from_file(root / PROFILE_FILENAME, ProfileId.PROFILE_A)
+    # 2. Import every selected captured profile before starting any simulation.
+    # PROFILE_IDS lists this fixture's real captured IDs, not QAM orders or
+    # wire IDs. Rust decodes and validates each; a missing selection is an error.
+    # This example does not guess IDs or silently ignore failed imports.
+    profiles = [DPD.from_file(root / PROFILE_FILENAME, ProfileId(profile_id))
+                for profile_id in PROFILE_IDS]
 
-    # 3. Resolve the OFDM Channel Descriptor (OCD) configuration.
-    # Reuse the profile's established grid and carrier roles. This fixture does
-    # not establish occupied bandwidth, so supply OCCUPIED_BANDWIDTH_HZ in Hz.
-    # BandwidthHz is a Rust-validated quantity, not an unlabelled integer.
-    # Omitted timing settings use documented application defaults: CP 512
-    # samples, roll-off 128 samples and interleaver depth 16. Reports identify
-    # defaults as assumptions rather than measured modem configuration.
-    ocd = OCD.from_profile(
-        ProtocolScope.DOCSIS31, profile,
-        OcdOverrides(bandwidth=BandwidthHz(OCCUPIED_BANDWIDTH_HZ)),
-    )
-
-    # 4. Create a controller and accept the selected profile.
-    # This owns configuration for later runs; it does not run the engine yet.
-    # The same Rust controller is available to native Rust consumers.
-    sim = Merlin(ocd)
-    sim.set_profile(profile)
-
-    # 5. Load each original RxMER binary in the collection independently.
+    # 3. Load each original RxMER binary in the collection independently.
     # Files are sorted for reproducible insertion order only. Rust decodes their
     # real header timestamps and preserves original bytes/provenance; timestamps
     # are never inferred from filenames. No scientific calculations run here.
@@ -89,13 +74,12 @@ def main():
     captures = sorted(root.glob(RXMER_FILE_PATTERN))
     if not captures:
         raise FileNotFoundError(f"No RxMER captures in {root}")
-    for capture in captures:
-        sim.add_rxmer(RxMer.from_file(capture))
+    observations = [RxMer.from_file(capture) for capture in captures]
     print(f"Loaded {len(captures)} RxMER captures; simulation has not started.")
 
-    # 6. Choose policies and separate source time from host execution time.
-    # - AverageAll requests ONE experiment using all captures. Rust averages
-    #   residual power, preserves missing values and validates exact grids.
+    # 4. Choose policies and separate source time from host execution time.
+    # - AverageAll requests one experiment per profile using all captures.
+    #   Rust averages residual power, preserves missing values and validates exact grids.
     #   It does not average dB or simulate the collection's hour of history.
     # - Unity is an explicit synthetic response, not a measured H. The desktop
     #   WB uses pilot-estimated receiver correction; that receiver setting and
@@ -109,37 +93,61 @@ def main():
     #   for real inputs rather than copying this fixture-specific value.
     # - MAX_RUNTIME_MS bounds host execution per experiment in milliseconds.
     #   A limit can yield a partial report instead of completion.
-    sim.set_options(EvaluationOptions(
+    options = EvaluationOptions(
         rxmer_selection=RxMerSelection.average_all(),
         channel_selection=ChannelSelection.unity(),
         observation=ObservationDuration(OBSERVATION_DURATION_MS),
         profile_tolerance=AssociationTolerance(PROFILE_ASSOCIATION_TOLERANCE_SECONDS),
-        limits=RunLimits(runtime=RuntimeLimit(MAX_RUNTIME_MS))))
+        limits=RunLimits(runtime=RuntimeLimit(MAX_RUNTIME_MS)))
 
-    # 7. Start actual simulation explicitly, then inspect every requested entry.
-    # Rust preflights the complete batch and runs the existing TX/channel/RX/FEC
-    # engine. The native binding releases the Python interpreter lock while
-    # computing. This synchronous call returns an owned batch when it finishes.
-    # Complete means execution completed; it does not guarantee FEC success.
-    for entry in sim.run():
-        print(entry.status)
-        report = entry.report
+    # 5. Create a fresh independent Rust controller for each profile.
+    # Derive its OCD from that profile's grid and protected roles. Supply the
+    # known fixture bandwidth explicitly; omitted timing retains documented
+    # application defaults (CP 512, roll-off 128, interleaver depth 16).
+    # Each controller restarts the common default PRBS/noise seeds and owns its
+    # configuration. The immutable capture objects are reused without editing.
+    # The API retains the captured ID; engine bootstrap uses wire Profile A.
+    print(f"Profiles: {PROFILE_IDS}; observation: {OBSERVATION_DURATION_MS} ms "
+          "per profile; RxMER: AverageAll; channel: unity")
+    total_started = perf_counter()
+    for profile in profiles:
+        ocd = OCD.from_profile(
+            ProtocolScope.DOCSIS31, profile,
+            OcdOverrides(bandwidth=BandwidthHz(OCCUPIED_BANDWIDTH_HZ)),
+        )
+        sim = Merlin(ocd)
+        sim.set_profile(profile)
+        for observation in observations:
+            sim.add_rxmer(observation)
+        sim.set_options(options)
 
-        # 8. Read actual observation-window outcomes, not analytical estimates.
-        # A not-started entry has no report; an early partial result may not yet
-        # have a FEC window. FEC and profile summaries share the same window.
-        # .value explicitly converts a read-only Rust quantity to a Python
-        # number for display. Corrected counts come from actual decoded outcomes,
-        # not from the number of decoder iterations. BER compares recovered
-        # payload bits with the independent source; None means unavailable,
-        # never an assumed zero. Reports also expose separately scoped whole-run
-        # diagnostics and retain their data after the controller is changed.
-        if report is not None and report.fec is not None:
-            print("Total:", report.fec.total_codewords.value)
-            print("Corrected:", report.fec.corrected_codewords.value)
-            print("Uncorrectable:", report.fec.uncorrectable_codewords.value)
-            print("BER:", report.profile.post_fec_ber.value
-                  if report.profile.post_fec_ber is not None else None)
+        # 6. Only run() starts the existing TX/channel/RX/FEC engine.
+        # The binding releases Python's interpreter lock while Rust computes.
+        # Timing measures host execution, not the simulated observation duration.
+        print(f"Profile {profile.profile_id.value}: starting", flush=True)
+        started = perf_counter()
+        batch = sim.run()
+        elapsed = perf_counter() - started
+        for entry in batch:
+            print(f"Profile {profile.profile_id.value}: {entry.status}")
+            report = entry.report
+
+            # 7. Print actual, observation-window FEC outcomes for this profile.
+            # Completion does not guarantee FEC success. A not-started result
+            # has no report; a partial run may lack an observation FEC window.
+            # None is unavailable, never zero. Counters come from Rust decoder
+            # outcomes; BER compares decoded payload with the original source.
+            # Reports own their data independently of this controller's lifetime.
+            if report is not None and report.fec is not None:
+                print("Total:", report.fec.total_codewords.value)
+                print("Corrected:", report.fec.corrected_codewords.value)
+                print("Uncorrectable:", report.fec.uncorrectable_codewords.value)
+                print("BER:", report.profile.post_fec_ber.value
+                      if report.profile.post_fec_ber is not None else None)
+            else:
+                print("Observation-window FEC report unavailable.")
+        print(f"Profile wall time: {elapsed:.3f} seconds")
+    print(f"Total experiment wall time: {perf_counter() - total_started:.3f} seconds")
 
 
 # Importing this example for inspection does not execute main or start a run.

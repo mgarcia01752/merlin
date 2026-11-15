@@ -1377,3 +1377,9 @@ validation are complete; the user guide includes the current dark capture.
   keep the collection workflow in multi_rxmer.py. Both native examples,
   exact restoration, import-only checks and documentation links pass.
   [Design](features/high-level-api/design.md#api-examples-04-keep-collection-walkthrough-separate).
+
+- [x] **API-EXAMPLES-05** Run the collection independently for captured
+  Profiles 0, 3 and 4. Label actual FEC/BER and host time per profile;
+  document explicit fixture selection and 1 ms observation. All three
+  native runs complete; syntax/import and documentation checks pass.
+  [Design](features/high-level-api/design.md#api-examples-05-independent-collection-runs-per-captured-profile).
