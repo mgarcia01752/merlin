@@ -35,7 +35,28 @@ Pane {
     RxmerDesignScope {id:scopeProbe;theme:theme;captureCount:50;visible:false}
     TestCase {
         name:"RxmerDesigner";when:windowShown
-        function cleanup(){dialog.close();wait(100)}
+        function cleanup(){dialog.close();findChild(dialog,"designerEffectsScroll").contentItem.contentY=0;wait(100)}
+        function revealEffect(item){
+            const scroll=findChild(dialog,"designerEffectsScroll"), flick=scroll.contentItem
+            const point=item.mapToItem(scroll,0,0)
+            flick.contentY=Math.max(0,Math.min(flick.contentHeight-flick.height,flick.contentY+point.y-flick.height/2))
+            verify(waitForRendering(dialog.contentItem))
+        }
+        function test_random_variation_only_for_flat_source(){
+            dialog.open();tryCompare(dialog,"visible",true)
+            const source=findChild(dialog,"designerSource"), toggle=findChild(dialog,"designerRandomVariation")
+            const deviation=findChild(dialog,"designerRandomDeviation"), seed=findChild(dialog,"designerRandomSeed")
+            verify(!toggle.enabled);verify(!deviation.enabled);compare(backend.lastRequest.recipe.random_variation,null)
+            source.currentIndex=1;toggle.checked=true;deviation.text="1.5";seed.text="41";dialog.refresh()
+            verify(toggle.enabled);verify(deviation.enabled)
+            compare(backend.lastRequest.recipe.random_variation.standard_deviation_db,1.5)
+            compare(backend.lastRequest.recipe.random_variation.seed,41)
+            source.currentIndex=0;dialog.refresh()
+            verify(!toggle.enabled);verify(!deviation.enabled);verify(!seed.enabled)
+            compare(backend.lastRequest.recipe.random_variation,null)
+            source.currentIndex=1;dialog.refresh()
+            compare(backend.lastRequest.recipe.random_variation.seed,41)
+        }
         function test_unchecked_tilt_disables_controls_and_retains_draft(){
             dialog.open();tryCompare(dialog,"visible",true)
             const toggle=findChild(dialog,"designerTilt"), field=findChild(dialog,"designerTiltDb")
@@ -132,6 +153,7 @@ Pane {
             for(let index=0;index<fields.length;index++){
                 const field=fields[index], value=Number(field.text)
                 const up=findChild(dialog,"designerNotch"+names[index]+"Up"), down=findChild(dialog,"designerNotch"+names[index]+"Down")
+                revealEffect(field)
                 mouseClick(up);compare(Number(field.text),value+1)
                 mouseClick(down);compare(Number(field.text),value)
                 field.forceActiveFocus();keyClick(Qt.Key_Up);compare(Number(field.text),value+1)
@@ -171,6 +193,7 @@ Pane {
                     const up=findChild(dialog,"designerNotch"+name+"Up")
                     const down=findChild(dialog,"designerNotch"+name+"Down")
                     verify(up.enabled);verify(down.enabled)
+                    revealEffect(field)
                     const point=up.mapToItem(scroll,0,0)
                     verify(point.x>=0 && point.x+up.width<=scroll.width,name+" arrow is horizontally clipped")
                     verify(point.y>=0 && point.y+up.height<=scroll.height,name+" arrow is vertically clipped")

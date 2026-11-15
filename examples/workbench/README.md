@@ -10,11 +10,12 @@ The former `examples/workbench.merlin.json` is now under `single/`.
 | [single](single/README.md) | One | One | One | Single capture |
 | [multi-rxmer](multi-rxmer/README.md) | One | Five | One | Average residual power |
 | [multi-rxmer-2](multi-rxmer-2/README.md) | One | 132 | Flat/unity | Average residual power |
+| [cl-192mhz-8mhz-notch](cl-192mhz-8mhz-notch/README.md) | Synthetic 4096-QAM | 42 dB with 8 MHz notch; flat companion | Flat/unity | PLC 333 MHz, notch 375 MHz |
 | [multi-rxmer-dschan](multi-rxmer-dschan/README.md) | Planned | Planned collection | Planned collection | Deferred |
 
-All three runnable WBs explicitly select `CmChannelEstimated`, matching the UI's
-new-configuration default. The two channel-34 WBs equalize with their supplied H;
-channel 193 uses unity correction because no measured H is supplied.
+All runnable WBs explicitly select `CmChannelEstimated`, matching the UI's
+new-configuration default. The two captured channel-34 WBs equalize with their supplied H;
+channel 193 and the synthetic notch experiment use unity correction because no measured H is supplied.
 
 Each runnable set has matching modem/channel, full frequency grid and DPD
 coverage within that set. `multi-rxmer-2` uses channel 193 and pre-collected

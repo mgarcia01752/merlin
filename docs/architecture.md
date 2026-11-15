@@ -2469,3 +2469,13 @@ The source installer accepts host CPython 3.10+ without an Ubuntu release
 allowlist. Shared CI/CD validates source installation and a version-only import
 on Ubuntu 22.04/24.04/26.04 and Windows. This packaging path retains the Python
 adapter → Basic Rust API → engine boundary; no simulation is used by its smoke.
+
+### RXMER-DESIGN-13: synthetic starting variation
+
+The Rust RxMER recipe optionally applies independent seeded Gaussian dB offsets
+before tilt, ripple, notch and value replacements. Qt admits this option only
+for flat synthetic baselines and rejects imported-baseline requests/envelopes
+that enable it. Capture-indexed ChaCha8 streams preserve repeatability and gaps;
+the designer never consumes simulation RNG state. The existing saved envelope
+retains deviation and seed, with absent options preserving legacy behavior.
+See [Designer workflow](user/measurement-inputs/rxmer-designer.md).

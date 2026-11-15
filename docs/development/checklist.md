@@ -1525,6 +1525,10 @@ validation are complete; the user guide includes the current dark capture.
   mouse stepping pass; refresh Designer images. Hosted Windows patch is pending.
   [Design](features/rxmer-designer/design.md#rxmer-design-12-font-aware-notch-field-layout).
 
+- [x] RXMER-DESIGN-13: Flat-baseline seeded random variation before frequency
+  effects, imported-source guards, reproducible previews and saved recipes.
+  [Design](features/rxmer-designer/design.md#rxmer-design-13--flat-baseline-random-variation).
+
 - [x] **CI-MSVC-01** Replace the Node 20 MSVC action in both Windows jobs
   with a shared native PowerShell initializer, retaining VS 2022/x64 and
   verifying linker selection. Workflow wiring checked locally; hosted execution
@@ -1586,3 +1590,9 @@ validation are complete; the user guide includes the current dark capture.
   download links and discoverable [reference skill](../../skills/docsis-pnm-rxmer-fec/SKILL.md).
 - [ ] Implement profile-relative carrier counts and verify field-capture FEC
   behavior; reference-skill completion does not establish simulation validity.
+
+## Reference experiments
+
+- [x] WB-CL-01: Add synthetic 192 MHz / 8 MHz notch and flat-baseline
+  workbenches, PLC at 333 MHz, with explicit assumptions and actual decoder
+  validation. [Design](features/cl-notch-workbench/design.md).

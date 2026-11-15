@@ -36,7 +36,7 @@ class DesktopTests(unittest.TestCase):
             self.assertEqual({path.name for path in destination.iterdir()},
                              {'README.md', 'workbench', 'measurements'})
             self.assertFalse((destination / 'cli').exists())
-            for name in ('single', 'multi-rxmer', 'multi-rxmer-2'):
+            for name in ('single', 'multi-rxmer', 'multi-rxmer-2', 'cl-192mhz-8mhz-notch'):
                 self.assertTrue((destination / 'workbench' / name / 'workbench.merlin.json').is_file())
             self.assertTrue((destination / 'measurements/single-channel/rxmer.json').is_file())
             with self.assertRaises(FileExistsError):

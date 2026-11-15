@@ -29,7 +29,7 @@ WorkbenchDialog {
     width:Math.min(1240,parent ? parent.width-30:1240)
     height:Math.min(820,parent ? parent.height-30:820)
     function recipe() {
-        return {tilt:tilt.checked ? {scope:tiltScope.value(),tilt_db:Number(tiltDb.text)} : null,
+        return {random_variation:source.currentIndex === 1 && randomVariation.checked ? {standard_deviation_db:randomDeviation.text.trim().length ? Number(randomDeviation.text):NaN,seed:randomSeed.text.trim().length ? Number(randomSeed.text):NaN} : null,tilt:tilt.checked ? {scope:tiltScope.value(),tilt_db:Number(tiltDb.text)} : null,
             ripple:ripple.checked ? {scope:rippleScope.value(),peak_to_peak_db:Number(rippleDb.text),spacing:distanceMode.checked ? {mode:"echo_distance",distance_metres:Number(distance.text),velocity_factor:Number(vf.text)} : {mode:"frequency",spacing_hz:Math.round(Number(spacing.text)*1e6)}} : null,
             notch:notch.checked ? {scope:notchScope.value(),center_hz:Math.round(Number(center.text)*1e6),bandwidth_hz:Math.round(Number(bandwidth.text)*1e6),depth_db:Number(depth.text),edge_hz:Math.round(Number(edge.text)*1e6)} : null,edits:valueEdits}
     }
@@ -108,6 +108,9 @@ WorkbenchDialog {
         if (information.request) {
             const request=information.request, rules=request.recipe
             source.currentIndex=request.source === "flat" ? 1:0;count.text=String(request.capture_count);baseline.text=String(request.baseline_db)
+            randomVariation.checked=!!rules.random_variation
+            randomDeviation.text=String(rules.random_variation ? rules.random_variation.standard_deviation_db:1.5)
+            randomSeed.text=String(rules.random_variation ? rules.random_variation.seed:41)
             tilt.checked=!!rules.tilt;tiltDb.text=String(rules.tilt ? rules.tilt.tilt_db:-4);tiltScope.restore(rules.tilt ? rules.tilt.scope:{mode:"all"})
             ripple.checked=!!rules.ripple;rippleDb.text=String(rules.ripple ? rules.ripple.peak_to_peak_db:2);rippleScope.restore(rules.ripple ? rules.ripple.scope:{mode:"all"})
             const period=rules.ripple ? rules.ripple.spacing:{mode:"frequency",spacing_hz:20000000}
@@ -159,6 +162,34 @@ WorkbenchDialog {
                 contentWidth:availableWidth
                 ColumnLayout {
                     width:effectsScroll.availableWidth;spacing:8
+                    Label {text:"Starting variation";color:theme.accent;font.bold:true}
+                    CheckBox {
+                        id:randomVariation;objectName:"designerRandomVariation";text:"Random variation";enabled:source.currentIndex === 1
+                        onToggled:dialog.refresh()
+                        ToolTip.visible:hovered || activeFocus
+                        ToolTip.text:"Independent normally distributed dB offsets across all subcarriers. Available only for a new flat sequence; applied before tilt, ripple and notch."
+                    }
+                    RowLayout {
+                        enabled:source.currentIndex === 1 && randomVariation.checked;opacity:enabled ? 1:0.5
+                        Label {text:"Std deviation (dB)";color:theme.text}
+                        TextField {id:randomDeviation;objectName:"designerRandomDeviation";text:"1.5";Layout.preferredWidth:65;onEditingFinished:dialog.refresh();Accessible.name:"Random variation standard deviation in dB"}
+                        StepButtons {
+                            theme:dialog.theme;namePrefix:"designerRandomDeviation"
+                            canIncrease:randomDeviation.text.trim().length>0 && Number.isFinite(Number(randomDeviation.text)) && Number(randomDeviation.text)>=0 && Number(randomDeviation.text)<=19.5
+                            canDecrease:randomDeviation.text.trim().length>0 && Number.isFinite(Number(randomDeviation.text)) && Number(randomDeviation.text)>=0.5 && Number(randomDeviation.text)<=20
+                            increaseDescription:"Increase standard deviation by 0.5 dB";decreaseDescription:"Decrease standard deviation by 0.5 dB"
+                            onIncreaseRequested:{randomDeviation.text=String(Number(randomDeviation.text)+0.5);dialog.refresh()}
+                            onDecreaseRequested:{randomDeviation.text=String(Number(randomDeviation.text)-0.5);dialog.refresh()}
+                        }
+                    }
+                    RowLayout {
+                        enabled:source.currentIndex === 1 && randomVariation.checked;opacity:enabled ? 1:0.5
+                        Label {text:"Random seed";color:theme.text}
+                        TextField {id:randomSeed;objectName:"designerRandomSeed";text:"41";Layout.preferredWidth:110;onEditingFinished:dialog.refresh();Accessible.name:"Designer random seed"
+                            ToolTip.visible:hovered || activeFocus;ToolTip.text:"Use the same seed to reproduce the same pattern. Each capture has a different pattern. This is separate from simulation Noise Seed."}
+                    }
+                    Label {text:source.currentIndex === 1 ? "Same variation across the channel; no frequency weighting." : "Imported captures keep their existing starting values.";color:theme.muted;wrapMode:Text.WordWrap;Layout.fillWidth:true;font.pixelSize:11}
+                    Rectangle {Layout.fillWidth:true;height:1;color:theme.line}
                     Label {text:"Frequency effects";color:theme.accent;font.bold:true}
                     CheckBox {id:tilt;objectName:"designerTilt";text:"RxMER tilt";onToggled:dialog.refresh()}
                     RowLayout {enabled:tilt.checked;opacity:enabled ? 1:0.5

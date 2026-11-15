@@ -205,3 +205,24 @@ uses that available width rather than the grid's own implicit width, avoiding a
 self-constraining layout. Regression coverage checks a 12 px font in a 600 px
 editor (six columns) and an 18 px font in a 350 px editor (three columns), then
 verifies visible arrow bounds and mouse steps on all four fields.
+
+## RXMER-DESIGN-13 — Flat-baseline random variation
+
+Add optional independent Gaussian dB offsets before frequency effects, only for
+new flat sequences. Existing imported baselines remain unchanged by this option.
+Rust owns validation and seeded ChaCha8/StandardNormal generation; QML presents
+an enable checkbox, standard deviation (default 1.5 dB) and seed (default 41).
+Use a separate stream per capture and consume one draw per grid position,
+including missing positions, so gaps do not shift later offsets. Persist the
+recipe in existing designer envelopes. No simulation RNG is consumed.
+
+Flow: baseline choice → flat + optional random variation / imported unchanged
+→ tilt → ripple → notch → explicit value replacements → preview → Apply/Save.
+Seeded preview, export and reopening must reproduce identical values. Existing
+recipes default to no variation. Reject nonfinite/out-of-range deviation,
+imported recipes with variation, and out-of-range output without clipping.
+Test reproducibility, missing-value alignment, moments, notch offset preservation,
+source guards, QML controls and native screenshots. This is synthetic RxMER
+variation, not an RF waveform or a calibrated model of field variability.
+
+Implementation and local validation are complete; see [validation](validation.md#rxmer-design-13-seeded-starting-variation) and the [user workflow](../../../user/measurement-inputs/rxmer-designer.md). Random dependencies are shared by the numerical Designer even in analysis-only builds; Qt remains optional.

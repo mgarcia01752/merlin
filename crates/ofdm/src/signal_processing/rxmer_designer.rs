@@ -4,6 +4,9 @@
  */
 //! Explicit synthetic RxMER profile edits; never infers channel phase or RF noise.
 use crate::{scenario::FrequencyGrid, types::FrequencyHz, SimulationError};
+use rand::SeedableRng;
+use rand_chacha::ChaCha8Rng;
+use rand_distr::{Distribution, StandardNormal};
 use serde::{Deserialize, Serialize};
 
 /// Application bounds, independent of a PNM wire-format representation.
@@ -130,10 +133,21 @@ pub struct ValueEdit {
     pub last_hz: FrequencyHz,
     pub value_db: f64,
 }
+/// Independent Gaussian dB offsets, applied before all frequency effects.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct RandomVariation {
+    /// Standard deviation in dB, finite and within 0 through 20.
+    pub standard_deviation_db: f64,
+    /// Independent designer seed; does not consume the simulation noise stream.
+    pub seed: u32,
+}
 /// Version-neutral typed edit recipe. File/WB schema versioning belongs to adapters.
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct RxmerRecipe {
+    /// Optional seeded variation around each baseline value.
+    pub random_variation: Option<RandomVariation>,
     pub tilt: Option<Tilt>,
     pub ripple: Option<Ripple>,
     pub notch: Option<Notch>,
@@ -158,6 +172,13 @@ impl RxmerRecipe {
     pub fn validate(&self, grid: &FrequencyGrid, count: usize) -> Result<(), SimulationError> {
         grid.validate()?;
         CaptureScope::All.validate(count)?;
+        if let Some(rule) = &self.random_variation {
+            if !bounded(rule.standard_deviation_db, 0.0, 20.0) {
+                return Err(fail(
+                    "Random variation standard deviation must be finite within 0–20 dB.",
+                ));
+            }
+        }
         let low = grid.frequency(0)?;
         let high = grid.frequency(grid.sample_count - 1)?;
         if let Some(tilt) = &self.tilt {
@@ -208,7 +229,7 @@ impl RxmerRecipe {
     /// * `baseline` - Same-length optional MER samples; None remains None.
     /// * `position`, `count` - One-based capture position and collection size.
     /// # Returns
-    /// Owned designed dB values in original order. Applies tilt, ripple, notch,
+    /// Owned designed dB values in original order. Applies random variation, tilt, ripple, notch,
     /// then explicit replacements in listed order. No simulation RNG is consumed.
     /// # Errors
     /// Rejects invalid recipes, positions, length, nonfinite baseline values or any
@@ -237,12 +258,26 @@ impl RxmerRecipe {
             .as_ref()
             .map(|rule| rule.spacing.frequency_hz())
             .transpose()?;
+        let mut random = self.random_variation.as_ref().map(|rule| {
+            let mut rng = ChaCha8Rng::seed_from_u64(u64::from(rule.seed));
+            rng.set_stream(position as u64 - 1);
+            rng
+        });
         let mut result = Vec::with_capacity(baseline.len());
         for (offset, value) in baseline.iter().enumerate() {
+            // Draw even for gaps so later carrier offsets remain aligned.
+            let offset_db = match (&self.random_variation, &mut random) {
+                (Some(rule), Some(rng)) => {
+                    let normal: f64 = StandardNormal.sample(rng);
+                    rule.standard_deviation_db * normal
+                }
+                _ => 0.0,
+            };
             let Some(mut value) = *value else {
                 result.push(None);
                 continue;
             };
+            value += offset_db;
             let frequency = grid.frequency(offset)?;
             if let Some(rule) = self
                 .tilt

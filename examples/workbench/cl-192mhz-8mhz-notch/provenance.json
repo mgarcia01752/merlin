@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "description": "Synthetic deterministic inputs; CableLabs-style qualitative comparison only. See README for matched settings and assumptions.",
+  "generator": "crates/pnm-input/examples/prepare_cl_notch_workbench.rs",
+  "reference": "CM-GL-PNM-3.1-V05-230927, Appendix II, pp.208-210",
+  "files": [
+    {
+      "file": "baseline.merlin.json",
+      "bytes": 140580,
+      "sha256": "2cf9843b906d7e9b9620e325cd41bb7c947f9fea925ab20aae3afa80755eb12a",
+      "synthetic": true
+    },
+    {
+      "file": "modulation_profile.json",
+      "bytes": 27988,
+      "sha256": "278ce685a7bd72a118c35ac8c1c3d7041d25fc55cd238bf59f4771ab005ee0d2",
+      "synthetic": true
+    },
+    {
+      "file": "rxmer-flat-42db.json",
+      "bytes": 76391,
+      "sha256": "0e266bf8d3e13c1e7dfbe95ceaa7d10e270416bf4fcfe1ace7dc2297b3cc01c2",
+      "synthetic": true
+    },
+    {
+      "file": "rxmer-notch-10db.json",
+      "bytes": 76391,
+      "sha256": "4c664fccbf46d4810ec69c69a4e6b8bb3cefb9a26457765e504db0aa64e149dc",
+      "synthetic": true
+    },
+    {
+      "file": "workbench.merlin.json",
+      "bytes": 140581,
+      "sha256": "083706473354d2a8b78f6268a500a25ad34f6c860740ccae71d769ebe27d20ba",
+      "synthetic": true
+    }
+  ]
+}

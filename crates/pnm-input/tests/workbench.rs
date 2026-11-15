@@ -180,3 +180,76 @@ fn resource_limits_reject_embedded_counts_lengths_and_oversize_files() {
         ErrorCode::ResourceLimit
     );
 }
+
+#[test]
+fn cablelabs_notch_fixture_preserves_frequency_plan_and_unity() {
+    use base64::{engine::general_purpose::STANDARD, Engine};
+    const NOTCH: &[u8] =
+        include_bytes!("../../../examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json");
+    const FLAT: &[u8] =
+        include_bytes!("../../../examples/workbench/cl-192mhz-8mhz-notch/baseline.merlin.json");
+    for (bytes, has_notch) in [(NOTCH, true), (FLAT, false)] {
+        let wb = Workbench::from_bytes(bytes).unwrap();
+        assert_eq!(wb.controllers().len(), 1);
+        let sim = &wb.controllers()[0];
+        assert_eq!(sim.profile().unwrap().profile_id().value(), 3);
+        assert_eq!(
+            sim.options().receiver_mode,
+            ReceiverMode::CmChannelEstimated
+        );
+        assert_eq!(sim.options().observation.value(), 10);
+        let prepared = sim.prepare().unwrap();
+        assert_eq!(
+            prepared[0]
+                .engine_settings()
+                .transmission
+                .occupied_bandwidth_hz,
+            192_000_000
+        );
+        assert!(prepared[0].engine_settings().impairments.response.is_none());
+        let doc: Value = serde_json::from_slice(bytes).unwrap();
+        let decode = |file: &Value| -> Value {
+            serde_json::from_slice(&STANDARD.decode(file["base64"].as_str().unwrap()).unwrap())
+                .unwrap()
+        };
+        let profile = decode(&doc["sections"]["profile"]["file"]);
+        let rxmer = decode(&doc["sections"]["measurements"]["rxmer"][0]);
+        let zero = rxmer["subcarrier_zero_frequency"].as_u64().unwrap();
+        let first = rxmer["first_active_subcarrier_index"].as_u64().unwrap();
+        let spacing = rxmer["subcarrier_spacing"].as_u64().unwrap();
+        assert_eq!(zero + first * spacing, 300_000_000);
+        assert_eq!(spacing, 25_000);
+        let values = rxmer["values"].as_array().unwrap();
+        assert_eq!(values.len(), 7600);
+        assert_eq!(zero + (first + values.len() as u64) * spacing, 490_000_000);
+        let mut low_count = 0;
+        for (offset, value) in values.iter().enumerate() {
+            let hz = zero + (first + offset as u64) * spacing;
+            let expected = if has_notch && (371_000_000..379_000_000).contains(&hz) {
+                low_count += 1;
+                10.0
+            } else {
+                42.0
+            };
+            assert_eq!(value.as_f64().unwrap(), expected);
+        }
+        assert_eq!(low_count, if has_notch { 320 } else { 0 });
+        let mut bin = first;
+        let mut plc_frequencies = Vec::new();
+        for scheme in profile["profiles"][0]["schemes"].as_array().unwrap() {
+            let count = scheme["num_subcarriers"].as_u64().unwrap();
+            match scheme["modulation_order_code"].as_u64().unwrap() {
+                20 => {
+                    plc_frequencies.extend((bin..bin + count).map(|index| zero + index * spacing))
+                }
+                1 | 12 => {}
+                unexpected => panic!("Unexpected carrier code {unexpected}"),
+            }
+            bin += count;
+        }
+        assert_eq!(bin, first + 7600);
+        assert_eq!(plc_frequencies.len(), 16);
+        assert_eq!(plc_frequencies.first(), Some(&332_800_000));
+        assert_eq!(plc_frequencies.last(), Some(&333_175_000));
+    }
+}

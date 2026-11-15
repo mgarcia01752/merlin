@@ -58,7 +58,7 @@ Actual native UI captures. Select an image to open its guide.
 <h3 align="center">RxMER Designer</h3>
 
 <p align="center">
-  <a href="docs/user/measurement-inputs/rxmer-designer.md"><img src="docs/images/workbench/rxmer-designer-dark.png" alt="RxMER Designer preview with tilt, ripple, a synthetic notch and PLC shading" width="1100"></a>
+  <a href="docs/user/measurement-inputs/rxmer-designer.md"><img src="docs/images/workbench/rxmer-designer-dark.png" alt="RxMER Designer with seeded random variation, frequency effects and PLC shading" width="1100"></a>
 </p>
 
 ## Measurements and demos

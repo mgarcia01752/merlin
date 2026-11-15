@@ -150,3 +150,81 @@ fn invalid_bounds_and_outputs_reject_without_clipping() {
     .frequency_hz()
     .is_err());
 }
+
+#[test]
+fn random_variation_is_reproducible_aligned_and_precedes_notch() {
+    let mut recipe = RxmerRecipe {
+        random_variation: Some(RandomVariation {
+            standard_deviation_db: 1.5,
+            seed: 41,
+        }),
+        ..Default::default()
+    };
+    let baseline = [Some(43.0); 9];
+    let original = recipe.apply(&grid(), &baseline, 1, 2).unwrap();
+    assert_eq!(original, recipe.apply(&grid(), &baseline, 1, 2).unwrap());
+    assert_ne!(original, recipe.apply(&grid(), &baseline, 2, 2).unwrap());
+    let mut gaps = baseline;
+    gaps[2] = None;
+    let result = recipe.apply(&grid(), &gaps, 1, 2).unwrap();
+    assert_eq!(result[2], None);
+    assert_eq!(&result[3..], &original[3..]);
+    recipe.notch = Some(Notch {
+        scope: CaptureScope::All,
+        center_hz: 104_000_000,
+        bandwidth_hz: 2_000_000,
+        depth_db: 33.0,
+        edge_hz: 0,
+    });
+    let notched = recipe.apply(&grid(), &baseline, 1, 2).unwrap();
+    for index in 0..9 {
+        let expected = if (3..=5).contains(&index) {
+            original[index].unwrap() - 33.0
+        } else {
+            original[index].unwrap()
+        };
+        assert_eq!(notched[index], Some(expected));
+    }
+    recipe
+        .random_variation
+        .as_mut()
+        .unwrap()
+        .standard_deviation_db = f64::NAN;
+    assert!(recipe.apply(&grid(), &baseline, 1, 2).is_err());
+}
+
+#[test]
+fn random_variation_has_expected_moments_and_zero_is_identity() {
+    let grid = FrequencyGrid {
+        zero_frequency_hz: 0,
+        first_subcarrier_index: 0,
+        spacing_hz: 25_000,
+        sample_count: 8192,
+    };
+    let baseline = vec![Some(43.0); grid.sample_count];
+    let mut recipe = RxmerRecipe {
+        random_variation: Some(RandomVariation {
+            standard_deviation_db: 1.5,
+            seed: 41,
+        }),
+        ..Default::default()
+    };
+    let values = recipe.apply(&grid, &baseline, 1, 1).unwrap();
+    let offsets: Vec<_> = values.iter().map(|value| value.unwrap() - 43.0).collect();
+    let mean = offsets.iter().sum::<f64>() / offsets.len() as f64;
+    let variance = offsets
+        .iter()
+        .map(|value| (value - mean).powi(2))
+        .sum::<f64>()
+        / offsets.len() as f64;
+    assert!(mean.abs() < 0.08, "mean={mean}");
+    assert!((variance.sqrt() - 1.5).abs() < 0.08, "variance={variance}");
+    recipe
+        .random_variation
+        .as_mut()
+        .unwrap()
+        .standard_deviation_db = 0.0;
+    assert_eq!(recipe.apply(&grid, &baseline, 1, 1).unwrap(), baseline);
+    let old: RxmerRecipe = serde_json::from_str("{}").unwrap();
+    assert!(old.random_variation.is_none());
+}

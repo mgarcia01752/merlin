@@ -163,3 +163,11 @@ backend settings (editor: zero attenuation; diagram: 12 dB gain, 6 dB CPA;
 independent noise disabled), not evidence
 of an end-to-end simulated run. The test window uses the application's theme
 palette for popups.
+
+## RXMER-DESIGN-13 refresh (2026-11-15)
+
+Rebuilt native Qt VM captures replace the Designer full-span, PLC-zoom and Save
+images. They show a new flat sequence, 43 dB baseline, 1.5 dB independent random
+variation, seed 41 and an 8 MHz notch centered at 375 MHz with 33 dB depth.
+The main-chart image is retained because that UI is unchanged. These are actual
+application captures, not mockups; the review closed without exporting inputs.

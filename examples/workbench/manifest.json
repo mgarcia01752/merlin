@@ -169,6 +169,17 @@
       ],
       "mode": "average",
       "provenance": "multi-rxmer-2/provenance.json"
+    },
+    {
+      "id": "cl-192mhz-8mhz-notch",
+      "workbench": "cl-192mhz-8mhz-notch/workbench.merlin.json",
+      "modulation_profile": "cl-192mhz-8mhz-notch/modulation_profile.json",
+      "channel_estimate": null,
+      "rxmer": [
+        "cl-192mhz-8mhz-notch/rxmer-notch-10db.json"
+      ],
+      "mode": "single",
+      "provenance": "cl-192mhz-8mhz-notch/provenance.json"
     }
   ],
   "planned": [

@@ -91,6 +91,11 @@ fn frame_from_flat(
     }))
 }
 fn materialize(record: Record, frame: Arc<RxMerFrame>) -> Result<Capture, AdmissionError> {
+    if matches!(record.baseline, Baseline::Imported { .. })
+        && record.recipe.random_variation.is_some()
+    {
+        return Err("Random variation requires a new flat sequence.".into());
+    }
     let values = record
         .recipe
         .apply(
@@ -287,6 +292,9 @@ impl Session {
         })
     }
     fn count(&self, request: &Request) -> Result<usize, AdmissionError> {
+        if request.source == "imported" && request.recipe.random_variation.is_some() {
+            return Err("Random variation requires a new flat sequence.".into());
+        }
         let count = match request.source.as_str() {
             "imported" => self.origins.len(),
             "flat" => request.capture_count,
@@ -545,6 +553,26 @@ mod tests {
         )
         .unwrap();
         (session, editors.measurements)
+    }
+    #[test]
+    fn random_variation_requires_flat_and_survives_envelope_roundtrip() {
+        let (session, _) = fixture();
+        let mut request = session.request.clone();
+        request.recipe.random_variation = Some(
+            docsis_ofdm_fec::signal_processing::rxmer_designer::RandomVariation {
+                standard_deviation_db: 1.5,
+                seed: 41,
+            },
+        );
+        request.source = "imported".into();
+        assert!(session.count(&request).is_err());
+        request.source = "flat".into();
+        request.capture_count = 1;
+        assert_eq!(session.count(&request).unwrap(), 1);
+        let origin = session.origin(&request, 0).unwrap();
+        let capture = materialize(origin.record, origin.frame).unwrap();
+        let restored = decode(&capture.original).unwrap().unwrap();
+        assert_eq!(capture.decoded_hash, restored.decoded_hash);
     }
     #[test]
     fn envelope_roundtrip_reopens_originals_without_compounding() {

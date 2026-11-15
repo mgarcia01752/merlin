@@ -91,6 +91,7 @@ See [QAM processing](qam-processing/README.md) and [receiver instruments](receiv
 | PLC | Physical Link Channel: protected signaling used to acquire and configure downstream OFDM reception. |
 | PNM | Proactive Network Maintenance. MERLIN uses supported existing PNM captures as simulation inputs. |
 | Profile | A set of modulation assignments over the channel's subcarriers. An imported profile is not automatically supported for a live run. |
+| Random variation | Independent Gaussian offsets in dB around a synthetic flat RxMER baseline. Standard deviation sets the spread; the designer seed reproduces the pattern. It is separate from waveform noise. See [RxMER Designer](measurement-inputs/rxmer-designer.md#starting-values-and-random-variation). |
 | Receiver estimate Ĥ (H-hat) | Channel response estimated from received pilots, distinct from applied H. The response Display selector calls it MCE Estimate for MCE runs and Pilot Estimate for legacy pilot-estimated runs. See the [MCE guide](receiver-estimation/mce.md). |
 | Run Profile | The captured profile ID used by one independent simulation run. It is separate from the current on-wire Profile A/ID0. |
 | RxMER | Receive Modulation Error Ratio: per-subcarrier signal-to-modulation-error power ratio, commonly expressed in dB. MERLIN uses it to model residual error power; it does not reconstruct measured I/Q from RxMER. |

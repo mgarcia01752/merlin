@@ -288,7 +288,7 @@ mod tests {
         let manifest: Value =
             serde_json::from_slice(&std::fs::read(root.join("manifest.json")).unwrap()).unwrap();
         let bundles = manifest["bundles"].as_array().unwrap();
-        assert_eq!(bundles.len(), 3);
+        assert_eq!(bundles.len(), 4);
         assert_eq!(manifest["planned"][0]["id"], "multi-rxmer-dschan");
         for bundle in bundles {
             let path = root.join(bundle["workbench"].as_str().unwrap());
@@ -299,13 +299,19 @@ mod tests {
             if let Some(response) = inputs.response.as_ref() {
                 assert_eq!(profile.key, response.key);
             } else {
-                assert_eq!(bundle["id"], "multi-rxmer-2");
+                assert!(matches!(
+                    bundle["id"].as_str(),
+                    Some("multi-rxmer-2" | "cl-192mhz-8mhz-notch")
+                ));
                 assert!(bundle["channel_estimate"].is_null());
             }
             assert!(playback.frames.iter().all(|frame| frame.key == profile.key));
             assert_eq!(
                 profile.key.grid.sample_count,
-                if bundle["id"] == "multi-rxmer-2" {
+                if matches!(
+                    bundle["id"].as_str(),
+                    Some("multi-rxmer-2" | "cl-192mhz-8mhz-notch")
+                ) {
                     7600
                 } else {
                     7480
@@ -368,7 +374,7 @@ mod tests {
             let paths = bundle["rxmer"].as_array().unwrap();
             assert_eq!(captures.len(), paths.len());
             let expected_count = match bundle["id"].as_str().unwrap() {
-                "single" => 1,
+                "single" | "cl-192mhz-8mhz-notch" => 1,
                 "multi-rxmer" => 5,
                 "multi-rxmer-2" => 132,
                 other => panic!("Unknown example {other}"),

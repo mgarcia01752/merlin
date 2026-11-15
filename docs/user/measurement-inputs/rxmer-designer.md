@@ -5,12 +5,56 @@ loaded captures or choose **New flat sequence**. The flat sequence uses the exac
 profile grid and keeps excluded carriers unavailable. Its profile epoch is only
 an association anchor; it is not a measured acquisition time.
 
-![RxMER Designer with tilt, ripple, a synthetic notch and PLC shading](../../images/workbench/rxmer-designer-dark.png)
+![RxMER Designer with seeded random variation and PLC shading](../../images/workbench/rxmer-designer-dark.png)
 
-The preview above shows two imported captures with tilt, ripple and a synthetic
-notch enabled for both. The stacked arrows sit beside each editable value, and
-**Save** is at the lower left. The separate main-chart screenshot below shows
-a generated 50-capture sequence with three captures selected.
+The preview shows the Designer's starting-variation and frequency-effect controls.
+
+## Starting values and random variation
+
+Choose **New flat sequence**, set **Flat RxMER (dB)** (for example 43), then
+enable **Random variation**. Set **Std deviation (dB)** to 1.5 and choose a
+**Random seed**. The small stacked arrows adjust deviation by 0.5 dB; the text
+field also accepts fractional values. Deviation is bounded to 0–20 dB and the
+seed is an integer from 0 through 4294967295.
+
+Each subcarrier receives an independent normal offset with the same distribution
+across the entire channel. There is no frequency weighting or smoothing:
+
+$$
+R_k = B_k + \sigma Z_k, \qquad Z_k \sim \mathcal N(0,1).
+$$
+
+Here B is the flat starting level, sigma is the standard deviation in dB,
+and Z is an independent standard-normal draw. A 43 dB baseline and 1.5 dB
+deviation produce scatter around 43 dB. A later 33 dB notch lowers that scatter
+to approximately 10 dB without changing its offsets. These are synthetic RxMER
+values, not waveform-time noise; the channel simulator separately generates
+signal noise from the resulting RxMER. The sample mean need not equal 43 exactly.
+
+**Imported captures** disables random variation and its controls, using existing
+captured values as the starting point. It does not flatten or randomize imports.
+Other effects remain available. Switching back to a new flat sequence retains
+the current random-control draft. Random variation applies to all newly generated
+captures; each capture has its own seeded pattern. The same seed, settings and
+capture index reproduce the same pattern on preview, Apply, Save and reopen.
+Missing samples remain missing without shifting the pattern on other carriers.
+
+```mermaid
+flowchart TD
+    A[Choose baseline] --> B{Source}
+    B -->|New flat sequence| C[Set capture count and flat RxMER]
+    C --> D[Optional random variation: deviation and seed]
+    B -->|Imported captures| E[Use existing values; random controls disabled]
+    D --> F[Optional tilt: direction and dB]
+    E --> F
+    F --> G[Optional ripple: depth and spacing or echo helper]
+    G --> H[Optional notch: center, width, depth and edge]
+    H --> I[Optional exact value replacements]
+    I --> J[Preview capture and chart]
+    J --> K[Apply to stage, Save binary or JSON, or Cancel]
+```
+
+## Frequency effects
 
 Enable the effects you need. When **RxMER tilt** is unchecked, its value,
 arrows, direction button and capture-range controls are disabled. Their settings
@@ -60,13 +104,13 @@ No PLC region is guessed from the RxMER shape; a missing or incompatible profile
 | LTE / 5G-style notch | Reduces MER within a center/width band, with flat interior and optional raised-cosine edges. It does not generate a cellular RF waveform. |
 | Replace subcarrier values | Sets a final MER value at one exact carrier-center frequency or an inclusive frequency range. Missing samples remain missing. |
 
-Each effect has its own **Capture range**. Leave it unchecked for all captures.
+Tilt, ripple, notch and value replacements each have their own **Capture range**. Leave it unchecked for all captures.
 Check it for one-based inclusive first/last capture numbers. Equal numbers select
 one capture. For example, **10 to 20** of 50 affects exactly 11 captures. These
 capture numbers are separate from subcarrier frequencies. Move **Preview capture**
 to inspect the sequence and use the timeline to see where each effect applies.
 
-Effects apply in order: tilt, ripple, notch, then listed value replacements.
+Effects apply in order: random variation, tilt, ripple, notch, then listed value replacements.
 The supported limits are 256 captures, 4 million values, 32 value ranges, ±60 dB tilt,
 0–60 dB ripple/notch depth and final MER −30 through 120 dB. Invalid combinations
 reject without clipping or changing original input files. Hover or focus known

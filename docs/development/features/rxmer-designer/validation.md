@@ -153,3 +153,30 @@ Refreshed full-span and PLC-zoom dark screenshots show actual imported captures,
 the review process closed without applying or saving the draft. Local logs are
 ignored under `docs/development/local/release-monitor/`. Hosted Windows validation
 requires the pending patch release; Linux success is not Windows verification.
+
+## RXMER-DESIGN-13: seeded starting variation
+
+On Ubuntu 22.04.5 x86_64, Rust 1.85.1 and Qt 6.8.3:
+
+- Six focused Rust Designer tests pass, including deterministic independent
+  capture streams, preserved missing-position alignment, expected mean/spread,
+  zero-deviation identity and unchanged offsets through a 33 dB notch.
+- All 139 analysis-only Rust tests pass without Qt or the simulation feature.
+- Warnings-denied Clippy passes for ofdm/pnm-input all targets and Qt all targets.
+- `scripts/qt-desktop.sh check` passes: 83 adapter tests (56.35 s), native build,
+  and 78 QML checks (14.758 s). QML tests scroll effects into view before mouse
+  assertions; the additional controls legitimately extend the existing panel.
+- Adapter tests reject random variation for imported requests and verify a
+  synthetic seeded envelope's decoded values survive reopening.
+- Native VM review uses the rebuilt executable: flat 43 dB, deviation 1.5 dB,
+  seed 41, notch center 375 MHz / width 8 MHz / depth 33 dB / edge 0. Both the
+  full-band preview and PLC zoom show the random offsets. Save preparation reports
+  7,600 samples and no missing/clipped values. No files were exported or accepted
+  into the user's running session. The isolated review process was closed.
+- Refreshed `rxmer-designer-dark.png`, `rxmer-designer-plc-zoom-dark.png` and
+  `rxmer-designer-save-dark.png` from the native VM window. The separate main
+  chart illustration remains valid; its controls did not change.
+
+The initial check caught an outdated three-bundle inventory assertion, now
+updated for WB-CL-01; the final check above passes. Full simulation workspace
+suite and Windows runtime were not run for this change. No commit or push made.
