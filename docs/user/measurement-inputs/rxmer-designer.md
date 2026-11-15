@@ -13,8 +13,9 @@ and a synthetic notch enabled for all captures.
 Enable the effects you need. When **RxMER tilt** is unchecked, its value,
 arrows, direction button and capture-range controls are disabled. Their settings
 are retained and restored when you check it again. With tilt enabled, the text box remains
-editable; its **↓ / ↑** buttons or the field’s Up/Down keys adjust the current
-value by exactly **1 dB**.
+editable; the small **▴ / ▾** buttons are stacked beside it, with increase
+on top and decrease below. Either arrow or the field’s Up/Down keys adjusts
+the current value by exactly **1 dB**.
 Fractional typed values remain supported. Steps beyond ±60 dB or from invalid
 text are disabled. Press the **Low → High / Low ← High** button before the
 field to reverse the tilt direction

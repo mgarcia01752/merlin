@@ -1223,6 +1223,12 @@ validation are complete; the user guide includes the current dark capture.
   the native build pass. Native direction changes verified.
   [Design](features/rxmer-designer/design.md#rxmer-design-07-direction-button-replaces-tilt-label).
 
+- [x] **RXMER-DESIGN-08** Stack small increase/decrease triangles beside
+  the tilt field using the shared action style. Preserve input/shortcuts,
+  bounds and disabled guards. All 80 adapter and 72 QML checks pass, with
+  native dark/light verification and refreshed guide screenshots.
+  [Design](features/rxmer-designer/design.md#rxmer-design-08-compact-stacked-tilt-arrows).
+
 ### Windows desktop UI delivery
 
 - [x] **UI-MSI-01** Implement Windows x64 desktop-only MSI staging and CI,

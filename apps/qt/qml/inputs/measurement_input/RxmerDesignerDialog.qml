@@ -117,17 +117,23 @@ WorkbenchDialog {
                             Keys.onDownPressed:dialog.stepTilt(-1)
                         }
                         Label {text:"dB";color:theme.text}
-                        WorkbenchActionButton {
-                            theme:dialog.theme;objectName:"designerTiltDown";text:"↓";compact:true
-                            enabled:dialog.canStepTilt(-1);onClicked:dialog.stepTilt(-1)
-                            Accessible.name:"Decrease RxMER tilt by 1 dB"
-                            ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
-                        }
-                        WorkbenchActionButton {
-                            theme:dialog.theme;objectName:"designerTiltUp";text:"↑";compact:true
-                            enabled:dialog.canStepTilt(1);onClicked:dialog.stepTilt(1)
-                            Accessible.name:"Increase RxMER tilt by 1 dB"
-                            ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
+                        ColumnLayout {
+                            spacing:2
+                            Layout.alignment:Qt.AlignVCenter
+                            WorkbenchActionButton {
+                                theme:dialog.theme;objectName:"designerTiltUp";text:"▴";compact:true
+                                implicitWidth:26;implicitHeight:14;padding:0;font.pixelSize:10
+                                enabled:dialog.canStepTilt(1);onClicked:dialog.stepTilt(1)
+                                Accessible.name:"Increase RxMER tilt by 1 dB"
+                                ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
+                            }
+                            WorkbenchActionButton {
+                                theme:dialog.theme;objectName:"designerTiltDown";text:"▾";compact:true
+                                implicitWidth:26;implicitHeight:14;padding:0;font.pixelSize:10
+                                enabled:dialog.canStepTilt(-1);onClicked:dialog.stepTilt(-1)
+                                Accessible.name:"Decrease RxMER tilt by 1 dB"
+                                ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
+                            }
                         }
 
                     }

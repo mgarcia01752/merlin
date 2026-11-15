@@ -70,6 +70,10 @@ Pane {
             dialog.open();tryCompare(dialog,"visible",true)
             const field=findChild(dialog,"designerTiltDb"), up=findChild(dialog,"designerTiltUp"), down=findChild(dialog,"designerTiltDown")
             verify(field);verify(up);verify(down)
+            const upper=up.mapToItem(null,0,0), lower=down.mapToItem(null,0,0)
+            compare(upper.x,lower.x);verify(upper.y+up.height<=lower.y)
+            verify(up.width<field.width)
+            verify(up.height+down.height+up.parent.spacing<=findChild(dialog,"designerTiltDirection").height)
             findChild(dialog,"designerTilt").checked=true
             field.text="-5";mouseClick(up);compare(field.text,"-4");compare(backend.lastRequest.recipe.tilt.tilt_db,-4)
             mouseClick(down);compare(field.text,"-5")

@@ -109,3 +109,22 @@ Clicking reverses the sign without changing magnitude, scope or zoom. Retain
 the signed field, dB unit, step actions and unchecked/invalid/zero guards. QML
 owns this presentation; Rust recipe semantics remain unchanged. Verify labels
 and keyboard/mouse reversal, rebuild and update the native guide capture.
+
+## RXMER-DESIGN-08: compact stacked tilt arrows
+
+Replace the two side-by-side shaft-arrow actions with a compact vertical column
+of small triangle arrows beside the dB field: increase above decrease. Reuse
+WorkbenchActionButton, retaining object names, one-dB handlers, focus/tooltips,
+text entry and all existing enable/boundary guards. Keep the column close to
+the field and within the original row height. Verify the existing Designer
+interaction tests, narrow layout and dark/light appearance, rebuild the native
+application and refresh the dark user-guide captures. No Rust recipe changes.
+
+Validation: the full Qt helper passed formatting, Clippy, all 80 adapter tests
+(54.32s), the native build and 72 QML checks (16.082s). The focused Designer
+suite passed 9 checks, including vertical alignment and the original input,
+keyboard, bounds and disabled behavior. Native VM dark/light inspection
+confirmed readable small triangles; mouse clicks changed -4 to -3 and back
+to -4 dB. Refreshed the normal/PLC-zoom dark guide captures. Review used owned
+application instances and isolated preferences; the existing user app was
+preserved. No core signal-processing or recipe behavior changed.
