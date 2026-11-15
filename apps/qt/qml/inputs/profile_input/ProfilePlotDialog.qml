@@ -76,7 +76,7 @@ WorkbenchDialog {
         GridLayout {
             columns: 2; columnSpacing: 10; rowSpacing: 6; Layout.fillWidth: true
             Label { text: "Y Axis"; color: dialog.theme.muted }
-            ComboBox { objectName: "modulationMetricSelector"; model: ["dB", "Bit loading"]; currentIndex: dialog.metric; Layout.preferredWidth: 160; onActivated: function(index) { dialog.metric = index; dialog.refreshRange() } ToolTip.visible: hovered; ToolTip.text: "dB: ideal Shannon minimum MER, not measured RxMER" }
+            ComboBox { objectName: "modulationMetricSelector"; model: ["dB", "Bit loading"]; currentIndex: dialog.metric; Layout.preferredWidth: 160; onActivated: function(index) { dialog.metric = index; dialog.refreshRange() } ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered; ToolTip.text: "dB: ideal Shannon minimum MER, not measured RxMER" }
             Label { text: "Profiles"; color: dialog.theme.muted; Layout.alignment: Qt.AlignTop; topPadding: 8 }
             Flow {
                 Layout.fillWidth: true; Layout.preferredHeight: childrenRect.height; spacing: 6
@@ -106,7 +106,7 @@ WorkbenchDialog {
                         enabled: modelData.count > 0
                         traceColor: dialog.roleColors[modelData.kind]
                         onClicked: { dialog.selectedRoles = dialog.toggle(dialog.selectedRoles, modelData.kind); dialog.refreshRange() }
-                        ToolTip.visible: hovered; ToolTip.text: modelData.count + " assignments in selected profiles"
+                        ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered; ToolTip.text: modelData.count + " assignments in selected profiles"
                     }
                 }
                 ProfileToggle { objectName: "modulationAllCarriers"; text: "All"; checkable: false; showIndicator: false; checked: dialog.selectedRoles.length === 7; onClicked: { dialog.selectedRoles = dialog.allRoles.slice(); dialog.refreshRange() } }

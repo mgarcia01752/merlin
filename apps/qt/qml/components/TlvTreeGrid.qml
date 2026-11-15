@@ -167,7 +167,7 @@ ColumnLayout {
                 Label { text: fieldRow.modelData.node.length === undefined ? "" : fieldRow.modelData.node.length; color: grid.theme.muted; Layout.preferredWidth: 52 }
                 Label { text: fieldRow.modelData.node.offset === undefined ? "" : fieldRow.modelData.node.offset; color: grid.theme.muted; Layout.preferredWidth: 58 }
             }
-            ToolTip.visible: hovered
+            ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered
             ToolTip.text: modelData.node.name + ": " + (modelData.node.value || "")
         }
         Label { visible: grid.nodes.length === 0; anchors.centerIn: parent; text: "No TLV fields available"; color: grid.theme.muted }

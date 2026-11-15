@@ -87,14 +87,14 @@ WorkbenchDialog {
             implicitWidth:26;implicitHeight:14;padding:0;font.pixelSize:10
             enabled:stepper.canIncrease;onClicked:stepper.increaseRequested()
             Accessible.name:stepper.increaseDescription
-            ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
+            ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus;ToolTip.text:Accessible.name
         }
         WorkbenchActionButton {
             theme:stepper.theme;objectName:stepper.namePrefix+"Down";text:"▾";compact:true
             implicitWidth:26;implicitHeight:14;padding:0;font.pixelSize:10
             enabled:stepper.canDecrease;onClicked:stepper.decreaseRequested()
             Accessible.name:stepper.decreaseDescription
-            ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
+            ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus;ToolTip.text:Accessible.name
         }
     }
     function document() { return JSON.stringify({source:source.currentIndex === 0 ? "imported":"flat",capture_count:captureCount,baseline_db:Number(baseline.text),recipe:recipe()}) }
@@ -166,7 +166,7 @@ WorkbenchDialog {
                     CheckBox {
                         id:randomVariation;objectName:"designerRandomVariation";text:"Random variation";enabled:source.currentIndex === 1
                         onToggled:dialog.refresh()
-                        ToolTip.visible:hovered || activeFocus
+                        ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus
                         ToolTip.text:"Independent normally distributed dB offsets across all subcarriers. Available only for a new flat sequence; applied before tilt, ripple and notch."
                     }
                     RowLayout {
@@ -186,7 +186,7 @@ WorkbenchDialog {
                         enabled:source.currentIndex === 1 && randomVariation.checked;opacity:enabled ? 1:0.5
                         Label {text:"Random seed";color:theme.text}
                         TextField {id:randomSeed;objectName:"designerRandomSeed";text:"41";Layout.preferredWidth:110;onEditingFinished:dialog.refresh();Accessible.name:"Designer random seed"
-                            ToolTip.visible:hovered || activeFocus;ToolTip.text:"Use the same seed to reproduce the same pattern. Each capture has a different pattern. This is separate from simulation Noise Seed."}
+                            ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || (activeFocus && (focusReason === Qt.TabFocusReason || focusReason === Qt.BacktabFocusReason || focusReason === Qt.ShortcutFocusReason));ToolTip.text:"Use the same seed to reproduce the same pattern. Each capture has a different pattern. This is separate from simulation Noise Seed."}
                     }
                     Label {text:source.currentIndex === 1 ? "Same variation across the channel; no frequency weighting." : "Imported captures keep their existing starting values.";color:theme.muted;wrapMode:Text.WordWrap;Layout.fillWidth:true;font.pixelSize:11}
                     Rectangle {Layout.fillWidth:true;height:1;color:theme.line}
@@ -198,7 +198,7 @@ WorkbenchDialog {
                             enabled:dialog.canStepTilt(0) && Number(tiltDb.text)!==0
                             onClicked:{tiltDb.text=String(-Number(tiltDb.text));dialog.refresh()}
                             Accessible.name:"Reverse RxMER tilt direction"
-                            ToolTip.visible:hovered || activeFocus
+                            ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus
                             ToolTip.text:"The arrow points toward the higher MER edge. Click to reverse direction, keeping the same magnitude. Positive dB raises the high-frequency edge; negative dB lowers it."
                             Accessible.description:ToolTip.text
                         }
@@ -241,7 +241,7 @@ WorkbenchDialog {
                             onDecreaseRequested:dialog.stepRipple(rippleDb,-1)
                         }
                     }
-                    CheckBox {id:distanceMode;objectName:"designerRippleDistanceMode";text:"Use echo-distance spacing helper";onToggled:dialog.refresh();ToolTip.visible:hovered || activeFocus;ToolTip.text:"Assumes a round-trip cable cavity: crest spacing = c × velocity factor / (2 × distance). Depth is an independent MER edit; no RF phase is modeled."}
+                    CheckBox {id:distanceMode;objectName:"designerRippleDistanceMode";text:"Use echo-distance spacing helper";onToggled:dialog.refresh();ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus;ToolTip.text:"Assumes a round-trip cable cavity: crest spacing = c × velocity factor / (2 × distance). Depth is an independent MER edit; no RF phase is modeled."}
                     RowLayout {
                         visible:!distanceMode.checked
                         Label {text:"Crest spacing (MHz)";color:theme.text}
@@ -267,7 +267,7 @@ Label {text:"VF";color:theme.text}
 TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.refresh()} }
                     RxmerDesignScope {id:rippleScope;theme:dialog.theme;captureCount:dialog.captureCount;onEdited:dialog.refresh()}
                     Rectangle {Layout.fillWidth:true;height:1;color:theme.line}
-                    CheckBox {id:notch;objectName:"designerNotch";text:"LTE / 5G-style notch";onToggled:dialog.refresh();ToolTip.visible:hovered || activeFocus;ToolTip.text:"Synthetic reduction in MER over a frequency band, not an LTE or 5G waveform simulation."}
+                    CheckBox {id:notch;objectName:"designerNotch";text:"LTE / 5G-style notch";onToggled:dialog.refresh();ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus;ToolTip.text:"Synthetic reduction in MER over a frequency band, not an LTE or 5G waveform simulation."}
                     GridLayout {
                         id:notchFields;objectName:"designerNotchFields"
                         Layout.fillWidth:true

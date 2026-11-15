@@ -67,7 +67,7 @@ WorkbenchDialog {
             Layout.fillWidth: true
             WorkbenchActionButton { theme: dialog.theme; objectName: "profileOpenFile"; text: "Open File…"; onClicked: dialog.showResult(dialog.backend.choose_file()) }
             WorkbenchActionButton { theme: dialog.theme; objectName: "profileRestoreWorkbench"; text: "Restore Workbench"; enabled: dialog.canRestoreWorkbench; onClicked: dialog.restoreWorkbench()
-                ToolTip.visible: hovered || activeFocus
+                ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered || visualFocus
                 ToolTip.text: "Discard pending edits and restore the last applied profile from this workbench."
                 Accessible.description: ToolTip.text }
             WorkbenchActionButton { theme: dialog.theme; objectName: "profileView"; text: "View Profile…"; enabled: dialog.previewModel.profile_ids.length > 0; onClicked: profilePlot.open() }

@@ -54,7 +54,7 @@ WorkbenchDialog {
                             Layout.fillWidth:true
                             wrapMode:Text.WordWrap
                             HoverHandler {id:merHover}
-                            ToolTip.visible:merHover.hovered
+                            ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:merHover.hovered
                             ToolTip.text:merReading.reading.help || "Select retained cells to calculate MER."
                         }
                         Label {
@@ -62,7 +62,7 @@ WorkbenchDialog {
                             color:dialog.theme.muted;font.pixelSize:11
                             Layout.fillWidth:true;wrapMode:Text.WordWrap
                             HoverHandler {id:estimateHover}
-                            ToolTip.visible:estimateHover.hovered
+                            ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:estimateHover.hovered
                             ToolTip.text:"Nearest ideal point estimate. Dense constellations and incorrect decisions can make it too high, even when received symbols are badly impaired."
                         }
                         Canvas {

@@ -12,7 +12,7 @@ WorkbenchActionButton {
     implicitHeight:140
     Accessible.name:text
     Accessible.description:caption
-    ToolTip.visible:hovered || visualFocus
+    ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus
     ToolTip.text:"Open "+text+" settings. The picture is a navigation icon."
     contentItem:Column {
         spacing:8

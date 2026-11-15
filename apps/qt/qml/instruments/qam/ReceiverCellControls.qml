@@ -54,7 +54,7 @@ ColumnLayout {
             currentIndex:controls.runProfile<0 ? 0 : runs.findIndex(function(run){return run.id===controls.runProfile})+1
             Layout.preferredWidth:190
             onActivated:function(index){controls.runProfile=index===0 ? -1 : runs[index-1].id}
-            ToolTip.visible:hovered || activeFocus
+            ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus
             ToolTip.text:"Captured profile ID from a separate simulation run. Select profiles in Configure WorkBench before running them."
         }
         Label { visible:controls.signalIndex===0 && (controls.metadata.profiles || []).length>1;text:"Wire Profile";color:controls.theme.muted }

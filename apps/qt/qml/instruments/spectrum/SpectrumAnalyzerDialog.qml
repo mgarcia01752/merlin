@@ -65,7 +65,7 @@ WorkbenchDialog {
                 objectName: "saDetailsToggle"
                 text: "Details"
                 checked: true
-                ToolTip.visible: hovered
+                ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered
                 ToolTip.text: "Show acquisition details below the plot"
             }
             WorkbenchActionButton { theme: dialog.theme; objectName: "saFullSpan"; text: "Full Span"; enabled: dialog.state.has_result; onClicked: dialog.showView(0, 0) }
@@ -116,7 +116,7 @@ WorkbenchDialog {
                 theme: dialog.theme
                 objectName: "saGenerate"; text: "Run simulation"
                 enabled: dialog.state.can_generate; onClicked: backend.generate()
-                ToolTip.visible: hovered
+                ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered
                 ToolTip.text: dialog.generateDescription + "\n" + (dialog.viewport.error || dialog.state.message || dialog.state.reason)
                 Accessible.description: dialog.generateDescription
             }
@@ -125,7 +125,7 @@ WorkbenchDialog {
                 objectName: "saCancel"; text: "Cancel preview"
                 visible: dialog.state.busy || false
                 onClicked: backend.cancel()
-                ToolTip.visible: hovered
+                ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered
                 ToolTip.text: "Cancel this TX preview. The main simulation uses Stop on the workbench."
             }
             Item { Layout.fillWidth: true }

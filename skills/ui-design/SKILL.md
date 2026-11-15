@@ -104,3 +104,21 @@ parent workbench.
 Maintain the [desktop debug inventory](../../docs/development/debugging.md)
 whenever introducing or changing debug switches, logging controls or their
 visible UI behavior. Normal UI keeps timing diagnostics out of the loading view.
+
+## Global tooltip delay
+
+Every MERLIN mouse-over tooltip waits **one second** before appearing. The
+single timing definition is `tooltipDelayMs` in `apps/qt/qml/theme/Theme.qml`.
+Bind attached tooltips with `ToolTip.delay: theme.tooltipDelayMs`; explicit
+`ToolTip` objects bind `delay` to their owning theme. Shared action buttons
+supply this default as well. Never duplicate a numeric delay in a view or add
+independent hover timers. Preserve existing keyboard-focus help and accessible
+descriptions; focus-triggered tooltip popups use the same delay. Click/F1 help
+stays immediate. Leaving the trigger cancels the pending tooltip through Qt's
+normal visibility handling. Require a continuous one-second dwell on the same
+control; re-entry restarts the full delay. Use `visualFocus` for keyboard help,
+where supported, or check keyboard focus reasons on text inputs. Labels and
+custom items must take keyboard focus only if their tooltip uses `activeFocus`.
+Mouse-click focus must not keep a hover tooltip pending
+after the pointer leaves. Apply this to all new and existing application
+views, charts, labels and controls; native OS dialogs retain platform behavior.

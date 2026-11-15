@@ -7,6 +7,7 @@ import QtQuick.Controls
 
 Button {
     id: control
+    ToolTip.delay: control.theme.tooltipDelayMs
     required property var theme
     property bool primary: false
     property bool compact: false

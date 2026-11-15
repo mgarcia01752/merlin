@@ -11,7 +11,7 @@ WorkbenchActionButton {
     property bool constellation: false
     implicitHeight: 112
     Accessible.name: text
-    ToolTip.visible: hovered || visualFocus
+    ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered || visualFocus
     ToolTip.text: "Open " + text
     contentItem: Column {
         spacing: 8

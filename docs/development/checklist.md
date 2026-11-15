@@ -1596,3 +1596,6 @@ validation are complete; the user guide includes the current dark capture.
 - [x] WB-CL-01: Add synthetic 192 MHz / 8 MHz notch and flat-baseline
   workbenches, PLC at 333 MHz, with explicit assumptions and actual decoder
   validation. [Design](features/cl-notch-workbench/design.md).
+
+- [x] UI-TOOLTIP-01: Centralize one-second tooltip timing across application
+  views and shared controls. [Design](features/tooltip-delay/design.md).

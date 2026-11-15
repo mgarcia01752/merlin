@@ -69,7 +69,7 @@ Item {
                     text: modelData.label
                     contentItem: Label { text: parent.text; color: modelData.kind === "file" ? tree.theme.text : tree.theme.muted; font.pixelSize: 11; elide: Text.ElideRight; verticalAlignment: Text.AlignVCenter; leftPadding: modelData.kind === "file" ? 0 : 24 }
                     onClicked: tree.selected(modelData.index)
-                    ToolTip.visible: hovered; ToolTip.text: modelData.detail || modelData.label
+                    ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered; ToolTip.text: modelData.detail || modelData.label
                 }
             }
         }

@@ -19,8 +19,7 @@ Button {
     property string indicatorDescription: ""
     Accessible.name: heading
     Accessible.description: statusLabel + ": " + statusReason + (pnmFileType ? ". CM PNM File: " + pnmFileType : "") + (indicatorText ? ". " + indicatorDescription : "")
-    ToolTip.visible: hovered || visualFocus
-    ToolTip.delay: 500
+    ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered || visualFocus
     ToolTip.text: statusLabel + ": " + statusReason + (indicatorText ? "\n" + indicatorDescription : "")
     hoverEnabled: true
     Rectangle {

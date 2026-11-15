@@ -46,7 +46,7 @@ Item {
         onClicked:control.installUpdate()
         contentItem: Label { text:parent.text; color:"white"; font.bold:true; horizontalAlignment:Text.AlignHCenter; verticalAlignment:Text.AlignVCenter }
         background: Rectangle { radius:9; color:parent.hovered ? "#2ea043" : "#238636"; border.color:parent.activeFocus ? "white" : "#2ea043"; border.width:parent.activeFocus ? 2 : 1 }
-        ToolTip.visible: hovered
+        ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered
         ToolTip.text: control.canUpdate ? "Install the available update and restart MERLIN" : "Stop the simulation before updating"
     }
     UpdateDialog {

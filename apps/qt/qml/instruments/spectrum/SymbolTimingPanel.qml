@@ -49,10 +49,10 @@ Rectangle {
                     activeFocusOnTab:true
                     Accessible.role:Accessible.Button
                     Accessible.name:"Expand Symbol Timing"
-                    onClicked:{forceActiveFocus();expanded.open()}
+                    onClicked:{expanded.open()}
                     Keys.onSpacePressed:expanded.open()
                     Keys.onReturnPressed:expanded.open()
-                    ToolTip.visible:containsMouse || activeFocus
+                    ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:containsMouse || activeFocus
                     ToolTip.text:"Open full symbol timing and overlap"
                 }
             }

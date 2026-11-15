@@ -102,7 +102,7 @@ Canvas {
             }
             plot.readout=closest ? closest.readout : ""
         }
-        ToolTip.visible:containsMouse && plot.readout.length>0
+        ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:containsMouse && plot.readout.length>0
         ToolTip.text:plot.readout
     }
 }

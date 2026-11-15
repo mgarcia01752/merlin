@@ -1,5 +1,7 @@
 # Feature development records
 
+- [Global one-second tooltip delay](tooltip-delay/design.md)
+
 - [CableLabs-style notch workbench](cl-notch-workbench/design.md)
 
 - [PNM RxMER/FEC reference skill](pnm-reference-skill/design.md)

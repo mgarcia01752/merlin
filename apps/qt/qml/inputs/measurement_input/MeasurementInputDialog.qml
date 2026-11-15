@@ -73,7 +73,7 @@ WorkbenchDialog {
         RowLayout {
             WorkbenchActionButton { theme: dialog.theme; objectName: "measurementOpen"; text: dialog.rxmer ? "Open file(s)…" : "Open file…"; onClicked: dialog.setMetadata(backend.choose_files(dialog.rxmer)) }
             WorkbenchActionButton { theme: dialog.theme; objectName: "measurementRestoreWorkbench"; text: "Restore Workbench"; enabled: dialog.canRestoreWorkbench; onClicked: dialog.restoreWorkbench()
-                ToolTip.visible: hovered || activeFocus
+                ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered || visualFocus
                 ToolTip.text: "Discard pending edits and restore this workbench’s last applied captures and options. Channel response may be flat / unity."
                 Accessible.description: ToolTip.text }
             WorkbenchActionButton { theme: dialog.theme; objectName: "measurementClear"; text: dialog.rxmer ? "Clear" : "Flat / unity"; onClicked: dialog.setMetadata(backend.edit(dialog.rxmer, -1, 0)) }
@@ -102,15 +102,13 @@ WorkbenchDialog {
                 color: theme.text
                 readonly property string helpText: "OFDM symbol index for the effective RxMER/playback preview (0 = first).\nPreview only; simulation settings and capture selection stay unchanged."
                 HoverHandler { id: previewSymbolHover }
-                ToolTip.visible: previewSymbolHover.hovered
-                ToolTip.delay: 500
+                ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: previewSymbolHover.hovered
                 ToolTip.text: helpText
             }
             // Whole-input unsigned symbol offset, 1–20 digits; Rust checks u64 overflow.
             TextField { objectName: "rxmerPreviewSymbol"; text: "0"; Layout.preferredWidth: 95
                 hoverEnabled: true
-                ToolTip.visible: hovered || activeFocus
-                ToolTip.delay: 500
+                ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered || (activeFocus && (focusReason === Qt.TabFocusReason || focusReason === Qt.BacktabFocusReason || focusReason === Qt.ShortcutFocusReason))
                 ToolTip.text: previewSymbolLabel.helpText
                 Accessible.description: previewSymbolLabel.helpText
                 validator: RegularExpressionValidator { regularExpression: /[0-9]{1,20}/ }

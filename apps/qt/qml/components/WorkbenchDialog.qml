@@ -42,7 +42,7 @@ Dialog {
             Layout.bottomMargin: 4
             focusPolicy: Qt.StrongFocus
             Accessible.name: "Close " + dialog.title
-            ToolTip.visible: hovered
+            ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered
             ToolTip.text: "Close"
             background: Rectangle {
                 radius: width / 2

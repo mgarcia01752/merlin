@@ -35,7 +35,7 @@ ColumnLayout {
                         Accessible.name: modelData.label + ": " + modelData.count
                         Label { anchors.centerIn: parent; visible: parent.width > implicitWidth + 12; text: modelData.count; color: chart.theme.background; font.bold: true }
                         MouseArea { id: hover; anchors.fill: parent; hoverEnabled: true }
-                        ToolTip.visible: hover.containsMouse
+                        ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hover.containsMouse
                         ToolTip.text: modelData.label + ": " + modelData.count
                     }
                 }

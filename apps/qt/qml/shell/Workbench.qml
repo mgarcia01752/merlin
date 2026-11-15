@@ -330,7 +330,7 @@ Item {
                         color: theme.text; font.pixelSize: 12
                         Layout.fillWidth: true; wrapMode: Text.WordWrap
                         MouseArea { id: elapsedHover; anchors.fill: parent; hoverEnabled: true }
-                        ToolTip.visible: elapsedHover.containsMouse
+                        ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: elapsedHover.containsMouse
                         ToolTip.text: "Wall time includes pauses and CPU scheduling waits. The run budget uses active time."
                     }
                 }
@@ -350,7 +350,7 @@ Item {
                 text: "Configure WorkBench"
                 enabled: !workbench.runState.busy && !workbench.loadingProject
                 onClicked: workbench.configureProject()
-                ToolTip.visible: hovered
+                ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered
                 ToolTip.text: workbench.hasProject ? "Select profiles and run settings" : "Create or open a workbench"
             }
             WorkbenchActionButton {

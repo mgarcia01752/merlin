@@ -34,7 +34,7 @@ WorkbenchDialog {
             text:(dialog.observation.reference_mer || {}).text || "TX-reference MER unavailable"
             color:dialog.theme.accent
             HoverHandler {id:merHover}
-            ToolTip.visible:merHover.hovered
+            ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:merHover.hovered
             ToolTip.text:(dialog.observation.reference_mer || {}).help || "Select retained cells to calculate MER."
         }
         Label {visible:dialog.tap===2;text:(dialog.observation.mer || {}).text || "";color:dialog.theme.muted;font.pixelSize:11;Layout.fillWidth:true;wrapMode:Text.WordWrap}

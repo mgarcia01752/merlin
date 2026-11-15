@@ -97,7 +97,7 @@ Item {
             }
             plot.readout=nearest ? nearest.readout || "" : ""
         }
-        ToolTip.visible:containsMouse && plot.readout.length>0
+        ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:containsMouse && plot.readout.length>0
         ToolTip.text:plot.readout
     }
     Label { anchors.centerIn:parent;visible:!plot.observation.available || plot.graph.kind === "empty";text:plot.graph.reason || "No capture";color:plot.theme.muted;font.pixelSize:plot.miniature ? 10 : 13 }

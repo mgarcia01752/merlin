@@ -40,7 +40,7 @@ WorkbenchDialog {
                 onActivated: function(index) {
                     dialog.setMode(["supplied_channel", "pilot_estimated", "merlin_estimated"][index])
                 }
-                ToolTip.visible: hovered || activeFocus
+                ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered || visualFocus
                 ToolTip.text: "Both pilot-based modes derive channel correction from received pilots. Only MCE also estimates noise for decoder confidence. Full pilot history spans 128 OFDM symbols; known symbol timing is still required."
             }
             Label {
@@ -63,7 +63,7 @@ WorkbenchDialog {
                 from: 1; to: 128; editable: true
                 value: dialog.draft.mce ? dialog.draft.mce.averaging_symbols : 16
                 onValueModified: dialog.draft.mce.averaging_symbols=value
-                ToolTip.visible: hovered || activeFocus
+                ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered || visualFocus
                 ToolTip.text: "Smooth the pilot-derived noise estimate over this many symbols. This does not change the 128-symbol full pilot-history span."
             }
             Label { text: "Decoder iteration limit"; color: theme.text }

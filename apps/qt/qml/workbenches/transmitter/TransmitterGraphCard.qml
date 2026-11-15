@@ -14,7 +14,7 @@ WorkbenchActionButton {
     property bool spectrum: false
     property var spectrumView: ({points:[]})
     Accessible.name:text+" · "+caption
-    ToolTip.visible:hovered || visualFocus
+    ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus
     ToolTip.text:observation.available ? "Open "+text : "Open "+text+" · Use Start to capture transmitter stages"
     contentItem: Column {
         spacing:4

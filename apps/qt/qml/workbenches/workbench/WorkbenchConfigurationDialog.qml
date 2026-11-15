@@ -48,7 +48,7 @@ WorkbenchDialog {
                 Label {
                     text:"Noise Seed";color:dialog.theme.text
                     HoverHandler { id:noiseSeedLabelHover }
-                    ToolTip.visible: noiseSeedLabelHover.hovered
+                    ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: noiseSeedLabelHover.hovered
                     ToolTip.text: dialog.noiseSeedHelp
                 }
                 SpinBox {
@@ -56,7 +56,7 @@ WorkbenchDialog {
                     from:0;to:2147483647;editable:true
                     value:dialog.draft.noise_seed===undefined ? 41:dialog.draft.noise_seed
                     onValueModified:dialog.draft.noise_seed=value
-                    ToolTip.visible: hovered || activeFocus
+                    ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered || visualFocus
                     ToolTip.text: dialog.noiseSeedHelp
                     Accessible.description: dialog.noiseSeedHelp
                 }

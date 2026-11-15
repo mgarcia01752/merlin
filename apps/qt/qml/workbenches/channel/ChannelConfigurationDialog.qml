@@ -61,7 +61,7 @@ WorkbenchDialog {
             objectName:"channelCombinedResponse";theme:dialog.theme;text:"Combined Channel Response"
             Layout.fillWidth:true;Layout.fillHeight:true
             Accessible.name:text;Accessible.description:"Accepted channel gain versus frequency. Open the enlarged view."
-            ToolTip.visible:hovered || visualFocus
+            ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus
             ToolTip.text:"Open the enlarged accepted channel response. This is a model preview, not received measurements."
             onClicked:expanded.open()
             contentItem:ColumnLayout {

@@ -15,7 +15,7 @@ Label {
     textFormat: Text.PlainText
     wrapMode: Text.WordWrap
     color: hasHelp ? theme.statusAttention : theme.muted
-    focusPolicy: hasHelp ? Qt.StrongFocus : Qt.NoFocus
+    focusPolicy: hasHelp ? Qt.TabFocus : Qt.NoFocus
     activeFocusOnTab: hasHelp
     font.underline: hasHelp && (hover.containsMouse || activeFocus)
     Accessible.role: hasHelp ? Accessible.Link : Accessible.StaticText
@@ -50,7 +50,7 @@ Label {
         objectName: "contextualStatusTooltip"
         text: status.hasHelp ? status.diagnostic.tooltip + "\nClick or press Enter for FAQ details." : status.activityTooltip
         visible: (hover.containsMouse || status.activeFocus) && text.length > 0
-        delay: 400
+        delay: status.theme.tooltipDelayMs
         timeout: 15000
         width: Math.min(520, status.Window.window ? status.Window.window.width - 40 : 520)
         contentItem: Label {

@@ -81,7 +81,7 @@ WorkbenchDialog {
             }
         }
         CheckBox {id:clamp;objectName:"pnmExportClamp";text:"Clamp to PNM range";enabled:!root.busy || !root.saving;onToggled:root.queueCheck()
-            ToolTip.visible:hovered || activeFocus;ToolTip.text:"Off: values outside 0–63.5 dB block export. On: Rust explicitly clamps and reports changed samples. Nonfinite values always fail."}
+            ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus;ToolTip.text:"Off: values outside 0–63.5 dB block export. On: Rust explicitly clamps and reports changed samples. Nonfinite values always fail."}
         Label {text:"PNM binary: 0–63.5 dB, rounded to the nearest 0.25 dB (half steps upward). JSON: full precision, without rounding or clamping. Both preserve missing readings, the full grid and capture times.";color:root.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap}
         Label {objectName:"pnmExportSummary";visible:root.canJson || root.canExport || root.savedPath.length>0
             text:(root.summary.captures || 0)+" capture(s) · "+(root.summary.samples || 0)+" samples · "+(root.summary.missing || 0)+" missing\n"+

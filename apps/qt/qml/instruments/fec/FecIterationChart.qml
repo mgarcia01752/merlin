@@ -61,6 +61,6 @@ Item {
         property int pointIndex: mouseX < 54 || mouseX >= width - 12 ? -1 : Math.floor((mouseX - 54) / (width - 66) * (chart.histogram.points || []).length)
         property var point: (chart.histogram.points || [])[pointIndex]
     }
-    ToolTip.visible: hover.containsMouse && !!hover.point
+    ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hover.containsMouse && !!hover.point
     ToolTip.text: hover.point ? hover.point.iteration + " iterations · " + hover.point.count + " codewords" : ""
 }
