@@ -14,13 +14,20 @@ the [generated Rust/Python reference](../../reference/api-reference.md).
 
 ## Rust workflow
 
-`CaptureLoader::controller_from_capture(&capture)` uses DOCSIS 3.1 with default
-OCD overrides. For explicit protocol or settings, retain
-`CaptureLoader::controller_from_profiles(&capture, protocol, overrides)`.
-The protocol default does not infer DOCSIS version from a PNM file version.
-Manual `Ocd::from_profile` construction still takes an explicit protocol.
+This simple example loads one modulation-profile capture and one RxMER
+capture, then simulates the first loaded profile and reads its FEC results.
+It does not load a channel estimate: a flat (unity) channel response is used,
+while RxMER supplies the measured signal-quality impairment. Loading only
+configures the simulation; `run()` starts it.
 
-The complete fixture-backed example lives in
+Create `Simulation::new()`, decode with `CaptureLoader::profiles`, then call
+`sim.load_profiles(profiles)`. Loading defaults to DOCSIS 3.1 and derives OCD
+settings. For explicit interpretation or settings use
+`sim.load_profiles_with_options(protocol, profiles, overrides)`.
+`Simulation::with_ocd(ocd)` supports manually configured channels. Legacy
+`Merlin` and capture-controller factories remain supported.
+
+The expanded fixture-backed example, which also loads a channel estimate, lives in
 [`run_single_capture.rs`](../../../examples/api/rust/run_single_capture.rs). Run it
 from the repository root:
 
@@ -29,23 +36,47 @@ scripts/cargo-local.sh run -p pnm-input --example run_single_capture --locked
 ```
 
 ```rust,ignore
+// Import the simulation types and native capture-loading helpers.
 use docsis_ofdm_fec::api::*;
 use pnm_input::{CaptureLoader, read_capture};
 
-let mut sim = CaptureLoader::controller_from_capture(
+// Allow this fixture's profile and RxMER timestamps to differ by up to 25 hours.
+const PROFILE_ASSOCIATION_TOLERANCE_SECONDS: u32 = 90_000;
+
+// Create an empty simulation; no engine work starts yet.
+let mut sim = Simulation::new();
+
+// Decode and retain all profiles; the first profile is selected automatically.
+sim.load_profiles(CaptureLoader::profiles(
     &read_capture("examples/workbench/single/modulation-profile.bin")?,
-)?;
+)?)?;
+
+// Add one RxMER capture and retain its ID for selection.
 let first = sim.add_rxmer(CaptureLoader::rxmer(
     &read_capture("examples/workbench/single/rxmer.bin")?,
 )?)?;
+
+// Configure the simulation before starting it.
 sim.set_options(EvaluationOptions::default()
+    // Use only the RxMER capture added above.
     .with_rxmer_selection(RxMerSelection::Individual(first))
+    // Use a flat channel response without loading a channel estimate.
     .with_channel_selection(ChannelSelection::Unity)
-    .with_profile_tolerance(AssociationTolerance::new(90_000)?))?;
+    // Accept the fixture's timestamp difference without changing either capture.
+    .with_profile_tolerance(AssociationTolerance::new(
+        PROFILE_ASSOCIATION_TOLERANCE_SECONDS,
+    )?))?;
+
+// Start simulation explicitly and retain the independently owned results.
 let batch = sim.run()?;
+
+// Inspect each experiment and print available FEC results.
 for entry in batch.iter() {
+    // A report may be absent if the experiment did not start.
     if let Some(report) = entry.report() {
+        // FEC counters may be unavailable when a run ends early.
         if let Some(fec) = report.fec() {
+            // Print the number of codewords the decoder could not correct.
             println!("UFEC: {}", fec.uncorrectable_codewords().value());
         }
     }
@@ -189,9 +220,10 @@ values come from the shared simulation engine; no analytical replacements are us
 
 ## Controller-owned profiles
 
-`CaptureLoader::controller_from_profiles` loads binary/JSON capture profiles
-into one idle controller. Rust-only callers with existing `Dpd` values can use
-`Merlin::from_profiles(protocol, profiles, overrides)`. The first supplied profile
+`Simulation::load_profiles` accepts decoded profiles from
+`CaptureLoader::profiles`, retaining them in one idle session. For explicit
+protocol/settings use `load_profiles_with_options`. Legacy
+`CaptureLoader::controller_from_profiles` and `Merlin::from_profiles` remain available. The first supplied profile
 is selected automatically. Use `profile_ids()`, `profile_by_id(id)` and
 `select_profile(id)` without reloading files. Existing construction and
 `set_profile()` remain supported.
@@ -204,3 +236,22 @@ report was produced. Current selection is restored before execution. At most
 16 profiles, 256 combined experiments and 64 MiB retained capture storage are
 accepted. Runtime limits apply per experiment, not to the complete collection.
 See [the runnable example](../../../examples/api/rust/run_all_profiles.rs).
+
+### Simulation lifecycle
+
+Create the session, load profiles, add measurements, configure selection, then
+call `run()` or `run_all_profiles()`. Empty sessions expose an empty profile list;
+operations requiring channel geometry return a structured error until profiles
+or an explicit OCD have been supplied. No construction or loading runs the engine.
+
+Reloading replaces the entire profile collection and selects its first profile.
+Compatible retained RxMER/channel estimates, their IDs, accepted run options and
+run numbering remain intact. Invalid loads leave the previous state unchanged.
+Changing to a different measurement grid requires a new simulation. Reports
+remain independently owned. Run preflight still checks timestamps and coverage.
+
+Multiple RxMER captures support Each (one experiment per capture), Individual,
+AverageAll and InterpolateAt. Averaging/interpolation uses residual power and
+preserves missing values on exact compatible grids. All-profile execution applies
+that policy separately to every loaded profile. Channel selection remains an
+independent explicit, nearest-time or unity policy.

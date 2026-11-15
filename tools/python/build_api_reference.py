@@ -75,6 +75,13 @@ def generate_sources(inventory):
         text = (f"{name}\n{'=' * len(name)}\n\n{notice}.. currentmodule:: merlin\n\n"
                 f".. autoclass:: {name}\n   :members:\n   :undoc-members:\n"
                 "   :special-members: __iter__, __len__, __getitem__\n")
+        canonical = item.get("canonical_name", name)
+        exported = {entry["name"] for entry in inventory["classes"]}
+        if canonical != name and canonical in exported:
+            text = (f"{name}\n{'=' * len(name)}\n\n"
+                    f"Compatibility alias for :class:`merlin.{canonical}`.\n\n"
+                    f".. autoclass:: merlin.{name}\n\n"
+                    f"See :doc:`{canonical}` for all methods and properties.\n")
         (source / f"{name}.rst").write_text(text, encoding="utf-8")
     (source / "classes.rst").write_text("\n".join(listing) + "\n", encoding="utf-8")
     return source
@@ -91,8 +98,14 @@ def validate_pages(inventory):
     for item in inventory["classes"]:
         name = item["name"]
         page = (OUTPUT / "python" / f"{name}.html").read_text(encoding="utf-8")
+        canonical = item.get("canonical_name", name)
+        exported = {entry["name"] for entry in inventory["classes"]}
+        target = canonical if canonical in exported else name
+        member_page = (OUTPUT / "python" / f"{target}.html").read_text(encoding="utf-8")
+        if target != name and f'id="merlin.{name}"' not in page:
+            raise ValueError(f"Missing generated API alias: {name}")
         for member in item["members"]:
-            if f'id="merlin.{name}.{member}"' not in page:
+            if f'id="merlin.{target}.{member}"' not in member_page:
                 raise ValueError(f"Missing generated API member: {name}.{member}")
         if "Interpreter token" in page or "* `py`" in page:
             raise ValueError(f"Hidden interpreter argument leaked into {name} docs")

@@ -899,3 +899,45 @@ fn default_capture_protocol_matches_explicit_loading() {
         format!("{:?}", explicit.ocd())
     );
 }
+
+#[test]
+fn simulation_loading_is_idle_atomic_and_preserves_scoped_measurements() {
+    let capture = input("profiles", PROFILE);
+    let mut sim = Simulation::new();
+    assert!(sim.profile_ids().is_empty());
+    assert!(sim.profile().is_none());
+    assert!(sim.run().is_err());
+    sim.load_profiles(CaptureLoader::profiles(&capture).unwrap())
+        .unwrap();
+    let ids = sim.profile_ids();
+    let rx = sim
+        .add_rxmer(CaptureLoader::rxmer(&input("rx", RX)).unwrap())
+        .unwrap();
+    sim.set_options(
+        EvaluationOptions::default()
+            .with_rxmer_selection(RxMerSelection::Individual(rx))
+            .with_channel_selection(ChannelSelection::Unity),
+    )
+    .unwrap();
+    assert!(sim.load_profiles(vec![]).is_err());
+    let incompatible = input("other-channel", include_bytes!("../../../examples/workbench/multi-rxmer-2/ds_ofdm_modulation_profile_aabbccddeeff_193_1764824373.bin"));
+    assert!(sim
+        .load_profiles(CaptureLoader::profiles(&incompatible).unwrap())
+        .is_err());
+    assert_eq!(sim.profile_ids(), ids);
+    sim.load_profiles(CaptureLoader::profiles(&capture).unwrap())
+        .unwrap();
+    assert!(sim.rxmer(rx).is_ok());
+    let mut other = Simulation::new();
+    other
+        .load_profiles(CaptureLoader::profiles(&capture).unwrap())
+        .unwrap();
+    assert!(other.rxmer(rx).is_err());
+    let token = RunControl::new();
+    token.cancel();
+    // Use the fixture's association allowance; cancellation prevents dispatch.
+    let mut options = sim.options().unwrap().clone();
+    options.profile_tolerance = AssociationTolerance::new(90_000).unwrap();
+    sim.set_options(options).unwrap();
+    assert!(sim.run_with_control(&token).is_ok());
+}

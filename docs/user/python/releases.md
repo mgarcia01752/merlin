@@ -101,3 +101,12 @@ in a clean CPython 3.10 environment, and exercises desktop install/reinstall/
 removal. No replacement packages are built on newer hosts. Both jobs must pass
 before publication. The newly added 24.04/26.04 installed checks are pending
 hosted execution; configuration alone is not runtime evidence.
+
+### API example timing
+
+Shared Rust checks run `tools/testing/api_examples.py` through the all/example
+phases of `scripts/test-local.sh`. Per-example elapsed wall time includes
+incremental compilation; logs and timing JSON are under `local/api-example-tests/`.
+Native wheel smoke checks record `example_elapsed_seconds` separately from
+`elapsed_seconds` for the complete isolated-wheel validation. Both print timing
+on failure as well as success; release publication still requires passing checks.

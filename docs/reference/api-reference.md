@@ -7,7 +7,7 @@ MERLIN provides generated HTML for the Rust API and Basic Python API:
 | Reference | Source of truth | Main entry points |
 | --- | --- | --- |
 | Rust | Rust public items and rustdoc comments | `docsis_ofdm_fec::api` and `pnm_input`, including `Workbench` |
-| Basic Python API | Signatures, classes, methods, properties and docstrings from the installed native extension | `merlin.Merlin`, input/selection/options/report types and `merlin.Workbench` |
+| Basic Python API | Signatures, classes, methods, properties and docstrings from the installed native extension | `merlin.Simulation` (legacy alias `Merlin`), input/selection/options/report types and `merlin.Workbench` |
 
 These are searchable class/method references, complementing the written guides.
 Python uses pinned [Sphinx autodoc](https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html)
@@ -55,7 +55,7 @@ matching native wheel are installed/cached, references can be built offline.
 Open `local/api-reference/index.html` in a browser. It links to:
 
 - `python/index.html`: Python reference, class index and full-text search.
-- `python/Merlin.html`: controller methods and properties.
+- `python/Simulation.html`: session loading, controller methods and properties.
 - `python/Workbench.html`: saved-workbench loading and execution.
 - `rust/docsis_ofdm_fec/api/index.html`: Basic Rust API types and operations.
 - `rust/pnm_input/index.html`: native binary/JSON/file loading and WB adapter.

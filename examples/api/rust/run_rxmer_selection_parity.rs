@@ -53,7 +53,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ProfileId::PROFILE_A,
     )?;
     let ocd = Ocd::from_profile(ProtocolScope::Docsis31, &dpd, OcdOverrides::default())?;
-    let mut sim = Merlin::new(ocd);
+    let mut sim = Simulation::with_ocd(ocd);
     sim.set_profile(dpd)?;
     let first = sim.add_rxmer(CaptureLoader::rxmer(&read_capture(
         output.join("first.json"),

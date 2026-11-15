@@ -2425,3 +2425,13 @@ entries. Existing single-profile workflows remain valid. Bounds are 16 profiles,
 Rust owns the DOCSIS 3.1 protocol default. The capture convenience loader and
 optional Python protocol argument share it; explicit protocol and OCD overrides
 remain supported. Loading never starts simulation.
+
+### API-SIMULATION-01 — Idle session entry point
+
+Simulation owns an optional existing Merlin controller; it never constructs dummy
+channel geometry. Decoded profile loading initializes or atomically replaces
+configuration while retaining compatible measurements and their scoped IDs.
+Python adapts file loading and delegates to this Rust session with existing worker
+and cancellation semantics. Legacy Rust Merlin and the Python Merlin alias remain.
+Basic examples use create/load/configure/run; advanced OCD and Workbench remain.
+Example timing is emitted by shared Rust checks and native wheel validation.

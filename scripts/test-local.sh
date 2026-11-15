@@ -73,6 +73,9 @@ fi
 if [[ "$ACTION" == all || "$ACTION" == example ]]; then
   "${CARGO[@]}" nextest run --profile local -p docsis-ofdm-fec --example prepare_rxmer_variants --locked --test-threads "$WORKERS" "${NEXT_ARGS[@]}"
 fi
+if [[ "$ACTION" == all || "$ACTION" == example ]]; then
+  python3 tools/testing/api_examples.py
+fi
 if [[ "$ACTION" == all || "$ACTION" == analysis ]]; then
   "${CARGO[@]}" nextest run --profile local -p docsis-ofdm-fec --no-default-features --locked --test-threads "$WORKERS" "${NEXT_ARGS[@]}"
   "${CARGO[@]}" test -p docsis-ofdm-fec --no-default-features --doc --locked

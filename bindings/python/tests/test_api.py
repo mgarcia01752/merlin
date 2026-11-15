@@ -253,6 +253,28 @@ class DerivedBandwidthTests(unittest.TestCase):
                          {"value": 192_000_000, "origin": "Explicit"})
 
 
+class SimulationTests(unittest.TestCase):
+    def test_idle_load_reload_and_legacy_alias(self):
+        """Empty sessions fail safely and reload preserves captured identifiers."""
+        self.assertIs(m.Merlin, m.Simulation)
+        sim = m.Simulation()
+        self.assertEqual(sim.profile_ids, [])
+        with self.assertRaises(m.ApiError):
+            sim.run()
+        sim.load_profiles(FIXTURE / "modulation-profile.bin")
+        rx = sim.add_rxmer_file(FIXTURE / "rxmer.bin")
+        channel = sim.add_channel_estimate_file(FIXTURE / "ds-channel-estimate.bin")
+        sim.set_options(m.EvaluationOptions(
+            rxmer_selection=m.RxMerSelection.individual(rx),
+            channel_selection=m.ChannelSelection.explicit(channel)))
+        with self.assertRaises(m.ApiError):
+            sim.load_profiles(FIXTURE / "rxmer.bin")
+        self.assertEqual(len(sim.profile_ids), 4)
+        sim.load_profiles(FIXTURE / "modulation-profile.bin")
+        self.assertIsNotNone(sim.get_rxmer(rx))
+        self.assertIsNotNone(sim.get_channel_estimate(channel))
+
+
 class LoadedProfilesTests(unittest.TestCase):
     def test_inventory_selection_cancellation_and_single_run_parity(self):
         """Retain profiles and match all-profile outcomes to independent runs."""

@@ -113,6 +113,16 @@ impl CaptureLoader {
         protocol: docsis_ofdm_fec::api::ProtocolScope,
         overrides: docsis_ofdm_fec::api::OcdOverrides,
     ) -> ApiResult<docsis_ofdm_fec::api::Merlin> {
+        docsis_ofdm_fec::api::Merlin::from_profiles(protocol, Self::profiles(input)?, overrides)
+    }
+    /// Decodes every profile in a bounded binary or JSON capture without simulation.
+    /// # Arguments
+    /// * `input` - Original capture retained with decoder provenance.
+    /// # Returns
+    /// Owned profiles in captured ID order for Simulation::load_profiles.
+    /// # Errors
+    /// Preserves decoder and aggregate storage-budget errors.
+    pub fn profiles(input: &NamedCapture) -> ApiResult<Vec<Dpd>> {
         let (decoded, contract) = decode(input, 10)?;
         let ids = Dpd::profile_ids_from_bytes(&decoded)?;
         // Reject retained source budgets before materializing each profile.
@@ -129,12 +139,11 @@ impl CaptureLoader {
                 "Profile collection source bytes exceed 64 MiB",
             ));
         }
-        let profiles = ids
-            .into_iter()
+        ids.into_iter()
             .map(|id| Dpd::from_decoded(input, &decoded, id, contract.clone()))
-            .collect::<ApiResult<Vec<_>>>()?;
-        docsis_ofdm_fec::api::Merlin::from_profiles(protocol, profiles, overrides)
+            .collect::<ApiResult<Vec<_>>>()
     }
+
     /// Loads one RxMER without requiring a channel or profile.
     /// # Arguments
     /// * `input` - Bounded original binary or JSON bytes.

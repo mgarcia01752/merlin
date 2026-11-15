@@ -53,6 +53,46 @@ impl Merlin {
         sim.loaded_profiles = profiles;
         Ok(sim)
     }
+    /// Replaces profiles atomically while retaining compatible measurements and IDs.
+    /// # Arguments
+    /// * `protocol`, `profiles`, `overrides` - Validated loading request.
+    /// # Returns
+    /// Unit with the first new profile selected; no simulation runs.
+    /// # Errors
+    /// Rejects invalid profiles or incompatible retained measurements without mutation.
+    pub fn load_profiles_with_options(
+        &mut self,
+        protocol: ProtocolScope,
+        profiles: Vec<Dpd>,
+        overrides: OcdOverrides,
+    ) -> ApiResult<()> {
+        let mut candidate = Self::from_profiles(protocol, profiles, overrides)?;
+        if self
+            .rxmer
+            .iter()
+            .any(|frame| frame.frame.key != candidate.ocd.key)
+            || self
+                .channels
+                .iter()
+                .any(|frame| frame.frame.key != candidate.ocd.key)
+        {
+            return Err(ApiError::new(
+                ErrorCode::IncompatibleGrid,
+                "Loaded profiles differ from retained measurement grids",
+            ));
+        }
+        candidate.scope = self.scope;
+        for frame in &self.rxmer {
+            candidate.add_rxmer(frame.clone())?;
+        }
+        for frame in &self.channels {
+            candidate.add_channel_estimate(frame.clone())?;
+        }
+        candidate.set_options(self.options.clone())?;
+        candidate.runs = self.runs;
+        *self = candidate;
+        Ok(())
+    }
     /// Lists IDs retained by this controller in loading order.
     /// # Returns
     /// Owned IDs; legacy controllers expose their selected profile if present.

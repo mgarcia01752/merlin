@@ -133,9 +133,14 @@ def main():
             imported = subprocess.run([str(executable), '-I', '-c', probe], cwd=isolated,
                                       env=environment, check=True, text=True, capture_output=True)
             report['imported_native'] = imported.stdout.strip()
-            result = subprocess.run([str(executable), '-I', str(EXAMPLE)], cwd=isolated,
-                                    env=environment, check=True, text=True, capture_output=True,
-                                    timeout=EXAMPLE_TIMEOUT_SECONDS)
+            example_started = time.perf_counter()
+            try:
+                result = subprocess.run([str(executable), '-I', str(EXAMPLE)], cwd=isolated,
+                                        env=environment, check=True, text=True, capture_output=True,
+                                        timeout=EXAMPLE_TIMEOUT_SECONDS)
+            finally:
+                report['example_elapsed_seconds'] = time.perf_counter() - example_started
+                print(f"Python API example time: {report['example_elapsed_seconds']:.2f}s", flush=True)
             report['stdout'] = result.stdout
             report['stderr'] = result.stderr
             print(result.stdout, end='')

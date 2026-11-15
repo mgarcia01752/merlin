@@ -212,3 +212,21 @@ The Rust and Python single-capture and all-profile examples use the default
 DOCSIS 3.1 interpretation. Advanced examples keep explicit protocol choices
 where they construct an OCD directly. File-format versions do not select a
 protocol automatically.
+
+## Simulation sessions and timed checks
+
+The basic Rust/Python examples create a Simulation, load the profile collection,
+then add measurements and run explicitly. Advanced examples can supply a
+validated OCD to the Simulation constructor (Rust: `with_ocd`). Saved-workbench
+examples continue to use Workbench and the same simulation engine.
+
+`scripts/test-local.sh example` runs the existing example unit tests plus the
+single-capture and all-profile Rust API examples. Each API check prints elapsed
+wall time including incremental compilation and retains logs/JSON under
+`local/api-example-tests/`. The all phase, guarded checks and shared CI include
+these checks. Failure still emits elapsed time and fails the gate.
+
+Native wheel release checks print Python example-only elapsed seconds separately
+from total wheel validation time. Their JSON report retains
+`example_elapsed_seconds` and `elapsed_seconds`; installation time is excluded
+from example time. This applies to Windows and Ubuntu wheel validation.

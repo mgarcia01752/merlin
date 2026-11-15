@@ -45,8 +45,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // A capture may contain multiple profiles, so choose one explicitly.
     // CaptureLoader detects binary/JSON by content and calls the native decoder.
     // The immutable DPD retains original bytes, assignments and provenance.
-    let mut sim =
-        CaptureLoader::controller_from_capture(&read_capture(root.join(PROFILE_FILENAME))?)?;
+    let mut sim = Simulation::new();
+    sim.load_profiles(CaptureLoader::profiles(&read_capture(
+        root.join(PROFILE_FILENAME),
+    )?)?)?;
 
     // 3. Select a retained profile without rereading its original capture.
     sim.select_profile(ProfileId::PROFILE_A)?;
@@ -87,6 +89,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // existing TX/channel/RX/FEC engine. The returned batch owns its reports;
     // subsequent controller changes do not invalidate those results.
     for entry in sim.run()?.iter() {
+        if entry.status() != RunStatus::Complete {
+            return Err("Single-capture example did not complete".into());
+        }
         // 8. Inspect status before interpreting optional scientific results.
         // Complete means execution finished, not that every codeword decoded.
         // NotStarted entries have no report; early partial runs can lack window

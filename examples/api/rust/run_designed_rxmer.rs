@@ -69,7 +69,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 ..Default::default()
             },
         )?;
-        let mut sim = Merlin::new(ocd);
+        let mut sim = Simulation::with_ocd(ocd);
         sim.set_profile(profile)?;
         let original_id = sim.add_rxmer(observation.clone())?;
 

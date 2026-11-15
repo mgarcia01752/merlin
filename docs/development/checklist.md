@@ -1550,3 +1550,10 @@ validation are complete; the user guide includes the current dark capture.
   and Python; preserve explicit protocol selection and update both examples.
   Fixture default/explicit parity, Rust example compilation and Python API
   tests pass locally; other platforms remain unverified for this change.
+
+- [x] API-SIMULATION-01: Add idle Simulation sessions in Rust and Python with
+  atomic profile loading, retained IDs and legacy compatibility. Update both
+  language examples and generated references. Shared example checks report
+  elapsed time; CI retains Rust logs and native wheel timing evidence.
+  Local fixture, cancellation, parity and documentation checks pass; hosted
+  Windows/newer Ubuntu execution remains unverified for this change.

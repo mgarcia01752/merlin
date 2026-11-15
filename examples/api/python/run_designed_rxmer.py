@@ -17,7 +17,7 @@ All decoding, validation, signal processing and FEC remain in Rust.
 from pathlib import Path
 from time import perf_counter
 from merlin import (
-    DPD, OCD, Merlin, ProtocolScope, OcdOverrides,
+    DPD, OCD, Simulation, ProtocolScope, OcdOverrides,
     RxMer, RxMerSelection, EvaluationOptions, ChannelSelection, ReceiverMode,
     ObservationDuration, AssociationTolerance, RunLimits, RuntimeLimit,
     NoiseSeed, PrbsSeed, IterationLimit,
@@ -76,7 +76,7 @@ def main():
                          roll_off=RollOffSamples(ROLL_OFF_SAMPLES),
                          interleaver_depth=InterleaverDepth(INTERLEAVER_DEPTH)),
         )
-        sim = Merlin(ocd)
+        sim = Simulation(ocd)
         sim.set_profile(profile)
         original_id = sim.add_rxmer(observation)
         # 4. Select this original explicitly. The designed tilt/ripple/notch are

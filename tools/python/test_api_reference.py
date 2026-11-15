@@ -85,6 +85,25 @@ class ApiReferenceTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Hidden interpreter"):
                     validate_pages(inventory)
 
+    def test_alias_links_to_verified_canonical_members(self):
+        """Keep compatibility names discoverable without losing member coverage."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "python").mkdir()
+            (root / "python/Merlin.html").write_text('<a id="merlin.Merlin"></a>')
+            canonical = root / "python/Simulation.html"
+            canonical.write_text('<a id="merlin.Simulation.run"></a>')
+            for name in ("search.html", "searchindex.js", "genindex.html"):
+                (root / "python" / name).write_text("")
+            inventory = {"classes": [
+                {"name": "Merlin", "canonical_name": "Simulation", "members": ["run"]},
+                {"name": "Simulation", "canonical_name": "Simulation", "members": ["run"]}]}
+            with patch("build_api_reference.OUTPUT", root):
+                validate_pages(inventory)
+                canonical.write_text("")
+                with self.assertRaisesRegex(ValueError, "Missing generated API member"):
+                    validate_pages(inventory)
+
 
 if __name__ == "__main__":
     unittest.main()

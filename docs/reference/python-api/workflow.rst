@@ -1,9 +1,10 @@
 Workflow and contracts
 ======================
 
-The high-level API owns validated configurations and original captures. Loading
-and configuring never starts simulation. Only :meth:`merlin.Merlin.run` or
-:meth:`merlin.Workbench.run` executes the existing Rust engine.
+The Basic Python API owns validated configurations and original captures. Loading
+and configuring never starts simulation. Explicit run methods, including
+:meth:`merlin.Simulation.run`, :meth:`merlin.Simulation.run_all_profiles` and
+:meth:`merlin.Workbench.run`, execute the existing Rust engine.
 
 Saved workbench
 ---------------
@@ -23,9 +24,9 @@ Saved workbench
 Captured input workflow
 -----------------------
 
-Use :class:`merlin.DPD` to discover/load profiles, :class:`merlin.OCD` to derive
-settings with optional :class:`merlin.OcdOverrides`, and :class:`merlin.Merlin`
-to retain the accepted configuration. Add :class:`merlin.RxMer` and
+Create :class:`merlin.Simulation` and call ``load_profiles(path)`` to retain all
+profiles and derive channel settings. Optional :class:`merlin.OcdOverrides`
+controls explicit settings. Manual DPD/OCD construction remains available. Add :class:`merlin.RxMer` and
 :class:`merlin.ChannelEstimate` originals separately. Returned capture IDs belong
 to that controller; IDs from another controller are invalid.
 
@@ -82,9 +83,13 @@ all-profile collection and designed-RxMER workflows. Neither API depends on Qt.
 Loaded profile collections
 --------------------------
 
-Use ``Merlin.from_profile_file(path)`` to retain all profiles and
+Create ``sim = Simulation()`` and call ``sim.load_profiles(path)`` to retain all profiles and
 resolve channel settings. Inspect ``sim.profile_ids``, use
 ``sim.profile_by_id(profile_id)`` or ``sim.select_profile(profile_id)``, and call
 ``sim.run_all_profiles()`` only when ready to simulate. Entries expose
 ``profile_id`` even when cancelled before starting. Explicit DPD/OCD loaders
 and ``set_profile`` remain supported.
+
+An empty session never starts work. Load profiles before configuring or adding
+measurements. Failed reloads preserve prior state; successful compatible reloads
+preserve measurement IDs and options. ``Merlin`` remains a compatibility alias.

@@ -19,7 +19,7 @@ Loading/configuring inputs does not start simulation; sim.run() below does.
 """
 from pathlib import Path
 from merlin import (
-    Merlin, ProfileId,
+    Simulation, ProfileId,
     RxMer, ChannelEstimate, EvaluationOptions, ChannelSelection,
     ObservationDuration, AssociationTolerance, RunLimits, RuntimeLimit,
 )
@@ -57,7 +57,8 @@ def main():
     )
 
     # 2. Load the profile collection into the controller; no simulation runs.
-    sim = Merlin.from_profile_file(root / PROFILE_FILENAME)
+    sim = Simulation()
+    sim.load_profiles(root / PROFILE_FILENAME)
 
     # 3. Select Profile A from the retained inventory without rereading the file.
     # sim.profile_ids lists all loaded IDs; sim.profile_by_id(id) returns a profile.

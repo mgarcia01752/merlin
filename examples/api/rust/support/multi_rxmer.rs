@@ -111,7 +111,7 @@ pub fn run(receiver_mode: ReceiverMode) -> Result<(), Box<dyn std::error::Error>
                 ..Default::default()
             },
         )?;
-        let mut sim = Merlin::new(ocd);
+        let mut sim = Simulation::with_ocd(ocd);
         sim.set_profile(profile)?;
         for observation in &observations {
             sim.add_rxmer(observation.clone())?;

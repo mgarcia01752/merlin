@@ -258,7 +258,7 @@ bounds. No new general channel request schema or Python/Qt dependency is added.
 
 ## Basic Rust API and native Python bindings
 
-Enable `high-level-api` on `docsis-ofdm-fec` to use `api::{Merlin,Dpd,Ocd,RxMer,
+Enable `high-level-api` on `docsis-ofdm-fec` to use `api::{Simulation,Merlin,Dpd,Ocd,RxMer,
 ChannelEstimate,EvaluationOptions}`. Checked quantities and opaque IDs prevent
 unit/identity confusion. Inputs are independently loaded and preserved; static
 selection/preflight precedes explicit bounded `run()` calls. Owned FEC and
@@ -433,12 +433,13 @@ for supported PRBS15/static modes, unsupported capabilities and finite bounds.
 
 ### Retained profile collections
 
-`Merlin::from_profiles` accepts existing validated profiles;
-`pnm_input::CaptureLoader::controller_from_profiles` loads a capture directly.
+`Simulation::load_profiles` accepts validated profiles decoded by
+`pnm_input::CaptureLoader::profiles`. Legacy `Merlin::from_profiles` and
+`CaptureLoader::controller_from_profiles` remain available.
 `profile_ids`, `profile_by_id` and `select_profile` operate on retained objects.
 `run_all_profiles` and its cancellation-aware variant use the same core engine
 as `run`, preserving selection and returning `profile_id` on every entry.
-Python mirrors these methods with `Merlin.from_profile_file` for file loading.
+Python mirrors the instance workflow with `Simulation()` and `load_profiles(path)`.
 Bandwidth is derived only when the captured span fits one supported value;
 ambiguous captures and manual OCD construction retain explicit overrides.
 
@@ -446,3 +447,14 @@ ambiguous captures and manual OCD construction retain explicit overrides.
 `CaptureLoader::controller_from_capture` uses that default and empty OCD overrides.
 Python `Merlin.from_profile_file(path, protocol=None, overrides=None)` uses the
 same Rust default when protocol is omitted. Explicit loading remains available.
+
+### Create a simulation session
+
+`Simulation::new()` starts empty; `load_profiles(Vec<Dpd>)` derives its OCD
+without running the engine. Decode via `pnm_input::CaptureLoader::profiles`.
+Use `load_profiles_with_options` for protocol/OCD overrides, or `with_ocd` for
+manual construction. Python mirrors this with `Simulation()`,
+`load_profiles(path, protocol=None, overrides=None)`, `add_rxmer_file(path)` and
+`add_channel_estimate_file(path)`. Existing typed measurement methods remain.
+Python `Merlin` is a compatibility alias; Rust `Merlin` remains the existing
+validated controller used by the session. Workbench runs that same engine.

@@ -557,3 +557,17 @@ PNM file versions. Add a default capture-controller loader; preserve the
 explicit protocol/override loader. Python accepts an omitted protocol and
 uses the same Rust default. Loading remains idle. Update both language guides
 and fixture examples; compare default and explicit loading in tests.
+
+## API-SIMULATION-01 — Create, load, configure, run
+
+Add a Rust Simulation session holding an optional existing Merlin controller.
+Creation is idle and has no fabricated OCD. Loading decoded profiles creates the
+validated controller; subsequent loads atomically validate retained measurements
+and preserve scoped IDs, options and run numbering. Missing profile configuration
+returns a structured error. Existing Merlin APIs remain compatible. Python exposes
+Simulation with an optional OCD constructor and a Merlin compatibility alias,
+using the existing worker, cancellation and GIL-release path. File I/O remains in
+pnm-input. Update examples and generated references in both languages. Report
+example-only elapsed time separately from wheel validation/build time, including
+failures, in native release evidence; Rust local/shared CI checks run timed API
+examples. Test empty state, failed replacement, identity and engine parity.

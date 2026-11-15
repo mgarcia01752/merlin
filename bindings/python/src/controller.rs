@@ -29,16 +29,16 @@ impl PyRunControl {
         self.0.cancel();
     }
 }
-/// High-level single-channel simulation controller, constructed from a validated OCD.
+/// Single-channel simulation session; create empty or supply a validated OCD.
 ///
 /// Loading inputs and accepting options never runs simulation. Only run() or
-/// run_with_control() starts the native engine, releasing the interpreter lock.
+/// run_with_control() or run_all_profiles() starts the native engine, releasing the interpreter lock.
 /// Captures retain original bytes; returned identifiers belong to this controller.
 /// Reports independently own complete/partial outcomes. ApiError.code identifies
 /// validation/preflight/Busy errors; scientific results never come from Python.
-#[pyclass(frozen, module = "merlin", name = "Merlin")]
+#[pyclass(frozen, module = "merlin", name = "Simulation")]
 pub(crate) struct PyMerlin {
-    state: Arc<Mutex<Option<api::Merlin>>>,
+    state: Arc<Mutex<Option<api::Simulation>>>,
 }
 impl PyMerlin {
     /// Wraps an already validated Rust controller without changing its configuration.
@@ -48,12 +48,12 @@ impl PyMerlin {
     /// Python controller using the existing Busy and GIL-releasing execution path.
     pub(crate) fn from_native(sim: api::Merlin) -> Self {
         Self {
-            state: Arc::new(Mutex::new(Some(sim))),
+            state: Arc::new(Mutex::new(Some(sim.into()))),
         }
     }
     fn access<T>(
         &self,
-        operation: impl FnOnce(&mut api::Merlin) -> api::ApiResult<T>,
+        operation: impl FnOnce(&mut api::Simulation) -> api::ApiResult<T>,
     ) -> PyResult<T> {
         let mut state = self.state.try_lock().map_err(|_| {
             error(api::ApiError::new(
@@ -154,13 +154,17 @@ impl PyMerlin {
 impl PyMerlin {
     /// Construct a Rust-backed value or request using the declared units and defaults.
     /// # Arguments
-    /// * `ocd` - Validated immutable OCD to preserve.
+    /// * `ocd` - Optional validated OCD; omit and call load_profiles for captured inputs.
     /// # Returns
     /// A fresh Rust-backed value or request, with native defaults where documented.
     #[new]
-    fn new(ocd: &PyOcd) -> Self {
+    #[pyo3(signature=(ocd=None))]
+    fn new(ocd: Option<&PyOcd>) -> Self {
         Self {
-            state: Arc::new(Mutex::new(Some(api::Merlin::new(ocd.0.clone())))),
+            state: Arc::new(Mutex::new(Some(
+                ocd.map(|value| api::Simulation::with_ocd(value.0.clone()))
+                    .unwrap_or_default(),
+            ))),
         }
     }
     /// Load a profile capture and retain its complete inventory without simulation.
@@ -187,6 +191,56 @@ impl PyMerlin {
         )
         .map(Self::from_native)
         .map_err(error)
+    }
+    /// Load all profiles from a binary or JSON capture without running simulation.
+    /// # Arguments
+    /// * `path` - Original profile capture to decode through Rust.
+    /// * `protocol`, `overrides` - Optional interpretation and channel settings.
+    /// # Returns
+    /// None; first loaded profile selected and compatible measurements retained.
+    /// # Errors
+    /// Structured decoding/configuration errors leave accepted state unchanged.
+    #[pyo3(signature=(path,protocol=None,overrides=None))]
+    fn load_profiles(
+        &self,
+        path: PathBuf,
+        protocol: Option<PyProtocolScope>,
+        overrides: Option<PyOcdOverrides>,
+    ) -> PyResult<()> {
+        self.access(|sim| {
+            let profiles = CaptureLoader::profiles(&read_capture(path)?)?;
+            sim.load_profiles_with_options(
+                protocol.map(PyProtocolScope::native).unwrap_or_default(),
+                profiles,
+                overrides.unwrap_or_default().native(),
+            )
+        })
+    }
+    /// Decode and add an original RxMER file through the Rust input adapter.
+    /// # Arguments
+    /// * `path` - Supported binary or JSON capture.
+    /// # Returns
+    /// Controller-scoped ID for selection and lookup.
+    /// # Errors
+    /// Preserves Rust file, decoding and compatibility errors.
+    fn add_rxmer_file(&self, path: PathBuf) -> PyResult<PyRxMerId> {
+        self.access(|sim| {
+            sim.add_rxmer(CaptureLoader::rxmer(&read_capture(path)?)?)
+                .map(PyRxMerId)
+        })
+    }
+    /// Decode and add an original channel-estimate file through Rust.
+    /// # Arguments
+    /// * `path` - Supported binary or JSON capture.
+    /// # Returns
+    /// Controller-scoped ID for channel selection.
+    /// # Errors
+    /// Preserves Rust file, decoding and compatibility errors.
+    fn add_channel_estimate_file(&self, path: PathBuf) -> PyResult<PyChannelId> {
+        self.access(|sim| {
+            sim.add_channel_estimate(CaptureLoader::channel_estimate(&read_capture(path)?)?)
+                .map(PyChannelId)
+        })
     }
     /// Read profile IDs retained by this object, without rereading a file.
     /// # Returns
@@ -303,7 +357,7 @@ impl PyMerlin {
     /// Preserves structured Rust validation errors and Python conversion failures.
     #[getter]
     fn ocd(&self) -> PyResult<PyOcd> {
-        self.access(|sim| Ok(PyOcd(sim.ocd().clone())))
+        self.access(|sim| Ok(PyOcd(sim.ocd()?.clone())))
     }
     /// Read profile from the native Rust snapshot.
     /// # Returns
@@ -321,7 +375,7 @@ impl PyMerlin {
     /// Preserves structured Rust validation errors and Python conversion failures.
     #[getter]
     fn options(&self) -> PyResult<PyEvaluationOptions> {
-        self.access(|sim| Ok(PyEvaluationOptions::from_native(sim.options())))
+        self.access(|sim| Ok(PyEvaluationOptions::from_native(sim.options()?)))
     }
     /// Run the accepted Rust configuration explicitly and return an independently owned batch.
     /// # Returns
@@ -352,5 +406,6 @@ impl PyMerlin {
 pub(crate) fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<PyRunControl>()?;
     module.add_class::<PyMerlin>()?;
+    module.add("Merlin", module.getattr("Simulation")?)?;
     Ok(())
 }

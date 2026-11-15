@@ -126,16 +126,20 @@ manylinux portability or support for another interpreter/OS.
 
 ## Simple workflow
 
-The file loader defaults to DOCSIS 3.1. Omit `protocol` for the normal workflow;
-`protocol=ProtocolScope.DOCSIS31` remains valid when an explicit choice is useful.
-Import `ProtocolScope` to select another supported scope. This is a default
-interpretation, not protocol detection from the capture file version. Existing
-manual `OCD.from_profile` construction still takes an explicit protocol.
+This simple example loads one modulation-profile capture and one RxMER
+capture, then simulates the first loaded profile and reads its FEC results.
+It does not load a channel estimate: a flat (unity) channel response is used,
+while RxMER supplies the measured signal-quality impairment. Loading only
+configures the simulation; `run()` starts it.
+
+`Simulation()` creates an empty simulation. `load_profiles(path)` loads the
+profiles using DOCSIS 3.1 by default. Specify `protocol` only to change that
+interpretation. Nothing runs until you call `run()`.
 
 ```python
 # Import capture loaders, validated values, run settings and the controller.
 from merlin import (
-    Merlin,
+    Simulation,
     RxMer, EvaluationOptions, ChannelSelection,
     AssociationTolerance, ObservationDuration, RunLimits, RuntimeLimit,
 )
@@ -146,8 +150,8 @@ PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 90_000  # Fixture capture-time allowance
 MAX_RUNTIME_MS = 300_000  # Limit each experiment to 300 seconds of host time.
 
 # Load the capture once; this object owns its profiles and resolved channel settings.
-sim = Merlin.from_profile_file(
-    "examples/workbench/single/modulation-profile.bin")
+sim = Simulation()
+sim.load_profiles("examples/workbench/single/modulation-profile.bin")
 
 # Inspect the retained IDs; the first loaded profile is selected for run().
 print([profile_id.value for profile_id in sim.profile_ids])
@@ -344,3 +348,22 @@ who need explicit construction or replacement.
 
 See matching [Python](../../../examples/api/python/run_all_profiles.py) and
 [Rust](../../../examples/api/rust/run_all_profiles.rs) examples.
+
+### Simulation lifecycle
+
+Create the session, load profiles, add measurements, configure selection, then
+call `run()` or `run_all_profiles()`. Empty sessions expose an empty profile list;
+operations requiring channel geometry return a structured error until profiles
+or an explicit OCD have been supplied. No construction or loading runs the engine.
+
+Reloading replaces the entire profile collection and selects its first profile.
+Compatible retained RxMER/channel estimates, their IDs, accepted run options and
+run numbering remain intact. Invalid loads leave the previous state unchanged.
+Changing to a different measurement grid requires a new simulation. Reports
+remain independently owned. Run preflight still checks timestamps and coverage.
+
+Multiple RxMER captures support Each (one experiment per capture), Individual,
+AverageAll and InterpolateAt. Averaging/interpolation uses residual power and
+preserves missing values on exact compatible grids. All-profile execution applies
+that policy separately to every loaded profile. Channel selection remains an
+independent explicit, nearest-time or unity policy.

@@ -618,3 +618,26 @@ Ubuntu runners, and no release was published.
 - Both changed Python examples completed: single capture reports 82 codewords;
   all-profile example completes profiles 0, 1, 2 and 3.
 - No full repository suite or Windows runtime validation was performed.
+
+## API-SIMULATION-01 — Session and timed example validation
+
+- Rust API integration: 24 tests passed in 44.22 s. A subsequent targeted reload
+  test passed in 0.47 s, including incompatible-grid rejection with retained IDs.
+- Python API tests: 11 passed in 9.05 s; the full binding suite then passed
+  20 tests in 26.45 s against the rebuilt local CPython 3.10 Linux wheel.
+  Rust/Python parity passes all four RxMER selection modes (3.54 s separate
+  Python comparison). Existing Merlin and Workbench workflows remain covered.
+- Final shared example phase: four example unit tests passed; single capture
+  14.19 s, all profiles 67.37 s, API total 81.56 s including incremental
+  compilation. Full example phase elapsed 1 min 39 s with exit 0.
+- Isolated installed-wheel single-capture smoke: passed; example-only 0.69 s,
+  complete wheel validation 4.40 s. No system installation was performed.
+- Tooling: 14 Python documentation/wheel tests and 12 runner tests passed,
+  including failure timing and canonical/compatibility documentation coverage.
+- Rust/Python Clippy, formatting, Rust examples compilation, generated Rust and
+  Sphinx references passed. Sphinx documents 59 exported class names including
+  the legacy alias; generated HTML remains local and untracked.
+- Analysis-only feature-boundary compilation passed.
+- CI YAML, shell syntax, Python example syntax and integration-guide freshness
+  passed. Full repository tests and hosted Windows/Ubuntu matrix execution were
+  not run; configured release timing is not hosted execution evidence.

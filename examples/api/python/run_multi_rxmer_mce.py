@@ -20,7 +20,7 @@ Loading/configuring inputs does not start simulation; sim.run() below does.
 from pathlib import Path
 from time import perf_counter
 from merlin import (
-    DPD, OCD, Merlin, ProtocolScope, OcdOverrides,
+    DPD, OCD, Simulation, ProtocolScope, OcdOverrides,
     RxMer, RxMerSelection, EvaluationOptions, ChannelSelection,
     ObservationDuration, AssociationTolerance, RunLimits, RuntimeLimit,
     ReceiverMode, NoiseSeed, PrbsSeed, IterationLimit,
@@ -138,7 +138,7 @@ def main(receiver_mode=RECEIVER_MODE):
                          roll_off=RollOffSamples(ROLL_OFF_SAMPLES),
                          interleaver_depth=InterleaverDepth(INTERLEAVER_DEPTH)),
         )
-        sim = Merlin(ocd)
+        sim = Simulation(ocd)
         sim.set_profile(profile)
         for observation in observations:
             sim.add_rxmer(observation)

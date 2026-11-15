@@ -162,3 +162,9 @@ Configuration is not evidence of native Windows execution or published assets.
 API documentation and example changes cover both Rust and Python unless
 explicitly scoped otherwise. Default profile-capture loading uses DOCSIS 3.1;
 explicit protocol selection remains supported and file versions do not infer it.
+
+Simulation is the preferred create/load/configure/run entry point in both APIs.
+Keep legacy constructors compatible. Loading is idle and atomic; preserve scoped
+measurement identity and owned results. Shared build/release example checks must
+report elapsed wall time, including failures, with Python example-only time
+separated from total wheel validation and Rust build-inclusive time labeled.
