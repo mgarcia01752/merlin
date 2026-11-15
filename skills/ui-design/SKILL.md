@@ -57,6 +57,11 @@ interleaver drain and how depth changes its tail without promising proportional
 wall runtime. Trace implementation-specific numbers to code; do not label them
 as specification requirements without specification evidence.
 
+Within each terminology section, keep term entries in ascending alphanumeric
+order by their displayed term, ignoring case and comparing digit groups
+numerically (2 before 10). Preserve section groupings, definitions and links
+when sorting; insert new terms in their sorted position.
+
 ## Contextual help and optional chart details
 
 Known warning/error states must provide actionable hover and keyboard-focus
