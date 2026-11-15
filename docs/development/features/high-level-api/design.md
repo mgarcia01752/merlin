@@ -145,3 +145,21 @@ Final follow-up verification after the template naming/documentation changes:
 55 Git workflow tests passed in 27.198s, four generator tests in 0.032s and
 five release/version tests in 0.242s. ShellCheck, syntax, generated-doc checks,
 665 Markdown relative links, skill validation and diff checks passed.
+
+## API-EXAMPLES-02: developer walkthrough comments
+
+Add filename headers and detailed numbered explanations to both `high_level`
+examples. Explain native Rust ownership, fixture paths, profile/OCD setup,
+independent measurements and scoped IDs, units/tolerances, the explicit run
+boundary, optional scoped reports and primitive output conversions. Move
+numeric configuration and fixture paths into named constants at the top,
+with explicit units and fixture-specific explanations. Preserve the executable
+workflow; verify syntax/formatting and constant-substitution equivalence. No
+engine or binding change is required.
+
+Validation: Rust example check passed in 0.27s; the installed Python example
+completed with 82 codewords, zero corrected/uncorrectable and BER 0. Python
+AST and Rust executable-token comparisons against HEAD matched after resolving
+the named constants and removing documentation/optional trailing commas.
+Rustfmt and diff whitespace checks passed. The architecture was reviewed;
+no engine ownership or behavior changed.

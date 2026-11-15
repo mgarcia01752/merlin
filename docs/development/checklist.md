@@ -1341,3 +1341,8 @@ validation are complete; the user guide includes the current dark capture.
   workflow and generator tests pass. Ignore generated/downloaded archives.
   [Requirements](features/high-level-api/requirements.md#mandatory-downstream-installation-document-maintenance),
   [workflow](git.md#required-python-installation-guide-refresh).
+
+- [x] **API-EXAMPLES-02** Explain both high-level examples with filename
+  headers, numbered walkthrough remarks and named configuration constants
+  with units. Rust checking, Python execution and equivalence checks pass.
+  [Design](features/high-level-api/design.md#api-examples-02-developer-walkthrough-comments).

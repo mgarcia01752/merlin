@@ -4,6 +4,10 @@ These examples call MERLIN's high-level Rust API. Python uses the native
 extension over that same API. They load existing fixtures and run one channel;
 they are source examples, not desktop workbench files or CLI JSON requests.
 Loading does not run simulation. Only the explicit `run()` call starts it.
+Both `high_level` files include filename headers and numbered developer
+walkthroughs. Adjust the named constants at the top for fixture paths,
+bandwidth, observation duration, association tolerance and host runtime; units
+and assumptions are explained alongside the workflow.
 
 | Example | Purpose |
 | --- | --- |
