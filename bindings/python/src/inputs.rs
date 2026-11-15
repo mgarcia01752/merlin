@@ -272,7 +272,7 @@ impl PyOcdOverrides {
     /// Copy conversion fields into existing Rust domain models; perform no scientific calculations.
     /// # Returns
     /// The immutable native value named by this read-only property.
-    fn native(&self) -> api::OcdOverrides {
+    pub(crate) fn native(&self) -> api::OcdOverrides {
         api::OcdOverrides {
             bandwidth: self.bandwidth.as_ref().map(|v| v.0),
             cyclic_prefix: self.cyclic_prefix.as_ref().map(|v| v.0),

@@ -1537,3 +1537,11 @@ validation are complete; the user guide includes the current dark capture.
 - [ ] **UBUNTU-COMPAT-01** Validate original 22.04 desktop/wheel assets on
   Ubuntu 24.04 and 26.04 before release. Matrix and Ubuntu 22.04+ documentation
   implemented; local workflow/tooling checks pass, hosted execution pending.
+
+- [x] **API-OCD-01** Derive captured bandwidth only when one supported width
+  fits. Preserve explicit settings and ambiguity errors; simplify both languages'
+  examples. Boundary, binary/JSON and explicit/derived checks pass.
+- [x] **API-PROFILES-01** Retain compatible profiles in the controller, expose
+  IDs/lookup/selection and run_all_profiles with bounded preflight/cancellation.
+  Keep legacy construction/setters. Rust/Python FEC parity and native examples
+  pass locally; other native platforms remain unverified for this change.

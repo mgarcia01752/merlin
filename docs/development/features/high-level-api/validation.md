@@ -580,3 +580,28 @@ All 13 Python tooling tests pass (0.034 s); local YAML parsing verifies both
 shell choices, the expression and the folded argument vector. This is a workflow
 fix only. Native Windows success remains pending the new patch run; no tests or
 publication requirements are removed.
+
+
+## API-OCD-01 and API-PROFILES-01: local Ubuntu validation
+
+Bandwidth resolution now distinguishes the ambiguous 186 MHz boundary from
+unique 187/192 MHz spans; oversize/overflow inputs do not infer a width. Binary
+and JSON imports resolve identically, and explicit settings preserve their
+origin. The narrowed fixture still requires a caller override.
+
+The controller retains four fixture profiles (0, 1, 2, 3), resolves settings
+without running, and exposes instance IDs/lookup/selection. All-profile batches
+preserve current selection and retain profile IDs for cancelled entries. Tests
+cover unknown/duplicate IDs, independent old results and the 256-experiment cap.
+The native loader checks aggregate source bytes before materializing profiles.
+
+Local checks: 22 Rust API integration tests (51.74 s), bandwidth boundary unit
+test, targeted collection-bound check (3.69 s), Rust example compilation and
+Clippy, Python API tests (10 cases, 9.99 s), receiver tests (3 cases, 4.49 s),
+all four selection-mode Rust/Python parity (3.37 s), and generated
+Python references (58 exported classes, warnings fatal). Both all-profile
+examples complete with actual per-profile FEC results; the Python single-capture
+example remains 82 total / 0 corrected / 0 uncorrectable / BER 0.000e+00.
+Direct Rust/Python all-profile FEC comparisons pass. Validation uses the rebuilt
+CPython 3.10 Linux wheel; this change has not been tested on Windows or newer
+Ubuntu runners, and no release was published.

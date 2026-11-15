@@ -13,7 +13,6 @@ use std::{path::Path, time::Instant};
 const FIXTURE_DIRECTORY_FROM_MANIFEST: &str = "../../examples/workbench/multi-rxmer-2";
 const PROFILE_FILENAME: &str = "ds_ofdm_modulation_profile_aabbccddeeff_193_1764824373.bin";
 const RXMER_FILENAME_PREFIX: &str = "ds_ofdm_rxmer_per_subcar_";
-const OCCUPIED_BANDWIDTH_HZ: u32 = 192_000_000;
 const OBSERVATION_DURATION_MS: u64 = 1;
 const PROFILE_ASSOCIATION_TOLERANCE_SECONDS: u32 = 7_200;
 const MAX_RUNTIME_MS: u64 = 300_000;
@@ -106,10 +105,10 @@ pub fn run(receiver_mode: ReceiverMode) -> Result<(), Box<dyn std::error::Error>
             ProtocolScope::Docsis31,
             &profile,
             OcdOverrides {
-                bandwidth: Some(BandwidthHz::new(OCCUPIED_BANDWIDTH_HZ)?),
                 cyclic_prefix: Some(CyclicPrefixSamples::new(CYCLIC_PREFIX_SAMPLES)?),
                 roll_off: Some(RollOffSamples::new(ROLL_OFF_SAMPLES)?),
                 interleaver_depth: Some(InterleaverDepth::new(INTERLEAVER_DEPTH)?),
+                ..Default::default()
             },
         )?;
         let mut sim = Merlin::new(ocd);

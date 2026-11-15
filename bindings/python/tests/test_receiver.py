@@ -62,8 +62,7 @@ class ReceiverModeTests(unittest.TestCase):
         """Keep shared fixture settings while explicitly choosing MCE in Python."""
         example = runpy.run_path(str(EXAMPLE))  # Importing never runs main().
         workbench = json.loads(WORKBENCH.read_text())
-        for constant, key in (("OCCUPIED_BANDWIDTH_HZ", "occupied_bandwidth_hz"),
-                              ("CYCLIC_PREFIX_SAMPLES", "cyclic_prefix_samples"),
+        for constant, key in (("CYCLIC_PREFIX_SAMPLES", "cyclic_prefix_samples"),
                               ("ROLL_OFF_SAMPLES", "roll_off_samples"),
                               ("INTERLEAVER_DEPTH", "time_interleaver_depth")):
             self.assertEqual(example[constant], workbench["transmission"][key])

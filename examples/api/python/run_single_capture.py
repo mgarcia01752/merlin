@@ -19,7 +19,7 @@ Loading/configuring inputs does not start simulation; sim.run() below does.
 """
 from pathlib import Path
 from merlin import (
-    DPD, OCD, Merlin, ProfileId, ProtocolScope, OcdOverrides, BandwidthHz,
+    Merlin, ProfileId, ProtocolScope,
     RxMer, ChannelEstimate, EvaluationOptions, ChannelSelection,
     ObservationDuration, AssociationTolerance, RunLimits, RuntimeLimit,
 )
@@ -32,7 +32,6 @@ FIXTURE_DIRECTORY = "examples/workbench/single"
 PROFILE_FILENAME = "modulation-profile.bin"
 RXMER_FILENAME = "rxmer.bin"
 CHANNEL_ESTIMATE_FILENAME = "ds-channel-estimate.bin"
-OCCUPIED_BANDWIDTH_HZ = 192_000_000  # Explicit fixture configuration: 192 MHz.
 OBSERVATION_DURATION_MS = 1  # Source observation, excluding acquisition/drain.
 PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 90_000  # Fixture capture-time allowance.
 MAX_RUNTIME_MS = 300_000  # Per-experiment wall-clock limit: 300 seconds.
@@ -57,29 +56,15 @@ def main():
         Path(__file__).resolve().parents[REPOSITORY_PARENT_INDEX] / FIXTURE_DIRECTORY
     )
 
-    # 2. Import the Downstream Profile Descriptor (DPD).
-    # A CM capture may contain multiple profiles, so select PROFILE_A explicitly.
-    # Rust detects binary/JSON from content, validates the selected profile and
-    # preserves original capture bytes, carrier assignments and provenance.
-    profile = DPD.from_file(root / PROFILE_FILENAME, ProfileId.PROFILE_A)
+    # 2. Load the profile collection into the controller; no simulation runs.
+    sim = Merlin.from_profile_file(root / PROFILE_FILENAME, ProtocolScope.DOCSIS31)
 
-    # 3. Resolve the OFDM Channel Descriptor (OCD) configuration.
-    # Reuse the profile's established grid and carrier roles. This fixture does
-    # not establish occupied bandwidth, so supply OCCUPIED_BANDWIDTH_HZ in Hz.
-    # BandwidthHz is a Rust-validated quantity, not an unlabelled integer.
-    # Omitted timing settings use documented application defaults: CP 512
-    # samples, roll-off 128 samples and interleaver depth 16. Reports identify
-    # defaults as assumptions rather than measured modem configuration.
-    ocd = OCD.from_profile(
-        ProtocolScope.DOCSIS31, profile,
-        OcdOverrides(bandwidth=BandwidthHz(OCCUPIED_BANDWIDTH_HZ)),
-    )
+    # 3. Select Profile A from the retained inventory without rereading the file.
+    # sim.profile_ids lists all loaded IDs; sim.profile_by_id(id) returns a profile.
+    sim.select_profile(ProfileId.PROFILE_A)
 
-    # 4. Create a controller and accept the selected profile.
-    # This owns configuration for later runs; it does not run the engine yet.
-    # The same Rust controller is available to native Rust consumers.
-    sim = Merlin(ocd)
-    sim.set_profile(profile)
+    # 4. Rust derives the unique bandwidth and reports timing defaults as such.
+    # sim.ocd exposes the resolved configuration; no separate set_profile is needed.
 
     # 5. Add RxMER and channel response independently.
     # RxMER supplies measured receive MER by subcarrier, used by Rust's residual

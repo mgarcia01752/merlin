@@ -3,10 +3,10 @@
 These examples call MERLIN's Basic Rust API. Python uses the native
 extension over that same API. They load existing fixtures and run one channel;
 they are source examples, not desktop workbench files or CLI JSON requests.
-Loading does not run simulation. Only the explicit `run()` call starts it.
+Loading does not run simulation. Only explicit `run()` or `run_all_profiles()` calls start it.
 Both single-capture files include filename headers and numbered developer
 walkthroughs. Adjust the named constants at the top for fixture paths,
-bandwidth, observation duration, association tolerance and host runtime; units
+observation duration, association tolerance and host runtime; units
 and assumptions are explained alongside the workflow.
 
 | Example | Purpose |
@@ -120,8 +120,8 @@ The generator creates two synthetic RxMER JSON fixtures in that output directory
 without changing the original captures. The Python parity test independently
 runs each policy and compares actual Rust-engine results.
 
-The workflow examples deliberately supply the fixture's 192 MHz bandwidth and
-capture-time tolerance. They request 1 ms of source observation with a separate
+The workflow examples derive 192 MHz from the fixture's unambiguous captured
+span and explicitly supply capture-time tolerance. They request 1 ms of source observation with a separate
 300 s host runtime bound. Those choices are examples, not inferred modem settings
 or promises about wall-clock duration. Results retain actual status and scope;
 complete execution does not imply FEC success.
@@ -192,3 +192,18 @@ Python runs produced matching results: Profiles 0/1/2 had 82/102/112 corrected
 codewords and zero uncorrectable words; Profile 3 had 17 corrected and 105
 uncorrectable out of 122, with BER `1.282e-02`. All runs completed. These are
 software simulation results for this designed input, not modem performance claims.
+
+
+## Loaded profile collection
+
+`run_all_profiles.py` and `run_all_profiles.rs` load one capture into a controller,
+list its retained IDs, and run every profile with the same RxMER and options.
+Each result carries `profile_id`, including cancelled/not-started entries.
+`select_profile(id)` selects one loaded profile for `run()`; `profile_by_id(id)`
+returns the retained profile. Existing static loaders and `set_profile()` remain
+available. No loading or selection operation runs simulation.
+
+```bash
+local/api-python-test/bin/python examples/api/python/run_all_profiles.py
+scripts/cargo-local.sh run -p pnm-input --example run_all_profiles --locked
+```

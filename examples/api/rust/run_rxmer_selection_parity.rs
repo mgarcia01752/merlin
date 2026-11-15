@@ -52,14 +52,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         &read_capture(root.join("modulation_profile.json"))?,
         ProfileId::PROFILE_A,
     )?;
-    let ocd = Ocd::from_profile(
-        ProtocolScope::Docsis31,
-        &dpd,
-        OcdOverrides {
-            bandwidth: Some(BandwidthHz::new(192_000_000)?),
-            ..Default::default()
-        },
-    )?;
+    let ocd = Ocd::from_profile(ProtocolScope::Docsis31, &dpd, OcdOverrides::default())?;
     let mut sim = Merlin::new(ocd);
     sim.set_profile(dpd)?;
     let first = sim.add_rxmer(CaptureLoader::rxmer(&read_capture(

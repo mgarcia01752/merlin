@@ -596,6 +596,14 @@ result_quantity!(
 pub(crate) struct PyExperimentId(api::ExperimentId);
 #[pymethods]
 impl PyExperimentEntry {
+    /// Read the profile ID even when this experiment was cancelled before starting.
+    /// # Returns
+    /// Captured profile identity attached by the native controller.
+    #[getter]
+    fn profile_id(&self) -> PyProfileId {
+        PyProfileId(self.entry().profile_id())
+    }
+
     /// Read id from the native Rust snapshot.
     /// # Returns
     /// The immutable native value named by this read-only property.

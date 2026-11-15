@@ -173,6 +173,24 @@ fn resolve<T: Copy>(explicit: Option<T>, derived: Option<T>, default: T) -> Reso
         },
     }
 }
+// Infer only a unique supported channel width; a minimum fit is not evidence.
+fn unique_bandwidth(sample_count: usize, spacing_hz: u32) -> Option<BandwidthHz> {
+    use crate::transmission::settings::{
+        CHANNEL_BANDWIDTH_STEP_HZ, MAX_CHANNEL_BANDWIDTH_HZ, MIN_CHANNEL_BANDWIDTH_HZ,
+    };
+    let span = u64::try_from(sample_count)
+        .ok()?
+        .checked_mul(u64::from(spacing_hz))?;
+    let mut candidates = (MIN_CHANNEL_BANDWIDTH_HZ..=MAX_CHANNEL_BANDWIDTH_HZ)
+        .step_by(CHANNEL_BANDWIDTH_STEP_HZ as usize)
+        .filter(|width| u64::from(*width) >= span);
+    let first = candidates.next()?;
+    if candidates.next().is_some() {
+        return None;
+    }
+    BandwidthHz::new(first).ok()
+}
+
 impl Ocd {
     fn settings(
         protocol: ProtocolScope,
@@ -208,7 +226,7 @@ impl Ocd {
             },
         ))
     }
-    /// Resolves capture-established geometry and optional timing overrides.
+    /// Resolves profile geometry, uniquely determined bandwidth and timing overrides.
     /// # Arguments
     /// * `protocol` - Explicit interpretation; never inferred from file format.
     /// * `dpd` - Selected original or hypothesis profile.
@@ -222,8 +240,17 @@ impl Ocd {
         dpd: &Dpd,
         overrides: OcdOverrides,
     ) -> ApiResult<Self> {
-        let (transmission, values) =
-            Self::settings(protocol, &dpd.profile.key, overrides, dpd.bandwidth)?;
+        let (transmission, values) = Self::settings(
+            protocol,
+            &dpd.profile.key,
+            overrides,
+            dpd.bandwidth.or_else(|| {
+                unique_bandwidth(
+                    dpd.profile.key.grid.sample_count,
+                    dpd.profile.key.grid.spacing_hz,
+                )
+            }),
+        )?;
         let layout =
             crate::simulation::channel::measurement::captured_layout(&dpd.profile, &transmission)?;
         Ok(Self {
@@ -265,5 +292,20 @@ impl Ocd {
     /// Immutable configuration snapshot.
     pub fn configuration(&self) -> &ResolvedConfiguration {
         &self.configuration
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn bandwidth_requires_exactly_one_supported_candidate() {
+        assert!(unique_bandwidth(7440, 25_000).is_none()); // 186 or 192 MHz.
+        assert_eq!(unique_bandwidth(7480, 25_000).unwrap().value(), 192_000_000);
+        assert_eq!(unique_bandwidth(7680, 25_000).unwrap().value(), 192_000_000);
+        assert!(unique_bandwidth(7681, 25_000).is_none());
+        assert!(unique_bandwidth(0, 25_000).is_none());
+        assert!(unique_bandwidth(usize::MAX, u32::MAX).is_none());
     }
 }

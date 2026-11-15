@@ -9,7 +9,7 @@ code. This record maps the contract to the current implementation and evidence.
 | --- | --- | --- |
 | 001–007, 010–015 | `docsis_ofdm_fec::api`, optional native input adapter | Validated inputs, owned results and Qt-independent build checks |
 | 020–027, 080 | `pnm-input` and immutable named bytes | All three binary/JSON fixture pairs passed fixture-backed imports |
-| 030–038, 081, 090–092 | `Ocd`, `Dpd`, existing captured-layout validation | Bandwidth override required for current decoder profiles; defaults recorded |
+| 030–038, 081, 090–092 | `Ocd`, `Dpd`, existing captured-layout validation | Derive uniquely determined profile bandwidth; ambiguous captures require override; defaults recorded |
 | 040–048, 082 | Independent controller collections, opaque scoped IDs | Explicit/unity/nearest-time policies implemented |
 | 100–113, 114–116 | `prepare`, existing `MeasurementPlayback` power operations | Static selections, exact grids, explicit epochs, null preservation |
 | 050–059, 083–085 | Sequential existing `run_channel` jobs | Direct engine parity, runtime continuation and cancellation tests passed |

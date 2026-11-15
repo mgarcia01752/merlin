@@ -45,7 +45,8 @@ before running. :class:`merlin.RunLimits` defaults to a 30,000 ms host runtime,
 50 decoder iterations and 64 retained detailed words. Source observation excludes
 acquisition/completion/drain and is separate from host elapsed time.
 
-An imported profile does not always establish occupied bandwidth. Supply that
+A profile derives bandwidth when its full span fits exactly one supported width.
+An ambiguous narrower profile still needs an override. Supply that
 through :class:`merlin.BandwidthHz` when needed. Omitted OCD timing uses reported
 application defaults: CP 512 samples, roll-off 128 samples and interleaver depth 16.
 Saved-workbench loading restores its saved settings, rather than these defaults.
@@ -76,3 +77,14 @@ sidecar. Loading the binary does not automatically ingest that sidecar.
 
 The shared landing page links complete runnable Rust/Python examples, including
 all-profile collection and designed-RxMER workflows. Neither API depends on Qt.
+
+
+Loaded profile collections
+--------------------------
+
+Use ``Merlin.from_profile_file(path, protocol)`` to retain all profiles and
+resolve channel settings. Inspect ``sim.profile_ids``, use
+``sim.profile_by_id(profile_id)`` or ``sim.select_profile(profile_id)``, and call
+``sim.run_all_profiles()`` only when ready to simulate. Entries expose
+``profile_id`` even when cancelled before starting. Explicit DPD/OCD loaders
+and ``set_profile`` remain supported.

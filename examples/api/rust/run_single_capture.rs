@@ -19,8 +19,6 @@ const FIXTURE_DIRECTORY_FROM_MANIFEST: &str = "../../examples/workbench/single";
 const PROFILE_FILENAME: &str = "modulation-profile.bin";
 const RXMER_FILENAME: &str = "rxmer.bin";
 const CHANNEL_ESTIMATE_FILENAME: &str = "ds-channel-estimate.bin";
-// Occupied bandwidth is an explicit choice here, not inferred from data span.
-const OCCUPIED_BANDWIDTH_HZ: u32 = 192_000_000;
 // Source observation excludes acquisition, completion and receiver drain.
 const OBSERVATION_DURATION_MS: u64 = 1;
 // Permit this fixture's profile and RxMER to have different original epochs.
@@ -47,31 +45,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // A capture may contain multiple profiles, so choose one explicitly.
     // CaptureLoader detects binary/JSON by content and calls the native decoder.
     // The immutable DPD retains original bytes, assignments and provenance.
-    let dpd = CaptureLoader::profile(
+    let mut sim = CaptureLoader::controller_from_profiles(
         &read_capture(root.join(PROFILE_FILENAME))?,
-        ProfileId::PROFILE_A,
-    )?;
-
-    // 3. Resolve the OFDM Channel Descriptor (OCD) from this profile.
-    // Reuse established grid/roles. The profile does not establish occupied
-    // bandwidth, so provide the named bandwidth constant through a checked type.
-    // Other overrides remain optional. Missing timing uses application defaults
-    // CP 512 samples, roll-off 128 samples and interleaver depth 16, reported as
-    // assumptions rather than captured modem settings. '?' propagates validation
-    // failures instead of panicking on invalid caller configuration.
-    let ocd = Ocd::from_profile(
         ProtocolScope::Docsis31,
-        &dpd,
-        OcdOverrides {
-            bandwidth: Some(BandwidthHz::new(OCCUPIED_BANDWIDTH_HZ)?),
-            ..Default::default()
-        },
+        OcdOverrides::default(),
     )?;
 
-    // 4. Own the resolved configuration and accept the selected DPD.
-    // This configures future runs; neither operation executes the engine.
-    let mut sim = Merlin::new(ocd);
-    sim.set_profile(dpd)?;
+    // 3. Select a retained profile without rereading its original capture.
+    sim.select_profile(ProfileId::PROFILE_A)?;
+
+    // 4. The controller owns profiles and resolved OCD; no setter is needed.
+    // Bandwidth derives uniquely; omitted timing retains documented defaults.
 
     // 5. Add measurements independently, preserving their original timestamps.
     // RxMER conditions Rust's residual-error model by subcarrier. The channel

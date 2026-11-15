@@ -336,14 +336,20 @@ impl PerformanceReport {
 #[derive(Serialize)]
 pub struct ExperimentEntry {
     id: ExperimentId,
+    profile_id: ProfileId,
     status: RunStatus,
     sources: MeasurementSources,
     report: Option<PerformanceReport>,
 }
 impl ExperimentEntry {
-    pub(crate) fn not_started(id: ExperimentId, sources: MeasurementSources) -> Self {
+    pub(crate) fn not_started(
+        id: ExperimentId,
+        profile_id: ProfileId,
+        sources: MeasurementSources,
+    ) -> Self {
         Self {
             id,
+            profile_id,
             status: RunStatus::NotStarted,
             sources,
             report: None,
@@ -357,15 +363,22 @@ impl ExperimentEntry {
         options: EvaluationOptions,
         result: Result<ChannelJobResult, crate::SimulationError>,
     ) -> Self {
+        let profile_id = dpd.profile_id();
         let report = PerformanceReport::new(sources.clone(), ocd, dpd, options, result);
         Self {
             id,
+            profile_id,
             status: report.status,
             sources,
             report: Some(report),
         }
     }
     getter!(id, ExperimentId, "Reads the opaque experiment identity.");
+    getter!(
+        profile_id,
+        ProfileId,
+        "Reads the captured profile identity, even when not started."
+    );
     getter!(
         status,
         RunStatus,

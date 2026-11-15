@@ -4,6 +4,7 @@
  */
 //! Independent collections, complete static batch preparation and bounded execution.
 use super::*;
+mod profiles;
 use crate::{
     signal_processing::channel::impairments::{ChannelImpairments, NoiseModel},
     simulation::{
@@ -237,6 +238,7 @@ impl PreparedExperiment {
 pub struct Merlin {
     ocd: Ocd,
     profile: Option<Dpd>,
+    loaded_profiles: Vec<Dpd>,
     rxmer: Vec<RxMer>,
     channels: Vec<ChannelEstimate>,
     options: EvaluationOptions,
@@ -254,6 +256,7 @@ impl Merlin {
         Self {
             ocd,
             profile: None,
+            loaded_profiles: vec![],
             rxmer: vec![],
             channels: vec![],
             options: EvaluationOptions::default(),
@@ -306,7 +309,13 @@ impl Merlin {
         }
         if self
             .retained
-            .checked_add(Self::profile_storage(&dpd))
+            .checked_add(
+                self.loaded_profiles
+                    .iter()
+                    .map(Self::profile_storage)
+                    .sum::<usize>(),
+            )
+            .and_then(|bytes| bytes.checked_add(Self::profile_storage(&dpd)))
             .is_none_or(|bytes| bytes > 64 * 1024 * 1024)
         {
             return Err(ApiError::new(
@@ -335,8 +344,16 @@ impl Merlin {
         self.retained
             .checked_add(bytes)
             .filter(|n| {
-                n.checked_add(self.profile.as_ref().map_or(0, Self::profile_storage))
-                    .is_some_and(|bytes| bytes <= 64 * 1024 * 1024)
+                n.checked_add(
+                    self.loaded_profiles
+                        .iter()
+                        .map(Self::profile_storage)
+                        .sum::<usize>(),
+                )
+                .and_then(|bytes| {
+                    bytes.checked_add(self.profile.as_ref().map_or(0, Self::profile_storage))
+                })
+                .is_some_and(|bytes| bytes <= 64 * 1024 * 1024)
             })
             .ok_or_else(|| {
                 ApiError::new(
@@ -705,14 +722,32 @@ impl Merlin {
     /// Preflight failures reject the entire batch before any experiment starts.
     pub fn run_with_control(&mut self, control: &RunControl) -> ApiResult<BatchReport> {
         let prepared = self.prepare()?;
+        let profile = self.profile.as_ref().expect("preflight profile").clone();
+        self.execute_prepared(
+            prepared
+                .into_iter()
+                .map(|entry| (profile.clone(), entry))
+                .collect(),
+            control,
+        )
+    }
+    fn execute_prepared(
+        &mut self,
+        prepared: Vec<(Dpd, PreparedExperiment)>,
+        control: &RunControl,
+    ) -> ApiResult<BatchReport> {
         let mut entries = Vec::new();
-        for (index, experiment) in prepared.into_iter().enumerate() {
+        for (index, (profile, experiment)) in prepared.into_iter().enumerate() {
             let id = ExperimentId {
                 scope: self.scope,
                 slot: self.runs * 256 + index,
             };
             if control.cancel.load(Ordering::Relaxed) {
-                entries.push(ExperimentEntry::not_started(id, experiment.sources));
+                entries.push(ExperimentEntry::not_started(
+                    id,
+                    profile.profile_id(),
+                    experiment.sources,
+                ));
                 continue;
             }
             let limits = ChannelJobLimits {
@@ -731,7 +766,7 @@ impl Merlin {
                 id,
                 experiment.sources,
                 self.ocd.clone(),
-                self.profile.as_ref().expect("preflight profile").clone(),
+                profile,
                 self.options.clone(),
                 result,
             ));

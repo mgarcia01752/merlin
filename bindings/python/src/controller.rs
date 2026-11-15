@@ -3,8 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Native dispatch with GIL release, Busy protection and cooperative signal handling.
+use crate::quantities::PyProfileId;
 use crate::{api, error, inputs::*, options::*, reports::PyBatchReport};
+use pnm_input::{read_capture, CaptureLoader};
 use pyo3::prelude::*;
+use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 /// Shareable native stop token, callable from another Python thread.
 #[pyclass(from_py_object, frozen, module = "merlin", name = "RunControl")]
@@ -79,6 +82,14 @@ impl PyMerlin {
         py: Python<'_>,
         control: api::RunControl,
     ) -> PyResult<PyBatchReport> {
+        self.execute_mode(py, control, false)
+    }
+    fn execute_mode(
+        &self,
+        py: Python<'_>,
+        control: api::RunControl,
+        all_profiles: bool,
+    ) -> PyResult<PyBatchReport> {
         let mut sim = {
             let mut state = self.state.try_lock().map_err(|_| {
                 error(api::ApiError::new(
@@ -98,7 +109,11 @@ impl PyMerlin {
         let worker_control = control.clone();
         let state = self.state.clone();
         let handle = std::thread::spawn(move || {
-            let result = sim.run_with_control(&worker_control);
+            let result = if all_profiles {
+                sim.run_all_profiles_with_control(&worker_control)
+            } else {
+                sim.run_with_control(&worker_control)
+            };
             // Restore controller ownership before notifying the waiting interpreter.
             if let Ok(mut slot) = state.lock() {
                 *slot = Some(sim);
@@ -147,6 +162,74 @@ impl PyMerlin {
         Self {
             state: Arc::new(Mutex::new(Some(api::Merlin::new(ocd.0.clone())))),
         }
+    }
+    /// Load a profile capture and retain its complete inventory without simulation.
+    /// # Arguments
+    /// * `path` - Existing binary PNM or decoded JSON capture.
+    /// * `protocol`, `overrides` - Interpretation and optional channel settings.
+    /// # Returns
+    /// Controller with its first loaded profile selected and all IDs available.
+    /// # Errors
+    /// Raises structured file, decoding and Rust configuration errors.
+    #[staticmethod]
+    #[pyo3(signature=(path,protocol,overrides=None))]
+    fn from_profile_file(
+        path: PathBuf,
+        protocol: PyProtocolScope,
+        overrides: Option<PyOcdOverrides>,
+    ) -> PyResult<Self> {
+        let capture = read_capture(path).map_err(error)?;
+        CaptureLoader::controller_from_profiles(
+            &capture,
+            protocol.native(),
+            overrides.unwrap_or_default().native(),
+        )
+        .map(Self::from_native)
+        .map_err(error)
+    }
+    /// Read profile IDs retained by this object, without rereading a file.
+    /// # Returns
+    /// Independent validated profile identifiers in loading order.
+    /// # Errors
+    /// Raises Busy while this controller is running.
+    #[getter]
+    fn profile_ids(&self) -> PyResult<Vec<PyProfileId>> {
+        self.access(|sim| Ok(sim.profile_ids().into_iter().map(PyProfileId).collect()))
+    }
+    /// Look up an already loaded profile by its captured ID.
+    /// # Arguments
+    /// * `profile_id` - Identifier from this object's profile_ids.
+    /// # Returns
+    /// Immutable independent profile retaining capture provenance.
+    /// # Errors
+    /// Raises a structured error for an absent ID or busy controller.
+    fn profile_by_id(&self, profile_id: &PyProfileId) -> PyResult<PyDpd> {
+        self.access(|sim| sim.profile_by_id(profile_id.0).cloned().map(PyDpd))
+    }
+    /// Select an already loaded profile for run(), without executing it.
+    /// # Arguments
+    /// * `profile_id` - Identifier from this object's inventory.
+    /// # Returns
+    /// None after accepting the selection.
+    /// # Errors
+    /// Raises structured validation or Busy errors without changing selection.
+    fn select_profile(&self, profile_id: &PyProfileId) -> PyResult<()> {
+        self.access(|sim| sim.select_profile(profile_id.0))
+    }
+    /// Run all loaded profiles using Rust preflight, limits and cancellation.
+    /// # Arguments
+    /// * `control` - Optional cooperative stop token; Python interrupts also stop work.
+    /// # Returns
+    /// Owned batch with profile_id on every complete, partial or unstarted entry.
+    /// # Errors
+    /// Raises preflight errors before any simulation starts; preserves Busy protection.
+    #[pyo3(signature=(control=None))]
+    fn run_all_profiles(
+        &self,
+        py: Python<'_>,
+        control: Option<PyRunControl>,
+    ) -> PyResult<PyBatchReport> {
+        self.execute_mode(py, control.map(|token| token.0).unwrap_or_default(), true)
     }
     /// Validate and atomically accept a copied profile for subsequent runs.
     /// # Arguments

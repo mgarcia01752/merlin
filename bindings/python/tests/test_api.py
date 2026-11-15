@@ -240,5 +240,48 @@ class NativeApiTests(unittest.TestCase):
         self.assertTrue(any(entry.report is not None for entry in batch))
 
 
+class DerivedBandwidthTests(unittest.TestCase):
+    def test_profile_without_bandwidth_override(self):
+        """Derive the fixture width in Rust while preserving explicit origins."""
+        profile = m.DPD.from_file(ROOT / "examples/workbench/single/modulation-profile.bin", m.ProfileId.PROFILE_A)
+        derived = m.OCD.from_profile(m.ProtocolScope.DOCSIS31, profile)
+        explicit = m.OCD.from_profile(m.ProtocolScope.DOCSIS31, profile,
+            m.OcdOverrides(bandwidth=m.BandwidthHz(192_000_000)))
+        self.assertEqual(derived.configuration["bandwidth"],
+                         {"value": 192_000_000, "origin": "Derived"})
+        self.assertEqual(explicit.configuration["bandwidth"],
+                         {"value": 192_000_000, "origin": "Explicit"})
+
+
+class LoadedProfilesTests(unittest.TestCase):
+    def test_inventory_selection_cancellation_and_single_run_parity(self):
+        """Retain profiles and match all-profile outcomes to independent runs."""
+        sim = m.Merlin.from_profile_file(FIXTURE / "modulation-profile.bin", m.ProtocolScope.DOCSIS31)
+        ids = sim.profile_ids
+        self.assertEqual([item.value for item in ids], [0, 1, 2, 3])
+        sim.select_profile(ids[2])
+        self.assertEqual(sim.profile_by_id(ids[1]).profile_id.value, 1)
+        sim.add_rxmer(m.RxMer.from_file(FIXTURE / "rxmer.bin"))
+        sim.set_options(m.EvaluationOptions(
+            channel_selection=m.ChannelSelection.unity(),
+            observation=m.ObservationDuration(1),
+            profile_tolerance=m.AssociationTolerance(90_000),
+            limits=m.RunLimits(runtime=m.RuntimeLimit(300_000))))
+        token = m.RunControl()
+        token.cancel()
+        cancelled = sim.run_all_profiles(token)
+        self.assertEqual([entry.profile_id.value for entry in cancelled], [0, 1, 2, 3])
+        self.assertTrue(all(entry.report is None for entry in cancelled))
+        self.assertEqual(sim.profile.profile_id.value, 2)
+        all_results = sim.run_all_profiles()
+        self.assertEqual([entry.profile_id.value for entry in all_results], [0, 1, 2, 3])
+        for entry in all_results:
+            sim.select_profile(entry.profile_id)
+            single = next(iter(sim.run()))
+            self.assertEqual(entry.report.fec.total_codewords.value, single.report.fec.total_codewords.value)
+            self.assertEqual(entry.report.fec.uncorrectable_codewords.value, single.report.fec.uncorrectable_codewords.value)
+        self.assertTrue(all(entry.report is None for entry in cancelled))
+
+
 if __name__ == "__main__":
     unittest.main()

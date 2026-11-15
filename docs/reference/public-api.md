@@ -429,3 +429,15 @@ Python `Workbench.from_file(path)` / `from_bytes(data)` call this Rust loader.
 return a list of batches, release the GIL during simulation, and reject concurrent
 runs of the same WB with Busy. See the [WB contract](../user/python/workbench.md)
 for supported PRBS15/static modes, unsupported capabilities and finite bounds.
+
+
+### Retained profile collections
+
+`Merlin::from_profiles` accepts existing validated profiles;
+`pnm_input::CaptureLoader::controller_from_profiles` loads a capture directly.
+`profile_ids`, `profile_by_id` and `select_profile` operate on retained objects.
+`run_all_profiles` and its cancellation-aware variant use the same core engine
+as `run`, preserving selection and returning `profile_id` on every entry.
+Python mirrors these methods with `Merlin.from_profile_file` for file loading.
+Bandwidth is derived only when the captured span fits one supported value;
+ambiguous captures and manual OCD construction retain explicit overrides.

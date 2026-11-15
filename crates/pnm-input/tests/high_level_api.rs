@@ -79,6 +79,19 @@ fn binary_json_all_kinds_and_wrong_kind() {
                 let a = CaptureLoader::profile(&original, ProfileId::PROFILE_A).unwrap();
                 let b = CaptureLoader::profile(&decoded, ProfileId::PROFILE_A).unwrap();
                 assert_eq!(a.grid(), b.grid());
+                for captured in [&a, &b] {
+                    let ocd = Ocd::from_profile(
+                        ProtocolScope::Docsis31,
+                        captured,
+                        OcdOverrides::default(),
+                    )
+                    .unwrap();
+                    assert_eq!(
+                        ocd.configuration().bandwidth().origin(),
+                        SettingOrigin::Derived
+                    );
+                    assert_eq!(ocd.configuration().bandwidth().value().value(), 192_000_000);
+                }
                 assert_eq!(a.sources()[0].original_bytes(), binary);
                 assert_ne!(
                     a.sources()[0].original_sha256(),
@@ -116,11 +129,19 @@ fn binary_json_all_kinds_and_wrong_kind() {
 }
 #[test]
 fn defaults_derived_grid_overrides_and_immutable_edit() {
+    let derived =
+        Ocd::from_profile(ProtocolScope::Docsis31, &profile(), OcdOverrides::default()).unwrap();
     assert_eq!(
-        Ocd::from_profile(ProtocolScope::Docsis31, &profile(), OcdOverrides::default())
-            .unwrap_err()
-            .code(),
-        ErrorCode::MissingSetting
+        derived.configuration().bandwidth().origin(),
+        SettingOrigin::Derived
+    );
+    assert_eq!(
+        *derived.configuration().bandwidth().value(),
+        *ocd().configuration().bandwidth().value()
+    );
+    assert_eq!(
+        serde_json::to_value(&derived).unwrap()["transmission"],
+        serde_json::to_value(ocd()).unwrap()["transmission"]
     );
     let ocd = ocd();
     assert_eq!(
@@ -763,4 +784,97 @@ fn pilot_estimated_api_matches_direct_engine_fec_and_owns_mode() {
 #[test]
 fn merlin_estimated_api_matches_direct_engine_fec_and_owns_mode() {
     receiver_mode_matches_direct_engine(ReceiverMode::MerlinChannelEstimated);
+}
+
+#[test]
+fn narrower_capture_keeps_bandwidth_explicit() {
+    let mut json: serde_json::Value = serde_json::from_slice(PROFILE).unwrap();
+    for profile in json["profiles"].as_array_mut().unwrap() {
+        let last = profile["schemes"]
+            .as_array_mut()
+            .unwrap()
+            .last_mut()
+            .unwrap();
+        last["num_subcarriers"] = (last["num_subcarriers"].as_u64().unwrap() - 40).into();
+    }
+    let capture = input("narrow-profile", &serde_json::to_vec(&json).unwrap());
+    let profile = Dpd::from_bytes(&capture, ProfileId::PROFILE_A).unwrap();
+    assert_eq!(
+        Ocd::from_profile(ProtocolScope::Docsis31, &profile, OcdOverrides::default())
+            .unwrap_err()
+            .code(),
+        ErrorCode::MissingSetting
+    );
+    let explicit = Ocd::from_profile(
+        ProtocolScope::Docsis31,
+        &profile,
+        OcdOverrides {
+            bandwidth: Some(BandwidthHz::new(192_000_000).unwrap()),
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        explicit.configuration().bandwidth().origin(),
+        SettingOrigin::Explicit
+    );
+}
+
+#[test]
+fn loaded_profiles_preserve_selection_ids_and_cancelled_entries() {
+    let mut sim = CaptureLoader::controller_from_profiles(
+        &input("profiles", PROFILE),
+        ProtocolScope::Docsis31,
+        OcdOverrides::default(),
+    )
+    .unwrap();
+    let ids = sim.profile_ids();
+    assert_eq!(
+        ids.iter().map(|id| id.value()).collect::<Vec<_>>(),
+        vec![0, 1, 2, 3]
+    );
+    sim.select_profile(ids[2]).unwrap();
+    assert_eq!(sim.profile_by_id(ids[1]).unwrap().profile_id(), ids[1]);
+    assert!(sim.select_profile(ProfileId::new(15).unwrap()).is_err());
+    assert_eq!(sim.profile().unwrap().profile_id(), ids[2]);
+    sim.add_rxmer(rx(0, 40.0)).unwrap();
+    let mut options = EvaluationOptions::default()
+        .with_channel_selection(ChannelSelection::Unity)
+        .with_profile_tolerance(AssociationTolerance::new(u32::MAX).unwrap());
+    options.observation = ObservationDuration::new(1).unwrap();
+    sim.set_options(options).unwrap();
+    let control = RunControl::new();
+    control.cancel();
+    let batch = sim.run_all_profiles_with_control(&control).unwrap();
+    assert_eq!(
+        batch
+            .iter()
+            .map(|entry| entry.profile_id())
+            .collect::<Vec<_>>(),
+        ids
+    );
+    assert!(batch
+        .iter()
+        .all(|entry| entry.status() == RunStatus::NotStarted));
+    assert_eq!(sim.profile().unwrap().profile_id(), ids[2]);
+    let snapshot = batch.to_json().unwrap();
+    sim.select_profile(ids[0]).unwrap();
+    assert_eq!(snapshot, batch.to_json().unwrap());
+    for epoch in 1..65 {
+        sim.add_rxmer(rx(epoch, 40.0)).unwrap();
+    }
+    assert_eq!(
+        sim.run_all_profiles_with_control(&control)
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::ResourceLimit
+    );
+    assert_eq!(sim.profile().unwrap().profile_id(), ids[0]);
+    assert!(Merlin::from_profiles(
+        ProtocolScope::Docsis31,
+        vec![profile(), profile()],
+        OcdOverrides::default()
+    )
+    .is_err());
 }

@@ -2,8 +2,8 @@
 
 The Basic Rust API configures MERLIN's existing single-channel source → transmitter
 → channel → receiver → independent source comparison. It does not implement a
-second simulator. Loading and preparation never run the experiment; only `run()`
-starts simulation. Existing low-level APIs, CLI and Qt remain available.
+second simulator. Loading and preparation never run the experiment; only explicit run methods
+start simulation. Existing low-level APIs, CLI and Qt remain available.
 
 Enable the core's `high-level-api` feature. Add optional `pnm-input` for native
 binary/JSON and file conveniences; it directly uses pinned Apache-2.0 `pnm`
@@ -26,16 +26,11 @@ scripts/cargo-local.sh run -p pnm-input --example run_single_capture --locked
 use docsis_ofdm_fec::api::*;
 use pnm_input::{CaptureLoader, read_capture};
 
-let dpd = CaptureLoader::profile(
+let mut sim = CaptureLoader::controller_from_profiles(
     &read_capture("examples/workbench/single/modulation-profile.bin")?,
-    ProfileId::PROFILE_A,
+    ProtocolScope::Docsis31,
+    OcdOverrides::default(),
 )?;
-let ocd = Ocd::from_profile(ProtocolScope::Docsis31, &dpd, OcdOverrides {
-    bandwidth: Some(BandwidthHz::new(192_000_000)?),
-    ..Default::default()
-})?;
-let mut sim = Merlin::new(ocd);
-sim.set_profile(dpd)?;
 let first = sim.add_rxmer(CaptureLoader::rxmer(
     &read_capture("examples/workbench/single/rxmer.bin")?,
 )?)?;
@@ -53,10 +48,10 @@ for entry in batch.iter() {
 }
 ```
 
-The sample explicitly selects 192 MHz because its source record supplies that
-configuration; the Basic Rust API never assumes that bandwidth. The imported profile
-establishes grid, protected PLC/pilot roles and loading, but decoder JSON does
-not establish occupied bandwidth. CP 512, roll-off 128 and depth 16 are reported
+The sample derives 192 MHz because its 187 MHz captured span fits only that
+supported bandwidth. Rust records the value as `Derived`. If multiple supported
+bandwidths fit a narrower capture, supply `OcdOverrides.bandwidth`; the API does
+not guess the smallest fit. Explicit overrides remain validated. CP 512, roll-off 128 and depth 16 are reported
 application defaults when not explicitly supplied. Manual OCD plus
 `Dpd::from_ocd` creates a hypothesis; `with_modulation` edits data carriers while
 preserving original captured bytes and protected roles.
@@ -186,3 +181,22 @@ The collection walkthroughs discover all
 captured profiles through Rust, preserve original captures and explicitly run
 each profile with matching policies, seeds, timing and bounds. Their FEC/BER
 values come from the shared simulation engine; no analytical replacements are used.
+
+
+## Controller-owned profiles
+
+`CaptureLoader::controller_from_profiles` loads binary/JSON capture profiles
+into one idle controller. Rust-only callers with existing `Dpd` values can use
+`Merlin::from_profiles(protocol, profiles, overrides)`. The first supplied profile
+is selected automatically. Use `profile_ids()`, `profile_by_id(id)` and
+`select_profile(id)` without reloading files. Existing construction and
+`set_profile()` remain supported.
+
+`run_all_profiles()` preflights every retained profile, then runs the same engine
+sequentially with unchanged options and fresh per-experiment engine state.
+`run_all_profiles_with_control(&control)` preserves cancellation and partial
+results. Each `ExperimentEntry::profile_id()` remains available even when no
+report was produced. Current selection is restored before execution. At most
+16 profiles, 256 combined experiments and 64 MiB retained capture storage are
+accepted. Runtime limits apply per experiment, not to the complete collection.
+See [the runnable example](../../../examples/api/rust/run_all_profiles.rs).

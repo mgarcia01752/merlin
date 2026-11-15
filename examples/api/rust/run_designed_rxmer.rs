@@ -13,7 +13,6 @@ use std::{path::Path, time::Instant};
 const RXMER_PATH_FROM_MANIFEST: &str =
     "../../examples/measurements/designed-rxmer/merlin_rxmer_designed.bin";
 const PROFILE_PATH_FROM_MANIFEST: &str = "../../examples/workbench/single/modulation-profile.bin";
-const OCCUPIED_BANDWIDTH_HZ: u32 = 192_000_000;
 const OBSERVATION_DURATION_MS: u64 = 1;
 const PROFILE_ASSOCIATION_TOLERANCE_SECONDS: u32 = 90_000;
 const MAX_RUNTIME_MS: u64 = 300_000;
@@ -64,10 +63,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             ProtocolScope::Docsis31,
             &profile,
             OcdOverrides {
-                bandwidth: Some(BandwidthHz::new(OCCUPIED_BANDWIDTH_HZ)?),
                 cyclic_prefix: Some(CyclicPrefixSamples::new(CYCLIC_PREFIX_SAMPLES)?),
                 roll_off: Some(RollOffSamples::new(ROLL_OFF_SAMPLES)?),
                 interleaver_depth: Some(InterleaverDepth::new(INTERLEAVER_DEPTH)?),
+                ..Default::default()
             },
         )?;
         let mut sim = Merlin::new(ocd);

@@ -21,7 +21,8 @@ not-started entries. Window FEC and profile metrics share scope; whole-run
 statistics are separately labeled.
 
 Imported decoder profiles establish grid/roles but do not establish occupied
-bandwidth: require an explicit bandwidth unless typed input establishes it.
+bandwidth: derive it only when the full captured span fits exactly one supported
+width; otherwise require an explicit bandwidth unless typed input establishes it.
 Never treat data-carrier span as occupied bandwidth. CP/RP/depth defaults are
 512/128/16, marked as application assumptions. Profile timestamp tolerance is
 independent of explicit channel reuse. Input and report objects are immutable.
@@ -522,3 +523,29 @@ It runs the real Python example and desktop installed lifecycle checks without
 building replacement artifacts. Reusable-workflow completion gates publication;
 existing three-version core tests and Windows/security checks remain mandatory.
 New hosted compatibility execution is pending; no local installation is required.
+
+
+### API-OCD-01: unambiguous captured bandwidth
+
+Resolve omitted bandwidth in Rust from the unchanged profile grid only when
+exactly one supported 24–192 MHz / 6 MHz-step bandwidth contains the full span.
+Do not round an ambiguous span to the smallest fitting bandwidth. Established
+bandwidth and explicit overrides retain existing validation/precedence. Record
+inferred values as Derived. Manual OCD construction still requires bandwidth.
+Python forwards to this same operation; remove redundant fixture bandwidth
+constants from both languages while preserving intentional timing settings.
+Test the 186 MHz ambiguity boundary, unique 187/192 MHz spans, oversize input,
+explicit/derived equivalence and existing simulation parity. Hosted checks are
+separate from local validation.
+
+
+### API-PROFILES-01: controller-owned profile collection
+
+Retain a bounded validated profile collection in the Rust controller. A native
+loader creates the controller directly from a capture, selecting its first ID
+without simulation. Expose loaded IDs, lookup and selection as instance methods.
+`run_all_profiles()` preflights all loaded profiles before execution, then uses
+the same engine dispatch and cancellation path as `run()`. Keep profile identity
+on every result, including not-started entries. Bound combined experiments to
+256 and total retained capture storage to 64 MiB. Preserve `set_profile()` and
+existing loaders. Python only adapts inputs and exposes the Rust operations.

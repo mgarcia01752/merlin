@@ -17,7 +17,7 @@ All decoding, validation, signal processing and FEC remain in Rust.
 from pathlib import Path
 from time import perf_counter
 from merlin import (
-    DPD, OCD, Merlin, ProtocolScope, OcdOverrides, BandwidthHz,
+    DPD, OCD, Merlin, ProtocolScope, OcdOverrides,
     RxMer, RxMerSelection, EvaluationOptions, ChannelSelection, ReceiverMode,
     ObservationDuration, AssociationTolerance, RunLimits, RuntimeLimit,
     NoiseSeed, PrbsSeed, IterationLimit,
@@ -28,7 +28,6 @@ from merlin import (
 REPOSITORY_PARENT_INDEX = 3
 RXMER_PATH = "examples/measurements/designed-rxmer/merlin_rxmer_designed.bin"
 PROFILE_PATH = "examples/workbench/single/modulation-profile.bin"
-OCCUPIED_BANDWIDTH_HZ = 192_000_000
 OBSERVATION_DURATION_MS = 1  # Source time, excluding acquisition/drain.
 PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 90_000  # Explicit fixture epoch allowance.
 MAX_RUNTIME_MS = 300_000  # Independent host budget per profile.
@@ -73,8 +72,7 @@ def main():
     for profile in profiles:
         ocd = OCD.from_profile(
             ProtocolScope.DOCSIS31, profile,
-            OcdOverrides(bandwidth=BandwidthHz(OCCUPIED_BANDWIDTH_HZ),
-                         cyclic_prefix=CyclicPrefixSamples(CYCLIC_PREFIX_SAMPLES),
+            OcdOverrides(cyclic_prefix=CyclicPrefixSamples(CYCLIC_PREFIX_SAMPLES),
                          roll_off=RollOffSamples(ROLL_OFF_SAMPLES),
                          interleaver_depth=InterleaverDepth(INTERLEAVER_DEPTH)),
         )

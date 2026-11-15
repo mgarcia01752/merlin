@@ -2399,3 +2399,23 @@ It runs the real Python example and desktop installed lifecycle checks without
 building replacement artifacts. Reusable-workflow completion gates publication;
 existing three-version core tests and Windows/security checks remain mandatory.
 New hosted compatibility execution is pending; no local installation is required.
+
+
+### API-OCD-01: captured-profile bandwidth resolution
+
+Basic Rust API OCD construction derives bandwidth only when exactly one
+supported width contains the complete captured grid span. The Python binding
+uses the same resolution. Ambiguous smaller spans still require an override;
+manual OCD configuration remains explicit. Derived, explicit and defaulted
+origins remain distinct; loading and resolution never run the simulation.
+
+
+### API-PROFILES-01: retained profile inventories
+
+The core controller owns compatible DPD collections and all-profile preflight/
+dispatch; pnm-input owns file/decoder conveniences. Python forwards to those
+Rust operations through the existing GIL-releasing worker. Loading selects the
+first profile without simulation. All-profile execution preserves current
+selection and adds profile identity to every result, including not-started
+entries. Existing single-profile workflows remain valid. Bounds are 16 profiles,
+256 combined experiments and the existing 64 MiB retained capture budget.

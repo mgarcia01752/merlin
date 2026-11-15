@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! High-level, Qt-free simulation API with owned inputs and results.
-//! Loading/configuration never executes jobs; only `Merlin::run` starts simulation.
+//! Loading/configuration never executes jobs; only explicit run methods start simulation.
 mod configuration;
 mod controller;
 mod error;

@@ -20,7 +20,7 @@ Loading/configuring inputs does not start simulation; sim.run() below does.
 from pathlib import Path
 from time import perf_counter
 from merlin import (
-    DPD, OCD, Merlin, ProtocolScope, OcdOverrides, BandwidthHz,
+    DPD, OCD, Merlin, ProtocolScope, OcdOverrides,
     RxMer, RxMerSelection, EvaluationOptions, ChannelSelection,
     ObservationDuration, AssociationTolerance, RunLimits, RuntimeLimit,
     ReceiverMode, NoiseSeed, PrbsSeed, IterationLimit,
@@ -34,7 +34,6 @@ REPOSITORY_PARENT_INDEX = 3  # examples/api/python/ -> repository root.
 FIXTURE_DIRECTORY = "examples/workbench/multi-rxmer-2"
 PROFILE_FILENAME = "ds_ofdm_modulation_profile_aabbccddeeff_193_1764824373.bin"
 RXMER_FILE_PATTERN = "ds_ofdm_rxmer_per_subcar_*.bin"
-OCCUPIED_BANDWIDTH_HZ = 192_000_000  # Explicit fixture configuration: 192 MHz.
 OBSERVATION_DURATION_MS = 1  # Per profile; increase for a longer experiment.
 PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 7_200  # Fixture capture-time allowance.
 MAX_RUNTIME_MS = 300_000  # Per-experiment wall-clock limit: 300 seconds.
@@ -124,7 +123,7 @@ def main(receiver_mode=RECEIVER_MODE):
 
     # 5. Create a fresh independent Rust controller for each profile.
     # Derive its OCD from that profile's grid and protected roles. Supply the
-    # known fixture bandwidth and timing explicitly, matching the saved WB.
+    # fixture timing explicitly; bandwidth derives from the profile span.
     # Receiver correction and channel response remain separate Rust choices.
     # Each controller restarts the common configured PRBS/noise seeds and owns its
     # configuration. The immutable capture objects are reused without editing.
@@ -135,8 +134,7 @@ def main(receiver_mode=RECEIVER_MODE):
     for profile in profiles:
         ocd = OCD.from_profile(
             ProtocolScope.DOCSIS31, profile,
-            OcdOverrides(bandwidth=BandwidthHz(OCCUPIED_BANDWIDTH_HZ),
-                         cyclic_prefix=CyclicPrefixSamples(CYCLIC_PREFIX_SAMPLES),
+            OcdOverrides(cyclic_prefix=CyclicPrefixSamples(CYCLIC_PREFIX_SAMPLES),
                          roll_off=RollOffSamples(ROLL_OFF_SAMPLES),
                          interleaver_depth=InterleaverDepth(INTERLEAVER_DEPTH)),
         )

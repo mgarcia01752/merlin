@@ -88,6 +88,41 @@ impl CaptureLoader {
         let (decoded, contract) = decode(input, 10)?;
         Dpd::from_decoded(input, &decoded, id, contract)
     }
+    /// Loads all captured profiles into an idle single-channel controller.
+    /// # Arguments
+    /// * `input` - Original bounded binary PNM or decoded JSON capture.
+    /// * `protocol`, `overrides` - Explicit interpretation and optional settings.
+    /// # Returns
+    /// Controller retaining all profiles, with the first captured ID selected.
+    /// # Errors
+    /// Preserves decoder, geometry, bandwidth and aggregate resource errors.
+    pub fn controller_from_profiles(
+        input: &NamedCapture,
+        protocol: docsis_ofdm_fec::api::ProtocolScope,
+        overrides: docsis_ofdm_fec::api::OcdOverrides,
+    ) -> ApiResult<docsis_ofdm_fec::api::Merlin> {
+        let (decoded, contract) = decode(input, 10)?;
+        let ids = Dpd::profile_ids_from_bytes(&decoded)?;
+        // Reject retained source budgets before materializing each profile.
+        const PROFILE_COLLECTION_BUDGET_BYTES: usize = 64 * 1024 * 1024;
+        if input
+            .bytes()
+            .len()
+            .checked_add(decoded.bytes().len())
+            .and_then(|bytes| bytes.checked_mul(ids.len()))
+            .is_none_or(|bytes| bytes > PROFILE_COLLECTION_BUDGET_BYTES)
+        {
+            return Err(ApiError::new(
+                ErrorCode::ResourceLimit,
+                "Profile collection source bytes exceed 64 MiB",
+            ));
+        }
+        let profiles = ids
+            .into_iter()
+            .map(|id| Dpd::from_decoded(input, &decoded, id, contract.clone()))
+            .collect::<ApiResult<Vec<_>>>()?;
+        docsis_ofdm_fec::api::Merlin::from_profiles(protocol, profiles, overrides)
+    }
     /// Loads one RxMER without requiring a channel or profile.
     /// # Arguments
     /// * `input` - Bounded original binary or JSON bytes.

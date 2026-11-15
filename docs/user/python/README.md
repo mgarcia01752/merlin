@@ -129,30 +129,22 @@ manylinux portability or support for another interpreter/OS.
 ```python
 # Import capture loaders, validated values, run settings and the controller.
 from merlin import (
-    DPD, OCD, Merlin, ProfileId, ProtocolScope, OcdOverrides,
-    BandwidthHz, RxMer, EvaluationOptions, ChannelSelection,
+    Merlin, ProtocolScope,
+    RxMer, EvaluationOptions, ChannelSelection,
     AssociationTolerance, ObservationDuration, RunLimits, RuntimeLimit,
 )
 
 # Keep fixture settings explicit, with units in each constant name.
-OCCUPIED_BANDWIDTH_HZ = 192_000_000  # This fixture occupies 192 MHz.
 OBSERVATION_DURATION_MS = 1  # Source observation, excluding acquisition/drain.
 PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 90_000  # Fixture capture-time allowance.
 MAX_RUNTIME_MS = 300_000  # Limit each experiment to 300 seconds of host time.
 
-# Load Profile A's modulation assignments from the existing capture.
-profile = DPD.from_file(
-    "examples/workbench/single/modulation-profile.bin", ProfileId.PROFILE_A)
+# Load the capture once; this object owns its profiles and resolved channel settings.
+sim = Merlin.from_profile_file(
+    "examples/workbench/single/modulation-profile.bin", ProtocolScope.DOCSIS31)
 
-# Derive the DOCSIS 3.1 channel configuration and supply its known bandwidth.
-ocd = OCD.from_profile(ProtocolScope.DOCSIS31, profile,
-    OcdOverrides(bandwidth=BandwidthHz(OCCUPIED_BANDWIDTH_HZ)))
-
-# Create a simulation controller without starting any simulation work.
-sim = Merlin(ocd)
-
-# Choose the modulation profile that the simulation will evaluate.
-sim.set_profile(profile)
+# Inspect the retained IDs; the first loaded profile is selected for run().
+print([profile_id.value for profile_id in sim.profile_ids])
 
 # Add measured RxMER; retain the returned identifier for later selection.
 first = sim.add_rxmer(RxMer.from_file("examples/workbench/single/rxmer.bin"))
@@ -182,8 +174,11 @@ for entry in sim.run():
               if report.profile.post_fec_ber is not None else None)
 ```
 
-The bundled fixture's occupied bandwidth and timestamp tolerance are explicitly
-selected. Timing defaults and scientific assumptions are retained in reports.
+The fixture's 187 MHz span uniquely identifies 192 MHz within supported channel
+settings. Bandwidth is derived in Rust; the timestamp tolerance is explicit.
+For narrower captures with multiple fitting bandwidths, supply an override:
+`OcdOverrides(bandwidth=BandwidthHz(CHANNEL_BANDWIDTH_HZ))`, importing those types
+and defining the constant from your channel configuration. Timing defaults and scientific assumptions are retained in reports.
 Use the [complete example](../../../examples/api/python/run_single_capture.py) for
 independent channel loading and explicit response reuse.
 
@@ -313,3 +308,33 @@ The expanded MCE name is `MerlinChannelEstimated` in Rust and
 `ReceiverMode.MERLIN_CHANNEL_ESTIMATED` in Python. Saved WB/CLI/report JSON
 retains `merlin_estimated` for compatibility; input also accepts
 `merlin_channel_estimated`. This is a naming change only.
+
+
+## Run every loaded profile
+
+Use `sim.run_all_profiles()` to evaluate every retained profile with the same
+accepted RxMER, channel and run options. This preserves the selection used by
+`sim.run()`. Every entry exposes `entry.profile_id`, including cancelled requests.
+The controller preflights the complete collection before starting any simulation.
+A collection holds at most 16 compatible profiles; a combined batch holds at most
+256 experiments and preserves the existing 64 MiB capture budget. Runtime limits
+apply per experiment, so running all profiles can take longer than one run.
+
+```python
+# Look up or select a loaded profile without reopening its capture.
+loaded_profile = sim.profile_by_id(sim.profile_ids[0])
+sim.select_profile(sim.profile_ids[0])
+
+# Explicitly run every loaded profile; results remain independent of the controller.
+for entry in sim.run_all_profiles():
+    print(entry.profile_id.value, entry.status)
+```
+
+`sim.run_all_profiles(control)` also accepts a `RunControl` token. Cancellation
+preserves completed/partial reports and the IDs of not-started profiles. Python
+releases the interpreter lock during simulation. Existing `DPD.from_file`,
+`OCD.from_profile`, `Merlin(ocd)` and `set_profile()` remain available for callers
+who need explicit construction or replacement.
+
+See matching [Python](../../../examples/api/python/run_all_profiles.py) and
+[Rust](../../../examples/api/rust/run_all_profiles.rs) examples.
