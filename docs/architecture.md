@@ -2372,8 +2372,9 @@ there is no silent fallback or arbitrary WB-setting approximation. See the
 ### API-WHEEL-01: native Python release validation
 
 Release-only Ubuntu 22.04/Windows 2022 x64 jobs build CPython 3.10 wheels through
-the shared notice-preserving native helper. A development test harness installs
-one wheel into a clean temporary venv and executes the real single-capture API
+the shared notice-preserving native helper. The wheel matrix selects Bash on
+Ubuntu and PowerShell on Windows to preserve the MSVC linker path. A development
+test harness installs one wheel into a clean temporary venv and executes the real single-capture API
 example outside the checkout, checking native identity and actual FEC/BER. This
 adds no simulation logic to Python or Qt dependencies. Only tested wheel/checksum
 artifacts enter release collection; both platforms and existing security/native

@@ -26,7 +26,9 @@ other Linux distributions/Python versions and macOS are outside this release mat
 Only a version-tag Release run enables the shared workflow's `python-wheels`
 job. Ordinary master/PR validation skips this matrix. Ubuntu and Windows each:
 
-1. Install CPython 3.10 x64, Rust 1.85.1 and maturin 1.8.3. Windows selects MSVC.
+1. Install CPython 3.10 x64, Rust 1.85.1 and maturin 1.8.3. Windows selects MSVC
+   and uses PowerShell; Ubuntu uses Bash. Git Bash must not precede MSVC with its
+   unrelated `link.exe` utility.
 2. Fetch the locked binding graph and build the optimized wheel through
    `tools/python/build_wheel.py`, preserving licenses/notices.
 3. Verify filename, distribution/version, CPython ABI/platform tags, native

@@ -567,3 +567,16 @@ Windows runtime/native artifact generation, both hosted release jobs and actual
 asset publication remain unverified. Full Rust/Qt suites were not repeated for
 Python packaging/workflow changes. Local logs/reports/wheel artifacts remain
 ignored under docs/development/local/python-wheel-release/.
+
+## API-WHEEL-02: Windows linker-path failure and patch
+
+[v0.3.0 release run](https://github.com/mgarcia01752/merlin/actions/runs/43696778449)
+passed its Ubuntu installed-wheel check but failed Windows compilation. The
+compiler log identifies `C:\Program Files\Git\usr\bin\link.exe`, which rejects
+MSVC flags. The Git Bash shell prepended that utility ahead of the initialized
+MSVC environment. The patch selects PowerShell for the Windows wheel row and
+Bash for Ubuntu, with a YAML-folded shared smoke command valid in both shells.
+All 13 Python tooling tests pass (0.034 s); local YAML parsing verifies both
+shell choices, the expression and the folded argument vector. This is a workflow
+fix only. Native Windows success remains pending the new patch run; no tests or
+publication requirements are removed.

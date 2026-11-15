@@ -484,3 +484,14 @@ docs/user/python/releases.md linked from installation/integration guides and
 release notes. Validate Linux end to end and rejection tests; configured Windows
 workflow remains unverified until its native hosted job succeeds. No local
 push, publication or system-wide installation is part of this task.
+
+### API-WHEEL-02: native Windows shell and linker
+
+Release v0.3.0 run 43696778449 failed in Windows wheel compilation: Git Bash
+prepended Git's usr/bin/link.exe ahead of MSVC. Ubuntu's installed-wheel example
+passed. Use an explicit shell per wheel matrix row (bash for Ubuntu, pwsh for
+Windows), preserving the MSVC developer environment. Fold the shared smoke
+command in YAML so neither Bash continuation nor PowerShell backticks leak into
+the other platform. Keep all build, installed-example and publication gates.
+Validate the parsed shell matrix and command arguments locally; native Windows
+verification requires a fresh patch release. No scientific changes are needed.

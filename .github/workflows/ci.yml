@@ -313,14 +313,16 @@ jobs:
           - name: ubuntu22-x64
             os: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
+            shell: bash
           - name: windows-x64
             os: windows-2022
             target: x86_64-pc-windows-msvc
+            shell: pwsh
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     defaults:
       run:
-        shell: bash
+        shell: ${{ matrix.shell }}
     env:
       RUSTUP_TOOLCHAIN: 1.85.1
       PYTHONPATH: ''
@@ -351,10 +353,10 @@ jobs:
       - name: Build native wheel with dependency notices
         run: python tools/python/build_wheel.py --out local/release-python-wheels
       - name: Install wheel and run actual single-capture API example
-        run: |
-          python tools/python/smoke_wheel.py --wheel-dir local/release-python-wheels \
-            --output dist/python-wheel-${{ matrix.name }} \
-            --report dist/python-wheel-${{ matrix.name }}-test.json
+        run: >-
+          python tools/python/smoke_wheel.py --wheel-dir local/release-python-wheels
+          --output dist/python-wheel-${{ matrix.name }}
+          --report dist/python-wheel-${{ matrix.name }}-test.json
       - name: Retain wheel test evidence
         if: always()
         uses: actions/upload-artifact@v6

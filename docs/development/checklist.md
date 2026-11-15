@@ -1514,3 +1514,8 @@ validation are complete; the user guide includes the current dark capture.
   NCP/PLC basis oracles, 38 codec tests and focused API recovery pass. Report
   isolated setup/encode timings separately from compilation and simulation.
   [Design and validation](features/sparse-encoder/design.md).
+
+- [x] **API-WHEEL-02** Select native PowerShell for Windows wheel compilation
+  and Bash for Ubuntu; fold shared smoke arguments portably. Local YAML and
+  tooling checks pass; hosted patch verification remains pending.
+  [Failure and fix](features/high-level-api/design.md#api-wheel-02-native-windows-shell-and-linker).
