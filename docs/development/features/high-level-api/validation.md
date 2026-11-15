@@ -411,3 +411,16 @@ The CM channel-estimate and saved-WB scripts both retained totals 83/114/124
 and corrected counts 0/5/19; MCE retained corrected counts 0/4/30. All runs
 completed with zero uncorrectable codewords and zero BER. No scientific settings
 or Rust code changed. Qt, full Rust checks and other platforms were not rerun.
+
+## API-EXAMPLES-09: matching Rust filenames and Cargo targets
+
+Renamed high_level.rs to run_single_capture.rs, policy_parity.rs to
+run_rxmer_selection_parity.rs and workbench.rs to
+run_multi_rxmer_cmce_workbench.rs. Cargo targets match their filenames.
+Updated current commands and guide links; engine code/settings remain unchanged.
+Rust formatting and pnm-input example Clippy passed. All three optimized
+examples built and executed successfully in 13.96s total (2.47s, 5.41s and
+6.08s respectively, including Cargo startup/build time). A fresh selection-policy
+reference was generated for native Python comparison. The native parity test
+passed all four selection modes in 3.70s. Full Rust/Qt suites and
+other platforms were not rerun for these example-only changes.

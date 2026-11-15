@@ -1461,3 +1461,8 @@ validation are complete; the user guide includes the current dark capture.
   receiver mode; update imports, tests and current documentation. All four
   native examples passed in 14.72s; three receiver tests passed in 9.58s.
   [Design](features/high-level-api/design.md#api-examples-08-descriptive-python-entry-point-names).
+
+- [x] **API-EXAMPLES-09** Rename Rust examples and Cargo targets by workflow;
+  update current guide links and commands. Formatting, example Clippy and
+  all three release example executions pass (13.96s total).
+  [Design](features/high-level-api/design.md#api-examples-09-matching-descriptive-rust-entry-points).

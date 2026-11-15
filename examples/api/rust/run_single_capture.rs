@@ -1,11 +1,11 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
  * SPDX-License-Identifier: Apache-2.0
- * File: examples/api/rust/high_level.rs
+ * File: examples/api/rust/run_single_capture.rs
  */
 //! Developer walkthrough: load captures, configure MERLIN, run, inspect results.
 //!
-//! Run with `scripts/cargo-local.sh run -p pnm-input --example high_level --locked`.
+//! Run with `scripts/cargo-local.sh run -p pnm-input --example run_single_capture --locked`.
 //! This uses the same Rust engine as the native Python example, without Qt or
 //! Python dependencies. Loading and configuration never execute simulation;
 //! only the explicit `run()` call below starts a batch.

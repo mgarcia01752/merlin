@@ -2,6 +2,7 @@
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
  * SPDX-License-Identifier: Apache-2.0
  */
+//! File: examples/api/rust/run_rxmer_selection_parity.rs
 //! Produces actual Rust policy results for independently executed Python parity tests.
 use docsis_ofdm_fec::api::*;
 use pnm_input::{read_capture, save_json, CaptureLoader};

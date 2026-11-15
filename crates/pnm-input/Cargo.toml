@@ -20,13 +20,13 @@ tempfile = "=3.23.0"
 rustix = { version = "=1.1.6", features = ["fs"] }
 
 [[example]]
-name = "high_level"
-path = "../../examples/api/rust/high_level.rs"
+name = "run_single_capture"
+path = "../../examples/api/rust/run_single_capture.rs"
 
 [[example]]
-name = "policy_parity"
-path = "../../examples/api/rust/policy_parity.rs"
+name = "run_rxmer_selection_parity"
+path = "../../examples/api/rust/run_rxmer_selection_parity.rs"
 
 [[example]]
-name = "workbench"
-path = "../../examples/api/rust/workbench.rs"
+name = "run_multi_rxmer_cmce_workbench"
+path = "../../examples/api/rust/run_multi_rxmer_cmce_workbench.rs"

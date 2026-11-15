@@ -201,7 +201,7 @@ The Rust reference example generates actual results before native Python parity
 tests. Python tests read those results; the extension never invokes a subprocess:
 
 ```bash
-scripts/cargo-local.sh run -p pnm-input --example policy_parity --locked -- local/parity-example
+scripts/cargo-local.sh run -p pnm-input --example run_rxmer_selection_parity --locked -- local/parity-example
 MERLIN_API_PARITY="$PWD/local/parity-example" local/api-python-test/bin/python -m unittest discover -s bindings/python/tests -v
 ```
 

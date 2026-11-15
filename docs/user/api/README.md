@@ -12,11 +12,11 @@ binary/JSON and file conveniences; it directly uses pinned Apache-2.0 `pnm`
 ## Rust workflow
 
 The complete fixture-backed example lives in
-[`high_level.rs`](../../../examples/api/rust/high_level.rs). Run it
+[`run_single_capture.rs`](../../../examples/api/rust/run_single_capture.rs). Run it
 from the repository root:
 
 ```bash
-scripts/cargo-local.sh run -p pnm-input --example high_level --locked
+scripts/cargo-local.sh run -p pnm-input --example run_single_capture --locked
 ```
 
 ```rust,ignore

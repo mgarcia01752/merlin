@@ -12,19 +12,19 @@ and assumptions are explained alongside the workflow.
 | Example | Purpose |
 | --- | --- |
 | [Saved WB in Python](python/run_multi_rxmer_cmce_workbench.py) | Load embedded captures and saved settings directly through Rust; run selected profiles without duplicate scientific constants. |
-| [Saved WB in Rust](rust/workbench.rs) | Use the same native loader and print owned per-profile batch reports. |
-| [Rust workflow](rust/high_level.rs) | Import a profile, derive OCD settings, add RxMER and a channel estimate independently, select one capture and inspect simulated results. |
+| [Saved WB in Rust](rust/run_multi_rxmer_cmce_workbench.rs) | Use the same native loader and print owned per-profile batch reports. |
+| [Rust workflow](rust/run_single_capture.rs) | Import a profile, derive OCD settings, add RxMER and a channel estimate independently, select one capture and inspect simulated results. |
 | [Python workflow](python/run_single_capture.py) | Perform the same fixture-backed workflow using the installed native Python extension and print FEC counts and BER. |
 | [Python multi-RxMER collection](python/run_multi_rxmer_mce.py) | Discover all profiles in the channel-193 capture and load its 132 RxMER binaries; run independent profile experiments using a Rust residual-power average, unity physical response and MCE receiver. |
 | [Python saved-UI comparison](python/run_multi_rxmer_cm_chan_est.py) | Run the same collection workflow with SuppliedChannel and all other settings matching the bundled multi-rxmer-2 workbench. |
-| [Rust selection policies](rust/policy_parity.rs) | Run `Each`, `Individual`, `AverageAll` and `InterpolateAt`; write actual reference results for the Python parity tests. |
+| [Rust selection policies](rust/run_rxmer_selection_parity.rs) | Run `Each`, `Individual`, `AverageAll` and `InterpolateAt`; write actual reference results for the Python parity tests. |
 
 ## Run Rust
 
 From the repository root, with the pinned Rust toolchain configured:
 
 ```bash
-scripts/cargo-local.sh run -p pnm-input --example high_level --locked
+scripts/cargo-local.sh run -p pnm-input --example run_single_capture --locked
 ```
 
 Cargo registers these source files as examples of `pnm-input`. They use shared
@@ -89,7 +89,7 @@ Choose a new output directory; the generator refuses an existing directory:
 
 ```bash
 mkdir -p local
-scripts/cargo-local.sh run -p pnm-input --example policy_parity --locked -- local/api-example-parity
+scripts/cargo-local.sh run -p pnm-input --example run_rxmer_selection_parity --locked -- local/api-example-parity
 MERLIN_API_PARITY="$PWD/local/api-example-parity" local/api-python-test/bin/python -m unittest discover -s bindings/python/tests -p test_parity.py -v
 ```
 

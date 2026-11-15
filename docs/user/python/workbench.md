@@ -87,7 +87,7 @@ manual option overrides through the normal API. `run()` and `run_with_control()`
 return `Vec<BatchReport>`, preserving controller-scoped identities and ownership.
 
 ```bash
-scripts/cargo-local.sh run -p pnm-input --example workbench --release --locked -- examples/workbench/multi-rxmer-2/workbench.merlin.json
+scripts/cargo-local.sh run -p pnm-input --example run_multi_rxmer_cmce_workbench --release --locked -- examples/workbench/multi-rxmer-2/workbench.merlin.json
 ```
 
 The importer independently implements the saved format contract in the Apache

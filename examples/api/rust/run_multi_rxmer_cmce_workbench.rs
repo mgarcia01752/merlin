@@ -2,8 +2,10 @@
  * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-//! File: examples/api/rust/workbench.rs
+//! File: examples/api/rust/run_multi_rxmer_cmce_workbench.rs
 //! Run saved WB settings through the native API, independently of Qt.
+//! The bundled multi-RxMER WB uses CMCE (supplied CM channel estimation).
+//! Other input workbenches retain their saved receiver mode.
 use pnm_input::Workbench;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Loading verifies embedded captures and preflights all saved profiles. No run yet.

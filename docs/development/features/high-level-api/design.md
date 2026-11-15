@@ -396,3 +396,13 @@ or Qt rebuild is required for these filename-only changes.
 | `workbench.py` | `run_multi_rxmer_cmce_workbench.py` |
 
 Earlier sections retain the filenames used during their recorded validation.
+
+### API-EXAMPLES-09: matching descriptive Rust entry points
+
+Rename the Rust single-capture, selection-parity and saved-WB examples and
+matching pnm-input Cargo example targets. Update current commands and guide
+links, leaving earlier validation filenames historical. Use run_single_capture,
+run_rxmer_selection_parity and run_multi_rxmer_cmce_workbench; the WB continues
+to honor its saved receiver mode. No algorithms, Rust public APIs or scientific
+settings change. Validate formatting, example Clippy/builds and actual execution
+of all three workflows using the existing fixtures and a fresh parity directory.
