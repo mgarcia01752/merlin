@@ -253,3 +253,44 @@ fn cablelabs_notch_fixture_preserves_frequency_plan_and_unity() {
         assert_eq!(plc_frequencies.last(), Some(&333_175_000));
     }
 }
+
+#[test]
+fn cablelabs_adapted_channel_prepares_without_changing_notch_settings() {
+    use base64::{engine::general_purpose::STANDARD, Engine};
+    let bytes = include_bytes!("../../../examples/workbench/cl-192mhz-8mhz-notch/cmce.merlin.json");
+    let mut adapted: Value = serde_json::from_slice(bytes).unwrap();
+    let original: Value = serde_json::from_slice(include_bytes!(
+        "../../../examples/measurements/single-channel/channel_estimation.json"
+    ))
+    .unwrap();
+    let response: Value = serde_json::from_slice(
+        &STANDARD
+            .decode(
+                adapted["sections"]["measurements"]["response"]["base64"]
+                    .as_str()
+                    .unwrap(),
+            )
+            .unwrap(),
+    )
+    .unwrap();
+    let samples = response["iq"].as_array().unwrap();
+    assert_eq!(samples.len(), 7600);
+    assert_eq!(samples.first(), original["iq"].as_array().unwrap().first());
+    assert_eq!(samples.last(), original["iq"].as_array().unwrap().last());
+    assert_eq!(response["subcarrier_zero_frequency"], 292_600_000);
+    assert_eq!(response["first_active_subcarrier_index"], 296);
+    assert_eq!(response["subcarrier_spacing"], 25_000);
+    let wb = Workbench::from_bytes(bytes).unwrap();
+    assert_eq!(
+        wb.controllers()[0].options().receiver_mode,
+        ReceiverMode::CmChannelEstimated
+    );
+    let prepared = wb.controllers()[0].prepare().unwrap();
+    assert!(prepared[0].engine_settings().impairments.response.is_some());
+    adapted["sections"]["measurements"]["response"] = Value::Null;
+    let unity: Value = serde_json::from_slice(include_bytes!(
+        "../../../examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+    ))
+    .unwrap();
+    assert_eq!(adapted, unity);
+}

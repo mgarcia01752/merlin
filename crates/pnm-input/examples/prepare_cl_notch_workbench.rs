@@ -3,6 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Generate a synthetic CableLabs-style experiment without modifying field inputs.
+#[path = "support/adapt_channel.rs"]
+mod adapt_channel;
+
 use base64::{engine::general_purpose::STANDARD, Engine};
 use docsis_ofdm_fec::{
     transmission::{
@@ -130,8 +133,46 @@ fn main() -> Result<(), Box<dyn Error>> {
         loaded.controllers()[0].prepare()?;
         fs::write(root.join(wb_name), bytes)?;
     }
+
+    // Adapt an existing response into a separate, explicitly synthetic experiment.
+    let original =
+        include_bytes!("../../../examples/measurements/single-channel/channel_estimation.json");
+    let mut response: Value = serde_json::from_slice(original)?;
+    let source_values: Vec<Option<[f64; 2]>> = serde_json::from_value(response["iq"].clone())?;
+    let original_header = response["pnm_header"].clone();
+    response["iq"] = json!(adapt_channel::interpolate(
+        &source_values,
+        usize::from(ACTIVE_COUNT)
+    )?);
+    response["subcarrier_zero_frequency"] = json!(ZERO_HZ);
+    response["first_active_subcarrier_index"] = json!(FIRST_BIN);
+    response["data_length"] = json!(u32::from(ACTIVE_COUNT) * 4);
+    response["pnm_header"]["capture_time"] = json!(CAPTURE_TIME);
+    let response_file = stored(root, "channel-estimation-adapted.json", &response)?;
+    let mut companion: Value =
+        serde_json::from_slice(&fs::read(root.join("workbench.merlin.json"))?)?;
+    companion["sections"]["measurements"]["response"] = response_file;
+    let bytes = serde_json::to_vec_pretty(&companion)?;
+    pnm_input::Workbench::from_bytes(&bytes)?.controllers()[0].prepare()?;
+    fs::write(root.join("cmce.merlin.json"), bytes)?;
+    let provenance = json!({
+        "source": "examples/measurements/single-channel/channel_estimation.json",
+        "source_sha256": format!("{:x}", Sha256::digest(original)),
+        "source_header": original_header,
+        "source_first_hz": 640_000_000, "source_last_hz": 826_975_000,
+        "source_count": source_values.len(),
+        "destination_first_hz": 300_000_000, "destination_last_hz": 489_975_000,
+        "destination_count": ACTIVE_COUNT,
+        "synthetic": true,
+        "transformation": "Endpoint-aligned frequency remap; linear complex I/Q interpolation; exact knots and missing samples preserved; no extrapolation. Derived timestamp matches the synthetic experiment.",
+        "license": "Apache-2.0; retain source NOTICE"
+    });
+    fs::write(
+        root.join("channel-estimation-provenance.json"),
+        serde_json::to_vec_pretty(&provenance)?,
+    )?;
     println!(
-        "Created and validated both workbenches in {}",
+        "Created and validated three workbenches in {}",
         root.display()
     );
     Ok(())

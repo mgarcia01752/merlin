@@ -1599,3 +1599,7 @@ validation are complete; the user guide includes the current dark capture.
 
 - [x] UI-TOOLTIP-01: Centralize one-second tooltip timing across application
   views and shared controls. [Design](features/tooltip-delay/design.md).
+
+- [x] WB-CL-02: Add a separately saved notch experiment with a frequency-aligned,
+  interpolated CM channel response, retained source provenance and decoder run.
+  [Design](features/cl-notch-workbench/design.md#wb-cl-02-adapted-measured-channel-companion).

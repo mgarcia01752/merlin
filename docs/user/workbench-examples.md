@@ -13,7 +13,7 @@ Save/Save As keep the operating system's normal destination selection.
 | `single` | One modulation profile, one RxMER, one DS channel estimate | Single RxMER input |
 | `multi-rxmer` | One modulation profile, five RxMER files, one DS channel estimate | Average linear residual power |
 | `multi-rxmer-2` | One modulation profile and 132 channel 193 RxMER files; no DS channel estimate | Average residual power; flat/unity channel response |
-| [cl-192mhz-8mhz-notch](../../examples/workbench/cl-192mhz-8mhz-notch/README.md) | Synthetic 4096-QAM profile; notch and flat RxMER JSON; two WBs | 192 MHz, PLC 333 MHz, 8 MHz notch centered at 375 MHz; Profile 3, 10 ms, unity |
+| [cl-192mhz-8mhz-notch](../../examples/workbench/cl-192mhz-8mhz-notch/README.md) | Synthetic 4096-QAM profile; notch and flat RxMER JSON; three WBs | 192 MHz, PLC 333 MHz, 8 MHz notch centered at 375 MHz; Profile 3, 10 ms; unity defaults and `cmce.merlin.json` with an adapted channel response |
 | `multi-rxmer-dschan` | Reserved documentation only | Varying channel-estimate playback is deferred |
 
 The three capture-based WBs use Profile A/ID 0, a PRBS15 source, independent comparison and

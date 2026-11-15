@@ -1,0 +1,20 @@
+{
+  "destination_count": 7600,
+  "destination_first_hz": 300000000,
+  "destination_last_hz": 489975000,
+  "license": "Apache-2.0; retain source NOTICE",
+  "source": "examples/measurements/single-channel/channel_estimation.json",
+  "source_count": 7480,
+  "source_first_hz": 640000000,
+  "source_header": {
+    "capture_time": 1391100,
+    "file_type": "PNN",
+    "file_type_version": 2,
+    "major_version": 1,
+    "minor_version": 0
+  },
+  "source_last_hz": 826975000,
+  "source_sha256": "f6542b2d1a41904e742f8660e68b53340468d7499cb6857ae4d7cd0f78480f82",
+  "synthetic": true,
+  "transformation": "Endpoint-aligned frequency remap; linear complex I/Q interpolation; exact knots and missing samples preserved; no extrapolation. Derived timestamp matches the synthetic experiment."
+}

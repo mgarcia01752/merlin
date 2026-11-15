@@ -30,3 +30,38 @@ and zero post-FEC BER. Notch: 1,273 corrected, 10.225 s wall time; flat baseline
 results or a field reliability guarantee. The scoped Rust fixture test verifies
 PLC first/last carriers, exact notch positions, active envelope, modulation codes
 and unity selection. Full suite and other platforms were not run for this fixture.
+
+## WB-CL-02: adapted measured channel companion
+
+Create `cmce.merlin.json` alongside the unchanged unity experiments. User-approved
+frequency alignment maps the existing single-channel response's 640–826.975 MHz
+endpoints (7,480 samples) to 300–489.975 MHz (7,600 samples). For target index j,
+source coordinate u = j × 7479 / 7599; linearly interpolate complex I and Q
+between floor(u) and ceil(u). Exact knots retain their values; missing endpoints
+produce missing output, never zero filling. No extrapolation or phase unwrapping.
+This stretches the response shape and its delay scale; it is a synthetic adapted
+response, not a measurement at the destination frequencies or a CL test setting.
+
+The Rust example generator owns this fixture-only transformation; production
+capture/grid validation remains unchanged. Preserve source bytes, timestamp and
+SHA-256 in provenance. The derived capture takes the synthetic WB identity/time
+for deliberate association. Supply the same adapted response to channel impairment
+and CM channel correction. Keep RxMER, PLC, seeds and run limits unchanged.
+Validate interpolation independently, Rust WB preparation, embedded hashes,
+reproducibility, native UI admission and one bounded engine run.
+
+### WB-CL-02 validation
+
+Interpolation/missing-value/bounds unit checks passed; both CL fixture preparation
+tests passed (0.13 seconds). Native Qt `--check-workbench` accepted the companion.
+The native Python WB runner completed in 10.187 seconds: 1,273 total codewords,
+1,273 corrected, zero uncorrectable and zero post-FEC BER. This is a finite
+10 ms simulation with known supplied correction, not a field reliability claim.
+Scoped Clippy and workspace formatting passed. The original five generated
+files are byte-identical; original capture bytes are unchanged. No UI code or
+engine behavior changed, and no full-suite/platform certification is claimed.
+
+All eight generated JSON files reproduce byte-for-byte; source, embedded and
+manifest hashes passed. Existing output directories are rejected. Five desktop
+packaging tests passed (0.038 seconds); the companion is included by the existing
+example directory packaging rule.

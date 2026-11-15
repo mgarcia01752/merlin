@@ -56,9 +56,10 @@ an existing output directory. Run from the repository root with a new destinatio
 scripts/cargo-local.sh run -p pnm-input --example prepare_cl_notch_workbench -- /tmp/merlin-cl-notch-new
 ```
 
-The five generated JSON files are deterministic. The checked-in provenance
+The eight generated JSON files are deterministic. The checked-in provenance
 records their hashes. The JSON captures use the existing decoded-input contract;
-these are synthetic inputs, not binary PNM exports or borrowed modem captures.
+the unity inputs are synthetic, while the CMCE companion derives its response
+from the existing capture as documented below. No binary PNM export is generated.
 
 To run either saved WB using an installed MERLIN Python API:
 
@@ -68,3 +69,29 @@ python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/
 ```
 
 [Validation record](../../../docs/development/features/cl-notch-workbench/design.md).
+
+## Companion with adapted CM channel estimation
+
+Open **[cmce.merlin.json](cmce.merlin.json)** for the same notch experiment with
+an adapted DS channel estimate. The channel applies this response and the receiver
+uses **Supplied CM channel estimation** to correct it. RxMER, PLC, noise seed,
+observation duration and decoder settings match the unity notch workbench.
+
+The existing `examples/measurements/single-channel/channel_estimation.json`
+covers 640–826.975 MHz with 7,480 samples. This companion maps its endpoints to
+300–489.975 MHz and linearly interpolates complex I and Q onto 7,600 positions:
+`u = j * 7479 / 7599`, then interpolate the two samples surrounding `u`.
+Exact source knots and endpoint values are retained. Missing endpoints produce
+missing output; no extrapolation, zero filling or phase unwrapping is performed.
+Frequency stretching also changes the equivalent delay scale. This is an adapted
+synthetic channel shape, not a field measurement at these frequencies and not a
+CableLabs-specified response.
+
+The original capture stays unchanged. `channel-estimation-provenance.json`
+records its hash, original timestamp and frequency mapping. The derived JSON uses
+the synthetic workbench timestamp for association. Its values are not quantized
+back to binary PNM. The source Apache-2.0 license and attribution are retained.
+
+```bash
+local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/cl-192mhz-8mhz-notch/cmce.merlin.json
+```

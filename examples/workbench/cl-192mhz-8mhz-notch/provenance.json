@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "description": "Synthetic deterministic inputs; CableLabs-style qualitative comparison only. See README for matched settings and assumptions.",
+  "description": "Synthetic deterministic experiment inputs, including an explicitly frequency-adapted measured response. See README and channel-estimation-provenance.json.",
   "generator": "crates/pnm-input/examples/prepare_cl_notch_workbench.rs",
   "reference": "CM-GL-PNM-3.1-V05-230927, Appendix II, pp.208-210",
   "files": [
@@ -32,6 +32,24 @@
       "file": "workbench.merlin.json",
       "bytes": 140581,
       "sha256": "083706473354d2a8b78f6268a500a25ad34f6c860740ccae71d769ebe27d20ba",
+      "synthetic": true
+    },
+    {
+      "file": "cmce.merlin.json",
+      "bytes": 801743,
+      "sha256": "16f9ca903c64b6483e42bd7550cc59b74549670fce2e88e08ad5cc390d9f6f76",
+      "synthetic": true
+    },
+    {
+      "file": "channel-estimation-adapted.json",
+      "bytes": 495724,
+      "sha256": "d98aacbded4b5c9199b74ea5b9136f830a3c46e5e2e316671ba6859dbafc78df",
+      "synthetic": true
+    },
+    {
+      "file": "channel-estimation-provenance.json",
+      "bytes": 782,
+      "sha256": "31418d45a770271c1c0df618b74d9ed4da9d561b4d6fd56679461be993ece8cd",
       "synthetic": true
     }
   ]
