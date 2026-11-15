@@ -19,6 +19,15 @@ Setup explicitly downloads the pinned Qt6.8.3 MSVC2022 x64 SDK through
 A complete explicit `QT_SDK_DIR` remains read-only. SDKs/caches are not release
 payload. The native job uses windows-2022 and caches by platform/toolchain/locks.
 
+Both Windows CI jobs initialize MSVC through
+`scripts/windows/setup-msvc-ci.ps1`. It finds VS 2022 with the x64 C++ workload,
+loads Microsoft's `Launch-VsDevShell.ps1`, checks the selected linker and SDK
+tools, and exports changed environment variables for subsequent steps. This
+replaces the Node 20-based `ilammy/msvc-dev-cmd@v1` action without requiring a
+JavaScript runtime. PowerShell remains the Windows build shell. Local workflow
+checks cover wiring; native execution of this replacement remains pending CI.
+See [Microsoft's developer-shell documentation](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=visualstudio).
+
 With WiX3.14.1 installed and `WIX_BIN` pointing to its bin directory:
 
 ```powershell

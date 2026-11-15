@@ -1524,3 +1524,8 @@ validation are complete; the user guide includes the current dark capture.
   using measured-width layout reflow. All 82 adapter/77 QML checks and native
   mouse stepping pass; refresh Designer images. Hosted Windows patch is pending.
   [Design](features/rxmer-designer/design.md#rxmer-design-12-font-aware-notch-field-layout).
+
+- [x] **CI-MSVC-01** Replace the Node 20 MSVC action in both Windows jobs
+  with a shared native PowerShell initializer, retaining VS 2022/x64 and
+  verifying linker selection. Workflow wiring checked locally; hosted execution
+  of the replacement remains pending. See [Windows setup](windows-desktop.md).
