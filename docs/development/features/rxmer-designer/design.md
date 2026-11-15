@@ -160,3 +160,10 @@ normal and PLC-zoom dark guide images were refreshed. Isolated review app
 instances were closed without applying drafts or changing user preferences.
 Qt owns these edit conveniences; Rust recipe admission and numerical models
 are unchanged, so no architecture ownership change was needed.
+
+## RXMER-DESIGN-11: PNM export (planned)
+
+See the [PNM export plan](pnm-export-plan.md). Proposed conversion lives in a
+shared Rust crate with independent Designer and encoder guards, explicit range
+policy, retained metadata/provenance and single/collection save scopes. Static
+PNM files remain separate from editable WB envelopes. No export is implemented.

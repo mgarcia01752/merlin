@@ -1243,6 +1243,12 @@ validation are complete; the user guide includes the current dark capture.
   editable values, keyboard and capture scope; same validation as above.
   [Design](features/rxmer-designer/design.md#rxmer-design-10-notch-field-steppers).
 
+- [ ] **RXMER-DESIGN-11** Plan and implement PNM 1.0 binary export with
+  crate-owned encoding, independent Designer/Rust guards, explicit range
+  conversion policy, metadata/provenance and bounded single/collection saves.
+  Planning only; implementation awaits review.
+  [Plan](features/rxmer-designer/pnm-export-plan.md).
+
 ### Windows desktop UI delivery
 
 - [x] **UI-MSI-01** Implement Windows x64 desktop-only MSI staging and CI,

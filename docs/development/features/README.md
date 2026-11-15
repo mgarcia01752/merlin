@@ -1,6 +1,6 @@
 # Feature development records
 
-- [RxMER Designer](rxmer-designer/design.md) · [validation](rxmer-designer/validation.md)
+- [RxMER Designer](rxmer-designer/design.md) · [validation](rxmer-designer/validation.md) · [PNM export plan](rxmer-designer/pnm-export-plan.md)
 
 - [Graphical transmitter test points](transmitter-graphs/design.md)
 

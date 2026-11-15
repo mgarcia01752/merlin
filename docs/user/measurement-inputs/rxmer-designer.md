@@ -92,3 +92,12 @@ Ripple depth depends on noise placement and cannot be inferred from spacing alon
 These controls edit an RxMER residual profile; the
 [measurement channel](../channel-measurements.md) converts the resulting total
 MER to residual error power once. They do not estimate a complex channel response.
+
+## Planned PNM binary export
+
+Saving designed captures as PNM `.bin` files is [planned](../../development/features/rxmer-designer/pnm-export-plan.md),
+not implemented. The proposal keeps conversion and validation in a reusable
+Rust crate and guards export in both Designer and crate APIs. It covers one
+capture or a collection, quarter-dB quantization, explicit range handling and
+provenance alongside the binary. Current WB Save continues to store the editable
+MERLIN records described above.
