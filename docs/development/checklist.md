@@ -914,11 +914,9 @@ integration. It does not mean all the broader product items above are complete.
   screenshots from a compact README analyzer gallery.
   [Design](features/readme-workbench-diagram/design.md#doc-brand-04-analyzer-gallery).
 
-
 - [x] **DOC-BRAND-03** Add a documentation index and UI, Rust API and
   planned Python guide entry points.
   [Design](features/readme-workbench-diagram/design.md#doc-brand-03-documentation-entry-points).
-
 
 - [x] **DOC-BRAND-02** Shorten README, describe the CMTS downstream PHY
   simulation directly and link existing flow/status documentation.
@@ -961,7 +959,6 @@ Local development scope only; existing push/release and security gates stay inta
 - [ ] **DEV-03** Validate complete provisioning on pristine Ubuntu 22.04/24.04/26.04.
 
 See [setup](setup.md) and [design](features/development-setup/design.md).
-
 
 ## Parallel local validation
 
@@ -1424,3 +1421,9 @@ validation are complete; the user guide includes the current dark capture.
   all four RxMER policies across three receiver modes and independent ownership.
   [Design](features/high-level-api/design.md#api-receiver-01-match-receiver-correction-across-rust-python-and-qt),
   [validation and measured delta](features/high-level-api/validation.md#api-receiver-01-receiver-settings-and-ui-parity).
+
+- [x] **API-RECEIVER-02** Expand the typed MCE name to
+  MerlinChannelEstimated / MERLIN_CHANNEL_ESTIMATED. Preserve saved JSON
+  compatibility and accept the expanded input spelling; verify native Python
+  options, all receiver/selection parity modes, MCE tests and Rust forwarding.
+  [Design](features/high-level-api/design.md#api-receiver-02-expand-mce-in-typed-receiver-names).

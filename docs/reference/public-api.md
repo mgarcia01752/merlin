@@ -298,7 +298,6 @@ producer before dispatch starts; `None` admits all phases for that producer.
 This permits acquisition PLC messages beside observation-only waveform/payload
 captures without spending the latter stages' budgets during acquisition.
 
-
 ## Receiver instrument observations and diagnostics
 
 `ConstellationSelection.capture_ncp` optionally retains CRC-classified matched
@@ -319,7 +318,6 @@ the existing Rust slicer rather than implementing DSP in QML.
 models, explicit units and bounded gain evaluation. `ChannelImpairments.additional_loss`
 composes the magnitude with measured H while preserving originals and the existing
 post-equalization RxMER reference plane. See the [model guide](../user/impairments/additional-loss.md).
-
 
 `signal_processing::channel::power::PowerConditioning` exposes typed scalar gain,
 attenuation, optional nominal DATA electrical reference/output target and optional
@@ -395,10 +393,15 @@ clamps/rounds; byte conversion alone does not write a recipe manifest.
 
 `api::ReceiverMode` re-exports the existing engine enum. Add it through
 `EvaluationOptions.receiver_mode` or `.with_receiver_mode(...)`;
-`SuppliedChannel` remains default, with `PilotEstimated` and `MerlinEstimated`
+`SuppliedChannel` remains default, with `PilotEstimated` and `MerlinChannelEstimated`
 also supported. Preparation copies it into `ChannelRunSettings.receiver_mode`.
 `ChannelSelection` still chooses applied H independently. MCE uses existing
 engine-default policies here; custom MCE tuning is not added in this milestone.
 Report options serialize the selected mode and assumptions distinguish supplied,
 pilot and MCE correction. Python exposes the same choice through `ReceiverMode`
 uppercase aliases and a typed mutable request property/constructor keyword.
+
+The expanded MCE name is `MerlinChannelEstimated` in Rust and
+`ReceiverMode.MERLIN_CHANNEL_ESTIMATED` in Python. Saved WB/CLI/report JSON
+retains `merlin_estimated` for compatibility; input also accepts
+`merlin_channel_estimated`. This is a naming change only.

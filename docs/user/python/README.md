@@ -228,7 +228,7 @@ options = EvaluationOptions(
 
 `ChannelSelection` chooses the applied physical response H. `ReceiverMode`
 chooses how the receiver corrects it: `SUPPLIED_CHANNEL` (the existing default),
-`PILOT_ESTIMATED`, or `MERLIN_ESTIMATED` (MCE with existing engine defaults).
+`PILOT_ESTIMATED`, or `MERLIN_CHANNEL_ESTIMATED` (MCE with existing engine defaults).
 Unity H can still be received through pilot-estimated correction. Selecting a
 mode does not run simulation. Accepted options and reports retain independent
 snapshots of the choice. All estimation/validation remains in Rust.
@@ -238,3 +238,8 @@ noise/PRBS seeds, decoder limit, average policy, duration and OCD timing. It doe
 not import arbitrary WB JSON; changing that WB requires updating the example's
 named constants. A fixture test guards drift. No change to the original
 single-capture example's receiver default is implied.
+
+The expanded MCE name is `MerlinChannelEstimated` in Rust and
+`ReceiverMode.MERLIN_CHANNEL_ESTIMATED` in Python. Saved WB/CLI/report JSON
+retains `merlin_estimated` for compatibility; input also accepts
+`merlin_channel_estimated`. This is a naming change only.

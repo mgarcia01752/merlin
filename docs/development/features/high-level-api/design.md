@@ -296,7 +296,7 @@ Expose the existing engine `ReceiverMode` in Rust `EvaluationOptions` with a
 copies the selected mode into the existing `ChannelRunSettings`; reports preserve
 it in owned options and use accurate receiver-specific assumptions. ChannelSelection
 still chooses applied H independently of receiver correction. PilotEstimated never
-receives supplied H as its correction; MerlinEstimated uses existing default MCE
+receives supplied H as its correction; MerlinChannelEstimated uses existing default MCE
 policies. No second estimator, Python calculations or Qt dependency is introduced.
 
 Mirror the typed mode and copied options in PyO3. Configure the multi-RxMER example
@@ -308,8 +308,19 @@ then compare each profile's actual UI/Python FEC counts. Preserve partial result
 cancellation and strict source association. Record remaining discrepancies rather
 than changing counters to force agreement.
 
-
 Implemented and verified: the corrected-codeword delta is caused solely by
 supplied-channel versus received-pilot correction. All three matched Python
 profiles agree with the rebuilt native Qt UI. See the
 [validation table and checks](validation.md#api-receiver-01-receiver-settings-and-ui-parity).
+
+### API-RECEIVER-02: expand MCE in typed receiver names
+
+Rename the Rust variant to ReceiverMode::MerlinChannelEstimated and the native
+Python variant to MerlinChannelEstimated with MERLIN_CHANNEL_ESTIMATED alias.
+This names the channel-estimation role explicitly without changing algorithms,
+defaults or settings. Keep serialized merlin_estimated for compatibility with
+existing WB/CLI files and Qt's wire contract; accept merlin_channel_estimated as
+an additional input spelling. No Qt layout or orchestration changes are needed.
+Update typed callers, examples, guides and tests together. Verify serde round
+trips, native Python option/report ownership and all selection-mode parity,
+then rebuild the Qt release executable to keep native callers current.

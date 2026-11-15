@@ -99,3 +99,10 @@ These additional repository requirements govern ongoing delivery:
 - Compare actual observation-window FEC and independent bit comparison per profile;
   matching BER alone is insufficient. Keep all static selection modes, owned
   results and cancellation intact. Do not force agreement by changing counters.
+
+## API-RECEIVER-02: explicit MCE naming
+
+Use `ReceiverMode::MerlinChannelEstimated` in Rust and
+`ReceiverMode.MERLIN_CHANNEL_ESTIMATED` in Python. Preserve existing WB/CLI/report
+JSON `merlin_estimated` and accept `merlin_channel_estimated` on input. Renaming
+must not change correction algorithms, decoder reliability or receiver defaults.

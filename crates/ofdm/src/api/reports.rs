@@ -236,7 +236,7 @@ impl PerformanceReport {
         let receiver_assumption = match options.receiver_mode {
             ReceiverMode::SuppliedChannel => "Supplied-channel correction uses the existing known-reference equalizer; explicit unity is synthetic",
             ReceiverMode::PilotEstimated => "Pilot-estimated correction uses received pilots; supplied H impairs the channel and is not receiver correction input",
-            ReceiverMode::MerlinEstimated => "MCE uses received pilots and received-only reliability with the engine's default MCE policies; supplied H and noise power are not receiver inputs",
+            ReceiverMode::MerlinChannelEstimated => "MCE uses received pilots and received-only reliability with the engine's default MCE policies; supplied H and noise power are not receiver inputs",
         };
         let assumptions = vec![
             "PRBS15 source; independent experiments reset source and noise seeds".into(),

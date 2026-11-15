@@ -74,7 +74,7 @@ fn run(spacing: SubcarrierSpacing, variance: f64, echo: Option<usize>) -> (Strin
     let (transmission, layout) = acquisition_support::acquisition_setup(spacing, false);
     let mut settings = ChannelRunSettings::new(transmission, layout);
     assert_eq!(settings.receiver_mode, ReceiverMode::SuppliedChannel);
-    settings.receiver_mode = ReceiverMode::MerlinEstimated;
+    settings.receiver_mode = ReceiverMode::MerlinChannelEstimated;
     settings.duration = std::time::Duration::from_micros(100);
     settings.llr_variance = variance;
     settings.impairments.noise = NoiseModel::Awgn { sample_power: 1e-5 };
@@ -156,7 +156,10 @@ fn changing_receiver_mode_keeps_the_actual_noisy_channel_samples_identical() {
         ..Default::default()
     });
     let mut raw = None;
-    for mode in [ReceiverMode::SuppliedChannel, ReceiverMode::MerlinEstimated] {
+    for mode in [
+        ReceiverMode::SuppliedChannel,
+        ReceiverMode::MerlinChannelEstimated,
+    ] {
         settings.receiver_mode = mode;
         let result = run_channel(
             &settings,
@@ -187,7 +190,7 @@ fn changing_receiver_mode_keeps_the_actual_noisy_channel_samples_identical() {
         }
         assert_eq!(
             result.receiver_reliability.is_some(),
-            mode == ReceiverMode::MerlinEstimated
+            mode == ReceiverMode::MerlinChannelEstimated
         );
     }
 }
@@ -197,7 +200,7 @@ fn excessive_delay_reports_real_degradation_instead_of_perfect_correction() {
     let (transmission, layout) =
         acquisition_support::acquisition_setup(SubcarrierSpacing::Khz50, false);
     let mut settings = ChannelRunSettings::new(transmission, layout);
-    settings.receiver_mode = ReceiverMode::MerlinEstimated;
+    settings.receiver_mode = ReceiverMode::MerlinChannelEstimated;
     settings.duration = std::time::Duration::from_micros(100);
     settings.channel_filter = ChannelFilterSettings::Echoes {
         paths: vec![
@@ -268,5 +271,20 @@ fn reference_and_legacy_pilot_rx_ignore_filter_nulls_only_on_excluded_bins() {
         {}
         assert_eq!(channel.summary().comparison.bit_errors, 0);
         assert_eq!(channel.summary().phase, ChannelPhase::Finished);
+    }
+}
+
+#[test]
+fn expanded_mce_name_preserves_saved_receiver_mode() {
+    let mode = ReceiverMode::MerlinChannelEstimated;
+    assert_eq!(
+        serde_json::to_string(&mode).unwrap(),
+        "\"merlin_estimated\""
+    );
+    for spelling in ["merlin_estimated", "merlin_channel_estimated"] {
+        assert_eq!(
+            serde_json::from_value::<ReceiverMode>(serde_json::json!(spelling)).unwrap(),
+            mode
+        );
     }
 }

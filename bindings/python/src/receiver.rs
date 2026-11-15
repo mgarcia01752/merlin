@@ -18,7 +18,7 @@ use pyo3::prelude::*;
 pub(crate) enum PyReceiverMode {
     SuppliedChannel,
     PilotEstimated,
-    MerlinEstimated,
+    MerlinChannelEstimated,
 }
 impl PyReceiverMode {
     /// Converts a Python policy to the existing native enum without calculations.
@@ -28,7 +28,7 @@ impl PyReceiverMode {
         match self {
             Self::SuppliedChannel => api::ReceiverMode::SuppliedChannel,
             Self::PilotEstimated => api::ReceiverMode::PilotEstimated,
-            Self::MerlinEstimated => api::ReceiverMode::MerlinEstimated,
+            Self::MerlinChannelEstimated => api::ReceiverMode::MerlinChannelEstimated,
         }
     }
 }
@@ -42,7 +42,7 @@ impl From<api::ReceiverMode> for PyReceiverMode {
         match mode {
             api::ReceiverMode::SuppliedChannel => Self::SuppliedChannel,
             api::ReceiverMode::PilotEstimated => Self::PilotEstimated,
-            api::ReceiverMode::MerlinEstimated => Self::MerlinEstimated,
+            api::ReceiverMode::MerlinChannelEstimated => Self::MerlinChannelEstimated,
         }
     }
 }
@@ -59,7 +59,10 @@ pub(crate) fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
     for (name, mode) in [
         ("SUPPLIED_CHANNEL", PyReceiverMode::SuppliedChannel),
         ("PILOT_ESTIMATED", PyReceiverMode::PilotEstimated),
-        ("MERLIN_ESTIMATED", PyReceiverMode::MerlinEstimated),
+        (
+            "MERLIN_CHANNEL_ESTIMATED",
+            PyReceiverMode::MerlinChannelEstimated,
+        ),
     ] {
         class.setattr(name, mode)?;
     }

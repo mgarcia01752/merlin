@@ -81,7 +81,6 @@ values in ascending captured-ID order, reject invalid catalogs and leave inputs
 unchanged. Discovery and loading do not run simulation. IDs describe what is
 present; profile selection and simulation admission remain separate operations.
 
-
 ## Selection and ownership
 
 Add RxMER captures and channel estimates independently. Counts and epochs need
@@ -147,7 +146,7 @@ save helpers add no-overwrite publication and provenance. See the
 
 `EvaluationOptions::with_receiver_mode(ReceiverMode::PilotEstimated)` selects
 received-pilot correction through the existing engine. `ReceiverMode` re-exports
-the engine's typed `SuppliedChannel`, `PilotEstimated` and `MerlinEstimated`
+the engine's typed `SuppliedChannel`, `PilotEstimated` and `MerlinChannelEstimated`
 choices; the existing default remains `SuppliedChannel`. Channel response
 selection is independent: explicit unity configures a flat applied H, while the
 receiver can still estimate its correction from received pilots. MCE uses the
@@ -158,3 +157,8 @@ it after later controller edits and assumptions describe the selected receiver.
 Python mirrors this as `EvaluationOptions(receiver_mode=...)`. The collection
 walkthrough uses pilot estimation to match its saved workbench. See the
 [Python receiver example](../python/README.md#select-receiver-correction-independently-of-the-channel).
+
+The expanded MCE name is `MerlinChannelEstimated` in Rust and
+`ReceiverMode.MERLIN_CHANNEL_ESTIMATED` in Python. Saved WB/CLI/report JSON
+retains `merlin_estimated` for compatibility; input also accepts
+`merlin_channel_estimated`. This is a naming change only.

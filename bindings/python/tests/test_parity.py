@@ -29,7 +29,11 @@ class RustPythonParity(unittest.TestCase):
         sim.add_rxmer(m.RxMer.from_file(directory / "second.json"))
         channel = sim.add_channel_estimate(m.ChannelEstimate.from_file(fixture / "channel_estimation.json"))
         receiver_name = expected["each"]["entries"][0]["report"]["options"]["receiver_mode"]
-        receiver = getattr(m.ReceiverMode, receiver_name.upper())
+        # Saved JSON retains the historical spelling; typed APIs expand MCE.
+        receiver_alias = ("MERLIN_CHANNEL_ESTIMATED"
+                          if receiver_name == "merlin_estimated"
+                          else receiver_name.upper())
+        receiver = getattr(m.ReceiverMode, receiver_alias)
         retained = []
         for name, policy in (
             ("each", m.RxMerSelection.each()),

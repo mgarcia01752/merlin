@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     {
         "supplied_channel" => ReceiverMode::SuppliedChannel,
         "pilot_estimated" => ReceiverMode::PilotEstimated,
-        "merlin_estimated" => ReceiverMode::MerlinEstimated,
+        "merlin_estimated" => ReceiverMode::MerlinChannelEstimated,
         _ => {
             return Err(
                 "Receiver mode must be supplied_channel, pilot_estimated or merlin_estimated"

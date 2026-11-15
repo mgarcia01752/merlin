@@ -764,14 +764,14 @@ mod tests {
         let legacy: Options = serde_json::from_str("{}").unwrap();
         assert_eq!(legacy.receiver_mode, ReceiverMode::SuppliedChannel);
         let options = Options {
-            receiver_mode: ReceiverMode::MerlinEstimated,
+            receiver_mode: ReceiverMode::MerlinChannelEstimated,
             duration_ms: 1,
             max_iterations: 10,
             ..Default::default()
         };
         let saved = serde_json::to_string(&options).unwrap();
         let restored: Options = serde_json::from_str(&saved).unwrap();
-        assert_eq!(restored.receiver_mode, ReceiverMode::MerlinEstimated);
+        assert_eq!(restored.receiver_mode, ReceiverMode::MerlinChannelEstimated);
         assert_eq!(restored.mce.averaging_symbols, 16);
         let (inputs, transmission) = accepted_inputs();
         let settings = prepare(&transmission, &inputs, &restored).unwrap();

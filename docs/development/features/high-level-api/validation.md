@@ -251,3 +251,27 @@ The full default-feature simulation suite was not rerun for this API forwarding
 change. Windows and other Python/platform targets remain unverified; nothing was
 published or installed system-wide. General WB JSON import and custom high-level
 MCE tuning remain outside this change.
+
+## API-RECEIVER-02: expanded MCE names
+
+Rust now uses ReceiverMode::MerlinChannelEstimated and Python uses
+ReceiverMode.MERLIN_CHANNEL_ESTIMATED (native variant MerlinChannelEstimated).
+The old typed spellings are replaced; downstream source callers must update.
+Serde still writes merlin_estimated so existing Qt/CLI/workbench data and reports
+retain their wire contract, and also accepts merlin_channel_estimated as input.
+The algorithms, receiver defaults and scientific results are unchanged.
+
+All 10 MCE tests pass (19.79s), including both input spellings and canonical
+serialization. The API forwarding test passes for all receiver/selection modes
+(0.31s). Workspace/all-target Clippy, adapter Clippy and formatting pass.
+The CPython 3.10 Linux wheel was rebuilt (1m37s) and installed only in the local
+test environment. Three Python receiver tests pass (5.292s); comparison with the
+preserved Rust baselines passes under all three receiver modes and all four
+RxMER policies (4.025s supplied, 4.339s pilot, 4.523s MCE). This includes actual
+all-profile FEC agreement with the recorded native UI reference.
+
+The Qt optimized release executable rebuild passes (3m29s); QML controls and
+serialized values are unchanged. The generated integration guide is current and
+relative documentation links resolve. No full simulation suite rerun or new
+platform certification is claimed for this naming-only change. Local evidence is under
+`docs/development/local/api-receiver-parity/rename-*`.

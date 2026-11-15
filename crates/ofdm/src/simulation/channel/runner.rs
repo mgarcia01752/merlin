@@ -79,7 +79,7 @@ impl ChannelRun {
             link.residual_transition(&plan.at(0), &plan.frames()[0].key.grid)?;
         }
         if settings.receiver_mode
-            == crate::signal_processing::receiver::channel_estimation::ReceiverMode::MerlinEstimated
+            == crate::signal_processing::receiver::channel_estimation::ReceiverMode::MerlinChannelEstimated
         {
             link.use_mce(settings.mce.clone())?;
         }

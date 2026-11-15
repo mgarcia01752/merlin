@@ -21,7 +21,7 @@ pub(crate) fn correction_name(
     match mode {
         ReceiverMode::SuppliedChannel => "Supplied H",
         ReceiverMode::PilotEstimated => "Pilot-estimated H-hat",
-        ReceiverMode::MerlinEstimated => "MCE",
+        ReceiverMode::MerlinChannelEstimated => "MCE",
     }
 }
 

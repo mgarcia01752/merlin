@@ -674,7 +674,7 @@ fn receiver_selection_is_independent_copied_and_forwarded_for_every_policy() {
     for mode in [
         ReceiverMode::SuppliedChannel,
         ReceiverMode::PilotEstimated,
-        ReceiverMode::MerlinEstimated,
+        ReceiverMode::MerlinChannelEstimated,
     ] {
         for selection in [
             RxMerSelection::Each,
@@ -762,5 +762,5 @@ fn pilot_estimated_api_matches_direct_engine_fec_and_owns_mode() {
 }
 #[test]
 fn merlin_estimated_api_matches_direct_engine_fec_and_owns_mode() {
-    receiver_mode_matches_direct_engine(ReceiverMode::MerlinEstimated);
+    receiver_mode_matches_direct_engine(ReceiverMode::MerlinChannelEstimated);
 }

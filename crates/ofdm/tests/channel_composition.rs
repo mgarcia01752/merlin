@@ -137,5 +137,5 @@ fn manual_tilt_and_echo_recover_reference_payload_and_actual_raw_samples() {
 }
 #[test]
 fn cable_and_echo_recover_mce_payload_and_actual_raw_samples() {
-    recover(true, ReceiverMode::MerlinEstimated);
+    recover(true, ReceiverMode::MerlinChannelEstimated);
 }

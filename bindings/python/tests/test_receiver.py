@@ -27,10 +27,12 @@ class ReceiverModeTests(unittest.TestCase):
         """Preserve the old default and independent request/report ownership."""
         self.assertEqual(m.EvaluationOptions().receiver_mode,
                          m.ReceiverMode.SUPPLIED_CHANNEL)
+        self.assertEqual(m.ReceiverMode.MERLIN_CHANNEL_ESTIMATED,
+                         m.ReceiverMode.MerlinChannelEstimated)
         sim, _ = configured()
         for mode in (m.ReceiverMode.SUPPLIED_CHANNEL,
                      m.ReceiverMode.PILOT_ESTIMATED,
-                     m.ReceiverMode.MERLIN_ESTIMATED):
+                     m.ReceiverMode.MERLIN_CHANNEL_ESTIMATED):
             options = sim.options
             options.receiver_mode = mode
             sim.set_options(options)
