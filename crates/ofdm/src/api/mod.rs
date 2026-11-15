@@ -2,7 +2,8 @@
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-//! High-level, Qt-free, owned-input simulation high-level API. Loading never executes jobs.
+//! High-level, Qt-free simulation API with owned inputs and results.
+//! Loading/configuration never executes jobs; only `Merlin::run` starts simulation.
 mod configuration;
 mod controller;
 mod error;

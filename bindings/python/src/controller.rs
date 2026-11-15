@@ -26,7 +26,13 @@ impl PyRunControl {
         self.0.cancel();
     }
 }
-/// High-level controller. Native scientific work never calls Python or the CLI.
+/// High-level single-channel simulation controller, constructed from a validated OCD.
+///
+/// Loading inputs and accepting options never runs simulation. Only run() or
+/// run_with_control() starts the native engine, releasing the interpreter lock.
+/// Captures retain original bytes; returned identifiers belong to this controller.
+/// Reports independently own complete/partial outcomes. ApiError.code identifies
+/// validation/preflight/Busy errors; scientific results never come from Python.
 #[pyclass(frozen, module = "merlin", name = "Merlin")]
 pub(crate) struct PyMerlin {
     state: Arc<Mutex<Option<api::Merlin>>>,
@@ -62,7 +68,7 @@ impl PyMerlin {
     }
     /// Dispatch the same Rust job while releasing the interpreter lock and polling cancellation.
     /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
+    /// * `py` - Internal interpreter token, never a Python-visible method argument.
     /// * `control` - Shared native cooperative-cancellation token.
     /// # Returns
     /// An owned BatchReport or a structured preflight error, with the controller restored.
@@ -234,8 +240,6 @@ impl PyMerlin {
         self.access(|sim| Ok(PyEvaluationOptions::from_native(sim.options())))
     }
     /// Run the accepted Rust configuration explicitly and return an independently owned batch.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// An owned BatchReport retaining complete, partial and not-started entries.
     /// # Errors
@@ -245,7 +249,6 @@ impl PyMerlin {
     }
     /// Run with cooperative cancellation, preserving partial and not-started results.
     /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// * `control` - Shared native cooperative-cancellation token.
     /// # Returns
     /// An owned BatchReport; cancellation preserves completed scientific results.

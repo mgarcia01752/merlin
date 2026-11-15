@@ -146,7 +146,7 @@ impl CellRandomizer {
 
     /// Generates the zero-loaded cell's specified BPSK label and clocks once.
     /// # Returns
-    /// D0[0] as label0(+1) or1(-1); zero-loaded cells carry no payload bits.
+    /// `D0[0]` as label0(+1) or1(-1); zero-loaded cells carry no payload bits.
     /// Receiver streams call this too to preserve synchronization and discard it.
     /// # Errors
     /// Rejects an inactive stream without advancing it.

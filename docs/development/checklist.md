@@ -1490,3 +1490,12 @@ validation are complete; the user guide includes the current dark capture.
   correct visible-state captions and link designed-input API examples.
   [Design](features/user-guide-captures/design.md#ui-doc-03-receiver-mode-and-designer-documentation-refresh),
   [audit](features/user-guide-captures/png-audit.md#ui-doc-03-receiver-mode-follow-up).
+
+- [x] **API-DOC-01** Build searchable Rust/Python high-level API HTML from
+  public source documentation and the actual native extension. Discover and
+  verify every exported Python class/member; provide a shared local landing
+  page, strict warning gates, pinned tooling and build instructions. Clean
+  hidden interpreter parameters, document units/defaults and fix literal Rust
+  bracket links. Offline build, browser review and targeted native checks pass.
+  [Design](features/high-level-api/design.md#api-doc-01-generated-high-level-rust-and-python-references),
+  [build guide](../reference/api-reference.md).

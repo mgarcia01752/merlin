@@ -49,7 +49,7 @@ pub fn reference_for_order(order: usize) -> Option<&'static QamReference> {
 /// * `order` - Physical constellation size, not an OSSI modulation code.
 /// * `label` - MSB-first integer value of the cell word, strictly below order.
 /// # Returns
-/// Unit-average-energy [I,Q] without changing inputs or accessing resources.
+/// Unit-average-energy `[I,Q]` without changing inputs or accessing resources.
 /// # Errors
 /// Reports unsupported orders and labels outside the selected constellation.
 pub fn map_symbol(

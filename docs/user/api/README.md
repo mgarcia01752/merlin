@@ -9,6 +9,9 @@ Enable the core's `high-level-api` feature. Add optional `pnm-input` for native
 binary/JSON and file conveniences; it directly uses pinned Apache-2.0 `pnm`
 0.3.6. Neither crate needs Qt or Python.
 
+For searchable class/method documentation generated from the actual APIs, see
+the [generated Rust/Python reference](../../reference/api-reference.md).
+
 ## Rust workflow
 
 The complete fixture-backed example lives in

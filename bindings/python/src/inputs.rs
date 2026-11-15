@@ -208,8 +208,6 @@ impl PyDpd {
         format!("{:?}", self.0.origin())
     }
     /// Read sources from the native Rust snapshot.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// Independent original-source provenance; created hypotheses have no captured source.
     /// # Errors
@@ -227,8 +225,6 @@ impl PyDpd {
         )
     }
     /// Read grid from the native Rust snapshot.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// An independent JSON snapshot of the exact original Hz/index grid.
     /// # Errors
@@ -342,8 +338,6 @@ impl PyOcd {
         .map_err(error)
     }
     /// Read configuration from the native Rust snapshot.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// An independent JSON snapshot of resolved values, origins and validated geometry.
     /// # Errors
@@ -389,8 +383,6 @@ macro_rules! measurement {
                     .map_err(error)
             }
             /// Read provenance from the native Rust snapshot.
-            /// # Arguments
-            /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
             /// # Returns
             /// Independent original/intermediate source metadata with unchanged epochs and hashes.
             /// # Errors
@@ -400,8 +392,6 @@ macro_rules! measurement {
                 object_from_json(py, &serde_json::to_string(self.0.provenance()).unwrap())
             }
             /// Read grid from the native Rust snapshot.
-            /// # Arguments
-            /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
             /// # Returns
             /// An independent JSON snapshot of the exact original Hz/index grid.
             /// # Errors
@@ -423,8 +413,6 @@ measurement!(
 #[pymethods]
 impl PyRxMer {
     /// Read values from the native Rust snapshot.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// An immutable tuple of original MerDb values or None for missing samples.
     /// # Errors
@@ -544,8 +532,6 @@ impl PyOcd {
 #[pymethods]
 impl PyDpd {
     /// Read carriers from the native Rust snapshot.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// The immutable native value named by this read-only property.
     /// # Errors
@@ -579,8 +565,6 @@ impl PyComplexResponse {
 #[pymethods]
 impl PyChannelEstimate {
     /// Read response from the native Rust snapshot.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// An immutable tuple of original complex H values or None for missing samples.
     /// # Errors
@@ -601,8 +585,6 @@ impl PyChannelEstimate {
 #[pymethods]
 impl PyOcd {
     /// Exports complete validated geometry and resolved origins as an owned snapshot.
-    /// # Arguments
-    /// * `py` - Interpreter token used for JSON transport conversion only.
     /// # Returns
     /// Independent dictionary; changes never mutate the accepted OCD.
     /// # Errors

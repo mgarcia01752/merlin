@@ -65,7 +65,7 @@ impl InterleavedPlcBlock {
 /// # Arguments
 /// * `spacing` - Fixed25/50kHz setting, not data time-interleaver depth.
 /// # Returns
-///96 source offsets: v[t,f]=u[t+S*f], S=6for8K or12for4K.
+///96 source offsets: `v[t,f]=u[t+S*f]`, S=6for8K or12for4K.
 pub fn source_indices(spacing: SubcarrierSpacing) -> [usize; PLC_CODEWORD_NIBBLES] {
     let geometry = PlcFrameGeometry::new(spacing);
     std::array::from_fn(|output| {

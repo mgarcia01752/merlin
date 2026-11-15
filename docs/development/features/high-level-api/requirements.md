@@ -133,3 +133,16 @@ new-configuration UI/API default. Preserve captures and all other settings.
 The saved-UI Python companion and WB loader must reproduce that saved choice;
 the separate MCE walkthrough remains MCE. Guard this policy in the packaged
 bundle inventory test and maintain current FEC references and user guides.
+
+## Generated API reference maintenance
+
+Maintain searchable generated references for the public Rust high-level API,
+PNM input/workbench adapter and native Python API. Source-owned documentation
+must describe public parameters, units, defaults, ownership, errors, cancellation
+and partial results; Python pages must not expose hidden interpreter arguments.
+The development builder uses strict rustdoc and pinned Sphinx against the actual
+installed native extension. Discover all exported classes, require public-member
+coverage and reject installed-version mismatch. Rebuild/reinstall the native
+wheel when its documentation changes even without a version bump. Keep generated
+HTML ignored and local; publication remains a separate authorized action.
+See the [build guide](../../../reference/api-reference.md).

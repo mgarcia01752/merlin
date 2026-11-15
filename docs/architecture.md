@@ -2330,6 +2330,13 @@ every discovered compatible single-bundle profile.
 They retain original bytes and keep the adjacent designer recipe as provenance;
 binary loading does not apply the recipe or automatically ingest the sidecar.
 
+The development-only generated API reference uses rustdoc for the high-level
+Rust modules and Sphinx autodoc against the actual native Python extension.
+Class/member coverage is validated without constructing controllers or running
+simulation. Artifacts remain under ignored `local/api-reference/`; the build
+adds no runtime or Qt dependencies. See the
+[reference build guide](reference/api-reference.md).
+
 ### Saved workbench API input
 
 The Apache `pnm-input::Workbench` loader independently decodes the saved WB

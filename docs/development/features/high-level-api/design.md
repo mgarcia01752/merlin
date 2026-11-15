@@ -446,3 +446,21 @@ current documentation links and measurement indexes. Add a focused collection
 README describing synthetic origin, export quantization and paired-example use.
 Verify original hashes, links and actual Rust/Python runs from the new location;
 no binary conversion, recipe edits or engine changes are required.
+
+### API-DOC-01: generated high-level Rust and Python references
+
+Build Rust reference pages with rustdoc for the high-level API and pnm-input;
+use warnings-as-errors and repair literal-bracket doc links. Build searchable
+Python class/method/property pages with pinned Sphinx autodoc against the actual
+installed native extension, with no mocks, CLI subprocess or simulation. Discover
+all exported classes dynamically, retain canonical names/aliases, and validate
+that no public exported type is omitted. Use the extension signatures and Rust-
+owned docstrings rather than maintaining a competing API implementation.
+Clean Python-facing docstrings of hidden interpreter arguments and describe
+important defaults, units, ownership, cancellation and structured errors.
+A development-only helper owns generated output under ignored local/api-reference
+and supplies a shared landing page linking Rust/Python, guides and examples.
+Refuse version mismatch and build offline after local dependency setup.
+Validate strict native builds, method/index coverage, documentation transforms,
+local links, no-run import and focused Python smoke tests after wheel rebuild.
+No hosting, publishing, Qt changes or system installations are authorized.

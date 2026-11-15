@@ -1,5 +1,9 @@
 # Rust API Guide
 
+For generated signatures, types and method documentation, see the
+[high-level Rust/Python API reference](api-reference.md). This page remains the
+architecture-oriented map of shared public operations.
+
 MERLIN exposes its simulation engine through public Rust APIs. The CLI and native
 Qt workbench reuse those APIs; optional native Python bindings adapt the same inputs
 and results. Signal processing remains in Rust.

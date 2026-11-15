@@ -33,7 +33,7 @@ static INDICES: [OnceLock<DemapIndex>; MAX_REFERENCE_BITS + 1] =
 /// tables retain direct scans to avoid search overhead. First use initializes any index.
 /// # Arguments
 /// * `order` - Physical constellation size, not an OSSI code.
-/// * `received` - Equalized unit-energy [I,Q]; no rescaling is applied.
+/// * `received` - Equalized unit-energy `[I,Q]`; no rescaling is applied.
 /// * `noise_power` - Positive finite E[|n|²], not a per-axis variance or dB value.
 /// # Returns
 /// Owned MSB-first natural-log LLRs; positive favors0, clipped to±100.
@@ -54,7 +54,7 @@ pub fn qam_llrs(
 
 /// Computes max-log LLRs with the established16-QAM array interface.
 /// # Arguments
-/// * `received` - Equalized unit-energy complex symbol [I,Q].
+/// * `received` - Equalized unit-energy complex symbol `[I,Q]`.
 /// * `noise_power` - E[|n|²]; each real component has variance noise_power/2.
 /// # Returns
 /// Four MSB-first natural-log likelihoods; positive favors0, clipped to±100.

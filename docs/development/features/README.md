@@ -1,5 +1,7 @@
 # Feature development records
 
+- [Generated high-level Rust/Python API reference](../../reference/api-reference.md) · [design](high-level-api/design.md#api-doc-01-generated-high-level-rust-and-python-references)
+
 - [RxMER Designer](rxmer-designer/design.md) · [validation](rxmer-designer/validation.md) · [PNM export plan](rxmer-designer/pnm-export-plan.md)
 
 - [Graphical transmitter test points](transmitter-graphs/design.md)

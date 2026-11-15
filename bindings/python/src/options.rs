@@ -84,7 +84,11 @@ impl PyChannelSelection {
         Self(api::ChannelSelection::NearestWithin(tolerance.0))
     }
 }
-/// Shared mutable limits request; accepting options copies its Rust value.
+/// Finite execution and retained-detail limits, copied when options are accepted.
+///
+/// Defaults: RuntimeLimit(30000) milliseconds of host execution,
+/// IterationLimit(50) and RetainedWordLimit(64). Host runtime is independent
+/// of ObservationDuration source time. Runtime exhaustion preserves partial results.
 #[pyclass(from_py_object, frozen, module = "merlin", name = "RunLimits")]
 #[derive(Clone)]
 pub(crate) struct PyRunLimits(std::sync::Arc<std::sync::Mutex<api::RunLimits>>);
@@ -187,25 +191,40 @@ impl PyRunLimits {
             .iterations = value.0;
     }
 }
-/// Mutable request; set_options stores a Rust-validated independent snapshot.
+/// Mutable simulation request; set_options accepts a validated independent copy.
+///
+/// Defaults: Each RxMER, unset channel selection, SuppliedChannel receiver,
+/// 100 ms source observation, noise seed 41, PRBS seed 0x7fff and zero-second
+/// profile tolerance. Select a channel explicitly before run. RunLimits defaults
+/// to 30,000 ms host runtime, 50 iterations and 64 retained detailed words.
+/// Scientific quantities require their named Rust-validated wrapper types;
+/// Python None selects the native default, not a fabricated zero.
 #[pyclass(from_py_object, module = "merlin", name = "EvaluationOptions")]
 #[derive(Clone)]
 pub(crate) struct PyEvaluationOptions {
+    /// RxMerSelection: static Each, Individual, AverageAll or InterpolateAt policy.
     #[pyo3(get, set)]
     rxmer_selection: PyRxMerSelection,
+    /// ChannelSelection or None: explicit response, nearest-time or unity; None fails run preflight.
     #[pyo3(get, set)]
     channel_selection: Option<PyChannelSelection>,
+    /// ReceiverMode: correction policy independent of the applied channel response.
     #[pyo3(get, set)]
     receiver_mode: PyReceiverMode,
     processing: api::ProcessingOptions,
+    /// ObservationDuration: source observation in milliseconds, excluding acquisition/drain.
     #[pyo3(get, set)]
     observation: PyObservationDuration,
+    /// NoiseSeed: reproducible noise generator seed.
     #[pyo3(get, set)]
     noise_seed: PyNoiseSeed,
+    /// PrbsSeed: nonzero fifteen-bit PRBS source seed.
     #[pyo3(get, set)]
     prbs_seed: PyPrbsSeed,
+    /// AssociationTolerance: maximum profile/capture epoch separation in seconds.
     #[pyo3(get, set)]
     profile_tolerance: PyAssociationTolerance,
+    /// RunLimits: finite host runtime, decoder iterations and retained detail budget.
     #[pyo3(get, set)]
     limits: PyRunLimits,
 }
@@ -246,8 +265,6 @@ impl PyEvaluationOptions {
 #[pymethods]
 impl PyEvaluationOptions {
     /// Returns an independent dictionary of existing MCE/filter/loss/power settings.
-    /// # Arguments
-    /// * `py` - Interpreter used only for serialization of Rust-owned settings.
     /// # Returns
     /// Copied settings for inspection; editing the dictionary does not mutate options.
     /// # Errors

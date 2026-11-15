@@ -14,7 +14,12 @@ mod workbench;
 use docsis_ofdm_fec::api;
 use pyo3::exceptions::PyException;
 use pyo3::prelude::*;
-pyo3::create_exception!(merlin, ApiError, PyException);
+pyo3::create_exception!(
+    merlin,
+    ApiError,
+    PyException,
+    "Structured native API failure. Read code (ErrorCode) and message (str); do not parse text for categories. Run outcomes and partial science remain in report status."
+);
 /// Read error from the native Rust snapshot.
 /// # Returns
 /// The immutable native value named by this read-only property.

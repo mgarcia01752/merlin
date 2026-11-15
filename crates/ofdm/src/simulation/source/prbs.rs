@@ -53,7 +53,7 @@ impl Prbs15 {
         self.position
     }
 
-    /// Generates a bounded chunk using s[n+15] = s[n+14] XOR s[n].
+    /// Generates a bounded chunk using `s[n+15] = s[n+14] XOR s[n]`.
     ///
     /// # Arguments
     /// * `count` - Number of bits, zero through MAX_PRBS_CHUNK_BITS.

@@ -34,8 +34,6 @@ fn export_error(value: ExportError) -> PyErr {
 #[pymethods]
 impl PyRxMer {
     /// Converts a loaded capture into full-precision decoded JSON in Rust.
-    /// # Arguments
-    /// * `py` - Interpreter token, released during validation and serialization.
     /// # Returns
     /// Owned UTF-8 bytes with unchanged finite values, missing nulls and provenance.
     /// # Errors
@@ -48,7 +46,6 @@ impl PyRxMer {
     }
     /// Saves new decoded JSON and its recipe/source provenance sidecar in Rust.
     /// # Arguments
-    /// * `py` - Interpreter token, released throughout native I/O.
     /// * `path` - New destination; existing files and sidecars are never overwritten.
     /// # Returns
     /// None after successful publication; original captures remain unchanged.
@@ -71,7 +68,6 @@ impl PyRxMer {
     }
     /// Converts this loaded RxMER to owned PNM 1.0 bytes through Rust validation.
     /// # Arguments
-    /// * `py` - Interpreter token; released during native conversion.
     /// * `clamp` - Explicitly opt into clipping outside 0..63.5 dB; default false.
     /// # Returns
     /// New binary bytes; quarter-dB rounding preserves missing samples and source data.
@@ -87,7 +83,6 @@ impl PyRxMer {
     }
     /// Computes a full-grid export summary using the shared Rust encoder.
     /// # Arguments
-    /// * `py` - Interpreter token, released during encoding.
     /// * `clamp` - Explicit out-of-range conversion policy; defaults to rejection.
     /// # Returns
     /// Independent counts, rounding/clipping changes and encoded byte count.
@@ -110,7 +105,6 @@ impl PyRxMer {
     }
     /// Saves a new PNM file and its MERLIN provenance sidecar through Rust I/O.
     /// # Arguments
-    /// * `py` - Interpreter token, released for conversion and file I/O.
     /// * `path` - New destination, never an input replacement.
     /// * `clamp` - Explicitly enable range clipping; nonfinite readings always fail.
     /// # Returns

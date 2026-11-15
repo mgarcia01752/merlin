@@ -487,3 +487,53 @@ location's logs exactly. Formatting, targeted example Clippy, generated-guide
 freshness and 451 relative documentation links passed. An initial formatting
 check caught the longer Rust constant line; cargo fmt corrected it and the final
 check passed. No engine changes or full-suite/Qt/platform checks were needed.
+
+## API-DOC-01: generated high-level references
+
+Implemented tools/python/build_api_reference.py and a pinned, isolated Sphinx
+8.1.3 development environment. The helper builds strict rustdoc for the core
+high-level API and pnm-input, then uses actual native Python signatures and
+docstrings to generate searchable per-class references. A metadata inventory
+records the native artifact/version and all 58 class exports with 191 declared
+public members. Coverage validation checks every member anchor. Factory/result
+types are identified as lacking a public constructor; no scientific object is
+constructed during discovery. Mock/non-native modules, version drift, unknown
+export kinds, redirected/unowned output and missing members fail explicitly.
+Generated sources/HTML stay under ignored local/api-reference with a shared
+landing page; the helper reuses the normal Cargo target cache.
+
+Removed hidden interpreter arguments from Python-facing source docstrings and
+documented input quantity units/ranges, result units, option defaults and ownership.
+Rebuilt the CPython 3.10 Linux wheel with existing notice collection and installed
+it only in project-local documentation/test environments. No scientific methods
+or algorithms changed. Escaped literal bracket expressions with code formatting
+in the six reported rustdoc warning sites; no warning suppression was introduced.
+
+Validation on Ubuntu x86_64 / CPython 3.10:
+
+| Check | Result |
+| --- | --- |
+| Full reference build with CARGO_NET_OFFLINE=true | Passed, final rebuild 5.09s; Rust and Sphinx warnings are errors |
+| Native export/member HTML coverage | 58 classes, 191 members; passed |
+| Documentation tooling regression tests | 6 passed, 0.012s |
+| Native Python API tests | 8 passed, 2.176s |
+| Native saved-workbench tests | 4 passed, 6.159s |
+| Core and binding formatting; binding all-target Clippy | Passed |
+| Generated HTML local links/resources | 1,208 resolved |
+| Changed Markdown relative links | 650 resolved |
+| Isolated documentation dependency check | Passed |
+| Native help/signature smoke check | Public docs omit interpreter arguments; units/signatures present |
+| Headless Chrome rendering of generated Merlin page | Reviewed; class signature, search, parameters, results and errors readable |
+| Integration-guide freshness and diff whitespace | Passed |
+
+The first discovery attempt correctly rejected the Maturin package wrapper;
+support was then added for its verified native merlin.merlin extension as well
+as direct extension installs. Initial Sphinx underline warnings and two omitted
+result-quantity macro descriptions were corrected before final strict builds.
+An inherited PYTHONPATH exposed unrelated PyPNM metadata to the initial isolated
+pip resolver; subsequent setup/check/build commands clear it. PyPNM was not
+modified or used for documentation. No credentials, private inputs or compiled
+artifacts are tracked. Existing full simulation/Qt suites were not rerun for
+source-documentation and generator changes. Other platforms, publication and
+hosted CI integration are not verified or enabled. Local evidence is under
+docs/development/local/api-reference/.

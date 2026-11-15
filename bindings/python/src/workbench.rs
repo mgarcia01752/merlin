@@ -68,7 +68,6 @@ impl PyWorkbench {
 impl PyWorkbench {
     /// Loads the saved WB and embedded originals through native Rust preflight.
     /// # Arguments
-    /// * `py` - Interpreter released during filesystem access, decoding and validation.
     /// * `path` - Existing self-contained workbench JSON path.
     /// # Returns
     /// Idle saved-profile controllers; simulation starts only on run.
@@ -82,7 +81,6 @@ impl PyWorkbench {
     }
     /// Loads copied WB bytes with the same native semantics as file loading.
     /// # Arguments
-    /// * `py` - Interpreter released during decoding and validation.
     /// * `data` - Complete bounded saved-WB JSON bytes, retained independently.
     /// # Returns
     /// Validated idle WB; no simulation or CLI subprocess starts.
@@ -112,23 +110,20 @@ impl PyWorkbench {
             .collect()
     }
     /// Explicitly simulates every saved selected profile through the existing Rust API.
-    /// # Arguments
-    /// * `py` - Interpreter released by the existing native job adapter during simulation.
     /// # Returns
     /// One owned BatchReport per profile, in profile_ids order; IDs remain controller-scoped.
     /// # Errors
-    /// Structured Busy/preflight errors and Python interrupts; inspect batch status for partials.
+    /// Structured Busy/preflight/conversion errors; inspect batch status for partials.
     fn run(&self, py: Python<'_>) -> PyResult<Vec<PyBatchReport>> {
         self.execute(py, api::RunControl::new())
     }
     /// Simulates saved profiles with shared cooperative cancellation.
     /// # Arguments
-    /// * `py` - Interpreter released during simulation with existing signal polling.
     /// * `control` - Shareable cancellation token; later profiles become not-started.
     /// # Returns
     /// Independently owned complete/partial/not-started batches in profile order.
     /// # Errors
-    /// Existing Busy, preflight and Python-interrupt errors.
+    /// Existing Busy, preflight and conversion errors. Interrupts request cancellation.
     fn run_with_control(
         &self,
         py: Python<'_>,

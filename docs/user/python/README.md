@@ -13,6 +13,9 @@ claim about an existing release asset. The tested development target is Ubuntu
 For PyPNM or another consumer, see [downstream installation and version
 pinning](integration.md).
 
+The [generated Python API reference](../../reference/api-reference.md) provides
+searchable native class, method, constructor-signature and property pages.
+
 ## Runnable examples
 
 The [matching Rust/Python example inventory](../../../examples/api/README.md)

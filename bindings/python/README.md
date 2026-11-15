@@ -4,6 +4,10 @@ Optional PyO3/maturin workspace consuming the canonical high-level Rust API and
 `pnm-input`. No Qt, CLI subprocess, Python scientific calculations or second
 engine. Distribution name `merlin-ofdm`, import name `merlin`.
 
+Generated class/method/property HTML is available through the
+[API reference builder](../../docs/reference/api-reference.md). It introspects
+the installed native extension and checks complete exported-member coverage.
+
 See [setup and usage](../../docs/user/python/README.md),
 [runnable examples](../../examples/api/README.md),
 [shared Rust workflow](../../docs/user/api/README.md) and

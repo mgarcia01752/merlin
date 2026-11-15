@@ -152,3 +152,10 @@ The local gate also runs the packaging and external-vector admission helper test
 For prepared native workflows and package builders, see
 [native validation/delivery](native-delivery.md). These workflows stay unpushed
 until requested; passing this Linux gate does not establish Windows/macOS support.
+
+## Generated API references
+
+See the [Rust/Python API reference build guide](../reference/api-reference.md).
+The development-only builder uses rustdoc and pinned Sphinx against a current
+native wheel, fails on warnings and missing Python members, and writes ignored
+local HTML with a shared landing page. No Qt or simulation run is required.

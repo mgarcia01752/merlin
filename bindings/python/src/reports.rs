@@ -7,8 +7,8 @@ use crate::{api, error, object_from_json, options::PyEvaluationOptions, quantiti
 use pyo3::prelude::*;
 use std::sync::Arc;
 macro_rules! result_quantity {
-    ($python:ident,$native:ident,$primitive:ty,$name:literal) => {
-        #[doc=concat!("Read-only Rust ",$name,"; explicit primitive conversion through .value.")]
+    ($python:ident,$native:ident,$primitive:ty,$name:literal,$description:literal) => {
+        #[doc=concat!("Read-only Rust ",$name,". ",$description," Primitive conversion is explicit through .value. Instances come from owned native reports, not caller construction.")]
         #[pyclass(from_py_object,frozen,module="merlin",name=$name)]
         #[derive(Clone)]
         pub(crate) struct $python(pub(crate) api::$native);
@@ -24,13 +24,55 @@ macro_rules! result_quantity {
         }
     };
 }
-result_quantity!(PyCodewordCount, CodewordCount, u64, "CodewordCount");
-result_quantity!(PyBitCount, BitCount, u64, "BitCount");
-result_quantity!(PySampleCount, SampleCount, u64, "SampleCount");
-result_quantity!(PyElapsedTime, ElapsedTime, u64, "ElapsedTime");
-result_quantity!(PyBitErrorRatio, BitErrorRatio, f64, "BitErrorRatio");
-result_quantity!(PyPayloadRate, PayloadRate, f64, "PayloadRate");
-result_quantity!(PyLinearPower, LinearPower, f64, "LinearPower");
+result_quantity!(
+    PyCodewordCount,
+    CodewordCount,
+    u64,
+    "CodewordCount",
+    "Completed simulated codewords."
+);
+result_quantity!(
+    PyBitCount,
+    BitCount,
+    u64,
+    "BitCount",
+    "Independently compared source bits."
+);
+result_quantity!(
+    PySampleCount,
+    SampleCount,
+    u64,
+    "SampleCount",
+    "Valid same-bin diagnostic samples."
+);
+result_quantity!(
+    PyElapsedTime,
+    ElapsedTime,
+    u64,
+    "ElapsedTime",
+    "Host elapsed milliseconds; not simulated duration."
+);
+result_quantity!(
+    PyBitErrorRatio,
+    BitErrorRatio,
+    f64,
+    "BitErrorRatio",
+    "Post-FEC dimensionless bit-error ratio."
+);
+result_quantity!(
+    PyPayloadRate,
+    PayloadRate,
+    f64,
+    "PayloadRate",
+    "Payload information bits per second, not application goodput."
+);
+result_quantity!(
+    PyLinearPower,
+    LinearPower,
+    f64,
+    "LinearPower",
+    "Accumulated normalized power; not calibrated RF power."
+);
 /// Native batch status, independent of decoder success.
 #[pyclass(
     from_py_object,
@@ -276,8 +318,6 @@ impl PyBatchReport {
         self.0.to_json().map_err(error)
     }
     /// Export an independent JSON transport snapshot that cannot mutate native state.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// An independent JSON-compatible snapshot; caller edits cannot mutate native results.
     /// # Errors
@@ -364,8 +404,6 @@ impl PyExperimentEntry {
         })
     }
     /// Read measurement sources from the native Rust snapshot.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// Independent contributor, response-selection, epoch and derivation metadata.
     /// # Errors
@@ -441,8 +479,6 @@ impl PyPerformanceReport {
         PyEvaluationOptions::from_native(self.report().options())
     }
     /// Read configuration from the native Rust snapshot.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// An independent JSON snapshot of resolved values, origins and validated geometry.
     /// # Errors
@@ -455,8 +491,6 @@ impl PyPerformanceReport {
         )
     }
     /// Read measurement sources from the native Rust snapshot.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// Independent contributor, response-selection, epoch and derivation metadata.
     /// # Errors
@@ -469,8 +503,6 @@ impl PyPerformanceReport {
         )
     }
     /// Read carrier mer from the native Rust snapshot.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// An immutable tuple of per-carrier native MER/power observations.
     /// # Errors
@@ -488,8 +520,6 @@ impl PyPerformanceReport {
         .unbind())
     }
     /// Read diagnostics from the native Rust snapshot.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// An independent scoped native diagnostic snapshot, or None before construction.
     /// # Errors
@@ -509,8 +539,6 @@ impl PyPerformanceReport {
         self.report().to_json().map_err(error)
     }
     /// Export an independent JSON transport snapshot that cannot mutate native state.
-    /// # Arguments
-    /// * `py` - Interpreter token used only for conversion, signal handling or lock release.
     /// # Returns
     /// An independent JSON-compatible snapshot; caller edits cannot mutate native results.
     /// # Errors
@@ -548,12 +576,19 @@ pub(crate) fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
     Ok(())
 }
 
-result_quantity!(PyResponseReal, ResponseReal, f64, "ResponseReal");
+result_quantity!(
+    PyResponseReal,
+    ResponseReal,
+    f64,
+    "ResponseReal",
+    "Dimensionless real component of a complex channel response."
+);
 result_quantity!(
     PyResponseImaginary,
     ResponseImaginary,
     f64,
-    "ResponseImaginary"
+    "ResponseImaginary",
+    "Dimensionless imaginary component of a complex channel response."
 );
 /// Opaque native experiment identity scoped to its originating controller.
 #[pyclass(from_py_object, frozen, module = "merlin", name = "ExperimentId")]
