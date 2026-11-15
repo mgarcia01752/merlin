@@ -18,14 +18,14 @@ or start a sidecar service.
 
 ## Version and availability
 
-The documented package version is **0.3.0** and the corresponding source
-release reference is **v0.3.0**. A reference is an expected source pin,
+The documented package version is **0.3.1** and the corresponding source
+release reference is **v0.3.1**. A reference is an expected source pin,
 not a claim that the tag already exists or that a wheel has been published.
 Verify that the chosen source contains the API and that approved wheel assets
 exist before configuring a downstream public dependency.
 
 The development validation target is Ubuntu 22.04 x86_64 / CPython 3.10. Its
-wheel filename is `merlin_ofdm-0.3.0-cp310-cp310-linux_x86_64.whl`. Each
+wheel filename is `merlin_ofdm-0.3.1-cp310-cp310-linux_x86_64.whl`. Each
 release needs its own validated artifact. Other platforms and Python ABIs
 remain unverified unless that release supplies supporting evidence. A native
 `linux_x86_64` wheel does not promise manylinux compatibility.
@@ -50,7 +50,7 @@ environment in the MERLIN checkout:
 ```bash
 python3 -m venv local/api-consumer
 local/api-consumer/bin/python -m pip install --no-index --only-binary=:all: \
-  --find-links local/python-wheels 'merlin-ofdm==0.3.0'
+  --find-links local/python-wheels 'merlin-ofdm==0.3.1'
 local/api-consumer/bin/python -c 'import merlin; from importlib.metadata import version; print(version("merlin-ofdm")); print(merlin.__file__)'
 ```
 
@@ -72,7 +72,7 @@ metadata:
 
 ```toml
 [project.optional-dependencies]
-merlin = ["merlin-ofdm==0.3.0"]
+merlin = ["merlin-ofdm==0.3.1"]
 ```
 
 Merge that declaration into the existing project metadata. If MERLIN is required
@@ -121,7 +121,7 @@ Package-index delivery lets pip choose the compatible wheel for a version.
 For reproducible deployment from a wheelhouse, use a locked requirement such as:
 
 ```text
-merlin-ofdm==0.3.0 --hash=sha256:<VERIFIED_WHEEL_SHA256>
+merlin-ofdm==0.3.1 --hash=sha256:<VERIFIED_WHEEL_SHA256>
 ```
 
 Replace `<VERIFIED_WHEEL_SHA256>` with the verified digest for the exact wheel
