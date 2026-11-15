@@ -2388,3 +2388,14 @@ field and arrow widths. It uses two groups per row when they fit, otherwise one
 group per row, keeping mouse targets within the clipped effects editor. This is
 presentation only; existing Rust validation, frequency units and recipe semantics
 are unchanged. [Design](development/features/rxmer-designer/design.md#rxmer-design-12-font-aware-notch-field-layout).
+
+
+### Ubuntu 22.04+ released-package compatibility
+
+Keep Ubuntu 22.04 as the release build baseline and preserve artifact names.
+The release-only `ubuntu-compatibility` job depends on the desktop and Python
+wheel builders and tests their checksummed artifacts on Ubuntu 24.04 and 26.04.
+It runs the real Python example and desktop installed lifecycle checks without
+building replacement artifacts. Reusable-workflow completion gates publication;
+existing three-version core tests and Windows/security checks remain mandatory.
+New hosted compatibility execution is pending; no local installation is required.

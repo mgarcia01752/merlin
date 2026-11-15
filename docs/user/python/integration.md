@@ -24,7 +24,9 @@ not a claim that the tag already exists or that a wheel has been published.
 Verify that the chosen source contains the API and that approved wheel assets
 exist before configuring a downstream public dependency.
 
-The development validation target is Ubuntu 22.04 x86_64 / CPython 3.10. Its
+The Ubuntu target is 22.04+ x86_64 / CPython 3.10. Release CI builds on 22.04
+and tests that same wheel on 24.04 and 26.04; new checks remain pending hosted
+validation. Its
 wheel filename is `merlin_ofdm-0.3.1-cp310-cp310-linux_x86_64.whl`. Each
 release needs its own validated artifact. Other platforms and Python ABIs
 remain unverified unless that release supplies supporting evidence. A native

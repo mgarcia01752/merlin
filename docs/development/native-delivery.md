@@ -157,3 +157,14 @@ both artifacts alongside all existing application/security gates. Separate
 JSON test evidence is retained on failure/success. See the
 [Python wheel release guide](../user/python/releases.md); configured Windows
 wheel execution remains unverified until a native hosted run succeeds.
+
+
+### Ubuntu 22.04+ released-package compatibility
+
+Keep Ubuntu 22.04 as the release build baseline and preserve artifact names.
+The release-only `ubuntu-compatibility` job depends on the desktop and Python
+wheel builders and tests their checksummed artifacts on Ubuntu 24.04 and 26.04.
+It runs the real Python example and desktop installed lifecycle checks without
+building replacement artifacts. Reusable-workflow completion gates publication;
+existing three-version core tests and Windows/security checks remain mandatory.
+New hosted compatibility execution is pending; no local installation is required.

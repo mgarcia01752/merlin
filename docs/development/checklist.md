@@ -1533,3 +1533,7 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **API-DOC-02** Name guides Basic Rust API / Basic Python API and separate
   Rust/Python example syntax in coding-style and public-api guidance. Preserve
   API signatures and package names. Documentation tooling and syntax checks pass.
+
+- [ ] **UBUNTU-COMPAT-01** Validate original 22.04 desktop/wheel assets on
+  Ubuntu 24.04 and 26.04 before release. Matrix and Ubuntu 22.04+ documentation
+  implemented; local workflow/tooling checks pass, hosted execution pending.

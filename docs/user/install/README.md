@@ -4,9 +4,9 @@ Choose the desktop package for the simulation workbench:
 
 | Platform | Install / uninstall |
 | --- | --- |
-| Ubuntu 22.04 amd64 desktop | [Desktop DEB](ubuntu-desktop.md) |
+| Ubuntu 22.04+ amd64 desktop | [Desktop DEB](ubuntu-desktop.md) |
 | Windows x64 desktop UI | [Desktop MSI](windows.md) |
-| Ubuntu 22.04, 24.04 and 26.04 x64 CLI | [CLI DEB or portable archive](linux.md) |
+| Ubuntu 22.04+ x64 CLI | [CLI DEB or portable archive](linux.md) |
 
 Windows native build/MSI/install/repair/shortcut/uninstall checks pass in v0.2.7.
 Interactive Windows 11 and upgrade/downgrade review remain pending. Windows CLI

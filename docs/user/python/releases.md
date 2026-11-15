@@ -89,3 +89,15 @@ The helper creates/removes its temporary venv, leaves inputs untouched and rejec
 an existing output directory. It publishes nothing. Reports/artifacts belong in
 ignored `local/`, `dist/` or `docs/development/local/` folders. Native Windows
 validation must run on Windows; a passing Linux check cannot verify its `.pyd`.
+
+## Ubuntu 22.04+ compatibility
+
+Ubuntu 22.04+ means the x64 LTS target family, with explicit release checks on
+22.04, 24.04 and 26.04. It is not a promise for every future Ubuntu release.
+The `ubuntu22.04` asset name identifies the build baseline and remains unchanged.
+The release-only `ubuntu-compatibility` matrix downloads the original 22.04
+wheel and desktop DEB, verifies checksums, runs the Python single-capture example
+in a clean CPython 3.10 environment, and exercises desktop install/reinstall/
+removal. No replacement packages are built on newer hosts. Both jobs must pass
+before publication. The newly added 24.04/26.04 installed checks are pending
+hosted execution; configuration alone is not runtime evidence.

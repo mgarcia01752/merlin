@@ -1,6 +1,6 @@
-# Ubuntu 22.04 desktop installation
+# Ubuntu 22.04+ desktop installation
 
-The current desktop installer targets **Ubuntu 22.04 x64 (amd64)**. It includes
+The current desktop installer targets **Ubuntu 22.04+ x64 (amd64)**. It includes
 the workbench, private Qt runtime, rounded desktop icon, user guides and all three
 runnable example bundles, including channel 193 `multi-rxmer-2`.
 
@@ -58,7 +58,7 @@ folder; packaged examples are read-only system resources.
 
 MERLIN checks once in the background shortly after startup. A green **Update**
 chip appears at the right of the **File | Settings | About** menu row when a
-newer stable Ubuntu 22.04 amd64 desktop release is available. Click **Update**
+newer stable Ubuntu 22.04+ amd64 desktop release is available. Click **Update**
 to start downloading and verifying it. Ubuntu asks for administrator approval;
 after installation MERLIN restarts automatically as your normal desktop user.
 You do not need to download a DEB manually or click Update a second time.
@@ -105,3 +105,15 @@ prerequisites separately. Local package extraction/startup checks and hosted
 install/reinstall/remove tests are distinct validation steps; consult the
 [desktop delivery design](../../development/features/ubuntu-desktop/design.md)
 for the actual recorded evidence.
+
+## Ubuntu 22.04+ compatibility
+
+Ubuntu 22.04+ means the x64 LTS target family, with explicit release checks on
+22.04, 24.04 and 26.04. It is not a promise for every future Ubuntu release.
+The `ubuntu22.04` asset name identifies the build baseline and remains unchanged.
+The release-only `ubuntu-compatibility` matrix downloads the original 22.04
+wheel and desktop DEB, verifies checksums, runs the Python single-capture example
+in a clean CPython 3.10 environment, and exercises desktop install/reinstall/
+removal. No replacement packages are built on newer hosts. Both jobs must pass
+before publication. The newly added 24.04/26.04 installed checks are pending
+hosted execution; configuration alone is not runtime evidence.

@@ -1,6 +1,6 @@
 # Ubuntu install and uninstall
 
-Use the DEB on Ubuntu 22.04, 24.04 or 26.04 x64. The release Linux build runs on22.04,
+Use the DEB on Ubuntu 22.04+ x64 (CI covers 22.04, 24.04 and 26.04). The release Linux build runs on22.04,
 so its libc baseline is not raised by building on a newer Ubuntu release.
 Download the matching `.deb` and `SHA256SUMS` from the release assets.
 

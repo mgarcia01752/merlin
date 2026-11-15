@@ -370,3 +370,62 @@ jobs:
           path: dist/python-wheel-${{ matrix.name }}/
           if-no-files-found: error
           retention-days: 14
+
+  ubuntu-compatibility:
+    name: Release package compatibility (${{ matrix.os }})
+    if: inputs.release && github.ref_type == 'tag'
+    needs: [desktop, python-wheels]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-26.04]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    env:
+      PYTHONPATH: ''
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.10'
+          architecture: x64
+      - uses: actions/download-artifact@v7
+        with:
+          name: merlin-assets-python-ubuntu22-x64
+          path: local/compatibility-wheel
+      - uses: actions/download-artifact@v7
+        with:
+          name: merlin-assets-desktop-ubuntu22-amd64
+          path: local/compatibility-desktop
+      - name: Verify original Ubuntu 22.04 artifact checksums
+        run: |
+          (cd local/compatibility-wheel && sha256sum --check SHA256SUMS)
+          (cd local/compatibility-desktop && sha256sum --check SHA256SUMS)
+      - name: Install baseline wheel and run actual Python example
+        run: >-
+          python tools/python/smoke_wheel.py --wheel-dir local/compatibility-wheel
+          --output dist/compatibility-${{ matrix.os }}
+          --report dist/compatibility-${{ matrix.os }}-test.json
+      - name: Install, exercise, reinstall and remove baseline desktop DEB
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y desktop-file-utils
+          sudo apt-get install -y ./local/compatibility-desktop/merlin-desktop_*.deb
+          python tools/packaging/desktop_smoke.py --installed
+          sudo apt-get install --reinstall -y ./local/compatibility-desktop/merlin-desktop_*.deb
+          python tools/packaging/desktop_smoke.py --installed
+          sudo apt-get remove -y merlin
+          test ! -e /usr/bin/merlin
+          test ! -e /usr/lib/merlin
+          test ! -e /usr/share/applications/merlin.desktop
+          test ! -e /usr/share/icons/hicolor/256x256/apps/merlin.png
+      - name: Retain compatibility evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: merlin-compatibility-evidence-${{ matrix.os }}
+          path: |
+            dist/compatibility-${{ matrix.os }}-test.json
+            docs/development/local/desktop-installed-check/
+          if-no-files-found: warn
+          retention-days: 14

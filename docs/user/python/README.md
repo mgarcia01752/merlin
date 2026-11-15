@@ -7,8 +7,9 @@ subprocess and does not require Qt.
 
 Distribution name: `merlin-ofdm`. Import name: `merlin`. The wheel described here
 is a local development artifact from the checkout, not a published package or a
-claim about an existing release asset. The tested development target is Ubuntu
-22.04 x86_64 with CPython 3.10. Other Python versions and platforms are unverified.
+claim about an existing release asset. The Ubuntu target is 22.04+ x86_64 with CPython 3.10. Release CI builds on
+22.04 and checks the same wheel on 24.04 and 26.04. New compatibility checks
+remain unverified until hosted CI passes; other Python ABIs are not covered.
 
 For PyPNM or another consumer, see [downstream installation and version
 pinning](integration.md).
