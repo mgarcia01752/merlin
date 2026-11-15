@@ -128,3 +128,35 @@ confirmed readable small triangles; mouse clicks changed -4 to -3 and back
 to -4 dB. Refreshed the normal/PLC-zoom dark guide captures. Review used owned
 application instances and isolated preferences; the existing user app was
 preserved. No core signal-processing or recipe behavior changed.
+
+## RXMER-DESIGN-09: ripple depth and spacing steppers
+
+Reuse the compact stacked triangle controls for ripple peak-to-peak depth and
+explicit crest spacing. Steps are 1 dB and 1 MHz respectively; retain fractional
+text entry, Up/Down keys, capture scope and zoom. Extract the existing visual
+stack as a local inline component so tilt and ripple share dimensions, theme,
+focus and tooltip behavior. New step guards require enabled Ripple and valid
+current/next values within the existing Rust recipe domain. The spacing control
+is inactive in echo-distance mode. Rust remains the admission authority. Validation is recorded below alongside
+RXMER-DESIGN-10.
+
+## RXMER-DESIGN-10: notch field steppers
+
+Apply the same shared stack to center, width, depth and edge. Frequency steps
+are 1 MHz; depth steps are 1 dB. Keep fractional editing and keyboard stepping.
+Guard the proposed notch against existing Rust bounds: its band stays within
+the capture grid, edge is at most half the width, and depth is 0–60 dB. Zero
+edge is allowed. Disabled effects retain their drafts. No numerical model or
+recipe schema changes. Cover bounds, scope and zoom in QML and inspect native
+dark/light rendering alongside RXMER-DESIGN-09.
+
+Validation for RXMER-DESIGN-09/10: Qt formatting, Clippy, native build, all
+80 adapter tests (63.90s) and all 74 QML checks (19.383s) passed. The focused
+Designer suite passed 11 checks (1.140s), covering fractional and keyboard
+steps, disabled guards, notch band/edge limits, capture scope and zoom. Native
+VM dark/light inspection confirmed all stacks fit within the existing left
+column. Native mouse stepping exercised ripple and all four notch fields;
+normal and PLC-zoom dark guide images were refreshed. Isolated review app
+instances were closed without applying drafts or changing user preferences.
+Qt owns these edit conveniences; Rust recipe admission and numerical models
+are unchanged, so no architecture ownership change was needed.

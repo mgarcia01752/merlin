@@ -40,6 +40,63 @@ WorkbenchDialog {
     function stepTilt(delta) {
         if (canStepTilt(delta)) {tiltDb.text=String(Number(tiltDb.text)+delta);refresh()}
     }
+    // Mirrors the existing positive u32-Hz input domain for button guards only.
+    readonly property real maximumFrequencyHz: 4294967295
+    function canStepRipple(field,delta) {
+        const value=Number(field.text), next=value+delta
+        if (!ripple.checked || field.text.trim().length===0 || !Number.isFinite(value) || !Number.isFinite(next)) {return false}
+        if (field===rippleDb) {return value>=0 && value<=60 && next>=0 && next<=60}
+        return !distanceMode.checked && Math.round(value*1e6)>=1 && Math.round(value*1e6)<=maximumFrequencyHz
+            && Math.round(next*1e6)>=1 && Math.round(next*1e6)<=maximumFrequencyHz
+    }
+    function stepRipple(field,delta) {
+        if (canStepRipple(field,delta)) {field.text=String(Number(field.text)+delta);refresh()}
+    }
+    function canStepNotch(field,delta) {
+        const value=Number(field.text), next=value+delta
+        if (!notch.checked || field.text.trim().length===0 || !Number.isFinite(value) || !Number.isFinite(next)) {return false}
+        if (field===depth) {return value>=0 && value<=60 && next>=0 && next<=60}
+        const centerHz=Math.round(Number(center.text)*1e6), widthHz=Math.round(Number(bandwidth.text)*1e6), edgeHz=Math.round(Number(edge.text)*1e6)
+        function valid(centerValue,widthValue,edgeValue) {
+            return Number.isFinite(centerValue) && Number.isFinite(widthValue) && Number.isFinite(edgeValue)
+                && centerValue>=0 && centerValue<=maximumFrequencyHz && widthValue>=1 && widthValue<=maximumFrequencyHz
+                && edgeValue>=0 && edgeValue<=widthValue/2
+                && centerValue-widthValue/2>=information.first_hz && centerValue+widthValue/2<=information.last_hz
+        }
+        if (center.text.trim().length===0 || bandwidth.text.trim().length===0 || edge.text.trim().length===0 || !valid(centerHz,widthHz,edgeHz)) {return false}
+        return valid(field===center ? Math.round(next*1e6):centerHz,
+            field===bandwidth ? Math.round(next*1e6):widthHz,field===edge ? Math.round(next*1e6):edgeHz)
+    }
+    function stepNotch(field,delta) {
+        if (canStepNotch(field,delta)) {field.text=String(Number(field.text)+delta);refresh()}
+    }
+    component StepButtons: ColumnLayout {
+        id:stepper
+        required property var theme
+        required property string namePrefix
+        required property string increaseDescription
+        required property string decreaseDescription
+        property bool canIncrease: false
+        property bool canDecrease: false
+        signal increaseRequested()
+        signal decreaseRequested()
+        spacing:2
+        Layout.alignment:Qt.AlignVCenter
+        WorkbenchActionButton {
+            theme:stepper.theme;objectName:stepper.namePrefix+"Up";text:"▴";compact:true
+            implicitWidth:26;implicitHeight:14;padding:0;font.pixelSize:10
+            enabled:stepper.canIncrease;onClicked:stepper.increaseRequested()
+            Accessible.name:stepper.increaseDescription
+            ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
+        }
+        WorkbenchActionButton {
+            theme:stepper.theme;objectName:stepper.namePrefix+"Down";text:"▾";compact:true
+            implicitWidth:26;implicitHeight:14;padding:0;font.pixelSize:10
+            enabled:stepper.canDecrease;onClicked:stepper.decreaseRequested()
+            Accessible.name:stepper.decreaseDescription
+            ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
+        }
+    }
     function document() { return JSON.stringify({source:source.currentIndex === 0 ? "imported":"flat",capture_count:captureCount,baseline_db:Number(baseline.text),recipe:recipe()}) }
     function refresh() { if (!initializing && visible && !working) { viewport=JSON.parse(backend.designer_preview(document(),Math.round(preview.value),viewStart,viewCount));errorMessage=viewport.error || "";diagnostic=viewport.diagnostic || null } }
     function setWindow(start,count) {viewStart=start;viewCount=count;refresh()}
@@ -117,34 +174,57 @@ WorkbenchDialog {
                             Keys.onDownPressed:dialog.stepTilt(-1)
                         }
                         Label {text:"dB";color:theme.text}
-                        ColumnLayout {
-                            spacing:2
-                            Layout.alignment:Qt.AlignVCenter
-                            WorkbenchActionButton {
-                                theme:dialog.theme;objectName:"designerTiltUp";text:"▴";compact:true
-                                implicitWidth:26;implicitHeight:14;padding:0;font.pixelSize:10
-                                enabled:dialog.canStepTilt(1);onClicked:dialog.stepTilt(1)
-                                Accessible.name:"Increase RxMER tilt by 1 dB"
-                                ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
-                            }
-                            WorkbenchActionButton {
-                                theme:dialog.theme;objectName:"designerTiltDown";text:"▾";compact:true
-                                implicitWidth:26;implicitHeight:14;padding:0;font.pixelSize:10
-                                enabled:dialog.canStepTilt(-1);onClicked:dialog.stepTilt(-1)
-                                Accessible.name:"Decrease RxMER tilt by 1 dB"
-                                ToolTip.visible:hovered || activeFocus;ToolTip.text:Accessible.name
-                            }
+                        StepButtons {
+                            theme:dialog.theme;namePrefix:"designerTilt"
+                            canIncrease:dialog.canStepTilt(1);canDecrease:dialog.canStepTilt(-1)
+                            increaseDescription:"Increase RxMER tilt by 1 dB"
+                            decreaseDescription:"Decrease RxMER tilt by 1 dB"
+                            onIncreaseRequested:dialog.stepTilt(1)
+                            onDecreaseRequested:dialog.stepTilt(-1)
                         }
 
                     }
                     RxmerDesignScope {id:tiltScope;objectName:"designerTiltScope";enabled:tilt.checked;opacity:enabled ? 1:0.5;theme:dialog.theme;captureCount:dialog.captureCount;onEdited:dialog.refresh()}
                     Rectangle {Layout.fillWidth:true; height:1;color:theme.line}
                     CheckBox {id:ripple;objectName:"designerRipple";text:"Ripple";onToggled:dialog.refresh()}
-                    RowLayout {Label {text:"Peak-to-peak (dB)";color:theme.text}
-TextField {id:rippleDb;text:"2";Layout.preferredWidth:80;onEditingFinished:dialog.refresh()} }
-                    CheckBox {id:distanceMode;text:"Use echo-distance spacing helper";onToggled:dialog.refresh();ToolTip.visible:hovered || activeFocus;ToolTip.text:"Assumes a round-trip cable cavity: crest spacing = c × velocity factor / (2 × distance). Depth is an independent MER edit; no RF phase is modeled."}
-                    RowLayout {visible:!distanceMode.checked;Label {text:"Crest spacing (MHz)";color:theme.text}
-TextField {id:spacing;text:"20";Layout.preferredWidth:80;onEditingFinished:dialog.refresh()} }
+                    RowLayout {
+                        Label {text:"Peak-to-peak (dB)";color:theme.text}
+                        TextField {
+                            id:rippleDb;objectName:"designerRippleDb";text:"2";Layout.preferredWidth:80
+                            Accessible.name:"Ripple peak-to-peak depth in dB"
+                            onEditingFinished:dialog.refresh()
+                            Keys.onUpPressed:dialog.stepRipple(rippleDb,1)
+                            Keys.onDownPressed:dialog.stepRipple(rippleDb,-1)
+                        }
+                        StepButtons {
+                            theme:dialog.theme;namePrefix:"designerRippleDepth"
+                            canIncrease:dialog.canStepRipple(rippleDb,1);canDecrease:dialog.canStepRipple(rippleDb,-1)
+                            increaseDescription:"Increase ripple peak-to-peak by 1 dB"
+                            decreaseDescription:"Decrease ripple peak-to-peak by 1 dB"
+                            onIncreaseRequested:dialog.stepRipple(rippleDb,1)
+                            onDecreaseRequested:dialog.stepRipple(rippleDb,-1)
+                        }
+                    }
+                    CheckBox {id:distanceMode;objectName:"designerRippleDistanceMode";text:"Use echo-distance spacing helper";onToggled:dialog.refresh();ToolTip.visible:hovered || activeFocus;ToolTip.text:"Assumes a round-trip cable cavity: crest spacing = c × velocity factor / (2 × distance). Depth is an independent MER edit; no RF phase is modeled."}
+                    RowLayout {
+                        visible:!distanceMode.checked
+                        Label {text:"Crest spacing (MHz)";color:theme.text}
+                        TextField {
+                            id:spacing;objectName:"designerRippleSpacing";text:"20";Layout.preferredWidth:80
+                            Accessible.name:"Ripple crest spacing in MHz"
+                            onEditingFinished:dialog.refresh()
+                            Keys.onUpPressed:dialog.stepRipple(spacing,1)
+                            Keys.onDownPressed:dialog.stepRipple(spacing,-1)
+                        }
+                        StepButtons {
+                            theme:dialog.theme;namePrefix:"designerRippleSpacing"
+                            canIncrease:dialog.canStepRipple(spacing,1);canDecrease:dialog.canStepRipple(spacing,-1)
+                            increaseDescription:"Increase ripple crest spacing by 1 MHz"
+                            decreaseDescription:"Decrease ripple crest spacing by 1 MHz"
+                            onIncreaseRequested:dialog.stepRipple(spacing,1)
+                            onDecreaseRequested:dialog.stepRipple(spacing,-1)
+                        }
+                    }
                     RowLayout {visible:distanceMode.checked;Label {text:"Distance (m)";color:theme.text}
 TextField {id:distance;text:"6.37";Layout.preferredWidth:70;onEditingFinished:dialog.refresh()}
 Label {text:"VF";color:theme.text}
@@ -152,15 +232,71 @@ TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.r
                     RxmerDesignScope {id:rippleScope;theme:dialog.theme;captureCount:dialog.captureCount;onEdited:dialog.refresh()}
                     Rectangle {Layout.fillWidth:true;height:1;color:theme.line}
                     CheckBox {id:notch;objectName:"designerNotch";text:"LTE / 5G-style notch";onToggled:dialog.refresh();ToolTip.visible:hovered || activeFocus;ToolTip.text:"Synthetic reduction in MER over a frequency band, not an LTE or 5G waveform simulation."}
-                    GridLayout {columns:4
+                    GridLayout {columns:6
                         Label {text:"Center MHz";color:theme.text}
-TextField {id:center;Layout.preferredWidth:75;onEditingFinished:dialog.refresh()}
+                        TextField {
+                            id:center;objectName:"designerNotchCenter";text:"";Layout.preferredWidth:75
+                            Accessible.name:"Notch center in MHz"
+                            onEditingFinished:dialog.refresh()
+                            Keys.onUpPressed:dialog.stepNotch(center,1)
+                            Keys.onDownPressed:dialog.stepNotch(center,-1)
+                        }
+                        StepButtons {
+                            theme:dialog.theme;namePrefix:"designerNotchCenter"
+                            canIncrease:dialog.canStepNotch(center,1);canDecrease:dialog.canStepNotch(center,-1)
+                            increaseDescription:"Increase notch center by 1 MHz"
+                            decreaseDescription:"Decrease notch center by 1 MHz"
+                            onIncreaseRequested:dialog.stepNotch(center,1)
+                            onDecreaseRequested:dialog.stepNotch(center,-1)
+                        }
                         Label {text:"Width MHz";color:theme.text}
-TextField {id:bandwidth;text:"10";Layout.preferredWidth:65;onEditingFinished:dialog.refresh()}
+                        TextField {
+                            id:bandwidth;objectName:"designerNotchWidth";text:"10";Layout.preferredWidth:65
+                            Accessible.name:"Notch width in MHz"
+                            onEditingFinished:dialog.refresh()
+                            Keys.onUpPressed:dialog.stepNotch(bandwidth,1)
+                            Keys.onDownPressed:dialog.stepNotch(bandwidth,-1)
+                        }
+                        StepButtons {
+                            theme:dialog.theme;namePrefix:"designerNotchWidth"
+                            canIncrease:dialog.canStepNotch(bandwidth,1);canDecrease:dialog.canStepNotch(bandwidth,-1)
+                            increaseDescription:"Increase notch width by 1 MHz"
+                            decreaseDescription:"Decrease notch width by 1 MHz"
+                            onIncreaseRequested:dialog.stepNotch(bandwidth,1)
+                            onDecreaseRequested:dialog.stepNotch(bandwidth,-1)
+                        }
                         Label {text:"Depth dB";color:theme.text}
-TextField {id:depth;text:"18";Layout.preferredWidth:75;onEditingFinished:dialog.refresh()}
+                        TextField {
+                            id:depth;objectName:"designerNotchDepth";text:"18";Layout.preferredWidth:75
+                            Accessible.name:"Notch depth in dB"
+                            onEditingFinished:dialog.refresh()
+                            Keys.onUpPressed:dialog.stepNotch(depth,1)
+                            Keys.onDownPressed:dialog.stepNotch(depth,-1)
+                        }
+                        StepButtons {
+                            theme:dialog.theme;namePrefix:"designerNotchDepth"
+                            canIncrease:dialog.canStepNotch(depth,1);canDecrease:dialog.canStepNotch(depth,-1)
+                            increaseDescription:"Increase notch depth by 1 dB"
+                            decreaseDescription:"Decrease notch depth by 1 dB"
+                            onIncreaseRequested:dialog.stepNotch(depth,1)
+                            onDecreaseRequested:dialog.stepNotch(depth,-1)
+                        }
                         Label {text:"Edge MHz";color:theme.text}
-TextField {id:edge;text:"1";Layout.preferredWidth:65;onEditingFinished:dialog.refresh()}
+                        TextField {
+                            id:edge;objectName:"designerNotchEdge";text:"1";Layout.preferredWidth:65
+                            Accessible.name:"Notch edge in MHz"
+                            onEditingFinished:dialog.refresh()
+                            Keys.onUpPressed:dialog.stepNotch(edge,1)
+                            Keys.onDownPressed:dialog.stepNotch(edge,-1)
+                        }
+                        StepButtons {
+                            theme:dialog.theme;namePrefix:"designerNotchEdge"
+                            canIncrease:dialog.canStepNotch(edge,1);canDecrease:dialog.canStepNotch(edge,-1)
+                            increaseDescription:"Increase notch edge by 1 MHz"
+                            decreaseDescription:"Decrease notch edge by 1 MHz"
+                            onIncreaseRequested:dialog.stepNotch(edge,1)
+                            onDecreaseRequested:dialog.stepNotch(edge,-1)
+                        }
                     }
                     RxmerDesignScope {id:notchScope;objectName:"designerNotchScope";theme:dialog.theme;captureCount:dialog.captureCount;onEdited:dialog.refresh()}
                     Rectangle {Layout.fillWidth:true;height:1;color:theme.line}

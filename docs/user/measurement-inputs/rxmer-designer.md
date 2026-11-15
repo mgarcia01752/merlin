@@ -24,6 +24,15 @@ edge; negative tilt lowers it. The arrow points toward the higher MER edge.
 The direction button preserves magnitude, capture scope and zoom,
 and is disabled for zero or invalid text.
 
+Ripple and notch fields use the same small stacked **▴ / ▾** controls.
+Ripple peak-to-peak and notch depth step by **1 dB**; crest spacing and notch
+center, width and edge step by **1 MHz**. Direct fractional entry and the
+field’s Up/Down keys remain available. Arrows are disabled until the effect is
+enabled, and cannot step outside valid bounds. Crest-spacing arrows are inactive
+when the echo-distance helper is selected. A notch must remain inside the
+capture frequency range, with edge width no greater than half its total width.
+Changing a field preserves the capture range and chart zoom.
+
 The preview overlays the original dashed curve and
 the designed solid curve on the same RxMER axis. A single shaded **PLC** region
 runs from the first to the last PLC carrier in the accepted modulation profile.

@@ -85,6 +85,64 @@ Pane {
             field.text="invalid";verify(!up.enabled);verify(!down.enabled)
             field.text="-7";field.forceActiveFocus();keyClick(Qt.Key_Tab);compare(backend.lastRequest.recipe.tilt.tilt_db,-7)
         }
+        function test_ripple_steps_preserve_fractional_entry_and_limits(){
+            dialog.open();tryCompare(dialog,"visible",true)
+            const field=findChild(dialog,"designerRippleDb"), spacing=findChild(dialog,"designerRippleSpacing")
+            const up=findChild(dialog,"designerRippleDepthUp"), down=findChild(dialog,"designerRippleDepthDown")
+            verify(!up.enabled);dialog.stepRipple(field,1);compare(field.text,"2")
+            findChild(dialog,"designerRipple").checked=true
+            mouseClick(up);compare(backend.lastRequest.recipe.ripple.peak_to_peak_db,3)
+            mouseClick(down);compare(field.text,"2")
+            field.text="2.5";field.forceActiveFocus();keyClick(Qt.Key_Up);compare(field.text,"3.5")
+            keyClick(Qt.Key_Down);compare(field.text,"2.5")
+            field.text="60";verify(!up.enabled);field.text="0";verify(!down.enabled)
+            field.text="invalid";verify(!up.enabled);verify(!down.enabled)
+            field.text="";verify(!up.enabled);field.text="2"
+            const spacingUp=findChild(dialog,"designerRippleSpacingUp"), spacingDown=findChild(dialog,"designerRippleSpacingDown")
+            mouseClick(findChild(dialog,"designerZoomPlc"))
+            spacing.text="20.5";mouseClick(spacingUp);compare(backend.lastRequest.recipe.ripple.spacing.spacing_hz,21500000)
+            mouseClick(spacingDown);compare(spacing.text,"20.5")
+            spacing.text="1";verify(!spacingDown.enabled)
+            spacing.text="4294";verify(!spacingUp.enabled)
+            spacing.text="0";verify(!spacingUp.enabled)
+            spacing.text="20";findChild(dialog,"designerRippleDistanceMode").checked=true
+            verify(!spacingUp.enabled);dialog.stepRipple(spacing,1);compare(spacing.text,"20")
+            compare(dialog.viewStart,4000);compare(dialog.viewCount,80)
+        }
+        function test_notch_steps_keep_band_edge_bounds_scope_and_zoom(){
+            dialog.open();tryCompare(dialog,"visible",true)
+            const center=findChild(dialog,"designerNotchCenter"), width=findChild(dialog,"designerNotchWidth")
+            const depth=findChild(dialog,"designerNotchDepth"), edge=findChild(dialog,"designerNotchEdge")
+            verify(!findChild(dialog,"designerNotchCenterUp").enabled)
+            dialog.stepNotch(center,1);compare(center.text,"733.5")
+            findChild(dialog,"designerNotch").checked=true
+            const scope=findChild(dialog,"designerNotchScope");scope.restore({mode:"range",first:10,last:20})
+            mouseClick(findChild(dialog,"designerZoomPlc"))
+            const fields=[center,width,depth,edge], names=["Center","Width","Depth","Edge"]
+            for(let index=0;index<fields.length;index++){
+                const field=fields[index], value=Number(field.text)
+                const up=findChild(dialog,"designerNotch"+names[index]+"Up"), down=findChild(dialog,"designerNotch"+names[index]+"Down")
+                mouseClick(up);compare(Number(field.text),value+1)
+                mouseClick(down);compare(Number(field.text),value)
+                field.forceActiveFocus();keyClick(Qt.Key_Up);compare(Number(field.text),value+1)
+                keyClick(Qt.Key_Down);compare(Number(field.text),value)
+                field.text="invalid";verify(!up.enabled);verify(!down.enabled)
+                field.text="";verify(!up.enabled);verify(!down.enabled);field.text=String(value)
+            }
+            compare(backend.lastRequest.recipe.notch.scope.first,10)
+            compare(dialog.viewStart,4000);compare(dialog.viewCount,80)
+            center.text="645";verify(!findChild(dialog,"designerNotchCenterDown").enabled)
+            verify(!findChild(dialog,"designerNotchWidthUp").enabled)
+            center.text="822";verify(!findChild(dialog,"designerNotchCenterUp").enabled)
+            center.text="733.5";edge.text="5";verify(!findChild(dialog,"designerNotchEdgeUp").enabled)
+            verify(!findChild(dialog,"designerNotchWidthDown").enabled)
+            edge.text="0";verify(!findChild(dialog,"designerNotchEdgeDown").enabled)
+            depth.text="60";verify(!findChild(dialog,"designerNotchDepthUp").enabled)
+            depth.text="0";verify(!findChild(dialog,"designerNotchDepthDown").enabled)
+            depth.text="2.5";dialog.stepNotch(depth,1);compare(backend.lastRequest.recipe.notch.depth_db,3.5)
+            findChild(dialog,"designerNotch").checked=false
+            dialog.stepNotch(depth,1);compare(depth.text,"3.5")
+        }
         function test_zoom_plc_navigation_and_capture_changes_keep_window(){
             dialog.open();tryCompare(dialog,"visible",true)
             mouseClick(findChild(dialog,"designerZoomPlc"))

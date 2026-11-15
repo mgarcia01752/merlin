@@ -1229,6 +1229,17 @@ validation are complete; the user guide includes the current dark capture.
   native dark/light verification and refreshed guide screenshots.
   [Design](features/rxmer-designer/design.md#rxmer-design-08-compact-stacked-tilt-arrows).
 
+- [x] **RXMER-DESIGN-09** Add shared stacked arrows for ripple depth
+  (1 dB) and crest spacing (1 MHz), preserving fractional editing, keyboard,
+  bounds and zoom. All 80 adapter and 74 QML checks pass; native dark/light
+  verified and guide screenshots refreshed.
+  [Design](features/rxmer-designer/design.md#rxmer-design-09-ripple-depth-and-spacing-steppers).
+
+- [x] **RXMER-DESIGN-10** Add stacked arrows to notch center, width,
+  depth and edge, guarding capture-band and edge/width limits. Preserve
+  editable values, keyboard and capture scope; same validation as above.
+  [Design](features/rxmer-designer/design.md#rxmer-design-10-notch-field-steppers).
+
 ### Windows desktop UI delivery
 
 - [x] **UI-MSI-01** Implement Windows x64 desktop-only MSI staging and CI,
