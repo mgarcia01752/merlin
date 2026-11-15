@@ -20,7 +20,7 @@ Loading/configuring inputs does not start simulation; sim.run() below does.
 from pathlib import Path
 from time import perf_counter
 from merlin import (
-    DPD, OCD, Merlin, ProfileId, ProtocolScope, OcdOverrides, BandwidthHz,
+    DPD, OCD, Merlin, ProtocolScope, OcdOverrides, BandwidthHz,
     RxMer, RxMerSelection, EvaluationOptions, ChannelSelection,
     ObservationDuration, AssociationTolerance, RunLimits, RuntimeLimit,
 )
@@ -31,7 +31,6 @@ from merlin import (
 REPOSITORY_PARENT_INDEX = 3  # examples/api/python/ -> repository root.
 FIXTURE_DIRECTORY = "examples/workbench/multi-rxmer-2"
 PROFILE_FILENAME = "ds_ofdm_modulation_profile_aabbccddeeff_193_1764824373.bin"
-PROFILE_IDS = (0, 3, 4)  # All profiles verified in this particular capture.
 RXMER_FILE_PATTERN = "ds_ofdm_rxmer_per_subcar_*.bin"
 OCCUPIED_BANDWIDTH_HZ = 192_000_000  # Explicit fixture configuration: 192 MHz.
 OBSERVATION_DURATION_MS = 1  # Per profile; increase for a longer experiment.
@@ -58,12 +57,14 @@ def main():
         Path(__file__).resolve().parents[REPOSITORY_PARENT_INDEX] / FIXTURE_DIRECTORY
     )
 
-    # 2. Import every selected captured profile before starting any simulation.
-    # PROFILE_IDS lists this fixture's real captured IDs, not QAM orders or
-    # wire IDs. Rust decodes and validates each; a missing selection is an error.
-    # This example does not guess IDs or silently ignore failed imports.
-    profiles = [DPD.from_file(root / PROFILE_FILENAME, ProfileId(profile_id))
-                for profile_id in PROFILE_IDS]
+    # 2. Discover the capture's real profile IDs through the Rust decoder.
+    # Results are validated ProfileId objects sorted by captured ID, not QAM
+    # orders or wire IDs. No hardcoded inventory, range probing or Python parser.
+    # Catalog discovery and explicit profile imports do not start simulation.
+    profile_path = root / PROFILE_FILENAME
+    profile_ids = DPD.profile_ids_from_file(profile_path)
+    profiles = [DPD.from_file(profile_path, profile_id)
+                for profile_id in profile_ids]
 
     # 3. Load each original RxMER binary in the collection independently.
     # Files are sorted for reproducible insertion order only. Rust decodes their
@@ -107,7 +108,7 @@ def main():
     # Each controller restarts the common default PRBS/noise seeds and owns its
     # configuration. The immutable capture objects are reused without editing.
     # The API retains the captured ID; engine bootstrap uses wire Profile A.
-    print(f"Profiles: {PROFILE_IDS}; observation: {OBSERVATION_DURATION_MS} ms "
+    print(f"Profiles: {[profile_id.value for profile_id in profile_ids]}; observation: {OBSERVATION_DURATION_MS} ms "
           "per profile; RxMER: AverageAll; channel: unity")
     total_started = perf_counter()
     for profile in profiles:

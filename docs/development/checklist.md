@@ -1383,3 +1383,10 @@ validation are complete; the user guide includes the current dark capture.
   document explicit fixture selection and 1 ms observation. All three
   native runs complete; syntax/import and documentation checks pass.
   [Design](features/high-level-api/design.md#api-examples-05-independent-collection-runs-per-captured-profile).
+
+- [x] **API-INPUT-02** Discover sorted validated profile IDs in the public
+  Rust API and native binary/JSON loader, mirror file/byte conveniences in
+  Python and use discovery in the all-profile collection example. Require
+  Rust-first shared API evolution; 16 Rust API tests, 7 Python API tests
+  and all four selection-policy parity modes pass.
+  [Design](features/high-level-api/design.md#api-input-02-discover-captured-profile-identities-in-rust).

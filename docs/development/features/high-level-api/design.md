@@ -221,3 +221,35 @@ wall time including loading was 4.10s. These are actual engine reports, not
 interoperability evidence or an expectation for other settings. Syntax/import,
 unchanged high_level.py and documentation checks pass. Reviewed architecture:
 no ownership or engine behavior changed, so no full Rust/Qt rebuild was needed.
+
+## API-INPUT-02: discover captured profile identities in Rust
+
+Add Dpd::profile_ids_from_bytes for bounded decoded JSON using the existing
+Rust profile importer and validated ProfileId values, sorted by captured ID.
+Add CaptureLoader::profile_ids for binary/JSON named captures with existing
+decoder dispatch. Python DPD.profile_ids_from_file/from_bytes delegates to that
+Rust loader; no Python parsing, range probing or hardcoded profile inventory.
+Reject malformed/empty/duplicate/out-of-domain catalogs through existing
+structured errors. Discovery never creates a controller or runs simulation.
+Preserve originals and existing explicit single-profile selection. Replace the
+collection example's PROFILE_IDS constant with discovery, then run all returned
+identities independently. Test JSON/binary/error parity in Rust first, then
+Python conversion and the real collection example after rebuilding the wheel.
+Document the permanent Rust-first rule for shared Python capabilities.
+
+Validation: 16 Rust API tests passed (56.64s test execution, 61.74s command
+including compilation). Both new discovery cases cover core JSON/native
+binary agreement, sorting, absent/duplicate/out-of-domain catalogs, truncation
+and unchanged source bytes. Workspace Clippy passed (20.60s), adapter Clippy
+passed (5.45s), and 136 analysis-only Rust tests passed (17.01s command).
+The native CPython 3.10 Linux wheel rebuilt with complete notices (39.40s) and
+was installed only in local/api-python-test. Seven native API tests passed
+(1.152s execution, 1.21s command), including owned discovery lists and
+structured errors. A fresh Rust baseline (82.23s) and Python parity check
+(3.91s command) agree for Each, Individual, AverageAll and InterpolateAt.
+The discovered-profile example completed with original profile totals
+83/114/124 and corrected counts 0/5/19, all UFEC/BER zero (4.29s process).
+Rust formatting, Python syntax/import-only behavior, unchanged high_level.py,
+guide links and whitespace checks passed. No Qt/scientific algorithm change
+or publication. The verified wheel remains Ubuntu x86_64 / CPython 3.10 only;
+other Python/platform targets are unverified.

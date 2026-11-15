@@ -34,6 +34,45 @@ def configured():
 
 
 class NativeApiTests(unittest.TestCase):
+    def test_profile_id_discovery_binary_json_and_errors(self):
+        binary_path = FIXTURE / "modulation-profile.bin"
+        decoded_path = ROOT / "examples/measurements/single-channel/modulation_profile.json"
+        for path in (binary_path, decoded_path):
+            ids = m.DPD.profile_ids_from_file(path)
+            self.assertEqual([profile_id.value for profile_id in ids], [0, 1, 2, 3])
+            self.assertTrue(all(isinstance(profile_id, m.ProfileId) for profile_id in ids))
+            copied = m.DPD.profile_ids_from_bytes("wrong.extension", path.read_bytes())
+            self.assertEqual([profile_id.value for profile_id in copied], [0, 1, 2, 3])
+            for profile_id in ids:
+                self.assertEqual(m.DPD.from_file(path, profile_id).profile_id.value, profile_id.value)
+            ids.clear()
+            self.assertEqual([profile_id.value for profile_id in copied], [0, 1, 2, 3])
+            self.assertEqual([value.value for value in m.DPD.profile_ids_from_file(path)], [0, 1, 2, 3])
+        collection = ROOT / "examples/workbench/multi-rxmer-2"
+        path = next(collection.glob("ds_ofdm_modulation_profile_*.bin"))
+        self.assertEqual([value.value for value in m.DPD.profile_ids_from_file(path)], [0, 3, 4])
+        document = json.loads(decoded_path.read_text())
+        cases = [b"{", (FIXTURE / "rxmer.bin").read_bytes()]
+        for mode in ("empty", "duplicate", "unsupported_id", "count"):
+            malformed = json.loads(json.dumps(document))
+            if mode == "empty":
+                malformed["profiles"] = []
+                malformed["num_profiles"] = 0
+            elif mode == "duplicate":
+                malformed["profiles"][1]["profile_id"] = malformed["profiles"][0]["profile_id"]
+            elif mode == "unsupported_id":
+                malformed["profiles"][0]["profile_id"] = 16
+            else:
+                malformed["num_profiles"] = 1
+            cases.append(json.dumps(malformed).encode())
+        for data in cases:
+            with self.assertRaises(m.ApiError) as context:
+                m.DPD.profile_ids_from_bytes("bad", data)
+            self.assertIsInstance(context.exception.code, m.ErrorCode)
+        with self.assertRaises(m.ApiError) as context:
+            m.DPD.profile_ids_from_file(collection / "missing.bin")
+        self.assertEqual(context.exception.code, m.ErrorCode.Io)
+
     def test_content_detection_typed_values_and_provenance(self):
         binary = m.RxMer.from_file(FIXTURE / "rxmer.bin")
         decoded = m.RxMer.from_file(ROOT / "examples/measurements/single-channel/rxmer.json")

@@ -152,3 +152,17 @@ Archive ignore checks passed for ZIPs, compressed tar files and Python wheels.
 No archive files were tracked; local inputs were not deleted by this change.
 The required maintenance and archive policies are recorded in the
 [acceptance requirements](requirements.md#mandatory-downstream-installation-document-maintenance).
+
+## Profile catalog discovery (API-INPUT-02)
+
+Rust-first profile discovery is implemented and verified in the current checkout:
+`Dpd::profile_ids_from_bytes` for decoded JSON and `CaptureLoader::profile_ids`
+for binary/JSON. Python file/byte discovery delegates to this path. The real
+channel-193 example discovers 0, 3 and 4 and runs all three without hardcoded IDs.
+
+Checks: 16 Rust API tests, 136 analysis-only tests, 7 Python API tests, all four
+Rust/Python policy parity modes, workspace/adapter Clippy and formatting passed.
+A native Linux CPython 3.10 wheel was rebuilt with notices and installed only
+in the local test environment. See the [design validation](design.md#api-input-02-discover-captured-profile-identities-in-rust)
+for timings and example counters. Windows/macOS/other interpreters are unverified;
+no wheel was published and no system installation was performed.

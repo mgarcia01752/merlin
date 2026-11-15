@@ -67,3 +67,17 @@ These additional repository requirements govern ongoing delivery:
 - **REQ-REPO-ARCHIVE-001:** Generated/downloaded archives, including ZIPs,
   compressed tar files and Python wheels, MUST be ignored by Git. A required
   source fixture needs a narrowly scoped, explicitly reviewed exception.
+
+## Shared Rust/Python API evolution
+
+- **REQ-API-PARITY-001:** Shared capabilities requested through Python MUST be
+  implemented and validated in the public Rust API first, then exposed by the
+  optional adapter with matching domain semantics and structured errors. Python
+  must not become the only owner of discovery, validation or scientific logic.
+- **REQ-API-PARITY-002:** Profile discovery MUST read the actual capture catalog
+  through Rust decoding, return validated captured identities and reject invalid
+  catalogs. Examples that run all profiles MUST use discovery rather than a
+  hardcoded list or probing possible identifiers. Discovery MUST NOT simulate.
+- **REQ-API-PARITY-003:** New discovery operations MUST cover binary/decoded JSON
+  agreement, ordering, empty/duplicate/invalid IDs and independent owned results
+  across Rust and Python. File convenience wrappers remain adapter responsibilities.

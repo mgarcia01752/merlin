@@ -558,3 +558,69 @@ fn individual_and_exact_epoch_keep_original_mer_values_without_round_trip() {
         assert_eq!(frame.mer_db, expected);
     }
 }
+
+#[test]
+fn profile_catalog_discovery_matches_core_json_and_binary_without_selection() {
+    let json = input("profiles.bin", PROFILE);
+    let original = json.bytes().to_vec();
+    let core = Dpd::profile_ids_from_bytes(&json).unwrap();
+    assert_eq!(
+        core.iter().map(|id| id.value()).collect::<Vec<_>>(),
+        vec![0, 1, 2, 3]
+    );
+    assert_eq!(CaptureLoader::profile_ids(&json).unwrap(), core);
+    let binary = input(
+        "profiles.json",
+        include_bytes!("../../../examples/workbench/single/modulation-profile.bin"),
+    );
+    assert_eq!(CaptureLoader::profile_ids(&binary).unwrap(), core);
+    let collection = input("collection", include_bytes!("../../../examples/workbench/multi-rxmer-2/ds_ofdm_modulation_profile_aabbccddeeff_193_1764824373.bin"));
+    let ids = CaptureLoader::profile_ids(&collection).unwrap();
+    assert_eq!(
+        ids.iter().map(|id| id.value()).collect::<Vec<_>>(),
+        vec![0, 3, 4]
+    );
+    for id in ids {
+        let profile = CaptureLoader::profile(&collection, id).unwrap();
+        assert_eq!(profile.profile_id(), id);
+        assert_eq!(profile.sources()[0].original_bytes(), collection.bytes());
+    }
+    assert_eq!(json.bytes(), original);
+}
+
+#[test]
+fn profile_catalog_rejects_malformed_empty_duplicate_and_out_of_domain_ids() {
+    for input in [input("malformed", b"{"), input("wrong kind", RX)] {
+        assert!(CaptureLoader::profile_ids(&input).is_err());
+        assert!(Dpd::profile_ids_from_bytes(&input).is_err());
+    }
+    let original: serde_json::Value = serde_json::from_slice(PROFILE).unwrap();
+    for case in ["empty", "duplicate", "unsupported id", "count"] {
+        let mut document = original.clone();
+        match case {
+            "empty" => {
+                document["profiles"] = serde_json::json!([]);
+                document["num_profiles"] = 0.into();
+            }
+            "duplicate" => {
+                document["profiles"][1]["profile_id"] =
+                    document["profiles"][0]["profile_id"].clone();
+            }
+            "unsupported id" => {
+                document["profiles"][0]["profile_id"] = 16.into();
+            }
+            "count" => {
+                document["num_profiles"] = 1.into();
+            }
+            _ => unreachable!(),
+        }
+        let capture = input(case, &serde_json::to_vec(&document).unwrap());
+        let core = Dpd::profile_ids_from_bytes(&capture).unwrap_err();
+        let adapter = CaptureLoader::profile_ids(&capture).unwrap_err();
+        assert_eq!(core.code(), adapter.code());
+    }
+    let mut corrupt =
+        include_bytes!("../../../examples/workbench/single/modulation-profile.bin").to_vec();
+    corrupt.truncate(20);
+    assert!(CaptureLoader::profile_ids(&input("truncated", &corrupt)).is_err());
+}

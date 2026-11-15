@@ -209,6 +209,31 @@ fn provenance(
     })
 }
 impl Dpd {
+    /// Lists validated captured profile identities from bounded decoded JSON.
+    ///
+    /// # Arguments
+    /// * `input` - Named decoded JSON; binary PNM needs the optional input adapter.
+    ///
+    /// # Returns
+    /// Owned identities sorted by captured ID. All profiles are decoded and
+    /// validated before returning; no controller is created or simulation run.
+    /// Original bytes are unchanged. IDs describe the capture, not wire mapping.
+    ///
+    /// # Errors
+    /// Rejects malformed, empty, duplicate or unsupported profile catalogs and
+    /// identities outside the public ProfileId domain, preserving input limits.
+    pub fn profile_ids_from_bytes(input: &NamedCapture) -> ApiResult<Vec<ProfileId>> {
+        let profiles = pnm_json::import_profiles(JsonCapture {
+            name: input.name(),
+            bytes: json(input)?,
+        })?;
+        let mut ids = profiles
+            .into_iter()
+            .map(|profile| ProfileId::new(profile.profile_id))
+            .collect::<ApiResult<Vec<_>>>()?;
+        ids.sort_by_key(|id| id.value());
+        Ok(ids)
+    }
     /// Imports an explicitly selected profile from bounded decoded JSON.
     /// # Arguments
     /// * `input` - Original named JSON bytes; binary needs the optional adapter.

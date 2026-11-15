@@ -58,6 +58,24 @@ application defaults when not explicitly supplied. Manual OCD plus
 `Dpd::from_ocd` creates a hypothesis; `with_modulation` edits data carriers while
 preserving original captured bytes and protected roles.
 
+Discover profiles before selecting one:
+
+```rust
+let input = read_capture("examples/workbench/single/modulation-profile.bin")?;
+let ids = CaptureLoader::profile_ids(&input)?;
+for id in ids {
+    let profile = CaptureLoader::profile(&input, id)?;
+    // Configure a fresh controller and run this profile explicitly.
+}
+```
+
+For decoded JSON without the native binary adapter, use
+`Dpd::profile_ids_from_bytes(&input)`. Both return owned validated `ProfileId`
+values in ascending captured-ID order, reject invalid catalogs and leave inputs
+unchanged. Discovery and loading do not run simulation. IDs describe what is
+present; profile selection and simulation admission remain separate operations.
+
+
 ## Selection and ownership
 
 Add RxMER captures and channel estimates independently. Counts and epochs need

@@ -260,7 +260,11 @@ unit/identity confusion. Inputs are independently loaded and preserved; static
 selection/preflight precedes explicit bounded `run()` calls. Owned FEC and
 profile summaries share observation-window scope; whole-run diagnostics are
 separately labeled. `pnm-input` adds direct native binary/JSON and bounded
-file conveniences without Qt or Python.
+file conveniences without Qt or Python. `Dpd::profile_ids_from_bytes` validates
+decoded JSON catalogs; `CaptureLoader::profile_ids` adds binary/JSON dispatch.
+Both return sorted owned `ProfileId` values without simulation. Python
+`DPD.profile_ids_from_file` and `profile_ids_from_bytes` delegate to this same
+Rust discovery and validation.
 
 The optional `bindings/python` workspace converts inputs and results for the
 same Rust API. See [working Rust usage](../user/api/README.md),

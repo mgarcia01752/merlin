@@ -2261,7 +2261,11 @@ paths remain unchanged; neither is a dependency of this high-level API.
 
 `pnm-input` independently calls pinned Apache `pnm` 0.3.6 for supported
 binary/JSON profile, RxMER and channel-response conversion, with bounded I/O
-and separate original/intermediate provenance. No GPL Qt orchestration is copied.
+and separate original/intermediate provenance. Core `Dpd::profile_ids_from_bytes`
+validates decoded catalogs and returns sorted `ProfileId` values;
+`CaptureLoader::profile_ids` adds native binary decoding. Python discovery
+delegates to this Rust path and never probes or parses profile inventories.
+No GPL Qt orchestration is copied.
 The separate optional Python adapter calls this same Rust API after its Rust
 validation gate. It releases the interpreter lock, preserves cooperative
 cancellation and owns independent result snapshots.

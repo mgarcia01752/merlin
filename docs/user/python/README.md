@@ -53,6 +53,20 @@ results and wall time per profile. The observation is 1 ms per profile; increase
 `OBSERVATION_DURATION_MS` for a longer run. See the [example notes](../../../examples/api/README.md) for
 scope and desktop-WB differences.
 
+Discover available profiles through the shared Rust loader:
+
+```python
+profile_ids = DPD.profile_ids_from_file(profile_path)
+# For bytes: DPD.profile_ids_from_bytes("capture", capture_bytes)
+for profile_id in profile_ids:
+    profile = DPD.from_file(profile_path, profile_id)
+```
+
+The returned `ProfileId` objects are validated, owned and sorted by captured ID.
+Binary PNM and decoded JSON use the same Rust validation. Invalid catalogs raise
+structured `ApiError`; discovery never runs simulation. The collection example
+uses this catalog to run every profile, without a fixed list of IDs.
+
 Installing a compatible precompiled wheel needs neither Rust nor Qt. Building
 from source needs the Rust toolchain. A native `linux_x86_64` tag does not promise
 manylinux portability or support for another interpreter/OS.

@@ -52,6 +52,26 @@ fn decode(input: &NamedCapture, kind: u8) -> ApiResult<(NamedCapture, Option<Dec
     ))
 }
 impl CaptureLoader {
+    /// Discovers captured profile identities through native binary/JSON decoding.
+    ///
+    /// # Arguments
+    /// * `input` - Bounded original named capture; extensions do not select format.
+    ///
+    /// # Returns
+    /// Owned validated IDs in ascending order, without running simulation or
+    /// changing input bytes. Call profile separately to select an identity.
+    ///
+    /// # Errors
+    /// Preserves structured decoder, input-limit and invalid-catalog errors.
+    pub fn profile_ids(input: &NamedCapture) -> ApiResult<Vec<ProfileId>> {
+        let (decoded, contract) = decode(input, 10)?;
+        if let Some(contract) = contract {
+            contract.validate().map_err(|error| {
+                ApiError::new(ErrorCode::UnsupportedDecoderContract, error.to_string())
+            })?;
+        }
+        Dpd::profile_ids_from_bytes(&decoded)
+    }
     /// Loads a single selected profile from supported binary PNM or decoded JSON.
     /// # Arguments
     /// * `input` - Bounded original named bytes, extensions ignored.

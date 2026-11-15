@@ -41,7 +41,8 @@ synthetic RxMER stress variants. Decoder outcomes are not guaranteed error-free.
 
 The [Python collection walkthrough](../../api/python/multi_rxmer.py) loads these same
 133 original PNM binaries directly: the profile plus 132 RxMER captures. It
-runs independent experiments for captured Profiles 0, 3 and 4, each using a
+discovers the profile catalog through Rust and runs independent experiments for
+every returned ID (currently 0, 3 and 4), each using a
 residual-power `AverageAll` and explicit unity H. FEC/BER and wall time are
 reported separately per profile.
 It does not import the desktop WB JSON or reproduce its pilot-estimated

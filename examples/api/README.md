@@ -13,7 +13,7 @@ and assumptions are explained alongside the workflow.
 | --- | --- |
 | [Rust workflow](rust/high_level.rs) | Import a profile, derive OCD settings, add RxMER and a channel estimate independently, select one capture and inspect simulated results. |
 | [Python workflow](python/high_level.py) | Perform the same fixture-backed workflow using the installed native Python extension and print FEC counts and BER. |
-| [Python multi-RxMER collection](python/multi_rxmer.py) | Load channel-193 Profiles 0, 3 and 4 and 132 RxMER binaries; run independent profile experiments using a Rust residual-power average and explicit unity response. |
+| [Python multi-RxMER collection](python/multi_rxmer.py) | Discover all profiles in the channel-193 capture and load its 132 RxMER binaries; run independent profile experiments using a Rust residual-power average and explicit unity response. |
 | [Rust selection policies](rust/policy_parity.rs) | Run `Each`, `Individual`, `AverageAll` and `InterpolateAt`; write actual reference results for the Python parity tests. |
 
 ## Run Rust
@@ -52,8 +52,9 @@ It does not import desktop WB JSON or reproduce its pilot-estimated receiver
 setting, which is not exposed by this API. `high_level.py` retains the original
 single-capture workflow with an explicit measured channel estimate.
 
-`PROFILE_IDS` explicitly selects these fixture profiles; it is not automatic
-catalog discovery. Each fresh controller resets the common default PRBS/noise
+`DPD.profile_ids_from_file()` discovers the catalog through Rust and returns
+validated `ProfileId` objects. The fixture currently contains 0, 3 and 4; no IDs
+are hardcoded in the script. Each fresh controller resets the common default PRBS/noise
 seeds and prints its own actual FEC/BER and host execution time. The default
 `OBSERVATION_DURATION_MS = 1` requests only 1 ms of source observation per
 profile. Increase that named constant for a longer experiment; execution speed

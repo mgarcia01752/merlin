@@ -79,6 +79,39 @@ impl PyDataModulation {
 pub(crate) struct PyDpd(pub(crate) api::Dpd);
 #[pymethods]
 impl PyDpd {
+    /// Discovers all validated captured IDs from a binary PNM or decoded JSON file.
+    ///
+    /// # Arguments
+    /// * `path` - Read-only capture path; contents determine the format.
+    ///
+    /// # Returns
+    /// Owned Rust-backed ProfileId values sorted by captured ID; no simulation.
+    ///
+    /// # Errors
+    /// Preserves structured native I/O, decoder, limit and catalog errors.
+    #[staticmethod]
+    fn profile_ids_from_file(path: PathBuf) -> PyResult<Vec<PyProfileId>> {
+        CaptureLoader::profile_ids(&read_capture(path).map_err(error)?)
+            .map(|ids| ids.into_iter().map(PyProfileId).collect())
+            .map_err(error)
+    }
+    /// Discovers all validated captured IDs from bounded original capture bytes.
+    ///
+    /// # Arguments
+    /// * `name` - Display identity, not a format hint.
+    /// * `data` - Original binary PNM or decoded JSON, bounded by Rust admission.
+    ///
+    /// # Returns
+    /// Independent Rust-backed ProfileId values sorted by captured ID; no run.
+    ///
+    /// # Errors
+    /// Preserves structured Rust decoder, input-limit and invalid-catalog errors.
+    #[staticmethod]
+    fn profile_ids_from_bytes(name: &str, data: &[u8]) -> PyResult<Vec<PyProfileId>> {
+        CaptureLoader::profile_ids(&named_input(name, data)?)
+            .map(|ids| ids.into_iter().map(PyProfileId).collect())
+            .map_err(error)
+    }
     /// Load supported binary PNM or decoded JSON through bounded native Rust validation.
     /// # Arguments
     /// * `path` - Caller-selected input or new output path; existing inputs are never overwritten.
