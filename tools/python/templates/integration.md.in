@@ -16,6 +16,73 @@ there is no separate MERLIN desktop application or CLI prerequisite.
 calls the Rust API directly through the extension; it does not launch a binary
 or start a sidecar service.
 
+## Quick start: download and install only the Python API
+
+You need **64-bit CPython 3.10** and a wheel for your operating system. The
+wheel includes the Rust engine; you do not need the MERLIN desktop application,
+CLI, Qt, a Rust compiler or a MERLIN source checkout.
+
+1. Open [MERLIN releases](https://github.com/mgarcia01752/merlin/releases).
+2. Open the release you want to use and expand **Assets**. Read its release
+   notes for supported platforms and API availability.
+3. Download the matching `.whl` file from the table below and that release's
+   `SHA256SUMS`. Save them in a `wheels` folder inside your Python project.
+   Choose the wheel, not the `.msi`, `.deb`, source ZIP or standalone library.
+4. Verify the wheel against its checksum using the
+   [release guide](releases.md#download-verify-and-install), then install it
+   using the commands below for your operating system.
+
+| Your environment | Wheel filename for the documented version |
+| --- | --- |
+| Ubuntu 22.04+ x86_64, CPython 3.10 | `merlin_ofdm-{{VERSION}}-cp310-cp310-linux_x86_64.whl` |
+| Windows x64, CPython 3.10 | `merlin_ofdm-{{VERSION}}-cp310-cp310-win_amd64.whl` |
+
+These are expected filenames, not a guarantee that a release has published
+both assets. If no compatible wheel appears under Assets, use another verified
+release or the [source-build instructions](README.md#build-and-install-locally).
+Do not rename a wheel to make it match a different Python version or platform.
+
+### Ubuntu: install in your project
+
+Open a terminal in your own project's folder. With CPython 3.10 and its venv
+support already installed:
+
+```bash
+python3.10 -m venv .venv
+.venv/bin/python -m pip install --no-index --only-binary=:all: ./wheels/merlin_ofdm-{{VERSION}}-cp310-cp310-linux_x86_64.whl
+.venv/bin/python -c "from merlin import Simulation; import merlin; print(merlin.__version__)"
+```
+
+### Windows: install in your project
+
+Open **Command Prompt** in your own project's folder. With 64-bit CPython 3.10
+and the Python launcher already installed:
+
+```bat
+py -3.10 -m venv .venv
+.venv\Scripts\python.exe -m pip install --no-index --only-binary=:all: .\wheels\merlin_ofdm-{{VERSION}}-cp310-cp310-win_amd64.whl
+.venv\Scripts\python.exe -c "from merlin import Simulation; import merlin; print(merlin.__version__)"
+```
+
+If your project already has a compatible environment, skip creating `.venv` and
+use that environment's Python executable for the install and import check.
+When choosing another release, replace the wheel filename with the exact file
+you downloaded. Installing this local wheel does not fetch MERLIN from PyPI.
+
+### Use it in your code
+
+```python
+from merlin import Simulation
+
+# Create an idle session; no simulation runs yet.
+sim = Simulation()
+```
+
+Continue with the [simple Python workflow](README.md#simple-workflow) to load
+your modulation profile and RxMER inputs and run the simulation. Example capture
+files are separate from the wheel. To make MERLIN part of your project's
+installation, follow [Declare a dependency](#declare-a-dependency-in-the-consuming-project).
+
 ## Version and availability
 
 The documented package version is **{{VERSION}}** and the corresponding source

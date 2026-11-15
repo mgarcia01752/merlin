@@ -11,6 +11,7 @@ claim about an existing release asset. The Ubuntu target is 22.04+ x86_64 with C
 22.04 and checks the same wheel on 24.04 and 26.04. New compatibility checks
 remain unverified until hosted CI passes; other Python ABIs are not covered.
 
+For Python-only setup, start with [download and install the Python API](integration.md#quick-start-download-and-install-only-the-python-api).
 For PyPNM or another consumer, see [downstream installation and version
 pinning](integration.md).
 
