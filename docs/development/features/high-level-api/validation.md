@@ -398,3 +398,16 @@ No wheel/Qt rebuild or full physics-suite rerun is needed for changed JSON,
 example choices and fixture references. Platform packaging/runtime outside the
 local Linux checks remains unverified. Evidence is local-only under
 `docs/development/local/api-receiver-parity/supplied-wb-*`.
+
+## API-EXAMPLES-08: descriptive Python filenames
+
+Renamed all four Python scripts and updated imports, current guide links,
+receiver test paths and the generated downstream integration guide. Historical
+validation entries keep their original names; the design records the mapping.
+All four scripts passed syntax checks and executed against the installed local
+CPython 3.10 Linux native extension in 14.72s total. Three receiver regression
+tests passed in 9.58s, including all-profile FEC parity with native UI anchors.
+The CM channel-estimate and saved-WB scripts both retained totals 83/114/124
+and corrected counts 0/5/19; MCE retained corrected counts 0/4/30. All runs
+completed with zero uncorrectable codewords and zero BER. No scientific settings
+or Rust code changed. Qt, full Rust checks and other platforms were not rerun.

@@ -3,11 +3,11 @@
 # Copyright 2026 DOCSIS OFDM Channel Sim contributors
 # SPDX-License-Identifier: Apache-2.0
 #
-# File: examples/api/python/multi_rxmer.py
+# File: examples/api/python/run_multi_rxmer_mce.py
 """Developer walkthrough: average a multi-RxMER collection and simulate its FEC.
 
 Run from the repository root using an environment with the native wheel:
-    local/api-python-test/bin/python examples/api/python/multi_rxmer.py
+    local/api-python-test/bin/python examples/api/python/run_multi_rxmer_mce.py
 
 The distribution is named merlin-ofdm; its Python import is merlin. Importing
 loads the compiled Rust extension into this process. Rust performs decoding,

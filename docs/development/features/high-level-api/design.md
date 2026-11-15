@@ -376,3 +376,23 @@ Historical pilot measurements remain historical. Reverify actual WB/script FEC
 against the native UI, update current fixture anchors, and guard the packaged
 bundle inventory against future receiver-mode drift. No engine/API default or
 algorithm changes are needed; no wheel or Qt rebuild is required for JSON input.
+
+### API-EXAMPLES-08: descriptive Python entry-point names
+
+Rename the four Python walkthroughs to identify single-capture, MCE collection,
+supplied CM channel-estimate collection and saved CMCE workbench workflows.
+Update sibling imports, receiver regression tests, current guides and generated
+integration documentation. Preserve algorithms, settings and historical validation
+names; the saved-WB script still honors the input file's receiver selection.
+Validate all four entry points against the installed local native extension,
+receiver regression tests, syntax and documentation links. No Rust API, wheel
+or Qt rebuild is required for these filename-only changes.
+
+| Previous filename | Current filename |
+| --- | --- |
+| `high_level.py` | `run_single_capture.py` |
+| `multi_rxmer.py` | `run_multi_rxmer_mce.py` |
+| `multi_rxmer_ui.py` | `run_multi_rxmer_cm_chan_est.py` |
+| `workbench.py` | `run_multi_rxmer_cmce_workbench.py` |
+
+Earlier sections retain the filenames used during their recorded validation.

@@ -3,12 +3,15 @@
 # Copyright 2026 MERLIN contributors
 # SPDX-License-Identifier: Apache-2.0
 #
-# File: examples/api/python/workbench.py
+# File: examples/api/python/run_multi_rxmer_cmce_workbench.py
 """Run a saved MERLIN WB through its native Rust API, without Qt or the CLI.
 
 Usage from the repository root after installing the native wheel:
-    local/api-python-test/bin/python examples/api/python/workbench.py
-    local/api-python-test/bin/python examples/api/python/workbench.py /path/to/workbench.merlin.json
+    local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cmce_workbench.py
+    local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cmce_workbench.py /path/to/workbench.merlin.json
+
+The bundled multi-RxMER WB uses supplied CM channel estimation (CMCE).
+A different input WB retains its own receiver mode; this filename does not force it.
 
 Rust loads the WB's embedded original captures and saved scientific settings.
 There are no duplicated profile, timing, receiver-mode or seed constants here.

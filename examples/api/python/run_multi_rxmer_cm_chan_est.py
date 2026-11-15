@@ -3,13 +3,13 @@
 # Copyright 2026 MERLIN contributors
 # SPDX-License-Identifier: Apache-2.0
 #
-# File: examples/api/python/multi_rxmer_ui.py
+# File: examples/api/python/run_multi_rxmer_cm_chan_est.py
 """Run the collection with the saved multi-rxmer-2 UI workbench settings.
 
 Run from the repository root after installing the native merlin-ofdm wheel:
-    local/api-python-test/bin/python examples/api/python/multi_rxmer_ui.py
+    local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cm_chan_est.py
 
-The saved WB selects SuppliedChannel. The sibling multi_rxmer.py selects MCE
+The saved WB selects SuppliedChannel. The sibling run_multi_rxmer_mce.py selects MCE
 by default; this companion chooses supplied-channel correction while reusing
 its complete documented workflow, captures, seeds, timing, limits and output.
 
@@ -19,7 +19,7 @@ not start simulation or alter captures. This matches the bundled saved WB,
 not arbitrary settings edited later in the UI or a general WB JSON importer.
 """
 from merlin import ReceiverMode
-from multi_rxmer import main as run_collection
+from run_multi_rxmer_mce import main as run_collection
 
 
 # Match examples/workbench/multi-rxmer-2/workbench.merlin.json.

@@ -142,7 +142,7 @@ the adapter subdirectory is not the validated distribution route and bypasses
 the helper's notice-generation step. The consumer does not need a source
 checkout or Rust compiler when installing the approved prebuilt wheel.
 
-After installation, run the [Python API example](../../../examples/api/python/high_level.py)
+After installation, run the [Python API example](../../../examples/api/python/run_single_capture.py)
 and the consuming application's own integration tests. Installing a dependency
 alone does not implement PyPNM's application-level use of MERLIN.
 

@@ -17,10 +17,10 @@ for batch in wb.run():  # Explicit simulation; releases Python's interpreter loc
             print(entry.report.fec.corrected_codewords.value)
 ```
 
-Run the complete [Python example](../../../examples/api/python/workbench.py):
+Run the complete [Python example](../../../examples/api/python/run_multi_rxmer_cmce_workbench.py):
 
 ```bash
-local/api-python-test/bin/python examples/api/python/workbench.py examples/workbench/multi-rxmer-2/workbench.merlin.json
+local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/multi-rxmer-2/workbench.merlin.json
 ```
 
 Omitting the argument selects that same bundled WB. A native wheel containing

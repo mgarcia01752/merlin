@@ -3,11 +3,11 @@
 # Copyright 2026 DOCSIS OFDM Channel Sim contributors
 # SPDX-License-Identifier: Apache-2.0
 #
-# File: examples/api/python/high_level.py
+# File: examples/api/python/run_single_capture.py
 """Developer walkthrough: load captures, configure MERLIN, run, inspect results.
 
 Run from the repository root using an environment with the native wheel:
-    local/api-python-test/bin/python examples/api/python/high_level.py
+    local/api-python-test/bin/python examples/api/python/run_single_capture.py
 
 The distribution is named merlin-ofdm; its Python import is merlin. Importing
 loads the compiled Rust extension into this process. Rust performs decoding,

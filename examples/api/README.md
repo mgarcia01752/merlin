@@ -11,12 +11,12 @@ and assumptions are explained alongside the workflow.
 
 | Example | Purpose |
 | --- | --- |
-| [Saved WB in Python](python/workbench.py) | Load embedded captures and saved settings directly through Rust; run selected profiles without duplicate scientific constants. |
+| [Saved WB in Python](python/run_multi_rxmer_cmce_workbench.py) | Load embedded captures and saved settings directly through Rust; run selected profiles without duplicate scientific constants. |
 | [Saved WB in Rust](rust/workbench.rs) | Use the same native loader and print owned per-profile batch reports. |
 | [Rust workflow](rust/high_level.rs) | Import a profile, derive OCD settings, add RxMER and a channel estimate independently, select one capture and inspect simulated results. |
-| [Python workflow](python/high_level.py) | Perform the same fixture-backed workflow using the installed native Python extension and print FEC counts and BER. |
-| [Python multi-RxMER collection](python/multi_rxmer.py) | Discover all profiles in the channel-193 capture and load its 132 RxMER binaries; run independent profile experiments using a Rust residual-power average, unity physical response and MCE receiver. |
-| [Python saved-UI comparison](python/multi_rxmer_ui.py) | Run the same collection workflow with SuppliedChannel and all other settings matching the bundled multi-rxmer-2 workbench. |
+| [Python workflow](python/run_single_capture.py) | Perform the same fixture-backed workflow using the installed native Python extension and print FEC counts and BER. |
+| [Python multi-RxMER collection](python/run_multi_rxmer_mce.py) | Discover all profiles in the channel-193 capture and load its 132 RxMER binaries; run independent profile experiments using a Rust residual-power average, unity physical response and MCE receiver. |
+| [Python saved-UI comparison](python/run_multi_rxmer_cm_chan_est.py) | Run the same collection workflow with SuppliedChannel and all other settings matching the bundled multi-rxmer-2 workbench. |
 | [Rust selection policies](rust/policy_parity.rs) | Run `Each`, `Individual`, `AverageAll` and `InterpolateAt`; write actual reference results for the Python parity tests. |
 
 ## Run Rust
@@ -38,13 +38,13 @@ First build/install the native wheel using the
 root:
 
 ```bash
-local/api-python-test/bin/python examples/api/python/high_level.py
+local/api-python-test/bin/python examples/api/python/run_single_capture.py
 ```
 
 For the separate channel-193 collection example:
 
 ```bash
-local/api-python-test/bin/python examples/api/python/multi_rxmer.py
+local/api-python-test/bin/python examples/api/python/run_multi_rxmer_mce.py
 ```
 
 This loads the companion modulation-profile binary and all 132 RxMER binaries
@@ -54,13 +54,13 @@ missing readings. The two-hour profile tolerance covers the collection.
 It explicitly selects `ReceiverMode.MERLIN_CHANNEL_ESTIMATED` (MCE) and matches
 the saved WB seeds, decoder limit and OCD timing. The saved WB selects
 SuppliedChannel; enable MCE in its receiver for comparable results. It loads the capture files directly; it is
-not a general desktop WB JSON importer. `high_level.py` retains the original
+not a general desktop WB JSON importer. `run_single_capture.py` retains the original
 single-capture workflow with an explicit measured channel estimate.
 
 To match the **unchanged saved UI workbench**, run the separate companion:
 
 ```bash
-local/api-python-test/bin/python examples/api/python/multi_rxmer_ui.py
+local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cm_chan_est.py
 ```
 
 It reuses the same workflow with `ReceiverMode.SUPPLIED_CHANNEL`; the MCE
@@ -121,8 +121,10 @@ mode and compares Each/Individual/AverageAll/InterpolateAt under that same mode.
 For a saved WB with its own settings, use:
 
 ```bash
-local/api-python-test/bin/python examples/api/python/workbench.py /path/to/workbench.merlin.json
+local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cmce_workbench.py /path/to/workbench.merlin.json
 ```
 
 See the [WB import guide](../../docs/user/python/workbench.md) for supported
-settings, structured failures and the equivalent Rust example.
+settings, structured failures and the equivalent Rust example. The bundled WB
+uses supplied CM channel estimation (CMCE); another input WB retains its saved
+receiver mode regardless of the script filename.

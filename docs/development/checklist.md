@@ -1386,8 +1386,8 @@ validation are complete; the user guide includes the current dark capture.
   completed with 83 codewords, 0 corrected/uncorrectable and BER 0.
   [Design](features/high-level-api/design.md#api-examples-03-channel-193-python-collection-example).
 
-- [x] **API-EXAMPLES-04** Restore the single-capture high_level.py and
-  keep the collection workflow in multi_rxmer.py. Both native examples,
+- [x] **API-EXAMPLES-04** Restore the single-capture run_single_capture.py and
+  keep the collection workflow in run_multi_rxmer_mce.py. Both native examples,
   exact restoration, import-only checks and documentation links pass.
   [Design](features/high-level-api/design.md#api-examples-04-keep-collection-walkthrough-separate).
 
@@ -1428,12 +1428,12 @@ validation are complete; the user guide includes the current dark capture.
   options, all receiver/selection parity modes, MCE tests and Rust forwarding.
   [Design](features/high-level-api/design.md#api-receiver-02-expand-mce-in-typed-receiver-names).
 
-- [x] **API-EXAMPLES-06** Select MERLIN_CHANNEL_ESTIMATED in multi_rxmer.py;
+- [x] **API-EXAMPLES-06** Select MERLIN_CHANNEL_ESTIMATED in run_multi_rxmer_mce.py;
   document the saved WB's different receiver mode. Run all three profiles with
   the native MCE API and preserve the pilot-mode UI comparison test.
   [Design](features/high-level-api/design.md#api-examples-06-use-mce-in-the-collection-walkthrough).
 
-- [x] **API-EXAMPLES-07** Add multi_rxmer_ui.py for the bundled saved WB's
+- [x] **API-EXAMPLES-07** Add run_multi_rxmer_cm_chan_est.py for the bundled saved WB's
   pilot receiver. Share the MCE walkthrough through an explicit mode argument;
   validate actual profile FEC against native UI anchors and shared WB settings.
   [Design](features/high-level-api/design.md#api-examples-07-separate-saved-ui-comparison-entry-point).
@@ -1456,3 +1456,8 @@ validation are complete; the user guide includes the current dark capture.
   defaults, unity behavior, pilot history, API names and saved WB semantics.
   [Design](features/independent-channel-estimation/design.md#ch-est-rx-13-explicit-three-mode-receiver-wording-and-documentation),
   [user guide](../user/receiver-estimation/modes.md).
+
+- [x] **API-EXAMPLES-08** Rename Python examples by capture workflow and
+  receiver mode; update imports, tests and current documentation. All four
+  native examples passed in 14.72s; three receiver tests passed in 9.58s.
+  [Design](features/high-level-api/design.md#api-examples-08-descriptive-python-entry-point-names).

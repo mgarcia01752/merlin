@@ -16,8 +16,8 @@ import merlin as m
 from test_api import configured
 
 ROOT = Path(__file__).resolve().parents[3]
-EXAMPLE = ROOT / "examples/api/python/multi_rxmer.py"
-UI_EXAMPLE = EXAMPLE.with_name("multi_rxmer_ui.py")
+EXAMPLE = ROOT / "examples/api/python/run_multi_rxmer_mce.py"
+UI_EXAMPLE = EXAMPLE.with_name("run_multi_rxmer_cm_chan_est.py")
 # Both entry points share the sibling workflow, as when executed by filename.
 sys.path.insert(0, str(EXAMPLE.parent))
 WORKBENCH = ROOT / "examples/workbench/multi-rxmer-2/workbench.merlin.json"

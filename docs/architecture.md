@@ -2312,7 +2312,7 @@ use the same existing Rust receiver operations as Qt; no Python estimation or Qt
 orchestration enters the library. Reports retain the selected mode and accurate
 assumptions. The collection example now selects MCE while retaining the curated
 WB's other settings; the saved WB uses SuppliedChannel. The regression comparison
-uses the separate multi_rxmer_ui.py entry point with supplied-channel mode to preserve
+uses the separate run_multi_rxmer_cm_chan_est.py entry point with supplied-channel mode to preserve
 its UI reference. Both entry points share one workflow through an explicit
 receiver-mode argument; no mutable global override or duplicate engine is used. See [receiver parity](development/features/high-level-api/design.md#api-receiver-01-match-receiver-correction-across-rust-python-and-qt).
 

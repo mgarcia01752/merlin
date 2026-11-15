@@ -86,8 +86,8 @@ reads the same saved value; it does not replace it with an API default.
 
 Saved input also accepts `merlin_channel_estimated` as an MCE alias; the canonical
 saved value remains `merlin_estimated` for compatibility. The separate
-`multi_rxmer.py` example deliberately selects MCE. `multi_rxmer_ui.py` selects
-supplied-channel correction to match the bundled WB. `workbench.py` loads the
+`run_multi_rxmer_mce.py` example deliberately selects MCE. `run_multi_rxmer_cm_chan_est.py` selects
+supplied-channel correction to match the bundled WB. `run_multi_rxmer_cmce_workbench.py` loads the
 mode directly from its input WB. See [WB API loading](../python/workbench.md).
 
 **Decoder iteration limit** applies to every mode. It bounds LDPC decoding work;

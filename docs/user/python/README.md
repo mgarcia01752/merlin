@@ -42,15 +42,15 @@ Install the matching CPython 3.10 Linux wheel into a separate local environment:
 ```bash
 python3 -m venv local/api-python-test
 local/api-python-test/bin/python -m pip install --no-index local/python-wheels/merlin_ofdm-0.2.9-cp310-cp310-linux_x86_64.whl
-local/api-python-test/bin/python examples/api/python/high_level.py
+local/api-python-test/bin/python examples/api/python/run_single_capture.py
 ```
 
-`high_level.py` demonstrates the original single-capture workflow. For the
+`run_single_capture.py` demonstrates the original single-capture workflow. For the
 separate example using the modulation profile and 132 RxMER binaries from
 `examples/workbench/multi-rxmer-2`, run:
 
 ```bash
-local/api-python-test/bin/python examples/api/python/multi_rxmer.py
+local/api-python-test/bin/python examples/api/python/run_multi_rxmer_mce.py
 ```
 
 The collection example runs Profiles 0, 3 and 4 independently, each with the
@@ -63,7 +63,7 @@ scope and matched fixture settings.
 To reproduce the bundled saved workbench's supplied-channel receiver instead:
 
 ```bash
-local/api-python-test/bin/python examples/api/python/multi_rxmer_ui.py
+local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cm_chan_est.py
 ```
 
 This companion shares all other settings and reporting with the MCE example;
@@ -134,7 +134,7 @@ for entry in sim.run():
 
 The bundled fixture's occupied bandwidth and timestamp tolerance are explicitly
 selected. Timing defaults and scientific assumptions are retained in reports.
-Use the [complete example](../../../examples/api/python/high_level.py) for
+Use the [complete example](../../../examples/api/python/run_single_capture.py) for
 independent channel loading and explicit response reuse.
 
 `from_file` accepts pathlib paths. `from_bytes(name, data)` uses bounded native

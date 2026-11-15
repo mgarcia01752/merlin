@@ -39,7 +39,7 @@ identity transformation and original filenames, and retain [LICENSE](LICENSE)
 and [NOTICE](NOTICE). These are pre-collected demo observations, not MERLIN's
 synthetic RxMER stress variants. Decoder outcomes are not guaranteed error-free.
 
-The [Python collection walkthrough](../../api/python/multi_rxmer.py) loads these same
+The [Python collection walkthrough](../../api/python/run_multi_rxmer_mce.py) loads these same
 133 original PNM binaries directly: the profile plus 132 RxMER captures. It
 discovers the profile catalog through Rust and runs independent experiments for
 every returned ID (currently 0, 3 and 4), each using a
@@ -47,5 +47,5 @@ residual-power `AverageAll` and explicit unity H. FEC/BER and wall time are
 reported separately per profile.
 The MCE walkthrough deliberately selects a different receiver. To use the saved
 WB's SuppliedChannel setting and other accepted configuration directly, run
-[workbench.py](../../api/python/workbench.py) with this WB path. See the
+[run_multi_rxmer_cmce_workbench.py](../../api/python/run_multi_rxmer_cmce_workbench.py) with this WB path. See the
 [API examples](../../api/README.md) for commands.
