@@ -129,7 +129,7 @@ impl WaveformLink {
             receiver.filter,
         )?;
         let rx = if receiver.mode
-            == crate::signal_processing::receiver::channel_estimation::ReceiverMode::SuppliedChannel
+            == crate::signal_processing::receiver::channel_estimation::ReceiverMode::CmChannelEstimated
         {
             WaveformReceiver::new(
                 &geometry,
@@ -261,7 +261,7 @@ impl WaveformLink {
     ) -> Result<(), SimulationError> {
         let plan = impairments.plan(self.geometry.settings(), &self.layout, variance)?;
         if mode
-            == crate::signal_processing::receiver::channel_estimation::ReceiverMode::SuppliedChannel
+            == crate::signal_processing::receiver::channel_estimation::ReceiverMode::CmChannelEstimated
         {
             self.rx.set_reference_response(&plan.response)?;
         }

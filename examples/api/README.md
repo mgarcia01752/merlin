@@ -11,12 +11,14 @@ and assumptions are explained alongside the workflow.
 
 | Example | Purpose |
 | --- | --- |
+| [Python explicit CM channel estimate](python/run_single_capture_cm_chan_est.py) | Apply one captured response to the channel and explicitly reuse it for supplied-channel receiver correction. |
+| [Rust explicit CM channel estimate](rust/run_single_capture_cm_chan_est.rs) | Same inputs, explicit channel/receiver settings and actual FEC outcomes as Python. |
 | [Saved WB in Python](python/run_multi_rxmer_cmce_workbench.py) | Load embedded captures and saved settings directly through Rust; run selected profiles without duplicate scientific constants. |
 | [Saved WB in Rust](rust/run_multi_rxmer_cmce_workbench.rs) | Use the same native loader and print owned per-profile batch reports. |
 | [Rust workflow](rust/run_single_capture.rs) | Import a profile, derive OCD settings, add RxMER and a channel estimate independently, select one capture and inspect simulated results. |
 | [Python workflow](python/run_single_capture.py) | Perform the same fixture-backed workflow using the installed native Python extension and print FEC counts and BER. |
 | [Python multi-RxMER collection](python/run_multi_rxmer_mce.py) | Discover all profiles in the channel-193 capture and load its 132 RxMER binaries; run independent profile experiments using a Rust residual-power average, unity physical response and MCE receiver. |
-| [Python saved-UI comparison](python/run_multi_rxmer_cm_chan_est.py) | Run the same collection workflow with SuppliedChannel and all other settings matching the bundled multi-rxmer-2 workbench. |
+| [Python saved-UI comparison](python/run_multi_rxmer_cm_chan_est.py) | Run the same collection workflow with CmChannelEstimated and all other settings matching the bundled multi-rxmer-2 workbench. |
 | [Rust selection policies](rust/run_rxmer_selection_parity.rs) | Run `Each`, `Individual`, `AverageAll` and `InterpolateAt`; write actual reference results for the Python parity tests. |
 
 The same workflows are available in both languages:
@@ -76,7 +78,7 @@ experiment for each captured profile: **0, 3 and 4**, with explicit unity H. Rus
 missing readings. The two-hour profile tolerance covers the collection.
 It explicitly selects `ReceiverMode.MERLIN_CHANNEL_ESTIMATED` (MCE) and matches
 the saved WB seeds, decoder limit and OCD timing. The saved WB selects
-SuppliedChannel; enable MCE in its receiver for comparable results. It loads the capture files directly; it is
+CmChannelEstimated; enable MCE in its receiver for comparable results. It loads the capture files directly; it is
 not a general desktop WB JSON importer. `run_single_capture.py` retains the original
 single-capture workflow with an explicit measured channel estimate.
 
@@ -86,7 +88,7 @@ To match the **unchanged saved UI workbench**, run the separate companion:
 local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cm_chan_est.py
 ```
 
-It reuses the same workflow with `ReceiverMode.SUPPLIED_CHANNEL`; the MCE
+It reuses the same workflow with `ReceiverMode.CM_CHANNEL_ESTIMATED`; the MCE
 walkthrough stays available separately. Both use the same profile discovery,
 132 captures, residual-power average, unity H, seeds, limits and timing.
 This matches the bundled saved WB; later UI edits require matching the shared
@@ -177,7 +179,7 @@ binary loading preserves the original bytes/provenance but does not read or
 automatically attach the adjacent sidecar; keep that file with the example to
 retain its synthetic origin and recipe.
 
-The examples use explicit Individual selection, SuppliedChannel correction and
+The examples use explicit Individual selection, CmChannelEstimated correction and
 unity physical response; no separate complex channel capture is loaded. Unity
 correction does not remove RxMER-driven residual noise. Named constants document
 192 MHz bandwidth, CP 512, roll-off 128, interleaver depth 16, noise seed 41,
@@ -221,7 +223,7 @@ validated OCD to the Simulation constructor (Rust: `with_ocd`). Saved-workbench
 examples continue to use Workbench and the same simulation engine.
 
 `scripts/test-local.sh example` runs the existing example unit tests plus the
-single-capture and all-profile Rust API examples. Each API check prints elapsed
+single-capture, all-profile and explicit CM channel-estimate Rust API examples. Each API check prints elapsed
 wall time including incremental compilation and retains logs/JSON under
 `local/api-example-tests/`. The all phase, guarded checks and shared CI include
 these checks. Failure still emits elapsed time and fails the gate.
@@ -230,3 +232,23 @@ Native wheel release checks print Python example-only elapsed seconds separately
 from total wheel validation time. Their JSON report retains
 `example_elapsed_seconds` and `elapsed_seconds`; installation time is excluded
 from example time. This applies to Windows and Ubuntu wheel validation.
+
+## One CM channel estimate in both channel and receiver
+
+`run_single_capture_cm_chan_est` loads the single-channel modulation profile,
+one RxMER and `ds-channel-estimate.bin`. It selects the response once for channel
+impairment and explicitly chooses CmChannelEstimated receiver correction. The
+receiver uses the same response; it does not estimate a new response from pilots.
+RxMER still contributes residual noise, so equalization does not imply perfect MER
+or guaranteed FEC recovery. Original capture bytes and timestamps stay unchanged.
+
+```bash
+local/api-python-test/bin/python examples/api/python/run_single_capture_cm_chan_est.py
+scripts/cargo-local.sh run -p pnm-input --example run_single_capture_cm_chan_est --locked
+```
+
+The existing single-capture walkthrough also loads a channel estimate but uses
+the default receiver mode. This named example makes both choices explicit.
+Shared Rust example checks include its elapsed time. Native wheel checks run both
+Python single-capture examples, record each name/time under `examples`, and
+report their summed `example_elapsed_seconds` separately from total validation.

@@ -8,12 +8,19 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ReceiverMode {
+    /// Correct using the supplied CM channel response selected for the channel.
     #[default]
-    SuppliedChannel,
+    #[serde(rename = "supplied_channel", alias = "cm_channel_estimated")]
+    CmChannelEstimated,
     PilotEstimated,
     /// Pilot correction and received-only reliability; supplied H/noise never enter RX.
     #[serde(rename = "merlin_estimated", alias = "merlin_channel_estimated")]
     MerlinChannelEstimated,
+}
+impl ReceiverMode {
+    /// Compatibility name for callers using the previous supplied-channel mode.
+    #[allow(non_upper_case_globals)]
+    pub const SuppliedChannel: Self = Self::CmChannelEstimated;
 }
 /// One least-squares pilot estimate and its pre-update independent prediction.
 #[derive(Debug, Clone, Serialize)]

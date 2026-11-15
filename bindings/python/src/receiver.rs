@@ -15,8 +15,12 @@ use pyo3::prelude::*;
     name = "ReceiverMode"
 )]
 #[derive(Clone, Copy, PartialEq)]
+#[allow(
+    clippy::enum_variant_names,
+    reason = "Keep public Python names aligned with the Rust receiver modes"
+)]
 pub(crate) enum PyReceiverMode {
-    SuppliedChannel,
+    CmChannelEstimated,
     PilotEstimated,
     MerlinChannelEstimated,
 }
@@ -26,7 +30,7 @@ impl PyReceiverMode {
     /// The same typed correction mode used by Rust and Qt.
     pub(crate) fn native(self) -> api::ReceiverMode {
         match self {
-            Self::SuppliedChannel => api::ReceiverMode::SuppliedChannel,
+            Self::CmChannelEstimated => api::ReceiverMode::CmChannelEstimated,
             Self::PilotEstimated => api::ReceiverMode::PilotEstimated,
             Self::MerlinChannelEstimated => api::ReceiverMode::MerlinChannelEstimated,
         }
@@ -40,7 +44,7 @@ impl From<api::ReceiverMode> for PyReceiverMode {
     /// Matching Python policy; no simulation or state mutation occurs.
     fn from(mode: api::ReceiverMode) -> Self {
         match mode {
-            api::ReceiverMode::SuppliedChannel => Self::SuppliedChannel,
+            api::ReceiverMode::CmChannelEstimated => Self::CmChannelEstimated,
             api::ReceiverMode::PilotEstimated => Self::PilotEstimated,
             api::ReceiverMode::MerlinChannelEstimated => Self::MerlinChannelEstimated,
         }
@@ -57,7 +61,9 @@ pub(crate) fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<PyReceiverMode>()?;
     let class = module.getattr("ReceiverMode")?;
     for (name, mode) in [
-        ("SUPPLIED_CHANNEL", PyReceiverMode::SuppliedChannel),
+        ("CM_CHANNEL_ESTIMATED", PyReceiverMode::CmChannelEstimated),
+        ("SUPPLIED_CHANNEL", PyReceiverMode::CmChannelEstimated),
+        ("SuppliedChannel", PyReceiverMode::CmChannelEstimated),
         ("PILOT_ESTIMATED", PyReceiverMode::PilotEstimated),
         (
             "MERLIN_CHANNEL_ESTIMATED",

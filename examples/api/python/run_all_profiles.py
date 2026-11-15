@@ -21,10 +21,12 @@ MAX_RUNTIME_MS = 300_000
 def main():
     """Run all loaded profiles and print actual per-profile FEC outcomes."""
     root = Path(__file__).resolve().parents[REPOSITORY_PARENT_INDEX] / FIXTURE_DIRECTORY
+
     # Load once; the controller retains the profiles and resolves channel settings.
     sim = Simulation()
     sim.load_profiles(root / "modulation-profile.bin")
     print("Loaded profiles:", [profile_id.value for profile_id in sim.profile_ids])
+
     # Reuse one original RxMER capture for each profile in the collection.
     sim.add_rxmer(RxMer.from_file(root / "rxmer.bin"))
     sim.set_options(EvaluationOptions(
@@ -32,6 +34,7 @@ def main():
         observation=ObservationDuration(OBSERVATION_DURATION_MS),
         profile_tolerance=AssociationTolerance(PROFILE_TOLERANCE_SECONDS),
         limits=RunLimits(runtime=RuntimeLimit(MAX_RUNTIME_MS))))
+
     # Only this call starts simulation; each profile receives fresh engine state.
     for entry in sim.run_all_profiles():
         print("Profile:", entry.profile_id.value, "Status:", entry.status)

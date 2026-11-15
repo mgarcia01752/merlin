@@ -84,7 +84,7 @@ reads the same saved value; it does not replace it with an API default.
 
 | UI choice | Rust ReceiverMode | Python ReceiverMode | Saved WB value |
 | --- | --- | --- | --- |
-| Supplied CM channel estimate | `SuppliedChannel` | `SUPPLIED_CHANNEL` | `supplied_channel` |
+| Supplied CM channel estimate | `CmChannelEstimated` | `CM_CHANNEL_ESTIMATED` | `supplied_channel` |
 | Pilot-based channel estimation | `PilotEstimated` | `PILOT_ESTIMATED` | `pilot_estimated` |
 | Pilot-based channel and noise estimation (MCE) | `MerlinChannelEstimated` | `MERLIN_CHANNEL_ESTIMATED` | `merlin_estimated` |
 

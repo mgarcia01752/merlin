@@ -522,7 +522,7 @@ UI-RF-01 implements the Channel Simulator amplifier/attenuator and inline TP
 layout. Click the right-pointing amplifier triangle or variable-resistor/diagonal-
 arrow attenuator to edit a draft. Apply accepts; X/Close cancel. Defaults are0 dB
 gain,0 dB attenuation and Tilt Off. TP circles before/after amplification open the
-shared SA/QAM instrument chooser; output instruments follow receiver attenuation.
+shared SA/QAM instrument chooser; output instruments follow Common Path Attenuator (CPA) attenuation.
 UI-RF-02 expands this diagram with the available application client area, using
 24 px dialog edge insets and32 px balanced inner drawing margins. Matching blocks
 retain readable dimensions; remaining width is distributed evenly among the six
@@ -2322,7 +2322,7 @@ supplied-channel default remains unchanged. PilotEstimated and MerlinChannelEsti
 use the same existing Rust receiver operations as Qt; no Python estimation or Qt
 orchestration enters the library. Reports retain the selected mode and accurate
 assumptions. The collection example now selects MCE while retaining the curated
-WB's other settings; the saved WB uses SuppliedChannel. The regression comparison
+WB's other settings; the saved WB uses CmChannelEstimated. The regression comparison
 uses the separate run_multi_rxmer_cm_chan_est.py entry point with supplied-channel mode to preserve
 its UI reference. Matching Rust collection entry points share the documented
 `examples/api/rust/support/multi_rxmer.rs` workflow, with identical profile
@@ -2435,3 +2435,25 @@ Python adapts file loading and delegates to this Rust session with existing work
 and cancellation semantics. Legacy Rust Merlin and the Python Merlin alias remain.
 Basic examples use create/load/configure/run; advanced OCD and Workbench remain.
 Example timing is emitted by shared Rust checks and native wheel validation.
+
+### API-CMCE-EXAMPLE-01 — Explicit reference correction examples
+
+The paired Rust/Python single-capture CM channel-estimate examples explicitly
+select the captured channel response and CmChannelEstimated receiver correction.
+They use the existing engine without additional calculations or API changes.
+Shared timed Rust checks and native wheel release checks exercise this workflow.
+
+### API-CMCE-NAME-01 — CM receiver enum names
+
+CmChannelEstimated / CM_CHANNEL_ESTIMATED are the preferred Rust/Python API
+names. Compatibility aliases retain existing source callers; serialized
+supplied_channel remains stable, with cm_channel_estimated accepted on input.
+Receiver algorithms, defaults and saved workbench behavior are unchanged.
+
+### API-CPA-01 — Common Path Attenuator controls
+
+Core PowerConditioning owns CPA loss (`cpa_attenuation_db`). Basic Rust controller
+and Simulation setters validate candidate power snapshots before acceptance;
+Python dispatches directly to those methods. No DSP is duplicated, and existing
+JSON/Qt transport retains `attenuation_db`. Getter values are effective gain and
+accepted CPA loss; configuration never runs the engine.

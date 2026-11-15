@@ -46,6 +46,6 @@ every returned ID (currently 0, 3 and 4), each using a
 residual-power `AverageAll` and explicit unity H. FEC/BER and wall time are
 reported separately per profile.
 The MCE walkthrough deliberately selects a different receiver. To use the saved
-WB's SuppliedChannel setting and other accepted configuration directly, run
+WB's CmChannelEstimated setting and other accepted configuration directly, run
 [run_multi_rxmer_cmce_workbench.py](../../api/python/run_multi_rxmer_cmce_workbench.py) with this WB path. See the
 [API examples](../../api/README.md) for commands.

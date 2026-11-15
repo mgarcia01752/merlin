@@ -12,7 +12,7 @@ The former `examples/workbench.merlin.json` is now under `single/`.
 | [multi-rxmer-2](multi-rxmer-2/README.md) | One | 132 | Flat/unity | Average residual power |
 | [multi-rxmer-dschan](multi-rxmer-dschan/README.md) | Planned | Planned collection | Planned collection | Deferred |
 
-All three runnable WBs explicitly select `SuppliedChannel`, matching the UI's
+All three runnable WBs explicitly select `CmChannelEstimated`, matching the UI's
 new-configuration default. The two channel-34 WBs equalize with their supplied H;
 channel 193 uses unity correction because no measured H is supplied.
 

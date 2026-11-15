@@ -193,7 +193,7 @@ impl PyRunLimits {
 }
 /// Mutable simulation request; set_options accepts a validated independent copy.
 ///
-/// Defaults: Each RxMER, unset channel selection, SuppliedChannel receiver,
+/// Defaults: Each RxMER, unset channel selection, CmChannelEstimated receiver,
 /// 100 ms source observation, noise seed 41, PRBS seed 0x7fff and zero-second
 /// profile tolerance. Select a channel explicitly before run. RunLimits defaults
 /// to 30,000 ms host runtime, 50 iterations and 64 retained detailed words.

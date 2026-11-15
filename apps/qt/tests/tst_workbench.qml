@@ -14,6 +14,8 @@ Pane {
     width: 1240; height: 780; visible: true
     Theme { id: theme }
     ThemePalette { targetControl: window; theme: theme }
+    ThemePalette { targetControl: window.Window.window; theme: theme }
+    ThemePalette { targetControl: workbench.channelPopup; theme: theme }
     QtObject {
         id: backend
         property string accepted: JSON.stringify({occupied_bandwidth_hz: 192000000, subcarrier_spacing: "25000", cyclic_prefix_samples: 512, roll_off_samples: 128, time_interleaver_depth: 16})
@@ -1701,9 +1703,15 @@ Pane {
             mouseClick(findChild(dialog.amplifierPopup,"channelAmplifierApply"));tryCompare(dialog.amplifierPopup,"visible",false)
             compare(measurementBackend.power.amplifier_gain_db,12)
             mouseClick(findChild(dialog,"channelAttenuator"));tryCompare(dialog.attenuatorPopup,"opened",true)
+            compare(dialog.attenuatorPopup.title,"Common Path Attenuator (CPA)")
+            compare(findChild(dialog,"channelAttenuator").Accessible.name,"Configure Common Path Attenuator (CPA)")
+            waitForRendering(dialog.attenuatorPopup.contentItem)
+            grabImage(dialog.attenuatorPopup.contentItem.parent).save("channel-attenuator-dark.png")
             findChild(dialog.attenuatorPopup,"channelAttenuation").text="6"
             mouseClick(findChild(dialog.attenuatorPopup,"channelAttenuatorApply"));tryCompare(dialog.attenuatorPopup,"visible",false)
             compare(measurementBackend.power.attenuation_db,6)
+            waitForRendering(dialog.contentItem)
+            grabImage(dialog.contentItem.parent).save("channel-inputs-ready-dark.png")
             const before=findChild(dialog,"channelTapBefore"),amp=findChild(dialog,"channelAmplifier"),after=findChild(dialog,"channelTapAfter")
             compare(amp.x-before.x-before.width,after.x-amp.x-amp.width)
             compare(before.y+before.height/2,amp.y+amp.height/2)

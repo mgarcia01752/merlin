@@ -373,7 +373,7 @@ All three runnable WB documents (single, multi-rxmer, multi-rxmer-2) now save
 receiver_mode supplied_channel. A structural comparison with HEAD confirms
 receiver_mode is the only changed setting in each WB: all embedded capture
 bytes, hashes and other settings are unchanged. The saved-UI Python companion
-selects SuppliedChannel; workbench.py imports it automatically. The separate
+selects CmChannelEstimated; workbench.py imports it automatically. The separate
 MCE walkthrough retains its deliberate MCE selection. Earlier pilot-mode
 measurements in this report describe the previous saved configuration.
 
@@ -391,7 +391,7 @@ estimate for channel 193. Channel-34 bundles use their measured supplied H.
 All seven Rust WB tests pass in 63.98s.
 Four WB Python tests pass in 9.755s with fresh Rust report parity; three receiver
 tests pass in 5.034s, and six packaging tests pass in 0.710s. Packaging tests now
-guard SuppliedChannel for every runnable bundled WB. Workspace/all-target Clippy,
+guard CmChannelEstimated for every runnable bundled WB. Workspace/all-target Clippy,
 formatting, generated integration-guide freshness and documentation links pass.
 The actual owned native UI process was reviewed and closed without saving edits.
 No wheel/Qt rebuild or full physics-suite rerun is needed for changed JSON,
@@ -452,7 +452,7 @@ docs/development/local/api-collection-examples/.
 Added Rust/Python run_designed_rxmer examples using the unchanged custom binary
 and the exact-grid-compatible single-bundle modulation profile. All four IDs
 are discovered through the Rust decoder. Individual selection, unity physical
-response, SuppliedChannel correction, seeds, timing and bounds match. The recipe
+response, CmChannelEstimated correction, seeds, timing and bounds match. The recipe
 is not applied again; binary loading does not automatically ingest its sidecar.
 Original and decoded profile hashes confirm the sidecar's source-profile linkage.
 
@@ -641,3 +641,40 @@ Ubuntu runners, and no release was published.
 - CI YAML, shell syntax, Python example syntax and integration-guide freshness
   passed. Full repository tests and hosted Windows/Ubuntu matrix execution were
   not run; configured release timing is not hosted execution evidence.
+
+## API-CMCE-EXAMPLE-01 — Explicit channel-estimate walkthroughs
+
+Receiver naming follow-up (API-CMCE-NAME-01): serialization compatibility passed;
+seven Rust workbench tests passed in 53.08 s and direct-engine parity in 44.57 s.
+Three Python receiver tests passed in 4.57 s and four workbench tests in 5.58 s.
+The rebuilt Linux CPython 3.10 wheel passed both examples in an isolated install
+(4.48 s total). Rust examples compile; core and binding Clippy passed. Generated
+Rust/Python reference documentation passed. Other platforms remain unverified.
+
+Both new examples completed with observation-window TotalCW 82, CCW 0, UFEC 0
+and post-FEC BER 0. Rust JSON and Python output agree. The isolated CPython 3.10
+Linux wheel check passed both examples, with the new Python case taking 0.55 s
+and total wheel validation 4.39 s. The timed Rust example passed in 11.74 s,
+including incremental compilation. Fourteen Python tooling tests and the targeted
+failure-timing test passed. Example Clippy, Rust formatting and Python syntax
+checks passed. No engine change, full repository suite or hosted Windows test
+was performed. Shared release checks are configured to retain per-example times.
+
+## API-CPA-01 — Shared gain and CPA controls
+
+- Two Rust API tests passed in 0.07 s: atomic valid/invalid setters, effective
+  target gain, target override, unloaded sessions and legacy/new JSON keys.
+- Six existing power/composition tests passed (composition 2.98 s), including
+  independent scalar-response checks and waveform payload recovery.
+- Rebuilt CPython 3.10 Linux wheel; four receiver/binding tests passed in 4.23 s.
+- Core and binding Clippy passed with warnings denied. Workspace/all-target
+  compilation passed in 9.38 s. Rust formatting and generated Rust/Python
+  reference documentation passed (59 exported classes).
+- Native XCB Qt 6.8.3 component test passed for label/accessibility, apply/cancel
+  and layout behavior. Updated dark editor and diagram captures use fixture
+  backend settings and do not establish full application simulation parity.
+- Three playback tests passed in 29.14 s and eight waveform-impairment tests
+  passed in 25.98 s, including independent-noise MER loss and gain recovery.
+- Full Qt check passed: Clippy, 82 Rust tests (53.90 s), native debug build
+  and 77 QML checks (13.58 s). The desktop executable is rebuilt.
+- Full core suite and Windows/macOS checks were not run for this change.

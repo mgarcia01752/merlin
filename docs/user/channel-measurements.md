@@ -217,7 +217,7 @@ synthetic integer-delay echoes or a bounded continuous FIR reconstructed from H.
 This is independent of MCE in Receiver Configuration. See the
 [waveform-filter guide](impairments/waveform-filter.md) for fit limits and supported combinations.
 
-![Channel Simulator with amplifier, attenuator and TapPoints](../images/workbench/channel-inputs-ready-dark.png)
+![Channel Simulator with launch amplifier, CPA and TapPoints](../images/workbench/channel-inputs-ready-dark.png)
 
 The channel workspace expands with the application window. Maximize MERLIN for
 more space: the diagram uses the available width with balanced outer margins,
@@ -246,14 +246,14 @@ channel estimates remain relative multipliers.
 Use **Gain (dB)**, or select **Set Output Data Level** for a target nominal DATA
 level after amplification. The target requires a reference and must resolve to
 0–60 dB gain. The reference/target range and gain bounds are model controls, not
-a universal DOCSIS CMTS output-power specification. Receiver attenuation accepts
+a universal DOCSIS CMTS output-power specification. Common Path Attenuator (CPA) attenuation accepts
 0–60 dB. Receiver AGC and physical overload/clipping are separate, unmodeled effects.
 
 ![Launch amplifier settings](../images/workbench/channel-amplifier-dark.png)
 
 ### Independent receiver noise
 
-The attenuator editor optionally enables **Add Independent Receiver Noise** with
+The **Common Path Attenuator (CPA)** editor optionally enables **Add Independent Receiver Noise** with
 a density in **dBmV/Hz**. This requires the TX electrical reference. It adds a
 fixed frequency-bin noise floor after attenuation, in addition to the supplied RxMER residual.
 Account for noise already represented by RxMER; leave this option off when the
@@ -265,7 +265,7 @@ matched equalization cannot undo that loss. With it off, the existing post-EQ
 RxMER model can retain the same MER despite cable attenuation. Actual samples
 and decoding determine recovery; a level warning does not invent bit errors.
 
-![Receiver input attenuation and independent noise](../images/workbench/channel-attenuator-dark.png)
+![Common Path Attenuator and independent noise](../images/workbench/channel-attenuator-dark.png)
 
 ### Channel Power and saved workbenches
 

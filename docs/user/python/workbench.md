@@ -42,12 +42,12 @@ the complete original WB independently of its input file.
 | PRBS15 | Use saved source seed; other file-source editor fields are dormant in this mode. |
 | RxMER | Support static single or residual-power average; honor checked capture hashes in saved order. |
 | Channel response | Use saved H and response tolerance, or explicit unity when absent. |
-| Receiver | Use saved SuppliedChannel, PilotEstimated or MCE, including MCE tuning and waveform channel-filter settings. |
+| Receiver | Use saved CmChannelEstimated, PilotEstimated or MCE, including MCE tuning and waveform channel-filter settings. |
 | Physical channel | Use saved additional cable/tilt loss and power conditioning. |
 | Work limits | Use saved observation duration, decoder iterations, runtime budget and noise seed. |
 | Theme/comparison display | Presentation settings do not alter the API's simulated FEC reporting. |
 
-The bundled multi-rxmer-2 WB selects SuppliedChannel, not MCE. Saving a new WB
+The bundled multi-rxmer-2 WB selects CmChannelEstimated, not MCE. Saving a new WB
 with MCE selected changes the imported mode without editing Python constants.
 The loader does not silently substitute modes. Unknown fields and unsupported
 schema versions fail with structured `ApiError` diagnostics.

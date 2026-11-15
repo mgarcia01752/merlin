@@ -288,7 +288,7 @@ fn independent_receiver_floor_reduces_mer_after_attenuation_and_gain_restores_it
     settings.impairments.power.input_data_level_dbmv_per_6mhz = Some(0.0);
     settings.impairments.power.receiver_noise_dbmv_hz = Some(-110.0);
     let baseline = run(&settings).measured_mer_db.unwrap();
-    settings.impairments.power.attenuation_db = 10.0;
+    settings.impairments.power.cpa_attenuation_db = 10.0;
     let weak = run(&settings).measured_mer_db.unwrap();
     assert!(
         (baseline - weak - 10.0).abs() < 0.5,

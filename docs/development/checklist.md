@@ -1446,7 +1446,7 @@ validation are complete; the user guide includes the current dark capture.
   [Design](features/high-level-api/design.md#api-wb-01-native-saved-workbench-import),
   [user contract](../user/python/workbench.md).
 
-- [x] **API-WB-02** Set SuppliedChannel in all runnable bundled WBs and the
+- [x] **API-WB-02** Set CmChannelEstimated in all runnable bundled WBs and the
   saved-UI companion; retain the separate MCE walkthrough. Verify unchanged
   capture/settings payloads, package defaults and Rust/Python/native UI FEC.
   [Design](features/high-level-api/design.md#api-wb-02-align-bundled-workbenches-with-the-default-receiver).
@@ -1557,3 +1557,18 @@ validation are complete; the user guide includes the current dark capture.
   elapsed time; CI retains Rust logs and native wheel timing evidence.
   Local fixture, cancellation, parity and documentation checks pass; hosted
   Windows/newer Ubuntu execution remains unverified for this change.
+
+- [x] API-CMCE-NAME-01: Use CmChannelEstimated / CM_CHANNEL_ESTIMATED
+  in Rust/Python, preserving compatibility names and saved response settings.
+  Local compatibility, workbench, engine parity and wheel checks pass.
+
+- [x] API-CMCE-EXAMPLE-01: Add paired Rust/Python single-capture examples
+  explicitly applying a captured CM response to the channel and receiver.
+  Fixture FEC parity, native isolated-wheel checks, example Clippy and timing
+  tests pass locally. Include both in timed build/release example checks;
+  hosted Windows/Ubuntu release execution remains unverified for this change.
+
+- [x] API-CPA-01: Name Common Path Attenuator (CPA) in the core model,
+  UI and terminology. Add Rust/Python launch gain and CPA setters/getters;
+  preserve saved JSON, validate finite bounds and reject changes atomically.
+  Targeted Rust/Python and full Qt checks pass; platform scope remains Linux.

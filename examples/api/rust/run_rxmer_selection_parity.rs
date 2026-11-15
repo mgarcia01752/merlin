@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .as_deref()
         .unwrap_or("supplied_channel")
     {
-        "supplied_channel" => ReceiverMode::SuppliedChannel,
+        "supplied_channel" => ReceiverMode::CmChannelEstimated,
         "pilot_estimated" => ReceiverMode::PilotEstimated,
         "merlin_estimated" => ReceiverMode::MerlinChannelEstimated,
         _ => {

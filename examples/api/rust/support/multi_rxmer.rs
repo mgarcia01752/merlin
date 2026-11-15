@@ -126,6 +126,7 @@ pub fn run(receiver_mode: ReceiverMode) -> Result<(), Box<dyn std::error::Error>
         let elapsed = started.elapsed();
         for entry in batch.iter() {
             println!("Profile {}: {:?}", profile_id.value(), entry.status());
+
             // 7. Use observation-window decoder outcomes and actual source BER.
             // Complete does not guarantee correct decoding. Unavailable metrics
             // remain unavailable; a partial run may have no complete FEC window.

@@ -27,20 +27,45 @@ UI_FEC_REFERENCE = [(0, 83, 0, 0), (3, 114, 5, 0), (4, 124, 19, 0)]
 
 
 class ReceiverModeTests(unittest.TestCase):
+    def test_cpa_setters_getters_and_atomic_validation(self):
+        """Python shares Rust limits and keeps unrelated session settings."""
+        sim, _ = configured()
+        sim.set_launch_amplifier_gain_db(12.0)
+        sim.set_cpa_attenuation_db(6.0)
+        self.assertEqual(sim.get_launch_amplifier_gain_db(), 12.0)
+        self.assertEqual(sim.get_cpa_attenuation_db(), 6.0)
+        self.assertEqual(sim.options.processing["power"]["attenuation_db"], 6.0)
+        for invalid in (-1.0, 60.01, float("nan"), float("inf")):
+            with self.assertRaises(m.ApiError) as error:
+                sim.set_cpa_attenuation_db(invalid)
+            self.assertEqual(error.exception.code, m.ErrorCode.InvalidInput)
+            with self.assertRaises(m.ApiError):
+                sim.set_launch_amplifier_gain_db(invalid)
+            self.assertEqual(sim.get_cpa_attenuation_db(), 6.0)
+            self.assertEqual(sim.get_launch_amplifier_gain_db(), 12.0)
+        for valid in (0.0, 60.0):
+            sim.set_cpa_attenuation_db(valid)
+            sim.set_launch_amplifier_gain_db(valid)
+            self.assertEqual(sim.get_cpa_attenuation_db(), valid)
+
     def test_receiver_options_are_typed_copied_and_reported(self):
         """Preserve the old default and independent request/report ownership."""
         self.assertEqual(m.EvaluationOptions().receiver_mode,
-                         m.ReceiverMode.SUPPLIED_CHANNEL)
+                         m.ReceiverMode.CM_CHANNEL_ESTIMATED)
         self.assertEqual(m.ReceiverMode.MERLIN_CHANNEL_ESTIMATED,
                          m.ReceiverMode.MerlinChannelEstimated)
+        self.assertEqual(m.ReceiverMode.CM_CHANNEL_ESTIMATED,
+                         m.ReceiverMode.SUPPLIED_CHANNEL)
+        self.assertEqual(m.ReceiverMode.CmChannelEstimated,
+                         m.ReceiverMode.SuppliedChannel)
         sim, _ = configured()
-        for mode in (m.ReceiverMode.SUPPLIED_CHANNEL,
+        for mode in (m.ReceiverMode.CM_CHANNEL_ESTIMATED,
                      m.ReceiverMode.PILOT_ESTIMATED,
                      m.ReceiverMode.MERLIN_CHANNEL_ESTIMATED):
             options = sim.options
             options.receiver_mode = mode
             sim.set_options(options)
-            options.receiver_mode = m.ReceiverMode.SUPPLIED_CHANNEL
+            options.receiver_mode = m.ReceiverMode.CM_CHANNEL_ESTIMATED
             self.assertEqual(sim.options.receiver_mode, mode)
         with self.assertRaises(TypeError):
             m.EvaluationOptions(receiver_mode="pilot_estimated")
@@ -54,7 +79,7 @@ class ReceiverModeTests(unittest.TestCase):
         self.assertEqual(report.options.receiver_mode, m.ReceiverMode.PILOT_ESTIMATED)
         self.assertEqual(batch.to_dict()["entries"][0]["report"]["options"]["receiver_mode"],
                          "pilot_estimated")
-        options.receiver_mode = m.ReceiverMode.SUPPLIED_CHANNEL
+        options.receiver_mode = m.ReceiverMode.CM_CHANNEL_ESTIMATED
         sim.set_options(options)
         self.assertEqual(report.options.receiver_mode, m.ReceiverMode.PILOT_ESTIMATED)
 
@@ -74,7 +99,7 @@ class ReceiverModeTests(unittest.TestCase):
         self.assertEqual(workbench["receiver"]["receiver_mode"], "supplied_channel")
         self.assertEqual(example["RECEIVER_MODE"], m.ReceiverMode.MERLIN_CHANNEL_ESTIMATED)
         ui_example = runpy.run_path(str(UI_EXAMPLE))
-        self.assertEqual(ui_example["RECEIVER_MODE"], m.ReceiverMode.SUPPLIED_CHANNEL)
+        self.assertEqual(ui_example["RECEIVER_MODE"], m.ReceiverMode.CM_CHANNEL_ESTIMATED)
         self.assertEqual(workbench["sections"]["measurements"]["options"]["mode"], "average")
         self.assertEqual(example["PROFILE_ASSOCIATION_TOLERANCE_SECONDS"],
                          workbench["sections"]["measurements"]["options"]["tolerance_seconds"])

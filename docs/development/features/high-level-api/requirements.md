@@ -128,7 +128,7 @@ must not change correction algorithms, decoder reliability or receiver defaults.
 
 ## API-WB-02: bundled receiver defaults
 
-All runnable WB examples must explicitly save SuppliedChannel, matching the
+All runnable WB examples must explicitly save CmChannelEstimated, matching the
 new-configuration UI/API default. Preserve captures and all other settings.
 The saved-UI Python companion and WB loader must reproduce that saved choice;
 the separate MCE walkthrough remains MCE. Guard this policy in the packaged
@@ -168,3 +168,11 @@ Keep legacy constructors compatible. Loading is idle and atomic; preserve scoped
 measurement identity and owned results. Shared build/release example checks must
 report elapsed wall time, including failures, with Python example-only time
 separated from total wheel validation and Rust build-inclusive time labeled.
+
+### API-CPA-01 — Channel conditioning controls
+
+Both APIs expose setters/getters for launch-amplifier gain and Common Path
+Attenuator (CPA) loss. Rust validates finite 0..60 dB values and rejects invalid
+updates without changing accepted settings. Setters never run simulation.
+Explicit gain clears a target level; the gain getter returns effective gain.
+Preserve legacy saved attenuation keys and define CPA in the shared terminology.

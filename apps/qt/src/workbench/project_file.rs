@@ -329,7 +329,7 @@ mod tests {
             assert_eq!(inputs.power, Default::default());
             let power = docsis_ofdm_fec::signal_processing::channel::power::PowerConditioning {
                 amplifier_gain_db: 30.0,
-                attenuation_db: 6.0,
+                cpa_attenuation_db: 6.0,
                 input_data_level_dbmv_per_6mhz: Some(0.0),
                 receiver_noise_dbmv_hz: Some(-120.0),
                 ..Default::default()

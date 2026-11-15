@@ -39,7 +39,7 @@ explicit unity. Response selection and :class:`merlin.ReceiverMode` are independ
 Defaults and units
 ------------------
 
-:class:`merlin.EvaluationOptions` defaults to Each, SuppliedChannel, a 100 ms
+:class:`merlin.EvaluationOptions` defaults to Each, CmChannelEstimated, a 100 ms
 source observation, noise seed 41, PRBS seed 0x7fff and zero seconds of profile
 association tolerance. Channel selection is initially unset and must be explicit
 before running. :class:`merlin.RunLimits` defaults to a 30,000 ms host runtime,

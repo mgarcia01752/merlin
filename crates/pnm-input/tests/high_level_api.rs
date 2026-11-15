@@ -691,9 +691,12 @@ fn receiver_selection_is_independent_copied_and_forwarded_for_every_policy() {
     let epoch = 1380970;
     let first = sim.add_rxmer(rx(epoch, 40.0)).unwrap();
     sim.add_rxmer(rx(epoch + 10, 42.0)).unwrap();
-    assert_eq!(sim.options().receiver_mode, ReceiverMode::SuppliedChannel);
+    assert_eq!(
+        sim.options().receiver_mode,
+        ReceiverMode::CmChannelEstimated
+    );
     for mode in [
-        ReceiverMode::SuppliedChannel,
+        ReceiverMode::CmChannelEstimated,
         ReceiverMode::PilotEstimated,
         ReceiverMode::MerlinChannelEstimated,
     ] {
@@ -709,7 +712,7 @@ fn receiver_selection_is_independent_copied_and_forwarded_for_every_policy() {
                 .with_receiver_mode(mode)
                 .with_rxmer_selection(selection);
             sim.set_options(options.clone()).unwrap();
-            options.receiver_mode = ReceiverMode::SuppliedChannel;
+            options.receiver_mode = ReceiverMode::CmChannelEstimated;
             assert_eq!(sim.options().receiver_mode, mode);
             for prepared in sim.prepare().unwrap() {
                 assert_eq!(prepared.engine_settings().receiver_mode, mode);
@@ -771,7 +774,7 @@ fn receiver_mode_matches_direct_engine(mode: ReceiverMode) {
     sim.set_options(
         sim.options()
             .clone()
-            .with_receiver_mode(ReceiverMode::SuppliedChannel),
+            .with_receiver_mode(ReceiverMode::CmChannelEstimated),
     )
     .unwrap();
     assert_eq!(report.options().receiver_mode, mode);
@@ -940,4 +943,57 @@ fn simulation_loading_is_idle_atomic_and_preserves_scoped_measurements() {
     options.profile_tolerance = AssociationTolerance::new(90_000).unwrap();
     sim.set_options(options).unwrap();
     assert!(sim.run_with_control(&token).is_ok());
+}
+
+#[test]
+fn cpa_controls_validate_atomically_and_preserve_idle_settings() {
+    let mut sim = Simulation::from(controller());
+    let original = sim.options().unwrap().clone();
+    sim.set_launch_amplifier_gain_db(12.0).unwrap();
+    sim.set_cpa_attenuation_db(6.0).unwrap();
+    assert_eq!(sim.get_launch_amplifier_gain_db().unwrap(), 12.0);
+    assert_eq!(sim.get_cpa_attenuation_db().unwrap(), 6.0);
+    assert_eq!(sim.options().unwrap().noise_seed, original.noise_seed);
+    for invalid in [-1.0, 60.01, f64::NAN, f64::INFINITY] {
+        assert_eq!(
+            sim.set_cpa_attenuation_db(invalid).unwrap_err().code(),
+            ErrorCode::InvalidInput
+        );
+        assert!(sim.set_launch_amplifier_gain_db(invalid).is_err());
+        assert_eq!(sim.get_cpa_attenuation_db().unwrap(), 6.0);
+        assert_eq!(sim.get_launch_amplifier_gain_db().unwrap(), 12.0);
+    }
+    for valid in [0.0, 60.0] {
+        sim.set_cpa_attenuation_db(valid).unwrap();
+        sim.set_launch_amplifier_gain_db(valid).unwrap();
+        assert_eq!(sim.get_cpa_attenuation_db().unwrap(), valid);
+    }
+    let mut options = sim.options().unwrap().clone();
+    options.processing.power.input_data_level_dbmv_per_6mhz = Some(0.0);
+    options.processing.power.amplifier_target_dbmv_per_6mhz = Some(20.0);
+    sim.set_options(options).unwrap();
+    assert_eq!(sim.get_launch_amplifier_gain_db().unwrap(), 20.0);
+    sim.set_launch_amplifier_gain_db(3.0).unwrap();
+    assert_eq!(sim.get_launch_amplifier_gain_db().unwrap(), 3.0);
+    assert!(sim
+        .options()
+        .unwrap()
+        .processing
+        .power
+        .amplifier_target_dbmv_per_6mhz
+        .is_none());
+    assert!(Simulation::new().set_cpa_attenuation_db(1.0).is_err());
+}
+
+#[test]
+fn cpa_serialization_preserves_saved_workbenches() {
+    use docsis_ofdm_fec::signal_processing::channel::power::PowerConditioning;
+    for key in ["attenuation_db", "cpa_attenuation_db"] {
+        let power: PowerConditioning =
+            serde_json::from_value(serde_json::json!({key: 6.0})).unwrap();
+        assert_eq!(power.cpa_attenuation_db, 6.0);
+        let json = serde_json::to_value(power).unwrap();
+        assert_eq!(json["attenuation_db"], 6.0);
+        assert!(json.get("cpa_attenuation_db").is_none());
+    }
 }

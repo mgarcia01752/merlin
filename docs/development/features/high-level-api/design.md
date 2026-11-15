@@ -293,7 +293,7 @@ value. Validate by running both fixture-backed examples with the native wheel.
 ### API-RECEIVER-01: match receiver correction across Rust, Python and Qt
 
 Expose the existing engine `ReceiverMode` in Rust `EvaluationOptions` with a
-`with_receiver_mode` builder, retaining SuppliedChannel as the default. Preparation
+`with_receiver_mode` builder, retaining CmChannelEstimated as the default. Preparation
 copies the selected mode into the existing `ChannelRunSettings`; reports preserve
 it in owned options and use accurate receiver-specific assumptions. ChannelSelection
 still chooses applied H independently of receiver correction. PilotEstimated never
@@ -370,7 +370,7 @@ and results. Record support boundaries and any unverified platforms explicitly.
 
 ### API-WB-02: align bundled workbenches with the default receiver
 
-Set SuppliedChannel explicitly in all three runnable WB files. Leave their
+Set CmChannelEstimated explicitly in all three runnable WB files. Leave their
 embedded captures and other settings intact. Match the saved-UI Python companion
 and current user documentation to that choice; preserve the separate MCE example.
 Historical pilot measurements remain historical. Reverify actual WB/script FEC
@@ -432,7 +432,7 @@ measurement; the binary alone does not carry that provenance declaration.
 Use the matching examples/workbench/single/modulation-profile.bin identified
 by its exact grid and the sidecar's decoded profile hash. Discover all captured
 profiles through Rust, run each independently with Individual selection, explicit
-unity physical channel and SuppliedChannel correction. Do not import an unrelated
+unity physical channel and CmChannelEstimated correction. Do not import an unrelated
 channel response or apply the designer recipe twice. Use named settings matching
 both languages, explicit 90,000-second fixture association tolerance and finite
 1ms observation/300s execution budgets. Validate independent language runs for
@@ -571,3 +571,37 @@ pnm-input. Update examples and generated references in both languages. Report
 example-only elapsed time separately from wheel validation/build time, including
 failures, in native release evidence; Rust local/shared CI checks run timed API
 examples. Test empty state, failed replacement, identity and engine parity.
+
+## API-CMCE-EXAMPLE-01 — Explicit channel and receiver response
+
+Add matching run_single_capture_cm_chan_est examples using the bundled single
+profile, RxMER and CM channel-estimate captures. Explicit channel selection
+applies the captured complex response to the channel; CmChannelEstimated uses it
+for receiver correction. Load the response once, preserve provenance, and keep
+this known-reference case distinct from pilot/MCE estimation. Use named constants,
+inline explanations, actual FEC reports and bounded runs. Include the Rust case
+in timed example checks and the Python case in isolated release-wheel checks.
+Verify identical Rust/Python window FEC results and maintain the user guides.
+
+## API-CMCE-NAME-01 — Explicit CM receiver naming
+
+Use ReceiverMode::CmChannelEstimated in Rust and
+ReceiverMode.CM_CHANNEL_ESTIMATED in Python. Preserve the old Rust associated
+constant and Python uppercase/PascalCase aliases. Keep serialized supplied_channel
+for existing workbenches/reports and accept cm_channel_estimated on input.
+The mode remains supplied-reference correction; it does not enable MCE or change
+signal processing. Update examples and guides; test enum defaults, both persisted
+spellings, compatibility aliases and receiver/Workbench outcomes.
+
+## API-CPA-01 — Common Path Attenuator controls
+
+Expose matching Simulation and controller setters/getters for launch gain and
+Common Path Attenuator (CPA) attenuation, in dB. Rust owns finite 0..60 dB
+validation and atomic acceptance; Python delegates without numerical logic.
+Setters preserve other options and do not run simulation. Explicit launch gain
+clears an existing amplifier target; its getter returns effective gain.
+Rename the core field to cpa_attenuation_db while retaining attenuation_db as
+the serialized key and accepting cpa_attenuation_db as an input alias.
+Test bounds, rejection atomicity, serialized compatibility and Python parity.
+The channel diagram uses CPA; its editor and accessibility label spell out
+Common Path Attenuator (CPA). The terminology page is the shared acronym index.

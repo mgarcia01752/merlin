@@ -184,7 +184,7 @@ taps display retained physical bins with original coordinates. Missing data is
 unavailable. After-amplifier samples/bins are the exact scalar transform of the
 retained TX boundary using the frozen core gain, not display-only point movement.
 
-The core PowerConditioning model composes amplifier gain and receiver attenuation
+The core PowerConditioning model composes amplifier gain and Common Path Attenuator (CPA) attenuation
 with imported H and additional loss. Existing measurement playback and response
 transitions preserve conditioning. RxMER retains its post-EQ reference. An optional
 independent receiver noise density is added after attenuation; matched correction

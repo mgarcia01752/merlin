@@ -73,7 +73,7 @@ fn received_only_reliability_has_independent_difference_math_and_atomic_errors()
 fn run(spacing: SubcarrierSpacing, variance: f64, echo: Option<usize>) -> (String, f64) {
     let (transmission, layout) = acquisition_support::acquisition_setup(spacing, false);
     let mut settings = ChannelRunSettings::new(transmission, layout);
-    assert_eq!(settings.receiver_mode, ReceiverMode::SuppliedChannel);
+    assert_eq!(settings.receiver_mode, ReceiverMode::CmChannelEstimated);
     settings.receiver_mode = ReceiverMode::MerlinChannelEstimated;
     settings.duration = std::time::Duration::from_micros(100);
     settings.llr_variance = variance;
@@ -157,7 +157,7 @@ fn changing_receiver_mode_keeps_the_actual_noisy_channel_samples_identical() {
     });
     let mut raw = None;
     for mode in [
-        ReceiverMode::SuppliedChannel,
+        ReceiverMode::CmChannelEstimated,
         ReceiverMode::MerlinChannelEstimated,
     ] {
         settings.receiver_mode = mode;
@@ -244,7 +244,10 @@ fn mce_recovers_echo_near_usable_guard_at_50khz() {
 
 #[test]
 fn reference_and_legacy_pilot_rx_ignore_filter_nulls_only_on_excluded_bins() {
-    for mode in [ReceiverMode::SuppliedChannel, ReceiverMode::PilotEstimated] {
+    for mode in [
+        ReceiverMode::CmChannelEstimated,
+        ReceiverMode::PilotEstimated,
+    ] {
         let (transmission, layout) =
             acquisition_support::acquisition_setup(SubcarrierSpacing::Khz50, false);
         let mut settings = ChannelRunSettings::new(transmission, layout);

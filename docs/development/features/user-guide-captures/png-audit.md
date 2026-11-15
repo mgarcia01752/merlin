@@ -153,3 +153,13 @@ were visually reviewed; no shipped workbench or input was saved/modified.
 These captures verify Linux appearance only. No new UI source changes occurred
 and no rebuild/full Rust or Qt test suites were required. Existing MCE and
 Designer images were inspected rather than unnecessarily regenerated.
+
+### API-CPA-01 — CPA editor terminology
+
+Updated `channel-attenuator-dark.png` and `channel-inputs-ready-dark.png` from
+the actual QML editor and channel diagram rendered on the
+Ubuntu XCB desktop with Qt 6.8.3. This is a component-test capture with fixture
+backend settings (editor: zero attenuation; diagram: 12 dB gain, 6 dB CPA;
+independent noise disabled), not evidence
+of an end-to-end simulated run. The test window uses the application's theme
+palette for popups.

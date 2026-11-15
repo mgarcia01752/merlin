@@ -326,6 +326,42 @@ impl PyMerlin {
     fn set_options(&self, options: &PyEvaluationOptions) -> PyResult<()> {
         self.access(|sim| sim.set_options(options.native()))
     }
+    /// Sets Common Path Attenuator (CPA) attenuation using native Rust validation.
+    /// # Arguments
+    /// * `value_db` - Finite value in the inclusive 0..60 dB model range.
+    /// # Returns
+    /// None after acceptance; does not start a run.
+    /// # Errors
+    /// Preserves structured unloaded, busy and validation errors.
+    fn set_cpa_attenuation_db(&self, value_db: f64) -> PyResult<()> {
+        self.access(|sim| sim.set_cpa_attenuation_db(value_db))
+    }
+    /// Reads effective Common Path Attenuator (CPA) attenuation from Rust.
+    /// # Returns
+    /// Accepted value in dB.
+    /// # Errors
+    /// Preserves structured unloaded and busy errors.
+    fn get_cpa_attenuation_db(&self) -> PyResult<f64> {
+        self.access(|sim| sim.get_cpa_attenuation_db())
+    }
+    /// Sets launch amplifier gain using native Rust validation.
+    /// # Arguments
+    /// * `value_db` - Finite value in the inclusive 0..60 dB model range.
+    /// # Returns
+    /// None after acceptance; does not start a run.
+    /// # Errors
+    /// Preserves structured unloaded, busy and validation errors.
+    fn set_launch_amplifier_gain_db(&self, value_db: f64) -> PyResult<()> {
+        self.access(|sim| sim.set_launch_amplifier_gain_db(value_db))
+    }
+    /// Reads effective launch amplifier gain from Rust.
+    /// # Returns
+    /// Accepted value in dB.
+    /// # Errors
+    /// Preserves structured unloaded and busy errors.
+    fn get_launch_amplifier_gain_db(&self) -> PyResult<f64> {
+        self.access(|sim| sim.get_launch_amplifier_gain_db())
+    }
     /// Return an immutable original observation after validating controller-scoped identity.
     /// # Arguments
     /// * `capture_id` - Opaque identifier returned by this controller.

@@ -10,7 +10,7 @@
 mod multi_rxmer;
 use docsis_ofdm_fec::api::ReceiverMode;
 
-const RECEIVER_MODE: ReceiverMode = ReceiverMode::SuppliedChannel;
+const RECEIVER_MODE: ReceiverMode = ReceiverMode::CmChannelEstimated;
 
 /// Runs the shared collection walkthrough with this example's receiver mode.
 ///

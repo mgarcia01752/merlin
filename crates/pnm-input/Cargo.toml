@@ -46,3 +46,7 @@ path = "../../examples/api/rust/run_designed_rxmer.rs"
 [[example]]
 name = "run_all_profiles"
 path = "../../examples/api/rust/run_all_profiles.rs"
+
+[[example]]
+name = "run_single_capture_cm_chan_est"
+path = "../../examples/api/rust/run_single_capture_cm_chan_est.rs"

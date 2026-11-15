@@ -31,7 +31,7 @@ PROFILE_PATH = "examples/workbench/single/modulation-profile.bin"
 OBSERVATION_DURATION_MS = 1  # Source time, excluding acquisition/drain.
 PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 90_000  # Explicit fixture epoch allowance.
 MAX_RUNTIME_MS = 300_000  # Independent host budget per profile.
-RECEIVER_MODE = ReceiverMode.SUPPLIED_CHANNEL
+RECEIVER_MODE = ReceiverMode.CM_CHANNEL_ESTIMATED
 NOISE_SEED = 41
 PRBS_SEED = 0x7FFF
 MAX_LDPC_ITERATIONS = 50
@@ -51,6 +51,7 @@ def main():
         Native ApiError for input/configuration/preflight failures. Partial runs
         preserve their status and available reports; unavailable counters stay absent.
     """
+
     # 1. Resolve original paths relative to this script, without altering inputs.
     root = Path(__file__).resolve().parents[REPOSITORY_PARENT_INDEX]
     profile_path = root / PROFILE_PATH
@@ -79,6 +80,7 @@ def main():
         sim = Simulation(ocd)
         sim.set_profile(profile)
         original_id = sim.add_rxmer(observation)
+
         # 4. Select this original explicitly. The designed tilt/ripple/notch are
         # already encoded in its RxMER values: do not apply the recipe again.
         # Unity means no additional complex channel impairment; supplied-channel

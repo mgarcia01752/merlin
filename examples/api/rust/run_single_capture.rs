@@ -19,10 +19,13 @@ const FIXTURE_DIRECTORY_FROM_MANIFEST: &str = "../../examples/workbench/single";
 const PROFILE_FILENAME: &str = "modulation-profile.bin";
 const RXMER_FILENAME: &str = "rxmer.bin";
 const CHANNEL_ESTIMATE_FILENAME: &str = "ds-channel-estimate.bin";
+
 // Source observation excludes acquisition, completion and receiver drain.
 const OBSERVATION_DURATION_MS: u64 = 1;
+
 // Permit this fixture's profile and RxMER to have different original epochs.
 const PROFILE_ASSOCIATION_TOLERANCE_SECONDS: u32 = 90_000;
+
 // Host execution has its own per-experiment bound, independent of source time.
 const MAX_RUNTIME_MS: u64 = 300_000;
 
@@ -79,6 +82,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_profile_tolerance(AssociationTolerance::new(
             PROFILE_ASSOCIATION_TOLERANCE_SECONDS,
         )?);
+
     // Source observation and host runtime use milliseconds but measure different
     // things. A host limit can return partial results before observation ends.
     options.observation = ObservationDuration::new(OBSERVATION_DURATION_MS)?;
@@ -92,6 +96,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if entry.status() != RunStatus::Complete {
             return Err("Single-capture example did not complete".into());
         }
+
         // 8. Inspect status before interpreting optional scientific results.
         // Complete means execution finished, not that every codeword decoded.
         // NotStarted entries have no report; early partial runs can lack window

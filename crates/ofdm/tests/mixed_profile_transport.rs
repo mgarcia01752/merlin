@@ -51,8 +51,8 @@ fn mixed_twist_matches_independent_transcribed_matrix_and_bijection() {
 fn waveform_supports_uniform16_and_mixed_with_zero_loading_and_16k() {
     for spacing in [SubcarrierSpacing::Khz25, SubcarrierSpacing::Khz50] {
         for (mixed, mode) in [
-            (false, ReceiverMode::SuppliedChannel),
-            (true, ReceiverMode::SuppliedChannel),
+            (false, ReceiverMode::CmChannelEstimated),
+            (true, ReceiverMode::CmChannelEstimated),
             (true, ReceiverMode::PilotEstimated),
         ] {
             let (transmission, raw) = acquisition_support::acquisition_setup(spacing, false);

@@ -102,7 +102,7 @@ fn legacy_all() -> bool {
 impl Default for Receiver {
     fn default() -> Self {
         Self {
-            receiver_mode: ReceiverMode::SuppliedChannel,
+            receiver_mode: ReceiverMode::CmChannelEstimated,
             channel_filter: Default::default(),
             mce: Default::default(),
             all_profiles: false,

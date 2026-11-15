@@ -36,6 +36,7 @@ scripts/cargo-local.sh run -p pnm-input --example run_single_capture --locked
 ```
 
 ```rust,ignore
+
 // Import the simulation types and native capture-loading helpers.
 use docsis_ofdm_fec::api::*;
 use pnm_input::{CaptureLoader, read_capture};
@@ -58,10 +59,13 @@ let first = sim.add_rxmer(CaptureLoader::rxmer(
 
 // Configure the simulation before starting it.
 sim.set_options(EvaluationOptions::default()
+
     // Use only the RxMER capture added above.
     .with_rxmer_selection(RxMerSelection::Individual(first))
+
     // Use a flat channel response without loading a channel estimate.
     .with_channel_selection(ChannelSelection::Unity)
+
     // Accept the fixture's timestamp difference without changing either capture.
     .with_profile_tolerance(AssociationTolerance::new(
         PROFILE_ASSOCIATION_TOLERANCE_SECONDS,
@@ -72,10 +76,13 @@ let batch = sim.run()?;
 
 // Inspect each experiment and print available FEC results.
 for entry in batch.iter() {
+
     // A report may be absent if the experiment did not start.
     if let Some(report) = entry.report() {
+
         // FEC counters may be unavailable when a run ends early.
         if let Some(fec) = report.fec() {
+
             // Print the number of codewords the decoder could not correct.
             println!("UFEC: {}", fec.uncorrectable_codewords().value());
         }
@@ -104,6 +111,7 @@ let input = read_capture("examples/workbench/single/modulation-profile.bin")?;
 let ids = CaptureLoader::profile_ids(&input)?;
 for id in ids {
     let profile = CaptureLoader::profile(&input, id)?;
+
     // Configure a fresh controller and run this profile explicitly.
 }
 ```
@@ -182,8 +190,8 @@ three choices and their channel/noise sources using the UI names.
 
 `EvaluationOptions::with_receiver_mode(ReceiverMode::PilotEstimated)` selects
 received-pilot correction through the existing engine. `ReceiverMode` re-exports
-the engine's typed `SuppliedChannel`, `PilotEstimated` and `MerlinChannelEstimated`
-choices; the existing default remains `SuppliedChannel`. Channel response
+the engine's typed `CmChannelEstimated`, `PilotEstimated` and `MerlinChannelEstimated`
+choices; the existing default remains `CmChannelEstimated`. Channel response
 selection is independent: explicit unity configures a flat applied H, while the
 receiver can still estimate its correction from received pilots. MCE uses the
 engine's existing default reliability settings in the Basic Rust API.
@@ -255,3 +263,43 @@ AverageAll and InterpolateAt. Averaging/interpolation uses residual power and
 preserves missing values on exact compatible grids. All-profile execution applies
 that policy separately to every loaded profile. Channel selection remains an
 independent explicit, nearest-time or unity policy.
+
+### Apply a captured channel response and correct it at the receiver
+
+See [the explicit CM channel-estimate example](../../../examples/api/rust/run_single_capture_cm_chan_est.rs).
+It loads one profile capture, one RxMER and one CM channel estimate. Explicit
+channel selection applies that response to the signal; `ReceiverMode::CmChannelEstimated`
+uses the same response for receiver equalization. This is known-reference
+correction, not pilot/MCE estimation. RxMER residual noise remains present.
+
+The preferred receiver name is `CmChannelEstimated` in Rust and
+`CM_CHANNEL_ESTIMATED` in Python. The previous `SuppliedChannel` name remains a
+compatibility alias (Python also retains `SUPPLIED_CHANNEL`). Saved JSON still
+writes `supplied_channel` and accepts both `supplied_channel` and
+`cm_channel_estimated`. This naming change does not enable blind estimation:
+the receiver corrects using the supplied CM response selected for the channel.
+
+## Launch amplifier and Common Path Attenuator (CPA)
+
+After loading profiles, configure the shared channel's gain and attenuation.
+Both accept finite values from 0 through 60 dB. Invalid updates leave the previous
+settings intact. An explicit launch gain clears any amplifier target level; its
+getter returns the effective gain. CPA changes preserve that target and all other
+settings. These controls apply to subsequent runs, not existing reports.
+
+```rust
+const LAUNCH_GAIN_DB: f64 = 12.0;
+const CPA_ATTENUATION_DB: f64 = 6.0;
+
+// Configure the loaded session without starting simulation.
+sim.set_launch_amplifier_gain_db(LAUNCH_GAIN_DB)?;
+sim.set_cpa_attenuation_db(CPA_ATTENUATION_DB)?;
+
+// Read back the accepted values in dB.
+let gain_db = sim.get_launch_amplifier_gain_db()?;
+let cpa_db = sim.get_cpa_attenuation_db()?;
+```
+
+The core Rust power field is `cpa_attenuation_db`. Saved workbench and processing
+dictionaries retain the legacy `attenuation_db` key for compatibility; JSON input
+also accepts `cpa_attenuation_db`. See [terminology](../terminology.md).

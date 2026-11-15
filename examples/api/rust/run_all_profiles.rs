@@ -16,6 +16,7 @@ const MAX_RUNTIME_MS: u64 = 300_000;
 /// Propagates capture, configuration and simulation preflight errors.
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_DIRECTORY);
+
     // Loading retains the complete inventory without starting simulation.
     let mut sim = Simulation::new();
     sim.load_profiles(CaptureLoader::profiles(&read_capture(
@@ -31,6 +32,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     options.observation = ObservationDuration::new(OBSERVATION_DURATION_MS)?;
     options.limits.runtime = RuntimeLimit::new(MAX_RUNTIME_MS)?;
     sim.set_options(options)?;
+
     // Returned entries identify their profile, including not-started requests.
     let batch = sim.run_all_profiles()?;
     if batch

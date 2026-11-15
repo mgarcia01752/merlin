@@ -26,7 +26,7 @@ WorkbenchDialog {
         error=backend.power_apply(JSON.stringify(draft))
         if(!error){modelApplied();close()}
     }
-    title:"Receiver Input Attenuator"
+    title:"Common Path Attenuator (CPA)"
     parent:Overlay.overlay;anchors.centerIn:parent;width:Math.min(620,parent ? parent.width-40 : 620)
     modal:true
     footer: ApplyCancelFooter {

@@ -10,7 +10,7 @@ Button {
     property bool amplifier:true
     property string valueText:"0 dB"
     padding:0;hoverEnabled:true
-    Accessible.name:amplifier ? "Configure Launch Amplifier" : "Configure Receiver Input Attenuator"
+    Accessible.name:amplifier ? "Configure Launch Amplifier" : "Configure Common Path Attenuator (CPA)"
     HoverHandler {cursorShape:Qt.PointingHandCursor}
     background:Rectangle {color:control.hovered ? control.theme.accentSoft : "transparent";radius:8;border.width:control.visualFocus ? 1 : 0;border.color:control.theme.accent}
     contentItem:Canvas {
@@ -30,5 +30,5 @@ Button {
         }
     }
     Label {anchors.horizontalCenter:parent.horizontalCenter;anchors.top:parent.bottom;anchors.topMargin:8;text:control.valueText;color:control.theme.accent;font.pixelSize:12}
-    Label {anchors.horizontalCenter:parent.horizontalCenter;anchors.top:parent.bottom;anchors.topMargin:27;text:control.amplifier ? "Launch Amplifier" : "RX Attenuator";color:control.theme.muted;font.pixelSize:11}
+    Label {anchors.horizontalCenter:parent.horizontalCenter;anchors.top:parent.bottom;anchors.topMargin:27;text:control.amplifier ? "Launch Amplifier" : "CPA";color:control.theme.muted;font.pixelSize:11}
 }

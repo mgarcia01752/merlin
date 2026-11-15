@@ -10,7 +10,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-EXAMPLES = ("run_single_capture", "run_all_profiles")
+EXAMPLES = ("run_single_capture", "run_all_profiles", "run_single_capture_cm_chan_est")
 TIMEOUT_SECONDS = 900
 
 
@@ -41,7 +41,7 @@ def run_example(command, log):
 
 
 def main():
-    """Execute both fixture-backed Rust entry workflows and print total wall time."""
+    """Execute the fixture-backed Rust entry workflows and print total wall time."""
     started = time.perf_counter()
     try:
         for example in EXAMPLES:

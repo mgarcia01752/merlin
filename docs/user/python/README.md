@@ -79,7 +79,7 @@ local/api-python-test/bin/python examples/api/python/run_multi_rxmer_mce.py
 
 The collection example runs Profiles 0, 3 and 4 independently, each with the
 Rust residual-power average, explicit unity physical response and MCE receiver
-correction. The saved workbench uses SuppliedChannel; enable MCE there to compare. It reports actual FEC
+correction. The saved workbench uses CmChannelEstimated; enable MCE there to compare. It reports actual FEC
 results and wall time per profile. The observation is 1 ms per profile; increase
 `OBSERVATION_DURATION_MS` for a longer run. See the [example notes](../../../examples/api/README.md) for
 scope and matched fixture settings.
@@ -110,6 +110,7 @@ Static discovery is also available through the shared Rust loader:
 
 ```python
 profile_ids = DPD.profile_ids_from_file(profile_path)
+
 # For bytes: DPD.profile_ids_from_bytes("capture", capture_bytes)
 for profile_id in profile_ids:
     profile = DPD.from_file(profile_path, profile_id)
@@ -137,6 +138,7 @@ profiles using DOCSIS 3.1 by default. Specify `protocol` only to change that
 interpretation. Nothing runs until you call `run()`.
 
 ```python
+
 # Import capture loaders, validated values, run settings and the controller.
 from merlin import (
     Simulation,
@@ -161,24 +163,32 @@ first = sim.add_rxmer(RxMer.from_file("examples/workbench/single/rxmer.bin"))
 
 # Configure the experiment before running it; loading does not start a run.
 sim.set_options(EvaluationOptions(
+
     # Use a flat channel response instead of an imported channel estimate.
     channel_selection=ChannelSelection.unity(),
+
     # Set simulated source duration, independently of the host runtime limit.
     observation=ObservationDuration(OBSERVATION_DURATION_MS),
+
     # Allow this fixture's profile/RxMER timestamp difference without rewriting it.
     profile_tolerance=AssociationTolerance(PROFILE_ASSOCIATION_TOLERANCE_SECONDS),
+
     # Bound execution time; reaching the limit can leave a partial report.
     limits=RunLimits(runtime=RuntimeLimit(MAX_RUNTIME_MS)),
 ))
 
 # Only run() starts simulation; iterate over the returned experiment entries.
 for entry in sim.run():
+
     # Read the owned report, which may be absent for an unsuccessful entry.
     report = entry.report
+
     # Print FEC outcomes only when the report contains those measurements.
     if report is not None and report.fec is not None:
+
         # Show codewords that the decoder could not correct.
         print(report.fec.uncorrectable_codewords.value)
+
         # Show post-FEC bit error rate, preserving None when it is unavailable.
         print(report.profile.post_fec_ber.value
               if report.profile.post_fec_ber is not None else None)
@@ -301,7 +311,7 @@ options = EvaluationOptions(
 ```
 
 `ChannelSelection` chooses the applied physical response H. `ReceiverMode`
-chooses how the receiver corrects it: `SUPPLIED_CHANNEL` (the existing default),
+chooses how the receiver corrects it: `CM_CHANNEL_ESTIMATED` (the existing default),
 `PILOT_ESTIMATED`, or `MERLIN_CHANNEL_ESTIMATED` (MCE with existing engine defaults).
 Unity H can still be received through pilot-estimated correction. Selecting a
 mode does not run simulation. Accepted options and reports retain independent
@@ -309,7 +319,7 @@ snapshots of the choice. All estimation/validation remains in Rust.
 
 The collection example selects MCE and matches the curated WB's noise/PRBS
 seeds, decoder limit, average policy, duration and OCD timing. The saved WB
-selects SuppliedChannel, so enable MCE there to match receiver behavior. It does
+selects CmChannelEstimated, so enable MCE there to match receiver behavior. It does
 not import arbitrary WB JSON; changing that WB requires updating the example's
 named constants. A fixture test guards drift. No change to the original
 single-capture example's receiver default is implied.
@@ -331,6 +341,7 @@ A collection holds at most 16 compatible profiles; a combined batch holds at mos
 apply per experiment, so running all profiles can take longer than one run.
 
 ```python
+
 # Look up or select a loaded profile without reopening its capture.
 loaded_profile = sim.profile_by_id(sim.profile_ids[0])
 sim.select_profile(sim.profile_ids[0])
@@ -367,3 +378,43 @@ AverageAll and InterpolateAt. Averaging/interpolation uses residual power and
 preserves missing values on exact compatible grids. All-profile execution applies
 that policy separately to every loaded profile. Channel selection remains an
 independent explicit, nearest-time or unity policy.
+
+### Apply a captured channel response and correct it at the receiver
+
+See [the explicit CM channel-estimate example](../../../examples/api/python/run_single_capture_cm_chan_est.py).
+It loads one profile capture, one RxMER and one CM channel estimate. Explicit
+channel selection applies that response to the signal; `ReceiverMode.CM_CHANNEL_ESTIMATED`
+uses the same response for receiver equalization. This is known-reference
+correction, not pilot/MCE estimation. RxMER residual noise remains present.
+
+The preferred receiver name is `CmChannelEstimated` in Rust and
+`CM_CHANNEL_ESTIMATED` in Python. The previous `SuppliedChannel` name remains a
+compatibility alias (Python also retains `SUPPLIED_CHANNEL`). Saved JSON still
+writes `supplied_channel` and accepts both `supplied_channel` and
+`cm_channel_estimated`. This naming change does not enable blind estimation:
+the receiver corrects using the supplied CM response selected for the channel.
+
+## Launch amplifier and Common Path Attenuator (CPA)
+
+After loading profiles, configure the shared channel's gain and attenuation.
+Both accept finite values from 0 through 60 dB. Invalid updates leave the previous
+settings intact. An explicit launch gain clears any amplifier target level; its
+getter returns the effective gain. CPA changes preserve that target and all other
+settings. These controls apply to subsequent runs, not existing reports.
+
+```python
+LAUNCH_GAIN_DB = 12.0
+CPA_ATTENUATION_DB = 6.0
+
+# Configure the loaded session without starting simulation.
+sim.set_launch_amplifier_gain_db(LAUNCH_GAIN_DB)
+sim.set_cpa_attenuation_db(CPA_ATTENUATION_DB)
+
+# Read back the accepted values in dB.
+print(sim.get_launch_amplifier_gain_db())
+print(sim.get_cpa_attenuation_db())
+```
+
+Saved workbench files and processing dictionaries retain the legacy `attenuation_db` key for compatibility; JSON input
+also accepts `cpa_attenuation_db`. Editing a Python processing dictionary does
+not update the session; use these setters. See [terminology](../terminology.md).

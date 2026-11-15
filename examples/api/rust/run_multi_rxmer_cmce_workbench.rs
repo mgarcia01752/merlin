@@ -13,6 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .nth(1)
         .ok_or("Supply a workbench.merlin.json path")?;
     let mut workbench = Workbench::from_file(path)?;
+
     // Only this explicit call executes the shared Rust engine. Batches own results.
     let batches = workbench.run()?;
     let values = batches

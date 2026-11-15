@@ -25,7 +25,10 @@ fn load_is_idle_self_contained_and_preserves_saved_options_and_bytes() {
         [0, 3, 4]
     );
     for sim in wb.controllers() {
-        assert_eq!(sim.options().receiver_mode, ReceiverMode::SuppliedChannel);
+        assert_eq!(
+            sim.options().receiver_mode,
+            ReceiverMode::CmChannelEstimated
+        );
         assert_eq!(sim.options().observation.value(), 1);
         assert_eq!(sim.options().noise_seed.value(), 41);
         assert_eq!(sim.options().prbs_seed.value(), 32767);

@@ -49,6 +49,7 @@ def main():
         Once an experiment starts, partial/failed outcomes are represented by
         its entry status and any available report, so inspect both.
     """
+
     # 1. Locate the shared capture fixtures relative to this source file.
     # REPOSITORY_PARENT_INDEX reaches the checkout from examples/api/python/. This
     # avoids depending on the caller's working directory when loading files.

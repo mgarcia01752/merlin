@@ -44,14 +44,14 @@ fn unitary_data_density_calibrates_to_explicit_six_mhz_reference() {
 fn gain_target_attenuation_and_independent_noise_have_distinct_references() {
     let mut power = calibrated();
     power.amplifier_gain_db = 20.0;
-    power.attenuation_db = 6.0;
+    power.cpa_attenuation_db = 6.0;
     assert!((power.net_amplitude() - 10.0_f64.powf(14.0 / 20.0)).abs() < 1e-12);
     power.amplifier_target_dbmv_per_6mhz = Some(30.0);
     assert_eq!(power.gain_db(), 30.0);
     power.receiver_noise_dbmv_hz = Some(-100.0);
     // -100 dBmV/Hz over6 MHz, referenced to0 dBmV data over6 MHz.
     assert!((power.receiver_noise_power() - 0.0006).abs() < 1e-12);
-    power.attenuation_db = 40.0;
+    power.cpa_attenuation_db = 40.0;
     assert!((power.receiver_noise_power() - 0.0006).abs() < 1e-12);
     power.validate().unwrap();
 }

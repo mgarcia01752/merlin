@@ -15,12 +15,14 @@ use serde::{Deserialize, Serialize};
 #[serde(default, deny_unknown_fields)]
 pub struct PowerConditioning {
     pub amplifier_gain_db: f64,
-    pub attenuation_db: f64,
+    /// Common Path Attenuator (CPA), in dB; serialized legacy key is retained.
+    #[serde(rename = "attenuation_db", alias = "cpa_attenuation_db")]
+    pub cpa_attenuation_db: f64,
     /// Absent preserves legacy relative units; not a measured electrical level.
     pub input_data_level_dbmv_per_6mhz: Option<f64>,
     /// Alternative to gain: target nominal DATA density after the amplifier.
     pub amplifier_target_dbmv_per_6mhz: Option<f64>,
-    /// Independent white receiver-input noise, after the variable attenuator.
+    /// Independent white receiver-input noise, after the Common Path Attenuator (CPA).
     /// Explicitly additional to the measured post-EQ RxMER residual, not its replacement.
     pub receiver_noise_dbmv_hz: Option<f64>,
 }
@@ -34,8 +36,8 @@ impl PowerConditioning {
         let valid_level = |value: f64| value.is_finite() && (-120.0..=60.0).contains(&value);
         if !self.amplifier_gain_db.is_finite()
             || !(0.0..=60.0).contains(&self.amplifier_gain_db)
-            || !self.attenuation_db.is_finite()
-            || !(0.0..=60.0).contains(&self.attenuation_db)
+            || !self.cpa_attenuation_db.is_finite()
+            || !(0.0..=60.0).contains(&self.cpa_attenuation_db)
             || self
                 .input_data_level_dbmv_per_6mhz
                 .is_some_and(|v| !valid_level(v))
@@ -76,9 +78,9 @@ impl PowerConditioning {
     }
     /// Returns a scalar complex-amplitude multiplier for a validated net path.
     /// # Returns
-    /// Amplifier followed by receiver attenuation, without imported-H normalization.
+    /// Amplifier followed by Common Path Attenuator (CPA), without imported-H normalization.
     pub fn net_amplitude(&self) -> f64 {
-        10.0_f64.powf((self.gain_db() - self.attenuation_db) / 20.0)
+        10.0_f64.powf((self.gain_db() - self.cpa_attenuation_db) / 20.0)
     }
     /// Converts normalized sample power to rms millivolt squared power.
     /// # Returns

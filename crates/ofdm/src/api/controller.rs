@@ -101,7 +101,7 @@ impl Default for EvaluationOptions {
         Self {
             rxmer_selection: RxMerSelection::Each,
             channel_selection: None,
-            receiver_mode: ReceiverMode::SuppliedChannel,
+            receiver_mode: ReceiverMode::CmChannelEstimated,
             processing: ProcessingOptions::default(),
             observation: ObservationDuration(100),
             noise_seed: NoiseSeed(41),
@@ -459,6 +459,48 @@ impl Merlin {
         }
         self.options = options;
         Ok(())
+    }
+    /// Sets Common Path Attenuator (CPA) attenuation without starting simulation.
+    /// # Arguments
+    /// * `value_db` - Finite value in the inclusive 0..60 dB model range.
+    /// # Returns
+    /// Unit after atomic acceptance; other options are preserved.
+    /// # Errors
+    /// Returns InvalidInput for invalid power settings; retains previous state.
+    pub fn set_cpa_attenuation_db(&mut self, value_db: f64) -> ApiResult<()> {
+        let mut power = self.options.processing.power.clone();
+        power.cpa_attenuation_db = value_db;
+        power.validate().map_err(ApiError::from)?;
+        self.options.processing.power = power;
+        Ok(())
+    }
+    /// Reads accepted Common Path Attenuator (CPA) attenuation in dB.
+    /// # Returns
+    /// The effective scalar value; no simulation is started.
+    pub fn get_cpa_attenuation_db(&self) -> f64 {
+        self.options.processing.power.cpa_attenuation_db
+    }
+    /// Sets launch amplifier gain without starting simulation.
+    /// # Arguments
+    /// * `value_db` - Finite value in the inclusive 0..60 dB model range.
+    /// # Returns
+    /// Unit after atomic acceptance; other options are preserved.
+    /// Explicit launch gain replaces any configured amplifier target.
+    /// # Errors
+    /// Returns InvalidInput for invalid power settings; retains previous state.
+    pub fn set_launch_amplifier_gain_db(&mut self, value_db: f64) -> ApiResult<()> {
+        let mut power = self.options.processing.power.clone();
+        power.amplifier_gain_db = value_db;
+        power.amplifier_target_dbmv_per_6mhz = None;
+        power.validate().map_err(ApiError::from)?;
+        self.options.processing.power = power;
+        Ok(())
+    }
+    /// Reads accepted launch amplifier gain in dB.
+    /// # Returns
+    /// The effective scalar value; no simulation is started.
+    pub fn get_launch_amplifier_gain_db(&self) -> f64 {
+        self.options.processing.power.gain_db()
     }
     /// Freezes and validates every effective experiment without constructing a runner.
     /// # Returns

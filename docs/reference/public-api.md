@@ -397,7 +397,7 @@ clamps/rounds; byte conversion alone does not write a recipe manifest.
 
 `api::ReceiverMode` re-exports the existing engine enum. Add it through
 `EvaluationOptions.receiver_mode` or `.with_receiver_mode(...)`;
-`SuppliedChannel` remains default, with `PilotEstimated` and `MerlinChannelEstimated`
+`CmChannelEstimated` remains default, with `PilotEstimated` and `MerlinChannelEstimated`
 also supported. Preparation copies it into `ChannelRunSettings.receiver_mode`.
 `ChannelSelection` still chooses applied H independently. MCE uses existing
 engine-default policies here; custom MCE tuning is not added in this milestone.
@@ -458,3 +458,22 @@ manual construction. Python mirrors this with `Simulation()`,
 `add_channel_estimate_file(path)`. Existing typed measurement methods remain.
 Python `Merlin` is a compatibility alias; Rust `Merlin` remains the existing
 validated controller used by the session. Workbench runs that same engine.
+
+The preferred receiver name is `CmChannelEstimated` in Rust and
+`CM_CHANNEL_ESTIMATED` in Python. The previous `SuppliedChannel` name remains a
+compatibility alias (Python also retains `SUPPLIED_CHANNEL`). Saved JSON still
+writes `supplied_channel` and accepts both `supplied_channel` and
+`cm_channel_estimated`. This naming change does not enable blind estimation:
+the receiver corrects using the supplied CM response selected for the channel.
+
+### Common Path Attenuator (CPA) and launch gain
+
+Rust `Simulation` and `Merlin`, and Python `Simulation` expose matching
+`set_cpa_attenuation_db`, `get_cpa_attenuation_db`,
+`set_launch_amplifier_gain_db` and `get_launch_amplifier_gain_db` operations.
+Setters validate finite 0..60 dB values in Rust and update atomically without
+running simulation. Simulation requires loaded profiles or an explicit OCD.
+Launch gain overrides a target level; its getter returns effective gain.
+`PowerConditioning::cpa_attenuation_db` names the core scalar loss. The persisted
+key remains `attenuation_db`; the new name is accepted as a JSON alias. Rust
+callers using the old public field name must update to `cpa_attenuation_db`.

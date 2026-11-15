@@ -40,7 +40,7 @@ fn settings(cable: bool) -> ChannelRunSettings {
         AdditionalLoss::Manual { tilt_db: -6.0 }
     };
     settings.impairments.power.amplifier_gain_db = 6.0;
-    settings.impairments.power.attenuation_db = 3.0;
+    settings.impairments.power.cpa_attenuation_db = 3.0;
     settings.channel_filter = ChannelFilterSettings::Echoes {
         paths: vec![
             EchoPath {
@@ -133,7 +133,7 @@ fn recover(cable: bool, mode: ReceiverMode) {
 }
 #[test]
 fn manual_tilt_and_echo_recover_reference_payload_and_actual_raw_samples() {
-    recover(false, ReceiverMode::SuppliedChannel);
+    recover(false, ReceiverMode::CmChannelEstimated);
 }
 #[test]
 fn cable_and_echo_recover_mce_payload_and_actual_raw_samples() {

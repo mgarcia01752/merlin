@@ -190,6 +190,43 @@ impl Simulation {
     pub fn set_options(&mut self, options: EvaluationOptions) -> ApiResult<()> {
         self.controller_mut()?.set_options(options)
     }
+    /// Sets Common Path Attenuator (CPA) attenuation through the Rust controller.
+    /// # Arguments
+    /// * `value_db` - Finite value in the inclusive 0..60 dB model range.
+    /// # Returns
+    /// Unit after atomic acceptance without running simulation.
+    /// # Errors
+    /// Rejects unloaded sessions and invalid settings without mutation.
+    pub fn set_cpa_attenuation_db(&mut self, value_db: f64) -> ApiResult<()> {
+        self.controller_mut()?.set_cpa_attenuation_db(value_db)
+    }
+    /// Reads effective Common Path Attenuator (CPA) attenuation without running simulation.
+    /// # Returns
+    /// Accepted value in dB.
+    /// # Errors
+    /// Rejects sessions without loaded profiles or explicit OCD.
+    pub fn get_cpa_attenuation_db(&self) -> ApiResult<f64> {
+        Ok(self.controller()?.get_cpa_attenuation_db())
+    }
+    /// Sets launch amplifier gain through the Rust controller.
+    /// # Arguments
+    /// * `value_db` - Finite value in the inclusive 0..60 dB model range.
+    /// # Returns
+    /// Unit after atomic acceptance without running simulation.
+    /// # Errors
+    /// Rejects unloaded sessions and invalid settings without mutation.
+    pub fn set_launch_amplifier_gain_db(&mut self, value_db: f64) -> ApiResult<()> {
+        self.controller_mut()?
+            .set_launch_amplifier_gain_db(value_db)
+    }
+    /// Reads effective launch amplifier gain without running simulation.
+    /// # Returns
+    /// Accepted value in dB.
+    /// # Errors
+    /// Rejects sessions without loaded profiles or explicit OCD.
+    pub fn get_launch_amplifier_gain_db(&self) -> ApiResult<f64> {
+        Ok(self.controller()?.get_launch_amplifier_gain_db())
+    }
     /// Delegates `prepare` to the existing validated controller.
     /// # Returns
     /// The controller result; only run methods execute simulation.

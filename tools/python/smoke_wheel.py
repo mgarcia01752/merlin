@@ -133,18 +133,24 @@ def main():
             imported = subprocess.run([str(executable), '-I', '-c', probe], cwd=isolated,
                                       env=environment, check=True, text=True, capture_output=True)
             report['imported_native'] = imported.stdout.strip()
-            example_started = time.perf_counter()
-            try:
-                result = subprocess.run([str(executable), '-I', str(EXAMPLE)], cwd=isolated,
-                                        env=environment, check=True, text=True, capture_output=True,
-                                        timeout=EXAMPLE_TIMEOUT_SECONDS)
-            finally:
-                report['example_elapsed_seconds'] = time.perf_counter() - example_started
-                print(f"Python API example time: {report['example_elapsed_seconds']:.2f}s", flush=True)
-            report['stdout'] = result.stdout
-            report['stderr'] = result.stderr
-            print(result.stdout, end='')
-            validate_example_output(result.stdout)
+            report['example_elapsed_seconds'] = 0.0
+            report['examples'] = []
+            for example in (EXAMPLE, EXAMPLE.with_name('run_single_capture_cm_chan_est.py')):
+                example_started = time.perf_counter()
+                try:
+                    result = subprocess.run([str(executable), '-I', str(example)], cwd=isolated,
+                                            env=environment, check=True, text=True, capture_output=True,
+                                            timeout=EXAMPLE_TIMEOUT_SECONDS)
+                finally:
+                    elapsed = time.perf_counter() - example_started
+                    report['example_elapsed_seconds'] += elapsed
+                    report['examples'].append({'name': example.name, 'elapsed_seconds': elapsed})
+                    print(f"Python API example {example.name}: {elapsed:.2f}s", flush=True)
+                report['stdout'] = result.stdout
+                report['stderr'] = result.stderr
+                print(result.stdout, end='')
+                validate_example_output(result.stdout)
+
         args.output.mkdir(parents=True, exist_ok=False)
         shutil.copy2(wheel, args.output / wheel.name)
         digest = hashlib.sha256(wheel.read_bytes()).hexdigest()

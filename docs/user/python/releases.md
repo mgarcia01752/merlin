@@ -36,7 +36,7 @@ job. Ordinary master/PR validation skips this matrix. Ubuntu and Windows each:
    extension type and required legal files.
 4. Create a fresh temporary venv, install that wheel with no dependencies/network,
    and verify the imported native module resides inside that environment.
-5. Run the actual `examples/api/python/run_single_capture.py` using isolated
+5. Run the actual single-capture and explicit CM channel-estimate examples using isolated
    Python from outside the checkout. It must complete with this fixture's
    82 total codewords, zero corrected/uncorrectable words and BER `0.000e+00`.
    These are actual engine outcomes, not replacement estimates.
@@ -96,7 +96,7 @@ Ubuntu 22.04+ means the x64 LTS target family, with explicit release checks on
 22.04, 24.04 and 26.04. It is not a promise for every future Ubuntu release.
 The `ubuntu22.04` asset name identifies the build baseline and remains unchanged.
 The release-only `ubuntu-compatibility` matrix downloads the original 22.04
-wheel and desktop DEB, verifies checksums, runs the Python single-capture example
+wheel and desktop DEB, verifies checksums, runs the Python single-capture examples
 in a clean CPython 3.10 environment, and exercises desktop install/reinstall/
 removal. No replacement packages are built on newer hosts. Both jobs must pass
 before publication. The newly added 24.04/26.04 installed checks are pending
@@ -110,3 +110,10 @@ incremental compilation; logs and timing JSON are under `local/api-example-tests
 Native wheel smoke checks record `example_elapsed_seconds` separately from
 `elapsed_seconds` for the complete isolated-wheel validation. Both print timing
 on failure as well as success; release publication still requires passing checks.
+
+The isolated wheel check runs both `run_single_capture.py` and
+`run_single_capture_cm_chan_est.py`. It validates each fixture's completed FEC
+output, records each example's elapsed seconds under `examples`, and records
+summed example time under `example_elapsed_seconds`. Total `elapsed_seconds`
+also includes environment creation and installation. A failed example blocks
+asset staging; the timing record is still written.

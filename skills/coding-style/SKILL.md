@@ -687,3 +687,14 @@ do not invent a convenience parameter to simplify documentation. Keep meaningful
 validated domain types and use named constants for example scientific values.
 Call the interfaces **Basic Python API** and **Basic Rust API**. This is documentation
 terminology, not a package, import, filename or Cargo-feature rename.
+
+## Explanatory comment spacing
+
+When adding a standalone explanatory remark (`//` in Rust or `#` in Python),
+leave one blank line before the comment or comment block to separate it from
+preceding code. Apply this to source examples and documentation code blocks,
+including comments inside argument lists. If rustfmt removes spacing inside a
+method chain, place the comment above the chain or split the configuration into
+separate statements rather than disabling formatting. Keep consecutive
+lines of one comment block together; do not insert blanks inside copyright
+banners or documentation comments. Inline end-of-line comments are unchanged.
