@@ -69,6 +69,64 @@ use that environment's Python executable for the install and import check.
 When choosing another release, replace the wheel filename with the exact file
 you downloaded. Installing this local wheel does not fetch MERLIN from PyPI.
 
+### Copy and paste: install by release tag
+
+Run one block below from your own project's folder. Change only `MERLIN_TAG`
+to the published release you want; the version and wheel URL are derived from
+it. These commands download the wheel directly into pip and install it in
+`.venv`. They do not require a MERLIN checkout or a desktop installer.
+
+Use a release whose Assets contain the matching CPython 3.10 wheel. The default
+below follows this document's version; it does not establish asset availability.
+A missing asset causes installation to fail. For explicit SHA-256 verification
+before installation, use the download-and-verify steps above instead.
+
+**Ubuntu — Bash**, with CPython 3.10 and venv support installed:
+
+```bash
+(
+    set -e
+    MERLIN_TAG="v{{VERSION}}"
+    MERLIN_VERSION="${MERLIN_TAG#v}"
+    MERLIN_WHEEL="merlin_ofdm-${MERLIN_VERSION}-cp310-cp310-linux_x86_64.whl"
+    MERLIN_URL="https://github.com/mgarcia01752/merlin/releases/download/${MERLIN_TAG}/${MERLIN_WHEEL}"
+
+    # Create the project environment, then download and install this release.
+    python3.10 -m venv .venv
+    .venv/bin/python -m pip install --no-index --only-binary=:all: "$MERLIN_URL"
+
+    # Confirm that the installed package exposes the simulation API.
+    .venv/bin/python -c "from merlin import Simulation; import merlin; print(merlin.__version__)"
+)
+```
+
+**Windows — PowerShell**, with 64-bit CPython 3.10 and the Python launcher
+installed (this block is for PowerShell, not Command Prompt):
+
+```powershell
+& {
+    $MERLIN_TAG = "v{{VERSION}}"
+    $MERLIN_VERSION = $MERLIN_TAG -replace '^v', ''
+    $MERLIN_WHEEL = "merlin_ofdm-$MERLIN_VERSION-cp310-cp310-win_amd64.whl"
+    $MERLIN_URL = "https://github.com/mgarcia01752/merlin/releases/download/$MERLIN_TAG/$MERLIN_WHEEL"
+
+    # Create the project environment, then download and install this release.
+    py -3.10 -m venv .venv
+    if ($LASTEXITCODE -ne 0) { throw "Could not create the Python environment." }
+    .\.venv\Scripts\python.exe -m pip install --no-index --only-binary=:all: $MERLIN_URL
+    if ($LASTEXITCODE -ne 0) { throw "MERLIN wheel installation failed." }
+
+    # Confirm that the installed package exposes the simulation API.
+    .\.venv\Scripts\python.exe -c "from merlin import Simulation; import merlin; print(merlin.__version__)"
+    if ($LASTEXITCODE -ne 0) { throw "MERLIN API import failed." }
+}
+```
+
+Tags in these examples use `vMAJOR.MINOR.PATCH`, such as `v{{VERSION}}`.
+For an existing compatible environment, omit its creation command and replace
+`.venv` with that environment's path. Pin the same version in your project as
+explained under [Declare a dependency](#declare-a-dependency-in-the-consuming-project).
+
 ### Use it in your code
 
 ```python
