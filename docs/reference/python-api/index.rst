@@ -1,5 +1,5 @@
-MERLIN high-level Python API
-============================
+MERLIN Basic Python API
+=======================
 
 This searchable reference is generated from the actual native ``merlin`` extension.
 Signatures, properties and documentation come from the Rust PyO3 adapter. No mock

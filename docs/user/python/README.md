@@ -1,7 +1,7 @@
-# Python Guide
+# Basic Python API Guide
 
-The optional native Python API calls MERLIN's existing Rust engine through the
-[high-level Rust API](../api/README.md). Scientific validation, averaging,
+The Basic Python API calls MERLIN's existing simulation engine through the
+[Basic Rust API](../api/README.md). Scientific validation, averaging,
 interpolation, simulation and FEC remain in Rust. Python never runs the CLI as a
 subprocess and does not require Qt.
 
@@ -13,7 +13,7 @@ claim about an existing release asset. The tested development target is Ubuntu
 For PyPNM or another consumer, see [downstream installation and version
 pinning](integration.md).
 
-The [generated Python API reference](../../reference/api-reference.md) provides
+The [generated Basic Python API reference](../../reference/api-reference.md) provides
 searchable native class, method, constructor-signature and property pages.
 
 ## Runnable examples
@@ -132,10 +132,12 @@ from merlin import (
     AssociationTolerance, ObservationDuration, RunLimits, RuntimeLimit,
 )
 
+OCCUPIED_BANDWIDTH_HZ = 192_000_000
+
 profile = DPD.from_file(
     "examples/workbench/single/modulation-profile.bin", ProfileId.PROFILE_A)
 ocd = OCD.from_profile(ProtocolScope.DOCSIS31, profile,
-    OcdOverrides(bandwidth=BandwidthHz(192_000_000)))
+    OcdOverrides(bandwidth=BandwidthHz(OCCUPIED_BANDWIDTH_HZ)))
 sim = Merlin(ocd)
 sim.set_profile(profile)
 first = sim.add_rxmer(RxMer.from_file("examples/workbench/single/rxmer.bin"))

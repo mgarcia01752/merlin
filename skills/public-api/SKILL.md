@@ -6,7 +6,7 @@ description: Design and review DOCSIS OFDM Channel Sim public Rust APIs so stand
 # Public simulation API
 
 DOCSIS OFDM Channel Sim owns a standalone Rust simulation core. The native Qt
-interface and optional Python package must call the same algorithms. The canonical high-level API lives under `crates/ofdm/src/api`; the optional
+interface and optional Python package must call the same algorithms. The canonical Basic Rust API lives under `crates/ofdm/src/api`; the optional
 `bindings/python` adapter calls it directly, independently of Qt and the CLI.
 
 - Put reusable signal-processing operations in crates/ofdm or crates/fec-codec, exposed
@@ -48,6 +48,17 @@ Keep viewer types, Qt types and GPL UI code out of the independent Apache-2.0
 simulation API; adapters consume MERLIN models rather than importing viewer
 analysis/capture ownership. CLI and simulation builds remain Qt-independent.
 
-See the [high-level API guide](../../docs/user/api/README.md) and
+See the [Basic Rust API guide](../../docs/user/api/README.md) and
 [Python guide](../../docs/user/python/README.md). Rust-only consumers retain
 the existing low-level APIs; no stable C ABI is promised.
+
+## Python-facing language contract
+
+Apply coding-style's language-specific API example rules. The **Basic Python
+API** shares Rust validation and results, but exposes Python syntax: optional
+arguments accept a value or `None`, and failures raise structured exceptions.
+Do not leak Rust `Option`/`Result` syntax into Python usage or signatures.
+For example, the existing override is
+`OcdOverrides(bandwidth=BandwidthHz(OCCUPIED_BANDWIDTH_HZ))`.
+Omit `bandwidth` or pass `None` to leave that override unset. Do not advertise
+`bandwidth_hz=` unless that parameter is actually implemented and tested.

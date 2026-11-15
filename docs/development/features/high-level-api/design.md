@@ -495,3 +495,19 @@ command in YAML so neither Bash continuation nor PowerShell backticks leak into
 the other platform. Keep all build, installed-example and publication gates.
 Validate the parsed shell matrix and command arguments locally; native Windows
 verification requires a fresh patch release. No scientific changes are needed.
+
+### API-DOC-02: Basic Python API terminology and language separation
+
+Use Basic Python API in Python guide/reference titles and navigation; retain
+Rust API names, package/import names, paths and Cargo features. Python examples
+use the binding's real keyword arguments and domain constructors, with `None`
+for unset overrides and exceptions for errors. Rust syntax belongs only in
+explicitly labeled Rust examples. The canonical coding-style and public-api
+skills enforce this distinction. The Rust guide title now explicitly names Rust.
+Validation: documentation tooling tests, Python example syntax, skill frontmatter
+and discovery links; no simulation behavior or binding signatures changed.
+
+Use **Basic Rust API** for the Rust-facing guide, navigation and reference labels,
+paired with **Basic Python API**. The Python introduction links to the Basic Rust
+API as the engine interface. Keep the `high-level-api` Cargo feature and existing
+paths unchanged; this terminology change does not alter binding signatures.

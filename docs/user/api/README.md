@@ -1,6 +1,6 @@
-# MERLIN high-level API
+# MERLIN Basic Rust API
 
-The Rust high-level API configures MERLIN's existing single-channel source → transmitter
+The Basic Rust API configures MERLIN's existing single-channel source → transmitter
 → channel → receiver → independent source comparison. It does not implement a
 second simulator. Loading and preparation never run the experiment; only `run()`
 starts simulation. Existing low-level APIs, CLI and Qt remain available.
@@ -54,7 +54,7 @@ for entry in batch.iter() {
 ```
 
 The sample explicitly selects 192 MHz because its source record supplies that
-configuration; the high-level API never assumes that bandwidth. The imported profile
+configuration; the Basic Rust API never assumes that bandwidth. The imported profile
 establishes grid, protected PLC/pilot roles and loading, but decoder JSON does
 not establish occupied bandwidth. CP 512, roll-off 128 and depth 16 are reported
 application defaults when not explicitly supplied. Manual OCD plus
@@ -136,7 +136,7 @@ captures. Decoder expansion and engine limits remain active.
 Implementation/evidence: [feature design](../../development/features/high-level-api/design.md),
 [acceptance mapping](../../development/features/high-level-api/requirements.md),
 and [validation](../../development/features/high-level-api/validation.md).
-The optional [Python API](../python/README.md) calls these same Rust operations
+The optional [Basic Python API](../python/README.md) calls these same Rust operations
 through native bindings; see its local wheel setup and parity evidence.
 
 Capture export is independent of simulation: use
@@ -156,7 +156,7 @@ the engine's typed `SuppliedChannel`, `PilotEstimated` and `MerlinChannelEstimat
 choices; the existing default remains `SuppliedChannel`. Channel response
 selection is independent: explicit unity configures a flat applied H, while the
 receiver can still estimate its correction from received pilots. MCE uses the
-engine's existing default reliability settings in this high-level API.
+engine's existing default reliability settings in the Basic Rust API.
 
 Preparation forwards the choice without running; owned report options preserve
 it after later controller edits and assumptions describe the selected receiver.

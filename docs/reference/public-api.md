@@ -1,7 +1,7 @@
 # Rust API Guide
 
 For generated signatures, types and method documentation, see the
-[high-level Rust/Python API reference](api-reference.md). This page remains the
+[Rust and Basic Python API reference](api-reference.md). This page remains the
 architecture-oriented map of shared public operations.
 
 MERLIN exposes its simulation engine through public Rust APIs. The CLI and native
@@ -256,7 +256,7 @@ It returns serializable per-word actual outcomes and independent error counts.
 See [component guides](../user/qam-processing/README.md) for lifecycle, math and
 bounds. No new general channel request schema or Python/Qt dependency is added.
 
-## High-level Rust API and native Python bindings
+## Basic Rust API and native Python bindings
 
 Enable `high-level-api` on `docsis-ofdm-fec` to use `api::{Merlin,Dpd,Ocd,RxMer,
 ChannelEstimate,EvaluationOptions}`. Checked quantities and opaque IDs prevent

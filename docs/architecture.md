@@ -1068,7 +1068,7 @@ The response Display selector names MCE or legacy pilot estimates from retained
 result metadata rather than relabeling old results with next-run settings.
 Training/Tracking describes 128-symbol history readiness,
 not certified accuracy. Apply is blocked during a run; draft Cancel/X preserves
-accepted settings. Rust settings/results are shared by CLI and Qt; the optional Python adapter consumes the same high-level Rust API.
+accepted settings. Rust settings/results are shared by CLI and Qt; the optional Python adapter consumes the same Basic Rust API.
 
 `signal_processing/channel/filter` owns static sparse delay lines or dense 8K FFT
 overlap-add (4096 input samples per chunk, at most2049 coefficients/2048 delay samples).
@@ -2283,7 +2283,7 @@ Desktop staging uses the explicit workbench/measurement allowlist and excludes
 CLI requests. CLI archives retain all public examples. No input schema or
 scientific bytes change. [Design](development/features/example-layout/design.md).
 
-### API-RUST-01: High-level Rust API and optional native adapters
+### API-RUST-01: Basic Rust API and optional native adapters
 
 `crates/ofdm/src/api` provides a high-level API around existing scenario/profile validation,
 `MeasurementPlayback` residual-power preparation and `run_channel` jobs. It

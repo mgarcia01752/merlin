@@ -675,3 +675,15 @@ never elevate source checkouts or run the restarted UI as root. Preserve
 accepted WB settings for recovery and block updates during simulation. Release assets must match the exact Ubuntu baseline, version,
 project URL, size bound and SHA-256 metadata. Audit core and Qt locks without
 advisory suppression before release; document and test dependency upgrades.
+
+## Language-specific API examples
+
+Keep each example valid for its labeled language. Python-facing guides and
+examples use Python keyword arguments, `None`, enums and exceptions from the
+actual bindings; never present Rust `Some(...)`, `::`, `?`, `let`, or struct-field
+syntax as Python. Rust examples remain Rust. Label and separate any explicit
+language comparison. Verify parameter names against the binding signatures;
+do not invent a convenience parameter to simplify documentation. Keep meaningful
+validated domain types and use named constants for example scientific values.
+Call the interfaces **Basic Python API** and **Basic Rust API**. This is documentation
+terminology, not a package, import, filename or Cargo-feature rename.

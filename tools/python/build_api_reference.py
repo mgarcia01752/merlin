@@ -3,7 +3,7 @@
 # Copyright 2026 MERLIN contributors
 # SPDX-License-Identifier: Apache-2.0
 #
-"""Build local high-level Rust and native Python API HTML, without publication."""
+"""Build local Basic Rust API and Basic Python API HTML, without publication."""
 import argparse
 import html
 import importlib.machinery
@@ -154,8 +154,8 @@ def main():
                    cwd=ROOT, env=environment, check=True)
     validate_pages(inventory)
     (OUTPUT / "inventory.json").write_text(json.dumps(inventory, indent=2) + "\n", encoding="utf-8")
-    links = [("python/index.html", "Python high-level API"),
-             ("rust/docsis_ofdm_fec/api/index.html", "Rust high-level API"),
+    links = [("python/index.html", "Basic Python API"),
+             ("rust/docsis_ofdm_fec/api/index.html", "Basic Rust API"),
              ("rust/pnm_input/index.html", "Rust PNM inputs and Workbench"),
              ("../../docs/reference/api-reference.md", "Build instructions and scope"),
              ("../../examples/api/README.md", "Matching Rust and Python examples")]

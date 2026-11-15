@@ -1,13 +1,13 @@
-# Generated high-level API reference
+# Generated Rust and Basic Python API reference
 
 [Documentation index](../README.md) · [Workflow guide](../user/api/README.md) · [Examples](../../examples/api/README.md)
 
-MERLIN provides generated HTML for the actual high-level APIs:
+MERLIN provides generated HTML for the Rust API and Basic Python API:
 
 | Reference | Source of truth | Main entry points |
 | --- | --- | --- |
 | Rust | Rust public items and rustdoc comments | `docsis_ofdm_fec::api` and `pnm_input`, including `Workbench` |
-| Python | Signatures, classes, methods, properties and docstrings from the installed native extension | `merlin.Merlin`, input/selection/options/report types and `merlin.Workbench` |
+| Basic Python API | Signatures, classes, methods, properties and docstrings from the installed native extension | `merlin.Merlin`, input/selection/options/report types and `merlin.Workbench` |
 
 These are searchable class/method references, complementing the written guides.
 Python uses pinned [Sphinx autodoc](https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html)
@@ -57,7 +57,7 @@ Open `local/api-reference/index.html` in a browser. It links to:
 - `python/index.html`: Python reference, class index and full-text search.
 - `python/Merlin.html`: controller methods and properties.
 - `python/Workbench.html`: saved-workbench loading and execution.
-- `rust/docsis_ofdm_fec/api/index.html`: high-level Rust types and operations.
+- `rust/docsis_ofdm_fec/api/index.html`: Basic Rust API types and operations.
 - `rust/pnm_input/index.html`: native binary/JSON/file loading and WB adapter.
 
 The landing page also links to the written guides and runnable examples.

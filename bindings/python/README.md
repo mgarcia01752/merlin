@@ -1,6 +1,6 @@
-# MERLIN native Python adapter
+# MERLIN Basic Python API adapter
 
-Optional PyO3/maturin workspace consuming the canonical high-level Rust API and
+Optional PyO3/maturin workspace consuming the canonical Basic Rust API and
 `pnm-input`. No Qt, CLI subprocess, Python scientific calculations or second
 engine. Distribution name `merlin-ofdm`, import name `merlin`.
 

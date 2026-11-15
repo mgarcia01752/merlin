@@ -1,6 +1,6 @@
 # Rust and Python API examples
 
-These examples call MERLIN's high-level Rust API. Python uses the native
+These examples call MERLIN's Basic Rust API. Python uses the native
 extension over that same API. They load existing fixtures and run one channel;
 they are source examples, not desktop workbench files or CLI JSON requests.
 Loading does not run simulation. Only the explicit `run()` call starts it.

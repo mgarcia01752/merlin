@@ -21,7 +21,7 @@ QML feature folders, instrument providers and the CXX-Qt bridge constraint.
 The [workbench example design](features/workbench-examples/design.md) covers
 the channel 193 collection in `multi-rxmer-2`, portable WBs and input bounds.
 
-The [high-level Rust and Python API](features/high-level-api/design.md) has
+The [Basic Rust API and Basic Python API](features/high-level-api/design.md) has
 [fixture-backed validation](features/high-level-api/validation.md) and separate
 [Rust](../user/api/README.md) and [Python](../user/python/README.md) guides.
 

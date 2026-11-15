@@ -51,6 +51,6 @@
 
 - [Python wheel releases and native validation](user/python/releases.md)
 - [Generated Rust/Python API reference](reference/api-reference.md)
-- [High-level Rust and Python API](user/api/README.md)
+- [Basic Rust API and Basic Python API](user/api/README.md)
 - [Matching Rust/Python examples](../examples/api/README.md), including the
   [custom designed RxMER collection](../examples/measurements/designed-rxmer/README.md)

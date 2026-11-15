@@ -1529,3 +1529,7 @@ validation are complete; the user guide includes the current dark capture.
   with a shared native PowerShell initializer, retaining VS 2022/x64 and
   verifying linker selection. Workflow wiring checked locally; hosted execution
   of the replacement remains pending. See [Windows setup](windows-desktop.md).
+
+- [x] **API-DOC-02** Name guides Basic Rust API / Basic Python API and separate
+  Rust/Python example syntax in coding-style and public-api guidance. Preserve
+  API signatures and package names. Documentation tooling and syntax checks pass.

@@ -1,6 +1,6 @@
 # Feature development records
 
-- [Generated high-level Rust/Python API reference](../../reference/api-reference.md) · [design](high-level-api/design.md#api-doc-01-generated-high-level-rust-and-python-references)
+- [Generated Rust and Basic Python API reference](../../reference/api-reference.md) · [design](high-level-api/design.md#api-doc-01-generated-high-level-rust-and-python-references)
 
 - [RxMER Designer](rxmer-designer/design.md) · [validation](rxmer-designer/validation.md) · [PNM export plan](rxmer-designer/pnm-export-plan.md)
 
@@ -63,7 +63,7 @@ from a fresh clone and are deliberately not Markdown link targets.
 | pnm measurement inputs | [README](pnm-measurement-inputs/README.md), [visual DPD](pnm-measurement-inputs/profile-view.md) |
 | prbs source | [plan](prbs-source/plan.md) · [validation](prbs-source/validation.md) |
 | project architecture | [plan](project-architecture/plan.md) |
-| High-level Rust and native Python API | [Design](high-level-api/design.md), [validation](high-level-api/validation.md); [historical proposal](python-adapter/design.md) |
+| Basic Rust API and Basic Python API | [Design](high-level-api/design.md), [validation](high-level-api/validation.md); [historical proposal](python-adapter/design.md) |
 | project rename | [notes](project-rename/notes.md) |
 | qam completion | [QAM-02/03 design](qam-completion/design.md) · [validation](qam-completion/validation.md) · [QAM-04 evidence needed](qam-completion/external-vectors.md) |
 | qam mapping | [architecture](qam-mapping/architecture.md) |

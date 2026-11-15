@@ -11,13 +11,13 @@ ROOT = Path(os.environ["MERLIN_DOC_ROOT"])
 sys.path.insert(0, str(ROOT / "tools/python"))
 from api_reference_support import sphinx_docstring
 
-project = "MERLIN Python API"
+project = "MERLIN Basic Python API"
 author = "MERLIN contributors"
 copyright = "2026, MERLIN contributors"
 release = (ROOT / "VERSION").read_text().strip()
 extensions = ["sphinx.ext.autodoc"]
 html_theme = "alabaster"
-html_title = f"MERLIN {release} Python API"
+html_title = f"MERLIN {release} Basic Python API"
 html_sidebars = {"**": ["about.html", "navigation.html", "searchbox.html"]}
 autodoc_member_order = "alphabetical"
 autodoc_class_signature = "mixed"
