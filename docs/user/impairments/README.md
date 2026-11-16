@@ -24,7 +24,7 @@ flowchart LR
 | Additional manual tilt and full cable loss | [Additional loss](additional-loss.md) |
 | Supplied response H and known-reference compensation | [Channel response](channel-response.md) |
 | Paired payload constellation before/after compensation | [Paired constellation](paired-constellation.md) |
-| Receiver Channel Estimation (CH-EST-RX) | [Pilot estimation and analyzers](../receiver-estimation/README.md) |
+| Receiver Channel Estimation | [Pilot estimation and analyzers](../receiver-estimation/README.md) |
 | Explicit temporal measurement epochs | [Measurement playback](measurement-timeline.md) |
 | CLI experiments and protected LTE sweep | [Running experiments](experiments.md) |
 

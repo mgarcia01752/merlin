@@ -1,9 +1,7 @@
-# Receiver Channel Estimation (CH-EST-RX)
+# Receiver Channel Estimation
 
-Channel Estimation (CH-EST) identifies the processing function; **Receiver Channel
-Estimation (CH-EST-RX)** identifies its direction. Transmitter-side work uses
-CH-EST-TX. MERLIN now provides a receiver-derived pilot estimate alongside the
-existing supplied-channel reference receiver. All algorithms and results are Rust.
+MERLIN provides a receiver-derived pilot estimate alongside the supplied CM
+channel estimate. All algorithms and results are implemented in Rust.
 
 Start with the **[receiver-mode comparison](modes.md)** for the three UI choices,
 what each estimates, noise confidence, default/unity behavior and saved-WB/API

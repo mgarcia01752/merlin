@@ -67,7 +67,7 @@ Actual native UI captures. Select an image to open its guide.
 - [PNM input guide](docs/user/measurement-inputs/README.md): supported capture types, decoded JSON and file limits.
 - [Impairment experiments](docs/user/impairments/experiments.md): reproduce the RxMER sweeps and inspect FEC outcomes.
 - [Paired constellations](docs/user/impairments/paired-constellation.md): export matched payload I/Q before and after equalization; includes an actual measured-response plot.
-- [Receiver Channel Estimation (CH-EST-RX)](docs/user/receiver-estimation/README.md): independent pilot estimation, protected analyzers and bounded timing search.
+- [Receiver Channel Estimation](docs/user/receiver-estimation/README.md): independent pilot estimation, protected analyzers and bounded timing search.
 - [Temporal measurements](docs/user/impairments/measurement-timeline.md) and [mixed profiles](docs/user/payload-transport/applied-profiles.md): explicit playback and variable-width coding.
 - [Binary RxMER demos](examples/measurements/rxmer-fec-stress/README.md): baseline plus 12, 11, 10 and 9 dB stress cases for external viewing.
 

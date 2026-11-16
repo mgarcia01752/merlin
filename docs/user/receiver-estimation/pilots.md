@@ -1,4 +1,4 @@
-# CH-EST-RX pilot observations
+# Receiver channel estimation: pilot observations
 
 The receiver creates its own pilot sequence from bootstrap spacing and physical
 carrier assignments. It selects continuous and phase-dependent scattered pilots

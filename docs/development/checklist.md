@@ -1643,3 +1643,6 @@ validation are complete; the user guide includes the current dark capture.
   checks pass; see the Windows desktop design.
 - [ ] **WIN-UPDATE-03 native verification** Run the Windows PowerShell path
   contract and verify installed update/report behavior with interactive UAC.
+
+- [x] **FEC-MON-BER** Display FEC Monitor BER in scientific notation while
+  preserving numeric results; see [design](features/fec-monitor/design.md#fec-mon-ber-scientific-notation).

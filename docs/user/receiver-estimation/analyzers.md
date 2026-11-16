@@ -1,4 +1,4 @@
-# CH-EST-RX protected-signal analyzers
+# Receiver channel estimation: protected-signal analyzers
 
 Pilot and PLC analyzers observe the two existing boundaries at the same physical
 carrier/time: `rx.fft.bins` before correction and `rx.equalized.iq` after correction.

@@ -142,3 +142,12 @@ submit steps, handle absent logs and browser failure, and preserve recovery.
 Use native path components for installer arguments; test Windows mixed-separator
 paths, not just paths already containing backslashes. A passing MSI lifecycle
 check does not establish interactive UAC updater verification.
+
+## BER display notation
+
+Unless explicitly requested otherwise, display every bit error ratio (BER) in
+scientific notation (for example `5.314e-4`), using three decimal places in the
+mantissa. Display exact zero as `0` and missing results as unavailable, never as
+zero. This is presentation formatting only: preserve the full underlying numeric
+value in Rust, API results, saved data and machine-readable exports. Do not round
+or replace stored values with formatted strings.

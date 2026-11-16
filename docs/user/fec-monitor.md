@@ -22,7 +22,9 @@ No decoder attempts means an empty graph, not a synthetic zero-iteration word.
 run, including startup/drain. Recovered means decoder-accepted with no detected
 source mismatch. Rejected words, independent source mismatches and unrecovered
 payloads are separate segments. Compared bits, bit errors and BER describe the
-independent source comparison; unavailable BER is shown as a dash. These totals
+independent source comparison. BER uses scientific notation (for example
+`5.314e-4`), with zero shown as `0` and unavailable BER as a dash. Formatting
+preserves the full underlying numeric value. These totals
 can differ from the observation counters because their counting scopes differ.
 A decoder-accepted payload without compared source bits is not proof of matching
 source data; inspect compared bits and BER alongside the recovery bar.

@@ -110,7 +110,7 @@ WorkbenchDialog {
                             Layout.fillWidth: true
                             Label { text: "Compared Bits: " + dialog.value(dialog.statistics.compared_bits); color: dialog.theme.text; Layout.fillWidth: true }
                             Label { text: "Bit Errors: " + dialog.value(dialog.statistics.bit_errors); color: dialog.theme.text; Layout.fillWidth: true }
-                            Label { text: "BER: " + dialog.value(dialog.statistics.ber); color: dialog.theme.text }
+                            Label { text: "BER: " + (dialog.statistics.ber === undefined || dialog.statistics.ber === null ? "—" : dialog.statistics.ber === 0 ? "0" : Number(dialog.statistics.ber).toExponential(3)); color: dialog.theme.text }
                         }
                     }
                 }

@@ -1,4 +1,4 @@
-# CH-EST-RX interpolation and equalization
+# Receiver channel estimation: interpolation and equalization
 
 Pilot observations are sparse within one symbol. The engineering estimator uses
 a bounded128-symbol history, consistent with the PHY's full scattered-pilot

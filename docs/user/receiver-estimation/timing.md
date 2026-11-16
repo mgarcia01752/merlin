@@ -1,4 +1,4 @@
-# CH-EST-RX bounded sample timing search
+# Receiver channel estimation: bounded sample timing search
 
 The timing component locates an unknown sample boundary using cyclic-prefix
 repetition. It requires known FFT length, prefix/taper settings and PLC symbol

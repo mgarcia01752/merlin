@@ -22,7 +22,7 @@ flowchart LR
     FIT --> PHASE[Score held-out scattered pilots over two symbols]
     PHASE --> SELECT[Select unique supported hypothesis]
     SELECT --> RX[Continuous total CFO correction]
-    RX --> EQ[Pilot CH-EST-RX and equalization]
+    RX --> EQ[Pilot channel estimation and equalization]
     EQ --> OUT[Recovered I/Q and separate data/control paths]
 ```
 

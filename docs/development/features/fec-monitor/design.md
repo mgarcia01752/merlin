@@ -62,3 +62,15 @@ Ubuntu dark screenshots confirm the updated layout; the transmitter cards also
 retain light-theme verification. Earlier in this same change, Qt formatting,
 Clippy and all 54 Rust adapter tests passed. No simulation or persisted settings
 were changed; installed packages and other platforms were not exercised.
+
+## FEC-MON-BER: scientific notation
+
+Format the FEC Monitor BER in QML with three decimal places in the mantissa,
+matching the verification dialog (for example `5.314e-4`). Preserve zero as `0`
+and absent values as `—`. Only presentation changes; Rust owns the unchanged
+ratio and counters. Validate QML and rebuild the desktop binary.
+
+Validation: all 83 QML cases pass using the project's Fusion style (22.05 s);
+the debug desktop build passes (1 min 11 s). The UI skill validates. An initial
+run without Fusion failed an unrelated About layout check; the configured rerun
+passes. Architecture ownership remains unchanged: this is QML formatting only.
