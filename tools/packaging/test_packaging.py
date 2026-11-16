@@ -54,7 +54,10 @@ class PackageTests(unittest.TestCase):
                 self.assertTrue((resources / name).is_file(), name)
             examples = resources / "examples/workbench"
             manifest = json.loads((examples / "manifest.json").read_text())
-            self.assertEqual(len(manifest["bundles"]), 3)
+            bundle_ids = [bundle["id"] for bundle in manifest["bundles"]]
+            self.assertCountEqual(bundle_ids, [
+                "single", "multi-rxmer", "multi-rxmer-2", "cl-192mhz-8mhz-notch",
+            ])
             for bundle in manifest["bundles"]:
                 workbench = examples / bundle["workbench"]
                 self.assertTrue(workbench.is_file())

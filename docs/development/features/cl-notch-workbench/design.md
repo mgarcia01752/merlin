@@ -87,3 +87,16 @@ CM/VSA measurement planes, hardware calibration and observation times differ.
 
 All 19 comparison JSON files reproduce byte-for-byte with the Rust generator.
 Embedded hashes, grids and original WB integrity passed verification.
+
+
+## WB-CL-04: release packaging inventory regression
+
+The first v0.3.2 local release gate found a stale CLI-package test expecting
+three bundles after the CL bundle became the fourth approved example. Assert
+the exact four bundle identities (including uniqueness), matching the installed
+desktop smoke inventory. Retain all file, receiver-mode, license, provenance,
+checksum and no-clobber checks. Packaging contents and simulation behavior stay
+unchanged. Validate the complete packaging test group before resuming the
+preserved release candidate; do not bypass release checks.
+
+Validation: all 23 packaging tests passed in 0.341 s on the local Ubuntu host.

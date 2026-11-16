@@ -1615,3 +1615,7 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **WB-CL-03** Run the preserved user Designer WB, an aligned 8 MHz notch
   and a unity notch-depth sweep using actual FEC; record timing and honest
   CableLabs comparison limits. [Results](features/cl-notch-workbench/comparison-sim-1.md).
+
+- [x] **WB-CL-04** Include the approved CL bundle in CLI packaging inventory
+  assertions while retaining integrity/license checks. All 23 packaging tests
+  passed. [Design](features/cl-notch-workbench/design.md#wb-cl-04-release-packaging-inventory-regression).
