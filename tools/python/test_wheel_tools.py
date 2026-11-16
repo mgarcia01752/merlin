@@ -8,8 +8,10 @@ from pathlib import Path
 import tempfile
 import unittest
 import zipfile
+import subprocess
+from unittest.mock import patch, Mock, call
 
-from build_wheel import build_command
+from build_wheel import build_command, prepare_notices
 from smoke_wheel import inspect_wheel, validate_example_output
 
 
@@ -37,6 +39,35 @@ class WheelToolTests(unittest.TestCase):
         self.assertNotIn('--compatibility', windows)
         with self.assertRaises(ValueError):
             build_command('python', Path('Cargo.toml'), Path('out'), 'darwin')
+
+    def test_cold_cache_fetch_precedes_offline_notices_on_each_host(self):
+        """Download only locked native sources before collecting their licenses."""
+        root = Path("checkout")
+        manifest = root / "bindings/python/Cargo.toml"
+        destination = root / "notices"
+        for system, target, prefix in [
+            ("Linux", "x86_64-unknown-linux-gnu", ["bash", "checkout/scripts/cargo-local.sh"]),
+            ("Windows", "x86_64-pc-windows-msvc", ["cargo", "+1.85.1"]),
+        ]:
+            with self.subTest(system=system), patch("build_wheel.platform.system", return_value=system), \
+                    patch("build_wheel.subprocess.run") as run, patch("build_wheel.collect_notices") as collect:
+                order = Mock()
+                order.attach_mock(run, "run")
+                order.attach_mock(collect, "collect")
+                run.return_value.stdout = f"cargo 1.85.1\nhost: {target}\n"
+                prepare_notices(root, destination, manifest)
+                self.assertEqual(order.mock_calls, [
+                    call.run([*prefix, "-vV"], cwd=root, check=True, capture_output=True, text=True),
+                    call.run([*prefix, "fetch", "--locked", "--manifest-path", str(manifest),
+                              "--target", target], cwd=root, check=True),
+                    call.collect(root, destination, manifest),
+                ])
+                collect.reset_mock()
+                run.side_effect = [Mock(stdout=f"host: {target}\n"),
+                                   subprocess.CalledProcessError(101, "cargo fetch")]
+                with self.assertRaises(subprocess.CalledProcessError):
+                    prepare_notices(root, destination, manifest)
+                collect.assert_not_called()
 
     def test_version_abi_platform_and_notices_are_required(self):
         """Reject mismatched consumer wheels and incomplete legal packaging."""

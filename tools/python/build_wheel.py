@@ -42,6 +42,34 @@ def build_command(interpreter, binding, output, host):
             "--out", str(output)]
 
 
+def prepare_notices(root, destination, manifest):
+    """Fetch locked host sources before offline license collection on fresh hosts.
+
+    Args:
+        root: Source checkout containing the pinned Cargo helper.
+        destination: Fresh notice staging directory.
+        manifest: Python binding Cargo manifest, whose lockfile stays unchanged.
+    Returns:
+        None after the existing collector validates and copies all notices.
+    Raises:
+        ValueError for missing host metadata; subprocess and notice failures
+        propagate before wheel construction or installation.
+    """
+    if platform.system() == "Windows":
+        cargo = ["cargo", "+1.85.1"]
+    else:
+        cargo = ["bash", (root / "scripts/cargo-local.sh").as_posix()]
+    information = subprocess.run([*cargo, "-vV"], cwd=root, check=True,
+                                 capture_output=True, text=True).stdout
+    hosts = [line.removeprefix("host: ") for line in information.splitlines()
+             if line.startswith("host: ")]
+    if len(hosts) != 1 or not hosts[0]:
+        raise ValueError("Cargo did not report one native host target")
+    subprocess.run([*cargo, "fetch", "--locked", "--manifest-path", str(manifest),
+                    "--target", hosts[0]], cwd=root, check=True)
+    collect_notices(root, destination, manifest)
+
+
 def main():
     """Collect reproducible legal assets, then invoke pinned local maturin.
 
@@ -66,7 +94,7 @@ def main():
         if any(path.is_symlink() for path in destination.rglob("*")):
             raise ValueError("Refuse redirected generated notices")
         shutil.rmtree(destination)
-    collect_notices(ROOT, destination, BINDING / "Cargo.toml")
+    prepare_notices(ROOT, destination, BINDING / "Cargo.toml")
     for source, name in (
         ("LICENSE", "MERLIN-LICENSE"), ("NOTICE", "MERLIN-NOTICE"),
         ("crates/fec-codec/LICENSE-MIT", "fec-codec-LICENSE-MIT"),

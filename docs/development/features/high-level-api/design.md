@@ -681,3 +681,18 @@ Qt validation also passed: 83 adapter tests in 38.59 s and 82 QML tests in
 18.243 s, plus Clippy and the rebuilt desktop binary. Rust API documentation
 regenerated without warnings in 11.24 s. No UI layout or screenshots changed.
 The final strengthened two-test Designer parity check passed in 3.62 s.
+
+## API-INSTALL-03: cold-cache wheel dependency preparation
+
+Release v0.3.2 exposed that the Python-only source installer invokes wheel
+notice collection before Cargo sources exist on a fresh runner. Keep notice
+collection offline and lockfile-bound, but first fetch the binding's locked
+native-host dependencies in the wheel builder. Apply the same pinned Cargo
+selection on Linux and Windows. Test fetch-before-collection ordering, native
+target selection and failure propagation; validate a real local cold-cache
+wheel and then all hosted installer/platform gates in a new patch release.
+
+Local validation: all 15 wheel-tool tests passed in 0.029 s. A real empty
+Cargo-cache wheel build completed (optimized compilation: 47.72 s), and
+installing that wheel into a project-local environment returned version
+0.3.2. Hosted validation of the fix remains pending the next patch release.

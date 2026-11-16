@@ -1619,3 +1619,8 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **WB-CL-04** Include the approved CL bundle in CLI packaging inventory
   assertions while retaining integrity/license checks. All 23 packaging tests
   passed. [Design](features/cl-notch-workbench/design.md#wb-cl-04-release-packaging-inventory-regression).
+
+- [x] **API-INSTALL-03** Fetch locked native dependencies before offline wheel
+  license collection; test Linux/Windows command ordering and fetch failures.
+  A local cold-cache wheel build and installed version smoke passed.
+  Hosted installer validation remains tracked above.
