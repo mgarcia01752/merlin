@@ -2355,7 +2355,12 @@ adds no runtime or Qt dependencies. See the
 The Apache `pnm-input::Workbench` loader independently decodes the saved WB
 schema 1/2 contract, validates embedded originals and preflights one existing
 high-level controller per selected profile. It depends on the Rust engine and
-PNM decoder only. No GPL Qt orchestration or Qt types enter the library. The
+PNM decoder only. No GPL Qt orchestration or Qt types enter the library.
+Saved RxMER Designer version-1 envelopes are decoded by the Apache workbench
+input adapter using the existing Rust `RxmerRecipe::apply`. Both flat and
+imported baselines preserve exact grids, gaps, timestamps and original envelope
+bytes. Typed `RxMer::from_frame` admission retains a separate validated frame
+intermediate without fabricating a PNM capture header. The
 Python `Workbench` adapter reuses those controllers and the existing GIL-releasing
 execution/cancellation path; it performs no scientific interpretation.
 

@@ -1451,6 +1451,10 @@ validation are complete; the user guide includes the current dark capture.
   capture/settings payloads, package defaults and Rust/Python/native UI FEC.
   [Design](features/high-level-api/design.md#api-wb-02-align-bundled-workbenches-with-the-default-receiver).
 
+- [x] **API-WB-03** Load saved RxMER Designer flat/imported recipes directly
+  through both Rust and Python APIs; preserve provenance and verify bounded
+  engine parity. [Design](features/high-level-api/design.md#api-wb-03-saved-rxmer-designer-inputs).
+
 - [x] **CH-EST-RX-13** Unify receiver configuration in the agreed three-mode
   dropdown, hide MCE averaging outside MCE and document channel/noise sources,
   defaults, unity behavior, pilot history, API names and saved WB semantics.
@@ -1607,3 +1611,7 @@ validation are complete; the user guide includes the current dark capture.
 - [x] QAM-MODE-01: Verify the MCE-to-QAM sample path and identify the recorded
   equalizer for current and archived runs.
   [Design](features/qam-receiver-mode/design.md).
+
+- [x] **WB-CL-03** Run the preserved user Designer WB, an aligned 8 MHz notch
+  and a unity notch-depth sweep using actual FEC; record timing and honest
+  CableLabs comparison limits. [Results](features/cl-notch-workbench/comparison-sim-1.md).

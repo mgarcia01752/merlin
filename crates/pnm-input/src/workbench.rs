@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Bounded saved-workbench import into existing Qt-independent API controllers.
+mod designer;
 use crate::CaptureLoader;
 use base64::{engine::general_purpose::STANDARD, Engine};
 use docsis_ofdm_fec::{api::*, transmission::TransmissionSettings};
@@ -318,7 +319,7 @@ impl Workbench {
             if !hashes.insert(&stored.sha256) {
                 return Err(invalid("Duplicate WB RxMER original"));
             }
-            let capture = CaptureLoader::rxmer(&stored.decode(&mut total)?)?;
+            let capture = designer::load(&stored.decode(&mut total)?)?;
             if selection.is_none_or(|hashes| hashes.contains(&stored.sha256)) {
                 selected_indices.push(originals.len());
             }

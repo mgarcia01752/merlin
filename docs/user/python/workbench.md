@@ -40,7 +40,7 @@ the complete original WB independently of its input file.
 | OCD | Validate saved bandwidth, spacing, CP, roll-off and interleaver depth against embedded DPD. |
 | Profiles | Use explicit schema-2 selection first, otherwise all-profiles or active-profile setting; preserve legacy all-profile behavior. |
 | PRBS15 | Use saved source seed; other file-source editor fields are dormant in this mode. |
-| RxMER | Support static single or residual-power average; honor checked capture hashes in saved order. |
+| RxMER | Support static single or residual-power average; honor checked capture hashes in saved order, including saved Designer recipes. |
 | Channel response | Use saved H and response tolerance, or explicit unity when absent. |
 | Receiver | Use saved CmChannelEstimated, PilotEstimated or MCE, including MCE tuning and waveform channel-filter settings. |
 | Physical channel | Use saved additional cable/tilt loss and power conditioning. |
@@ -51,6 +51,14 @@ The bundled multi-rxmer-2 WB selects CmChannelEstimated, not MCE. Saving a new W
 with MCE selected changes the imported mode without editing Python constants.
 The loader does not silently substitute modes. Unknown fields and unsupported
 schema versions fail with structured `ApiError` diagnostics.
+
+RxMER Designer version-1 envelopes load directly in both APIs. Flat baselines
+(including seeded random variation) and imported binary/JSON baselines use the
+same Rust Designer calculation as the UI. Tilt, ripple, notch, capture scopes
+and edits retain their saved meaning. No preliminary export or manual conversion
+is needed. The loader retains the exact recipe bytes and original embedded
+baseline, with separate materialized-frame provenance. Invalid versions, corrupt
+baselines and nested Designer envelopes fail explicitly.
 
 File payload sources, continuous RxMER hold/interpolation playback and incomplete
 editor-only WBs are unsupported by this importer. They fail explicitly rather

@@ -45,7 +45,10 @@ Dependencies point from CLI/future adapters to docsis-ofdm-fec to fec-codec.
 
 Apply skills/coding-style, skills/scientific-testing, and the applicable versioned
 PHY skill. Apply skills/public-api to public models and operations and
-skills/docsis-signal-processing to signal-processing changes. Keep canonical skills under skills/ with relative discovery links
+skills/docsis-signal-processing to signal-processing changes. All saved-workbench
+JSON, schema, embedded-payload and persisted-setting changes must follow the
+saved-workbench compatibility contract in skills/public-api for both Rust and
+Python, including UI-generated Designer recipes. Keep canonical skills under skills/ with relative discovery links
 under .agents/skills/ and .claude/skills/.
 
 - All signal processing, channel models, modulation/demapping, FEC and simulation

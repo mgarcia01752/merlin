@@ -1,6 +1,6 @@
 ---
 name: public-api
-description: Design and review DOCSIS OFDM Channel Sim public Rust APIs so standalone tools and optional Python bindings can share the same simulation core. Use when adding or changing public simulation models, operations, errors or job interfaces.
+description: Design and review DOCSIS OFDM Channel Sim public Rust APIs so standalone tools and optional Python bindings can share the same simulation core. Use when adding or changing public simulation models, operations, errors, job interfaces or saved-workbench JSON contracts.
 ---
 
 # Public simulation API
@@ -62,3 +62,34 @@ For example, the existing override is
 `OcdOverrides(bandwidth=BandwidthHz(OCCUPIED_BANDWIDTH_HZ))`.
 Omit `bandwidth` or pass `None` to leave that override unset. Do not advertise
 `bandwidth_hz=` unless that parameter is actually implemented and tested.
+
+## Saved-workbench compatibility
+
+Saved workbenches are shared inputs for the Qt UI, Basic Rust API and Basic
+Python API. Apply this contract whenever changing workbench JSON (`*.merlin.json`,
+`wb.json` or equivalent), its schema, defaults, embedded payloads, save/load code,
+or UI settings persisted into it.
+
+- Every supported simulation setting and capture representation saved by the UI
+  must load and run through both APIs without manual conversion. This includes
+  RxMER Designer recipes, not only materialized binary or decoded JSON captures.
+- Implement decoding, recipe materialization, validation and simulation semantics
+  in shared Qt-independent Rust code, exposed through the Rust API and consumed
+  by Python. Do not duplicate scientific calculations in Python or depend on Qt
+  to reconstruct saved inputs.
+- Preserve profiles, selections, receiver modes, grids, missing values, seeds,
+  provenance, defaults and execution limits. Presentation-only state may be
+  ignored by headless callers; simulation settings must not be silently dropped
+  or replaced. Loading must remain idle until an explicit run call.
+- Add or update a UI-produced saved-workbench fixture and exercise it through
+  both Rust and Python loaders. Verify resolved inputs/settings and a bounded,
+  deterministic engine run with matching status, FEC outcomes and partial-result
+  behavior where affected. Test changed recipes against the shared Designer
+  output. Record test elapsed times; a successful UI reopen alone is insufficient.
+- Preserve previously supported schema versions or provide explicit versioned
+  migration and structured rejection for unsupported versions/payloads. Cover
+  affected invalid inputs and bounds, and update both API docs/examples when
+  their behavior changes.
+- Treat a UI/API compatibility gap as unfinished work. Record the gap and its
+  regression case; do not describe a manual conversion workaround as full
+  saved-workbench support or mark the change complete before both APIs pass.

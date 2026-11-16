@@ -65,3 +65,25 @@ All eight generated JSON files reproduce byte-for-byte; source, embedded and
 manifest hashes passed. Existing output directories are rejected. Five desktop
 packaging tests passed (0.038 seconds); the companion is included by the existing
 example directory packaging rule.
+
+## WB-CL-03: user design versus CL-style notch sweep
+
+Preserve `wb-sim-1.merlin.json` exactly. A bounded Rust example materializes its
+single flat Designer recipe through the existing RxmerRecipe::apply operation
+into decoded RxMER JSON accepted by the Rust/Python WB API. This provides a
+materialized comparison, while API-WB-03 now also loads the
+original Designer envelope directly without any conversion.
+Generate an exact-settings run, a notch-location/width-only variant (375 MHz,
+8 MHz, retaining 1 MHz edges), and seven simplified reference cases: unity/CMCE,
+48 dB flat background, no tilt/ripple/random variation, rectangular 8 MHz notch
+at 375 MHz, depths 0/8/18/28/38/43/48 dB. Keep PLC, profile, run duration and seed.
+48 dB is an explicit high-background assumption, not a CL-published fixed value.
+Use the native Python-to-Rust runner for actual FEC and preserve status/partial
+results and elapsed time. Compare qualitatively with V05 Fig.192 p.210, not
+numerical curve matching: RxMER-conditioned Gaussian noise is not LTE, and the
+CM/VSA measurement planes, hardware calibration and observation times differ.
+
+[Completed WB-CL-03 run results and limitations](comparison-sim-1.md).
+
+All 19 comparison JSON files reproduce byte-for-byte with the Rust generator.
+Embedded hashes, grids and original WB integrity passed verification.

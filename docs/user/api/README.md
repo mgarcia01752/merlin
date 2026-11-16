@@ -213,6 +213,8 @@ Use `pnm_input::Workbench::from_file(path)` to load embedded captures and saved
 settings directly, without restating scientific constants. Loading preflights
 but does not run; `workbench.run()` returns one owned batch per saved selected
 profile through the same engine. Python mirrors this as `Workbench.from_file`.
+Saved RxMER Designer recipes (flat or imported baselines) are reconstructed in
+Rust automatically, preserving gaps, seeded variation and original bytes.
 See the [supported WB contract and Rust example](../python/workbench.md).
 
 ### Matching Rust and Python collection examples

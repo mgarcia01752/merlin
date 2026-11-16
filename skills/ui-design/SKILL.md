@@ -122,3 +122,12 @@ custom items must take keyboard focus only if their tooltip uses `activeFocus`.
 Mouse-click focus must not keep a hover tooltip pending
 after the pointer leaves. Apply this to all new and existing application
 views, charts, labels and controls; native OS dialogs retain platform behavior.
+
+## Saved workbenches and headless APIs
+
+When changing persisted workbench settings, JSON schemas or embedded data
+(including RxMER Designer recipes), apply the
+[public-API saved-workbench contract](../public-api/SKILL.md#saved-workbench-compatibility).
+UI-saved simulations must also load and run through the Rust and Python APIs
+without manual conversion. Include both API compatibility checks alongside the
+applicable UI checks; keep scientific reconstruction in shared Rust code.

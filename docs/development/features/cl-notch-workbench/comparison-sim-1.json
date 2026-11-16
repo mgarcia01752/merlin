@@ -1,0 +1,247 @@
+{
+  "platform": "Ubuntu x86_64, CPython 3.10, local MERLIN 0.3.1 with API-WB-03 changes",
+  "observation_ms": 10,
+  "noise_seed": 41,
+  "results": [
+    {
+      "workbench": "wb-sim-1.merlin.json",
+      "sha256": "9f802eee2223eddfdfeba3a3f98efeaf253adaf1df0ab503dc5babb4caef5096",
+      "status": "Complete",
+      "elapsed_seconds": 19.630260448000627,
+      "fec": {
+        "scope": "ObservationWindow",
+        "counters": {
+          "total_cw": 1273,
+          "ccw": 1220,
+          "ufec": 53,
+          "clean_cw": 0,
+          "undetected_errors": 0
+        }
+      },
+      "profile": {
+        "scope": "ObservationWindow",
+        "profile_id": 3,
+        "compared_bits": 18117336,
+        "bit_errors": 6653,
+        "post_fec_ber": 0.00036721734365361444,
+        "payload_rate": 1811733600.0
+      }
+    },
+    {
+      "workbench": "cl-unity-notch-0db.merlin.json",
+      "sha256": "81503f737ac4748794a96dfa346c89dafb5ad54bf37c0189c4c09a4be7c58b6d",
+      "status": "Complete",
+      "elapsed_seconds": 8.594296385999769,
+      "fec": {
+        "scope": "ObservationWindow",
+        "counters": {
+          "total_cw": 1273,
+          "ccw": 1273,
+          "ufec": 0,
+          "clean_cw": 0,
+          "undetected_errors": 0
+        }
+      },
+      "profile": {
+        "scope": "ObservationWindow",
+        "profile_id": 3,
+        "compared_bits": 18117336,
+        "bit_errors": 0,
+        "post_fec_ber": 0.0,
+        "payload_rate": 1811733600.0
+      }
+    },
+    {
+      "workbench": "cl-unity-notch-10db.merlin.json",
+      "sha256": "d8bcda20a9280babf186a7be4ddf69b7a167ae1efe7abb0d3c521f4e8d344b5b",
+      "status": "Complete",
+      "elapsed_seconds": 8.849449478999304,
+      "fec": {
+        "scope": "ObservationWindow",
+        "counters": {
+          "total_cw": 1273,
+          "ccw": 1273,
+          "ufec": 0,
+          "clean_cw": 0,
+          "undetected_errors": 0
+        }
+      },
+      "profile": {
+        "scope": "ObservationWindow",
+        "profile_id": 3,
+        "compared_bits": 18117336,
+        "bit_errors": 0,
+        "post_fec_ber": 0.0,
+        "payload_rate": 1811733600.0
+      }
+    },
+    {
+      "workbench": "cl-unity-notch-20db.merlin.json",
+      "sha256": "082dcde13c650a351af27e29d9f3db14af6d5f817bdf25d418ad3ad4cfcbd8f9",
+      "status": "Complete",
+      "elapsed_seconds": 8.391070903999207,
+      "fec": {
+        "scope": "ObservationWindow",
+        "counters": {
+          "total_cw": 1273,
+          "ccw": 1273,
+          "ufec": 0,
+          "clean_cw": 0,
+          "undetected_errors": 0
+        }
+      },
+      "profile": {
+        "scope": "ObservationWindow",
+        "profile_id": 3,
+        "compared_bits": 18117336,
+        "bit_errors": 0,
+        "post_fec_ber": 0.0,
+        "payload_rate": 1811733600.0
+      }
+    },
+    {
+      "workbench": "cl-unity-notch-30db.merlin.json",
+      "sha256": "0ea0efa333a994b46ae96483095b50f61b3a472fab5608c1dc1226a80590aadd",
+      "status": "Complete",
+      "elapsed_seconds": 7.477505057999224,
+      "fec": {
+        "scope": "ObservationWindow",
+        "counters": {
+          "total_cw": 1273,
+          "ccw": 1273,
+          "ufec": 0,
+          "clean_cw": 0,
+          "undetected_errors": 0
+        }
+      },
+      "profile": {
+        "scope": "ObservationWindow",
+        "profile_id": 3,
+        "compared_bits": 18117336,
+        "bit_errors": 0,
+        "post_fec_ber": 0.0,
+        "payload_rate": 1811733600.0
+      }
+    },
+    {
+      "workbench": "cl-unity-notch-40db.merlin.json",
+      "sha256": "48f12a02b1cb8ead815bfc276d2e063b24bff543b2dd7914fbea06a3bd9f34a0",
+      "status": "Complete",
+      "elapsed_seconds": 6.393671185996936,
+      "fec": {
+        "scope": "ObservationWindow",
+        "counters": {
+          "total_cw": 1273,
+          "ccw": 731,
+          "ufec": 0,
+          "clean_cw": 542,
+          "undetected_errors": 0
+        }
+      },
+      "profile": {
+        "scope": "ObservationWindow",
+        "profile_id": 3,
+        "compared_bits": 18117336,
+        "bit_errors": 0,
+        "post_fec_ber": 0.0,
+        "payload_rate": 1811733600.0
+      }
+    },
+    {
+      "workbench": "cl-unity-notch-48db.merlin.json",
+      "sha256": "b87872759120dde49e50f9855e5d61f5c4fc5a5e17cc3d141832ed1795144ad6",
+      "status": "Complete",
+      "elapsed_seconds": 5.556085512002028,
+      "fec": {
+        "scope": "ObservationWindow",
+        "counters": {
+          "total_cw": 1273,
+          "ccw": 0,
+          "ufec": 0,
+          "clean_cw": 1273,
+          "undetected_errors": 0
+        }
+      },
+      "profile": {
+        "scope": "ObservationWindow",
+        "profile_id": 3,
+        "compared_bits": 18117336,
+        "bit_errors": 0,
+        "post_fec_ber": 0.0,
+        "payload_rate": 1811733600.0
+      }
+    },
+    {
+      "workbench": "cl-unity-notch-5db.merlin.json",
+      "sha256": "aea33978931848f8420ddb242de50881644045119b3813b663f9a1a9d208029e",
+      "status": "Complete",
+      "elapsed_seconds": 8.365430330999516,
+      "fec": {
+        "scope": "ObservationWindow",
+        "counters": {
+          "total_cw": 1273,
+          "ccw": 1273,
+          "ufec": 0,
+          "clean_cw": 0,
+          "undetected_errors": 0
+        }
+      },
+      "profile": {
+        "scope": "ObservationWindow",
+        "profile_id": 3,
+        "compared_bits": 18117336,
+        "bit_errors": 0,
+        "post_fec_ber": 0.0,
+        "payload_rate": 1811733600.0
+      }
+    },
+    {
+      "workbench": "user-cl-notch.merlin.json",
+      "sha256": "7db72028f39e02630e5c7227b3ccee976c717bddfe58759ab8575ab73b33f814",
+      "status": "Complete",
+      "elapsed_seconds": 14.328758581999864,
+      "fec": {
+        "scope": "ObservationWindow",
+        "counters": {
+          "total_cw": 1273,
+          "ccw": 1269,
+          "ufec": 4,
+          "clean_cw": 0,
+          "undetected_errors": 0
+        }
+      },
+      "profile": {
+        "scope": "ObservationWindow",
+        "profile_id": 3,
+        "compared_bits": 18117336,
+        "bit_errors": 903,
+        "post_fec_ber": 4.984176481575437e-05,
+        "payload_rate": 1811733600.0
+      }
+    },
+    {
+      "workbench": "user-materialized.merlin.json",
+      "sha256": "c86498238945ca9bd964aa52d85827b66e3e9b0a21bcddcaea1bd4cbec5d7f93",
+      "status": "Complete",
+      "elapsed_seconds": 24.67921830799969,
+      "fec": {
+        "scope": "ObservationWindow",
+        "counters": {
+          "total_cw": 1273,
+          "ccw": 1220,
+          "ufec": 53,
+          "clean_cw": 0,
+          "undetected_errors": 0
+        }
+      },
+      "profile": {
+        "scope": "ObservationWindow",
+        "profile_id": 3,
+        "compared_bits": 18117336,
+        "bit_errors": 6653,
+        "post_fec_ber": 0.00036721734365361444,
+        "payload_rate": 1811733600.0
+      }
+    }
+  ]
+}

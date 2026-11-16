@@ -496,6 +496,26 @@ macro_rules! measurement {
 measurement!(RxMer, import_rxmer, mer_db, RxMerFrame);
 measurement!(ChannelEstimate, import_channel, iq, ChannelFrame);
 impl RxMer {
+    /// Admits a materialized observation while retaining its original recipe or capture.
+    /// # Arguments
+    /// * `original` - Bounded immutable source bytes retained without rewriting.
+    /// * `frame` - Owned exact-grid observation with validated source metadata.
+    /// # Returns
+    /// Idle immutable input with separate source and serialized-frame provenance.
+    /// # Errors
+    /// Rejects invalid frames or oversized serialized intermediates.
+    pub fn from_frame(original: &NamedCapture, frame: RxMerFrame) -> ApiResult<Self> {
+        frame.validate()?;
+        let bytes = serde_json::to_vec(&frame)
+            .map_err(|error| ApiError::new(ErrorCode::InvalidInput, error.to_string()))?;
+        let decoded = NamedCapture::new(original.name(), bytes)?;
+        let source = provenance(original, &decoded, frame.capture_time, None)?;
+        Ok(Self {
+            frame,
+            provenance: source,
+        })
+    }
+
     /// Borrows the validated original-grid frame for native Rust adapters.
     /// # Returns
     /// Immutable complete identity, samples and source provenance for this

@@ -630,3 +630,54 @@ Source installation uses host CPython 3.10 or newer, with no Ubuntu release
 allowlist. Release downloads require a wheel matching the selected Python ABI.
 CI exercises source installation on Ubuntu and Windows with newer interpreters,
 then prints the installed version only. Existing simulation gates stay separate.
+
+## API-WB-03: saved RxMER Designer inputs
+
+The workbench importer must accept UI-saved version-1 Designer envelopes as
+well as PNM captures. A focused Apache input adapter validates flat/imported
+baselines, embedded integrity, recipe version and work bounds, then calls the
+existing Rust `RxmerRecipe::apply`. No GPL Qt orchestration is copied. Typed
+RxMER admission retains the exact envelope and a distinct materialized-frame
+intermediate; grids, gaps, timestamps and seeded samples remain unchanged.
+Python uses the same Rust Workbench loader. Loading/preflight remain idle.
+Regression coverage includes both baselines, malformed/nested payloads, provenance,
+UI-produced workbench loading and deterministic run parity with materialized input.
+
+The input adapter enables serde_json `float_roundtrip`: exported f64 samples
+must reparse exactly. The initial parity regression found a 7.1e-15 dB JSON
+round-trip difference that changed a borderline FEC outcome. The test now
+asserts exact prepared samples before comparing actual decoder reports; it does
+not round samples or relax FEC equality. This also applies when the adapter is
+linked into Qt. Original bytes/hashes remain unchanged.
+
+### API-WB-03 validation (Ubuntu x64, CPython 3.10)
+
+All 44 `pnm-input` release tests passed (11.56 s combined test execution;
+2.08 s incremental build). Designer/materialized FEC parity passed in 5.294 s.
+All eight Python workbench tests passed in 19.164 s, including fresh Rust/Python
+Designer parity, imported-baseline FEC equivalence, idle loading, structured
+failures and cancellation. Scoped
+Clippy passed in 10.41 s; formatting passed. The optimized native wheel built
+in 32.68 s and was installed only into the existing project-local test environment.
+Windows and other Python versions remain unverified for this change.
+
+Reproduce the cross-language check with a new output path (the Rust test refuses
+an existing report destination):
+
+```bash
+MERLIN_DESIGNER_PARITY_OUT=/tmp/designer-rust-new.json scripts/cargo-local.sh test -p pnm-input --release --test designer_workbench --locked -- --nocapture
+MERLIN_DESIGNER_PARITY=/tmp/designer-rust-new.json local/api-python-test/bin/python -m unittest discover -s bindings/python/tests -p 'test*workbench.py' -v
+```
+
+The unmodified UI-saved `wb-sim-1.merlin.json` also completed directly through
+both APIs with MCE and the saved 10 ms observation: 1,273 total, 1,220 corrected,
+53 uncorrectable, zero clean and zero undetected codewords. Rust wall time was
+20.37 s (including incremental command startup), Python 19.63 s. Reported FEC
+and profile metrics match exactly. These are finite simulated outcomes, not
+CableLabs measurements. Before exact JSON float parsing, the initial local run
+had 54 uncorrectables; that superseded result is not the final parity reference.
+
+Qt validation also passed: 83 adapter tests in 38.59 s and 82 QML tests in
+18.243 s, plus Clippy and the rebuilt desktop binary. Rust API documentation
+regenerated without warnings in 11.24 s. No UI layout or screenshots changed.
+The final strengthened two-test Designer parity check passed in 3.62 s.

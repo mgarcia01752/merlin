@@ -1,0 +1,391 @@
+{
+  "cases": [
+    {
+      "baseline_db": 48.0,
+      "receiver": {
+        "all_profiles": true,
+        "channel_filter": {
+          "mode": "diagonal"
+        },
+        "duration_ms": 10,
+        "max_iterations": 50,
+        "max_runtime_ms": 300000,
+        "mce": {
+          "averaging_symbols": 16,
+          "minimum_variance": 1e-8
+        },
+        "noise_seed": 41,
+        "receiver_mode": "merlin_estimated",
+        "selected_profile_ids": [
+          3
+        ]
+      },
+      "recipe": {
+        "edits": [],
+        "notch": {
+          "bandwidth_hz": 10000000,
+          "center_hz": 394987500,
+          "depth_db": 18.0,
+          "edge_hz": 1000000,
+          "scope": {
+            "mode": "all"
+          }
+        },
+        "random_variation": {
+          "seed": 41,
+          "standard_deviation_db": 0.75
+        },
+        "ripple": {
+          "peak_to_peak_db": 2.0,
+          "scope": {
+            "mode": "all"
+          },
+          "spacing": {
+            "mode": "frequency",
+            "spacing_hz": 20000000
+          }
+        },
+        "tilt": {
+          "scope": {
+            "mode": "all"
+          },
+          "tilt_db": -3.0
+        }
+      },
+      "sha256": "c86498238945ca9bd964aa52d85827b66e3e9b0a21bcddcaea1bd4cbec5d7f93",
+      "unity": false,
+      "workbench": "user-materialized.merlin.json"
+    },
+    {
+      "baseline_db": 48.0,
+      "receiver": {
+        "all_profiles": true,
+        "channel_filter": {
+          "mode": "diagonal"
+        },
+        "duration_ms": 10,
+        "max_iterations": 50,
+        "max_runtime_ms": 300000,
+        "mce": {
+          "averaging_symbols": 16,
+          "minimum_variance": 1e-8
+        },
+        "noise_seed": 41,
+        "receiver_mode": "merlin_estimated",
+        "selected_profile_ids": [
+          3
+        ]
+      },
+      "recipe": {
+        "edits": [],
+        "notch": {
+          "bandwidth_hz": 8000000,
+          "center_hz": 375000000,
+          "depth_db": 18.0,
+          "edge_hz": 1000000,
+          "scope": {
+            "mode": "all"
+          }
+        },
+        "random_variation": {
+          "seed": 41,
+          "standard_deviation_db": 0.75
+        },
+        "ripple": {
+          "peak_to_peak_db": 2.0,
+          "scope": {
+            "mode": "all"
+          },
+          "spacing": {
+            "mode": "frequency",
+            "spacing_hz": 20000000
+          }
+        },
+        "tilt": {
+          "scope": {
+            "mode": "all"
+          },
+          "tilt_db": -3.0
+        }
+      },
+      "sha256": "7db72028f39e02630e5c7227b3ccee976c717bddfe58759ab8575ab73b33f814",
+      "unity": false,
+      "workbench": "user-cl-notch.merlin.json"
+    },
+    {
+      "baseline_db": 48.0,
+      "receiver": {
+        "all_profiles": true,
+        "channel_filter": {
+          "mode": "diagonal"
+        },
+        "duration_ms": 10,
+        "max_iterations": 50,
+        "max_runtime_ms": 300000,
+        "mce": {
+          "averaging_symbols": 16,
+          "minimum_variance": 1e-8
+        },
+        "noise_seed": 41,
+        "receiver_mode": "supplied_channel",
+        "selected_profile_ids": [
+          3
+        ]
+      },
+      "recipe": {
+        "edits": [],
+        "notch": {
+          "bandwidth_hz": 8000000,
+          "center_hz": 375000000,
+          "depth_db": 0.0,
+          "edge_hz": 0,
+          "scope": {
+            "mode": "all"
+          }
+        },
+        "random_variation": null,
+        "ripple": null,
+        "tilt": null
+      },
+      "sha256": "b87872759120dde49e50f9855e5d61f5c4fc5a5e17cc3d141832ed1795144ad6",
+      "unity": true,
+      "workbench": "cl-unity-notch-48db.merlin.json"
+    },
+    {
+      "baseline_db": 48.0,
+      "receiver": {
+        "all_profiles": true,
+        "channel_filter": {
+          "mode": "diagonal"
+        },
+        "duration_ms": 10,
+        "max_iterations": 50,
+        "max_runtime_ms": 300000,
+        "mce": {
+          "averaging_symbols": 16,
+          "minimum_variance": 1e-8
+        },
+        "noise_seed": 41,
+        "receiver_mode": "supplied_channel",
+        "selected_profile_ids": [
+          3
+        ]
+      },
+      "recipe": {
+        "edits": [],
+        "notch": {
+          "bandwidth_hz": 8000000,
+          "center_hz": 375000000,
+          "depth_db": 8.0,
+          "edge_hz": 0,
+          "scope": {
+            "mode": "all"
+          }
+        },
+        "random_variation": null,
+        "ripple": null,
+        "tilt": null
+      },
+      "sha256": "48f12a02b1cb8ead815bfc276d2e063b24bff543b2dd7914fbea06a3bd9f34a0",
+      "unity": true,
+      "workbench": "cl-unity-notch-40db.merlin.json"
+    },
+    {
+      "baseline_db": 48.0,
+      "receiver": {
+        "all_profiles": true,
+        "channel_filter": {
+          "mode": "diagonal"
+        },
+        "duration_ms": 10,
+        "max_iterations": 50,
+        "max_runtime_ms": 300000,
+        "mce": {
+          "averaging_symbols": 16,
+          "minimum_variance": 1e-8
+        },
+        "noise_seed": 41,
+        "receiver_mode": "supplied_channel",
+        "selected_profile_ids": [
+          3
+        ]
+      },
+      "recipe": {
+        "edits": [],
+        "notch": {
+          "bandwidth_hz": 8000000,
+          "center_hz": 375000000,
+          "depth_db": 18.0,
+          "edge_hz": 0,
+          "scope": {
+            "mode": "all"
+          }
+        },
+        "random_variation": null,
+        "ripple": null,
+        "tilt": null
+      },
+      "sha256": "0ea0efa333a994b46ae96483095b50f61b3a472fab5608c1dc1226a80590aadd",
+      "unity": true,
+      "workbench": "cl-unity-notch-30db.merlin.json"
+    },
+    {
+      "baseline_db": 48.0,
+      "receiver": {
+        "all_profiles": true,
+        "channel_filter": {
+          "mode": "diagonal"
+        },
+        "duration_ms": 10,
+        "max_iterations": 50,
+        "max_runtime_ms": 300000,
+        "mce": {
+          "averaging_symbols": 16,
+          "minimum_variance": 1e-8
+        },
+        "noise_seed": 41,
+        "receiver_mode": "supplied_channel",
+        "selected_profile_ids": [
+          3
+        ]
+      },
+      "recipe": {
+        "edits": [],
+        "notch": {
+          "bandwidth_hz": 8000000,
+          "center_hz": 375000000,
+          "depth_db": 28.0,
+          "edge_hz": 0,
+          "scope": {
+            "mode": "all"
+          }
+        },
+        "random_variation": null,
+        "ripple": null,
+        "tilt": null
+      },
+      "sha256": "082dcde13c650a351af27e29d9f3db14af6d5f817bdf25d418ad3ad4cfcbd8f9",
+      "unity": true,
+      "workbench": "cl-unity-notch-20db.merlin.json"
+    },
+    {
+      "baseline_db": 48.0,
+      "receiver": {
+        "all_profiles": true,
+        "channel_filter": {
+          "mode": "diagonal"
+        },
+        "duration_ms": 10,
+        "max_iterations": 50,
+        "max_runtime_ms": 300000,
+        "mce": {
+          "averaging_symbols": 16,
+          "minimum_variance": 1e-8
+        },
+        "noise_seed": 41,
+        "receiver_mode": "supplied_channel",
+        "selected_profile_ids": [
+          3
+        ]
+      },
+      "recipe": {
+        "edits": [],
+        "notch": {
+          "bandwidth_hz": 8000000,
+          "center_hz": 375000000,
+          "depth_db": 38.0,
+          "edge_hz": 0,
+          "scope": {
+            "mode": "all"
+          }
+        },
+        "random_variation": null,
+        "ripple": null,
+        "tilt": null
+      },
+      "sha256": "d8bcda20a9280babf186a7be4ddf69b7a167ae1efe7abb0d3c521f4e8d344b5b",
+      "unity": true,
+      "workbench": "cl-unity-notch-10db.merlin.json"
+    },
+    {
+      "baseline_db": 48.0,
+      "receiver": {
+        "all_profiles": true,
+        "channel_filter": {
+          "mode": "diagonal"
+        },
+        "duration_ms": 10,
+        "max_iterations": 50,
+        "max_runtime_ms": 300000,
+        "mce": {
+          "averaging_symbols": 16,
+          "minimum_variance": 1e-8
+        },
+        "noise_seed": 41,
+        "receiver_mode": "supplied_channel",
+        "selected_profile_ids": [
+          3
+        ]
+      },
+      "recipe": {
+        "edits": [],
+        "notch": {
+          "bandwidth_hz": 8000000,
+          "center_hz": 375000000,
+          "depth_db": 43.0,
+          "edge_hz": 0,
+          "scope": {
+            "mode": "all"
+          }
+        },
+        "random_variation": null,
+        "ripple": null,
+        "tilt": null
+      },
+      "sha256": "aea33978931848f8420ddb242de50881644045119b3813b663f9a1a9d208029e",
+      "unity": true,
+      "workbench": "cl-unity-notch-5db.merlin.json"
+    },
+    {
+      "baseline_db": 48.0,
+      "receiver": {
+        "all_profiles": true,
+        "channel_filter": {
+          "mode": "diagonal"
+        },
+        "duration_ms": 10,
+        "max_iterations": 50,
+        "max_runtime_ms": 300000,
+        "mce": {
+          "averaging_symbols": 16,
+          "minimum_variance": 1e-8
+        },
+        "noise_seed": 41,
+        "receiver_mode": "supplied_channel",
+        "selected_profile_ids": [
+          3
+        ]
+      },
+      "recipe": {
+        "edits": [],
+        "notch": {
+          "bandwidth_hz": 8000000,
+          "center_hz": 375000000,
+          "depth_db": 48.0,
+          "edge_hz": 0,
+          "scope": {
+            "mode": "all"
+          }
+        },
+        "random_variation": null,
+        "ripple": null,
+        "tilt": null
+      },
+      "sha256": "81503f737ac4748794a96dfa346c89dafb5ad54bf37c0189c4c09a4be7c58b6d",
+      "unity": true,
+      "workbench": "cl-unity-notch-0db.merlin.json"
+    }
+  ],
+  "source": "examples/workbench/cl-192mhz-8mhz-notch/wb-sim-1.merlin.json",
+  "source_sha256": "9f802eee2223eddfdfeba3a3f98efeaf253adaf1df0ab503dc5babb4caef5096"
+}

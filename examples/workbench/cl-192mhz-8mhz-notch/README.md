@@ -95,3 +95,13 @@ back to binary PNM. The source Apache-2.0 license and attribution are retained.
 ```bash
 local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/cl-192mhz-8mhz-notch/cmce.merlin.json
 ```
+
+## Saved Designer comparison
+
+`wb-sim-1.merlin.json` is the preserved UI-saved design with MCE. Both Rust and
+Python load its Designer recipe directly. The separate
+[CL-positioned 8 MHz variant](comparison-sim-1/user-cl-notch.merlin.json) retains
+its other channel/receiver settings. The same folder contains a materialized
+original and a flat-background unity sweep, with a provenance manifest.
+See the [measured simulation comparison](../../../docs/development/features/cl-notch-workbench/comparison-sim-1.md)
+for actual FEC, timing and limitations against CableLabs Figure 192.
