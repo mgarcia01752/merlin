@@ -1628,3 +1628,8 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **WB-CL-05** Preserve capture/workbench bytes across Git line-ending
   settings and test a Windows-style checkout without weakening provenance.
   All 24 packaging tests pass locally; hosted Windows validation is pending.
+
+- [x] **UBUNTU-COMPAT-02** Derive external package requirements from direct
+  ELF dependencies; leave transitive system dependencies to the target OS.
+  Packaging regressions and a real local Qt runtime deployment pass.
+  Hosted Ubuntu 26.04 lifecycle validation remains pending.

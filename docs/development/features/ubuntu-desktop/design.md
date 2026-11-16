@@ -118,3 +118,18 @@ metadata/build log. SHA256SUMS matches. The final stripped package passes all
 three original/WB/full-request checks, private Qt/ICU resolution and offline UI
 startup. The native executable is built and current. Hosted and installed-VM
 acceptance remain explicitly unchecked.
+
+## UBUNTU-COMPAT-02: direct ELF package dependencies
+
+The v0.3.2 Ubuntu 26.04 lifecycle gate rejected libpcre3, a transitive
+Ubuntu 22.04 system-library dependency recorded by ldd. A target distribution
+must resolve its own system-library closure. Read DT_NEEDED for every shipped
+ELF and declare only its direct external libraries; retain the complete private
+Qt closure and ldd's missing-library rejection. Do not remove dependencies by
+name or bundle obsolete system libraries. Test that indirect PCRE is omitted
+while directly required PCRE remains, then run all native lifecycle gates.
+
+Local validation: all 25 packaging tests passed in 0.606 s. Deploying the
+actual Qt 6.8.3 runtime and current desktop binary into temporary staging
+resolved every library and produced direct package owners without libpcre3.
+Ubuntu 26.04 installation remains pending the corrected hosted release.

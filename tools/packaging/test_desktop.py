@@ -7,6 +7,9 @@
 import tempfile
 from pathlib import Path
 import unittest
+from unittest.mock import patch
+from types import SimpleNamespace
+from qt_runtime import deploy
 from desktop import package
 from common import ROOT
 from asset_names import asset_name
@@ -28,6 +31,31 @@ def scratch_directory():
 
 
 class DesktopTests(unittest.TestCase):
+    def test_system_dependencies_use_shipped_elf_direct_requirements(self):
+        """Leave system transitive dependencies to apt without hiding direct ones."""
+        for direct_pcre in (False, True):
+            with self.subTest(direct_pcre=direct_pcre), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                payload = root / 'payload'
+                payload.mkdir()
+                (payload / 'merlin-qt').write_bytes(b'\x7fELF')
+                sdk = root / 'sdk'
+                sdk.mkdir()
+                dynamic = '(NEEDED) Shared library: [libglib-2.0.so.0]\n'
+                if direct_pcre:
+                    dynamic += '(NEEDED) Shared library: [libpcre.so.3]\n'
+                linked = ('libglib-2.0.so.0 => /lib/libglib-2.0.so.0 (0x1)\n'
+                          'libpcre.so.3 => /lib/libpcre.so.3 (0x2)\n')
+                with patch('qt_runtime.subprocess.run', side_effect=[
+                    SimpleNamespace(stdout='[]'), SimpleNamespace(stdout=dynamic),
+                    SimpleNamespace(stdout=linked),
+                ]):
+                    actual = deploy(payload, sdk, root / 'qml')
+                expected = [Path('/lib/libglib-2.0.so.0')]
+                if direct_pcre:
+                    expected.append(Path('/lib/libpcre.so.3'))
+                self.assertEqual(actual, expected)
+
     def test_desktop_examples_exclude_cli_and_keep_runnable_workbenches(self):
         """Desktop and CLI payloads must expose the correct example inventory."""
         with scratch_directory() as directory:

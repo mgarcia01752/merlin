@@ -7,6 +7,7 @@
 """Stage private Qt runtime imports using the pinned SDK, never system installs."""
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -20,7 +21,8 @@ def deploy(payload, sdk, qml_source):
         sdk: Read-only pinned Qt SDK root.
         qml_source: Project QML root for Qt's own dependency scanner.
     Returns:
-        Sorted paths of required system libraries outside the private Qt SDK.
+        Sorted paths of direct system dependencies of every shipped ELF.
+        Target distributions resolve their own transitive system dependencies.
     Raises:
         ValueError for unresolved dependencies or scanner paths outside the SDK.
         OSError/subprocess errors for missing tools, SDK files or copy failures.
@@ -60,6 +62,9 @@ def deploy(payload, sdk, qml_source):
         if path in examined:
             continue
         examined.add(path)
+        dynamic = subprocess.run(['readelf', '--dynamic', str(path)],
+                                 capture_output=True, text=True, check=True)
+        needed = set(re.findall(r'\(NEEDED\).*?\[([^\]]+)\]', dynamic.stdout))
         result = subprocess.run(['ldd', str(path)], env=environment, capture_output=True, text=True, check=True)
         if 'not found' in result.stdout:
             raise ValueError(f'Unresolved runtime dependency: {path}\n{result.stdout}')
@@ -73,7 +78,7 @@ def deploy(payload, sdk, qml_source):
                 if not destination.exists():
                     shutil.copy2(dependency.resolve(), destination)
                     pending.append(destination)
-            elif not dependency.is_relative_to(payload):
+            elif fields[0] in needed and not dependency.is_relative_to(payload):
                 system_libraries.add(dependency)
     (payload / 'qt.conf').write_text('[Paths]\nPrefix=.\nLibraries=lib\nPlugins=plugins\nQmlImports=qml\n', encoding='utf-8')
     return sorted(system_libraries)
