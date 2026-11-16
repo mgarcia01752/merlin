@@ -43,6 +43,13 @@ if ($Arguments -notlike '*/passive /norestart REBOOT=ReallySuppress*' -or
     $Arguments -like '*DESKTOP_SHORTCUT*' -or $Arguments -notlike '*Test User''s Folder*') {
     throw "Incorrect installer arguments: $Arguments"
 }
+$Plan.package = "C:\Users\Test User\merlin/updates\update.msi"
+$Plan.log = "C:\Users\Test User\merlin/updates\last-install.log"
+$Normalized = Get-MerlinInstallerArguments $Plan
+if ($Normalized.Contains('merlin/updates') -or
+    !$Normalized.Contains('merlin\updates\update.msi')) {
+    throw 'MSI paths must use native Windows separators.'
+}
 $Plan.desktop_shortcut = $true
 if ((Get-MerlinInstallerArguments $Plan) -notlike '* DESKTOP_SHORTCUT=1') { throw 'Shortcut choice was lost.' }
 foreach ($Path in @('relative.msi', 'C:\bad"path.msi', "C:\bad`npath.msi")) {

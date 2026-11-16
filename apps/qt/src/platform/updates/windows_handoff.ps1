@@ -70,8 +70,10 @@ function Get-MerlinInstallerArguments {
         }
     }
     # MSI quotes a directory without a trailing slash (no backslash/quote edge).
-    $Directory = $Plan.directory.TrimEnd([char[]]'\/')
-    $Arguments = '/i "{0}" /passive /norestart REBOOT=ReallySuppress INSTALLDIR="{1}" /L*V "{2}"' -f $Plan.package, $Directory, $Plan.log
+    $Directory = [IO.Path]::GetFullPath($Plan.directory).TrimEnd([char[]]'\/')
+    $Package = [IO.Path]::GetFullPath($Plan.package)
+    $Log = [IO.Path]::GetFullPath($Plan.log)
+    $Arguments = '/i "{0}" /passive /norestart REBOOT=ReallySuppress INSTALLDIR="{1}" /L*V "{2}"' -f $Package, $Directory, $Log
     if ($Plan.desktop_shortcut) { $Arguments += ' DESKTOP_SHORTCUT=1' }
     return $Arguments
 }

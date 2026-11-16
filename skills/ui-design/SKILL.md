@@ -131,3 +131,14 @@ When changing persisted workbench settings, JSON schemas or embedded data
 UI-saved simulations must also load and run through the Rust and Python APIs
 without manual conversion. Include both API compatibility checks alongside the
 applicable UI checks; keep scientific reconstruction in shared Rust code.
+
+## Update failure reporting
+
+On update errors, offer an explicit Report Issue action. Rust owns bounded log
+reading, encoding handling and user-profile-path redaction. Qt copies the report
+only on a click and opens the fixed repository issue form; never auto-submit,
+put logs in URLs, or include captures/workbench contents. Explain paste/review/
+submit steps, handle absent logs and browser failure, and preserve recovery.
+Use native path components for installer arguments; test Windows mixed-separator
+paths, not just paths already containing backslashes. A passing MSI lifecycle
+check does not establish interactive UAC updater verification.

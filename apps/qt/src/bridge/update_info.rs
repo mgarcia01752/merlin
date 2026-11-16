@@ -15,6 +15,11 @@ pub mod bridge {
         #[qobject]
         #[qml_element]
         type UpdateInfo = super::UpdateInfoRust;
+        /// Prepares a user-reviewed clipboard report without posting it.
+        /// # Returns
+        /// Bounded diagnostic text and the fixed GitHub issue form URL.
+        #[qinvokable]
+        fn issue_report(self: Pin<&mut UpdateInfo>, status: &QString) -> QString;
         /// Starts one bounded background release check without blocking.
         /// # Returns
         /// Current plain display state as bounded JSON.
@@ -45,6 +50,15 @@ pub struct UpdateInfoRust {
     model: crate::platform::updates::Model,
 }
 impl bridge::UpdateInfo {
+    /// Reads a bounded diagnostic on explicit request; never submits an issue.
+    /// # Arguments
+    /// * `status` - Displayed update or recovery failure.
+    /// # Returns
+    /// Clipboard report and fixed issue URL, or a diagnostic when unavailable.
+    pub fn issue_report(self: core::pin::Pin<&mut Self>, status: &QString) -> QString {
+        QString::from(self.model.issue_report(&status.to_string()).to_string())
+    }
+
     /// Dispatches one read-only lookup and returns immediately with display JSON.
     /// # Returns
     /// Bounded status without source measurements or credentials.

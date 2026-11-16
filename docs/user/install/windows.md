@@ -83,3 +83,19 @@ folder remain; do not put original captures or workbenches in Program Files.
 The release lists compressed installer bytes. Packaging reports installed file
 bytes separately. Windows system libraries remain external prerequisites;
 package size and installed behavior need measurements from the native run.
+
+If an update fails, **Report Issue…** copies a diagnostic report and opens
+MERLIN’s GitHub issue form. Paste the report, review it for private information,
+and submit it yourself. The report includes the final 32 KiB of the installer
+log when available; your current Windows user-profile path is redacted. No
+workbench or capture is included, and nothing is posted automatically. The log
+may describe the previous install attempt if failure happened before MSI began.
+
+An older installed updater can fail with MSI error 1619 and log error 1324
+for `merlin/updates`. Download the full MSI from Releases and run it manually
+to replace that updater; a new release cannot repair the already-running old
+helper. Keep normal Windows security and UAC enabled.
+
+![Update failure reporting in dark mode](../../images/workbench/update-error-dark.png)
+
+[Light-mode view](../../images/workbench/update-error-light.png).

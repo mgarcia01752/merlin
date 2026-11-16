@@ -208,3 +208,27 @@ approval/cancel, MSI failure and rollback, 3010 without forced reboot, normal-us
 relaunch, WB recovery, custom install location and desktop shortcut preservation.
 PowerShell is unavailable on this local Linux host, so these checks were not run
 locally. Earlier v0.2.7/v0.2.8 packaging results do not verify this new updater.
+
+## WIN-UPDATE-03: native paths and user-reviewed error reports
+
+A field MSI log reports error 1324 for `merlin/updates`: Rust joined a compound
+path containing a forward slash and MSI rejected it after the COM preflight.
+Build paths component by component and normalize every installer argument with
+Windows GetFullPath before launching msiexec. Keep hash, identity and UAC checks.
+Add native contract coverage for mixed separators and spaces.
+
+On update errors, offer Report Issue. Rust reads a bounded tail of the installer
+log (UTF-8/UTF-16), redacts the current user-profile path, and constructs a report.
+QML copies it only on the user's click and opens a fixed GitHub new-issue form.
+The user pastes, reviews and submits; no automatic posting or log-bearing URL.
+Missing logs produce a usable status-only report. Report text explains that the
+user must review for private information. Keep reports out of saved workbenches.
+Test failed/success state visibility, log bounds/encoding/redaction, and browser
+failure. Native Windows install verification remains required separately.
+
+The focused QML suite passed all 7 cases, including clipboard paste-back and
+browser failure. Dark/light dialog captures were reviewed and added to the
+Windows install guide. The UI skill and both discovery links validated. Rust
+Qt-adapter tests passed all 85 cases in 47.40 s; the full QML suite passed
+83 cases in 28.12 s. Formatting, Clippy and the desktop build passed. No Windows PowerShell runtime
+is available on this host; its new native path contract remains unexecuted here.

@@ -1637,3 +1637,9 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **API-INSTALL-04** Pin the child Windows wheel build to the active MSVC
   compiler/linker instead of Git Bash link; retain native installer CI.
   All 16 wheel-tool tests pass; native Windows confirmation is pending.
+
+- [x] **WIN-UPDATE-03** Implement native MSI handoff paths and explicit,
+  user-reviewed clipboard/issue reporting for update failures. Local Rust/QML
+  checks pass; see the Windows desktop design.
+- [ ] **WIN-UPDATE-03 native verification** Run the Windows PowerShell path
+  contract and verify installed update/report behavior with interactive UAC.

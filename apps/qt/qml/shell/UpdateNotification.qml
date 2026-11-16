@@ -15,18 +15,32 @@ Item {
     property alias popup: dialog
     property bool canUpdate: true
     property var prepareUpdate: function() { return {saved:true} }
+    property var openIssue: function(url) { return Qt.openUrlExternally(url) }
+    TextEdit { id: reportClipboard; visible: false; textFormat: TextEdit.PlainText }
+    function reportIssue() {
+        if (state.error !== true || state.busy) { return }
+        const report = JSON.parse(backend.issue_report(state.status || "Update failed"))
+        if (report.error) { dialog.reportFeedback = report.error; return }
+        reportClipboard.text = report.text
+        reportClipboard.selectAll()
+        reportClipboard.copy()
+        reportClipboard.deselect()
+        dialog.reportFeedback = openIssue(report.url)
+            ? "Report copied. Paste it into GitHub, review for private information, then submit."
+            : "Report copied. Browser could not open; visit github.com/mgarcia01752/merlin/issues to paste and review it."
+    }
     function installUpdate() {
         if (!canUpdate || state.busy) { return }
         const recovery = prepareUpdate()
         if (recovery.error) {
-            state = Object.assign({}, state, {status:recovery.error})
+            state = Object.assign({}, state, {status:recovery.error,error:true})
             dialog.open()
             return
         }
         state = JSON.parse(backend.install())
         dialog.open()
     }
-    function refresh() { state=JSON.parse(backend.check()) }
+    function refresh() { dialog.reportFeedback=""; state=JSON.parse(backend.check()) }
     function showUpdates() { dialog.open() }
     Component.onCompleted: {state=JSON.parse(backend.poll());if(state.show_result) dialog.open()}
     Timer { interval:2000;running:control.startupCheck;repeat:false;onTriggered: {if(control.state.enabled && !control.state.show_result) control.refresh()} }
@@ -54,6 +68,7 @@ Item {
         onCheckRequested:control.refresh()
         onPreferenceRequested:function(enabled){control.state=JSON.parse(control.backend.set_enabled(enabled))}
         onInstallRequested:control.installUpdate()
+        onReportRequested:control.reportIssue()
         canInstall:control.canUpdate
     }
 }

@@ -11,10 +11,15 @@ import "../qml/theme"
 Pane {
     id:window;width:960;height:640;visible:true
     Theme {id:theme}
+    ThemePalette { targetControl: window; theme: theme }
+    ThemePalette { targetControl: window.Window.window; theme: theme }
+    ThemePalette { targetControl: updates.popup; theme: theme }
+    TextEdit { id: clipboardProbe; visible: false }
     QtObject {
         id:backend
         property var current:({enabled:true,busy:false,available:false,status:"No release yet."})
         property int installs:0
+        function issue_report(){return JSON.stringify({text:"Diagnostic report",url:"https://github.com/mgarcia01752/merlin/issues/new"})}
         function poll(){return JSON.stringify(current)}
         function check(){current={enabled:current.enabled,busy:false,available:true,status:"MERLIN 0.2.0 is available."};return JSON.stringify(current)}
         function install(){installs++;current.busy=true;current.installing=true;current.status="Downloading update…";return JSON.stringify(current)}
@@ -62,6 +67,25 @@ Pane {
             verify(recovered);compare(backend.installs,1)
             verify(updates.state.installing)
             updates.installUpdate();compare(backend.installs,1)
+        }
+        function test_error_report_requires_click_and_handles_browser_failure(){
+            let opened=0
+            updates.openIssue=function(url){opened++;return false}
+            updates.state={enabled:true,busy:false,available:false,error:true,status:"Update failed (Windows Installer code 1619). Your workbench was restored."}
+            updates.showUpdates();tryCompare(updates.popup,"opened",true)
+            const action=findChild(updates,"reportUpdateIssue")
+            verify(action.visible);compare(opened,0)
+            wait(150)
+            grabImage(updates.popup.contentItem.parent).save("update-error-dark.png")
+            theme.dark=false;wait(150)
+            grabImage(updates.popup.contentItem.parent).save("update-error-light.png")
+            theme.dark=true
+            mouseClick(action);compare(opened,1)
+            clipboardProbe.text="";clipboardProbe.paste()
+            compare(clipboardProbe.text,"Diagnostic report")
+            verify(updates.popup.reportFeedback.indexOf("Browser could not open")>=0)
+            updates.state={enabled:true,busy:false,available:false,error:false}
+            verify(!action.visible)
         }
         function test_manual_check_and_preference(){
             updates.showUpdates();tryCompare(updates.popup,"opened",true)

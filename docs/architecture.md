@@ -2486,3 +2486,11 @@ that enable it. Capture-indexed ChaCha8 streams preserve repeatability and gaps;
 the designer never consumes simulation RNG state. The existing saved envelope
 retains deviation and seed, with absent options preserving legacy behavior.
 See [Designer workflow](user/measurement-inputs/rxmer-designer.md).
+
+### Update failure diagnostics
+
+The Qt update adapter builds native Windows path components and normalizes
+installer arguments before MSI handoff. Rust owns bounded installer-log reads,
+UTF-16 decoding, user-profile-path redaction and issue report construction. QML
+handles the explicit clipboard action and opens the fixed GitHub form; the user
+reviews and submits it. Logs are never embedded in URLs or workbench JSON.

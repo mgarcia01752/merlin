@@ -343,11 +343,3 @@ received pilots. The separate [Waveform Channel](impairments/waveform-filter.md)
 models static sample delays and bounded CM-response reconstruction. Both remain
 explicit choices; default workbenches retain supplied-H reference correction and
 the per-subcarrier channel model.
-
-## Hover help
-
-Hover over a control with help text for **one second** to show its tooltip.
-Moving away before one second cancels the hover tooltip; returning starts a
-fresh one-second wait. Mouse-click focus does not keep it pending.
-Keyboard-focus tooltips use the same delay; clicking contextual help or pressing F1 still opens help immediately.
-The delay is shared across MERLIN views, in both dark and light themes.

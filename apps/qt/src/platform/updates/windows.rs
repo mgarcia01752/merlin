@@ -34,7 +34,7 @@ fn storage() -> Result<PathBuf, String> {
         .map(PathBuf::from)
         .filter(|path| path.is_absolute())
         .ok_or("No private Windows application data directory.")?;
-    Ok(base.join("merlin/updates"))
+    Ok(base.join("merlin").join("updates"))
 }
 
 fn bounded_text(path: &Path) -> Option<String> {

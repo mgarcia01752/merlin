@@ -14,6 +14,7 @@ pub(crate) mod windows;
 #[cfg(target_os = "windows")]
 pub(crate) use windows as install;
 mod release;
+mod report;
 use serde_json::{json, Value};
 use std::io::Read;
 use std::{
@@ -63,6 +64,7 @@ impl Default for Model {
             .unwrap_or(true);
         let mut state = json!({"windows":cfg!(target_os = "windows"),"enabled":enabled,"busy":false,"available":false,"status":"Check for a newer MERLIN release.","url":""});
         if let Some(message) = install::take_result() {
+            state["error"] = json!(!message.starts_with("MERLIN "));
             state["status"] = json!(message);
             state["show_result"] = json!(true);
         }
@@ -75,6 +77,14 @@ impl Default for Model {
     }
 }
 impl Model {
+    /// Prepares a bounded diagnostic for an explicit user report action.
+    /// # Arguments
+    /// * `status` - Displayed error, including UI recovery-preparation failures.
+    /// # Returns
+    /// Clipboard text and issue URL without submitting or changing update state.
+    pub(crate) fn issue_report(&self, status: &str) -> Value {
+        report::prepare(status)
+    }
     /// Starts at most one background lookup without accessing Qt or captures.
     /// # Returns
     /// Current display state; another check is ignored while a worker is active.
@@ -82,6 +92,7 @@ impl Model {
         if self.pending.is_none() {
             let (sender, receiver) = mpsc::sync_channel(1);
             self.pending = Some(receiver);
+            self.state["error"] = json!(false);
             self.state["busy"] = json!(true);
             self.state["status"] = json!("Checking for updates…");
             std::thread::spawn(move || {
@@ -96,6 +107,7 @@ impl Model {
     pub(crate) fn install(&mut self) -> Value {
         if self.pending.is_none() && self.state["available"] == true {
             if !install::supported() {
+                self.state["error"] = json!(true);
                 self.state["status"] = json!(
                     "Automatic installation requires an installed MERLIN desktop application."
                 );
@@ -106,6 +118,7 @@ impl Model {
                 std::sync::Arc::new(std::sync::Mutex::new("Preparing update…".to_string()));
             self.progress = Some(progress.clone());
             self.pending = Some(receiver);
+            self.state["error"] = json!(false);
             self.state["busy"] = json!(true);
             self.state["installing"] = json!(true);
             self.state["status"] = json!("Preparing update…");
@@ -134,7 +147,7 @@ impl Model {
                 Ok(result) => {
                     let enabled = self.state["enabled"].clone();
                     self.state = result.unwrap_or_else(
-                        |message| json!({"busy":false,"available":false,"status":message,"url":""}),
+                        |message| json!({"error":true,"busy":false,"available":false,"status":message,"url":""}),
                     );
                     self.state["enabled"] = enabled;
                     self.pending = None;
@@ -143,6 +156,7 @@ impl Model {
                         match install::restart() {
                             Ok(()) => self.state["restarted"] = json!(true),
                             Err(message) => {
+                                self.state["error"] = json!(true);
                                 self.state["status"] = json!(format!(
                                     "Update could not finish automatically. {message}"
                                 ))
@@ -154,6 +168,7 @@ impl Model {
                     self.progress = None;
                     self.state["installing"] = json!(false);
                     self.state["busy"] = json!(false);
+                    self.state["error"] = json!(true);
                     self.state["status"] = json!("Update check ended. Try again later.");
                     self.pending = None;
                 }
@@ -191,7 +206,10 @@ impl Model {
         };
         match save() {
             Ok(()) => self.state["enabled"] = json!(enabled),
-            Err(message) => self.state["status"] = json!(message),
+            Err(message) => {
+                self.state["error"] = json!(true);
+                self.state["status"] = json!(message);
+            }
         }
         self.state.clone()
     }
@@ -212,6 +230,11 @@ mod tests {
         sender.send(Err("Offline".into())).unwrap();
         let result = model.poll();
         assert_eq!(result["busy"], false);
+        assert_eq!(result["error"], true);
+        assert!(model.issue_report("Offline")["text"]
+            .as_str()
+            .unwrap()
+            .contains("Offline"));
         assert_eq!(result["enabled"], false);
         assert_eq!(result["available"], false);
         assert!(model.pending.is_none());
