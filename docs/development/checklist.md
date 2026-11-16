@@ -1624,3 +1624,7 @@ validation are complete; the user guide includes the current dark capture.
   license collection; test Linux/Windows command ordering and fetch failures.
   A local cold-cache wheel build and installed version smoke passed.
   Hosted installer validation remains tracked above.
+
+- [x] **WB-CL-05** Preserve capture/workbench bytes across Git line-ending
+  settings and test a Windows-style checkout without weakening provenance.
+  All 24 packaging tests pass locally; hosted Windows validation is pending.

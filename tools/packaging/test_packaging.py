@@ -5,6 +5,7 @@
 #
 """Package safety, no-clobber behavior and complete resource ownership."""
 import tempfile
+import subprocess
 import unittest
 import hashlib
 import json
@@ -15,6 +16,27 @@ from package import package
 
 
 class PackageTests(unittest.TestCase):
+    def test_capture_checkout_preserves_bytes_with_windows_autocrlf(self):
+        """Keep provenance and embedded originals exact under Windows Git settings."""
+        source = Path(__file__).resolve().parents[2]
+        relative = Path("examples/workbench/cl-192mhz-8mhz-notch/modulation_profile.json")
+        original = (source / relative).read_bytes()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            checkout = root / "checkout"
+            checkout.mkdir()
+            (checkout / ".gitattributes").write_bytes((source / ".gitattributes").read_bytes())
+            (checkout / relative).parent.mkdir(parents=True)
+            (checkout / relative).write_bytes(original)
+            subprocess.run(["git", "init", "--quiet"], cwd=checkout, check=True)
+            git = ["git", "-c", "core.autocrlf=true"]
+            subprocess.run([*git, "add", ".gitattributes", relative.as_posix()],
+                           cwd=checkout, check=True, capture_output=True)
+            (checkout / relative).unlink()
+            subprocess.run([*git, "checkout-index", "--force", relative.as_posix()],
+                           cwd=checkout, check=True, capture_output=True)
+            self.assertEqual((checkout / relative).read_bytes(), original)
+
     def test_existing_output_preserved(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

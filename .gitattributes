@@ -1,3 +1,7 @@
 # Reviewed third-party license resources have pinned byte-level provenance.
 # Preserve original bytes on every platform; never normalize their line endings.
 /tools/packaging/resources/** -text
+
+# Captures and saved workbenches retain exact bytes and provenance hashes.
+/examples/workbench/** -text
+/examples/measurements/** -text

@@ -100,3 +100,16 @@ unchanged. Validate the complete packaging test group before resuming the
 preserved release candidate; do not bypass release checks.
 
 Validation: all 23 packaging tests passed in 0.341 s on the local Ubuntu host.
+
+## WB-CL-05: preserve fixture bytes on Windows checkout
+
+v0.3.2 Windows adapter validation exposed Git autocrlf conversion of the new
+JSON modulation profile: its checkout bytes differed from the embedded original
+and recorded provenance. Disable text conversion for workbench and measurement
+fixtures in .gitattributes. Keep exact-byte and hash assertions unchanged.
+Add a temporary-repository checkout test with core.autocrlf=true to exercise
+Windows-style conversion locally, then verify native Windows in the release.
+
+Validation: all 24 packaging tests passed in 0.967 s, including a real Git
+checkout with Windows-style autocrlf enabled. Native Windows confirmation
+remains pending the corrected patch release.
