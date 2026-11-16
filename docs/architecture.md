@@ -2192,7 +2192,9 @@ measures original received-reference error; the nearest-point estimate remains
 separate and may be optimistic under dense/noisy QAM.
 
 `receiver/qam_history` retains bounded compact per-run constellations and decoder
-LLRs, keyed by original captured profile ID, separately from wire ID0. No full
+LLRs and the frozen receiver mode, keyed by original captured profile ID,
+separately from wire ID0. QAM labels its actual CMCE/PE/MCE correction from that
+selected run, never from current editable settings. No full
 job/waveform archive is retained. Exact run selection serves QAM/channel-output/
 slicer; unavailable choices never fall back. Latest keeps its full original
 capture, archives advertise their actual retained population, and accepted input

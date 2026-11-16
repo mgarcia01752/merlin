@@ -17,6 +17,8 @@ use std::{cell::RefCell, sync::Arc};
 /// With at most 32 runs this retains at most 425984 cells and 518400 decoder LLRs.
 pub(crate) struct Snapshot {
     pub id: u8,
+    pub receiver_mode:
+        docsis_ofdm_fec::signal_processing::receiver::channel_estimation::ReceiverMode,
     pub data: Option<ConstellationResult>,
     pub protected: Option<ProtectedConstellation>,
     pub decoder_llrs: Vec<f64>,
@@ -85,6 +87,7 @@ pub(crate) fn retain(id: u8, result: &ResultData) {
     });
     let snapshot = Arc::new(Snapshot {
         id,
+        receiver_mode: result.job.settings.receiver_mode,
         data,
         protected,
         decoder_llrs: result
@@ -145,6 +148,7 @@ mod tests {
                 status: "complete".into(),
                 snapshot: Some(Arc::new(Snapshot {
                     id: 3,
+                    receiver_mode: docsis_ofdm_fec::signal_processing::receiver::channel_estimation::ReceiverMode::MerlinChannelEstimated,
                     data: None,
                     protected: None,
                     decoder_llrs: vec![],

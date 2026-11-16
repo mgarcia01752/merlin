@@ -1,5 +1,7 @@
 # Feature development records
 
+- [Recorded receiver mode in QAM](qam-receiver-mode/design.md)
+
 - [Global one-second tooltip delay](tooltip-delay/design.md)
 
 - [CableLabs-style notch workbench](cl-notch-workbench/design.md)

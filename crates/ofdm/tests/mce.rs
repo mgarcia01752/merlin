@@ -156,6 +156,7 @@ fn changing_receiver_mode_keeps_the_actual_noisy_channel_samples_identical() {
         ..Default::default()
     });
     let mut raw = None;
+    let mut corrected = None;
     for mode in [
         ReceiverMode::CmChannelEstimated,
         ReceiverMode::MerlinChannelEstimated,
@@ -187,6 +188,19 @@ fn changing_receiver_mode_keeps_the_actual_noisy_channel_samples_identical() {
             assert_eq!(previous, &samples);
         } else {
             raw = Some(samples);
+        }
+        let equalized: Vec<_> = pairs.iter().map(|pair| pair.after_equalization).collect();
+        if let Some(previous) = &corrected {
+            assert_ne!(
+                previous, &equalized,
+                "MCE must use its pilot estimate, not supplied correction"
+            );
+            assert_eq!(
+                result.constellation.as_ref().unwrap().channel_coefficients,
+                "pilot_estimated_h_receiver_reciprocal"
+            );
+        } else {
+            corrected = Some(equalized);
         }
         assert_eq!(
             result.receiver_reliability.is_some(),

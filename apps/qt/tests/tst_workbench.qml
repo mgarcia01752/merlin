@@ -190,11 +190,13 @@ Pane {
         property bool retainedCells:false
         property var lastQuery: ({})
         property bool lastDecoderInput:false
+        property string correctionMode:"MCE"
+        property string correctionName:"MERLIN Channel Estimation (MCE)"
         function qam_selected(document) {
             lastQuery=JSON.parse(document)
             if (!retainedCells) { return qam(lastQuery.signal,lastQuery.view,lastQuery.part) }
             const available=lastQuery.run_profile!==7 && (lastQuery.first_bin<0 || lastQuery.first_bin<=320) && (lastQuery.last_bin<0 || lastQuery.last_bin>=320)
-            return JSON.stringify({available:available,diagnostic:lastQuery.run_profile===7 ? {code:"QamRunUnavailable",tooltip:"Select the profile in Configure WorkBench and run it."} : null,reason:available ? "Actual test observations" : "No cells match",points:available ? [{raw_x:0.4,raw_y:0.4,eq_x:0.5,eq_y:0.5}] : [],profiles:[0],orders:[256],first_bin:320,last_bin:320,first_symbol:10,last_symbol:10,retained:1,runs:[{id:0,available:true},{id:3,available:true},{id:7,available:false}],raw_reference_mer:{text:available ? "MER (TX reference): 30.00 dB · 1 cells" : "TX-reference MER unavailable"},equalized_reference_mer:{text:available ? "MER (TX reference): 40.00 dB · 1 cells" : "TX-reference MER unavailable"},raw_mer:{text:available ? "MER estimate: 30.00 dB · 1 cells" : "MER unavailable · no selected cells"},equalized_mer:{text:available ? "MER estimate: 40.00 dB · 1 cells" : "MER unavailable · no selected cells"},detail:"Retained test result"})
+            return JSON.stringify({available:available,correction_mode:lastQuery.run_profile===7 ? undefined : correctionMode,correction_name:lastQuery.run_profile===7 ? undefined : correctionName,correction_help:"Recorded receiver mode",diagnostic:lastQuery.run_profile===7 ? {code:"QamRunUnavailable",tooltip:"Select the profile in Configure WorkBench and run it."} : null,reason:available ? "Actual test observations" : "No cells match",points:available ? [{raw_x:0.4,raw_y:0.4,eq_x:0.5,eq_y:0.5}] : [],profiles:[0],orders:[256],first_bin:320,last_bin:320,first_symbol:10,last_symbol:10,retained:1,runs:[{id:0,available:true},{id:3,available:true},{id:7,available:false}],raw_reference_mer:{text:available ? "MER (TX reference): 30.00 dB · 1 cells" : "TX-reference MER unavailable"},equalized_reference_mer:{text:available ? "MER (TX reference): 40.00 dB · 1 cells" : "TX-reference MER unavailable"},raw_mer:{text:available ? "MER estimate: 30.00 dB · 1 cells" : "MER unavailable · no selected cells"},equalized_mer:{text:available ? "MER estimate: 40.00 dB · 1 cells" : "MER unavailable · no selected cells"},detail:"Retained test result"})
         }
         function response(document) { lastQuery=JSON.parse(document);return JSON.stringify({available:retainedCells,points:[],x_ticks:[],y_ticks:[],snapshots:[10],reason:"Response test",summary:"Actual response query"}) }
         function slicer(document,decoderInput) { lastQuery=JSON.parse(document);lastDecoderInput=decoderInput;return JSON.stringify({available:retainedCells,rows:[],llr:{count:retainedCells ? 8 : 0},histogram:{points:[],x_ticks:[],y_ticks:[]},detail:"Actual soft query"}) }
@@ -1583,6 +1585,12 @@ Pane {
             mouseClick(findChild(receiver,"receiverDataQam"));tryCompare(receiver.qamPopup,"opened",true)
             const qam=receiver.qamPopup
             compare(qam.observation.points.length,1)
+            for (const mode of [["MCE","MERLIN Channel Estimation (MCE)"],["PE","Pilot estimation (PE)"],["CMCE","Supplied CM channel estimation (CMCE)"]]) {
+                receiverBackend.correctionMode=mode[0];receiverBackend.correctionName=mode[1];qam.refresh()
+                compare(findChild(qam,"receiverQamCorrection").text,"Recorded run · Equalizer: "+mode[1])
+                compare(findVisualItem(qam.contentItem,"receiverEqualizedTitle").text,"Equalized · "+mode[0]+" · Before Slicing")
+            }
+            receiverBackend.correctionMode="MCE";receiverBackend.correctionName="MERLIN Channel Estimation (MCE)";qam.refresh()
             verify(findChild(qam,"receiverProfile").enabled)
             tryVerify(function(){return findVisualItem(qam.contentItem,"receiverEqualizedMer")!==null})
             compare(findVisualItem(qam.contentItem,"receiverEqualizedMer").text,"MER (TX reference): 40.00 dB · 1 cells")
@@ -1603,6 +1611,7 @@ Pane {
             compare(qam.observation.points.length,1)
             runChoice.currentIndex=3;runChoice.activated(3)
             compare(qam.observation.available,false)
+            compare(findChild(qam,"receiverQamCorrection").text,"Equalizer unavailable · No recorded run selected")
             const missingRun=findVisualItem(qam.contentItem,"receiverQamUnavailable")
             verify(missingRun.hasHelp)
             missingRun.forceActiveFocus();keyClick(Qt.Key_F1)

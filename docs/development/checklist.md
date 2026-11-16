@@ -1603,3 +1603,7 @@ validation are complete; the user guide includes the current dark capture.
 - [x] WB-CL-02: Add a separately saved notch experiment with a frequency-aligned,
   interpolated CM channel response, retained source provenance and decoder run.
   [Design](features/cl-notch-workbench/design.md#wb-cl-02-adapted-measured-channel-companion).
+
+- [x] QAM-MODE-01: Verify the MCE-to-QAM sample path and identify the recorded
+  equalizer for current and archived runs.
+  [Design](features/qam-receiver-mode/design.md).

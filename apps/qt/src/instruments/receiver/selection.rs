@@ -19,9 +19,9 @@ pub(crate) fn correction_name(
 ) -> &'static str {
     use docsis_ofdm_fec::signal_processing::receiver::channel_estimation::ReceiverMode;
     match mode {
-        ReceiverMode::SuppliedChannel => "Supplied H",
-        ReceiverMode::PilotEstimated => "Pilot-estimated H-hat",
-        ReceiverMode::MerlinChannelEstimated => "MCE",
+        ReceiverMode::SuppliedChannel => "Supplied CM channel estimation (CMCE)",
+        ReceiverMode::PilotEstimated => "Pilot estimation (PE)",
+        ReceiverMode::MerlinChannelEstimated => "MERLIN Channel Estimation (MCE)",
     }
 }
 
@@ -258,6 +258,18 @@ pub(crate) fn select_run<'a>(
         .as_ref()
         .map(|playback| playback.profile.profile_id));
     selected.metadata["archived"] = json!(snapshot.is_some());
+    let mode = snapshot.map_or(result.job.settings.receiver_mode, |saved| {
+        saved.receiver_mode
+    });
+    selected.metadata["correction_name"] = json!(correction_name(mode));
+    use docsis_ofdm_fec::signal_processing::receiver::channel_estimation::ReceiverMode;
+    let (short, help) = match mode {
+        ReceiverMode::CmChannelEstimated => ("CMCE", "The recorded run corrects received samples using the supplied channel/model response. Without a CM capture, correction uses the configured model response."),
+        ReceiverMode::PilotEstimated => ("PE", "The recorded run estimates channel correction from received pilots. The supplied CM capture impairs the channel; it is not the receiver correction. Decoder confidence uses calibrated noise information."),
+        ReceiverMode::MerlinChannelEstimated => ("MCE", "The recorded run estimates channel correction and decoder noise confidence from received pilots. The supplied CM capture impairs the channel; it is not the receiver correction."),
+    };
+    selected.metadata["correction_mode"] = json!(short);
+    selected.metadata["correction_help"] = json!(help);
     Ok(selected)
 }
 /// Measures actual complex error against matched TX symbols, never slicer decisions.
@@ -369,7 +381,7 @@ pub(crate) fn qam(query: &Query) -> Value {
     } else {
         "No retained cells match this coordinate/modulation selection."
     });
-    state["detail"]=json!(format!("{} selected / {} retained cells · at most 2048 displayed · {} QAM · correction {} · shared axes ±{extent:.3}. Coordinates are receive-channel symbols; unretained history is unavailable.",selection.cells.len(),state["retained"],state["selected_order"],correction_name(result.job.settings.receiver_mode)));
+    state["detail"]=json!(format!("{} selected / {} retained cells · at most 2048 displayed · {} QAM · correction {} · shared axes ±{extent:.3}. Coordinates are receive-channel symbols; unretained history is unavailable.",selection.cells.len(),state["retained"],state["selected_order"],state["correction_name"].as_str().unwrap_or("Unavailable")));
     state["raw_tap"] = json!("rx.fft.bins");
     state["equalized_tap"] = json!("rx.equalized.iq");
     state

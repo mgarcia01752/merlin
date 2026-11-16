@@ -33,7 +33,17 @@ WorkbenchDialog {
             Layout.fillWidth:true
             onSelectionChanged:dialog.refresh()
         }
-        Label { text: dialog.rawOnly ? "Received FFT Cells · Before Equalization" : "Received I/Q before hard decisions · supplied H and estimated H-hat remain distinct"; color: dialog.theme.accent; Layout.fillWidth: true; wrapMode: Text.WordWrap }
+        Label {
+            objectName: "receiverQamCorrection"
+            text: dialog.rawOnly ? "Received FFT cells · Before equalization"
+                : dialog.observation.correction_name ? "Recorded run · Equalizer: " + dialog.observation.correction_name
+                : "Equalizer unavailable · No recorded run selected"
+            color: dialog.theme.accent; Layout.fillWidth: true; wrapMode: Text.WordWrap
+            HoverHandler { id: correctionHover }
+            ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: correctionHover.hovered
+            ToolTip.text: dialog.observation.correction_help || "Run the simulation to record the receiver correction mode."
+            Accessible.description: ToolTip.text
+        }
         RowLayout {
             Layout.fillWidth: true; Layout.fillHeight: true; spacing: 12
             Repeater {
@@ -44,7 +54,12 @@ WorkbenchDialog {
                     radius: 8; color: dialog.theme.background; border.color: dialog.theme.line
                     ColumnLayout {
                         anchors.fill: parent; anchors.margins: 18
-                        Label { text: modelData; color: dialog.theme.text; font.bold: true }
+                        Label {
+                            objectName: modelData.indexOf("Raw")===0 ? "receiverRawTitle" : "receiverEqualizedTitle"
+                            text: modelData.indexOf("Raw")===0 ? modelData
+                                : "Equalized · " + (dialog.observation.correction_mode || "Unavailable") + " · Before Slicing"
+                            color: dialog.theme.text; font.bold: true; Layout.fillWidth:true; wrapMode:Text.WordWrap
+                        }
                         Label {
                             id:merReading
                             objectName:modelData.indexOf("Raw")===0 ? "receiverRawMer" : "receiverEqualizedMer"

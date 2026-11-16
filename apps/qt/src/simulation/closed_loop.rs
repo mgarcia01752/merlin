@@ -790,6 +790,26 @@ mod tests {
         ));
         assert!(result.job.receiver_reliability.as_ref().unwrap().tracking);
         assert_eq!(result.job.summary.comparison.bit_errors, 0);
+        let profile = inputs.profile.clone().unwrap();
+        crate::instruments::receiver::qam_history::begin(std::slice::from_ref(&profile));
+        crate::instruments::receiver::qam_history::retain(profile.profile_id, &result);
+        let snapshot =
+            crate::instruments::receiver::qam_history::get(i32::from(profile.profile_id)).unwrap();
+        let mut result = result;
+        result.job.settings.receiver_mode = ReceiverMode::SuppliedChannel;
+        let selected = crate::instruments::receiver::selection::select_run(
+            &result,
+            Some(&snapshot),
+            &Default::default(),
+        )
+        .unwrap();
+        assert_eq!(selected.metadata["correction_mode"], "MCE");
+        assert_eq!(
+            selected.metadata["correction_name"],
+            "MERLIN Channel Estimation (MCE)"
+        );
+        crate::instruments::receiver::qam_history::clear();
+        result.job.settings.receiver_mode = ReceiverMode::MerlinChannelEstimated;
         publish(Some(Arc::new(result)));
         let response =
             crate::instruments::receiver::diagnostics::response(r#"{"source":2}"#).unwrap();

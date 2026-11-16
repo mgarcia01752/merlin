@@ -37,6 +37,26 @@ The display limit reports when only a subset of retained cells is shown.
 or Preamble. These groups retain their different modulation and pilot boost.
 The paired panels use matching received cells and equal I/Q scale.
 
+The **Recorded run · Equalizer** label identifies the correction that produced
+the selected samples, including archived Run Profiles. Changing a receiver
+setting does not relabel an old result; run again to produce new samples.
+The equalized heading also names **CMCE**, **PE** or **MCE**:
+
+- **CMCE — Supplied CM channel estimation:** correct with the supplied/model response.
+- **PE — Pilot estimation:** derive correction from received pilots; retain calibrated decoder noise information.
+- **MCE — MERLIN Channel Estimation:** derive correction and decoder noise confidence from received pilots.
+
+With PE or MCE, an imported channel estimate still impairs the channel, but is
+not passed to the receiver as its correction. Processing is **RX FFT → channel
+estimation → equalization → soft-bit calculation → FEC decoding**. The raw panel
+is before correction; the equalized panel is **before slicing**, not reconstructed
+from decoded bits. Hover over the recorded-mode label for the explanation.
+
+The screenshot below uses retained samples from a stopped MCE review run.
+
+![Recorded MCE correction before slicing](../images/workbench/receiver-qam-mce-dark.png)
+
+
 Select an available **Run Profile** and one modulation order, then optionally
 enter inclusive **First/Last Bin** and **First/Last RX Symbol** bounds. **All**
 means all retained coordinates, and **Reset Filters** clears the filters. The
