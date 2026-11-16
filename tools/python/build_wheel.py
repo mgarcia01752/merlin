@@ -70,6 +70,30 @@ def prepare_notices(root, destination, manifest):
     collect_notices(root, destination, manifest)
 
 
+def windows_build_environment(environment):
+    """Select the active MSVC linker even when Git Bash leads the search path.
+
+    Args:
+        environment: Inherited build environment; the input is never modified.
+    Returns:
+        A copied environment with the compiler's sibling linker selected for
+        the native x64 MSVC target and its tools first on the child PATH.
+    Raises:
+        ValueError when the active developer shell lacks cl.exe or link.exe.
+    """
+    result = environment.copy()
+    compiler = shutil.which("cl.exe", path=result.get("PATH", ""))
+    if compiler is None:
+        raise ValueError("Windows wheel builds require an x64 MSVC developer shell (cl.exe).")
+    tools = Path(compiler).resolve().parent
+    linker = tools / "link.exe"
+    if not linker.is_file():
+        raise ValueError(f"MSVC linker is missing beside the compiler: {linker}")
+    result["CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER"] = str(linker)
+    result["PATH"] = str(tools) + os.pathsep + result.get("PATH", "")
+    return result
+
+
 def main():
     """Collect reproducible legal assets, then invoke pinned local maturin.
 
@@ -107,6 +131,8 @@ def main():
         environment.setdefault("CARGO_HOME", str(ROOT / "local/cargo"))
         environment.setdefault("RUSTUP_HOME", str(ROOT / "local/rustup"))
         environment["PATH"] = str(ROOT / "local/cargo/bin") + os.pathsep + environment.get("PATH", "")
+    if sys.platform == "win32":
+        environment = windows_build_environment(environment)
     args.out.mkdir(parents=True, exist_ok=True)
     subprocess.run(build_command(sys.executable, BINDING / "Cargo.toml",
                                  args.out.resolve(), sys.platform),

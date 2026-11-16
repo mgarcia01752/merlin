@@ -11,7 +11,7 @@ import zipfile
 import subprocess
 from unittest.mock import patch, Mock, call
 
-from build_wheel import build_command, prepare_notices
+from build_wheel import build_command, prepare_notices, windows_build_environment
 from smoke_wheel import inspect_wheel, validate_example_output
 
 
@@ -39,6 +39,28 @@ class WheelToolTests(unittest.TestCase):
         self.assertNotIn('--compatibility', windows)
         with self.assertRaises(ValueError):
             build_command('python', Path('Cargo.toml'), Path('out'), 'darwin')
+
+    def test_windows_linker_comes_from_active_compiler_not_git_bash(self):
+        """Avoid Unix link.exe collisions and reject incomplete MSVC tools."""
+        with tempfile.TemporaryDirectory(prefix="merlin msvc ") as directory:
+            tools = Path(directory).resolve()
+            (tools / "cl.exe").write_bytes(b"compiler")
+            linker = tools / "link.exe"
+            linker.write_bytes(b"linker")
+            original = {"PATH": "git-bash-first", "INCLUDE": "sdk-includes"}
+            with patch("build_wheel.shutil.which", return_value=str(tools / "cl.exe")) as which:
+                result = windows_build_environment(original)
+                which.assert_called_once_with("cl.exe", path="git-bash-first")
+                self.assertEqual(result["CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER"], str(linker))
+                self.assertTrue(result["PATH"].startswith(str(tools)))
+                self.assertEqual(result["INCLUDE"], "sdk-includes")
+                self.assertEqual(original, {"PATH": "git-bash-first", "INCLUDE": "sdk-includes"})
+                linker.unlink()
+                with self.assertRaises(ValueError):
+                    windows_build_environment(original)
+            with patch("build_wheel.shutil.which", return_value=None):
+                with self.assertRaises(ValueError):
+                    windows_build_environment(original)
 
     def test_cold_cache_fetch_precedes_offline_notices_on_each_host(self):
         """Download only locked native sources before collecting their licenses."""

@@ -696,3 +696,17 @@ Local validation: all 15 wheel-tool tests passed in 0.029 s. A real empty
 Cargo-cache wheel build completed (optimized compilation: 47.72 s), and
 installing that wheel into a project-local environment returned version
 0.3.2. Hosted validation of the fix remains pending the next patch release.
+
+## API-INSTALL-04: native MSVC linker from Git Bash
+
+After cold-cache preparation was fixed, v0.3.3 reached compilation on Windows
+and selected Git Bash's Unix link utility. Keep the shell-independent Python
+wheel builder, locate link.exe beside the active MSVC cl.exe, and select that
+absolute linker for Cargo's native x64 MSVC target. Prepend that tool directory
+in the child environment only. Fail clearly when the configured compiler lacks
+its linker. Test PATH collisions and missing prerequisites; native Git Bash
+source installation remains part of the required hosted installer matrix.
+
+All 16 wheel-tool tests passed locally in 0.033 s. Windows linker execution
+requires the next native hosted run; Linux mocks establish selection and error
+contracts only.

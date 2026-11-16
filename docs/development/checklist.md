@@ -1633,3 +1633,7 @@ validation are complete; the user guide includes the current dark capture.
   ELF dependencies; leave transitive system dependencies to the target OS.
   Packaging regressions and a real local Qt runtime deployment pass.
   Hosted Ubuntu 26.04 lifecycle validation remains pending.
+
+- [x] **API-INSTALL-04** Pin the child Windows wheel build to the active MSVC
+  compiler/linker instead of Git Bash link; retain native installer CI.
+  All 16 wheel-tool tests pass; native Windows confirmation is pending.
