@@ -120,6 +120,7 @@ fn main() {
                 "qml/instruments/qam/ReceiverCellControls.qml",
                 "qml/instruments/response/ReceiverResponseDialog.qml",
                 "qml/instruments/slicer/ReceiverSlicerDialog.qml",
+                "qml/instruments/slicer/SoftDiagnosticPlot.qml",
                 "qml/instruments/fec/ReceiverFecDialog.qml",
                 "qml/instruments/fec/FecControlTable.qml",
                 "qml/instruments/fec/FecAllocationChart.qml",

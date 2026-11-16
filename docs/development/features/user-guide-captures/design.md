@@ -64,7 +64,7 @@ No source changed and no build or automated simulation suite was run.
 | [receiver-fec-dark.png](../../../images/workbench/receiver-fec-dark.png) | Refreshed native capture |
 | [receiver-qam-ncp-dark.png](../../../images/workbench/receiver-qam-ncp-dark.png) | Refreshed native capture |
 | [receiver-response-dark.png](../../../images/workbench/receiver-response-dark.png) | Refreshed native capture |
-| [receiver-slicer-dark.png](../../../images/workbench/receiver-slicer-dark.png) | Refreshed native capture |
+| [slicer-confidence-dark.png](../../../images/workbench/slicer-confidence-dark.png) | Updated RX-LLR-02 UI; illustrative fixture, not field measurements. |
 | [receiver-spectrum-dark.png](../../../images/workbench/receiver-spectrum-dark.png) | Refreshed native capture |
 | [receiver-workbench-dark.png](../../../images/workbench/receiver-workbench-dark.png) | Refreshed native capture |
 | [rxmer-interpolation-dark.png](../../../images/workbench/rxmer-interpolation-dark.png) | Refreshed native capture |

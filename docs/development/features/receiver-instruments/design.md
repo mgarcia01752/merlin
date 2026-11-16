@@ -104,3 +104,40 @@ Local logs and disposable WB files remain under ignored `docs/development/local/
 The user's wording update replaces authored documentation prose by context with
 simulation, signal processing or numerical terms, preserving source identifiers,
 canonical skill paths and pinned specification text.
+
+## RX-LLR-02: readable symbol and confidence diagnostics
+
+Replace the waveform-like histogram with three tabs: Symbol Decisions, Bit
+Confidence (default), and Decoder Input. Rust constructs bounded histogram bars,
+separate at-limit counts, a near-zero view, and a min/max decoder-bit sequence.
+Counts cover only retained values and never imply BER or decoder correctness.
+Symbol Decisions shows a selected physical cell, nearby reference points and its
+exact nearest-point decision region, with visual zoom and selectable details.
+The region is clipped against all reference points in Rust, including cross QAM.
+Post-descrambling LLR signs remain separate from physical symbol labels. Keep
+profile selection for decoder snapshots; cell filters apply only to cell views.
+QML renders and selects; no new demapper, decoder, simulation or persistence.
+Validate histogram conservation, edge values, decision geometry, QML routing,
+empty data, and native build. Refresh the user guide and screenshots.
+
+Validation: Qt formatting/Clippy and debug build pass. All 87 Rust adapter tests
+pass (46.69 s), including new confidence conservation/extrema and square/cross-QAM
+region checks. All 86 QML checks pass (20.28 s), including tab routing, default
+confidence view, near-zero range, decoder selection and empty results. Reviewed
+dark/light captures use an explicitly labeled illustrative test fixture; they
+replace the old slicer screenshot. Native Windows interactive behavior remains
+unverified for this change.
+
+## RX-RESP-PLC — PLC region and contextual velocity factor
+
+Frequency response views reuse the spectrum PLC annotation from the frozen run
+layout: one continuous first-to-last PLC region, including both compare panels.
+Impulse/delay views have no frequency band. VF and distance details appear only
+in Impulse / Echo because VF converts delay to cable distance, not gain/phase.
+Rust owns the band projection; QML owns control visibility. Validate through the
+existing PLC projection tests, response-view QML checks and Qt build/check.
+
+RX-RESP-PLC validation: Qt formatting/Clippy/build passed; 87 adapter tests
+passed (45.69 s), 89 QML cases passed (19.85 s). Dark/light illustrative
+screenshots reviewed. Existing debug executable rebuilt; Windows interactive
+behavior remains unverified. No simulation or persisted/API settings changed.

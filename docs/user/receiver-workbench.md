@@ -158,6 +158,13 @@ Choose among up to four retained observation-symbol snapshots.
 or Impulse / Echo. Each panel labels its independent vertical scale; applied H
 uses the actual realized filter response when continuous filtering is selected.
 
+Frequency views shade the continuous region from the first to last PLC carrier
+from the recorded run, including both comparison panels. **VF (%)** and cable
+distance details appear only in **Impulse / Echo**; VF does not affect gain,
+phase or real/imaginary values. Delay plots have no PLC frequency shading.
+
+![PLC shading in both response panels (illustrative display fixture)](../images/workbench/response-plc-dark.png)
+
 Views include gain, wrapped phase, real/imaginary H and the band-limited impulse
 response. Excluded/unknown frequency bins remain gaps in response curves and are
 zero-filled for the impulse transform. Band limits produce ringing, so plotted
@@ -169,24 +176,43 @@ is explicit; path/reflector distances are estimates, not reach or protection.
 
 ## Slicer and LLRs
 
-Open **Soft Demap / Decode** or **Slicer / LLR**. It begins with the current QAM
-selection; its filters can then be changed independently. The first 128 selected
-cells show physical nearest-symbol labels, received I/Q, residual squared distance
-and actual post-descrambling NCP/payload LLRs. Physical labels precede
-descrambling, so do not compare their bits directly with those LLR signs.
-Pilot slicing explicitly accounts for its existing amplitude boost.
+Open **Slicer / Soft Demap** or **Slicer / LLR**. The filters initially follow
+the QAM selection and can then be changed independently. Three tabs separate
+physical symbol decisions from soft bit confidence:
 
-Select **Payload LDPC Input** to inspect the first retained coding-order
-16,200-value decoder-input window and its likelihood distribution. Cell filters
-do not relabel this separate word boundary. Positive LLR favors zero; negative
-favors one. These are diagnostics: production FEC continues to consume soft
-values, and hard decisions never feed back into decoding.
+- **Symbol Decisions:** select one of the first 128 retained cells. The plot
+  shows nearby ideal symbols (+), the received symbol and error vector (teal),
+  and the selected symbol's nearest-point decision region (yellow). Zoom changes
+  the displayed neighborhood. Coordinates are normalized and relative to the
+  selected ideal symbol; pilot amplitude boost is removed for this display.
+  The region is calculated against the complete constellation, including cross
+  QAM. An outer unbounded region is clipped to the local viewport.
+- **Bit Confidence** (default): histogram bars count actual post-descrambling
+  LLRs from at most 2,048 selected cells (32,768 soft values). Positive favors
+  bit 0, negative favors bit 1, and near zero means uncertain. Values at or
+  beyond ±100 are counted separately from the bars. The demapper clips at ±100;
+  retained values cannot recover the original unclipped magnitude. Near-zero
+  zoom shows only −10 < LLR < +10 and displays how many bits remain in view.
+  Hover for each bin's range, count and percentage of all retained bits.
+- **Decoder Input:** actual coding-order LLRs from the first retained payload
+  decoder word, plotted by zero-based bit index. Min/max display groups preserve
+  extremes. The profile selector remains available; cell/bin/symbol filters do
+  not apply to this separately retained snapshot.
 
-Protected PLC/pilot streams provide physical decisions but do not expose a
-retained per-cell soft boundary in this view. They show that distinction explicitly;
-LLRs are not synthesized from decided labels.
+Large LLR magnitude means confidence, not proof of correctness. Refer to FEC
+Monitor for actual decoder outcomes. Physical labels precede descrambling; do
+not compare their bits directly with the post-descrambling LLR signs. These
+hard decisions are diagnostic and never feed back into FEC decoding. Protected
+streams without retained LLRs explicitly show that limitation.
 
-![Actual decisions and likelihoods](../images/workbench/receiver-slicer-dark.png)
+The following UI captures use an **illustrative test fixture**, not field
+measurements or simulation performance results:
+
+![Bit confidence histogram](../images/workbench/slicer-confidence-dark.png)
+
+[Light theme](../images/workbench/slicer-confidence-light.png) ·
+[Symbol decisions](../images/workbench/slicer-symbol-dark.png) ·
+[Decoder input](../images/workbench/slicer-decoder-dark.png)
 
 ## Spectrum Analyzer
 

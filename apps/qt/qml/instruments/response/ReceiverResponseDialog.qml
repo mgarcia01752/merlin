@@ -34,8 +34,8 @@ WorkbenchDialog {
             ComboBox { objectName:"receiverResponseSource";model:["Applied Channel (H)",dialog.estimateLabel,dialog.mceResult ? "Compare Channel / MCE" : "Compare Channel / Pilots"];currentIndex:dialog.sourceIndex;Layout.preferredWidth:240;onActivated:function(index){dialog.sourceIndex=index;dialog.snapshotIndex=0;dialog.refresh()} }
             Label { text:"View";color:dialog.theme.text }
             ComboBox { objectName:"receiverResponseView";model:["Gain","Wrapped Phase","Real","Imaginary","Impulse / Echo"];currentIndex:dialog.viewIndex;Layout.preferredWidth:165;onActivated:function(index){dialog.viewIndex=index;dialog.refresh()} }
-            Label { text:"VF (%)";color:dialog.theme.text }
-            SpinBox { objectName:"receiverVelocity";from:1;to:100;editable:true;value:dialog.velocityPercent;onValueModified:{dialog.velocityPercent=value;dialog.refresh()} }
+            Label { visible:dialog.viewIndex===4;text:"VF (%)";color:dialog.theme.text }
+            SpinBox { visible:dialog.viewIndex===4;objectName:"receiverVelocity";from:1;to:100;editable:true;value:dialog.velocityPercent;onValueModified:{dialog.velocityPercent=value;dialog.refresh()} }
             Item { Layout.fillWidth:true }
         }
         RowLayout {

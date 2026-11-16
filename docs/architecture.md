@@ -2494,3 +2494,12 @@ installer arguments before MSI handoff. Rust owns bounded installer-log reads,
 UTF-16 decoding, user-profile-path redaction and issue report construction. QML
 handles the explicit clipboard action and opens the fixed GitHub form; the user
 reviews and submits it. Logs are never embedded in URLs or workbench JSON.
+
+### Receiver soft-decision presentation
+
+The Qt Rust adapter projects retained LLRs into bounded histogram bars and
+min/max decoder-index groups, and computes selected-symbol Voronoi regions
+from existing constellation references. QML renders these in Symbol Decisions,
+Bit Confidence and Decoder Input tabs. Endpoint counts preserve the distinction
+between demapper limits and the display range. No hard decisions feed the FEC
+engine, no LLRs are synthesized, and no saved-workbench/API schema changes.

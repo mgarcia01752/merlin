@@ -208,6 +208,11 @@ pub(crate) fn response(document: &str) -> Result<Value, String> {
         )
     };
     let mut state = curve(&x, &values, axis, coordinate);
+    if query.view < 4 {
+        state["start"] = json!(0);
+        state["count"] = json!(masked.len());
+        crate::spectrum_view::plc::annotate(&mut state, &layout);
+    }
     state["snapshots"] = json!(snapshots);
     state["summary"] = json!(format!(
         "{} · {} observed bins · correction {}",
@@ -219,7 +224,9 @@ pub(crate) fn response(document: &str) -> Result<Value, String> {
         response.available_bins,
         super::selection::correction_name(settings.receiver_mode)
     ));
-    state["detail"]=json!(format!("Peak delay: {:.4} µs · extra path {:.2} ft · two-way spacing {:.2} ft · VF {:.2}. Band-limited estimate; not guaranteed echo protection.",response.peak_delay_microseconds,response.peak_extra_path_feet,response.peak_two_way_spacing_feet,f64::from(query.velocity_percent)/100.0));
+    if query.view == 4 {
+        state["detail"]=json!(format!("Peak delay: {:.4} µs · extra path {:.2} ft · two-way spacing {:.2} ft · VF {:.2}. Band-limited estimate; not guaranteed echo protection.",response.peak_delay_microseconds,response.peak_extra_path_feet,response.peak_two_way_spacing_feet,f64::from(query.velocity_percent)/100.0));
+    }
     if let Some(reliability) = &result.job.receiver_reliability {
         state["mce"] = json!({"tracking":reliability.tracking,"raw_noise_power":reliability.raw_noise_power,"noise_text":format!("{:.3e}",reliability.raw_noise_power),"compared_pilots":reliability.compared_pilots});
     }
@@ -265,7 +272,7 @@ pub(crate) fn slicer(document: &str, decoder_input: bool) -> Result<Value, Strin
             .map(|v| Some(*v as f64))
             .collect();
         return Ok(
-            json!({"available":!values.is_empty(),"rows":[],"llr":statistics,"histogram":curve(&x,&y,"Retained LLR count","LLR · log P(0)/P(1)"),"reason":"No payload LDPC-input LLRs retained for this run.","detail":format!("Actual rx.bits.inverse · first retained word {:?} · {} coding-order LLRs. Cell/window selectors apply to the cell view, not this separately retained codeword.",archived.as_ref().map_or(result.observations.decoder_word,|snapshot|snapshot.decoder_word),values.len())}),
+            json!({"available":!values.is_empty(),"rows":[],"confidence":super::soft_display::confidence(values),"llr":statistics,"histogram":curve(&x,&y,"Retained LLR count","LLR · log P(0)/P(1)"),"reason":"No payload LDPC-input LLRs retained for this run.","detail":format!("Actual rx.bits.inverse · first retained word {:?} · {} coding-order LLRs. Cell/window selectors apply to the cell view, not this separately retained codeword.",archived.as_ref().map_or(result.observations.decoder_word,|snapshot|snapshot.decoder_word),values.len())}),
         );
     }
     let selection = select_run(&result, archived.as_deref(), &query)?;
@@ -273,7 +280,7 @@ pub(crate) fn slicer(document: &str, decoder_input: bool) -> Result<Value, Strin
     for cell in selection.cells.iter().take(128) {
         let point = [cell.eq[0] / cell.amplitude, cell.eq[1] / cell.amplitude];
         let decision = slice_symbol(cell.order, point).map_err(|e| e.to_string())?;
-        rows.push(json!({"bin":cell.bin,"symbol":cell.symbol,"source_symbol":cell.source,"order":cell.order,"iq":cell.eq,"label":decision.label,"reference":[decision.reference_iq[0]*cell.amplitude,decision.reference_iq[1]*cell.amplitude],"distance_squared":decision.distance_squared*cell.amplitude*cell.amplitude,"llrs":cell.llrs}));
+        rows.push(json!({"bin":cell.bin,"symbol":cell.symbol,"source_symbol":cell.source,"order":cell.order,"iq":cell.eq,"normalized_iq":point,"neighborhood":super::soft_display::neighborhood(usize::from(cell.order),usize::from(decision.label)),"label":decision.label,"reference":[decision.reference_iq[0]*cell.amplitude,decision.reference_iq[1]*cell.amplitude],"distance_squared":decision.distance_squared*cell.amplitude*cell.amplitude,"llrs":cell.llrs}));
     }
     let soft: Vec<_> = selection
         .cells
@@ -296,7 +303,7 @@ pub(crate) fn slicer(document: &str, decoder_input: bool) -> Result<Value, Strin
         .map(|v| Some(*v as f64))
         .collect();
     Ok(
-        json!({"available":!rows.is_empty(),"rows":rows,"llr":statistics,"histogram":curve(&x,&y,"Retained LLR count","LLR · log P(0)/P(1)"),"reason":"No retained received cells match the selection.","detail":format!("{} selected cells · first128 physical nearest-symbol decisions. Cell LLRs are actual post-descrambling receiver values (first2048 cells); labels are pre-descrambling physical decisions and do not feed FEC. {}",selection.cells.len(),if soft.is_empty(){"This protected stream has no retained soft boundary; no LLRs are synthesized."}else{"Positive LLR favors zero; negative favors one."})}),
+        json!({"available":!rows.is_empty(),"rows":rows,"confidence":super::soft_display::confidence(&soft),"llr":statistics,"histogram":curve(&x,&y,"Retained LLR count","LLR · log P(0)/P(1)"),"reason":"No retained received cells match the selection.","detail":format!("{} selected cells · first128 physical nearest-symbol decisions. Cell LLRs are actual post-descrambling receiver values (first2048 cells); labels are pre-descrambling physical decisions and do not feed FEC. {}",selection.cells.len(),if soft.is_empty(){"This protected stream has no retained soft boundary; no LLRs are synthesized."}else{"Positive LLR favors zero; negative favors one."})}),
     )
 }
 /// Returns genuine bounded decoder counters and completed word outcomes from the shared job.

@@ -1650,3 +1650,10 @@ validation are complete; the user guide includes the current dark capture.
 - [x] **RX-DEMUX** Label the receiver separation stage DEMUX, retaining
   PLC / NCP / Data and the QAM action; see
   [design](features/receiver-workbench/design.md#rx-demux-receiver-stage-label).
+
+- [x] **RX-LLR-02** Provide symbol decision regions, confidence histograms and
+  decoder-index views with explicit retained-data scope. See
+  [design](features/receiver-instruments/design.md#rx-llr-02-readable-symbol-and-confidence-diagnostics).
+
+- [x] RX-RESP-PLC: Shade first–last PLC in receiver frequency responses;
+  show VF/distance only for echo ([design](features/receiver-instruments/design.md#rx-resp-plc--plc-region-and-contextual-velocity-factor)).
