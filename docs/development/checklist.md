@@ -1646,3 +1646,7 @@ validation are complete; the user guide includes the current dark capture.
 
 - [x] **FEC-MON-BER** Display FEC Monitor BER in scientific notation while
   preserving numeric results; see [design](features/fec-monitor/design.md#fec-mon-ber-scientific-notation).
+
+- [x] **RX-DEMUX** Label the receiver separation stage DEMUX, retaining
+  PLC / NCP / Data and the QAM action; see
+  [design](features/receiver-workbench/design.md#rx-demux-receiver-stage-label).

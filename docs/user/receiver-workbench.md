@@ -6,12 +6,12 @@ Start. Instruments inspect the same retained complete/partial run and never
 advance the simulation. Each popup has X and its existing Close/Cancel controls.
 See the [run/save guide](closed-loop-workbench.md).
 
-![Receiver Workbench and FEC Statistics shortcut](../images/workbench/receiver-workbench-dark.png)
+![Receiver Workbench](../images/workbench/receiver-workbench-dark.png)
 
 ## FEC statistics
 
-Open **Receiver → FEC Statistics** in the upper-right header, or **FEC Monitor**
-in the Diagnostic Instruments row. Both open the same window.
+Open **Receiver → FEC Monitor**
+in the Diagnostic Instruments row.
 
 Select a completed profile, then use **Overview**, **Control Channels** or
 **Codewords**. Overview shows TotalCW/CCW/UFEC, codeword outcomes, actual LDPC
@@ -214,3 +214,14 @@ separately. Receiver configuration retains correction mode and iteration limit. 
 selector reviews each result; other instruments remain labelled with the latest
 completed profile. See the [profile performance guide](receiver-profile-performance.md)
 for counter scope, Profile A mapping and sweep controls.
+
+The **DEMUX** stage separates PLC, NCP and data symbols for their respective
+receiver paths. Select it to inspect the received QAM symbols.
+
+Select **Slicer / Soft Demap** to open the Slicer / LLR instrument. **FEC Decode**
+underneath identifies the subsequent decoding stage. Hard nearest-point
+decisions are available for inspection; FEC uses soft bit confidence.
+
+Receiver QAM views default to **Paired**, showing raw and equalized I/Q together
+for data, NCP, PLC and pilots. Your selected view is retained when switching
+receiver entry points. Transmitter/channel taps retain their single-point view.

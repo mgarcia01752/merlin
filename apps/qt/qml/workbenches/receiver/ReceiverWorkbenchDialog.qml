@@ -41,7 +41,7 @@ WorkbenchDialog {
     closePolicy: Popup.CloseOnEscape
     contentItem: ColumnLayout {
         spacing: 14
-        RowLayout { Layout.fillWidth:true; Label { text: "Receiver Signal Path"; font.pixelSize:19; font.bold:true; color:dialog.theme.text; Layout.fillWidth:true } WorkbenchActionButton { theme: dialog.theme; objectName:"receiverFecShortcut"; text:"FEC Statistics"; onClicked:fec.open() } WorkbenchActionButton { theme: dialog.theme; objectName:"receiverConfigure"; text:"Configure Receiver…"; onClicked:dialog.configurationRequested() } }
+        RowLayout { Layout.fillWidth:true; Label { text: "Receiver Signal Path"; font.pixelSize:19; font.bold:true; color:dialog.theme.text; Layout.fillWidth:true } WorkbenchActionButton { theme: dialog.theme; objectName:"receiverConfigure"; text:"Configure Receiver…"; onClicked:dialog.configurationRequested() } }
         Rectangle {
             Layout.fillWidth: true; Layout.preferredHeight: 142
             color: dialog.theme.background; radius: 12; border.color: dialog.theme.line
@@ -55,26 +55,26 @@ WorkbenchDialog {
                 Label { text: "→"; color: dialog.theme.muted; font.pixelSize: 18; Layout.alignment: Qt.AlignTop; Layout.topMargin: 26 }
                 ColumnLayout {
                     Layout.fillWidth: true; Layout.preferredWidth: 1; Layout.minimumWidth: 0; spacing: 10
-                    StageChip { theme: dialog.theme; text: "FFT"; Layout.fillWidth: true;  Layout.preferredHeight: 64; onClicked: dialog.openQam(qam.signalIndex, 0) }
+                    StageChip { theme: dialog.theme; text: "FFT"; Layout.fillWidth: true;  Layout.preferredHeight: 64; onClicked: dialog.openQam(qam.signalIndex, qam.viewIndex) }
                     ReceiverChip { theme: dialog.theme; objectName: "receiverFftTap"; text: "● FFT Bins"; compact: true; Layout.preferredHeight: 30; Layout.fillWidth: true; onClicked: dialog.openSpectrum(3) }
                 }
                 Label { text: "→"; color: dialog.theme.muted; font.pixelSize: 18; Layout.alignment: Qt.AlignTop; Layout.topMargin: 26 }
                 ColumnLayout {
                     Layout.fillWidth: true; Layout.preferredWidth: 1; Layout.minimumWidth: 0; spacing: 10
-                    StageChip { theme: dialog.theme; text: "CH-EST /\nEqualizer"; Layout.fillWidth: true;  Layout.preferredHeight: 64; onClicked: response.open() }
-                    ReceiverChip { theme: dialog.theme; text: "● Equalized I/Q"; compact: true; Layout.preferredHeight: 30; Layout.fillWidth: true; onClicked: dialog.openQam(qam.signalIndex, 1) }
+                    StageChip { theme: dialog.theme; text: "Equalizer"; Layout.fillWidth: true;  Layout.preferredHeight: 64; onClicked: response.open() }
+                    ReceiverChip { theme: dialog.theme; text: "● Equalized I/Q"; compact: true; Layout.preferredHeight: 30; Layout.fillWidth: true; onClicked: dialog.openQam(qam.signalIndex, qam.viewIndex) }
                 }
                 Label { text: "→"; color: dialog.theme.muted; font.pixelSize: 18; Layout.alignment: Qt.AlignTop; Layout.topMargin: 26 }
                 ColumnLayout {
                     Layout.fillWidth: true; Layout.preferredWidth: 1; Layout.minimumWidth: 0; spacing: 10
-                    StageChip { theme: dialog.theme; text: "Received Roles"; Layout.fillWidth: true;  Layout.preferredHeight: 64; onClicked: dialog.openQam(qam.signalIndex, qam.viewIndex) }
+                    StageChip { theme: dialog.theme; text: "DEMUX"; Layout.fillWidth: true;  Layout.preferredHeight: 64; onClicked: dialog.openQam(qam.signalIndex, qam.viewIndex) }
                     Label { text: "PLC / NCP / Data"; color: dialog.theme.muted; Layout.fillWidth: true; Layout.preferredHeight: 30; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; font.pixelSize: 11 }
                 }
                 Label { text: "→"; color: dialog.theme.muted; font.pixelSize: 18; Layout.alignment: Qt.AlignTop; Layout.topMargin: 26 }
                 ColumnLayout {
                     Layout.fillWidth: true; Layout.preferredWidth: 1; Layout.minimumWidth: 0; spacing: 10
-                    StageChip { theme: dialog.theme; text: "Soft Demap /\nDecode"; Layout.fillWidth: true;  Layout.preferredHeight: 64; onClicked: dialog.openSlicer() }
-                    Label { text: "Branch-specific FEC"; color: dialog.theme.muted; Layout.fillWidth: true; Layout.preferredHeight: 30; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; font.pixelSize: 11 }
+                    StageChip { theme: dialog.theme; text: "Slicer /\nSoft Demap"; Layout.fillWidth: true;  Layout.preferredHeight: 64; onClicked: dialog.openSlicer() }
+                    Label { text: "FEC Decode"; color: dialog.theme.muted; Layout.fillWidth: true; Layout.preferredHeight: 30; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; font.pixelSize: 11 }
                 }
             }
         }
@@ -96,7 +96,7 @@ WorkbenchDialog {
                     ReceiverChip { theme: dialog.theme; text: "Channel Response / Echo"; Layout.fillWidth: true; onClicked: response.open() }
                     ReceiverChip { theme: dialog.theme; text: "Slicer / LLR"; Layout.fillWidth: true; onClicked: dialog.openSlicer() }
                     ReceiverChip { theme: dialog.theme; objectName:"receiverProfilePerformance"; text: "Profile Performance"; Layout.fillWidth: true; onClicked: performance.open() }
-                    ReceiverChip { theme: dialog.theme; text: "FEC Monitor"; Layout.fillWidth: true; onClicked: fec.open() }
+                    ReceiverChip { theme: dialog.theme; objectName: "receiverFecMonitor"; text: "FEC Monitor"; Layout.fillWidth: true; onClicked: fec.open() }
                 }
             }
         }

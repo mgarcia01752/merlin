@@ -158,3 +158,26 @@ widths within their row. Keep keyboard focus visible, preserve light/dark theme
 colors and do not change navigation or simulation state. Refresh native dark
 screenshots and check minimum-size layout using the existing QML suite and Qt
 build only; no new DSP tests are needed for this presentation change.
+
+## RX-DEMUX: receiver stage label
+
+Rename the receiver signal-path stage from Received Roles to DEMUX. Retain
+PLC / NCP / Data underneath and the existing QAM action. This is presentation
+terminology only; receiver processing and architecture are unchanged.
+
+The following stage is labeled Slicer / Soft Demap with FEC Decode underneath.
+Its existing action opens Slicer / LLR. These labels describe the instrument and
+soft-decision decoder path; they do not insert hard slicing before soft decoding.
+
+Shorten CH-EST / Equalizer to Equalizer; preserve the response-view action.
+
+Receiver QAM defaults to Paired for every signal selection. FFT/equalized entry
+points preserve the selected view rather than overriding the paired default.
+Single-stage transmitter/channel taps keep their explicit raw-only controls.
+
+Validation: all 49 workbench QML checks pass (8.85 s), the final debug desktop
+build passes, and git diff whitespace checks pass. No engine behavior changed.
+
+Remove the redundant FEC Statistics header shortcut. Keep FEC Monitor in
+Diagnostic Instruments as the single FEC entry and route the existing UI check
+through it. Update user instructions accordingly.

@@ -11,7 +11,7 @@ ColumnLayout {
     required property var theme
     property var metadata: ({})
     property int signalIndex: 0
-    property int viewIndex: 1
+    property int viewIndex: 2
     property int plcPartIndex: 0
     property int runProfile: -1
     property int profile: -1

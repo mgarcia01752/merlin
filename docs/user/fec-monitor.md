@@ -1,6 +1,6 @@
 # FEC Monitor
 
-Open **Receiver → FEC Statistics** or **FEC Monitor**. Both open this instrument.
+Open **Receiver → Diagnostic Instruments → FEC Monitor**.
 Select a captured profile to inspect its retained complete or partial result.
 Changing profiles does not run the simulation or change other instruments.
 

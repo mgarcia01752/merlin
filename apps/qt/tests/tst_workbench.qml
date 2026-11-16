@@ -1631,7 +1631,7 @@ Pane {
             boundary.currentIndex=1;boundary.activated(1)
             compare(receiverBackend.lastDecoderInput,true)
             closeWithX(receiver.slicerPopup)
-            mouseClick(findChild(receiver,"receiverFecShortcut"));tryCompare(receiver.fecPopup,"opened",true)
+            mouseClick(findChild(receiver,"receiverFecMonitor"));tryCompare(receiver.fecPopup,"opened",true)
             verify(findChild(receiver.fecPopup,"receiverFecStatus").text.indexOf("complete")>=0)
             closeWithX(receiver.fecPopup);closeWithX(receiver)
             receiverBackend.retainedCells=false
