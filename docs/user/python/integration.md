@@ -74,8 +74,8 @@ wheel's interpreter requirement. Keep the OS-managed Python unchanged.
 
 | Your environment | Wheel filename for the documented version |
 | --- | --- |
-| Ubuntu 22.04+ x86_64, CPython 3.10 | `merlin_ofdm-0.3.4-cp310-cp310-linux_x86_64.whl` |
-| Windows x64, CPython 3.10 | `merlin_ofdm-0.3.4-cp310-cp310-win_amd64.whl` |
+| Ubuntu 22.04+ x86_64, CPython 3.10 | `merlin_ofdm-0.3.5-cp310-cp310-linux_x86_64.whl` |
+| Windows x64, CPython 3.10 | `merlin_ofdm-0.3.5-cp310-cp310-win_amd64.whl` |
 
 These are expected filenames, not a guarantee that a release has published
 both assets. If no compatible wheel appears under Assets, use another verified
@@ -89,7 +89,7 @@ support already installed:
 
 ```bash
 python3.10 -m venv .venv
-.venv/bin/python -m pip install --no-index --only-binary=:all: ./wheels/merlin_ofdm-0.3.4-cp310-cp310-linux_x86_64.whl
+.venv/bin/python -m pip install --no-index --only-binary=:all: ./wheels/merlin_ofdm-0.3.5-cp310-cp310-linux_x86_64.whl
 .venv/bin/python -c "from merlin import Simulation; import merlin; print(merlin.__version__)"
 ```
 
@@ -100,7 +100,7 @@ and the Python launcher already installed:
 
 ```bat
 py -3.10 -m venv .venv
-.venv\Scripts\python.exe -m pip install --no-index --only-binary=:all: .\wheels\merlin_ofdm-0.3.4-cp310-cp310-win_amd64.whl
+.venv\Scripts\python.exe -m pip install --no-index --only-binary=:all: .\wheels\merlin_ofdm-0.3.5-cp310-cp310-win_amd64.whl
 .venv\Scripts\python.exe -c "from merlin import Simulation; import merlin; print(merlin.__version__)"
 ```
 
@@ -126,7 +126,7 @@ before installation, use the download-and-verify steps above instead.
 ```bash
 (
     set -e
-    MERLIN_TAG="v0.3.4"
+    MERLIN_TAG="v0.3.5"
     MERLIN_VERSION="${MERLIN_TAG#v}"
     MERLIN_WHEEL="merlin_ofdm-${MERLIN_VERSION}-cp310-cp310-linux_x86_64.whl"
     MERLIN_URL="https://github.com/mgarcia01752/merlin/releases/download/${MERLIN_TAG}/${MERLIN_WHEEL}"
@@ -145,7 +145,7 @@ installed (this block is for PowerShell, not Command Prompt):
 
 ```powershell
 & {
-    $MERLIN_TAG = "v0.3.4"
+    $MERLIN_TAG = "v0.3.5"
     $MERLIN_VERSION = $MERLIN_TAG -replace '^v', ''
     $MERLIN_WHEEL = "merlin_ofdm-$MERLIN_VERSION-cp310-cp310-win_amd64.whl"
     $MERLIN_URL = "https://github.com/mgarcia01752/merlin/releases/download/$MERLIN_TAG/$MERLIN_WHEEL"
@@ -162,7 +162,7 @@ installed (this block is for PowerShell, not Command Prompt):
 }
 ```
 
-Tags in these examples use `vMAJOR.MINOR.PATCH`, such as `v0.3.4`.
+Tags in these examples use `vMAJOR.MINOR.PATCH`, such as `v0.3.5`.
 For an existing compatible environment, omit its creation command and replace
 `.venv` with that environment's path. Pin the same version in your project as
 explained under [Declare a dependency](#declare-a-dependency-in-the-consuming-project).
@@ -183,8 +183,8 @@ installation, follow [Declare a dependency](#declare-a-dependency-in-the-consumi
 
 ## Version and availability
 
-The documented package version is **0.3.4** and the corresponding source
-release reference is **v0.3.4**. A reference is an expected source pin,
+The documented package version is **0.3.5** and the corresponding source
+release reference is **v0.3.5**. A reference is an expected source pin,
 not a claim that the tag already exists or that a wheel has been published.
 Verify that the chosen source contains the API and that approved wheel assets
 exist before configuring a downstream public dependency.
@@ -192,7 +192,7 @@ exist before configuring a downstream public dependency.
 The Ubuntu target is 22.04+ x86_64 / CPython 3.10. Release CI builds on 22.04
 and tests that same wheel on 24.04 and 26.04; new checks remain pending hosted
 validation. Its
-wheel filename is `merlin_ofdm-0.3.4-cp310-cp310-linux_x86_64.whl`. Each
+wheel filename is `merlin_ofdm-0.3.5-cp310-cp310-linux_x86_64.whl`. Each
 release needs its own validated artifact. Other platforms and Python ABIs
 remain unverified unless that release supplies supporting evidence. A native
 `linux_x86_64` wheel does not promise manylinux compatibility.
@@ -217,7 +217,7 @@ environment in the MERLIN checkout:
 ```bash
 python3 -m venv local/api-consumer
 local/api-consumer/bin/python -m pip install --no-index --only-binary=:all: \
-  --find-links local/python-wheels 'merlin-ofdm==0.3.4'
+  --find-links local/python-wheels 'merlin-ofdm==0.3.5'
 local/api-consumer/bin/python -c 'import merlin; from importlib.metadata import version; print(version("merlin-ofdm")); print(merlin.__file__)'
 ```
 
@@ -235,7 +235,7 @@ If simulation is optional, a consumer can declare an extra in its own
 
 ```toml
 [project.optional-dependencies]
-merlin = ["merlin-ofdm==0.3.4"]
+merlin = ["merlin-ofdm==0.3.5"]
 ```
 
 Merge that declaration into the existing project metadata. If MERLIN is required
@@ -284,7 +284,7 @@ Package-index delivery lets pip choose the compatible wheel for a version.
 For reproducible deployment from a wheelhouse, use a locked requirement such as:
 
 ```text
-merlin-ofdm==0.3.4 --hash=sha256:<VERIFIED_WHEEL_SHA256>
+merlin-ofdm==0.3.5 --hash=sha256:<VERIFIED_WHEEL_SHA256>
 ```
 
 Replace `<VERIFIED_WHEEL_SHA256>` with the verified digest for the exact wheel
