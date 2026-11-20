@@ -732,7 +732,8 @@
       "id": "INT-BASE-01",
       "title": "Establish reproducible unified-workspace regression baseline",
       "dependencies": [
-        "INT-DOC-01"
+        "INT-DOC-01",
+        "DS-REQ-01"
       ],
       "architecture": "unified-acceptance-and-final-documentation-gate",
       "acceptance": "Record exact source/target/toolchain/locks and run the existing MERLIN regression/analysis-only/examples/native API baselines. Source results stay separately labeled; no invented external interoperability.",
@@ -984,7 +985,10 @@
         "INT-TOOLS-01",
         "INT-PNM-02",
         "INT-FEC-01",
-        "INT-DSP-01"
+        "INT-DSP-01",
+        "DS-GAP-01",
+        "DS-GAP-02",
+        "DS-GAP-03"
       ],
       "architecture": "unified-acceptance-and-final-documentation-gate",
       "acceptance": "Run full required MERLIN Rust tests/Clippy/format/analysis-only/doctests/examples plus actual Python/CLI/PNM compatibility and applicable Qt integration checks. Record deterministic values separately from elapsed time, all failures/omissions and exact candidate. Source-only passes are insufficient.",
@@ -1001,7 +1005,8 @@
       "id": "INT-DOC-02",
       "title": "Complete final documentation and skill correspondence",
       "dependencies": [
-        "INT-REG-01"
+        "INT-REG-01",
+        "DS-REQ-01"
       ],
       "architecture": "unified-acceptance-and-final-documentation-gate",
       "acceptance": "Meet all ten user documentation completion conditions: one architecture/requirements/checklist; complete requirement/task evidence; resolving links; skills name actual final modules; no obsolete user-facing branding; docs match implemented support and every newly accepted capability has local integrated evidence.",
@@ -3826,5 +3831,16 @@
     "RX-DEMUX",
     "RX-LLR-02"
   ],
-  "original_api_requirements_sha256": "bdd38a27b9351e3e5e4d533d7b986304c340019024c8adfe91a4ef1512f1dceb"
+  "original_api_requirements_sha256": "bdd38a27b9351e3e5e4d533d7b986304c340019024c8adfe91a4ef1512f1dceb",
+  "downstream_backfill": {
+    "baseline_commit": "c91e2c86845c192aa5a6550fb77bbd232c5780e7",
+    "documentation_task": "DS-REQ-01",
+    "evidence_gap_tasks": [
+      "DS-GAP-01",
+      "DS-GAP-02",
+      "DS-GAP-03"
+    ],
+    "index": "docs/development/features/downstream-requirements/traceability.json",
+    "status": "Documentation backfill complete; targeted gaps and integrated runtime acceptance remain pending."
+  }
 }

@@ -51,6 +51,25 @@ owns API design/parity review. Existing PHY editions and local discovery links
 are reused. These are documentation responsibilities only; upstream engine/crate
 placement, source-code migration and validation remain planned integration work.
 
+## Requirements and historical evidence ownership
+
+The [requirements baseline](requirements.md#detailed-downstream-contract-register)
+records existing downstream behavior at stage, API and adapter granularity.
+Existing task/feature requirement IDs remain stable. The official checklist owns
+overall progress; its subordinate UI checklist owns detailed presentation states.
+The [backfill design](development/features/downstream-requirements/design.md)
+maps those contracts to current modules, maintained tests and historical records.
+It adds traceability without replacing stage definitions or acceptance history.
+
+Historical records describe their original checkout/platform and can contain
+superseded pending states. Later named refinements govern current behavior;
+neither a test path nor a prior source-repository pass establishes a new run.
+Missing execution records stay explicit coverage gaps with targeted acceptance
+tasks. Original completed tasks retain their marks while those gaps remain open.
+DS-REQ-01 closes documentation backfill only. DS-GAP-01..03 and all applicable
+unified-workspace gates must close before final backend acceptance. Broader
+native/installed/hosted checks retain their existing separate task owners.
+
 ## Unified backend integration
 
 This section is the authoritative **integration design** alongside the unchanged

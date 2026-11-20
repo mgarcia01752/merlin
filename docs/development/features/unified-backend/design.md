@@ -4,6 +4,12 @@ Task: **INT-DOC-01**, with final runtime-backed reconciliation tracked separatel
 as **INT-DOC-02** in the [official checklist](../../checklist.md#unified-backend-integration).
 This task consolidates documentation; it does not migrate scientific implementations.
 
+The subsequent [downstream backfill](../downstream-requirements/design.md) adds
+detailed existing requirements, the original numbered API clauses and historical
+task/evidence navigation. DS-REQ-01 is a prerequisite of INT-BASE-01;
+DS-GAP-01..03 additionally gate INT-REG-01. These are separate from source
+migration acceptance and do not change historical downstream checkbox states.
+
 ## Architecture and file ownership
 
 Extend the [canonical architecture](../../../architecture.md#unified-backend-integration)

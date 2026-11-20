@@ -13,6 +13,11 @@ links the [complete source review](features/unified-backend/source-review.md),
 This is a planned integration design; final implementation/documentation acceptance
 remains open until the unified workspace passes its corresponding runtime tests.
 
+The [downstream requirements backfill](features/downstream-requirements/design.md)
+links historical tasks, detailed stage/API contracts, current owners and located
+evidence. Its [validation](features/downstream-requirements/validation.md) separates
+documentation closure from three open targeted evidence gaps and integration tests.
+
 The [unified OFDM/OFDMA integration guide](ofdm-ofdma-integration-guide.md)
 preserves the full user-supplied master prompt for backend integration planning.
 It defines intended scope, source pin, reuse audit, compatibility requirements,

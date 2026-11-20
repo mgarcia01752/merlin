@@ -1,5 +1,9 @@
 # Feature development records
 
+- [Downstream requirements backfill (DS-REQ-01)](downstream-requirements/design.md)
+  · [task/evidence index](downstream-requirements/traceability.json)
+  · [validation and gaps](downstream-requirements/validation.md)
+
 - [Unified backend architecture, requirements and checklist consolidation](unified-backend/design.md)
   · [source dispositions and evidence](unified-backend/source-review.md)
   · [validation and remaining acceptance](unified-backend/validation.md)
