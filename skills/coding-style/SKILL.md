@@ -5,6 +5,10 @@ description: Apply DOCSIS OFDM Channel Sim coding conventions when writing, modi
 
 # DOCSIS OFDM Channel Sim coding style
 
+For architecture/requirements/task links and a path/symbol-level semantic reuse
+audit, apply [development-workflow](../development-workflow/SKILL.md). Existing
+module responsibilities and all conventions below remain authoritative.
+
 Use documented public Rust APIs, meaningful domain types and pinned local PHY evidence.
 All signal processing and FEC algorithms are Rust. Do not introduce native DSP
 or codec libraries through FFI. The native Qt layer only presents results.
@@ -629,6 +633,10 @@ JSON, generated files or lockfiles; use package metadata or provenance for those
 
 ## Applying and checking the style
 
+For unfamiliar work from another session or tool, also apply
+[external-change-review](../external-change-review/SKILL.md) before adoption;
+inspect staged, unstaged and untracked content without altering the index.
+
 Apply these conventions to new and modified code. Installing this skill alone
 does not authorize repository-wide formatting or API migrations. During reviews,
 report violations in the requested scope. During migrations, preserve behavior
@@ -698,3 +706,34 @@ method chain, place the comment above the chain or split the configuration into
 separate statements rather than disabling formatting. Keep consecutive
 lines of one comment block together; do not insert blanks inside copyright
 banners or documentation comments. Inline end-of-line comments are unchanged.
+
+## Reused-material audit
+
+Before copying or adapting source, tables, tests, fixtures, text, artwork or bundled
+runtimes, record the exact origin/revision, affected local paths, original holders,
+applicable license expressions, per-file exceptions and permission evidence.
+Translation, renamed APIs and private access do not establish new ownership or
+permission. Resolve missing permission or incompatible terms before that import;
+continue independent work where possible.
+
+Keep required original headers, license texts and applicable NOTICE content;
+record modifications separately without replacing upstream authorship. Use
+metadata/sidecars for non-commentable material rather than inserting comments in
+JSON or binaries. A project SPDX banner or credits line does not replace a
+component's required notices. Preserve the Apache/MIT simulation and GPL Qt
+boundary already defined here.
+
+Use the established root/component NOTICE and license locations, plus the owning
+feature's provenance record; do not create a competing license inventory. Map
+each reused component to the packages carrying it and the required materials
+delivered in those packages. On an upgrade review license/NOTICE changes as well
+as code and locks. Remove an attribution entry only after confirming the covered
+material and adaptations are absent.
+
+At packaging acceptance inspect the actual unpacked DEB, MSI, wheel or archive
+for the applicable material. Repository presence or an About screen alone is not
+distribution evidence. Record which notices and artifacts were checked and which
+remain pending; do not claim blanket legal compliance or change existing license
+terms as part of a reuse audit. Generic engineering ideas expressed in new prose
+do not need historical product branding; actual reused material retains its
+required attribution.

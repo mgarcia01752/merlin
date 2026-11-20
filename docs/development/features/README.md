@@ -1,5 +1,8 @@
 # Feature development records
 
+- [Selective engineering guidance adoption (DEV-GUIDE-01)](engineering-guidance/design.md)
+  · [validation](engineering-guidance/validation.md)
+
 - [Recorded receiver mode in QAM](qam-receiver-mode/design.md)
 
 - [Global one-second tooltip delay](tooltip-delay/design.md)

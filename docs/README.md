@@ -36,6 +36,10 @@
 
 ## Development
 
+- [Engineering skill catalog](../skills/README.md)
+- [Planning, semantic reuse and traceable acceptance](../skills/development-workflow/SKILL.md)
+- [Review changes from other sessions](../skills/external-change-review/SKILL.md)
+
 - [Development workspace](development/README.md)
 - [Current status and validation limits](development/status.md)
 - [Architecture](architecture.md)

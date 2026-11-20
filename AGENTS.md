@@ -1,5 +1,25 @@
 # DOCSIS OFDM Channel Sim
 
+## Additive engineering workflow
+
+Use the [local skill catalog](skills/README.md) for task-specific guidance.
+Apply [development-workflow](skills/development-workflow/SKILL.md) to planning
+and changes to existing owners: Architecture → Requirements → Developer checklist
+→ Implementation → Validation. Link new or materially revised requirements,
+task dependencies, owner/file maps and acceptance evidence while preserving
+existing IDs and status owners. A planning record does not authorize implementation.
+Apply [external-change-review](skills/external-change-review/SKILL.md) when
+adopting unfamiliar work from other sessions, developers or tools; preserve the
+index/unrelated changes and inspect untracked contents explicitly.
+
+These additions clarify the repository-specific rules below. Foundation defaults
+do not replace MERLIN's scope, pinned evidence, licensing, Rust/Python contracts,
+Qt conventions, validation gates or Git/release helpers. Keep evidence and
+changeable-source claims scoped through the workflow's
+[evidence reference](skills/development-workflow/references/evidence.md).
+
+## Repository scope and implementation
+
 DOCSIS OFDM Channel Sim is a standalone DOCSIS simulation
 library and CLI. Work exclusively in this repository unless scope is changed.
 For Qt framework reuse, read-only inspection of PNM-Viewer-Toolkit is authorized;

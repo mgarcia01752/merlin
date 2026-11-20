@@ -5,6 +5,14 @@ Start with the [status](status.md), [checklist](checklist.md) and
 [architecture](../architecture.md), then use the feature records for design history.
 Start with [development setup](setup.md) for the Ubuntu package/toolchain installer.
 
+Use the [engineering skill catalog](../../skills/README.md) and
+[development workflow](../../skills/development-workflow/SKILL.md) for
+Architecture → Requirements → Developer checklist → Implementation → Validation.
+New or materially revised tasks link requirements, explicit dependencies,
+architecture/file owners and acceptance evidence. Existing IDs and status owners
+remain stable. The [selective guidance adoption](features/engineering-guidance/design.md)
+records the reviewed foundation candidate, local overrides and validation scope.
+
 The [Qt closed-loop and workbench-file design](features/qt-closed-loop/design.md)
 tracks native execution/persistence and its validation.
 

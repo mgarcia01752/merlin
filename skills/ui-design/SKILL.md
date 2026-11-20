@@ -151,3 +151,49 @@ mantissa. Display exact zero as `0` and missing results as unavailable, never as
 zero. This is presentation formatting only: preserve the full underlying numeric
 value in Rust, API results, saved data and machine-readable exports. Do not round
 or replace stored values with formatted strings.
+
+## Measurement-display acceptance
+
+Before adding a renderer, identify the measured/derived quantity, source, units,
+grid, missing-data semantics and numerical owner. Reuse shared chart navigation
+and bounded Rust viewports. Retain original indices through display reduction,
+do not connect across missing samples, and do not infer special carrier bands
+without trusted metadata. Reject incompatible grids instead of silently aligning
+them. Group devices/channels and order capture playback from decoded identity and
+timestamps, not filenames.
+
+State whether averaging applies to complex coefficients, magnitude, power, phase
+or a derived metric; these operations need not commute. Labels and exports reflect
+the existing Rust calculation. Appearance and theme changes must preserve accepted
+values, stored precision, RNG state and results. Preserve range across metric
+changes on the same grid when meaningful, and reset stale ranges on source changes.
+
+Frequency plots retain pointer zoom, drag range selection and Full Span under the
+existing navigation contract. I/Q views need equal axis scale and a density legend
+when showing density; histograms label bins/counts and tables label units/scope.
+Do not impose frequency interaction on unrelated data or describe coefficient
+scatter as received symbols. Test actual pointer/keyboard events and viewport
+behavior, not only direct signal invocation.
+
+Native checks use the freshly built executable and current VM DISPLAY/XAUTHORITY,
+covering narrow/long views, theme states, focus, disabled controls and real scrollbar
+dragging. Verify theme propagation into popups/overlays and reopen after busy states.
+If a styled footer action exists but is invisible, inspect model membership and
+visual-parent/window attachment before making a narrowly justified correction.
+Do not replace every footer or accept a passing retry as complete validation.
+
+## Desktop artwork consumers
+
+When artwork changes, inspect exterior alpha separately from intentional filled
+interiors. Preserve the reviewed master and use the existing conversion owner;
+check generated sizes over contrasting backgrounds for clipping and halos.
+Trace the actual file selected by the executable, installed launcher/shortcut,
+package-manager listing and installer. Embedded artwork does not establish that
+an installed shell uses the same asset.
+
+Record source/generated/installed asset identities and native observation separately.
+Investigate caches, active/hover tiles and session state before changing correct
+artwork; do not overwrite installed assets, alter global styling or restart a user
+session without authorization. Unavailable installed-platform checks remain pending.
+These criteria govern future affected work; they do not authorize UI or installer
+changes during documentation planning.

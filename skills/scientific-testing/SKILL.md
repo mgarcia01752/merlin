@@ -5,6 +5,9 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
 
 # Simulation testing
 
+Use [development-workflow](../development-workflow/SKILL.md) to connect new test
+work to requirement IDs, owning stages, prerequisite tasks and acceptance evidence.
+
 Local full validation uses `scripts/test-local.sh all` with checksum-pinned
 nextest and four process-isolated workers; `MERLIN_TEST_THREADS` overrides the
 1..32 budget. Split independent parameter matrices into separately named tests
@@ -164,3 +167,34 @@ example, analysis-only checks, release smokes, static/tooling checks and Git
 guards. Full remains default; hosted CI is unchanged. Reject combining it with
 `--skip-test`; preserve the selected mode through `--resume` and printed retry
 commands. Report omissions and do not equate subset success with full coverage.
+
+## Parser boundaries and fixture transformations
+
+Choose expectations independently of production conversion helpers/constants.
+For signed fixed-point input, test zero, extrema, one representable step, negative
+and fractional values, byte/component order and scaling through the public parser
+or serializer as well as the helper. For example, a synthetic four-fractional-bit
+representation maps raw 1 to 0.0625 and raw -1 to -0.0625. This arithmetic example
+does not define a DOCSIS sentinel. Missing-value markers stay format-specific;
+the same bit pattern can be valid in another format.
+
+Map existing assertions, parameter combinations and oracle origins when moving or
+splitting tests; confirm actual test discovery rather than accepting case counts
+as equivalent coverage. Cover truncation, declared lengths, trailing bytes,
+unsupported versions, overflow and allocation/work bounds where the contract applies.
+Keep convergence/status and independent recovered truth as separate assertions.
+
+Sanitization is an explicit, format-aware preparation step producing a new approved
+fixture, never an incidental packaging mutation. Preserve original evidence in its
+authorized ignored location. Record source/output hashes, transformation, permission
+and provenance without exposing private identities. Keep aliases consistent across
+related times/channels and distinct for distinct sources. Reject unknown layouts
+rather than guessing offsets or replacing arbitrary byte patterns.
+
+Decode original and prepared copies through the format owner to compare unaffected
+semantics. Review filenames, archive members, metadata, screenshots and logs
+separately; changing a fixture does not sanitize earlier Git history. Curated bundles
+need an approved relative-path/size/hash inventory and bounded archive-member checks.
+Builds read that inventory without rewriting fixtures; repeatability and installed
+resource discovery require their own evidence. Follow the existing example-folder
+and packaging owners rather than adding a second bundler.

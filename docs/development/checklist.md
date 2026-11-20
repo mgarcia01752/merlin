@@ -26,6 +26,12 @@ waveform observation and integration checks. Use this pattern for new groups ins
 local to a component, not a global execution order. Select the next unfinished
 item by the documented dependencies and current implementation priority.
 
+New or materially revised scope follows the
+[development workflow](../../skills/development-workflow/SKILL.md#linked-requirements-and-tasks):
+direct requirement and architecture links, explicit prerequisite IDs, acceptance
+evidence and reverse requirement-to-task navigation. Preserve existing IDs/history
+and declared status owners rather than duplicating or renumbering old tasks.
+
 ## Terminology
 
 **Cell = QAM symbol**: one complex I/Q point on one subcarrier during one OFDM
@@ -34,6 +40,20 @@ for that period. A256-QAM cell carries eight coded bits; pilot/control cells may
 instead use BPSK or QPSK. Read cell interleaving as modulation-symbol interleaving,
 distinct from bit interleaving. Introduce the term as **QAM symbol (cell)**; see
 the [architecture definition](../architecture.md#terminology-cell-and-symbol).
+
+## Engineering guidance
+
+- [x] **DEV-GUIDE-01** Incorporate reviewed foundation clarifications additively.
+  Requirements: [GUIDE-R1](features/engineering-guidance/design.md#guide-r1-preserve-local-contracts),
+  [GUIDE-R2](features/engineering-guidance/design.md#guide-r2-traceable-planning-and-reuse),
+  [GUIDE-R3](features/engineering-guidance/design.md#guide-r3-review-and-evidence),
+  [GUIDE-R4](features/engineering-guidance/design.md#guide-r4-self-contained-discovery),
+  [GUIDE-R5](features/engineering-guidance/design.md#guide-r5-candidate-provenance-and-truthful-validation).
+  Architecture/file plan: [guidance owners](features/engineering-guidance/design.md#architecture-and-ownership).
+  Dependencies: none; existing engineering documentation is the reviewed baseline.
+  Acceptance: preserve all prior instruction lines and local contracts, resolve
+  added file/fragment/discovery links, validate skill metadata and identify the
+  dirty source candidate. Evidence: [validation record](features/engineering-guidance/validation.md).
 
 ## Architecture and module rules
 

@@ -20,6 +20,25 @@ Checklist IDs use stable component/work-area prefixes, such as PLC, WAVE-TX, WAV
 RX-CONFIG, rather than temporary NEXT labels. Local numbering identifies work;
 dependencies and current priority determine the next item to implement.
 
+## Engineering guidance ownership
+
+The [development-workflow skill](../skills/development-workflow/SKILL.md) owns
+the Architecture → Requirements → Developer checklist → Implementation → Validation
+procedure and semantic reuse audit. For new or materially revised stages, link
+overview labels to their canonical sections, name concrete implementation/test/
+registration files as Add (planned), Edit or Reuse, and connect requirements to
+dependent tasks and acceptance evidence. This extends navigation and traceability;
+it does not replace existing module ownership or renumber historical work.
+
+The [skill catalog](../skills/README.md) routes implementation-specific rules.
+[External-change review](../skills/external-change-review/SKILL.md) owns unfamiliar
+candidate review while preserving the index and unrelated work. Evidence/freshness
+records remain with their feature owner under the
+[evidence procedure](../skills/development-workflow/references/evidence.md).
+The [adoption design](development/features/engineering-guidance/design.md) records
+the selective foundation baseline and overrides. This is documentation ownership;
+no simulation, API, UI, dependency or delivery boundary changes.
+
 ## Minimum acceptance: MERLIN closed loop
 
 The user clarified on2026-11-09 that this project validates its own single-channel

@@ -1,0 +1,155 @@
+{
+  "source": "Personal Development Environment (PDE), local checkout",
+  "review_date": "2026-11-20",
+  "head": "6f7197d17b0efc7a4be0d44a517d886b2f03009d",
+  "candidate": "reviewed working-tree candidate; includes uncommitted and untracked guidance",
+  "remote_freshness": "not checked; no fetch performed",
+  "source_status_sha256": "5934b928521e45af6ff1557e8d0dcd25ab74138b16411a547bebfc681d21fefa",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "4f59de9c2eeaed549e18249870a342cb51ade0da7b3d32d3d6a84c8a7a7d2e3e",
+      "git_state": "M"
+    },
+    {
+      "path": "README.md",
+      "sha256": "cdcebbcec9a1c9e4e5ab4a528cab2da6536b25530d6188aa444447ee6cee041f",
+      "git_state": "M"
+    },
+    {
+      "path": "docs/adoption.md",
+      "sha256": "5bb5d5ab91a99be38da820e5d5cda8c2eadc93ff4258004e4dfab08279721243",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/README.md",
+      "sha256": "b7a5ccaeabda738a89a6ca530639396a67eb2d1ee2fb5ab79ac0dec30e9a7bda",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/api-contracts/references/procedure.md",
+      "sha256": "a0b45b368ad75684caa2c13a648fbdc5eecdb98c81b913be905065000b2a086d",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/api-contracts/references/saved-data-and-bindings.md",
+      "sha256": "a36a17c57a8a85b811ef2d455a6a64a19923beecc90323ce5cc0c854a9d72988",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/build-validation/references/procedure.md",
+      "sha256": "fec23e2ff1f55d77567fa420cf150f610f64356f122b796499b005f9b18d55df",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/data-fixture-hygiene/references/procedure.md",
+      "sha256": "0841a3912be60c5d6d34bd6a53ec68832d171a9965f17913c95507f6eee90d45",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/desktop-workspace/references/procedure.md",
+      "sha256": "5b6efea3079bffd7df785d80c2e3287aab46051f8b32f46aa4aff0cb52851bb1",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/development-workflow/SKILL.md",
+      "sha256": "9bbb7ff211b40dad925f4d50bef5171e428c0354815b790607c4647c5b3151c4",
+      "git_state": "M"
+    },
+    {
+      "path": "skills/development-workflow/references/checklist-traceability.md",
+      "sha256": "056227ef50bd5de66e1ab13a1bff53301563992ebe398f995c6f07d5b4d2a1f9",
+      "git_state": "??"
+    },
+    {
+      "path": "skills/development-workflow/references/procedure.md",
+      "sha256": "f8c1df41ba97961b96e58489fa20925bc8d8335aba1645dc9c97fc42ead801d9",
+      "git_state": "M"
+    },
+    {
+      "path": "skills/external-change-review/SKILL.md",
+      "sha256": "0b281da7088c1e8f15eeae6e2344c9321f9f2d1675af1262a71673c6067b7a5e",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/external-change-review/references/procedure.md",
+      "sha256": "56f5580b52189bb52d21702cc4be0913e023f381e0f2569a61b86fff908ca6f1",
+      "git_state": "M"
+    },
+    {
+      "path": "skills/generic-guidance/references/procedure.md",
+      "sha256": "5d9184d7959eb74ccc41a235c5d8c5eaa78a0fda7409405f5de3de3e7cffda70",
+      "git_state": "M"
+    },
+    {
+      "path": "skills/git-workflow/SKILL.md",
+      "sha256": "c5bf7e590f849f73d808f91e460aa664e01d37810f20694edc9f605860f8e4d1",
+      "git_state": "M"
+    },
+    {
+      "path": "skills/github-cicd/references/minimal-assets.md",
+      "sha256": "bb8069e6a0f4729e08ae57a5cd0321b2756c12e019fe2fb7033edb2b9545b703",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/knowledge-freshness/references/procedure.md",
+      "sha256": "e099f1b2b1901ffdf15bc28a154f83b6cdb9e83950db22300847d2038305b96c",
+      "git_state": "M"
+    },
+    {
+      "path": "skills/knowledge-maintenance/references/procedure.md",
+      "sha256": "af3144e7c49446ca974ace925b56f54be8ae7a69c3e2ec979e0fdeff26f7eb8f",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/modular-bootstrap/references/procedure.md",
+      "sha256": "d0d446e1a1d6f70ce8df3cc59138a7b62f7743ef42f936928365f1054cd1d201",
+      "git_state": "M"
+    },
+    {
+      "path": "skills/numerical-testing/references/procedure.md",
+      "sha256": "3184faf43d6178ecc51857a442235afa25a698d0f97b8bc96d9471d89e8d07a0",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/qt-ui-development/references/native-behavior.md",
+      "sha256": "cb6eb8dfbbc7aac66d27bb235ad70f5ea387b3273dd0c71215005b3475d24194",
+      "git_state": "M"
+    },
+    {
+      "path": "skills/release-versioning/references/packaging-and-recovery.md",
+      "sha256": "00f89996fc57e8717b85f3cdd8fb8bdfd64d23922b196afeb3f534c779243c5a",
+      "git_state": "M"
+    },
+    {
+      "path": "skills/repository-baseline/references/procedure.md",
+      "sha256": "1f30ca7537e454308b84a7ef583ba26f2b4b66d7c44b2a7cc3d38654e94c3e18",
+      "git_state": "M"
+    },
+    {
+      "path": "skills/reuse-first-changes/SKILL.md",
+      "sha256": "b2955c98e08f29c3b8d8df0d1fc12a774d8437fbd1993362d7c61fd169d5fd47",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/reuse-first-changes/references/procedure.md",
+      "sha256": "b774b180ee9cb9cfc03547d5531017f91598c20a9db011171c5452c1eff9d572",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/software-facts/references/procedure.md",
+      "sha256": "db5354fd856e2dc8feb30bf74cbc24610a4df9646df179c27fd80889f78f7490",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/third-party-reuse/references/procedure.md",
+      "sha256": "d287080b1ef415b3d695156eb225f3277b38e6e46160c3fef24ab8e6437c4297",
+      "git_state": "clean"
+    },
+    {
+      "path": "skills/ui-theming/references/procedure.md",
+      "sha256": "7dd6383c5344a2a37ca1e29bd17a80508c2691400db72a49c319b3f2a5ed41d8",
+      "git_state": "clean"
+    }
+  ]
+}
