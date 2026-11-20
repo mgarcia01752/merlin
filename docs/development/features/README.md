@@ -1,5 +1,8 @@
 # Feature development records
 
+- [Upstream skill migration (SKILL-US-01)](upstream-skills/design.md)
+  · [validation](upstream-skills/validation.md)
+
 - [Selective engineering guidance adoption (DEV-GUIDE-01)](engineering-guidance/design.md)
   · [validation](engineering-guidance/validation.md)
 

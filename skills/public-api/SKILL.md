@@ -5,6 +5,12 @@ description: Design and review DOCSIS OFDM Channel Sim public Rust APIs so stand
 
 # Public simulation API
 
+When planning or extending shared Rust/Python operations, read the
+[paired API procedure](references/paired-api.md) for operation/signature mapping,
+non-executable planning declarations, native ownership and lifecycle parity.
+It applies to explicitly scoped upstream work while preserving the existing
+downstream surface and saved-workbench compatibility below.
+
 DOCSIS OFDM Channel Sim owns a standalone Rust simulation core. The native Qt
 interface and optional Python package must call the same algorithms. The canonical Basic Rust API lives under `crates/ofdm/src/api`; the optional
 `bindings/python` adapter calls it directly, independently of Qt and the CLI.

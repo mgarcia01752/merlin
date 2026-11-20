@@ -5,6 +5,11 @@ description: Prepare commits and guarded pushes for DOCSIS OFDM Channel Sim usin
 
 # Git workflow
 
+After each completed refactor, automatically include a concrete local
+`tools/git/git-save.sh --commit-msg` command in the handoff. Review the complete
+pending scope first and keep every message line within 60 characters. This is
+command preparation only; do not execute a commit or push unless explicitly asked.
+
 Before a commit message, inspect git status --short, git diff --stat, git diff,
 staged changes and every untracked file. git-save stages all non-ignored files.
 Preserve private inputs under ignored docs/development/local/ and never stage

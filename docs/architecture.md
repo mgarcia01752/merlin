@@ -39,6 +39,18 @@ The [adoption design](development/features/engineering-guidance/design.md) recor
 the selective foundation baseline and overrides. This is documentation ownership;
 no simulation, API, UI, dependency or delivery boundary changes.
 
+### Upstream guidance migration
+
+The [source-skill migration record](development/features/upstream-skills/design.md)
+maps all pinned source skills to existing MERLIN owners. The
+[signal-processing reference](../skills/docsis-signal-processing/references/upstream.md)
+owns direction-specific upstream scientific contracts; the
+[testing reference](../skills/scientific-testing/references/upstream.md) owns their
+acceptance method; the [paired API reference](../skills/public-api/references/paired-api.md)
+owns API design/parity review. Existing PHY editions and local discovery links
+are reused. These are documentation responsibilities only; upstream engine/crate
+placement, source-code migration and validation remain planned integration work.
+
 ## Minimum acceptance: MERLIN closed loop
 
 The user clarified on2026-11-09 that this project validates its own single-channel

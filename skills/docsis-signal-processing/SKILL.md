@@ -1,12 +1,14 @@
 ---
 name: docsis-signal-processing
-description: Implement or review DOCSIS OFDM Channel Sim signal-processing and FEC behavior using local pinned PHY evidence, Rust-only algorithms and explicit signal-processing support states. OFDMA work is deferred unless requested.
+description: Implement or review MERLIN downstream OFDM and explicitly scoped upstream OFDMA signal-processing/FEC work using pinned PHY evidence, safe Rust algorithms and explicit support states.
 ---
 
 # DOCSIS OFDM Channel Sim simulation scope
 
 - DOCSIS OFDM Channel Sim is standalone and DOCSIS-centric. Prioritize downstream OFDM functionality.
-  OFDMA is a later scope. Optional Qt presentation and Python bindings are deferred.
+  Preserve the implemented downstream engine and its Qt/native Python adapters.
+  Upstream runtime integration remains separate from migrated skill guidance;
+  follow the user's explicit scope and reviewed architecture before source migration.
 - All DSP, channel models, constellation mapping/demapping, FEC and simulation
   orchestration must be Rust. This includes algorithm dependencies. Do not use
   C/C++ codecs, native FFT/BLAS DSP wrappers or Python simulation sidecars.
@@ -34,3 +36,12 @@ description: Implement or review DOCSIS OFDM Channel Sim signal-processing and F
 For field RxMER/profile screening, FEC margin interpretation and empirical
 validation cases, use [docsis-pnm-rxmer-fec](../docsis-pnm-rxmer-fec/SKILL.md).
 Its PNM guidance supplements the versioned PHY evidence; it does not replace it.
+
+## Upstream OFDMA work
+
+For explicitly scoped upstream planning, implementation or review, read the
+[upstream scientific contracts](references/upstream.md) and the
+[upstream test procedure](../scientific-testing/references/upstream.md).
+They retain distinct codec definitions, processing order, pilot-estimated C×H,
+Pre-Eq semantics and receiver separation from simulator truth. These are guidance
+contracts, not a claim that upstream stages have landed in MERLIN.

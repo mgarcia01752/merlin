@@ -5,6 +5,10 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
 
 # Simulation testing
 
+For upstream codec/OFDMA work, also read the
+[upstream validation procedure](references/upstream.md). Keep its direction-specific
+source/decoder checks alongside all applicable downstream regressions below.
+
 Use [development-workflow](../development-workflow/SKILL.md) to connect new test
 work to requirement IDs, owning stages, prerequisite tasks and acceptance evidence.
 

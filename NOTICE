@@ -35,3 +35,36 @@ The constellation MER power accumulator and nearest-reference row search in
 crates/ofdm/src/signal_processing/modulation/mer.rs adapt PNM Viewer Toolkit's
 Apache-2.0 pnm/analysis/constellation/mer.rs. Original contributor notices are
 preserved; MERLIN supplies its own references and typed calculator interface.
+
+Upstream scientific/API skill instructions under
+skills/docsis-signal-processing/references/upstream.md,
+skills/scientific-testing/references/upstream.md and
+skills/public-api/references/paired-api.md adapt engineering guidance from
+https://github.com/PyPNMApps/morgana at revision
+69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
+Modifications: MERLIN-local ownership and links, separate direction-specific
+guidance, preserved downstream contracts and explicit planned-runtime status.
+No scientific source implementation, specification corpus or runtime dependency
+is imported by this skill migration.
+
+The source NOTICE retains the following qualification for PDE-derived
+instructional material; paths in this quoted notice identify source records:
+
+Engineering skills/templates were selectively adopted from the user's PDE
+foundation, base revision 6f7197d17b0efc7a4be0d44a517d886b2f03009d with
+hash-pinned working-tree inputs, at the user's explicit request. That source
+has no root redistribution license; its imported
+instructional material is not silently relicensed by MORGANA's root LICENSE.
+Resolve public redistribution terms before publication. The adaptation inventory,
+local overrides and source hashes are in docs/development/foundation-adoption.md
+and docs/development/foundation-sources.json.
+
+DOCSIS skill instructions derive from MERLIN's pinned PHY guidance at the above
+MERLIN revision. Specification documents/extractions retain CableLabs rights.
+
+The originating MERLIN revision named by that source notice is
+096d5a476194d4f2e016863d723b225257bb6037. Local adaptation/provenance records
+for this guidance migration are docs/development/features/upstream-skills/design.md
+and source-inventory.json in that directory. Existing copyright notices and
+licenses above remain unchanged; this notice assigns no new redistribution
+terms to PDE-derived instructional material.

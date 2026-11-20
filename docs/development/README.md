@@ -5,6 +5,15 @@ Start with the [status](status.md), [checklist](checklist.md) and
 [architecture](../architecture.md), then use the feature records for design history.
 Start with [development setup](setup.md) for the Ubuntu package/toolchain installer.
 
+The [unified OFDM/OFDMA integration guide](ofdm-ofdma-integration-guide.md)
+preserves the full user-supplied master prompt for backend integration planning.
+It defines intended scope, source pin, reuse audit, compatibility requirements,
+phases and acceptance targets; it does not claim completed integration.
+
+The [upstream skill migration](features/upstream-skills/design.md) records the
+pinned source-skill inventory, local destinations and retained overrides, with
+[guidance validation](features/upstream-skills/validation.md).
+
 Use the [engineering skill catalog](../../skills/README.md) and
 [development workflow](../../skills/development-workflow/SKILL.md) for
 Architecture → Requirements → Developer checklist → Implementation → Validation.

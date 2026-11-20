@@ -31,6 +31,12 @@ channel estimates and an applied modulation profile. Support is developed agains
 pinned DOCSIS3.1/4.0 evidence up to16384-QAM; do not equate a recognized order with
 an implemented full coding chain or assume an optional modem capability.
 
+The [upstream skill migration](docs/development/features/upstream-skills/design.md)
+adds integration guidance under the existing signal-processing, scientific-testing
+and public-API skills. Use their upstream references for explicitly scoped work.
+This guidance migration does not implement OFDMA, transfer source-repository
+authorizations or change current downstream/API/Qt acceptance.
+
 The minimum engine is a MERLIN-only closed loop: source → MERLIN TX → channel
 model → MERLIN RX → compare recovered bits against the original source. Another
 implementation or external interoperability dataset is not an acceptance

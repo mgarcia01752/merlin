@@ -26,3 +26,13 @@ For software facts, official-source freshness, setup review and selective adopti
 read the workflow's [evidence reference](development-workflow/references/evidence.md).
 Private specification PDFs and captures remain under ignored local evidence paths;
 linked reference guidance does not promise those private files in a fresh clone.
+
+## Upstream integration guidance
+
+The existing skill owners now include
+[upstream scientific contracts](docsis-signal-processing/references/upstream.md),
+[upstream validation](scientific-testing/references/upstream.md) and
+[paired Rust/Python review](public-api/references/paired-api.md).
+The [migration record](../docs/development/features/upstream-skills/design.md)
+maps every source skill to a local owner and preserves source attribution.
+Skill availability does not establish upstream runtime support.

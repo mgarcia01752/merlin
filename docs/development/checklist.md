@@ -55,6 +55,19 @@ the [architecture definition](../architecture.md#terminology-cell-and-symbol).
   added file/fragment/discovery links, validate skill metadata and identify the
   dirty source candidate. Evidence: [validation record](features/engineering-guidance/validation.md).
 
+## Upstream skill migration
+
+- [x] **SKILL-US-01** Migrate pinned upstream guidance into existing MERLIN skills.
+  Requirements: [SKILL-US-R1](features/upstream-skills/design.md#skill-us-r1-pinned-and-scoped-migration),
+  [SKILL-US-R2](features/upstream-skills/design.md#skill-us-r2-direction-correct-scientific-guidance),
+  [SKILL-US-R3](features/upstream-skills/design.md#skill-us-r3-paired-apis-and-compatibility),
+  [SKILL-US-R4](features/upstream-skills/design.md#skill-us-r4-local-resources-and-attribution).
+  Architecture/files: [local guidance owners](features/upstream-skills/design.md#architecture-and-destination-files).
+  Dependency: DEV-GUIDE-01; baseline local guidance is already incorporated.
+  Acceptance: map all 20 source skills, preserve local/source work and notices,
+  adapt upstream science/testing/API references, validate metadata/navigation and
+  retain existing runtime support boundaries. Evidence: [validation](features/upstream-skills/validation.md).
+
 ## Architecture and module rules
 
 - [x] **ARCH-01** Maintain one canonical architecture and this checklist.
