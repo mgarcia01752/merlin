@@ -4,7 +4,7 @@ The [README overview](../../README.md#workbench-overview) uses matching dark/lig
 system illustrations. They show the signal connections; the images below show
 the actual native interface.
 
-The [README analyzer gallery](../../README.md#signal-analyzers) links directly to
+The [README analyzer gallery](../../README.md#signal-analyzers-and-rxmer-designer) links directly to
 the Spectrum Analyzer, QAM, channel response/echo and RxMER instrument guides.
 
 The [Transmitter workbench](transmitter-workbench.md) provides staged test points,

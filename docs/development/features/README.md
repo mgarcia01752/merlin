@@ -1,5 +1,9 @@
 # Feature development records
 
+- [Unified backend architecture, requirements and checklist consolidation](unified-backend/design.md)
+  · [source dispositions and evidence](unified-backend/source-review.md)
+  · [validation and remaining acceptance](unified-backend/validation.md)
+
 - [Upstream skill migration (SKILL-US-01)](upstream-skills/design.md)
   · [validation](upstream-skills/validation.md)
 

@@ -2,6 +2,15 @@
 
 ## Additive engineering workflow
 
+During backend integration, `docs/architecture.md`, `docs/requirements.md` and
+`docs/development/checklist.md` are the canonical architecture, requirements
+baseline and delivery checklist. Reconcile both source repositories through the
+[unified documentation record](docs/development/features/unified-backend/design.md).
+Preserve original IDs, technical references and independent vectors. Source-only
+passes or completed source design gates never establish MERLIN runtime acceptance.
+Final skill/module/user-document correspondence remains pending until integrated
+implementation and its required local acceptance pass.
+
 Use the [local skill catalog](skills/README.md) for task-specific guidance.
 Apply [development-workflow](skills/development-workflow/SKILL.md) to planning
 and changes to existing owners: Architecture → Requirements → Developer checklist

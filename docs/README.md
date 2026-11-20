@@ -36,6 +36,10 @@
 
 ## Development
 
+- [Canonical requirements baseline](requirements.md)
+- [Unified backend integration design](architecture.md#unified-backend-integration)
+- [Source documentation review and preservation](development/features/unified-backend/source-review.md)
+
 - [Engineering skill catalog](../skills/README.md)
 - [Planning, semantic reuse and traceable acceptance](../skills/development-workflow/SKILL.md)
 - [Review changes from other sessions](../skills/external-change-review/SKILL.md)

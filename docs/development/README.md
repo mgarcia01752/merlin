@@ -5,6 +5,14 @@ Start with the [status](status.md), [checklist](checklist.md) and
 [architecture](../architecture.md), then use the feature records for design history.
 Start with [development setup](setup.md) for the Ubuntu package/toolchain installer.
 
+The [requirements baseline](../requirements.md) is authoritative for behavior and
+acceptance in both directions. The [unified backend consolidation](features/unified-backend/design.md)
+links the [complete source review](features/unified-backend/source-review.md),
+[integration gates](checklist.md#unified-backend-integration) and
+[documentation validation](features/unified-backend/validation.md).
+This is a planned integration design; final implementation/documentation acceptance
+remains open until the unified workspace passes its corresponding runtime tests.
+
 The [unified OFDM/OFDMA integration guide](ofdm-ofdma-integration-guide.md)
 preserves the full user-supplied master prompt for backend integration planning.
 It defines intended scope, source pin, reuse audit, compatibility requirements,

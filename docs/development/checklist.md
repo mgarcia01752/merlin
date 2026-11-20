@@ -68,6 +68,163 @@ the [architecture definition](../architecture.md#terminology-cell-and-symbol).
   adapt upstream science/testing/API references, validate metadata/navigation and
   retain existing runtime support boundaries. Evidence: [validation](features/upstream-skills/validation.md).
 
+## Unified backend integration
+
+These are integration tasks in the unified MERLIN workspace, not copied source
+checkmarks. [Canonical architecture](../architecture.md#unified-backend-integration),
+[requirements](../requirements.md) and [source/document inventory](features/unified-backend/source-review.md)
+govern scope. All new runtime gates remain open. INT-DOC-01 is design consolidation;
+INT-DOC-02 is the final ten-condition documentation acceptance after runtime tests.
+Existing downstream and SKILL-US-01 statuses remain unchanged. Each task's
+architecture owner identifies concrete implementation/test paths and dispositions.
+
+<a id="int-doc-01"></a>
+- [x] **INT-DOC-01** Consolidate architecture, requirements, checklists and source records.
+  Requirements: [REQ-COM-DOC-01](../requirements.md#req-com-doc-01).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-backend-integration).
+  Depends on: SKILL-US-01.
+  Acceptance: Complete all source document/requirement/task dispositions, preserve downstream IDs/statuses/API clauses, resolve local links and dependency/coverage checks. Documentation only; final runtime correspondence remains INT-DOC-02.
+
+<a id="int-base-01"></a>
+- [ ] **INT-BASE-01** Establish reproducible unified-workspace regression baseline.
+  Requirements: [REQ-DS-PHY-01](../requirements.md#req-ds-phy-01), [REQ-COM-SYS-05](../requirements.md#req-com-sys-05).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-acceptance-and-final-documentation-gate).
+  Depends on: INT-DOC-01.
+  Acceptance: Record exact source/target/toolchain/locks and run the existing MERLIN regression/analysis-only/examples/native API baselines. Source results stay separately labeled; no invented external interoperability.
+
+<a id="int-license-01"></a>
+- [ ] **INT-LICENSE-01** Review scientific source rights, notices and dependency contracts.
+  Requirements: [REQ-COM-NFR-02](../requirements.md#req-com-nfr-02), [REQ-DS-DELIVERY-01](../requirements.md#req-ds-delivery-01).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-crate-ownership).
+  Depends on: INT-DOC-01.
+  Acceptance: Inventory each imported file/resource and transitive dependency with source/version/license/notices/modifications and artifact obligations; preserve Apache/MIT science and GPL Qt boundary. Resolve actual reuse permissions before import; retain both lock audits and pins.
+
+<a id="int-reuse-01"></a>
+- [ ] **INT-REUSE-01** Audit function-level DSP/FEC reuse and final leaf placement.
+  Requirements: [REQ-COM-SYS-03](../requirements.md#req-com-sys-03), [REQ-COM-REUSE-01](../requirements.md#req-com-reuse-01).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-shared-dsp-and-fec).
+  Depends on: INT-BASE-01, INT-LICENSE-01.
+  Acceptance: Map exact source/target symbols as SHARE/REUSE/ADAPT/SEPARATE/DEFER, check every numerical convention and consumer, settle concrete file/test paths, record compatibility/performance baselines and architecture-review decisions before scientific migration.
+
+<a id="int-fec-01"></a>
+- [ ] **INT-FEC-01** Integrate independently source-checked upstream LDPC families.
+  Requirements: [REQ-COM-SYS-05](../requirements.md#req-com-sys-05), [REQ-US-TX-02](../requirements.md#req-us-tx-02), [REQ-US-RX-08](../requirements.md#req-us-rx-08), [REQ-DS-FEC-01](../requirements.md#req-ds-fec-01), [REQ-COM-REUSE-01](../requirements.md#req-com-reuse-01).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-shared-dsp-and-fec).
+  Depends on: INT-REUSE-01.
+  Acceptance: All three families pass original row/edge/frozen-parity, shortening, failed-decision/iteration/known-zero/truth cases in fec-codec; all downstream BCH/LDPC/NCP/PLC regressions pass. No BCH on ordinary upstream data, no regenerated golden expectations.
+
+<a id="int-dsp-01"></a>
+- [ ] **INT-DSP-01** Consolidate proven common numerical kernels.
+  Requirements: [REQ-COM-REUSE-01](../requirements.md#req-com-reuse-01).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-shared-dsp-and-fec).
+  Depends on: INT-FEC-01, INT-REUSE-01.
+  Acceptance: Prove FFT/bin/normalization, QAM/LLR, PRBS continuity, channel/noise equivalence for each extracted kernel; benchmark changed hot paths, preserve re-exports and downstream results. Create dsp only if justified; a documented direct-reuse/no-new-crate decision must pass the same equivalence checks.
+
+<a id="int-us-config-01"></a>
+- [ ] **INT-US-CONFIG-01** Register upstream PHY, typed configuration, grants and source.
+  Requirements: [REQ-US-CFG-01](../requirements.md#req-us-cfg-01), [REQ-US-CFG-02](../requirements.md#req-us-cfg-02), [REQ-US-CFG-03](../requirements.md#req-us-cfg-03), [REQ-US-CFG-04](../requirements.md#req-us-cfg-04), [REQ-US-CFG-05](../requirements.md#req-us-cfg-05), [REQ-US-CFG-06](../requirements.md#req-us-cfg-06), [REQ-US-PRBS-01](../requirements.md#req-us-prbs-01), [REQ-US-PRBS-02](../requirements.md#req-us-prbs-02), [REQ-US-PRBS-03](../requirements.md#req-us-prbs-03), [REQ-US-PRBS-04](../requirements.md#req-us-prbs-04).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-configuration-and-source).
+  Depends on: INT-DSP-01.
+  Acceptance: Local module registration, supported/domain-valid distinctions, complete source-field coverage and typed idle session foundation pass. Independent grant capacities, all three codeword families, fill/pad/source bookkeeping, PRBS phase/period/seed/range and rejection atomicity pass before waveform use.
+
+<a id="int-us-tx-01"></a>
+- [ ] **INT-US-TX-01** Migrate all eight upstream transmitter boundaries.
+  Requirements: [REQ-US-TX-01](../requirements.md#req-us-tx-01), [REQ-US-TX-03](../requirements.md#req-us-tx-03), [REQ-US-TX-04](../requirements.md#req-us-tx-04), [REQ-US-TX-05](../requirements.md#req-us-tx-05), [REQ-US-TX-06](../requirements.md#req-us-tx-06), [REQ-US-TX-07](../requirements.md#req-us-tx-07), [REQ-US-TX-08](../requirements.md#req-us-tx-08).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-processing-order).
+  Depends on: INT-US-CONFIG-01.
+  Acceptance: Each US-TX-01..08 typed boundary passes independent source/order/label/pilot/permutation/Pre-Eq/transform/window vectors for both numerologies and declared supported orders/patterns, including chunk/state/invalid-input cases and exact source accounting.
+
+<a id="int-us-ch-01"></a>
+- [ ] **INT-US-CH-01** Migrate unity and supported upstream channel models.
+  Requirements: [REQ-US-CH-01](../requirements.md#req-us-ch-01), [REQ-US-CH-02](../requirements.md#req-us-ch-02), [REQ-US-CH-03](../requirements.md#req-us-ch-03), [REQ-US-CH-04](../requirements.md#req-us-ch-04), [REQ-US-CH-05](../requirements.md#req-us-ch-05), [REQ-US-CH-06](../requirements.md#req-us-ch-06).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-channel-and-measurement-reference-planes).
+  Depends on: INT-US-TX-01.
+  Acceptance: Unity is bitwise exact including signed zero/metadata/no-RNG; causal FIR, AWGN, restricted RxMER residual, integer delay/phase/CFO pass independent samples/powers, chunk/seed/observation/drain and whole-schedule rejection tests. Preserve source composition restrictions.
+
+<a id="int-us-rx-01"></a>
+- [ ] **INT-US-RX-01** Migrate all nine received-only upstream receiver boundaries.
+  Requirements: [REQ-US-RX-01](../requirements.md#req-us-rx-01), [REQ-US-RX-02](../requirements.md#req-us-rx-02), [REQ-US-RX-03](../requirements.md#req-us-rx-03), [REQ-US-RX-04](../requirements.md#req-us-rx-04), [REQ-US-RX-05](../requirements.md#req-us-rx-05), [REQ-US-RX-06](../requirements.md#req-us-rx-06), [REQ-US-RX-07](../requirements.md#req-us-rx-07), [REQ-US-RX-09](../requirements.md#req-us-rx-09).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-processing-order).
+  Depends on: INT-US-CH-01, INT-US-TX-01.
+  Acceptance: US-RX-01..09 pass configured timing/window/FFT, FrameFlatLs/FramePilotLinear, inverse resources, finite MaxLog, soft mask, shortening/LDPC and information coverage tests without hidden TX/H/C/source truth; missing data never compacts positions.
+
+<a id="int-us-loop-01"></a>
+- [ ] **INT-US-LOOP-01** Accept bounded upstream loop, observations and lifecycle locally.
+  Requirements: [REQ-US-SYS-01](../requirements.md#req-us-sys-01), [REQ-US-SYS-02](../requirements.md#req-us-sys-02), [REQ-US-SYS-04](../requirements.md#req-us-sys-04), [REQ-COM-OBS-01](../requirements.md#req-com-obs-01), [REQ-COM-OBS-02](../requirements.md#req-com-obs-02), [REQ-COM-LIFE-01](../requirements.md#req-com-life-01), [REQ-COM-LIFE-02](../requirements.md#req-com-life-02), [REQ-COM-LIFE-03](../requirements.md#req-com-life-03), [REQ-COM-NFR-01](../requirements.md#req-com-nfr-01).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
+  Depends on: INT-US-RX-01.
+  Acceptance: Actual MERLIN source→TX→channel→RX recovers independently compared meaningful bits for both numerologies and supported loading; retain real FEC failure/partial/coverage outcomes. Execute through the initial public Rust upstream session developed alongside the stages; final API convergence remains INT-RUST-01. Cancellation precedes pause acceptance; test state preservation, deterministic science, passive metrics/taps and bounded aggregate/retained work.
+
+<a id="int-pnm-01"></a>
+- [ ] **INT-PNM-01** Integrate source-derived upstream capture inspectors and decoders.
+  Requirements: .
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-pnm-and-capture-admission).
+  Depends on: INT-US-LOOP-01.
+  Acceptance: Reuse verified pinned parser capabilities; UCD multipart/envelope, CCAP RxMER and applied/last-update Pre-Eq pass source-derived independent length/offset/scaling/sentinel/flag/overflow/original-byte tests locally. Unknown metadata remains inspectable; no guessed association.
+
+<a id="int-pnm-02"></a>
+- [ ] **INT-PNM-02** Integrate explicit measured association and playback.
+  Requirements: [REQ-US-PNM-01](../requirements.md#req-us-pnm-01), [REQ-US-PNM-02](../requirements.md#req-us-pnm-02), [REQ-US-PNM-03](../requirements.md#req-us-pnm-03), [REQ-US-PNM-04](../requirements.md#req-us-pnm-04).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-pnm-and-capture-admission).
+  Depends on: INT-PNM-01, INT-US-CONFIG-01, INT-US-CH-01.
+  Acceptance: Complete-plan UCD/CM/CCAP-interface/grid/time mapping, source coverage, power-domain selection/average/hold/interpolation and corresponding-probe Set/Adjust schedules pass. Validate later events before consumption; actual captured-plan runs preserve originals and reject incompatible C/H/RxMER combinations atomically.
+
+<a id="int-rust-01"></a>
+- [ ] **INT-RUST-01** Converge typed Rust APIs without downstream breakage.
+  Requirements: [REQ-US-API-01](../requirements.md#req-us-api-01), [REQ-COM-API-03](../requirements.md#req-com-api-03), [REQ-COM-API-06](../requirements.md#req-com-api-06).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
+  Depends on: INT-US-LOOP-01, INT-PNM-02.
+  Acceptance: Public upstream operations and common lifecycle/error/provenance semantics pass native Rust tests, idle/Busy/ownership/bounds/unsupported/versioned-schema checks. Preserve every downstream import/entrypoint/report, optional analysis-only support and Rust-only independence.
+
+<a id="int-py-01"></a>
+- [ ] **INT-PY-01** Expose upstream through the existing native Python distribution.
+  Requirements: [REQ-US-API-02](../requirements.md#req-us-api-02), [REQ-COM-API-04](../requirements.md#req-com-api-04), [REQ-COM-API-05](../requirements.md#req-com-api-05).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
+  Depends on: INT-RUST-01.
+  Acceptance: Actual native extension exports/types/errors/owned results and independently executed Rust/Python runs agree, including configuration/captures/cancel/pause/Busy/interpreter-lock release. Both languages document the same supported behavior; preserve existing workbench recipes and old Python imports.
+
+<a id="int-cli-01"></a>
+- [ ] **INT-CLI-01** Add upstream commands to the existing CLI.
+  Requirements: [REQ-COM-IDENTITY-01](../requirements.md#req-com-identity-01), [REQ-DS-API-01](../requirements.md#req-ds-api-01).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
+  Depends on: INT-RUST-01.
+  Acceptance: All existing commands/output schemas still pass; new upstream commands use canonical Rust operations, bounded JSON/I/O and create-new export behavior. No parallel executable or algorithm implementation.
+
+<a id="int-tools-01"></a>
+- [ ] **INT-TOOLS-01** Reconcile dependency, example and delivery inventories.
+  Requirements: [REQ-COM-NFR-03](../requirements.md#req-com-nfr-03), [REQ-DS-DELIVERY-01](../requirements.md#req-ds-delivery-01).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-normative-evidence-and-exclusions).
+  Depends on: INT-LICENSE-01, INT-PY-01, INT-CLI-01.
+  Acceptance: Validate local manifests/locks/version/pins/notices, examples and package member inventories without silently changing toolchains, two CI entrypoints or native target scope. Preserve caches and generated Python-guide policy; installed/hosted claims require separate actual evidence.
+
+<a id="int-reg-01"></a>
+- [ ] **INT-REG-01** Pass unified downstream and upstream backend regressions.
+  Requirements: [REQ-DS-FEC-01](../requirements.md#req-ds-fec-01), [REQ-DS-PHY-01](../requirements.md#req-ds-phy-01), [REQ-DS-RUN-01](../requirements.md#req-ds-run-01), [REQ-DS-INPUT-01](../requirements.md#req-ds-input-01), [REQ-DS-API-01](../requirements.md#req-ds-api-01), [REQ-DS-UI-01](../requirements.md#req-ds-ui-01).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-acceptance-and-final-documentation-gate).
+  Depends on: INT-TOOLS-01, INT-PNM-02, INT-FEC-01, INT-DSP-01.
+  Acceptance: Run full required MERLIN Rust tests/Clippy/format/analysis-only/doctests/examples plus actual Python/CLI/PNM compatibility and applicable Qt integration checks. Record deterministic values separately from elapsed time, all failures/omissions and exact candidate. Source-only passes are insufficient.
+
+<a id="int-doc-02"></a>
+- [ ] **INT-DOC-02** Complete final documentation and skill correspondence.
+  Requirements: [REQ-COM-DOC-01](../requirements.md#req-com-doc-01).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-acceptance-and-final-documentation-gate).
+  Depends on: INT-REG-01.
+  Acceptance: Meet all ten user documentation completion conditions: one architecture/requirements/checklist; complete requirement/task evidence; resolving links; skills name actual final modules; no obsolete user-facing branding; docs match implemented support and every newly accepted capability has local integrated evidence.
+
+<a id="int-accept-01"></a>
+- [ ] **INT-ACCEPT-01** Accept the unified backend within declared supported scope.
+  Requirements: [REQ-COM-NFR-04](../requirements.md#req-com-nfr-04), [REQ-COM-DOC-01](../requirements.md#req-com-doc-01), [REQ-DS-DELIVERY-01](../requirements.md#req-ds-delivery-01).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-acceptance-and-final-documentation-gate).
+  Depends on: INT-DOC-02, INT-REG-01, INT-TOOLS-01.
+  Acceptance: Review complete requirement/acceptance and numerical/performance/provenance/license matrices for both independently executable directions. All mandatory children pass locally; retain limitations, deferred scope and native/hosted boundaries. No merge, release, publication or push is authorized by acceptance.
+
+<a id="int-defer-01"></a>
+- [ ] **INT-DEFER-01** Retain explicit future UI, wider PHY and ranging designs.
+  Requirements: [REQ-US-OBS-03](../requirements.md#req-us-obs-03), [REQ-US-OBS-04](../requirements.md#req-us-obs-04).
+  Architecture/owners/tests: [canonical placement](../architecture.md#unified-normative-evidence-and-exclusions).
+  Depends on: none; explicitly deferred outside current delivery.
+  Acceptance: Deferred outside this backend migration: upstream GUI, wider acquisition/confidence, fractional timing/phase noise, broad C/H/RxMER synthesis, finite-file transport and ranging/probe execution. Preserve detailed designs and evidence; require separate approval, source checks and implementation tests before exposure. This is not a dependency for backend acceptance.
+
 ## Architecture and module rules
 
 - [x] **ARCH-01** Maintain one canonical architecture and this checklist.

@@ -11,6 +11,13 @@ non-executable planning declarations, native ownership and lifecycle parity.
 It applies to explicitly scoped upstream work while preserving the existing
 downstream surface and saved-workbench compatibility below.
 
+For unified backend work, the [canonical adapter design](../../docs/architecture.md#unified-rust-python-and-cli-apis)
+retains `crates/ofdm/src/api` and `bindings/python`; planned upstream operations
+belong in `crates/ofdma/src/api`, with native input admission in `crates/pnm-input`.
+Follow that planned/current distinction rather than retaining source facade names
+or forcing upstream algorithms into downstream-specific models. Final paths and
+API/user documentation require INT-DOC-02 acceptance after actual integration.
+
 DOCSIS OFDM Channel Sim owns a standalone Rust simulation core. The native Qt
 interface and optional Python package must call the same algorithms. The canonical Basic Rust API lives under `crates/ofdm/src/api`; the optional
 `bindings/python` adapter calls it directly, independently of Qt and the CLI.

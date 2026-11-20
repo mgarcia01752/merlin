@@ -7,6 +7,7 @@ description: Plan MERLIN changes through architecture, requirements and dependen
 
 Start from the user's goal and constraints, the active branch/worktree, and the
 current [architecture](../../docs/architecture.md),
+[requirements baseline](../../docs/requirements.md),
 [official checklist](../../docs/development/checklist.md) and relevant feature
 records. A new feature in MERLIN follows the **existing-codebase** path: inspect
 current owners before choosing a design. A genuinely new standalone component

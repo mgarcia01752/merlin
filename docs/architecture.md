@@ -51,6 +51,475 @@ owns API design/parity review. Existing PHY editions and local discovery links
 are reused. These are documentation responsibilities only; upstream engine/crate
 placement, source-code migration and validation remain planned integration work.
 
+## Unified backend integration
+
+This section is the authoritative **integration design** alongside the unchanged
+implemented downstream architecture below. The source review is pinned to
+`69b38071cd3ebebc4eb96849f82b7871ab8da5ec`; MERLIN baseline is
+`fa26de619b5d28a442c42e46ad1ed19262a9d08a`. **No upstream runtime or shared DSP
+crate has been migrated at this documentation checkpoint.** Source acceptance
+reports are historical evidence, never MERLIN integration passes. The
+[requirements baseline](requirements.md), [integration checklist](development/checklist.md#unified-backend-integration)
+and [document dispositions](development/features/unified-backend/source-review.md)
+provide behavior, delivery status and provenance respectively.
+
+### Unified crate ownership
+
+| Component | Current owner | Integration design and compatibility |
+| --- | --- | --- |
+| Downstream PHY | `crates/ofdm`, Cargo `docsis-ofdm-fec` | Retain package, public imports, control channels, interleavers, waveform, received configuration and report schemas. |
+| Common FEC | `crates/fec-codec` | Extend with `src/upstream_ldpc/` definitions/codec and independent source tests; keep existing BCH, downstream LDPC, shortening, NCP and PLC. |
+| Generic DSP | Existing numerical owners in `crates/ofdm/src/signal_processing/` | `crates/dsp` is conditional, not an existing crate. Extract only kernels proven equivalent and valuable by INT-REUSE-01/INT-DSP-01. |
+| Upstream PHY | Not present | Add proposed `crates/ofdma`, package `docsis-ofdma`; collapse source scientific/facade functionality into focused local modules and `src/api/`, not former product crates. |
+| Native measurement input | `crates/pnm-input` | Extend bounded adapters with `src/upstream/`; own binary envelope decoding, file I/O and raw-byte admission; core PHY owns typed observation/configuration semantics. |
+| CLI | `crates/cli`, executable `ofdm-fec` | Add upstream operations via public Rust APIs; retain every existing command and output contract. No second executable. |
+| Native Python | `bindings/python`, package `merlin` | Retain existing imports and exports; add upstream native wrappers only after Rust operation parity. No second distribution or Python science. |
+| Qt | `apps/qt` | Existing downstream presentation stays unchanged; upstream UI implementation is outside this backend integration. |
+
+**Current dependency direction:** CLI → downstream → optional FEC;
+`pnm-input` → downstream API and exact pinned `pnm`; native Python → downstream
+API and `pnm-input`. The independent Qt adapter retains its current dependencies.
+The downstream `pnm-input` Cargo feature is not a dependency back to the adapter.
+
+**Proposed dependency direction (all dashed paths remain planned):**
+
+```mermaid
+flowchart TD
+    CLI[Existing CLI] -.-> DS[Downstream PHY]
+    CLI -.-> US[Proposed upstream PHY]
+    PY[Existing native Python adapter] -.-> DS
+    PY -.-> US
+    PY -.-> INPUT[Native PNM input adapter]
+    INPUT -.-> DS
+    INPUT -.-> US
+    INPUT -.-> PNM[Exact pinned PNM decoder]
+    DS -.-> FEC[Common FEC mechanisms and separate code definitions]
+    US -.-> FEC
+    DS -.-> DSP[Conditional generic DSP kernels]
+    US -.-> DSP
+```
+
+No core PHY/FEC/DSP depends on CLI, Python, Qt, native input adapter or another
+checkout. There is no cycle from PHY back to `pnm-input`. The planned API modules
+live with their respective PHY ownership; a new umbrella crate is not required.
+All scientific algorithms/dependencies remain safe Rust. Optional downstream
+analysis-only builds and existing feature behavior remain supported.
+
+### Unified shared DSP and FEC
+
+FEC mechanisms may share sparse adjacency, systematic encoder plans, bounded
+decoder setup/iteration accounting and syndrome operations only where semantics
+match. Upstream code definitions remain independently source-checked: long
+N=16200/K=14400, medium N=5940/K=5040 and short N=1120/K=840. Their matrices
+must not be replaced by downstream definitions of matching dimensions. Ordinary
+upstream scheduled data has neither downstream BCH nor ranging-only puncturing.
+Preserve shortened known-zero consistency separately from convergence/parity and
+original payload truth. `fec-codec` remains usable without modulation/channel models.
+
+Planned FEC files: `crates/fec-codec/src/upstream_ldpc/{definitions,codec,mod}.rs`
+and `crates/fec-codec/tests/upstream_source_audit.rs`. Existing
+[downstream codec tests](../crates/fec-codec/tests/codec.rs),
+[normative checks](../crates/fec-codec/tests/normative.rs) and
+[shortening tests](../crates/fec-codec/tests/shortening_codec.rs) remain.
+
+DSP candidates are FFT/IFFT, complex representation, distance/LLR arithmetic,
+noise/FIR/phase kernels, power accumulation and PRBS primitives. Compare exact
+normalization, phase/bin/bit ordering, seeds, continuity, allocation and execution
+cost before sharing. Equal names, orders or dimensions are insufficient. Retain
+PHY-specific pilots, labeling, resource/grant state, CP/window/burst assembly and
+receiver state machines. If extraction is justified, use proposed
+`crates/dsp/src/{complex,transform,modulation,channel,noise,measurements}.rs` with
+`crates/dsp/tests/equivalence.rs`; otherwise document direct local reuse. These
+are concrete candidate paths, not installed modules or permission for empty stubs.
+INT-REUSE-01 must settle the mapping before changing numerical owners; INT-DSP-01
+accepts a justified no-new-crate decision too. Benchmark changed hot kernels and
+preserve downstream re-exports/results without regenerating golden vectors.
+
+### Unified downstream processing
+
+The existing [module boundaries](#modules-and-stage-boundaries) and
+[transmission/receiver flow](#transmission-and-receiver-flow) remain authoritative
+for implemented downstream behavior. Source → BCH/LDPC → downstream bit processing,
+packing/NCP, randomization/QAM and time/frequency interleaving → pilots/PLC physical
+assembly → IFFT/prefix/window → channel → RX framing/FFT/estimation → inverse
+resource/interleaving/demapping → received NCP boundaries → LDPC/BCH → independent
+source comparison retains its existing order and startup/drain semantics.
+
+Current owners are `crates/ofdm/src/transmission/`, `signal_processing/`,
+`simulation/`, `scenario/`, `profile/` and `api/`. Preserve control/data distinctions,
+null/excluded carriers, captured profiles and established receiver modes. Regression
+anchors include [payload transport](../crates/ofdm/tests/payload_transport.rs),
+[waveform integration](../crates/ofdm/tests/waveform_integration.rs),
+[receiver configuration](../crates/ofdm/tests/receiver_configuration.rs) and
+[public paths](../crates/ofdm/tests/public_paths.rs); INT-REG-01 requires the full
+relevant suites, not only these representative files.
+
+### Unified upstream configuration and source
+
+Proposed `crates/ofdma/src/configuration/` owns UCD/IUC, represented MAP/grant,
+profile/resource/loading and separately validated TX/RX projections. Generic
+versioned JSON, captured UCD inspection and actual execution support are distinct.
+Retain inspectable optional/reserved controls without claiming ranging/probing
+execution. Configuration load/preview is idle and atomic. Source format tags must
+be explicitly translated/versioned; renaming product identity must not relabel
+raw original bytes or silently accept an incompatible schema.
+
+Register the proposed member in `Cargo.toml` with `crates/ofdma/Cargo.toml` and
+`crates/ofdma/src/lib.rs`. Concrete configuration owners are
+`crates/ofdma/src/configuration/ucd/{mod,channel,controls,profiles}.rs` and
+`crates/ofdma/src/configuration/{grant,profile,waveform}.rs`; shared resource
+planning uses `crates/ofdma/src/resources/{grid,permutation,pilot_patterns}.rs`
+and `crates/ofdma/src/grant/{mod,plan,fec_selection}.rs`. All are Add (planned),
+not placeholders to create before the reuse/architecture gate passes.
+
+Proposed `crates/ofdma/src/source/{prbs15,verifier}.rs` owns continuous source and
+independent verification. Grant boundaries reset the 23-bit PHY randomizer, not
+PRBS15. Source accounting separates meaningful data, information-fill ones,
+shortening zeros, parity and zero grant pad; invalid/backpressured work consumes
+no extra source. The verifier alone receives original truth, checks positions/
+coverage and preserves failed recovered decisions. Reuse the existing PRBS only
+after exact recurrence, seed, phase, bit order and chunk equivalence checks.
+Planned tests: `crates/ofdma/tests/{configuration,configuration_json,prbs}.rs`.
+
+### Unified upstream processing order
+
+All entries below are **planned for MERLIN**. The retained
+[stage contracts](development/features/unified-backend/references/upstream-stage-contracts.md)
+preserve detailed scientific definitions, source equations/tables, reference
+planes and limitations at the pinned source revision. That reference is historical;
+local ownership and any deliberate adaptations are controlled here.
+
+```mermaid
+flowchart LR
+    S[Continuous PRBS source] --> T1[Grant plan and upstream LDPC]
+    T1 --> T2[Grant randomizer then QAM and joint resource framing]
+    T2 --> T3[Pre-Eq C then IFFT and sample assembly]
+    T3 --> CH[Response H then residual then timing/phase]
+    CH --> R1[Configured framing then useful window and FFT]
+    R1 --> R2[Received-pilot effective-channel estimate and equalization]
+    R2 --> R3[Inverse resources then soft demap and derandomization]
+    R3 --> R4[Restore shortening then LDPC and deframe]
+    R4 --> V[Independent original-bit comparison]
+    S -. expected truth only .-> V
+```
+
+The linked stage index below is the complete eight-TX/six-channel/nine-RX
+inventory. Fused numerical implementations must preserve these observable
+boundaries, representations and state/identity semantics. A source stage checked
+as implemented does not check its MERLIN integration task.
+
+| Stage | Representation boundary |
+| --- | --- |
+| [US-TX-01: Grant framing and FEC selection](#us-tx-01-grant-framing-and-fec-selection) | Information/source → grant plan |
+| [US-TX-02: LDPC encoding and shortening](#us-tx-02-ldpc-encoding-and-shortening) | Grant plan → encoded retained bits |
+| [US-TX-03: Grant-seeded PHY randomization](#us-tx-03-grant-seeded-phy-randomization) | Encoded bits → randomized grant bits |
+| [US-TX-04: Cell words and upstream QAM](#us-tx-04-cell-words-and-upstream-qam) | Randomized bits → labeled loaded cells |
+| [US-TX-05: Pilots, resources and joint interleaving](#us-tx-05-pilots-resources-and-joint-interleaving) | Loaded cells/pilots → role-scaled physical bins |
+| [US-TX-06: CM Pre-Eq](#us-tx-06-cm-pre-eq) | Physical bins → Pre-Eq-corrected bins |
+| [US-TX-07: Centered unitary IFFT](#us-tx-07-centered-unitary-ifft) | Corrected bins → useful time samples |
+| [US-TX-08: Prefix, window and sample assembly](#us-tx-08-prefix-window-and-sample-assembly) | Useful samples → indexed burst/guards |
+| [US-CH-01: Indexed sample admission](#us-ch-01-indexed-sample-admission) | Indexed samples → validated admitted blocks |
+| [US-CH-02: Exact unity transport](#us-ch-02-exact-unity-transport) | Admitted samples → exact transport |
+| [US-CH-03: Physical channel response](#us-ch-03-physical-channel-response) | Transport samples → causal response samples |
+| [US-CH-04: AWGN and restricted RxMER residuals](#us-ch-04-awgn-and-restricted-rxmer-residuals) | Response samples → residual-impaired samples |
+| [US-CH-05: Integer timing, phase and CFO](#us-ch-05-integer-timing-phase-and-cfo) | Impaired samples → timing/phase/CFO samples |
+| [US-CH-06: Output and passive observations](#us-ch-06-output-and-passive-observations) | Indexed output → RX delivery/passive observations |
+| [US-RX-01: Configured burst framing and timing](#us-rx-01-configured-burst-framing-and-timing) | Received indexed blocks → framed intervals |
+| [US-RX-02: Useful-symbol extraction](#us-rx-02-useful-symbol-extraction) | Frames → complete useful windows |
+| [US-RX-03: Centered unitary FFT](#us-rx-03-centered-unitary-fft) | Useful windows → raw physical bins |
+| [US-RX-04: Received-pilot estimation and equalization](#us-rx-04-received-pilot-estimation-and-equalization) | Received pilots/bins → effective estimate/corrected cells |
+| [US-RX-05: Resource extraction and inverse interleaving](#us-rx-05-resource-extraction-and-inverse-interleaving) | Physical cells → ordered grant cells |
+| [US-RX-06: Soft QAM demapping](#us-rx-06-soft-qam-demapping) | Cells → finite MSB-first soft bits |
+| [US-RX-07: Soft PHY derandomization](#us-rx-07-soft-phy-derandomization) | Soft bits → derandomized coded metrics |
+| [US-RX-08: Shortening restoration and LDPC decoding](#us-rx-08-shortening-restoration-and-ldpc-decoding) | Retained metrics → actual LDPC decisions/status |
+| [US-RX-09: Information deframing](#us-rx-09-information-deframing) | Decoded information → meaningful decisions/coverage |
+
+### US-TX-01: Grant framing and FEC selection
+
+Grant framing must derive coded capacity and the upstream codeword sequence from accepted resources/loading while separating meaningful bytes, information-fill ones, shortening zeros, parity and zero grant pad.
+
+Add (planned) owner: `crates/ofdma/src/grant/plan.rs`; acceptance tests: `crates/ofdma/tests/grant_plan.rs`.
+Requirement: [REQ-US-TX-01](requirements.md#req-us-tx-01); delivery: **INT-US-TX-01**.
+
+### US-TX-02: LDPC encoding and shortening
+
+Encoding must use the selected source-verified upstream long/medium/short LDPC family with systematic order and exact shortening semantics. All three code families must pass source audit and codec acceptance before dependent waveform implementation.
+
+Add (planned) owner: `crates/fec-codec/src/upstream_ldpc/codec.rs`; acceptance tests: `crates/fec-codec/tests/upstream_source_audit.rs`.
+Requirement: [REQ-US-TX-02](requirements.md#req-us-tx-02); delivery: **INT-FEC-01**.
+
+### US-TX-03: Grant-seeded PHY randomization
+
+PHY randomization must use the defined 23-bit grant seed, first-bit/tap convention and per-grant reset over exactly the transmitted bit positions.
+
+Add (planned) owner: `crates/ofdma/src/bit_processing/randomizer.rs`; acceptance tests: `crates/ofdma/tests/randomization.rs`.
+Requirement: [REQ-US-TX-03](requirements.md#req-us-tx-03); delivery: **INT-US-TX-01**.
+
+### US-TX-04: Cell words and upstream QAM
+
+QAM mapping must form MSB-first cell words in accepted visit order using exact upstream labels, normalization and role-dependent loading.
+
+Add (planned) owner: `crates/ofdma/src/signal_processing/qam.rs`; acceptance tests: `crates/ofdma/tests/qam_mapping.rs`.
+Requirement: [REQ-US-TX-04](requirements.md#req-us-tx-04); delivery: **INT-US-TX-01**.
+
+### US-TX-05: Pilots, resources and joint interleaving
+
+OFDMA framing must apply the accepted pilot pattern, known signs, role/loading plan, block partitioning and joint interleaving/address order.
+
+Add (planned) owner: `crates/ofdma/src/transmitter/framing.rs`; acceptance tests: `crates/ofdma/tests/resource_interleaving.rs`.
+Requirement: [REQ-US-TX-05](requirements.md#req-us-tx-05); delivery: **INT-US-TX-01**.
+
+### US-TX-06: CM Pre-Eq
+
+Pre-EQ must apply one accepted complex corrective bank after role scaling and before IFFT, preserving the distinction between C and injected H.
+
+Add (planned) owner: `crates/ofdma/src/signal_processing/pre_eq.rs`; acceptance tests: `crates/ofdma/tests/pre_eq.rs`.
+Requirement: [REQ-US-TX-06](requirements.md#req-us-tx-06); delivery: **INT-US-TX-01**.
+
+### US-TX-07: Centered unitary IFFT
+
+IFFT must transform complete accepted 2K/50 kHz or 4K/25 kHz physical grids at 102.4 Msamples/s using the defined centered unitary convention.
+
+Add (planned) owner: `crates/ofdma/src/signal_processing/transform.rs`; acceptance tests: `crates/ofdma/tests/waveform_transform.rs`.
+Requirement: [REQ-US-TX-07](requirements.md#req-us-tx-07); delivery: **INT-US-TX-01**.
+
+### US-TX-08: Prefix, window and sample assembly
+
+Sample assembly must apply the specified CP/RP, cyclic extension, taper and overlap while retaining exact useful/prefix origins, burst edges, tails and explicit guards.
+
+Add (planned) owner: `crates/ofdma/src/transmitter/assembly.rs`; acceptance tests: `crates/ofdma/tests/tx_framing.rs`.
+Requirement: [REQ-US-TX-08](requirements.md#req-us-tx-08); delivery: **INT-US-TX-01**.
+
+### US-CH-01: Indexed sample admission
+
+Channel admission must validate finite indexed sample blocks, clock, identities, continuity and budgets before changing state.
+
+Add (planned) owner: `crates/ofdma/src/channel/stream.rs`; acceptance tests: `crates/ofdma/tests/channel_models.rs`.
+Requirement: [REQ-US-CH-01](requirements.md#req-us-ch-01); delivery: **INT-US-CH-01**.
+
+### US-CH-02: Exact unity transport
+
+Initial unity transport must preserve sample bit patterns and metadata exactly without impairments or random draws.
+
+Add (planned) owner: `crates/ofdma/src/channel/stream.rs`; acceptance tests: `crates/ofdma/tests/channel_models.rs`.
+Requirement: [REQ-US-CH-02](requirements.md#req-us-ch-02); delivery: **INT-US-CH-01**.
+
+### US-CH-03: Physical channel response
+
+The response extension must apply the declared causal synthetic complex FIR without implicit normalization, circular wrap or per-symbol resets.
+
+Add (planned) owner: `crates/ofdma/src/channel/stream.rs`; acceptance tests: `crates/ofdma/tests/channel_models.rs`.
+Requirement: [REQ-US-CH-03](requirements.md#req-us-ch-03); delivery: **INT-US-CH-01**.
+
+### US-CH-04: AWGN and restricted RxMER residuals
+
+Residual synthesis must offer explicit Off, sample-AWGN and restricted RxMER-derived modes using separate deterministic noise state and declared reference power.
+
+Add (planned) owner: `crates/ofdma/src/channel/residual.rs`; acceptance tests: `crates/ofdma/tests/rxmer_channel.rs`.
+Requirement: [REQ-US-CH-04](requirements.md#req-us-ch-04); delivery: **INT-US-CH-01**.
+
+### US-CH-05: Integer timing, phase and CFO
+
+The timing extension must implement only the designed integer delay, constant phase and CFO with emitted-sample-clock continuity.
+
+Add (planned) owner: `crates/ofdma/src/channel/stream.rs`; acceptance tests: `crates/ofdma/tests/channel_models.rs`.
+Requirement: [REQ-US-CH-05](requirements.md#req-us-ch-05); delivery: **INT-US-CH-01**.
+
+### US-CH-06: Output and passive observations
+
+Channel output must retain indexed samples and bounded passive observations while separating diagnostics from legitimate RX inputs.
+
+Add (planned) owner: `crates/ofdma/src/instruments/observer.rs`; acceptance tests: `crates/ofdma/tests/matched_metrics.rs`.
+Requirement: [REQ-US-CH-06](requirements.md#req-us-ch-06); delivery: **INT-US-CH-01**.
+
+### US-RX-01: Configured burst framing and timing
+
+Burst framing must derive timing from accepted RX configuration and preserve actual indexed blocks and explicit missing intervals.
+
+Add (planned) owner: `crates/ofdma/src/receiver/framing.rs`; acceptance tests: `crates/ofdma/tests/rx_framing.rs`.
+Requirement: [REQ-US-RX-01](requirements.md#req-us-rx-01); delivery: **INT-US-RX-01**.
+
+### US-RX-02: Useful-symbol extraction
+
+Useful-symbol extraction must select exactly the scheduled N-sample windows without silently filling incomplete windows.
+
+Add (planned) owner: `crates/ofdma/src/receiver/framing.rs`; acceptance tests: `crates/ofdma/tests/rx_framing.rs`.
+Requirement: [REQ-US-RX-02](requirements.md#req-us-rx-02); delivery: **INT-US-RX-01**.
+
+### US-RX-03: Centered unitary FFT
+
+FFT must produce raw physical bins using the inverse of the accepted centered unitary TX convention.
+
+Add (planned) owner: `crates/ofdma/src/signal_processing/transform.rs`; acceptance tests: `crates/ofdma/tests/waveform_transform.rs`.
+Requirement: [REQ-US-RX-03](requirements.md#req-us-rx-03); delivery: **INT-US-RX-01**.
+
+### US-RX-04: Received-pilot estimation and equalization
+
+Channel estimation/equalization must estimate effective C×H from received known pilots using the declared FrameFlatLs or FramePilotLinear policy and explicit zero-forcing validity.
+
+Add (planned) owner: `crates/ofdma/src/signal_processing/estimation.rs`; acceptance tests: `crates/ofdma/tests/rx_estimation.rs`.
+Requirement: [REQ-US-RX-04](requirements.md#req-us-rx-04); delivery: **INT-US-RX-01**.
+
+### US-RX-05: Resource extraction and inverse interleaving
+
+Resource extraction must independently invert the accepted resource/interleaving order and preserve unavailable scheduled cells and their bit positions.
+
+Add (planned) owner: `crates/ofdma/src/receiver/mod.rs`; acceptance tests: `crates/ofdma/tests/rx_resources.rs`.
+Requirement: [REQ-US-RX-05](requirements.md#req-us-rx-05); delivery: **INT-US-RX-01**.
+
+### US-RX-06: Soft QAM demapping
+
+Soft demapping must produce MSB-first finite MaxLog natural-log P(0)/P(1) metrics from shared upstream labels/scales and a valid ReferenceVariance.
+
+Add (planned) owner: `crates/ofdma/src/signal_processing/demapping.rs`; acceptance tests: `crates/ofdma/tests/soft_metrics.rs`.
+Requirement: [REQ-US-RX-06](requirements.md#req-us-rx-06); delivery: **INT-US-RX-01**.
+
+### US-RX-07: Soft PHY derandomization
+
+Soft derandomization must independently regenerate the grant mask and reverse LLR signs before LDPC without changing magnitude or position.
+
+Add (planned) owner: `crates/ofdma/src/bit_processing/randomizer.rs`; acceptance tests: `crates/ofdma/tests/randomization.rs`.
+Requirement: [REQ-US-RX-07](requirements.md#req-us-rx-07); delivery: **INT-US-RX-01**.
+
+### US-RX-08: Shortening restoration and LDPC decoding
+
+LDPC integration must restore shortening exactly once through the existing codec contract and retain real decoder outcomes.
+
+Add (planned) owner: `crates/fec-codec/src/upstream_ldpc/codec.rs`; acceptance tests: `crates/fec-codec/tests/upstream_source_audit.rs`.
+Requirement: [REQ-US-RX-08](requirements.md#req-us-rx-08); delivery: **INT-FEC-01**.
+
+### US-RX-09: Information deframing
+
+Information deframing must remove only receiver-known residual fill and retain actual complete/partial/failed meaningful decisions and coverage.
+
+Add (planned) owner: `crates/ofdma/src/receiver/framing.rs`; acceptance tests: `crates/ofdma/tests/rx_framing.rs`.
+Requirement: [REQ-US-RX-09](requirements.md#req-us-rx-09); delivery: **INT-US-RX-01**.
+
+### Unified channel and measurement reference planes
+
+Preserve `Y[k] = X[k] C[k] H[k] + N[k]`: C is transmitter correction, H physical
+response, N impairment and Y the received observation. Received known pilots
+estimate effective C×H. Normal RX receives samples and legitimate accepted
+configuration, never H/C, original payload/PRBS seed, residual targets or noise RNG.
+Truth correction is an explicitly labeled reference experiment, not normal recovery.
+
+Unity transport must preserve signed zeros, indices, rate, guards/tails and sample
+bit patterns without RNG. Nonunity order is causal FIR → output-referred noise/
+residual → integer delay/phase/CFO, with continuous state across chunks and exact
+drain. Initial RxMER residual synthesis requires unity physical H and every
+scheduled C bank, with timing disabled; reject incompatible later updates before
+source consumption. Do not relax this merely because downstream supports another
+combination. Broader joint models remain deferred with their source design.
+
+Proposed upstream owners are `crates/ofdma/src/channel/{stream,residual}.rs`,
+`measurements/{rxmer,pre_eq}.rs` and `simulation/{request,run,control,report}.rs`.
+Share kernels only through the reuse gate; configuration, reference planes and
+missing-value policies stay direction-specific. All retained taps identify run,
+configuration, stage, units, original indices, sample/bin geometry and coverage.
+Observation/plotting cannot change RNG draws or decode outcomes. MER/BER/status,
+convergence/parity/shortened-zero checks, source mismatch and unavailable/partial
+coverage remain independent report fields. Job/retention/iteration budgets must
+be explicit and validated cumulatively, not guessed from source task completion.
+
+Planned passive metric/tap owners are
+`crates/ofdma/src/instruments/{metrics,observer,spectrum}.rs`; the actual loop,
+control and independent comparison acceptance belongs in
+`crates/ofdma/tests/closed_loop.rs` and `crates/ofdma/tests/matched_metrics.rs`.
+
+### Unified PNM and capture admission
+
+Extend `crates/pnm-input/src/upstream/{ucd,rxmer,pre_eq,association}.rs` and tests
+`crates/pnm-input/tests/{upstream_ucd,upstream_rxmer,upstream_pre_eq,upstream_association}.rs`.
+Reuse the exact pinned decoder only for verified formats; any missing upstream
+format needs a bounded source-derived Rust adapter, not a second parser for an
+already supported format. The core typed models stay Qt/path/runtime independent.
+
+Preserve original bytes/hashes, CM/CMTS/interface/channel identities, exact grids,
+subcarrier-zero origins, units/scales, missing values, capture times and update order.
+UCD message-envelope inspection is not configuration projection. Structural
+multipart admission must preserve all fragments and reject missing/duplicate/
+inconsistent sets before semantic projection. CM assignment, occupied bandwidth,
+CCAP-interface→UCID mapping and synthetic replay epochs stay explicit.
+
+RxMER single/average/hold/interpolation operates on residual power with stated
+weights/coverage, not dB averages or silent frequency resampling. Pre-Eq applied
+banks versus last updates have distinct scales and meanings; Set/Adjust requires
+external operation/status/corresponding-probe/base context absent from the file.
+Missing/ambiguous/stale bases reject atomically. Preserve source timestamps
+separately from synthetic symbol offsets and original updates separately from
+normalized effective banks. Measured C is neither physical H nor receive noise.
+Preflight the entire selected schedule before any source/RNG consumption.
+
+Existing downstream [input ownership](#pnm-measurement-input-direction),
+[binary/API tests](../crates/pnm-input/tests/high_level_api.rs) and
+[workbench tests](../crates/pnm-input/tests/workbench.rs) remain compatible.
+
+### Unified Rust Python and CLI APIs
+
+Retain `crates/ofdm/src/api/` and current downstream imports. Add proposed
+`crates/ofdma/src/api/{session,error,reports}.rs` as the upstream typed API, sharing
+lifecycle/error/provenance conventions where semantics match. The existing
+`merlin.Simulation` remains valid; an upstream controller is additive and does
+not force one giant configuration or rename downstream exports. Final public
+names/signatures require the INT-RUST-01 compatibility review before implementation.
+A new universal controller/umbrella crate is not an acceptance prerequisite.
+
+Planned direct Rust contract/parity acceptance is
+`crates/ofdma/tests/api_parity.rs`, alongside `crates/ofdma/tests/closed_loop.rs`.
+
+The existing `bindings/python` builds one optional native distribution. Add
+proposed `bindings/python/src/upstream/{configuration,session,reports}.rs` and
+`bindings/python/tests/test_upstream_parity.py` after public Rust operations work.
+Keep typed/runtime declarations, buffer/result ownership, structured error
+categories, interpreter-lock release, Busy handling, bounded progress, cancellation
+and pause semantics aligned. No scientific calculations or separate schemas in
+Python. Preserve current saved-workbench schema/recipe behavior; introducing an
+upstream document needs explicit version/migration and both language consumers.
+
+Add upstream CLI dispatch under `crates/cli/src/commands/upstream.rs` and
+`crates/cli/tests/upstream.rs`; existing commands/output and executable stay intact.
+Existing [native parity tests](../bindings/python/tests/test_parity.py) and
+[workbench parity](../bindings/python/tests/test_workbench.py) remain mandatory.
+Loading/preparing stays idle; only explicit run executes a frozen accepted plan.
+Completed science survives cancellation. Pause retains PRBS/randomizer/RNG/
+interleaver/overlap/update/receiver state at defined safe boundaries.
+
+### Unified normative evidence and exclusions
+
+Preserve PHY 3.1 I20 §7.4.1 (processing), §7.4.3/Table8 (FEC), §7.4.4–7
+(randomization/mapping/interleaving), §7.4.9–10 (transform/prefix/window),
+§7.4.15–17 (distinct ranging/probes/pilots/Pre-Eq), and §9.4.8 (upstream RxMER).
+PHY 4.0 I07 §7.2.4/§7.3.4 delegates upstream behavior; preserve FDX/FDD and
+optional-capability distinctions rather than asserting full 4.0 waveform support.
+MULPI 3.1 I25 controls UCD/MAP, CCAP-OSSI 3.1 I18 controls upstream RxMER file
+admission, and CM-OSSI 3.1 I27 D.2.13 controls applied/update coefficient files.
+The [source review](development/features/unified-backend/source-review.md) retains
+exact hashes, page/table provenance, source claims and independently derived
+fixtures. This documentation pass does not claim fresh PDF verification.
+
+Source-only validation is not independent external hardware interoperability.
+Preserve the independent all-family matrix corrections, row/edge fingerprints,
+frozen impulse parity supports and public source-vector files; never regenerate
+expected values from migrated production constants to make tests pass.
+
+Deferred designs retain broader C/H/RxMER composition, inferred plant response,
+fractional clock/stochastic phase noise, blind/wider acquisition and confidence,
+finite-file transport, ranging/preamble/probe execution and upstream GUI. Their
+source design gates do not accept executable MERLIN support. No device control,
+SNMP/TFTP, multi-CM scheduler/MAC service or Python sidecar is introduced. Existing
+Ubuntu/Windows delivery, two CI entrypoints and all release/security gates remain.
+
+### Unified acceptance and final documentation gate
+
+INT-DOC-01 accepts only the consolidated design/requirement/task records.
+INT-DOC-02 remains open until implemented paths, skills, API/user docs and observed
+MERLIN integration outcomes agree. INT-ACCEPT-01 requires all relevant downstream
+and upstream Rust/native Python/CLI/PNM regressions inside the unified workspace,
+limits/cancellation/determinism and notice/dependency review. Do not import source
+checkmarks, source package/wheel/VM claims or stale historical status into current
+MERLIN acceptance. Keep original technical documentation and vectors until their
+requirements, decisions and evidence have been preserved and replacements pass.
+
 ## Minimum acceptance: MERLIN closed loop
 
 The user clarified on2026-11-09 that this project validates its own single-channel

@@ -39,6 +39,13 @@ Its PNM guidance supplements the versioned PHY evidence; it does not replace it.
 
 ## Upstream OFDMA work
 
+Use the [canonical unified owner map](../../docs/architecture.md#unified-backend-integration)
+for local paths: existing downstream `crates/ofdm`, existing common `crates/fec-codec`,
+proposed upstream `crates/ofdma` and conditional `crates/dsp`. The stage sections
+identify planned leaf modules/tests. Source paths in retained historical contracts
+are provenance, not MERLIN dependencies; INT-DOC-02 must reconcile actual final
+locations after migration. Do not claim proposed paths are callable modules.
+
 For explicitly scoped upstream planning, implementation or review, read the
 [upstream scientific contracts](references/upstream.md) and the
 [upstream test procedure](../scientific-testing/references/upstream.md).

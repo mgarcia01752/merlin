@@ -1,5 +1,11 @@
 # Qt UI checklist
 
+This is the subordinate Qt detail checklist. The
+[official developer checklist](checklist.md) owns overall delivery and the
+[canonical requirements baseline](../requirements.md) owns requirements.
+Upstream backend integration does not implement upstream UI; its source UI
+design remains deferred under INT-DEFER-01.
+
 The [architecture](../architecture.md#ui-merlin-simulation-workbench) defines the
 MERLIN Simulation Workbench. This checklist expands UI-01 through UI-04 in the
 [main checklist](checklist.md); keep their milestone status consistent.

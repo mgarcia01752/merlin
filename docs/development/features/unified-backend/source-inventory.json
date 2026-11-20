@@ -1,0 +1,3830 @@
+{
+  "source_revision": "69b38071cd3ebebc4eb96849f82b7871ab8da5ec",
+  "merlin_baseline": "fa26de619b5d28a442c42e46ad1ed19262a9d08a",
+  "source_checkout": "read-only; clean at exact pinned source revision",
+  "documentation_status": "design consolidation; final runtime-backed documentation acceptance pending INT-DOC-02",
+  "source_requirements": [
+    {
+      "source_id": "REQ-SYS-01",
+      "id": "REQ-US-SYS-01",
+      "behavior": "The toolkit SHALL run a bounded one-CM/one-channel upstream reference experiment from source bits through the actual TX, channel and RX, then compare recovered meaningful bits independently.",
+      "acceptance": "A completed and drained unity run recovers all generated meaningful bits with full contiguous coverage and zero mismatches; source counts, recovered counts and decoder flags are checked separately.",
+      "source_owner": "[Signal path](architecture.md#planned-upstream-signal-path-and-workbenches); SOURCE-01, WAVE-TX/CH/RX-01.",
+      "shared": false,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/simulation/run.rs",
+      "test": "crates/ofdma/tests/closed_loop.rs",
+      "task": "INT-US-LOOP-01"
+    },
+    {
+      "source_id": "REQ-SYS-02",
+      "id": "REQ-US-SYS-02",
+      "behavior": "Normal receiver inputs SHALL contain received samples and legitimate accepted receiver configuration. They SHALL NOT contain source truth or injected channel/noise truth.",
+      "acceptance": "Receiver admission tests exclude original bits, PRBS seed/ledger, injected H/C, RxMER targets and noise seeds/power; diagnostic truth is consumed only by separate comparisons.",
+      "source_owner": "[Ownership/results](architecture.md#ownership-results-and-acceptance); WAVE-RX-01.",
+      "shared": false,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/simulation/run.rs",
+      "test": "crates/ofdma/tests/closed_loop.rs",
+      "task": "INT-US-LOOP-01"
+    },
+    {
+      "source_id": "REQ-SYS-03",
+      "id": "REQ-COM-SYS-03",
+      "behavior": "Scientific algorithms, validation and orchestration SHALL execute in safe Rust independently of presentation or language runtimes. Adapters MUST NOT duplicate scientific calculations.",
+      "acceptance": "Core-only build/tests require neither Python nor Qt; adapters contain no DSP/FEC/association duplicates, native DSP/codec FFI or unsafe simulation code.",
+      "source_owner": "[API ownership](architecture.md#api-ownership-and-dependency-flow); FOUNDATION-03, API-RUST/INPUT-01.",
+      "shared": true,
+      "architecture": "unified-crate-ownership",
+      "owner": "crates/ofdma/src/lib.rs and core manifests",
+      "test": "Rust-only dependency/build inspection and no-unsafe guards",
+      "task": "INT-REUSE-01"
+    },
+    {
+      "source_id": "REQ-SYS-04",
+      "id": "REQ-US-SYS-04",
+      "behavior": "The toolkit SHALL distinguish representable settings, domain validity and executable support.",
+      "acceptance": "Unsupported optional modes remain inspectable with reasons; execution rejects them before consuming input, random state or source bits; recognized QAM/code identifiers alone never imply a complete coding chain.",
+      "source_owner": "[US Configuration](architecture.md#us-configuration); US-CONFIG-01, USJSON-CORE/PROJECTION/PARITY-01.",
+      "shared": false,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/simulation/run.rs",
+      "test": "crates/ofdma/tests/closed_loop.rs",
+      "task": "INT-US-LOOP-01"
+    },
+    {
+      "source_id": "REQ-SYS-05",
+      "id": "REQ-COM-SYS-05",
+      "behavior": "Scientific claims SHALL identify pinned evidence and the applicable endpoint without confusing internal closed-loop evidence with external interoperability. Each stage SHALL have source-checked expected inputs/outputs recorded before its implementation, independently of production tables/algorithms.",
+      "acceptance": "Source/matrix/label checks record revision, section/page and source-review gaps; reports/docs label internal experiments accurately and retain optional-capability distinctions. Build these cases stage by stage; external interoperability fixtures and a complete upfront catalog are not prerequisites.",
+      "source_owner": "[Foundation evidence](development/features/foundation/design.md#ldpc-01-normative-evidence-and-engine-feasibility); LDPC-01/02.",
+      "shared": true,
+      "architecture": "unified-normative-evidence-and-exclusions",
+      "owner": "crates/fec-codec/src/upstream_ldpc/definitions.rs",
+      "test": "crates/fec-codec/tests/upstream_source_audit.rs",
+      "task": "INT-FEC-01"
+    },
+    {
+      "source_id": "REQ-CFG-01",
+      "id": "REQ-US-CFG-01",
+      "behavior": "US Configuration SHALL retain a discoverable profile/preset inventory and explicitly select a one-CM/one-channel configuration shared by both endpoints.",
+      "acceptance": "Rust inventory exposes every retained entry without hardcoded adapter catalogs; invalid selection preserves the prior accepted plan; inventory does not automatically create multi-preset trials.",
+      "source_owner": "[US Configuration](architecture.md#us-configuration); US-CONFIG-01.",
+      "shared": false,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/configuration/ucd/mod.rs",
+      "test": "crates/ofdma/tests/configuration_json.rs",
+      "task": "INT-US-CONFIG-01"
+    },
+    {
+      "source_id": "REQ-CFG-02",
+      "id": "REQ-US-CFG-02",
+      "behavior": "Configuration admission SHALL produce an immutable CMTS plan and separate accepted TX/RX views through shared validation.",
+      "acceptance": "Both views agree on permitted geometry/grant/pilot/PHY-seed settings while normal RX excludes source, C/update values and channel/noise truth; failure preserves accepted settings and readiness.",
+      "source_owner": "[CMTS configuration](architecture.md#cmts-configuration-us-configuration-json); USJSON-CORE/PROJECTION/PARITY-01.",
+      "shared": false,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/configuration/ucd/mod.rs",
+      "test": "crates/ofdma/tests/configuration_json.rs",
+      "task": "INT-US-CONFIG-01"
+    },
+    {
+      "source_id": "REQ-CFG-03",
+      "id": "REQ-US-CFG-03",
+      "behavior": "Generic OFDMA JSON SHALL have an explicit format/schema version, named presets, selection and separated normative configuration versus simulation settings.",
+      "acceptance": "Schema/parser fixtures cover required/optional/null/default/unknown-field behavior, unsupported versions, bounded extension metadata and round trips; vendor IDs are optional provenance, never normative preset meanings.",
+      "source_owner": "[CMTS JSON contract](architecture.md#cmts-configuration-us-configuration-json); USJSON-FORMAT/PRESETS-01.",
+      "shared": false,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/configuration/ucd/mod.rs",
+      "test": "crates/ofdma/tests/configuration_json.rs",
+      "task": "INT-US-CONFIG-01"
+    },
+    {
+      "source_id": "REQ-CFG-04",
+      "id": "REQ-US-CFG-04",
+      "behavior": "Configuration coverage SHALL account for every applicable field/option in the pinned MULPI OFDMA scope.",
+      "acceptance": "The field-level matrix records source path/page, endpoint, force/applicability, encoding/units/enums, JSON pointer, Rust owner, support state and independent fixtures; every inapplicable or unresolved row has an explicit disposition.",
+      "source_owner": "[Coverage plan](development/features/us-configuration-json/coverage.md); USJSON-COVERAGE-01.",
+      "shared": false,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/configuration/ucd/mod.rs",
+      "test": "crates/ofdma/tests/configuration_json.rs",
+      "task": "INT-US-CONFIG-01"
+    },
+    {
+      "source_id": "REQ-CFG-05",
+      "id": "REQ-US-CFG-05",
+      "behavior": "Typed and document-based configurations SHALL use equivalent domain rules and bounded admission. The first reference loop SHALL use typed synthetic configuration; JSON and verified capture loaders SHALL follow its acceptance.",
+      "acceptance": "Invalid ranges, reserved values, inconsistent pilot/loading/geometry, associations and aggregate budgets reject atomically; valid synthetic configurations do not require an unverified capture decoder. Full applicable MULPI/JSON delivery remains required after the typed reference milestone.",
+      "source_owner": "[US Configuration admission](architecture.md#us-configuration); US-CONFIG-01, USJSON-CORE/PROJECTION/PARITY-01.",
+      "shared": false,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/configuration/ucd/mod.rs",
+      "test": "crates/ofdma/tests/configuration_json.rs",
+      "task": "INT-US-CONFIG-01"
+    },
+    {
+      "source_id": "REQ-CFG-06",
+      "id": "REQ-US-CFG-06",
+      "behavior": "Example presets SHALL demonstrate generic configurations without claiming universal recommended modulation.",
+      "acceptance": "Reviewed 25/50 kHz, mixed-loading and zero-valued-minislot examples identify source versus engineering choices; ranging/probe examples explicitly state execution support; conditional/optional settings are not silently discarded.",
+      "source_owner": "[JSON delivery plan](development/features/us-configuration-json/design.md); USJSON-FORMAT/PRESETS-01.",
+      "shared": false,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/configuration/ucd/mod.rs",
+      "test": "crates/ofdma/tests/configuration_json.rs",
+      "task": "INT-US-CONFIG-01"
+    },
+    {
+      "source_id": "REQ-PRBS-01",
+      "id": "REQ-US-PRBS-01",
+      "behavior": "The source SHALL emit continuous deterministic PRBS15 using the architecture's recurrence, seed range and bit order, independently of PHY scrambling.",
+      "acceptance": "Literal initial vectors and the 32767-bit period pass for independently checked seeds; zero/out-of-range seeds reject; grants, words and chunk boundaries do not reseed the source.",
+      "source_owner": "[Sequence contract](architecture.md#sequence-and-bit-representation); SOURCE-01.",
+      "shared": false,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/source/prbs15.rs",
+      "test": "crates/ofdma/tests/prbs.rs",
+      "task": "INT-US-CONFIG-01"
+    },
+    {
+      "source_id": "REQ-PRBS-02",
+      "id": "REQ-US-PRBS-02",
+      "behavior": "Source consumption SHALL track accepted meaningful payload with checked absolute positions and bounded chunks.",
+      "acceptance": "Fill/shortening/parity/pad/pilots consume no source bits; backpressure and rejected work do not advance the generator; chunked generation matches contiguous generation and overflow rejects before mutation.",
+      "source_owner": "[Source interfaces](architecture.md#rust-owners-and-stage-interfaces); SOURCE-01.",
+      "shared": false,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/source/prbs15.rs",
+      "test": "crates/ofdma/tests/prbs.rs",
+      "task": "INT-US-CONFIG-01"
+    },
+    {
+      "source_id": "REQ-PRBS-03",
+      "id": "REQ-US-PRBS-03",
+      "behavior": "Verification SHALL compare actual recovered meaningful decisions using an independently owned expected stream and validated source association.",
+      "acceptance": "Wrong but valid codewords produce source errors even if parity passes; failures do not suppress available decisions; gaps/duplicates/reordering stop contiguous comparison explicitly without phase search or repair.",
+      "source_owner": "[Comparison contract](architecture.md#independent-comparison-and-incomplete-recovery); SOURCE-01, WAVE-RX-01.",
+      "shared": false,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/source/prbs15.rs",
+      "test": "crates/ofdma/tests/prbs.rs",
+      "task": "INT-US-CONFIG-01"
+    },
+    {
+      "source_id": "REQ-PRBS-04",
+      "id": "REQ-US-PRBS-04",
+      "behavior": "Verification results SHALL distinguish generated, compared and unverified bits, coverage, mismatch counts and completion.",
+      "acceptance": "Zero compared bits yield unavailable BER; zero observed errors with partial/truncated/discontinuous coverage cannot claim complete recovery; retained results survive later operations.",
+      "source_owner": "[Comparison contract](architecture.md#independent-comparison-and-incomplete-recovery); SOURCE-01, API-RUN-01.",
+      "shared": false,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/source/prbs15.rs",
+      "test": "crates/ofdma/tests/prbs.rs",
+      "task": "INT-US-CONFIG-01"
+    },
+    {
+      "source_id": "REQ-TX-01",
+      "id": "REQ-US-TX-01",
+      "behavior": "Grant framing SHALL derive coded capacity and the upstream codeword sequence from accepted resources/loading while separating meaningful bytes, information-fill ones, shortening zeros, parity and zero grant pad.",
+      "acceptance": "Independent threshold/borrowing/boundary cases conserve bits and source consumption; RX derives the same layout from legitimate configuration; rejected plans preserve state.",
+      "source_owner": "[TX-01](architecture.md#tx-01-grant-framing-and-fec-selection); PHY-01.",
+      "shared": false,
+      "architecture": "us-tx-01-grant-framing-and-fec-selection",
+      "owner": "crates/ofdma/src/grant/plan.rs",
+      "test": "crates/ofdma/tests/grant_plan.rs",
+      "task": "INT-US-TX-01"
+    },
+    {
+      "source_id": "REQ-TX-02",
+      "id": "REQ-US-TX-02",
+      "behavior": "Encoding SHALL use the selected source-verified upstream long/medium/short LDPC family with systematic order and exact shortening semantics. All three code families SHALL pass source audit and codec acceptance before dependent waveform implementation.",
+      "acceptance": "Independently checked matrix entries/parity and full/shortened words pass; only appended shortening-zero coordinates are omitted; no downstream BCH or assumed puncturing is added.",
+      "source_owner": "[TX-02](architecture.md#tx-02-ldpc-encoding-and-shortening); LDPC-01/02, WAVE-TX-01.",
+      "shared": false,
+      "architecture": "us-tx-02-ldpc-encoding-and-shortening",
+      "owner": "crates/fec-codec/src/upstream_ldpc/codec.rs",
+      "test": "crates/fec-codec/tests/upstream_source_audit.rs",
+      "task": "INT-FEC-01"
+    },
+    {
+      "source_id": "REQ-TX-03",
+      "id": "REQ-US-TX-03",
+      "behavior": "PHY randomization SHALL use the defined 23-bit grant seed, first-bit/tap convention and per-grant reset over exactly the transmitted bit positions.",
+      "acceptance": "Literal mask vectors, chunk continuity and reset tests cover parity and final grant pad; omitted shortening and known pilots add no clocks; invalid/reordered input preserves state.",
+      "source_owner": "[TX-03](architecture.md#tx-03-grant-seeded-phy-randomization); WAVE-TX-01.",
+      "shared": false,
+      "architecture": "us-tx-03-grant-seeded-phy-randomization",
+      "owner": "crates/ofdma/src/bit_processing/randomizer.rs",
+      "test": "crates/ofdma/tests/randomization.rs",
+      "task": "INT-US-TX-01"
+    },
+    {
+      "source_id": "REQ-TX-04",
+      "id": "REQ-US-TX-04",
+      "behavior": "QAM mapping SHALL form MSB-first cell words in accepted visit order using exact upstream labels, normalization and role-dependent loading.",
+      "acceptance": "Independent label/energy vectors cover the declared BPSK/QPSK through 4096-QAM scope including non-square orders; inactive resources consume no payload; unknown/unimplemented orders reject.",
+      "source_owner": "[TX-04](architecture.md#tx-04-cell-word-construction-and-qam-mapping); WAVE-TX-01.",
+      "shared": false,
+      "architecture": "us-tx-04-cell-words-and-upstream-qam",
+      "owner": "crates/ofdma/src/signal_processing/qam.rs",
+      "test": "crates/ofdma/tests/qam_mapping.rs",
+      "task": "INT-US-TX-01"
+    },
+    {
+      "source_id": "REQ-TX-05",
+      "id": "REQ-US-TX-05",
+      "behavior": "OFDMA framing SHALL apply the accepted pilot pattern, known signs, role/loading plan, block partitioning and joint interleaving/address order.",
+      "acceptance": "Independent masks, pilot vectors and permutation/bijection cases cover supported patterns, edge/body layout, exclusions, zero resources and boost exceptions; bit/cell totals are conserved and scaling occurs once.",
+      "source_owner": "[TX-05](architecture.md#tx-05-pilots-ofdma-framing-and-interleaving); WAVE-TX-01.",
+      "shared": false,
+      "architecture": "us-tx-05-pilots-resources-and-joint-interleaving",
+      "owner": "crates/ofdma/src/transmitter/framing.rs",
+      "test": "crates/ofdma/tests/resource_interleaving.rs",
+      "task": "INT-US-TX-01"
+    },
+    {
+      "source_id": "REQ-TX-06",
+      "id": "REQ-US-TX-06",
+      "behavior": "Pre-EQ SHALL apply one accepted complex corrective bank after role scaling and before IFFT, preserving the distinction between C and injected H.",
+      "acceptance": "Independent normalization/phase/default/reset/replacement/adjustment cases pass; excluded carriers remain zero; stale bases/nonfinite/invalid banks reject; bank transitions occur only at accepted symbol boundaries.",
+      "source_owner": "[TX-06](architecture.md#tx-06-cm-pre-eq); WAVE-TX-01, PREEQ-INPUT-01.",
+      "shared": false,
+      "architecture": "us-tx-06-cm-pre-eq",
+      "owner": "crates/ofdma/src/signal_processing/pre_eq.rs",
+      "test": "crates/ofdma/tests/pre_eq.rs",
+      "task": "INT-US-TX-01"
+    },
+    {
+      "source_id": "REQ-TX-07",
+      "id": "REQ-US-TX-07",
+      "behavior": "IFFT SHALL transform complete accepted 2K/50 kHz or 4K/25 kHz physical grids at 102.4 Msamples/s using the defined centered unitary convention.",
+      "acceptance": "Independent direct-sum, tone, impulse and energy checks establish sign/bin order/scaling; useful sample count and timing are exact; inactive bins and invalid geometry are checked.",
+      "source_owner": "[TX-07](architecture.md#tx-07-ifft); WAVE-TX-01.",
+      "shared": false,
+      "architecture": "us-tx-07-centered-unitary-ifft",
+      "owner": "crates/ofdma/src/signal_processing/transform.rs",
+      "test": "crates/ofdma/tests/waveform_transform.rs",
+      "task": "INT-US-TX-01"
+    },
+    {
+      "source_id": "REQ-TX-08",
+      "id": "REQ-US-TX-08",
+      "behavior": "Sample assembly SHALL apply the specified CP/RP, cyclic extension, taper and overlap while retaining exact useful/prefix origins, burst edges, tails and explicit guards.",
+      "acceptance": "Independent numbered-sample/window tests cover zero/nonzero RP and adjacent symbols; complete output is invariant across chunks/backpressure; invalid geometry rejects and cancellation retains honest partial status.",
+      "source_owner": "[TX-08](architecture.md#tx-08-sample-assembly); WAVE-TX-01.",
+      "shared": false,
+      "architecture": "us-tx-08-prefix-window-and-sample-assembly",
+      "owner": "crates/ofdma/src/transmitter/assembly.rs",
+      "test": "crates/ofdma/tests/tx_framing.rs",
+      "task": "INT-US-TX-01"
+    },
+    {
+      "source_id": "REQ-CH-01",
+      "id": "REQ-US-CH-01",
+      "behavior": "Channel admission SHALL validate finite indexed sample blocks, clock, identities, continuity and budgets before changing state.",
+      "acceptance": "Stale/duplicate/overlap/unexplained-gap/nonfinite/overflow inputs reject atomically; empty blocks are no-ops, not finish; unsupported composition rejects before TX consumption.",
+      "source_owner": "[CH-01](architecture.md#ch-01-input-admission); WAVE-CH-01, WAVE-CH-02.",
+      "shared": false,
+      "architecture": "us-ch-01-indexed-sample-admission",
+      "owner": "crates/ofdma/src/channel/stream.rs",
+      "test": "crates/ofdma/tests/channel_models.rs",
+      "task": "INT-US-CH-01"
+    },
+    {
+      "source_id": "REQ-CH-02",
+      "id": "REQ-US-CH-02",
+      "behavior": "Initial unity transport SHALL preserve sample bit patterns and metadata exactly without impairments or random draws.",
+      "acceptance": "Bitwise tests include signed zero and arbitrary chunking with unchanged indices/rate/burst/tail/guard/validity; empty/disabled impairment settings use the same bypass.",
+      "source_owner": "[CH-02](architecture.md#ch-02-unity-transport); WAVE-CH-01.",
+      "shared": false,
+      "architecture": "us-ch-02-exact-unity-transport",
+      "owner": "crates/ofdma/src/channel/stream.rs",
+      "test": "crates/ofdma/tests/channel_models.rs",
+      "task": "INT-US-CH-01"
+    },
+    {
+      "source_id": "REQ-CH-03",
+      "id": "REQ-US-CH-03",
+      "behavior": "The response extension SHALL apply the declared causal synthetic complex FIR without implicit normalization, circular wrap or per-symbol resets.",
+      "acceptance": "Literal complex convolution/impulse/delay cases establish phase, original origin, state continuity and exact terminal drain; zero/deep-null responses remain valid destructive experiments.",
+      "source_owner": "[CH-03](architecture.md#ch-03-channel-response); WAVE-CH-02.",
+      "shared": false,
+      "architecture": "us-ch-03-physical-channel-response",
+      "owner": "crates/ofdma/src/channel/stream.rs",
+      "test": "crates/ofdma/tests/channel_models.rs",
+      "task": "INT-US-CH-01"
+    },
+    {
+      "source_id": "REQ-CH-04",
+      "id": "REQ-US-CH-04",
+      "behavior": "Residual synthesis SHALL offer explicit Off, sample-AWGN and restricted RxMER-derived modes using separate deterministic noise state and declared reference power.",
+      "acceptance": "Independent power/statistical/draw-order tests cover seeds, missing-carrier policy and pilot/role scaling; initial RxMER synthesis rejects nonunity C/H or incompatible timing across the complete schedule.",
+      "source_owner": "[CH-04](architecture.md#ch-04-residual-error); WAVE-CH-02.",
+      "shared": false,
+      "architecture": "us-ch-04-awgn-and-restricted-rxmer-residuals",
+      "owner": "crates/ofdma/src/channel/residual.rs",
+      "test": "crates/ofdma/tests/rxmer_channel.rs",
+      "task": "INT-US-CH-01"
+    },
+    {
+      "source_id": "REQ-CH-05",
+      "id": "REQ-US-CH-05",
+      "behavior": "The timing extension SHALL implement only the designed integer delay, constant phase and CFO with emitted-sample-clock continuity.",
+      "acceptance": "Independent impulse/tone/rotation cases establish signs/origin, chunk/pause continuity and exact delay drain; zero mode is bitwise bypass; fractional clock and stochastic phase noise remain unavailable.",
+      "source_owner": "[CH-05](architecture.md#ch-05-timing-and-phase); WAVE-CH-02, CH-EXT-02.",
+      "shared": false,
+      "architecture": "us-ch-05-integer-timing-phase-and-cfo",
+      "owner": "crates/ofdma/src/channel/stream.rs",
+      "test": "crates/ofdma/tests/channel_models.rs",
+      "task": "INT-US-CH-01"
+    },
+    {
+      "source_id": "REQ-CH-06",
+      "id": "REQ-US-CH-06",
+      "behavior": "Channel output SHALL retain indexed samples and bounded passive observations while separating diagnostics from legitimate RX inputs.",
+      "acceptance": "Observer selection/capacity does not change samples or randomness; output validity/partial/drain metadata is retained; injected H/noise settings never become hidden RX corrections.",
+      "source_owner": "[CH-06](architecture.md#ch-06-output-and-observations); WAVE-CH-01, INSTRUMENTS-01.",
+      "shared": false,
+      "architecture": "us-ch-06-output-and-passive-observations",
+      "owner": "crates/ofdma/src/instruments/observer.rs",
+      "test": "crates/ofdma/tests/matched_metrics.rs",
+      "task": "INT-US-CH-01"
+    },
+    {
+      "source_id": "REQ-RX-01",
+      "id": "REQ-US-RX-01",
+      "behavior": "Burst framing SHALL derive timing from accepted RX configuration and preserve actual indexed blocks and explicit missing intervals.",
+      "acceptance": "Literal origin/stride/window cases pass; unexplained gaps/reordering reject; declared gaps retain coverage loss rather than becoming available zero samples; no hidden timing search is performed.",
+      "source_owner": "[RX-01](architecture.md#rx-01-burst-framing-and-timing); WAVE-RX-01.",
+      "shared": false,
+      "architecture": "us-rx-01-configured-burst-framing-and-timing",
+      "owner": "crates/ofdma/src/receiver/framing.rs",
+      "test": "crates/ofdma/tests/rx_framing.rs",
+      "task": "INT-US-RX-01"
+    },
+    {
+      "source_id": "REQ-RX-02",
+      "id": "REQ-US-RX-02",
+      "behavior": "Useful-symbol extraction SHALL select exactly the scheduled N-sample windows without silently filling incomplete windows.",
+      "acceptance": "Numbered-sample/CP/overlap/truncation cases distinguish available zeros from missing samples and retain the correct symbol identities and unavailable outcomes.",
+      "source_owner": "[RX-02](architecture.md#rx-02-useful-symbol-extraction); WAVE-RX-01.",
+      "shared": false,
+      "architecture": "us-rx-02-useful-symbol-extraction",
+      "owner": "crates/ofdma/src/receiver/framing.rs",
+      "test": "crates/ofdma/tests/rx_framing.rs",
+      "task": "INT-US-RX-01"
+    },
+    {
+      "source_id": "REQ-RX-03",
+      "id": "REQ-US-RX-03",
+      "behavior": "FFT SHALL produce raw physical bins using the inverse of the accepted centered unitary TX convention.",
+      "acceptance": "Independent complex-sum, signed-tone, impulse and energy cases establish bin/sign/scaling correctness and preserve availability metadata without injecting channel truth.",
+      "source_owner": "[RX-03](architecture.md#rx-03-fft); WAVE-RX-01.",
+      "shared": false,
+      "architecture": "us-rx-03-centered-unitary-fft",
+      "owner": "crates/ofdma/src/signal_processing/transform.rs",
+      "test": "crates/ofdma/tests/waveform_transform.rs",
+      "task": "INT-US-RX-01"
+    },
+    {
+      "source_id": "REQ-RX-04",
+      "id": "REQ-US-RX-04",
+      "behavior": "Channel estimation/equalization SHALL estimate effective C\u00d7H from received known pilots using the declared FrameFlatLs or FramePilotLinear policy and explicit zero-forcing validity.",
+      "acceptance": "Independent complex-anchor/interpolation/notch cases verify known pilot gain/sign treatment, estimate coverage and unavailable outputs; no hidden supplied-H, fast within-frame tracking or noise-estimation capability is claimed.",
+      "source_owner": "[RX-04](architecture.md#rx-04-channel-estimation-and-equalization); WAVE-RX-01, RX-EXT-01.",
+      "shared": false,
+      "architecture": "us-rx-04-received-pilot-estimation-and-equalization",
+      "owner": "crates/ofdma/src/signal_processing/estimation.rs",
+      "test": "crates/ofdma/tests/rx_estimation.rs",
+      "task": "INT-US-RX-01"
+    },
+    {
+      "source_id": "REQ-RX-05",
+      "id": "REQ-US-RX-05",
+      "behavior": "Resource extraction SHALL independently invert the accepted resource/interleaving order and preserve unavailable scheduled cells and their bit positions.",
+      "acceptance": "Independent mixed-loading/permutation/boost cases conserve order/counts; missing cells are not compacted and known amplitude is removed once.",
+      "source_owner": "[RX-05](architecture.md#rx-05-resource-extraction-and-inverse-interleaving); WAVE-RX-01.",
+      "shared": false,
+      "architecture": "us-rx-05-resource-extraction-and-inverse-interleaving",
+      "owner": "crates/ofdma/src/receiver/mod.rs",
+      "test": "crates/ofdma/tests/rx_resources.rs",
+      "task": "INT-US-RX-01"
+    },
+    {
+      "source_id": "REQ-RX-06",
+      "id": "REQ-US-RX-06",
+      "behavior": "Soft demapping SHALL produce MSB-first finite MaxLog natural-log P(0)/P(1) metrics from shared upstream labels/scales and a valid ReferenceVariance.",
+      "acceptance": "Independent label/distance/sign tests cover positive-favors-zero convention, configured saturation, ties and zero-confidence erasures; nonpositive/nonfinite variance rejects.",
+      "source_owner": "[RX-06](architecture.md#rx-06-soft-qam-demapping); WAVE-RX-01.",
+      "shared": false,
+      "architecture": "us-rx-06-soft-qam-demapping",
+      "owner": "crates/ofdma/src/signal_processing/demapping.rs",
+      "test": "crates/ofdma/tests/soft_metrics.rs",
+      "task": "INT-US-RX-01"
+    },
+    {
+      "source_id": "REQ-RX-07",
+      "id": "REQ-US-RX-07",
+      "behavior": "Soft derandomization SHALL independently regenerate the grant mask and reverse LLR signs before LDPC without changing magnitude or position.",
+      "acceptance": "Mask-one metrics reverse sign; erasures stay zero; every transmitted position including pad advances the mask, while omitted shortening/pilots do not; word ordering and grant resets remain exact.",
+      "source_owner": "[RX-07](architecture.md#rx-07-phy-soft-derandomization); WAVE-RX-01.",
+      "shared": false,
+      "architecture": "us-rx-07-soft-phy-derandomization",
+      "owner": "crates/ofdma/src/bit_processing/randomizer.rs",
+      "test": "crates/ofdma/tests/randomization.rs",
+      "task": "INT-US-RX-01"
+    },
+    {
+      "source_id": "REQ-RX-08",
+      "id": "REQ-US-RX-08",
+      "behavior": "LDPC integration SHALL restore shortening exactly once through the existing codec contract and retain real decoder outcomes.",
+      "acceptance": "Retained-length inputs, independent shortening cases and 1..100 iteration bounds pass; convergence, syndrome, shortened-zero consistency, failed decisions and actual iterations remain distinct; controls act between indivisible codec calls.",
+      "source_owner": "[RX-08](architecture.md#rx-08-shortening-restoration-and-ldpc-decoding); LDPC-01/02, WAVE-RX-01.",
+      "shared": false,
+      "architecture": "us-rx-08-shortening-restoration-and-ldpc-decoding",
+      "owner": "crates/fec-codec/src/upstream_ldpc/codec.rs",
+      "test": "crates/fec-codec/tests/upstream_source_audit.rs",
+      "task": "INT-FEC-01"
+    },
+    {
+      "source_id": "REQ-RX-09",
+      "id": "REQ-US-RX-09",
+      "behavior": "Information deframing SHALL remove only receiver-known residual fill and retain actual complete/partial/failed meaningful decisions and coverage.",
+      "acceptance": "Independent byte/fill/short-word cases preserve positions and continuity; failures are not dropped; source association/comparison happens outside normal RX.",
+      "source_owner": "[RX-09](architecture.md#rx-09-information-deframing); WAVE-RX-01.",
+      "shared": false,
+      "architecture": "us-rx-09-information-deframing",
+      "owner": "crates/ofdma/src/receiver/framing.rs",
+      "test": "crates/ofdma/tests/rx_framing.rs",
+      "task": "INT-US-RX-01"
+    },
+    {
+      "source_id": "REQ-PNM-01",
+      "id": "REQ-US-PNM-01",
+      "behavior": "Imported observations SHALL preserve original bytes, hashes, timestamps, exact grids, nulls, identities, units and reference/provenance.",
+      "acceptance": "Original input remains recoverable after decode/selection/replay; malformed, incompatible and oversized inputs reject without replacing accepted state; upstream formats need pinned evidence and lawful fixtures.",
+      "source_owner": "[PNM input design](development/features/upstream-inputs/design.md); RXMER-FORMAT-01, PREEQ-FORMAT-01, US-CONFIG-FORMAT-01.",
+      "shared": false,
+      "architecture": "unified-pnm-and-capture-admission",
+      "owner": "crates/pnm-input/src/upstream/association.rs",
+      "test": "crates/pnm-input/tests/upstream_association.rs",
+      "task": "INT-PNM-02"
+    },
+    {
+      "source_id": "REQ-PNM-02",
+      "id": "REQ-US-PNM-02",
+      "behavior": "RxMER SHALL support explicit single selection, power-domain averaging and bounded scheduled hold/interpolation policies over multiple captures.",
+      "acceptance": "Independent conversions/weights/time-boundary/null cases match resolved power and coverage; original capture times stay unchanged; synthetic replay time is separate and importing more files does not create trials implicitly.",
+      "source_owner": "[RxMER](architecture.md#rxmer-input); RXMER-INPUT-01.",
+      "shared": false,
+      "architecture": "unified-pnm-and-capture-admission",
+      "owner": "crates/pnm-input/src/upstream/association.rs",
+      "test": "crates/pnm-input/tests/upstream_association.rs",
+      "task": "INT-PNM-02"
+    },
+    {
+      "source_id": "REQ-PNM-03",
+      "id": "REQ-US-PNM-03",
+      "behavior": "US-Pre-EQ SHALL support a single fixed bank, multiple snapshots and multiple explicitly based initialization/adjustment updates.",
+      "acceptance": "Independent complex/base/reset tests reject stale, missing or ambiguous dependencies; immutable schedules apply complete accepted banks only at defined symbol boundaries and preserve probe/source associations.",
+      "source_owner": "[US-Pre-EQ](architecture.md#us-pre-eq-input); PREEQ-INPUT-01.",
+      "shared": false,
+      "architecture": "unified-pnm-and-capture-admission",
+      "owner": "crates/pnm-input/src/upstream/association.rs",
+      "test": "crates/pnm-input/tests/upstream_association.rs",
+      "task": "INT-PNM-02"
+    },
+    {
+      "source_id": "REQ-PNM-04",
+      "id": "REQ-US-PNM-04",
+      "behavior": "Combined input preflight SHALL validate the entire selected playback/update plan against channel/receiver support before execution.",
+      "acceptance": "A later incompatible Pre-EQ event fails preparation even if the initial bank is compatible; RxMER targets, corrective C and injected H remain separate; no unsupported composition is silently enabled.",
+      "source_owner": "[Input composition](development/features/upstream-inputs/design.md); PREEQ-INPUT-01, RXMER-INPUT-01, WAVE-CH-02.",
+      "shared": false,
+      "architecture": "unified-pnm-and-capture-admission",
+      "owner": "crates/pnm-input/src/upstream/association.rs",
+      "test": "crates/pnm-input/tests/upstream_association.rs",
+      "task": "INT-PNM-02"
+    },
+    {
+      "source_id": "REQ-OBS-01",
+      "id": "REQ-COM-OBS-01",
+      "behavior": "Shared Rust QAM and SA instruments SHALL inspect bounded real stage observations at named TX/channel/RX reference planes.",
+      "acceptance": "Query results identify run, configuration, tap, grid/sample units and retention coverage; absent history remains unavailable; instrument enable/disable/query does not alter waveform, RNG or decoder behavior.",
+      "source_owner": "[Shared QAM/SA](architecture.md#shared-qam-analyzer-and-spectrum-analyzer); INSTRUMENTS-01.",
+      "shared": true,
+      "architecture": "unified-channel-and-measurement-reference-planes",
+      "owner": "crates/ofdma/src/instruments/metrics.rs",
+      "test": "crates/ofdma/tests/matched_metrics.rs",
+      "task": "INT-US-LOOP-01"
+    },
+    {
+      "source_id": "REQ-OBS-02",
+      "id": "REQ-COM-OBS-02",
+      "behavior": "Scientific results SHALL distinguish measured observations, analytical/model inputs, receiver estimates and simulated FEC/source outcomes.",
+      "acceptance": "Reports preserve convergence/parity/known-zero/source-error distinctions, failed words, actual iterations, partial coverage and provenance; zero observed error uses an explicit status rather than fabricated finite RxMER or JSON infinity.",
+      "source_owner": "[Results](architecture.md#ownership-results-and-acceptance); API-RUN-01, INSTRUMENTS-01.",
+      "shared": true,
+      "architecture": "unified-channel-and-measurement-reference-planes",
+      "owner": "crates/ofdma/src/instruments/metrics.rs",
+      "test": "crates/ofdma/tests/matched_metrics.rs",
+      "task": "INT-US-LOOP-01"
+    },
+    {
+      "source_id": "REQ-OBS-03",
+      "id": "REQ-US-OBS-03",
+      "behavior": "Future workbenches SHALL present PRBS, CM-US-TX, CH-SIM and CMTS-US-RX in path order with separate US Configuration and PNM Files inputs.",
+      "acceptance": "Stage navigation opens the corresponding defined stage; shared QAM/SA actions route to actual selected taps; source-only acceptance never marks the entire experiment ready.",
+      "source_owner": "[Workbench organization](architecture.md#planned-upstream-signal-path-and-workbenches); DEV-UI-PLAN-01 after scientific prerequisites, then a separately approved UI implementation checklist.",
+      "shared": false,
+      "architecture": "unified-normative-evidence-and-exclusions",
+      "owner": "apps/qt (upstream UI owner deferred; no files authorized)",
+      "test": "future upstream UI interaction/accepted-state cases (deferred)",
+      "task": "INT-DEFER-01"
+    },
+    {
+      "source_id": "REQ-OBS-04",
+      "id": "REQ-US-OBS-04",
+      "behavior": "Editors SHALL distinguish draft and accepted settings, keep loading/apply idle and preserve accepted state on cancel/invalid apply.",
+      "acceptance": "Accepted readiness uses text as well as color; preview consumes no active source/random state; displayed results distinguish complete, partial and discontinuous coverage.",
+      "source_owner": "[Source lifecycle/presentation](architecture.md#lifecycle-and-prbs-tx--prbs-rx-presentation); SOURCE-01, DEV-UI-PLAN-01, then a separately approved UI implementation checklist.",
+      "shared": false,
+      "architecture": "unified-normative-evidence-and-exclusions",
+      "owner": "apps/qt (upstream UI owner deferred; no files authorized)",
+      "test": "future upstream UI interaction/accepted-state cases (deferred)",
+      "task": "INT-DEFER-01"
+    },
+    {
+      "source_id": "REQ-API-01",
+      "id": "REQ-US-API-01",
+      "behavior": "The high-level Rust API SHALL expose typed idle session, configuration/inventory/selection, input admission, preview and explicit bounded execution while preserving existing FEC entrypoints. This Rust session SHALL be developed alongside the backend and used for reference unity-loop acceptance.",
+      "acceptance": "Direct Rust consumers exercise valid/invalid operations without CLI/Qt/Python; existing FEC imports, calls and schema-1 report semantics remain compatible.",
+      "source_owner": "[Paired operations](architecture.md#paired-rust-and-python-interface-stubs); API-RUST/INPUT-01.",
+      "shared": false,
+      "architecture": "unified-rust-python-and-cli-apis",
+      "owner": "crates/ofdma/src/api/session.rs",
+      "test": "crates/ofdma/tests/api_parity.rs",
+      "task": "INT-RUST-01"
+    },
+    {
+      "source_id": "REQ-API-02",
+      "id": "REQ-US-API-02",
+      "behavior": "The optional native Python API SHALL wrap working public Rust operations with equivalent domain validation and results. Native Python implementation SHALL begin after the Rust unity loop passes acceptance.",
+      "acceptance": "Real native calls cover configuration, single/multi inputs and execution; no Python DSP/association/decoder implementation or subprocess sidecar is used; Rust-only dependency checks exclude binding runtimes. No early FEC-only Python wrapper is part of the selected delivery order.",
+      "source_owner": "[API ownership](architecture.md#api-ownership-and-dependency-flow); API-PY/STUB-01.",
+      "shared": false,
+      "architecture": "unified-rust-python-and-cli-apis",
+      "owner": "crates/ofdma/src/api/session.rs",
+      "test": "crates/ofdma/tests/api_parity.rs",
+      "task": "INT-PY-01"
+    },
+    {
+      "source_id": "REQ-API-03",
+      "id": "REQ-COM-API-03",
+      "behavior": "Both APIs SHALL return owned results and structured domain errors using native language conventions.",
+      "acceptance": "Error categories/details match without parsing messages; Python uses exceptions/None and checked integer/buffer conversions; outputs remain valid after later calls, input release and session disposal; zero-copy claims require lifetime proof.",
+      "source_owner": "[API errors/results](architecture.md#api-lifecycle-errors-and-result-contracts); API-PARITY/DOCS-01.",
+      "shared": true,
+      "architecture": "unified-rust-python-and-cli-apis",
+      "owner": "crates/ofdma/src/api/session.rs",
+      "test": "crates/ofdma/tests/api_parity.rs",
+      "task": "INT-RUST-01"
+    },
+    {
+      "source_id": "REQ-API-04",
+      "id": "REQ-COM-API-04",
+      "behavior": "Native Python execution SHALL release the interpreter lock during long Rust work and serialize mutable session access with explicit Busy behavior.",
+      "acceptance": "Actual native concurrency tests demonstrate independent cancellation/progress access, deterministic Busy for competing calls and session restoration after normal/error/cancel exits; no Python callback executes inside core locks.",
+      "source_owner": "[API lifecycle](architecture.md#api-lifecycle-errors-and-result-contracts); API-PY/STUB-01, API-PARITY/DOCS-01.",
+      "shared": true,
+      "architecture": "unified-rust-python-and-cli-apis",
+      "owner": "crates/ofdma/src/api/session.rs",
+      "test": "crates/ofdma/tests/api_parity.rs",
+      "task": "INT-PY-01"
+    },
+    {
+      "source_id": "REQ-API-05",
+      "id": "REQ-COM-API-05",
+      "behavior": "Rust and Python contracts, examples and Python type declarations SHALL describe the same implemented capability set.",
+      "acceptance": "Independently executed bounded native runs match resolved settings, seeds, provenance, status, FEC outcomes and partial coverage with declared numerical tolerances; actual extension exports match `.pyi`/typing metadata and paired examples run.",
+      "source_owner": "[API gates](architecture.md#api-delivery-and-validation-gates); API-PY/STUB-01, API-PARITY/DOCS-01.",
+      "shared": true,
+      "architecture": "unified-rust-python-and-cli-apis",
+      "owner": "crates/ofdma/src/api/session.rs",
+      "test": "crates/ofdma/tests/api_parity.rs",
+      "task": "INT-PY-01"
+    },
+    {
+      "source_id": "REQ-API-06",
+      "id": "REQ-COM-API-06",
+      "behavior": "Exported/configuration documents SHALL use explicit independent versions and declared compatibility rules.",
+      "acceptance": "Unknown versions/typed fields reject or follow an explicit migration; no FEC report is reinterpreted as configuration/workbench; any later shared saved experiment runs through both APIs without dropped settings or manual conversion.",
+      "source_owner": "[API compatibility](architecture.md#api-lifecycle-errors-and-result-contracts); USJSON-FORMAT/PRESETS-01, API-01.",
+      "shared": true,
+      "architecture": "unified-rust-python-and-cli-apis",
+      "owner": "crates/ofdma/src/api/session.rs",
+      "test": "crates/ofdma/tests/api_parity.rs",
+      "task": "INT-RUST-01"
+    },
+    {
+      "source_id": "REQ-LIFE-01",
+      "id": "REQ-COM-LIFE-01",
+      "behavior": "Runs SHALL freeze accepted settings with distinct run/configuration identities and deterministic independent source/noise state.",
+      "acceptance": "Repeated runs with equal seeds/settings reproduce declared deterministic outputs; observers/chunking do not affect science; stale results or cross-session IDs are rejected.",
+      "source_owner": "[API lifecycle](architecture.md#api-lifecycle-errors-and-result-contracts); SOURCE-01, WAVE-TX/CH/RX-01, API-RUN-01.",
+      "shared": true,
+      "architecture": "unified-rust-python-and-cli-apis",
+      "owner": "crates/ofdma/src/simulation/run.rs",
+      "test": "crates/ofdma/tests/closed_loop.rs",
+      "task": "INT-US-LOOP-01"
+    },
+    {
+      "source_id": "REQ-LIFE-02",
+      "id": "REQ-COM-LIFE-02",
+      "behavior": "Cancellation/failure SHALL preserve completed science and identify incomplete or not-started work under bounded safe work quanta.",
+      "acceptance": "Stage-boundary and between-word cancellation tests retain actual completed results/counts, pending tails/ranges and partial status; no forced thread termination or invented completion is used.",
+      "source_owner": "[Run ownership](architecture.md#ownership-results-and-acceptance); WAVE-TX/CH/RX-01, API-RUN-01.",
+      "shared": true,
+      "architecture": "unified-rust-python-and-cli-apis",
+      "owner": "crates/ofdma/src/simulation/run.rs",
+      "test": "crates/ofdma/tests/closed_loop.rs",
+      "task": "INT-US-LOOP-01"
+    },
+    {
+      "source_id": "REQ-LIFE-03",
+      "id": "REQ-COM-LIFE-03",
+      "behavior": "Pause/resume, when exposed, SHALL preserve all scientific stream state and define paused-time and stop-from-paused semantics. Bounded cancellation and partial-result acceptance SHALL precede pause/resume delivery.",
+      "acceptance": "Tests retain PRBS/mask/permutation/Pre-EQ/RNG/history state and pending output across pause; controls remain unavailable in an API until its safe-boundary/lifecycle contract is implemented. First-loop readiness MUST NOT depend on pause/resume; later exposure requires state/time/stop-from-paused tests.",
+      "source_owner": "[API control boundary](architecture.md#api-lifecycle-errors-and-result-contracts); API-RUN-01, API-PY/STUB-01.",
+      "shared": true,
+      "architecture": "unified-rust-python-and-cli-apis",
+      "owner": "crates/ofdma/src/simulation/run.rs",
+      "test": "crates/ofdma/tests/closed_loop.rs",
+      "task": "INT-US-LOOP-01"
+    },
+    {
+      "source_id": "REQ-NFR-01",
+      "id": "REQ-COM-NFR-01",
+      "behavior": "Inputs, expanded plans, per-call work, cumulative runtime/memory, output queues and retained observations SHALL be bounded before allocation/execution.",
+      "acceptance": "Existing architecture budgets and independently checked overflow/exhaustion cases reject without state mutation; final cumulative job budgets are documented before execution support.",
+      "source_owner": "[Configuration limits](architecture.md#us-configuration), [API limits](architecture.md#api-lifecycle-errors-and-result-contracts); US-CONFIG-01, API-RUN-01.",
+      "shared": true,
+      "architecture": "unified-upstream-configuration-and-source",
+      "owner": "crates/ofdma/src/simulation/run.rs",
+      "test": "crates/ofdma/tests/closed_loop.rs",
+      "task": "INT-US-LOOP-01"
+    },
+    {
+      "source_id": "REQ-NFR-02",
+      "id": "REQ-COM-NFR-02",
+      "behavior": "Reusable code/tooling SHALL preserve Apache-2.0 ownership and all applicable third-party notices, licenses and provenance. Reviewed reference-code adaptations SHALL remain locally owned and MUST NOT introduce an external source-checkout or former-product runtime dependency.",
+      "acceptance": "Dependency/reuse/package review retains actual copied notices and modifications; GPL presentation code does not enter the independent scientific core; private PDFs/captures/build outputs remain excluded. Each adaptation retains source/revision/notices/modifications and passes independent upstream checks.",
+      "source_owner": "[Foundation/reuse](development/features/foundation/design.md#foundation-02-merlin-reuse-assessment); FOUNDATION-03.",
+      "shared": true,
+      "architecture": "unified-crate-ownership",
+      "owner": "NOTICE and local dependency manifests",
+      "test": "source/dependency/license and package notice inspection",
+      "task": "INT-LICENSE-01",
+      "adaptation": "Replace prohibition on depending on MERLIN with prohibition on external checkout/former product dependencies; retain local crate dependencies and existing Apache/MIT/GPL boundaries."
+    },
+    {
+      "source_id": "REQ-NFR-03",
+      "id": "REQ-COM-NFR-03",
+      "behavior": "Development setup SHALL require explicit intent and provide read-only check/dry-run behavior on declared targets.",
+      "acceptance": "Mode/host/pin/path/bounds/failure tests pass; inspection creates no caches or installs; apply obtains only missing declared prerequisites with pinned local Rust/locked sources; real fresh provisioning is verified separately.",
+      "source_owner": "[Setup requirements](development/features/development-setup/design.md#setup-01-requirements); SETUP-01..04.",
+      "shared": true,
+      "architecture": "unified-normative-evidence-and-exclusions",
+      "owner": "scripts/install-development.sh (retain current owner)",
+      "test": "existing setup tooling checks plus explicitly authorized target provisioning",
+      "task": "INT-TOOLS-01"
+    },
+    {
+      "source_id": "REQ-NFR-04",
+      "id": "REQ-COM-NFR-04",
+      "behavior": "Validation and delivery records SHALL state actual evidence and preserve reproducible local tooling.",
+      "acceptance": "Required local gate passes with downloaded source/toolchain caches retained and stable Cargo build outputs retained after testing; hosted/native/package/interoperability claims require actual corresponding runs; prepared save commands do not imply commit/push/release execution.",
+      "source_owner": "[Checkpoint](architecture.md#checkpoint-and-target-overview), [Git workflow](git.md); FOUNDATION-03, official completion reviews.",
+      "shared": true,
+      "architecture": "unified-acceptance-and-final-documentation-gate",
+      "owner": "scripts/test-local.sh and existing build/release helpers",
+      "test": "complete existing validation gates, native Python/CLI/PNM and final inventories",
+      "task": "INT-ACCEPT-01",
+      "adaptation": "Retain stable Cargo outputs and caches under MERLIN policy; do not inherit mandatory source cleanup."
+    }
+  ],
+  "integration_tasks": [
+    {
+      "id": "INT-DOC-01",
+      "title": "Consolidate architecture, requirements, checklists and source records",
+      "dependencies": [
+        "SKILL-US-01"
+      ],
+      "architecture": "unified-backend-integration",
+      "acceptance": "Complete all source document/requirement/task dispositions, preserve downstream IDs/statuses/API clauses, resolve local links and dependency/coverage checks. Documentation only; final runtime correspondence remains INT-DOC-02.",
+      "requirements": [
+        "REQ-COM-DOC-01"
+      ]
+    },
+    {
+      "id": "INT-BASE-01",
+      "title": "Establish reproducible unified-workspace regression baseline",
+      "dependencies": [
+        "INT-DOC-01"
+      ],
+      "architecture": "unified-acceptance-and-final-documentation-gate",
+      "acceptance": "Record exact source/target/toolchain/locks and run the existing MERLIN regression/analysis-only/examples/native API baselines. Source results stay separately labeled; no invented external interoperability.",
+      "requirements": [
+        "REQ-DS-PHY-01",
+        "REQ-COM-SYS-05"
+      ]
+    },
+    {
+      "id": "INT-LICENSE-01",
+      "title": "Review scientific source rights, notices and dependency contracts",
+      "dependencies": [
+        "INT-DOC-01"
+      ],
+      "architecture": "unified-crate-ownership",
+      "acceptance": "Inventory each imported file/resource and transitive dependency with source/version/license/notices/modifications and artifact obligations; preserve Apache/MIT science and GPL Qt boundary. Resolve actual reuse permissions before import; retain both lock audits and pins.",
+      "requirements": [
+        "REQ-COM-NFR-02",
+        "REQ-DS-DELIVERY-01"
+      ]
+    },
+    {
+      "id": "INT-REUSE-01",
+      "title": "Audit function-level DSP/FEC reuse and final leaf placement",
+      "dependencies": [
+        "INT-BASE-01",
+        "INT-LICENSE-01"
+      ],
+      "architecture": "unified-shared-dsp-and-fec",
+      "acceptance": "Map exact source/target symbols as SHARE/REUSE/ADAPT/SEPARATE/DEFER, check every numerical convention and consumer, settle concrete file/test paths, record compatibility/performance baselines and architecture-review decisions before scientific migration.",
+      "requirements": [
+        "REQ-COM-SYS-03",
+        "REQ-COM-REUSE-01"
+      ]
+    },
+    {
+      "id": "INT-FEC-01",
+      "title": "Integrate independently source-checked upstream LDPC families",
+      "dependencies": [
+        "INT-REUSE-01"
+      ],
+      "architecture": "unified-shared-dsp-and-fec",
+      "acceptance": "All three families pass original row/edge/frozen-parity, shortening, failed-decision/iteration/known-zero/truth cases in fec-codec; all downstream BCH/LDPC/NCP/PLC regressions pass. No BCH on ordinary upstream data, no regenerated golden expectations.",
+      "requirements": [
+        "REQ-COM-SYS-05",
+        "REQ-US-TX-02",
+        "REQ-US-RX-08",
+        "REQ-DS-FEC-01",
+        "REQ-COM-REUSE-01"
+      ]
+    },
+    {
+      "id": "INT-DSP-01",
+      "title": "Consolidate proven common numerical kernels",
+      "dependencies": [
+        "INT-FEC-01",
+        "INT-REUSE-01"
+      ],
+      "architecture": "unified-shared-dsp-and-fec",
+      "acceptance": "Prove FFT/bin/normalization, QAM/LLR, PRBS continuity, channel/noise equivalence for each extracted kernel; benchmark changed hot paths, preserve re-exports and downstream results. Create dsp only if justified; a documented direct-reuse/no-new-crate decision must pass the same equivalence checks.",
+      "requirements": [
+        "REQ-COM-REUSE-01"
+      ]
+    },
+    {
+      "id": "INT-US-CONFIG-01",
+      "title": "Register upstream PHY, typed configuration, grants and source",
+      "dependencies": [
+        "INT-DSP-01"
+      ],
+      "architecture": "unified-upstream-configuration-and-source",
+      "acceptance": "Local module registration, supported/domain-valid distinctions, complete source-field coverage and typed idle session foundation pass. Independent grant capacities, all three codeword families, fill/pad/source bookkeeping, PRBS phase/period/seed/range and rejection atomicity pass before waveform use.",
+      "requirements": [
+        "REQ-US-CFG-01",
+        "REQ-US-CFG-02",
+        "REQ-US-CFG-03",
+        "REQ-US-CFG-04",
+        "REQ-US-CFG-05",
+        "REQ-US-CFG-06",
+        "REQ-US-PRBS-01",
+        "REQ-US-PRBS-02",
+        "REQ-US-PRBS-03",
+        "REQ-US-PRBS-04"
+      ]
+    },
+    {
+      "id": "INT-US-TX-01",
+      "title": "Migrate all eight upstream transmitter boundaries",
+      "dependencies": [
+        "INT-US-CONFIG-01"
+      ],
+      "architecture": "unified-upstream-processing-order",
+      "acceptance": "Each US-TX-01..08 typed boundary passes independent source/order/label/pilot/permutation/Pre-Eq/transform/window vectors for both numerologies and declared supported orders/patterns, including chunk/state/invalid-input cases and exact source accounting.",
+      "requirements": [
+        "REQ-US-TX-01",
+        "REQ-US-TX-03",
+        "REQ-US-TX-04",
+        "REQ-US-TX-05",
+        "REQ-US-TX-06",
+        "REQ-US-TX-07",
+        "REQ-US-TX-08"
+      ]
+    },
+    {
+      "id": "INT-US-CH-01",
+      "title": "Migrate unity and supported upstream channel models",
+      "dependencies": [
+        "INT-US-TX-01"
+      ],
+      "architecture": "unified-channel-and-measurement-reference-planes",
+      "acceptance": "Unity is bitwise exact including signed zero/metadata/no-RNG; causal FIR, AWGN, restricted RxMER residual, integer delay/phase/CFO pass independent samples/powers, chunk/seed/observation/drain and whole-schedule rejection tests. Preserve source composition restrictions.",
+      "requirements": [
+        "REQ-US-CH-01",
+        "REQ-US-CH-02",
+        "REQ-US-CH-03",
+        "REQ-US-CH-04",
+        "REQ-US-CH-05",
+        "REQ-US-CH-06"
+      ]
+    },
+    {
+      "id": "INT-US-RX-01",
+      "title": "Migrate all nine received-only upstream receiver boundaries",
+      "dependencies": [
+        "INT-US-CH-01",
+        "INT-US-TX-01"
+      ],
+      "architecture": "unified-upstream-processing-order",
+      "acceptance": "US-RX-01..09 pass configured timing/window/FFT, FrameFlatLs/FramePilotLinear, inverse resources, finite MaxLog, soft mask, shortening/LDPC and information coverage tests without hidden TX/H/C/source truth; missing data never compacts positions.",
+      "requirements": [
+        "REQ-US-RX-01",
+        "REQ-US-RX-02",
+        "REQ-US-RX-03",
+        "REQ-US-RX-04",
+        "REQ-US-RX-05",
+        "REQ-US-RX-06",
+        "REQ-US-RX-07",
+        "REQ-US-RX-09"
+      ]
+    },
+    {
+      "id": "INT-US-LOOP-01",
+      "title": "Accept bounded upstream loop, observations and lifecycle locally",
+      "dependencies": [
+        "INT-US-RX-01"
+      ],
+      "architecture": "unified-rust-python-and-cli-apis",
+      "acceptance": "Actual MERLIN source\u2192TX\u2192channel\u2192RX recovers independently compared meaningful bits for both numerologies and supported loading; retain real FEC failure/partial/coverage outcomes. Execute through the initial public Rust upstream session developed alongside the stages; final API convergence remains INT-RUST-01. Cancellation precedes pause acceptance; test state preservation, deterministic science, passive metrics/taps and bounded aggregate/retained work.",
+      "requirements": [
+        "REQ-US-SYS-01",
+        "REQ-US-SYS-02",
+        "REQ-US-SYS-04",
+        "REQ-COM-OBS-01",
+        "REQ-COM-OBS-02",
+        "REQ-COM-LIFE-01",
+        "REQ-COM-LIFE-02",
+        "REQ-COM-LIFE-03",
+        "REQ-COM-NFR-01"
+      ]
+    },
+    {
+      "id": "INT-PNM-01",
+      "title": "Integrate source-derived upstream capture inspectors and decoders",
+      "dependencies": [
+        "INT-US-LOOP-01"
+      ],
+      "architecture": "unified-pnm-and-capture-admission",
+      "acceptance": "Reuse verified pinned parser capabilities; UCD multipart/envelope, CCAP RxMER and applied/last-update Pre-Eq pass source-derived independent length/offset/scaling/sentinel/flag/overflow/original-byte tests locally. Unknown metadata remains inspectable; no guessed association.",
+      "requirements": []
+    },
+    {
+      "id": "INT-PNM-02",
+      "title": "Integrate explicit measured association and playback",
+      "dependencies": [
+        "INT-PNM-01",
+        "INT-US-CONFIG-01",
+        "INT-US-CH-01"
+      ],
+      "architecture": "unified-pnm-and-capture-admission",
+      "acceptance": "Complete-plan UCD/CM/CCAP-interface/grid/time mapping, source coverage, power-domain selection/average/hold/interpolation and corresponding-probe Set/Adjust schedules pass. Validate later events before consumption; actual captured-plan runs preserve originals and reject incompatible C/H/RxMER combinations atomically.",
+      "requirements": [
+        "REQ-US-PNM-01",
+        "REQ-US-PNM-02",
+        "REQ-US-PNM-03",
+        "REQ-US-PNM-04"
+      ]
+    },
+    {
+      "id": "INT-RUST-01",
+      "title": "Converge typed Rust APIs without downstream breakage",
+      "dependencies": [
+        "INT-US-LOOP-01",
+        "INT-PNM-02"
+      ],
+      "architecture": "unified-rust-python-and-cli-apis",
+      "acceptance": "Public upstream operations and common lifecycle/error/provenance semantics pass native Rust tests, idle/Busy/ownership/bounds/unsupported/versioned-schema checks. Preserve every downstream import/entrypoint/report, optional analysis-only support and Rust-only independence.",
+      "requirements": [
+        "REQ-US-API-01",
+        "REQ-COM-API-03",
+        "REQ-COM-API-06"
+      ]
+    },
+    {
+      "id": "INT-PY-01",
+      "title": "Expose upstream through the existing native Python distribution",
+      "dependencies": [
+        "INT-RUST-01"
+      ],
+      "architecture": "unified-rust-python-and-cli-apis",
+      "acceptance": "Actual native extension exports/types/errors/owned results and independently executed Rust/Python runs agree, including configuration/captures/cancel/pause/Busy/interpreter-lock release. Both languages document the same supported behavior; preserve existing workbench recipes and old Python imports.",
+      "requirements": [
+        "REQ-US-API-02",
+        "REQ-COM-API-04",
+        "REQ-COM-API-05"
+      ]
+    },
+    {
+      "id": "INT-CLI-01",
+      "title": "Add upstream commands to the existing CLI",
+      "dependencies": [
+        "INT-RUST-01"
+      ],
+      "architecture": "unified-rust-python-and-cli-apis",
+      "acceptance": "All existing commands/output schemas still pass; new upstream commands use canonical Rust operations, bounded JSON/I/O and create-new export behavior. No parallel executable or algorithm implementation.",
+      "requirements": [
+        "REQ-COM-IDENTITY-01",
+        "REQ-DS-API-01"
+      ]
+    },
+    {
+      "id": "INT-TOOLS-01",
+      "title": "Reconcile dependency, example and delivery inventories",
+      "dependencies": [
+        "INT-LICENSE-01",
+        "INT-PY-01",
+        "INT-CLI-01"
+      ],
+      "architecture": "unified-normative-evidence-and-exclusions",
+      "acceptance": "Validate local manifests/locks/version/pins/notices, examples and package member inventories without silently changing toolchains, two CI entrypoints or native target scope. Preserve caches and generated Python-guide policy; installed/hosted claims require separate actual evidence.",
+      "requirements": [
+        "REQ-COM-NFR-03",
+        "REQ-DS-DELIVERY-01"
+      ]
+    },
+    {
+      "id": "INT-REG-01",
+      "title": "Pass unified downstream and upstream backend regressions",
+      "dependencies": [
+        "INT-TOOLS-01",
+        "INT-PNM-02",
+        "INT-FEC-01",
+        "INT-DSP-01"
+      ],
+      "architecture": "unified-acceptance-and-final-documentation-gate",
+      "acceptance": "Run full required MERLIN Rust tests/Clippy/format/analysis-only/doctests/examples plus actual Python/CLI/PNM compatibility and applicable Qt integration checks. Record deterministic values separately from elapsed time, all failures/omissions and exact candidate. Source-only passes are insufficient.",
+      "requirements": [
+        "REQ-DS-FEC-01",
+        "REQ-DS-PHY-01",
+        "REQ-DS-RUN-01",
+        "REQ-DS-INPUT-01",
+        "REQ-DS-API-01",
+        "REQ-DS-UI-01"
+      ]
+    },
+    {
+      "id": "INT-DOC-02",
+      "title": "Complete final documentation and skill correspondence",
+      "dependencies": [
+        "INT-REG-01"
+      ],
+      "architecture": "unified-acceptance-and-final-documentation-gate",
+      "acceptance": "Meet all ten user documentation completion conditions: one architecture/requirements/checklist; complete requirement/task evidence; resolving links; skills name actual final modules; no obsolete user-facing branding; docs match implemented support and every newly accepted capability has local integrated evidence.",
+      "requirements": [
+        "REQ-COM-DOC-01"
+      ]
+    },
+    {
+      "id": "INT-ACCEPT-01",
+      "title": "Accept the unified backend within declared supported scope",
+      "dependencies": [
+        "INT-DOC-02",
+        "INT-REG-01",
+        "INT-TOOLS-01"
+      ],
+      "architecture": "unified-acceptance-and-final-documentation-gate",
+      "acceptance": "Review complete requirement/acceptance and numerical/performance/provenance/license matrices for both independently executable directions. All mandatory children pass locally; retain limitations, deferred scope and native/hosted boundaries. No merge, release, publication or push is authorized by acceptance.",
+      "requirements": [
+        "REQ-COM-NFR-04",
+        "REQ-COM-DOC-01",
+        "REQ-DS-DELIVERY-01"
+      ]
+    },
+    {
+      "id": "INT-DEFER-01",
+      "title": "Retain explicit future UI, wider PHY and ranging designs",
+      "dependencies": [],
+      "architecture": "unified-normative-evidence-and-exclusions",
+      "acceptance": "Deferred outside this backend migration: upstream GUI, wider acquisition/confidence, fractional timing/phase noise, broad C/H/RxMER synthesis, finite-file transport and ranging/probe execution. Preserve detailed designs and evidence; require separate approval, source checks and implementation tests before exposure. This is not a dependency for backend acceptance.",
+      "requirements": [
+        "REQ-US-OBS-03",
+        "REQ-US-OBS-04"
+      ]
+    }
+  ],
+  "source_tasks": [
+    {
+      "source_id": "LDPC-01",
+      "source_checked": true,
+      "summary": "Resolve the recorded matrix discrepancy and independently audit every upstream matrix/order.<br>",
+      "destination": "INT-FEC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "LDPC-02",
+      "source_checked": true,
+      "summary": "Complete source-verified standalone codec acceptance.<br>",
+      "destination": "INT-FEC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-CORE-01",
+      "source_checked": true,
+      "summary": "Register the reviewed PHY owners, shared typed boundaries and explicit resource/error contracts using suitable locally adapted reference code.<br>",
+      "destination": "INT-US-LOOP-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "US-CONFIG-01",
+      "source_checked": true,
+      "summary": "Implement the supported typed reference configuration, inventory/selection and legitimate TX/RX projections.<br>",
+      "destination": "INT-US-CONFIG-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "API-RUST/INPUT-01",
+      "source_checked": true,
+      "summary": "Implement the typed idle Rust session/configuration/input/inventory/preview surface.<br>",
+      "destination": "INT-RUST-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "PHY-01",
+      "source_checked": true,
+      "summary": "Implement TX-01 resource capacity, grant/codeword selection and fill/pad accounting.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "SOURCE-01",
+      "source_checked": true,
+      "summary": "Implement continuous PRBS15, independent verification and source associations.<br>",
+      "destination": "INT-US-CONFIG-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-TX-02",
+      "source_checked": true,
+      "summary": "Integrate exact upstream LDPC encoding/shortening and ordered grant assembly.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-TX-03",
+      "source_checked": true,
+      "summary": "Implement grant-seeded PHY randomization.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-TX-04",
+      "source_checked": true,
+      "summary": "Implement MSB-first role-dependent QAM mapping.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-TX-05",
+      "source_checked": true,
+      "summary": "Implement exact pilot roles/signs, block partitioning and joint address generation.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-TX-06",
+      "source_checked": true,
+      "summary": "Implement accepted static Pre-EQ admission/defaults and carrier application.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-TX-07",
+      "source_checked": true,
+      "summary": "Implement the accepted centered unitary upstream IFFT.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-TX-08",
+      "source_checked": true,
+      "summary": "Implement CP/RP extension, taper, overlap, burst tails and explicit guards.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "WAVE-TX-01",
+      "source_checked": true,
+      "summary": "Complete one source-verified scheduled-data burst across all eight TX stages.<br>",
+      "destination": "INT-US-TX-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-CH-01",
+      "source_checked": true,
+      "summary": "Implement indexed sample admission and bounded pipeline preflight.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-CH-02",
+      "source_checked": true,
+      "summary": "Implement exact unity transport and zero-effect bypass.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-CH-06",
+      "source_checked": true,
+      "summary": "Implement channel output validity and passive bounded observation routing.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "WAVE-CH-01",
+      "source_checked": true,
+      "summary": "Accept the complete bounded unity channel boundary.<br>",
+      "destination": "INT-US-CH-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-RX-01",
+      "source_checked": true,
+      "summary": "Implement RX-01: Burst framing and indexed available/missing sample intervals.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-RX-02",
+      "source_checked": true,
+      "summary": "Implement RX-02: Exact useful-window extraction and unavailable-symbol outcomes.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-RX-03",
+      "source_checked": true,
+      "summary": "Implement RX-03: Centered unitary FFT and raw physical-bin results.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-RX-04",
+      "source_checked": true,
+      "summary": "Implement RX-04: Received-pilot C\u00d7H estimation and declared zero-forcing correction.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-RX-05",
+      "source_checked": true,
+      "summary": "Implement RX-05: Resource extraction and inverse joint ordering.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-RX-06",
+      "source_checked": true,
+      "summary": "Implement RX-06: Finite MSB-first MaxLog LLRs and erasures.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-RX-07",
+      "source_checked": true,
+      "summary": "Implement RX-07: Independent grant-mask soft derandomization and pad separation.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-RX-08",
+      "source_checked": true,
+      "summary": "Implement RX-08: Codec integration with exactly-once shortening restoration.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-RX-09",
+      "source_checked": true,
+      "summary": "Implement RX-09: Information deframing with actual failed/partial payload coverage.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "WAVE-RX-01",
+      "source_checked": true,
+      "summary": "Accept the full configured-timing received-only receiver.<br>",
+      "destination": "INT-US-RX-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-RUN-01",
+      "source_checked": true,
+      "summary": "Implement frozen run settings, identities, cumulative budgets and cancellation with retained completed science.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "INSTRUMENTS-01",
+      "source_checked": true,
+      "summary": "Implement shared bounded QAM/SA collectors and queryable matched taps.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-RESULTS-01",
+      "source_checked": true,
+      "summary": "Implement owned experiment reports and independent source/decoder/metric accounting.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "API-RUN-01",
+      "source_checked": true,
+      "summary": "Expose accepted bounded execution, owned reports, progress/cancellation and QAM/SA access.<br>",
+      "destination": "INT-RUST-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-LOOP-01",
+      "source_checked": true,
+      "summary": "Accept the complete source-to-recovered-bits reference unity experiment.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-PAUSE-01",
+      "source_checked": true,
+      "summary": "Add pause/resume after the accepted bounded/cancellable reference loop.<br>",
+      "destination": "INT-US-LOOP-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "RXMER-SYNTHETIC-01",
+      "source_checked": true,
+      "summary": "Implement exact-grid explicitly synthetic RxMER inputs and bounded pure power playback.<br>",
+      "destination": "INT-PNM-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "PREEQ-SYNTHETIC-01",
+      "source_checked": true,
+      "summary": "Implement fixed synthetic banks, snapshots and explicit probe-based updates.<br>",
+      "destination": "INT-PNM-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "USJSON-COVERAGE-01",
+      "source_checked": true,
+      "summary": "Complete the applicable pinned MULPI/PHY field-level coverage audit.<br>",
+      "destination": "INT-US-CONFIG-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "USJSON-FORMAT/PRESETS-01",
+      "source_checked": true,
+      "summary": "Finalize the versioned generic schema, examples and guide.<br>",
+      "destination": "INT-US-CONFIG-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "USJSON-CORE/PROJECTION/PARITY-01",
+      "source_checked": true,
+      "summary": "Implement bounded configuration JSON admission and accepted CMTS/TX/RX views.<br>",
+      "destination": "INT-US-CONFIG-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "US-CONFIG-FORMAT-01",
+      "source_checked": true,
+      "summary": "Verify the declared upstream configuration/profile capture envelope before adding its importer.<br>",
+      "destination": "INT-PNM-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "US-CONFIG-INSPECT-01",
+      "source_checked": true,
+      "summary": "Implement bounded offline Type51 UCD structural inspection through Rust/native Python.<br>",
+      "destination": "INT-PNM-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "RXMER-FORMAT-01",
+      "source_checked": true,
+      "summary": "Verify upstream RxMER format/reference/units/nulls.<br>",
+      "destination": "INT-PNM-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "PREEQ-FORMAT-01",
+      "source_checked": true,
+      "summary": "Verify upstream corrective bank/update formats and base/probe semantics.<br>",
+      "destination": "INT-PNM-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "RXMER-INSPECT-01",
+      "source_checked": true,
+      "summary": "Decode bounded upstream CCAP RxMER files through Rust and native Python.<br>",
+      "destination": "INT-PNM-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "US-CONFIG-INPUT-01",
+      "source_checked": true,
+      "summary": "Associate/project captured UCDs into source configuration with full source validation.<br>",
+      "destination": "INT-PNM-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "RXMER-INPUT-01",
+      "source_checked": true,
+      "summary": "Implement original-preserving typed RxMER admission, association and single/multiple power playback.<br>",
+      "destination": "INT-PNM-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "PREEQ-INPUT-01",
+      "source_checked": true,
+      "summary": "Implement fixed banks, multiple snapshots and explicitly based bounded updates.<br>",
+      "destination": "INT-PNM-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-CH-03",
+      "source_checked": true,
+      "summary": "Implement bounded causal synthetic FIR response and exact terminal drain.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-CH-04",
+      "source_checked": true,
+      "summary": "Implement declared sample AWGN and restricted RxMER residual synthesis.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-CH-05",
+      "source_checked": true,
+      "summary": "Implement integer delay, phase/CFO and emitted-clock continuity.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-COMPOSE-01",
+      "source_checked": true,
+      "summary": "Validate the entire joint RxMER/channel/Pre-EQ update schedule before execution.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "WAVE-CH-02",
+      "source_checked": true,
+      "summary": "Accept the supported synthetic impairment/measurement-model experiment scope.<br>",
+      "destination": "INT-US-CH-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "WAVE-CH-CAPTURE-01",
+      "source_checked": true,
+      "summary": "Accept verified measured capture import/association through the supported channel models.<br>",
+      "destination": "INT-PNM-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "API-PY/STUB-01",
+      "source_checked": true,
+      "summary": "Implement native Python conversion/dispatch and runtime-matching type declarations.<br>",
+      "destination": "INT-PY-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "API-PARITY/DOCS-01",
+      "source_checked": true,
+      "summary": "Validate independent Rust/native-Python parity and deliver runnable paired examples/guides.<br>",
+      "destination": "INT-PY-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "API-01",
+      "source_checked": true,
+      "summary": "Close all supported high-level Rust and Python API delivery gates.<br>",
+      "destination": "INT-RUST-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-LICENSE-01",
+      "source_checked": true,
+      "summary": "Complete copied-material/dependency attribution and package-scope review.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "SETUP-04",
+      "source_checked": true,
+      "summary": "Validate actual fresh-machine setup on each declared target.<br>",
+      "destination": "INT-TOOLS-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-UI-PLAN-01",
+      "source_checked": true,
+      "summary": "Define the presentation implementation plan and readiness/editor acceptance before GUI work.<br>",
+      "destination": "INT-DEFER-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "RX-EXT-01",
+      "source_checked": true,
+      "summary": "Design wider received-signal acquisition, tracking, calibrated confidence and finite-file framing.<br>",
+      "destination": "INT-DEFER-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "CH-EXT-02",
+      "source_checked": true,
+      "summary": "Design captured-H reconstruction, fractional clock/phase noise and broader RxMER/C/H composition.<br>",
+      "destination": "INT-DEFER-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RANGING-01",
+      "source_checked": true,
+      "summary": "Design initial/fine-ranging preambles, probing and received-signal acquisition.<br>",
+      "destination": "INT-DEFER-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "FOUNDATION-03",
+      "source_checked": true,
+      "summary": "Complete independent workspace delivery, required CI/tooling/user guides and reviewed distribution scope.<br>",
+      "destination": "INT-TOOLS-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "DEV-HANDOFF-01",
+      "source_checked": true,
+      "summary": "Reconcile requirements, architecture, checklist, user guides and actual evidence for the accepted delivery scope.<br>",
+      "destination": "INT-DOC-02",
+      "status_transfer": false
+    },
+    {
+      "source_id": "REQ-BASELINE-01",
+      "source_checked": true,
+      "summary": "Consolidate the current architecture into a project-wide",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "FOUNDATION-01",
+      "source_checked": true,
+      "summary": "Inspect PDE and record selective adoption decisions.<br>",
+      "destination": "INT-TOOLS-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "FOUNDATION-02",
+      "source_checked": true,
+      "summary": "Inspect MERLIN and document reusable/upstream-specific owners.<br>",
+      "destination": "INT-TOOLS-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-01",
+      "source_checked": true,
+      "summary": "Define PRBS \u2192 CM-US-TX \u2192 unity Channel Simulator \u2192 CMTS-US-RX,",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-PRBS-01",
+      "source_checked": true,
+      "summary": "Define the self-contained PRBS-TX/PRBS-RX block, sequence,",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-TX-00",
+      "source_checked": true,
+      "summary": "Define the CM-US-TX block, eight internal stages and typed",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-TX-NAV",
+      "source_checked": true,
+      "summary": "Link all TX overview/output labels to local stage sections,",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-PATH-01",
+      "source_checked": true,
+      "summary": "Backfill each signal-path block/stage with planned code/test",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-TX-01",
+      "source_checked": true,
+      "summary": "Expand grant framing/FEC selection, source/fill/shortening/pad",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-TX-02",
+      "source_checked": true,
+      "summary": "Define LDPC encoding/shortening, exact transmitted bit order,",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-TX-03",
+      "source_checked": true,
+      "summary": "Define the 23-bit grant randomizer, register/first-bit convention,",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-TX-04",
+      "source_checked": true,
+      "summary": "Define MSB-first cell words, exact upstream constellation/role",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-TX-05",
+      "source_checked": true,
+      "summary": "Define shared pilot/resource roles, block partitioning, joint",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-TX-06",
+      "source_checked": true,
+      "summary": "Define coefficient/reference planes, defaults/exclusions,",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-TX-07",
+      "source_checked": true,
+      "summary": "Define upstream IFFT geometry, centered bin order/unitary scaling,",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-TX-08",
+      "source_checked": true,
+      "summary": "Define upstream CP/RP, extension/taper/overlap, prefix/useful",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-CH-00",
+      "source_checked": true,
+      "summary": "Stage the Channel Simulator with six linked sections, support",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-CH-01/02/06",
+      "source_checked": true,
+      "summary": "Define sample admission, exact unity transport, output",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RXMER-01",
+      "source_checked": true,
+      "summary": "Add the separate upstream RxMER input, original provenance,",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-US-CONFIG-01",
+      "source_checked": true,
+      "summary": "Define US Configuration input, retained profile inventory,",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-PNM-02",
+      "source_checked": true,
+      "summary": "Define single-shot/multi-input RxMER and US-Pre-EQ,",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-USJSON-01",
+      "source_checked": true,
+      "summary": "Record generic OFDMA JSON as the CMTS configuration",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-CH-03",
+      "source_checked": true,
+      "summary": "Define causal complex FIR, original tap/path reference,",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-CH-04",
+      "source_checked": true,
+      "summary": "Define sample AWGN and restricted unity-C/H RxMER synthesis,",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-CH-05",
+      "source_checked": true,
+      "summary": "Define integer delay and constant phase/CFO, emitted-clock",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RX-00",
+      "source_checked": true,
+      "summary": "Define CMTS-US-RX block inputs/results, nine-stage processing",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RX-NAV/PATH",
+      "source_checked": true,
+      "summary": "Link all RX overview/output labels to stage sections,",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RX-01",
+      "source_checked": true,
+      "summary": "Expand burst framing/timing and bounded indexed-sample admission.<br>",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RX-02",
+      "source_checked": true,
+      "summary": "Expand useful-window selection, CP/overlap and validity.<br>",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RX-03",
+      "source_checked": true,
+      "summary": "Expand forward transform admission, metadata and independent vectors.<br>",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RX-04",
+      "source_checked": true,
+      "summary": "Expand pilot estimate/correction, coverage, reliability and nulls.<br>",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RX-05",
+      "source_checked": true,
+      "summary": "Expand exact resource extraction and inverse joint visits.<br>",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RX-06",
+      "source_checked": true,
+      "summary": "Expand MSB-first LLR metrics, labels/scales and confidence policy.<br>",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RX-07",
+      "source_checked": true,
+      "summary": "Expand soft grant mask reversal, word ordering and pad separation.<br>",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RX-08",
+      "source_checked": true,
+      "summary": "Expand shortening/codec integration and separate decode outcomes.<br>",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RX-09",
+      "source_checked": true,
+      "summary": "Expand receiver-known deframing and partial information results.<br>",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-RANGING-00",
+      "source_checked": true,
+      "summary": "Reserve explicit future ranging/preamble and probing modes;",
+      "destination": "INT-DEFER-01",
+      "status_transfer": false
+    },
+    {
+      "source_id": "ARCH-API-01",
+      "source_checked": true,
+      "summary": "Review the reference high-level Rust/native Python structure;",
+      "destination": "INT-DOC-01",
+      "status_transfer": false
+    }
+  ],
+  "source_documents": [
+    {
+      "path": "docs/architecture.md",
+      "sha256": "dd8ea57fcdd04986991c4e1b390e28e40e219a4f74f68369e7ea222889909fb4",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-backend-integration",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/architecture.md",
+      "headings": [
+        "MORGANA architecture",
+        "Checkpoint and target overview",
+        "Measured capture admission",
+        "Accepted backend delivery decisions",
+        "Upstream configuration capture inspection",
+        "Planned upstream signal path and workbenches",
+        "Planned code layout",
+        "Implemented buffering and lifecycle boundaries",
+        "US Configuration",
+        "PRBS block architecture",
+        "Sequence and bit representation",
+        "Rust owners and stage interfaces",
+        "Independent comparison and incomplete recovery",
+        "Lifecycle and PRBS-TX / PRBS-RX presentation",
+        "Reference assessment and acceptance",
+        "CM-US-TX block architecture",
+        "Internal stage sequence",
+        "Deferred burst modes and preambles",
+        "TX-01: Grant framing and FEC selection",
+        "TX-02: LDPC encoding and shortening",
+        "TX-03: Grant-seeded PHY randomization",
+        "TX-04: Cell-word construction and QAM mapping",
+        "TX-05: Pilots, OFDMA framing and interleaving",
+        "TX-06: CM Pre-Eq",
+        "TX-07: IFFT",
+        "TX-08: Sample assembly",
+        "US-Pre-EQ input",
+        "Channel Simulator: unity stub first",
+        "Channel stage sequence",
+        "RxMER input",
+        "CH-01: Input admission",
+        "CH-02: Unity transport",
+        "CH-03: Channel response",
+        "CH-04: Residual error",
+        "CH-05: Timing and phase",
+        "CH-06: Output and observations",
+        "CMTS-US-RX block architecture",
+        "CMTS configuration: US Configuration JSON",
+        "Receiver stage sequence",
+        "RX-01: Burst framing and timing",
+        "RX-02: Useful-symbol extraction",
+        "RX-03: FFT",
+        "RX-04: Channel estimation and equalization",
+        "RX-05: Resource extraction and inverse interleaving",
+        "RX-06: Soft QAM demapping",
+        "RX-07: PHY soft derandomization",
+        "RX-08: Shortening restoration and LDPC decoding",
+        "RX-09: Information deframing",
+        "Shared QAM Analyzer and Spectrum Analyzer",
+        "Ownership, results and acceptance",
+        "High-level Rust and Python APIs",
+        "API ownership and dependency flow",
+        "API modules and planned stub paths",
+        "Paired Rust and Python interface stubs",
+        "API lifecycle, errors and result contracts",
+        "API delivery and validation gates"
+      ]
+    },
+    {
+      "path": "docs/development/README.md",
+      "sha256": "05b3b96d519e026356ca1cc22e23003dde64e77be533f63229047181eb27a8e0",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-backend-integration",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/README.md",
+      "headings": [
+        "Development"
+      ]
+    },
+    {
+      "path": "docs/development/build.md",
+      "sha256": "12f3e7cc62ddf24be78d452b15657568168f45ac66ad1991ac37ea2bb33050c2",
+      "classification": "Exclude",
+      "destination": "skills/development-workflow/SKILL.md",
+      "rationale": "Redundant source repository workflow/paths/status; retain MERLIN-specific PDE, setup, Git, cache and delivery policy. Original remains pinned and is not deleted.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/build.md",
+      "headings": [
+        "Build and validation"
+      ]
+    },
+    {
+      "path": "docs/development/checklist.md",
+      "sha256": "8968e24ebafed6a3a538b31b136123700e652c6177b2f1f757c4fbd7f69a8b45",
+      "classification": "Adapt",
+      "destination": "docs/development/checklist.md#unified-backend-integration",
+      "rationale": "Every source task maps to a local gate/deferred decision; source checkmarks do not transfer.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/checklist.md",
+      "headings": [
+        "Official software development checklist",
+        "How to use this checklist",
+        "1. Source evidence and core admission",
+        "2. Source and grant planning",
+        "3. CM-US-TX implementation and acceptance",
+        "4. Unity CH-SIM boundary",
+        "5. CMTS-US-RX implementation and acceptance",
+        "6. Closed loop, controls, instruments and results",
+        "7. Complete configuration JSON and PNM admission",
+        "8. Supported channel impairment extensions",
+        "9. High-level Rust and native Python delivery",
+        "10. Foundation delivery and deferred design gates",
+        "Requirement coverage",
+        "Completed design and tooling records"
+      ]
+    },
+    {
+      "path": "docs/development/features/backend-delivery/design.md",
+      "sha256": "d2249289e95576675d825e3c96950a1a3f96730ee3ba483f9720028d6f5bc1e1",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-backend-integration",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/backend-delivery/design.md",
+      "headings": [
+        "Accepted backend delivery plan",
+        "Accepted decisions and traceability",
+        "First milestone and later work",
+        "Layout and status changes",
+        "Completion and validation",
+        "Validation"
+      ]
+    },
+    {
+      "path": "docs/development/features/backend-stages/design.md",
+      "sha256": "2f94ab3b56e5c31345432310315f7f5c9749fc26ff1f2f11847dd2bede0003ba",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-backend-integration",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/backend-stages/design.md",
+      "headings": [
+        "Backend stage implementation",
+        "First shared contracts and independent cases",
+        "Concrete application budget decision",
+        "Source/resource/transform cases recorded before integration",
+        "Channel extension cases before implementation",
+        "Later adapter gate",
+        "Measurement and pause extension cases (before implementation)",
+        "Loader design after accepted Rust/native synthetic loop",
+        "Source preservation and scientific wheel review"
+      ]
+    },
+    {
+      "path": "docs/development/features/backend-stages/validation.md",
+      "sha256": "54036d97af05b6f1ce600e0fa03d661e405a4b4111af34b92778465b2112d135",
+      "classification": "Retain",
+      "destination": "docs/development/features/unified-backend/references/backend-stages-validation.md",
+      "rationale": "Preserve full historical source evidence, field coverage or deferred design, explicitly without MERLIN runtime acceptance.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/backend-stages/validation.md",
+      "headings": [
+        "Backend stage validation \u2014 2026-11-20",
+        "Actual implementation and independent evidence",
+        "Local commands and evidence",
+        "Capture research and remaining scope"
+      ]
+    },
+    {
+      "path": "docs/development/features/capture-formats/design.md",
+      "sha256": "f07ab1af9b9967c07f47280769caf32ea9cb4271dbb08515ba43a1d045e884dd",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-pnm-and-capture-admission",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/capture-formats/design.md",
+      "headings": [
+        "Upstream capture format verification and UCD inspection",
+        "Source and envelope decision",
+        "Reuse and implementation decisions",
+        "Independent cases recorded before implementation"
+      ]
+    },
+    {
+      "path": "docs/development/features/capture-formats/validation.md",
+      "sha256": "1b9024962c429e656802a5d7be9fc7177cff126cc5d1214010737099094b56bf",
+      "classification": "Retain",
+      "destination": "docs/development/features/unified-backend/references/capture-formats-validation.md",
+      "rationale": "Preserve full historical source evidence, field coverage or deferred design, explicitly without MERLIN runtime acceptance.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/capture-formats/validation.md",
+      "headings": [
+        "UCD capture format and inspection validation \u2014 2026-11-20",
+        "Source and independent acceptance",
+        "Local checks"
+      ]
+    },
+    {
+      "path": "docs/development/features/channel-simulator/design.md",
+      "sha256": "5eeb51b94e18194ca2c4e4b0ef6ce057604f406bef5bbdd602a95cb9101c8b28",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-backend-integration",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/channel-simulator/design.md",
+      "headings": [
+        "Channel Simulator stages and RxMER input",
+        "Requirements",
+        "Canonical architecture and reuse review",
+        "Dependency-ordered checklist",
+        "Validation",
+        "Configuration and PNM input extension"
+      ]
+    },
+    {
+      "path": "docs/development/features/cm-us-tx/design.md",
+      "sha256": "c27a130d85f6c4d98b2f63c4822b25cae3a68a9439da64cbeec13004a156fb5d",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-backend-integration",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/cm-us-tx/design.md",
+      "headings": [
+        "CM-US-TX block and stage design",
+        "Requirements and ownership",
+        "Reference and source boundaries",
+        "Dependency-ordered checklist",
+        "Validation scope"
+      ]
+    },
+    {
+      "path": "docs/development/features/cmts-us-rx/design.md",
+      "sha256": "9dc64349566a2a6b6ce372fe8ef1b51edbd55b08d789593078b8665fb348acaf",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-backend-integration",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/cmts-us-rx/design.md",
+      "headings": [
+        "CMTS-US-RX block and stage design",
+        "Requirements",
+        "Architecture and reuse",
+        "CMTS configuration / US Configuration JSON",
+        "Stage contract completion",
+        "Dependency-ordered checklist",
+        "Validation",
+        "Prior block-overview validation",
+        "RX-01..09 architecture completion validation"
+      ]
+    },
+    {
+      "path": "docs/development/features/code-layout/design.md",
+      "sha256": "0b5e7b7a4dddccb7eb241c804bf7a8eb5a1b07b691ee93d00c187bdfae3e0aa2",
+      "classification": "Exclude",
+      "destination": "skills/development-workflow/SKILL.md",
+      "rationale": "Redundant source repository workflow/paths/status; retain MERLIN-specific PDE, setup, Git, cache and delivery policy. Original remains pinned and is not deleted.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/code-layout/design.md",
+      "headings": [
+        "Planned code layout per architecture section",
+        "Requirements and design",
+        "Checklist and validation"
+      ]
+    },
+    {
+      "path": "docs/development/features/development-setup/design.md",
+      "sha256": "546fe73939ca70355e8632894bf43a109e38f8a840d92ee23d66e9de8d75f6e1",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-backend-integration",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/development-setup/design.md",
+      "headings": [
+        "Development setup",
+        "SETUP-01: Requirements",
+        "SETUP-02: Architecture and reuse",
+        "SETUP-03: Validation and checklist",
+        "Validation results",
+        "Subsequent fresh-machine acceptance"
+      ]
+    },
+    {
+      "path": "docs/development/features/extension-designs/channel.md",
+      "sha256": "82d2ef6630ee1774aa862350394795329b6844f6b714578f7794f95d7a882c83",
+      "classification": "Retain",
+      "destination": "docs/development/features/unified-backend/references/extension-designs-channel.md",
+      "rationale": "Preserve full historical source evidence, field coverage or deferred design, explicitly without MERLIN runtime acceptance.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/extension-designs/channel.md",
+      "headings": [
+        "Wider channel and composition design",
+        "Owners and source decisions",
+        "Inferred response and incomplete grids",
+        "Fractional clock and phase noise",
+        "Broader RxMER/C/H composition",
+        "Independent future acceptance"
+      ]
+    },
+    {
+      "path": "docs/development/features/extension-designs/ranging.md",
+      "sha256": "0887291f555067ac780ce5c43c41e5d6c5c15f34eed72c8573e90320f233cf2c",
+      "classification": "Retain",
+      "destination": "docs/development/features/unified-backend/references/extension-designs-ranging.md",
+      "rationale": "Preserve full historical source evidence, field coverage or deferred design, explicitly without MERLIN runtime acceptance.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/extension-designs/ranging.md",
+      "headings": [
+        "Ranging, preamble and probe design",
+        "Pinned source applicability",
+        "Owners and planned files",
+        "Interfaces and stage flow",
+        "Bounds, lifecycle and independent acceptance"
+      ]
+    },
+    {
+      "path": "docs/development/features/extension-designs/receiver.md",
+      "sha256": "98e2526b66dd9ac1af6dcc9ba4b8e215c54752f96ca39f7a680408e3c08231f1",
+      "classification": "Retain",
+      "destination": "docs/development/features/unified-backend/references/extension-designs-receiver.md",
+      "rationale": "Preserve full historical source evidence, field coverage or deferred design, explicitly without MERLIN runtime acceptance.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/extension-designs/receiver.md",
+      "headings": [
+        "Wider receiver design",
+        "Contracts and ownership",
+        "Resolved engineering algorithms",
+        "Bounds and acceptance before implementation"
+      ]
+    },
+    {
+      "path": "docs/development/features/extension-designs/ui.md",
+      "sha256": "6245af98a223312eb6a925173fdb62f244ef021a542a0d88e38be5bd10303338",
+      "classification": "Retain",
+      "destination": "docs/development/features/unified-backend/references/extension-designs-ui.md",
+      "rationale": "Preserve full historical source evidence, field coverage or deferred design, explicitly without MERLIN runtime acceptance.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/extension-designs/ui.md",
+      "headings": [
+        "Presentation implementation design",
+        "Owners and planned files",
+        "Routes and accepted state",
+        "Lifecycle, limits and independent acceptance"
+      ]
+    },
+    {
+      "path": "docs/development/features/foundation/design.md",
+      "sha256": "dba76a3718ccbe902a0d0b9fe977128e3736c87d602a116fb0fc02f6d7de9e40",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-backend-integration",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/foundation/design.md",
+      "headings": [
+        "MORGANA foundation and upstream FEC design",
+        "FOUNDATION-01: Requirements and PDE assessment",
+        "FOUNDATION-02: MERLIN reuse assessment",
+        "LDPC-01: Normative evidence and engine feasibility",
+        "LDPC-02: Acceptance and evidence limits",
+        "FOUNDATION-03: Workspace and public API",
+        "PHY-01 onward: Dependency-ordered plan",
+        "Architecture and receiver isolation",
+        "Licensing and release boundaries",
+        "FOUNDATION-04: Checkpoint and agent guidance"
+      ]
+    },
+    {
+      "path": "docs/development/features/foundation/validation.md",
+      "sha256": "1f33d3a367816ccd4c9d3cdaf06df8102db2567b034641d5d0f475936e6d3294",
+      "classification": "Retain",
+      "destination": "docs/development/features/unified-backend/references/foundation-validation.md",
+      "rationale": "Preserve full historical source evidence, field coverage or deferred design, explicitly without MERLIN runtime acceptance.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/foundation/validation.md",
+      "headings": [
+        "Foundation checkpoint validation"
+      ]
+    },
+    {
+      "path": "docs/development/features/ldpc-source-audit/design.md",
+      "sha256": "c4811b9a89743a03433f1020f5e4b6244792250d06d521eaf8762dbf6325c46e",
+      "classification": "Merge",
+      "destination": "docs/architecture.md#unified-shared-dsp-and-fec",
+      "rationale": "Preserve independent audit/parity/shortening decisions and existing full validation reference; acceptance must be rerun in fec-codec.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/ldpc-source-audit/design.md",
+      "headings": [
+        "All-family LDPC source audit",
+        "Evidence and independent expectations",
+        "Reuse and acceptance"
+      ]
+    },
+    {
+      "path": "docs/development/features/ldpc-source-audit/validation.md",
+      "sha256": "c7124d72592fc48d4c10e69ced5250e9a96afbd5742f2f0aaade445f8995af9d",
+      "classification": "Retain",
+      "destination": "docs/development/features/unified-backend/references/ldpc-source-audit-validation.md",
+      "rationale": "Preserve full historical source evidence, field coverage or deferred design, explicitly without MERLIN runtime acceptance.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/ldpc-source-audit/validation.md",
+      "headings": [
+        "LDPC source audit and codec acceptance",
+        "Original-source review and corrections",
+        "Independent regressions and decoder behavior",
+        "Executed validation",
+        "Boundaries"
+      ]
+    },
+    {
+      "path": "docs/development/features/prbs-source/design.md",
+      "sha256": "3f6cd47ccbd511d0329d265fec36b3a1f31998bec89bf6c6c980774a7f6c958b",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-backend-integration",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/prbs-source/design.md",
+      "headings": [
+        "PRBS block design",
+        "Requirements",
+        "Architecture and reference decisions",
+        "Dependency-ordered checklist",
+        "Validation scope"
+      ]
+    },
+    {
+      "path": "docs/development/features/public-api/design.md",
+      "sha256": "351f46a3d7d6fa815e93b6ce22e48912f0f1773f6e0ce624a06bfa9222abe8ac",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/public-api/design.md",
+      "headings": [
+        "High-level Rust API and native Python wrapper",
+        "Requirements and acceptance",
+        "Read-only reference review and reuse decisions",
+        "Contracts, paths and failure boundaries",
+        "Dependency-ordered checklist",
+        "Validation"
+      ]
+    },
+    {
+      "path": "docs/development/features/remaining-delivery/design.md",
+      "sha256": "12e2b26ee677a6f654e6ec624c73b395956a75efd6f9aca2fc2e93fe5294d0b3",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/remaining-delivery/design.md",
+      "headings": [
+        "Remaining delivery gates",
+        "Architecture and reuse",
+        "Source and test decisions",
+        "Requirements and acceptance"
+      ]
+    },
+    {
+      "path": "docs/development/features/remaining-delivery/validation.md",
+      "sha256": "15d7d5e96e3d13055e3caea2714d5a4d8de7a9dbef6e247a282f57ec9d348c8b",
+      "classification": "Retain",
+      "destination": "docs/development/features/unified-backend/references/remaining-delivery-validation.md",
+      "rationale": "Preserve full historical source evidence, field coverage or deferred design, explicitly without MERLIN runtime acceptance.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/remaining-delivery/validation.md",
+      "headings": [
+        "Remaining delivery evidence",
+        "PREEQ-FORMAT-01",
+        "Capture model admission",
+        "Distribution and platform boundaries",
+        "Aggregate API and scientific acceptance",
+        "Fresh target setup",
+        "Design gates and foundation delivery",
+        "Cleanup and final handoff"
+      ]
+    },
+    {
+      "path": "docs/development/features/requirements/design.md",
+      "sha256": "3681d139b6b1cf06c0f886fd8b7cf898dc1cd48d4384e6c5d6a2627fbb503ae0",
+      "classification": "Exclude",
+      "destination": "skills/development-workflow/SKILL.md",
+      "rationale": "Redundant source repository workflow/paths/status; retain MERLIN-specific PDE, setup, Git, cache and delivery policy. Original remains pinned and is not deleted.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/requirements/design.md",
+      "headings": [
+        "Architecture-derived requirements baseline",
+        "Request and procedure",
+        "Document ownership and reuse",
+        "Completion checklist",
+        "Validation",
+        "Mandatory requirement wording"
+      ]
+    },
+    {
+      "path": "docs/development/features/rxmer-capture/design.md",
+      "sha256": "f9760830dc00d3efce2b0f290b14b828a1cc2a34df6900e4ed14f752370f7674",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-pnm-and-capture-admission",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/rxmer-capture/design.md",
+      "headings": [
+        "Upstream RxMER file verification and lossless decoding",
+        "Pinned evidence and decisions",
+        "Explicit interpretation boundaries",
+        "Existing owners and reuse",
+        "Independent cases fixed before implementation"
+      ]
+    },
+    {
+      "path": "docs/development/features/rxmer-capture/validation.md",
+      "sha256": "14e2519c704ef98b8881d817a11b43e2d4bd81ed25f646ebe9ad4936442c632c",
+      "classification": "Retain",
+      "destination": "docs/development/features/unified-backend/references/rxmer-capture-validation.md",
+      "rationale": "Preserve full historical source evidence, field coverage or deferred design, explicitly without MERLIN runtime acceptance.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/rxmer-capture/validation.md",
+      "headings": [
+        "Upstream RxMER decoder validation \u2014 2026-11-20",
+        "Actual source and independent evidence",
+        "Local gates"
+      ]
+    },
+    {
+      "path": "docs/development/features/software-development-checklist/design.md",
+      "sha256": "a6187a95da75fed1654ae2417906c6db64af66acc80560e97ccc9ea67f631a8c",
+      "classification": "Exclude",
+      "destination": "skills/development-workflow/SKILL.md",
+      "rationale": "Redundant source repository workflow/paths/status; retain MERLIN-specific PDE, setup, Git, cache and delivery policy. Original remains pinned and is not deleted.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/software-development-checklist/design.md",
+      "headings": [
+        "Software development checklist and traceability",
+        "Requirements",
+        "Ownership and scope",
+        "Completion and validation",
+        "Validation",
+        "Generic workflow review"
+      ]
+    },
+    {
+      "path": "docs/development/features/upstream-inputs/design.md",
+      "sha256": "7904771f83c29fb4b505b195821d295ab04c1f68a1aa33302c924a9c86ab23da",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-pnm-and-capture-admission",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/upstream-inputs/design.md",
+      "headings": [
+        "US Configuration and PNM Files",
+        "Requirements and ownership",
+        "Reuse and evidence",
+        "Generic JSON configuration extension",
+        "Checklist",
+        "Validation"
+      ]
+    },
+    {
+      "path": "docs/development/features/upstream-signal-path/design.md",
+      "sha256": "8e03b83e449f7f8bd520743eec63daefe8d732f9a55a36f43ce36eeb27b95739",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-backend-integration",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/upstream-signal-path/design.md",
+      "headings": [
+        "Upstream signal path and shared instruments",
+        "Requirements",
+        "Architecture and source decisions",
+        "Acceptance and validation"
+      ]
+    },
+    {
+      "path": "docs/development/features/us-configuration-json/coverage.md",
+      "sha256": "9ba8b015c58e2d1f232a95cb419bccbffcab243fe84430e1a7ceed44901e3680",
+      "classification": "Retain",
+      "destination": "docs/development/features/unified-backend/references/us-configuration-json-coverage.md",
+      "rationale": "Preserve full historical source evidence, field coverage or deferred design, explicitly without MERLIN runtime acceptance.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/us-configuration-json/coverage.md",
+      "headings": [
+        "OFDMA configuration field coverage",
+        "Additional model and execution boundaries",
+        "Structural schema and runtime acceptance"
+      ]
+    },
+    {
+      "path": "docs/development/features/us-configuration-json/design.md",
+      "sha256": "1520bbad3ae8f677a73e5150fb8691bf1d1fee8ce81a7f44f5de4b843e945e40",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-pnm-and-capture-admission",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/features/us-configuration-json/design.md",
+      "headings": [
+        "Generic OFDMA JSON and CMTS configuration",
+        "Requirements",
+        "Canonical ownership and flow",
+        "Evidence and scope",
+        "Dependency-ordered checklist",
+        "Validation"
+      ]
+    },
+    {
+      "path": "docs/development/foundation-adoption.md",
+      "sha256": "af045795fa61a9748311d8c890b0dee8b7de22f819ef5c154752ac33ed63b0ce",
+      "classification": "Exclude",
+      "destination": "skills/development-workflow/SKILL.md",
+      "rationale": "Redundant source repository workflow/paths/status; retain MERLIN-specific PDE, setup, Git, cache and delivery policy. Original remains pinned and is not deleted.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/foundation-adoption.md",
+      "headings": [
+        "Foundation adoption"
+      ]
+    },
+    {
+      "path": "docs/development/setup.md",
+      "sha256": "74abcb3dc8942683e1cf29217bed1b0c49e5017240f03c43c7dbc5ba1549d2f2",
+      "classification": "Exclude",
+      "destination": "skills/development-workflow/SKILL.md",
+      "rationale": "Redundant source repository workflow/paths/status; retain MERLIN-specific PDE, setup, Git, cache and delivery policy. Original remains pinned and is not deleted.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/development/setup.md",
+      "headings": [
+        "Development installer"
+      ]
+    },
+    {
+      "path": "docs/git.md",
+      "sha256": "470357f7c1e1ceb173d37d96e277776201fae56e8a1a5e2d4f4f30751119a964",
+      "classification": "Exclude",
+      "destination": "skills/development-workflow/SKILL.md",
+      "rationale": "Redundant source repository workflow/paths/status; retain MERLIN-specific PDE, setup, Git, cache and delivery policy. Original remains pinned and is not deleted.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/git.md",
+      "headings": [
+        "Local save workflow"
+      ]
+    },
+    {
+      "path": "docs/reference/distribution.md",
+      "sha256": "53f0245edd377e59f9271ea09dedfa483630a7ead8d42238169a9157a77cfb8c",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-backend-integration",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/reference/distribution.md",
+      "headings": [
+        "Scientific distribution inventory"
+      ]
+    },
+    {
+      "path": "docs/reference/specifications.md",
+      "sha256": "82f174180ce9241a893c04bdf7e61b950d77fd9020d605d9e42d03870ab4a1b4",
+      "classification": "Merge",
+      "destination": "docs/development/features/unified-backend/source-review.md#normative-provenance",
+      "rationale": "Preserve edition/hash/page claims with evidence level; no private corpus or unperformed PDF verification.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/reference/specifications.md",
+      "headings": [
+        "Pinned local specification evidence"
+      ]
+    },
+    {
+      "path": "docs/requirements.md",
+      "sha256": "119a89fbf4a32052b9c833ab8d00393d5f9a08d6ae13731ab3397274277ec928",
+      "classification": "Merge",
+      "destination": "docs/requirements.md",
+      "rationale": "All 59 behavior/acceptance contracts mapped uniquely; source aliases preserved; explicit local policy adaptations recorded.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/requirements.md",
+      "headings": [
+        "MORGANA requirements",
+        "Purpose and scope",
+        "Interpretation, status and traceability",
+        "System and scientific boundaries",
+        "US Configuration and CMTS control",
+        "PRBS source and independent verification",
+        "CM-US-TX stages",
+        "CH-SIM stages",
+        "CMTS-US-RX stages",
+        "PNM Files and measurement-driven inputs",
+        "Instruments, results and planned presentation",
+        "High-level Rust API and native Python API",
+        "Lifecycle and nonfunctional constraints",
+        "Accepted backend staging",
+        "Acceptance milestones and open decisions",
+        "Baseline maintenance"
+      ]
+    },
+    {
+      "path": "docs/sw-facts/README.md",
+      "sha256": "c46bbddf7acfb75aa645f0ffd48f7df173f997dd33f97136e015235f837d7921",
+      "classification": "Exclude",
+      "destination": "skills/development-workflow/SKILL.md",
+      "rationale": "Redundant source repository workflow/paths/status; retain MERLIN-specific PDE, setup, Git, cache and delivery policy. Original remains pinned and is not deleted.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/sw-facts/README.md",
+      "headings": [
+        "Software facts"
+      ]
+    },
+    {
+      "path": "docs/user/README.md",
+      "sha256": "8a6d69cbe480dc44adc9f6cb342db62c59b4d0988d47ec83202ba6d8dd33c7cd",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/user/README.md",
+      "headings": [
+        "MORGANA user guides"
+      ]
+    },
+    {
+      "path": "docs/user/capture-inspection.md",
+      "sha256": "0c787d9a3c2e003a9df93f0486255231c5e95754c528149538494b8e6ebb2690",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-pnm-and-capture-admission",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/user/capture-inspection.md",
+      "headings": [
+        "Offline UCD inspection",
+        "Rust",
+        "Native Python"
+      ]
+    },
+    {
+      "path": "docs/user/measured-experiments.md",
+      "sha256": "c6920f28f3d65a7334ad0dc91517554c88a0b925b3a46710d4fe65a50f741e95",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-pnm-and-capture-admission",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/user/measured-experiments.md",
+      "headings": [
+        "Capture-driven experiments",
+        "fn main() -> Result<(), Box<dyn std::error::Error>> {",
+        "Ok(()) }",
+        "Source and association contract",
+        "Models, ownership and limits"
+      ]
+    },
+    {
+      "path": "docs/user/rxmer-captures.md",
+      "sha256": "d84cad1b0bab6654c8867aab77ab7a3c05430be6124fad33da42c1173b5a35dd",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-pnm-and-capture-admission",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/user/rxmer-captures.md",
+      "headings": [
+        "Inspect upstream RxMER captures",
+        "Rust",
+        "Native Python",
+        "Provenance and interpretation limits"
+      ]
+    },
+    {
+      "path": "docs/user/upstream-experiments.md",
+      "sha256": "25bb9784d15c3661b5fa0c222270b216d3b2e31e0fe08fee9d311d269d8a9e86",
+      "classification": "Adapt",
+      "destination": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "rationale": "Adapt technical ownership and scope into canonical MERLIN integration records.",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/docs/user/upstream-experiments.md",
+      "headings": [
+        "Upstream experiments",
+        "Supported scope",
+        "Run a configuration",
+        "Rust API",
+        "Native Python",
+        "Results and instruments",
+        "Application bounds"
+      ]
+    }
+  ],
+  "source_evidence_files": [
+    {
+      "path": "bindings/python/tests/test_capture.py",
+      "sha256": "b5b96912439add26f35db24168135901fb2c3d92c2cd0368e33d31abae115066",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/bindings/python/tests/test_capture.py",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "bindings/python/tests/test_experiment.py",
+      "sha256": "bd0e747b1626f9d19f3755648d868adf2c84b07e87d2e6eafb19e2e8ecabf038",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/bindings/python/tests/test_experiment.py",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "bindings/python/tests/test_measured.py",
+      "sha256": "b69d29f4e79ec8af2dccc07a93f2f4cc872d8c45ce155116cc2031f49b220d07",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/bindings/python/tests/test_measured.py",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "bindings/python/tests/test_rxmer_capture.py",
+      "sha256": "adce0e60b9fe9c7db252ff8ed21edb820ef0ba05c24d5ae4c60334fc378f1b5b",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/bindings/python/tests/test_rxmer_capture.py",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/ldpc/src/tests/oracle.rs",
+      "sha256": "4ab8de4e4e2d737733dfefa298611799ef133005340a519ccf6e55d984e36c38",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/ldpc/src/tests/oracle.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/ldpc/src/tests/source_audit.rs",
+      "sha256": "7250bed0faba265f19bf391a78beed01bd125e0093fb8dad232e2247cbda4886",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/ldpc/src/tests/source_audit.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/ldpc/src/tests/source_fixtures.rs",
+      "sha256": "58e21ff4ef8f450f4867f2d18569732ed848f1b9a90f410ea4d832b7aba86a77",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/ldpc/src/tests/source_fixtures.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/morgana/tests/configuration_json.rs",
+      "sha256": "1e4ea0b6038ae4b9eb3ddee411f8a797c44dd036545adeb7edc2b137451d6328",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/morgana/tests/configuration_json.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/morgana/tests/experiment.rs",
+      "sha256": "ed073bc07b9731e0e4c6acb74aea6271e7555e2d96ed0ff9dbdcb67b10bd69c5",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/morgana/tests/experiment.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/morgana/tests/measured_experiment.rs",
+      "sha256": "7f7355a43410b4385705ce371bf4817a247d0d04984c56e6a9a6da818509b8e2",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/morgana/tests/measured_experiment.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/morgana/tests/pre_eq_capture.rs",
+      "sha256": "69a24102dde88e8ae30eba52e6afaa9d6048a482c564e5cea88d2de21a634478",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/morgana/tests/pre_eq_capture.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/morgana/tests/rxmer_capture.rs",
+      "sha256": "21a42536e663c92b57d3451e7981ea5808e819aa68de231c20081f4a460cb880",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/morgana/tests/rxmer_capture.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/morgana/tests/ucd_capture.rs",
+      "sha256": "3506336ebc4db1894265f3efc28428edc4537bfb56db555ef58147c54e4b9beb",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/morgana/tests/ucd_capture.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/channel_models.rs",
+      "sha256": "3b39d8361d8453c3c81adedae9666dd28857ad2baa8ae9d3632aeadfab8f1f03",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/channel_models.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/common/mod.rs",
+      "sha256": "9be12cc53188d90d302bc0c0a0f465f0c0b27cc177e25c948aa00bba0bc0608b",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/common/mod.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/configuration.rs",
+      "sha256": "609b0eaa8f600368605cc5478d3f3b320891322fd2b501900e6d3b267478d721",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/configuration.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/grant_plan.rs",
+      "sha256": "29d7f55143d9183450c4d0da18b5f072dd5dccba9d17c24659a9f586fd01b112",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/grant_plan.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/matched_metrics.rs",
+      "sha256": "fd2babcfc8ee581932571c1d9df1f09001e2cb5dcacd7ad5adefda5ef0d9bb97",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/matched_metrics.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/measurement_playback.rs",
+      "sha256": "95bba23c92970fc1e0206c42dfcba76327056af4f9915419779b69c23f3957f3",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/measurement_playback.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/prbs.rs",
+      "sha256": "6c1687031b28f9bdaa3ffdf3f11a529c4ab6bdd59fdfd7b0267a453990d359b0",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/prbs.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/pre_eq.rs",
+      "sha256": "b105be83e22dac4444b3797f0b1c61c035da4469712bdbff33ed4017207ec370",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/pre_eq.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/qam_mapping.rs",
+      "sha256": "c76888c955435eea48aece518955af187e75398d6e0e05a130de9d7732e66ed4",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/qam_mapping.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/randomization.rs",
+      "sha256": "2aec91fa6fe96f31fe1f0202a16418901b8e5274c9dcc3eb6d38f48c3ca94e87",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/randomization.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/rx_estimation.rs",
+      "sha256": "e5b721af1efd08e255cbbcaffc112149e3547a8b7f89a0b5d768f903712bc62e",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/rx_estimation.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/rx_framing.rs",
+      "sha256": "dd9ff9be5fd3e2f8a7667cef1266af8075c4728a92b82442e02aee8c21d5f94c",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/rx_framing.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/rxmer_channel.rs",
+      "sha256": "eb350a489fd357d5001b751640f11e8f2ac96ff818e48ba8debbd40542c61b93",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/rxmer_channel.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/transforms.rs",
+      "sha256": "540b6490625a449e214de9e4206a037925a91102e817028e417c0cda4a091028",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/transforms.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/transmit_window.rs",
+      "sha256": "9c9802fb870db96ebad6a2ce7584c2e6f77bf5f9994c60640ebfa3a40b5de858",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/transmit_window.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/upstream_interleaving.rs",
+      "sha256": "1944459b290f6b955181391b0359cf3cae9e9d2925fd8799f9395edf8d1887b6",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/upstream_interleaving.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/upstream_pilots.rs",
+      "sha256": "720ce3665ecd4099e420d1d346431ed4e22446f81cb75e78ad5fd77b00a625e5",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/upstream_pilots.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "crates/phy/tests/waveform_loop.rs",
+      "sha256": "4d9bc9fa9549070976afe2e9fffa5b675528a75479d2c8a23d149328b664d9a6",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/crates/phy/tests/waveform_loop.rs",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/measured/README.md",
+      "sha256": "234a3bfb9eb8bdb17d662e459c0c809f00fa82f9e8f8525756e5bb9e529b6708",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/measured/README.md",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/measured/applied-unity.hex",
+      "sha256": "a01e2078b947b78eb5b39e59f94d06bca194b6274834d10b4d2189c82cd6064a",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/measured/applied-unity.hex",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/measured/capture-driven-25khz.json",
+      "sha256": "29a0b85c24ec4fa2fb32eabc249dc4c9fc2ccb56f5a29c0d9137ed383eea1288",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/measured/capture-driven-25khz.json",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/measured/capture-driven.json",
+      "sha256": "3bb8a58271007a84a8ef4c31e57576489a60054e97395c8d02bcc0c3d13f75ec",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/measured/capture-driven.json",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/measured/rxmer-40db.hex",
+      "sha256": "c9d5383d423b8107fd4b8bd4c48853850cff8a5dd11a458824e392db0b506596",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/measured/rxmer-40db.hex",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/measured/ucd-25khz.hex",
+      "sha256": "ddc9afe91ff2c3fd89e5b854c9d0da055ca6b4d9a03f294471ee8f8c2e4d84de",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/measured/ucd-25khz.hex",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/measured/update-unity.hex",
+      "sha256": "e7cea5fd00699177034ebe5785a3c05a4ca2f81051f17e7e11c4d57567c5585a",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/measured/update-unity.hex",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/pre-eq/README.md",
+      "sha256": "b3f72d65ab306308d31d5ced4f1d3a68ec9f3c26e58deb32beac7f0cc2e498cb",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/pre-eq/README.md",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/pre-eq/applied.hex",
+      "sha256": "5498edac63d465425ea9b85536920022473931dda21c43205f2518b0f4acb75f",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/pre-eq/applied.hex",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/pre-eq/last-update.hex",
+      "sha256": "98fcf28edfec97a0360d1c248a521330673ee27d0ff487f1691e5e536065f3a2",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/pre-eq/last-update.hex",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/rxmer/README.md",
+      "sha256": "00bdb27ff3d2a296610ebc639efbf5ab40f61eab022714675e6b863a61da84d9",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/rxmer/README.md",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/rxmer/ccap-25khz.hex",
+      "sha256": "db79db5edf913bf6ff4e53fd2755c47ebd5da497ae074a2d6ad979b114eba0ba",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/rxmer/ccap-25khz.hex",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/rxmer/ccap-50khz.hex",
+      "sha256": "de2554483568392b9c2bec00e89a09d2a0b77e92a10f6b2a0b56d2051028b2b9",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/rxmer/ccap-50khz.hex",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/ucd/README.md",
+      "sha256": "99ea2acb67b5e18743e5b779f13a1d23078a8772aa0a4d81f304c9d0670e9864",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/ucd/README.md",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/ucd/minimal.hex",
+      "sha256": "e6084dac3707177becfb1877126ba96c7afc2e7a7c75edf61f0ded490bdd2f57",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/ucd/minimal.hex",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "examples/measurements/ucd/scheduled-50khz.hex",
+      "sha256": "e5377b7870ce5582ec595045ec5a921472d54052b666759fe042ea95e994d346",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/examples/measurements/ucd/scheduled-50khz.hex",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "tools/development/tests/test_setup.py",
+      "sha256": "4298277dff6a8366b4c07f5436c2f37c8e6f92c54b9b13d631fc8840fb5f4e28",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/tools/development/tests/test_setup.py",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "tools/git/tests/test_git_save.py",
+      "sha256": "673bf07da51806d8add02b6e34a925fbeb7179031147734f51a5d9ecb6df917e",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/tools/git/tests/test_git_save.py",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "tools/packaging/tests/test_license_selection.py",
+      "sha256": "918e68c5f63d07e28f51a3b93cd4b2ca501e1f2d9538605e240945643f78dc8c",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/tools/packaging/tests/test_license_selection.py",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "tools/packaging/tests/test_source_bundle.py",
+      "sha256": "10acefa7f46c8264114e225d62da5a5686d0f9fabf86e8694f18b5a29f3ad387",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/tools/packaging/tests/test_source_bundle.py",
+      "status": "source reference only; migration and local execution pending"
+    },
+    {
+      "path": "tools/validation/ldpc_source_reference.rs",
+      "sha256": "bb896779649084edc518b8bb645ff3790d25160df1b52bd221282eb520805c45",
+      "source_url": "https://github.com/PyPNMApps/morgana/blob/69b38071cd3ebebc4eb96849f82b7871ab8da5ec/tools/validation/ldpc_source_reference.rs",
+      "status": "source reference only; migration and local execution pending"
+    }
+  ],
+  "merlin_documents": [
+    {
+      "path": "docs/architecture.md",
+      "sha256": "c34743605f33b0ce22d7b3e98955a15987f9d2f45e7aa25d1bff79b4f1d0085e",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/checklist-review.md",
+      "sha256": "8512bc851f969233f2d2cdc38eb91dd916c3874cd550330e15b4990bc8abe135",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/checklist.md",
+      "sha256": "a874654f830c1b6c0daebc3d0ace7157c7a708ef98f76aac2b4191d1a34b5a38",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/README.md",
+      "sha256": "7ea70949cfc077696962c2ac36fad81d112b84b7ae23fd684899c62ad8cc5768",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/about-menu/design.md",
+      "sha256": "0159ebc407552b880bb3a89c96e04790e6376ca2b03c5b5726940f8c3383ff1f",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/automatic-updates/design.md",
+      "sha256": "18af336aa2c91456d9be4ef83cf2b13a699d64a6e2e47d541088d1260b2d57ba",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/build-cache/design.md",
+      "sha256": "e3aad800c41652c6719b44778d4329f26e581019c391cf9a1db4cd5ef926c8e3",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/carrier-layout/architecture.md",
+      "sha256": "a024c6e1b6d5d3f7f303e9d1c69045522173e617c570a0baef08767084e65f69",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/cell-interleaving/architecture.md",
+      "sha256": "18e4aaf4bd7847e9f99d6342beec4acc942a9c1f54dcc5745c5d151be3297dc1",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/cell-randomizer/architecture.md",
+      "sha256": "516cdc3af32950817e7626baf494a5cd26a1be4f0c501a65ef2d170b18968df0",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/channel-runner/plan.md",
+      "sha256": "939ead1ac1103af774f9967968d1791d29b73bacdea7eed7b83a687bd1fabf94",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/channel-runner/validation.md",
+      "sha256": "3f09685128c342ee21b7cf7d9e460d69b14559c156165916c0850d7ca8eb93b7",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/channel-tilt/design.md",
+      "sha256": "87052682302eea3bd6a7d06eb469672f5174129b4687269d3dce2a319f44494a",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/channel-widths/design.md",
+      "sha256": "6fe4a95592e76dd56bbcd50fb845212d4d241d786be4318c017452865a0b1952",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/channel-workbench/design.md",
+      "sha256": "75b036b18f8df674436a0d61af0747c64316a1d18fa3d4d45ac88833b96aa5da",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/checklist-audit/plan.md",
+      "sha256": "93772304c3b7c6a86b5a335126eb91e2d27e14abe0d982e49b2a675c68b4eae0",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/checklist-audit/validation.md",
+      "sha256": "ef31e763b09f4c4145b3445ef596fd8bebf3bad6209e1154103fac2055d218c1",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/checklist-naming/plan.md",
+      "sha256": "0005d35a3ad1f41f4ee8a8bffd44a53bc8935ca2936e2ed0b056eba075eb163c",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/cl-notch-workbench/comparison-sim-1.md",
+      "sha256": "a8fe223da4006ce7773ae385e6d0ceb77a1335b35cc4d61d77c7bcc02fc5350c",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/cl-notch-workbench/design.md",
+      "sha256": "9fa12f73797ed9e605b5385f71e72e99c53c0539095a9f924110b895f8d105c2",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/closed-loop-validation/design.md",
+      "sha256": "faaa887adca259a5aeb545630ac282528ec3b3e0073eb2441a80ae398f73f1a1",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/closed-loop-validation/validation.md",
+      "sha256": "c1d5cb33ba36d2fe407372ab078983b79e1491ae2f7dd9744c8750dc97b4a72e",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/command-timing/design.md",
+      "sha256": "e86f0df47c0ab7355df39cde6aa6f10304ecfec6db755e5556c7d17213698df3",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/completion-group/design.md",
+      "sha256": "deeeb6f768c0b7cbf7a7d090fce28f8b940b5dfac9c2dbc56c3ae8a854115030",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/completion-group/external-channel-vectors.md",
+      "sha256": "a7de8571f2b36e94a7a4a29a569f6e2f3840b174aecdc33c565c9712423eff08",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/completion-group/validation.md",
+      "sha256": "d2246326b3cd81d74b2f12bd003bbb10acfd1cab2c18b0f0fe4e0cbefb68a422",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/contextual-help/design.md",
+      "sha256": "2f9406455d68165873fb68c5ddc7626794292daa9875e3f19747cfb3840046cd",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/development-setup/design.md",
+      "sha256": "41f42310a0857f7a0575d16654a3fb589eb5e04dc402b58e6c8c5d60fe1150e6",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/development-workspace/plan.md",
+      "sha256": "11f94c9f9f2a9fdfb3090f1d6129c402027d721ea9262ea374cdf63b5b4d4e38",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/docs-only-push/design.md",
+      "sha256": "21c650d8f3c1496c24e8129fdff0aa1c7ed1eea14d0a02c009c274751709a6d9",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/engineering-guidance/design.md",
+      "sha256": "65f5f8596b6c847b67e3913aa5ae94d33d07ef552f86f557399955aaaa4e473b",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/engineering-guidance/validation.md",
+      "sha256": "05f376e1b44db6fc25f4264593b07eeda4159fcc7bad871714ba601cf164eaf2",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/example-layout/design.md",
+      "sha256": "524d4dd1a24259fddafd024fca692947218b249d0936285f5a838647c4f217a0",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/example-layout/validation.md",
+      "sha256": "9a609f94205eba713f319b32c5807b96fa7c56320d13bdcc226a2ab4ad6a489a",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/fec-monitor/design.md",
+      "sha256": "8bb1246e3f1d04a6cd0958af24ef703e9014f39687c2a16b45fe6f74feff85bf",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/fec-shortening/design.md",
+      "sha256": "3f41781e1322cbecf66c14433c42712279fabda8563ed78c542e07c3d047dd79",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/fec-shortening/validation.md",
+      "sha256": "55648cda871864dbcd2f302b6942e716dca65d9e87da0f9c7926c99df190c5b6",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/file-payload-source/design.md",
+      "sha256": "e9bdd1634c8d6cf347371b90ed3fc69843a4dcf6a5c6ace940779240af0e08bb",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/file-payload-source/implementation.md",
+      "sha256": "1dafca7de648deff5285c1b2e02b535fc168790f4bf0ae75456d6af25af3b50a",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/high-level-api/design.md",
+      "sha256": "f9916e04fac40f87ff3225f733b36f82184ba7fb2b37e6210ca9205e60e3fe90",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/high-level-api/requirements.md",
+      "sha256": "bdd38a27b9351e3e5e4d533d7b986304c340019024c8adfe91a4ef1512f1dceb",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/high-level-api/validation.md",
+      "sha256": "ad249e5b9cf65acf2c2df753d08de26f0b43df97056def3cafd5ec991db3a169",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/impairment-group/plan.md",
+      "sha256": "303f19c01fcc4e840be4da0ef97bb550bc5dbf1fd8b08a252d95c60f8f697c4b",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/impairment-group/validation.md",
+      "sha256": "5bab2b5f09b6c02d9653a0028306239842da89e1593029423fd44f7a01dd7336",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/independent-channel-estimation/design.md",
+      "sha256": "ba16db5b4629e1097cb3c32877d6052e14721340020e393524fd15a85be63323",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/independent-channel-estimation/implementation.md",
+      "sha256": "48f80db4f7824a37a2f366de4201c4403aea6e5bf870014f6b39532bb325d6d1",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/lte-ingress/plan.md",
+      "sha256": "fe14ce1c9c3f87085b659af8016a9786e3891006c90a99810c8461c9377b8e80",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/lte-ingress/validation.md",
+      "sha256": "74ade1e57e3386c9093dc39d4ba70566ea423db24d22c481c7f30ff3254738bc",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/mouse-zoom/design.md",
+      "sha256": "33f719113fe3f8b8951fc41fa91303efab90386e4937851b54d62b830c1d0538",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/ncp-codec/architecture.md",
+      "sha256": "e5133ce8afd28d128dabbfb8c82b3ac16037cb0190cece507492ee467c10982d",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/paired-constellation/implementation.md",
+      "sha256": "78bd42b4325089fe275fbf9dff05da0e42b5ee72f31104ab351094851a6130e3",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/paired-constellation/plan.md",
+      "sha256": "21cf01b5b3163db1220f42bfb07d83fad3c5d0208a7f46c6b2f1a7c8c8374175",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/parallel-local-tests/design.md",
+      "sha256": "aaae6e0330d17a5c287dab99ef7fd82f9424dbfc284954e048f46906348382b3",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/payload-transport/plan.md",
+      "sha256": "e6c45a97dbcdda9c99054b78b9af2beb638d829d3d796528c51caa3726d0d231",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/payload-transport/validation.md",
+      "sha256": "1846078a4661fedd2dc6e39c8f2194f850d9e6d7d689038a349acca44dce293e",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/pilot-channel-estimation/implementation.md",
+      "sha256": "1521c2f1b9e2d502fd34e9111f5d5ecfe73e3ce27a6ddf91495848180b58711e",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/pilot-channel-estimation/plan.md",
+      "sha256": "96751cb22af8d25a2c088e9d9b366a27aa9c66b6cc56aa795ecaa40034e5907b",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/pilot-plc-signals/architecture.md",
+      "sha256": "f93e9bafa27ea3779f593e4765d9868a15909a3cd768ae9dd0ece86156d0ada5",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/plc-block-interleaving/architecture.md",
+      "sha256": "f45be0801170bdd54f904f612c1763974df511c530955683e9214de9dd622bee",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/plc-completion/plan.md",
+      "sha256": "8c355b209af2be0a5883274f85ef2d5a828220ccd3583427b19a3ff5dcba4fd8",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/plc-completion/validation.md",
+      "sha256": "5cda6007143d57509f9f51c461b74d115379d27a2e557acd87b2cce2a71f8cd8",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/plc-ldpc/architecture.md",
+      "sha256": "6a1df1fa0a91a8d0928c359e7704f46c74b3fa172feb023cb9f6fda9f2431b09",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/plc-message-blocks/architecture.md",
+      "sha256": "d4fb01e2015a292d19e365ce84a1f4d079bb553bd205e36fae951460c5ad9364",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/plc-randomization/architecture.md",
+      "sha256": "e1eeb36ed3696ca6cba645187cd6dbfbceaefb6db57e2ab2e756839bf62035a1",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/plc-randomization/validation.md",
+      "sha256": "2390f0269a90ea8e92acae58f6a691c40dfbcc8f6fc0e73035f687c2c0510cdc",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/pnm-measurement-inputs/README.md",
+      "sha256": "6d7a81bf0cc4529f2626dddb07bc25ed2e6d0b93c0e8cb13c815d2e209a2aaab",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/pnm-measurement-inputs/profile-view.md",
+      "sha256": "9074144ca30d5123b9a04b97b32c3dcbfa2d0876e239b079c7c7a0dc9b5d5d21",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/pnm-reference-skill/design.md",
+      "sha256": "86cf5ad6e66b4bdc424c92e87a1eadc4aedc8794a87e226cf818ebf1823a7a37",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/popup-close-controls/design.md",
+      "sha256": "8b4c3c2aab574c7a17f50f6e872fd3e49fbdd3e83a5de61b61b85d34a8d3c677",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/prbs-source/plan.md",
+      "sha256": "22a3f8c1ac12467231283596d620799a982f1bc4e4e15e56cd67fe9fbf015e5a",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/prbs-source/validation.md",
+      "sha256": "7b8083ff0343f87d38f1700ff0220c8647ef887d566b986d04553e28f626af49",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/profile-performance/design.md",
+      "sha256": "38abe8421c159d97456fbf869da9c92373ff417d5168cf579fe02b93cd5316ec",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/project-architecture/plan.md",
+      "sha256": "083190e45e62a890bc030d81c606833e44d002dca03bd990bf23183ecccc6054",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/project-rename/notes.md",
+      "sha256": "d10d9fd4d73deb36e74b7211f5d6dd52ea5ea05f70f1c448e69f774842224018",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/python-adapter/design.md",
+      "sha256": "76860634809332a55d50a4e17db8a9048cf232735aca263b5a484d167ada0164",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/qam-completion/design.md",
+      "sha256": "db540ed28d6552bcbf368ad85c569d150b506c0db3f87ba32557f43967f79889",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/qam-completion/external-vectors.md",
+      "sha256": "dffd3ac49d217e07ed46d6e0a9283d1f3d394c446d2dc0e753c7169eaf8ee768",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/qam-completion/validation.md",
+      "sha256": "fe9f1155b88e5e1d87b5a3067432a10d4979cd336c631668028f22ce0a7ab985",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/qam-demapper-performance/design.md",
+      "sha256": "72b9375513f604c3a9ba5b28097a875d0dc42232efffe86c96e71ef2430081c6",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/qam-mapping/architecture.md",
+      "sha256": "03aa2f07a07800968d9e250182195ec7f70ecd032f08facabf76d84e12b17c86",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/qam-markers/design.md",
+      "sha256": "01a85c0ceceb75de54b852f73808c639ad45e26559c80a9a70d93bbc79a1d7f5",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/qam-mer/design.md",
+      "sha256": "76514af7d3b2894d9ebb3911248d7faeb85ab0721dd69257acde250a7776dc0d",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/qam-receiver-mode/design.md",
+      "sha256": "df901b753ea22a6725bc2cf1a8ebbeb3af649bfab5bd4e20042a138398bdf417",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/qam-run-results/design.md",
+      "sha256": "e8cf29e267db254871a763b97c4fc8a95dc52abaea5bf38483e95e55816877f8",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/qam256-coding-loop/architecture.md",
+      "sha256": "296a6a34d700b637ef9c989f2228928ae7589bc3038cf61451c57a02f0204c23",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/qt-closed-loop/design.md",
+      "sha256": "784300777db061d3213d5469a31d790ee3c1a5b91fcb635fe31d86dad86323c4",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/qt-closed-loop/validation.md",
+      "sha256": "acc0d3f2336f28c269be827365d3249b59436f3e784eeb1667482e699d531fe2",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/qt-source-organization/design.md",
+      "sha256": "eda23a355689fa762fe1970d0764d5744e93a7887335d7712e6634eda1ba234f",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/quick-local-tests/design.md",
+      "sha256": "d1dbfd83fec3ed9356a33e12d9396292adb976b390b90eb87712f1ed9fa836ff",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/readme-workbench-diagram/design.md",
+      "sha256": "56637d5805603b287efd9331131bc8f75c676f9ec578f19a74ff490e479766b9",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/receiver-acquisition/design.md",
+      "sha256": "c882d50052949b413c98e0c92581ad3d6583dffbc2d8b4504cca7bfd797d3fce",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/receiver-acquisition/validation.md",
+      "sha256": "fe89a9f77ac3a2716526968eff94866b6b71e5247b2d510c1a83d53cc5c18aa2",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/receiver-configuration/plan.md",
+      "sha256": "ac30145bfe115478acdd9818df93fede36fb9239dc2357e8ef42e29474047cda",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/receiver-configuration/validation.md",
+      "sha256": "b97aa7949340daa932105693fff5757e15660764729586221a3fb8bf1743aea4",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/receiver-instruments/design.md",
+      "sha256": "057b997dfde5b8a655432da52ae0a65ec69b9bf42787454a9fd65ffa857b909b",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/receiver-workbench/design.md",
+      "sha256": "2dc2da110f88d706c1d67df9ece603935b00d4c07fd2a42e1cb6428a35dec864",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/receiver-workbench/validation.md",
+      "sha256": "1dfa8e880c6a72a07fed8a142a5d00d224b959d89eb06bf16c6f6898250e0d58",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/release-asset-names/design.md",
+      "sha256": "5d4796bba5a8f0073e34aad408b8f08f54e8b4254a9ec6632b960599e8ef1b7e",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/release-resume/design.md",
+      "sha256": "b52e799521dd8eb04f37ec313e9d536879a00ff5861a80e810ac6698384bae72",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/responsive-workbench-open/design.md",
+      "sha256": "7dfe3c8a59a1adeffad03be656f51b3ec6a9b6c6761c3eb7f2c24dc242dd611a",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/restore-workbench-inputs/design.md",
+      "sha256": "75bdb493f244d5d2f89a1e54faa7ccf04fa69305854878525222f36ceea7045d",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/rf-power-budget/design.md",
+      "sha256": "6201d9f2d9d3295b7dec9756b42b096d39063eed4a75295466020b3ea5e4ca1c",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/run-elapsed-time/design.md",
+      "sha256": "2b39ca0548c65af57540ed87a367f79460355563a7f07a47c536da5d93e412d8",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/run-infrastructure/plan.md",
+      "sha256": "e039cf74b1403f0b9c0d87551639e0c417f425e3261b325cc3d375cec6858130",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/run-infrastructure/validation.md",
+      "sha256": "20053b8ea612e71c474706aeb2d1018aea21105a6cf3b41d2983314cd358e17c",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/rust-logging/architecture.md",
+      "sha256": "9a7d84dc157ef8bf4215d469ed3c152188b1a7be755d4486f88802c805b5b938",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/rust-only-signal-processing/architecture.md",
+      "sha256": "a2228d4dce3672b4d1021e8eb9c100822965217060321d6c747e233eef9a841d",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/rxmer-designer/design.md",
+      "sha256": "1be0fd24f52ac9ecc84b69e401a95aeeca8adac6857d9a9a8772e154b3a9e93b",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/rxmer-designer/pnm-export-plan.md",
+      "sha256": "67857b787be633c8933f8c10b256b67f7aa5e04d516ce0591f2d4aad875e2ce7",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/rxmer-designer/validation.md",
+      "sha256": "595331a0e84902fb355ebe23baabfb7f2d632e9b7d3ac2e275c70a03c3a4dbb9",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/rxmer-error-sweep/README.md",
+      "sha256": "32f9fb6ec229cc65602c6f31b6e01f021dfc236a8700c4a4d920f7f20607aefc",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/rxmer-selection/design.md",
+      "sha256": "d53317f97ec2db9334eed3017189a039929b4130c9fe2fb2dfc46f8f98047819",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/rxmer-workbench/design.md",
+      "sha256": "a3245f92a4c9f828d5639abc4c806c667c771eec73d7a43ed533a557a0488343",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/rxmer-workbench/validation.md",
+      "sha256": "f3f9e9f56c58316066e1b15c62d679808eb77aa8124ced600ba8558f62b56db4",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/security-checks/design.md",
+      "sha256": "e7b6334629fc3d9341d01aeb3df9d67efbdabef3e1635e56ea28e74ba833d230",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/simulation-documentation/plan.md",
+      "sha256": "0fdf65c37a653e645c98113ea9f630e4ef774182a673ec246db6f01fa6c1b6bf",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/simulation-documentation/validation.md",
+      "sha256": "32e0d507354bc4f9337c7ca40855424cd24a6ce6c8c43c5494195856b98a3008",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/single-channel-transmission/architecture.md",
+      "sha256": "28441996b4b33100335a1b3891e562a153b1eab7cded8bd9c44526b2f24c24df",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/source-organization/architecture.md",
+      "sha256": "46702933938aedac8d2ec042487b5eb36f59027fe76a478b59531bf56a05b21b",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/sparse-encoder/design.md",
+      "sha256": "c296480a1b1cbb6d27d0eb1af462c3c72c806da3dfa91f6ecf941f65fe0b55cf",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/symbol-packing/architecture.md",
+      "sha256": "edc2800572c068993a9a5089c549d4d5ac5ce3699d7853079f6f37b8036c8f3e",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/symbol-packing/design.md",
+      "sha256": "57a3b99343858152a18a2101ab78ed934f13998fa4d21cbdbf54f7017fbb61c2",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/symbol-timing-popup/design.md",
+      "sha256": "769393848c994d909159ca69ad0eb6288d3b25fa7242fc3108c96a293cd53f87",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/terminology/design.md",
+      "sha256": "8955d38150d049c31cd8620a23d6ed5f8d23518177d75935ea899d4f9eb95a4d",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/tooltip-delay/design.md",
+      "sha256": "c902c12b900a682d245d54729a7c3c4935cdd217e1d58af6018d0b1fe1e160e6",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/transmitter-graphs/design.md",
+      "sha256": "827a04cf2b4d92064870f7c097bc72921e84cb790f02c043a16c6f4ded86f351",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/transmitter-spectrum/design.md",
+      "sha256": "691f0de0d2bdd0471aa73e22a535b699827844939539473727a947f013a5bf72",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/transmitter-spectrum/validation.md",
+      "sha256": "e0b61cde9cc003606c79a699fe5421465ecbe6a8b0fb16248c68b5ff30a9a7af",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/transmitter-workbench/design.md",
+      "sha256": "d2be77fd1ec3b57bd98585f16452a90d3c1876328202fd6501ec3988d72b47d6",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/ubuntu-desktop/design.md",
+      "sha256": "09e770eb72d1454c0ef537fc9bc7194ffea998c6acda9f9d1dd9152298bf9677",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/ubuntu-desktop/local-validation.md",
+      "sha256": "c8f103e78248509304eef6a68dd64d6f1948f142a1e535e3900c3af5f62386b1",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/ui-copy/design.md",
+      "sha256": "fe91b4a10a3dd7ea176c14146efb2bf08de661ff44243a93e35d736a2da61cb9",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/upstream-skills/design.md",
+      "sha256": "59b6ead234e1ef13dc1fb9735da78c33e9099159c75f14389955fa508a93496c",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/upstream-skills/validation.md",
+      "sha256": "6356230943bc2312e127de4fb5bcfd1c1f30c459ca64d9c9a1457a9735c3d6ad",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/user-guide-captures/design.md",
+      "sha256": "72f06305910f76ddb57b6511d2974b614b5e0b3fa8b34a0f719e56d662bb5363",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/user-guide-captures/png-audit.md",
+      "sha256": "b5ab78142f1ef9c6d4a6a6cc4ccaee17508d87ae77fc26a10475f95275944d33",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/verification-panel/design.md",
+      "sha256": "93e8d50af32126a4d91474cb1aaa12194c2f6ef6adafaa568a68982cbc11f8d9",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/visual-workspace/design.md",
+      "sha256": "054529624167f9bc53c0374eedec2e58998f2136a803e0d4d47c6c9b83d7812c",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/visual-workspace/plan.md",
+      "sha256": "e89eb00b66b1392fa6796010da8d907a3b45acab0c475898ec9232601adb3761",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/visual-workspace/validation.md",
+      "sha256": "817eba2c0455b2c7507efe68ec144ba8df6f9838638d1a0c9cf7653c6261ecf7",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/waveform/plan.md",
+      "sha256": "75673182e960d65134ec8b8747cfbac6fce4be76ea20da7638d68e62ced1eeab",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/waveform/validation.md",
+      "sha256": "c93233086ad2d4980b84d111528bad4f14ae9982870ffdb5ba1dd00c62289216",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/waveform-direction/notes.md",
+      "sha256": "9089276c96266b0ab866b8ffe1ef9b659213f7ab937b81e7f214bb16cd68c80b",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/windows-desktop/design.md",
+      "sha256": "3c55d1292e12b616ce921f004c1b6425fd327893d0a6b01494b428f31b87f237",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/windows-desktop/validation.md",
+      "sha256": "d8bc46f70ce311f4e531e0252f656d68ed6671638d82024d042235f1263d5c9b",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/workbench-configuration/design.md",
+      "sha256": "d5dfa04feaa76de8c41b66415785276ad4cb928b8e131894ec4c023efcd29f4a",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/features/workbench-examples/design.md",
+      "sha256": "1ef8199c388f49f5a19e552421973fcbd06986f4104bc4a0e9aba2da2e42830a",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    },
+    {
+      "path": "docs/development/ui-checklist.md",
+      "sha256": "7c3f24e9b25035eef0acd58206cd4f86e2464f8a54d14748ec2861ff3ad39ce1",
+      "disposition": "preserve original downstream technical contract; canonical additions or compatibility redirect only"
+    }
+  ],
+  "preserved_downstream_task_ids": [
+    "DEV-GUIDE-01",
+    "SKILL-US-01",
+    "ARCH-01",
+    "ARCH-02",
+    "ARCH-03",
+    "ARCH-04",
+    "ARCH-05",
+    "ARCH-06",
+    "ARCH-07",
+    "SRC-01",
+    "SRC-02",
+    "SRC-03",
+    "SRC-04",
+    "SRC-05",
+    "SRC-06",
+    "FEC-01",
+    "FEC-02",
+    "FEC-03",
+    "BITS-01",
+    "BITS-02",
+    "QAM-01",
+    "QAM-02",
+    "QAM-03",
+    "QAM-04",
+    "RAND-01",
+    "PACK-01",
+    "PACK-02",
+    "PACK-03",
+    "NCP-01",
+    "NCP-02",
+    "NCP-03",
+    "CFG-01",
+    "LAYOUT-01",
+    "LAYOUT-02",
+    "LAYOUT-03",
+    "INT-01",
+    "INT-02",
+    "INT-03",
+    "CELL-01",
+    "CELL-02",
+    "PLC-01",
+    "PLC-02",
+    "PLC-03",
+    "PLC-04",
+    "PLC-05",
+    "PLC-06",
+    "PLC-07A",
+    "PLC-07",
+    "PLC-08",
+    "PLC-09",
+    "PLC-10",
+    "PLC-11",
+    "PLC-12",
+    "PLC-13",
+    "PLC-14",
+    "PLC-15",
+    "RX-CONFIG-01",
+    "WAVE-TX-01",
+    "WAVE-TX-02",
+    "WAVE-TX-03",
+    "WAVE-CH-01",
+    "WAVE-RX-01",
+    "WAVE-RX-02",
+    "WAVE-RX-03",
+    "WAVE-RX-04",
+    "WAVE-RX-05",
+    "WAVE-RX-06",
+    "WAVE-QA-01",
+    "WAVE-QA-02",
+    "RUN-01",
+    "RUN-02",
+    "RUN-03",
+    "RUN-04",
+    "RUN-05",
+    "RUN-06",
+    "RUN-07",
+    "RUN-08",
+    "INPUT-01",
+    "INPUT-02",
+    "MODEL-01",
+    "MODEL-02",
+    "MODEL-03",
+    "MODEL-04",
+    "CONST-01",
+    "CONST-02",
+    "CONST-03",
+    "CONST-04",
+    "CONST-05",
+    "MODEL-05",
+    "CH-EST-RX-01",
+    "CH-EST-RX-02",
+    "CH-EST-RX-03",
+    "CH-EST-RX-04",
+    "CH-EST-RX-05",
+    "CH-EST-RX-06",
+    "CH-EST-RX-07",
+    "CH-EST-RX-08",
+    "CH-EST-RX-09",
+    "CH-EST-RX-10",
+    "CH-EST-RX-11",
+    "CH-EST-RX-12",
+    "MODEL-06",
+    "MODEL-07",
+    "QA-01",
+    "QA-02",
+    "QA-03",
+    "QA-08",
+    "QA-04",
+    "QA-05",
+    "QA-06",
+    "INSTALL-EXAMPLES-01",
+    "CH-EST-PLAYBACK-01",
+    "QA-07",
+    "API-01",
+    "UI-RF-02",
+    "UI-RF-01",
+    "RF-POWER-01",
+    "UI-ORG-02",
+    "UI-ORG-01",
+    "UI-INSTR-01",
+    "WAVE-CH-TILT-01",
+    "UI-CH-02 / WAVE-CH-COMPOSE-01",
+    "UI-CH-01",
+    "UI-DOC-01",
+    "UI-SA-07",
+    "UI-SA-06",
+    "UI-DOC-02",
+    "UI-TX-06",
+    "UI-TX-05",
+    "UI-TX-04",
+    "UI-TX-03",
+    "UI-EXAMPLES-01",
+    "UI-EXAMPLES-02",
+    "UI-OPEN-01",
+    "UI-01",
+    "UI-02",
+    "UI-03",
+    "UI-TX-01/02",
+    "UI-04",
+    "LATER-01",
+    "LATER-02",
+    "DOC-BRAND-05",
+    "DOC-BRAND-04",
+    "DOC-BRAND-03",
+    "DOC-BRAND-02",
+    "DOC-PUSH-01",
+    "SEC-01",
+    "BUILD-01",
+    "BUILD-02",
+    "BUILD-03",
+    "BUILD-04",
+    "DEV-01",
+    "DEV-02",
+    "DEV-03",
+    "DEV-05",
+    "UI-WB-OPEN-01",
+    "UI-DPD-VIEW-01",
+    "UI-DEB-01",
+    "UI-UPDATE-01",
+    "UI-DEB-02",
+    "UI-DEB-03",
+    "DEV-04",
+    "SECURITY-DEPS-02",
+    "UI-DPD-VIEW-02",
+    "RX-PERF-01",
+    "FEC-COUNTS-01",
+    "UI-RX-PERF-01",
+    "UI-RX-PERF-02",
+    "UI-UPDATE-02",
+    "UI-UPDATE-QA-01",
+    "UI-WB-CONFIG-01",
+    "UI-WB-CONFIG-02",
+    "CI-CONSOLIDATE-01",
+    "CI-DESKTOP-APT-01",
+    "CI-DESKTOP-QA-01",
+    "UI-DIALOG-ACTIONS-01",
+    "UI-FEC-02",
+    "UI-RUN-TIME-01",
+    "UI-TERMS-02",
+    "QAM-PERF-01",
+    "UI-WB-CONTROLS-01",
+    "UI-BUTTONS-01",
+    "UI-QAM-DOTS-01",
+    "UI-HELP-01",
+    "UI-SA-DETAILS-01",
+    "RELEASE-RESUME-01",
+    "RELEASE-RESUME-02",
+    "DEV-TEST-QUICK-01",
+    "RELEASE-ASSET-01",
+    "UI-ABOUT-01",
+    "UI-WB-OPEN-02",
+    "UI-RXMER-SELECT-01",
+    "UI-RXMER-ANIM-01",
+    "UI-TX-GRAPH-01",
+    "UI-WB-OPEN-03",
+    "UI-CH-ICON-01",
+    "UI-FEC-TABLE-01",
+    "UI-WB-OPEN-04",
+    "UI-SA-TIMING-02",
+    "UI-QAM-MER-01",
+    "UI-INPUT-RESTORE-01",
+    "UI-QAM-RUNS-02",
+    "RXMER-DESIGN-01",
+    "RXMER-DESIGN-02",
+    "RXMER-DESIGN-03",
+    "RXMER-DESIGN-04",
+    "RXMER-DESIGN-05",
+    "RXMER-DESIGN-06",
+    "RXMER-DESIGN-07",
+    "RXMER-DESIGN-08",
+    "RXMER-DESIGN-09",
+    "RXMER-DESIGN-10",
+    "RXMER-DESIGN-11",
+    "UI-BUILD-RELEASE-01",
+    "UI-MSI-01",
+    "UI-MSI-02",
+    "UI-MSI-09",
+    "UI-MSI-03",
+    "UI-MSI-04",
+    "UI-MSI-05",
+    "UI-MSI-06",
+    "UI-MSI-07",
+    "UI-MSI-08",
+    "EXAMPLES-01",
+    "TOOL-TIME-01",
+    "UI-WIN-THEME-01",
+    "SA-PLC-01",
+    "UI-WIN-UPDATE-01",
+    "UI-WIN-UPDATE-02",
+    "UI-DOC-02",
+    "API-RUST-01",
+    "API-PY-01",
+    "API-EXAMPLES-01",
+    "API-INTEGRATION-01",
+    "API-INTEGRATION-02",
+    "API-EXAMPLES-02",
+    "API-EXAMPLES-03",
+    "API-EXAMPLES-04",
+    "API-EXAMPLES-05",
+    "API-INPUT-02",
+    "API-INPUT-03",
+    "API-EXAMPLE-BER-01",
+    "API-RECEIVER-01",
+    "API-RECEIVER-02",
+    "API-EXAMPLES-06",
+    "API-EXAMPLES-07",
+    "API-WB-01",
+    "API-WB-02",
+    "API-WB-03",
+    "CH-EST-RX-13",
+    "API-EXAMPLES-08",
+    "API-EXAMPLES-09",
+    "API-EXAMPLES-10",
+    "API-EXAMPLES-11",
+    "API-EXAMPLES-12",
+    "UI-DOC-03",
+    "API-DOC-01",
+    "API-WHEEL-01",
+    "FEC-SPARSE-01",
+    "API-WHEEL-02",
+    "RXMER-DESIGN-12",
+    "CI-MSVC-01",
+    "API-DOC-02",
+    "UBUNTU-COMPAT-01",
+    "API-OCD-01",
+    "API-PROFILES-01",
+    "WB-CL-03",
+    "WB-CL-04",
+    "API-INSTALL-03",
+    "WB-CL-05",
+    "UBUNTU-COMPAT-02",
+    "API-INSTALL-04",
+    "WIN-UPDATE-03",
+    "WIN-UPDATE-03 native verification",
+    "FEC-MON-BER",
+    "RX-DEMUX",
+    "RX-LLR-02"
+  ],
+  "original_api_requirements_sha256": "bdd38a27b9351e3e5e4d533d7b986304c340019024c8adfe91a4ef1512f1dceb"
+}

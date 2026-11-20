@@ -5,6 +5,12 @@ description: Add or review codec, DSP, profile evaluation and interoperability t
 
 # Simulation testing
 
+For integration acceptance, use the [canonical requirements](../../docs/requirements.md)
+and [integration gates](../../docs/development/checklist.md#unified-backend-integration).
+Retained source test reports/vectors inform independent cases, but every new
+accepted capability needs passing tests in unified MERLIN. Source design checks
+and documentation migration are not executable PHY acceptance.
+
 For upstream codec/OFDMA work, also read the
 [upstream validation procedure](references/upstream.md). Keep its direction-specific
 source/decoder checks alongside all applicable downstream regressions below.

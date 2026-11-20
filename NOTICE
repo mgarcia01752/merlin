@@ -68,3 +68,13 @@ for this guidance migration are docs/development/features/upstream-skills/design
 and source-inventory.json in that directory. Existing copyright notices and
 licenses above remain unchanged; this notice assigns no new redistribution
 terms to PDE-derived instructional material.
+
+The source documentation retained/adapted under
+docs/development/features/unified-backend/references/, the unified architecture
+and the requirements baseline use the same pinned source revision above.
+Modifications: explicit historical-evidence labels, rebased source links,
+MERLIN-local ownership and identifiers, retained downstream API contracts and
+documented local cache/dependency-policy adaptations. Original source documents,
+independent vectors and scientific attributions remain identified in
+docs/development/features/unified-backend/source-inventory.json.
+No private specification PDF, extracted corpus or captured device data is imported.
