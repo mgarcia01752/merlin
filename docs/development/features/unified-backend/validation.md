@@ -1,5 +1,7 @@
 # Unified documentation validation and completion boundary
 
+The unified backend is locally accepted within its declared supported scope under
+[INT-ACCEPT-01](#int-accept-01-final-backend-acceptance).
 The earlier sections preserve their named historical checkpoints. Current progress
 is owned by the [official checklist](../../checklist.md); the final regression and documentation sections below record current local acceptance.
 
@@ -316,3 +318,39 @@ cache, private input or source corpus is shipped. All normative definitions,
 original downstream evidence and source design/validation dispositions are retained.
 Broader platforms, native installers/updaters, external interoperability and
 INT-DEFER-01 remain outside this local backend/documentation acceptance.
+
+## INT-ACCEPT-01: Final backend acceptance
+
+All 22 mandatory integration tasks are accepted in the official checklist. The
+[final review candidate](acceptance-candidate.json), [five requirement chains and
+review data](acceptance-evidence.json), and [85 exact final tool cases](acceptance-test-results.json)
+join the existing runtime records. INT-DEFER-01 remains unchecked and outside
+this delivery. No completed downstream task or original requirement ID is lost.
+
+| Reviewed boundary | Evidence and accepted scope |
+| --- | --- |
+| Shared DSP and FEC | Independent Fourier/PRBS vectors, frozen former-kernel equality, all three distinct upstream LDPC families, source-table/syndrome/parity/shortening/original-information checks. Scientific kernels and waveform state keep their declared owners. |
+| Downstream | 334 workspace cases plus relevant codec/PNM/CLI/native/Qt cases preserve existing behavior, grids, reference planes, PLC/NCP, original-source comparison and partial outcomes. |
+| Upstream | 83 engine cases preserve 25/50 kHz operation, source/TX/channel/received-only RX and bounded sessions. All 40 core requirement chains have integrated named evidence. |
+| Measurement admission | 68 PNM workspace cases cover old and upstream inputs, exact bytes/hashes/nulls/epochs, capture inventories and complete typed measured association. Measured-RxMER restrictions remain explicit. |
+| Rust and Python | 364 Rust rows, 373 actual native operations, 88 directional/common class exports and 59 preserved root classes. Six facade and two common workspace cases supplement prior direction-only builds; all 48 installed-native cases use separate Rust references. Same-named directional types remain independent. |
+| CLI and existing Qt | All 32 CLI cases, including 23 preserved cases and nine upstream cases; 87 Qt Rust and 89 software/offscreen QML cases, with the current debug executable built. No upstream Qt implementation. |
+| Numerical and performance records | [FEC allocation/benchmark evidence](fec-validation.md#numerical-and-allocation-evidence) and [DSP paired hot-path measurements](../signal-processing/validation.md#hot-path-and-allocation-evidence) remain intact. Source inspection is not allocator profiling; host timings are not universal throughput promises. Ordinary regression skips only three named performance benchmarks. |
+| Provenance and documentation | All source document dispositions, 59 source requirements, 520 canonical IDs, 430 downstream task mappings and 163 protected original records remain validated. Twelve canonical skills and 24 discovery links resolve. No original technical source document/vector was deleted. |
+| License and delivery | Root/Python/Qt third-party package identity counts remain 119/121/202; Cargo locks, root LICENSE and NOTICE match accepted tooling checkpoint `95e2ac5`. Wheel notices, CLI inventory and version/guide policy retain their accepted checks. |
+| Final acceptance automation | 85 tool cases, current link/dependency/ID preservation checks and strict actual compiler/native/compiled-case acceptance pass. Every accepted requirement chain has exact source/case/candidate/observed-result fields; eight already completed historical planning/FEC/DSP tasks keep verified original evidence. |
+
+The complete 832-file regression manifest still matches the current scientific,
+native and Qt implementation bytes. Changes after that regression are reference
+generation and documentation only. Full Rust/CLI/PNM/Qt tests and the accepted
+48-case native run retain their own immutable candidate records. Fresh export and
+compiled-case checks are current metadata validation, not a fabricated new runtime.
+
+Supported upstream measured RxMER retains unity H and effective C, with sample
+noise/timing disabled; broader synthesis is not inferred from generic channel
+support. Upstream Qt, wider acquisition/confidence, fractional timing/phase noise,
+finite-file transport and ranging/probes remain INT-DEFER-01. No external
+modem/CMTS interoperability, hosted CI, Windows runtime or installed updater/installer
+lifecycle is claimed. Local security audit has zero vulnerabilities and retains
+the unsuppressed `humantime 2.4.0` maintenance advisory `RUSTSEC-2026-0542`.
+This accepts the backend source branch; no merge, release, push or publication.

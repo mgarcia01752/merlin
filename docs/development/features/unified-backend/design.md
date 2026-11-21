@@ -248,3 +248,21 @@ examples and skill owner paths. Link the final ten-condition review and exact
 requirement/acceptance records. Existing link/ID/dependency/source-preservation
 validators and real export/compiled-case acceptance remain required; a successful
 reference render does not substitute for the scientific regression gate.
+
+## INT-ACCEPT-01: Final supported backend review
+
+Review accepted INT-REG-01 checkpoint `559c49e` and INT-DOC-02 checkpoint
+`b3ffc80`. Verify the full 832-file scientific/native/Qt regression manifest still
+matches current bytes; documentation/reference tooling is the only later change.
+Require every mandatory integration dependency accepted, all requirement chains
+valid and the explicit INT-DEFER-01 exclusion retained. Reconcile numerical
+vectors, independently executed Rust/native outcomes, reference-plane limits,
+hot-path/allocation evidence, provenance, notices and unchanged third-party pins.
+
+Run current metadata/link/source/history acceptance against fresh compiler/native
+exports and Cargo test discovery. Retain full-suite and installed-wheel evidence
+with their own immutable candidates, rather than rerunning unchanged science for
+a documentation-only review. Repeat relevant tool/version/guide checks. Final
+records supplement the official checklist and retain eight verified historical
+planning/FEC/DSP exceptions. No source cleanup, Qt expansion, release, merge or
+publication is part of backend acceptance.

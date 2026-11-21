@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "completion_authority": "docs/development/checklist.md",
+  "records": [
+    {
+      "requirement_id": "REQ-COM-NFR-04",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-accept-01-final-supported-backend-review",
+      "checklist_task": "INT-ACCEPT-01",
+      "implementing_crate": "tools (final backend review/validation, not a Cargo crate)",
+      "source_file": "tools/validation/implementation_evidence.py",
+      "symbol": "audit",
+      "test_file": "tools/validation/test_implementation_evidence.py",
+      "qualified_test_case": "ImplementationEvidenceTests.test_complete_working_candidate_and_exact_case",
+      "validation_command": "python3 -B -m unittest discover -s tools/validation -p 'test_*.py' -v",
+      "observed_result": "pass; all 22 mandatory integration tasks have local acceptance; 85 final tool cases, actual strict export/compiled-case audit and unchanged 832-file runtime source identity. Numerical/performance/provenance/license/support limits reviewed against retained exact runtime records.",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/acceptance-candidate.json",
+        "sha256": "f606a07607956f136b034e8236bf0f246e02dc39af0a483888269ac096acd179"
+      },
+      "status": "integrated-validated INT-ACCEPT-01",
+      "limitations": "Local Linux x86_64 / Rust 1.85.1 / CPython 3.10 / Qt 6.8.3. Final review does not create new scientific runtime results or close INT-DEFER-01, external interoperability, Windows/hosted or native installer/updater acceptance. Security maintenance advisory retained; no push/release/merge/publication."
+    },
+    {
+      "requirement_id": "REQ-COM-DOC-01",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-accept-01-final-supported-backend-review",
+      "checklist_task": "INT-ACCEPT-01",
+      "implementing_crate": "tools (final backend review/validation, not a Cargo crate)",
+      "source_file": "tools/validation/feature_documentation.py",
+      "symbol": "audit",
+      "test_file": "tools/validation/test_feature_documentation.py",
+      "qualified_test_case": "DocumentationValidationTests.test_real_checkout",
+      "validation_command": "python3 -B -m unittest discover -s tools/validation -p 'test_*.py' -v",
+      "observed_result": "pass; all 22 mandatory integration tasks have local acceptance; 85 final tool cases, actual strict export/compiled-case audit and unchanged 832-file runtime source identity. Numerical/performance/provenance/license/support limits reviewed against retained exact runtime records.",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/acceptance-candidate.json",
+        "sha256": "f606a07607956f136b034e8236bf0f246e02dc39af0a483888269ac096acd179"
+      },
+      "status": "integrated-validated INT-ACCEPT-01",
+      "limitations": "Local Linux x86_64 / Rust 1.85.1 / CPython 3.10 / Qt 6.8.3. Final review does not create new scientific runtime results or close INT-DEFER-01, external interoperability, Windows/hosted or native installer/updater acceptance. Security maintenance advisory retained; no push/release/merge/publication."
+    },
+    {
+      "requirement_id": "REQ-DS-DELIVERY-01",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-accept-01-final-supported-backend-review",
+      "checklist_task": "INT-ACCEPT-01",
+      "implementing_crate": "tools (final backend review/validation, not a Cargo crate)",
+      "source_file": "tools/release/versions.py",
+      "symbol": "synchronize",
+      "test_file": "tools/release/test_versions.py",
+      "qualified_test_case": "VersionPropagationTests.test_two_versions_and_dependency_preservation",
+      "validation_command": "python3 -B -m unittest discover -s tools/release -p 'test_*.py' -v",
+      "observed_result": "pass; all 22 mandatory integration tasks have local acceptance; 85 final tool cases, actual strict export/compiled-case audit and unchanged 832-file runtime source identity. Numerical/performance/provenance/license/support limits reviewed against retained exact runtime records.",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/acceptance-candidate.json",
+        "sha256": "f606a07607956f136b034e8236bf0f246e02dc39af0a483888269ac096acd179"
+      },
+      "status": "integrated-validated INT-ACCEPT-01",
+      "limitations": "Local Linux x86_64 / Rust 1.85.1 / CPython 3.10 / Qt 6.8.3. Final review does not create new scientific runtime results or close INT-DEFER-01, external interoperability, Windows/hosted or native installer/updater acceptance. Security maintenance advisory retained; no push/release/merge/publication."
+    },
+    {
+      "requirement_id": "REQ-COM-TRACE-01",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-accept-01-final-supported-backend-review",
+      "checklist_task": "INT-ACCEPT-01",
+      "implementing_crate": "tools (final backend review/validation, not a Cargo crate)",
+      "source_file": "tools/validation/integration_traceability.py",
+      "symbol": "audit",
+      "test_file": "tools/validation/test_integration_traceability.py",
+      "qualified_test_case": "IntegrationTraceabilityTests.test_valid_contract_and_real_repository",
+      "validation_command": "python3 -B -m unittest discover -s tools/validation -p 'test_*.py' -v",
+      "observed_result": "pass; all 22 mandatory integration tasks have local acceptance; 85 final tool cases, actual strict export/compiled-case audit and unchanged 832-file runtime source identity. Numerical/performance/provenance/license/support limits reviewed against retained exact runtime records.",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/acceptance-candidate.json",
+        "sha256": "f606a07607956f136b034e8236bf0f246e02dc39af0a483888269ac096acd179"
+      },
+      "status": "integrated-validated INT-ACCEPT-01",
+      "limitations": "Local Linux x86_64 / Rust 1.85.1 / CPython 3.10 / Qt 6.8.3. Final review does not create new scientific runtime results or close INT-DEFER-01, external interoperability, Windows/hosted or native installer/updater acceptance. Security maintenance advisory retained; no push/release/merge/publication."
+    },
+    {
+      "requirement_id": "REQ-COM-TRACE-02",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-accept-01-final-supported-backend-review",
+      "checklist_task": "INT-ACCEPT-01",
+      "implementing_crate": "tools (final backend review/validation, not a Cargo crate)",
+      "source_file": "tools/validation/implementation_evidence.py",
+      "symbol": "audit",
+      "test_file": "tools/validation/test_implementation_evidence.py",
+      "qualified_test_case": "ImplementationEvidenceTests.test_accepted_task_cannot_drop_its_requirement_chain",
+      "validation_command": "python3 -B -m unittest discover -s tools/validation -p 'test_*.py' -v",
+      "observed_result": "pass; all 22 mandatory integration tasks have local acceptance; 85 final tool cases, actual strict export/compiled-case audit and unchanged 832-file runtime source identity. Numerical/performance/provenance/license/support limits reviewed against retained exact runtime records.",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/acceptance-candidate.json",
+        "sha256": "f606a07607956f136b034e8236bf0f246e02dc39af0a483888269ac096acd179"
+      },
+      "status": "integrated-validated INT-ACCEPT-01",
+      "limitations": "Local Linux x86_64 / Rust 1.85.1 / CPython 3.10 / Qt 6.8.3. Final review does not create new scientific runtime results or close INT-DEFER-01, external interoperability, Windows/hosted or native installer/updater acceptance. Security maintenance advisory retained; no push/release/merge/publication."
+    }
+  ],
+  "mandatory_tasks": 22,
+  "deferred_tasks": [
+    "INT-DEFER-01"
+  ],
+  "runtime_source_files": 832,
+  "runtime_candidate_sha256": "39c568e875baa4c2ae455cc7403ad52e590b400c74432f31c0f190812a68021d",
+  "runtime_current_byte_match": true,
+  "complete_requirement_records": 78,
+  "verified_historical_tasks": 8,
+  "numerical_performance_references": [
+    "docs/development/features/unified-backend/fec-validation.md#numerical-and-allocation-evidence",
+    "docs/development/features/signal-processing/validation.md#hot-path-and-allocation-evidence"
+  ],
+  "license_lock_review": "Locks, root LICENSE/NOTICE unchanged since 95e2ac5; original source/third-party attributions retained.",
+  "scope": "Supported unified backend source acceptance only; official checklist remains the sole completion authority."
+}

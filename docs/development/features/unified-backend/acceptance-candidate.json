@@ -1,0 +1,52 @@
+{
+  "base_revision": "b3ffc808026e73e995138c5c98ddb30adb5a132b",
+  "scope": "Final review/status and acceptance-tool source. Runtime scientific/native/Qt source remains exactly pinned by regression-candidate.json; actual compiler/native metadata is freshly generated. No scientific or dependency change.",
+  "sha256": "f606a07607956f136b034e8236bf0f246e02dc39af0a483888269ac096acd179",
+  "files": [
+    {
+      "path": "docs/architecture.md",
+      "sha256": "496a019d47f8e41a300e0fc2e8ec7d4c49cbda4dd017b2213252afdc4848274e"
+    },
+    {
+      "path": "docs/development/checklist.md",
+      "sha256": "841e7a3469278a4645968e0437fa201a657b5291d041166b3a1e4f06f3845ccf"
+    },
+    {
+      "path": "docs/development/features/unified-backend/design.md",
+      "sha256": "507c68081eb77b77927d9555f7df86988a6456c5801ceb85ebea0f79857b1bc1"
+    },
+    {
+      "path": "docs/development/features/unified-backend/source-inventory.json",
+      "sha256": "62ffdfcf46d6362996a4ab5096c3e987c3d1023b70babb50310c398df107f1de"
+    },
+    {
+      "path": "docs/development/features/unified-backend/validation.md",
+      "sha256": "ee36bfc12a487f89396f234eeedf06b7b708c18ba987863244997dcae3a8b81f"
+    },
+    {
+      "path": "docs/development/status.md",
+      "sha256": "8b979cc8914fb453ee958b0a9dfa0e39c888777c5d4313455d92d6f5cfb34883"
+    },
+    {
+      "path": "docs/requirements.md",
+      "sha256": "8683701a4458fd52f1b0b7ae73b42c8b13542ae51052620b2f3e2915000492da"
+    },
+    {
+      "path": "tools/release/versions.py",
+      "sha256": "2ef7f4bb6a48fc8d4bf6a5ea28dae488ed2ca88d7cedea47678ac2b1febdc4bf"
+    },
+    {
+      "path": "tools/validation/feature_documentation.py",
+      "sha256": "0f0f4fbf4a40a313496b6fba7f1da0b0e2d37cf7353fd8e8aa65a3e4c9d681c9"
+    },
+    {
+      "path": "tools/validation/implementation_evidence.py",
+      "sha256": "ca5a9977b9b10abc96ba0a145795fe0ec546c4cc09f20ba2d21a20676fe40090"
+    },
+    {
+      "path": "tools/validation/integration_traceability.py",
+      "sha256": "5dff3df87e6d18fab9daa05d4173ece7d514b2e5c1423e0f413649f851cb1f78"
+    }
+  ],
+  "runtime_candidate": "39c568e875baa4c2ae455cc7403ad52e590b400c74432f31c0f190812a68021d"
+}

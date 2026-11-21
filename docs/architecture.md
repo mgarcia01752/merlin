@@ -107,8 +107,8 @@ now includes an independent typed engine/session with local
 [synthetic backend acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 Capture adapters, Rust/native Python APIs and directional CLI now have local
 acceptance. Tooling and full unified regressions, including unchanged downstream Qt
-compatibility, now pass locally; final documentation/backend review follows the
-official checklist. The [regression record](development/features/unified-backend/validation.md#int-reg-01-complete-unified-workspace-regression)
+compatibility, now pass locally. Final documentation/backend review is accepted
+within the declared scope; the official checklist owns completion. The [regression record](development/features/unified-backend/validation.md#int-reg-01-complete-unified-workspace-regression)
 retains exact candidates, executed cases and platform/security boundaries.
 Source acceptance
 reports are historical evidence, never MERLIN integration passes. The
@@ -734,13 +734,18 @@ Ubuntu/Windows delivery, two CI entrypoints and all release/security gates remai
 Delivery gates: [INT-BASE-01](development/checklist.md#int-base-01), [INT-REG-01](development/checklist.md#int-reg-01), [INT-DOC-02](development/checklist.md#int-doc-02), [INT-ACCEPT-01](development/checklist.md#int-accept-01).
 
 INT-DOC-01 accepts only the consolidated design/requirement/task records.
-INT-DOC-02 remains open until implemented paths, skills, API/user docs and observed
-MERLIN integration outcomes agree. INT-ACCEPT-01 requires all relevant downstream
+INT-DOC-02 accepts agreement between implemented paths, skills, API/user docs and
+observed MERLIN integration outcomes. INT-ACCEPT-01 requires all relevant downstream
 and upstream Rust/native Python/CLI/PNM regressions inside the unified workspace,
 limits/cancellation/determinism and notice/dependency review. Do not import source
 checkmarks, source package/wheel/VM claims or stale historical status into current
 MERLIN acceptance. Keep original technical documentation and vectors until their
 requirements, decisions and evidence have been preserved and replacements pass.
+
+Current backend acceptance: [INT-ACCEPT-01 final review](development/features/unified-backend/validation.md#int-accept-01-final-backend-acceptance)
+records all 22 mandatory tasks, complete local regression and final documentation
+correspondence. INT-DEFER-01 remains outside this backend delivery. Existing
+native/hosted/installer and external interoperability boundaries remain explicit.
 
 ## Minimum acceptance: MERLIN closed loop
 

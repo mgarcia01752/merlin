@@ -377,7 +377,8 @@ architecture owner identifies concrete implementation/test paths and disposition
   605 workspace, 4 preparation and 139 analysis-only cases plus 12 workflows pass;
   static, native parity and existing downstream Qt compatibility pass. Three
   ignored benchmarks, empty doctest phases, maintenance advisory and local-only
-  platform/installer boundaries remain explicit. Final documentation is next.
+  platform/installer boundaries remain explicit. Subsequent final documentation
+  acceptance is recorded below.
 
 <a id="int-doc-02"></a>
 - [x] **INT-DOC-02** Complete final documentation and skill correspondence.
@@ -392,11 +393,17 @@ architecture owner identifies concrete implementation/test paths and disposition
   imports; 80 tool cases and fresh export/compiled-case acceptance pass.
 
 <a id="int-accept-01"></a>
-- [ ] **INT-ACCEPT-01** Accept the unified backend within declared supported scope.
+- [x] **INT-ACCEPT-01** Accept the unified backend within declared supported scope.
   Requirements: [REQ-COM-NFR-04](../requirements.md#req-com-nfr-04), [REQ-COM-DOC-01](../requirements.md#req-com-doc-01), [REQ-DS-DELIVERY-01](../requirements.md#req-ds-delivery-01), [REQ-COM-TRACE-01](../requirements.md#req-com-trace-01), [REQ-COM-TRACE-02](../requirements.md#req-com-trace-02).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-acceptance-and-final-documentation-gate).
   Depends on: INT-DOC-02, INT-REG-01, INT-TOOLS-01.
   Acceptance: Review complete requirement/acceptance and numerical/performance/provenance/license matrices for both independently executable directions. All mandatory children pass locally; retain limitations, deferred scope and native/hosted boundaries. No merge, release, publication or push is authorized by acceptance.
+  Acceptance evidence: [final supported-scope review](features/unified-backend/validation.md#int-accept-01-final-backend-acceptance)
+  and [exact requirement/candidate records](features/unified-backend/acceptance-evidence.json).
+  All 22 mandatory integration tasks pass their local gates; the 832-file runtime
+  manifest still matches current bytes. Final 85 tool cases and fresh strict
+  compiler/native/compiled-case acceptance pass. INT-DEFER-01, broader platform
+  and installed/hosted boundaries remain explicit; no publication is implied.
 
 <a id="int-defer-01"></a>
 - [ ] **INT-DEFER-01** Retain explicit future UI, wider PHY and ranging designs.
@@ -1785,6 +1792,10 @@ other initial Ubuntu targets.
 
 <a id="task-later-01"></a>
 - [ ] **LATER-01** OFDMA architecture and implementation after downstream scope.
+  Historical roadmap marker: supported backend delivery is now accepted under
+  [INT-ACCEPT-01](#int-accept-01). Wider upstream scope remains
+  [INT-DEFER-01](#int-defer-01); this original checkbox does not own integration
+  progress or imply that the accepted backend is still unimplemented.
 
   Requirements: [LATER-01](../requirements.md#ds-later-01).
 

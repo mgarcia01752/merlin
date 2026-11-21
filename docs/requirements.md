@@ -1267,6 +1267,12 @@ Detailed UI refinements keep their status owner in the subordinate UI checklist.
 | <a id="ds-later-01"></a>**LATER-01**: OFDMA architecture and implementation after downstream scope. | [LATER-01](development/checklist.md#task-later-01). Pending / partial. | [architecture](architecture.md#purpose-and-scope); [lib.rs](../crates/ofdm/src/lib.rs) | Record: [visual-workspace/plan](development/features/visual-workspace/plan.md). |
 | <a id="ds-later-02"></a>**LATER-02**: Channel bonding/multi-channel simulation or FDX-specific behavior only under a separate explicit design and validation scope. | [LATER-02](development/checklist.md#task-later-02). Pending / partial. | [architecture](architecture.md#purpose-and-scope); [lib.rs](../crates/ofdm/src/lib.rs) | Record: [visual-workspace/plan](development/features/visual-workspace/plan.md). |
 
+The original LATER-01 row retains its historical pending/partial marker. The
+supported OFDMA backend in `crates/ofdma` now has
+[INT-ACCEPT-01 acceptance](development/checklist.md#int-accept-01) under the
+[unified upstream architecture](architecture.md#unified-upstream-configuration-and-source).
+Wider upstream scope remains [INT-DEFER-01](development/checklist.md#int-defer-01).
+
 
 ### Pilot/PLC supplied-H reference evidence
 

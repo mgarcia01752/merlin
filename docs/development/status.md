@@ -13,7 +13,8 @@ The independent upstream OFDMA backend now implements typed configuration, CM TX
 channel, received-only CMTS RX, bounded sessions and measured UCD/RxMER/Pre-Eq
 admission. One Rust facade and one native Python distribution expose directional
 namespaces; the existing CLI also runs upstream. Full unified regressions pass.
-Final documentation and backend acceptance follow their checklist gates.
+Final documentation and backend acceptance now pass their local checklist gates;
+see the [final supported-scope review](features/unified-backend/validation.md#int-accept-01-final-backend-acceptance).
 Multi-channel simulation and upstream Qt remain outside the implemented scope.
 Continue work through the [development workspace](README.md), which links public
 feature records and defines the ignored local evidence/output location.
