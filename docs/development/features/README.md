@@ -1,176 +1,175 @@
 # Feature development records
 
-- [Downstream requirements backfill (DS-REQ-01)](downstream-requirements/design.md)
-  · [task/evidence index](downstream-requirements/traceability.json)
-  · [validation and gaps](downstream-requirements/validation.md)
+Engineering responsibilities organize this index; established feature directories
+and their original paths remain intact. The [architecture](../../architecture.md),
+[requirements baseline](../../requirements.md) and [official checklist](../checklist.md)
+are authoritative. [DOC-ORG-01](../checklist.md#doc-org-01) records the documentation
+reorganization; [acceptance and exact preservation counts](unified-backend/validation.md#doc-org-01-functional-documentation-acceptance)
+do not imply new runtime acceptance.
 
-- [Unified backend architecture, requirements and checklist consolidation](unified-backend/design.md)
-  · [source dispositions and evidence](unified-backend/source-review.md)
-  · [validation and remaining acceptance](unified-backend/validation.md)
-  · [proposed functional documentation organization](unified-backend/feature-documentation-plan.md)
-  · [complete proposed file and reference map](unified-backend/feature-documentation-inventory.json)
+Current functional records identify local owners, requirements, tasks and evidence.
+Historical records keep their original findings, paths and limits; consult current
+canonical task states before interpreting old pending/complete statements. Private
+evidence stays under ignored `docs/development/local/` and is not linked as a shipped artifact.
 
-- [Upstream skill migration (SKILL-US-01)](upstream-skills/design.md)
-  · [validation](upstream-skills/validation.md)
+New functional owners: [FEC](fec/design.md), [DSP](signal-processing/design.md),
+[OFDMA configuration](ofdma/configuration.md), [TX](ofdma/transmitter.md),
+[RX](ofdma/receiver.md), [channel](ofdma/channel.md), [Pre-Eq](ofdma/pre-equalization.md),
+[upstream PNM](pnm-measurement-inputs/upstream.md) and [paired APIs](high-level-api/upstream.md).
 
-- [Selective engineering guidance adoption (DEV-GUIDE-01)](engineering-guidance/design.md)
-  · [validation](engineering-guidance/validation.md)
+Future upstream Qt design remains deferred; existing downstream workbench ownership
+is retained. The [source UI design](unified-backend/references/extension-designs-ui.md)
+is historical guidance, not authorization to create a second application.
 
-- [Recorded receiver mode in QAM](qam-receiver-mode/design.md)
+Reference navigation: [development status](../status.md),
+[subordinate UI checklist](../ui-checklist.md),
+[generated Rust/Python API reference](../../reference/api-reference.md) and
+[its design owner](high-level-api/design.md#api-doc-01-generated-high-level-rust-and-python-references).
+Workbench guides: [channel measurements](../../user/channel-measurements.md),
+[closed-loop execution](../../user/closed-loop-workbench.md) and
+[receiver instruments](../../user/receiver-workbench.md).
 
-- [Global one-second tooltip delay](tooltip-delay/design.md)
+## FEC mechanisms and distinct code families
 
-- [CableLabs-style notch workbench](cl-notch-workbench/design.md)
+- **fec-shortening**: [design.md](fec-shortening/design.md) · [validation.md](fec-shortening/validation.md).
+- **fec**: [design.md (active functional owner)](fec/design.md).
+- **ncp-codec**: [architecture.md](ncp-codec/architecture.md).
+- **plc-ldpc**: [architecture.md](plc-ldpc/architecture.md).
+- **sparse-encoder**: [design.md](sparse-encoder/design.md).
 
-- [PNM RxMER/FEC reference skill](pnm-reference-skill/design.md)
+## Signal processing and numerical conventions
 
-- [Generated Rust and Basic Python API reference](../../reference/api-reference.md) · [design](high-level-api/design.md#api-doc-01-generated-high-level-rust-and-python-references)
+- **channel-widths**: [design.md](channel-widths/design.md).
+- **qam-completion**: [design.md](qam-completion/design.md) · [external-vectors.md](qam-completion/external-vectors.md) · [validation.md](qam-completion/validation.md).
+- **qam-demapper-performance**: [design.md](qam-demapper-performance/design.md).
+- **qam-mapping**: [architecture.md](qam-mapping/architecture.md).
+- **qam256-coding-loop**: [architecture.md](qam256-coding-loop/architecture.md).
+- **signal-processing**: [design.md (active functional owner)](signal-processing/design.md).
 
-- [RxMER Designer](rxmer-designer/design.md) · [validation](rxmer-designer/validation.md) · [PNM export plan](rxmer-designer/pnm-export-plan.md)
+## Downstream OFDM, channels and simulation
 
-- [Graphical transmitter test points](transmitter-graphs/design.md)
+- **carrier-layout**: [architecture.md](carrier-layout/architecture.md).
+- **cell-interleaving**: [architecture.md](cell-interleaving/architecture.md).
+- **cell-randomizer**: [architecture.md](cell-randomizer/architecture.md).
+- **channel-runner**: [plan.md](channel-runner/plan.md) · [validation.md](channel-runner/validation.md).
+- **channel-tilt**: [design.md](channel-tilt/design.md).
+- **closed-loop-validation**: [design.md](closed-loop-validation/design.md) · [validation.md](closed-loop-validation/validation.md).
+- **completion-group**: [design.md](completion-group/design.md) · [external-channel-vectors.md](completion-group/external-channel-vectors.md) · [validation.md](completion-group/validation.md).
+- **file-payload-source**: [design.md](file-payload-source/design.md) · [implementation.md](file-payload-source/implementation.md).
+- **impairment-group**: [plan.md](impairment-group/plan.md) · [validation.md](impairment-group/validation.md).
+- **independent-channel-estimation**: [design.md](independent-channel-estimation/design.md) · [implementation.md](independent-channel-estimation/implementation.md).
+- **lte-ingress**: [plan.md](lte-ingress/plan.md) · [validation.md](lte-ingress/validation.md).
+- **paired-constellation**: [implementation.md](paired-constellation/implementation.md) · [plan.md](paired-constellation/plan.md).
+- **payload-transport**: [plan.md](payload-transport/plan.md) · [validation.md](payload-transport/validation.md).
+- **pilot-channel-estimation**: [implementation.md](pilot-channel-estimation/implementation.md) · [plan.md](pilot-channel-estimation/plan.md).
+- **pilot-plc-signals**: [architecture.md](pilot-plc-signals/architecture.md).
+- **plc-block-interleaving**: [architecture.md](plc-block-interleaving/architecture.md).
+- **plc-completion**: [plan.md](plc-completion/plan.md) · [validation.md](plc-completion/validation.md).
+- **plc-message-blocks**: [architecture.md](plc-message-blocks/architecture.md).
+- **plc-randomization**: [architecture.md](plc-randomization/architecture.md) · [validation.md](plc-randomization/validation.md).
+- **prbs-source**: [plan.md](prbs-source/plan.md) · [validation.md](prbs-source/validation.md).
+- **receiver-acquisition**: [design.md](receiver-acquisition/design.md) · [validation.md](receiver-acquisition/validation.md).
+- **receiver-configuration**: [plan.md](receiver-configuration/plan.md) · [validation.md](receiver-configuration/validation.md).
+- **rf-power-budget**: [design.md](rf-power-budget/design.md).
+- **run-infrastructure**: [plan.md](run-infrastructure/plan.md) · [validation.md](run-infrastructure/validation.md).
+- **single-channel-transmission**: [architecture.md](single-channel-transmission/architecture.md).
+- **symbol-packing**: [architecture.md](symbol-packing/architecture.md) · [design.md](symbol-packing/design.md).
+- **waveform-direction**: [notes.md](waveform-direction/notes.md).
+- **waveform**: [plan.md](waveform/plan.md) · [validation.md](waveform/validation.md).
 
-- [Responsive workbench loading](responsive-workbench-open/design.md)
-- [RxMER capture selection and CWB capacity](rxmer-selection/design.md)
+## Upstream OFDMA
 
-- [Theme-aware README workbench diagram](readme-workbench-diagram/design.md)
+- **ofdma**: [channel.md (active functional owner)](ofdma/channel.md) · [configuration.md (active functional owner)](ofdma/configuration.md) · [pre-equalization.md (active functional owner)](ofdma/pre-equalization.md) · [receiver.md (active functional owner)](ofdma/receiver.md) · [transmitter.md (active functional owner)](ofdma/transmitter.md).
 
-- [Transmitter workbench (UI-TX-03)](transmitter-workbench/design.md)
+## PNM and measurement processing
 
-This index includes ongoing feature plans and historical design/validation
-records moved from the former root workspace. The [paired constellation](paired-constellation/implementation.md) group
-implements CONST-01 through CONST-05 using supplied H/reciprocal correction. Historical records describe the state at the
-time each task was performed. Earlier statements about pending stages are
-historical; consult the [current checklist](../checklist.md),
-[status](../status.md) and [canonical architecture](../../architecture.md).
+- **pnm-measurement-inputs**: [README.md](pnm-measurement-inputs/README.md) · [profile-view.md](pnm-measurement-inputs/profile-view.md) · [upstream.md (active functional owner)](pnm-measurement-inputs/upstream.md).
+- **pnm-reference-skill**: [design.md](pnm-reference-skill/design.md).
+- **rxmer-designer**: [design.md](rxmer-designer/design.md) · [pnm-export-plan.md](rxmer-designer/pnm-export-plan.md) · [validation.md](rxmer-designer/validation.md).
+- **rxmer-error-sweep**: [README.md](rxmer-error-sweep/README.md).
 
-Continue development here: add or update `features/<feature>/plan.md` and related
-reviewable design/validation notes. Keep each algorithm's maintained user guide
-under `docs/user/`; do not turn historical reports into competing architecture.
-Private source documents and generated evidence belong in the matching ignored
-`docs/development/local/<feature>/` directory. Those local artifacts are absent
-from a fresh clone and are deliberately not Markdown link targets.
+## Public Rust and Python APIs
 
-| Work area | Records |
-| --- | --- |
-| local command timing | [design](command-timing/design.md) |
-| parallel local tests | [design](parallel-local-tests/design.md) |
-| user-facing UI wording | [design](ui-copy/design.md) |
-| Ubuntu desktop/update notification | [design](ubuntu-desktop/design.md) |
-| workbench example bundles | [design](workbench-examples/design.md) |
-| recovered-data panel | [design](verification-panel/design.md) |
-| mouse chart navigation | [design](mouse-zoom/design.md) |
-| receiver instruments | [design](receiver-instruments/design.md) |
-| popup close controls | [design](popup-close-controls/design.md) |
-| carrier layout | [architecture](carrier-layout/architecture.md) |
-| cell interleaving | [architecture](cell-interleaving/architecture.md) |
-| cell randomizer | [architecture](cell-randomizer/architecture.md) |
-| channel runner | [plan](channel-runner/plan.md) · [validation](channel-runner/validation.md) |
-| checklist audit | [plan](checklist-audit/plan.md) · [validation](checklist-audit/validation.md) |
-| checklist naming | [plan](checklist-naming/plan.md) |
-| documentation-only push | [design](docs-only-push/design.md) |
-| development workspace | [plan](development-workspace/plan.md) |
-| fec shortening | [design](fec-shortening/design.md) · [validation](fec-shortening/validation.md) |
-| file payload source | [design](file-payload-source/design.md) · [implementation](file-payload-source/implementation.md) |
-| impairment group | [plan](impairment-group/plan.md) · [validation](impairment-group/validation.md) |
-| lte ingress | [plan](lte-ingress/plan.md) · [validation](lte-ingress/validation.md) |
-| ncp codec | [architecture](ncp-codec/architecture.md) |
-| paired constellation | [plan](paired-constellation/plan.md) · [implementation](paired-constellation/implementation.md) |
-| payload transport | [plan](payload-transport/plan.md) · [validation](payload-transport/validation.md) |
-| receiver channel estimation | [plan](pilot-channel-estimation/plan.md) · [implementation](pilot-channel-estimation/implementation.md) |
-| pilot plc signals | [architecture](pilot-plc-signals/architecture.md) |
-| plc block interleaving | [architecture](plc-block-interleaving/architecture.md) |
-| plc completion | [plan](plc-completion/plan.md) · [validation](plc-completion/validation.md) |
-| plc ldpc | [architecture](plc-ldpc/architecture.md) |
-| plc message blocks | [architecture](plc-message-blocks/architecture.md) |
-| plc randomization | [architecture](plc-randomization/architecture.md) · [validation](plc-randomization/validation.md) |
-| pnm measurement inputs | [README](pnm-measurement-inputs/README.md), [visual DPD](pnm-measurement-inputs/profile-view.md) |
-| prbs source | [plan](prbs-source/plan.md) · [validation](prbs-source/validation.md) |
-| project architecture | [plan](project-architecture/plan.md) |
-| Basic Rust API and Basic Python API | [Design](high-level-api/design.md), [validation](high-level-api/validation.md); [historical proposal](python-adapter/design.md) |
-| project rename | [notes](project-rename/notes.md) |
-| qam completion | [QAM-02/03 design](qam-completion/design.md) · [validation](qam-completion/validation.md) · [QAM-04 evidence needed](qam-completion/external-vectors.md) |
-| qam mapping | [architecture](qam-mapping/architecture.md) |
-| qam256 coding loop | [architecture](qam256-coding-loop/architecture.md) |
-| receiver configuration | [plan](receiver-configuration/plan.md) · [validation](receiver-configuration/validation.md) |
-| run infrastructure | [plan](run-infrastructure/plan.md) · [validation](run-infrastructure/validation.md) |
-| security checks | [design](security-checks/design.md) |
-| rust logging | [architecture](rust-logging/architecture.md) |
-| rust only signal processing | [architecture](rust-only-signal-processing/architecture.md) |
-| rxmer error sweep | [README](rxmer-error-sweep/README.md) |
-| simulation documentation | [plan](simulation-documentation/plan.md) · [validation](simulation-documentation/validation.md) |
-| single channel transmission | [architecture](single-channel-transmission/architecture.md) |
-| source organization | [architecture](source-organization/architecture.md) |
-| symbol packing | [architecture](symbol-packing/architecture.md), [build hygiene](symbol-packing/design.md) |
-| Development setup | [installer and pinned source design](development-setup/design.md) |
-| Qt simulation workbench (UI-01 partial) | [design](visual-workspace/design.md) · [validation](visual-workspace/validation.md) · [plan](visual-workspace/plan.md) · [UI checklist](../ui-checklist.md) |
-| Transmitter spectrum | [UI-TX-01/02 design](transmitter-spectrum/design.md) |
-| waveform | [plan](waveform/plan.md) · [validation](waveform/validation.md) |
-| waveform direction | [notes](waveform-direction/notes.md) |
-| downstream completion group | [design](completion-group/design.md) · [validation](completion-group/validation.md) · [external vector needs](completion-group/external-channel-vectors.md) |
-| synthetic channel widths | [design and validation](channel-widths/design.md) |
-| receiver acquisition | [WAVE-RX-05 design](receiver-acquisition/design.md) · [validation](receiver-acquisition/validation.md) |
-| closed-loop minimum acceptance | [design](closed-loop-validation/design.md) · [test evidence](closed-loop-validation/validation.md) |
+- **high-level-api**: [design.md](high-level-api/design.md) · [requirements.md](high-level-api/requirements.md) · [upstream.md (active functional owner)](high-level-api/upstream.md) · [validation.md](high-level-api/validation.md).
+- **python-adapter**: [design.md](python-adapter/design.md).
 
-Build tooling proposal: [BUILD-01–04 content-based cache](build-cache/design.md).
+## Workbench and presentation
 
-Channel Estimate/RxMER workbench: [design](rxmer-workbench/design.md) · [validation](rxmer-workbench/validation.md) · [user guide](../../user/channel-measurements.md).
+- **about-menu**: [design.md](about-menu/design.md).
+- **channel-workbench**: [design.md](channel-workbench/design.md).
+- **cl-notch-workbench**: [comparison-sim-1.json](cl-notch-workbench/comparison-sim-1.json) · [comparison-sim-1.md](cl-notch-workbench/comparison-sim-1.md) · [design.md](cl-notch-workbench/design.md).
+- **contextual-help**: [design.md](contextual-help/design.md).
+- **fec-monitor**: [design.md](fec-monitor/design.md).
+- **mouse-zoom**: [design.md](mouse-zoom/design.md).
+- **popup-close-controls**: [design.md](popup-close-controls/design.md).
+- **profile-performance**: [design.md](profile-performance/design.md).
+- **qam-markers**: [design.md](qam-markers/design.md).
+- **qam-mer**: [design.md](qam-mer/design.md).
+- **qam-receiver-mode**: [design.md](qam-receiver-mode/design.md).
+- **qam-run-results**: [design.md](qam-run-results/design.md).
+- **qt-closed-loop**: [design.md](qt-closed-loop/design.md) · [validation.md](qt-closed-loop/validation.md).
+- **qt-source-organization**: [design.md](qt-source-organization/design.md).
+- **readme-workbench-diagram**: [design.md](readme-workbench-diagram/design.md).
+- **receiver-instruments**: [design.md](receiver-instruments/design.md).
+- **receiver-workbench**: [design.md](receiver-workbench/design.md) · [validation.md](receiver-workbench/validation.md).
+- **responsive-workbench-open**: [design.md](responsive-workbench-open/design.md).
+- **restore-workbench-inputs**: [design.md](restore-workbench-inputs/design.md).
+- **run-elapsed-time**: [design.md](run-elapsed-time/design.md).
+- **rxmer-selection**: [design.md](rxmer-selection/design.md).
+- **rxmer-workbench**: [design.md](rxmer-workbench/design.md) · [validation.md](rxmer-workbench/validation.md).
+- **symbol-timing-popup**: [design.md](symbol-timing-popup/design.md).
+- **terminology**: [design.md](terminology/design.md).
+- **tooltip-delay**: [design.md](tooltip-delay/design.md).
+- **transmitter-graphs**: [design.md](transmitter-graphs/design.md).
+- **transmitter-spectrum**: [design.md](transmitter-spectrum/design.md) · [validation.md](transmitter-spectrum/validation.md).
+- **transmitter-workbench**: [design.md](transmitter-workbench/design.md).
+- **ui-copy**: [design.md](ui-copy/design.md).
+- **user-guide-captures**: [design.md](user-guide-captures/design.md) · [png-audit.md](user-guide-captures/png-audit.md).
+- **verification-panel**: [design.md](verification-panel/design.md).
+- **visual-workspace**: [design.md](visual-workspace/design.md) · [plan.md](visual-workspace/plan.md) · [validation.md](visual-workspace/validation.md).
+- **workbench-configuration**: [design.md](workbench-configuration/design.md).
+- **workbench-examples**: [design.md](workbench-examples/design.md).
 
-Receiver Workbench navigation: [design](receiver-workbench/design.md) · [validation](receiver-workbench/validation.md) · [user interaction](../../user/receiver-workbench.md).
+## Integration, requirements and engineering history
 
-Qt closed-loop execution and workbench persistence: [design](qt-closed-loop/design.md) · [validation](qt-closed-loop/validation.md) · [user guide](../../user/closed-loop-workbench.md).
+The frozen documentation plan/inventory preserve proposal-time wording. The
+[current routing](unified-backend/source-inventory.json) and
+[DOC-ORG-01 evidence](unified-backend/validation.md#doc-org-01-functional-documentation-acceptance)
+record the approved execution and its documentation-only acceptance.
 
-- [Current native user-guide captures (UI-DOC-01)](user-guide-captures/design.md)
+- **checklist-audit**: [plan.md](checklist-audit/plan.md) · [validation.md](checklist-audit/validation.md).
+- **checklist-naming**: [plan.md](checklist-naming/plan.md).
+- **development-workspace**: [plan.md](development-workspace/plan.md).
+- **downstream-requirements**: [design.md](downstream-requirements/design.md) · [traceability.json](downstream-requirements/traceability.json) · [validation.md](downstream-requirements/validation.md).
+- **engineering-guidance**: [design.md](engineering-guidance/design.md) · [source-inventory.json](engineering-guidance/source-inventory.json) · [validation.md](engineering-guidance/validation.md).
+- **project-architecture**: [plan.md](project-architecture/plan.md).
+- **project-rename**: [notes.md](project-rename/notes.md).
+- **rust-only-signal-processing**: [architecture.md](rust-only-signal-processing/architecture.md).
+- **simulation-documentation**: [plan.md](simulation-documentation/plan.md) · [validation.md](simulation-documentation/validation.md).
+- **source-organization**: [architecture.md](source-organization/architecture.md).
+- **unified-backend**: [baseline.md](unified-backend/baseline.md) · [design.md](unified-backend/design.md) · [feature-documentation-inventory.json](unified-backend/feature-documentation-inventory.json) · [feature-documentation-plan.md](unified-backend/feature-documentation-plan.md) · [fec-validation.md](unified-backend/fec-validation.md) · [reuse-review.md](unified-backend/reuse-review.md) · [scientific-source-review.json](unified-backend/scientific-source-review.json) · [source-inventory.json](unified-backend/source-inventory.json) · [source-review.md](unified-backend/source-review.md) · [validation.md](unified-backend/validation.md).
+- **upstream-skills**: [design.md](upstream-skills/design.md) · [source-inventory.json](upstream-skills/source-inventory.json) · [validation.md](upstream-skills/validation.md).
 
-- [Online terminology guide (UI-DOC-02)](terminology/design.md)
+## Development tooling and delivery
 
-- [Basic Channel Simulator staging (UI-CH-01, implemented)](channel-workbench/design.md)
+- **automatic-updates**: [design.md](automatic-updates/design.md).
+- **build-cache**: [design.md](build-cache/design.md).
+- **command-timing**: [design.md](command-timing/design.md).
+- **development-setup**: [design.md](development-setup/design.md).
+- **docs-only-push**: [design.md](docs-only-push/design.md).
+- **example-layout**: [design.md](example-layout/design.md) · [validation.md](example-layout/validation.md).
+- **parallel-local-tests**: [design.md](parallel-local-tests/design.md).
+- **quick-local-tests**: [design.md](quick-local-tests/design.md).
+- **release-asset-names**: [design.md](release-asset-names/design.md).
+- **release-resume**: [design.md](release-resume/design.md).
+- **rust-logging**: [architecture.md](rust-logging/architecture.md).
+- **security-checks**: [design.md](security-checks/design.md).
+- **ubuntu-desktop**: [design.md](ubuntu-desktop/design.md) · [local-validation.md](ubuntu-desktop/local-validation.md).
+- **windows-desktop**: [design.md](windows-desktop/design.md) · [validation.md](windows-desktop/validation.md).
 
-- [Additional channel tilt (WAVE-CH-TILT-01, implemented)](channel-tilt/design.md)
+## Historical source evidence archive
 
-- [Channel conditioning (UI-RF-01) and RF power follow-ups (RF-POWER-01)](rf-power-budget/design.md)
+All 12 records below remain byte-identical at their original locations. Functional
+owners above adapt current contracts; source checkmarks/commands never become MERLIN passes.
 
-- [Qt source organization (UI-ORG-01 / UI-ORG-02)](qt-source-organization/design.md)
-
-- [Receiver profile performance and independent profile runs](profile-performance/design.md)
-
-- [Automatic Ubuntu updates](automatic-updates/design.md): UI-UPDATE-02.
-
-- [WB configuration and shared CI](workbench-configuration/design.md): UI-WB-CONFIG-01, UI-WB-CONTROLS-01, UI-BUTTONS-01, CI-CONSOLIDATE-01 and CI-DESKTOP-APT-01.
-
-- [Readable FEC Monitor](fec-monitor/design.md): UI-FEC-02.
-
-- [Run elapsed time and profile progress](run-elapsed-time/design.md): UI-RUN-TIME-01.
-
-- [Exact indexed QAM demapping](qam-demapper-performance/design.md): QAM-PERF-01.
-
-- [Received QAM scatter dots](qam-markers/design.md): UI-QAM-DOTS-01.
-
-- [Contextual help and spectrum details](contextual-help/design.md): UI-HELP-01, UI-SA-DETAILS-01.
-
-- [Interrupted release recovery](release-resume/design.md): RELEASE-RESUME-01.
-
-- [Quick local test subset](quick-local-tests/design.md): DEV-TEST-QUICK-01.
-
-- [Release asset filenames](release-asset-names/design.md): RELEASE-ASSET-01.
-
-- [About and dropdown menu cleanup](about-menu/design.md): UI-ABOUT-01.
-
-- [Full symbol timing popup](symbol-timing-popup/design.md): UI-SA-TIMING-02.
-
-- [Calculated constellation MER](qam-mer/design.md): UI-QAM-MER-01.
-
-- [Restore workbench inputs](restore-workbench-inputs/design.md): UI-INPUT-RESTORE-01.
-
-- [Run-specific QAM results and TX-reference MER](qam-run-results/design.md): UI-QAM-RUNS-02.
-
-- [Independent receiver estimation through a channel with memory](independent-channel-estimation/design.md): CH-EST-RX-07..12 (implemented for bounded static channels).
-
-- [Windows desktop MSI](windows-desktop/design.md): native UI packaging, icons,
-  Windows adapter boundaries and CI lifecycle gates; macOS deferred.
-
-- [CLI versus desktop examples](example-layout/design.md): EXAMPLES-01,
-  documented use cases and separate desktop/CLI packaging inventories.
-
-- [Sparse control-channel encoder](sparse-encoder/design.md): FEC-SPARSE-01,
-  isolated synthetic timings, substitution and independent NCP/PLC validation.
+- **unified-backend/references**: [backend-stages-validation.md](unified-backend/references/backend-stages-validation.md) · [capture-formats-validation.md](unified-backend/references/capture-formats-validation.md) · [extension-designs-channel.md](unified-backend/references/extension-designs-channel.md) · [extension-designs-ranging.md](unified-backend/references/extension-designs-ranging.md) · [extension-designs-receiver.md](unified-backend/references/extension-designs-receiver.md) · [extension-designs-ui.md](unified-backend/references/extension-designs-ui.md) · [foundation-validation.md](unified-backend/references/foundation-validation.md) · [ldpc-source-audit-validation.md](unified-backend/references/ldpc-source-audit-validation.md) · [remaining-delivery-validation.md](unified-backend/references/remaining-delivery-validation.md) · [rxmer-capture-validation.md](unified-backend/references/rxmer-capture-validation.md) · [upstream-stage-contracts.md](unified-backend/references/upstream-stage-contracts.md) · [us-configuration-json-coverage.md](unified-backend/references/us-configuration-json-coverage.md).

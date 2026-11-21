@@ -710,3 +710,10 @@ source installation remains part of the required hosted installer matrix.
 All 16 wheel-tool tests passed locally in 0.033 s. Windows linker execution
 requires the next native hosted run; Linux mocks establish selection and error
 contracts only.
+
+## Upstream API convergence owner
+
+The [active paired Rust/Python design](upstream.md) owns upstream convergence
+while this record preserves the implemented downstream API decisions and historical
+validation. Upstream runtime gates stay open; current public imports and saved
+workbench compatibility remain unchanged.

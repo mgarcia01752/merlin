@@ -61,7 +61,7 @@
       "shared": true,
       "architecture": "unified-normative-evidence-and-exclusions",
       "owner": "crates/fec-codec/src/upstream_ldpc/definitions.rs",
-      "test": "crates/fec-codec/tests/upstream_source_audit.rs",
+      "test": "crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs",
       "task": "INT-FEC-01"
     },
     {
@@ -1018,7 +1018,8 @@
       "title": "Complete final documentation and skill correspondence",
       "dependencies": [
         "INT-REG-01",
-        "DS-REQ-01"
+        "DS-REQ-01",
+        "DOC-ORG-01"
       ],
       "architecture": "unified-acceptance-and-final-documentation-gate",
       "acceptance": "Meet all ten user documentation completion conditions: one architecture/requirements/checklist; complete requirement/task evidence; resolving links; skills name actual final modules; no obsolete user-facing branding; docs match implemented support and every newly accepted capability has local integrated evidence.",
@@ -3854,5 +3855,2106 @@
     ],
     "index": "docs/development/features/downstream-requirements/traceability.json",
     "status": "Documentation backfill complete; DS-GAP-01/02 have current scoped results and DS-GAP-03 has recovered historical evidence. Final integrated runtime acceptance remains pending."
+  },
+  "documentation_organization": {
+    "task": "DOC-ORG-01",
+    "requirements": [
+      "DOC-R3",
+      "REQ-COM-DOC-01"
+    ],
+    "architecture": "requirements-and-historical-evidence-ownership",
+    "dependencies": [
+      "DS-REQ-01",
+      "INT-DOC-01"
+    ],
+    "approved_baseline": "ca2de34fa70e8e2b40c2622a2123c35d4471a070",
+    "frozen_plan": "docs/development/features/unified-backend/feature-documentation-plan.md",
+    "frozen_inventory": "docs/development/features/unified-backend/feature-documentation-inventory.json",
+    "completion_owner": "docs/development/checklist.md#doc-org-01",
+    "validation_record": "docs/development/features/unified-backend/validation.md#doc-org-01-functional-documentation-acceptance",
+    "original_file_count": 170,
+    "final_feature_file_count": 181,
+    "existing_file_mapping": [
+      {
+        "path": "docs/development/features/README.md",
+        "destination": "docs/development/features/README.md",
+        "disposition": "Adapt",
+        "baseline_sha256": "2745b90f5212b57d734881c69fd16065cc41b687121138963461475075098d0a"
+      },
+      {
+        "path": "docs/development/features/about-menu/design.md",
+        "destination": "docs/development/features/about-menu/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "0159ebc407552b880bb3a89c96e04790e6376ca2b03c5b5726940f8c3383ff1f"
+      },
+      {
+        "path": "docs/development/features/automatic-updates/design.md",
+        "destination": "docs/development/features/automatic-updates/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "18af336aa2c91456d9be4ef83cf2b13a699d64a6e2e47d541088d1260b2d57ba"
+      },
+      {
+        "path": "docs/development/features/build-cache/design.md",
+        "destination": "docs/development/features/build-cache/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "e3aad800c41652c6719b44778d4329f26e581019c391cf9a1db4cd5ef926c8e3"
+      },
+      {
+        "path": "docs/development/features/carrier-layout/architecture.md",
+        "destination": "docs/development/features/carrier-layout/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "a024c6e1b6d5d3f7f303e9d1c69045522173e617c570a0baef08767084e65f69"
+      },
+      {
+        "path": "docs/development/features/cell-interleaving/architecture.md",
+        "destination": "docs/development/features/cell-interleaving/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "18e4aaf4bd7847e9f99d6342beec4acc942a9c1f54dcc5745c5d151be3297dc1"
+      },
+      {
+        "path": "docs/development/features/cell-randomizer/architecture.md",
+        "destination": "docs/development/features/cell-randomizer/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "516cdc3af32950817e7626baf494a5cd26a1be4f0c501a65ef2d170b18968df0"
+      },
+      {
+        "path": "docs/development/features/channel-runner/plan.md",
+        "destination": "docs/development/features/channel-runner/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "939ead1ac1103af774f9967968d1791d29b73bacdea7eed7b83a687bd1fabf94"
+      },
+      {
+        "path": "docs/development/features/channel-runner/validation.md",
+        "destination": "docs/development/features/channel-runner/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "3f09685128c342ee21b7cf7d9e460d69b14559c156165916c0850d7ca8eb93b7"
+      },
+      {
+        "path": "docs/development/features/channel-tilt/design.md",
+        "destination": "docs/development/features/channel-tilt/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "87052682302eea3bd6a7d06eb469672f5174129b4687269d3dce2a319f44494a"
+      },
+      {
+        "path": "docs/development/features/channel-widths/design.md",
+        "destination": "docs/development/features/channel-widths/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "6fe4a95592e76dd56bbcd50fb845212d4d241d786be4318c017452865a0b1952"
+      },
+      {
+        "path": "docs/development/features/channel-workbench/design.md",
+        "destination": "docs/development/features/channel-workbench/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "75b036b18f8df674436a0d61af0747c64316a1d18fa3d4d45ac88833b96aa5da"
+      },
+      {
+        "path": "docs/development/features/checklist-audit/plan.md",
+        "destination": "docs/development/features/checklist-audit/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "93772304c3b7c6a86b5a335126eb91e2d27e14abe0d982e49b2a675c68b4eae0"
+      },
+      {
+        "path": "docs/development/features/checklist-audit/validation.md",
+        "destination": "docs/development/features/checklist-audit/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "ef31e763b09f4c4145b3445ef596fd8bebf3bad6209e1154103fac2055d218c1"
+      },
+      {
+        "path": "docs/development/features/checklist-naming/plan.md",
+        "destination": "docs/development/features/checklist-naming/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "0005d35a3ad1f41f4ee8a8bffd44a53bc8935ca2936e2ed0b056eba075eb163c"
+      },
+      {
+        "path": "docs/development/features/cl-notch-workbench/comparison-sim-1.json",
+        "destination": "docs/development/features/cl-notch-workbench/comparison-sim-1.json",
+        "disposition": "Keep",
+        "baseline_sha256": "a5e7c8425cdb90391806dd47036a9c68426812830e47661c4f1e16d0bc5ee7d3"
+      },
+      {
+        "path": "docs/development/features/cl-notch-workbench/comparison-sim-1.md",
+        "destination": "docs/development/features/cl-notch-workbench/comparison-sim-1.md",
+        "disposition": "Keep",
+        "baseline_sha256": "a8fe223da4006ce7773ae385e6d0ceb77a1335b35cc4d61d77c7bcc02fc5350c"
+      },
+      {
+        "path": "docs/development/features/cl-notch-workbench/design.md",
+        "destination": "docs/development/features/cl-notch-workbench/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "9fa12f73797ed9e605b5385f71e72e99c53c0539095a9f924110b895f8d105c2"
+      },
+      {
+        "path": "docs/development/features/closed-loop-validation/design.md",
+        "destination": "docs/development/features/closed-loop-validation/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "faaa887adca259a5aeb545630ac282528ec3b3e0073eb2441a80ae398f73f1a1"
+      },
+      {
+        "path": "docs/development/features/closed-loop-validation/validation.md",
+        "destination": "docs/development/features/closed-loop-validation/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "c1d5cb33ba36d2fe407372ab078983b79e1491ae2f7dd9744c8750dc97b4a72e"
+      },
+      {
+        "path": "docs/development/features/command-timing/design.md",
+        "destination": "docs/development/features/command-timing/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "e86f0df47c0ab7355df39cde6aa6f10304ecfec6db755e5556c7d17213698df3"
+      },
+      {
+        "path": "docs/development/features/completion-group/design.md",
+        "destination": "docs/development/features/completion-group/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "deeeb6f768c0b7cbf7a7d090fce28f8b940b5dfac9c2dbc56c3ae8a854115030"
+      },
+      {
+        "path": "docs/development/features/completion-group/external-channel-vectors.md",
+        "destination": "docs/development/features/completion-group/external-channel-vectors.md",
+        "disposition": "Keep",
+        "baseline_sha256": "a7de8571f2b36e94a7a4a29a569f6e2f3840b174aecdc33c565c9712423eff08"
+      },
+      {
+        "path": "docs/development/features/completion-group/validation.md",
+        "destination": "docs/development/features/completion-group/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "d2246326b3cd81d74b2f12bd003bbb10acfd1cab2c18b0f0fe4e0cbefb68a422"
+      },
+      {
+        "path": "docs/development/features/contextual-help/design.md",
+        "destination": "docs/development/features/contextual-help/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "2f9406455d68165873fb68c5ddc7626794292daa9875e3f19747cfb3840046cd"
+      },
+      {
+        "path": "docs/development/features/development-setup/design.md",
+        "destination": "docs/development/features/development-setup/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "41f42310a0857f7a0575d16654a3fb589eb5e04dc402b58e6c8c5d60fe1150e6"
+      },
+      {
+        "path": "docs/development/features/development-workspace/plan.md",
+        "destination": "docs/development/features/development-workspace/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "11f94c9f9f2a9fdfb3090f1d6129c402027d721ea9262ea374cdf63b5b4d4e38"
+      },
+      {
+        "path": "docs/development/features/docs-only-push/design.md",
+        "destination": "docs/development/features/docs-only-push/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "21c650d8f3c1496c24e8129fdff0aa1c7ed1eea14d0a02c009c274751709a6d9"
+      },
+      {
+        "path": "docs/development/features/downstream-requirements/design.md",
+        "destination": "docs/development/features/downstream-requirements/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "e645be3aa6f99b620e9d5b0991eb68fa2e636e172659114002446ade03542621"
+      },
+      {
+        "path": "docs/development/features/downstream-requirements/traceability.json",
+        "destination": "docs/development/features/downstream-requirements/traceability.json",
+        "disposition": "Keep",
+        "baseline_sha256": "2b5a62614b29d2ade815f26037e6fcdb25909fe6a03ad4b75ab9a8c1989255cf"
+      },
+      {
+        "path": "docs/development/features/downstream-requirements/validation.md",
+        "destination": "docs/development/features/downstream-requirements/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "29a1b3760365d93a0f20dba65839e5b1591c502dfc29a185493c9c3fd6c3dae8"
+      },
+      {
+        "path": "docs/development/features/engineering-guidance/design.md",
+        "destination": "docs/development/features/engineering-guidance/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "65f5f8596b6c847b67e3913aa5ae94d33d07ef552f86f557399955aaaa4e473b"
+      },
+      {
+        "path": "docs/development/features/engineering-guidance/source-inventory.json",
+        "destination": "docs/development/features/engineering-guidance/source-inventory.json",
+        "disposition": "Keep",
+        "baseline_sha256": "41c948b1ceee1db20fb47437ebb7202dbe98750fd6374ebca4726ba62c11e826"
+      },
+      {
+        "path": "docs/development/features/engineering-guidance/validation.md",
+        "destination": "docs/development/features/engineering-guidance/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "05f376e1b44db6fc25f4264593b07eeda4159fcc7bad871714ba601cf164eaf2"
+      },
+      {
+        "path": "docs/development/features/example-layout/design.md",
+        "destination": "docs/development/features/example-layout/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "524d4dd1a24259fddafd024fca692947218b249d0936285f5a838647c4f217a0"
+      },
+      {
+        "path": "docs/development/features/example-layout/validation.md",
+        "destination": "docs/development/features/example-layout/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "9a609f94205eba713f319b32c5807b96fa7c56320d13bdcc226a2ab4ad6a489a"
+      },
+      {
+        "path": "docs/development/features/fec-monitor/design.md",
+        "destination": "docs/development/features/fec-monitor/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "8bb1246e3f1d04a6cd0958af24ef703e9014f39687c2a16b45fe6f74feff85bf"
+      },
+      {
+        "path": "docs/development/features/fec-shortening/design.md",
+        "destination": "docs/development/features/fec-shortening/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "3f41781e1322cbecf66c14433c42712279fabda8563ed78c542e07c3d047dd79"
+      },
+      {
+        "path": "docs/development/features/fec-shortening/validation.md",
+        "destination": "docs/development/features/fec-shortening/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "55648cda871864dbcd2f302b6942e716dca65d9e87da0f9c7926c99df190c5b6"
+      },
+      {
+        "path": "docs/development/features/file-payload-source/design.md",
+        "destination": "docs/development/features/file-payload-source/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "e9bdd1634c8d6cf347371b90ed3fc69843a4dcf6a5c6ace940779240af0e08bb"
+      },
+      {
+        "path": "docs/development/features/file-payload-source/implementation.md",
+        "destination": "docs/development/features/file-payload-source/implementation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "1dafca7de648deff5285c1b2e02b535fc168790f4bf0ae75456d6af25af3b50a"
+      },
+      {
+        "path": "docs/development/features/high-level-api/design.md",
+        "destination": "docs/development/features/high-level-api/design.md",
+        "disposition": "Adapt",
+        "baseline_sha256": "f9916e04fac40f87ff3225f733b36f82184ba7fb2b37e6210ca9205e60e3fe90"
+      },
+      {
+        "path": "docs/development/features/high-level-api/requirements.md",
+        "destination": "docs/development/features/high-level-api/requirements.md",
+        "disposition": "Keep",
+        "baseline_sha256": "d9cca13205cea80227e70316ea8d8844638f21128546380e219b17659f995eaf"
+      },
+      {
+        "path": "docs/development/features/high-level-api/validation.md",
+        "destination": "docs/development/features/high-level-api/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "ad249e5b9cf65acf2c2df753d08de26f0b43df97056def3cafd5ec991db3a169"
+      },
+      {
+        "path": "docs/development/features/impairment-group/plan.md",
+        "destination": "docs/development/features/impairment-group/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "303f19c01fcc4e840be4da0ef97bb550bc5dbf1fd8b08a252d95c60f8f697c4b"
+      },
+      {
+        "path": "docs/development/features/impairment-group/validation.md",
+        "destination": "docs/development/features/impairment-group/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "5bab2b5f09b6c02d9653a0028306239842da89e1593029423fd44f7a01dd7336"
+      },
+      {
+        "path": "docs/development/features/independent-channel-estimation/design.md",
+        "destination": "docs/development/features/independent-channel-estimation/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "ba16db5b4629e1097cb3c32877d6052e14721340020e393524fd15a85be63323"
+      },
+      {
+        "path": "docs/development/features/independent-channel-estimation/implementation.md",
+        "destination": "docs/development/features/independent-channel-estimation/implementation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "48f80db4f7824a37a2f366de4201c4403aea6e5bf870014f6b39532bb325d6d1"
+      },
+      {
+        "path": "docs/development/features/lte-ingress/plan.md",
+        "destination": "docs/development/features/lte-ingress/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "fe14ce1c9c3f87085b659af8016a9786e3891006c90a99810c8461c9377b8e80"
+      },
+      {
+        "path": "docs/development/features/lte-ingress/validation.md",
+        "destination": "docs/development/features/lte-ingress/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "74ade1e57e3386c9093dc39d4ba70566ea423db24d22c481c7f30ff3254738bc"
+      },
+      {
+        "path": "docs/development/features/mouse-zoom/design.md",
+        "destination": "docs/development/features/mouse-zoom/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "33f719113fe3f8b8951fc41fa91303efab90386e4937851b54d62b830c1d0538"
+      },
+      {
+        "path": "docs/development/features/ncp-codec/architecture.md",
+        "destination": "docs/development/features/ncp-codec/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "e5133ce8afd28d128dabbfb8c82b3ac16037cb0190cece507492ee467c10982d"
+      },
+      {
+        "path": "docs/development/features/paired-constellation/implementation.md",
+        "destination": "docs/development/features/paired-constellation/implementation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "78bd42b4325089fe275fbf9dff05da0e42b5ee72f31104ab351094851a6130e3"
+      },
+      {
+        "path": "docs/development/features/paired-constellation/plan.md",
+        "destination": "docs/development/features/paired-constellation/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "21cf01b5b3163db1220f42bfb07d83fad3c5d0208a7f46c6b2f1a7c8c8374175"
+      },
+      {
+        "path": "docs/development/features/parallel-local-tests/design.md",
+        "destination": "docs/development/features/parallel-local-tests/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "aaae6e0330d17a5c287dab99ef7fd82f9424dbfc284954e048f46906348382b3"
+      },
+      {
+        "path": "docs/development/features/payload-transport/plan.md",
+        "destination": "docs/development/features/payload-transport/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "e6c45a97dbcdda9c99054b78b9af2beb638d829d3d796528c51caa3726d0d231"
+      },
+      {
+        "path": "docs/development/features/payload-transport/validation.md",
+        "destination": "docs/development/features/payload-transport/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "1846078a4661fedd2dc6e39c8f2194f850d9e6d7d689038a349acca44dce293e"
+      },
+      {
+        "path": "docs/development/features/pilot-channel-estimation/implementation.md",
+        "destination": "docs/development/features/pilot-channel-estimation/implementation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "1521c2f1b9e2d502fd34e9111f5d5ecfe73e3ce27a6ddf91495848180b58711e"
+      },
+      {
+        "path": "docs/development/features/pilot-channel-estimation/plan.md",
+        "destination": "docs/development/features/pilot-channel-estimation/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "96751cb22af8d25a2c088e9d9b366a27aa9c66b6cc56aa795ecaa40034e5907b"
+      },
+      {
+        "path": "docs/development/features/pilot-plc-signals/architecture.md",
+        "destination": "docs/development/features/pilot-plc-signals/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "f93e9bafa27ea3779f593e4765d9868a15909a3cd768ae9dd0ece86156d0ada5"
+      },
+      {
+        "path": "docs/development/features/plc-block-interleaving/architecture.md",
+        "destination": "docs/development/features/plc-block-interleaving/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "f45be0801170bdd54f904f612c1763974df511c530955683e9214de9dd622bee"
+      },
+      {
+        "path": "docs/development/features/plc-completion/plan.md",
+        "destination": "docs/development/features/plc-completion/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "8c355b209af2be0a5883274f85ef2d5a828220ccd3583427b19a3ff5dcba4fd8"
+      },
+      {
+        "path": "docs/development/features/plc-completion/validation.md",
+        "destination": "docs/development/features/plc-completion/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "5cda6007143d57509f9f51c461b74d115379d27a2e557acd87b2cce2a71f8cd8"
+      },
+      {
+        "path": "docs/development/features/plc-ldpc/architecture.md",
+        "destination": "docs/development/features/plc-ldpc/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "6a1df1fa0a91a8d0928c359e7704f46c74b3fa172feb023cb9f6fda9f2431b09"
+      },
+      {
+        "path": "docs/development/features/plc-message-blocks/architecture.md",
+        "destination": "docs/development/features/plc-message-blocks/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "d4fb01e2015a292d19e365ce84a1f4d079bb553bd205e36fae951460c5ad9364"
+      },
+      {
+        "path": "docs/development/features/plc-randomization/architecture.md",
+        "destination": "docs/development/features/plc-randomization/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "e1eeb36ed3696ca6cba645187cd6dbfbceaefb6db57e2ab2e756839bf62035a1"
+      },
+      {
+        "path": "docs/development/features/plc-randomization/validation.md",
+        "destination": "docs/development/features/plc-randomization/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "2390f0269a90ea8e92acae58f6a691c40dfbcc8f6fc0e73035f687c2c0510cdc"
+      },
+      {
+        "path": "docs/development/features/pnm-measurement-inputs/README.md",
+        "destination": "docs/development/features/pnm-measurement-inputs/README.md",
+        "disposition": "Adapt",
+        "baseline_sha256": "6d7a81bf0cc4529f2626dddb07bc25ed2e6d0b93c0e8cb13c815d2e209a2aaab"
+      },
+      {
+        "path": "docs/development/features/pnm-measurement-inputs/profile-view.md",
+        "destination": "docs/development/features/pnm-measurement-inputs/profile-view.md",
+        "disposition": "Keep",
+        "baseline_sha256": "9074144ca30d5123b9a04b97b32c3dcbfa2d0876e239b079c7c7a0dc9b5d5d21"
+      },
+      {
+        "path": "docs/development/features/pnm-reference-skill/design.md",
+        "destination": "docs/development/features/pnm-reference-skill/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "86cf5ad6e66b4bdc424c92e87a1eadc4aedc8794a87e226cf818ebf1823a7a37"
+      },
+      {
+        "path": "docs/development/features/popup-close-controls/design.md",
+        "destination": "docs/development/features/popup-close-controls/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "8b4c3c2aab574c7a17f50f6e872fd3e49fbdd3e83a5de61b61b85d34a8d3c677"
+      },
+      {
+        "path": "docs/development/features/prbs-source/plan.md",
+        "destination": "docs/development/features/prbs-source/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "22a3f8c1ac12467231283596d620799a982f1bc4e4e15e56cd67fe9fbf015e5a"
+      },
+      {
+        "path": "docs/development/features/prbs-source/validation.md",
+        "destination": "docs/development/features/prbs-source/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "7b8083ff0343f87d38f1700ff0220c8647ef887d566b986d04553e28f626af49"
+      },
+      {
+        "path": "docs/development/features/profile-performance/design.md",
+        "destination": "docs/development/features/profile-performance/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "38abe8421c159d97456fbf869da9c92373ff417d5168cf579fe02b93cd5316ec"
+      },
+      {
+        "path": "docs/development/features/project-architecture/plan.md",
+        "destination": "docs/development/features/project-architecture/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "083190e45e62a890bc030d81c606833e44d002dca03bd990bf23183ecccc6054"
+      },
+      {
+        "path": "docs/development/features/project-rename/notes.md",
+        "destination": "docs/development/features/project-rename/notes.md",
+        "disposition": "Keep",
+        "baseline_sha256": "d10d9fd4d73deb36e74b7211f5d6dd52ea5ea05f70f1c448e69f774842224018"
+      },
+      {
+        "path": "docs/development/features/python-adapter/design.md",
+        "destination": "docs/development/features/python-adapter/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "76860634809332a55d50a4e17db8a9048cf232735aca263b5a484d167ada0164"
+      },
+      {
+        "path": "docs/development/features/qam-completion/design.md",
+        "destination": "docs/development/features/qam-completion/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "db540ed28d6552bcbf368ad85c569d150b506c0db3f87ba32557f43967f79889"
+      },
+      {
+        "path": "docs/development/features/qam-completion/external-vectors.md",
+        "destination": "docs/development/features/qam-completion/external-vectors.md",
+        "disposition": "Keep",
+        "baseline_sha256": "dffd3ac49d217e07ed46d6e0a9283d1f3d394c446d2dc0e753c7169eaf8ee768"
+      },
+      {
+        "path": "docs/development/features/qam-completion/validation.md",
+        "destination": "docs/development/features/qam-completion/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "fe9f1155b88e5e1d87b5a3067432a10d4979cd336c631668028f22ce0a7ab985"
+      },
+      {
+        "path": "docs/development/features/qam-demapper-performance/design.md",
+        "destination": "docs/development/features/qam-demapper-performance/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "72b9375513f604c3a9ba5b28097a875d0dc42232efffe86c96e71ef2430081c6"
+      },
+      {
+        "path": "docs/development/features/qam-mapping/architecture.md",
+        "destination": "docs/development/features/qam-mapping/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "03aa2f07a07800968d9e250182195ec7f70ecd032f08facabf76d84e12b17c86"
+      },
+      {
+        "path": "docs/development/features/qam-markers/design.md",
+        "destination": "docs/development/features/qam-markers/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "01a85c0ceceb75de54b852f73808c639ad45e26559c80a9a70d93bbc79a1d7f5"
+      },
+      {
+        "path": "docs/development/features/qam-mer/design.md",
+        "destination": "docs/development/features/qam-mer/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "76514af7d3b2894d9ebb3911248d7faeb85ab0721dd69257acde250a7776dc0d"
+      },
+      {
+        "path": "docs/development/features/qam-receiver-mode/design.md",
+        "destination": "docs/development/features/qam-receiver-mode/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "df901b753ea22a6725bc2cf1a8ebbeb3af649bfab5bd4e20042a138398bdf417"
+      },
+      {
+        "path": "docs/development/features/qam-run-results/design.md",
+        "destination": "docs/development/features/qam-run-results/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "e8cf29e267db254871a763b97c4fc8a95dc52abaea5bf38483e95e55816877f8"
+      },
+      {
+        "path": "docs/development/features/qam256-coding-loop/architecture.md",
+        "destination": "docs/development/features/qam256-coding-loop/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "296a6a34d700b637ef9c989f2228928ae7589bc3038cf61451c57a02f0204c23"
+      },
+      {
+        "path": "docs/development/features/qt-closed-loop/design.md",
+        "destination": "docs/development/features/qt-closed-loop/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "784300777db061d3213d5469a31d790ee3c1a5b91fcb635fe31d86dad86323c4"
+      },
+      {
+        "path": "docs/development/features/qt-closed-loop/validation.md",
+        "destination": "docs/development/features/qt-closed-loop/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "acc0d3f2336f28c269be827365d3249b59436f3e784eeb1667482e699d531fe2"
+      },
+      {
+        "path": "docs/development/features/qt-source-organization/design.md",
+        "destination": "docs/development/features/qt-source-organization/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "eda23a355689fa762fe1970d0764d5744e93a7887335d7712e6634eda1ba234f"
+      },
+      {
+        "path": "docs/development/features/quick-local-tests/design.md",
+        "destination": "docs/development/features/quick-local-tests/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "d1dbfd83fec3ed9356a33e12d9396292adb976b390b90eb87712f1ed9fa836ff"
+      },
+      {
+        "path": "docs/development/features/readme-workbench-diagram/design.md",
+        "destination": "docs/development/features/readme-workbench-diagram/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "56637d5805603b287efd9331131bc8f75c676f9ec578f19a74ff490e479766b9"
+      },
+      {
+        "path": "docs/development/features/receiver-acquisition/design.md",
+        "destination": "docs/development/features/receiver-acquisition/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "c882d50052949b413c98e0c92581ad3d6583dffbc2d8b4504cca7bfd797d3fce"
+      },
+      {
+        "path": "docs/development/features/receiver-acquisition/validation.md",
+        "destination": "docs/development/features/receiver-acquisition/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "fe89a9f77ac3a2716526968eff94866b6b71e5247b2d510c1a83d53cc5c18aa2"
+      },
+      {
+        "path": "docs/development/features/receiver-configuration/plan.md",
+        "destination": "docs/development/features/receiver-configuration/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "ac30145bfe115478acdd9818df93fede36fb9239dc2357e8ef42e29474047cda"
+      },
+      {
+        "path": "docs/development/features/receiver-configuration/validation.md",
+        "destination": "docs/development/features/receiver-configuration/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "b97aa7949340daa932105693fff5757e15660764729586221a3fb8bf1743aea4"
+      },
+      {
+        "path": "docs/development/features/receiver-instruments/design.md",
+        "destination": "docs/development/features/receiver-instruments/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "057b997dfde5b8a655432da52ae0a65ec69b9bf42787454a9fd65ffa857b909b"
+      },
+      {
+        "path": "docs/development/features/receiver-workbench/design.md",
+        "destination": "docs/development/features/receiver-workbench/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "2dc2da110f88d706c1d67df9ece603935b00d4c07fd2a42e1cb6428a35dec864"
+      },
+      {
+        "path": "docs/development/features/receiver-workbench/validation.md",
+        "destination": "docs/development/features/receiver-workbench/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "1dfa8e880c6a72a07fed8a142a5d00d224b959d89eb06bf16c6f6898250e0d58"
+      },
+      {
+        "path": "docs/development/features/release-asset-names/design.md",
+        "destination": "docs/development/features/release-asset-names/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "5d4796bba5a8f0073e34aad408b8f08f54e8b4254a9ec6632b960599e8ef1b7e"
+      },
+      {
+        "path": "docs/development/features/release-resume/design.md",
+        "destination": "docs/development/features/release-resume/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "b52e799521dd8eb04f37ec313e9d536879a00ff5861a80e810ac6698384bae72"
+      },
+      {
+        "path": "docs/development/features/responsive-workbench-open/design.md",
+        "destination": "docs/development/features/responsive-workbench-open/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "7dfe3c8a59a1adeffad03be656f51b3ec6a9b6c6761c3eb7f2c24dc242dd611a"
+      },
+      {
+        "path": "docs/development/features/restore-workbench-inputs/design.md",
+        "destination": "docs/development/features/restore-workbench-inputs/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "75bdb493f244d5d2f89a1e54faa7ccf04fa69305854878525222f36ceea7045d"
+      },
+      {
+        "path": "docs/development/features/rf-power-budget/design.md",
+        "destination": "docs/development/features/rf-power-budget/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "6201d9f2d9d3295b7dec9756b42b096d39063eed4a75295466020b3ea5e4ca1c"
+      },
+      {
+        "path": "docs/development/features/run-elapsed-time/design.md",
+        "destination": "docs/development/features/run-elapsed-time/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "2b39ca0548c65af57540ed87a367f79460355563a7f07a47c536da5d93e412d8"
+      },
+      {
+        "path": "docs/development/features/run-infrastructure/plan.md",
+        "destination": "docs/development/features/run-infrastructure/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "e039cf74b1403f0b9c0d87551639e0c417f425e3261b325cc3d375cec6858130"
+      },
+      {
+        "path": "docs/development/features/run-infrastructure/validation.md",
+        "destination": "docs/development/features/run-infrastructure/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "20053b8ea612e71c474706aeb2d1018aea21105a6cf3b41d2983314cd358e17c"
+      },
+      {
+        "path": "docs/development/features/rust-logging/architecture.md",
+        "destination": "docs/development/features/rust-logging/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "9a7d84dc157ef8bf4215d469ed3c152188b1a7be755d4486f88802c805b5b938"
+      },
+      {
+        "path": "docs/development/features/rust-only-signal-processing/architecture.md",
+        "destination": "docs/development/features/rust-only-signal-processing/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "a2228d4dce3672b4d1021e8eb9c100822965217060321d6c747e233eef9a841d"
+      },
+      {
+        "path": "docs/development/features/rxmer-designer/design.md",
+        "destination": "docs/development/features/rxmer-designer/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "1be0fd24f52ac9ecc84b69e401a95aeeca8adac6857d9a9a8772e154b3a9e93b"
+      },
+      {
+        "path": "docs/development/features/rxmer-designer/pnm-export-plan.md",
+        "destination": "docs/development/features/rxmer-designer/pnm-export-plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "67857b787be633c8933f8c10b256b67f7aa5e04d516ce0591f2d4aad875e2ce7"
+      },
+      {
+        "path": "docs/development/features/rxmer-designer/validation.md",
+        "destination": "docs/development/features/rxmer-designer/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "595331a0e84902fb355ebe23baabfb7f2d632e9b7d3ac2e275c70a03c3a4dbb9"
+      },
+      {
+        "path": "docs/development/features/rxmer-error-sweep/README.md",
+        "destination": "docs/development/features/rxmer-error-sweep/README.md",
+        "disposition": "Keep",
+        "baseline_sha256": "32f9fb6ec229cc65602c6f31b6e01f021dfc236a8700c4a4d920f7f20607aefc"
+      },
+      {
+        "path": "docs/development/features/rxmer-selection/design.md",
+        "destination": "docs/development/features/rxmer-selection/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "d53317f97ec2db9334eed3017189a039929b4130c9fe2fb2dfc46f8f98047819"
+      },
+      {
+        "path": "docs/development/features/rxmer-workbench/design.md",
+        "destination": "docs/development/features/rxmer-workbench/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "a3245f92a4c9f828d5639abc4c806c667c771eec73d7a43ed533a557a0488343"
+      },
+      {
+        "path": "docs/development/features/rxmer-workbench/validation.md",
+        "destination": "docs/development/features/rxmer-workbench/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "f3f9e9f56c58316066e1b15c62d679808eb77aa8124ced600ba8558f62b56db4"
+      },
+      {
+        "path": "docs/development/features/security-checks/design.md",
+        "destination": "docs/development/features/security-checks/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "e7b6334629fc3d9341d01aeb3df9d67efbdabef3e1635e56ea28e74ba833d230"
+      },
+      {
+        "path": "docs/development/features/simulation-documentation/plan.md",
+        "destination": "docs/development/features/simulation-documentation/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "0fdf65c37a653e645c98113ea9f630e4ef774182a673ec246db6f01fa6c1b6bf"
+      },
+      {
+        "path": "docs/development/features/simulation-documentation/validation.md",
+        "destination": "docs/development/features/simulation-documentation/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "32e0d507354bc4f9337c7ca40855424cd24a6ce6c8c43c5494195856b98a3008"
+      },
+      {
+        "path": "docs/development/features/single-channel-transmission/architecture.md",
+        "destination": "docs/development/features/single-channel-transmission/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "28441996b4b33100335a1b3891e562a153b1eab7cded8bd9c44526b2f24c24df"
+      },
+      {
+        "path": "docs/development/features/source-organization/architecture.md",
+        "destination": "docs/development/features/source-organization/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "46702933938aedac8d2ec042487b5eb36f59027fe76a478b59531bf56a05b21b"
+      },
+      {
+        "path": "docs/development/features/sparse-encoder/design.md",
+        "destination": "docs/development/features/sparse-encoder/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "c296480a1b1cbb6d27d0eb1af462c3c72c806da3dfa91f6ecf941f65fe0b55cf"
+      },
+      {
+        "path": "docs/development/features/symbol-packing/architecture.md",
+        "destination": "docs/development/features/symbol-packing/architecture.md",
+        "disposition": "Keep",
+        "baseline_sha256": "edc2800572c068993a9a5089c549d4d5ac5ce3699d7853079f6f37b8036c8f3e"
+      },
+      {
+        "path": "docs/development/features/symbol-packing/design.md",
+        "destination": "docs/development/features/symbol-packing/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "57a3b99343858152a18a2101ab78ed934f13998fa4d21cbdbf54f7017fbb61c2"
+      },
+      {
+        "path": "docs/development/features/symbol-timing-popup/design.md",
+        "destination": "docs/development/features/symbol-timing-popup/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "769393848c994d909159ca69ad0eb6288d3b25fa7242fc3108c96a293cd53f87"
+      },
+      {
+        "path": "docs/development/features/terminology/design.md",
+        "destination": "docs/development/features/terminology/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "8955d38150d049c31cd8620a23d6ed5f8d23518177d75935ea899d4f9eb95a4d"
+      },
+      {
+        "path": "docs/development/features/tooltip-delay/design.md",
+        "destination": "docs/development/features/tooltip-delay/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "c902c12b900a682d245d54729a7c3c4935cdd217e1d58af6018d0b1fe1e160e6"
+      },
+      {
+        "path": "docs/development/features/transmitter-graphs/design.md",
+        "destination": "docs/development/features/transmitter-graphs/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "827a04cf2b4d92064870f7c097bc72921e84cb790f02c043a16c6f4ded86f351"
+      },
+      {
+        "path": "docs/development/features/transmitter-spectrum/design.md",
+        "destination": "docs/development/features/transmitter-spectrum/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "691f0de0d2bdd0471aa73e22a535b699827844939539473727a947f013a5bf72"
+      },
+      {
+        "path": "docs/development/features/transmitter-spectrum/validation.md",
+        "destination": "docs/development/features/transmitter-spectrum/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "e0b61cde9cc003606c79a699fe5421465ecbe6a8b0fb16248c68b5ff30a9a7af"
+      },
+      {
+        "path": "docs/development/features/transmitter-workbench/design.md",
+        "destination": "docs/development/features/transmitter-workbench/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "d2be77fd1ec3b57bd98585f16452a90d3c1876328202fd6501ec3988d72b47d6"
+      },
+      {
+        "path": "docs/development/features/ubuntu-desktop/design.md",
+        "destination": "docs/development/features/ubuntu-desktop/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "09e770eb72d1454c0ef537fc9bc7194ffea998c6acda9f9d1dd9152298bf9677"
+      },
+      {
+        "path": "docs/development/features/ubuntu-desktop/local-validation.md",
+        "destination": "docs/development/features/ubuntu-desktop/local-validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "c8f103e78248509304eef6a68dd64d6f1948f142a1e535e3900c3af5f62386b1"
+      },
+      {
+        "path": "docs/development/features/ui-copy/design.md",
+        "destination": "docs/development/features/ui-copy/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "fe91b4a10a3dd7ea176c14146efb2bf08de661ff44243a93e35d736a2da61cb9"
+      },
+      {
+        "path": "docs/development/features/unified-backend/baseline.md",
+        "destination": "docs/development/features/unified-backend/baseline.md",
+        "disposition": "Keep",
+        "baseline_sha256": "9202ed5da62f10b1c29403366725e6e6781369c264f1d927e8819b7121124876"
+      },
+      {
+        "path": "docs/development/features/unified-backend/design.md",
+        "destination": "docs/development/features/unified-backend/design.md",
+        "disposition": "Adapt",
+        "baseline_sha256": "cbc43f8b8f1bbc18753ee57c8471a69a1f6fcca644d1ccdcf4d4087709edc662"
+      },
+      {
+        "path": "docs/development/features/unified-backend/fec-validation.md",
+        "destination": "docs/development/features/unified-backend/fec-validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "8c09cb08e702202f03346b7623f3d8112e5be8baed5d55398728ecb267495420"
+      },
+      {
+        "path": "docs/development/features/unified-backend/references/backend-stages-validation.md",
+        "destination": "docs/development/features/unified-backend/references/backend-stages-validation.md",
+        "disposition": "Archive",
+        "baseline_sha256": "69b19a297ad4c12bef2e9fa497d654ce1069f228950f09b9449b04a6daaecc90"
+      },
+      {
+        "path": "docs/development/features/unified-backend/references/capture-formats-validation.md",
+        "destination": "docs/development/features/unified-backend/references/capture-formats-validation.md",
+        "disposition": "Archive",
+        "baseline_sha256": "295e81239f765c7df9d2bc8f0bb77a88c32ea22d886c16d51e6bd62ba82ad795"
+      },
+      {
+        "path": "docs/development/features/unified-backend/references/extension-designs-channel.md",
+        "destination": "docs/development/features/unified-backend/references/extension-designs-channel.md",
+        "disposition": "Archive",
+        "baseline_sha256": "76ce11ef16f27e8344c841fc5cdcb6bf266f69d572885308d8b82e24a35f76b3"
+      },
+      {
+        "path": "docs/development/features/unified-backend/references/extension-designs-ranging.md",
+        "destination": "docs/development/features/unified-backend/references/extension-designs-ranging.md",
+        "disposition": "Archive",
+        "baseline_sha256": "eea094f7b6cca8dbf44516f6353b733c68da1fe162157e2935c1424a75b6cc34"
+      },
+      {
+        "path": "docs/development/features/unified-backend/references/extension-designs-receiver.md",
+        "destination": "docs/development/features/unified-backend/references/extension-designs-receiver.md",
+        "disposition": "Archive",
+        "baseline_sha256": "a2457aad338db949d78b571adb24735e7044b4f5a99ef40f8a3cb25c32dd0b7f"
+      },
+      {
+        "path": "docs/development/features/unified-backend/references/extension-designs-ui.md",
+        "destination": "docs/development/features/unified-backend/references/extension-designs-ui.md",
+        "disposition": "Archive",
+        "baseline_sha256": "2d22362f52b0ff4eeae8a81f085e86eddcf3b359ac22b62f0b11a4cafb0616e3"
+      },
+      {
+        "path": "docs/development/features/unified-backend/references/foundation-validation.md",
+        "destination": "docs/development/features/unified-backend/references/foundation-validation.md",
+        "disposition": "Archive",
+        "baseline_sha256": "c4416b57050819cdc6ba50d8dd25ff117dddaa3dbc7a0859c533ca27100875d7"
+      },
+      {
+        "path": "docs/development/features/unified-backend/references/ldpc-source-audit-validation.md",
+        "destination": "docs/development/features/unified-backend/references/ldpc-source-audit-validation.md",
+        "disposition": "Archive",
+        "baseline_sha256": "3451d8c8ac83fd52e53a249bb431c6e02c172d8999736ac28be41c695805c090"
+      },
+      {
+        "path": "docs/development/features/unified-backend/references/remaining-delivery-validation.md",
+        "destination": "docs/development/features/unified-backend/references/remaining-delivery-validation.md",
+        "disposition": "Archive",
+        "baseline_sha256": "bd04222d6d34ebb96e00bb2ebc5c8af6800057b910d0ad25021bf3bae03b0552"
+      },
+      {
+        "path": "docs/development/features/unified-backend/references/rxmer-capture-validation.md",
+        "destination": "docs/development/features/unified-backend/references/rxmer-capture-validation.md",
+        "disposition": "Archive",
+        "baseline_sha256": "5ffd65d5caca9d68fcb181ed0f34a536af7af644275e5baebd4718137533d553"
+      },
+      {
+        "path": "docs/development/features/unified-backend/references/upstream-stage-contracts.md",
+        "destination": "docs/development/features/unified-backend/references/upstream-stage-contracts.md",
+        "disposition": "Archive",
+        "baseline_sha256": "4d17070f71239179f394a394772425dde287d9d93ceeca44784fee8e75b93ffe"
+      },
+      {
+        "path": "docs/development/features/unified-backend/references/us-configuration-json-coverage.md",
+        "destination": "docs/development/features/unified-backend/references/us-configuration-json-coverage.md",
+        "disposition": "Archive",
+        "baseline_sha256": "a6290e6e1117974f16b2554d5359fb829bc68dbf70ec01a930b44f76085ed26b"
+      },
+      {
+        "path": "docs/development/features/unified-backend/reuse-review.md",
+        "destination": "docs/development/features/unified-backend/reuse-review.md",
+        "disposition": "Keep",
+        "baseline_sha256": "f3f13de08feffef1f607c7d64c82182dd0d290f5aa19756b60c47388ae6e2473"
+      },
+      {
+        "path": "docs/development/features/unified-backend/scientific-source-review.json",
+        "destination": "docs/development/features/unified-backend/scientific-source-review.json",
+        "disposition": "Keep",
+        "baseline_sha256": "08815d914b08057b16aeea74a9e133ad9c98bb2ecd326b25a5b52a6741573b4c"
+      },
+      {
+        "path": "docs/development/features/unified-backend/source-inventory.json",
+        "destination": "docs/development/features/unified-backend/source-inventory.json",
+        "disposition": "Adapt",
+        "baseline_sha256": "f73e47f9c16fffe09ffb60bdb59fbc06d351b2ad83eb6a6aea813134cad3c5ed"
+      },
+      {
+        "path": "docs/development/features/unified-backend/source-review.md",
+        "destination": "docs/development/features/unified-backend/source-review.md",
+        "disposition": "Adapt",
+        "baseline_sha256": "0a21efb219fec45a67505c0c0f9b2bcdad77b570699b50fe5ec88534bec5d284"
+      },
+      {
+        "path": "docs/development/features/unified-backend/validation.md",
+        "destination": "docs/development/features/unified-backend/validation.md",
+        "disposition": "Adapt",
+        "baseline_sha256": "8525084fa87456019bdf7e372c0c6faf4a4d526bde04eac1ade20981f7f965ce"
+      },
+      {
+        "path": "docs/development/features/upstream-skills/design.md",
+        "destination": "docs/development/features/upstream-skills/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "59b6ead234e1ef13dc1fb9735da78c33e9099159c75f14389955fa508a93496c"
+      },
+      {
+        "path": "docs/development/features/upstream-skills/source-inventory.json",
+        "destination": "docs/development/features/upstream-skills/source-inventory.json",
+        "disposition": "Keep",
+        "baseline_sha256": "d60e95e35c94e00cea52e0cc1ba299999f276549161648a500175391434888fd"
+      },
+      {
+        "path": "docs/development/features/upstream-skills/validation.md",
+        "destination": "docs/development/features/upstream-skills/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "6356230943bc2312e127de4fb5bcfd1c1f30c459ca64d9c9a1457a9735c3d6ad"
+      },
+      {
+        "path": "docs/development/features/user-guide-captures/design.md",
+        "destination": "docs/development/features/user-guide-captures/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "72f06305910f76ddb57b6511d2974b614b5e0b3fa8b34a0f719e56d662bb5363"
+      },
+      {
+        "path": "docs/development/features/user-guide-captures/png-audit.md",
+        "destination": "docs/development/features/user-guide-captures/png-audit.md",
+        "disposition": "Keep",
+        "baseline_sha256": "b5ab78142f1ef9c6d4a6a6cc4ccaee17508d87ae77fc26a10475f95275944d33"
+      },
+      {
+        "path": "docs/development/features/verification-panel/design.md",
+        "destination": "docs/development/features/verification-panel/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "93e8d50af32126a4d91474cb1aaa12194c2f6ef6adafaa568a68982cbc11f8d9"
+      },
+      {
+        "path": "docs/development/features/visual-workspace/design.md",
+        "destination": "docs/development/features/visual-workspace/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "054529624167f9bc53c0374eedec2e58998f2136a803e0d4d47c6c9b83d7812c"
+      },
+      {
+        "path": "docs/development/features/visual-workspace/plan.md",
+        "destination": "docs/development/features/visual-workspace/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "e89eb00b66b1392fa6796010da8d907a3b45acab0c475898ec9232601adb3761"
+      },
+      {
+        "path": "docs/development/features/visual-workspace/validation.md",
+        "destination": "docs/development/features/visual-workspace/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "817eba2c0455b2c7507efe68ec144ba8df6f9838638d1a0c9cf7653c6261ecf7"
+      },
+      {
+        "path": "docs/development/features/waveform-direction/notes.md",
+        "destination": "docs/development/features/waveform-direction/notes.md",
+        "disposition": "Keep",
+        "baseline_sha256": "9089276c96266b0ab866b8ffe1ef9b659213f7ab937b81e7f214bb16cd68c80b"
+      },
+      {
+        "path": "docs/development/features/waveform/plan.md",
+        "destination": "docs/development/features/waveform/plan.md",
+        "disposition": "Keep",
+        "baseline_sha256": "75673182e960d65134ec8b8747cfbac6fce4be76ea20da7638d68e62ced1eeab"
+      },
+      {
+        "path": "docs/development/features/waveform/validation.md",
+        "destination": "docs/development/features/waveform/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "c93233086ad2d4980b84d111528bad4f14ae9982870ffdb5ba1dd00c62289216"
+      },
+      {
+        "path": "docs/development/features/windows-desktop/design.md",
+        "destination": "docs/development/features/windows-desktop/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "3c55d1292e12b616ce921f004c1b6425fd327893d0a6b01494b428f31b87f237"
+      },
+      {
+        "path": "docs/development/features/windows-desktop/validation.md",
+        "destination": "docs/development/features/windows-desktop/validation.md",
+        "disposition": "Keep",
+        "baseline_sha256": "d8bc46f70ce311f4e531e0252f656d68ed6671638d82024d042235f1263d5c9b"
+      },
+      {
+        "path": "docs/development/features/workbench-configuration/design.md",
+        "destination": "docs/development/features/workbench-configuration/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "d5dfa04feaa76de8c41b66415785276ad4cb928b8e131894ec4c023efcd29f4a"
+      },
+      {
+        "path": "docs/development/features/workbench-examples/design.md",
+        "destination": "docs/development/features/workbench-examples/design.md",
+        "disposition": "Keep",
+        "baseline_sha256": "1ef8199c388f49f5a19e552421973fcbd06986f4104bc4a0e9aba2da2e42830a"
+      }
+    ],
+    "functional_records": [
+      {
+        "proposed_path": "docs/development/features/fec/design.md",
+        "disposition": "Add",
+        "functional_owner": "FEC",
+        "purpose": "Shared sparse infrastructure; distinct downstream BCH/data/NCP/PLC and upstream families; actual INT-FEC-01 evidence, separate source audits.",
+        "source_sections": [
+          "docs/development/features/sparse-encoder/design.md",
+          "docs/development/features/fec-shortening/design.md",
+          "docs/development/features/unified-backend/fec-validation.md",
+          "docs/development/features/unified-backend/references/ldpc-source-audit-validation.md",
+          "docs/development/features/unified-backend/references/upstream-stage-contracts.md#tx-02-ldpc-encoding-and-shortening",
+          "docs/development/features/unified-backend/references/upstream-stage-contracts.md#rx-08-shortening-restoration-and-ldpc-decoding"
+        ],
+        "requirement_ids": [
+          "REQ-DS-FEC-01",
+          "REQ-US-TX-02",
+          "REQ-US-RX-08",
+          "REQ-COM-REUSE-01",
+          "REQ-COM-SYS-05"
+        ],
+        "checklist_ids": [
+          "INT-FEC-01",
+          "INT-DSP-01"
+        ],
+        "architecture_references": [
+          "docs/architecture.md#unified-shared-dsp-and-fec"
+        ],
+        "content_policy": "Adapt current local ownership/status and scientific contracts; link existing independent evidence; preserve originals; do not duplicate mandatory requirement text or transfer source acceptance.",
+        "implementation_and_test_owners": [
+          {
+            "requirement": "REQ-DS-FEC-01",
+            "kind": "module",
+            "path": "crates/fec-codec/src/lib.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-DS-FEC-01",
+            "kind": "test",
+            "path": "crates/fec-codec/tests/codec.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-DS-FEC-01",
+            "kind": "test",
+            "path": "crates/fec-codec/tests/normative.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-US-TX-02",
+            "kind": "module",
+            "path": "crates/fec-codec/src/upstream_ldpc/codec.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-US-TX-02",
+            "kind": "test",
+            "path": "crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-US-TX-02",
+            "kind": "test",
+            "path": "crates/fec-codec/src/upstream_ldpc/tests.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-US-RX-08",
+            "kind": "module",
+            "path": "crates/fec-codec/src/upstream_ldpc/codec.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-US-RX-08",
+            "kind": "test",
+            "path": "crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-US-RX-08",
+            "kind": "test",
+            "path": "crates/fec-codec/src/upstream_ldpc/tests.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-COM-REUSE-01",
+            "kind": "module",
+            "path": "crates/fec-codec/src/sparse_encoder.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-COM-REUSE-01",
+            "kind": "module",
+            "path": "crates/ofdm/src/signal_processing",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-COM-REUSE-01",
+            "kind": "test",
+            "path": "crates/fec-codec/src/sparse_encoder/tests.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-COM-SYS-05",
+            "kind": "module",
+            "path": "crates/fec-codec/src/upstream_ldpc/definitions.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-COM-SYS-05",
+            "kind": "test",
+            "path": "crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs",
+            "state": "existing"
+          }
+        ],
+        "acceptance_sha256": "570e37d4f23510c186c80be79e0e47fa8953b11c1580206979bba7d3230deffa"
+      },
+      {
+        "proposed_path": "docs/development/features/signal-processing/design.md",
+        "disposition": "Add",
+        "functional_owner": "DSP",
+        "purpose": "Conventions and sharing decisions for complex IQ, FFT, QAM/LLR, FIR/noise, power and PRBS; current owners stay intact; extraction remains INT-DSP-01.",
+        "source_sections": [
+          "docs/development/features/unified-backend/reuse-review.md",
+          "docs/development/features/qam-mapping/architecture.md",
+          "docs/development/features/qam-demapper-performance/design.md",
+          "docs/development/features/waveform/plan.md",
+          "docs/development/features/prbs-source/plan.md",
+          "docs/development/features/impairment-group/plan.md"
+        ],
+        "requirement_ids": [
+          "REQ-COM-REUSE-01",
+          "REQ-COM-SYS-03",
+          "REQ-DS-PHY-01"
+        ],
+        "checklist_ids": [
+          "INT-REUSE-01",
+          "INT-DSP-01"
+        ],
+        "architecture_references": [
+          "docs/architecture.md#unified-shared-dsp-and-fec"
+        ],
+        "content_policy": "Adapt current local ownership/status and scientific contracts; link existing independent evidence; preserve originals; do not duplicate mandatory requirement text or transfer source acceptance.",
+        "implementation_and_test_owners": [
+          {
+            "requirement": "REQ-COM-REUSE-01",
+            "kind": "module",
+            "path": "crates/fec-codec/src/sparse_encoder.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-COM-REUSE-01",
+            "kind": "module",
+            "path": "crates/ofdm/src/signal_processing",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-COM-REUSE-01",
+            "kind": "test",
+            "path": "crates/fec-codec/src/sparse_encoder/tests.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-COM-SYS-03",
+            "kind": "module",
+            "path": "crates/ofdma/src/lib.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-DS-PHY-01",
+            "kind": "module",
+            "path": "crates/ofdm/src/transmission",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-DS-PHY-01",
+            "kind": "test",
+            "path": "crates/ofdm/tests/waveform_integration.rs",
+            "state": "existing"
+          }
+        ],
+        "acceptance_sha256": "6eff36f08ca25858981a9cfbaeeb896f030a6e47bcf45789a355b04753dff00d"
+      },
+      {
+        "proposed_path": "docs/development/features/ofdma/configuration.md",
+        "disposition": "Add",
+        "functional_owner": "OFDMA configuration / grants / source",
+        "purpose": "Typed UCD/IUC and represented MAP/grant/minislot contracts, source framing and PRBS; source field coverage and unsupported modes remain explicit.",
+        "source_sections": [
+          "docs/development/features/unified-backend/references/us-configuration-json-coverage.md",
+          "docs/development/features/unified-backend/references/foundation-validation.md",
+          "docs/development/features/unified-backend/references/extension-designs-ranging.md",
+          "docs/development/features/unified-backend/references/upstream-stage-contracts.md#tx-01-grant-framing-and-fec-selection",
+          "docs/development/features/unified-backend/references/upstream-stage-contracts.md#prbs-block-architecture"
+        ],
+        "requirement_ids": [
+          "REQ-US-CFG-01",
+          "REQ-US-CFG-02",
+          "REQ-US-CFG-03",
+          "REQ-US-CFG-04",
+          "REQ-US-CFG-05",
+          "REQ-US-CFG-06",
+          "REQ-US-PRBS-01",
+          "REQ-US-PRBS-02",
+          "REQ-US-PRBS-03",
+          "REQ-US-PRBS-04"
+        ],
+        "checklist_ids": [
+          "INT-US-CONFIG-01"
+        ],
+        "architecture_references": [
+          "docs/architecture.md#unified-upstream-configuration-and-source"
+        ],
+        "content_policy": "Adapt current local ownership/status and scientific contracts; link existing independent evidence; preserve originals; do not duplicate mandatory requirement text or transfer source acceptance.",
+        "implementation_and_test_owners": [
+          {
+            "requirement": "REQ-US-CFG-01",
+            "kind": "module",
+            "path": "crates/ofdma/src/configuration/ucd/mod.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CFG-01",
+            "kind": "test",
+            "path": "crates/ofdma/tests/configuration_json.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CFG-02",
+            "kind": "module",
+            "path": "crates/ofdma/src/configuration/ucd/mod.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CFG-02",
+            "kind": "test",
+            "path": "crates/ofdma/tests/configuration_json.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CFG-03",
+            "kind": "module",
+            "path": "crates/ofdma/src/configuration/ucd/mod.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CFG-03",
+            "kind": "test",
+            "path": "crates/ofdma/tests/configuration_json.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CFG-04",
+            "kind": "module",
+            "path": "crates/ofdma/src/configuration/ucd/mod.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CFG-04",
+            "kind": "test",
+            "path": "crates/ofdma/tests/configuration_json.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CFG-05",
+            "kind": "module",
+            "path": "crates/ofdma/src/configuration/ucd/mod.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CFG-05",
+            "kind": "test",
+            "path": "crates/ofdma/tests/configuration_json.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CFG-06",
+            "kind": "module",
+            "path": "crates/ofdma/src/configuration/ucd/mod.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CFG-06",
+            "kind": "test",
+            "path": "crates/ofdma/tests/configuration_json.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PRBS-01",
+            "kind": "module",
+            "path": "crates/ofdma/src/source/prbs15.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PRBS-01",
+            "kind": "test",
+            "path": "crates/ofdma/tests/prbs.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PRBS-02",
+            "kind": "module",
+            "path": "crates/ofdma/src/source/prbs15.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PRBS-02",
+            "kind": "test",
+            "path": "crates/ofdma/tests/prbs.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PRBS-03",
+            "kind": "module",
+            "path": "crates/ofdma/src/source/prbs15.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PRBS-03",
+            "kind": "test",
+            "path": "crates/ofdma/tests/prbs.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PRBS-04",
+            "kind": "module",
+            "path": "crates/ofdma/src/source/prbs15.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PRBS-04",
+            "kind": "test",
+            "path": "crates/ofdma/tests/prbs.rs",
+            "state": "planned"
+          }
+        ],
+        "acceptance_sha256": "417e175763c0f51079cd6868f7ae6a0fcda644745ad70e4566577a7ff2c964f6"
+      },
+      {
+        "proposed_path": "docs/development/features/ofdma/transmitter.md",
+        "disposition": "Add",
+        "functional_owner": "OFDMA transmitter",
+        "purpose": "TX-01..08 in normative order; grant layout, randomizer, QAM/resource visits, pilots/interleaving, Pre-Eq handoff, transform and sample assembly; no upstream BCH.",
+        "source_sections": [
+          "docs/development/features/unified-backend/references/upstream-stage-contracts.md#tx-01-grant-framing-and-fec-selection",
+          "docs/development/features/unified-backend/references/upstream-stage-contracts.md#tx-08-sample-assembly",
+          "docs/development/features/unified-backend/references/backend-stages-validation.md"
+        ],
+        "requirement_ids": [
+          "REQ-US-TX-01",
+          "REQ-US-TX-02",
+          "REQ-US-TX-03",
+          "REQ-US-TX-04",
+          "REQ-US-TX-05",
+          "REQ-US-TX-06",
+          "REQ-US-TX-07",
+          "REQ-US-TX-08"
+        ],
+        "checklist_ids": [
+          "INT-US-TX-01",
+          "INT-FEC-01"
+        ],
+        "architecture_references": [
+          "docs/architecture.md#unified-upstream-processing-order"
+        ],
+        "content_policy": "Adapt current local ownership/status and scientific contracts; link existing independent evidence; preserve originals; do not duplicate mandatory requirement text or transfer source acceptance.",
+        "implementation_and_test_owners": [
+          {
+            "requirement": "REQ-US-TX-01",
+            "kind": "module",
+            "path": "crates/ofdma/src/grant/plan.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-01",
+            "kind": "test",
+            "path": "crates/ofdma/tests/grant_plan.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-02",
+            "kind": "module",
+            "path": "crates/fec-codec/src/upstream_ldpc/codec.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-US-TX-02",
+            "kind": "test",
+            "path": "crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-US-TX-02",
+            "kind": "test",
+            "path": "crates/fec-codec/src/upstream_ldpc/tests.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-US-TX-03",
+            "kind": "module",
+            "path": "crates/ofdma/src/bit_processing/randomizer.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-03",
+            "kind": "test",
+            "path": "crates/ofdma/tests/randomization.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-04",
+            "kind": "module",
+            "path": "crates/ofdma/src/signal_processing/qam.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-04",
+            "kind": "test",
+            "path": "crates/ofdma/tests/qam_mapping.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-05",
+            "kind": "module",
+            "path": "crates/ofdma/src/transmitter/framing.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-05",
+            "kind": "test",
+            "path": "crates/ofdma/tests/resource_interleaving.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-06",
+            "kind": "module",
+            "path": "crates/ofdma/src/signal_processing/pre_eq.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-06",
+            "kind": "test",
+            "path": "crates/ofdma/tests/pre_eq.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-07",
+            "kind": "module",
+            "path": "crates/ofdma/src/signal_processing/transform.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-07",
+            "kind": "test",
+            "path": "crates/ofdma/tests/waveform_transform.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-08",
+            "kind": "module",
+            "path": "crates/ofdma/src/transmitter/assembly.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-08",
+            "kind": "test",
+            "path": "crates/ofdma/tests/tx_framing.rs",
+            "state": "planned"
+          }
+        ],
+        "acceptance_sha256": "64846a106b30044f952b65cc940c54d21c593813c73f9f1f0d083652f95daf99"
+      },
+      {
+        "proposed_path": "docs/development/features/ofdma/receiver.md",
+        "disposition": "Add",
+        "functional_owner": "OFDMA receiver",
+        "purpose": "RX-01..09; received-only admission/framing/FFT/estimation, inverse resource processing, LLRs, shortening and independent source verification. Wider receiver remains deferred.",
+        "source_sections": [
+          "docs/development/features/unified-backend/references/upstream-stage-contracts.md#rx-01-burst-framing-and-timing",
+          "docs/development/features/unified-backend/references/upstream-stage-contracts.md#rx-09-information-deframing",
+          "docs/development/features/unified-backend/references/extension-designs-receiver.md"
+        ],
+        "requirement_ids": [
+          "REQ-US-RX-01",
+          "REQ-US-RX-02",
+          "REQ-US-RX-03",
+          "REQ-US-RX-04",
+          "REQ-US-RX-05",
+          "REQ-US-RX-06",
+          "REQ-US-RX-07",
+          "REQ-US-RX-08",
+          "REQ-US-RX-09"
+        ],
+        "checklist_ids": [
+          "INT-US-RX-01",
+          "INT-FEC-01",
+          "INT-DEFER-01"
+        ],
+        "architecture_references": [
+          "docs/architecture.md#unified-upstream-processing-order"
+        ],
+        "content_policy": "Adapt current local ownership/status and scientific contracts; link existing independent evidence; preserve originals; do not duplicate mandatory requirement text or transfer source acceptance.",
+        "implementation_and_test_owners": [
+          {
+            "requirement": "REQ-US-RX-01",
+            "kind": "module",
+            "path": "crates/ofdma/src/receiver/framing.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-01",
+            "kind": "test",
+            "path": "crates/ofdma/tests/rx_framing.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-02",
+            "kind": "module",
+            "path": "crates/ofdma/src/receiver/framing.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-02",
+            "kind": "test",
+            "path": "crates/ofdma/tests/rx_framing.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-03",
+            "kind": "module",
+            "path": "crates/ofdma/src/signal_processing/transform.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-03",
+            "kind": "test",
+            "path": "crates/ofdma/tests/waveform_transform.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-04",
+            "kind": "module",
+            "path": "crates/ofdma/src/signal_processing/estimation.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-04",
+            "kind": "test",
+            "path": "crates/ofdma/tests/rx_estimation.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-05",
+            "kind": "module",
+            "path": "crates/ofdma/src/receiver/mod.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-05",
+            "kind": "test",
+            "path": "crates/ofdma/tests/rx_resources.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-06",
+            "kind": "module",
+            "path": "crates/ofdma/src/signal_processing/demapping.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-06",
+            "kind": "test",
+            "path": "crates/ofdma/tests/soft_metrics.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-07",
+            "kind": "module",
+            "path": "crates/ofdma/src/bit_processing/randomizer.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-07",
+            "kind": "test",
+            "path": "crates/ofdma/tests/randomization.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-08",
+            "kind": "module",
+            "path": "crates/fec-codec/src/upstream_ldpc/codec.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-US-RX-08",
+            "kind": "test",
+            "path": "crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-US-RX-08",
+            "kind": "test",
+            "path": "crates/fec-codec/src/upstream_ldpc/tests.rs",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-US-RX-09",
+            "kind": "module",
+            "path": "crates/ofdma/src/receiver/framing.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-RX-09",
+            "kind": "test",
+            "path": "crates/ofdma/tests/rx_framing.rs",
+            "state": "planned"
+          }
+        ],
+        "acceptance_sha256": "ecb214ed1df7fe2f401d0692a9a888ba892c69e63504e4272e3f8a7ab36b7363"
+      },
+      {
+        "proposed_path": "docs/development/features/ofdma/channel.md",
+        "disposition": "Add",
+        "functional_owner": "OFDMA channel / reference planes",
+        "purpose": "CH-01..06 and Y=XCH+N; direction-specific state, residual measurement policy, timing/drain and observation limits. Wider composition remains deferred.",
+        "source_sections": [
+          "docs/development/features/unified-backend/references/upstream-stage-contracts.md#ch-01-input-admission",
+          "docs/development/features/unified-backend/references/upstream-stage-contracts.md#ch-06-output-and-observations",
+          "docs/development/features/unified-backend/references/extension-designs-channel.md"
+        ],
+        "requirement_ids": [
+          "REQ-US-CH-01",
+          "REQ-US-CH-02",
+          "REQ-US-CH-03",
+          "REQ-US-CH-04",
+          "REQ-US-CH-05",
+          "REQ-US-CH-06"
+        ],
+        "checklist_ids": [
+          "INT-US-CH-01",
+          "INT-PNM-02",
+          "INT-DEFER-01"
+        ],
+        "architecture_references": [
+          "docs/architecture.md#unified-channel-and-measurement-reference-planes"
+        ],
+        "content_policy": "Adapt current local ownership/status and scientific contracts; link existing independent evidence; preserve originals; do not duplicate mandatory requirement text or transfer source acceptance.",
+        "implementation_and_test_owners": [
+          {
+            "requirement": "REQ-US-CH-01",
+            "kind": "module",
+            "path": "crates/ofdma/src/channel/stream.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CH-01",
+            "kind": "test",
+            "path": "crates/ofdma/tests/channel_models.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CH-02",
+            "kind": "module",
+            "path": "crates/ofdma/src/channel/stream.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CH-02",
+            "kind": "test",
+            "path": "crates/ofdma/tests/channel_models.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CH-03",
+            "kind": "module",
+            "path": "crates/ofdma/src/channel/stream.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CH-03",
+            "kind": "test",
+            "path": "crates/ofdma/tests/channel_models.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CH-04",
+            "kind": "module",
+            "path": "crates/ofdma/src/channel/residual.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CH-04",
+            "kind": "test",
+            "path": "crates/ofdma/tests/rxmer_channel.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CH-05",
+            "kind": "module",
+            "path": "crates/ofdma/src/channel/stream.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CH-05",
+            "kind": "test",
+            "path": "crates/ofdma/tests/channel_models.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CH-06",
+            "kind": "module",
+            "path": "crates/ofdma/src/instruments/observer.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-CH-06",
+            "kind": "test",
+            "path": "crates/ofdma/tests/matched_metrics.rs",
+            "state": "planned"
+          }
+        ],
+        "acceptance_sha256": "f28e33067f04f20623006391a493c4342c4820d619994a8e53ace5f216e1705a"
+      },
+      {
+        "proposed_path": "docs/development/features/ofdma/pre-equalization.md",
+        "disposition": "Add",
+        "functional_owner": "OFDMA Pre-Eq",
+        "purpose": "Applied correction C versus physical H; TX-06 filtering, banks, time/grid/provenance and update semantics; parsing belongs to PNM adapter.",
+        "source_sections": [
+          "docs/development/features/unified-backend/references/upstream-stage-contracts.md#tx-06-cm-pre-eq",
+          "docs/development/features/unified-backend/references/upstream-stage-contracts.md#us-pre-eq-input",
+          "docs/development/features/unified-backend/references/remaining-delivery-validation.md#preeq-format-01"
+        ],
+        "requirement_ids": [
+          "REQ-US-TX-06",
+          "REQ-US-PNM-02",
+          "REQ-US-PNM-03",
+          "REQ-US-PNM-04"
+        ],
+        "checklist_ids": [
+          "INT-US-TX-01",
+          "INT-PNM-01",
+          "INT-PNM-02"
+        ],
+        "architecture_references": [
+          "docs/architecture.md#unified-channel-and-measurement-reference-planes",
+          "docs/architecture.md#unified-pnm-and-capture-admission"
+        ],
+        "content_policy": "Adapt current local ownership/status and scientific contracts; link existing independent evidence; preserve originals; do not duplicate mandatory requirement text or transfer source acceptance.",
+        "implementation_and_test_owners": [
+          {
+            "requirement": "REQ-US-TX-06",
+            "kind": "module",
+            "path": "crates/ofdma/src/signal_processing/pre_eq.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-TX-06",
+            "kind": "test",
+            "path": "crates/ofdma/tests/pre_eq.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PNM-02",
+            "kind": "module",
+            "path": "crates/pnm-input/src/upstream/association.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PNM-02",
+            "kind": "test",
+            "path": "crates/pnm-input/tests/upstream_association.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PNM-03",
+            "kind": "module",
+            "path": "crates/pnm-input/src/upstream/association.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PNM-03",
+            "kind": "test",
+            "path": "crates/pnm-input/tests/upstream_association.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PNM-04",
+            "kind": "module",
+            "path": "crates/pnm-input/src/upstream/association.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PNM-04",
+            "kind": "test",
+            "path": "crates/pnm-input/tests/upstream_association.rs",
+            "state": "planned"
+          }
+        ],
+        "acceptance_sha256": "bc7632794fa77e04c02110c5affd9d04f5238c0af1422f0a01f76c9df0ec81eb"
+      },
+      {
+        "proposed_path": "docs/development/features/pnm-measurement-inputs/upstream.md",
+        "disposition": "Add",
+        "functional_owner": "PNM upstream inputs",
+        "purpose": "UCD/RxMER/Pre-Eq bounded decode, association, policies and whole-plan playback; preserve raw bytes/grids/unknowns; source format evidence is not integrated support.",
+        "source_sections": [
+          "docs/development/features/pnm-measurement-inputs/README.md",
+          "docs/development/features/unified-backend/references/capture-formats-validation.md",
+          "docs/development/features/unified-backend/references/rxmer-capture-validation.md",
+          "docs/development/features/unified-backend/references/remaining-delivery-validation.md",
+          "docs/development/features/unified-backend/references/upstream-stage-contracts.md#rxmer-input"
+        ],
+        "requirement_ids": [
+          "REQ-US-PNM-01",
+          "REQ-US-PNM-02",
+          "REQ-US-PNM-03",
+          "REQ-US-PNM-04"
+        ],
+        "checklist_ids": [
+          "INT-PNM-01",
+          "INT-PNM-02"
+        ],
+        "architecture_references": [
+          "docs/architecture.md#unified-pnm-and-capture-admission"
+        ],
+        "content_policy": "Adapt current local ownership/status and scientific contracts; link existing independent evidence; preserve originals; do not duplicate mandatory requirement text or transfer source acceptance.",
+        "implementation_and_test_owners": [
+          {
+            "requirement": "REQ-US-PNM-01",
+            "kind": "module",
+            "path": "crates/pnm-input/src/upstream/association.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PNM-01",
+            "kind": "test",
+            "path": "crates/pnm-input/tests/upstream_association.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PNM-02",
+            "kind": "module",
+            "path": "crates/pnm-input/src/upstream/association.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PNM-02",
+            "kind": "test",
+            "path": "crates/pnm-input/tests/upstream_association.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PNM-03",
+            "kind": "module",
+            "path": "crates/pnm-input/src/upstream/association.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PNM-03",
+            "kind": "test",
+            "path": "crates/pnm-input/tests/upstream_association.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PNM-04",
+            "kind": "module",
+            "path": "crates/pnm-input/src/upstream/association.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-PNM-04",
+            "kind": "test",
+            "path": "crates/pnm-input/tests/upstream_association.rs",
+            "state": "planned"
+          }
+        ],
+        "acceptance_sha256": "c560376bad979e787446d1fef756ca28b6d2ff70e2a12ef64479421caf5b8c80"
+      },
+      {
+        "proposed_path": "docs/development/features/high-level-api/upstream.md",
+        "disposition": "Add",
+        "functional_owner": "Public Rust / Python API",
+        "purpose": "Paired direction-aware composition, errors, lifecycle, bounds and reports through the same Rust engine; current downstream imports and persistence preserved; no early FEC-only Python facade.",
+        "source_sections": [
+          "docs/development/features/high-level-api/design.md",
+          "docs/development/features/high-level-api/requirements.md",
+          "docs/development/features/unified-backend/references/remaining-delivery-validation.md#aggregate-api-and-scientific-acceptance"
+        ],
+        "requirement_ids": [
+          "REQ-US-API-01",
+          "REQ-US-API-02",
+          "REQ-COM-API-03",
+          "REQ-COM-API-04",
+          "REQ-COM-API-05",
+          "REQ-COM-API-06",
+          "REQ-DS-API-01",
+          "REQ-COM-IDENTITY-01"
+        ],
+        "checklist_ids": [
+          "INT-US-LOOP-01",
+          "INT-RUST-01",
+          "INT-PY-01",
+          "INT-CLI-01"
+        ],
+        "architecture_references": [
+          "docs/architecture.md#unified-rust-python-and-cli-apis"
+        ],
+        "content_policy": "Adapt current local ownership/status and scientific contracts; link existing independent evidence; preserve originals; do not duplicate mandatory requirement text or transfer source acceptance.",
+        "implementation_and_test_owners": [
+          {
+            "requirement": "REQ-US-API-01",
+            "kind": "module",
+            "path": "crates/ofdma/src/api/session.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-API-01",
+            "kind": "test",
+            "path": "crates/ofdma/tests/api_parity.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-API-02",
+            "kind": "module",
+            "path": "crates/ofdma/src/api/session.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-US-API-02",
+            "kind": "test",
+            "path": "crates/ofdma/tests/api_parity.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-COM-API-03",
+            "kind": "module",
+            "path": "crates/ofdma/src/api/session.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-COM-API-03",
+            "kind": "test",
+            "path": "crates/ofdma/tests/api_parity.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-COM-API-04",
+            "kind": "module",
+            "path": "crates/ofdma/src/api/session.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-COM-API-04",
+            "kind": "test",
+            "path": "crates/ofdma/tests/api_parity.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-COM-API-05",
+            "kind": "module",
+            "path": "crates/ofdma/src/api/session.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-COM-API-05",
+            "kind": "test",
+            "path": "crates/ofdma/tests/api_parity.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-COM-API-06",
+            "kind": "module",
+            "path": "crates/ofdma/src/api/session.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-COM-API-06",
+            "kind": "test",
+            "path": "crates/ofdma/tests/api_parity.rs",
+            "state": "planned"
+          },
+          {
+            "requirement": "REQ-DS-API-01",
+            "kind": "module",
+            "path": "crates/ofdm/src/api",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-DS-API-01",
+            "kind": "module",
+            "path": "bindings/python/src",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-DS-API-01",
+            "kind": "test",
+            "path": "bindings/python/tests/test_api.py",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-DS-API-01",
+            "kind": "test",
+            "path": "bindings/python/tests/test_parity.py",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-COM-IDENTITY-01",
+            "kind": "module",
+            "path": "crates/ofdm/src/api",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-COM-IDENTITY-01",
+            "kind": "module",
+            "path": "bindings/python/src",
+            "state": "existing"
+          },
+          {
+            "requirement": "REQ-COM-IDENTITY-01",
+            "kind": "test",
+            "path": "bindings/python/tests/test_api.py",
+            "state": "existing"
+          }
+        ],
+        "acceptance_sha256": "dc504c1a1d790439f9ca02825cbb1f2c7d81075c12d89a8d3564e677624f5aee"
+      }
+    ],
+    "historical_aliases": {
+      "UI-DOC-02": [
+        "task-req-ds-doc-terms-01",
+        "task-req-ds-doc-png-01"
+      ]
+    },
+    "policy": "Official checklist owns completion. Frozen plan/inventory retain proposal-time statements and hashes; this block supplies current ownership and the final additive mapping. No moves/merges/deletions or runtime acceptance transfer.",
+    "acceptance_snapshot": {
+      "feature_files": 181,
+      "markdown_links": 7632,
+      "canonical_requirement_ids": 515,
+      "source_requirements": 59,
+      "downstream_routes": 127,
+      "downstream_task_mappings": 430,
+      "functional_records": 9,
+      "functional_requirement_mappings": 57,
+      "functional_unique_requirements": 50,
+      "functional_task_mappings": 22,
+      "dependency_nodes": 28,
+      "skills": 12,
+      "discovery_links": 24,
+      "protected_original_records": 163,
+      "historical_archives": 12,
+      "baseline": "ca2de34fa70e8e2b40c2622a2123c35d4471a070",
+      "historical_checkbox_lines_preserved": 521,
+      "tool_tests_passed": 25,
+      "source_document_dispositions_preserved": 46,
+      "source_task_mappings_preserved": 103,
+      "source_evidence_identities_preserved": 52,
+      "runtime_validation": "No new scientific/Qt acceptance; documentation checks only",
+      "record": "docs/development/features/unified-backend/validation.md#doc-org-01-functional-documentation-acceptance"
+    }
   }
 }

@@ -97,3 +97,100 @@ Therefore final documentation migration is not complete at this design checkpoin
 No original source technical document/vector is deleted; no package installation,
 source checkout modification, build-cache cleanup, commit, push or publication
 is authorized or performed by these documentation changes.
+
+## DOC-ORG-01: Functional documentation acceptance
+
+Executed on 2026-11-20, branch `merge-merlin-morgana`, working candidate based on
+`ca2de34fa70e8e2b40c2622a2123c35d4471a070`. The user approved the frozen
+[plan](feature-documentation-plan.md) and [170-file inventory](feature-documentation-inventory.json).
+Those proposal-time records remain unchanged; their earlier awaiting-review wording
+is historical. The [current mapping](source-inventory.json) records the executed
+zero-move organization. Earlier dated checkpoints above retain their original scope.
+
+The [official DOC-ORG-01 task](../../checklist.md#doc-org-01),
+[canonical documentation owner](../../../architecture.md#requirements-and-historical-evidence-ownership),
+[DOC-R3](../../../requirements.md#ds-doc-r3) and
+[REQ-COM-DOC-01](../../../requirements.md#req-com-doc-01) own this acceptance.
+It accepts documentation structure/traceability only; INT-DOC-02 and all unfinished
+backend/Qt tasks retain their existing states.
+
+### Executed file mapping
+
+| Disposition | Actual result |
+| --- | --- |
+| Keep | 151 original feature files remain byte-identical at the same paths. |
+| Archive in place | 12 original historical source references remain byte-identical at the same paths. |
+| Adapt | Seven approved original feature records: index; high-level API design; PNM README; integration design, source review, source inventory and validation. Original anchors/source findings remain. |
+| Add | Nine functional feature records listed below. |
+| Move / merge / delete | Zero / zero / zero. All 170 original feature paths remain present. |
+| Frozen planning records | Two records already committed with the approval baseline remain byte-identical. |
+| Final count | 181 feature files: the 170 originals, two frozen planning records and nine additions. |
+
+New active owners:
+
+- [FEC mechanisms/code families](../fec/design.md).
+- [DSP conventions/reuse](../signal-processing/design.md).
+- [OFDMA configuration/grants/source](../ofdma/configuration.md).
+- [OFDMA transmitter](../ofdma/transmitter.md).
+- [OFDMA receiver](../ofdma/receiver.md).
+- [OFDMA channel](../ofdma/channel.md).
+- [Pre-Eq correction banks](../ofdma/pre-equalization.md).
+- [Upstream PNM](../pnm-measurement-inputs/upstream.md).
+- [Converged Rust/Python APIs](../high-level-api/upstream.md).
+
+The existing feature index now groups all records by engineering responsibility.
+Existing downstream directories retain their owners. Integration records keep the
+migration/evidence history; source-only stage contracts are linked from active
+functional owners instead of duplicated. Canonical architecture, requirements and
+checklist gain direct forward/return links; navigation does not depend solely on
+the index. Source inventory metadata retains original clauses/hashes/locators and
+adds the current mapping. REQ-COM-SYS-05 now names the verified
+`crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs`; old locators in frozen
+proposal/snapshot text remain historical, not current test owners.
+
+### Commands and measured structural results
+
+`python3 -B tools/validation/feature_documentation.py --migration` passes.
+Its normal mode also passes through existing tool-test discovery. Strict migration
+mode compares this candidate against the approved snapshot; normal mode supports
+ongoing documentation checks without freezing future legitimate development.
+
+| Check | Actual result |
+| --- | --- |
+| Local Markdown links/files/fragments | **7,632** links checked across maintained tracked/new Markdown, including relative paths, explicit/duplicate-heading fragments and images; zero broken targets. Fenced examples and external URL availability are excluded. |
+| Original feature preservation | All 170 accounted for; all 163 Keep/Archive hashes match, seven Adapt diffs reviewed; no original feature anchor lost. Both frozen planning files match the approval commit. |
+| Requirement identity and clauses | 515 unique canonical IDs and two existing compatibility aliases retained; all 59 inherited behavior/acceptance clauses and 93 original numbered API clauses preserved. |
+| Existing downstream traceability | 127 current module/test/record routes resolve; all 430 original downstream requirement/task occurrences retain their forward/return links. |
+| Functional traceability | Nine records; 57 requirement→feature mappings covering 50 distinct current IDs; 22 declared task→feature mappings covering 14 distinct existing tasks. Each record has architecture/requirement/task return links and existing or explicitly planned module/test owners. |
+| Integration requirements | All 21 original integration tasks retain valid nonempty requirement lists and architecture/requirement return links, including INT-PNM-01. |
+| Task history | All 521 original official/UI checkbox lines remain byte-identical. Only new DOC-ORG-01 is accepted; existing completed/pending integration states do not change. |
+| Legacy aliases | Both completed UI-DOC-02 labels, exact canonical mappings and unique task-req-ds-doc-terms-01 / task-req-ds-doc-png-01 anchors are preserved. New task IDs remain unique. |
+| Dependencies | 28 known nodes, matching current checklist/inventory prerequisites and no cycles; DOC-ORG-01 now also gates INT-DOC-02. |
+| Machine records | All six original feature JSON records parse; original source/task/document/evidence snapshots and field values are unchanged except the approved current FEC locator and INT-DOC-02 dependency. Current mapping agrees with all original/new paths. |
+| Navigation and skills | All 181 feature records reachable; no unintended orphan. Twelve canonical skill metadata records and 24 relative discovery links validate; local skill references resolve. |
+| Tool regression cases | `python3 -B -m unittest discover -s tools/validation -p 'test_*.py'`: 25 passed, including 16 new positive/negative documentation contracts and the existing nine cases. |
+| Guide and whitespace | `python3 -B tools/python/update_integration_doc.py --check` and `git diff --check` pass. |
+| Implementation scope | Only approved documentation plus the two documentation-validation Python files changed. Rust, Cargo manifests/locks, native binding/Qt/QML implementations, scientific regression fixtures and public API behavior are unchanged. |
+
+The new cases exercise missing links/fragments, literal fenced examples, duplicate
+anchors, legacy alias navigation, explicit planned/current owners, the exact stale
+FEC locator, historical checkbox preservation, unknown/cyclic dependencies and
+missing feature return links and exact prior index navigation. The first working audit found one missing Pre-Eq
+return link at the PNM handoff; it was corrected before acceptance. Final review
+restored seven direct user/API/status/index routes and added a preservation case. Test-file
+existence is not presented as scientific execution evidence.
+
+### Boundaries and remaining work
+
+No Rust simulation, native Python engine, Qt build, private specification PDF,
+modem capture, installed lifecycle, external URL or hosted-CI validation was rerun
+for this documentation-only change. Existing scientific evidence retains its
+original checkout/platform and limitations. No source checkmark closes an upstream
+runtime gate. The public paired API record explicitly includes existing upstream
+Rust/Python requirement IDs as well as shared contracts; no IDs or behavior changed.
+
+DOC-ORG-01 is complete after these structural checks. INT-DSP-01 remains the next
+backend implementation gate; downstream history and all other task states are
+preserved. Final runtime/module/API correspondence, final documentation acceptance
+and unified backend acceptance remain open at INT-REG-01 / INT-DOC-02 /
+INT-ACCEPT-01. No commit, push, merge, publication or installation was performed.

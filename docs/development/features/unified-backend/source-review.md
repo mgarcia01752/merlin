@@ -147,3 +147,36 @@ INT-DOC-02 stays open until all ten user criteria hold against actual integrated
 paths, API/PNM behavior, current user documentation and passing MERLIN evidence.
 Do not delete original technical references merely because they are inventoried,
 replaced by a summary, or passed tests in their source workspace.
+
+## Functional ownership after DOC-ORG-01
+
+The approved zero-move mapping adds active MERLIN feature owners below. This
+integration area retains migration decisions, source identities and historical
+acceptance. All 12 references and all original 170 paths remain available;
+none of their source-only pass states transfers to local runtime acceptance.
+The [frozen proposal/inventory](feature-documentation-inventory.json) records the
+original decision; [current routing](source-inventory.json) and
+[structural evidence](validation.md#doc-org-01-functional-documentation-acceptance)
+record execution. The canonical
+[architecture](../../../architecture.md#requirements-and-historical-evidence-ownership),
+[requirements](../../../requirements.md#req-com-doc-01) and
+[DOC-ORG-01](../../checklist.md#doc-org-01) govern this documentation change.
+
+| Functional owner | Active feature record | Delivery gates |
+| --- | --- | --- |
+| FEC | [fec/design.md](../fec/design.md) | [INT-FEC-01](../../checklist.md#int-fec-01), [INT-DSP-01](../../checklist.md#int-dsp-01) |
+| DSP | [signal-processing/design.md](../signal-processing/design.md) | [INT-REUSE-01](../../checklist.md#int-reuse-01), [INT-DSP-01](../../checklist.md#int-dsp-01) |
+| OFDMA configuration / grants / source | [ofdma/configuration.md](../ofdma/configuration.md) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) |
+| OFDMA transmitter | [ofdma/transmitter.md](../ofdma/transmitter.md) | [INT-US-TX-01](../../checklist.md#int-us-tx-01), [INT-FEC-01](../../checklist.md#int-fec-01) |
+| OFDMA receiver | [ofdma/receiver.md](../ofdma/receiver.md) | [INT-US-RX-01](../../checklist.md#int-us-rx-01), [INT-FEC-01](../../checklist.md#int-fec-01), [INT-DEFER-01](../../checklist.md#int-defer-01) |
+| OFDMA channel / reference planes | [ofdma/channel.md](../ofdma/channel.md) | [INT-US-CH-01](../../checklist.md#int-us-ch-01), [INT-PNM-02](../../checklist.md#int-pnm-02), [INT-DEFER-01](../../checklist.md#int-defer-01) |
+| OFDMA Pre-Eq | [ofdma/pre-equalization.md](../ofdma/pre-equalization.md) | [INT-US-TX-01](../../checklist.md#int-us-tx-01), [INT-PNM-01](../../checklist.md#int-pnm-01), [INT-PNM-02](../../checklist.md#int-pnm-02) |
+| PNM upstream inputs | [pnm-measurement-inputs/upstream.md](../pnm-measurement-inputs/upstream.md) | [INT-PNM-01](../../checklist.md#int-pnm-01), [INT-PNM-02](../../checklist.md#int-pnm-02) |
+| Public Rust / Python API | [high-level-api/upstream.md](../high-level-api/upstream.md) | [INT-US-LOOP-01](../../checklist.md#int-us-loop-01), [INT-RUST-01](../../checklist.md#int-rust-01), [INT-PY-01](../../checklist.md#int-py-01), [INT-CLI-01](../../checklist.md#int-cli-01) |
+
+Existing downstream design folders retain ownership and stable links. The new
+records provide current local interface/status interpretation and link complete
+source equations/evidence instead of duplicating historical documents. Deferred
+ranging, wider channel/receiver and upstream Qt designs remain explicitly deferred.
+The current sparse LDPC leaf has its own MERLIN evidence; the archived appendix's
+older all-pending wrapper remains a preserved historical statement.

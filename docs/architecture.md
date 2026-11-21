@@ -53,6 +53,11 @@ and MERLIN acceptance are tracked in the unified backend sections below.
 
 ## Requirements and historical evidence ownership
 
+The [approved functional documentation organization](development/features/unified-backend/source-review.md#functional-ownership-after-doc-org-01) is delivered by
+[DOC-ORG-01](development/checklist.md#doc-org-01). Active feature records own detailed
+contracts; the three canonical documents and original historical acceptance keep
+their authority. Frozen source references remain evidence, not current support.
+
 The [requirements baseline](requirements.md#detailed-downstream-contract-register)
 records existing downstream behavior at stage, API and adapter granularity.
 Existing task/feature requirement IDs remain stable. The official checklist owns
@@ -133,6 +138,10 @@ analysis-only builds and existing feature behavior remain supported.
 
 ### Unified shared DSP and FEC
 
+Active feature detail: [FEC mechanisms and distinct code families](development/features/fec/design.md)
+and [shared numerical conventions](development/features/signal-processing/design.md).
+Their documentation acceptance does not close pending DSP extraction.
+
 Delivery gates: [INT-REUSE-01](development/checklist.md#int-reuse-01), [INT-FEC-01](development/checklist.md#int-fec-01), [INT-DSP-01](development/checklist.md#int-dsp-01).
 
 FEC mechanisms may share sparse adjacency, systematic encoder plans, bounded
@@ -189,6 +198,8 @@ relevant suites, not only these representative files.
 
 ### Unified upstream configuration and source
 
+Active feature detail: [OFDMA configuration, grants and source](development/features/ofdma/configuration.md).
+
 Delivery gates: [INT-US-CONFIG-01](development/checklist.md#int-us-config-01).
 
 Proposed `crates/ofdma/src/configuration/` owns UCD/IUC, represented MAP/grant,
@@ -217,6 +228,10 @@ after exact recurrence, seed, phase, bit order and chunk equivalence checks.
 Planned tests: `crates/ofdma/tests/{configuration,configuration_json,prbs}.rs`.
 
 ### Unified upstream processing order
+
+Active feature detail: [OFDMA transmitter](development/features/ofdma/transmitter.md)
+and [OFDMA receiver](development/features/ofdma/receiver.md), with their exact
+requirement/task/module/test boundaries.
 
 Delivery gates: [INT-US-TX-01](development/checklist.md#int-us-tx-01), [INT-US-RX-01](development/checklist.md#int-us-rx-01).
 
@@ -443,6 +458,9 @@ Requirement: [REQ-US-RX-09](requirements.md#req-us-rx-09); delivery: **INT-US-RX
 
 ### Unified channel and measurement reference planes
 
+Active feature detail: [OFDMA channel](development/features/ofdma/channel.md)
+and [Pre-Eq correction banks](development/features/ofdma/pre-equalization.md).
+
 Delivery gates: [INT-US-CH-01](development/checklist.md#int-us-ch-01).
 
 Preserve `Y[k] = X[k] C[k] H[k] + N[k]`: C is transmitter correction, H physical
@@ -476,6 +494,10 @@ control and independent comparison acceptance belongs in
 
 ### Unified PNM and capture admission
 
+Active feature detail: [upstream capture admission and measured input](development/features/pnm-measurement-inputs/upstream.md).
+The [Pre-Eq feature](development/features/ofdma/pre-equalization.md) owns the
+correction-bank/application handoff after raw adapter admission.
+
 Delivery gates: [INT-PNM-01](development/checklist.md#int-pnm-01), [INT-PNM-02](development/checklist.md#int-pnm-02).
 
 Extend `crates/pnm-input/src/upstream/{ucd,rxmer,pre_eq,association}.rs` and tests
@@ -505,6 +527,8 @@ Existing downstream [input ownership](#pnm-measurement-input-direction),
 [workbench tests](../crates/pnm-input/tests/workbench.rs) remain compatible.
 
 ### Unified Rust Python and CLI APIs
+
+Active feature detail: [paired Rust/Python convergence](development/features/high-level-api/upstream.md).
 
 Delivery gates: [INT-US-LOOP-01](development/checklist.md#int-us-loop-01), [INT-RUST-01](development/checklist.md#int-rust-01), [INT-PY-01](development/checklist.md#int-py-01), [INT-CLI-01](development/checklist.md#int-cli-01).
 

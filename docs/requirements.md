@@ -54,11 +54,11 @@ coverage without falsely creating new historical runtime evidence.
 
 | ID | Required behavior | Architecture / implementation owner | Acceptance / delivery |
 | --- | --- | --- | --- |
-| <a id="req-ds-fec-01"></a>REQ-DS-FEC-01 | MERLIN MUST retain current BCH/LDPC, shortening, NCP and PLC code definitions, outcomes and public codec imports. | [FEC ownership](architecture.md#unified-shared-dsp-and-fec); `crates/fec-codec/src/` and downstream transmission owners. | Existing `crates/fec-codec/tests/{normative,codec,shortening_codec,ncp,plc_decoding}.rs` plus downstream control-channel integration; INT-REG-01. Integration references: [INT-FEC-01](development/checklist.md#int-fec-01), [INT-REG-01](development/checklist.md#int-reg-01). |
-| <a id="req-ds-phy-01"></a>REQ-DS-PHY-01 | Downstream QAM/LLR/bit and cell interleaving, randomization, pilots, packing, PLC/NCP and waveform processing MUST preserve exact supported behavior and grids. | [Downstream path](architecture.md#unified-downstream-processing); `crates/ofdm/src/{transmission,signal_processing}/`. | `crates/ofdm/tests/{payload_transport,waveform_integration,qam_mapping,receiver_configuration}.rs` and all relevant existing parameter suites; INT-REG-01. Integration references: [INT-BASE-01](development/checklist.md#int-base-01), [INT-REG-01](development/checklist.md#int-reg-01). |
+| <a id="req-ds-fec-01"></a>REQ-DS-FEC-01 | MERLIN MUST retain current BCH/LDPC, shortening, NCP and PLC code definitions, outcomes and public codec imports. | [FEC ownership](architecture.md#unified-shared-dsp-and-fec); `crates/fec-codec/src/` and downstream transmission owners. | Existing `crates/fec-codec/tests/{normative,codec,shortening_codec,ncp,plc_decoding}.rs` plus downstream control-channel integration; INT-REG-01. Integration references: [INT-FEC-01](development/checklist.md#int-fec-01), [INT-REG-01](development/checklist.md#int-reg-01). Feature records: [fec/design.md](development/features/fec/design.md). |
+| <a id="req-ds-phy-01"></a>REQ-DS-PHY-01 | Downstream QAM/LLR/bit and cell interleaving, randomization, pilots, packing, PLC/NCP and waveform processing MUST preserve exact supported behavior and grids. | [Downstream path](architecture.md#unified-downstream-processing); `crates/ofdm/src/{transmission,signal_processing}/`. | `crates/ofdm/tests/{payload_transport,waveform_integration,qam_mapping,receiver_configuration}.rs` and all relevant existing parameter suites; INT-REG-01. Integration references: [INT-BASE-01](development/checklist.md#int-base-01), [INT-REG-01](development/checklist.md#int-reg-01). Feature records: [signal-processing/design.md](development/features/signal-processing/design.md). |
 | <a id="req-ds-run-01"></a>REQ-DS-RUN-01 | Existing source/receiver/channel jobs MUST retain truth separation, duration/startup/drain, bounded work, deterministic seeds and partial/cancelled outcomes. | [Lifecycle](architecture.md#lifecycle-validation-and-future-interfaces); `crates/ofdm/src/simulation/`. | Existing `crates/ofdm/tests/{channel_job,duration_timing,prbs_source,file_source_channel}.rs`; INT-REG-01. Integration references: [INT-REG-01](development/checklist.md#int-reg-01). |
 | <a id="req-ds-input-01"></a>REQ-DS-INPUT-01 | Capture bytes/hashes/grids/nulls/profile identities, association, measurement policies and saved workbench compatibility MUST remain intact. | [PNM ownership](architecture.md#pnm-measurement-input-direction); `crates/pnm-input/src/`, downstream `scenario/` and `api/`. | Existing `crates/pnm-input/tests/{high_level_api,workbench,designer_workbench}.rs`; INT-REG-01. Integration references: [INT-REG-01](development/checklist.md#int-reg-01). |
-| <a id="req-ds-api-01"></a>REQ-DS-API-01 | Existing Rust imports, Python exports, CLI syntax, report/schema defaults and saved recipes MUST remain compatible; shared capabilities MUST land in Rust first. | [Unified adapters](architecture.md#unified-rust-python-and-cli-apis); `crates/ofdm/src/api/`, `bindings/python`, `crates/cli`. | Existing native `bindings/python/tests/{test_api,test_parity,test_workbench,test_designer_workbench}.py`, API examples and CLI cases; INT-RUST-01, INT-PY-01, INT-CLI-01, INT-REG-01. Integration references: [INT-CLI-01](development/checklist.md#int-cli-01), [INT-REG-01](development/checklist.md#int-reg-01). |
+| <a id="req-ds-api-01"></a>REQ-DS-API-01 | Existing Rust imports, Python exports, CLI syntax, report/schema defaults and saved recipes MUST remain compatible; shared capabilities MUST land in Rust first. | [Unified adapters](architecture.md#unified-rust-python-and-cli-apis); `crates/ofdm/src/api/`, `bindings/python`, `crates/cli`. | Existing native `bindings/python/tests/{test_api,test_parity,test_workbench,test_designer_workbench}.py`, API examples and CLI cases; INT-RUST-01, INT-PY-01, INT-CLI-01, INT-REG-01. Integration references: [INT-CLI-01](development/checklist.md#int-cli-01), [INT-REG-01](development/checklist.md#int-reg-01). Feature records: [high-level-api/upstream.md](development/features/high-level-api/upstream.md). |
 | <a id="req-ds-ui-01"></a>REQ-DS-UI-01 | Backend integration MUST preserve existing Qt downstream presentation/readiness/persistence; it MUST NOT add upstream UI as a side effect. | [Qt boundary](architecture.md#ui-merlin-simulation-workbench); `apps/qt/`. | Relevant existing Qt tests/build only if integration changes their dependencies/contracts; INT-REG-01. Detailed UI status remains subordinate in `docs/development/ui-checklist.md`. Integration references: [INT-REG-01](development/checklist.md#int-reg-01). |
 | <a id="req-ds-delivery-01"></a>REQ-DS-DELIVERY-01 | Existing VERSION/source pins, licenses, package targets, Master/Release security/native gates and generated Python installation guide policy MUST remain authoritative. | [Delivery](architecture.md#unified-normative-evidence-and-exclusions); current `tools/`, `.github/workflows/` and setup owners. | Existing tooling, version, both-lock audit, release/package/native gates when applicable; INT-LICENSE-01, INT-TOOLS-01, INT-ACCEPT-01. Integration references: [INT-LICENSE-01](development/checklist.md#int-license-01), [INT-TOOLS-01](development/checklist.md#int-tools-01), [INT-ACCEPT-01](development/checklist.md#int-accept-01). |
 
@@ -66,9 +66,9 @@ coverage without falsely creating new historical runtime evidence.
 
 | ID | Required behavior | Architecture / owner | Acceptance / task |
 | --- | --- | --- | --- |
-| <a id="req-com-reuse-01"></a>REQ-COM-REUSE-01 | Shared algorithms MUST be selected by exact semantic/equivalence and performance evidence; direction-specific normative state MUST remain separate. | [Shared DSP/FEC](architecture.md#unified-shared-dsp-and-fec); existing core owners; conditional `crates/dsp`. | Function/path reuse matrix, independent vectors, retained golden values, allocation/runtime measurements; INT-REUSE-01, INT-DSP-01, INT-FEC-01. Integration references: [INT-REUSE-01](development/checklist.md#int-reuse-01), [INT-FEC-01](development/checklist.md#int-fec-01), [INT-DSP-01](development/checklist.md#int-dsp-01). |
-| <a id="req-com-identity-01"></a>REQ-COM-IDENTITY-01 | The integrated product MUST remain MERLIN with one CLI/Python family; former product crates/controllers/imports MUST NOT be introduced. Required source attribution and raw source metadata MUST remain accurate. | [Crates](architecture.md#unified-crate-ownership); local manifests, APIs, packaging metadata and NOTICE. | Source/import/export/package inventory plus downstream compatibility; INT-RUST-01, INT-PY-01, INT-CLI-01, INT-TOOLS-01. Integration references: [INT-CLI-01](development/checklist.md#int-cli-01). |
-| <a id="req-com-doc-01"></a>REQ-COM-DOC-01 | One architecture, requirements baseline and official checklist MUST cover both directions with exact source/document/task mappings and final implementation evidence. | [Final documentation gate](architecture.md#unified-acceptance-and-final-documentation-gate); canonical docs and skills. | Complete source inventory, unique IDs, dependency/coverage/link checks and final module/API/runtime correspondence; INT-DOC-01, INT-DOC-02. Integration references: [INT-DOC-01](development/checklist.md#int-doc-01), [INT-DOC-02](development/checklist.md#int-doc-02), [INT-ACCEPT-01](development/checklist.md#int-accept-01). |
+| <a id="req-com-reuse-01"></a>REQ-COM-REUSE-01 | Shared algorithms MUST be selected by exact semantic/equivalence and performance evidence; direction-specific normative state MUST remain separate. | [Shared DSP/FEC](architecture.md#unified-shared-dsp-and-fec); existing core owners; conditional `crates/dsp`. | Function/path reuse matrix, independent vectors, retained golden values, allocation/runtime measurements; INT-REUSE-01, INT-DSP-01, INT-FEC-01. Integration references: [INT-REUSE-01](development/checklist.md#int-reuse-01), [INT-FEC-01](development/checklist.md#int-fec-01), [INT-DSP-01](development/checklist.md#int-dsp-01). Feature records: [fec/design.md](development/features/fec/design.md), [signal-processing/design.md](development/features/signal-processing/design.md). |
+| <a id="req-com-identity-01"></a>REQ-COM-IDENTITY-01 | The integrated product MUST remain MERLIN with one CLI/Python family; former product crates/controllers/imports MUST NOT be introduced. Required source attribution and raw source metadata MUST remain accurate. | [Crates](architecture.md#unified-crate-ownership); local manifests, APIs, packaging metadata and NOTICE. | Source/import/export/package inventory plus downstream compatibility; INT-RUST-01, INT-PY-01, INT-CLI-01, INT-TOOLS-01. Integration references: [INT-CLI-01](development/checklist.md#int-cli-01). Feature records: [high-level-api/upstream.md](development/features/high-level-api/upstream.md). |
+| <a id="req-com-doc-01"></a>REQ-COM-DOC-01 | One architecture, requirements baseline and official checklist MUST cover both directions with exact source/document/task mappings and final implementation evidence. | [Final documentation gate](architecture.md#unified-acceptance-and-final-documentation-gate); canonical docs and skills. | Complete source inventory, unique IDs, dependency/coverage/link checks and final module/API/runtime correspondence; INT-DOC-01, INT-DOC-02. Integration references: [INT-DOC-01](development/checklist.md#int-doc-01), [INT-DOC-02](development/checklist.md#int-doc-02), [INT-ACCEPT-01](development/checklist.md#int-accept-01). Documentation delivery: [DOC-ORG-01](development/checklist.md#doc-org-01). |
 
 ## Upstream and inherited common contracts
 
@@ -89,6 +89,8 @@ Architecture: [canonical owner](architecture.md#unified-crate-ownership).
 Implementation: `crates/ofdma/src/lib.rs and core manifests`. Acceptance owner: `Rust-only dependency/build inspection and no-unsafe guards`.
 Delivery: [**INT-REUSE-01**](development/checklist.md#int-reuse-01); source alias `REQ-SYS-03`.
 
+Feature records: [signal-processing/design.md](development/features/signal-processing/design.md).
+
 #### REQ-COM-SYS-05
 
 Scientific claims SHALL identify pinned evidence and the applicable endpoint without confusing internal closed-loop evidence with external interoperability. Each stage SHALL have source-checked expected inputs/outputs recorded before its implementation, independently of production tables/algorithms.
@@ -96,9 +98,11 @@ Scientific claims SHALL identify pinned evidence and the applicable endpoint wit
 Acceptance: Source/matrix/label checks record revision, section/page and source-review gaps; reports/docs label internal experiments accurately and retain optional-capability distinctions. Build these cases stage by stage; external interoperability fixtures and a complete upfront catalog are not prerequisites.
 
 Architecture: [canonical owner](architecture.md#unified-normative-evidence-and-exclusions).
-Implementation: `crates/fec-codec/src/upstream_ldpc/definitions.rs`. Acceptance owner: `crates/fec-codec/tests/upstream_source_audit.rs`.
+Implementation: `crates/fec-codec/src/upstream_ldpc/definitions.rs`. Acceptance owner: [source audit](../crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs).
 Delivery: [**INT-FEC-01**](development/checklist.md#int-fec-01); source alias `REQ-SYS-05`.
 Integration references: [INT-BASE-01](development/checklist.md#int-base-01).
+
+Feature records: [fec/design.md](development/features/fec/design.md).
 
 #### REQ-COM-OBS-01
 
@@ -130,6 +134,8 @@ Architecture: [canonical owner](architecture.md#unified-rust-python-and-cli-apis
 Implementation: `crates/ofdma/src/api/session.rs`. Acceptance owner: `crates/ofdma/tests/api_parity.rs`.
 Delivery: [**INT-RUST-01**](development/checklist.md#int-rust-01); source alias `REQ-API-03`.
 
+Feature records: [high-level-api/upstream.md](development/features/high-level-api/upstream.md).
+
 #### REQ-COM-API-04
 
 Native Python execution SHALL release the interpreter lock during long Rust work and serialize mutable session access with explicit Busy behavior.
@@ -139,6 +145,8 @@ Acceptance: Actual native concurrency tests demonstrate independent cancellation
 Architecture: [canonical owner](architecture.md#unified-rust-python-and-cli-apis).
 Implementation: `crates/ofdma/src/api/session.rs`. Acceptance owner: `crates/ofdma/tests/api_parity.rs`.
 Delivery: [**INT-PY-01**](development/checklist.md#int-py-01); source alias `REQ-API-04`.
+
+Feature records: [high-level-api/upstream.md](development/features/high-level-api/upstream.md).
 
 #### REQ-COM-API-05
 
@@ -150,6 +158,8 @@ Architecture: [canonical owner](architecture.md#unified-rust-python-and-cli-apis
 Implementation: `crates/ofdma/src/api/session.rs`. Acceptance owner: `crates/ofdma/tests/api_parity.rs`.
 Delivery: [**INT-PY-01**](development/checklist.md#int-py-01); source alias `REQ-API-05`.
 
+Feature records: [high-level-api/upstream.md](development/features/high-level-api/upstream.md).
+
 #### REQ-COM-API-06
 
 Exported/configuration documents SHALL use explicit independent versions and declared compatibility rules.
@@ -159,6 +169,8 @@ Acceptance: Unknown versions/typed fields reject or follow an explicit migration
 Architecture: [canonical owner](architecture.md#unified-rust-python-and-cli-apis).
 Implementation: `crates/ofdma/src/api/session.rs`. Acceptance owner: `crates/ofdma/tests/api_parity.rs`.
 Delivery: [**INT-RUST-01**](development/checklist.md#int-rust-01); source alias `REQ-API-06`.
+
+Feature records: [high-level-api/upstream.md](development/features/high-level-api/upstream.md).
 
 #### REQ-COM-LIFE-01
 
@@ -274,6 +286,8 @@ Architecture: [canonical owner](architecture.md#unified-upstream-configuration-a
 Implementation: `crates/ofdma/src/configuration/ucd/mod.rs`. Acceptance owner: `crates/ofdma/tests/configuration_json.rs`.
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-CFG-01`.
 
+Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
+
 #### REQ-US-CFG-02
 
 Configuration admission SHALL produce an immutable CMTS plan and separate accepted TX/RX views through shared validation.
@@ -283,6 +297,8 @@ Acceptance: Both views agree on permitted geometry/grant/pilot/PHY-seed settings
 Architecture: [canonical owner](architecture.md#unified-upstream-configuration-and-source).
 Implementation: `crates/ofdma/src/configuration/ucd/mod.rs`. Acceptance owner: `crates/ofdma/tests/configuration_json.rs`.
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-CFG-02`.
+
+Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
 
 #### REQ-US-CFG-03
 
@@ -294,6 +310,8 @@ Architecture: [canonical owner](architecture.md#unified-upstream-configuration-a
 Implementation: `crates/ofdma/src/configuration/ucd/mod.rs`. Acceptance owner: `crates/ofdma/tests/configuration_json.rs`.
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-CFG-03`.
 
+Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
+
 #### REQ-US-CFG-04
 
 Configuration coverage SHALL account for every applicable field/option in the pinned MULPI OFDMA scope.
@@ -303,6 +321,8 @@ Acceptance: The field-level matrix records source path/page, endpoint, force/app
 Architecture: [canonical owner](architecture.md#unified-upstream-configuration-and-source).
 Implementation: `crates/ofdma/src/configuration/ucd/mod.rs`. Acceptance owner: `crates/ofdma/tests/configuration_json.rs`.
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-CFG-04`.
+
+Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
 
 #### REQ-US-CFG-05
 
@@ -314,6 +334,8 @@ Architecture: [canonical owner](architecture.md#unified-upstream-configuration-a
 Implementation: `crates/ofdma/src/configuration/ucd/mod.rs`. Acceptance owner: `crates/ofdma/tests/configuration_json.rs`.
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-CFG-05`.
 
+Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
+
 #### REQ-US-CFG-06
 
 Example presets SHALL demonstrate generic configurations without claiming universal recommended modulation.
@@ -323,6 +345,8 @@ Acceptance: Reviewed 25/50 kHz, mixed-loading and zero-valued-minislot examples 
 Architecture: [canonical owner](architecture.md#unified-upstream-configuration-and-source).
 Implementation: `crates/ofdma/src/configuration/ucd/mod.rs`. Acceptance owner: `crates/ofdma/tests/configuration_json.rs`.
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-CFG-06`.
+
+Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
 
 #### REQ-US-PRBS-01
 
@@ -334,6 +358,8 @@ Architecture: [canonical owner](architecture.md#unified-upstream-configuration-a
 Implementation: `crates/ofdma/src/source/prbs15.rs`. Acceptance owner: `crates/ofdma/tests/prbs.rs`.
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-PRBS-01`.
 
+Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
+
 #### REQ-US-PRBS-02
 
 Source consumption SHALL track accepted meaningful payload with checked absolute positions and bounded chunks.
@@ -343,6 +369,8 @@ Acceptance: Fill/shortening/parity/pad/pilots consume no source bits; backpressu
 Architecture: [canonical owner](architecture.md#unified-upstream-configuration-and-source).
 Implementation: `crates/ofdma/src/source/prbs15.rs`. Acceptance owner: `crates/ofdma/tests/prbs.rs`.
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-PRBS-02`.
+
+Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
 
 #### REQ-US-PRBS-03
 
@@ -354,6 +382,8 @@ Architecture: [canonical owner](architecture.md#unified-upstream-configuration-a
 Implementation: `crates/ofdma/src/source/prbs15.rs`. Acceptance owner: `crates/ofdma/tests/prbs.rs`.
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-PRBS-03`.
 
+Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
+
 #### REQ-US-PRBS-04
 
 Verification results SHALL distinguish generated, compared and unverified bits, coverage, mismatch counts and completion.
@@ -363,6 +393,8 @@ Acceptance: Zero compared bits yield unavailable BER; zero observed errors with 
 Architecture: [canonical owner](architecture.md#unified-upstream-configuration-and-source).
 Implementation: `crates/ofdma/src/source/prbs15.rs`. Acceptance owner: `crates/ofdma/tests/prbs.rs`.
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-PRBS-04`.
+
+Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
 
 #### REQ-US-TX-01
 
@@ -374,6 +406,8 @@ Architecture: [canonical owner](architecture.md#us-tx-01-grant-framing-and-fec-s
 Implementation: `crates/ofdma/src/grant/plan.rs`. Acceptance owner: `crates/ofdma/tests/grant_plan.rs`.
 Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alias `REQ-TX-01`.
 
+Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md).
+
 #### REQ-US-TX-02
 
 Encoding SHALL use the selected source-verified upstream long/medium/short LDPC family with systematic order and exact shortening semantics. All three code families SHALL pass source audit and codec acceptance before dependent waveform implementation.
@@ -383,6 +417,8 @@ Acceptance: Independently checked matrix entries/parity and full/shortened words
 Architecture: [canonical owner](architecture.md#us-tx-02-ldpc-encoding-and-shortening).
 Implementation: `crates/fec-codec/src/upstream_ldpc/codec.rs`. Acceptance owner: [source audit](../crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs) and [codec cases](../crates/fec-codec/src/upstream_ldpc/tests.rs); [MERLIN results](development/features/unified-backend/fec-validation.md).
 Delivery: [**INT-FEC-01**](development/checklist.md#int-fec-01); source alias `REQ-TX-02`.
+
+Feature records: [fec/design.md](development/features/fec/design.md), [ofdma/transmitter.md](development/features/ofdma/transmitter.md).
 
 #### REQ-US-TX-03
 
@@ -394,6 +430,8 @@ Architecture: [canonical owner](architecture.md#us-tx-03-grant-seeded-phy-random
 Implementation: `crates/ofdma/src/bit_processing/randomizer.rs`. Acceptance owner: `crates/ofdma/tests/randomization.rs`.
 Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alias `REQ-TX-03`.
 
+Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md).
+
 #### REQ-US-TX-04
 
 QAM mapping SHALL form MSB-first cell words in accepted visit order using exact upstream labels, normalization and role-dependent loading.
@@ -403,6 +441,8 @@ Acceptance: Independent label/energy vectors cover the declared BPSK/QPSK throug
 Architecture: [canonical owner](architecture.md#us-tx-04-cell-words-and-upstream-qam).
 Implementation: `crates/ofdma/src/signal_processing/qam.rs`. Acceptance owner: `crates/ofdma/tests/qam_mapping.rs`.
 Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alias `REQ-TX-04`.
+
+Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md).
 
 #### REQ-US-TX-05
 
@@ -414,6 +454,8 @@ Architecture: [canonical owner](architecture.md#us-tx-05-pilots-resources-and-jo
 Implementation: `crates/ofdma/src/transmitter/framing.rs`. Acceptance owner: `crates/ofdma/tests/resource_interleaving.rs`.
 Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alias `REQ-TX-05`.
 
+Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md).
+
 #### REQ-US-TX-06
 
 Pre-EQ SHALL apply one accepted complex corrective bank after role scaling and before IFFT, preserving the distinction between C and injected H.
@@ -423,6 +465,8 @@ Acceptance: Independent normalization/phase/default/reset/replacement/adjustment
 Architecture: [canonical owner](architecture.md#us-tx-06-cm-pre-eq).
 Implementation: `crates/ofdma/src/signal_processing/pre_eq.rs`. Acceptance owner: `crates/ofdma/tests/pre_eq.rs`.
 Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alias `REQ-TX-06`.
+
+Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md), [ofdma/pre-equalization.md](development/features/ofdma/pre-equalization.md).
 
 #### REQ-US-TX-07
 
@@ -434,6 +478,8 @@ Architecture: [canonical owner](architecture.md#us-tx-07-centered-unitary-ifft).
 Implementation: `crates/ofdma/src/signal_processing/transform.rs`. Acceptance owner: `crates/ofdma/tests/waveform_transform.rs`.
 Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alias `REQ-TX-07`.
 
+Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md).
+
 #### REQ-US-TX-08
 
 Sample assembly SHALL apply the specified CP/RP, cyclic extension, taper and overlap while retaining exact useful/prefix origins, burst edges, tails and explicit guards.
@@ -443,6 +489,8 @@ Acceptance: Independent numbered-sample/window tests cover zero/nonzero RP and a
 Architecture: [canonical owner](architecture.md#us-tx-08-prefix-window-and-sample-assembly).
 Implementation: `crates/ofdma/src/transmitter/assembly.rs`. Acceptance owner: `crates/ofdma/tests/tx_framing.rs`.
 Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alias `REQ-TX-08`.
+
+Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md).
 
 #### REQ-US-CH-01
 
@@ -454,6 +502,8 @@ Architecture: [canonical owner](architecture.md#us-ch-01-indexed-sample-admissio
 Implementation: `crates/ofdma/src/channel/stream.rs`. Acceptance owner: `crates/ofdma/tests/channel_models.rs`.
 Delivery: [**INT-US-CH-01**](development/checklist.md#int-us-ch-01); source alias `REQ-CH-01`.
 
+Feature records: [ofdma/channel.md](development/features/ofdma/channel.md).
+
 #### REQ-US-CH-02
 
 Initial unity transport SHALL preserve sample bit patterns and metadata exactly without impairments or random draws.
@@ -463,6 +513,8 @@ Acceptance: Bitwise tests include signed zero and arbitrary chunking with unchan
 Architecture: [canonical owner](architecture.md#us-ch-02-exact-unity-transport).
 Implementation: `crates/ofdma/src/channel/stream.rs`. Acceptance owner: `crates/ofdma/tests/channel_models.rs`.
 Delivery: [**INT-US-CH-01**](development/checklist.md#int-us-ch-01); source alias `REQ-CH-02`.
+
+Feature records: [ofdma/channel.md](development/features/ofdma/channel.md).
 
 #### REQ-US-CH-03
 
@@ -474,6 +526,8 @@ Architecture: [canonical owner](architecture.md#us-ch-03-physical-channel-respon
 Implementation: `crates/ofdma/src/channel/stream.rs`. Acceptance owner: `crates/ofdma/tests/channel_models.rs`.
 Delivery: [**INT-US-CH-01**](development/checklist.md#int-us-ch-01); source alias `REQ-CH-03`.
 
+Feature records: [ofdma/channel.md](development/features/ofdma/channel.md).
+
 #### REQ-US-CH-04
 
 Residual synthesis SHALL offer explicit Off, sample-AWGN and restricted RxMER-derived modes using separate deterministic noise state and declared reference power.
@@ -483,6 +537,8 @@ Acceptance: Independent power/statistical/draw-order tests cover seeds, missing-
 Architecture: [canonical owner](architecture.md#us-ch-04-awgn-and-restricted-rxmer-residuals).
 Implementation: `crates/ofdma/src/channel/residual.rs`. Acceptance owner: `crates/ofdma/tests/rxmer_channel.rs`.
 Delivery: [**INT-US-CH-01**](development/checklist.md#int-us-ch-01); source alias `REQ-CH-04`.
+
+Feature records: [ofdma/channel.md](development/features/ofdma/channel.md).
 
 #### REQ-US-CH-05
 
@@ -494,6 +550,8 @@ Architecture: [canonical owner](architecture.md#us-ch-05-integer-timing-phase-an
 Implementation: `crates/ofdma/src/channel/stream.rs`. Acceptance owner: `crates/ofdma/tests/channel_models.rs`.
 Delivery: [**INT-US-CH-01**](development/checklist.md#int-us-ch-01); source alias `REQ-CH-05`.
 
+Feature records: [ofdma/channel.md](development/features/ofdma/channel.md).
+
 #### REQ-US-CH-06
 
 Channel output SHALL retain indexed samples and bounded passive observations while separating diagnostics from legitimate RX inputs.
@@ -503,6 +561,8 @@ Acceptance: Observer selection/capacity does not change samples or randomness; o
 Architecture: [canonical owner](architecture.md#us-ch-06-output-and-passive-observations).
 Implementation: `crates/ofdma/src/instruments/observer.rs`. Acceptance owner: `crates/ofdma/tests/matched_metrics.rs`.
 Delivery: [**INT-US-CH-01**](development/checklist.md#int-us-ch-01); source alias `REQ-CH-06`.
+
+Feature records: [ofdma/channel.md](development/features/ofdma/channel.md).
 
 #### REQ-US-RX-01
 
@@ -514,6 +574,8 @@ Architecture: [canonical owner](architecture.md#us-rx-01-configured-burst-framin
 Implementation: `crates/ofdma/src/receiver/framing.rs`. Acceptance owner: `crates/ofdma/tests/rx_framing.rs`.
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-01`.
 
+Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
+
 #### REQ-US-RX-02
 
 Useful-symbol extraction SHALL select exactly the scheduled N-sample windows without silently filling incomplete windows.
@@ -523,6 +585,8 @@ Acceptance: Numbered-sample/CP/overlap/truncation cases distinguish available ze
 Architecture: [canonical owner](architecture.md#us-rx-02-useful-symbol-extraction).
 Implementation: `crates/ofdma/src/receiver/framing.rs`. Acceptance owner: `crates/ofdma/tests/rx_framing.rs`.
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-02`.
+
+Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
 
 #### REQ-US-RX-03
 
@@ -534,6 +598,8 @@ Architecture: [canonical owner](architecture.md#us-rx-03-centered-unitary-fft).
 Implementation: `crates/ofdma/src/signal_processing/transform.rs`. Acceptance owner: `crates/ofdma/tests/waveform_transform.rs`.
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-03`.
 
+Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
+
 #### REQ-US-RX-04
 
 Channel estimation/equalization SHALL estimate effective C×H from received known pilots using the declared FrameFlatLs or FramePilotLinear policy and explicit zero-forcing validity.
@@ -543,6 +609,8 @@ Acceptance: Independent complex-anchor/interpolation/notch cases verify known pi
 Architecture: [canonical owner](architecture.md#us-rx-04-received-pilot-estimation-and-equalization).
 Implementation: `crates/ofdma/src/signal_processing/estimation.rs`. Acceptance owner: `crates/ofdma/tests/rx_estimation.rs`.
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-04`.
+
+Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
 
 #### REQ-US-RX-05
 
@@ -554,6 +622,8 @@ Architecture: [canonical owner](architecture.md#us-rx-05-resource-extraction-and
 Implementation: `crates/ofdma/src/receiver/mod.rs`. Acceptance owner: `crates/ofdma/tests/rx_resources.rs`.
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-05`.
 
+Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
+
 #### REQ-US-RX-06
 
 Soft demapping SHALL produce MSB-first finite MaxLog natural-log P(0)/P(1) metrics from shared upstream labels/scales and a valid ReferenceVariance.
@@ -563,6 +633,8 @@ Acceptance: Independent label/distance/sign tests cover positive-favors-zero con
 Architecture: [canonical owner](architecture.md#us-rx-06-soft-qam-demapping).
 Implementation: `crates/ofdma/src/signal_processing/demapping.rs`. Acceptance owner: `crates/ofdma/tests/soft_metrics.rs`.
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-06`.
+
+Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
 
 #### REQ-US-RX-07
 
@@ -574,6 +646,8 @@ Architecture: [canonical owner](architecture.md#us-rx-07-soft-phy-derandomizatio
 Implementation: `crates/ofdma/src/bit_processing/randomizer.rs`. Acceptance owner: `crates/ofdma/tests/randomization.rs`.
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-07`.
 
+Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
+
 #### REQ-US-RX-08
 
 LDPC integration SHALL restore shortening exactly once through the existing codec contract and retain real decoder outcomes.
@@ -584,6 +658,8 @@ Architecture: [canonical owner](architecture.md#us-rx-08-shortening-restoration-
 Implementation: `crates/fec-codec/src/upstream_ldpc/codec.rs`. Acceptance owner: [source audit](../crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs) and [codec cases](../crates/fec-codec/src/upstream_ldpc/tests.rs); [MERLIN results](development/features/unified-backend/fec-validation.md).
 Delivery: [**INT-FEC-01**](development/checklist.md#int-fec-01); source alias `REQ-RX-08`.
 
+Feature records: [fec/design.md](development/features/fec/design.md), [ofdma/receiver.md](development/features/ofdma/receiver.md).
+
 #### REQ-US-RX-09
 
 Information deframing SHALL remove only receiver-known residual fill and retain actual complete/partial/failed meaningful decisions and coverage.
@@ -593,6 +669,8 @@ Acceptance: Independent byte/fill/short-word cases preserve positions and contin
 Architecture: [canonical owner](architecture.md#us-rx-09-information-deframing).
 Implementation: `crates/ofdma/src/receiver/framing.rs`. Acceptance owner: `crates/ofdma/tests/rx_framing.rs`.
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-09`.
+
+Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
 
 #### REQ-US-PNM-01
 
@@ -605,6 +683,8 @@ Implementation: `crates/pnm-input/src/upstream/association.rs`. Acceptance owner
 Delivery: [**INT-PNM-02**](development/checklist.md#int-pnm-02); source alias `REQ-PNM-01`.
 Integration references: [INT-PNM-01](development/checklist.md#int-pnm-01).
 
+Feature records: [pnm-measurement-inputs/upstream.md](development/features/pnm-measurement-inputs/upstream.md).
+
 #### REQ-US-PNM-02
 
 RxMER SHALL support explicit single selection, power-domain averaging and bounded scheduled hold/interpolation policies over multiple captures.
@@ -615,6 +695,8 @@ Architecture: [canonical owner](architecture.md#unified-pnm-and-capture-admissio
 Implementation: `crates/pnm-input/src/upstream/association.rs`. Acceptance owner: `crates/pnm-input/tests/upstream_association.rs`.
 Delivery: [**INT-PNM-02**](development/checklist.md#int-pnm-02); source alias `REQ-PNM-02`.
 Integration references: [INT-PNM-01](development/checklist.md#int-pnm-01).
+
+Feature records: [ofdma/pre-equalization.md](development/features/ofdma/pre-equalization.md), [pnm-measurement-inputs/upstream.md](development/features/pnm-measurement-inputs/upstream.md).
 
 #### REQ-US-PNM-03
 
@@ -627,6 +709,8 @@ Implementation: `crates/pnm-input/src/upstream/association.rs`. Acceptance owner
 Delivery: [**INT-PNM-02**](development/checklist.md#int-pnm-02); source alias `REQ-PNM-03`.
 Integration references: [INT-PNM-01](development/checklist.md#int-pnm-01).
 
+Feature records: [ofdma/pre-equalization.md](development/features/ofdma/pre-equalization.md), [pnm-measurement-inputs/upstream.md](development/features/pnm-measurement-inputs/upstream.md).
+
 #### REQ-US-PNM-04
 
 Combined input preflight SHALL validate the entire selected playback/update plan against channel/receiver support before execution.
@@ -636,6 +720,8 @@ Acceptance: A later incompatible Pre-EQ event fails preparation even if the init
 Architecture: [canonical owner](architecture.md#unified-pnm-and-capture-admission).
 Implementation: `crates/pnm-input/src/upstream/association.rs`. Acceptance owner: `crates/pnm-input/tests/upstream_association.rs`.
 Delivery: [**INT-PNM-02**](development/checklist.md#int-pnm-02); source alias `REQ-PNM-04`.
+
+Feature records: [ofdma/pre-equalization.md](development/features/ofdma/pre-equalization.md), [pnm-measurement-inputs/upstream.md](development/features/pnm-measurement-inputs/upstream.md).
 
 #### REQ-US-OBS-03
 
@@ -667,6 +753,8 @@ Architecture: [canonical owner](architecture.md#unified-rust-python-and-cli-apis
 Implementation: `crates/ofdma/src/api/session.rs`. Acceptance owner: `crates/ofdma/tests/api_parity.rs`.
 Delivery: [**INT-RUST-01**](development/checklist.md#int-rust-01); source alias `REQ-API-01`.
 
+Feature records: [high-level-api/upstream.md](development/features/high-level-api/upstream.md).
+
 #### REQ-US-API-02
 
 The optional native Python API SHALL wrap working public Rust operations with equivalent domain validation and results. Native Python implementation SHALL begin after the Rust unity loop passes acceptance.
@@ -676,6 +764,8 @@ Acceptance: Real native calls cover configuration, single/multi inputs and execu
 Architecture: [canonical owner](architecture.md#unified-rust-python-and-cli-apis).
 Implementation: `crates/ofdma/src/api/session.rs`. Acceptance owner: `crates/ofdma/tests/api_parity.rs`.
 Delivery: [**INT-PY-01**](development/checklist.md#int-py-01); source alias `REQ-API-02`.
+
+Feature records: [high-level-api/upstream.md](development/features/high-level-api/upstream.md).
 
 ## Detailed downstream contract register
 
@@ -2111,6 +2201,6 @@ only; the final integration/documentation gates remain open.
 | --- | --- | --- |
 | <a id="ds-doc-r1"></a>**DOC-R1** | [original clause](development/features/unified-backend/design.md#requirements-and-acceptance); [architecture](architecture.md#unified-backend-integration); [canonical documents](development/features/unified-backend/design.md#architecture-and-file-ownership) | [INT-DOC-01](development/checklist.md#int-doc-01); [documentation evidence](development/features/unified-backend/validation.md) |
 | <a id="ds-doc-r2"></a>**DOC-R2** | [original clause](development/features/unified-backend/design.md#requirements-and-acceptance); [architecture](architecture.md#unified-backend-integration); [canonical documents](development/features/unified-backend/design.md#architecture-and-file-ownership) | [INT-DOC-01](development/checklist.md#int-doc-01); [documentation evidence](development/features/unified-backend/validation.md) |
-| <a id="ds-doc-r3"></a>**DOC-R3** | [original clause](development/features/unified-backend/design.md#requirements-and-acceptance); [architecture](architecture.md#unified-backend-integration); [canonical documents](development/features/unified-backend/design.md#architecture-and-file-ownership) | [INT-DOC-01](development/checklist.md#int-doc-01); [documentation evidence](development/features/unified-backend/validation.md) |
+| <a id="ds-doc-r3"></a>**DOC-R3** | [original clause](development/features/unified-backend/design.md#requirements-and-acceptance); [architecture](architecture.md#unified-backend-integration); [canonical documents](development/features/unified-backend/design.md#architecture-and-file-ownership) | [INT-DOC-01](development/checklist.md#int-doc-01); [documentation evidence](development/features/unified-backend/validation.md)  Documentation delivery: [DOC-ORG-01](development/checklist.md#doc-org-01). |
 | <a id="ds-doc-r4"></a>**DOC-R4** | [original clause](development/features/unified-backend/design.md#requirements-and-acceptance); [architecture](architecture.md#unified-backend-integration); [canonical documents](development/features/unified-backend/design.md#architecture-and-file-ownership) | [INT-DOC-01](development/checklist.md#int-doc-01); [documentation evidence](development/features/unified-backend/validation.md) |
 | <a id="ds-doc-r5"></a>**DOC-R5** | [original clause](development/features/unified-backend/design.md#requirements-and-acceptance); [architecture](architecture.md#unified-backend-integration); [canonical documents](development/features/unified-backend/design.md#architecture-and-file-ownership) | [INT-DOC-01](development/checklist.md#int-doc-01); [documentation evidence](development/features/unified-backend/validation.md) |

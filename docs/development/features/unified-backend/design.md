@@ -118,3 +118,35 @@ three families' source/oracle/shortening/correction/failure cases and existing
 downstream FEC tests pass in MERLIN, along with relevant shared-code regressions,
 formatting and Clippy. Full upstream transport and Python remain later gates;
 this step introduces no early Python codec facade or alternate CLI.
+
+## DOC-ORG-01: Functional feature-documentation ownership
+
+The user approved the [frozen proposal](feature-documentation-plan.md) and
+[170-file baseline](feature-documentation-inventory.json) after commit
+`ca2de34fa70e8e2b40c2622a2123c35d4471a070`. Keep those proposal-time records
+unchanged; their awaiting-review wording is historical. The
+[current mapping](source-inventory.json) and
+[structural validation](validation.md#doc-org-01-functional-documentation-acceptance)
+record execution. The [official task](../../checklist.md#doc-org-01) owns completion.
+
+Requirements are [DOC-R3](../../../requirements.md#ds-doc-r3) and
+[REQ-COM-DOC-01](../../../requirements.md#req-com-doc-01); the
+[canonical documentation owner](../../../architecture.md#requirements-and-historical-evidence-ownership)
+remains authoritative. DS-REQ-01 and INT-DOC-01 precede this task; INT-DOC-02 also
+depends on it without accepting unfinished backend work.
+
+Add nine active functional records under `fec/`, `signal-processing/`, `ofdma/`,
+`pnm-measurement-inputs/` and `high-level-api/`. Preserve all original paths,
+151 Keep files, 12 historical Archive files, source requirements/fixtures and all
+historical checkbox lines/aliases. Adapt only the seven approved original records.
+Update canonical links and the grouped index; correct only the current
+REQ-COM-SYS-05 test owner. No scientific/API/UI implementation or dependency changes.
+
+Documentation validation is owned by `tools/validation/feature_documentation.py`
+and its focused cases in `tools/validation/test_feature_documentation.py`.
+Inputs are current tracked/new documentation and the frozen approved inventory;
+outputs are diagnostics/counts only. Bound scanning to repository files and skip
+private/build/cached corpora; never write evidence, source fixtures or task status
+from the validator. Tests cover path/fragments, preservation, planned/current
+locators, aliases and dependency rejection. The completion report records actual
+checks and omissions; no simulation/Qt tests are needed for documentation changes.

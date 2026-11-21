@@ -168,6 +168,15 @@ architecture owner identifies concrete implementation/test paths and disposition
   Depends on: SKILL-US-01.
   Acceptance: Complete all source document/requirement/task dispositions, preserve downstream IDs/statuses/API clauses, resolve local links and dependency/coverage checks. Documentation only; final runtime correspondence remains INT-DOC-02.
 
+<a id="doc-org-01"></a>
+- [x] **DOC-ORG-01** Establish functional feature-documentation ownership.
+  Requirements: [DOC-R3](../requirements.md#ds-doc-r3), [REQ-COM-DOC-01](../requirements.md#req-com-doc-01).
+  Architecture/owners: [documentation ownership](../architecture.md#requirements-and-historical-evidence-ownership).
+  Depends on: DS-REQ-01, INT-DOC-01.
+  Design: [approved mapping](features/unified-backend/feature-documentation-plan.md), [current functional records](features/unified-backend/source-review.md#functional-ownership-after-doc-org-01).
+  Acceptance: Account for all 170 originals; preserve 151 Keep and 12 Archive hashes, seven reviewed adaptations, all requirement IDs and historical checkbox states/aliases. Add nine functional records with direct canonical/task/module/evidence links; resolve Markdown/fragments, current locators, inventories, navigation and skills; keep dependencies acyclic and scientific/UI implementations unchanged.
+  Evidence: [structural acceptance](features/unified-backend/validation.md#doc-org-01-functional-documentation-acceptance).
+
 <a id="int-base-01"></a>
 - [x] **INT-BASE-01** Establish reproducible unified-workspace regression baseline.
   Requirements: [REQ-DS-PHY-01](../requirements.md#req-ds-phy-01), [REQ-COM-SYS-05](../requirements.md#req-com-sys-05).
@@ -191,6 +200,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Depends on: INT-BASE-01, INT-LICENSE-01.
   Acceptance: Map exact source/target symbols as SHARE/REUSE/ADAPT/SEPARATE/DEFER, check every numerical convention and consumer, settle concrete file/test paths, record compatibility/performance baselines and architecture-review decisions before scientific migration.
   Evidence: [pre-import review](features/unified-backend/reuse-review.md).
+  Feature records: [signal-processing/design.md](features/signal-processing/design.md).
 
 <a id="int-fec-01"></a>
 - [x] **INT-FEC-01** Integrate independently source-checked upstream LDPC families.
@@ -199,6 +209,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Depends on: INT-REUSE-01.
   Acceptance: All three families pass original row/edge/frozen-parity, shortening, failed-decision/iteration/known-zero/truth cases in fec-codec; all downstream BCH/LDPC/NCP/PLC regressions pass. No BCH on ordinary upstream data, no regenerated golden expectations.
   Evidence: [MERLIN codec and regression results](features/unified-backend/fec-validation.md).
+  Feature records: [fec/design.md](features/fec/design.md), [ofdma/transmitter.md](features/ofdma/transmitter.md), [ofdma/receiver.md](features/ofdma/receiver.md).
 
 <a id="int-dsp-01"></a>
 - [ ] **INT-DSP-01** Consolidate proven common numerical kernels.
@@ -206,6 +217,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-shared-dsp-and-fec).
   Depends on: INT-FEC-01, INT-REUSE-01.
   Acceptance: Prove FFT/bin/normalization, QAM/LLR, PRBS continuity, channel/noise equivalence for each extracted kernel; benchmark changed hot paths, preserve re-exports and downstream results. Create dsp only if justified; a documented direct-reuse/no-new-crate decision must pass the same equivalence checks.
+  Feature records: [fec/design.md](features/fec/design.md), [signal-processing/design.md](features/signal-processing/design.md).
 
 <a id="int-us-config-01"></a>
 - [ ] **INT-US-CONFIG-01** Register upstream PHY, typed configuration, grants and source.
@@ -213,6 +225,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-configuration-and-source).
   Depends on: INT-DSP-01.
   Acceptance: Local module registration, supported/domain-valid distinctions, complete source-field coverage and typed idle session foundation pass. Independent grant capacities, all three codeword families, fill/pad/source bookkeeping, PRBS phase/period/seed/range and rejection atomicity pass before waveform use.
+  Feature records: [ofdma/configuration.md](features/ofdma/configuration.md).
 
 <a id="int-us-tx-01"></a>
 - [ ] **INT-US-TX-01** Migrate all eight upstream transmitter boundaries.
@@ -220,6 +233,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-processing-order).
   Depends on: INT-US-CONFIG-01.
   Acceptance: Each US-TX-01..08 typed boundary passes independent source/order/label/pilot/permutation/Pre-Eq/transform/window vectors for both numerologies and declared supported orders/patterns, including chunk/state/invalid-input cases and exact source accounting.
+  Feature records: [ofdma/transmitter.md](features/ofdma/transmitter.md), [ofdma/pre-equalization.md](features/ofdma/pre-equalization.md).
 
 <a id="int-us-ch-01"></a>
 - [ ] **INT-US-CH-01** Migrate unity and supported upstream channel models.
@@ -227,6 +241,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-channel-and-measurement-reference-planes).
   Depends on: INT-US-TX-01.
   Acceptance: Unity is bitwise exact including signed zero/metadata/no-RNG; causal FIR, AWGN, restricted RxMER residual, integer delay/phase/CFO pass independent samples/powers, chunk/seed/observation/drain and whole-schedule rejection tests. Preserve source composition restrictions.
+  Feature records: [ofdma/channel.md](features/ofdma/channel.md).
 
 <a id="int-us-rx-01"></a>
 - [ ] **INT-US-RX-01** Migrate all nine received-only upstream receiver boundaries.
@@ -234,6 +249,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-processing-order).
   Depends on: INT-US-CH-01, INT-US-TX-01.
   Acceptance: US-RX-01..09 pass configured timing/window/FFT, FrameFlatLs/FramePilotLinear, inverse resources, finite MaxLog, soft mask, shortening/LDPC and information coverage tests without hidden TX/H/C/source truth; missing data never compacts positions.
+  Feature records: [ofdma/receiver.md](features/ofdma/receiver.md).
 
 <a id="int-us-loop-01"></a>
 - [ ] **INT-US-LOOP-01** Accept bounded upstream loop, observations and lifecycle locally.
@@ -241,6 +257,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
   Depends on: INT-US-RX-01.
   Acceptance: Actual MERLIN source→TX→channel→RX recovers independently compared meaningful bits for both numerologies and supported loading; retain real FEC failure/partial/coverage outcomes. Execute through the initial public Rust upstream session developed alongside the stages; final API convergence remains INT-RUST-01. Cancellation precedes pause acceptance; test state preservation, deterministic science, passive metrics/taps and bounded aggregate/retained work.
+  Feature records: [high-level-api/upstream.md](features/high-level-api/upstream.md).
 
 <a id="int-pnm-01"></a>
 - [ ] **INT-PNM-01** Integrate source-derived upstream capture inspectors and decoders.
@@ -248,6 +265,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-pnm-and-capture-admission).
   Depends on: INT-US-LOOP-01.
   Acceptance: Reuse verified pinned parser capabilities; UCD multipart/envelope, CCAP RxMER and applied/last-update Pre-Eq pass source-derived independent length/offset/scaling/sentinel/flag/overflow/original-byte tests locally. Unknown metadata remains inspectable; no guessed association.
+  Feature records: [ofdma/pre-equalization.md](features/ofdma/pre-equalization.md), [pnm-measurement-inputs/upstream.md](features/pnm-measurement-inputs/upstream.md).
 
 <a id="int-pnm-02"></a>
 - [ ] **INT-PNM-02** Integrate explicit measured association and playback.
@@ -255,6 +273,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-pnm-and-capture-admission).
   Depends on: INT-PNM-01, INT-US-CONFIG-01, INT-US-CH-01.
   Acceptance: Complete-plan UCD/CM/CCAP-interface/grid/time mapping, source coverage, power-domain selection/average/hold/interpolation and corresponding-probe Set/Adjust schedules pass. Validate later events before consumption; actual captured-plan runs preserve originals and reject incompatible C/H/RxMER combinations atomically.
+  Feature records: [ofdma/channel.md](features/ofdma/channel.md), [ofdma/pre-equalization.md](features/ofdma/pre-equalization.md), [pnm-measurement-inputs/upstream.md](features/pnm-measurement-inputs/upstream.md).
 
 <a id="int-rust-01"></a>
 - [ ] **INT-RUST-01** Converge typed Rust APIs without downstream breakage.
@@ -262,6 +281,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
   Depends on: INT-US-LOOP-01, INT-PNM-02.
   Acceptance: Public upstream operations and common lifecycle/error/provenance semantics pass native Rust tests, idle/Busy/ownership/bounds/unsupported/versioned-schema checks. Preserve every downstream import/entrypoint/report, optional analysis-only support and Rust-only independence.
+  Feature records: [high-level-api/upstream.md](features/high-level-api/upstream.md).
 
 <a id="int-py-01"></a>
 - [ ] **INT-PY-01** Expose upstream through the existing native Python distribution.
@@ -269,6 +289,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
   Depends on: INT-RUST-01.
   Acceptance: Actual native extension exports/types/errors/owned results and independently executed Rust/Python runs agree, including configuration/captures/cancel/pause/Busy/interpreter-lock release. Both languages document the same supported behavior; preserve existing workbench recipes and old Python imports.
+  Feature records: [high-level-api/upstream.md](features/high-level-api/upstream.md).
 
 <a id="int-cli-01"></a>
 - [ ] **INT-CLI-01** Add upstream commands to the existing CLI.
@@ -276,6 +297,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
   Depends on: INT-RUST-01.
   Acceptance: All existing commands/output schemas still pass; new upstream commands use canonical Rust operations, bounded JSON/I/O and create-new export behavior. No parallel executable or algorithm implementation.
+  Feature records: [high-level-api/upstream.md](features/high-level-api/upstream.md).
 
 <a id="int-tools-01"></a>
 - [ ] **INT-TOOLS-01** Reconcile dependency, example and delivery inventories.
@@ -296,7 +318,7 @@ architecture owner identifies concrete implementation/test paths and disposition
 - [ ] **INT-DOC-02** Complete final documentation and skill correspondence.
   Requirements: [REQ-COM-DOC-01](../requirements.md#req-com-doc-01).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-acceptance-and-final-documentation-gate).
-  Depends on: INT-REG-01, DS-REQ-01.
+  Depends on: INT-REG-01, DS-REQ-01, DOC-ORG-01.
   Acceptance: Meet all ten user documentation completion conditions: one architecture/requirements/checklist; complete requirement/task evidence; resolving links; skills name actual final modules; no obsolete user-facing branding; docs match implemented support and every newly accepted capability has local integrated evidence.
 
 <a id="int-accept-01"></a>
@@ -314,6 +336,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Acceptance: Deferred outside this backend migration: upstream GUI, wider acquisition/confidence, fractional timing/phase noise, broad C/H/RxMER synthesis, finite-file transport and ranging/probe execution. Preserve detailed designs and evidence; require separate approval, source checks and implementation tests before exposure. This is not a dependency for backend acceptance.
 
 ## Architecture and module rules
+  Feature records: [ofdma/receiver.md](features/ofdma/receiver.md), [ofdma/channel.md](features/ofdma/channel.md).
 
 <a id="task-arch-01"></a>
 - [x] **ARCH-01** Maintain one canonical architecture and this checklist.
