@@ -546,9 +546,14 @@ correction-bank/application handoff after raw adapter admission.
 
 Delivery gates: [INT-PNM-01](development/checklist.md#int-pnm-01), [INT-PNM-02](development/checklist.md#int-pnm-02).
 
-Extend `crates/pnm-input/src/upstream/{ucd,rxmer,pre_eq,association}.rs` and tests
-`crates/pnm-input/tests/{upstream_ucd,upstream_rxmer,upstream_pre_eq,upstream_association}.rs`.
-Reuse the exact pinned decoder only for verified formats; any missing upstream
+Implemented raw admission is owned by `crates/pnm-input/src/upstream/{ucd,ucd_projection,rxmer,pre_eq}.rs`;
+whole-plan association remains planned in `association.rs`. Raw acceptance tests are
+`crates/pnm-input/tests/{upstream_ucd,upstream_ucd_projection,upstream_rxmer,upstream_pre_eq}.rs`;
+whole-plan cases remain planned in `upstream_association.rs`.
+The Pre-Eq adapter reuses the exact pinned typed decoder for minor zero and its
+fixed-point kernel for the approved opaque-minor profile without rewriting bytes.
+UCD and CCAP major2 RxMER use bounded source-derived owners because the pin lacks
+those contracts. Reuse the exact pinned decoder only for verified formats; any missing upstream
 format needs a bounded source-derived Rust adapter, not a second parser for an
 already supported format. The core typed models stay Qt/path/runtime independent.
 

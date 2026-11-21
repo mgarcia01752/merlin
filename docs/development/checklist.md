@@ -293,12 +293,13 @@ architecture owner identifies concrete implementation/test paths and disposition
   Acceptance evidence: [83 local cases and 40 exact chains](features/ofdma/design.md#session-and-core-acceptance).
 
 <a id="int-pnm-01"></a>
-- [ ] **INT-PNM-01** Integrate source-derived upstream capture inspectors and decoders.
+- [x] **INT-PNM-01** Integrate source-derived upstream capture inspectors and decoders.
   Requirements: [REQ-US-PNM-01](../requirements.md#req-us-pnm-01), [REQ-US-PNM-02](../requirements.md#req-us-pnm-02), [REQ-US-PNM-03](../requirements.md#req-us-pnm-03).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-pnm-and-capture-admission).
   Depends on: INT-US-LOOP-01.
   Acceptance: Reuse verified pinned parser capabilities; UCD multipart/envelope, CCAP RxMER and applied/last-update Pre-Eq pass source-derived independent length/offset/scaling/sentinel/flag/overflow/original-byte tests locally. Unknown metadata remains inspectable; no guessed association.
   Feature records: [ofdma/pre-equalization.md](features/ofdma/pre-equalization.md), [pnm-measurement-inputs/upstream.md](features/pnm-measurement-inputs/upstream.md).
+  Acceptance evidence: [15 decoder cases and downstream input regressions](features/pnm-measurement-inputs/upstream.md#decoder-acceptance).
 
 <a id="int-pnm-02"></a>
 - [ ] **INT-PNM-02** Integrate explicit measured association and playback.

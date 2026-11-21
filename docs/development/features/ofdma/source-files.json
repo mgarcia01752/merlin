@@ -450,6 +450,106 @@
       "source": "schemas/us-configuration-v1.schema.json",
       "destination": "schemas/upstream-configuration-v1.schema.json",
       "source_sha256": "fa01e76601f09048b8bf3323c3a82963fda0e51f9c029705c804e3645d8d0b4d"
+    },
+    {
+      "source": "crates/morgana/src/inputs/ucd.rs",
+      "destination": "crates/pnm-input/src/upstream/ucd.rs",
+      "source_sha256": "2c4cd05d12ed96c3f22fa8b74446903084cbce37f14df46ab9f95149a7b1e1e1"
+    },
+    {
+      "source": "crates/morgana/src/inputs/rxmer.rs",
+      "destination": "crates/pnm-input/src/upstream/rxmer.rs",
+      "source_sha256": "ddb782a537fa1ae73638dd6407ca24742c1d6d16f0965f9dcc8f44a6cb1ad1e4"
+    },
+    {
+      "source": "crates/morgana/src/inputs/pre_eq.rs",
+      "destination": "crates/pnm-input/src/upstream/pre_eq.rs",
+      "source_sha256": "a7e9bcdb7b5edf97d8b527d7579dc7150df4918f76e25da8c18c4176e5833b46"
+    },
+    {
+      "source": "crates/morgana/tests/ucd_capture.rs",
+      "destination": "crates/pnm-input/tests/upstream_ucd.rs",
+      "source_sha256": "3506336ebc4db1894265f3efc28428edc4537bfb56db555ef58147c54e4b9beb"
+    },
+    {
+      "source": "crates/morgana/tests/rxmer_capture.rs",
+      "destination": "crates/pnm-input/tests/upstream_rxmer.rs",
+      "source_sha256": "21a42536e663c92b57d3451e7981ea5808e819aa68de231c20081f4a460cb880"
+    },
+    {
+      "source": "crates/morgana/tests/pre_eq_capture.rs",
+      "destination": "crates/pnm-input/tests/upstream_pre_eq.rs",
+      "source_sha256": "69a24102dde88e8ae30eba52e6afaa9d6048a482c564e5cea88d2de21a634478"
+    },
+    {
+      "source": "examples/measurements/ucd/scheduled-50khz.hex",
+      "destination": "examples/measurements/upstream/ucd/scheduled-50khz.hex",
+      "source_sha256": "e5377b7870ce5582ec595045ec5a921472d54052b666759fe042ea95e994d346"
+    },
+    {
+      "source": "examples/measurements/ucd/minimal.hex",
+      "destination": "examples/measurements/upstream/ucd/minimal.hex",
+      "source_sha256": "e6084dac3707177becfb1877126ba96c7afc2e7a7c75edf61f0ded490bdd2f57"
+    },
+    {
+      "source": "examples/measurements/rxmer/ccap-25khz.hex",
+      "destination": "examples/measurements/upstream/rxmer/ccap-25khz.hex",
+      "source_sha256": "db79db5edf913bf6ff4e53fd2755c47ebd5da497ae074a2d6ad979b114eba0ba"
+    },
+    {
+      "source": "examples/measurements/rxmer/ccap-50khz.hex",
+      "destination": "examples/measurements/upstream/rxmer/ccap-50khz.hex",
+      "source_sha256": "de2554483568392b9c2bec00e89a09d2a0b77e92a10f6b2a0b56d2051028b2b9"
+    },
+    {
+      "source": "examples/measurements/pre-eq/last-update.hex",
+      "destination": "examples/measurements/upstream/pre-eq/last-update.hex",
+      "source_sha256": "98fcf28edfec97a0360d1c248a521330673ee27d0ff487f1691e5e536065f3a2"
+    },
+    {
+      "source": "examples/measurements/pre-eq/applied.hex",
+      "destination": "examples/measurements/upstream/pre-eq/applied.hex",
+      "source_sha256": "5498edac63d465425ea9b85536920022473931dda21c43205f2518b0f4acb75f"
+    },
+    {
+      "source": "crates/morgana/src/inputs/ucd_projection.rs",
+      "destination": "crates/pnm-input/src/upstream/ucd_projection.rs",
+      "source_sha256": "9f1b485223e1947fe349867379d73f525a79fbcb81d07162043fd3dfc6a99083"
+    },
+    {
+      "source": "examples/measurements/measured/applied-unity.hex",
+      "destination": "examples/measurements/upstream/measured/applied-unity.hex",
+      "source_sha256": "a01e2078b947b78eb5b39e59f94d06bca194b6274834d10b4d2189c82cd6064a"
+    },
+    {
+      "source": "examples/measurements/measured/capture-driven-25khz.json",
+      "destination": "examples/measurements/upstream/measured/capture-driven-25khz.json",
+      "source_sha256": "29a0b85c24ec4fa2fb32eabc249dc4c9fc2ccb56f5a29c0d9137ed383eea1288"
+    },
+    {
+      "source": "examples/measurements/measured/capture-driven.json",
+      "destination": "examples/measurements/upstream/measured/capture-driven.json",
+      "source_sha256": "3bb8a58271007a84a8ef4c31e57576489a60054e97395c8d02bcc0c3d13f75ec"
+    },
+    {
+      "source": "examples/measurements/measured/rxmer-40db.hex",
+      "destination": "examples/measurements/upstream/measured/rxmer-40db.hex",
+      "source_sha256": "c9d5383d423b8107fd4b8bd4c48853850cff8a5dd11a458824e392db0b506596"
+    },
+    {
+      "source": "examples/measurements/measured/ucd-25khz.hex",
+      "destination": "examples/measurements/upstream/measured/ucd-25khz.hex",
+      "source_sha256": "ddc9afe91ff2c3fd89e5b854c9d0da055ca6b4d9a03f294471ee8f8c2e4d84de"
+    },
+    {
+      "source": "examples/measurements/measured/update-unity.hex",
+      "destination": "examples/measurements/upstream/measured/update-unity.hex",
+      "source_sha256": "e7cea5fd00699177034ebe5785a3c05a4ca2f81051f17e7e11c4d57567c5585a"
+    },
+    {
+      "source": "crates/morgana/tests/measured_experiment.rs",
+      "destination": "crates/pnm-input/tests/upstream_ucd_projection.rs",
+      "source_sha256": "7f7355a43410b4385705ce371bf4817a247d0d04984c56e6a9a6da818509b8e2"
     }
   ]
 }

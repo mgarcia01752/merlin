@@ -783,6 +783,8 @@ Integration references: [INT-PNM-01](development/checklist.md#int-pnm-01).
 
 Feature records: [pnm-measurement-inputs/upstream.md](development/features/pnm-measurement-inputs/upstream.md).
 
+MERLIN decoder slice: [exact implementation/test record](development/features/pnm-measurement-inputs/implementation-evidence.json), keyed by `REQ-US-PNM-01`; full requirement remains gated by INT-PNM-02.
+
 #### REQ-US-PNM-02
 
 RxMER SHALL support explicit single selection, power-domain averaging and bounded scheduled hold/interpolation policies over multiple captures.
@@ -796,6 +798,8 @@ Integration references: [INT-PNM-01](development/checklist.md#int-pnm-01).
 
 Feature records: [ofdma/pre-equalization.md](development/features/ofdma/pre-equalization.md), [pnm-measurement-inputs/upstream.md](development/features/pnm-measurement-inputs/upstream.md).
 
+MERLIN decoder slice: [exact implementation/test record](development/features/pnm-measurement-inputs/implementation-evidence.json), keyed by `REQ-US-PNM-02`; full requirement remains gated by INT-PNM-02.
+
 #### REQ-US-PNM-03
 
 US-Pre-EQ SHALL support a single fixed bank, multiple snapshots and multiple explicitly based initialization/adjustment updates.
@@ -808,6 +812,8 @@ Delivery: [**INT-PNM-02**](development/checklist.md#int-pnm-02); source alias `R
 Integration references: [INT-PNM-01](development/checklist.md#int-pnm-01).
 
 Feature records: [ofdma/pre-equalization.md](development/features/ofdma/pre-equalization.md), [pnm-measurement-inputs/upstream.md](development/features/pnm-measurement-inputs/upstream.md).
+
+MERLIN decoder slice: [exact implementation/test record](development/features/pnm-measurement-inputs/implementation-evidence.json), keyed by `REQ-US-PNM-03`; full requirement remains gated by INT-PNM-02.
 
 #### REQ-US-PNM-04
 

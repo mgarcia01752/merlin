@@ -10,6 +10,7 @@ the separate workbench folder for a ready-configured desktop example.
 
 | Collection | Use case |
 | --- | --- |
+| [upstream](upstream/README.md) | Inspect synthetic UCD, CCAP RxMER and applied/update Pre-Eq inputs with preserved provenance. |
 | [designed-rxmer](designed-rxmer/README.md) | Use custom synthetic RxMER Designer output with matching Rust and Python API walkthroughs. |
 | [single-channel](single-channel/README.md) | Inspect/import RxMER, channel estimates and modulation-profile data, with documented impairment variants. |
 | [channel-widths](channel-widths/README.md) | Exercise compatible 24 MHz and 90 MHz channel grids and their profiles. |

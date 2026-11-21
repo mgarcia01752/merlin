@@ -9,7 +9,7 @@ documentation only. Current integration evidence is never inferred from source c
 
 The existing native `pnm-input` adapter remains the I/O/raw-byte owner. Current
 downstream support and the PNM setup/source pin remain unchanged. Upstream UCD,
-RxMER and Pre-Eq admission is planned under INT-PNM-01; whole-plan association and
+RxMER and Pre-Eq admission is implemented under INT-PNM-01; whole-plan association and
 actual measured playback require INT-PNM-02. A source decoder name or historical
 source pass does not prove support in MERLIN's exact pinned decoder.
 
@@ -41,7 +41,8 @@ unsupported file versions. A complete future schedule is checked before source w
 | Existing downstream channel estimate/RxMER/profile | Retain established decoder/API/grid/provenance behavior and its separate downstream owners. |
 
 The adapter depends on core PHY types/APIs; core PHY never depends back on file I/O.
-Proposed local files are `crates/pnm-input/src/upstream/{ucd,rxmer,pre_eq,association}.rs`.
+Raw owners are `crates/pnm-input/src/upstream/{ucd,ucd_projection,rxmer,pre_eq}.rs`;
+`association.rs` remains the next implementation unit.
 Verify actual exact-version decoder support per format before reuse; missing support
 requires its own reviewed bounded Rust owner and independent format evidence.
 No vendored PNM Viewer, network capture/control or Python calculations are added.
@@ -85,3 +86,47 @@ Related delivery gates: [INT-PNM-01](../../checklist.md#int-pnm-01), [INT-PNM-02
 Normative lookup: [pinned PHY 3.1 I20 guidance](../../../../skills/docsis-phy-3-1-i20/SKILL.md).
 Retained source records describe their original checkout and limitations; test
 paths above do not claim a new pass. Final integrated backend acceptance stays open.
+
+## INT-PNM-01 implementation unit
+
+Synthetic core checkpoint: `a3533ae`. Add the planned native upstream module and
+three bounded source-derived format owners/tests. Reuse existing pnm-input I/O,
+serde/SHA dependencies and exact `pnm` 0.3.6 revision
+`5fbd5561f3e06b73486546b5ffa520279080a5eb`; add an independent docsis-ofdma edge.
+Neither PHY depends on this adapter. Source fixture bytes stay identical under
+`examples/measurements/upstream/`, with source hashes and legal origin recorded.
+
+| Inspected path / symbol | Contract / evidence | Gap | Decision / destination |
+| --- | --- | --- | --- |
+| Pinned `pnm/parser/cm_us_ofdma_pre_eq.rs::CmUsOfdmaPreEq::parse` | Typed PNN6/7, BE signed pairs, applied s2.13 / update s1.14; literal tests | Pin only accepts exact version 1.0; approved source contract retains opaque minor 0..255 | ADAPT in `crates/pnm-input/src/upstream/pre_eq.rs`: delegate minor0 to full decoder; retain stricter envelope/grid/profile checks and original bytes |
+| Pinned `pnm/lib/fixed_point_decoder.rs::decode_iq` | Same BE decoded i16 pair and power-of-two scaling, no excluded-pair marker | Nonzero opaque minor cannot use full pinned header parser | REUSE this kernel after bounded source-derived envelope admission, without changing originals or passing a falsified header |
+| Source `crates/morgana/src/inputs/{ucd,rxmer}.rs` | UCD management envelope/TLVs and CCAP I18 Table410 major2 RxMER; independent authored hex fixtures | No typed counterpart in exact pinned decoder | ADAPT native owners; structural inspection is separate from projection/association |
+| Pinned `common/json.rs::to_json` | Bounded serialization, exact errors, owned output | Native inspection export | REUSE; pretty formatting is an adapter representation change, separate from retained originals |
+
+Input byte/array bounds precede allocation. Reject unsupported identity/major/spacing,
+truncation, bad length/grid and flag/overflow combinations with typed category,
+field and offset. Opaque metadata/unknown TLVs remain inspectable. Normalization,
+association and simulated noise are not decoder responsibilities. Capture inspection
+exports use explicit `merlin.upstream.*` identities; raw inputs are never relabeled.
+No new authoritative private-PDF review is claimed; pinned source evidence and
+independent authored fixtures retain their exact origins. INT-PNM-02 remains the
+measured-association/playback gate.
+
+### Decoder acceptance
+
+All 15 upstream decoder/projection cases pass inside MERLIN, including literal
+fixed-point values for every opaque minor byte, all raw RxMER octets, nulls,
+original hashes, malformed extents/resource limits and multipart identity/order.
+The complete 59-case pnm-input regression suite also passes, including downstream binary,
+API, Designer and saved-workbench cases. Clippy denies warnings; formatting passes.
+The final upstream-only run pins the exact source candidate independently of the
+broader component run. No original field input or normative PDF was newly acquired.
+
+- [Tested decoder candidate](decoder-candidate.json).
+- [Executed decoder cases](decoder-test-results.json).
+- [Exact requirement slices](implementation-evidence.json).
+- [User guide](../../../user/upstream/measurements.md).
+
+INT-PNM-01 accepts bounded inspection/projection only. REQ-US-PNM-01..03 still
+require complete-plan association/playback under INT-PNM-02; decoder tests alone
+cannot accept policy selection, update lineage or actual capture-driven runs.

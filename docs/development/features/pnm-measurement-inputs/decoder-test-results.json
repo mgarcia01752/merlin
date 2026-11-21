@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "command": "scripts/cargo-local.sh test -p pnm-input --locked --test upstream_ucd --test upstream_ucd_projection --test upstream_rxmer --test upstream_pre_eq",
+  "exit_code": 0,
+  "host": "x86_64-unknown-linux-gnu",
+  "rustc": "1.85.1",
+  "candidate_record": "docs/development/features/pnm-measurement-inputs/decoder-candidate.json",
+  "candidate_sha256": "d3d40573563b81007487e356672cc587d816782a962ac6ccfe3b901a20792dc9",
+  "validation_log": "docs/development/local/unified-backend/pnm-integration/decoder-acceptance.log",
+  "validation_log_sha256": "c65a81d6082bbd562b3624b2621d57d930e20707bad558a5aeeb4774e737280e",
+  "passed": 15,
+  "cases": [
+    {
+      "test_file": "crates/pnm-input/tests/upstream_pre_eq.rs",
+      "qualified_test_case": "malformed_extents_versions_and_every_truncated_prefix_reject"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_pre_eq.rs",
+      "qualified_test_case": "literal_scales_headers_and_immutable_originals"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_pre_eq.rs",
+      "qualified_test_case": "pinned_decoder_and_opaque_minor_profiles_keep_literal_coefficients"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+      "qualified_test_case": "every_raw_reading_encoding_and_interior_missing_positions"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+      "qualified_test_case": "truncated_trailing_wrong_type_version_and_declared_lengths"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+      "qualified_test_case": "frozen_25khz_vendor_minor_integrated_ccap_and_exact_subgrid"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+      "qualified_test_case": "frozen_50khz_metadata_offsets_values_nulls_and_hash"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+      "qualified_test_case": "exact_file_grid_and_empty_observation_boundaries"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+      "qualified_test_case": "raw_minor_flag_identifier_padding_and_original_lifetimes"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_ucd.rs",
+      "qualified_test_case": "exact_outer_nested_lengths_iuc_and_channel_order_failures"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_ucd.rs",
+      "qualified_test_case": "exact_envelope_llc_version_and_multipart_failures"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_ucd.rs",
+      "qualified_test_case": "unknown_duplicate_and_zero_length_values_remain_in_source_order"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_ucd.rs",
+      "qualified_test_case": "literal_source_envelopes_offsets_hashes_and_owned_originals"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_ucd.rs",
+      "qualified_test_case": "byte_and_combined_outer_nested_record_limits_precede_unbounded_work"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_ucd_projection.rs",
+      "qualified_test_case": "multipart_projection_has_literal_timestamp_enums_profiles_and_lossless_parts"
+    }
+  ]
+}
