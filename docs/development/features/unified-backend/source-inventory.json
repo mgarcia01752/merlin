@@ -5855,8 +5855,8 @@
           {
             "requirement": "REQ-US-API-01",
             "kind": "test",
-            "path": "crates/ofdma/tests/api_parity.rs",
-            "state": "planned"
+            "path": "crates/merlin/tests/namespaces.rs",
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-API-02",
@@ -5867,7 +5867,7 @@
           {
             "requirement": "REQ-US-API-02",
             "kind": "test",
-            "path": "crates/ofdma/tests/api_parity.rs",
+            "path": "bindings/python/tests/test_upstream_experiment.py",
             "state": "planned"
           },
           {
@@ -5879,8 +5879,8 @@
           {
             "requirement": "REQ-COM-API-03",
             "kind": "test",
-            "path": "crates/ofdma/tests/api_parity.rs",
-            "state": "planned"
+            "path": "crates/merlin/tests/namespaces.rs",
+            "state": "existing"
           },
           {
             "requirement": "REQ-COM-API-04",
@@ -5891,7 +5891,7 @@
           {
             "requirement": "REQ-COM-API-04",
             "kind": "test",
-            "path": "crates/ofdma/tests/api_parity.rs",
+            "path": "bindings/python/tests/test_upstream_experiment.py",
             "state": "planned"
           },
           {
@@ -5903,7 +5903,7 @@
           {
             "requirement": "REQ-COM-API-05",
             "kind": "test",
-            "path": "crates/ofdma/tests/api_parity.rs",
+            "path": "bindings/python/tests/test_upstream_experiment.py",
             "state": "planned"
           },
           {
@@ -5915,8 +5915,8 @@
           {
             "requirement": "REQ-COM-API-06",
             "kind": "test",
-            "path": "crates/ofdma/tests/api_parity.rs",
-            "state": "planned"
+            "path": "crates/merlin/tests/namespaces.rs",
+            "state": "existing"
           },
           {
             "requirement": "REQ-DS-API-01",
@@ -5995,7 +5995,8 @@
       "source_evidence_identities_preserved": 52,
       "runtime_validation": "No new scientific/Qt acceptance; documentation checks only",
       "record": "docs/development/features/unified-backend/validation.md#doc-org-01-functional-documentation-acceptance"
-    }
+    },
+    "source_requirement_locator_policy": "source_requirements retains approved initial owner/test planning locators as provenance; current functional_records, canonical requirements and implementation evidence own actual integration locations."
   },
   "master_prompt_review": {
     "source": "docs/development/backend-integration-master-guide.md",

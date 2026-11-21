@@ -1,0 +1,23 @@
+{
+  "base_revision": "c6e306562ce0696a1b941d200f61b55ca3d5a1ce",
+  "scope": "Matrix/tooling and targeted API test changes relative to accepted namespace checkpoint; scientific implementations unchanged.",
+  "sha256": "4d92537444c463ec9a8d83e772f8ead91c7eaecc763d81ff9354a7554551c421",
+  "files": [
+    {
+      "path": "crates/pnm-input/tests/upstream_association.rs",
+      "sha256": "20ed339992e0cdeb6d107c4ed6b63658916e9653482d9de664dde88bf7060aae"
+    },
+    {
+      "path": "docs/development/features/high-level-api/operation-matrix.json",
+      "sha256": "065b3af4e047a40a6ad215e155a016b5cb8657c8abdcf0758c80e4adfd8ccd6b"
+    },
+    {
+      "path": "tools/validation/api_operation_matrix.py",
+      "sha256": "33b5fd83e72f5455b05c46a38e272382d2d6218948036d631d76892b69c7b74a"
+    },
+    {
+      "path": "tools/validation/test_api_operation_matrix.py",
+      "sha256": "100fc1e897abbaf8bd51ecbbfdc06c14be69a1297c00c3b64e0278867b0a5983"
+    }
+  ]
+}

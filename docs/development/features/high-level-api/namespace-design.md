@@ -24,7 +24,7 @@ conversion, validation, lifecycle implementation or result reshaping.
 The Rust facade and common contract leaf are now implemented after accepted
 upstream and measured prerequisites. Python package paths below remain planned
 until INT-PY-01. The implementation unit and validation record below identify
-current exports; complete operation-matrix coverage still gates INT-RUST-01.
+current exports; complete Rust operation coverage is recorded in the matrix acceptance below.
 
 | Cargo package | Library name / directory | Ownership and permitted dependencies |
 | --- | --- | --- |
@@ -254,8 +254,8 @@ adapter, native registration/pyproject/library target and build/reference toolin
 Remove no existing public export, record, test, scientific implementation or fixture.
 
 The selected mapping remains approved, with namespace implementation evidence
-below. Planning/FEC remain completed. INT-RUST-01 stays open for the complete
-operation matrix; Python namespaces still wait for INT-PY-01. Changes to the
+below. Planning/FEC remain completed. INT-RUST-01 now has complete Rust
+operation coverage; Python namespaces still wait for INT-PY-01. Changes to the
 selected package names/common export set require a compatible design update.
 No upstream Qt implementation or release/publication is authorized.
 
@@ -320,9 +320,9 @@ Compiler-generated public export discovery now uses
 `tools/validation/rust_api_inventory.py`, with independent wildcard/module,
 macro/trait and stale-target cases in `test_rust_api_inventory.py`. It inventories
 fresh rustdoc, never stale directory contents; source/export facts do not claim
-scientific execution. The operation matrix still needs its complete individual
-operation rows before INT-RUST-01 can close. No accepted planning/FEC task reopens.
+scientific execution. The operation matrix now contains all individual
+Rust operation rows and passing export/execution checks. No accepted planning/FEC task reopens.
 
 Exact evidence: [candidate](namespace-candidate.json), [executed cases](namespace-test-results.json)
 and [requirement slices](namespace-evidence.json). These accept the namespace unit
-only; the official task remains open for complete operation mapping.
+only; complete Rust operation mapping is now accepted in [the active API record](upstream.md#rust-api-acceptance).

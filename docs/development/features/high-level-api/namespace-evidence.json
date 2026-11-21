@@ -16,9 +16,10 @@
       "observed_result": "pass",
       "tested_candidate": {
         "record": "docs/development/features/high-level-api/namespace-candidate.json",
-        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8"
+        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8",
+        "accepted_revision": "c6e306562ce0696a1b941d200f61b55ca3d5a1ce"
       },
-      "status": "integrated-validated namespace slice; full INT-RUST-01 operation coverage remains open",
+      "status": "integrated-validated Rust namespace; operation coverage accepted separately; native and final regression gates remain open",
       "limitations": "Exact type identity and targeted engine/lifecycle regressions; no native Python namespace/wheel, final CLI or hosted/field interoperability acceptance."
     },
     {
@@ -35,9 +36,10 @@
       "observed_result": "pass",
       "tested_candidate": {
         "record": "docs/development/features/high-level-api/namespace-candidate.json",
-        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8"
+        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8",
+        "accepted_revision": "c6e306562ce0696a1b941d200f61b55ca3d5a1ce"
       },
-      "status": "integrated-validated namespace slice; full INT-RUST-01 operation coverage remains open",
+      "status": "integrated-validated Rust namespace; operation coverage accepted separately; native and final regression gates remain open",
       "limitations": "Exact type identity and targeted engine/lifecycle regressions; no native Python namespace/wheel, final CLI or hosted/field interoperability acceptance."
     },
     {
@@ -54,9 +56,10 @@
       "observed_result": "pass",
       "tested_candidate": {
         "record": "docs/development/features/high-level-api/namespace-candidate.json",
-        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8"
+        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8",
+        "accepted_revision": "c6e306562ce0696a1b941d200f61b55ca3d5a1ce"
       },
-      "status": "integrated-validated namespace slice; full INT-RUST-01 operation coverage remains open",
+      "status": "integrated-validated Rust namespace; operation coverage accepted separately; native and final regression gates remain open",
       "limitations": "Exact type identity and targeted engine/lifecycle regressions; no native Python namespace/wheel, final CLI or hosted/field interoperability acceptance."
     },
     {
@@ -73,9 +76,10 @@
       "observed_result": "pass",
       "tested_candidate": {
         "record": "docs/development/features/high-level-api/namespace-candidate.json",
-        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8"
+        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8",
+        "accepted_revision": "c6e306562ce0696a1b941d200f61b55ca3d5a1ce"
       },
-      "status": "integrated-validated namespace slice; full INT-RUST-01 operation coverage remains open",
+      "status": "integrated-validated Rust namespace; operation coverage accepted separately; native and final regression gates remain open",
       "limitations": "Exact type identity and targeted engine/lifecycle regressions; no native Python namespace/wheel, final CLI or hosted/field interoperability acceptance."
     },
     {
@@ -92,9 +96,10 @@
       "observed_result": "pass",
       "tested_candidate": {
         "record": "docs/development/features/high-level-api/namespace-candidate.json",
-        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8"
+        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8",
+        "accepted_revision": "c6e306562ce0696a1b941d200f61b55ca3d5a1ce"
       },
-      "status": "integrated-validated namespace slice; full INT-RUST-01 operation coverage remains open",
+      "status": "integrated-validated Rust namespace; operation coverage accepted separately; native and final regression gates remain open",
       "limitations": "Exact type identity and targeted engine/lifecycle regressions; no native Python namespace/wheel, final CLI or hosted/field interoperability acceptance."
     }
   ]

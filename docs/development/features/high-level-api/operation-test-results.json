@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "command": "scripts/cargo-local.sh test -p pnm-input --locked --test upstream_association",
+      "exit_code": 0,
+      "passed": 9,
+      "cases": [
+        {
+          "test_file": "crates/pnm-input/tests/upstream_association.rs",
+          "qualified_test_case": "independent_pre_eq_input_does_not_require_invented_ccap_or_rxmer_metadata"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_association.rs",
+          "qualified_test_case": "measured_plan_roundtrip_preserves_admission_and_both_original_representations"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_association.rs",
+          "qualified_test_case": "interior_exclusion_zeros_remain_in_sources_and_never_become_update_addresses"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_association.rs",
+          "qualified_test_case": "captured_ucd_and_both_pnm_inputs_drive_actual_loop_with_original_provenance"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_association.rs",
+          "qualified_test_case": "multiple_updates_keep_corresponding_older_bases_and_cancel_keeps_sources"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_association.rs",
+          "qualified_test_case": "typed_handoff_validates_envelope_and_preserves_original_and_accepted_state"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_association.rs",
+          "qualified_test_case": "every_capture_association_and_late_update_is_admitted_atomically"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_association.rs",
+          "qualified_test_case": "measured_power_policies_snapshots_init_adjust_and_composition_preflight"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_association.rs",
+          "qualified_test_case": "captured_25khz_mixed_zero_loading_uses_exact_4k_source_grid"
+        }
+      ],
+      "scope": "Current API-coverage candidate; nine cases including the new source-plan roundtrip.",
+      "log": "docs/development/local/unified-backend/rust-api-integration/association-api-tests.log",
+      "log_sha256": "4098165e19b228164268101da5fe7e71c7d4c2440da8bea21f7e71319bfca4f6"
+    },
+    {
+      "command": "scripts/cargo-local.sh test -p pnm-input --locked",
+      "exit_code": 0,
+      "passed": 59,
+      "cases": [
+        {
+          "test_file": "crates/pnm-input/src/lib.rs",
+          "qualified_test_case": "workbench::designer::tests::ui_flat_recipe_preserves_samples_gaps_and_provenance"
+        },
+        {
+          "test_file": "crates/pnm-input/src/lib.rs",
+          "qualified_test_case": "workbench::designer::tests::rejects_versions_masks_positions_bounds_and_invalid_recipes"
+        },
+        {
+          "test_file": "crates/pnm-input/src/lib.rs",
+          "qualified_test_case": "workbench::designer::tests::imported_recipe_preserves_baseline_and_applies_once"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/designer_workbench.rs",
+          "qualified_test_case": "designer_load_is_idle_and_cancel_preserves_not_started"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/designer_workbench.rs",
+          "qualified_test_case": "designer_run_matches_materialized_capture_and_exports_python_parity"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "cpa_serialization_preserves_saved_workbenches"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "cpa_controls_validate_atomically_and_preserve_idle_settings"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "export_never_overwrites_existing_destination"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "cancellation_preserves_all_requested_entries_without_execution"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "defaults_derived_grid_overrides_and_immutable_edit"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "binary_json_all_kinds_and_wrong_kind"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "channel_nearest_explicit_reuse_ties_and_unset_policy"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "individual_and_exact_epoch_keep_original_mer_values_without_round_trip"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "loaded_profile_catalog_survives_source_removal_and_serializes"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "default_capture_protocol_matches_explicit_loading"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "narrower_capture_keeps_bandwidth_explicit"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "interpolation_uses_adjacent_unequal_intervals_and_exact_originals"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "missing_contributors_cannot_turn_into_valid_averages_or_interpolations"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "nulls_grid_errors_preflight_and_atomic_additions"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "profile_catalog_rejects_malformed_empty_duplicate_and_out_of_domain_ids"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "profile_catalog_discovery_matches_core_json_and_binary_without_selection"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "runtime_limit_returns_partial_and_continues_batch"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "receiver_selection_is_independent_copied_and_forwarded_for_every_policy"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "static_policies_power_math_ids_epochs_and_loading_does_not_run"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "simulation_loading_is_idle_atomic_and_preserves_scoped_measurements"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "aggregate_budget_rejects_addition_and_profile_replacement_atomically"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "loaded_profiles_preserve_selection_ids_and_cancelled_entries"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "created_profile_runs_as_hypothesis_without_fabricated_capture_provenance"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "merlin_estimated_api_matches_direct_engine_fec_and_owns_mode"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "pilot_estimated_api_matches_direct_engine_fec_and_owns_mode"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "high_level_api_matches_direct_engine_and_owns_old_reports"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/rxmer_export.rs",
+          "qualified_test_case": "independent_golden_header_payload_and_decoder_roundtrip"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/rxmer_export.rs",
+          "qualified_test_case": "strict_guard_clamp_quantization_and_nonfinite_are_independent_of_ui"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/rxmer_export.rs",
+          "qualified_test_case": "json_preserves_full_precision_missing_values_and_metadata_without_binary_limits"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/rxmer_export.rs",
+          "qualified_test_case": "create_new_files_manifest_batch_cancellation_and_failure"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_pre_eq.rs",
+          "qualified_test_case": "malformed_extents_versions_and_every_truncated_prefix_reject"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_pre_eq.rs",
+          "qualified_test_case": "literal_scales_headers_and_immutable_originals"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_pre_eq.rs",
+          "qualified_test_case": "pinned_decoder_and_opaque_minor_profiles_keep_literal_coefficients"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+          "qualified_test_case": "every_raw_reading_encoding_and_interior_missing_positions"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+          "qualified_test_case": "frozen_25khz_vendor_minor_integrated_ccap_and_exact_subgrid"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+          "qualified_test_case": "frozen_50khz_metadata_offsets_values_nulls_and_hash"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+          "qualified_test_case": "truncated_trailing_wrong_type_version_and_declared_lengths"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+          "qualified_test_case": "exact_file_grid_and_empty_observation_boundaries"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+          "qualified_test_case": "raw_minor_flag_identifier_padding_and_original_lifetimes"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_ucd.rs",
+          "qualified_test_case": "exact_envelope_llc_version_and_multipart_failures"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_ucd.rs",
+          "qualified_test_case": "exact_outer_nested_lengths_iuc_and_channel_order_failures"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_ucd.rs",
+          "qualified_test_case": "unknown_duplicate_and_zero_length_values_remain_in_source_order"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_ucd.rs",
+          "qualified_test_case": "literal_source_envelopes_offsets_hashes_and_owned_originals"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_ucd.rs",
+          "qualified_test_case": "byte_and_combined_outer_nested_record_limits_precede_unbounded_work"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_ucd_projection.rs",
+          "qualified_test_case": "multipart_projection_has_literal_timestamp_enums_profiles_and_lossless_parts"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench.rs",
+          "qualified_test_case": "cablelabs_notch_fixture_preserves_frequency_plan_and_unity"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench.rs",
+          "qualified_test_case": "cablelabs_adapted_channel_prepares_without_changing_notch_settings"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench.rs",
+          "qualified_test_case": "resource_limits_reject_embedded_counts_lengths_and_oversize_files"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench.rs",
+          "qualified_test_case": "imports_single_and_multi_workbenches_with_measured_channel_response"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench.rs",
+          "qualified_test_case": "rejects_corrupt_unknown_unsupported_and_out_of_range_settings"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench.rs",
+          "qualified_test_case": "imports_schema_two_profile_and_capture_selection_and_processing"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench.rs",
+          "qualified_test_case": "load_is_idle_self_contained_and_preserves_saved_options_and_bytes"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench.rs",
+          "qualified_test_case": "saved_profile_precedence_legacy_and_current_and_cancellation"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench.rs",
+          "qualified_test_case": "real_saved_workbench_fec_matches_independently_observed_native_ui"
+        }
+      ],
+      "scope": "Historical integrated MERLIN decoder checkpoint component run, retained unchanged; this is not a new run or standalone source evidence.",
+      "log": "docs/development/local/unified-backend/rust-api-integration/../pnm-integration/all-input-tests.log",
+      "log_sha256": "d940968ed998d1072b9df5d508463d14dc75f72f138cf120f9b3687d20ba32c6"
+    }
+  ],
+  "candidate_record": "docs/development/features/high-level-api/operation-candidate.json",
+  "candidate_sha256": "4d92537444c463ec9a8d83e772f8ead91c7eaecc763d81ff9354a7554551c421"
+}

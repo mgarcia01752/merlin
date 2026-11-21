@@ -311,13 +311,13 @@ architecture owner identifies concrete implementation/test paths and disposition
   Acceptance evidence: [23 input cases and 83 core regressions](features/pnm-measurement-inputs/upstream.md#measured-association-acceptance).
 
 <a id="int-rust-01"></a>
-- [ ] **INT-RUST-01** Converge typed Rust APIs without downstream breakage.
+- [x] **INT-RUST-01** Converge typed Rust APIs without downstream breakage.
   Requirements: [REQ-US-API-01](../requirements.md#req-us-api-01), [REQ-COM-API-03](../requirements.md#req-com-api-03), [REQ-COM-API-06](../requirements.md#req-com-api-06), [REQ-DS-API-01](../requirements.md#req-ds-api-01), [REQ-COM-API-07](../requirements.md#req-com-api-07), [REQ-COM-API-09](../requirements.md#req-com-api-09).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
   Depends on: INT-US-LOOP-01, INT-PNM-02.
   Acceptance: Public upstream operations and common lifecycle/error/provenance semantics pass native Rust tests, idle/Busy/ownership/bounds/unsupported/versioned-schema checks. Preserve every downstream import/entrypoint/report, optional analysis-only support and Rust-only independence. Approve namespace-to-crate mapping before compatibility-sensitive edits; accept explicit direction imports/aliases with every exported Rust operation in the authoritative matrix.
   Feature records: [high-level-api/upstream.md](features/high-level-api/upstream.md).
-  Progress: [implemented facade/common contracts and passing compatibility checks](features/high-level-api/namespace-design.md#namespace-implementation-validation); complete per-operation matrix coverage remains open.
+  Progress: [implemented facade/common contracts and passing compatibility checks](features/high-level-api/namespace-design.md#namespace-implementation-validation); [complete operation coverage](features/high-level-api/upstream.md#rust-api-acceptance) now passes compiler-export and executed Rust case checks.
 
 <a id="int-py-01"></a>
 - [ ] **INT-PY-01** Expose upstream through the existing native Python distribution.

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "completion_authority": "docs/development/checklist.md",
+  "records": [
+    {
+      "requirement_id": "REQ-COM-API-09",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/upstream.md",
+      "checklist_task": "INT-RUST-01",
+      "implementing_crate": "tools/validation (development tooling, not a Cargo crate)",
+      "source_file": "tools/validation/api_operation_matrix.py",
+      "symbol": "validate",
+      "test_file": "tools/validation/test_api_operation_matrix.py",
+      "qualified_test_case": "OperationMatrixTests.test_stale_signature_missing_export_and_unexecuted_case",
+      "validation_command": "python3 -B -m unittest discover -s tools/validation -p 'test_api_operation_matrix.py' -v",
+      "observed_result": "pass; five positive/negative matrix validator cases",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/operation-candidate.json",
+        "sha256": "4d92537444c463ec9a8d83e772f8ead91c7eaecc763d81ff9354a7554551c421"
+      },
+      "status": "integrated-validated Rust operation coverage; native coverage remains INT-PY-01/INT-TOOLS-01",
+      "limitations": "Existing root native metadata establishes signatures only; planned native cases/exports do not count as executed acceptance. Language-only operations remain explicitly unbound."
+    }
+  ],
+  "compiler_execution_audit": {
+    "command": "python3 -B tools/validation/api_operation_matrix.py --exports docs/development/local/unified-backend/rust-api-integration/rust-exports.json --executed-record docs/development/features/high-level-api/namespace-test-results.json --executed-record docs/development/features/pnm-measurement-inputs/decoder-test-results.json --executed-record docs/development/features/pnm-measurement-inputs/association-test-results.json --executed-record docs/development/features/high-level-api/operation-test-results.json",
+    "observed_result": "pass; all 364 explicit Rust operation rows match exact compiler exports/hidden helpers and successful named cases",
+    "scope": "Rust operation completeness; native completeness remains a separate gate."
+  }
+}

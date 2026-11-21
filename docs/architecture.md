@@ -122,7 +122,7 @@ Delivery gates: [INT-LICENSE-01](development/checklist.md#int-license-01).
 | Downstream PHY | `crates/ofdm`, Cargo `docsis-ofdm-fec` | Retain package, public imports, control channels, interleavers, waveform, received configuration and report schemas. |
 | Common FEC | `crates/fec-codec` | `src/upstream_ldpc/` now owns upstream definitions/codec and independent source tests; existing BCH, downstream LDPC, shortening, NCP and PLC remain. |
 | Generic DSP | `crates/dsp`, Cargo `merlin-dsp`; existing directional numerical owners retained | Shared centered unitary 2K/4K/8K FFT and one-step PRBS15 recurrence; downstream wrappers preserve geometry/errors/state. Independent/frozen equivalence and hot-path measurements precede consumer rewiring; INT-DSP-01 now has passing consumer acceptance. No generic channel/QAM/measurement state extraction. |
-| Upstream PHY | `crates/ofdma`, package `docsis-ofdma` | Independent typed configuration, TX/channel/received-only RX, bounded session, strict versioned document admission and instruments are implemented; native Python/CLI and final API matrix acceptance remain gated. |
+| Upstream PHY | `crates/ofdma`, package `docsis-ofdma` | Independent typed configuration, TX/channel/received-only RX, bounded session, strict versioned document admission and instruments are implemented; native Python/CLI and final unified regression acceptance remain gated. |
 | Native measurement input | `crates/pnm-input` | Implemented `src/upstream/` owns bounded binary admission and complete measured association; core accepts an immutable typed handoff and retains original provenance. |
 | CLI | `crates/cli`, executable `ofdm-fec` | Add upstream operations via public Rust APIs; retain every existing command and output contract. No second executable. |
 | Native Python | `bindings/python`, package `merlin` | Retain existing imports and exports; add upstream native wrappers only after Rust operation parity. No second distribution or Python science. |
@@ -602,7 +602,8 @@ An explicit common-token bridge also cancels a paused upstream worker through
 a bounded condvar wait; no worker or callback is added to the common leaf.
 The upstream ApiError retains original causes and legacy code strings and adds
 a shared typed category query. [Namespace implementation validation](development/features/high-level-api/namespace-design.md#namespace-implementation-validation)
-records compatibility/build evidence; the complete operation matrix remains open.
+records compatibility/build evidence. The [complete operation rows](development/features/high-level-api/operation-matrix.json)
+now pass compiler-export and executed Rust case checks; native delivery remains open.
  The implemented
 `crates/ofdma/src/api/{session,error,measured,reports}.rs` owns the upstream typed API, sharing
 lifecycle/error/provenance conventions where semantics match. The existing

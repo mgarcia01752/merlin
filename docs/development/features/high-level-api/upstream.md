@@ -88,12 +88,12 @@ linked; nonexistent local paths are explicitly planned, not passing evidence.
 
 | Stable requirement | Delivery / acceptance | Implementation and test owner |
 | --- | --- | --- |
-| [REQ-US-API-01](../../../requirements.md#req-us-api-01) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/ofdma/tests/api_parity.rs` (planned) |
-| [REQ-US-API-02](../../../requirements.md#req-us-api-02) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/ofdma/tests/api_parity.rs` (planned) |
-| [REQ-COM-API-03](../../../requirements.md#req-com-api-03) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/ofdma/tests/api_parity.rs` (planned) |
-| [REQ-COM-API-04](../../../requirements.md#req-com-api-04) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/ofdma/tests/api_parity.rs` (planned) |
-| [REQ-COM-API-05](../../../requirements.md#req-com-api-05) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/ofdma/tests/api_parity.rs` (planned) |
-| [REQ-COM-API-06](../../../requirements.md#req-com-api-06) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/ofdma/tests/api_parity.rs` (planned) |
+| [REQ-US-API-01](../../../requirements.md#req-us-api-01) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/merlin/tests/namespaces.rs` |
+| [REQ-US-API-02](../../../requirements.md#req-us-api-02) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `bindings/python/tests/test_upstream_experiment.py` (planned) |
+| [REQ-COM-API-03](../../../requirements.md#req-com-api-03) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/merlin/tests/namespaces.rs` |
+| [REQ-COM-API-04](../../../requirements.md#req-com-api-04) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `bindings/python/tests/test_upstream_experiment.py` (planned) |
+| [REQ-COM-API-05](../../../requirements.md#req-com-api-05) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `bindings/python/tests/test_upstream_experiment.py` (planned) |
+| [REQ-COM-API-06](../../../requirements.md#req-com-api-06) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/merlin/tests/namespaces.rs` |
 | [REQ-DS-API-01](../../../requirements.md#req-ds-api-01) | [INT-REG-01](../../checklist.md#int-reg-01) | Module: [crates/ofdm/src/api](../../../../crates/ofdm/src/api); Module: [bindings/python/src](../../../../bindings/python/src); Test: [bindings/python/tests/test_api.py](../../../../bindings/python/tests/test_api.py); Test: [bindings/python/tests/test_parity.py](../../../../bindings/python/tests/test_parity.py) |
 | [REQ-COM-IDENTITY-01](../../../requirements.md#req-com-identity-01) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: [crates/ofdm/src/api](../../../../crates/ofdm/src/api); Module: [bindings/python/src](../../../../bindings/python/src); Test: [bindings/python/tests/test_api.py](../../../../bindings/python/tests/test_api.py) |
 
@@ -109,3 +109,50 @@ Related delivery gates: [INT-US-LOOP-01](../../checklist.md#int-us-loop-01), [IN
 Normative lookup: [pinned PHY 3.1 I20 guidance](../../../../skills/docsis-phy-3-1-i20/SKILL.md).
 Retained source records describe their original checkout and limitations; test
 paths above do not claim a new pass. Final integrated backend acceptance stays open.
+
+## INT-RUST-01 complete operation coverage
+
+Namespace checkpoint `c6e3065` provides the real crates and tests. Complete the
+existing compatibility matrix with compiler-discovered explicit public methods,
+including macro-generated quantities and public re-exports. The matrix's full
+seventeen-cell rows live in `operation-matrix.json`; compatibility-matrix.md is
+its navigable explanation and selected session view, not a second status owner.
+Each operation is keyed by its stable public Rust path. Shared contract cells
+resolve through named definitions, avoiding repeated prose across simple getters.
+
+Reuse the current compiler export inventory and native 0.4.0 downstream metadata.
+Current native metadata establishes existing signatures only; it does not accept
+new Python namespaces or execution. Preserve deliberate language differences:
+Rust borrowed views, generic Serde helpers, low-level typed builders and native
+file conveniences need explicit mappings or justified language-only entries,
+not artificial Python methods. New upstream native signatures follow the reviewed
+source adapter; complete Rust coverage must distinguish those planned bindings
+from actual exports. INT-PY-01 replaces plans with installed native observations.
+
+Acceptance: every documented public Rust operation and hidden cross-crate Serde
+helper has one complete row; every source path/signature and named Rust test
+resolves; evidence has a real executed candidate and declared scope. Re-export
+preservation is proved by all-type identity and retained downstream regressions,
+not a claim that a new test re-exercises every getter branch. Full Python export
+coverage and independent numerical parity remain their own delivery gate.
+
+### Rust API acceptance
+
+The complete Rust operation matrix passes fresh compiler-export and named executed
+case checks: 364 rows, with deliberate language-only differences made explicit.
+The namespace/common unit has 8 tests; downstream high-level/lifecycle compatibility
+has 26/6 passing cases, upstream engine coverage has 83, and analysis-only has 139.
+The additional measured-plan roundtrip brings current association API coverage to
+9 cases. All 43 validation-tool tests pass, including negative contract/signature/
+execution fixtures. The 5 release/version tooling cases, Clippy, formatting and
+required direction/common-only builds pass. No science or accepted FEC behavior is
+changed by the matrix/owner reconciliation.
+
+Full native export discovery, independent Python numerical/lifecycle parity and
+installed-wheel acceptance remain INT-PY-01. Final complete-workspace regressions
+remain INT-REG-01; existing historical downstream acceptance remains intact.
+
+Exact API-coverage evidence: [candidate](operation-candidate.json),
+[requirement record](operation-evidence.json) and [named run records](operation-test-results.json).
+Initial owner/test locators in the preserved source-requirement inventory remain
+planning provenance; the functional owners and exact records above are current.

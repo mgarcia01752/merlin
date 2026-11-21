@@ -3,10 +3,18 @@
 Subordinate to [API architecture](../../../architecture.md#unified-rust-python-and-cli-apis),
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
-matrix required by master §7. It starts with inspected downstream session rows;
-full export coverage, upstream signatures and executed direction/native acceptance
-remain open under INT-RUST-01, INT-PY-01 and INT-DOC-02. This seed is not final API
-acceptance. Source inspection took place at `402106f0b85605e38dbc1aa755b3799e6939b024`.
+matrix required by master §7. The [full row data](operation-matrix.json) now records
+364 explicit public Rust operations with all seventeen cells, expanded macro
+methods, adapter exports and deliberate language differences. Shared contract cells
+resolve through named definitions in that same data file. The session table below
+is a readable subset of this one matrix. New native namespaces and installed-wheel
+execution remain pending INT-PY-01; source or metadata inspection never accepts them.
+
+The [operation run records](operation-test-results.json) add a targeted measured-plan
+roundtrip and retain exact named historical MERLIN component cases. The
+[namespace run records](namespace-test-results.json) retain actual compatibility,
+engine/lifecycle and analysis-only execution. Historical source results are not
+substituted for these MERLIN runs.
 
 ## Namespace proposal for review
 
@@ -111,20 +119,31 @@ future aliases, submodules or upstream operations. Exact current cases are T1–
 | `pub fn run_all_profiles(&mut self) -> ApiResult<BatchReport>` | `run_all_profiles(self, control=None) → BatchReport` | G / T5 |
 | `pub fn run_all_profiles_with_control( &mut self, control: &RunControl, ) -> ApiResult<BatchReport>` | `run_all_profiles(self, control=None) → BatchReport` | G / T4/T5 |
 
-## Pending operation coverage and delivery
+## Full operation rows and delivery boundaries
 
-| Direction / operation | Rust / Python namespace and signature | Ownership, units, errors, lifecycle and reports | Requirements / task / evidence |
-| --- | --- | --- | --- |
-| Downstream remaining domain factories, getters, reports, capture/workbench loading/export and diagnostics | Current modules in the inventory above; add exact operation rows before acceptance, preserving all existing signatures | Existing typed defaults/units/schemas, owned native values, create-new exports and idle loading remain binding; no blanket parity claim for unpaired helpers | REQ-DS-API-01, REQ-COM-API-09; INT-RUST-01/INT-PY-01/INT-DOC-02; matrix coverage gap, existing backfill/history retained. |
-| Explicit downstream alias/import | Implemented `merlin::downstream` facade re-export; planned real `merlin.downstream` Python module; existing signatures preserved | Same types/engine; root imports unchanged | REQ-COM-API-07/08; INT-RUST-01/INT-PY-01; Rust namespace cases pass, native namespace execution pending. |
-| Upstream configure/validate/prepare | Planned `merlin::upstream` re-exporting `docsis_ofdma::api`, and `merlin.upstream`; exact type/method signatures await typed implementation and review | Owned immutable UCD/IUC/grant/source views, explicit grid/units/bounds, received-only RX; load/prepare idle and atomic | REQ-US-API-01/02, REQ-COM-API-03/06/07/08/09; INT-US-CONFIG-01 then INT-RUST-01/INT-PY-01; planned. |
-| Upstream run/report/control | Same planned namespaces; no fabricated `run`/`report`/pause method | Freeze accepted generation; Busy/unsupported/bounds/decoder outcomes and partial reports; pause only after preservation proof | REQ-COM-LIFE-01/02/03, REQ-US-API-01/02; INT-US-LOOP-01 then INT-RUST-01/INT-PY-01; planned. |
-| Upstream capture/discovery/association | Planned upstream Rust and one native package; signatures await verified parsers and accepted plan | Exact bytes/hashes/grid/identity/time/update/reference planes; explicit invalid/unsupported/association status | REQ-US-PNM-01/02/03/04, REQ-COM-API-05/09; INT-PNM-01/02 then INT-RUST-01/INT-PY-01; planned. |
+Search [operation-matrix.json](operation-matrix.json) by its stable `operation`
+path, for example `merlin::upstream::Simulation::run`. Each row contains the
+seventeen master cells: direction, operation, Rust namespace/declaration,
+Python namespace/declaration, ownership, units, errors, lifecycle, result/schema,
+compatibility, requirement, task, exact tests, executed evidence and status.
+Source files and compiler signatures are recorded in the Rust declaration cell.
+Named contract references resolve in the data's `contracts` object.
 
-Every pending or additional exported operation must gain all seventeen §7 cells,
-exact native and Rust cases, command/result/candidate evidence and limitations
-before the corresponding implementation task closes. Use native inventory tooling
-(`tools/python/build_api_reference.py`) alongside Rust public exports; it cannot
-infer parity merely from names. Expand this matrix in place, not a second matrix.
-Do not add a Python preparation method or fabricate shared controls for visual
-symmetry. Preserve standard native errors and actual supported behavior.
+| Row group | Rust scope | Python scope |
+| --- | --- | --- |
+| Downstream: 234 operations | Existing API, expanded quantities, file/workbench/export adapters and exact old/new nominal identity. | Existing root signatures are verified from the actual 0.4.0 extension; directional aliases and a fresh wheel still need INT-PY-01. |
+| Upstream: 126 operations | Independent real session/models, measured admission, raw observations and the two hidden cross-crate Serde helpers. | Planned native declarations come from the reviewed source adapter; new shared cancellation/error mappings are explicit. No new upstream import is currently claimed. |
+| Common: 4 operations | Clone/atomic query and one-way control contracts, with directional rich lifecycle retained. | Common re-exports/query and installed imports remain planned. The Rust Cancellation trait has no Python class. |
+
+Rust borrowed views, generic deserializers, validated-owner helpers and native
+file conveniences are recorded with explicit language-only or adapter mappings.
+A missing direct Python helper is never labeled as a callable native method.
+Constructor/returned-view conversions reuse Rust validation; no adapter calculates
+an alternative scientific result. Existing root/class signatures remain unchanged.
+
+Validation uses `tools/validation/api_operation_matrix.py` with fresh compiler
+exports from `rust_api_inventory.py` and the named executed records. It rejects
+missing/empty cells, unresolved contracts/requirements/tasks, stale owners/signatures,
+missing exact cases, unexecuted Rust cases and uncovered compiler exports. Native
+export-completeness and independent numerical parity remain INT-PY-01/INT-TOOLS-01
+acceptance work. The official checklist alone owns task completion.

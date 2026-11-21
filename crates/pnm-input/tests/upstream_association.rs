@@ -287,3 +287,32 @@ fn typed_handoff_validates_envelope_and_preserves_original_and_accepted_state() 
     assert_eq!(report.measurement_provenance_json, Some(provenance));
     assert_eq!(report.configuration, accepted);
 }
+
+#[test]
+fn measured_plan_roundtrip_preserves_admission_and_both_original_representations() {
+    let plan = MeasuredExperiment::from_json(PLAN).unwrap();
+    let encoded = plan.to_json().unwrap();
+    let reloaded = MeasuredExperiment::from_json(encoded.as_bytes()).unwrap();
+    assert_eq!(plan.original_bytes(), Some(PLAN));
+    assert_eq!(reloaded.original_bytes(), Some(encoded.as_bytes()));
+    assert_eq!(
+        serde_json::to_value(&plan).unwrap(),
+        serde_json::to_value(&reloaded).unwrap()
+    );
+    assert_eq!(plan.prepare().unwrap(), reloaded.prepare().unwrap());
+    let original_provenance: Value =
+        serde_json::from_str(&plan.provenance_json().unwrap()).unwrap();
+    let reloaded_provenance: Value =
+        serde_json::from_str(&reloaded.provenance_json().unwrap()).unwrap();
+    assert_eq!(
+        original_provenance["source_hashes"],
+        reloaded_provenance["source_hashes"]
+    );
+    assert_eq!(original_provenance["plan"], reloaded_provenance["plan"]);
+    assert_eq!(original_provenance["original_plan_bytes"], json!(PLAN));
+    assert_eq!(
+        reloaded_provenance["original_plan_bytes"],
+        json!(encoded.as_bytes())
+    );
+    assert!(MeasuredExperiment::from_json(&vec![b' '; 16 * 1024 * 1024 + 1]).is_err());
+}
