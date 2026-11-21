@@ -1,0 +1,151 @@
+{
+  "format": "merlin.upstream.configuration",
+  "schema_version": 1,
+  "presets": [
+    {
+      "id": "generic-25khz",
+      "description": "Synthetic generic example; no universal recommended loading.",
+      "vendor_template_id": 224,
+      "channel": {
+        "message_type": 51,
+        "management_version": 5,
+        "upstream_channel_id": 1,
+        "configuration_change_count": 0,
+        "minislot_size_ticks": 0,
+        "downstream_channel_id": 1,
+        "preamble_pattern": null,
+        "ranging_required": null,
+        "ranging_holdoff_priority": null,
+        "channel_class_id": null,
+        "change_indicator_bitmask": 0,
+        "timestamp_snapshot": {
+          "reserved": 0,
+          "docsis_timestamp": 0,
+          "divide_by_20_msb": 0,
+          "minislot_count": 0
+        },
+        "cyclic_prefix_samples": 192,
+        "rolloff_samples": 64,
+        "subcarrier_spacing_khz": 25,
+        "subcarrier_zero_hz": 0,
+        "excluded_bands": [
+          {
+            "first": 0,
+            "last": 255
+          },
+          {
+            "first": 1056,
+            "last": 4095
+          }
+        ],
+        "unused_bands": [
+          {
+            "first": 384,
+            "last": 1055
+          }
+        ],
+        "frame_symbols": 6,
+        "randomization_seed": 8388607,
+        "encompassed_bandwidth_hz": 20000000,
+        "bursts": [
+          {
+            "iuc": 5,
+            "preamble_length_bits": null,
+            "preamble_offset_bits": null,
+            "initial_ranging_subcarriers": null,
+            "fine_ranging_subcarriers": null,
+            "data_profile": [
+              {
+                "modulation_index": 4,
+                "pilot_pattern": 8,
+                "additional_minislots": 3
+              },
+              {
+                "modulation_index": 0,
+                "pilot_pattern": 0,
+                "additional_minislots": 1
+              },
+              {
+                "modulation_index": 6,
+                "pilot_pattern": 8,
+                "additional_minislots": 1
+              }
+            ],
+            "ir_power_control": null
+          },
+          {
+            "iuc": 13,
+            "preamble_length_bits": null,
+            "preamble_offset_bits": null,
+            "initial_ranging_subcarriers": null,
+            "fine_ranging_subcarriers": null,
+            "data_profile": [
+              {
+                "modulation_index": 2,
+                "pilot_pattern": 8,
+                "additional_minislots": 7
+              }
+            ],
+            "ir_power_control": null
+          }
+        ]
+      },
+      "assignment": {
+        "cm_mac": [
+          2,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "registered": true,
+        "assigned_iucs": [
+          5,
+          13
+        ],
+        "ranging_sid": 7,
+        "testing_sid": null,
+        "sid_cluster": [
+          7
+        ]
+      },
+      "map": null,
+      "probe_map": null
+    }
+  ],
+  "selected_preset": "generic-25khz",
+  "simulation": {
+    "mode": "scheduled_data",
+    "selected_iuc": 5,
+    "source_seed": 1,
+    "grant_id": 1,
+    "epoch_sample": 0,
+    "first_frame": 0,
+    "frames": 2,
+    "minislots": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "grants": 1,
+    "maximum_samples": 16777216,
+    "chunk_samples": 997,
+    "timeout_ms": 30000,
+    "retained_points": 4096,
+    "retained_taps": [
+      "TxOutput",
+      "RxEqualized"
+    ],
+    "estimator": "frame_flat_ls",
+    "maximum_pilot_gap": 64,
+    "reference_variance": 0.02,
+    "equalizer_power_floor": 1e-12,
+    "ldpc_iterations": 50
+  }
+}

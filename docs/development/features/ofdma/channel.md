@@ -9,7 +9,7 @@ documentation only. Current integration evidence is never inferred from source c
 
 Typed channel execution and synthetic measurement playback now have local
 [implementation evidence](design.md#int-us-ch-01-channel-implementation-unit).
-Combined schedule/observer acceptance remains open under INT-US-CH-01; measured
+Combined schedule/observer acceptance now passes under INT-US-CH-01; measured
 capture association additionally requires INT-PNM-02. Source reports remain historical.
 Direction-specific channel state/admission remains separate from shared numerical
 kernels and from the accepted downstream channel implementation.
@@ -76,7 +76,7 @@ linked; nonexistent local paths are explicitly planned, not passing evidence.
 | [REQ-US-CH-03](../../../requirements.md#req-us-ch-03) | [INT-US-CH-01](../../checklist.md#int-us-ch-01) | Module: `crates/ofdma/src/channel/stream.rs`; Test: `crates/ofdma/tests/channel_models.rs` |
 | [REQ-US-CH-04](../../../requirements.md#req-us-ch-04) | [INT-US-CH-01](../../checklist.md#int-us-ch-01) | Module: `crates/ofdma/src/channel/residual.rs`; Test: `crates/ofdma/tests/rxmer_channel.rs` |
 | [REQ-US-CH-05](../../../requirements.md#req-us-ch-05) | [INT-US-CH-01](../../checklist.md#int-us-ch-01) | Module: `crates/ofdma/src/channel/stream.rs`; Test: `crates/ofdma/tests/channel_models.rs` |
-| [REQ-US-CH-06](../../../requirements.md#req-us-ch-06) | [INT-US-CH-01](../../checklist.md#int-us-ch-01) | Module: `crates/ofdma/src/instruments/observer.rs` (planned); Test: `crates/ofdma/tests/matched_metrics.rs` (planned) |
+| [REQ-US-CH-06](../../../requirements.md#req-us-ch-06) | [INT-US-CH-01](../../checklist.md#int-us-ch-01) | Module: `crates/ofdma/src/instruments/observer.rs`; Test: `crates/ofdma/tests/matched_metrics.rs` |
 
 Related delivery gates: [INT-US-CH-01](../../checklist.md#int-us-ch-01), [INT-PNM-02](../../checklist.md#int-pnm-02), [INT-DEFER-01](../../checklist.md#int-defer-01).
 

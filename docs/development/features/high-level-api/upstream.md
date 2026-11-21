@@ -12,8 +12,9 @@ documentation only. Current integration evidence is never inferred from source c
 This is the active feature design for converging direction-specific operations through
 the existing public Rust engine and native Python distribution. Existing downstream
 Rust/Python APIs, imports, schemas, examples and saved-workbench contracts remain
-implemented within their recorded supported scope. Upstream Rust composition,
-measured operations and native wrappers remain planned at their linked delivery gates.
+implemented within their recorded supported scope. Initial upstream typed Rust
+composition now passes local synthetic session acceptance. Final facade/common
+contracts, measured operations and native wrappers remain at their delivery gates.
 
 The [current backend master review](../unified-backend/master-prompt-review.md)
 adds explicit direction namespaces, package-import acceptance and a fourteen-field
@@ -28,7 +29,7 @@ stays with INT-RUST-01 and INT-PY-01 below.
 
 ## Dependency and operation ownership
 
-Core PHY modules own typed validation, scientific state and results. The planned
+Core PHY modules own typed validation, scientific state and results. The implemented
 upstream `crates/ofdma/src/api/` composes those owners; the native input adapter owns
 bounded file admission. The existing Python extension converts native values and
 calls the same Rust operations. CLI and future Qt are consumers of those APIs.
@@ -84,12 +85,12 @@ linked; nonexistent local paths are explicitly planned, not passing evidence.
 
 | Stable requirement | Delivery / acceptance | Implementation and test owner |
 | --- | --- | --- |
-| [REQ-US-API-01](../../../requirements.md#req-us-api-01) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs` (planned); Test: `crates/ofdma/tests/api_parity.rs` (planned) |
-| [REQ-US-API-02](../../../requirements.md#req-us-api-02) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs` (planned); Test: `crates/ofdma/tests/api_parity.rs` (planned) |
-| [REQ-COM-API-03](../../../requirements.md#req-com-api-03) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs` (planned); Test: `crates/ofdma/tests/api_parity.rs` (planned) |
-| [REQ-COM-API-04](../../../requirements.md#req-com-api-04) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs` (planned); Test: `crates/ofdma/tests/api_parity.rs` (planned) |
-| [REQ-COM-API-05](../../../requirements.md#req-com-api-05) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs` (planned); Test: `crates/ofdma/tests/api_parity.rs` (planned) |
-| [REQ-COM-API-06](../../../requirements.md#req-com-api-06) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs` (planned); Test: `crates/ofdma/tests/api_parity.rs` (planned) |
+| [REQ-US-API-01](../../../requirements.md#req-us-api-01) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/ofdma/tests/api_parity.rs` (planned) |
+| [REQ-US-API-02](../../../requirements.md#req-us-api-02) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/ofdma/tests/api_parity.rs` (planned) |
+| [REQ-COM-API-03](../../../requirements.md#req-com-api-03) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/ofdma/tests/api_parity.rs` (planned) |
+| [REQ-COM-API-04](../../../requirements.md#req-com-api-04) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/ofdma/tests/api_parity.rs` (planned) |
+| [REQ-COM-API-05](../../../requirements.md#req-com-api-05) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/ofdma/tests/api_parity.rs` (planned) |
+| [REQ-COM-API-06](../../../requirements.md#req-com-api-06) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/ofdma/tests/api_parity.rs` (planned) |
 | [REQ-DS-API-01](../../../requirements.md#req-ds-api-01) | [INT-REG-01](../../checklist.md#int-reg-01) | Module: [crates/ofdm/src/api](../../../../crates/ofdm/src/api); Module: [bindings/python/src](../../../../bindings/python/src); Test: [bindings/python/tests/test_api.py](../../../../bindings/python/tests/test_api.py); Test: [bindings/python/tests/test_parity.py](../../../../bindings/python/tests/test_parity.py) |
 | [REQ-COM-IDENTITY-01](../../../requirements.md#req-com-identity-01) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: [crates/ofdm/src/api](../../../../crates/ofdm/src/api); Module: [bindings/python/src](../../../../bindings/python/src); Test: [bindings/python/tests/test_api.py](../../../../bindings/python/tests/test_api.py) |
 

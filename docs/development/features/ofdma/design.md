@@ -218,3 +218,95 @@ CONFIG/TX/CH/RX tasks remain unchecked until the broader session/document/schedu
 acceptance. It is not hardware or external interoperability evidence.
 
 [Receiver user guide](../../../user/upstream/receiver.md).
+
+## INT-US-LOOP-01 and INT-US-CONFIG-01: session and document unit
+
+Received-only checkpoint `e9112eb` supplies the nine-stage RX. Adapt source
+`crates/phy/src/{simulation,instruments}/` into matching OFDMA owners. Compose
+actual source/TX/channel/RX/verifier through the typed public session now; final
+facade/common-contract convergence stays INT-RUST-01.
+
+Adapt source `crates/morgana/src/api/{error,reports,session}.rs` into OFDMA `api/`;
+retain typed options/configuration, atomic configure/preview, owned complete and
+partial reports, progress/control and bounded Rust serialization. Capture-backed
+configuration methods stay absent until INT-PNM-02 supplies an adapter-safe input
+contract; no PHY→pnm-input dependency or empty success method is introduced.
+
+Adapt source `inputs/us_configuration.rs` and `inputs/synthetic.rs` into
+`configuration/{document,synthetic}.rs`. Preserve full field validation and
+original byte/hash retention. New MERLIN schema-1 identity is explicitly
+`merlin.upstream.configuration`; the distinct report identity is
+`merlin.upstream.experiment`. Historical source schema identities are not accepted
+or relabeled as current inputs. Existing downstream schemas do not change.
+Source fixtures receive this explicit format-tag translation only, not changed
+normative or numerical values. Preserve their per-file origin/hashes.
+
+| Source symbol | Contract / evidence | Gap | Decision / destination |
+| --- | --- | --- | --- |
+| `simulation::{preview,run}`, `RunControl` | Whole-job preflight, cancellation before source, pause-safe state/time accounting, actual partial results | Local lifecycle | ADAPT `crates/ofdma/src/simulation/`; keep directional rich control until common cancellation convergence |
+| `ObservationStore`, `MatchedMer`, spectrum | Passive bounded actual observations, distinct MER states, no RNG/receiver changes | Local instruments | ADAPT `crates/ofdma/src/instruments/`; preserve per-tap planes and budgets |
+| `ConfigurationDocument`, `RunSettings`, synthetic documents | Strict bounded versioned JSON, inventory and original bytes, full typed prepare rules | Complete configuration admission | ADAPT to configuration/; no file I/O/parser dependency in core |
+| `api::Simulation` | Idle typed public session, exclusive mutable Rust ownership, reusable reports | Upstream session | ADAPT real core session; final facade and native Python remain gated |
+
+Add source `experiment` and `configuration_json` acceptance cases, preserving
+scientific assertions and explicit format-tag migration. Add source matched-MER
+cases. Place reviewed synthetic JSON fixtures under `examples/cli/upstream/`.
+Full schedules must reject incompatible H/C/RxMER or later-event failures before
+source consumption. Independent comparison stays outside normal RX. No work
+starts during JSON loading, preview or instrument queries.
+
+## Session and core acceptance
+
+INT-US-CONFIG-01, INT-US-TX-01, INT-US-CH-01, INT-US-RX-01 and INT-US-LOOP-01
+now pass their synthetic single-CM backend scope inside MERLIN. Earlier sections
+are checkpoint history; their then-pending configuration/session gates are closed
+by this acceptance. INT-PNM-01 is next; facade/common contracts, native Python,
+unified CLI, final automation and full downstream regression remain open.
+
+[Exact fourteen-field implementation evidence](implementation-evidence.json)
+contains 40 stable requirement records. Each names its architecture/design/task,
+crate/file/symbol, exact test file/case, command/result, candidate, status and
+limitations. [Executed case inventory](session-test-results.json) was parsed from
+the actual successful Cargo output, with its SHA-256 retained. Every referenced
+case was found in that output; file existence alone was not used as execution proof.
+[108 field dispositions](configuration-field-mapping.json) retain the historical
+normative matrix and bind its applicable/current owners to explicit local case
+scope. Full optional control representation is distinct from executable modes.
+
+Tested base `e9112eb`, [code/build/input fingerprint](session-candidate.json)
+SHA-256 `e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246`.
+Existing Rust 1.85.1, Linux x86_64, pinned dependency versions unchanged.
+
+| Executed command | Observed result |
+| --- | --- |
+| `scripts/cargo-local.sh test -p docsis-ofdma --locked` | 83 passed, one explicit benchmark ignored; doctests pass |
+| `scripts/cargo-local.sh clippy -p docsis-ofdma --all-targets --locked -- -D warnings` | Pass |
+| `scripts/cargo-local.sh fmt --all -- --check` | Pass |
+
+The new `closed_loop.rs` has 28 separately named cases: every scheduled loading
+2..12 at both 25/50 kHz, plus all three LDPC families in both modes. Existing
+source cases cover all 14 pilot patterns, independent masks/labels/normalization,
+physical convolution/noise/RxMER replay, actual errors/iterations/partial coverage,
+whole-schedule rejection, zero loading/guards, cancellation before pause,
+state-preserving pause/resume and paused-time exclusion, owned reports and passive
+instrument invariance. `stage_boundaries.rs` adds exact zero-rolloff prefix/useful
+assembly and independent received impulse windows with nonzero ignored prefixes,
+including missing-sample rejection without phase repair, for both geometries.
+
+Generic configuration and experiment documents have separate explicit MERLIN
+schema-1 format tags. The structural schema and four synthetic inputs are tracked;
+the Rust parser additionally enforces domain, budget and execution constraints.
+Original accepted input bytes/hashes remain unchanged in owned reports.
+
+Private output:
+`docs/development/local/unified-backend/session-integration/acceptance-rust-tests.log`.
+An initial mechanical import adaptation still referenced former test module paths;
+those imports were corrected before the successful runs, without changing numerical
+expectations. No scientific assertion or golden value was weakened.
+
+All loops here are MERLIN-only internal verification. No hardware interoperability,
+raw MAC scheduler/ranging/probe, broader C/H/RxMER composition, captured-plan,
+installed-wheel, upstream CLI, Qt or hosted/platform acceptance is inferred.
+Existing downstream code/tests and completed checklist history remain unchanged.
+
+[Bounded-session user guide](../../../user/upstream/session.md).

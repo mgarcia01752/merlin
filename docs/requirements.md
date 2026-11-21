@@ -132,6 +132,8 @@ Architecture: [canonical owner](architecture.md#unified-channel-and-measurement-
 Implementation: `crates/ofdma/src/instruments/metrics.rs`. Acceptance owner: `crates/ofdma/tests/matched_metrics.rs`.
 Delivery: [**INT-US-LOOP-01**](development/checklist.md#int-us-loop-01); source alias `REQ-OBS-01`.
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-COM-OBS-01`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-COM-OBS-02
 
 Scientific results SHALL distinguish measured observations, analytical/model inputs, receiver estimates and simulated FEC/source outcomes.
@@ -141,6 +143,8 @@ Acceptance: Reports preserve convergence/parity/known-zero/source-error distinct
 Architecture: [canonical owner](architecture.md#unified-channel-and-measurement-reference-planes).
 Implementation: `crates/ofdma/src/instruments/metrics.rs`. Acceptance owner: `crates/ofdma/tests/matched_metrics.rs`.
 Delivery: [**INT-US-LOOP-01**](development/checklist.md#int-us-loop-01); source alias `REQ-OBS-02`.
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-COM-OBS-02`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-COM-API-03
 
@@ -200,6 +204,8 @@ Architecture: [canonical owner](architecture.md#unified-rust-python-and-cli-apis
 Implementation: `crates/ofdma/src/simulation/run.rs`. Acceptance owner: `crates/ofdma/tests/closed_loop.rs`.
 Delivery: [**INT-US-LOOP-01**](development/checklist.md#int-us-loop-01); source alias `REQ-LIFE-01`.
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-COM-LIFE-01`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-COM-LIFE-02
 
 Cancellation/failure SHALL preserve completed science and identify incomplete or not-started work under bounded safe work quanta.
@@ -209,6 +215,8 @@ Acceptance: Stage-boundary and between-word cancellation tests retain actual com
 Architecture: [canonical owner](architecture.md#unified-rust-python-and-cli-apis).
 Implementation: `crates/ofdma/src/simulation/run.rs`. Acceptance owner: `crates/ofdma/tests/closed_loop.rs`.
 Delivery: [**INT-US-LOOP-01**](development/checklist.md#int-us-loop-01); source alias `REQ-LIFE-02`.
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-COM-LIFE-02`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-COM-LIFE-03
 
@@ -220,6 +228,8 @@ Architecture: [canonical owner](architecture.md#unified-rust-python-and-cli-apis
 Implementation: `crates/ofdma/src/simulation/run.rs`. Acceptance owner: `crates/ofdma/tests/closed_loop.rs`.
 Delivery: [**INT-US-LOOP-01**](development/checklist.md#int-us-loop-01); source alias `REQ-LIFE-03`.
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-COM-LIFE-03`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-COM-NFR-01
 
 Inputs, expanded plans, per-call work, cumulative runtime/memory, output queues and retained observations SHALL be bounded before allocation/execution.
@@ -229,6 +239,8 @@ Acceptance: Existing architecture budgets and independently checked overflow/exh
 Architecture: [canonical owner](architecture.md#unified-upstream-configuration-and-source).
 Implementation: `crates/ofdma/src/simulation/run.rs`. Acceptance owner: `crates/ofdma/tests/closed_loop.rs`.
 Delivery: [**INT-US-LOOP-01**](development/checklist.md#int-us-loop-01); source alias `REQ-NFR-01`.
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-COM-NFR-01`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-COM-NFR-02
 
@@ -274,6 +286,8 @@ Architecture: [canonical owner](architecture.md#unified-upstream-configuration-a
 Implementation: `crates/ofdma/src/simulation/run.rs`. Acceptance owner: `crates/ofdma/tests/closed_loop.rs`.
 Delivery: [**INT-US-LOOP-01**](development/checklist.md#int-us-loop-01); source alias `REQ-SYS-01`.
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-SYS-01`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-SYS-02
 
 Normal receiver inputs SHALL contain received samples and legitimate accepted receiver configuration. They SHALL NOT contain source truth or injected channel/noise truth.
@@ -284,6 +298,8 @@ Architecture: [canonical owner](architecture.md#unified-upstream-configuration-a
 Implementation: `crates/ofdma/src/simulation/run.rs`. Acceptance owner: `crates/ofdma/tests/closed_loop.rs`.
 Delivery: [**INT-US-LOOP-01**](development/checklist.md#int-us-loop-01); source alias `REQ-SYS-02`.
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-SYS-02`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-SYS-04
 
 The toolkit SHALL distinguish representable settings, domain validity and executable support.
@@ -293,6 +309,8 @@ Acceptance: Unsupported optional modes remain inspectable with reasons; executio
 Architecture: [canonical owner](architecture.md#unified-upstream-configuration-and-source).
 Implementation: `crates/ofdma/src/simulation/run.rs`. Acceptance owner: `crates/ofdma/tests/closed_loop.rs`.
 Delivery: [**INT-US-LOOP-01**](development/checklist.md#int-us-loop-01); source alias `REQ-SYS-04`.
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-SYS-04`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-CFG-01
 
@@ -306,6 +324,8 @@ Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); sou
 
 Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-CFG-01`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-CFG-02
 
 Configuration admission SHALL produce an immutable CMTS plan and separate accepted TX/RX views through shared validation.
@@ -317,6 +337,8 @@ Implementation: `crates/ofdma/src/configuration/ucd/mod.rs`. Acceptance owner: `
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-CFG-02`.
 
 Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-CFG-02`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-CFG-03
 
@@ -330,6 +352,8 @@ Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); sou
 
 Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-CFG-03`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-CFG-04
 
 Configuration coverage SHALL account for every applicable field/option in the pinned MULPI OFDMA scope.
@@ -341,6 +365,8 @@ Implementation: `crates/ofdma/src/configuration/ucd/mod.rs`. Acceptance owner: `
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-CFG-04`.
 
 Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-CFG-04`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-CFG-05
 
@@ -354,6 +380,8 @@ Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); sou
 
 Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-CFG-05`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-CFG-06
 
 Example presets SHALL demonstrate generic configurations without claiming universal recommended modulation.
@@ -365,6 +393,8 @@ Implementation: `crates/ofdma/src/configuration/ucd/mod.rs`. Acceptance owner: `
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-CFG-06`.
 
 Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-CFG-06`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-PRBS-01
 
@@ -378,6 +408,8 @@ Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); sou
 
 Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-PRBS-01`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-PRBS-02
 
 Source consumption SHALL track accepted meaningful payload with checked absolute positions and bounded chunks.
@@ -389,6 +421,8 @@ Implementation: `crates/ofdma/src/source/prbs15.rs`. Acceptance owner: `crates/o
 Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); source alias `REQ-PRBS-02`.
 
 Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-PRBS-02`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-PRBS-03
 
@@ -402,6 +436,8 @@ Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); sou
 
 Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-PRBS-03`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-PRBS-04
 
 Verification results SHALL distinguish generated, compared and unverified bits, coverage, mismatch counts and completion.
@@ -414,6 +450,8 @@ Delivery: [**INT-US-CONFIG-01**](development/checklist.md#int-us-config-01); sou
 
 Feature records: [ofdma/configuration.md](development/features/ofdma/configuration.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-PRBS-04`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-TX-01
 
 Grant framing SHALL derive coded capacity and the upstream codeword sequence from accepted resources/loading while separating meaningful bytes, information-fill ones, shortening zeros, parity and zero grant pad.
@@ -425,6 +463,8 @@ Implementation: `crates/ofdma/src/grant/plan.rs`. Acceptance owner: `crates/ofdm
 Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alias `REQ-TX-01`.
 
 Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-TX-01`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-TX-02
 
@@ -450,6 +490,8 @@ Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alia
 
 Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-TX-03`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-TX-04
 
 QAM mapping SHALL form MSB-first cell words in accepted visit order using exact upstream labels, normalization and role-dependent loading.
@@ -462,6 +504,8 @@ Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alia
 
 Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-TX-04`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-TX-05
 
 OFDMA framing SHALL apply the accepted pilot pattern, known signs, role/loading plan, block partitioning and joint interleaving/address order.
@@ -469,10 +513,12 @@ OFDMA framing SHALL apply the accepted pilot pattern, known signs, role/loading 
 Acceptance: Independent masks, pilot vectors and permutation/bijection cases cover supported patterns, edge/body layout, exclusions, zero resources and boost exceptions; bit/cell totals are conserved and scaling occurs once.
 
 Architecture: [canonical owner](architecture.md#us-tx-05-pilots-resources-and-joint-interleaving).
-Implementation: `crates/ofdma/src/transmitter/framing.rs`. Acceptance owner: `crates/ofdma/tests/resource_interleaving.rs`.
+Implementation: `crates/ofdma/src/transmitter/framing.rs`. Acceptance owner: `crates/ofdma/tests/upstream_interleaving.rs`.
 Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alias `REQ-TX-05`.
 
 Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-TX-05`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-TX-06
 
@@ -486,6 +532,8 @@ Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alia
 
 Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md), [ofdma/pre-equalization.md](development/features/ofdma/pre-equalization.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-TX-06`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-TX-07
 
 IFFT SHALL transform complete accepted 2K/50 kHz or 4K/25 kHz physical grids at 102.4 Msamples/s using the defined centered unitary convention.
@@ -493,10 +541,12 @@ IFFT SHALL transform complete accepted 2K/50 kHz or 4K/25 kHz physical grids at 
 Acceptance: Independent direct-sum, tone, impulse and energy checks establish sign/bin order/scaling; useful sample count and timing are exact; inactive bins and invalid geometry are checked.
 
 Architecture: [canonical owner](architecture.md#us-tx-07-centered-unitary-ifft).
-Implementation: `crates/ofdma/src/signal_processing/transform.rs`. Acceptance owner: `crates/ofdma/tests/waveform_transform.rs`.
+Implementation: `crates/ofdma/src/signal_processing/transform.rs`. Acceptance owner: `crates/ofdma/tests/transforms.rs`.
 Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alias `REQ-TX-07`.
 
 Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-TX-07`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-TX-08
 
@@ -510,6 +560,8 @@ Delivery: [**INT-US-TX-01**](development/checklist.md#int-us-tx-01); source alia
 
 Feature records: [ofdma/transmitter.md](development/features/ofdma/transmitter.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-TX-08`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-CH-01
 
 Channel admission SHALL validate finite indexed sample blocks, clock, identities, continuity and budgets before changing state.
@@ -521,6 +573,8 @@ Implementation: `crates/ofdma/src/channel/stream.rs`. Acceptance owner: `crates/
 Delivery: [**INT-US-CH-01**](development/checklist.md#int-us-ch-01); source alias `REQ-CH-01`.
 
 Feature records: [ofdma/channel.md](development/features/ofdma/channel.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-CH-01`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-CH-02
 
@@ -534,6 +588,8 @@ Delivery: [**INT-US-CH-01**](development/checklist.md#int-us-ch-01); source alia
 
 Feature records: [ofdma/channel.md](development/features/ofdma/channel.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-CH-02`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-CH-03
 
 The response extension SHALL apply the declared causal synthetic complex FIR without implicit normalization, circular wrap or per-symbol resets.
@@ -545,6 +601,8 @@ Implementation: `crates/ofdma/src/channel/stream.rs`. Acceptance owner: `crates/
 Delivery: [**INT-US-CH-01**](development/checklist.md#int-us-ch-01); source alias `REQ-CH-03`.
 
 Feature records: [ofdma/channel.md](development/features/ofdma/channel.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-CH-03`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-CH-04
 
@@ -558,6 +616,8 @@ Delivery: [**INT-US-CH-01**](development/checklist.md#int-us-ch-01); source alia
 
 Feature records: [ofdma/channel.md](development/features/ofdma/channel.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-CH-04`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-CH-05
 
 The timing extension SHALL implement only the designed integer delay, constant phase and CFO with emitted-sample-clock continuity.
@@ -569,6 +629,8 @@ Implementation: `crates/ofdma/src/channel/stream.rs`. Acceptance owner: `crates/
 Delivery: [**INT-US-CH-01**](development/checklist.md#int-us-ch-01); source alias `REQ-CH-05`.
 
 Feature records: [ofdma/channel.md](development/features/ofdma/channel.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-CH-05`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-CH-06
 
@@ -582,6 +644,8 @@ Delivery: [**INT-US-CH-01**](development/checklist.md#int-us-ch-01); source alia
 
 Feature records: [ofdma/channel.md](development/features/ofdma/channel.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-CH-06`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-RX-01
 
 Burst framing SHALL derive timing from accepted RX configuration and preserve actual indexed blocks and explicit missing intervals.
@@ -593,6 +657,8 @@ Implementation: `crates/ofdma/src/receiver/framing.rs`. Acceptance owner: `crate
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-01`.
 
 Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-RX-01`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-RX-02
 
@@ -606,6 +672,8 @@ Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alia
 
 Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-RX-02`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-RX-03
 
 FFT SHALL produce raw physical bins using the inverse of the accepted centered unitary TX convention.
@@ -613,10 +681,12 @@ FFT SHALL produce raw physical bins using the inverse of the accepted centered u
 Acceptance: Independent complex-sum, signed-tone, impulse and energy cases establish bin/sign/scaling correctness and preserve availability metadata without injecting channel truth.
 
 Architecture: [canonical owner](architecture.md#us-rx-03-centered-unitary-fft).
-Implementation: `crates/ofdma/src/signal_processing/transform.rs`. Acceptance owner: `crates/ofdma/tests/waveform_transform.rs`.
+Implementation: `crates/ofdma/src/signal_processing/transform.rs`. Acceptance owner: `crates/ofdma/tests/transforms.rs`.
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-03`.
 
 Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-RX-03`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-RX-04
 
@@ -630,6 +700,8 @@ Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alia
 
 Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
 
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-RX-04`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+
 #### REQ-US-RX-05
 
 Resource extraction SHALL independently invert the accepted resource/interleaving order and preserve unavailable scheduled cells and their bit positions.
@@ -637,10 +709,12 @@ Resource extraction SHALL independently invert the accepted resource/interleavin
 Acceptance: Independent mixed-loading/permutation/boost cases conserve order/counts; missing cells are not compacted and known amplitude is removed once.
 
 Architecture: [canonical owner](architecture.md#us-rx-05-resource-extraction-and-inverse-interleaving).
-Implementation: `crates/ofdma/src/receiver/mod.rs`. Acceptance owner: `crates/ofdma/tests/rx_resources.rs`.
+Implementation: `crates/ofdma/src/receiver/mod.rs`. Acceptance owner: `crates/ofdma/tests/waveform_loop.rs`.
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-05`.
 
 Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-RX-05`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-RX-06
 
@@ -649,10 +723,12 @@ Soft demapping SHALL produce MSB-first finite MaxLog natural-log P(0)/P(1) metri
 Acceptance: Independent label/distance/sign tests cover positive-favors-zero convention, configured saturation, ties and zero-confidence erasures; nonpositive/nonfinite variance rejects.
 
 Architecture: [canonical owner](architecture.md#us-rx-06-soft-qam-demapping).
-Implementation: `crates/ofdma/src/signal_processing/demapping.rs`. Acceptance owner: `crates/ofdma/tests/soft_metrics.rs`.
+Implementation: `crates/ofdma/src/signal_processing/demapping.rs`. Acceptance owner: `crates/ofdma/tests/qam_mapping.rs`.
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-06`.
 
 Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-RX-06`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-RX-07
 
@@ -665,6 +741,8 @@ Implementation: `crates/ofdma/src/bit_processing/randomizer.rs`. Acceptance owne
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-07`.
 
 Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-RX-07`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-RX-08
 
@@ -689,6 +767,8 @@ Implementation: `crates/ofdma/src/receiver/framing.rs`. Acceptance owner: `crate
 Delivery: [**INT-US-RX-01**](development/checklist.md#int-us-rx-01); source alias `REQ-RX-09`.
 
 Feature records: [ofdma/receiver.md](development/features/ofdma/receiver.md).
+
+MERLIN execution: [exact implementation/test record](development/features/ofdma/implementation-evidence.json), keyed by `REQ-US-RX-09`; [83-case acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 
 #### REQ-US-PNM-01
 

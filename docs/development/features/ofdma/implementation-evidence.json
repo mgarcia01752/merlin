@@ -1,0 +1,767 @@
+{
+  "schema_version": 1,
+  "completion_authority": "docs/development/checklist.md",
+  "validation_log": "docs/development/local/unified-backend/session-integration/acceptance-rust-tests.log",
+  "records": [
+    {
+      "requirement_id": "REQ-US-CFG-01",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CONFIG-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/configuration/document.rs",
+      "symbol": "ConfigurationDocument::prepare",
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-CFG-02",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CONFIG-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/configuration/document.rs",
+      "symbol": "ConfigurationDocument::prepare",
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-CFG-03",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CONFIG-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/configuration/document.rs",
+      "symbol": "ConfigurationDocument::prepare",
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-CFG-04",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CONFIG-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/configuration/document.rs",
+      "symbol": "ConfigurationDocument::prepare",
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "control_fields_and_conditional_options_are_independently_exercised",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-CFG-05",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CONFIG-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/configuration/document.rs",
+      "symbol": "ConfigurationDocument::prepare",
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "source_reserved_width_range_and_cross_field_boundaries_reject",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-CFG-06",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CONFIG-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/configuration/document.rs",
+      "symbol": "ConfigurationDocument::prepare",
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-PRBS-01",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CONFIG-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/source/prbs15.rs",
+      "symbol": "Prbs15::generate",
+      "test_file": "crates/ofdma/tests/prbs.rs",
+      "qualified_test_case": "literal_seed_phase_period_and_chunk_continuity",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-PRBS-02",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CONFIG-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/source/prbs15.rs",
+      "symbol": "Prbs15::generate",
+      "test_file": "crates/ofdma/tests/prbs.rs",
+      "qualified_test_case": "rejected_calls_and_coverage_gaps_never_advance_state",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-PRBS-03",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CONFIG-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/source/verifier.rs",
+      "symbol": "PrbsVerifier::compare",
+      "test_file": "crates/ofdma/tests/prbs.rs",
+      "qualified_test_case": "rejected_calls_and_coverage_gaps_never_advance_state",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-PRBS-04",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CONFIG-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/source/verifier.rs",
+      "symbol": "PrbsVerifier::compare",
+      "test_file": "crates/ofdma/tests/prbs.rs",
+      "qualified_test_case": "rejected_calls_and_coverage_gaps_never_advance_state",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-TX-01",
+      "architecture_owner": "docs/architecture.md#us-tx-01-grant-framing-and-fec-selection",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-TX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/grant/fec_selection.rs",
+      "symbol": "select",
+      "test_file": "crates/ofdma/tests/grant_plan.rs",
+      "qualified_test_case": "source_threshold_and_two_shortened_word_literals",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-TX-03",
+      "architecture_owner": "docs/architecture.md#us-tx-03-grant-seeded-phy-randomization",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-TX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/bit_processing/randomizer.rs",
+      "symbol": "Randomizer23::apply_bits",
+      "test_file": "crates/ofdma/tests/randomization.rs",
+      "qualified_test_case": "literal_mask_and_independent_grant_soft_inverse",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-TX-04",
+      "architecture_owner": "docs/architecture.md#us-tx-04-cell-words-and-upstream-qam",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-TX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/signal_processing/qam.rs",
+      "symbol": "map_symbol",
+      "test_file": "crates/ofdma/tests/qam_mapping.rs",
+      "qualified_test_case": "independent_annex_labels_and_every_order_mean_energy",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-TX-05",
+      "architecture_owner": "docs/architecture.md#us-tx-05-pilots-resources-and-joint-interleaving",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-TX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/resources/grid.rs",
+      "symbol": "ResourcePlan::new",
+      "test_file": "crates/ofdma/tests/upstream_interleaving.rs",
+      "qualified_test_case": "every_supported_geometry_has_exact_independent_cartesian_coverage",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-TX-06",
+      "architecture_owner": "docs/architecture.md#us-tx-06-cm-pre-eq",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-TX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/signal_processing/pre_eq.rs",
+      "symbol": "PreEqBank::apply",
+      "test_file": "crates/ofdma/tests/pre_eq.rs",
+      "qualified_test_case": "defaults_full_domain_phase_and_invalid_bank_atomicity",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-TX-07",
+      "architecture_owner": "docs/architecture.md#us-tx-07-centered-unitary-ifft",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-TX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/signal_processing/transform.rs",
+      "symbol": "Transform::inverse",
+      "test_file": "crates/ofdma/tests/transforms.rs",
+      "qualified_test_case": "centered_unitary_tones_and_direct_sums",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-TX-08",
+      "architecture_owner": "docs/architecture.md#us-tx-08-prefix-window-and-sample-assembly",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-TX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/transmitter/assembly.rs",
+      "symbol": "BurstAssembler::push",
+      "test_file": "crates/ofdma/tests/stage_boundaries.rs",
+      "qualified_test_case": "zero_rolloff_is_exact_prefix_then_useful_samples_without_tail",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-CH-01",
+      "architecture_owner": "docs/architecture.md#us-ch-01-indexed-sample-admission",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CH-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/channel/stream.rs",
+      "symbol": "Channel::push",
+      "test_file": "crates/ofdma/tests/channel_models.rs",
+      "qualified_test_case": "rejected_blocks_preserve_history_rng_cursor_and_terminal_state",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-CH-02",
+      "architecture_owner": "docs/architecture.md#us-ch-02-exact-unity-transport",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CH-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/channel/stream.rs",
+      "symbol": "Channel::push",
+      "test_file": "crates/ofdma/tests/channel_models.rs",
+      "qualified_test_case": "exact_unity_signed_zeros_and_pinned_noise_chunk_invariance",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-CH-03",
+      "architecture_owner": "docs/architecture.md#us-ch-03-physical-channel-response",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CH-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/channel/stream.rs",
+      "symbol": "Channel::push",
+      "test_file": "crates/ofdma/tests/channel_models.rs",
+      "qualified_test_case": "literal_convolution_delay_phase_and_exact_drain_order",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-CH-05",
+      "architecture_owner": "docs/architecture.md#us-ch-05-integer-timing-phase-and-cfo",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CH-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/channel/stream.rs",
+      "symbol": "Channel::push",
+      "test_file": "crates/ofdma/tests/channel_models.rs",
+      "qualified_test_case": "literal_convolution_delay_phase_and_exact_drain_order",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-CH-04",
+      "architecture_owner": "docs/architecture.md#us-ch-04-awgn-and-restricted-rxmer-residuals",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CH-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/channel/residual.rs",
+      "symbol": "RxmerChannel::push",
+      "test_file": "crates/ofdma/tests/rxmer_channel.rs",
+      "qualified_test_case": "every_bin_draw_order_actual_useful_samples_and_chunk_retry_invariance",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-CH-06",
+      "architecture_owner": "docs/architecture.md#us-ch-06-output-and-passive-observations",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-CH-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/instruments/observer.rs",
+      "symbol": "ObservationStore::qam",
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-RX-01",
+      "architecture_owner": "docs/architecture.md#us-rx-01-configured-burst-framing-and-timing",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-RX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/receiver/framing.rs",
+      "symbol": "Receiver::gap",
+      "test_file": "crates/ofdma/tests/rx_framing.rs",
+      "qualified_test_case": "cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-RX-02",
+      "architecture_owner": "docs/architecture.md#us-rx-02-useful-symbol-extraction",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-RX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/receiver/framing.rs",
+      "symbol": "Receiver::push",
+      "test_file": "crates/ofdma/tests/stage_boundaries.rs",
+      "qualified_test_case": "received_window_discards_numbered_prefix_and_never_repairs_a_missing_sample",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-RX-03",
+      "architecture_owner": "docs/architecture.md#us-rx-03-centered-unitary-fft",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-RX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/signal_processing/transform.rs",
+      "symbol": "Transform::forward",
+      "test_file": "crates/ofdma/tests/transforms.rs",
+      "qualified_test_case": "centered_unitary_tones_and_direct_sums",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-RX-04",
+      "architecture_owner": "docs/architecture.md#us-rx-04-received-pilot-estimation-and-equalization",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-RX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/signal_processing/estimation.rs",
+      "symbol": "estimate",
+      "test_file": "crates/ofdma/tests/rx_estimation.rs",
+      "qualified_test_case": "linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-RX-05",
+      "architecture_owner": "docs/architecture.md#us-rx-05-resource-extraction-and-inverse-interleaving",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-RX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/receiver/framing.rs",
+      "symbol": "Receiver::push",
+      "test_file": "crates/ofdma/tests/waveform_loop.rs",
+      "qualified_test_case": "rejected_and_truncated_samples_preserve_real_coverage",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-RX-06",
+      "architecture_owner": "docs/architecture.md#us-rx-06-soft-qam-demapping",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-RX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/signal_processing/demapping.rs",
+      "symbol": "max_log",
+      "test_file": "crates/ofdma/tests/qam_mapping.rs",
+      "qualified_test_case": "maxlog_reference_variance_ties_erasures_and_finite_rejection",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-RX-07",
+      "architecture_owner": "docs/architecture.md#us-rx-07-soft-phy-derandomization",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-RX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/bit_processing/randomizer.rs",
+      "symbol": "Randomizer23::apply_llrs",
+      "test_file": "crates/ofdma/tests/randomization.rs",
+      "qualified_test_case": "literal_mask_and_independent_grant_soft_inverse",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-RX-09",
+      "architecture_owner": "docs/architecture.md#us-rx-09-information-deframing",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-RX-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/receiver/framing.rs",
+      "symbol": "Receiver::push",
+      "test_file": "crates/ofdma/tests/rx_framing.rs",
+      "qualified_test_case": "cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-SYS-01",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-LOOP-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/simulation/run.rs",
+      "symbol": "run",
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_long_family_recovers",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-SYS-02",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-LOOP-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/simulation/run.rs",
+      "symbol": "run",
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "both_numerologies_high_level_exact_source_coverage_and_owned_results",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-SYS-04",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-LOOP-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/simulation/run.rs",
+      "symbol": "run",
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-COM-OBS-01",
+      "architecture_owner": "docs/architecture.md#unified-channel-and-measurement-reference-planes",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-LOOP-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/simulation/run.rs",
+      "symbol": "run",
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-COM-OBS-02",
+      "architecture_owner": "docs/architecture.md#unified-channel-and-measurement-reference-planes",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-LOOP-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/simulation/run.rs",
+      "symbol": "run",
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-COM-LIFE-01",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-LOOP-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/simulation/run.rs",
+      "symbol": "run",
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "both_numerologies_high_level_exact_source_coverage_and_owned_results",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-COM-LIFE-02",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-LOOP-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/simulation/run.rs",
+      "symbol": "run",
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "asynchronous_cancel_retains_actual_completed_prefix",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-COM-LIFE-03",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-LOOP-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/simulation/run.rs",
+      "symbol": "run",
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-COM-NFR-01",
+      "architecture_owner": "docs/architecture.md#unified-upstream-configuration-and-source",
+      "feature_design": "docs/development/features/ofdma/design.md",
+      "checklist_task": "INT-US-LOOP-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/simulation/run.rs",
+      "symbol": "run",
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "failed_configuration_and_budget_changes_preserve_accepted_settings",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/ofdma/session-candidate.json",
+        "sha256": "e0be7ed6c9631114ffb6ee7042262a4e9b638b41d1b05f26393d2853bd667246"
+      },
+      "status": "integrated-validated slice; official checklist owns completion",
+      "limitations": "Scheduled single-CM synthetic backend; capture adapters, final facade/common contracts, Python/CLI and final regression acceptance remain separate. No hardware interoperability claim."
+    }
+  ]
+}

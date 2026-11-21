@@ -340,6 +340,116 @@
       "source": "crates/phy/tests/waveform_loop.rs",
       "destination": "crates/ofdma/tests/waveform_loop.rs",
       "source_sha256": "4d9bc9fa9549070976afe2e9fffa5b675528a75479d2c8a23d149328b664d9a6"
+    },
+    {
+      "source": "crates/phy/src/simulation/control.rs",
+      "destination": "crates/ofdma/src/simulation/control.rs",
+      "source_sha256": "98f8b74c411c9a098d8b218215f3fef7be81dda0d32fdb53afbabb1a706d5b20"
+    },
+    {
+      "source": "crates/phy/src/simulation/mod.rs",
+      "destination": "crates/ofdma/src/simulation/mod.rs",
+      "source_sha256": "1118a368634d90b9d8b9bbc049f55e960f5994e550ffb4652ef17fa160db4b36"
+    },
+    {
+      "source": "crates/phy/src/simulation/report.rs",
+      "destination": "crates/ofdma/src/simulation/report.rs",
+      "source_sha256": "3ff00d2558bb205df6542ac84d7f1f1c6f33c7b6e2316c534c4e96812242859f"
+    },
+    {
+      "source": "crates/phy/src/simulation/request.rs",
+      "destination": "crates/ofdma/src/simulation/request.rs",
+      "source_sha256": "cf24bb99a481c79cb6c94930b4f516ce0e9a6eaddc31a1996500362598a006db"
+    },
+    {
+      "source": "crates/phy/src/simulation/run.rs",
+      "destination": "crates/ofdma/src/simulation/run.rs",
+      "source_sha256": "6eb3f4fe53122f5be55d9eb4d2720a80bf8481811b2838dc47c2e90ee7ba1d46"
+    },
+    {
+      "source": "crates/phy/src/instruments/metrics.rs",
+      "destination": "crates/ofdma/src/instruments/metrics.rs",
+      "source_sha256": "4388f4bdb5159b6bb667a6bdbafa676d25004a991cd89b1032637c4e6c0f6dbc"
+    },
+    {
+      "source": "crates/phy/src/instruments/mod.rs",
+      "destination": "crates/ofdma/src/instruments/mod.rs",
+      "source_sha256": "b03ed715ba15a0f243cc78718e8631580be356023fb7601725f554912195d5fc"
+    },
+    {
+      "source": "crates/phy/src/instruments/observer.rs",
+      "destination": "crates/ofdma/src/instruments/observer.rs",
+      "source_sha256": "2902595e10bf3c21b56167151b72020d26a0f0d1781976dc8fb20617357d15b2"
+    },
+    {
+      "source": "crates/phy/src/instruments/spectrum.rs",
+      "destination": "crates/ofdma/src/instruments/spectrum.rs",
+      "source_sha256": "7391a3371e92a77ac8583bfcccf458712d52922a1ed97b00792b328dccb06e8e"
+    },
+    {
+      "source": "crates/phy/tests/matched_metrics.rs",
+      "destination": "crates/ofdma/tests/matched_metrics.rs",
+      "source_sha256": "fd2babcfc8ee581932571c1d9df1f09001e2cb5dcacd7ad5adefda5ef0d9bb97"
+    },
+    {
+      "source": "crates/morgana/src/api/error.rs",
+      "destination": "crates/ofdma/src/api/error.rs",
+      "source_sha256": "ab13b68c431a8fdf94354dec9e1e65efe98576f35a284b151ba7651a815a8e71"
+    },
+    {
+      "source": "crates/morgana/src/api/reports.rs",
+      "destination": "crates/ofdma/src/api/reports.rs",
+      "source_sha256": "49ceb68dd7acc9441c66d29e234e652233cb5ac0b095049c54748527eff1920a"
+    },
+    {
+      "source": "crates/morgana/src/api/session.rs",
+      "destination": "crates/ofdma/src/api/session.rs",
+      "source_sha256": "724f5bb53989a7ffd0abb7d6ad8b7721aaebebfd5cc3d668fd8d6d8d55842aa7"
+    },
+    {
+      "source": "crates/morgana/src/inputs/us_configuration.rs",
+      "destination": "crates/ofdma/src/configuration/document.rs",
+      "source_sha256": "551e249883f595c64e3f3fa85b98f8cdc49d8dc731c48127e78b121aac0f4171"
+    },
+    {
+      "source": "crates/morgana/src/inputs/synthetic.rs",
+      "destination": "crates/ofdma/src/configuration/synthetic.rs",
+      "source_sha256": "f24050ec7ad918f83f829a66f24b4ecdb0f552165dd15fa46b726af8b691b958"
+    },
+    {
+      "source": "crates/morgana/tests/configuration_json.rs",
+      "destination": "crates/ofdma/tests/configuration_json.rs",
+      "source_sha256": "1e4ea0b6038ae4b9eb3ddee411f8a797c44dd036545adeb7edc2b137451d6328"
+    },
+    {
+      "source": "crates/morgana/tests/experiment.rs",
+      "destination": "crates/ofdma/tests/experiment.rs",
+      "source_sha256": "ed073bc07b9731e0e4c6acb74aea6271e7555e2d96ed0ff9dbdcb67b10bd69c5"
+    },
+    {
+      "source": "examples/configuration/us-50khz.json",
+      "destination": "examples/cli/upstream/us-50khz.json",
+      "source_sha256": "36d3381660c3a3606535ecb92a79b0796e052e434eebdd3b404251a7c01254a7"
+    },
+    {
+      "source": "examples/configuration/us-25khz.json",
+      "destination": "examples/cli/upstream/us-25khz.json",
+      "source_sha256": "3aec8981175c11be8338d2fd4d380056b67422a10d296927e574d60b71b69199"
+    },
+    {
+      "source": "examples/configuration/us-controls-inspection.json",
+      "destination": "examples/cli/upstream/us-controls-inspection.json",
+      "source_sha256": "7d855fa3efa95c6bc6c83a3588d47e0f7cbf5a94bcf7881d87aee170cf593774"
+    },
+    {
+      "source": "examples/configuration/us-synthetic-playback.json",
+      "destination": "examples/cli/upstream/us-synthetic-playback.json",
+      "source_sha256": "7180321a019812eef3d7aae311a5fc058f52834bf18af437ecfa55879233d1e1"
+    },
+    {
+      "source": "schemas/us-configuration-v1.schema.json",
+      "destination": "schemas/upstream-configuration-v1.schema.json",
+      "source_sha256": "fa01e76601f09048b8bf3323c3a82963fda0e51f9c029705c804e3645d8d0b4d"
     }
   ]
 }

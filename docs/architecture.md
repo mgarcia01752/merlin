@@ -103,7 +103,9 @@ contained no upstream runtime. The first additive implementation now supplies
 [standalone upstream LDPC](development/features/unified-backend/fec-validation.md)
 in the existing FEC crate. Shared FFT/PRBS15 kernels now have a numerical leaf in
 `crates/dsp`, with passing [consumer acceptance](development/features/signal-processing/validation.md). Upstream PHY
-migration remains pending. Source acceptance
+now includes an independent typed engine/session with local
+[synthetic backend acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
+Capture adapters and final API/CLI convergence remain pending. Source acceptance
 reports are historical evidence, never MERLIN integration passes. The
 [requirements baseline](requirements.md), [integration checklist](development/checklist.md#unified-backend-integration)
 and [document dispositions](development/features/unified-backend/source-review.md)
@@ -120,7 +122,7 @@ Delivery gates: [INT-LICENSE-01](development/checklist.md#int-license-01).
 | Downstream PHY | `crates/ofdm`, Cargo `docsis-ofdm-fec` | Retain package, public imports, control channels, interleavers, waveform, received configuration and report schemas. |
 | Common FEC | `crates/fec-codec` | `src/upstream_ldpc/` now owns upstream definitions/codec and independent source tests; existing BCH, downstream LDPC, shortening, NCP and PLC remain. |
 | Generic DSP | `crates/dsp`, Cargo `merlin-dsp`; existing directional numerical owners retained | Shared centered unitary 2K/4K/8K FFT and one-step PRBS15 recurrence; downstream wrappers preserve geometry/errors/state. Independent/frozen equivalence and hot-path measurements precede consumer rewiring; INT-DSP-01 now has passing consumer acceptance. No generic channel/QAM/measurement state extraction. |
-| Upstream PHY | Not present | Add proposed `crates/ofdma`, package `docsis-ofdma`; collapse source scientific/facade functionality into focused local modules and `src/api/`, not former product crates. |
+| Upstream PHY | `crates/ofdma`, package `docsis-ofdma` | Independent typed configuration, TX/channel/received-only RX, bounded session, strict versioned document admission and instruments are implemented; facade/native Python/PNM/CLI convergence remain gated. |
 | Native measurement input | `crates/pnm-input` | Extend bounded adapters with `src/upstream/`; own binary envelope decoding, file I/O and raw-byte admission; core PHY owns typed observation/configuration semantics. |
 | CLI | `crates/cli`, executable `ofdm-fec` | Add upstream operations via public Rust APIs; retain every existing command and output contract. No second executable. |
 | Native Python | `bindings/python`, package `merlin` | Retain existing imports and exports; add upstream native wrappers only after Rust operation parity. No second distribution or Python science. |
@@ -249,8 +251,8 @@ The independent member is registered in `Cargo.toml` with `crates/ofdma/Cargo.to
 `crates/ofdma/src/configuration/{grant,profile,waveform}.rs`; shared resource
 planning uses `crates/ofdma/src/resources/{grid,permutation,pilot_patterns}.rs`
 and `crates/ofdma/src/grant/{mod,plan,fec_selection}.rs`. These owners are now
-implemented. Versioned document admission and the complete idle session remain
-open within INT-US-CONFIG-01; the typed reference milestone precedes them.
+implemented. Versioned document admission and the complete idle session are now
+accepted within INT-US-CONFIG-01 after the typed reference milestone.
 
 `crates/ofdma/src/source/{prbs15,verifier}.rs` owns continuous source and
 independent verification. Grant boundaries reset the 23-bit PHY randomizer, not
@@ -260,7 +262,7 @@ no extra source. The verifier alone receives original truth, checks positions/
 coverage and preserves failed recovered decisions. Reuse the existing PRBS only
 after exact recurrence, seed, phase, bit order and chunk equivalence checks.
 Existing tests: `crates/ofdma/tests/{configuration,grant_plan,prbs,upstream_pilots,upstream_interleaving}.rs`.
-Document admission tests `crates/ofdma/tests/configuration_json.rs` remain planned.
+Document admission tests `crates/ofdma/tests/configuration_json.rs` now pass locally.
 See [the implementation record](development/features/ofdma/design.md#int-us-config-01-typed-foundation).
 
 ### Unified upstream processing order
@@ -273,12 +275,13 @@ Delivery gates: [INT-US-TX-01](development/checklist.md#int-us-tx-01), [INT-US-R
 
 Typed upstream TX composition is implemented, with stage tests recorded in
 [the implementation record](development/features/ofdma/design.md#int-us-tx-01-transmitter-implementation-unit).
-Combined CONFIG/TX acceptance remains open until document/session gates pass.
+Combined CONFIG/TX acceptance now passes the document/session gates.
 Typed channel transport and restricted residual playback are implemented with
 [local channel evidence](development/features/ofdma/design.md#int-us-ch-01-channel-implementation-unit).
 Normal received-only RX composition now has
 [local stage and internal loop evidence](development/features/ofdma/design.md#int-us-rx-01-received-only-receiver-implementation-unit).
-Combined document/session/backend acceptance remains open; standalone LDPC
+Document/session and synthetic stage acceptance now pass locally; final backend
+regression and adapter acceptance remain open; standalone LDPC
 encoding/decoding now has the codec owners and acceptance identified below. The retained
 [stage contracts](development/features/unified-backend/references/upstream-stage-contracts.md)
 preserve detailed scientific definitions, source equations/tables, reference
@@ -464,14 +467,14 @@ Requirement: [REQ-US-RX-04](requirements.md#req-us-rx-04); delivery: **INT-US-RX
 
 Resource extraction must independently invert the accepted resource/interleaving order and preserve unavailable scheduled cells and their bit positions.
 
-Implemented owner: `crates/ofdma/src/receiver/mod.rs`; acceptance tests: `crates/ofdma/tests/rx_resources.rs`.
+Implemented owner: `crates/ofdma/src/receiver/mod.rs`; acceptance tests: `crates/ofdma/tests/waveform_loop.rs`.
 Requirement: [REQ-US-RX-05](requirements.md#req-us-rx-05); delivery: **INT-US-RX-01**.
 
 ### US-RX-06: Soft QAM demapping
 
 Soft demapping must produce MSB-first finite MaxLog natural-log P(0)/P(1) metrics from shared upstream labels/scales and a valid ReferenceVariance.
 
-Implemented owner: `crates/ofdma/src/signal_processing/demapping.rs`; acceptance tests: `crates/ofdma/tests/soft_metrics.rs`.
+Implemented owner: `crates/ofdma/src/signal_processing/demapping.rs`; acceptance tests: `crates/ofdma/tests/qam_mapping.rs`.
 Requirement: [REQ-US-RX-06](requirements.md#req-us-rx-06); delivery: **INT-US-RX-01**.
 
 ### US-RX-07: Soft PHY derandomization
@@ -520,7 +523,7 @@ scheduled C bank, with timing disabled; reject incompatible later updates before
 source consumption. Do not relax this merely because downstream supports another
 combination. Broader joint models remain deferred with their source design.
 
-Proposed upstream owners are `crates/ofdma/src/channel/{stream,residual}.rs`,
+Implemented upstream owners are `crates/ofdma/src/channel/{stream,residual}.rs`,
 `measurements/{rxmer,pre_eq}.rs` and `simulation/{request,run,control,report}.rs`.
 Share kernels only through the reuse gate; configuration, reference planes and
 missing-value policies stay direction-specific. All retained taps identify run,

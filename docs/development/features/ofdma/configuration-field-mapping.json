@@ -1,0 +1,979 @@
+{
+  "source_revision": "69b38071cd3ebebc4eb96849f82b7871ab8da5ec",
+  "source_matrix": "docs/development/features/unified-backend/references/us-configuration-json-coverage.md",
+  "normative_review": "Historical pinned matrix retained; no new authoritative PDF inspection claimed.",
+  "rows": [
+    {
+      "field_id": "US-CFG-FIELD-001",
+      "source_matrix_line": 36,
+      "json_mapping": "/presets/*/channel/message_type",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-002",
+      "source_matrix_line": 37,
+      "json_mapping": "/presets/*/channel/management_version",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-003",
+      "source_matrix_line": 38,
+      "json_mapping": "/presets/*/channel/upstream_channel_id",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-004",
+      "source_matrix_line": 39,
+      "json_mapping": "/presets/*/channel/configuration_change_count",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-005",
+      "source_matrix_line": 40,
+      "json_mapping": "/presets/*/channel/minislot_size_ticks",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-006",
+      "source_matrix_line": 41,
+      "json_mapping": "/presets/*/channel/downstream_channel_id",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-007",
+      "source_matrix_line": 42,
+      "json_mapping": "/presets/*/channel/preamble_pattern",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-008",
+      "source_matrix_line": 43,
+      "json_mapping": "/presets/*/channel/ranging_required",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-009",
+      "source_matrix_line": 44,
+      "json_mapping": "/presets/*/channel/ranging_holdoff_priority",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-010",
+      "source_matrix_line": 45,
+      "json_mapping": "/presets/*/channel/channel_class_id",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-011",
+      "source_matrix_line": 46,
+      "json_mapping": "/presets/*/channel/bursts",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-012",
+      "source_matrix_line": 47,
+      "json_mapping": "/presets/*/channel/change_indicator_bitmask",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-013",
+      "source_matrix_line": 48,
+      "json_mapping": "/presets/*/channel/timestamp_snapshot",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-014",
+      "source_matrix_line": 49,
+      "json_mapping": "/presets/*/channel/cyclic_prefix_samples",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-015",
+      "source_matrix_line": 50,
+      "json_mapping": "/presets/*/channel/rolloff_samples",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-016",
+      "source_matrix_line": 51,
+      "json_mapping": "/presets/*/channel/subcarrier_spacing_khz",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-017",
+      "source_matrix_line": 52,
+      "json_mapping": "/presets/*/channel/subcarrier_zero_hz",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-018",
+      "source_matrix_line": 53,
+      "json_mapping": "/presets/*/channel/excluded_bands",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-019",
+      "source_matrix_line": 54,
+      "json_mapping": "/presets/*/channel/unused_bands",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-020",
+      "source_matrix_line": 55,
+      "json_mapping": "/presets/*/channel/frame_symbols",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-021",
+      "source_matrix_line": 56,
+      "json_mapping": "/presets/*/channel/randomization_seed",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-022",
+      "source_matrix_line": 57,
+      "json_mapping": "/presets/*/channel/timestamp_snapshot/reserved",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-023",
+      "source_matrix_line": 58,
+      "json_mapping": "/presets/*/channel/timestamp_snapshot/docsis_timestamp",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-024",
+      "source_matrix_line": 59,
+      "json_mapping": "/presets/*/channel/timestamp_snapshot/divide_by_20_msb",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-025",
+      "source_matrix_line": 60,
+      "json_mapping": "/presets/*/channel/timestamp_snapshot/minislot_count",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-026",
+      "source_matrix_line": 61,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-027",
+      "source_matrix_line": 62,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-028",
+      "source_matrix_line": 63,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-029",
+      "source_matrix_line": 64,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-030",
+      "source_matrix_line": 65,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-031",
+      "source_matrix_line": 66,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-032",
+      "source_matrix_line": 67,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-033",
+      "source_matrix_line": 68,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-034",
+      "source_matrix_line": 69,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-035",
+      "source_matrix_line": 70,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-036",
+      "source_matrix_line": 71,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-037",
+      "source_matrix_line": 72,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-038",
+      "source_matrix_line": 73,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-039",
+      "source_matrix_line": 74,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-040",
+      "source_matrix_line": 75,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-041",
+      "source_matrix_line": 76,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-042",
+      "source_matrix_line": 77,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-043",
+      "source_matrix_line": 78,
+      "json_mapping": "No JSON property; unknown fields reject",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-044",
+      "source_matrix_line": 79,
+      "json_mapping": "/presets/*/channel/bursts/*/preamble_length_bits",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-045",
+      "source_matrix_line": 80,
+      "json_mapping": "/presets/*/channel/bursts/*/preamble_offset_bits",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-046",
+      "source_matrix_line": 81,
+      "json_mapping": "/presets/*/channel/bursts/*/initial_ranging_subcarriers",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-047",
+      "source_matrix_line": 82,
+      "json_mapping": "/presets/*/channel/bursts/*/fine_ranging_subcarriers",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-048",
+      "source_matrix_line": 83,
+      "json_mapping": "/presets/*/channel/bursts/*/data_profile",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-049",
+      "source_matrix_line": 84,
+      "json_mapping": "/presets/*/channel/bursts/*/ir_power_control",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-050",
+      "source_matrix_line": 85,
+      "json_mapping": "/presets/*/channel/bursts/*/data_profile/*/modulation_index",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-051",
+      "source_matrix_line": 86,
+      "json_mapping": "/presets/*/channel/bursts/*/data_profile/*/pilot_pattern",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-052",
+      "source_matrix_line": 87,
+      "json_mapping": "/presets/*/channel/bursts/*/data_profile/*/additional_minislots",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-053",
+      "source_matrix_line": 88,
+      "json_mapping": "/presets/*/channel/bursts/*/ir_power_control/starting_power_quarter_dbmv",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-054",
+      "source_matrix_line": 89,
+      "json_mapping": "/presets/*/channel/bursts/*/ir_power_control/step_quarter_db",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-055",
+      "source_matrix_line": 90,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-056",
+      "source_matrix_line": 91,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-057",
+      "source_matrix_line": 92,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-058",
+      "source_matrix_line": 93,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-059",
+      "source_matrix_line": 94,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-060",
+      "source_matrix_line": 95,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-061",
+      "source_matrix_line": 96,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-062",
+      "source_matrix_line": 97,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-063",
+      "source_matrix_line": 98,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-064",
+      "source_matrix_line": 99,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-065",
+      "source_matrix_line": 100,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-066",
+      "source_matrix_line": 101,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-067",
+      "source_matrix_line": 102,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-068",
+      "source_matrix_line": 103,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-069",
+      "source_matrix_line": 104,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-070",
+      "source_matrix_line": 105,
+      "json_mapping": "No JSON property; source reasons retained here",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "disposition": "Excluded by source scope; unknown JSON fields reject.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-071",
+      "source_matrix_line": 106,
+      "json_mapping": "/presets/*/map/version",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-072",
+      "source_matrix_line": 107,
+      "json_mapping": "/presets/*/map/upstream_channel_id",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-073",
+      "source_matrix_line": 108,
+      "json_mapping": "/presets/*/map/ucd_count",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-074",
+      "source_matrix_line": 109,
+      "json_mapping": "/presets/*/map/number_of_elements",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-075",
+      "source_matrix_line": 110,
+      "json_mapping": "/presets/*/map/reserved",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-076",
+      "source_matrix_line": 111,
+      "json_mapping": "/presets/*/map/channel_allocation_type",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-077",
+      "source_matrix_line": 112,
+      "json_mapping": "/presets/*/map/allocation_start",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-078",
+      "source_matrix_line": 113,
+      "json_mapping": "/presets/*/map/acknowledgement_time",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-079",
+      "source_matrix_line": 114,
+      "json_mapping": "/presets/*/map/ranging_backoff_start",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-080",
+      "source_matrix_line": 115,
+      "json_mapping": "/presets/*/map/ranging_backoff_end",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-081",
+      "source_matrix_line": 116,
+      "json_mapping": "/presets/*/map/data_backoff_start",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-082",
+      "source_matrix_line": 117,
+      "json_mapping": "/presets/*/map/data_backoff_end",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-083",
+      "source_matrix_line": 118,
+      "json_mapping": "/presets/*/map/elements/*/sid",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-084",
+      "source_matrix_line": 119,
+      "json_mapping": "/presets/*/map/elements/*/iuc",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-085",
+      "source_matrix_line": 120,
+      "json_mapping": "/presets/*/map/elements/*/minislot_offset",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-086",
+      "source_matrix_line": 121,
+      "json_mapping": "/presets/*/map/elements/*/expansion_words",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-087",
+      "source_matrix_line": 122,
+      "json_mapping": "/presets/*/probe_map/version",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-088",
+      "source_matrix_line": 123,
+      "json_mapping": "/presets/*/probe_map/upstream_channel_id",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-089",
+      "source_matrix_line": 124,
+      "json_mapping": "/presets/*/probe_map/ucd_count",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-090",
+      "source_matrix_line": 125,
+      "json_mapping": "/presets/*/probe_map/number_of_elements",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-091",
+      "source_matrix_line": 126,
+      "json_mapping": "/presets/*/probe_map/reserved",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-092",
+      "source_matrix_line": 127,
+      "json_mapping": "/presets/*/probe_map/channel_allocation_type",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-093",
+      "source_matrix_line": 128,
+      "json_mapping": "/presets/*/probe_map/allocation_start",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-094",
+      "source_matrix_line": 129,
+      "json_mapping": "/presets/*/probe_map/elements/*/sid",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-095",
+      "source_matrix_line": 130,
+      "json_mapping": "/presets/*/probe_map/elements/*/measure_rxmer",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-096",
+      "source_matrix_line": 131,
+      "json_mapping": "/presets/*/probe_map/elements/*/alternate_power",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-097",
+      "source_matrix_line": 132,
+      "json_mapping": "/presets/*/probe_map/elements/*/equalization_disabled",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-098",
+      "source_matrix_line": 133,
+      "json_mapping": "/presets/*/probe_map/elements/*/stagger",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-099",
+      "source_matrix_line": 134,
+      "json_mapping": "/presets/*/probe_map/elements/*/frame",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-100",
+      "source_matrix_line": 135,
+      "json_mapping": "/presets/*/probe_map/elements/*/symbol",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-101",
+      "source_matrix_line": 136,
+      "json_mapping": "/presets/*/probe_map/elements/*/start_subcarrier",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-102",
+      "source_matrix_line": 137,
+      "json_mapping": "/presets/*/probe_map/elements/*/subcarrier_skip",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-103",
+      "source_matrix_line": 138,
+      "json_mapping": "/presets/*/assignment/registered",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-104",
+      "source_matrix_line": 139,
+      "json_mapping": "/presets/*/assignment/assigned_iucs",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-105",
+      "source_matrix_line": 140,
+      "json_mapping": "/presets/*/assignment/testing_sid",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-106",
+      "source_matrix_line": 141,
+      "json_mapping": "/presets/*/assignment/ranging_sid",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-107",
+      "source_matrix_line": 142,
+      "json_mapping": "/presets/*/assignment/sid_cluster",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    },
+    {
+      "field_id": "US-CFG-FIELD-108",
+      "source_matrix_line": 143,
+      "json_mapping": "/presets/*/assignment/cm_mac",
+      "implementation_file": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "acceptance_case": "crates/ofdma/tests/configuration_json.rs::examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "disposition": "Represented with source domain rules; execution support follows the source matrix disposition.",
+      "evidence_scope": "Roundtrip/strict-field policy. Domain boundary cases are the six configuration_json tests; this row does not claim an independent negative test for every possible value."
+    }
+  ]
+}

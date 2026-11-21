@@ -1,0 +1,312 @@
+{
+  "format": "merlin.upstream.configuration",
+  "schema_version": 1,
+  "presets": [
+    {
+      "id": "inspection-controls",
+      "description": "Synthetic generic example; no universal recommended loading.",
+      "vendor_template_id": 224,
+      "channel": {
+        "message_type": 51,
+        "management_version": 5,
+        "upstream_channel_id": 1,
+        "configuration_change_count": 0,
+        "minislot_size_ticks": 0,
+        "downstream_channel_id": 1,
+        "preamble_pattern": [
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255,
+          255
+        ],
+        "ranging_required": 3,
+        "ranging_holdoff_priority": 4294901791,
+        "channel_class_id": 1,
+        "change_indicator_bitmask": 2047,
+        "timestamp_snapshot": {
+          "reserved": 0,
+          "docsis_timestamp": 305419896,
+          "divide_by_20_msb": 15,
+          "minislot_count": 2309737967
+        },
+        "cyclic_prefix_samples": 192,
+        "rolloff_samples": 64,
+        "subcarrier_spacing_khz": 50,
+        "subcarrier_zero_hz": 0,
+        "excluded_bands": [
+          {
+            "first": 0,
+            "last": 127
+          },
+          {
+            "first": 528,
+            "last": 2047
+          }
+        ],
+        "unused_bands": [
+          {
+            "first": 192,
+            "last": 527
+          }
+        ],
+        "frame_symbols": 6,
+        "randomization_seed": 8388607,
+        "encompassed_bandwidth_hz": 20000000,
+        "bursts": [
+          {
+            "iuc": 1,
+            "preamble_length_bits": null,
+            "preamble_offset_bits": null,
+            "initial_ranging_subcarriers": null,
+            "fine_ranging_subcarriers": null,
+            "data_profile": null,
+            "ir_power_control": null
+          },
+          {
+            "iuc": 2,
+            "preamble_length_bits": null,
+            "preamble_offset_bits": null,
+            "initial_ranging_subcarriers": null,
+            "fine_ranging_subcarriers": null,
+            "data_profile": null,
+            "ir_power_control": null
+          },
+          {
+            "iuc": 3,
+            "preamble_length_bits": 128,
+            "preamble_offset_bits": 0,
+            "initial_ranging_subcarriers": 64,
+            "fine_ranging_subcarriers": null,
+            "data_profile": null,
+            "ir_power_control": {
+              "starting_power_quarter_dbmv": 160,
+              "step_quarter_db": 4
+            }
+          },
+          {
+            "iuc": 4,
+            "preamble_length_bits": 64,
+            "preamble_offset_bits": 128,
+            "initial_ranging_subcarriers": null,
+            "fine_ranging_subcarriers": 64,
+            "data_profile": null,
+            "ir_power_control": null
+          },
+          {
+            "iuc": 5,
+            "preamble_length_bits": null,
+            "preamble_offset_bits": null,
+            "initial_ranging_subcarriers": null,
+            "fine_ranging_subcarriers": null,
+            "data_profile": [
+              {
+                "modulation_index": 4,
+                "pilot_pattern": 1,
+                "additional_minislots": 7
+              }
+            ],
+            "ir_power_control": null
+          },
+          {
+            "iuc": 13,
+            "preamble_length_bits": null,
+            "preamble_offset_bits": null,
+            "initial_ranging_subcarriers": null,
+            "fine_ranging_subcarriers": null,
+            "data_profile": [
+              {
+                "modulation_index": 2,
+                "pilot_pattern": 1,
+                "additional_minislots": 7
+              }
+            ],
+            "ir_power_control": null
+          }
+        ]
+      },
+      "assignment": {
+        "cm_mac": [
+          2,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "registered": true,
+        "assigned_iucs": [
+          5,
+          13
+        ],
+        "ranging_sid": 7,
+        "testing_sid": 12,
+        "sid_cluster": [
+          7
+        ]
+      },
+      "map": {
+        "version": 5,
+        "upstream_channel_id": 1,
+        "ucd_count": 0,
+        "number_of_elements": 3,
+        "reserved": 0,
+        "channel_allocation_type": 0,
+        "allocation_start": 123,
+        "acknowledgement_time": 100,
+        "ranging_backoff_start": 0,
+        "ranging_backoff_end": 15,
+        "data_backoff_start": 1,
+        "data_backoff_end": 15,
+        "elements": [
+          {
+            "sid": 7,
+            "iuc": 5,
+            "minislot_offset": 0,
+            "expansion_words": null
+          },
+          {
+            "sid": 1,
+            "iuc": 15,
+            "minislot_offset": 1,
+            "expansion_words": [
+              305419896
+            ]
+          },
+          {
+            "sid": 0,
+            "iuc": 7,
+            "minislot_offset": 8,
+            "expansion_words": null
+          }
+        ]
+      },
+      "probe_map": {
+        "version": 5,
+        "upstream_channel_id": 1,
+        "ucd_count": 0,
+        "number_of_elements": 2,
+        "reserved": 0,
+        "channel_allocation_type": 1,
+        "allocation_start": 24,
+        "elements": [
+          {
+            "sid": 7,
+            "measure_rxmer": true,
+            "alternate_power": false,
+            "equalization_disabled": false,
+            "stagger": false,
+            "frame": 0,
+            "symbol": 0,
+            "start_subcarrier": 0,
+            "subcarrier_skip": 0
+          },
+          {
+            "sid": 7,
+            "measure_rxmer": false,
+            "alternate_power": true,
+            "equalization_disabled": true,
+            "stagger": true,
+            "frame": 0,
+            "symbol": 1,
+            "start_subcarrier": 7,
+            "subcarrier_skip": 2
+          }
+        ]
+      }
+    }
+  ],
+  "selected_preset": "inspection-controls",
+  "simulation": {
+    "mode": "probe",
+    "selected_iuc": 5,
+    "source_seed": 1,
+    "grant_id": 1,
+    "epoch_sample": 0,
+    "first_frame": 0,
+    "frames": 2,
+    "minislots": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "grants": 1,
+    "maximum_samples": 16777216,
+    "chunk_samples": 997,
+    "timeout_ms": 30000,
+    "retained_points": 4096,
+    "retained_taps": [
+      "TxOutput",
+      "RxEqualized"
+    ],
+    "estimator": "frame_flat_ls",
+    "maximum_pilot_gap": 64,
+    "reference_variance": 0.02,
+    "equalizer_power_floor": 1e-12,
+    "ldpc_iterations": 50
+  }
+}

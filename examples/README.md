@@ -24,3 +24,5 @@ The custom [merlin_rxmer_designed.bin](measurements/designed-rxmer/merlin_rxmer_
 Designer output, not a CM measurement. Matching Rust/Python walkthroughs and
 compatible profile selection are documented in the
 [API examples](api/README.md#custom-designed-rxmer).
+
+[Upstream configuration fixtures](cli/upstream/README.md) exercise typed Rust admission and bounded runs.

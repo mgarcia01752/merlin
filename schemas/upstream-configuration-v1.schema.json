@@ -1,0 +1,1403 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mgarcia01752/merlin/schemas/upstream-configuration-v1.schema.json",
+  "title": "MERLIN upstream OFDMA configuration v1",
+  "description": "Structural schema. Shared Rust additionally validates source applicability, reserved bits, conditional fields, exact carrier mapping, pilot-family compatibility, all budgets and executable support. Not a MAC message encoder or a saved desktop workbench.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "merlin.upstream.configuration"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "presets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/preset"
+      },
+      "maxItems": 256,
+      "minItems": 1
+    },
+    "selected_preset": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "simulation": {
+      "$ref": "#/$defs/simulation"
+    }
+  },
+  "required": [
+    "format",
+    "schema_version",
+    "presets",
+    "selected_preset",
+    "simulation"
+  ],
+  "$defs": {
+    "band": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "first": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "last": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        }
+      },
+      "required": [
+        "first",
+        "last"
+      ]
+    },
+    "timestamp": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reserved": {
+          "const": 0
+        },
+        "docsis_timestamp": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "divide_by_20_msb": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "minislot_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      },
+      "required": [
+        "reserved",
+        "docsis_timestamp",
+        "divide_by_20_msb",
+        "minislot_count"
+      ]
+    },
+    "profile_group": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "modulation_index": {
+          "enum": [
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        },
+        "pilot_pattern": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 14
+        },
+        "additional_minislots": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        }
+      },
+      "required": [
+        "modulation_index",
+        "pilot_pattern",
+        "additional_minislots"
+      ]
+    },
+    "ir_power": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "starting_power_quarter_dbmv": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "step_quarter_db": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        }
+      },
+      "required": [
+        "starting_power_quarter_dbmv",
+        "step_quarter_db"
+      ]
+    },
+    "burst": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "iuc": {
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            9,
+            10,
+            11,
+            12,
+            13
+          ]
+        },
+        "preamble_length_bits": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 512
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "preamble_offset_bits": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65535
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "initial_ranging_subcarriers": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 128
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fine_ranging_subcarriers": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 512
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data_profile": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/profile_group"
+              },
+              "maxItems": 126,
+              "minItems": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ir_power_control": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ir_power"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "iuc"
+      ]
+    },
+    "channel": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "message_type": {
+          "const": 51
+        },
+        "management_version": {
+          "const": 5
+        },
+        "upstream_channel_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "configuration_change_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "minislot_size_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "downstream_channel_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "preamble_pattern": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 255
+              },
+              "maxItems": 128,
+              "minItems": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ranging_required": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ranging_holdoff_priority": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "channel_class_id": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "change_indicator_bitmask": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2047
+        },
+        "timestamp_snapshot": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "cyclic_prefix_samples": {
+          "enum": [
+            96,
+            128,
+            160,
+            192,
+            224,
+            256,
+            288,
+            320,
+            384,
+            512,
+            640
+          ]
+        },
+        "rolloff_samples": {
+          "enum": [
+            0,
+            32,
+            64,
+            96,
+            128,
+            160,
+            192,
+            224
+          ]
+        },
+        "subcarrier_spacing_khz": {
+          "enum": [
+            25,
+            50
+          ]
+        },
+        "subcarrier_zero_hz": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "excluded_bands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/band"
+          },
+          "maxItems": 63,
+          "minItems": 0
+        },
+        "unused_bands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/band"
+          },
+          "maxItems": 63,
+          "minItems": 0
+        },
+        "frame_symbols": {
+          "type": "integer",
+          "minimum": 6,
+          "maximum": 36
+        },
+        "randomization_seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8388607
+        },
+        "encompassed_bandwidth_hz": {
+          "type": "integer",
+          "minimum": 6400000,
+          "maximum": 95000000
+        },
+        "bursts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/burst"
+          },
+          "maxItems": 11,
+          "minItems": 1
+        }
+      },
+      "required": [
+        "message_type",
+        "management_version",
+        "upstream_channel_id",
+        "configuration_change_count",
+        "minislot_size_ticks",
+        "downstream_channel_id",
+        "change_indicator_bitmask",
+        "timestamp_snapshot",
+        "cyclic_prefix_samples",
+        "rolloff_samples",
+        "subcarrier_spacing_khz",
+        "subcarrier_zero_hz",
+        "excluded_bands",
+        "unused_bands",
+        "frame_symbols",
+        "randomization_seed",
+        "encompassed_bandwidth_hz",
+        "bursts"
+      ]
+    },
+    "assignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cm_mac": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+          },
+          "maxItems": 6,
+          "minItems": 6
+        },
+        "registered": {
+          "type": "boolean"
+        },
+        "assigned_iucs": {
+          "type": "array",
+          "items": {
+            "enum": [
+              5,
+              6,
+              9,
+              10,
+              11,
+              12,
+              13
+            ]
+          },
+          "maxItems": 2,
+          "minItems": 0
+        },
+        "ranging_sid": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 15871
+        },
+        "testing_sid": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 15871
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sid_cluster": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 15871
+          },
+          "maxItems": 256,
+          "minItems": 0
+        }
+      },
+      "required": [
+        "cm_mac",
+        "registered",
+        "assigned_iucs",
+        "ranging_sid",
+        "sid_cluster"
+      ]
+    },
+    "map_element": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sid": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16383
+        },
+        "iuc": {
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            9,
+            10,
+            11,
+            12,
+            13,
+            15
+          ]
+        },
+        "minislot_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16383
+        },
+        "expansion_words": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4294967295
+              },
+              "maxItems": 490,
+              "minItems": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "sid",
+        "iuc",
+        "minislot_offset"
+      ]
+    },
+    "map": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": 5
+        },
+        "upstream_channel_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "ucd_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "number_of_elements": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 490
+        },
+        "reserved": {
+          "const": 0
+        },
+        "channel_allocation_type": {
+          "const": 0
+        },
+        "allocation_start": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "acknowledgement_time": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "ranging_backoff_start": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "ranging_backoff_end": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "data_backoff_start": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "data_backoff_end": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/map_element"
+          },
+          "maxItems": 490,
+          "minItems": 0
+        }
+      },
+      "required": [
+        "version",
+        "upstream_channel_id",
+        "ucd_count",
+        "number_of_elements",
+        "reserved",
+        "channel_allocation_type",
+        "allocation_start",
+        "acknowledgement_time",
+        "ranging_backoff_start",
+        "ranging_backoff_end",
+        "data_backoff_start",
+        "data_backoff_end",
+        "elements"
+      ]
+    },
+    "probe_element": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sid": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 15871
+        },
+        "measure_rxmer": {
+          "type": "boolean"
+        },
+        "alternate_power": {
+          "type": "boolean"
+        },
+        "equalization_disabled": {
+          "type": "boolean"
+        },
+        "stagger": {
+          "type": "boolean"
+        },
+        "frame": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "symbol": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 35
+        },
+        "start_subcarrier": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7
+        },
+        "subcarrier_skip": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 7
+        }
+      },
+      "required": [
+        "sid",
+        "measure_rxmer",
+        "alternate_power",
+        "equalization_disabled",
+        "stagger",
+        "frame",
+        "symbol",
+        "start_subcarrier",
+        "subcarrier_skip"
+      ]
+    },
+    "probe_map": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": 5
+        },
+        "upstream_channel_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "ucd_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "number_of_elements": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        },
+        "reserved": {
+          "const": 0
+        },
+        "channel_allocation_type": {
+          "const": 1
+        },
+        "allocation_start": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/probe_element"
+          },
+          "maxItems": 128,
+          "minItems": 0
+        }
+      },
+      "required": [
+        "version",
+        "upstream_channel_id",
+        "ucd_count",
+        "number_of_elements",
+        "reserved",
+        "channel_allocation_type",
+        "allocation_start",
+        "elements"
+      ]
+    },
+    "preset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "vendor_template_id": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "channel": {
+          "$ref": "#/$defs/channel"
+        },
+        "assignment": {
+          "$ref": "#/$defs/assignment"
+        },
+        "map": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/map"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "probe_map": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/probe_map"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "description",
+        "channel",
+        "assignment"
+      ]
+    },
+    "iq": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "re": {
+          "type": "number"
+        },
+        "im": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "re",
+        "im"
+      ]
+    },
+    "bank": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        },
+        "coefficients": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "minItems": 2,
+            "maxItems": 2,
+            "items": false
+          },
+          "maxItems": 4096,
+          "minItems": 0
+        }
+      },
+      "required": [
+        "generation",
+        "coefficients"
+      ]
+    },
+    "probe_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        },
+        "bank_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        }
+      },
+      "required": [
+        "id",
+        "bank_id"
+      ]
+    },
+    "update": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "snapshot"
+            },
+            "bank": {
+              "$ref": "#/$defs/bank"
+            }
+          },
+          "required": [
+            "kind",
+            "bank"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "initialize"
+            },
+            "base_bank": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "probe": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 4095
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": false
+                  }
+                ],
+                "minItems": 2,
+                "maxItems": 2,
+                "items": false
+              },
+              "maxItems": 4096,
+              "minItems": 1
+            }
+          },
+          "required": [
+            "kind",
+            "base_bank",
+            "probe",
+            "values"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "const": "adjust"
+            },
+            "base_bank": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "probe": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 4095
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": false
+                  }
+                ],
+                "minItems": 2,
+                "maxItems": 2,
+                "items": false
+              },
+              "maxItems": 4096,
+              "minItems": 1
+            }
+          },
+          "required": [
+            "kind",
+            "base_bank",
+            "probe",
+            "values"
+          ]
+        }
+      ]
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "symbol": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9215
+        },
+        "operation": {
+          "$ref": "#/$defs/update"
+        }
+      },
+      "required": [
+        "id",
+        "symbol",
+        "operation"
+      ]
+    },
+    "pre_eq": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "initial_id": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "initial": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/bank"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/event"
+          },
+          "maxItems": 255,
+          "minItems": 0
+        },
+        "probes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/probe_reference"
+          },
+          "maxItems": 256,
+          "minItems": 0
+        }
+      },
+      "required": [
+        "initial_id",
+        "events",
+        "probes"
+      ]
+    },
+    "rxmer_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "mer_db": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxItems": 4096,
+          "minItems": 0
+        }
+      },
+      "required": [
+        "id",
+        "mer_db"
+      ]
+    },
+    "rxmer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rxmer_source"
+          },
+          "maxItems": 256,
+          "minItems": 1
+        },
+        "policy": {
+          "enum": [
+            "single",
+            "average",
+            "hold",
+            "interpolate"
+          ]
+        },
+        "offsets": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4294967295
+              },
+              "maxItems": 256,
+              "minItems": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "sources",
+        "policy"
+      ]
+    },
+    "channel_model": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "taps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/iq"
+          },
+          "maxItems": 256,
+          "minItems": 1
+        },
+        "noise_variance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "noise_seed": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+          },
+          "maxItems": 32,
+          "minItems": 32
+        },
+        "delay_samples": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4096
+        },
+        "phase_radians": {
+          "type": "number"
+        },
+        "frequency_offset_hz": {
+          "type": "number",
+          "minimum": -51200000,
+          "maximum": 51200000
+        }
+      },
+      "required": [
+        "taps",
+        "noise_variance",
+        "noise_seed",
+        "delay_samples",
+        "phase_radians",
+        "frequency_offset_hz"
+      ]
+    },
+    "guards": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "leading": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4096
+        },
+        "trailing": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4096
+        }
+      },
+      "required": [
+        "leading",
+        "trailing"
+      ]
+    },
+    "simulation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "scheduled_data",
+            "initial_ranging",
+            "fine_ranging",
+            "probe",
+            "profile_testing"
+          ]
+        },
+        "selected_iuc": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "source_seed": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32767
+        },
+        "grant_id": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "epoch_sample": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "first_frame": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "frames": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "minislots": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 236
+          },
+          "maxItems": 237,
+          "minItems": 1
+        },
+        "grants": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "maximum_samples": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16777216
+        },
+        "chunk_samples": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65536
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 300000
+        },
+        "retained_points": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65536
+        },
+        "retained_taps": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "TxGrid",
+              "TxPreEq",
+              "TxUseful",
+              "TxOutput",
+              "ChannelInput",
+              "ChannelOutput",
+              "RxInput",
+              "RxFft",
+              "RxEqualized"
+            ]
+          },
+          "maxItems": 9,
+          "minItems": 0
+        },
+        "estimator": {
+          "enum": [
+            "frame_flat_ls",
+            "frame_pilot_linear"
+          ]
+        },
+        "maximum_pilot_gap": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4096
+        },
+        "reference_variance": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "equalizer_power_floor": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "ldpc_iterations": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "channel": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/channel_model"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "guards": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/guards"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "synthetic_rxmer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/rxmer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "synthetic_pre_eq": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/pre_eq"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "mode",
+        "selected_iuc",
+        "source_seed",
+        "grant_id",
+        "epoch_sample",
+        "first_frame",
+        "frames",
+        "minislots",
+        "grants",
+        "maximum_samples",
+        "chunk_samples",
+        "timeout_ms",
+        "retained_points",
+        "retained_taps",
+        "estimator",
+        "maximum_pilot_gap",
+        "reference_variance",
+        "equalizer_power_floor",
+        "ldpc_iterations"
+      ]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+/*
+ * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+//! Typed idle upstream simulation sessions over the independent Rust engine.
+mod error;
+mod reports;
+mod session;
+pub use crate::channel::ChannelConfig;
+pub use crate::configuration::*;
+pub use crate::instruments::{QamSnapshot, SpectrumSnapshot, Tap};
+pub use crate::measurements::{
+    PowerSnapshot, PreEqEvent, PreEqOperation, PreEqPlayback, ProbeReference, RxmerPlayback,
+    RxmerPolicy, SyntheticRxmer,
+};
+pub use crate::signal_processing::PreEqBank;
+pub use crate::simulation::{
+    BatchReport, ExperimentConfig, ExperimentOptions, ExperimentPreview, GrantReport,
+    ProgressSnapshot, RunControl, RunStatus,
+};
+pub use crate::types::Iq;
+pub use crate::PhyError;
+pub use error::{ApiError, ApiResult, CaptureFailure};
+pub(crate) use reports::bounded_json;
+pub use reports::ReportJson;
+pub use session::Simulation;

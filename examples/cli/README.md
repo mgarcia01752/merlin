@@ -77,3 +77,5 @@ supported model, work limits and interpretation of the results.
 Shared measurement/import workflows remain under
 [measurement examples](../measurements/README.md). Desktop workbench examples are
 separate under [workbench](../workbench/README.md).
+
+[Upstream synthetic configuration inputs](upstream/README.md) use the separate upstream schema.

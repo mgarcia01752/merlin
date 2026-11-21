@@ -5,15 +5,18 @@
 //! Independent safe Rust upstream OFDMA configuration and processing.
 #![forbid(unsafe_code)]
 
+pub mod api;
 pub mod bit_processing;
 pub mod channel;
 pub mod configuration;
 mod error;
 pub mod grant;
+pub mod instruments;
 pub mod measurements;
 pub mod receiver;
 pub mod resources;
 pub mod signal_processing;
+pub mod simulation;
 pub mod source;
 pub mod transmitter;
 pub mod types;

@@ -238,54 +238,59 @@ architecture owner identifies concrete implementation/test paths and disposition
   Feature records: [fec/design.md](features/fec/design.md), [signal-processing/design.md](features/signal-processing/design.md).
 
 <a id="int-us-config-01"></a>
-- [ ] **INT-US-CONFIG-01** Register upstream PHY, typed configuration, grants and source.
+- [x] **INT-US-CONFIG-01** Register upstream PHY, typed configuration, grants and source.
   Requirements: [REQ-US-CFG-01](../requirements.md#req-us-cfg-01), [REQ-US-CFG-02](../requirements.md#req-us-cfg-02), [REQ-US-CFG-03](../requirements.md#req-us-cfg-03), [REQ-US-CFG-04](../requirements.md#req-us-cfg-04), [REQ-US-CFG-05](../requirements.md#req-us-cfg-05), [REQ-US-CFG-06](../requirements.md#req-us-cfg-06), [REQ-US-PRBS-01](../requirements.md#req-us-prbs-01), [REQ-US-PRBS-02](../requirements.md#req-us-prbs-02), [REQ-US-PRBS-03](../requirements.md#req-us-prbs-03), [REQ-US-PRBS-04](../requirements.md#req-us-prbs-04).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-configuration-and-source).
   Depends on: INT-DSP-01.
   Acceptance: Local module registration, supported/domain-valid distinctions, complete source-field coverage and typed idle session foundation pass. Independent grant capacities, all three codeword families, fill/pad/source bookkeeping, PRBS phase/period/seed/range and rejection atomicity pass before waveform use.
   Progress: typed configuration, grants/resources and continuous source are registered;
   [typed foundation evidence](features/ofdma/design.md#validation) covers this unit only.
-  Full document admission, source-field coverage and session acceptance remain open.
+  Full document admission, source-field coverage and typed session acceptance now pass locally.
   Public exports follow the [selected exact mapping](features/high-level-api/namespace-design.md); initial typed upstream stage APIs precede final facade convergence. No empty namespace scaffold.
   Feature records: [ofdma/configuration.md](features/ofdma/configuration.md).
+  Acceptance evidence: [83 local cases and 40 exact chains](features/ofdma/design.md#session-and-core-acceptance).
 
 <a id="int-us-tx-01"></a>
-- [ ] **INT-US-TX-01** Migrate all eight upstream transmitter boundaries.
+- [x] **INT-US-TX-01** Migrate all eight upstream transmitter boundaries.
   Requirements: [REQ-US-TX-01](../requirements.md#req-us-tx-01), [REQ-US-TX-03](../requirements.md#req-us-tx-03), [REQ-US-TX-04](../requirements.md#req-us-tx-04), [REQ-US-TX-05](../requirements.md#req-us-tx-05), [REQ-US-TX-06](../requirements.md#req-us-tx-06), [REQ-US-TX-07](../requirements.md#req-us-tx-07), [REQ-US-TX-08](../requirements.md#req-us-tx-08).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-processing-order).
   Depends on: INT-US-CONFIG-01.
   Acceptance: Each US-TX-01..08 typed boundary passes independent source/order/label/pilot/permutation/Pre-Eq/transform/window vectors for both numerologies and declared supported orders/patterns, including chunk/state/invalid-input cases and exact source accounting.
   Progress: [typed TX implementation unit](features/ofdma/design.md#int-us-tx-01-transmitter-implementation-unit)
-  is locally tested; combined configuration/TX acceptance remains open.
+  and combined configuration/TX acceptance now pass locally.
   Feature records: [ofdma/transmitter.md](features/ofdma/transmitter.md), [ofdma/pre-equalization.md](features/ofdma/pre-equalization.md).
+  Acceptance evidence: [83 local cases and 40 exact chains](features/ofdma/design.md#session-and-core-acceptance).
 
 <a id="int-us-ch-01"></a>
-- [ ] **INT-US-CH-01** Migrate unity and supported upstream channel models.
+- [x] **INT-US-CH-01** Migrate unity and supported upstream channel models.
   Requirements: [REQ-US-CH-01](../requirements.md#req-us-ch-01), [REQ-US-CH-02](../requirements.md#req-us-ch-02), [REQ-US-CH-03](../requirements.md#req-us-ch-03), [REQ-US-CH-04](../requirements.md#req-us-ch-04), [REQ-US-CH-05](../requirements.md#req-us-ch-05), [REQ-US-CH-06](../requirements.md#req-us-ch-06).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-channel-and-measurement-reference-planes).
   Depends on: INT-US-TX-01.
   Acceptance: Unity is bitwise exact including signed zero/metadata/no-RNG; causal FIR, AWGN, restricted RxMER residual, integer delay/phase/CFO pass independent samples/powers, chunk/seed/observation/drain and whole-schedule rejection tests. Preserve source composition restrictions.
   Progress: [channel implementation unit](features/ofdma/design.md#int-us-ch-01-channel-implementation-unit)
-  passes locally; full-schedule and observer acceptance remains open.
+  and full-schedule/observer acceptance now pass locally.
   Feature records: [ofdma/channel.md](features/ofdma/channel.md).
+  Acceptance evidence: [83 local cases and 40 exact chains](features/ofdma/design.md#session-and-core-acceptance).
 
 <a id="int-us-rx-01"></a>
-- [ ] **INT-US-RX-01** Migrate all nine received-only upstream receiver boundaries.
+- [x] **INT-US-RX-01** Migrate all nine received-only upstream receiver boundaries.
   Requirements: [REQ-US-RX-01](../requirements.md#req-us-rx-01), [REQ-US-RX-02](../requirements.md#req-us-rx-02), [REQ-US-RX-03](../requirements.md#req-us-rx-03), [REQ-US-RX-04](../requirements.md#req-us-rx-04), [REQ-US-RX-05](../requirements.md#req-us-rx-05), [REQ-US-RX-06](../requirements.md#req-us-rx-06), [REQ-US-RX-07](../requirements.md#req-us-rx-07), [REQ-US-RX-09](../requirements.md#req-us-rx-09).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-processing-order).
   Depends on: INT-US-CH-01, INT-US-TX-01.
   Acceptance: US-RX-01..09 pass configured timing/window/FFT, FrameFlatLs/FramePilotLinear, inverse resources, finite MaxLog, soft mask, shortening/LDPC and information coverage tests without hidden TX/H/C/source truth; missing data never compacts positions.
   Progress: [received-only RX and direct loop](features/ofdma/design.md#int-us-rx-01-received-only-receiver-implementation-unit)
-  pass locally; combined configuration/session acceptance remains open.
+  and combined configuration/session acceptance now pass locally.
   Feature records: [ofdma/receiver.md](features/ofdma/receiver.md).
+  Acceptance evidence: [83 local cases and 40 exact chains](features/ofdma/design.md#session-and-core-acceptance).
 
 <a id="int-us-loop-01"></a>
-- [ ] **INT-US-LOOP-01** Accept bounded upstream loop, observations and lifecycle locally.
+- [x] **INT-US-LOOP-01** Accept bounded upstream loop, observations and lifecycle locally.
   Requirements: [REQ-US-SYS-01](../requirements.md#req-us-sys-01), [REQ-US-SYS-02](../requirements.md#req-us-sys-02), [REQ-US-SYS-04](../requirements.md#req-us-sys-04), [REQ-COM-OBS-01](../requirements.md#req-com-obs-01), [REQ-COM-OBS-02](../requirements.md#req-com-obs-02), [REQ-COM-LIFE-01](../requirements.md#req-com-life-01), [REQ-COM-LIFE-02](../requirements.md#req-com-life-02), [REQ-COM-LIFE-03](../requirements.md#req-com-life-03), [REQ-COM-NFR-01](../requirements.md#req-com-nfr-01).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
   Depends on: INT-US-RX-01.
   Acceptance: Actual MERLIN source→TX→channel→RX recovers independently compared meaningful bits for both numerologies and supported loading; retain real FEC failure/partial/coverage outcomes. Execute through the initial public Rust upstream session developed alongside the stages; final API convergence remains INT-RUST-01. Cancellation precedes pause acceptance; test state preservation, deterministic science, passive metrics/taps and bounded aggregate/retained work.
   Feature records: [high-level-api/upstream.md](features/high-level-api/upstream.md).
+  Acceptance evidence: [83 local cases and 40 exact chains](features/ofdma/design.md#session-and-core-acceptance).
 
 <a id="int-pnm-01"></a>
 - [ ] **INT-PNM-01** Integrate source-derived upstream capture inspectors and decoders.

@@ -1,0 +1,428 @@
+{
+  "schema_version": 1,
+  "command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+  "exit_code": 0,
+  "rust_version": "1.85.1",
+  "host": "x86_64 Linux",
+  "passed": 83,
+  "ignored": 1,
+  "source_log_sha256": "859c151ef3afbfa00d1d38a2964992b8e89f7539d2f4fffa57ddf5bd8c1abe46",
+  "candidate_record": "docs/development/features/ofdma/session-candidate.json",
+  "cases": [
+    {
+      "test_file": "crates/ofdma/src/lib.rs",
+      "qualified_test_case": "instruments::spectrum::tests::independent_constant_tone_psd_units_identity_and_no_cross_grant_join",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/channel_models.rs",
+      "qualified_test_case": "literal_convolution_delay_phase_and_exact_drain_order",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/channel_models.rs",
+      "qualified_test_case": "rejected_blocks_preserve_history_rng_cursor_and_terminal_state",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/channel_models.rs",
+      "qualified_test_case": "exact_unity_signed_zeros_and_pinned_noise_chunk_invariance",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_qam_bits_2_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_qam_bits_3_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_qam_bits_4_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_qam_bits_5_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_qam_bits_7_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_medium_family_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_qam_bits_6_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_short_family_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_qam_bits_8_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_qam_bits_10_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_medium_family_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_qam_bits_9_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_qam_bits_10_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_qam_bits_2_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_qam_bits_3_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_qam_bits_4_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_qam_bits_5_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_qam_bits_6_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_qam_bits_7_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_long_family_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_qam_bits_8_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_short_family_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_qam_bits_9_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_qam_bits_11_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_qam_bits_11_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_long_family_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz50_qam_bits_12_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/closed_loop.rs",
+      "qualified_test_case": "khz25_qam_bits_12_recovers",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/configuration.rs",
+      "qualified_test_case": "explicit_iuc_inventory_and_rejected_candidate_preserve_snapshot",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/configuration.rs",
+      "qualified_test_case": "frame_bandwidth_thresholds_are_encompassed_bandwidth",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/configuration.rs",
+      "qualified_test_case": "original_numerology_and_all_prefix_rolloff_values",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/configuration.rs",
+      "qualified_test_case": "overflow_and_nonfinite_boundaries_reject_without_wrapping",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "direct_nonfinite_rust_edits_never_export_as_missing_json_values",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "source_reserved_width_range_and_cross_field_boundaries_reject",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "control_fields_and_conditional_options_are_independently_exercised",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "unknown_fields_nulls_limits_and_failed_replacement_preserve_session",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "every_applicable_cp_rp_enum_and_loading_pattern_rule_has_a_case",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "examples_roundtrip_complete_inventory_and_actual_both_numerology_runs",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "pre_cancel_does_not_generate_or_claim_recovery",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "asynchronous_cancel_retains_actual_completed_prefix",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "failed_configuration_and_budget_changes_preserve_accepted_settings",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "both_numerologies_high_level_exact_source_coverage_and_owned_results",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "acknowledged_paused_time_does_not_consume_active_runtime_budget",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/experiment.rs",
+      "qualified_test_case": "pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/grant_plan.rs",
+      "qualified_test_case": "source_threshold_and_two_shortened_word_literals",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/grant_plan.rs",
+      "qualified_test_case": "complete_bounded_capacity_sweep_conserves_every_role",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/matched_metrics.rs",
+      "qualified_test_case": "explicit_empty_zero_error_and_literal_twenty_db",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/measurement_playback.rs",
+      "qualified_test_case": "snapshots_replace_and_adjustments_use_explicit_older_probe_base",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/measurement_playback.rs",
+      "qualified_test_case": "literal_power_average_hold_interpolation_nulls_and_boundaries",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/prbs.rs",
+      "qualified_test_case": "rejected_calls_and_coverage_gaps_never_advance_state",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/prbs.rs",
+      "qualified_test_case": "literal_seed_phase_period_and_chunk_continuity",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/pre_eq.rs",
+      "qualified_test_case": "defaults_full_domain_phase_and_invalid_bank_atomicity",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/qam_mapping.rs",
+      "qualified_test_case": "maxlog_reference_variance_ties_erasures_and_finite_rejection",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/qam_mapping.rs",
+      "qualified_test_case": "independent_annex_labels_and_every_order_mean_energy",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/randomization.rs",
+      "qualified_test_case": "literal_mask_and_independent_grant_soft_inverse",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/rx_estimation.rs",
+      "qualified_test_case": "linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/rx_estimation.rs",
+      "qualified_test_case": "literal_flat_complex_ls_zero_forcing_and_unobserved_failure",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/rx_framing.rs",
+      "qualified_test_case": "cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/rx_framing.rs",
+      "qualified_test_case": "cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/rxmer_channel.rs",
+      "qualified_test_case": "every_bin_draw_order_actual_useful_samples_and_chunk_retry_invariance",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/stage_boundaries.rs",
+      "qualified_test_case": "zero_rolloff_is_exact_prefix_then_useful_samples_without_tail",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/stage_boundaries.rs",
+      "qualified_test_case": "received_window_discards_numbered_prefix_and_never_repairs_a_missing_sample",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/transform_reuse.rs",
+      "qualified_test_case": "shared_transform_preserves_source_bits_and_error_fields",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/transforms.rs",
+      "qualified_test_case": "centered_unitary_tones_and_direct_sums",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/transmit_window.rs",
+      "qualified_test_case": "numbered_prefix_suffix_and_exact_two_symbol_timeline",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/tx_framing.rs",
+      "qualified_test_case": "codeword_information_fill_and_grant_pad_have_distinct_values",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/tx_framing.rs",
+      "qualified_test_case": "transmitter_rejection_preserves_source_and_emission_stops_at_declared_support",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/upstream_interleaving.rs",
+      "qualified_test_case": "exact_partition_and_first_diagonal_source_cases",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/upstream_interleaving.rs",
+      "qualified_test_case": "every_supported_geometry_has_exact_independent_cartesian_coverage",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/upstream_pilots.rs",
+      "qualified_test_case": "boosted_short_frame_complement_exception_and_physical_pilot_sequence",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/upstream_pilots.rs",
+      "qualified_test_case": "source_literals_and_all_family_role_counts",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/waveform_loop.rs",
+      "qualified_test_case": "rejected_and_truncated_samples_preserve_real_coverage",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/waveform_loop.rs",
+      "qualified_test_case": "both_modes_all_pilot_patterns_and_cross_frame_words_recover",
+      "result": "pass"
+    },
+    {
+      "test_file": "crates/ofdma/tests/waveform_loop.rs",
+      "qualified_test_case": "all_upstream_qam_orders_and_received_pilot_phase_recovery",
+      "result": "pass"
+    }
+  ]
+}

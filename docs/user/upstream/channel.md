@@ -30,8 +30,8 @@ pilots estimate effective C times H. Neither a correction bank nor a residual
 noise target is an exact measurement of H. Synthetic playback and capture-backed
 association have separate admission gates.
 
-Local channel/power/replay tests pass. Passive observations, complete schedule
-admission and combined receiver/backend acceptance remain tracked by the
+Local channel/power/replay tests pass. Passive observations and complete synthetic schedule
+admission also pass locally. Capture-backed and final backend acceptance remain in the
 [checklist](../../development/checklist.md#int-us-ch-01).
 See [channel contracts](../../development/features/ofdma/channel.md) and
 [local validation](../../development/features/ofdma/design.md#int-us-ch-01-channel-implementation-unit).

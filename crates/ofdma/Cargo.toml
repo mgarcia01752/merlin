@@ -18,6 +18,9 @@ rand = "=0.9.5"
 rand_chacha = "=0.9.0"
 rand_distr = "=0.5.1"
 
+serde_json = { version = "=1.0.145", features = ["float_roundtrip"] }
+sha2 = "=0.10.9"
+
 [lints.rust]
 unsafe_code = "forbid"
 missing_docs = "deny"

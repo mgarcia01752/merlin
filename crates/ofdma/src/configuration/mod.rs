@@ -218,3 +218,11 @@ impl UsConfiguration {
         )
     }
 }
+
+mod document;
+mod synthetic;
+pub use document::{ConfigurationDocument, ConfigurationPreset, RunSettings};
+pub use synthetic::{
+    BankDocument, EventDocument, PreEqDocument, ProbeDocument, RxmerDocument,
+    RxmerSelectionDocument, UpdateDocument,
+};

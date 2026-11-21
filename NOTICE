@@ -93,7 +93,7 @@ legacy product controller nor PDE instructional/specification/capture material.
 See docs/development/features/unified-backend/scientific-source-review.json and
 reuse-review.md for source hashes, destinations and acceptance scope.
 
-Upstream configuration, resource/grant planning, source and transmitter contracts in
+Upstream scientific engine, configuration/session and instrument contracts in
 crates/ofdma adapt Apache-2.0 scientific code from MORGANA revision
 69b38071cd3ebebc4eb96849f82b7871ab8da5ec. Original copyrights are retained.
 Per-file origins and source hashes are recorded in

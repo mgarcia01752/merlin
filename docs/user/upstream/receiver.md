@@ -32,6 +32,6 @@ errors are separate outcomes. Failed words retain their available decisions.
 An independent simulator observer compares meaningful recovered bits with its
 own PRBS stream. This observer cannot feed expected bits into receiver decisions.
 Local internal loops pass both numerologies, all pilot patterns and supported
-loading. Complete document/session/backend acceptance remains in the
+loading. Complete document/session acceptance now passes; final adapter/backend acceptance remains in the
 [checklist](../../development/checklist.md#int-us-rx-01); this is not external
 hardware interoperability evidence. See [validation](../../development/features/ofdma/design.md#int-us-rx-01-received-only-receiver-implementation-unit).

@@ -9,8 +9,8 @@ documentation only. Current integration evidence is never inferred from source c
 
 The local typed upstream transmitter now composes all eight stages.
 [The implementation record](design.md#int-us-tx-01-transmitter-implementation-unit)
-records its tests; combined INT-US-TX-01 acceptance remains open behind complete
-configuration admission. Standalone LDPC acceptance remains INT-FEC-01. Consume
+records its tests; combined INT-US-TX-01 acceptance now passes complete
+configuration admission and the local session cases. Standalone LDPC acceptance remains INT-FEC-01. Consume
 only validated source/configuration/resource plans and explicit correction-bank
 updates. Emit indexed complex baseband samples with configuration/run identity and
 actual retained tap coverage.
@@ -68,9 +68,9 @@ linked; nonexistent local paths are explicitly planned, not passing evidence.
 | [REQ-US-TX-02](../../../requirements.md#req-us-tx-02) | [INT-FEC-01](../../checklist.md#int-fec-01) | Module: [crates/fec-codec/src/upstream_ldpc/codec.rs](../../../../crates/fec-codec/src/upstream_ldpc/codec.rs); Test: [crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs](../../../../crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs); Test: [crates/fec-codec/src/upstream_ldpc/tests.rs](../../../../crates/fec-codec/src/upstream_ldpc/tests.rs) |
 | [REQ-US-TX-03](../../../requirements.md#req-us-tx-03) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/bit_processing/randomizer.rs`; Test: `crates/ofdma/tests/randomization.rs` |
 | [REQ-US-TX-04](../../../requirements.md#req-us-tx-04) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/signal_processing/qam.rs`; Test: `crates/ofdma/tests/qam_mapping.rs` |
-| [REQ-US-TX-05](../../../requirements.md#req-us-tx-05) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/transmitter/framing.rs`; Test: `crates/ofdma/tests/resource_interleaving.rs` (planned) |
+| [REQ-US-TX-05](../../../requirements.md#req-us-tx-05) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/transmitter/framing.rs`; Test: `crates/ofdma/tests/upstream_interleaving.rs` |
 | [REQ-US-TX-06](../../../requirements.md#req-us-tx-06) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/signal_processing/pre_eq.rs`; Test: `crates/ofdma/tests/pre_eq.rs` |
-| [REQ-US-TX-07](../../../requirements.md#req-us-tx-07) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/signal_processing/transform.rs`; Test: `crates/ofdma/tests/waveform_transform.rs` (planned) |
+| [REQ-US-TX-07](../../../requirements.md#req-us-tx-07) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/signal_processing/transform.rs`; Test: `crates/ofdma/tests/transforms.rs` |
 | [REQ-US-TX-08](../../../requirements.md#req-us-tx-08) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/transmitter/assembly.rs`; Test: `crates/ofdma/tests/tx_framing.rs` |
 
 Related delivery gates: [INT-US-TX-01](../../checklist.md#int-us-tx-01), [INT-FEC-01](../../checklist.md#int-fec-01).

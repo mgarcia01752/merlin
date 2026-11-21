@@ -5161,7 +5161,7 @@
             "requirement": "REQ-US-CFG-01",
             "kind": "test",
             "path": "crates/ofdma/tests/configuration_json.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CFG-02",
@@ -5173,7 +5173,7 @@
             "requirement": "REQ-US-CFG-02",
             "kind": "test",
             "path": "crates/ofdma/tests/configuration_json.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CFG-03",
@@ -5185,7 +5185,7 @@
             "requirement": "REQ-US-CFG-03",
             "kind": "test",
             "path": "crates/ofdma/tests/configuration_json.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CFG-04",
@@ -5197,7 +5197,7 @@
             "requirement": "REQ-US-CFG-04",
             "kind": "test",
             "path": "crates/ofdma/tests/configuration_json.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CFG-05",
@@ -5209,7 +5209,7 @@
             "requirement": "REQ-US-CFG-05",
             "kind": "test",
             "path": "crates/ofdma/tests/configuration_json.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CFG-06",
@@ -5221,7 +5221,7 @@
             "requirement": "REQ-US-CFG-06",
             "kind": "test",
             "path": "crates/ofdma/tests/configuration_json.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PRBS-01",
@@ -5366,8 +5366,8 @@
           {
             "requirement": "REQ-US-TX-05",
             "kind": "test",
-            "path": "crates/ofdma/tests/resource_interleaving.rs",
-            "state": "planned"
+            "path": "crates/ofdma/tests/upstream_interleaving.rs",
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-06",
@@ -5390,8 +5390,8 @@
           {
             "requirement": "REQ-US-TX-07",
             "kind": "test",
-            "path": "crates/ofdma/tests/waveform_transform.rs",
-            "state": "planned"
+            "path": "crates/ofdma/tests/transforms.rs",
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-08",
@@ -5472,8 +5472,8 @@
           {
             "requirement": "REQ-US-RX-03",
             "kind": "test",
-            "path": "crates/ofdma/tests/waveform_transform.rs",
-            "state": "planned"
+            "path": "crates/ofdma/tests/transforms.rs",
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-04",
@@ -5496,8 +5496,8 @@
           {
             "requirement": "REQ-US-RX-05",
             "kind": "test",
-            "path": "crates/ofdma/tests/rx_resources.rs",
-            "state": "planned"
+            "path": "crates/ofdma/tests/waveform_loop.rs",
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-06",
@@ -5508,8 +5508,8 @@
           {
             "requirement": "REQ-US-RX-06",
             "kind": "test",
-            "path": "crates/ofdma/tests/soft_metrics.rs",
-            "state": "planned"
+            "path": "crates/ofdma/tests/qam_mapping.rs",
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-07",
@@ -5648,13 +5648,13 @@
             "requirement": "REQ-US-CH-06",
             "kind": "module",
             "path": "crates/ofdma/src/instruments/observer.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CH-06",
             "kind": "test",
             "path": "crates/ofdma/tests/matched_metrics.rs",
-            "state": "planned"
+            "state": "existing"
           }
         ],
         "acceptance_sha256": "f28e33067f04f20623006391a493c4342c4820d619994a8e53ace5f216e1705a"
@@ -5850,7 +5850,7 @@
             "requirement": "REQ-US-API-01",
             "kind": "module",
             "path": "crates/ofdma/src/api/session.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-API-01",
@@ -5862,7 +5862,7 @@
             "requirement": "REQ-US-API-02",
             "kind": "module",
             "path": "crates/ofdma/src/api/session.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-API-02",
@@ -5874,7 +5874,7 @@
             "requirement": "REQ-COM-API-03",
             "kind": "module",
             "path": "crates/ofdma/src/api/session.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-COM-API-03",
@@ -5886,7 +5886,7 @@
             "requirement": "REQ-COM-API-04",
             "kind": "module",
             "path": "crates/ofdma/src/api/session.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-COM-API-04",
@@ -5898,7 +5898,7 @@
             "requirement": "REQ-COM-API-05",
             "kind": "module",
             "path": "crates/ofdma/src/api/session.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-COM-API-05",
@@ -5910,7 +5910,7 @@
             "requirement": "REQ-COM-API-06",
             "kind": "module",
             "path": "crates/ofdma/src/api/session.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-COM-API-06",

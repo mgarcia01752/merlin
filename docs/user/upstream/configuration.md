@@ -34,7 +34,7 @@ original absolute positions; it rejects gaps/reordering without searching for
 a better phase. Zero compared bits have no BER value.
 
 This foundation does not start a run, load measurements or generate a waveform.
-Versioned document admission and the final public Rust/Python session remain
-under integration. See [architecture](../../architecture.md#unified-upstream-configuration-and-source),
+Strict versioned documents and the [typed Rust session](session.md) now have local
+acceptance. Final facade and native Python convergence remain under integration. See [architecture](../../architecture.md#unified-upstream-configuration-and-source),
 [configuration design](../../development/features/ofdma/configuration.md) and
 [executed foundation tests](../../development/features/ofdma/design.md#validation).
