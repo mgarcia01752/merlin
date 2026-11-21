@@ -603,22 +603,24 @@ a bounded condvar wait; no worker or callback is added to the common leaf.
 The upstream ApiError retains original causes and legacy code strings and adds
 a shared typed category query. [Namespace implementation validation](development/features/high-level-api/namespace-design.md#namespace-implementation-validation)
 records compatibility/build evidence. The [complete operation rows](development/features/high-level-api/operation-matrix.json)
-now pass compiler-export and executed Rust case checks; native delivery remains open.
- The implemented
+now pass compiler-export and executed Rust case checks. Native namespace execution
+also passes the [installed-wheel unit](development/features/high-level-api/python-evidence.json);
+complete native operation coverage remains open under INT-PY-01.
+The implemented
 `crates/ofdma/src/api/{session,error,measured,reports}.rs` owns the upstream typed API, sharing
 lifecycle/error/provenance conventions where semantics match. The existing
 `merlin.Simulation` remains valid; an upstream controller is additive and does
 not force one giant configuration or rename downstream exports. Final public
-names/signatures require the INT-RUST-01 compatibility review before implementation.
+names/signatures retain the accepted INT-RUST-01 compatibility mapping.
 The literal unified `merlin` root is now provided by a selected minimal re-export facade; it owns no controller, science, input parsing or lifecycle implementation.
 
 The [selected exact namespace design](development/features/high-level-api/namespace-design.md)
 is recorded by [INT-API-MAP-01](development/checklist.md#int-api-map-01), refining
 [REQ-COM-API-07](requirements.md#req-com-api-07),
 [REQ-COM-API-08](requirements.md#req-com-api-08) and
-[REQ-COM-API-09](requirements.md#req-com-api-09). Planned Cargo `merlin` / library
+[REQ-COM-API-09](requirements.md#req-com-api-09). Cargo `merlin` / library
 `merlin` in `crates/merlin` re-exports `docsis_ofdm_fec::api::*` under `downstream`,
-`docsis_ofdma::api::*` under `upstream`, and genuinely shared contracts from planned
+`docsis_ofdma::api::*` under `upstream`, and genuinely shared contracts from
 Cargo `merlin-api` / library `merlin_api` in `crates/phy-api` under `common`.
 The existing downstream Cargo package/library and every `api::*` import remain.
 Both PHYs depend only on common leaf owners, never on each other or the facade.
@@ -635,12 +637,13 @@ sessions accompany stages; real closed-loop acceptance precedes INT-RUST-01 faca
 convergence and INT-PY-01 native exposure. The [operation matrix](development/features/high-level-api/compatibility-matrix.md)
 retains exact method/evidence ownership.
 
-Planned direct Rust contract/parity acceptance is
-`crates/ofdma/tests/api_parity.rs`, alongside `crates/ofdma/tests/closed_loop.rs`.
+Direct Rust contract/parity acceptance lives in `crates/merlin/tests/namespaces.rs`
+and `crates/ofdma/tests/experiment.rs`, alongside received-only engine tests.
 
-The existing `bindings/python` builds one optional native distribution. Add
-proposed `bindings/python/src/upstream/{configuration,session,reports}.rs` and
-`bindings/python/tests/test_upstream_parity.py` after public Rust operations work.
+The existing `bindings/python` builds one optional native distribution. Its
+`src/upstream/{configuration,simulation,reports,capture,document,measurements}.rs`
+adapts accepted public Rust operations; `tests/test_upstream_*.py` retains the
+source-derived parity, capture, ownership and lifecycle cases.
 Keep typed/runtime declarations, buffer/result ownership, structured error
 categories, interpreter-lock release, Busy handling, bounded progress, cancellation
 and pause semantics aligned. No scientific calculations or separate schemas in
@@ -649,10 +652,10 @@ upstream document needs explicit version/migration and both language consumers.
 
 [REQ-COM-API-08](requirements.md#req-com-api-08) adds standard Python imports
 `from merlin.downstream import Simulation` and
-`from merlin.upstream import Simulation`; neither is implemented yet.
+`from merlin.upstream import Simulation`; both now execute in the local installed wheel.
 Retain root `merlin.Simulation`/`merlin.Merlin` downstream compatibility and the
-existing distribution. Evaluate real packages versus registered native submodules
-through discovery, typing, wheel and installed Python 3.10+ checks; adding module
+existing distribution. The real packages pass discovery, typing, wheel and installed
+CPython 3.10 checks; other declared Python 3.10+ environments need native checks. Adding module
 attributes alone cannot satisfy the import contract. The selected layout is a real
 `merlin` package with one private `merlin._native` extension and import-only
 `downstream.py`, `upstream.py`, `common.py`, matching stubs and `py.typed`. Preserve

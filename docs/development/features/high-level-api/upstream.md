@@ -14,8 +14,8 @@ the existing public Rust engine and native Python distribution. Existing downstr
 Rust/Python APIs, imports, schemas, examples and saved-workbench contracts remain
 implemented within their recorded supported scope. Initial upstream typed Rust
 composition now passes local synthetic session acceptance. The real facade/common
-contracts now pass targeted Rust checks; complete operation coverage and native
-wrappers remain at their delivery gates. Measured Rust
+contracts now pass targeted Rust checks; complete Rust operation coverage is accepted; native
+wrappers pass the installed namespace unit with full native operation traceability still open. Measured Rust
 admission now uses the adapter-owned MeasuredExperiment and core-owned typed
 MeasuredConfiguration handoff; no core-to-capture dependency is introduced.
 
@@ -156,3 +156,69 @@ Exact API-coverage evidence: [candidate](operation-candidate.json),
 [requirement record](operation-evidence.json) and [named run records](operation-test-results.json).
 Initial owner/test locators in the preserved source-requirement inventory remain
 planning provenance; the functional owners and exact records above are current.
+
+## INT-PY-01 native namespace implementation unit
+
+Prerequisite Rust acceptance: `854caec`. Adapt the six reviewed source native
+modules into `bindings/python/src/upstream/`; retain their typed conversion,
+Busy/interpreter-lock/cancellation/report ownership behavior. Local `api` imports
+combine facade upstream types and pnm-input capture admission inside the adapter
+only. Neither engine gains an adapter/Python dependency. Existing downstream
+native code changes only its API import alias plus the additive common stop query.
+
+Select one `_native` extension and real import-only package modules under
+`bindings/python/python/merlin/`. Preserve every root downstream class and its
+`__module__ = "merlin"`; directional modules re-export the exact native objects.
+Add `merlin/merlin.py` as a legacy import shim for the previous generated native
+module path, retaining one binary. Keep distribution name/version and PyO3 pins.
+Register upstream classes privately with public `merlin.upstream` class identities.
+The upstream control constructor optionally accepts the common native token.
+
+| Existing/source owner | Decision / concrete destination |
+| --- | --- |
+| `bindings/python/src/{lib,controller,...}.rs` | REUSE downstream objects, conversion and engine; edit entry point/import only and add read-only cancellation query. |
+| `morgana/bindings/python/src/{capture,configuration,document,measurements,reports,simulation}.rs` | ADAPT into `bindings/python/src/upstream/`; local sibling imports and facade/input owners; no copied algorithms. |
+| Source native error conversion | ADAPT to the existing root ApiError and shared ErrorCode; preserve upstream field/offset/legacy code as typed optional metadata. Existing downstream messages/code behavior stays the same. |
+| Source `configure_measured_json` | ADAPT: pnm-input admits/prepares the plan, then calls the accepted typed core handoff. No core capture parser is added. |
+| Source four native test files / six upstream Rust examples | ADAPT into local upstream tests and pnm-input Rust examples, with exact public imports/fixtures/schema names. Preserve assertions and independently executed Rust comparisons. |
+| `tools/python/{build_api_reference,smoke_wheel}.py` | EDIT private-extension detection and installed package/typing checks, retaining legacy example/FEC and notice gates. |
+
+New root/directional/common `.pyi` files and py.typed describe actual objects and
+signatures. New exception metadata defaults to None, with upstream errors retaining
+original field/offset and legacy diagnostic strings; common machine categories
+come directly from Rust, never message parsing. Verify actual installed-wheel
+imports/discovery/typing/one-binary/legacy identity outside the checkout, all old
+native cases, source-derived upstream parity/lifecycle cases, shared cancellation
+while paused, notices and every exported operation before accepting INT-PY-01.
+Only local isolated build/test environments are used; no system installation.
+
+### Installed namespace unit validation
+
+The [candidate](python-candidate.json), [46 executed native cases](python-test-results.json)
+and [requirement slices](python-evidence.json) identify this implementation unit.
+All 25 original downstream cases, 17 adapted upstream cases and four namespace
+cases pass in an installed Linux x86_64 CPython 3.10 wheel, outside the checkout,
+with fresh separate Rust references enabled (29.254 s). This includes actual
+SIGINT, interpreter-lock release, Busy, pause/resume/cancel, retained results,
+raw capture provenance and both upstream numerologies. Other interpreters and
+Windows runtime remain unverified.
+
+The existing wheel smoke passes both downstream examples: 82 total codewords,
+zero corrected/uncorrectable and zero observed BER in each (5.15 s including a
+fresh installation). The paired unified upstream examples discover profiles
+through Rust and recover all 1,976 compared source bits with zero errors.
+Nineteen Python tool cases, native all-target Clippy, affected Rust all-target
+Clippy and both formatting checks pass.
+
+The complete suite initially exposed comparison of process-relative controller
+scope counters. Compare their equality/distinctness relationships instead,
+retaining exact slots, policies and scientific data; no engine behavior changed.
+The first mixed wheel also omitted notices: pinned maturin 1.8.3 resolves wheel
+include globs from python-source ([source](https://github.com/PyO3/maturin/blob/v1.8.3/src/module_writer.rs#L1306-L1328)).
+Staging now follows that base, preserving the old archive paths. The builder
+checks every notice's exact archived bytes before issuing checksums; independent
+negative cases reject omissions, changes, missing namespace files and two binaries.
+
+INT-PY-01 stays open until the operation matrix covers actual native exports and
+signatures with executed-case references. This accepted unit is not final backend
+acceptance and does not imply hosted/package publication.

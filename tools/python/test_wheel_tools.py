@@ -11,20 +11,23 @@ import zipfile
 import subprocess
 from unittest.mock import patch, Mock, call
 
-from build_wheel import build_command, prepare_notices, windows_build_environment
+from build_wheel import build_command, prepare_notices, validate_notices, windows_build_environment
 from smoke_wheel import inspect_wheel, validate_example_output
 
 
 class WheelToolTests(unittest.TestCase):
     """Use synthetic archive headers only; engine smoke execution is separate."""
 
-    def wheel(self, root, platform='linux_x86_64', native='merlin/merlin.so', notice=True):
+    def wheel(self, root, platform='linux_x86_64', native='merlin/_native.so', notice=True):
         """Write a small archive fixture for metadata validation, never installation."""
         path = root / f'merlin_ofdm-1.2.3-cp310-cp310-{platform}.whl'
         with zipfile.ZipFile(path, 'w') as archive:
             archive.writestr('merlin_ofdm-1.2.3.dist-info/METADATA', 'Name: merlin-ofdm\nVersion: 1.2.3\n')
             archive.writestr('merlin_ofdm-1.2.3.dist-info/WHEEL', f'Tag: cp310-cp310-{platform}\n')
             archive.writestr(native, b'archive fixture only')
+            for name in ('__init__.py', 'downstream.py', 'upstream.py', 'common.py', 'merlin.py',
+                         '__init__.pyi', 'downstream.pyi', 'upstream.pyi', 'common.pyi', 'merlin.pyi', 'py.typed'):
+                archive.writestr('merlin/' + name, '')
             if notice:
                 for name in ('MERLIN-LICENSE', 'MERLIN-NOTICE', 'manifest.json'):
                     archive.writestr(f'target/wheel-notices/{name}', '{}')
@@ -96,13 +99,13 @@ class WheelToolTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             linux = self.wheel(root)
-            self.assertEqual(inspect_wheel(linux, '1.2.3', 'cp310', 'linux_x86_64'), 'merlin/merlin.so')
+            self.assertEqual(inspect_wheel(linux, '1.2.3', 'cp310', 'linux_x86_64'), 'merlin/_native.so')
             for version, abi, platform in [('2.0.0', 'cp310', 'linux_x86_64'),
                                            ('1.2.3', 'cp312', 'linux_x86_64'),
                                            ('1.2.3', 'cp310', 'win_amd64')]:
                 with self.assertRaises(ValueError):
                     inspect_wheel(linux, version, abi, platform)
-            windows = self.wheel(root, platform='win_amd64', native='merlin/merlin.pyd')
+            windows = self.wheel(root, platform='win_amd64', native='merlin/_native.pyd')
             self.assertTrue(inspect_wheel(windows, '1.2.3', 'cp310', 'win_amd64').endswith('.pyd'))
             windows = self.wheel(root, platform='win_amd64')
             with self.assertRaisesRegex(ValueError, 'native extension'):
@@ -121,6 +124,44 @@ class WheelToolTests(unittest.TestCase):
                           complete.replace('0.000e+00', '1.000e-03'), complete + complete]:
             with self.assertRaises(ValueError):
                 validate_example_output(incorrect)
+
+    def test_complete_notice_bytes_are_required_in_actual_archive(self):
+        """Do not accept a nominal legal directory with missing dependency texts."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            notices = root / 'notices/dependency'
+            notices.mkdir(parents=True)
+            source = notices / 'LICENSE'
+            source.write_bytes(b'Exact independently authored license fixture')
+            wheel = self.wheel(root)
+            with self.assertRaisesRegex(ValueError, 'unchanged generated notice'):
+                validate_notices(wheel, root / 'notices')
+            with zipfile.ZipFile(wheel, 'a') as archive:
+                archive.writestr('target/wheel-notices/dependency/LICENSE', source.read_bytes())
+            validate_notices(wheel, root / 'notices')
+            source.write_bytes(b'Changed fixture')
+            with self.assertRaisesRegex(ValueError, 'unchanged generated notice'):
+                validate_notices(wheel, root / 'notices')
+
+    def test_namespace_payload_and_single_binary_are_required(self):
+        """Reject incomplete mixed wheels and an accidental second extension."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            wheel = self.wheel(root)
+            with zipfile.ZipFile(wheel) as archive:
+                payload = {name: archive.read(name) for name in archive.namelist()}
+            for omitted in ('merlin/upstream.py', 'merlin/common.pyi', 'merlin/py.typed'):
+                with zipfile.ZipFile(wheel, 'w') as archive:
+                    for name, content in payload.items():
+                        if name != omitted:
+                            archive.writestr(name, content)
+                with self.assertRaisesRegex(ValueError, 'namespace/typing'):
+                    inspect_wheel(wheel, '1.2.3', 'cp310', 'linux_x86_64')
+            self.wheel(root)
+            with zipfile.ZipFile(wheel, 'a') as archive:
+                archive.writestr('merlin/second.so', b'not a real extension')
+            with self.assertRaisesRegex(ValueError, 'single native extension'):
+                inspect_wheel(wheel, '1.2.3', 'cp310', 'linux_x86_64')
 
 
 if __name__ == '__main__':

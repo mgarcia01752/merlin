@@ -20,3 +20,7 @@ merlin-api = { path = "../phy-api" }
 [lints.rust]
 unsafe_code = "forbid"
 missing_docs = "deny"
+
+[[example]]
+name = "upstream_session"
+required-features = ["upstream"]

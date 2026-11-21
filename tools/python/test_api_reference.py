@@ -59,6 +59,14 @@ class ApiReferenceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "version differs"):
             native_inventory(module, "2.0.0")
 
+    def test_private_extension_is_selected_before_the_legacy_import_shim(self):
+        """A real package's compatibility .py module is never mistaken for native."""
+        native = SimpleNamespace(__file__="fake" + importlib.machinery.EXTENSION_SUFFIXES[0],
+                                 __version__="1.0.0")
+        wrapper = SimpleNamespace(__version__="1.0.0", _native=native,
+                                  merlin=SimpleNamespace(__file__="merlin.py"))
+        self.assertEqual(native_inventory(wrapper, "1.0.0")["native_artifact"], str(Path(native.__file__).resolve()))
+
     def test_maturin_wrapper_uses_native_exports_without_documenting_wrapper_module(self):
         """Accept the wheel's normal package wrapper and enumerate only native classes."""
         class Controller:

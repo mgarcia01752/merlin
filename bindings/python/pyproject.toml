@@ -12,7 +12,8 @@ classifiers = ["Programming Language :: Rust", "Programming Language :: Python :
 
 [tool.maturin]
 bindings = "pyo3"
-module-name = "merlin"
+module-name = "merlin._native"
+python-source = "python"
 strip = true
 
 include = [{ path = "target/wheel-notices/**/*", format = "wheel" }]

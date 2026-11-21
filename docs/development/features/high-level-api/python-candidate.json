@@ -1,0 +1,191 @@
+{
+  "base_revision": "854caecce2f618edc38b3fe9720b617e3e157326",
+  "scope": "Installed native namespace implementation unit; full native operation-matrix reconciliation remains open under INT-PY-01. Includes exact changed source/build/test/package inputs; unchanged scientific owners are pinned by base revision.",
+  "sha256": "c2575907cfde6a3992eff08ed11024ef5c3b543414e3bc41ed3386b2ac0e1e5f",
+  "files": [
+    {
+      "path": "NOTICE",
+      "sha256": "35ecb2d012fda8b36c760f5eb2aaeec4be85f74fb2a8292675d535410055d890"
+    },
+    {
+      "path": "bindings/python/Cargo.lock",
+      "sha256": "510c2d28247718d8aefcfc4c5ee3e0d0aca2b9e485f89dbd06323084e253f25c"
+    },
+    {
+      "path": "bindings/python/Cargo.toml",
+      "sha256": "6036af87ce38c7cc688c4c3e349e95f77ef4000a88433e41a35c6a55d8639831"
+    },
+    {
+      "path": "bindings/python/pyproject.toml",
+      "sha256": "4c19ab29636fa2cbefaf52885ff06c170dbc51f8a64e6dad941ff194e953cd0e"
+    },
+    {
+      "path": "bindings/python/python/merlin/__init__.py",
+      "sha256": "1235e34f36e88407365fdeec04d800e82955947f3a58ec2a3fa3aa419478e109"
+    },
+    {
+      "path": "bindings/python/python/merlin/__init__.pyi",
+      "sha256": "8082f46a91610b342d0538f1c00c1d28621d434f986537d64301762bd108bc0c"
+    },
+    {
+      "path": "bindings/python/python/merlin/common.py",
+      "sha256": "ffb1002a39085ad839afd72f564ff87d1bd41dda216ec50606bd9475fdd11d46"
+    },
+    {
+      "path": "bindings/python/python/merlin/common.pyi",
+      "sha256": "70e73725f190156b9815d3b3d7043ab5450000801229fd55ebe9fc2dfce8a886"
+    },
+    {
+      "path": "bindings/python/python/merlin/downstream.py",
+      "sha256": "5712664ae0e2526ca10ae63b9e7901ff5b83fa732fe48fd1d37d2324dc6e9196"
+    },
+    {
+      "path": "bindings/python/python/merlin/downstream.pyi",
+      "sha256": "b1983ac9817da7e42503c14034a1d8e8e6d75b0e0c6df437755c10abd836c744"
+    },
+    {
+      "path": "bindings/python/python/merlin/merlin.py",
+      "sha256": "ae368f25f0e0ec3ff67938f32d41e64aaecaa0423e56232add8270be73530494"
+    },
+    {
+      "path": "bindings/python/python/merlin/merlin.pyi",
+      "sha256": "b1983ac9817da7e42503c14034a1d8e8e6d75b0e0c6df437755c10abd836c744"
+    },
+    {
+      "path": "bindings/python/python/merlin/py.typed",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "bindings/python/python/merlin/upstream.py",
+      "sha256": "d3da5bfb2a92aaaf8e399cc793834e6bf81067cc7c52840cdedd98163fef4eac"
+    },
+    {
+      "path": "bindings/python/python/merlin/upstream.pyi",
+      "sha256": "7afebb372607fbdef891a80e0bf11a1fcbdf2e3850236ff32a5b5ba2868ba8b1"
+    },
+    {
+      "path": "bindings/python/src/controller.rs",
+      "sha256": "d292c2d1acb780b49f6a42cc3a847d54037bafd28ef1eeb8d229acc5b927a55d"
+    },
+    {
+      "path": "bindings/python/src/lib.rs",
+      "sha256": "93d4040528ba202a313dc7285ac947b21d09b6fd7a749b71375ab04324e3a8ec"
+    },
+    {
+      "path": "bindings/python/src/upstream/capture.rs",
+      "sha256": "23ec7673ea76b60e42ee474ea80c8662b0526f399999d790746c2a4d58b84f07"
+    },
+    {
+      "path": "bindings/python/src/upstream/configuration.rs",
+      "sha256": "48370744f7aa519dae361cd9f4f74d60e9dbd52c01e00d98812cde81f9a98204"
+    },
+    {
+      "path": "bindings/python/src/upstream/document.rs",
+      "sha256": "e961dfb6efe8941fd14572454b5d4cc2d299c76e7923a393e215c9dce01b5316"
+    },
+    {
+      "path": "bindings/python/src/upstream/measurements.rs",
+      "sha256": "5c9721980775e8eb1b94cae09a439a9c2876fbbb76569e98d5c543137c5d7a2b"
+    },
+    {
+      "path": "bindings/python/src/upstream/mod.rs",
+      "sha256": "2b4e6cd2af0bd5fc7def1e4e587d43297d8c9b2fc5cb2933a7307a53499dad53"
+    },
+    {
+      "path": "bindings/python/src/upstream/reports.rs",
+      "sha256": "86186e52ebb2b0d66db82bba9bfdb67f9d0e68423e09948f40a4b1e3937dcc66"
+    },
+    {
+      "path": "bindings/python/src/upstream/simulation.rs",
+      "sha256": "4e0f721966f6f587acbbc21df70acc8fb9f982af6d772cdaa6b8d41b58287073"
+    },
+    {
+      "path": "bindings/python/tests/test_namespaces.py",
+      "sha256": "93b99a1c6e0acb38ae13d14eea9d0d1655581de94fe5d541f25dff32757dbb79"
+    },
+    {
+      "path": "bindings/python/tests/test_upstream_capture.py",
+      "sha256": "0a06197690bf9b87474b1d1480d011f8d3adc8b1637d41178b64547aa20c4412"
+    },
+    {
+      "path": "bindings/python/tests/test_upstream_experiment.py",
+      "sha256": "5a185954a65af9cd810fb66983f81fcd360741bdc9a9182a5e2f730bc430cba1"
+    },
+    {
+      "path": "bindings/python/tests/test_upstream_measured.py",
+      "sha256": "cfa0f75076befe6a86efc24c1b9085759ba805eb83eb8659d577ea27c8cfe2f6"
+    },
+    {
+      "path": "bindings/python/tests/test_upstream_rxmer_capture.py",
+      "sha256": "207294a87891f8f89ab4e0c9a12d8ea0ed7b75e0c7b47b9d3683e815f286952a"
+    },
+    {
+      "path": "bindings/python/tests/test_workbench.py",
+      "sha256": "322d6398600862fbee803ad96428691e4ce766281c1af657df255819e6e45933"
+    },
+    {
+      "path": "crates/merlin/Cargo.toml",
+      "sha256": "10f5c9f1ddcf088c7e2162fa82171fdb9a30c022f8df1ff24ecf61f0f3fb86fa"
+    },
+    {
+      "path": "crates/merlin/examples/upstream_session.rs",
+      "sha256": "a2a6d120fef4b6214d30ac4faa467b2e3f9b8c0fe12c31372c181b490bfd3e68"
+    },
+    {
+      "path": "crates/ofdma/examples/upstream_document.rs",
+      "sha256": "9c32a69a288722bd37cf23bbee804f11bfad5ee415c0f252e07fd9e848ec1dd2"
+    },
+    {
+      "path": "crates/ofdma/examples/upstream_loop.rs",
+      "sha256": "3c489199e3d54924dbfa3594f81c7bad34e546d53bed3b10193018e7b82bdcb6"
+    },
+    {
+      "path": "crates/ofdma/examples/upstream_measurements.rs",
+      "sha256": "a3bac320da8ba9948a745c787dcd4cbc62d00150e008b88c4975cf44ff0264a7"
+    },
+    {
+      "path": "crates/pnm-input/examples/inspect_rxmer.rs",
+      "sha256": "28a03a678d5897e7743f9026adc88c6c568194320176f48f720e721df1d33b21"
+    },
+    {
+      "path": "crates/pnm-input/examples/inspect_ucd.rs",
+      "sha256": "cf4e3ecba8ed77a28d5c71aef46fba498227c5c29a84ed2d38b37e30be46d584"
+    },
+    {
+      "path": "crates/pnm-input/examples/upstream_captures.rs",
+      "sha256": "4161a6eeec058d147ade61c8f7943a2e5414cc054176620faddc4c7162e90a07"
+    },
+    {
+      "path": "examples/api/python/run_upstream.py",
+      "sha256": "4e61d8b4c72f3df376beb53574091dc628db2d4b72493e34282785ad8718823a"
+    },
+    {
+      "path": "tools/python/build_api_reference.py",
+      "sha256": "28731a2a9c2ccefdc6da8e183ba0dca09574177490cdab5d46653bf0aef11c3e"
+    },
+    {
+      "path": "tools/python/build_wheel.py",
+      "sha256": "bc71ca56854b0f75eb5add956e00e5fb58572874dc05127f8927c2fc2029019e"
+    },
+    {
+      "path": "tools/python/smoke_wheel.py",
+      "sha256": "7c964d001d24066e7ffeb38451c422b250af7f0041401689fcaaa08e77745579"
+    },
+    {
+      "path": "tools/python/templates/integration.md.in",
+      "sha256": "a4fd484b39b09414eed9288d783b3fdc7bc0119b22dd96bf51b8f7e3c6b86b97"
+    },
+    {
+      "path": "tools/python/test_api_reference.py",
+      "sha256": "776a7e39dcbc840041e727557ecdefab0675e29f9c5dcf9e9bacd93c314d8ec8"
+    },
+    {
+      "path": "tools/python/test_wheel_tools.py",
+      "sha256": "3c560ec10b861259c5582dacbb7786928e699189fbc42aa2f33bb735ca84cddb"
+    },
+    {
+      "path": "tools/python/update_integration_doc.py",
+      "sha256": "7a2e05169287cd3b61b29d625a987e33317eda86c71fa06bcfb65881fd89e789"
+    }
+  ]
+}

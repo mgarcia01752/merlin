@@ -33,9 +33,9 @@ def native_inventory(module, expected_version):
     Raises:
         ValueError for a mocked/non-native module, version drift or export omission.
     """
-    # Maturin wheels expose a thin package re-exporting merlin.merlin; source
-    # development installs can expose the extension directly. Validate either.
-    native = getattr(module, "merlin", module)
+    # Mixed wheels use one private extension; older wheels used merlin.merlin.
+    # Read actual native objects rather than the import-only compatibility shim.
+    native = getattr(module, "_native", getattr(module, "merlin", module))
     artifact = Path(native.__file__).resolve()
     if not any(str(artifact).endswith(suffix)
                for suffix in importlib.machinery.EXTENSION_SUFFIXES):
@@ -51,7 +51,24 @@ def native_inventory(module, expected_version):
         classes.append({"name": name, "canonical_name": value.__name__,
                         "signature": signature, "constructible": "__new__" in vars(value),
                         "members": public_members(value)})
-    return {"version": expected_version, "native_artifact": str(artifact), "classes": classes}
+    namespaces = {}
+    for name in ("downstream", "upstream", "common"):
+        direction = getattr(module, name, None)
+        if direction is None:
+            continue
+        exported = []
+        for public, value in public_classes(direction):
+            try:
+                signature = str(inspect.signature(value))
+            except (TypeError, ValueError):
+                signature = None
+            exported.append({"name": public, "canonical_name": value.__name__,
+                             "module": value.__module__, "signature": signature,
+                             "constructible": "__new__" in vars(value),
+                             "members": public_members(value)})
+        namespaces[name] = exported
+    return {"version": expected_version, "native_artifact": str(artifact),
+            "classes": classes, "namespaces": namespaces}
 
 
 def generate_sources(inventory):

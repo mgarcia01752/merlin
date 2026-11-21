@@ -419,3 +419,7 @@ print(sim.get_cpa_attenuation_db())
 Saved workbench files and processing dictionaries retain the legacy `attenuation_db` key for compatibility; JSON input
 also accepts `cpa_attenuation_db`. Editing a Python processing dictionary does
 not update the session; use these setters. See [terminology](../terminology.md).
+
+The [upstream native guide](upstream.md) describes the additive direction/common
+namespaces, captured-plan admission and shared cancellation in the unified source
+build. Existing root-level calls continue to use downstream OFDM.

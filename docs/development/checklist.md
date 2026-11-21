@@ -327,6 +327,12 @@ architecture owner identifies concrete implementation/test paths and disposition
   Acceptance: Actual native extension exports/types/errors/owned results and independently executed Rust/Python runs agree, including configuration/captures/cancel/pause/Busy/interpreter-lock release. Both languages document the same supported behavior; preserve existing workbench recipes and old Python imports. Verify direct downstream/upstream imports, discovery, typing and installed wheels on declared Python 3.10+ environments; attributes alone do not satisfy submodule import acceptance.
   Feature records: [high-level-api/upstream.md](features/high-level-api/upstream.md).
 
+  Progress: [native namespace implementation unit](features/high-level-api/python-evidence.json)
+  passes 46 installed Linux/CPython 3.10 cases, including fresh direct Rust parity,
+  original downstream workbenches/Designer recipes and common-token cancellation.
+  One-extension wheel/discovery/typing/legal payload and both legacy FEC examples
+  pass. Complete native operation-matrix reconciliation remains open.
+
 <a id="int-cli-01"></a>
 - [ ] **INT-CLI-01** Add upstream commands to the existing CLI.
   Requirements: [REQ-COM-IDENTITY-01](../requirements.md#req-com-identity-01), [REQ-DS-API-01](../requirements.md#req-ds-api-01).

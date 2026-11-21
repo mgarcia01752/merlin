@@ -560,6 +560,91 @@
       "source": "crates/morgana/tests/measured_experiment.rs",
       "destination": "crates/pnm-input/tests/upstream_association.rs",
       "source_sha256": "7f7355a43410b4385705ce371bf4817a247d0d04984c56e6a9a6da818509b8e2"
+    },
+    {
+      "source": "bindings/python/src/capture.rs",
+      "destination": "bindings/python/src/upstream/capture.rs",
+      "source_sha256": "643d3f7851fdc66a83096e93493d6b85acee7c84c6f7b0965a966692baeb7167"
+    },
+    {
+      "source": "bindings/python/src/configuration.rs",
+      "destination": "bindings/python/src/upstream/configuration.rs",
+      "source_sha256": "0787e1934f2bc69cb1e3b2c7fb34d91664e51bd1fc4bffccaac000e955b33406"
+    },
+    {
+      "source": "bindings/python/src/document.rs",
+      "destination": "bindings/python/src/upstream/document.rs",
+      "source_sha256": "b0ce424e6c96b5b213038403ddd2b08600aad9b600369be12b2ee5a49a7b8cee"
+    },
+    {
+      "source": "bindings/python/src/measurements.rs",
+      "destination": "bindings/python/src/upstream/measurements.rs",
+      "source_sha256": "7ba2e5809d73427f69787d5524e0ea26055913cc11e2304342307b81389dd82f"
+    },
+    {
+      "source": "bindings/python/src/reports.rs",
+      "destination": "bindings/python/src/upstream/reports.rs",
+      "source_sha256": "be245e9ccdb64f3069de9dfa18aa9b196c91c952922f575fc710cecb1e9901a1"
+    },
+    {
+      "source": "bindings/python/src/simulation.rs",
+      "destination": "bindings/python/src/upstream/simulation.rs",
+      "source_sha256": "e5a009988e084898c7be2893c5b296df36636e2b48d35fdb47d6dcff6d622296"
+    },
+    {
+      "source": "bindings/python/python/morgana/__init__.pyi",
+      "destination": "bindings/python/python/merlin/upstream.pyi",
+      "source_sha256": "e8bad9f2ed62f7bbe06b2658ad6fd28fafcf63a1c373fe371516c8c236646265"
+    },
+    {
+      "source": "crates/morgana/examples/upstream_loop.rs",
+      "destination": "crates/ofdma/examples/upstream_loop.rs",
+      "source_sha256": "0ce97739858a70f9848b26d835de754fd5a40284cfcc478f578d9f972689bc48"
+    },
+    {
+      "source": "crates/morgana/examples/upstream_measurements.rs",
+      "destination": "crates/ofdma/examples/upstream_measurements.rs",
+      "source_sha256": "d5bfbfd6e9706730529722c3a7cae6bc4b0720243684b785d2fb484874463605"
+    },
+    {
+      "source": "crates/morgana/examples/upstream_document.rs",
+      "destination": "crates/ofdma/examples/upstream_document.rs",
+      "source_sha256": "7312bf6e0823f97382d64adb29d27cdbabd82a19c09cd1a420d0ad6a1f619da6"
+    },
+    {
+      "source": "crates/morgana/examples/upstream_captures.rs",
+      "destination": "crates/pnm-input/examples/upstream_captures.rs",
+      "source_sha256": "7463d86c3b8770bcc39c07d0bb3ced6be766cf471f2f08fc86ffa9af7748b169"
+    },
+    {
+      "source": "crates/morgana/examples/inspect_ucd.rs",
+      "destination": "crates/pnm-input/examples/inspect_ucd.rs",
+      "source_sha256": "1a5ad8eb7ac03f31cca7b5815c428b2b5647bd203367f9d284cdf4ccc734e64e"
+    },
+    {
+      "source": "crates/morgana/examples/inspect_rxmer.rs",
+      "destination": "crates/pnm-input/examples/inspect_rxmer.rs",
+      "source_sha256": "3d5b6a75d95cff94ce96b477889300806b94549d939002cb4ec84ee0e03be795"
+    },
+    {
+      "source": "bindings/python/tests/test_experiment.py",
+      "destination": "bindings/python/tests/test_upstream_experiment.py",
+      "source_sha256": "bd0e747b1626f9d19f3755648d868adf2c84b07e87d2e6eafb19e2e8ecabf038"
+    },
+    {
+      "source": "bindings/python/tests/test_capture.py",
+      "destination": "bindings/python/tests/test_upstream_capture.py",
+      "source_sha256": "b5b96912439add26f35db24168135901fb2c3d92c2cd0368e33d31abae115066"
+    },
+    {
+      "source": "bindings/python/tests/test_rxmer_capture.py",
+      "destination": "bindings/python/tests/test_upstream_rxmer_capture.py",
+      "source_sha256": "adce0e60b9fe9c7db252ff8ed21edb820ef0ba05c24d5ae4c60334fc378f1b5b"
+    },
+    {
+      "source": "bindings/python/tests/test_measured.py",
+      "destination": "bindings/python/tests/test_upstream_measured.py",
+      "source_sha256": "b69d29f4e79ec8af2dccc07a93f2f4cc872d8c45ce155116cc2031f49b220d07"
     }
   ]
 }

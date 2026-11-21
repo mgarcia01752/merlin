@@ -114,3 +114,9 @@ Copyright 2026 MORGANA contributors. Changes: native MERLIN ownership, explicit
 MERLIN schema names, reuse of the exact pinned PNM typed/fixed-point decoder,
 and added cross-minor coefficient checks. Per-file hashes are in the same
 source-files.json inventory. Original physical input bytes are not rewritten.
+
+Native upstream Python adapters/stubs/tests and reference examples adapt the
+same pinned MORGANA Apache-2.0 source revision. Original copyrights are retained.
+Changes: MERLIN namespaces, facade/input ownership, shared error/control mapping
+and installed-package compatibility/typing checks. Per-file source origins and
+hashes remain in docs/development/features/ofdma/source-files.json.

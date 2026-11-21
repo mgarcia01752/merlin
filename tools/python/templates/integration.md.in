@@ -10,7 +10,13 @@ there is no separate MERLIN desktop application or CLI prerequisite.
 | `merlin-ofdm` | Python distribution name used by pip and dependency metadata |
 | `merlin` | Module imported by Python code |
 | MERLIN Git tag/commit | Source revision from which a wheel is built |
-| `merlin*.so` / Windows `.pyd` | Native extension loaded into the Python process |
+| `merlin/_native*.so` / Windows `.pyd` | One private native extension loaded into the Python process |
+
+The unified source checkout provides real `merlin.downstream`, `merlin.upstream`
+and `merlin.common` modules. Root `merlin.Simulation` remains downstream; the legacy
+`merlin.merlin` path re-exports those same objects. These namespaces require a wheel
+built from this checkout; a matching version/tag alone does not prove that a
+published artifact contains the current source changes.
 
 `pymerlin` is not the package/import name implemented in this checkout. Python
 calls the Rust API directly through the extension; it does not launch a binary

@@ -28,6 +28,13 @@ impl PyRunControl {
     fn cancel(&self) {
         self.0.cancel();
     }
+    /// Reads the shared Rust stop request without changing it.
+    ///
+    /// # Returns
+    /// True after cancellation by any clone; a fresh control starts false.
+    fn is_cancelled(&self) -> bool {
+        self.0.is_cancelled()
+    }
 }
 /// Single-channel simulation session; create empty or supply a validated OCD.
 ///

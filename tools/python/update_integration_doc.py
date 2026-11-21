@@ -53,7 +53,10 @@ def render(root):
     if cargo_field(manifest, 'version') != version:
         raise ValueError('Python adapter version does not match VERSION')
     project = checked_path(root, 'bindings/python/pyproject.toml').read_text()
-    if cargo_field(project, 'name') != 'merlin-ofdm' or 'module-name = "merlin"' not in project:
+    if (cargo_field(project, 'name') != 'merlin-ofdm'
+            or 'module-name = "merlin._native"' not in project
+            or 'python-source = "python"' not in project
+            or 'name = "_native"' not in manifest):
         raise ValueError('Python package/import names changed; update integration template')
     template = checked_path(root, TEMPLATE).read_text(encoding='utf-8')
     if '{{VERSION}}' not in template:

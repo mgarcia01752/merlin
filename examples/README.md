@@ -26,3 +26,7 @@ compatible profile selection are documented in the
 [API examples](api/README.md#custom-designed-rxmer).
 
 [Upstream configuration fixtures](cli/upstream/README.md) exercise typed Rust admission and bounded runs.
+
+The unified API pair uses [Rust](../crates/merlin/examples/upstream_session.rs) and
+[Python](api/python/run_upstream.py) over the same bounded upstream configuration.
+Both discover inventory through Rust and preserve existing downstream examples.

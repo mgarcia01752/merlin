@@ -12,6 +12,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
 BINDING = ROOT / "bindings/python"
@@ -94,6 +95,24 @@ def windows_build_environment(environment):
     return result
 
 
+def validate_notices(wheel, destination):
+    """Require every generated legal file, with unchanged bytes, in the wheel.
+
+    Args:
+        wheel: Newly built native archive.
+        destination: Reviewed staging directory containing the complete notices.
+    Raises:
+        ValueError for omitted or changed legal files before writing a checksum.
+    """
+    with zipfile.ZipFile(wheel) as archive:
+        for source in destination.rglob('*'):
+            if not source.is_file():
+                continue
+            member = 'target/wheel-notices/' + source.relative_to(destination).as_posix()
+            if member not in archive.namelist() or archive.read(member) != source.read_bytes():
+                raise ValueError(f"Wheel lacks unchanged generated notice: {member}")
+
+
 def main():
     """Collect reproducible legal assets, then invoke pinned local maturin.
 
@@ -109,8 +128,11 @@ def main():
         parser.error("Native wheel release targets are Linux/Windows x64")
     if not (sys.platform.startswith("linux") or sys.platform == "win32"):
         parser.error("Native wheel release targets are Linux/Windows x64")
-    destination = BINDING / "target/wheel-notices"
-    if any(parent.is_symlink() for parent in [BINDING, BINDING / "target", destination]):
+    # Pinned maturin 1.8.3 resolves wheel include globs from python-source.
+    # Keep the archive's existing target/wheel-notices paths and ignored staging.
+    destination = BINDING / "python/target/wheel-notices"
+    if any(parent.is_symlink() for parent in
+           [BINDING, BINDING / "python", BINDING / "python/target", destination]):
         raise ValueError("Refuse redirected notice staging")
     if destination.exists():
         if not (destination / "manifest.json").is_file():
@@ -138,6 +160,7 @@ def main():
                                  args.out.resolve(), sys.platform),
                    cwd=ROOT, env=environment, check=True)
     for wheel in args.out.glob("merlin_ofdm-*.whl"):
+        validate_notices(wheel, destination)
         digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
         wheel.with_suffix(wheel.suffix + ".sha256").write_text(
             f"{digest}  {wheel.name}\n", encoding="utf-8")

@@ -11,7 +11,8 @@ mod receiver;
 mod reports;
 mod rxmer_export;
 mod workbench;
-use docsis_ofdm_fec::api;
+use merlin::downstream as api;
+mod upstream;
 use pyo3::exceptions::PyException;
 use pyo3::prelude::*;
 pyo3::create_exception!(
@@ -49,10 +50,16 @@ pub(crate) fn object_from_json(py: Python<'_>, json: &str) -> PyResult<Py<PyAny>
 /// # Errors
 /// Propagates Python allocation/registration failures.
 #[pymodule]
-fn merlin(module: &Bound<'_, PyModule>) -> PyResult<()> {
+fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add("__version__", env!("CARGO_PKG_VERSION"))?;
     module.add_class::<PyErrorCode>()?;
     module.add("ApiError", module.py().get_type::<ApiError>())?;
+    for name in ["field", "offset", "legacy_code"] {
+        module
+            .py()
+            .get_type::<ApiError>()
+            .setattr(name, module.py().None())?;
+    }
     quantities::register(module)?;
     inputs::register(module)?;
     receiver::register(module)?;
@@ -60,6 +67,7 @@ fn merlin(module: &Bound<'_, PyModule>) -> PyResult<()> {
     reports::register(module)?;
     controller::register(module)?;
     workbench::register(module)?;
+    upstream::register(module)?;
     Ok(())
 }
 

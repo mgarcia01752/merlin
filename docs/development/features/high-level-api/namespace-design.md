@@ -22,8 +22,8 @@ rustdoc and `pub use` declarations only: no science, controllers, input decoding
 conversion, validation, lifecycle implementation or result reshaping.
 
 The Rust facade and common contract leaf are now implemented after accepted
-upstream and measured prerequisites. Python package paths below remain planned
-until INT-PY-01. The implementation unit and validation record below identify
+upstream and measured prerequisites. Python package paths below are implemented and pass the installed namespace
+unit; INT-PY-01 remains open for complete native operation coverage. The implementation unit and validation record below identify
 current exports; complete Rust operation coverage is recorded in the matrix acceptance below.
 
 | Cargo package | Library name / directory | Ownership and permitted dependencies |
@@ -36,7 +36,7 @@ current exports; complete Rust operation coverage is recorded in the matrix acce
 | `fec-codec` (existing) | `fec_codec`, `crates/fec-codec` | Existing shared mechanisms and separate normative code families. No new facade/API dependency. |
 | `pnm-input` (existing) | `pnm_input`, `crates/pnm-input` | Native file/capture adapter; existing downstream and pinned parser, implemented upstream; neither PHY points back here. |
 | `ofdm-fec-cli` (existing) | Existing `ofdm-fec` binary, `crates/cli` | Adapter uses public direction APIs/facade and native input; retains syntax/output/exit statuses. |
-| `merlin-python` (existing) | Planned private extension `_native`, `bindings/python` | One PyO3 extension, depends on facade plus native input. Distribution metadata remains `merlin-ofdm`; public Python import root remains `merlin`. Internal library/module rename is tested as a packaging change, not a second extension/distribution. |
+| `merlin-python` (existing) | Implemented private extension `_native`, `bindings/python` | One PyO3 extension, depends on facade plus native input. Distribution metadata remains `merlin-ofdm`; public Python import root remains `merlin`. Internal library/module rename is tested as a packaging change, not a second extension/distribution. |
 
 All new project packages use canonical VERSION, currently 0.4.0, edition 2021,
 Rust 1.85 and Apache-2.0. Keep scientific crates `forbid(unsafe_code)`. Explicit
@@ -90,9 +90,9 @@ paths remain planned; solid core/input edges already exist.
 ```mermaid
 flowchart TD
     USER[External Rust application] --> ROOT[merlin facade]
-    PY[merlin Python package / one private extension] -.-> ROOT
+    PY[merlin Python package / one private extension] --> ROOT
     CLI[Existing CLI] -.-> ROOT
-    PY -.-> INPUT[pnm-input]
+    PY --> INPUT[pnm-input]
     CLI -.-> INPUT
     ROOT --> DS[docsis-ofdm-fec]
     ROOT --> US[docsis-ofdma]
@@ -229,7 +229,7 @@ as approval of hypothetical universal `Configuration`/`Report` types or pause su
 | `crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context` | Same common control cancels actual bounded native Rust loops and preserves their completed science. | REQ-COM-LIFE-02, REQ-COM-API-07; INT-RUST-01. |
 | `bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity` | All three real modules import outside checkout; root and downstream class identity and every original export/signature/default/error match. | REQ-COM-API-08/09, REQ-DS-API-01; INT-PY-01. |
 | `bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload` | `importlib.util.find_spec`, `pkgutil`, `.pyi`, `py.typed` and one extension are present in installed wheel. | REQ-COM-API-08; INT-PY-01. |
-| `bindings/python/tests/test_upstream_parity.py::UpstreamParity.test_native_direction_runs` | Native upstream values/errors/results/provenance/lifetime/control agree with direct Rust; no PyO3/stub-only acceptance. | REQ-US-API-02, REQ-COM-API-05; INT-PY-01. |
+| `bindings/python/tests/test_upstream_experiment.py::NativeTests.test_independently_executed_rust_and_python_scientific_parity` | Native upstream values/errors/results/provenance/lifetime/control agree with direct Rust; no PyO3/stub-only acceptance. | REQ-US-API-02, REQ-COM-API-05; INT-PY-01. |
 | Existing downstream suites / examples | Retain all old Rust public paths, direct engine parity, native imports, saved workbenches/Designer recipes and current interpreter-lock/Busy/owned partial results. | REQ-DS-API-01; INT-RUST-01/INT-PY-01/INT-REG-01. |
 
 Run feature-isolation Cargo checks for each facade direction, common-only mode,
@@ -255,7 +255,7 @@ Remove no existing public export, record, test, scientific implementation or fix
 
 The selected mapping remains approved, with namespace implementation evidence
 below. Planning/FEC remain completed. INT-RUST-01 now has complete Rust
-operation coverage; Python namespaces still wait for INT-PY-01. Changes to the
+operation coverage; Python namespace execution now passes the [installed unit](python-evidence.json); complete native operation traceability remains INT-PY-01. Changes to the
 selected package names/common export set require a compatible design update.
 No upstream Qt implementation or release/publication is authorized.
 

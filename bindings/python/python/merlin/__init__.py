@@ -1,0 +1,72 @@
+#
+# Copyright 2026 DOCSIS OFDM Channel Sim contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+"""One native MERLIN distribution; root classes retain downstream behavior."""
+from ._native import (
+    ApiError,
+    AssociationTolerance,
+    BandwidthHz,
+    BatchReport,
+    BatchStatus,
+    BitCount,
+    BitErrorRatio,
+    CaptureTime,
+    CarrierCount,
+    CarrierMer,
+    CarrierRange,
+    ChannelEstimate,
+    ChannelEstimateId,
+    ChannelSelection,
+    CodewordCount,
+    ComplexResponse,
+    CyclicPrefixSamples,
+    DPD,
+    DataModulation,
+    ElapsedTime,
+    ErrorCode,
+    EvaluationOptions,
+    ExperimentEntry,
+    ExperimentId,
+    FecReport,
+    FrequencyHz,
+    InterleaverDepth,
+    IterationLimit,
+    LinearPower,
+    MerDb,
+    Merlin,
+    NoiseSeed,
+    OCD,
+    ObservationDuration,
+    OcdConfiguration,
+    OcdOverrides,
+    PayloadRate,
+    PerformanceReport,
+    PrbsSeed,
+    ProfileId,
+    ProfilePerformance,
+    ProtocolScope,
+    ReceiverMode,
+    ResponseImaginary,
+    ResponseReal,
+    RetainedWordLimit,
+    RollOffSamples,
+    RunControl,
+    RunLimits,
+    RunStatus,
+    RuntimeLimit,
+    RxMer,
+    RxMerId,
+    RxMerSelection,
+    SampleCount,
+    Simulation,
+    SubcarrierIndex,
+    Weight,
+    Workbench,
+)
+from ._native import __version__
+
+__all__ = ['__version__', 'ErrorCode', 'ApiError', 'ProfileId', 'CaptureTime', 'AssociationTolerance', 'ObservationDuration', 'RuntimeLimit', 'NoiseSeed', 'PrbsSeed', 'IterationLimit', 'RetainedWordLimit', 'FrequencyHz', 'BandwidthHz', 'CyclicPrefixSamples', 'RollOffSamples', 'InterleaverDepth', 'SubcarrierIndex', 'CarrierCount', 'MerDb', 'Weight', 'OcdConfiguration', 'ComplexResponse', 'ProtocolScope', 'DataModulation', 'DPD', 'RxMer', 'ChannelEstimate', 'OcdOverrides', 'OCD', 'CarrierRange', 'ReceiverMode', 'RxMerId', 'ChannelEstimateId', 'RxMerSelection', 'ChannelSelection', 'RunLimits', 'EvaluationOptions', 'ResponseReal', 'ResponseImaginary', 'ExperimentId', 'BatchStatus', 'RunStatus', 'BatchReport', 'ExperimentEntry', 'PerformanceReport', 'FecReport', 'ProfilePerformance', 'CarrierMer', 'CodewordCount', 'BitCount', 'SampleCount', 'ElapsedTime', 'BitErrorRatio', 'PayloadRate', 'LinearPower', 'RunControl', 'Simulation', 'Merlin', 'Workbench', 'common', 'downstream', 'upstream']
+
+from . import common, downstream, upstream
+from . import merlin as merlin

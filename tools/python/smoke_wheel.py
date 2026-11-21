@@ -60,6 +60,14 @@ def inspect_wheel(wheel, version, python_tag, platform_tag):
         binaries = [name for name in names if name.endswith(('.so', '.pyd'))]
         if len(binaries) != 1 or not binaries[0].endswith(extension):
             raise ValueError("Wheel is missing its expected single native extension")
+        if not binaries[0].startswith('merlin/_native'):
+            raise ValueError("Wheel must contain its single private native extension")
+        for required in ('__init__.py', 'downstream.py', 'upstream.py', 'common.py', 'merlin.py',
+                         '__init__.pyi', 'downstream.pyi', 'upstream.pyi', 'common.pyi', 'merlin.pyi', 'py.typed'):
+            if f'merlin/{required}' not in names:
+                raise ValueError(f"Wheel lacks namespace/typing payload: {required}")
+        if any('__pycache__' in name or name.endswith('.pyc') for name in names):
+            raise ValueError("Wheel contains generated Python bytecode")
         for required in ('MERLIN-LICENSE', 'MERLIN-NOTICE', 'manifest.json'):
             if f'target/wheel-notices/{required}' not in names:
                 raise ValueError(f"Wheel lacks required notices: {required}")
@@ -127,7 +135,7 @@ def main():
             # Verify import resolves inside the fresh environment and has the source version.
             probe = ("import merlin,sys; from pathlib import Path; "
                      f"assert merlin.__version__ == {version!r}; "
-                     "native=getattr(merlin,'merlin',merlin); "
+                     "native=getattr(merlin,'_native',getattr(merlin,'merlin',merlin)); "
                      "assert Path(native.__file__).resolve().is_relative_to(Path(sys.prefix).resolve()); "
                      "print(native.__file__)")
             imported = subprocess.run([str(executable), '-I', '-c', probe], cwd=isolated,

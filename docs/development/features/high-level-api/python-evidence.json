@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "completion_authority": "docs/development/checklist.md",
+  "records": [
+    {
+      "requirement_id": "REQ-US-API-02",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/upstream.md#int-py-01-native-namespace-implementation-unit",
+      "checklist_task": "INT-PY-01",
+      "implementing_crate": "merlin-python",
+      "source_file": "bindings/python/src/upstream/simulation.rs",
+      "symbol": "PySimulation::execute",
+      "test_file": "bindings/python/tests/test_upstream_experiment.py",
+      "qualified_test_case": "NativeTests.test_independently_executed_rust_and_python_scientific_parity",
+      "validation_command": "docs/development/local/unified-backend/python-namespace-integration/installed/bin/python -I -B -m unittest discover -s /home/dev01/Projects/merlin/bindings/python/tests -v (working directory and complete reference environment in python-test-results.json)",
+      "observed_result": "pass; 46 actual installed-wheel cases including this exact case, with fresh direct Rust references",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/python-candidate.json",
+        "sha256": "c2575907cfde6a3992eff08ed11024ef5c3b543414e3bc41ed3386b2ac0e1e5f"
+      },
+      "status": "integrated-validated namespace implementation unit; INT-PY-01 remains open for complete native operation traceability",
+      "limitations": "Only local Linux x86_64 CPython 3.10 runtime tested. Python 3.10+ remains declared source support; Windows and other interpreters require their native gates."
+    },
+    {
+      "requirement_id": "REQ-COM-API-04",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/upstream.md#int-py-01-native-namespace-implementation-unit",
+      "checklist_task": "INT-PY-01",
+      "implementing_crate": "merlin-python",
+      "source_file": "bindings/python/src/upstream/simulation.rs",
+      "symbol": "PySimulation::execute",
+      "test_file": "bindings/python/tests/test_namespaces.py",
+      "qualified_test_case": "NamespaceImports.test_common_control_bridge",
+      "validation_command": "docs/development/local/unified-backend/python-namespace-integration/installed/bin/python -I -B -m unittest discover -s /home/dev01/Projects/merlin/bindings/python/tests -v (working directory and complete reference environment in python-test-results.json)",
+      "observed_result": "pass; 46 actual installed-wheel cases including this exact case, with fresh direct Rust references",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/python-candidate.json",
+        "sha256": "c2575907cfde6a3992eff08ed11024ef5c3b543414e3bc41ed3386b2ac0e1e5f"
+      },
+      "status": "integrated-validated namespace implementation unit; INT-PY-01 remains open for complete native operation traceability",
+      "limitations": "Only local Linux x86_64 CPython 3.10 runtime tested. Python 3.10+ remains declared source support; Windows and other interpreters require their native gates."
+    },
+    {
+      "requirement_id": "REQ-COM-API-05",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/upstream.md#int-py-01-native-namespace-implementation-unit",
+      "checklist_task": "INT-PY-01",
+      "implementing_crate": "merlin-python",
+      "source_file": "bindings/python/src/upstream/mod.rs",
+      "symbol": "error",
+      "test_file": "bindings/python/tests/test_upstream_rxmer_capture.py",
+      "qualified_test_case": "RxmerCaptureTests.test_native_unknown_metadata_and_structured_rejections",
+      "validation_command": "docs/development/local/unified-backend/python-namespace-integration/installed/bin/python -I -B -m unittest discover -s /home/dev01/Projects/merlin/bindings/python/tests -v (working directory and complete reference environment in python-test-results.json)",
+      "observed_result": "pass; 46 actual installed-wheel cases including this exact case, with fresh direct Rust references",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/python-candidate.json",
+        "sha256": "c2575907cfde6a3992eff08ed11024ef5c3b543414e3bc41ed3386b2ac0e1e5f"
+      },
+      "status": "integrated-validated namespace implementation unit; INT-PY-01 remains open for complete native operation traceability",
+      "limitations": "Only local Linux x86_64 CPython 3.10 runtime tested. Python 3.10+ remains declared source support; Windows and other interpreters require their native gates."
+    },
+    {
+      "requirement_id": "REQ-DS-API-01",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/upstream.md#int-py-01-native-namespace-implementation-unit",
+      "checklist_task": "INT-PY-01",
+      "implementing_crate": "merlin-python",
+      "source_file": "bindings/python/src/lib.rs",
+      "symbol": "_native",
+      "test_file": "bindings/python/tests/test_workbench.py",
+      "qualified_test_case": "WorkbenchTests.test_actual_saved_run_owned_results_and_rust_ui_parity",
+      "validation_command": "docs/development/local/unified-backend/python-namespace-integration/installed/bin/python -I -B -m unittest discover -s /home/dev01/Projects/merlin/bindings/python/tests -v (working directory and complete reference environment in python-test-results.json)",
+      "observed_result": "pass; 46 actual installed-wheel cases including this exact case, with fresh direct Rust references",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/python-candidate.json",
+        "sha256": "c2575907cfde6a3992eff08ed11024ef5c3b543414e3bc41ed3386b2ac0e1e5f"
+      },
+      "status": "integrated-validated namespace implementation unit; INT-PY-01 remains open for complete native operation traceability",
+      "limitations": "Only local Linux x86_64 CPython 3.10 runtime tested. Python 3.10+ remains declared source support; Windows and other interpreters require their native gates."
+    },
+    {
+      "requirement_id": "REQ-COM-API-08",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/upstream.md#int-py-01-native-namespace-implementation-unit",
+      "checklist_task": "INT-PY-01",
+      "implementing_crate": "merlin-python",
+      "source_file": "bindings/python/src/lib.rs",
+      "symbol": "_native",
+      "test_file": "bindings/python/tests/test_namespaces.py",
+      "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload",
+      "validation_command": "docs/development/local/unified-backend/python-namespace-integration/installed/bin/python -I -B -m unittest discover -s /home/dev01/Projects/merlin/bindings/python/tests -v (working directory and complete reference environment in python-test-results.json)",
+      "observed_result": "pass; 46 actual installed-wheel cases including this exact case, with fresh direct Rust references",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/python-candidate.json",
+        "sha256": "c2575907cfde6a3992eff08ed11024ef5c3b543414e3bc41ed3386b2ac0e1e5f"
+      },
+      "status": "integrated-validated namespace implementation unit; INT-PY-01 remains open for complete native operation traceability",
+      "limitations": "Only local Linux x86_64 CPython 3.10 runtime tested. Python 3.10+ remains declared source support; Windows and other interpreters require their native gates."
+    }
+  ],
+  "installed_wheel_smoke": {
+    "status": "passed",
+    "platform": "linux",
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "extension": "merlin/_native.cpython-310-x86_64-linux-gnu.so",
+    "wheel": "merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "imported_native": "/tmp/merlin-wheel-test-u4ghavw4/venv/lib/python3.10/site-packages/merlin/_native.cpython-310-x86_64-linux-gnu.so",
+    "example_elapsed_seconds": 1.482827713014558,
+    "examples": [
+      {
+        "name": "run_single_capture.py",
+        "elapsed_seconds": 0.7227350980101619
+      },
+      {
+        "name": "run_single_capture_cm_chan_est.py",
+        "elapsed_seconds": 0.7600926150043961
+      }
+    ],
+    "stdout": "RunStatus.Complete\nTotal: 82\nCorrected: 0\nUncorrectable: 0\nBER: 0.000e+00\n",
+    "stderr": "",
+    "sha256": "85bc94aabef79206b699e49bd6125c49b039335a75a5ea151916115cafc13db5",
+    "elapsed_seconds": 5.148884911992354
+  },
+  "other_checks": [
+    "19 Python tooling unit cases passed, including exact legal-byte omission/change rejection and single-binary/namespace payload negatives.",
+    "Native adapter all-target Clippy with -D warnings passed; workspace/binding format checks and facade/OFDMA/PNM all-target Clippy passed.",
+    "Paired unified upstream Rust/Python example completed: 1976 compared source bits, zero bit errors, complete reference recovery; actual Rust-discovered profiles [5,13]."
+  ]
+}

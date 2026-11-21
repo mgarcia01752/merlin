@@ -19,6 +19,27 @@ WB = ROOT / "examples/workbench/multi-rxmer-2/workbench.merlin.json"
 UI_FEC = [(83, 0, 0), (114, 5, 0), (124, 19, 0)]
 
 
+def controller_relative_sources(sources):
+    """Compare opaque controller identities by relationships across processes.
+
+    Scope numbers come from each process's controller counter. Preserve slots,
+    scope equality/distinctness, policies and all other source metadata exactly.
+    """
+    scopes = {}
+
+    def relative(value):
+        if isinstance(value, list):
+            return [relative(item) for item in value]
+        if isinstance(value, dict):
+            if set(value) == {"scope", "slot"}:
+                scope = scopes.setdefault(value["scope"], len(scopes))
+                return {"scope": scope, "slot": value["slot"]}
+            return {key: relative(value[key]) for key in sorted(value)}
+        return value
+
+    return relative(sources)
+
+
 class WorkbenchTests(unittest.TestCase):
     def test_self_contained_file_bytes_and_copied_settings(self):
         """Load away from fixture paths without running or reading sidecar captures."""
@@ -86,8 +107,10 @@ class WorkbenchTests(unittest.TestCase):
                 self.assertEqual(actual["status"], expected["status"])
                 for got, want in zip(actual["entries"], expected["entries"]):
                     self.assertEqual(got["status"], want["status"])
-                    for key in ("fec", "all_completed_fec", "profile", "options", "sources"):
+                    for key in ("fec", "all_completed_fec", "profile", "options"):
                         self.assertEqual(got["report"][key], want["report"][key])
+                    self.assertEqual(controller_relative_sources(got["report"]["sources"]),
+                                     controller_relative_sources(want["report"]["sources"]))
 
     def test_other_python_thread_can_cancel_and_later_profiles_are_not_started(self):
         """GIL release lets a caller cancel native work and retain all profile entries."""
