@@ -265,6 +265,8 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-channel-and-measurement-reference-planes).
   Depends on: INT-US-TX-01.
   Acceptance: Unity is bitwise exact including signed zero/metadata/no-RNG; causal FIR, AWGN, restricted RxMER residual, integer delay/phase/CFO pass independent samples/powers, chunk/seed/observation/drain and whole-schedule rejection tests. Preserve source composition restrictions.
+  Progress: [channel implementation unit](features/ofdma/design.md#int-us-ch-01-channel-implementation-unit)
+  passes locally; full-schedule and observer acceptance remains open.
   Feature records: [ofdma/channel.md](features/ofdma/channel.md).
 
 <a id="int-us-rx-01"></a>

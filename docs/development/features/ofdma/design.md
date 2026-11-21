@@ -128,3 +128,46 @@ Private outputs: `docs/development/local/unified-backend/tx-integration/`.
 The combined task remains unchecked; full JSON/source-field/session and later
 received-only loop acceptance are not inferred. The
 [user guide](../../../user/upstream/transmitter.md) describes the current stages.
+
+## INT-US-CH-01: channel implementation unit
+
+TX checkpoint `72c9145` supplies the typed waveform. Adapt source
+`crates/phy/src/channel/{mod,stream,residual}.rs` into matching OFDMA owners.
+Inputs are contiguous finite indexed blocks with run/generation/grant identity;
+outputs preserve the sample clock, checked causal drain and actual coverage.
+Keep H separate from transmitter C and the restricted RxMER residual reference.
+
+| Source symbol | Contract / evidence | Gap | Decision / destination |
+| --- | --- | --- | --- |
+| `ChannelConfig`, `Channel::{new,push,finish}` | Exact unity bypass including signed zero; causal FIR→AWGN→delay→phase/CFO; independent convolution/noise/chunk tests | Local composition | ADAPT `crates/ofdma/src/channel/stream.rs` unchanged scientific operation/draw order; SEPARATE from downstream filter/state |
+| `RxmerChannel::{new,push}` | Symbol-conditioned residual draws in physical-bin order; immutable playback; whole-call retry | Local residual transport | ADAPT `crates/ofdma/src/channel/residual.rs`; SHARE transform only; composition restrictions remain high-level admission |
+| `RxmerPlayback`, `PreEqPlayback` | Power-domain average/hold/interpolation, corresponding-probe Set/Adjust bases | Local schedule evidence | REUSE implemented typed measurement owners; preserve nulls, complete banks and future-event rejection |
+
+Add original independent `channel_models`, `rxmer_channel` and
+`measurement_playback` cases with unchanged expectations. Add only exact pinned
+rand 0.9.5, rand_chacha 0.9.0 and rand_distr 0.5.1 dependencies already present
+in MERLIN; no compiler upgrade or new algorithm dependency. RNG state and stream
+history commit only after complete block validation. A failed push leaves all
+accepted state intact. Sample-count and retained-frame bounds remain explicit.
+
+### Channel unit validation
+
+[Candidate fingerprint](channel-candidate.json) records base `72c9145`, SHA-256
+`40191833b516a4a22b8726d98abb0f55cb5109479d31b41e2c3e152d2db28d81`.
+`test -p docsis-ofdma --offline` passed 27 cases, one explicit benchmark ignored;
+Clippy all targets with warnings denied and formatting passed. Exact pinned
+existing dependencies were resolved locally; the lock diff adds only the three
+OFDMA RNG edges and changes no package identity/version/checksum.
+
+Source-independent acceptance cases in `crates/ofdma/tests/`:
+`channel_models.rs::literal_convolution_delay_phase_and_exact_drain_order`,
+`channel_models.rs::exact_unity_signed_zeros_and_pinned_noise_chunk_invariance`,
+`channel_models.rs::rejected_blocks_preserve_history_rng_cursor_and_terminal_state`,
+`rxmer_channel.rs::every_bin_draw_order_actual_useful_samples_and_chunk_retry_invariance`,
+`measurement_playback.rs::literal_power_average_hold_interpolation_nulls_and_boundaries`,
+`measurement_playback.rs::snapshots_replace_and_adjustments_use_explicit_older_probe_base`.
+Expectations and original source hashes remain unchanged.
+
+Private output: `docs/development/local/unified-backend/channel-integration/rust-tests.log`.
+High-level full-schedule/observer acceptance remains pending and the task stays
+unchecked. [User guide](../../../user/upstream/channel.md).

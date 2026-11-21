@@ -7,3 +7,5 @@ Combined waveform execution, facade imports, Python namespaces and CLI
 operations follow their acceptance gates; this page does not claim those are
 already available. The [official checklist](../../development/checklist.md#unified-backend-integration)
 tracks delivery.
+
+[Typed channel simulator and measurement reference planes](channel.md).

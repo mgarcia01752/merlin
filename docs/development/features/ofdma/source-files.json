@@ -280,6 +280,36 @@
       "source": "crates/phy/tests/transmit_window.rs",
       "destination": "crates/ofdma/tests/transmit_window.rs",
       "source_sha256": "9c9802fb870db96ebad6a2ce7584c2e6f77bf5f9994c60640ebfa3a40b5de858"
+    },
+    {
+      "source": "crates/phy/src/channel/mod.rs",
+      "destination": "crates/ofdma/src/channel/mod.rs",
+      "source_sha256": "5282921e1c26d8a8e1a7cbbfbd35b71ec0317cb90920f2b7023d0ef091388fae"
+    },
+    {
+      "source": "crates/phy/src/channel/residual.rs",
+      "destination": "crates/ofdma/src/channel/residual.rs",
+      "source_sha256": "6d86f4ed08b8dd07f28c8c03c6d19c67f10246336594997f803f0d69f1a87dad"
+    },
+    {
+      "source": "crates/phy/src/channel/stream.rs",
+      "destination": "crates/ofdma/src/channel/stream.rs",
+      "source_sha256": "f2ff310ad2a28c5fcda67cc897d9697c9f1a62c34c5861a647a6b9e40e8c2185"
+    },
+    {
+      "source": "crates/phy/tests/channel_models.rs",
+      "destination": "crates/ofdma/tests/channel_models.rs",
+      "source_sha256": "3b39d8361d8453c3c81adedae9666dd28857ad2baa8ae9d3632aeadfab8f1f03"
+    },
+    {
+      "source": "crates/phy/tests/rxmer_channel.rs",
+      "destination": "crates/ofdma/tests/rxmer_channel.rs",
+      "source_sha256": "eb350a489fd357d5001b751640f11e8f2ac96ff818e48ba8debbd40542c61b93"
+    },
+    {
+      "source": "crates/phy/tests/measurement_playback.rs",
+      "destination": "crates/ofdma/tests/measurement_playback.rs",
+      "source_sha256": "95bba23c92970fc1e0206c42dfcba76327056af4f9915419779b69c23f3957f3"
     }
   ]
 }

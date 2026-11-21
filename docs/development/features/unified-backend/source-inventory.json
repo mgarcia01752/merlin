@@ -5588,61 +5588,61 @@
             "requirement": "REQ-US-CH-01",
             "kind": "module",
             "path": "crates/ofdma/src/channel/stream.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CH-01",
             "kind": "test",
             "path": "crates/ofdma/tests/channel_models.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CH-02",
             "kind": "module",
             "path": "crates/ofdma/src/channel/stream.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CH-02",
             "kind": "test",
             "path": "crates/ofdma/tests/channel_models.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CH-03",
             "kind": "module",
             "path": "crates/ofdma/src/channel/stream.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CH-03",
             "kind": "test",
             "path": "crates/ofdma/tests/channel_models.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CH-04",
             "kind": "module",
             "path": "crates/ofdma/src/channel/residual.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CH-04",
             "kind": "test",
             "path": "crates/ofdma/tests/rxmer_channel.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CH-05",
             "kind": "module",
             "path": "crates/ofdma/src/channel/stream.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CH-05",
             "kind": "test",
             "path": "crates/ofdma/tests/channel_models.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CH-06",

@@ -14,6 +14,10 @@ fec-codec = { path = "../fec-codec" }
 merlin-dsp = { path = "../dsp" }
 serde = { version = "=1.0.228", features = ["derive"] }
 
+rand = "=0.9.5"
+rand_chacha = "=0.9.0"
+rand_distr = "=0.5.1"
+
 [lints.rust]
 unsafe_code = "forbid"
 missing_docs = "deny"

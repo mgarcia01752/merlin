@@ -274,7 +274,9 @@ Delivery gates: [INT-US-TX-01](development/checklist.md#int-us-tx-01), [INT-US-R
 Typed upstream TX composition is implemented, with stage tests recorded in
 [the implementation record](development/features/ofdma/design.md#int-us-tx-01-transmitter-implementation-unit).
 Combined CONFIG/TX acceptance remains open until document/session gates pass.
-Channel and normal RX composition below remain **planned for MERLIN**; standalone LDPC
+Typed channel transport and restricted residual playback are implemented with
+[local channel evidence](development/features/ofdma/design.md#int-us-ch-01-channel-implementation-unit).
+Normal RX composition below remains **planned for MERLIN**; standalone LDPC
 encoding/decoding now has the codec owners and acceptance identified below. The retained
 [stage contracts](development/features/unified-backend/references/upstream-stage-contracts.md)
 preserve detailed scientific definitions, source equations/tables, reference
@@ -390,35 +392,35 @@ Requirement: [REQ-US-TX-08](requirements.md#req-us-tx-08); delivery: **INT-US-TX
 
 Channel admission must validate finite indexed sample blocks, clock, identities, continuity and budgets before changing state.
 
-Add (planned) owner: `crates/ofdma/src/channel/stream.rs`; acceptance tests: `crates/ofdma/tests/channel_models.rs`.
+Implemented owner: `crates/ofdma/src/channel/stream.rs`; acceptance tests: `crates/ofdma/tests/channel_models.rs`.
 Requirement: [REQ-US-CH-01](requirements.md#req-us-ch-01); delivery: **INT-US-CH-01**.
 
 ### US-CH-02: Exact unity transport
 
 Initial unity transport must preserve sample bit patterns and metadata exactly without impairments or random draws.
 
-Add (planned) owner: `crates/ofdma/src/channel/stream.rs`; acceptance tests: `crates/ofdma/tests/channel_models.rs`.
+Implemented owner: `crates/ofdma/src/channel/stream.rs`; acceptance tests: `crates/ofdma/tests/channel_models.rs`.
 Requirement: [REQ-US-CH-02](requirements.md#req-us-ch-02); delivery: **INT-US-CH-01**.
 
 ### US-CH-03: Physical channel response
 
 The response extension must apply the declared causal synthetic complex FIR without implicit normalization, circular wrap or per-symbol resets.
 
-Add (planned) owner: `crates/ofdma/src/channel/stream.rs`; acceptance tests: `crates/ofdma/tests/channel_models.rs`.
+Implemented owner: `crates/ofdma/src/channel/stream.rs`; acceptance tests: `crates/ofdma/tests/channel_models.rs`.
 Requirement: [REQ-US-CH-03](requirements.md#req-us-ch-03); delivery: **INT-US-CH-01**.
 
 ### US-CH-04: AWGN and restricted RxMER residuals
 
 Residual synthesis must offer explicit Off, sample-AWGN and restricted RxMER-derived modes using separate deterministic noise state and declared reference power.
 
-Add (planned) owner: `crates/ofdma/src/channel/residual.rs`; acceptance tests: `crates/ofdma/tests/rxmer_channel.rs`.
+Implemented owner: `crates/ofdma/src/channel/residual.rs`; acceptance tests: `crates/ofdma/tests/rxmer_channel.rs`.
 Requirement: [REQ-US-CH-04](requirements.md#req-us-ch-04); delivery: **INT-US-CH-01**.
 
 ### US-CH-05: Integer timing, phase and CFO
 
 The timing extension must implement only the designed integer delay, constant phase and CFO with emitted-sample-clock continuity.
 
-Add (planned) owner: `crates/ofdma/src/channel/stream.rs`; acceptance tests: `crates/ofdma/tests/channel_models.rs`.
+Implemented owner: `crates/ofdma/src/channel/stream.rs`; acceptance tests: `crates/ofdma/tests/channel_models.rs`.
 Requirement: [REQ-US-CH-05](requirements.md#req-us-ch-05); delivery: **INT-US-CH-01**.
 
 ### US-CH-06: Output and passive observations

@@ -6,6 +6,7 @@
 #![forbid(unsafe_code)]
 
 pub mod bit_processing;
+pub mod channel;
 pub mod configuration;
 mod error;
 pub mod grant;
