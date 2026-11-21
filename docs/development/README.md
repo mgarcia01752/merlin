@@ -1,5 +1,7 @@
 # MERLIN development workspace
 
+The [selected namespace mapping](features/high-level-api/namespace-design.md) fixes the literal Rust root, common contract leaf and real Python package layout; namespace runtime acceptance remains separate.
+
 This is the working home for ongoing development and its published documentation.
 Start with the [status](status.md), [checklist](checklist.md) and
 [architecture](../architecture.md), then use the feature records for design history.
@@ -10,6 +12,9 @@ acceptance in both directions. The [unified backend consolidation](features/unif
 links the [complete source review](features/unified-backend/source-review.md),
 [integration gates](checklist.md#unified-backend-integration) and
 [documentation validation](features/unified-backend/validation.md).
+The [shared DSP design](features/signal-processing/design.md#int-dsp-01-implementation-slice) and
+[validation record](features/signal-processing/validation.md) track the next numerical integration step.
+
 The [pre-import baseline](features/unified-backend/baseline.md),
 [reuse review](features/unified-backend/reuse-review.md) and
 [standalone upstream LDPC acceptance](features/unified-backend/fec-validation.md)

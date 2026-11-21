@@ -1,5 +1,7 @@
 # Backend master prompt preflight and traceability
 
+Later decision: the [selected exact namespace design](../high-level-api/namespace-design.md) resolves the initial facade/common/Python alternatives below. The preflight results and completed planning/FEC history remain a historical checkpoint; namespace implementation stays gated.
+
 Delivery: [INT-PLAN-01](../../checklist.md#int-plan-01). Design authority remains
 [architecture](../../../architecture.md#requirements-and-historical-evidence-ownership),
 behavior remains in [requirements](../../../requirements.md#backend-master-prompt-additions),

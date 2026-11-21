@@ -1,5 +1,7 @@
 # Converged public Rust and native Python APIs
 
+The [selected exact namespace mapping](namespace-design.md) uses a minimal `merlin` facade, independent PHY owners, a neutral common contract leaf and one real Python package. [INT-API-MAP-01](../../checklist.md#int-api-map-01) records the design decision; public exports still await their runtime gates.
+
 Active feature detail, subordinate to [canonical architecture](../../../architecture.md#unified-rust-python-and-cli-apis).
 The [requirements baseline](../../../requirements.md) owns mandatory behavior; the
 [official checklist](../../checklist.md) owns completion. [DOC-ORG-01](../../checklist.md#doc-org-01) accepts

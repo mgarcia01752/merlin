@@ -18,11 +18,18 @@ Follow that planned/current distinction rather than retaining source facade name
 or forcing upstream algorithms into downstream-specific models. Final paths and
 API/user documentation require INT-DOC-02 acceptance after actual integration.
 
+The [selected namespace mapping](../../docs/development/features/high-level-api/namespace-design.md)
+plans a thin Cargo/library `merlin` facade and independent `merlin-api` contract
+leaf, plus one real Python package with a private native extension. These owners
+remain planned until the API delivery gates; preserve the existing downstream
+exports and root native `merlin.Simulation` without an early placeholder facade.
+
 DOCSIS OFDM Channel Sim owns a standalone Rust simulation core. The native Qt
 interface and optional Python package must call the same algorithms. The canonical Basic Rust API lives under `crates/ofdm/src/api`; the optional
 `bindings/python` adapter calls it directly, independently of Qt and the CLI.
 
-- Put reusable signal-processing operations in crates/ofdm or crates/fec-codec, exposed
+- Put shared numerical kernels in crates/dsp, directional processing in crates/ofdm
+  or the explicitly scoped crates/ofdma, and codecs in crates/fec-codec, exposed
   through documented public Rust modules. CLI or GUI code adapts inputs/results;
   it must not contain a second implementation of a calculation.
 - Use meaningful domain types, explicit units, stable enums with documented

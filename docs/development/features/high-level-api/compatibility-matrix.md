@@ -10,51 +10,24 @@ acceptance. Source inspection took place at `402106f0b85605e38dbc1aa755b3799e693
 
 ## Namespace proposal for review
 
-The current Rust Cargo package is `docsis-ofdm-fec`, Rust library
-`docsis_ofdm_fec`; the `high-level-api` feature enables `api`.
-[Its exports](../../../../crates/ofdm/src/api/mod.rs) include `Simulation`, `Merlin`,
-configuration/input/report/unit types, `ApiError`, `ApiResult`, `ErrorCode`,
-`ReceiverMode`, `SubcarrierSpacing` and `ProtocolScope`.
-Neither `crates/ofdma` nor a Rust `merlin` facade exists at the review baseline.
+The [selected namespace-to-Cargo mapping](namespace-design.md) supersedes the
+initial crate-alias/common-ownership alternatives. The user requires a literal
+`merlin::{downstream,upstream,common}` root. A minimal planned Cargo/library
+`merlin` facade re-exports existing `docsis_ofdm_fec::api`, planned
+`docsis_ofdma::api` and the planned neutral `merlin_api` contracts. This is justified
+by independent PHY usability and exact backward compatibility; neither PHY depends
+on the facade or the other PHY. Common contracts live in their own small leaf,
+never in a downstream-specific owner that upstream must import.
 
-| Logical interface | Proposed exact Rust export / owner | Decision state |
-| --- | --- | --- |
-| Existing downstream | `docsis_ofdm_fec::api::*`, Cargo `docsis-ofdm-fec`, `crates/ofdm/src/api/` | Existing; retain all imports and exact type identity. |
-| Explicit downstream | `docsis_ofdm_fec::downstream::*`, additive `pub use api as downstream` in `crates/ofdm/src/lib.rs` under the same feature gate | Proposed alias; no second engine and no package rename. Approval required before edit. |
-| Explicit upstream | `docsis_ofdma::upstream::*`, proposed Cargo `docsis-ofdma` in `crates/ofdma/Cargo.toml`; alias of its typed `api` module | Proposed; typed stage API first, final convergence after the actual closed loop. |
-| Common contracts | Compatible directional lifecycle/error/report conventions; retain existing downstream `RunControl`, `RunLimits`, errors and reports | No common Rust module exists. Nominal shared types/leaf extraction require semantic evidence and a separately reviewed exact placement; never make upstream depend on downstream. |
-| Optional single Rust root | If review requires literal `merlin::{downstream,upstream,common}`, evaluate a thin `crates/merlin` facade with a separately named Cargo package/library, re-exporting validated owners | Alternative only; no umbrella prerequisite or placeholder crate. Final Cargo/library names are unresolved, not approved. |
-
-The recommended initial topology uses direction crates and compatible contracts.
-The prompt's `merlin` tree is logical, not a claim that this Cargo crate exists.
-The two direction paths above are concrete proposals. Common nominal ownership
-and whether a literal shared root is necessary remain explicit design decisions.
-Present the complete final mapping for approval under master §4.4/§19 before
-compatibility-sensitive exports, including the initial upstream API. No approval
-is inferred from completing INT-PLAN-01 or from earlier migration approval.
-This review does not change the current branch or start INT-DSP-01.
-
-The current Python distribution is `merlin-ofdm`, Cargo package `merlin-python`,
-native library/import `merlin`, with one PyO3 extension. The module registers
-`Simulation` and aliases `Merlin` to it; both are downstream. No `.pyi` or
-`py.typed` file is currently tracked under `bindings/python`. Existing Sphinx
-reference generation inspects actual native classes; it is not a type-stub generator.
-
-| Proposed Python tree | Native dispatch | Import acceptance |
-| --- | --- | --- |
-| `merlin.Simulation`, `merlin.Merlin`, current domain/report classes | Existing downstream Rust, unchanged signatures and type identity | Preserve root imports and legacy aliases. |
-| `merlin.downstream.Simulation` | Alias to the same downstream native class | Proposed; direct imports, identity, discovery and installed wheel checks required. |
-| `merlin.upstream.Simulation` | Planned upstream Rust session, distinct typed UCD/IUC configuration | Proposed; no upstream class exists yet. |
-| Common native objects | Re-export only genuinely compatible types | Proposed; avoid falsely equating directional report/configuration types. |
-
-Evaluate a real Python package with thin `downstream.py` / `upstream.py` modules
-against PyO3 submodule registration. A real-package design would require reviewed
-maturin `module-name`/`python-source` changes and native extension placement; a
-registered design must prove standard imports, `sys.modules`, discovery and wheel
-installation. Select the layout after those checks; attaching attributes alone
-is insufficient. Keep one distribution/extension, Python >=3.10, root imports,
-structured native errors and saved-workbench behavior. No package edits are made
-by this proposal.
+Python uses one existing `merlin-ofdm` distribution and real `merlin` package,
+one private `merlin._native` extension and import-only directional/common modules.
+Root `merlin.Simulation` remains the same downstream native type. New native
+namespaces/classes and type files remain planned; installed-wheel execution is
+required before acceptance. [INT-API-MAP-01](../../checklist.md#int-api-map-01)
+documents the exact mapping; INT-RUST-01/INT-PY-01 still own implementation.
+The complete exports, dependency graph, compatibility behavior, planned common
+signatures and named acceptance tests are in that selected design. This matrix
+continues to own the existing exact session signatures and parity rows below.
 
 ## Existing inventory and ownership
 
@@ -143,8 +116,8 @@ future aliases, submodules or upstream operations. Exact current cases are T1–
 | Direction / operation | Rust / Python namespace and signature | Ownership, units, errors, lifecycle and reports | Requirements / task / evidence |
 | --- | --- | --- | --- |
 | Downstream remaining domain factories, getters, reports, capture/workbench loading/export and diagnostics | Current modules in the inventory above; add exact operation rows before acceptance, preserving all existing signatures | Existing typed defaults/units/schemas, owned native values, create-new exports and idle loading remain binding; no blanket parity claim for unpaired helpers | REQ-DS-API-01, REQ-COM-API-09; INT-RUST-01/INT-PY-01/INT-DOC-02; matrix coverage gap, existing backfill/history retained. |
-| Explicit downstream alias/import | Proposed `docsis_ofdm_fec::downstream`; `merlin.downstream`; no new callable signature selected | Same types/engine; root imports unchanged | REQ-COM-API-07/08; INT-RUST-01/INT-PY-01; planned, no executed evidence. |
-| Upstream configure/validate/prepare | Planned `docsis_ofdma::upstream` and `merlin.upstream`; exact type/method signatures await typed implementation and review | Owned immutable UCD/IUC/grant/source views, explicit grid/units/bounds, received-only RX; load/prepare idle and atomic | REQ-US-API-01/02, REQ-COM-API-03/06/07/08/09; INT-US-CONFIG-01 then INT-RUST-01/INT-PY-01; planned. |
+| Explicit downstream alias/import | Planned `merlin::downstream` facade re-export; real `merlin.downstream` Python module; existing signatures preserved | Same types/engine; root imports unchanged | REQ-COM-API-07/08; INT-RUST-01/INT-PY-01; planned, no executed evidence. |
+| Upstream configure/validate/prepare | Planned `merlin::upstream` re-exporting `docsis_ofdma::api`, and `merlin.upstream`; exact type/method signatures await typed implementation and review | Owned immutable UCD/IUC/grant/source views, explicit grid/units/bounds, received-only RX; load/prepare idle and atomic | REQ-US-API-01/02, REQ-COM-API-03/06/07/08/09; INT-US-CONFIG-01 then INT-RUST-01/INT-PY-01; planned. |
 | Upstream run/report/control | Same planned namespaces; no fabricated `run`/`report`/pause method | Freeze accepted generation; Busy/unsupported/bounds/decoder outcomes and partial reports; pause only after preservation proof | REQ-COM-LIFE-01/02/03, REQ-US-API-01/02; INT-US-LOOP-01 then INT-RUST-01/INT-PY-01; planned. |
 | Upstream capture/discovery/association | Planned upstream Rust and one native package; signatures await verified parsers and accepted plan | Exact bytes/hashes/grid/identity/time/update/reference planes; explicit invalid/unsupported/association status | REQ-US-PNM-01/02/03/04, REQ-COM-API-05/09; INT-PNM-01/02 then INT-RUST-01/INT-PY-01; planned. |
 

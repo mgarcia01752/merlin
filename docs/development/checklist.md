@@ -220,12 +220,21 @@ architecture owner identifies concrete implementation/test paths and disposition
   Feature records: [master prompt review](features/unified-backend/master-prompt-review.md), [API compatibility matrix](features/high-level-api/compatibility-matrix.md).
   Evidence: [preflight verification](features/unified-backend/master-prompt-review.md#preflight-verification).
 
+<a id="int-api-map-01"></a>
+- [x] **INT-API-MAP-01** Finalize the literal unified Rust/Python namespace mapping.
+  Requirements: [REQ-COM-API-07](../requirements.md#req-com-api-07), [REQ-COM-API-08](../requirements.md#req-com-api-08), [REQ-COM-API-09](../requirements.md#req-com-api-09).
+  Architecture/owners/tests: [API ownership](../architecture.md#unified-rust-python-and-cli-apis).
+  Depends on: INT-PLAN-01.
+  Acceptance: Document exact facade/common/PHY Cargo package and library names, acyclic dependencies, public re-exports, preserved downstream type/import/behavior compatibility, one real Python package/extension layout and named installed-wheel/isolation/parity acceptance. This is a design decision only; export/runtime gates remain open.
+  Feature records: [selected namespace design](features/high-level-api/namespace-design.md), [single operation matrix](features/high-level-api/compatibility-matrix.md).
+
 <a id="int-dsp-01"></a>
-- [ ] **INT-DSP-01** Consolidate proven common numerical kernels.
+- [x] **INT-DSP-01** Consolidate proven common numerical kernels.
   Requirements: [REQ-COM-REUSE-01](../requirements.md#req-com-reuse-01).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-shared-dsp-and-fec).
-  Depends on: INT-FEC-01, INT-REUSE-01, INT-PLAN-01.
+  Depends on: INT-FEC-01, INT-REUSE-01, INT-PLAN-01, INT-API-MAP-01.
   Acceptance: Prove FFT/bin/normalization, QAM/LLR, PRBS continuity, channel/noise equivalence for each extracted kernel; benchmark changed hot paths, preserve re-exports and downstream results. Create dsp only if justified; a documented direct-reuse/no-new-crate decision must pass the same equivalence checks.
+  Evidence: [shared kernels and downstream validation](features/signal-processing/validation.md).
   Feature records: [fec/design.md](features/fec/design.md), [signal-processing/design.md](features/signal-processing/design.md).
 
 <a id="int-us-config-01"></a>
@@ -234,7 +243,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-configuration-and-source).
   Depends on: INT-DSP-01.
   Acceptance: Local module registration, supported/domain-valid distinctions, complete source-field coverage and typed idle session foundation pass. Independent grant capacities, all three codeword families, fill/pad/source bookkeeping, PRBS phase/period/seed/range and rejection atomicity pass before waveform use.
-  Before changing public exports: obtain namespace-to-crate mapping approval under [master §4.4/§19](features/high-level-api/compatibility-matrix.md#namespace-proposal-for-review); the preflight does not grant it.
+  Public exports follow the [selected exact mapping](features/high-level-api/namespace-design.md); initial typed upstream stage APIs precede final facade convergence. No empty namespace scaffold.
   Feature records: [ofdma/configuration.md](features/ofdma/configuration.md).
 
 <a id="int-us-tx-01"></a>

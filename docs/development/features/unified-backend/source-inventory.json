@@ -809,12 +809,25 @@
       ]
     },
     {
+      "id": "INT-API-MAP-01",
+      "requirements": [
+        "REQ-COM-API-07",
+        "REQ-COM-API-08",
+        "REQ-COM-API-09"
+      ],
+      "architecture": "unified-rust-python-and-cli-apis",
+      "dependencies": [
+        "INT-PLAN-01"
+      ]
+    },
+    {
       "id": "INT-DSP-01",
       "title": "Consolidate proven common numerical kernels",
       "dependencies": [
         "INT-FEC-01",
         "INT-REUSE-01",
-        "INT-PLAN-01"
+        "INT-PLAN-01",
+        "INT-API-MAP-01"
       ],
       "architecture": "unified-shared-dsp-and-fec",
       "acceptance": "Prove FFT/bin/normalization, QAM/LLR, PRBS continuity, channel/noise equivalence for each extracted kernel; benchmark changed hot paths, preserve re-exports and downstream results. Create dsp only if justified; a documented direct-reuse/no-new-crate decision must pass the same equivalence checks.",
@@ -6759,5 +6772,87 @@
         ]
       }
     ]
+  },
+  "namespace_design": {
+    "path": "docs/development/features/high-level-api/namespace-design.md",
+    "task": "INT-API-MAP-01",
+    "requirements": [
+      "REQ-COM-API-07",
+      "REQ-COM-API-08",
+      "REQ-COM-API-09"
+    ],
+    "dependencies": [
+      "INT-PLAN-01"
+    ],
+    "facade": {
+      "package": "merlin",
+      "library": "merlin",
+      "path": "crates/merlin"
+    },
+    "common": {
+      "package": "merlin-api",
+      "library": "merlin_api",
+      "path": "crates/phy-api"
+    },
+    "upstream": {
+      "package": "docsis-ofdma",
+      "library": "docsis_ofdma",
+      "path": "crates/ofdma"
+    },
+    "python": {
+      "distribution": "merlin-ofdm",
+      "import": "merlin",
+      "extension": "merlin._native",
+      "source": "bindings/python/python/merlin"
+    },
+    "implementation_gates": [
+      "INT-RUST-01",
+      "INT-PY-01"
+    ]
+  },
+  "dsp_integration": {
+    "task": "INT-DSP-01",
+    "requirement": "REQ-COM-REUSE-01",
+    "architecture": "unified-shared-dsp-and-fec",
+    "design": "docs/development/features/signal-processing/design.md",
+    "validation": "docs/development/features/signal-processing/validation.md",
+    "crate": "merlin-dsp",
+    "implementation": [
+      "crates/dsp/src/transform.rs",
+      "crates/dsp/src/prbs15.rs",
+      "crates/ofdm/src/signal_processing/waveform/transform.rs",
+      "crates/ofdm/src/simulation/source/prbs.rs"
+    ],
+    "acceptance_tests": "crates/dsp/tests/equivalence.rs",
+    "base_commit": "37be29ec2d536a96a504211fd49b20152e5555cb",
+    "code_sha256": {
+      "Cargo.lock": "71ead4d733d15115ed02b1a7b39e7963705011e5f36f64246b70a8b60da0dfd5",
+      "Cargo.toml": "3bf98a18a870d78cf4f3c38151c7bb57a3dfc9772f3dee6ecd462c0adbb56ad3",
+      "apps/qt/Cargo.lock": "25e3b9ed097cc9c92daf2afe7768729357cca88c5ddea63e78bd97c44c882f64",
+      "bindings/python/Cargo.lock": "9fa3c2386c6937776b21f266906c88faddcb9e3408f0a4a914e25e5b114eeacb",
+      "crates/dsp/Cargo.toml": "85540051ec63cc6704364ecebf1fd400eebdd9839fea280bc3dba5e7e9c06488",
+      "crates/dsp/src/complex.rs": "4ec8721d0f36ac6f8543eeecb6c3ec278e6ccccef84490611ca6f9b103d66c16",
+      "crates/dsp/src/error.rs": "97244fea42085006e9e4d1fde105ed7c2fa877a098add96e0cba2b60f6c43896",
+      "crates/dsp/src/lib.rs": "6453f380e8961e59cbd2fbae35870c40d8ffb35762a36b01063919b19a3eab8d",
+      "crates/dsp/src/prbs15.rs": "2d7bc63f1dcc3ee760870fdbbe490d995bdd00fa0a79587fe8b9d1913692619e",
+      "crates/dsp/src/transform.rs": "521861e3086d9328ce5aaaba614e1d61a355ce98f95aa32baa2d32010acaaede",
+      "crates/dsp/tests/benchmark.rs": "35c2448ef8b5338b138f342544915e99cbb9fd9f09534dcef7e4a8858b4af619",
+      "crates/dsp/tests/equivalence.rs": "b0239f3f58f5b22f1234a0c13fe5dfd0903776bea21c5a00cee994dc6f158a61",
+      "crates/dsp/tests/support/legacy_transform.rs": "1e0434f4a3e23d87ce2b0ebef626b2f1ec01fa5e16c4e9109ae0a36da40dc15d",
+      "crates/ofdm/Cargo.toml": "6c3a3cc01b5079b4ea18d5ab9c4f5fbbfd0f565348494199af940b82174a834e",
+      "crates/ofdm/src/signal_processing/waveform/transform.rs": "060694a6f308574dc95fbea012ccdbf07b140a4fbb6a7cd319b9b7dd8ca8c82b",
+      "crates/ofdm/src/simulation/source/prbs.rs": "24f91512a733f904c5fbd98269962e999aaac7dd1268fb8d37f05e09b05f1b02",
+      "tools/release/versions.py": "c5adaa74f358b5016d9a015cbeacbb01ae125c489bde3e74824b0e2c7baf5383"
+    },
+    "code_manifest_sha256": "fbc568a61f5d729925d75dbd61cd972f45d900f3f9a8424f26a338cc0140d90a",
+    "scope": "Shared numerical kernels and existing downstream consumers only; upstream stage/runtime acceptance remains separate.",
+    "full_regression_code_manifest_sha256": "64b362dd1dea45252365adfffaae5fb3610cf4078086bd5a2833e9bbcdf27932",
+    "post_regression_documentation": {
+      "path": "crates/dsp/tests/support/legacy_transform.rs",
+      "before_sha256": "65f49cddadf2affef63bc492e09afceef533c8f6d034ce2cb47fa80d41c426c1",
+      "after_sha256": "1e0434f4a3e23d87ce2b0ebef626b2f1ec01fa5e16c4e9109ae0a36da40dc15d",
+      "scope": "Only the frozen test constructor parameter documentation changed; numerical code is identical.",
+      "check": "All six shared-kernel cases rerun successfully; fmt check passes."
+    }
   }
 }

@@ -41,7 +41,11 @@ Its PNM guidance supplements the versioned PHY evidence; it does not replace it.
 
 Use the [canonical unified owner map](../../docs/architecture.md#unified-backend-integration)
 for local paths: existing downstream `crates/ofdm`, existing common `crates/fec-codec`,
-proposed upstream `crates/ofdma` and conditional `crates/dsp`. The stage sections
+proposed upstream `crates/ofdma` and existing `crates/dsp` (`merlin-dsp`). The latter
+owns centered unitary 2K/4K/8K transforms and the one-step PRBS15 recurrence;
+directional geometry, errors, source identity/state and verification remain in
+the PHY wrappers. See [DSP acceptance](../../docs/development/features/signal-processing/validation.md).
+Do not infer upstream stage acceptance from shared-kernel tests. The stage sections
 identify planned leaf modules/tests. Source paths in retained historical contracts
 are provenance, not MERLIN dependencies; INT-DOC-02 must reconcile actual final
 locations after migration. Do not claim proposed paths are callable modules.

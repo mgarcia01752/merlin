@@ -101,7 +101,9 @@ implemented downstream architecture below. The source review is pinned to
 `fa26de619b5d28a442c42e46ad1ed19262a9d08a`. That initial documentation checkpoint
 contained no upstream runtime. The first additive implementation now supplies
 [standalone upstream LDPC](development/features/unified-backend/fec-validation.md)
-in the existing FEC crate; upstream PHY and shared DSP migration remain pending. Source acceptance
+in the existing FEC crate. Shared FFT/PRBS15 kernels now have a numerical leaf in
+`crates/dsp`, with passing [consumer acceptance](development/features/signal-processing/validation.md). Upstream PHY
+migration remains pending. Source acceptance
 reports are historical evidence, never MERLIN integration passes. The
 [requirements baseline](requirements.md), [integration checklist](development/checklist.md#unified-backend-integration)
 and [document dispositions](development/features/unified-backend/source-review.md)
@@ -113,9 +115,11 @@ Delivery gates: [INT-LICENSE-01](development/checklist.md#int-license-01).
 
 | Component | Current owner | Integration design and compatibility |
 | --- | --- | --- |
+| Unified Rust root | Not implemented | Selected thin Cargo/library `merlin` in `crates/merlin`; only re-export direction APIs and common contracts. No scientific implementation or core dependency back to this facade. |
+| Common API contracts | Not extracted | Planned Cargo `merlin-api` / library `merlin_api` in `crates/phy-api`; shared cancellation query/control and existing error categories only. Directional limits/reports/errors remain directional. |
 | Downstream PHY | `crates/ofdm`, Cargo `docsis-ofdm-fec` | Retain package, public imports, control channels, interleavers, waveform, received configuration and report schemas. |
 | Common FEC | `crates/fec-codec` | `src/upstream_ldpc/` now owns upstream definitions/codec and independent source tests; existing BCH, downstream LDPC, shortening, NCP and PLC remain. |
-| Generic DSP | Existing numerical owners in `crates/ofdm/src/signal_processing/` | `crates/dsp` is conditional, not an existing crate. Extract only kernels proven equivalent and valuable by INT-REUSE-01/INT-DSP-01. |
+| Generic DSP | `crates/dsp`, Cargo `merlin-dsp`; existing directional numerical owners retained | Shared centered unitary 2K/4K/8K FFT and one-step PRBS15 recurrence; downstream wrappers preserve geometry/errors/state. Independent/frozen equivalence and hot-path measurements precede consumer rewiring; INT-DSP-01 now has passing consumer acceptance. No generic channel/QAM/measurement state extraction. |
 | Upstream PHY | Not present | Add proposed `crates/ofdma`, package `docsis-ofdma`; collapse source scientific/facade functionality into focused local modules and `src/api/`, not former product crates. |
 | Native measurement input | `crates/pnm-input` | Extend bounded adapters with `src/upstream/`; own binary envelope decoding, file I/O and raw-byte admission; core PHY owns typed observation/configuration semantics. |
 | CLI | `crates/cli`, executable `ofdm-fec` | Add upstream operations via public Rust APIs; retain every existing command and output contract. No second executable. |
@@ -127,27 +131,31 @@ Delivery gates: [INT-LICENSE-01](development/checklist.md#int-license-01).
 API and `pnm-input`. The independent Qt adapter retains its current dependencies.
 The downstream `pnm-input` Cargo feature is not a dependency back to the adapter.
 
-**Proposed dependency direction (all dashed paths remain planned):**
+**Selected dependency direction (dashed edges remain planned):**
 
 ```mermaid
 flowchart TD
-    CLI[Existing CLI] -.-> DS[Downstream PHY]
-    CLI -.-> US[Proposed upstream PHY]
-    PY[Existing native Python adapter] -.-> DS
-    PY -.-> US
-    PY -.-> INPUT[Native PNM input adapter]
-    INPUT -.-> DS
+    CLI[Existing CLI] -.-> ROOT[Selected merlin facade]
+    PY[Existing native Python adapter] -.-> ROOT
+    ROOT -.-> DS[Downstream PHY]
+    ROOT -.-> US[Proposed upstream PHY]
+    ROOT -.-> API[Planned merlin-api contracts]
+    DS -.-> API
+    US -.-> API
+    PY --> INPUT[Native PNM input adapter]
+    CLI -.-> INPUT
+    INPUT --> DS
     INPUT -.-> US
-    INPUT -.-> PNM[Exact pinned PNM decoder]
-    DS -.-> FEC[Common FEC mechanisms and separate code definitions]
+    INPUT --> PNM[Exact pinned PNM decoder]
+    DS --> FEC[Common FEC mechanisms and separate code definitions]
     US -.-> FEC
-    DS -.-> DSP[Conditional generic DSP kernels]
+    DS --> DSP[Shared numerical DSP kernels]
     US -.-> DSP
 ```
 
 No core PHY/FEC/DSP depends on CLI, Python, Qt, native input adapter or another
 checkout. There is no cycle from PHY back to `pnm-input`. The planned API modules
-live with their respective PHY ownership; a new umbrella crate is not required.
+live with their respective PHY ownership; the selected literal public root uses the thin facade described below.
 All scientific algorithms/dependencies remain safe Rust. Optional downstream
 analysis-only builds and existing feature behavior remain supported.
 
@@ -158,6 +166,15 @@ and [shared numerical conventions](development/features/signal-processing/design
 Their documentation acceptance does not close pending DSP extraction.
 
 Delivery gates: [INT-REUSE-01](development/checklist.md#int-reuse-01), [INT-FEC-01](development/checklist.md#int-fec-01), [INT-DSP-01](development/checklist.md#int-dsp-01).
+
+Shared numerical evidence is recorded in [DSP integration validation](development/features/signal-processing/validation.md).
+`merlin_dsp::transform::{TransformPlan,TransformSize}` owns only bounded array math;
+downstream `waveform::transform` retains mode selection and exact error mapping.
+`merlin_dsp::prbs15::step` owns one recurrence transition; source owners retain
+seed/absolute position, resource validation, identity and independent verifier policy.
+Source-stage wrappers remain planned until their own migration gates pass. The
+[frozen former-kernel fixture](../crates/dsp/tests/support/legacy_transform.rs)
+is test-only equivalence evidence, separate from independent Fourier/PRBS checks.
 
 FEC mechanisms may share sparse adjacency, systematic encoder plans, bounded
 decoder setup/iteration accounting and syndrome operations only where semantics
@@ -553,18 +570,30 @@ lifecycle/error/provenance conventions where semantics match. The existing
 `merlin.Simulation` remains valid; an upstream controller is additive and does
 not force one giant configuration or rename downstream exports. Final public
 names/signatures require the INT-RUST-01 compatibility review before implementation.
-A new universal controller/umbrella crate is not an acceptance prerequisite.
+The literal unified `merlin` root is now provided by a selected minimal re-export facade; it owns no controller, science, input parsing or lifecycle implementation.
 
-Explicit downstream/upstream Rust namespaces are now required by
-[REQ-COM-API-07](requirements.md#req-com-api-07), while the existing Cargo package
-`docsis-ofdm-fec` and `docsis_ofdm_fec::api` exports remain compatible.
-The [namespace proposal and operation matrix](development/features/high-level-api/compatibility-matrix.md)
-distinguish current symbols, proposed aliases and unresolved common leaf ownership.
-The logical `merlin` tree in the prompt is not evidence of an existing Rust crate.
-Present the final namespace-to-crate mapping for approval before any
-compatibility-sensitive export change, including initial upstream API work.
-INT-RUST-01 owns final convergence; upstream typed sessions still accompany stages
-and reach real closed-loop acceptance first. Do not skip those dependencies.
+The [selected exact namespace design](development/features/high-level-api/namespace-design.md)
+is recorded by [INT-API-MAP-01](development/checklist.md#int-api-map-01), refining
+[REQ-COM-API-07](requirements.md#req-com-api-07),
+[REQ-COM-API-08](requirements.md#req-com-api-08) and
+[REQ-COM-API-09](requirements.md#req-com-api-09). Planned Cargo `merlin` / library
+`merlin` in `crates/merlin` re-exports `docsis_ofdm_fec::api::*` under `downstream`,
+`docsis_ofdma::api::*` under `upstream`, and genuinely shared contracts from planned
+Cargo `merlin-api` / library `merlin_api` in `crates/phy-api` under `common`.
+The existing downstream Cargo package/library and every `api::*` import remain.
+Both PHYs depend only on common leaf owners, never on each other or the facade.
+Direction-isolation facade features retain independent core/analysis-only builds.
+A Cargo alias alone cannot assemble two PHY owners under one literal root.
+
+Initial shared contracts are cancellation/query and unchanged error categories;
+directional limits/configuration/engine errors/reports remain directional. Existing
+`RunControl` and `ErrorCode` paths survive through re-exports after common extraction
+is validated. The design keeps current public AtomicBool engine entrypoints while
+adapting their internal cancellation query; it exposes no mutable shared flag.
+No namespace placeholder is introduced by documentation. Initial upstream typed
+sessions accompany stages; real closed-loop acceptance precedes INT-RUST-01 facade
+convergence and INT-PY-01 native exposure. The [operation matrix](development/features/high-level-api/compatibility-matrix.md)
+retains exact method/evidence ownership.
 
 Planned direct Rust contract/parity acceptance is
 `crates/ofdma/tests/api_parity.rs`, alongside `crates/ofdma/tests/closed_loop.rs`.
@@ -584,7 +613,11 @@ upstream document needs explicit version/migration and both language consumers.
 Retain root `merlin.Simulation`/`merlin.Merlin` downstream compatibility and the
 existing distribution. Evaluate real packages versus registered native submodules
 through discovery, typing, wheel and installed Python 3.10+ checks; adding module
-attributes alone cannot satisfy the import contract.
+attributes alone cannot satisfy the import contract. The selected layout is a real
+`merlin` package with one private `merlin._native` extension and import-only
+`downstream.py`, `upstream.py`, `common.py`, matching stubs and `py.typed`. Preserve
+root native class identities, distribution metadata `merlin-ofdm` and old imports.
+Installed-wheel imports must run in fresh processes outside the source checkout.
 [REQ-COM-API-09](requirements.md#req-com-api-09) owns the single compatibility matrix.
 
 Add upstream CLI dispatch under `crates/cli/src/commands/upstream.rs` and

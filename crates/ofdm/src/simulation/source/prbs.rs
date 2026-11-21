@@ -87,9 +87,8 @@ impl Prbs15 {
     }
 
     fn next_bit(&mut self) -> u8 {
-        let output = (self.state & 1) as u8;
-        let feedback = (self.state ^ (self.state >> (PRBS15_DEGREE - 1))) & 1;
-        self.state = (self.state >> 1) | (feedback << (PRBS15_DEGREE - 1));
+        let (next_register, output) = merlin_dsp::prbs15::step(self.state);
+        self.state = next_register;
         self.position += 1;
         output
     }

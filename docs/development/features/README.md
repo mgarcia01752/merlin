@@ -1,5 +1,7 @@
 # Feature development records
 
+The [selected Rust/Python namespace mapping](high-level-api/namespace-design.md) documents the thin facade rationale, exact Cargo owners and installed-wheel compatibility gates.
+
 Engineering responsibilities organize this index; established feature directories
 and their original paths remain intact. The [architecture](../../architecture.md),
 [requirements baseline](../../requirements.md) and [official checklist](../checklist.md)
@@ -12,7 +14,7 @@ Historical records keep their original findings, paths and limits; consult curre
 canonical task states before interpreting old pending/complete statements. Private
 evidence stays under ignored `docs/development/local/` and is not linked as a shipped artifact.
 
-New functional owners: [FEC](fec/design.md), [DSP](signal-processing/design.md),
+New functional owners: [FEC](fec/design.md), [DSP](signal-processing/design.md) ([validation](signal-processing/validation.md)),
 [OFDMA configuration](ofdma/configuration.md), [TX](ofdma/transmitter.md),
 [RX](ofdma/receiver.md), [channel](ofdma/channel.md), [Pre-Eq](ofdma/pre-equalization.md),
 [upstream PNM](pnm-measurement-inputs/upstream.md) and [paired APIs](high-level-api/upstream.md).
