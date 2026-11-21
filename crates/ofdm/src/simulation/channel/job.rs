@@ -178,6 +178,7 @@ pub fn run_channel_controlled(
 ///
 /// # Errors
 /// Propagates the same admission/construction failures as run_channel.
+#[cfg(feature = "high-level-api")]
 pub(crate) fn run_channel_with_cancellation(
     settings: &ChannelRunSettings,
     limits: &ChannelJobLimits,

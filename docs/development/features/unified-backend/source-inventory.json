@@ -6918,7 +6918,8 @@
       "docs/development/features/high-level-api/python-evidence.json",
       "docs/development/features/high-level-api/python-operation-evidence.json",
       "docs/development/features/high-level-api/cli-evidence.json",
-      "docs/development/features/unified-backend/tooling-evidence.json"
+      "docs/development/features/unified-backend/tooling-evidence.json",
+      "docs/development/features/unified-backend/regression-evidence.json"
     ],
     "execution_files": [
       "docs/development/features/ofdma/session-test-results.json",
@@ -6929,7 +6930,8 @@
       "docs/development/features/high-level-api/python-test-results.json",
       "docs/development/features/high-level-api/python-operation-test-results.json",
       "docs/development/features/high-level-api/cli-test-results.json",
-      "docs/development/features/unified-backend/tooling-test-results.json"
+      "docs/development/features/unified-backend/tooling-test-results.json",
+      "docs/development/features/unified-backend/regression-test-results.json"
     ]
   }
 }

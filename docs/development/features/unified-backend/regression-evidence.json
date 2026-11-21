@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "completion_authority": "docs/development/checklist.md",
+  "records": [
+    {
+      "requirement_id": "REQ-DS-FEC-01",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-reg-01-unified-backend-regression",
+      "checklist_task": "INT-REG-01",
+      "implementing_crate": "fec-codec",
+      "source_file": "crates/fec-codec/src/concatenated.rs",
+      "symbol": "ConcatenatedCodec::decode_noiseless",
+      "test_file": "crates/fec-codec/tests/concatenated.rs",
+      "qualified_test_case": "isolated_encode_reverse_decode_and_compare_reuses_one_codec",
+      "validation_command": "scripts/test-local.sh all",
+      "observed_result": "pass; 605 workspace, 4 preparation and 139 analysis-only cases; twelve API workflows, Rustdoc phases and static checks. Actual unchanged downstream Qt build/Rust/QML compatibility passes; fresh accepted 48-case installed-native parity retained.",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/regression-candidate.json",
+        "sha256": "39c568e875baa4c2ae455cc7403ad52e590b400c74432f31c0f190812a68021d"
+      },
+      "status": "integrated-validated INT-REG-01",
+      "limitations": "Local Linux x86_64 Rust 1.85.1 / CPython 3.10 / Qt 6.8.3 only. Three explicitly ignored benchmarks are not correctness evidence; doctest phases contain zero tests. No external modem/CMTS interoperability, Windows/hosted/native-installer or upstream Qt claim. Timings are host observations, not throughput guarantees."
+    },
+    {
+      "requirement_id": "REQ-DS-PHY-01",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-reg-01-unified-backend-regression",
+      "checklist_task": "INT-REG-01",
+      "implementing_crate": "docsis-ofdm-fec",
+      "source_file": "crates/ofdm/src/simulation/waveform/reference.rs",
+      "symbol": "run_reference_waveform",
+      "test_file": "crates/ofdm/tests/waveform_integration.rs",
+      "qualified_test_case": "actual_two_frame_waveform_recovers_pilots_plc_and_configuration_with_zero_errors",
+      "validation_command": "scripts/test-local.sh all",
+      "observed_result": "pass; 605 workspace, 4 preparation and 139 analysis-only cases; twelve API workflows, Rustdoc phases and static checks. Actual unchanged downstream Qt build/Rust/QML compatibility passes; fresh accepted 48-case installed-native parity retained.",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/regression-candidate.json",
+        "sha256": "39c568e875baa4c2ae455cc7403ad52e590b400c74432f31c0f190812a68021d"
+      },
+      "status": "integrated-validated INT-REG-01",
+      "limitations": "Local Linux x86_64 Rust 1.85.1 / CPython 3.10 / Qt 6.8.3 only. Three explicitly ignored benchmarks are not correctness evidence; doctest phases contain zero tests. No external modem/CMTS interoperability, Windows/hosted/native-installer or upstream Qt claim. Timings are host observations, not throughput guarantees."
+    },
+    {
+      "requirement_id": "REQ-DS-RUN-01",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-reg-01-unified-backend-regression",
+      "checklist_task": "INT-REG-01",
+      "implementing_crate": "docsis-ofdm-fec",
+      "source_file": "crates/ofdm/src/simulation/channel/job.rs",
+      "symbol": "run_channel_controlled",
+      "test_file": "crates/ofdm/tests/channel_job.rs",
+      "qualified_test_case": "cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+      "validation_command": "scripts/test-local.sh all",
+      "observed_result": "pass; 605 workspace, 4 preparation and 139 analysis-only cases; twelve API workflows, Rustdoc phases and static checks. Actual unchanged downstream Qt build/Rust/QML compatibility passes; fresh accepted 48-case installed-native parity retained.",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/regression-candidate.json",
+        "sha256": "39c568e875baa4c2ae455cc7403ad52e590b400c74432f31c0f190812a68021d"
+      },
+      "status": "integrated-validated INT-REG-01",
+      "limitations": "Local Linux x86_64 Rust 1.85.1 / CPython 3.10 / Qt 6.8.3 only. Three explicitly ignored benchmarks are not correctness evidence; doctest phases contain zero tests. No external modem/CMTS interoperability, Windows/hosted/native-installer or upstream Qt claim. Timings are host observations, not throughput guarantees."
+    },
+    {
+      "requirement_id": "REQ-DS-INPUT-01",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-reg-01-unified-backend-regression",
+      "checklist_task": "INT-REG-01",
+      "implementing_crate": "pnm-input",
+      "source_file": "crates/pnm-input/src/lib.rs",
+      "symbol": "CaptureLoader::profile_ids",
+      "test_file": "crates/pnm-input/tests/high_level_api.rs",
+      "qualified_test_case": "profile_catalog_discovery_matches_core_json_and_binary_without_selection",
+      "validation_command": "scripts/test-local.sh all",
+      "observed_result": "pass; 605 workspace, 4 preparation and 139 analysis-only cases; twelve API workflows, Rustdoc phases and static checks. Actual unchanged downstream Qt build/Rust/QML compatibility passes; fresh accepted 48-case installed-native parity retained.",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/regression-candidate.json",
+        "sha256": "39c568e875baa4c2ae455cc7403ad52e590b400c74432f31c0f190812a68021d"
+      },
+      "status": "integrated-validated INT-REG-01",
+      "limitations": "Local Linux x86_64 Rust 1.85.1 / CPython 3.10 / Qt 6.8.3 only. Three explicitly ignored benchmarks are not correctness evidence; doctest phases contain zero tests. No external modem/CMTS interoperability, Windows/hosted/native-installer or upstream Qt claim. Timings are host observations, not throughput guarantees."
+    },
+    {
+      "requirement_id": "REQ-DS-API-01",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-reg-01-unified-backend-regression",
+      "checklist_task": "INT-REG-01",
+      "implementing_crate": "docsis-ofdm-fec",
+      "source_file": "crates/ofdm/src/api/simulation.rs",
+      "symbol": "Simulation::run",
+      "test_file": "crates/merlin/tests/namespaces.rs",
+      "qualified_test_case": "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+      "validation_command": "scripts/test-local.sh all",
+      "observed_result": "pass; 605 workspace, 4 preparation and 139 analysis-only cases; twelve API workflows, Rustdoc phases and static checks. Actual unchanged downstream Qt build/Rust/QML compatibility passes; fresh accepted 48-case installed-native parity retained.",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/regression-candidate.json",
+        "sha256": "39c568e875baa4c2ae455cc7403ad52e590b400c74432f31c0f190812a68021d"
+      },
+      "status": "integrated-validated INT-REG-01",
+      "limitations": "Local Linux x86_64 Rust 1.85.1 / CPython 3.10 / Qt 6.8.3 only. Three explicitly ignored benchmarks are not correctness evidence; doctest phases contain zero tests. No external modem/CMTS interoperability, Windows/hosted/native-installer or upstream Qt claim. Timings are host observations, not throughput guarantees."
+    },
+    {
+      "requirement_id": "REQ-DS-UI-01",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-reg-01-unified-backend-regression",
+      "checklist_task": "INT-REG-01",
+      "implementing_crate": "pnm-input",
+      "source_file": "crates/pnm-input/src/workbench.rs",
+      "symbol": "Workbench::run",
+      "test_file": "crates/pnm-input/tests/workbench.rs",
+      "qualified_test_case": "real_saved_workbench_fec_matches_independently_observed_native_ui",
+      "validation_command": "scripts/test-local.sh all",
+      "observed_result": "pass; 605 workspace, 4 preparation and 139 analysis-only cases; twelve API workflows, Rustdoc phases and static checks. Actual unchanged downstream Qt build/Rust/QML compatibility passes; fresh accepted 48-case installed-native parity retained.",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/regression-candidate.json",
+        "sha256": "39c568e875baa4c2ae455cc7403ad52e590b400c74432f31c0f190812a68021d"
+      },
+      "status": "integrated-validated INT-REG-01",
+      "limitations": "Local Linux x86_64 Rust 1.85.1 / CPython 3.10 / Qt 6.8.3 only. Three explicitly ignored benchmarks are not correctness evidence; doctest phases contain zero tests. No external modem/CMTS interoperability, Windows/hosted/native-installer or upstream Qt claim. Timings are host observations, not throughput guarantees."
+    }
+  ],
+  "workspace_cases": 605,
+  "analysis_only_cases": 139,
+  "preparation_cases": 4,
+  "api_workflows": 12,
+  "qt_rust_cases": 87,
+  "qt_qml_cases": 89,
+  "native_cases_retained": 48,
+  "scope": "Full integration regressions inside MERLIN. Existing downstream history and source evidence remain preserved; only the official checklist owns completion."
+}

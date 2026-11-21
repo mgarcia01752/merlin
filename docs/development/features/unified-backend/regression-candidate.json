@@ -1,0 +1,3335 @@
+{
+  "base_revision": "95e2ac53a98b66f46b0726f298cd118ba9580822",
+  "scope": "Complete tracked scientific/native/Qt sources, source fixtures, Cargo manifests/locks and test driver at final regression; single private helper cfg guard matches its high-level-api-only callers. Documentation-only reconciliation follows separately.",
+  "sha256": "39c568e875baa4c2ae455cc7403ad52e590b400c74432f31c0f190812a68021d",
+  "files": [
+    {
+      "path": ".config/nextest.toml",
+      "sha256": "ff9bb8ed8b3c60302632ea0272d33bcefab3e6a13767cddce8bad9bcf791fce3"
+    },
+    {
+      "path": "Cargo.lock",
+      "sha256": "7997979cae4e897cebb5105e596bd9a3f08886b59b31edd343eb9a23a37d983b"
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "b5e39e32f9aa95fa350d9746ca16e568def1b1a56d14dee2d7196cf1513de88d"
+    },
+    {
+      "path": "VERSION",
+      "sha256": "40b8eb4000a913a7791090535f291d3d369874162a89ef3c9e3d4e887a1b9e79"
+    },
+    {
+      "path": "apps/qt/Cargo.lock",
+      "sha256": "422d6c10ffb606dc97d1c8279ae5b95ee5065596c47390c2aade37379e6ebdd3"
+    },
+    {
+      "path": "apps/qt/Cargo.toml",
+      "sha256": "819e5f8c8b03af75653516e5efc35592db3abf8745e3ca56874c1b02749e546d"
+    },
+    {
+      "path": "apps/qt/LICENSE",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "path": "apps/qt/NOTICE",
+      "sha256": "f2a601f4a1492a524508077d7ab57b23e4dc514627c9057d5b9a911609ffbcd8"
+    },
+    {
+      "path": "apps/qt/branding.qrc",
+      "sha256": "fdfc44bdc1f243108b08f52d8e9e4bbf5abb9191c2782fc153857fb7e81b20fd"
+    },
+    {
+      "path": "apps/qt/build.rs",
+      "sha256": "e5c3c6afc9d502439512f045a344814835a08bbf41b6702e68e54ba21a0fbf9b"
+    },
+    {
+      "path": "apps/qt/merlin.desktop.in",
+      "sha256": "69a6c302b0c744bcd435d46360a9b5bde7dcb731cc9bbaa875066aa13db7f708"
+    },
+    {
+      "path": "apps/qt/qml/Main.qml",
+      "sha256": "b3b80d2e88b9fbddf26e24866110001a3282a7b2bdab45379192065a19a52d3f"
+    },
+    {
+      "path": "apps/qt/qml/about/AboutDialog.qml",
+      "sha256": "7e99d2e1a4d6bae7e72a387d543fb10d74cdd2867a4687240e8256215b3e822f"
+    },
+    {
+      "path": "apps/qt/qml/about/FaqDialog.qml",
+      "sha256": "645b7a6125e714ee79ef30b79d1d6a6b34de002b6daf436d804f052e40b4cb34"
+    },
+    {
+      "path": "apps/qt/qml/about/LicenseDialog.qml",
+      "sha256": "5afa3ef24cf4479e84ec7816074b45810ad68cfae72aff03a9c7aa5b35e3a85b"
+    },
+    {
+      "path": "apps/qt/qml/components/ApplyCancelFooter.qml",
+      "sha256": "ad5a1a737496c315d3e2f0e07f56be6933f2bad7c7298e873eeba51949d5fe3b"
+    },
+    {
+      "path": "apps/qt/qml/components/ChartNavigation.qml",
+      "sha256": "f3a8cafb94b90ab629f3a6f99b7b5ab2a6e3e22abb55388e689bccb035983107"
+    },
+    {
+      "path": "apps/qt/qml/components/Connection.qml",
+      "sha256": "5e5e55c978b4319d7b8796599c8de9a6e7b698c54ede94876dba45c56a1ae59e"
+    },
+    {
+      "path": "apps/qt/qml/components/ContextualStatus.qml",
+      "sha256": "117cc28b9f9d6f95b80018cda8b0fc7c57c8450cfcc28b3f9647d503f4674406"
+    },
+    {
+      "path": "apps/qt/qml/components/ReceiverChip.qml",
+      "sha256": "82c1f703d63ac27b334c0671689c6aa9c978e73a9ca33df0fa5ed4b1889ca22f"
+    },
+    {
+      "path": "apps/qt/qml/components/StageChip.qml",
+      "sha256": "02781aab7ca2176ed434a2f1b8965844d583f3317790c2f282610da419f3741b"
+    },
+    {
+      "path": "apps/qt/qml/components/TlvTreeGrid.qml",
+      "sha256": "202c178bafeca4dd7f3f633122a5e2590012f4eea327a2552250d79f2790542e"
+    },
+    {
+      "path": "apps/qt/qml/components/WorkbenchActionButton.qml",
+      "sha256": "46b75f9dd54915377795493f5c5cd014326e1fa8bd6c08b10f3c74015569903f"
+    },
+    {
+      "path": "apps/qt/qml/components/WorkbenchBlock.qml",
+      "sha256": "9795f822b5ab3be13ee0c647df54a736fccabfaccba6d9c92bd1a825d93e667f"
+    },
+    {
+      "path": "apps/qt/qml/components/WorkbenchDialog.qml",
+      "sha256": "a25345c864e1a6b949750d64da4adc8b776a2201398661ee88b2a26073307cfb"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/ChannelResponseDialog.qml",
+      "sha256": "d2084877a738909956b49dfffebc7be1095b5661f701735982ba41cf9da686d5"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/MeasurementCaptureTree.qml",
+      "sha256": "bb6668b2efe65581c6867ed4c29d76a798039845624d6afbc25329ed8fd60f00"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/MeasurementInputDialog.qml",
+      "sha256": "97d86cfe79d68f64698729c6f4092a5134180b7af82fd5d7ea0333a324043e4d"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/MeasurementPlaybackControls.qml",
+      "sha256": "2a2a9df030d0e1e2d24bc093fbaa946d4268b32422b24b8e63d8d6d6c2577964"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/MeasurementPlot.qml",
+      "sha256": "077c216c5bc753d6705fc950fcef43ce558f96890e10ae783c89e5d9844a286d"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/MeasurementViewer.qml",
+      "sha256": "5331dc788f6f3cbd6333e994cd3e372e3cf0864804333ed821ebd8dd91e53dc8"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/RxmerDesignScope.qml",
+      "sha256": "0f2c1519d313f42d0d7a73bc4c5fdb7f165040e2fa4f5210d8ec0450ba4a4768"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/RxmerDesignerDialog.qml",
+      "sha256": "d7bb6f825eacb57968f3db3936a7cb062b4130f19eabce0f5de8c4765e25db58"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/RxmerInputDialog.qml",
+      "sha256": "222d1689f0bf4f4511d15d6467a2f5ba5b1dfdd0c737eed0d9564d0c619fb15a"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/RxmerPnmExportDialog.qml",
+      "sha256": "3b3eb8a59099cb950320ba5a07f2e259e156df03ced87e2d42065bb8bf449e5b"
+    },
+    {
+      "path": "apps/qt/qml/inputs/ofdm_settings/OfdmSettingsDialog.qml",
+      "sha256": "623392134aeb7442297818bbf71f42a3c3729bd0b0b1c58f20bdd7c44e03e50d"
+    },
+    {
+      "path": "apps/qt/qml/inputs/profile_input/ProfileBandwidthDialog.qml",
+      "sha256": "5d3e3fa1633359df6855c259e75d00cbdd078b6d6f86053ce8a3b68b3d9ef67a"
+    },
+    {
+      "path": "apps/qt/qml/inputs/profile_input/ProfileChart.qml",
+      "sha256": "1c768b92169c8bebce07d6ca10dfc3cda3ac22e39c41ba6c88d24c3aaeb1188b"
+    },
+    {
+      "path": "apps/qt/qml/inputs/profile_input/ProfileInputDialog.qml",
+      "sha256": "d113e57858edf0810348922752ae0f98f1b51aa48712e9b2604fb9553eb91988"
+    },
+    {
+      "path": "apps/qt/qml/inputs/profile_input/ProfilePlotDialog.qml",
+      "sha256": "96a4ebe0def7490cebcd334c3c4f2733a5ad054d37070c5e8dce0e90d4d19b66"
+    },
+    {
+      "path": "apps/qt/qml/inputs/source_input/SourceInputDialog.qml",
+      "sha256": "53fe443e2649364fe624f378c11f4bda7720ee05ac9545c379413f838e3dd670"
+    },
+    {
+      "path": "apps/qt/qml/instruments/fec/FecAllocationChart.qml",
+      "sha256": "bf4a2ea07bfb1dec55c3c100c97b459d8b1a6750bd420389bfcfce30a2d3202f"
+    },
+    {
+      "path": "apps/qt/qml/instruments/fec/FecCodewordTable.qml",
+      "sha256": "0d1bbaccfc15d9d93ae28b7ac94676302acc96169e86a654ef786f333b714525"
+    },
+    {
+      "path": "apps/qt/qml/instruments/fec/FecControlTable.qml",
+      "sha256": "169da7fa0b0a0757cac73d2ffa3abf7aa2439320f624f1539a93c1a0d950118b"
+    },
+    {
+      "path": "apps/qt/qml/instruments/fec/FecIterationChart.qml",
+      "sha256": "b92f0e1e77081623991a4fa26e8a5ed730adde2eb2ef262bf7b2c5fe77f314e9"
+    },
+    {
+      "path": "apps/qt/qml/instruments/fec/ReceiverFecDialog.qml",
+      "sha256": "c8af22babe2a1a558134eac84ce22eda8912ea40f1916e63f3cc50f9f83c6472"
+    },
+    {
+      "path": "apps/qt/qml/instruments/messages/TransmitterMessageDialog.qml",
+      "sha256": "5fa497a1355f1dfd69385060bce2c3770c75add0dcadc6a0d3f74647649745ca"
+    },
+    {
+      "path": "apps/qt/qml/instruments/profile_performance/ProfilePerformanceDialog.qml",
+      "sha256": "4e5944c842326cd56871f2deeaf35b78e012cd79ccc264f167d572f47bfd3361"
+    },
+    {
+      "path": "apps/qt/qml/instruments/qam/ReceiverCellControls.qml",
+      "sha256": "89b4897248e985b837685dce9ef47b544ff2d475eb41300b56bfbb2562d61b95"
+    },
+    {
+      "path": "apps/qt/qml/instruments/qam/ReceiverQamDialog.qml",
+      "sha256": "3d7896c0cffdc58b4417446ac6a0169d31b758bc06ad8569dcb243a82f37a64f"
+    },
+    {
+      "path": "apps/qt/qml/instruments/qam/TapQamDialog.qml",
+      "sha256": "b4040467263430f7c7613e3e60f1a51a7c1975bdfcd8e938bd259003f57778be"
+    },
+    {
+      "path": "apps/qt/qml/instruments/qam/TransmitterQamDialog.qml",
+      "sha256": "4016521f74f7e7a4d2fcffa8ccb106997de91abe205cc5362557aa4a48bcb992"
+    },
+    {
+      "path": "apps/qt/qml/instruments/qam/TransmitterScatter.qml",
+      "sha256": "7fa930879d337517e66e727c0e0f1e6a505fe36beb3863486d3f0310a09c9262"
+    },
+    {
+      "path": "apps/qt/qml/instruments/response/ReceiverResponseDialog.qml",
+      "sha256": "9662260903e429a34073cea161ae605808113a23ebb73b4194f6233b5a1f08d4"
+    },
+    {
+      "path": "apps/qt/qml/instruments/selection/InstrumentChoice.qml",
+      "sha256": "120c8daf6dca8f7bfcdfe240d285890ed1e437ffd3c71cf74da95f24b262f864"
+    },
+    {
+      "path": "apps/qt/qml/instruments/slicer/ReceiverSlicerDialog.qml",
+      "sha256": "507c0ed025a0fe538e9aaba7059a492dbb8eff880621b40de1b015966868d0eb"
+    },
+    {
+      "path": "apps/qt/qml/instruments/slicer/SoftDiagnosticPlot.qml",
+      "sha256": "bed8071b5ea32d2d1df206234d19a719505b9108970b2618a16cb0b34ec3a6ff"
+    },
+    {
+      "path": "apps/qt/qml/instruments/spectrum/SpectrumAnalyzerDialog.qml",
+      "sha256": "672546e3efbe794d285a3f965e87302eea1429635dabd4c2467e14b908f42f94"
+    },
+    {
+      "path": "apps/qt/qml/instruments/spectrum/SpectrumPlot.qml",
+      "sha256": "45adad8db65c53cacd8695334ad62747b3a8204c0a4dc7a2097c18ea9faf3186"
+    },
+    {
+      "path": "apps/qt/qml/instruments/spectrum/SymbolTimingDialog.qml",
+      "sha256": "c7b680a766a3d4a7e3aac1afd1722e62ee7249ccb262de33bcc844e893d1fbed"
+    },
+    {
+      "path": "apps/qt/qml/instruments/spectrum/SymbolTimingPanel.qml",
+      "sha256": "13573f58f3695925f20c3e6a1ff7c9f3f56bcb81311b73f96d7b1b5111bdbea9"
+    },
+    {
+      "path": "apps/qt/qml/instruments/spectrum/SymbolTimingPlot.qml",
+      "sha256": "aae7bb1013551b1fba3d144eca138596ed146dcfcc3044786054dd889aaa0176"
+    },
+    {
+      "path": "apps/qt/qml/instruments/stages/TransmitterStageDialog.qml",
+      "sha256": "3d7bc5794c9c0272e24b837bfd43958dbaf1105514155005ec114e281df141f0"
+    },
+    {
+      "path": "apps/qt/qml/instruments/stages/TransmitterStageLegend.qml",
+      "sha256": "a831b2d8deb93af93f40c560de3ae237762a801c171b390809951f4f2be6e566"
+    },
+    {
+      "path": "apps/qt/qml/instruments/stages/TransmitterStagePlot.qml",
+      "sha256": "931949662563162d2a8b57dc5fd6fd7b9e68e1fb83eb9bb92324226f237a7796"
+    },
+    {
+      "path": "apps/qt/qml/shell/SectionPreviewDialog.qml",
+      "sha256": "8693349e8296349eebca6f7cb0652e389baf3acaa4e421260221354d398f2432"
+    },
+    {
+      "path": "apps/qt/qml/shell/SettingsDialog.qml",
+      "sha256": "f79ac0a95f8ba59e188e016613e9623468602e3bcbdebc5f59c87b2f021ef27f"
+    },
+    {
+      "path": "apps/qt/qml/shell/UpdateDialog.qml",
+      "sha256": "26ddd35aa07838436d28a7c1bf58441d87b9e77439484cfd80b3f4bfc9478b00"
+    },
+    {
+      "path": "apps/qt/qml/shell/UpdateNotification.qml",
+      "sha256": "563bdaf912d020cd880e8c057cd4873bf4b3a7ef87ad6096827488db860435bc"
+    },
+    {
+      "path": "apps/qt/qml/shell/Workbench.qml",
+      "sha256": "714243ee3f7593c2fc9c3f8e45debd6f8b959309a18a40be10b53835b03f816e"
+    },
+    {
+      "path": "apps/qt/qml/shell/WorkbenchEntryDialog.qml",
+      "sha256": "8c11aade91a441a450b4a56fa8f7f0b33833f985d4d7d0b04ba99d8f4cb4d0ae"
+    },
+    {
+      "path": "apps/qt/qml/shell/WorkbenchFileFeedback.qml",
+      "sha256": "5697f166777696e92934bbdea2ea573990cf42cd944e0736f90738554bbc24c1"
+    },
+    {
+      "path": "apps/qt/qml/shell/WorkbenchLoadingDialog.qml",
+      "sha256": "35d2cd4c6b1b359f68a058a26f0a488035c061c52ac056a70df64e98701efd01"
+    },
+    {
+      "path": "apps/qt/qml/shell/WorkbenchMenuBar.qml",
+      "sha256": "b5d71e086de58d04a499c24424cac727cb0e0b8697aa9ee1ee8f55a50bed802d"
+    },
+    {
+      "path": "apps/qt/qml/theme/Theme.qml",
+      "sha256": "9d4256abfaad5f6ff77ec735d85bae967f51de3547afd82b4568ecc0287dfc96"
+    },
+    {
+      "path": "apps/qt/qml/theme/ThemePalette.qml",
+      "sha256": "a4a694c742bbf2a3894d0df34ea3a87699523538937fbb33ad0b9fc37fd040ad"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelAmplifierDialog.qml",
+      "sha256": "0266b72e6b3297552bc38c927863b2e1894b0dead21b443ed4768031af5829cc"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelAttenuatorDialog.qml",
+      "sha256": "390f93b8ca4ef6e67f89947bd591f369cf954b558f7a6d4ea408ccf451d15d92"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelConfigurationDialog.qml",
+      "sha256": "c234d79607fa8f5e5487d8d3ce704fc6aa8e5a1eedc78d4c8088d67ad94eac7b"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelFilterDialog.qml",
+      "sha256": "8cb8317f81a653f6687178a5335d5edf9f03129e4d995cb7f02d529b35422be4"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelInstrumentDialog.qml",
+      "sha256": "aca59269d419888ce276743d9d1c9a04a4dab203c4371b449c37505ccd242cb5"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelLossDialog.qml",
+      "sha256": "c80451b7628aa853b286f000464fcdc2b19b8661642c184f6406da5c87277411"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelModelCard.qml",
+      "sha256": "c35e65d0a4c6325df1a64697d41329fcd21377fe3e713da8dc80e7ab7acad435"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelResponsePreviewDialog.qml",
+      "sha256": "a635a4217c5166842d8ef87b888193859b2791279a00455772e683d40924327a"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelWorkbenchDialog.qml",
+      "sha256": "204dbd365202613af3e201dbd5da723a9fe92b3424677f1cad8733b9771fcea8"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ConditioningSymbol.qml",
+      "sha256": "c8119c714076757b7cdfa1fbfbaf6ad103d305e69cee9e70a264597554608f9e"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/receiver/ReceiverConfigurationDialog.qml",
+      "sha256": "aae7b2584efebccfa6ae38f9588661dbf6d8a30222f2b004109342df516a3f40"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/receiver/ReceiverWorkbenchDialog.qml",
+      "sha256": "3dd50825d234bfa90ca61484a87ef40e2112403e26284c6385109fe5516143d5"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/transmitter/TransmitterGraphCard.qml",
+      "sha256": "213468183eac65fa3d0582e0c317ce914a63b963b573d3facc41c7547f41b81a"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/transmitter/TransmitterWorkbenchDialog.qml",
+      "sha256": "1d58b723bde712d6c68e8d20508fc4a4612e16f7bdf57c9e30a9e0b4f10e938a"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/verification/VerificationBarChart.qml",
+      "sha256": "3dbec4542307502a13286302dbbb0a3c633cfe691c3be4c99830eee92a396a23"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/verification/VerificationDialog.qml",
+      "sha256": "454cc26613be345e9d66dbc6d4de3b027a9b5f12f26c0711be6ec880364dc51a"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/workbench/WorkbenchConfigurationDialog.qml",
+      "sha256": "bad7426a9099484ea4e90ecfc438f1f11eda360a0a279f2f4498bc6f993bee02"
+    },
+    {
+      "path": "apps/qt/src/bridge/about_info.rs",
+      "sha256": "026803769e937f5bef1b39ecd084aa94e9384bce16ed402ccccd88f27dae6ec7"
+    },
+    {
+      "path": "apps/qt/src/bridge/branding.rs",
+      "sha256": "c3c4d8fcf3fa9775b4de668ebd153d64c28407427f689804936eee93fd340e73"
+    },
+    {
+      "path": "apps/qt/src/bridge/closed_loop.rs",
+      "sha256": "a25df73430ced76176462646ce6bdd593c8276c90aba022432ea271c09b66404"
+    },
+    {
+      "path": "apps/qt/src/bridge/measurement_input.rs",
+      "sha256": "b10fcfa45e011614dfa85563409e019e7327649d09e471ed2e91d3c5d87679c4"
+    },
+    {
+      "path": "apps/qt/src/bridge/mod.rs",
+      "sha256": "31367f3da29420061528fb309a8f8fdc0c413154ea33eb24375b35d06694ca2a"
+    },
+    {
+      "path": "apps/qt/src/bridge/ofdm_settings.rs",
+      "sha256": "1707490db07900bf2ee8f060f38059ff0ca6f97c41eab7c4f3d196a1b25f6b98"
+    },
+    {
+      "path": "apps/qt/src/bridge/profile_input.rs",
+      "sha256": "8faa55895e860ed7296658e7a459d5f26eb54b1f18ad64a198bb7bcc13b03d05"
+    },
+    {
+      "path": "apps/qt/src/bridge/receiver_instruments.rs",
+      "sha256": "9db740aa78778e5520a3536a1c87ca0204ce1676c78d3c3f95d792927e4efc9f"
+    },
+    {
+      "path": "apps/qt/src/bridge/rxmer_designer.rs",
+      "sha256": "da36549cb20f6e37a58b1756d80fba669ed167cf79eee01d43a972abbbcc79ac"
+    },
+    {
+      "path": "apps/qt/src/bridge/rxmer_export.rs",
+      "sha256": "c9e2a29f709c7d893018a095292cf41bec1b23365e6b8542aafea9e523837063"
+    },
+    {
+      "path": "apps/qt/src/bridge/source_input.rs",
+      "sha256": "1a172eeab7ec64493c6039ddc56e12206bd94485be6e9f25f948cfb264141131"
+    },
+    {
+      "path": "apps/qt/src/bridge/transmitter_analyzer.rs",
+      "sha256": "c4e16c9272e41484ba452bf2b1f184247c3e4408fc22f565cd58df1d9bcc41d0"
+    },
+    {
+      "path": "apps/qt/src/bridge/update_info.rs",
+      "sha256": "7bc53cb3f3ef726fc6da6cc32aa174d6536bf3073a2ee12a02423ee7dbc2a846"
+    },
+    {
+      "path": "apps/qt/src/bridge/workbench_file.rs",
+      "sha256": "dea500fb6e7ecc49a972d19c8f288ff6ee0a9250a9b07e2abf34669bdae67066"
+    },
+    {
+      "path": "apps/qt/src/help.rs",
+      "sha256": "acc63121799801502e19985ecfc63bc5721f98e0e9cc50f2125b564bb7404754"
+    },
+    {
+      "path": "apps/qt/src/inputs/channel_model.rs",
+      "sha256": "fa5b96b80524ad12e9e3661de97ec9af027c2b3b00dc3a3ac1f5bedbaa2b452b"
+    },
+    {
+      "path": "apps/qt/src/inputs/measurement_input/designer.rs",
+      "sha256": "0980d220a25db83613230ed06251aad9e92788f1a3863376bec69633e8cc756c"
+    },
+    {
+      "path": "apps/qt/src/inputs/measurement_input/document.rs",
+      "sha256": "318a1513704161370baa9abc0806c1c16f7773e82692702a1d408822cd64aa80"
+    },
+    {
+      "path": "apps/qt/src/inputs/measurement_input/mod.rs",
+      "sha256": "e7b1730bb592aadad2db50aa7a06fd88d942b7d67209dcd18a1a3dc09fff9860"
+    },
+    {
+      "path": "apps/qt/src/inputs/measurement_input/model.rs",
+      "sha256": "709915ed9d776ae5ae567593ec53f7fb169589885534c73fe4078053765bd0dd"
+    },
+    {
+      "path": "apps/qt/src/inputs/measurement_input/plc.rs",
+      "sha256": "922f02813f8a4c66bbd5b98ef16faa4bd055cdf3f2f2fb776055ab4aed3fd1d7"
+    },
+    {
+      "path": "apps/qt/src/inputs/measurement_input/preview.rs",
+      "sha256": "81f0f6032b4cb37c9905c92598fccd750ffd15c200a4a0dd672228b0dc0da74b"
+    },
+    {
+      "path": "apps/qt/src/inputs/mod.rs",
+      "sha256": "ddb063caaa705d4d4db18ab1cd9daa52e35e374400237496d402ca0e414a8008"
+    },
+    {
+      "path": "apps/qt/src/inputs/profile_input/document.rs",
+      "sha256": "43e2795e53c04b92a530c18287471230a4e08b01f02165ad5bcba64c73d1b482"
+    },
+    {
+      "path": "apps/qt/src/inputs/profile_input/mod.rs",
+      "sha256": "19588f871ff459c629816f41361ad744cb44b6472b322142ad0d8c12c7ba0bd1"
+    },
+    {
+      "path": "apps/qt/src/inputs/profile_input/plot.rs",
+      "sha256": "af9efc4bd433e241745629a0ac8158bbbe3d6b022cce7e86b9648e26a1c433ac"
+    },
+    {
+      "path": "apps/qt/src/inputs/source_input/mod.rs",
+      "sha256": "e18a6eb94b2eaa51e5ea8bb4579830f871dc7c1533ed429c293fc7a92cbb0411"
+    },
+    {
+      "path": "apps/qt/src/inputs/source_input/model.rs",
+      "sha256": "8c037d3bd76ac2538ea11d1816fc2072fb056616556f8b307cc031f0714ef351"
+    },
+    {
+      "path": "apps/qt/src/instruments/channel/mod.rs",
+      "sha256": "71d3db52d4506cc2559edaa7011aace00330646992518a43de5f9ea7da082c7d"
+    },
+    {
+      "path": "apps/qt/src/instruments/mod.rs",
+      "sha256": "57c6e79e6b14a216865d9f06af0aeac1dbdf1998d53b3d0de63233020a8305b6"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/diagnostics.rs",
+      "sha256": "6987638a192508dd6e91f1477f5f47bb5e4f5affeb090d115eb044924babf629"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/fec.rs",
+      "sha256": "dc339e82ae92667089f867599f86e0927d3742bdb426efa58a1178993bde8c89"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/mod.rs",
+      "sha256": "157d4273ac21c25354ef77c50c0eea901723a1dd4105d25411dfb9fc69b0a007"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/performance.rs",
+      "sha256": "fa2776c102efc2176db25313168df55a53163e75d4183ed9cae3977a32453ff6"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/qam_history.rs",
+      "sha256": "2e35d3baca08efb43f102219bd9c7065a348b495ef3260fd69246a5b2887e9b1"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/selection.rs",
+      "sha256": "cec25646b4e9d757d1c1756d845da6f575a27b9514f97039508a830a8c7da2d4"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/soft_display.rs",
+      "sha256": "d4be913c06a242898401b6b7677b7205dad0965e744fa8cbaaa5d8d76ac253c9"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/verification.rs",
+      "sha256": "fceeed06ad8f860f887167c9ab01cb69c3dcaac388debba2155c7cc1e8525648"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/views.rs",
+      "sha256": "f016f76536b00224eb971a47a2e0bd7fa9de4f79a493a293138452cd698fa280"
+    },
+    {
+      "path": "apps/qt/src/instruments/spectrum/mod.rs",
+      "sha256": "47cea86ad53db7b81f6499e5d52394fc1aa5504aeabdcd9856183ca08510d5aa"
+    },
+    {
+      "path": "apps/qt/src/instruments/spectrum/plc.rs",
+      "sha256": "b76c2e17ef8f87486ebdfcd3a59a5b04b1a716861d05bebe0c670b3fcfbe610a"
+    },
+    {
+      "path": "apps/qt/src/instruments/spectrum/symbol_timing.rs",
+      "sha256": "8d45c5f3e0c219525a2371e7ad9c87c8c4131eb7f565339da6284f241b4634f7"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/capture.rs",
+      "sha256": "7449f43b85007f65d1adfbec906f76329b8f2ddd1f67a295084e55c3891dd940"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/channel_input.rs",
+      "sha256": "0a76dcedfd703cc04ec0669bac83b47007fe06bd800e9cb09b8689758da80e73"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/graphs/mod.rs",
+      "sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/graphs/physical.rs",
+      "sha256": "836a25a11a68186fe8bc1287b05b76c6d2ac01c08a5a85eb22c1c4c313e31fc0"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/messages.rs",
+      "sha256": "c2fb517f9afd5b3eead6963c54b7b54330eedce196c11e475fe0d7ddbccf0e81"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/mod.rs",
+      "sha256": "4a5ade4958be22366c65e6a056873389e24e1341d3bb486b6bd1e5e61d7f1623"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/preview.rs",
+      "sha256": "32850ff76a746fe4b76d3873dc683ce3ee8d088ce86add4890bca2db91ce92f4"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/qam_points.rs",
+      "sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/tlv_fields.rs",
+      "sha256": "6929e413fb4d8fe6b60885e4beb19211a5148505d01df6fa6e5fc74d4b76f4e5"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/views.rs",
+      "sha256": "707ef817678d59b33c95421d99699563a2f1a8af593274312f1cead12a229325"
+    },
+    {
+      "path": "apps/qt/src/main.rs",
+      "sha256": "eb127a52c4fd7888f5f6ce0a5201721ce8bf66dbabb73a3100552e494c81edf0"
+    },
+    {
+      "path": "apps/qt/src/platform/application_style.h",
+      "sha256": "ff4b872c01fe433bcbdaf8999ee8fa37b150895ba4e57e7dfff91b13c16ea962"
+    },
+    {
+      "path": "apps/qt/src/platform/application_style.rs",
+      "sha256": "4a492c17e0cbc6fa87757878969be49fef20fba913f7a71a578fa99c6637d1d8"
+    },
+    {
+      "path": "apps/qt/src/platform/branding.h",
+      "sha256": "f12981ee44adc4ebc98ea6c7358e48568e3e5d4c2b7ebd452c067f4a43905232"
+    },
+    {
+      "path": "apps/qt/src/platform/example_directory.rs",
+      "sha256": "5e09939b76a75b8dcf8b56420b2b38b4950cb0bc935a6bae64b5010e40f38101"
+    },
+    {
+      "path": "apps/qt/src/platform/input_file.rs",
+      "sha256": "ad37c1bae12f2763b81892a69dfb200bba687e4cfaf839c6e96a2ca771dcfea8"
+    },
+    {
+      "path": "apps/qt/src/platform/logging.rs",
+      "sha256": "20cd9a22cd5ba70b418795fd426f45a4de27212626638315894387409fcdcdc7"
+    },
+    {
+      "path": "apps/qt/src/platform/mod.rs",
+      "sha256": "f12fb9fe97dc0ffd4c984761a38647a4c08870495187efbc11152ae6343be97f"
+    },
+    {
+      "path": "apps/qt/src/platform/native_file_picker.h",
+      "sha256": "39e1ab187072ae1733ab0cbce1c0b15b71de3e4ac3868ff63fa0c967ed618dbf"
+    },
+    {
+      "path": "apps/qt/src/platform/native_file_picker.rs",
+      "sha256": "0753bb02787f7aa7e3a8482419327fa848665226ef265b51bc2ebe6b6127a199"
+    },
+    {
+      "path": "apps/qt/src/platform/startup.rs",
+      "sha256": "0d670176e916b483baf1489ee40081e47db0121511cbd9b90f77ec4de41feae1"
+    },
+    {
+      "path": "apps/qt/src/platform/updates/download.rs",
+      "sha256": "1dddb1cebddf7c86289d1593f20cd08f7aff5e828ff87ab86484eec41fc3d0d2"
+    },
+    {
+      "path": "apps/qt/src/platform/updates/install.rs",
+      "sha256": "c1448e9005eaec31a4dfd6e7400f3907a11fbe16c51e494e062fdd723e4a6816"
+    },
+    {
+      "path": "apps/qt/src/platform/updates/install_unavailable.rs",
+      "sha256": "0211966bc963012f7015de4373fe502a6edd4e3b4554ade2bc6f6428016904db"
+    },
+    {
+      "path": "apps/qt/src/platform/updates/mod.rs",
+      "sha256": "0b7ec849b2e6d4c0f5d0cc68e8c5d575a08ab2822f63bc2fdfa0bb138cbf58b8"
+    },
+    {
+      "path": "apps/qt/src/platform/updates/release.rs",
+      "sha256": "9fa057ad5c3d4171138e77681dbb74576784a0a1a37f786bae85e9fe62e1afbc"
+    },
+    {
+      "path": "apps/qt/src/platform/updates/report.rs",
+      "sha256": "eb2411c7f1a46c527ec2c0cf2966f0e9855a306978b1f9bf0e5b7ddd275667b4"
+    },
+    {
+      "path": "apps/qt/src/platform/updates/windows.rs",
+      "sha256": "ef1e4282c66fff14e598f16457a9074190c7f84023121769c4f62bd83e6df574"
+    },
+    {
+      "path": "apps/qt/src/platform/updates/windows_handoff.ps1",
+      "sha256": "14e5d9e22888cf2f8a0d7a6d6ef366919d6a35e7fd39fd70900cc5545e568bb1"
+    },
+    {
+      "path": "apps/qt/src/platform/windows_file_picker.h",
+      "sha256": "b8fba65bea1c76adf69e9b47e8f4459939bce9835a1ca4c65ba0f1b1c72b700e"
+    },
+    {
+      "path": "apps/qt/src/simulation/closed_loop.rs",
+      "sha256": "e83a517f3969ff30caae9618411e4af9c1cde81c87fb97e5c56ab97d0b297914"
+    },
+    {
+      "path": "apps/qt/src/simulation/mod.rs",
+      "sha256": "8d5437f964d31359c2f92fcd02bbff58d758a8b493cd1ded788ef10455f664b9"
+    },
+    {
+      "path": "apps/qt/src/simulation/run_timing.rs",
+      "sha256": "3c7ba9f75e99546bff9213288c4e74f1eab06979961a31a72100cff5a629617c"
+    },
+    {
+      "path": "apps/qt/src/workbench/mod.rs",
+      "sha256": "76371d720ec66965f04a95fd17e67c3b37a03e97632d472e5bd204363906eb4a"
+    },
+    {
+      "path": "apps/qt/src/workbench/project_file.rs",
+      "sha256": "985fdead4ff07756f5b4f06cc152a8cc36c8259871520ac596c85b0e69b2dc85"
+    },
+    {
+      "path": "apps/qt/src/workbench/project_load.rs",
+      "sha256": "895d38151b1992b7fa932a84a3ec20109b8512dd7505225bee083f481e98c1e8"
+    },
+    {
+      "path": "apps/qt/src/workbench/session.rs",
+      "sha256": "439f869b04539487f831fe53bddb1ec4568215e413d840ca060b4174c170750d"
+    },
+    {
+      "path": "apps/qt/tests/tst_buttons.qml",
+      "sha256": "0b50607b49ce0f4f66831efd0023c46c3b0e6c94ec7bdc0c26c2e4bf2aae603a"
+    },
+    {
+      "path": "apps/qt/tests/tst_control_palette.qml",
+      "sha256": "5a5ca3932f62e39a85ae99f2f160c138991cfdf192d32ef2fbe725106b881a6c"
+    },
+    {
+      "path": "apps/qt/tests/tst_response_view.qml",
+      "sha256": "b7db83ce244715cb831952e1ac473aa3e98129a7772eba138bfa9423c312651a"
+    },
+    {
+      "path": "apps/qt/tests/tst_rxmer_designer.qml",
+      "sha256": "b9908081ee1533569a1da07fd84a0897b546e62c21438363488940b4e164046f"
+    },
+    {
+      "path": "apps/qt/tests/tst_soft_diagnostics.qml",
+      "sha256": "ba8d7e70ea12219bf8b1e091212d832e381fc410e16fbcd312a61e048d0812e8"
+    },
+    {
+      "path": "apps/qt/tests/tst_tooltips.qml",
+      "sha256": "15706948e6c40d6a66ce8c1c3561977edd45850a30bdbc7b4e01e789a1bab8a2"
+    },
+    {
+      "path": "apps/qt/tests/tst_updates.qml",
+      "sha256": "3f86bc23c831c4458d1d9c43cf7d5bd012bed3c0235f0f714b083bfb509a75ab"
+    },
+    {
+      "path": "apps/qt/tests/tst_workbench.qml",
+      "sha256": "0eaed1625801328e8e729f14aec57f6f6dfa863da933c8179d1d4dde426c76d2"
+    },
+    {
+      "path": "apps/qt/third-party/pnm-LICENSE",
+      "sha256": "507435d71ab5dacd16fd13e968649a1940b72b67faa6381124200ec5d0162ef3"
+    },
+    {
+      "path": "apps/qt/third-party/pnm-NOTICE",
+      "sha256": "067995de122a64cc41a5d561c3c79c1ba0b88f81e965506000d60d66ca3092a7"
+    },
+    {
+      "path": "bindings/python/Cargo.lock",
+      "sha256": "510c2d28247718d8aefcfc4c5ee3e0d0aca2b9e485f89dbd06323084e253f25c"
+    },
+    {
+      "path": "bindings/python/Cargo.toml",
+      "sha256": "6036af87ce38c7cc688c4c3e349e95f77ef4000a88433e41a35c6a55d8639831"
+    },
+    {
+      "path": "bindings/python/README.md",
+      "sha256": "f012e54de8799ccbe47091a897c4afc64f639ef05a3e65bcc140683aba3d1045"
+    },
+    {
+      "path": "bindings/python/pyproject.toml",
+      "sha256": "4c19ab29636fa2cbefaf52885ff06c170dbc51f8a64e6dad941ff194e953cd0e"
+    },
+    {
+      "path": "bindings/python/python/merlin/__init__.py",
+      "sha256": "1235e34f36e88407365fdeec04d800e82955947f3a58ec2a3fa3aa419478e109"
+    },
+    {
+      "path": "bindings/python/python/merlin/__init__.pyi",
+      "sha256": "8082f46a91610b342d0538f1c00c1d28621d434f986537d64301762bd108bc0c"
+    },
+    {
+      "path": "bindings/python/python/merlin/common.py",
+      "sha256": "ffb1002a39085ad839afd72f564ff87d1bd41dda216ec50606bd9475fdd11d46"
+    },
+    {
+      "path": "bindings/python/python/merlin/common.pyi",
+      "sha256": "70e73725f190156b9815d3b3d7043ab5450000801229fd55ebe9fc2dfce8a886"
+    },
+    {
+      "path": "bindings/python/python/merlin/downstream.py",
+      "sha256": "5712664ae0e2526ca10ae63b9e7901ff5b83fa732fe48fd1d37d2324dc6e9196"
+    },
+    {
+      "path": "bindings/python/python/merlin/downstream.pyi",
+      "sha256": "b1983ac9817da7e42503c14034a1d8e8e6d75b0e0c6df437755c10abd836c744"
+    },
+    {
+      "path": "bindings/python/python/merlin/merlin.py",
+      "sha256": "ae368f25f0e0ec3ff67938f32d41e64aaecaa0423e56232add8270be73530494"
+    },
+    {
+      "path": "bindings/python/python/merlin/merlin.pyi",
+      "sha256": "b1983ac9817da7e42503c14034a1d8e8e6d75b0e0c6df437755c10abd836c744"
+    },
+    {
+      "path": "bindings/python/python/merlin/py.typed",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "bindings/python/python/merlin/upstream.py",
+      "sha256": "d3da5bfb2a92aaaf8e399cc793834e6bf81067cc7c52840cdedd98163fef4eac"
+    },
+    {
+      "path": "bindings/python/python/merlin/upstream.pyi",
+      "sha256": "7afebb372607fbdef891a80e0bf11a1fcbdf2e3850236ff32a5b5ba2868ba8b1"
+    },
+    {
+      "path": "bindings/python/src/controller.rs",
+      "sha256": "d292c2d1acb780b49f6a42cc3a847d54037bafd28ef1eeb8d229acc5b927a55d"
+    },
+    {
+      "path": "bindings/python/src/inputs.rs",
+      "sha256": "6d811628db77ccc448332be6998c3cb3572964ba847c266b09692dd6754fd740"
+    },
+    {
+      "path": "bindings/python/src/lib.rs",
+      "sha256": "93d4040528ba202a313dc7285ac947b21d09b6fd7a749b71375ab04324e3a8ec"
+    },
+    {
+      "path": "bindings/python/src/options.rs",
+      "sha256": "d4eba0b3360656cfb8cb837832afbd64deef9ad81770162531067ddf3c00c29a"
+    },
+    {
+      "path": "bindings/python/src/quantities.rs",
+      "sha256": "36a660def22a16d49491ecd8368a119babd57dc8bac8fb00366a6da4cbaafcdd"
+    },
+    {
+      "path": "bindings/python/src/receiver.rs",
+      "sha256": "7805e6c90b2a68970583fa9001f7a6ade18bccbac98fe14c4bf496d382e26b07"
+    },
+    {
+      "path": "bindings/python/src/reports.rs",
+      "sha256": "7de64357f7983fd619fb5d50018e735c166b838352bca91650611dd55af9e7f3"
+    },
+    {
+      "path": "bindings/python/src/rxmer_export.rs",
+      "sha256": "d227abbe5d9fb56d6ce8bbb09b53f53ee11426f15f4b78fdb2b0ece8e86a940e"
+    },
+    {
+      "path": "bindings/python/src/upstream/capture.rs",
+      "sha256": "23ec7673ea76b60e42ee474ea80c8662b0526f399999d790746c2a4d58b84f07"
+    },
+    {
+      "path": "bindings/python/src/upstream/configuration.rs",
+      "sha256": "48370744f7aa519dae361cd9f4f74d60e9dbd52c01e00d98812cde81f9a98204"
+    },
+    {
+      "path": "bindings/python/src/upstream/document.rs",
+      "sha256": "e961dfb6efe8941fd14572454b5d4cc2d299c76e7923a393e215c9dce01b5316"
+    },
+    {
+      "path": "bindings/python/src/upstream/measurements.rs",
+      "sha256": "5c9721980775e8eb1b94cae09a439a9c2876fbbb76569e98d5c543137c5d7a2b"
+    },
+    {
+      "path": "bindings/python/src/upstream/mod.rs",
+      "sha256": "2b4e6cd2af0bd5fc7def1e4e587d43297d8c9b2fc5cb2933a7307a53499dad53"
+    },
+    {
+      "path": "bindings/python/src/upstream/reports.rs",
+      "sha256": "86186e52ebb2b0d66db82bba9bfdb67f9d0e68423e09948f40a4b1e3937dcc66"
+    },
+    {
+      "path": "bindings/python/src/upstream/simulation.rs",
+      "sha256": "4e0f721966f6f587acbbc21df70acc8fb9f982af6d772cdaa6b8d41b58287073"
+    },
+    {
+      "path": "bindings/python/src/workbench.rs",
+      "sha256": "c7495a9584a1f5e28d02d69b1dd48dab743d9a83edda8e74ae50439533b5816b"
+    },
+    {
+      "path": "bindings/python/tests/test_api.py",
+      "sha256": "a7abcdeb3a7c860b2eae6554f9194166c5090761ce3f0c492db93c5152e8d900"
+    },
+    {
+      "path": "bindings/python/tests/test_designer_workbench.py",
+      "sha256": "0bfd1ad6f3dc512d6070c8cfdb5ddd4931ea75ba559d7115c72be8ef76b5b979"
+    },
+    {
+      "path": "bindings/python/tests/test_namespaces.py",
+      "sha256": "93b99a1c6e0acb38ae13d14eea9d0d1655581de94fe5d541f25dff32757dbb79"
+    },
+    {
+      "path": "bindings/python/tests/test_parity.py",
+      "sha256": "abb67ae095157e6c73642a1a81ab86cbf0586c466c4f156fa98277002d878b9b"
+    },
+    {
+      "path": "bindings/python/tests/test_receiver.py",
+      "sha256": "f8a1ed30884e02a65bf713dcbb54b3844056dd1877341011ea9d2a7925fefaee"
+    },
+    {
+      "path": "bindings/python/tests/test_rxmer_export.py",
+      "sha256": "d5528034509bf53c371eda58660a5fa9ef6ada58e6c3144851d4f74be287e50c"
+    },
+    {
+      "path": "bindings/python/tests/test_upstream_capture.py",
+      "sha256": "0a06197690bf9b87474b1d1480d011f8d3adc8b1637d41178b64547aa20c4412"
+    },
+    {
+      "path": "bindings/python/tests/test_upstream_experiment.py",
+      "sha256": "5a185954a65af9cd810fb66983f81fcd360741bdc9a9182a5e2f730bc430cba1"
+    },
+    {
+      "path": "bindings/python/tests/test_upstream_measured.py",
+      "sha256": "cfa0f75076befe6a86efc24c1b9085759ba805eb83eb8659d577ea27c8cfe2f6"
+    },
+    {
+      "path": "bindings/python/tests/test_upstream_operations.py",
+      "sha256": "d16ee4e9bee21e95b59d81b3ae67db8b25ad06d3d82dc9c66ae15b0dbb6576fd"
+    },
+    {
+      "path": "bindings/python/tests/test_upstream_rxmer_capture.py",
+      "sha256": "207294a87891f8f89ab4e0c9a12d8ea0ed7b75e0c7b47b9d3683e815f286952a"
+    },
+    {
+      "path": "bindings/python/tests/test_workbench.py",
+      "sha256": "322d6398600862fbee803ad96428691e4ce766281c1af657df255819e6e45933"
+    },
+    {
+      "path": "crates/cli/Cargo.toml",
+      "sha256": "0d84bd8453e0f186cf9736944ad3d8f322979474135dde61bb1a20ba230a423a"
+    },
+    {
+      "path": "crates/cli/src/arguments.rs",
+      "sha256": "b7618afa1ff2e2c793b4a9a0cf0a191209c68e6be4a5de0d53650327ca32ebf2"
+    },
+    {
+      "path": "crates/cli/src/commands/channel.rs",
+      "sha256": "d9f9d7f5810933604199807556860138ba7f07afa7d7ecf730ca510820ba0305"
+    },
+    {
+      "path": "crates/cli/src/commands/evaluate.rs",
+      "sha256": "bfab4f9aad0443fd6816a5b28b0400481080961aa870115b51e1d87106482c1a"
+    },
+    {
+      "path": "crates/cli/src/commands/import_pnm.rs",
+      "sha256": "119238d577a8eb10b77519268cbd713708ccaaf8c9904145c7e6d69b3f30ed28"
+    },
+    {
+      "path": "crates/cli/src/commands/mod.rs",
+      "sha256": "e6d07e72341d50f903f924c000a7971392d0c88624a5125ff6d287573944c550"
+    },
+    {
+      "path": "crates/cli/src/commands/simulate.rs",
+      "sha256": "0957e5e5c22db484459be6c9dbf07428fed853a559b8efa1ca74d7cfa8c5a584"
+    },
+    {
+      "path": "crates/cli/src/commands/upstream.rs",
+      "sha256": "ed4012e3f41d2c56f7c125750c93eafe59bab8b51d30f08aa36c1e3c3548d3ec"
+    },
+    {
+      "path": "crates/cli/src/json_io.rs",
+      "sha256": "afbf046642af67e4b9154318fdef9da87b284542a204dd31a8cf0ae4d105946f"
+    },
+    {
+      "path": "crates/cli/src/logging/mod.rs",
+      "sha256": "7180c3978e568a1cd53ad004565af73e373ae583be86e273f3cd683f9752ec32"
+    },
+    {
+      "path": "crates/cli/src/main.rs",
+      "sha256": "3d3e83e8db878834976a7feac6541f001ac7be6aa15cf56d88554f894d72c945"
+    },
+    {
+      "path": "crates/cli/src/source_io/mod.rs",
+      "sha256": "0847a89f33142ddf59a51e51d36a9815c71f3794a3e78ca09799465f3fcadfce"
+    },
+    {
+      "path": "crates/cli/tests/channel.rs",
+      "sha256": "cf560ec8f8eab813e7cb3bd6e4b079e4a4406a084f72e5b1bce470241ae91fcc"
+    },
+    {
+      "path": "crates/cli/tests/commands.rs",
+      "sha256": "18911ae954c09be5190ffd60bd95075f01f0c535f8337c7bb23b603c4786f1a1"
+    },
+    {
+      "path": "crates/cli/tests/constellation.rs",
+      "sha256": "19c8dfd15f3de121674453792ff24c797141f0b458e7b8725b183fc4ab0550dc"
+    },
+    {
+      "path": "crates/cli/tests/file_payload.rs",
+      "sha256": "66bb3e4f2fff65e3db4019c42483679e681e3271716f2b47d54345ff244701f6"
+    },
+    {
+      "path": "crates/cli/tests/logging.rs",
+      "sha256": "2d43784d23c83585ae0b886d1c8e5ba28abadcf3d0e1d99327784f3c2a99893e"
+    },
+    {
+      "path": "crates/cli/tests/pnm_import.rs",
+      "sha256": "2e3cb21a66cd1b427244403c465ff84e0e7a4c93d1c3baf39ff618cfb32e107c"
+    },
+    {
+      "path": "crates/cli/tests/receiver_measurements.rs",
+      "sha256": "e33bea462278b3f3d28436512afd3072ded7eb732ddbad6417825031108e180a"
+    },
+    {
+      "path": "crates/cli/tests/upstream.rs",
+      "sha256": "40e46d5383263b97272b8bff3b53d6c7d421760d57b5f07efa48efe69c23be67"
+    },
+    {
+      "path": "crates/dsp/Cargo.toml",
+      "sha256": "85540051ec63cc6704364ecebf1fd400eebdd9839fea280bc3dba5e7e9c06488"
+    },
+    {
+      "path": "crates/dsp/src/complex.rs",
+      "sha256": "4ec8721d0f36ac6f8543eeecb6c3ec278e6ccccef84490611ca6f9b103d66c16"
+    },
+    {
+      "path": "crates/dsp/src/error.rs",
+      "sha256": "97244fea42085006e9e4d1fde105ed7c2fa877a098add96e0cba2b60f6c43896"
+    },
+    {
+      "path": "crates/dsp/src/lib.rs",
+      "sha256": "6453f380e8961e59cbd2fbae35870c40d8ffb35762a36b01063919b19a3eab8d"
+    },
+    {
+      "path": "crates/dsp/src/prbs15.rs",
+      "sha256": "2d7bc63f1dcc3ee760870fdbbe490d995bdd00fa0a79587fe8b9d1913692619e"
+    },
+    {
+      "path": "crates/dsp/src/transform.rs",
+      "sha256": "521861e3086d9328ce5aaaba614e1d61a355ce98f95aa32baa2d32010acaaede"
+    },
+    {
+      "path": "crates/dsp/tests/benchmark.rs",
+      "sha256": "35c2448ef8b5338b138f342544915e99cbb9fd9f09534dcef7e4a8858b4af619"
+    },
+    {
+      "path": "crates/dsp/tests/equivalence.rs",
+      "sha256": "b0239f3f58f5b22f1234a0c13fe5dfd0903776bea21c5a00cee994dc6f158a61"
+    },
+    {
+      "path": "crates/dsp/tests/support/legacy_transform.rs",
+      "sha256": "1e0434f4a3e23d87ce2b0ebef626b2f1ec01fa5e16c4e9109ae0a36da40dc15d"
+    },
+    {
+      "path": "crates/fec-codec/Cargo.toml",
+      "sha256": "d607268719fe2667ded5b1a42e584c1845174f87e4b57ccb6f24dd453c752857"
+    },
+    {
+      "path": "crates/fec-codec/LICENSE-APACHE",
+      "sha256": "507435d71ab5dacd16fd13e968649a1940b72b67faa6381124200ec5d0162ef3"
+    },
+    {
+      "path": "crates/fec-codec/LICENSE-MIT",
+      "sha256": "9467d35542b4535b5536347c28f77d11e69e1151517c20168097112b052183cd"
+    },
+    {
+      "path": "crates/fec-codec/examples/codec_loop.rs",
+      "sha256": "e4bd0c7e07f43f9b9f39e8eb95e747d73c5337e3ffcc576cfd7080c118a0f3db"
+    },
+    {
+      "path": "crates/fec-codec/examples/shortened_codec_loop.rs",
+      "sha256": "8148afb646eb91289594a5235a13c1d31098d301444c4d95e3076f1564b96935"
+    },
+    {
+      "path": "crates/fec-codec/src/bch.rs",
+      "sha256": "2fa48d87012d6a42a28efeb43af2e7f9dad25340e14ff4fd651e9ae889c66331"
+    },
+    {
+      "path": "crates/fec-codec/src/concatenated.rs",
+      "sha256": "5b2782be33ed089d79127abc993a5c8f4a30fd18fd0cba3d889c9f24d5d98774"
+    },
+    {
+      "path": "crates/fec-codec/src/crc.rs",
+      "sha256": "75e28ff0a6d24961677b0443b9f4a0bcef845b73c8808c99d4e84d1b336318ea"
+    },
+    {
+      "path": "crates/fec-codec/src/ldpc.rs",
+      "sha256": "ffa43e90662f7fa0a4144a3b14436cba447e907323c6fd9ee28eb52915d004ed"
+    },
+    {
+      "path": "crates/fec-codec/src/lib.rs",
+      "sha256": "82ceebb14e147331309d74571057ecaeefb1694014d8203de96db2203a48e1ec"
+    },
+    {
+      "path": "crates/fec-codec/src/ncp/codec.rs",
+      "sha256": "5cbfd15f2de5d8ecd5e6ec7754b61814a91f9f064dfe1597a19ea25314586057"
+    },
+    {
+      "path": "crates/fec-codec/src/ncp/matrix.rs",
+      "sha256": "cdde5b1e7b2cea5ef14671e2caad1ec922e8fc47e2dc330107adc5d2d3f66964"
+    },
+    {
+      "path": "crates/fec-codec/src/ncp/mod.rs",
+      "sha256": "804b2be18adc52733d76c476fe15bcd67be5d549d4476418d0791292be3ec50b"
+    },
+    {
+      "path": "crates/fec-codec/src/parameters.rs",
+      "sha256": "045d8d77822f03fb0a8034d47e84705faf79034119a47e63f11d1f6591ad8d8b"
+    },
+    {
+      "path": "crates/fec-codec/src/plc/codec.rs",
+      "sha256": "0ca09e7714c70dfacfa1999fca265fdf01e8bfac7835f913ff206b1498de2053"
+    },
+    {
+      "path": "crates/fec-codec/src/plc/decoding.rs",
+      "sha256": "804fc086aa716b3ae0c60e67d00a7d2f38b7db666a66fa2b408852b0e0cc6868"
+    },
+    {
+      "path": "crates/fec-codec/src/plc/encoding.rs",
+      "sha256": "cbfdeb9ee1b30fef61744a36fc59e7350b1ab5ec9ab14f41cbf8f579dda00c2a"
+    },
+    {
+      "path": "crates/fec-codec/src/plc/matrix.rs",
+      "sha256": "79e6d9ebb4f1c839e02d06e090de11d7479f818b3a44b9916142f4a46ed38006"
+    },
+    {
+      "path": "crates/fec-codec/src/plc/mod.rs",
+      "sha256": "3aa6bfd87843852c8f192a0f0767e729d4a67d5f3f3313e6b7c7b03a28f034c6"
+    },
+    {
+      "path": "crates/fec-codec/src/plc/parameters.rs",
+      "sha256": "f60b706a2a302f1392eae8f26f86585202e882868654399d0fe638461326a5ce"
+    },
+    {
+      "path": "crates/fec-codec/src/plc/puncturing.rs",
+      "sha256": "372d023b6b859263fb0b3760fea68e0b1ae3df3f6cfaaab84b00dee612a23497"
+    },
+    {
+      "path": "crates/fec-codec/src/shortening/codec.rs",
+      "sha256": "d59a5f0d3e33d17b42ee2204dffaff5d02731ed211bf4f476a61ce9cfe94538c"
+    },
+    {
+      "path": "crates/fec-codec/src/shortening/decoding.rs",
+      "sha256": "e725e07caed83d6257002fe09e6950f7e1fe07011c6a8c004ef7853a84717c1c"
+    },
+    {
+      "path": "crates/fec-codec/src/shortening/encoding.rs",
+      "sha256": "dba767ce9480b4e7b259a73420c4dc69d544a1906ff46c86ac6d51da66df2ede"
+    },
+    {
+      "path": "crates/fec-codec/src/shortening/mod.rs",
+      "sha256": "c3049f67e7f82213310bdc401b7861bd9802af4a03fc52938dba1db9b991bf33"
+    },
+    {
+      "path": "crates/fec-codec/src/shortening/parameters.rs",
+      "sha256": "d394d1954a385e3b4390ed57c2974aceed3a72d12e800e0eace438d4f9aee43d"
+    },
+    {
+      "path": "crates/fec-codec/src/sparse_encoder.rs",
+      "sha256": "459cddcda811e6354b775800a183cc4a95c39e992bd65057f7d2e8905cf1666f"
+    },
+    {
+      "path": "crates/fec-codec/src/sparse_encoder/tests.rs",
+      "sha256": "d67702e39a6baa0a91c8ef83d217b8aeaf4e1cc43b5f724359328d77ea978c45"
+    },
+    {
+      "path": "crates/fec-codec/src/statistics.rs",
+      "sha256": "e2d154fbf4cf563ab5358e9c50884b69410a03f8ac7d3aaefe769a985b2b407c"
+    },
+    {
+      "path": "crates/fec-codec/src/upstream_ldpc/codec.rs",
+      "sha256": "0e850e20fbd161ca000a39cc7f420d64c43fd132a280609e8017038dbcda2bf7"
+    },
+    {
+      "path": "crates/fec-codec/src/upstream_ldpc/definitions.rs",
+      "sha256": "9c8d50037e49ac0eb037f760ad3d46ec529d9dd0d7280004e32122353b7d3fd4"
+    },
+    {
+      "path": "crates/fec-codec/src/upstream_ldpc/error.rs",
+      "sha256": "6395af87f0536aff451937eba7fab3509299286c38afdbd0ac579dde6f9fa90f"
+    },
+    {
+      "path": "crates/fec-codec/src/upstream_ldpc/mod.rs",
+      "sha256": "38b0a55995425765edd51a3d189bea9f518749dff3e8f0b29ccb9406d481c41c"
+    },
+    {
+      "path": "crates/fec-codec/src/upstream_ldpc/tests.rs",
+      "sha256": "035b3fd65c457e2404d369ba4399e9bb0a8ba43a84ec716e4ba5985c5deca76e"
+    },
+    {
+      "path": "crates/fec-codec/src/upstream_ldpc/tests/oracle.rs",
+      "sha256": "7af547496d42e43761ff9a775f9fd2f9b0352320a8a87ca0bf29afdebde3e975"
+    },
+    {
+      "path": "crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs",
+      "sha256": "9683fc264e721d0f102ee662199238850b599d2b469203d8578e811bdf714fb6"
+    },
+    {
+      "path": "crates/fec-codec/src/upstream_ldpc/tests/source_fixtures.rs",
+      "sha256": "f0afc8b087836587a732ac5416fbd457ba00e0c3b83c349ce5f58cb23364aa4b"
+    },
+    {
+      "path": "crates/fec-codec/tests/codec.rs",
+      "sha256": "42e07218b8f677834747c97114d7b827195a7519faf723673827e4ba7c9510ff"
+    },
+    {
+      "path": "crates/fec-codec/tests/concatenated.rs",
+      "sha256": "9973d71cdd44e939b1725b549b85c041464f5099085abbe9102560b9bd516f9e"
+    },
+    {
+      "path": "crates/fec-codec/tests/logging.rs",
+      "sha256": "a98066856f51c3fc87a44ccb73c77dd88e3787e614dbd43683dcbdb02398e3eb"
+    },
+    {
+      "path": "crates/fec-codec/tests/ncp.rs",
+      "sha256": "6652340884c1ac2ec7c0f1dadde58b5cd4cbc40bd22aa69e17245538e80bf043"
+    },
+    {
+      "path": "crates/fec-codec/tests/normative.rs",
+      "sha256": "3abda6bd64c42ba6af7de5be7dc75751120adb7d48295d974190c9f9f180a9e9"
+    },
+    {
+      "path": "crates/fec-codec/tests/plc_decoding.rs",
+      "sha256": "6d13a18b94c2292b2f8775ab142adbb5fdc71fdacbd5c886a135fbd6aedb1fba"
+    },
+    {
+      "path": "crates/fec-codec/tests/plc_encoding.rs",
+      "sha256": "c983cd8d14afc45dbfb856409aba19120934ecc67b469fe8a4169c18d137f30b"
+    },
+    {
+      "path": "crates/fec-codec/tests/plc_puncturing.rs",
+      "sha256": "d915087004550f34355457e28ae9044f4ba654cc492a18e60145994d0ecdf1f3"
+    },
+    {
+      "path": "crates/fec-codec/tests/shortening_codec.rs",
+      "sha256": "fb70d1c11bc5e5925f204b302deef3005c7c21ca678ef63964ab278a02770b6f"
+    },
+    {
+      "path": "crates/fec-codec/tests/shortening_correction.rs",
+      "sha256": "2a112a5ead061be665e1c6de983a028efebf7844b79af1a87c067bb4d3c21240"
+    },
+    {
+      "path": "crates/fec-codec/tests/shortening_geometry.rs",
+      "sha256": "26c6f270dbdcf7f157b106ef03f2c2aa355f90dc218378b4871fca41064e9147"
+    },
+    {
+      "path": "crates/fec-codec/tests/statistics.rs",
+      "sha256": "238757b08dc7084b677e0ba76f3b006eb508015fc1536b1b92b08827b0128dfd"
+    },
+    {
+      "path": "crates/fec-codec/tests/support/payload.rs",
+      "sha256": "9bcde1d25fdfbc601fedb3e6d2fbf4960f3e87786b8823f1c64fff5a45cfb610"
+    },
+    {
+      "path": "crates/fec-codec/tests/support/plc.rs",
+      "sha256": "e5f9af7e977ca506e090ceb2f1fd9a544a0a790f2707bf250a8993aed322ff0b"
+    },
+    {
+      "path": "crates/merlin/Cargo.toml",
+      "sha256": "10f5c9f1ddcf088c7e2162fa82171fdb9a30c022f8df1ff24ecf61f0f3fb86fa"
+    },
+    {
+      "path": "crates/merlin/examples/upstream_session.rs",
+      "sha256": "a2a6d120fef4b6214d30ac4faa467b2e3f9b8c0fe12c31372c181b490bfd3e68"
+    },
+    {
+      "path": "crates/merlin/src/lib.rs",
+      "sha256": "37c2b8b5a4f7c62d237b21e3bfe4fdd5b2a82e223ec532e2f9e5d2f8c645aee5"
+    },
+    {
+      "path": "crates/merlin/tests/namespaces.rs",
+      "sha256": "9e98eac7026b2398e6fef5dfdfca479f9eaba4675c376fbab0c020d3157afbce"
+    },
+    {
+      "path": "crates/ofdm/Cargo.toml",
+      "sha256": "2b0dae6550eec6c0a1b0bffd8d9da8b17b0293082e122346864471f8f0baf237"
+    },
+    {
+      "path": "crates/ofdm/build.rs",
+      "sha256": "5ed683c9416e7b533fdd95217124a4bf6017d6417f013101797954d5340e3485"
+    },
+    {
+      "path": "crates/ofdm/build/qam_tables.rs",
+      "sha256": "0d108e641e64e00d28477ba1c36c322ef099ceb7300fadfc971fdd68be5857fd"
+    },
+    {
+      "path": "crates/ofdm/examples/cell_interleaving.rs",
+      "sha256": "b0858ea50089bcb0ac1da430aea9035dbe1624e504e475e89ff3095f0c7b6c5a"
+    },
+    {
+      "path": "crates/ofdm/examples/channel_run.rs",
+      "sha256": "ee0a8d2e26bfd261d4918c6257ae8d81cc9d5891cf6a979898df531a8bfdaab1"
+    },
+    {
+      "path": "crates/ofdm/examples/channel_widths/fixtures.rs",
+      "sha256": "a4787c7c2483df3ed7010b1e5142c8c5ba6ea8bc9359983e84a5be6d1750515a"
+    },
+    {
+      "path": "crates/ofdm/examples/channel_widths/main.rs",
+      "sha256": "83028d47779be211f38e1b57fe57133c80ea264a8f95909792bc588473ba6e68"
+    },
+    {
+      "path": "crates/ofdm/examples/measurement_export/main.rs",
+      "sha256": "38fe6129e163a0af3a2d293445c5c6e26170d923c691dac1c39c59d3c94e6c38"
+    },
+    {
+      "path": "crates/ofdm/examples/measurement_fixtures/alignment.rs",
+      "sha256": "6208b2eec11166de1d35f5bca8981a210baae3d02b5ba9a1547d380527a6e775"
+    },
+    {
+      "path": "crates/ofdm/examples/measurement_fixtures/main.rs",
+      "sha256": "43268e0ee2200d40350e1f7c9a017c90997fd97b52d8b7adf3b5039f7fea881c"
+    },
+    {
+      "path": "crates/ofdm/examples/measurement_runs/main.rs",
+      "sha256": "c8e2b13d812d8d790a9f6a2e28b46339f6b7aa1ab0fe16a5e3c443fe240089ba"
+    },
+    {
+      "path": "crates/ofdm/examples/ncp_field.rs",
+      "sha256": "77d5174734fb8600cd43af51087fc53f3bcc3affc022c082a238b00eefea2f05"
+    },
+    {
+      "path": "crates/ofdm/examples/payload_waveform.rs",
+      "sha256": "7fc0a9a8f5c7b38162cbdd81e5a45ee6e947da7be13d407baefe3a580695ebb2"
+    },
+    {
+      "path": "crates/ofdm/examples/pilot_signals.rs",
+      "sha256": "fe6713e3ab1d94b296db8ef537a1e4556f9a941943e5dc20f8e99bb580b70bfc"
+    },
+    {
+      "path": "crates/ofdm/examples/plc_channel.rs",
+      "sha256": "992e58835d63a199a45f47fece21abaa76ce81aea01ce3a42a57a709aee6ef50"
+    },
+    {
+      "path": "crates/ofdm/examples/plc_codec_loop.rs",
+      "sha256": "54320a45a3831801fe798424247633863acfbd64b2d7042a182d084445610997"
+    },
+    {
+      "path": "crates/ofdm/examples/plc_interleaving.rs",
+      "sha256": "25d46dd52e69a1fad9515f3d5c5deb66a9b244a133256fe2e48ce237da48768b"
+    },
+    {
+      "path": "crates/ofdm/examples/plc_messages.rs",
+      "sha256": "683b263b9d3cdb8ced434a67aae9c823da3f5d00901cd4483863a263b7f9514f"
+    },
+    {
+      "path": "crates/ofdm/examples/plc_randomization.rs",
+      "sha256": "727e259e192aae638dc472d18e3682427981cceed2ffdccd0a3c811d67356c39"
+    },
+    {
+      "path": "crates/ofdm/examples/protected_scatter/main.rs",
+      "sha256": "e632765584b99427c96d3744b69b71e870cb6ce6df5851781b704d58e1a281c0"
+    },
+    {
+      "path": "crates/ofdm/examples/qam256_codec_loop.rs",
+      "sha256": "8db67f4b121f30c01dd35bb914f5ca1d04e0daf1d6fd7ef857681a83c73fe5b4"
+    },
+    {
+      "path": "crates/ofdm/examples/qam_demapper_benchmark.rs",
+      "sha256": "48993db1c8f4be229fbd48f6b3f3340952502c8eca116f0453264313da310917"
+    },
+    {
+      "path": "crates/ofdm/examples/shortened_waveform.rs",
+      "sha256": "f36b6346df1b38214bdcc839f16ddc0e53304d2e34a8f7cf5dd3abb9b8f13c77"
+    },
+    {
+      "path": "crates/ofdm/examples/symbol_packing.rs",
+      "sha256": "0b1364b68ff362fb478cda31d506b0353b5ce4883b99d7b80780a0f6837d5128"
+    },
+    {
+      "path": "crates/ofdm/examples/waveform_channel.rs",
+      "sha256": "45d69566684a569de2eb4b6276a5becee24f2df41d9b637378aa1ca2a5f14a2b"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/1024QAM_table.txt",
+      "sha256": "5fa129396987afce51a3aac5b4a2851cf1637894fa0d8013a7af00bb7133151d"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/128QAM_table.txt",
+      "sha256": "47f1b644d7e1df00d181c5b74f1469a38bcd748922275e6f03d7066d17f72f67"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/16384QAM_table.txt",
+      "sha256": "2b372b248a3dc7eded7a5c4ca79d4f85c8620f2ec135920467ca70a4d682e7d0"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/16QAM_table.txt",
+      "sha256": "dd6d4a320418ffada704fa7f76192c30ff400427fefe16acb49d16c9dcbd6306"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/2048QAM_table.txt",
+      "sha256": "99aa9567c09677f73a27324a1062b984aef89f7f1d06b5cf443c21497942511a"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/256QAM_table.txt",
+      "sha256": "6572a2c4d0c889ba21c90f7892fe564f6dd0212523867c4a6061b7565811a7ee"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/2QAM_table.txt",
+      "sha256": "9edb585543fb9e9b6a2b5c3d7f29b6b2734798001a6ad8732cff8c9b05e8acaf"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/4096QAM_table.txt",
+      "sha256": "b875214454063be6dde49b4d6d09b87b20c8cc60c77eacdfc17115751892a6fc"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/4QAM_table.txt",
+      "sha256": "52a5f33b03c1c13d0bfc27079128792459c9720d95587ba42a74d6c257fa8280"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/512QAM_table.txt",
+      "sha256": "4f40fb442999ee1435839ba7a94ef9ce70cab4269ce8b921d9fb287317231f77"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/64QAM_table.txt",
+      "sha256": "c79f6fedca4542ce6b87371ae541d087ea0b6011442c7f21dd64b8ec8ec5a682"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/8192QAM_table.txt",
+      "sha256": "51c5fc26fd065b311a9a7daed9c4334a04665be5652511db570af7870b927ae2"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/ConstellationScalingFactors.txt",
+      "sha256": "b20cfd0c588d559e2c9db51bd20e4f098da502f1ac952080ae72ae18b9dce263"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/LICENSE",
+      "sha256": "507435d71ab5dacd16fd13e968649a1940b72b67faa6381124200ec5d0162ef3"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/NOTICE",
+      "sha256": "067995de122a64cc41a5d561c3c79c1ba0b88f81e965506000d60d66ca3092a7"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/README.md",
+      "sha256": "b99ead3bcab894da38142aaa8f5aab08527acd94340ec73f5064836f06959708"
+    },
+    {
+      "path": "crates/ofdm/resources/qam-table/provenance.json",
+      "sha256": "f6c0281f1d6488c58de78cabb7c7164784a7cdae44763418636ebc9aa68ead1b"
+    },
+    {
+      "path": "crates/ofdm/src/api/configuration.rs",
+      "sha256": "abfda143f41b6891f5de6ef36e1aa4b35e2b71428c1708e13696aecbfde37c39"
+    },
+    {
+      "path": "crates/ofdm/src/api/controller.rs",
+      "sha256": "ab22bdf47fbe53c23afafb01f4d96ab687bd4203a819b07151853e557c8e4634"
+    },
+    {
+      "path": "crates/ofdm/src/api/controller/profiles.rs",
+      "sha256": "98bccd7562b55d71b2f42d12cc4f19024a3a45473a828de4f9475cb86915a438"
+    },
+    {
+      "path": "crates/ofdm/src/api/error.rs",
+      "sha256": "2bc462c4db918b8c8e4c0290569236a4359001331a077e193f6de2039c4b697d"
+    },
+    {
+      "path": "crates/ofdm/src/api/inputs.rs",
+      "sha256": "a2c0291abf5d98e3fe771e0349bc49576373476dd2b6b7f205fe4424a83b0ebf"
+    },
+    {
+      "path": "crates/ofdm/src/api/mod.rs",
+      "sha256": "bdb4f40ed28b68c8c9efecfdbeabd596bb674d0fe50f9e4b166e4b351944b549"
+    },
+    {
+      "path": "crates/ofdm/src/api/reports.rs",
+      "sha256": "21178234f02539e6813356e62d1b8a8be2c0f125c32810ddb557dfc6adc5162a"
+    },
+    {
+      "path": "crates/ofdm/src/api/simulation.rs",
+      "sha256": "a19ea46a15bf697fa01398961498f5d4cad291a260cdd40983905956da20fba5"
+    },
+    {
+      "path": "crates/ofdm/src/api/units.rs",
+      "sha256": "eaf17d84bb4b4e8a30d49e11133ed2be96d8aa493c98e63dcc07fa3243b5bc14"
+    },
+    {
+      "path": "crates/ofdm/src/error.rs",
+      "sha256": "701cbeb7c7deaf73c84f7a547abe11fcdde22d8af936df6cd763899802d6fcef"
+    },
+    {
+      "path": "crates/ofdm/src/input_format.rs",
+      "sha256": "69a5fa29fa0034a9e1a5fa756370a0e14f4653c050a953567d1d46ca1ab6ac8a"
+    },
+    {
+      "path": "crates/ofdm/src/lib.rs",
+      "sha256": "372776627ab3bce31ceac69dddcd83679ef66d475d59254a125cf4149e846736"
+    },
+    {
+      "path": "crates/ofdm/src/profile/candidate.rs",
+      "sha256": "4ff6424da8bc93b7cae4960693946b7c8875d95999e209cdee3fd49415e66d1f"
+    },
+    {
+      "path": "crates/ofdm/src/profile/document.rs",
+      "sha256": "e5279b93987802d37f43496574eadd11e3724816eba2faa4979135264ed94791"
+    },
+    {
+      "path": "crates/ofdm/src/profile/evaluation.rs",
+      "sha256": "0f7f62b6d89720e11619d757fdd2dfb510305626a9c8a5f33ff4ca73d9e4f403"
+    },
+    {
+      "path": "crates/ofdm/src/profile/mod.rs",
+      "sha256": "617639ba7cbb8b4c5294a65a13a21c67482761bd2655146aa0a07b78bbb7147b"
+    },
+    {
+      "path": "crates/ofdm/src/scenario/association.rs",
+      "sha256": "d3172801394d7dcff9f3d4693089e6f46e8445400607bcce56d4ee3588970dde"
+    },
+    {
+      "path": "crates/ofdm/src/scenario/document.rs",
+      "sha256": "f577206d65eb1aa26dac047ac5199f06fce39e89f46124e07b7aec9df12b91d6"
+    },
+    {
+      "path": "crates/ofdm/src/scenario/grid.rs",
+      "sha256": "ac16c8962380a9e385b6ffa88eca5a8b4ecb9585cfd7430056b8d42372ceef67"
+    },
+    {
+      "path": "crates/ofdm/src/scenario/measurement_view.rs",
+      "sha256": "e5b716ba2d0633cc730975c90c94aa17b7d71f6077f005ceaa343fc594dd5069"
+    },
+    {
+      "path": "crates/ofdm/src/scenario/mod.rs",
+      "sha256": "c04493e6cd016ed6a2c1ca7d4406126a506e46b26e9bf9ab2a7771bdc9b03c3a"
+    },
+    {
+      "path": "crates/ofdm/src/scenario/observation.rs",
+      "sha256": "6f3b78b2c40e0da033e2c6afa7d57f273a647f38828f86b858b98467af255c58"
+    },
+    {
+      "path": "crates/ofdm/src/scenario/pnm_json/contract.rs",
+      "sha256": "e4916203da179d4a2745d11740de003cfadbd0faabda247d91bc9a5d0306952d"
+    },
+    {
+      "path": "crates/ofdm/src/scenario/pnm_json/decoded.rs",
+      "sha256": "00ced5c8a90a6b10b42bf25df945a841562fff73b0d7065f6e19ceb248931895"
+    },
+    {
+      "path": "crates/ofdm/src/scenario/pnm_json/measurements.rs",
+      "sha256": "283a579f947204f1938b8bf3e3d310b2188d77c29c10a339edcb427ae40a8dbd"
+    },
+    {
+      "path": "crates/ofdm/src/scenario/pnm_json/mod.rs",
+      "sha256": "c5de227470dc6c12c544c51680a699a600e2758aa73b228b75421ffc835ff512"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/bit_loading.rs",
+      "sha256": "5b6748ffb9371835b58c9243d3e2b7b000cb5dadd91d1e7d1649a9aa1c2a413e"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/channel/additional_loss.rs",
+      "sha256": "c4190bf7e070436547de59b7225b7072bdf9022adbc108cfc413e83915c2d546"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/channel/awgn.rs",
+      "sha256": "404e34d4c9b80047eca33b87d4e2c4675fc41410a70376d7cdd3a6106002586f"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/channel/composition.rs",
+      "sha256": "8f5dc39b17b57a190ce040b7a67c28e2dca3c6ce0071f1df563abc9a85f270af"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/channel/filter.rs",
+      "sha256": "2c8ca56a3c9529ab8719a6b5bf21ba5480b0b1dcd9b0f527fe043681a7d51626"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/channel/impairments.rs",
+      "sha256": "8f13e49e5a5d3b779d555512e9a1c5170c1b709f9bb2e93572c1a7827989ddff"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/channel/mod.rs",
+      "sha256": "88215ae685ea98efe0b2f0f6e7b8a8a3a3ef20be704a8d2bd076b566081aae4b"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/channel/power.rs",
+      "sha256": "8433299512b4a4a4f49d0eaee394f0b83c88eda86ffbd9178e32b6f4005b8882"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/channel/reference.rs",
+      "sha256": "b6026b5f6cfdd55c18b1af3e6b17ba86a6914e254dcd096151fd6a141a2f721d"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/interleaving/frequency.rs",
+      "sha256": "b8b6dd76618690bd2421558523b13dede41e2020548d41f58de3eee7976b1537"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/interleaving/mod.rs",
+      "sha256": "340eea8346a7233b5332497c19cc43efc97a095ccccea7e9d78c68119dca4eba"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/interleaving/settings.rs",
+      "sha256": "3e670786552904708c0d0eb122a582a9cb5130e23568bed917e631fab212ab91"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/interleaving/symbol.rs",
+      "sha256": "54525d1c86b8a74424e3ecd459fdc1918beff2f33c5a882407e9c6a9c75c6d6a"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/interleaving/time.rs",
+      "sha256": "4e6ceda8d55da1e36ae03fe46df966b56508f39904f81d620d35c7095f9596de"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/mod.rs",
+      "sha256": "f95efc03d18a2619319eff6376e7fbaa1318a94de87630280b1ba054653c21da"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/interleaving/boundary.rs",
+      "sha256": "f4e1a64ec8a6ae5362fb734fe3b8a8bc17cf08d667a11195a290aeb07667b92a"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/interleaving/demultiplexing.rs",
+      "sha256": "26ae2bbb44f9e8c3b419f3565cbf91c0c970f6b794053ca07289a1f319fa35ba"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/interleaving/mixed.rs",
+      "sha256": "1ade48be0d999505f5b62ff83fbfa842da68258be096d7f79102ea7284032b2a"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/interleaving/mod.rs",
+      "sha256": "5af6dc15a083c5418cf1d073723a1281871d8f4f8ed5fb1fd00c3dbb6a5808f2"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/interleaving/parameters.rs",
+      "sha256": "7a5b0ed59441ec48c6f6f1d21161e54193bce04fd0c7414e5898264f76d800bd"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/interleaving/parity.rs",
+      "sha256": "ecfd7be046f7b42998f600fafb04daf120634853e4df10d0346f80cd2c19d6c9"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/interleaving/shortened.rs",
+      "sha256": "0786d3487482787a92d8d40be84773e5355944112bc895b02927df7bbe7d4d79"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/interleaving/twist.rs",
+      "sha256": "31f5469b0771b06b93f08586e91913d64c6c7740db6ff8d0dedbf839a43d085f"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/mer.rs",
+      "sha256": "f5f6176ce905ff510cfac80ae740f1b712f58324f27a502b701866c72501a52f"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/mod.rs",
+      "sha256": "dfbf09fe83b50b8d522a0eea608379b6bfd2a07e068f3a413d8f2059938ae25e"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/qam.rs",
+      "sha256": "f4adea00a0f5c5010556f9ba6474798e0db3b1eafa2f70b8e1556d05bd8bbf66"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/randomization/cell.rs",
+      "sha256": "bb5def5a2084eb60262e9d197afab5f906d2ab1cf95e80c1e4c2ce40d4a53524"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/randomization/lfsr.rs",
+      "sha256": "4ae0901b739f3ab8705b49298cea1658308d07d02e2d42f5267062c6c3cf2245"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/randomization/mod.rs",
+      "sha256": "8bbf5b6f6df2c921bcc30a1e4791c4757631eab4531fbef77e155b72375a86a7"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/slicing/mod.rs",
+      "sha256": "a96b7ba84f6bdbc21fbae50ad3023aca09c2361c243a6e73ac6b25a71f1360d1"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/soft_bits.rs",
+      "sha256": "26c16bd293a779d2c8b0a967040653ebe5a8f40f53ecc8158d01aae6dd93226e"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/soft_bits/axis.rs",
+      "sha256": "36b522d80247450b7872f96f3c6f7b788b099b2771a6145f8e80bc95e27a4f54"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/soft_bits/index.rs",
+      "sha256": "d5dfbb9f470db56503c0b5f72cc86fc44e9dc11fd926707f62b96a80c738749e"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/modulation/soft_bits/search.rs",
+      "sha256": "58f67a3dfd5448632548a00e5973cdb1dca1c3fe7ce88bec0d4282ce614d24e1"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/noise/awgn.rs",
+      "sha256": "f86b580459e37a92ed1cfc3448508b1cd905c5fadd07e50ef38f16f1110e5046"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/noise/lte_ingress.rs",
+      "sha256": "b778e60040c54860e55a04e731344ea770876939cb524d396eba79408863cfe6"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/noise/measured.rs",
+      "sha256": "d8d41e723dbb8c3d5ac8f18f2d90b95f6fcd4fb375e388542a3a5a0854b81ef7"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/noise/mod.rs",
+      "sha256": "e4610710ee6315e537079f214ec270610e244a7f114f7d99527cf21743b1aa23"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/noise/residual.rs",
+      "sha256": "51e8c3443a3c8d7c88aedc7c16b7e7b2807e5217bb6802de0dd85749adaf524b"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/ofdm.rs",
+      "sha256": "c7586b7268287745968af3cbcce862a60daa227ac313ef07f88d052881e43937"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/pilots/continuous.rs",
+      "sha256": "93a18d591e986b892f8d986e3bbd207aa0f2aa4ba5cd701e1b047d22d464c7cc"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/pilots/mod.rs",
+      "sha256": "4396d02793f305ca5e8ef0762cc6b803be8a35ad1abb9e623e23b26ecc901ad1"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/pilots/model.rs",
+      "sha256": "8ddf534a0b59af5c16a9f417a6e28c56f7c684bd54b0b884083f71abf59c62f2"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/pilots/power.rs",
+      "sha256": "977e682ecf2b6c38ddd9e22698fd3887d5523119146d4585bd5bf7d9642e235d"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/pilots/scattered.rs",
+      "sha256": "aaa55e8080eb03c77b59b7f26b238a9603f2d42f8c128806797964a9a037e4b5"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/pilots/sequence.rs",
+      "sha256": "076e20d84d8b79fbe25fc126d9d5a6df18b030c3ee0f3a862285f3b489cf94ed"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/channel_estimation/acquisition.rs",
+      "sha256": "79ddcfa5e75b5cf931fde90b97f8407f6ec4c373ab835ce8137ef6c9cc54d87f"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/channel_estimation/interpolation.rs",
+      "sha256": "2af4a4c1afa6a93e85f5a1472b505d5be598f6aa91c057670ab88f5c3de4438e"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/channel_estimation/mod.rs",
+      "sha256": "d9aa163d3201862856fff7834c2c58fc3b88fa68c80222b4799a6299ceaa2e9b"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/channel_estimation/model.rs",
+      "sha256": "fdcf31eb28013dfee94e6cba07e5a5f17dcc3a87a4531a1a365dd47a9cb23401"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/channel_estimation/pilot.rs",
+      "sha256": "9c8a6adab2f05719581a761782999415fca6042d8399094e6405db909e69af4b"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/channel_estimation/reliability.rs",
+      "sha256": "1f67d0105f3780ae3fab086a1bf8011acb94c86216d5b7f00437e44e569d1b97"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/channel_estimation/search.rs",
+      "sha256": "fdef3aef683bf9211799229b9a3e2ae590768ba355ddea19139faabdf7247f88"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/channel_estimation/timing.rs",
+      "sha256": "b8b8c47646f42917bfd2d1924388ba0459b1ebe45bc4f28cecde4e49014f4ffa"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/diagnostics.rs",
+      "sha256": "f9ead067a0c6fcedc66d286df3c8cda72d0c31e208b36550479bb866734de5b5"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/equalization.rs",
+      "sha256": "a26fcf0762564ca53f542db62262c7e6175ba94428d2c927704d707069283121"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/extraction.rs",
+      "sha256": "4c60d3a26e5796bd7862e57733f63b189944358cb7425c53cb3dec87cbb0c362"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/mod.rs",
+      "sha256": "7bcae3d6a0eb4168d5b8ecba1419fb5196c11267dd38e4514d24c363620bda87"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/payload/collector.rs",
+      "sha256": "242c1ad706d87a1563101b7cbbb2a98873eead84c82b21a8990938d746bb651e"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/payload/configuration.rs",
+      "sha256": "f3c88786b7b017d7e0f1272e33fd2e078925f0815da660cc656c1bc5074b0009"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/payload/control.rs",
+      "sha256": "3831e181f15049152a75778313050dee5484454106b834a9b07e4b9db2e34dd9"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/payload/decoder.rs",
+      "sha256": "22525858bf27e9a0f16a6be3cb7f79ce5358cf45c50c9d971b7971dbfbc5cae7"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/payload/mod.rs",
+      "sha256": "6f1b7e238b78f8c914a39180a4848865c155b97ab52ecd06a88d399cf6ecd1e9"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/payload/model.rs",
+      "sha256": "15bc0f9cc9b85382dba4efa35cc88c2529877f4d9af269de52dc436ec2ef4a40"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/payload/variable.rs",
+      "sha256": "999cf139fb57eb738ad1339b2c86999e64440d774065f0a0fcfea124523df47b"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/timing.rs",
+      "sha256": "37493508b0fcd12ae8839e35208e1c3bea6d73142f4fa250ac1ffc406f47eed2"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/rxmer_designer.rs",
+      "sha256": "f86f7ced022b1485aa155548502d07bc556e6d8b9d7508016872b8c882b07de8"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/shannon.rs",
+      "sha256": "ac3cedd90cad404fefeeed45ed4e268214b8aca9806d6f4f54e65f454339725e"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/cyclic_prefix.rs",
+      "sha256": "0950ab43771ce3a0aebef130b0721442dbd5de7866976880d90ef15e648c6fbc"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/fft.rs",
+      "sha256": "bb14e64c1dfff1427baaf481f024430663e61944955db153f1bfa958c3e53e1f"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/geometry.rs",
+      "sha256": "ca2910cfb9fae192fcbc4bfcf5f2c86a507f00f3711ab042afb2c352c90c90d7"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/ifft.rs",
+      "sha256": "2ee3d98917797320edce3ad9c95a9d3cd1cacabeb704cd346ebb3ede5d76468c"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/mod.rs",
+      "sha256": "e815b6b2235c55d9e4b6405752635e4a6f941b89ae8f904b9bff75abe971f7bf"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/overlap_add.rs",
+      "sha256": "d252138f04ddd0a562e58c4af26f9363d9a5a94a8f5a2800d7045478f92a0cef"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/samples.rs",
+      "sha256": "867ceef3965f32a85a66dd81e8f6c7f60db8853c11f26e8aa45d05223bebf7da"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/spectrum.rs",
+      "sha256": "18ad6b27234b0caf78489896f80752eb00b1f432e4a7682f84c05bd1c3be2853"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/timing.rs",
+      "sha256": "9a3000ae599599565d8551d23864c322765ff7bdd6b49a62270cae5222cccd7d"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/transform.rs",
+      "sha256": "060694a6f308574dc95fbea012ccdbf07b140a4fbb6a7cd319b9b7dd8ca8c82b"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/windowing.rs",
+      "sha256": "1ebbf83a38d2efc290d49360eaaae0130c0367af71bfcc8a4c9fc7725030f53b"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/accounting.rs",
+      "sha256": "ab0535e571a8a93154e898ac530853fa777f041292fb5dff5ef2244a6f465d0e"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/config.rs",
+      "sha256": "df0203e12736bf48d284b3faf27a73be50be047e0b5358612786f2f5c6218099"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/constellation/collector.rs",
+      "sha256": "22833dc73a973d2ffcba34885da0dae9881924b5cb7f2eca151e470f6550f25f"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/constellation/mod.rs",
+      "sha256": "f343849bc35992b5eeb220595dd8f66f3a054a2a1fd4e05457220634380aea27"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/constellation/model.rs",
+      "sha256": "409d6b5da8920c5eb336eee74ec59a2ce4181d6d0ba01a69fb35ec487a14fcd6"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/constellation/selection.rs",
+      "sha256": "6f57f001599ecfaffe5a511b6c655318c90852ccafbdbeffb4d12507b65da003"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/document.rs",
+      "sha256": "6a9ea0d473c4af0fdc98aad1587529d3d94001a13092170d67fd83f84cb8c55d"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/impairment.rs",
+      "sha256": "840cc8e6483c06e09c9c04f6d3bdbc696f4940321026374ad65f652e21cc12c1"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/job.rs",
+      "sha256": "f8c160b214a5b024aae119908b496b3cc0c9b4673b25bfc2bc3bf1ac7fce8f76"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/link.rs",
+      "sha256": "38d1a6869858a106fce64d88606febd399ed3ab975bc92ce7333e1b29f0e7686"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/measurement.rs",
+      "sha256": "554ca88c874548f0fee0adecb7f8a4231e12a7928b5958741ec0c5dde8da1f0b"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/measurement_playback.rs",
+      "sha256": "3a1d99f0a5e1d4eca80246eef5ce66ae27331023d99bbf8d1f217d51e51ec2ca"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/mod.rs",
+      "sha256": "f71e01c699ded714cd109ac0b85da0deeb52872816ede12bf763e2c3549b8500"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/performance.rs",
+      "sha256": "3bd7b62afbdd21a978b20d9e0b47b7ed28748eaa1caf8acc350cff1e08ae1cbc"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/protected_constellation/mod.rs",
+      "sha256": "04082f618b2df7297818f02691d6ad8c1daa9ca04022c426dae36c111ea5436a"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/results.rs",
+      "sha256": "294a910303dd0d485adee724f7d6b908b9a9d229bb30be09a0e37efc93a79b1f"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/runner.rs",
+      "sha256": "b5e4aa3a1a27c1a14bc243e992587dc80488d747f339e272888a49d9d057189a"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/timeline.rs",
+      "sha256": "e6bf85f258f8a65afe19fdac59632f4458e6b763fa12818c985d5ab95156db20"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/coding_loop/mod.rs",
+      "sha256": "975f0b428040e492d874a56294a8243228bd50dc9769a64878078a1905bb9907"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/coding_loop/qam256.rs",
+      "sha256": "ebe816f06c067ec148fd1d2f72ec159b0806fa953688a1cca32bf0f3d36576f4"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/config.rs",
+      "sha256": "1494db613da2d8350d77ff7c522afe726507b0ed2093f752a8720f82203cd3c6"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/mod.rs",
+      "sha256": "429b61a2d6dd9c51043eafbcc3378fae8774f0f40319a9cb9235eeff0597ba4c"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/payload/mod.rs",
+      "sha256": "e6698404490f31b92155503b64d00728f258bcd840d5577bcc3b2ea8bea35ba0"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/payload/observation.rs",
+      "sha256": "ceb101a9d99e483f8a263d802960bb011d34ea8dfff6dde8f54dd9ad8b6d951d"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/payload/receiver.rs",
+      "sha256": "d6ead29d504bea5ee552e6157a604c8437d0198d7861aa67fc29558759c37a89"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/payload/reference.rs",
+      "sha256": "92c6a91e21ce23d69ad8b9ff4fece0584ff41fa4aa9863c6c750cdc1b4ece59e"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/payload/shortened/mod.rs",
+      "sha256": "0834f4065de99c815aa5d9b636107d121680183846dd2e93feec15704db46d57"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/payload/transmitter.rs",
+      "sha256": "a87a7d729df63dff7a8aeb8cdd9d577f0f8cf440c25c4d6045e1dd462933264f"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/pilots/generator.rs",
+      "sha256": "a498904bafcfa92b90bc638470c3abce1dca4429423788b197cfb6b9f3f677d8"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/pilots/mod.rs",
+      "sha256": "14919683401fe755281b3c3e886ff8ec29f37cdedf5a3524cdec90faf0bb41df"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/pilots/observation.rs",
+      "sha256": "ad7f39d422f2f1ef5a6c5f87ed2f9cef322aa063c75b3e660ac198dfdcb547eb"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/pilots/results.rs",
+      "sha256": "f1b7984b7a08d94162750027b2e67f903ac76b7dd783a3f2f726596f80acd909"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/plc/acquisition.rs",
+      "sha256": "21d1a182c9dfbfb8614f42de2f7549745c70ab6410eb8f2fd447659d93f581cf"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/plc/interleaving.rs",
+      "sha256": "499f5791789a05e219503b836ecf39e6bb5415119bbba2bcb248555a88018b57"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/plc/mod.rs",
+      "sha256": "a32c7a5256f37bc33f81ff19d8e9099b135cbfd716682eb2a8cb6d3ebf0830b4"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/plc/observation.rs",
+      "sha256": "76e4cfbedc58d1761371a8a72b4cdc8e52823e9bbf207953d89c0f8afc94b855"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/plc/receiver.rs",
+      "sha256": "3edaaaa0e0923eaa59f6522c893f25dd951ad2e1c34be12a30be3bfd7cf9a8f6"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/plc/transmitter.rs",
+      "sha256": "b124de32869deca6ff82853c2396733e72096cd5a7823cad7e5ba7f8ed20c494"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/results.rs",
+      "sha256": "b12a1622fb7feb5047e2f761e25a35b6607e2689275c827f2a66bbdd04a17a3a"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/runner.rs",
+      "sha256": "d9dd171d18d809b5db7ca3b63d7a8acf5b5495cd35e0130e9dcdb1cdb896f68c"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/source/file/config.rs",
+      "sha256": "d4535fd3a017ffd3e33a637230fe5c70c798fd34541b95a3a26baf364f82361e"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/source/file/generator.rs",
+      "sha256": "1f8f84eb8b3b1b17868079d74a08701c230f72b1acc6f8d73ddefa1cc8676444"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/source/file/mod.rs",
+      "sha256": "0f9293f93ab062f6db1e31591e33b07f1ed62cc72798e9b64ae845189ee20732"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/source/file/verification.rs",
+      "sha256": "17b94c75f49f179f678dfb7feff8be56868c7e310f28d7ae067485e93286abcb"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/source/mod.rs",
+      "sha256": "cd0b4b80f21f6edc0c1153568d177ca5f846c89e64550063288b1b24a1d20289"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/source/observation.rs",
+      "sha256": "e5c14692ada9a1f9ad6e7ef9bdd979dc764ca302be63dd93f5bfd74c366438d1"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/source/prbs.rs",
+      "sha256": "24f91512a733f904c5fbd98269962e999aaac7dd1268fb8d37f05e09b05f1b02"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/source/seeded.rs",
+      "sha256": "0542ca1e63da03ce55cd9597513308aeec9912b9baf9eb398b4475843919d4e6"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/source/selection.rs",
+      "sha256": "bb6f2b1ffc85b2ce9ded5da3bbaea0d42fb6a9d81b7111fdcfff8db557bab1ef"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/test_points/export.rs",
+      "sha256": "e0200720abab684082de4289e6fe2e22957769bf3cdf258fe65ab697d9b1b761"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/test_points/mod.rs",
+      "sha256": "5f3663f00880d954decf775f6c7c4aae88f509278b6a33021728bc5411dcdd73"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/test_points/model.rs",
+      "sha256": "1376ef2519a26c18b1af6260d92a7f52661e34698bd3f365aeb8200bd6348a22"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/test_points/observer.rs",
+      "sha256": "cbbf949a3a6c8fbea0c7db42e861f4626ebc5c7b26178aa7d144ffe49d2e6125"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/transmitter_preview.rs",
+      "sha256": "5a9b32b69ec7af24c110af05864ffd35523f72823cf10b0ad4c08d9dcf931547"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/waveform/mod.rs",
+      "sha256": "40366df5505d65026116c972fca221c2d010784834d3b92575d3b96c5a53b9b6"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/waveform/observation.rs",
+      "sha256": "c4fd87fdd286a05daf903459aa3cae9ce53a703d7d6a131062b49a077800cb96"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/waveform/receiver.rs",
+      "sha256": "3add7a4841f94848f6a034a804b1ab6e5b50115a20c4bc7ef7b509b69988681e"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/waveform/reference.rs",
+      "sha256": "5e777db675b7815b76c4fdc227eab8e31dbee409dfe147daee57ccd255e79b25"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/waveform/transmitter.rs",
+      "sha256": "757d4c7bfae8cb2df7c8efc3230badec225b300b2cae1f22788733d463ca648c"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/frame/assembly.rs",
+      "sha256": "5b4a4a6fd5d8e44abfbcef80cf6d0872e8de9e8a90400746a58a6d3a138a4e03"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/frame/mod.rs",
+      "sha256": "5f029fcb8d2b8cef9206a77b3e87066c3f1dbb558a00ff3a0034796688e1ff63"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/layout/bit_loading.rs",
+      "sha256": "e5a4a5c87d699dd182e3d5740ae29e834980913f7cc1708b9d1780e0ff2dc6ce"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/layout/continuous.rs",
+      "sha256": "bffa51c574aff6427f5fca231ee63a540d1aecd15e1283672fd2a16e0ed28686"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/layout/mod.rs",
+      "sha256": "b67caac01143b773b919dbe8b4e50fdd1c130877f64c6befdc0f51268cb8c199"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/layout/ncp.rs",
+      "sha256": "f3986d57f5ad30ae24528bead4abfcf28dffdf95f3c7cfe3ae0e9b99dfc0f0b7"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/layout/physical.rs",
+      "sha256": "a478d7b677d623947e8037ff60a4c4328c25fa65ea685440449032eab742ea49"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/layout/pilot_reference.rs",
+      "sha256": "1a2dc6148a036e67aa1615687e7b774a1ccff1287afca8ac416ddeb9754d2340"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/mod.rs",
+      "sha256": "5787d8fd6e51ce3a1e76426bd6475f8f411ea61677c3d877b16083398d3fb36e"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/ncp/activation.rs",
+      "sha256": "472a07fbc4e87b589069d5dc5719b0b4333fec74b5899f3bf982edc5352d667b"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/ncp/field.rs",
+      "sha256": "50b78eb6a34502f5538a2a184dd4780b16f0391cc5b88097edf158e8a06d8e6a"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/ncp/mapping.rs",
+      "sha256": "9690ff8b6ac2c7e7114bbfb0886d15f851174b6c96624da645944ad3c5dfa891"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/ncp/message.rs",
+      "sha256": "6172d0b5bd7bb10ff4cc583c52a626e3696eff944a98587d589c755469c6512c"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/ncp/mod.rs",
+      "sha256": "775076d666673c0cd6268172259cd138d5066d909f9ff77c2bbc0bb7b166bd55"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/packing/mod.rs",
+      "sha256": "e690c08565ff49ba4c0dc3112061fab990896fa22c240538a267dd232a43c383"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/packing/model.rs",
+      "sha256": "6254942ffb1ba3ea84984beadec38027dba3fe9509283d0e2c8b72c607a66a42"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/packing/packer.rs",
+      "sha256": "19bd8793837081410b67599526c9b350ccc4385a2ed47b344a21191cab7eef67"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/packing/planner.rs",
+      "sha256": "ba72a5872ed354e95a9ea14368da4b42c17b2fdb89b999bc1710a52b90baf49e"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/packing/shortening.rs",
+      "sha256": "32a9f05aee8cbb80edff23337c8a5d8e5ca92bbcabc051a11d14962d60ce669d"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/block_interleaving.rs",
+      "sha256": "62a0af16f802708167d42fc7ff46793d5f07afe6d85b24a2411c6caec34db2d5"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/checksums.rs",
+      "sha256": "b9b0a7d42666246ac6a15f29f62558b467889890f96eb7b507083a9ca957dd9b"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/coding.rs",
+      "sha256": "fd0b5604b4b96d91276269a3c615360fbffeddc9b26b9f9ccd5e886d35632bd4"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/descriptors.rs",
+      "sha256": "d1642f426be1bfeae4882cd2cda375781f758dbcbd861a804db98fd6120165ee"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/frame.rs",
+      "sha256": "6cd884c981efe18ed4753165e26a4e72ecedc6f6dc527ed058b287767603e6dc"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/geometry.rs",
+      "sha256": "9d94890fca1267341e26ac6333fbbcd39973110de2b2d0d44c433ea532acdd84"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/information.rs",
+      "sha256": "1a62b07bb34564a72bb1f27b612b6bf930b50d58cd6916690e7dee71654c1f98"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/mac_packets.rs",
+      "sha256": "697f8a98c549823667b88288e032e6a2d78003feff29690aa6f6634014240d1b"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/mapping.rs",
+      "sha256": "b9418af3ee63bde23cb9a2f0b4ba12ab5c851168cf4fd223a1adb7b033b8e3f9"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/message_channel.rs",
+      "sha256": "54a6b2cecc49a416bfeac2b86e7e19381a287f7894a39612c305404ce0c5e6ab"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/mod.rs",
+      "sha256": "adca548e58f6aec549f51d9c41a121efe64ed56949a6e412a8926525def1be73"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/nibbles.rs",
+      "sha256": "6fd59b7c1861dedba528fa4823fad4991f4de88bed19705f75d41e93f4489b27"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/preamble.rs",
+      "sha256": "185f73bf55637fc1f00d1d69ca62f55e7e9fe4ed8bbe795842c293ba2944d3d5"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/randomization.rs",
+      "sha256": "dc4e7b16fc1d834b8d1f5e20e5c8b10d86ea14262866cd7b2cfefac99d1dfd17"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/reassembly.rs",
+      "sha256": "b8c5bdcad76182aa6c241d88e61acd6ba0dcf0edcbe305339a65e3b616b0d3e7"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/receiver_configuration/channel.rs",
+      "sha256": "9aef73a47327e64809137a1f92d4ff58358439727ddf1e9868a14c665f734124"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/receiver_configuration/collection.rs",
+      "sha256": "da2c74313cd6fc2d7e9ebf91e5fa6f1973b93d3146462089d596d47e3e1647e4"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/receiver_configuration/configuration.rs",
+      "sha256": "dedbecaf8ba70181068359243cdfd69db98909066c4f8f6228a15f66e9625e9e"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/receiver_configuration/generations.rs",
+      "sha256": "6b0aa6f93532744143ffa36c37d1b26fd562449d1828b86749712e9879faf3c1"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/receiver_configuration/mod.rs",
+      "sha256": "360d6432a11b6d03803fc8a1ea23922d124fc8332fedb04f71a4e1f55145a041"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/receiver_configuration/profile.rs",
+      "sha256": "f0822518590513c9528f4dfdb9844a5df4ec17a4586b7c3bea9c7de80dc8273b"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/receiver_configuration/state.rs",
+      "sha256": "f149c049bdd463f5f4737d645f343a7be308fbcba5b6873f7d702990bef81dd5"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/scheduling.rs",
+      "sha256": "a17156a9719045938dd29e1cc45e99583f6b36d14ce0ca363b1d80ce1c965af0"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/timestamp.rs",
+      "sha256": "dee6d25ac84401e9c6b5599a1f5155c485ee18152716e1ca719aab914dc01299"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/plc/timestamp_block.rs",
+      "sha256": "8b2222fd72fde2304aa6fcde21f31091fb36d7f04a8a2c58306a1356c07de7a8"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/settings.rs",
+      "sha256": "537fa3fb56dce36d755e8068a0170d770c081471b0ca7a32bef624ea395417be"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/symbols/assembly.rs",
+      "sha256": "7922435df5323d85dfba2406b6d85dcfdac01e05c357a2fdb3c88c18e1fac933"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/symbols/mod.rs",
+      "sha256": "58ff571d5468069a3c4eb23a0e1fdcc341dc26d28d3823fda3c86cb98112135a"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/symbols/model.rs",
+      "sha256": "077fae8680849bef7e84230c85d3274bd45a294e037b2b03e196406129ee33c2"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/timing.rs",
+      "sha256": "12f7bbc19b1dc470c7c82102063c737003a3fd5f8b95f96067f7c1925f39c29f"
+    },
+    {
+      "path": "crates/ofdm/src/types/mod.rs",
+      "sha256": "6ef937e5baf97d1c92f3b9624181238cc9f70ac42a72ecb08b7cfd5d62b0ee27"
+    },
+    {
+      "path": "crates/ofdm/src/types/modulation.rs",
+      "sha256": "7731bdf025f320fa07ac684bd23446dd768cd4e6a365956a828c29371aa0ba05"
+    },
+    {
+      "path": "crates/ofdm/src/types/ofdm_modulation.rs",
+      "sha256": "af629062501a643406cc588d8eb98aa742819679d13323820e7fe64f828ab403"
+    },
+    {
+      "path": "crates/ofdm/tests/acquisition_support/mod.rs",
+      "sha256": "f28452a9c09ea5f18abacc98e81582f6b4584d0d3e2fae9bab189e6b6c5fe93d"
+    },
+    {
+      "path": "crates/ofdm/tests/additional_loss.rs",
+      "sha256": "7ba7f951a8dc0d58ff4b101ee969bea89664560d02017d996064c5e53f7e38f7"
+    },
+    {
+      "path": "crates/ofdm/tests/bit_interleaving.rs",
+      "sha256": "7e5477277914f32e9eb0e78c56134596d908d69235679640728bacf2a83a747e"
+    },
+    {
+      "path": "crates/ofdm/tests/bit_processing_boundaries.rs",
+      "sha256": "6bc06fb3259e7226a39eeba0e9314c0c751052cb7ef67d05fbf813863d5cf2e7"
+    },
+    {
+      "path": "crates/ofdm/tests/carrier_layout.rs",
+      "sha256": "26236ed5fc70234dae369c6bf7f146ed24ea5ed4727f2e80c099152b7d1e4271"
+    },
+    {
+      "path": "crates/ofdm/tests/carrier_mer.rs",
+      "sha256": "4b851a582e5329a64d777ec12426ba659ca458d8d406f7c612340f83f9d19d62"
+    },
+    {
+      "path": "crates/ofdm/tests/cell_interleaving.rs",
+      "sha256": "a86e9935e4411e0307b61c9e5fec5809460d41ce04470c18b662000f6ce50b6a"
+    },
+    {
+      "path": "crates/ofdm/tests/cell_randomizer.rs",
+      "sha256": "7d2aace127f11d576ffe4cceda9684ce65c3bc1853df6e1bbf75aa00ca5f296e"
+    },
+    {
+      "path": "crates/ofdm/tests/channel_composition.rs",
+      "sha256": "d19126bc3b048f23bc45ec424db9002ca7699ae8b70454a192d593cc44c9615b"
+    },
+    {
+      "path": "crates/ofdm/tests/channel_estimation_rx.rs",
+      "sha256": "d314719052afa36a374d3a5a04c52443ee69e0011d119c5f3785a234e8749f1b"
+    },
+    {
+      "path": "crates/ofdm/tests/channel_estimation_timing.rs",
+      "sha256": "d126c609b58db7af29d98e7fbb652cd9c4f6583f5e622110a3368d1bc7e39c91"
+    },
+    {
+      "path": "crates/ofdm/tests/channel_filter.rs",
+      "sha256": "b317b5e4f66dfdec5f6a5e9d222775b13bb43f171e58d4175ca647ab400c74df"
+    },
+    {
+      "path": "crates/ofdm/tests/channel_job.rs",
+      "sha256": "fd1a262c1747b3c1d15bed764c4332f4219f351ed1cf7208257cd2d131a93886"
+    },
+    {
+      "path": "crates/ofdm/tests/channel_playback.rs",
+      "sha256": "56e3a71b3879b772b2272b162435b8eb18c94949e381550bb001efa2fd41a50d"
+    },
+    {
+      "path": "crates/ofdm/tests/channel_power.rs",
+      "sha256": "9799651daddb0add617c95cd8464a5ed52057830d474fa95f41dc1d1505f8850"
+    },
+    {
+      "path": "crates/ofdm/tests/channel_runner.rs",
+      "sha256": "73c6150fb66a4360864283416466f8a69a26d8ccd9d734449268aa1d51800a0f"
+    },
+    {
+      "path": "crates/ofdm/tests/channel_timeline.rs",
+      "sha256": "669e3246c52beb5cc043d06a7492c5e59b2f4980319714642278b7d5f4f0a5e6"
+    },
+    {
+      "path": "crates/ofdm/tests/channel_widths.rs",
+      "sha256": "29651ceb68eb681b9f39638f140ffd361abc3daa0e1227c49a7163a15b3b92b2"
+    },
+    {
+      "path": "crates/ofdm/tests/constellation_mer.rs",
+      "sha256": "8e08867303d6478743c932a877fa8704e589816fd31b807d3207029edf968d5e"
+    },
+    {
+      "path": "crates/ofdm/tests/continuous_pilot_placement.rs",
+      "sha256": "3a2f5eb1c6d57f13b7bfbf106b4502fcbd3d2fc63dec6c639b9912bf1f6d5119"
+    },
+    {
+      "path": "crates/ofdm/tests/documents.rs",
+      "sha256": "a15b3757cd9c015a61028cd19919d410ef4f2f4cd5db0699383ac0c3486af349"
+    },
+    {
+      "path": "crates/ofdm/tests/duration_timing.rs",
+      "sha256": "49e753601c1d4d0c202e699e55c41f4bf724222cb1a8477857d355ca3ad936f5"
+    },
+    {
+      "path": "crates/ofdm/tests/dynamic_profiles.rs",
+      "sha256": "0be69010ce0746ba7026cbbe5a175b806c401de1cfa4df26c39edcdedffab4bb"
+    },
+    {
+      "path": "crates/ofdm/tests/file_source.rs",
+      "sha256": "4fc81343885c827633f8c1c12eea2a40db1bd30b1004ed794e4560b5c17197e7"
+    },
+    {
+      "path": "crates/ofdm/tests/file_source_channel.rs",
+      "sha256": "ad62c5a02d8cdd67e2eb07e9da813ed6e13b1f06c4936d5d593845343e7e2af8"
+    },
+    {
+      "path": "crates/ofdm/tests/input_format.rs",
+      "sha256": "b04ef4ee0ad9205b345cf86e30cdf3b3ef6725c00bd097133d4d1501e282578b"
+    },
+    {
+      "path": "crates/ofdm/tests/interleaved_noiseless.rs",
+      "sha256": "428b5543b451246d026a6afa304a4c4dde1daf48764aebbbd53be5fce9ee784a"
+    },
+    {
+      "path": "crates/ofdm/tests/lte_ingress.rs",
+      "sha256": "a09dcf6b909646189ed8117c1d2857ba7c655c7497443c2def91b1b65ced7c1a"
+    },
+    {
+      "path": "crates/ofdm/tests/mce.rs",
+      "sha256": "38570e4beafd6630d0e0f1a3a9ae580882a8f412171c4e82ad6410d2917de768"
+    },
+    {
+      "path": "crates/ofdm/tests/measurement_imports.rs",
+      "sha256": "fde75bf93697a9e849a586c5693bbfc3e15cb98ffd64e6b67717c2c247b41a99"
+    },
+    {
+      "path": "crates/ofdm/tests/measurement_playback.rs",
+      "sha256": "2056dfeefbfbb52d2ad896cc38bda93232404b2a530df490cc95c9a441ea6d69"
+    },
+    {
+      "path": "crates/ofdm/tests/mixed_profile_transport.rs",
+      "sha256": "db75874ca9abcf8f6f37b87d096ee5bc6014a9b5e7c53849116124ecefd154ef"
+    },
+    {
+      "path": "crates/ofdm/tests/ncp_constellation.rs",
+      "sha256": "c3771c83e9439c41dabf9232862aabd3cf7c919a0318ee88bc6f613ee17bd2fa"
+    },
+    {
+      "path": "crates/ofdm/tests/ncp_field.rs",
+      "sha256": "d7d85ef367ec41120eae15f0f2e0b3b52781aa5fdf9fcb4845f3720bff6c811b"
+    },
+    {
+      "path": "crates/ofdm/tests/ncp_message.rs",
+      "sha256": "f9ed3ce0eaaa22c4af9762e149a7dd6d6818512d9c91439677d7ac713aa7d2e5"
+    },
+    {
+      "path": "crates/ofdm/tests/ncp_packed_noiseless.rs",
+      "sha256": "bbb2291c2ec646293b04becd9943708a2005243725c5fceb3f18d74bd1ad1b5c"
+    },
+    {
+      "path": "crates/ofdm/tests/nonideal_acquisition.rs",
+      "sha256": "7e32f35297a9d48118cde48a18875d3231b244bb25ad7851797f6e3e9280f5e0"
+    },
+    {
+      "path": "crates/ofdm/tests/ofdm_modulation.rs",
+      "sha256": "8a53ec544921202254fa31d62ad8f18c17a4bacde91d7140ff86bb39dfe41a38"
+    },
+    {
+      "path": "crates/ofdm/tests/packed_noiseless.rs",
+      "sha256": "30d286c06ade05c8d41a5b68c115e2981fe28e0084f57ca1914e82ac0c08362d"
+    },
+    {
+      "path": "crates/ofdm/tests/paired_constellation.rs",
+      "sha256": "7cf32cbe6c1f79abb2bc856406f5069648b70fae201a99d6784ea84bf1b06833"
+    },
+    {
+      "path": "crates/ofdm/tests/payload_assembly.rs",
+      "sha256": "da20a20327eff36c9a6c7962f1b6c47464165070487f6f5f5997ef536135e141"
+    },
+    {
+      "path": "crates/ofdm/tests/payload_observation.rs",
+      "sha256": "a7ebf622fb91d41cb292a5424e2683296f48a154a5b644a372208655f3975b92"
+    },
+    {
+      "path": "crates/ofdm/tests/payload_rejection.rs",
+      "sha256": "c3fb2aaa4b9c037010a10c4eccca32f4601137b2d13f1c2aabdfd2ccf90a5f5d"
+    },
+    {
+      "path": "crates/ofdm/tests/payload_support/mod.rs",
+      "sha256": "974071cfcfdd72ca8def37364247fa52e3a31efa3b40f6e94906f79257c64ea1"
+    },
+    {
+      "path": "crates/ofdm/tests/payload_transport.rs",
+      "sha256": "a0263caf8d19aed40daea7d8276db16015934dd11e234682e11965b1ad36a760"
+    },
+    {
+      "path": "crates/ofdm/tests/payload_waveform.rs",
+      "sha256": "0a1be45a82c46d0c1647a5531e4130fe251ca297b7f869b9a25bb1fef10c9f5c"
+    },
+    {
+      "path": "crates/ofdm/tests/pilot_observation.rs",
+      "sha256": "2ba79fbbfc47b9439426f5db1d267743263809a4a3d22f27d8806b6433bda361"
+    },
+    {
+      "path": "crates/ofdm/tests/pilot_power.rs",
+      "sha256": "b89babffa176c13d4dbc0eed060ee5e90ea401b75e4eed149c73a70eca1d1422"
+    },
+    {
+      "path": "crates/ofdm/tests/pilot_sequence.rs",
+      "sha256": "3fb63b8e7c04a6a9827abfe6d27dc5a5f79561e79a428805128c58702092b421"
+    },
+    {
+      "path": "crates/ofdm/tests/pilot_signals.rs",
+      "sha256": "3a008cc6e42e5e728800db4392a7314cc9f7f5124418c35f4d3e1f12f406c9f3"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_acquisition_roundtrip.rs",
+      "sha256": "ee7db19c285229c836a21bf091600b564d2d7771ca2435d96ea743fa9f83aa5c"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_block_interleaving.rs",
+      "sha256": "8d6c0dd2d0504cb353ca0b9053085719fd1ec661985406d420a322f1e5e014c4"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_coding.rs",
+      "sha256": "37741ddedd517a4ef6076ed3b09993216f0323a8e6a625f132fb268dc42acaf0"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_descriptors.rs",
+      "sha256": "5d2af67abd084bab4e6043b20fd3790caba127e162156282e5e4566aee3de1cc"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_frame.rs",
+      "sha256": "adc8f26b534fad4619ff418d683258d7f9fc09394e01a09de47e20488e8188b0"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_frame_signals.rs",
+      "sha256": "a818e80fde074e2b7546b82e0eadfcf23edad0e0fea9c489b192f6d6055c1189"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_geometry.rs",
+      "sha256": "e2f9f9b7b987e37bd6872acb208bef24f119a266c360bd65ae56657143b78a0a"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_information.rs",
+      "sha256": "73c606f94a6f883683954f41e23e04c73d8f58c3619c2674cccbf7d0dcbc5c7b"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_interleaved_codec.rs",
+      "sha256": "1214f3ce2c3a3683fc7e0b9b391cbe244449b90ea2aeefd196bb04af3cd513ad"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_interleaving_observation.rs",
+      "sha256": "7457125367efe00cede335dde4e8a51c4e86a6fe5fa7f7576c1ddbc01aa0e4ab"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_message_channel.rs",
+      "sha256": "e46e3539ba88fa0cb3ede3b59c58febb9c95e4001dc48805e8d5477156a7b342"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_nibbles.rs",
+      "sha256": "0c233858bc85b7992a22fd1a68b14298c3f8ad037dfe2a9b26f86da902900304"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_observation.rs",
+      "sha256": "565078bc3f87660514d751e7d0e3a54de226e721aa023cd75bcb8f0c62e99a07"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_preamble.rs",
+      "sha256": "4624dc1aefd6b0aecc2b18c3dda7dd83da9e9b070287a1e0d6a40c03daf7d247"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_randomization.rs",
+      "sha256": "0d69c7944610c3e0bb540e293ef112bf5f4908e357d039c333d927b8fe61e41d"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_randomized_codec.rs",
+      "sha256": "368609ee5e1b3da080e9cf07e8be6cd81134f12c451afc82b3175bc90593903a"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_receiver_acquisition.rs",
+      "sha256": "1fb831af38d375fcc7db62075cad5915d6d5cbac140d1765b28e11f29f080db7"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_timestamp.rs",
+      "sha256": "875bdd8611d6548fcef0ebcb64d4dbab7f1b1df1f82c7860fefde73dd32bc8fb"
+    },
+    {
+      "path": "crates/ofdm/tests/plc_timestamp_block.rs",
+      "sha256": "2b6a3e317eea254d4e127e7233229d6f827bdf5f4c163e340cce296682b85d65"
+    },
+    {
+      "path": "crates/ofdm/tests/pnm_json_contract.rs",
+      "sha256": "64f4e01c76b80e3132fb202c118e8e4ec495a42e09f61b446e84b9777bd4538a"
+    },
+    {
+      "path": "crates/ofdm/tests/pnm_json_import.rs",
+      "sha256": "0e35a62c397331062a8a77a17cab37eef64823c8246b1fc21e5000aff3dfe8d6"
+    },
+    {
+      "path": "crates/ofdm/tests/prbs_source.rs",
+      "sha256": "9672e64f9ccc3d917a2ba2f7b122020d866e76545a3e9a4d83ef254edd205dba"
+    },
+    {
+      "path": "crates/ofdm/tests/profile_lab.rs",
+      "sha256": "de7226c4b8a1cf8419421cab18221439ea330acc9890e180703fbe0c3cdb95b7"
+    },
+    {
+      "path": "crates/ofdm/tests/protected_constellation.rs",
+      "sha256": "7e0f84a0b6b29221f2e65e034474dcbdf78e1ec044a39e5ae86fbba4b97b408b"
+    },
+    {
+      "path": "crates/ofdm/tests/public_paths.rs",
+      "sha256": "8027616feaa795185418192995a908b3d2c6f03800897b9135621d6f00fd2445"
+    },
+    {
+      "path": "crates/ofdm/tests/qam256_coding_loop.rs",
+      "sha256": "98f876997a85264ad86686f3fa9f10bcc0d5182e5bf6f32cec5410cc0b88f120"
+    },
+    {
+      "path": "crates/ofdm/tests/qam_coding_orders.rs",
+      "sha256": "d93d9ecc0728d5e5b9dd88e275e837e022d6aeb04a3b2f57eff16f144f050686"
+    },
+    {
+      "path": "crates/ofdm/tests/qam_mapping.rs",
+      "sha256": "86553f5f014eb9be0231ca030de677607a46bc98831df955f98cbecfbfda74d2"
+    },
+    {
+      "path": "crates/ofdm/tests/qam_reference_tables.rs",
+      "sha256": "dc36f8aa0f8f8f196b7e2856ed8db52b99257dddf63b264a89ec28caed8eeaee"
+    },
+    {
+      "path": "crates/ofdm/tests/qam_slicing.rs",
+      "sha256": "6ca0054908df1eea94f1f7f9bf89ac0dbd2a4e810fbac5348a082af56c2c7bcc"
+    },
+    {
+      "path": "crates/ofdm/tests/qam_soft_index.rs",
+      "sha256": "855c653fd0facb99834740192d5886cef51ab58560d1996a7ecac86b7f3b1ec2"
+    },
+    {
+      "path": "crates/ofdm/tests/receiver_configuration.rs",
+      "sha256": "0c90aac5d40b4873d9a10ac73ee106efaf74880ae4d953dce149f9935918fde0"
+    },
+    {
+      "path": "crates/ofdm/tests/receiver_diagnostics.rs",
+      "sha256": "9a3872bb38ddef119a22eaaed0d2eb5c4bba26ec9f55b97809e71ab0eb01e54f"
+    },
+    {
+      "path": "crates/ofdm/tests/receiver_mode_names.rs",
+      "sha256": "9db0a7d261909dc1102a57367323cb60b82ccb78e88d4d296531f9d5b0a9477a"
+    },
+    {
+      "path": "crates/ofdm/tests/receiver_profiles.rs",
+      "sha256": "65432ba57260724742b347f616e1c9c184f9092fc368838a1855d7eea3105e4d"
+    },
+    {
+      "path": "crates/ofdm/tests/receiver_search.rs",
+      "sha256": "c3ef372fb6031597b93010fbb0fa644434d540e2f641bd8f2f6b5c7c9e2e99d9"
+    },
+    {
+      "path": "crates/ofdm/tests/run_infrastructure.rs",
+      "sha256": "b0483a0454ac71c97f92f8b825d0f47b3e0a9755d772ebdd923f762e7f049f38"
+    },
+    {
+      "path": "crates/ofdm/tests/rxmer_designer.rs",
+      "sha256": "f2dfa114990dd693365b563d3317bbb87c6f99cc35342ad17ea75311a9b823a6"
+    },
+    {
+      "path": "crates/ofdm/tests/shortened_receiver.rs",
+      "sha256": "0a36b0145397cdcac406fabb4387b186045f9c2c7605a681583b8236a94ed000"
+    },
+    {
+      "path": "crates/ofdm/tests/shortened_transport.rs",
+      "sha256": "7cc302e5c8644dba860b6e8efc9362cb2db71e71526e5599baede8f3ce2d974c"
+    },
+    {
+      "path": "crates/ofdm/tests/source_input_config.rs",
+      "sha256": "40ec8a340e264802da0f2dab5708f9ce56b775f223d83e36be878aee25c19068"
+    },
+    {
+      "path": "crates/ofdm/tests/support/mod.rs",
+      "sha256": "b3a521f09660460501545ba81e36fc3564d47f85706c794cf10405dbe2d59b38"
+    },
+    {
+      "path": "crates/ofdm/tests/symbol_packing.rs",
+      "sha256": "10c07ca0aa39db294b2ad5c8d18d40b4b89fc494a60d6ad2972afb0e16880f60"
+    },
+    {
+      "path": "crates/ofdm/tests/test_point_observer.rs",
+      "sha256": "8bb2c4bcb4543849f2b7541182aeb6bbbb603d437019409f02e9ad5a19f7d1ef"
+    },
+    {
+      "path": "crates/ofdm/tests/transmission.rs",
+      "sha256": "03ac1ca0fd127ea0cb2be47d49d7ffa5bd46e56f97a43fbf836ee75a33ac1bd1"
+    },
+    {
+      "path": "crates/ofdm/tests/transmitter_preview.rs",
+      "sha256": "52c257d116e336495ba66466c0a6d26ee2d0493b8d8ec7cfbeed2894499a6b22"
+    },
+    {
+      "path": "crates/ofdm/tests/uniform_profile_orders.rs",
+      "sha256": "f0218efd5be89394814cb5dc7069f639a92d2bc95460d7a599adf2a836a30a0c"
+    },
+    {
+      "path": "crates/ofdm/tests/waveform_impairments.rs",
+      "sha256": "67233e49f9a41851ce506693c2986f61d437c0d8ad9e016698be4726685d27e5"
+    },
+    {
+      "path": "crates/ofdm/tests/waveform_integration.rs",
+      "sha256": "6ae5b8c0b60680397d24c3825c7289e6177c3f1842e0f338061c33fb08b62f68"
+    },
+    {
+      "path": "crates/ofdm/tests/waveform_observation.rs",
+      "sha256": "f17a5326703eca2fbce16a94c64cd3c5eeab39727e73222079bbd2be731a2aff"
+    },
+    {
+      "path": "crates/ofdm/tests/waveform_prefix.rs",
+      "sha256": "3556ffba95876e543d9e0da4db917c27ba425350ac3549759aef3a3760bc31e2"
+    },
+    {
+      "path": "crates/ofdm/tests/waveform_receiver.rs",
+      "sha256": "cddb86270f0978ba9b9eec81689cd9bbc8eae0de422a69861f3f68e57e8bc348"
+    },
+    {
+      "path": "crates/ofdm/tests/waveform_spectrum.rs",
+      "sha256": "b3f61e017c2708a2cbfbf4e8eee788fca430c3f61487719859db15c7cbb32310"
+    },
+    {
+      "path": "crates/ofdm/tests/waveform_timing.rs",
+      "sha256": "004be4d8956c5567e75fd727b942836f1855edcd974864df42623f415c79a373"
+    },
+    {
+      "path": "crates/ofdm/tests/waveform_transforms.rs",
+      "sha256": "37055c82ae5c03633059c7acc203e977e806f8ab8ca34d1e1fef8d77831a3c23"
+    },
+    {
+      "path": "crates/ofdm/tests/waveform_window.rs",
+      "sha256": "a4be428025e36099f49f42ff690b0a2f248ec04e3c1e9905027b48c311729d3d"
+    },
+    {
+      "path": "crates/ofdma/Cargo.toml",
+      "sha256": "4790c06c8e0244755aeef376223d621fba0d23a132376a80c017f5289d0a91d7"
+    },
+    {
+      "path": "crates/ofdma/build.rs",
+      "sha256": "7450bd531046d43c440f2959c9c3a5d63dc15a18daf50d0811f09b186a4cef76"
+    },
+    {
+      "path": "crates/ofdma/examples/upstream_document.rs",
+      "sha256": "9c32a69a288722bd37cf23bbee804f11bfad5ee415c0f252e07fd9e848ec1dd2"
+    },
+    {
+      "path": "crates/ofdma/examples/upstream_loop.rs",
+      "sha256": "3c489199e3d54924dbfa3594f81c7bad34e546d53bed3b10193018e7b82bdcb6"
+    },
+    {
+      "path": "crates/ofdma/examples/upstream_measurements.rs",
+      "sha256": "a3bac320da8ba9948a745c787dcd4cbc62d00150e008b88c4975cf44ff0264a7"
+    },
+    {
+      "path": "crates/ofdma/src/api/error.rs",
+      "sha256": "1352daa21ebc4a755997b09140cdf072c2dd4f3062170801beb264c62deb53c3"
+    },
+    {
+      "path": "crates/ofdma/src/api/measured.rs",
+      "sha256": "b45c2cf92de4507b62df40e8c53ad97e7cbf995443696b74a341eaea58bb82cf"
+    },
+    {
+      "path": "crates/ofdma/src/api/mod.rs",
+      "sha256": "a66696630dab18e34c89cc946c7e1480948d3ce8c8b5a87707af2eb9ea16eb7b"
+    },
+    {
+      "path": "crates/ofdma/src/api/reports.rs",
+      "sha256": "3013c7f0eef8b476733d7bea6ac8d630a575bcb52866a4a5dc7d8cf9b99774a5"
+    },
+    {
+      "path": "crates/ofdma/src/api/session.rs",
+      "sha256": "037f849b48d5b46255e1c9653c2b6bd9f149184ff1dc368c39d5fed9dd996cb7"
+    },
+    {
+      "path": "crates/ofdma/src/bit_processing/mod.rs",
+      "sha256": "c73efe8ac94648e513e6e16f3db4917f51710ce80d99bc470e378186fb6b600d"
+    },
+    {
+      "path": "crates/ofdma/src/bit_processing/pilot_sequence.rs",
+      "sha256": "a0b9e6cb3459e409a9fb108c6c022448883ad8f1d5252ca23fb58822927641fe"
+    },
+    {
+      "path": "crates/ofdma/src/bit_processing/randomizer.rs",
+      "sha256": "371d090271e2e0673a2fad4d6ae9332d6a8a853175c9501e272bd04413d8fede"
+    },
+    {
+      "path": "crates/ofdma/src/channel/mod.rs",
+      "sha256": "6d489405eb82724b93f6c68f7f8989a95feb1d9111c31aa8db3fc0a610cc2489"
+    },
+    {
+      "path": "crates/ofdma/src/channel/residual.rs",
+      "sha256": "62af9cf17fd817325bbb47f31a231ffd7e8810b5e5fa1c213795a2b0cad0480b"
+    },
+    {
+      "path": "crates/ofdma/src/channel/stream.rs",
+      "sha256": "52e1b6a92d6ef0f75aa13ba90d9c435bbe591765aaae1ee170c4ad9bb26fb998"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/burst.rs",
+      "sha256": "149c9207e2ca6e264430141bd024a170abc1eca4100bc44630e2736c9fc92e54"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/document.rs",
+      "sha256": "f457096e1d99a60597a8c4f02e9c4c3eedff5c44db3c32f6194fcfbd8f6fafca"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/grant.rs",
+      "sha256": "bc35d620f048dc9955df4db36adfc405ee4cc3fb2f972dcc399b61eca6746970"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/guards.rs",
+      "sha256": "bfed2cd36cab7bb7a4ff4348b77555310893c8d722e690d7baac9586b2fef383"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/mod.rs",
+      "sha256": "9266b85250e07913ead56eb316c9af52d12dc4545a7ee978fec942ab59c40899"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/profile.rs",
+      "sha256": "190b8eab01de9eb1bc05f22cb6cb01161978404532895878e6e9a75241f726fb"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/receiver.rs",
+      "sha256": "5297c458629cf222ec774a1f8394ff869b3137770e45648dd6e1c16f79278fe3"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/serde_limits.rs",
+      "sha256": "90cdbd039c866afc853d63e3da2f48168bb5b9747b74b5ea0712c5a3ca9fa4b7"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/synthetic.rs",
+      "sha256": "32260efe3d5acda9dd7c612705a8a85920f2df8e91e831a54c5d6f3bdc3db2f3"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "sha256": "2359d2789cb7954ec2760c8a5450f28dc41e4e8d175c6144a7afc7669521bccd"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "sha256": "ebef03cb90ce5f227878b718cd25266e981d110838125f03a3dbf080af1e6ced"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/mod.rs",
+      "sha256": "b1f57800f6b18821aaef6e7c6e01da8cbf4dcd0146161dc24ea311c122e7f7fc"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "sha256": "5069afdbb57cc30b23be91cd85c7444ac168f6638e75fd00cd15ce77ddf95798"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/waveform.rs",
+      "sha256": "6d7e22178aa4c7d8a1514a377979a68d8c9b9063a2d239c5af9a7a8e44cdc2b3"
+    },
+    {
+      "path": "crates/ofdma/src/error.rs",
+      "sha256": "a9cd209bfba351e38a4d89de0ff73b6c2648257c443cd06370ed7b07d3982c55"
+    },
+    {
+      "path": "crates/ofdma/src/grant/fec_selection.rs",
+      "sha256": "83813139d150e061532c952d6e13ab38f7fbd6792357a335eb16dbb6dd0d8bfe"
+    },
+    {
+      "path": "crates/ofdma/src/grant/mod.rs",
+      "sha256": "24afc8e14d3653a366e46c726a503e381e2a9282d3c7454700491e84e87443b8"
+    },
+    {
+      "path": "crates/ofdma/src/grant/plan.rs",
+      "sha256": "87746f08b6e02ae4f6623367fb05e5fbfb7747dbdcb6743d9e5f826b2cf4107e"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/metrics.rs",
+      "sha256": "27c937943afc4bc8762e4d788c1c8234f1398eec50962ea93c38a3fc9515f957"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/mod.rs",
+      "sha256": "81369a715694c43619d250d16953393ecfba6a35e6c14db6e170fb3ab2ebf50c"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/observer.rs",
+      "sha256": "55b94d347c4ce780303b6e756763b0fc648b32c6d3c817aebeb0b06577e526da"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/spectrum.rs",
+      "sha256": "fdda7e059e1fc165f086d26d0e3e21704f594188e05946db72a4899f0f873364"
+    },
+    {
+      "path": "crates/ofdma/src/lib.rs",
+      "sha256": "3e32572bb6c7f21bf4bfda85e4ef3288bc9b37af509b1037e020c90a1e12f8df"
+    },
+    {
+      "path": "crates/ofdma/src/measurements/mod.rs",
+      "sha256": "ef436e0a7525ce27ac06c06afb74b26fa251b23785561dece2282a0b82b3afad"
+    },
+    {
+      "path": "crates/ofdma/src/measurements/pre_eq.rs",
+      "sha256": "3438377f076af6d8f806839e4f00014a76c4f46f31a0fd68293c6e8ca6dc988b"
+    },
+    {
+      "path": "crates/ofdma/src/measurements/rxmer.rs",
+      "sha256": "5536619ef23fb7d11c3eb8a121326f1a41fdb7ec57cad51042fe3c25d56b0112"
+    },
+    {
+      "path": "crates/ofdma/src/receiver/framing.rs",
+      "sha256": "68ac932ab212fe07b1487b2913c2a921dabdc6a5cc57867aa88a2d7b89b66819"
+    },
+    {
+      "path": "crates/ofdma/src/receiver/mod.rs",
+      "sha256": "7506eb07d66c98c1f8bce787f4d3c7bcaeafd6f44cc6565e3c6ef0de55fe9ec2"
+    },
+    {
+      "path": "crates/ofdma/src/resources/grid.rs",
+      "sha256": "4be528f0a7f14588dba508960b00817fc111356c5c7a0dd9ef8a1704296debaf"
+    },
+    {
+      "path": "crates/ofdma/src/resources/interleaving_blocks.rs",
+      "sha256": "f533f41a46d415ea92e05385f696f62dd267e4037f6e37ec1c8db74a4e3d1c73"
+    },
+    {
+      "path": "crates/ofdma/src/resources/mod.rs",
+      "sha256": "cf9bf2a1021bad1954b32741765465ffb6506ad16767baba99c4989b4c2a9a8b"
+    },
+    {
+      "path": "crates/ofdma/src/resources/permutation.rs",
+      "sha256": "a82022e3839fb3b9adbf07b10d63f15c53e9e67e8f29507d2b012ee56f0eaf7e"
+    },
+    {
+      "path": "crates/ofdma/src/resources/pilot_patterns.rs",
+      "sha256": "c21210635b5c9ba5e2f14c7298cae1800cd7de172750241f7801b0f9f86bb8fe"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/cyclic_extension.rs",
+      "sha256": "b4b7900ae5db7f424af490303c56f175a689ccdade23684eb3c3c9db20784050"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/demapping.rs",
+      "sha256": "c5f0d158b13b17c6906ebfe7e686105af97b15e9d3eb921251edbe97fe2ee0ca"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/estimation.rs",
+      "sha256": "88f8304461def5e7ae5c02209d7b00a845333e08232b80cb68ae19ed16b46d4e"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/mod.rs",
+      "sha256": "fad3a5324851630554786901782e3f5bc3ef04b18fc5b5954f5b580d656dd602"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/pre_eq.rs",
+      "sha256": "ddc4fcdad0929346781043dd15eb225891791381aff036c644fc163cae860e48"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/qam.rs",
+      "sha256": "5cbe958f3866bbd6877b716f3edc46e2698dcd5664e697b7faa53759f577b1e1"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/qam_tables.rs",
+      "sha256": "eeab6de9d62c92485111dcac870c76a27064a6cf33d6be1fcaf3d277046d8620"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/transform.rs",
+      "sha256": "4e8659d71de61c2652eb5477963bfc85c7a369daa3038d85ec3676fbe3866a1b"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/transmit_window.rs",
+      "sha256": "742b7b4f219503fafa2ae9ee5bbfee0ad8426c8d330e58b90fbd3d9f042b122c"
+    },
+    {
+      "path": "crates/ofdma/src/simulation/control.rs",
+      "sha256": "87ab34e3aed3795cd87c0535e683d8cb2b77099543a93d79b4babb1b9efc9ba5"
+    },
+    {
+      "path": "crates/ofdma/src/simulation/mod.rs",
+      "sha256": "ac5bb0796f3d9e1a7317f903b0e468407e41764ef01d7a55eef74a244c8e5d43"
+    },
+    {
+      "path": "crates/ofdma/src/simulation/report.rs",
+      "sha256": "40b64a0f7e39049dcc0747f1c8956e1ca1e39aa5e41f1ae56eb0f7de3907a25d"
+    },
+    {
+      "path": "crates/ofdma/src/simulation/request.rs",
+      "sha256": "d3609a3493a904a022835247c1d4b91d3077f293479c6f52617ded431717ddb3"
+    },
+    {
+      "path": "crates/ofdma/src/simulation/run.rs",
+      "sha256": "640854d842921cca3fc9efdc58dee01902c0f3f4571697e89a59749836bd9f33"
+    },
+    {
+      "path": "crates/ofdma/src/source/mod.rs",
+      "sha256": "7d69aaefac51a54018f7d265e9f49aee84bf803ca5a47489a7fd8aaeba461b2e"
+    },
+    {
+      "path": "crates/ofdma/src/source/prbs15.rs",
+      "sha256": "e3e69475d4959414b86837ecc9d01c633cb7340a71a6574596dedb6429c29626"
+    },
+    {
+      "path": "crates/ofdma/src/source/verifier.rs",
+      "sha256": "ff8bbefd88c126874d2d7d4303b7e5447d38c156ef63da0ef39fe86fc20d0c16"
+    },
+    {
+      "path": "crates/ofdma/src/transmitter/assembly.rs",
+      "sha256": "8b7c3c6129c79dcc135f0a5964690280ff4915d878377aff18592a27f3f41b96"
+    },
+    {
+      "path": "crates/ofdma/src/transmitter/framer.rs",
+      "sha256": "20ed59d61d11c0df628a6f14e8658083e5793c93061b30526ff7ddfd74f4f499"
+    },
+    {
+      "path": "crates/ofdma/src/transmitter/framing.rs",
+      "sha256": "5c8c6ed31df946cae3ff785e832ab58550d494936b76faa0f6fa568e2039cbe0"
+    },
+    {
+      "path": "crates/ofdma/src/transmitter/mod.rs",
+      "sha256": "baab4a8062fb0a9b1083ab85bd611360cd17480eff979112a70c32fe82f5a8c2"
+    },
+    {
+      "path": "crates/ofdma/src/types/bits.rs",
+      "sha256": "71cb89e6bed20454596e31f9569adb6b5ce8c5515630e69b067bea5ef83dca70"
+    },
+    {
+      "path": "crates/ofdma/src/types/iq.rs",
+      "sha256": "2a4e9d9f8834b63b0b7350c6ebec998e26fd59b09012bc8705de035d45c33c41"
+    },
+    {
+      "path": "crates/ofdma/src/types/mod.rs",
+      "sha256": "f8a771fce21bdbe75eeeda7f5e5f873682dc984d5f62dd78bd277d2741d354cf"
+    },
+    {
+      "path": "crates/ofdma/src/types/samples.rs",
+      "sha256": "e4af17c7f362cfbd1350fcf6720b5b26a07e6a67747d291061429be2221dad66"
+    },
+    {
+      "path": "crates/ofdma/tests/channel_models.rs",
+      "sha256": "9646f483e27fa96593ed43bef31d3cec9600ac209aca3013fcb9753cff5875cf"
+    },
+    {
+      "path": "crates/ofdma/tests/closed_loop.rs",
+      "sha256": "61c60f6df6867cc73ea966e927b185ccc7e9a6ac69cd5b724db42c357f0a0db9"
+    },
+    {
+      "path": "crates/ofdma/tests/common/mod.rs",
+      "sha256": "1d3e830af1396957755aece8a045d2710a81a99501536ecb14f5ff8bf3fec036"
+    },
+    {
+      "path": "crates/ofdma/tests/configuration.rs",
+      "sha256": "f7a0742dbd5c47424f20c79bcbe22134c9a2cb3083130e95e21f49a11039610f"
+    },
+    {
+      "path": "crates/ofdma/tests/configuration_json.rs",
+      "sha256": "a3183ce7c76cd1db9ff59e001e9f4fb6a07118a3e7bcafa814d4f6a972c36811"
+    },
+    {
+      "path": "crates/ofdma/tests/experiment.rs",
+      "sha256": "55c4b54b6b528f579ea17825ef226b6e50e4d593abd7aef3c43c47541d3446d6"
+    },
+    {
+      "path": "crates/ofdma/tests/grant_plan.rs",
+      "sha256": "8640524cecf1f61908e0eccbcc1e8fe644975b7dff2d22c8ea3668a27784e832"
+    },
+    {
+      "path": "crates/ofdma/tests/matched_metrics.rs",
+      "sha256": "3d98d1680d902c57cbcea51b35ddd54fb1e302799b619b1b5cbc26f307cb2544"
+    },
+    {
+      "path": "crates/ofdma/tests/measurement_playback.rs",
+      "sha256": "9949148a6529068f9896a13d9439124ce02f8e1d09383d1a870c994f6f9e0b83"
+    },
+    {
+      "path": "crates/ofdma/tests/prbs.rs",
+      "sha256": "766c997182ab157fe41f89d63a1b37e13d6e3c029782c957f4f6596581895aae"
+    },
+    {
+      "path": "crates/ofdma/tests/pre_eq.rs",
+      "sha256": "26baa0ddc11655245a6f54e7a25b3810a20361ac358180c1f677bfd1e1c58855"
+    },
+    {
+      "path": "crates/ofdma/tests/qam_mapping.rs",
+      "sha256": "7795f65ebe1438b6795c7d625ed160f9f49dd6fd4f0e3603d83b22a6be85b6dd"
+    },
+    {
+      "path": "crates/ofdma/tests/randomization.rs",
+      "sha256": "3c5d172b6c6b96501a022b487f8972ae3e5d71159ac10e326872000ca13f35b2"
+    },
+    {
+      "path": "crates/ofdma/tests/rx_estimation.rs",
+      "sha256": "b5f78513af44df4378f0487c6bf059858921097301186a248894d7e8dc79cce0"
+    },
+    {
+      "path": "crates/ofdma/tests/rx_framing.rs",
+      "sha256": "5a88f0459829a768193bc2fb523b044b6bc95cc942d33e66caed97a06ac17c83"
+    },
+    {
+      "path": "crates/ofdma/tests/rxmer_channel.rs",
+      "sha256": "1d478d237033ebed16cfe5da416aa8ecacd0068a097e8dd1c81b50bea2bfb755"
+    },
+    {
+      "path": "crates/ofdma/tests/stage_boundaries.rs",
+      "sha256": "d3403918c529e28b172103318de5d6e1b6b50e96b2c8c5e93cfdce71a2705d85"
+    },
+    {
+      "path": "crates/ofdma/tests/support/legacy_transform.rs",
+      "sha256": "339b57d7ba7338838a71c6092a20e562db068fd291314c88ce07388527a8156b"
+    },
+    {
+      "path": "crates/ofdma/tests/transform_reuse.rs",
+      "sha256": "a15bdee401784458956f3db61a861008ebbe476e4cc8c1c9a1bfef83d7a17949"
+    },
+    {
+      "path": "crates/ofdma/tests/transforms.rs",
+      "sha256": "9b3bc10d43c0de1741cf64b6f319d4e8994b0ff50297eb0421b56a0559861979"
+    },
+    {
+      "path": "crates/ofdma/tests/transmit_window.rs",
+      "sha256": "b5571ab9954c0fad185eee28e8144252c2463865f91fa0edf0be215e4d700518"
+    },
+    {
+      "path": "crates/ofdma/tests/tx_framing.rs",
+      "sha256": "385583233399406b65bd69090cdff84b1deaa231e6f33896890a9d4a3d0fbfe2"
+    },
+    {
+      "path": "crates/ofdma/tests/upstream_interleaving.rs",
+      "sha256": "432a98a76da178211f215d1e352401a53dc77b2451b677db60e8ef6ffa5b0af0"
+    },
+    {
+      "path": "crates/ofdma/tests/upstream_pilots.rs",
+      "sha256": "2085545f820682c809ff604f0bad587c220355ca1d1f44bf75b199c7c6aae895"
+    },
+    {
+      "path": "crates/ofdma/tests/waveform_loop.rs",
+      "sha256": "05b9b6bfc09ece7a001d770d9f41fb9f088a205a5a93bc9c364cd87b5330af1d"
+    },
+    {
+      "path": "crates/phy-api/Cargo.toml",
+      "sha256": "a545fa3623af813dfcf63019013b09cc5c7aaadd36f7656e955b2c01985b9846"
+    },
+    {
+      "path": "crates/phy-api/src/control.rs",
+      "sha256": "0e01a7740713c90fb8ed662173ee34e813c44c701c9008819f1d09cf20c2fb93"
+    },
+    {
+      "path": "crates/phy-api/src/error.rs",
+      "sha256": "56d6df69c08e5ac818de28661fbbcd0e6511a3b2289261011f86b0f6e0d8421b"
+    },
+    {
+      "path": "crates/phy-api/src/lib.rs",
+      "sha256": "3badafe18d0251b5bca66c66690114062741578beddf6a1c35d7ab0e45f17c87"
+    },
+    {
+      "path": "crates/phy-api/tests/contracts.rs",
+      "sha256": "ac75af0c19bbb01e52a63821b457e1bdbc3e6e62099823e1813f3a45b43d5fc6"
+    },
+    {
+      "path": "crates/pnm-input/Cargo.toml",
+      "sha256": "25ef4e175dcc33da8b9d19e4b469433372496878aef32844120445e582645ff9"
+    },
+    {
+      "path": "crates/pnm-input/README.md",
+      "sha256": "d07986d0b107d1eb7fcc8f9f9e0375401bda1be8a44c288da8f995fb9336c857"
+    },
+    {
+      "path": "crates/pnm-input/examples/inspect_rxmer.rs",
+      "sha256": "28a03a678d5897e7743f9026adc88c6c568194320176f48f720e721df1d33b21"
+    },
+    {
+      "path": "crates/pnm-input/examples/inspect_ucd.rs",
+      "sha256": "cf4e3ecba8ed77a28d5c71aef46fba498227c5c29a84ed2d38b37e30be46d584"
+    },
+    {
+      "path": "crates/pnm-input/examples/prepare_cl_comparison.rs",
+      "sha256": "3000030b4accfa8a037a136db0b5054443600adfc7e489d4e6f05a66787e8182"
+    },
+    {
+      "path": "crates/pnm-input/examples/prepare_cl_notch_workbench.rs",
+      "sha256": "39bc403a0f98653d26186a16bf0166480184a2ed9529ad5c8807d2990abe4500"
+    },
+    {
+      "path": "crates/pnm-input/examples/support/adapt_channel.rs",
+      "sha256": "c98b710362372b42bc7aba9197965342e6eec537310d7be2af540232e5e55ace"
+    },
+    {
+      "path": "crates/pnm-input/examples/upstream_captures.rs",
+      "sha256": "4161a6eeec058d147ade61c8f7943a2e5414cc054176620faddc4c7162e90a07"
+    },
+    {
+      "path": "crates/pnm-input/src/lib.rs",
+      "sha256": "793bb4560769c5a04aa6ff596e5dbb46f1eed2314f0df85a9c347c393371833e"
+    },
+    {
+      "path": "crates/pnm-input/src/rxmer_export/files.rs",
+      "sha256": "806bec1da08c589b30c32508ae6f20adb06ddca263820385fb641125a14ac5e2"
+    },
+    {
+      "path": "crates/pnm-input/src/rxmer_export/mod.rs",
+      "sha256": "77d7fa7157f59cc61c328635f1060b7b75604c5cdd41afa58fd0b23b3eb05211"
+    },
+    {
+      "path": "crates/pnm-input/src/upstream/association.rs",
+      "sha256": "d737b565a99c8809c1da48683331353d78b827ed7e5bbd5b3cc790b523ac240d"
+    },
+    {
+      "path": "crates/pnm-input/src/upstream/mod.rs",
+      "sha256": "509e0f4ab19f48bc577fce83497e9ae1b452c1b93af8d1e1d5d3f072206d4736"
+    },
+    {
+      "path": "crates/pnm-input/src/upstream/pre_eq.rs",
+      "sha256": "955f1708a22d9f9f213d4b0c98ad0dacdb27f69655ad215ca05caf1ad9f1b1b5"
+    },
+    {
+      "path": "crates/pnm-input/src/upstream/rxmer.rs",
+      "sha256": "e71d8008fb2af537e4fa81703b55e36c59eb912382e968f30f503a17782fa169"
+    },
+    {
+      "path": "crates/pnm-input/src/upstream/ucd.rs",
+      "sha256": "42b906f66a8e7190b79710962f62da1536c4b9376c788fe7eaa2241c6df09718"
+    },
+    {
+      "path": "crates/pnm-input/src/upstream/ucd_projection.rs",
+      "sha256": "2e70264e0d0d8789286ca03c6c6bbee793683751b7dc1a2e5d98f0d87e01d481"
+    },
+    {
+      "path": "crates/pnm-input/src/workbench.rs",
+      "sha256": "2ce6963f34aff324625ca95dd09ebe99498200e4038a53647e4bae57052ed572"
+    },
+    {
+      "path": "crates/pnm-input/src/workbench/designer.rs",
+      "sha256": "c2c707151d37fc596a99477ffb3b0f120a8c2939156b63665bebb47055f3c30c"
+    },
+    {
+      "path": "crates/pnm-input/tests/designer_workbench.rs",
+      "sha256": "76041a8d57a6af4e6004205169bb3aa3faa9a3fd65b3906d7003294b35c76447"
+    },
+    {
+      "path": "crates/pnm-input/tests/fixtures/README.md",
+      "sha256": "40fcc04e1f051ce43c7f188aff581031bcf22c5bd5b27d7bc6a855a34fde4320"
+    },
+    {
+      "path": "crates/pnm-input/tests/fixtures/designer-flat.json",
+      "sha256": "658c78329df218c83079bcb1a26ae7c63547af929648bb8705a7487a0cff4c0f"
+    },
+    {
+      "path": "crates/pnm-input/tests/high_level_api.rs",
+      "sha256": "01349d7f8fa680822e6bbac224114f702880b7d3e89372fb3e32dbedb4e5e72c"
+    },
+    {
+      "path": "crates/pnm-input/tests/rxmer_export.rs",
+      "sha256": "6f2e3aba2ce31faea368fcd37aa7d81eb13b42d03945c0eddcf1e057c17981be"
+    },
+    {
+      "path": "crates/pnm-input/tests/upstream_association.rs",
+      "sha256": "20ed339992e0cdeb6d107c4ed6b63658916e9653482d9de664dde88bf7060aae"
+    },
+    {
+      "path": "crates/pnm-input/tests/upstream_pre_eq.rs",
+      "sha256": "29e892da3c566b663d4b8284ed1ef181b2ef141c083e62ebfa7773bc6d6e96ab"
+    },
+    {
+      "path": "crates/pnm-input/tests/upstream_rxmer.rs",
+      "sha256": "abccaa2dc7b13bace192515a18e2db66ad5092b8b3050a4870fa2ad968ea81c4"
+    },
+    {
+      "path": "crates/pnm-input/tests/upstream_ucd.rs",
+      "sha256": "9a766b6abe6cb8cfdef90e1387a0a842bf3592ac34a72988c9c79abb1de3da76"
+    },
+    {
+      "path": "crates/pnm-input/tests/upstream_ucd_projection.rs",
+      "sha256": "cb4886eaff3bba44d9fd2374dd13d7ba761bf944b1d1ddae062d2228de792089"
+    },
+    {
+      "path": "crates/pnm-input/tests/workbench.rs",
+      "sha256": "328b43662da30d745400e7537bf369e661cff9721968acffaf31e9d4df249f96"
+    },
+    {
+      "path": "scripts/apt-development.sh",
+      "sha256": "ad0c9332db7be754a88a682e3ba0e0a49cd4475fd5767402047c3a0ddb44ad6c"
+    },
+    {
+      "path": "scripts/cargo-local.sh",
+      "sha256": "a679bb34195d7829f5e412574a1dd6dd3c7d84e290021b827048ca236303854a"
+    },
+    {
+      "path": "scripts/check-before-push.sh",
+      "sha256": "140f0ec9189fcd86cdf42746662bd52bce7d0be968d146c9bea44dd3a307a5a4"
+    },
+    {
+      "path": "scripts/install-development.sh",
+      "sha256": "13b536f29b96333bbae97ab9ca760cc1bfa07b982c98cf573833489c823ccb82"
+    },
+    {
+      "path": "scripts/python-api/README.md",
+      "sha256": "05e12588eb41b4b8cda0b5ce2481522570b92c23ba76b117b85496eaed72bc0b"
+    },
+    {
+      "path": "scripts/python-api/install-local.sh",
+      "sha256": "68ec26c803d5c826539f3cc07cb28d1d18d16a6ee171eb2a3a4d5c887554749c"
+    },
+    {
+      "path": "scripts/python-api/install.py",
+      "sha256": "aa75ad3135cbbcd585645c4c0538e47099d8879fb661f6c9321ee1d4dc93c196"
+    },
+    {
+      "path": "scripts/python-api/test_install.py",
+      "sha256": "a7b8f311aeeeece92030f124a58456e13d219718849cc5556b6524eb454ab7f9"
+    },
+    {
+      "path": "scripts/qt-desktop.sh",
+      "sha256": "141badb80b38d75f056f4d0e9c4c42f555f45b09604c77b0fe8d85c493b24f53"
+    },
+    {
+      "path": "scripts/security-audit.sh",
+      "sha256": "a9442e451dcc6edd53a12514f4a65144269e42a628aa39e22ec43febf4ea9b3f"
+    },
+    {
+      "path": "scripts/test-local.sh",
+      "sha256": "9f6feb0e2318836219baf4db462afe830b465b27df772aaa3f911c0160939119"
+    },
+    {
+      "path": "scripts/windows/qt-desktop.ps1",
+      "sha256": "53071fda62b57937f221e2a9448e06f0507f4be936165c138d1e9b5ba9c02ada"
+    },
+    {
+      "path": "scripts/windows/setup-msvc-ci.ps1",
+      "sha256": "60fe521c8769029a8332e796523075458006ab1a8e68740493f20925228b7928"
+    },
+    {
+      "path": "scripts/windows/test-installed.ps1",
+      "sha256": "9d465c4b6f807951c3b340fb21f6c5d08ceddbbc648a32ccdc711374e783d438"
+    },
+    {
+      "path": "scripts/windows/test-update.ps1",
+      "sha256": "8d3e52ec824b4a6032e99900ec457362285fa14d675a2eab2633f455224789ec"
+    },
+    {
+      "path": "tools/testing/api_examples.py",
+      "sha256": "063107477ff960e0fd2a993ee8e7b45c97cc4b21f95a839b7835035757e44b26"
+    },
+    {
+      "path": "tools/testing/native_api.py",
+      "sha256": "f128154b30ede2d51ced7385f636ccfad6d43747b93c38c87895c8567b6b024f"
+    },
+    {
+      "path": "tools/testing/nextest.py",
+      "sha256": "6da9b680c7567743c624485e8419516af1897fdc52636f98fe5d2f6a50ffecd7"
+    },
+    {
+      "path": "tools/testing/quick-tests.json",
+      "sha256": "ce6f3bd694e93e852977900e5675558758e99be3d75d745e7af31991ba0063a2"
+    },
+    {
+      "path": "tools/testing/quick_tests.py",
+      "sha256": "8f9747b4174c62790afbd83236791a420f80799a2d033b5b2ebead56c3435a9d"
+    },
+    {
+      "path": "tools/testing/test_api_examples.py",
+      "sha256": "31a20408216775551ad0550fcc104c7aa55b4196ff800069f74b652b9c74e52c"
+    },
+    {
+      "path": "tools/testing/test_local.py",
+      "sha256": "3971c649a7938071721bad7243410bf7d43abfabf0c0f417812b25b730e36c78"
+    },
+    {
+      "path": "tools/testing/test_native_api.py",
+      "sha256": "a2a43677d545ef5301249f8f4147e1f3e1c0b298ee88355eff33e7c9e0eae172"
+    },
+    {
+      "path": "tools/testing/test_nextest.py",
+      "sha256": "ba77e487827ed4dfd48231125134ba727bbe26cc1998772151b82ba9e16d9ab0"
+    },
+    {
+      "path": "tools/testing/test_quick_tests.py",
+      "sha256": "515a437ba825dbf26426abda38ca3dbf2bef22d0e7c34af77ec5223d14aa771c"
+    }
+  ]
+}

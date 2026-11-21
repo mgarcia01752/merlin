@@ -202,3 +202,28 @@ nextest discovery and matching Cargo metadata; omitting an input fails. Neither
 mode recreates an old test run. The code/test owners are
 `tools/validation/{implementation_evidence,test_implementation_evidence}.py`,
 `tools/testing/{native_api,test_native_api}.py` and the existing adapter/tool suites.
+
+## INT-REG-01: Unified backend regression
+
+Use accepted implementation checkpoint `95e2ac5` and preserve its scientific
+sources, source vectors and dependency pins. Run the full existing
+`scripts/test-local.sh all` gate with four isolated nextest processes, retained
+doctests, all twelve API workflows, analysis-only coverage and the serialized
+pause case. Run workspace formatting and all-target Clippy with warnings denied;
+retain native adapter Clippy and the already fresh installed-wheel/direct-Rust
+48-case run. Do not substitute source-only results, compile-only discovery or
+quick subsets for this acceptance.
+
+Validate the unchanged downstream Qt adapter through its existing check script
+because shared scientific/API dependencies changed. Reuse the available pinned
+Qt 6.8.3 SDK read-only; all outputs/caches remain in MERLIN. This is compatibility
+validation, with no upstream Qt implementation, SDK/system installation or changes
+to another repository. Keep runtime phases sequential to avoid unrelated load in
+timing-sensitive cases and preserve useful build caches/profiles.
+
+Audit all three locks without advisory suppressions and retain actual warnings
+separately from vulnerabilities. Record commands, exact source candidate, named
+cases, elapsed times, failures/corrections and host/platform limits. Existing
+downstream history stays completed; new integration evidence belongs to INT-REG-01.
+The architecture/requirement/checklist links and final documentation/whole-backend
+acceptance remain separate subsequent gates. No publication, merge or release.

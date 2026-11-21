@@ -366,12 +366,18 @@ architecture owner identifies concrete implementation/test paths and disposition
   final regression/documentation/backend gates remain separate.
 
 <a id="int-reg-01"></a>
-- [ ] **INT-REG-01** Pass unified downstream and upstream backend regressions.
+- [x] **INT-REG-01** Pass unified downstream and upstream backend regressions.
   Requirements: [REQ-DS-FEC-01](../requirements.md#req-ds-fec-01), [REQ-DS-PHY-01](../requirements.md#req-ds-phy-01), [REQ-DS-RUN-01](../requirements.md#req-ds-run-01), [REQ-DS-INPUT-01](../requirements.md#req-ds-input-01), [REQ-DS-API-01](../requirements.md#req-ds-api-01), [REQ-DS-UI-01](../requirements.md#req-ds-ui-01).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-acceptance-and-final-documentation-gate).
   Depends on: INT-TOOLS-01, INT-PNM-02, INT-FEC-01, INT-DSP-01,
   DS-GAP-01, DS-GAP-02, DS-GAP-03.
   Acceptance: Run full required MERLIN Rust tests/Clippy/format/analysis-only/doctests/examples plus actual Python/CLI/PNM compatibility and applicable Qt integration checks. Record deterministic values separately from elapsed time, all failures/omissions and exact candidate. Source-only passes are insufficient.
+  Acceptance evidence: [final source/case records](features/unified-backend/regression-evidence.json)
+  and [complete local regression](features/unified-backend/validation.md#int-reg-01-complete-unified-workspace-regression).
+  605 workspace, 4 preparation and 139 analysis-only cases plus 12 workflows pass;
+  static, native parity and existing downstream Qt compatibility pass. Three
+  ignored benchmarks, empty doctest phases, maintenance advisory and local-only
+  platform/installer boundaries remain explicit. Final documentation is next.
 
 <a id="int-doc-02"></a>
 - [ ] **INT-DOC-02** Complete final documentation and skill correspondence.

@@ -251,3 +251,36 @@ smokes and the complete 1,976-bit upstream fixture. The three locks retain exact
 checkpoint; version metadata and the generated Python guide agree. No dependency
 pin or native delivery target changed. Final whole-workspace regressions remain
 INT-REG-01; no release, system installation or publication occurred.
+
+## INT-REG-01: Complete unified workspace regression
+
+The [regression source manifest](regression-candidate.json),
+[six downstream requirement chains](regression-evidence.json) and
+[exact executed cases and security results](regression-test-results.json) accept
+the final corrected scientific source. `scripts/test-local.sh all` passes all
+605 workspace cases, four preparation cases, 139 analysis-only cases and twelve
+API workflows. The seven workspace and one analysis rustdoc-test phases run
+successfully and contain zero doctest cases. The only three omitted tests are
+explicitly ignored performance benchmarks, named in the run record.
+
+The initial full run at `95e2ac5` passed but exposed an unused private cancellation
+bridge in a build without `high-level-api`. Its caller already requires that
+feature; the helper now has the same cfg guard. The full gate was rerun on that
+corrected source (9m49s including relinking); default-feature Clippy, workspace
+Clippy, binding Clippy and formatting all pass. No public signature, function
+body, input contract or downstream scientific result changed.
+
+The unchanged downstream Qt adapter passes warnings-denied Clippy, its
+87 Rust cases and 89 software/offscreen QML cases, and the current executable
+is built. The existing pinned Qt 6.8.3 SDK was used read-only; all outputs remain
+in MERLIN. This is source-build compatibility, without upstream UI implementation
+or installed GUI/native updater lifecycle acceptance.
+
+The fresh 48-case installed CPython 3.10 suite and independently executed Rust
+references from INT-TOOLS-01 remain applicable: native adapter/scientific bodies
+are unchanged. Full workspace CLI/PNM/session cases also pass in this new run.
+All three locks pass the unsuppressed security audit with zero vulnerabilities;
+`humantime 2.4.0` has maintenance advisory `RUSTSEC-2026-0542`, retained explicitly
+in the run record. Dependency pins and original downstream acceptance remain intact.
+Local Linux results do not establish Windows/hosted/native-installation or external
+modem/CMTS interoperability. Final documentation and backend review remain separate.
