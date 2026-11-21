@@ -1,0 +1,99 @@
+{
+  "base_revision": "05574235149955143d6485a46b921a8ae3773cc2",
+  "scope": "Changed executable inputs relative to base; unchanged source and existing tests are fixed by that Git revision. Documentation is reconciled separately.",
+  "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8",
+  "files": [
+    {
+      "path": "Cargo.lock",
+      "sha256": "5ce057b5273d6c92725d6c10dfdb3cfef33c21fb5526970325d8f6322e704f9f"
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "b5e39e32f9aa95fa350d9746ca16e568def1b1a56d14dee2d7196cf1513de88d"
+    },
+    {
+      "path": "apps/qt/Cargo.lock",
+      "sha256": "422d6c10ffb606dc97d1c8279ae5b95ee5065596c47390c2aade37379e6ebdd3"
+    },
+    {
+      "path": "bindings/python/Cargo.lock",
+      "sha256": "9f404fafad6c301346e786251795fc25a071446585be6c2bddd4b3ac336c567a"
+    },
+    {
+      "path": "crates/merlin/Cargo.toml",
+      "sha256": "be729ab591618f81501c3529d9e4579ce24b14cf56ba6cfbdc3d280546ae42fa"
+    },
+    {
+      "path": "crates/merlin/src/lib.rs",
+      "sha256": "37c2b8b5a4f7c62d237b21e3bfe4fdd5b2a82e223ec532e2f9e5d2f8c645aee5"
+    },
+    {
+      "path": "crates/merlin/tests/namespaces.rs",
+      "sha256": "9e98eac7026b2398e6fef5dfdfca479f9eaba4675c376fbab0c020d3157afbce"
+    },
+    {
+      "path": "crates/ofdm/Cargo.toml",
+      "sha256": "2b0dae6550eec6c0a1b0bffd8d9da8b17b0293082e122346864471f8f0baf237"
+    },
+    {
+      "path": "crates/ofdm/src/api/controller.rs",
+      "sha256": "ab22bdf47fbe53c23afafb01f4d96ab687bd4203a819b07151853e557c8e4634"
+    },
+    {
+      "path": "crates/ofdm/src/api/error.rs",
+      "sha256": "2bc462c4db918b8c8e4c0290569236a4359001331a077e193f6de2039c4b697d"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/job.rs",
+      "sha256": "a8a3ed000cc80b5f776e389cc7855c0c5876267503d0a762f61fadb14fc55931"
+    },
+    {
+      "path": "crates/ofdma/Cargo.toml",
+      "sha256": "4790c06c8e0244755aeef376223d621fba0d23a132376a80c017f5289d0a91d7"
+    },
+    {
+      "path": "crates/ofdma/src/api/error.rs",
+      "sha256": "1352daa21ebc4a755997b09140cdf072c2dd4f3062170801beb264c62deb53c3"
+    },
+    {
+      "path": "crates/ofdma/src/api/mod.rs",
+      "sha256": "a66696630dab18e34c89cc946c7e1480948d3ce8c8b5a87707af2eb9ea16eb7b"
+    },
+    {
+      "path": "crates/ofdma/src/simulation/control.rs",
+      "sha256": "87ab34e3aed3795cd87c0535e683d8cb2b77099543a93d79b4babb1b9efc9ba5"
+    },
+    {
+      "path": "crates/phy-api/Cargo.toml",
+      "sha256": "a545fa3623af813dfcf63019013b09cc5c7aaadd36f7656e955b2c01985b9846"
+    },
+    {
+      "path": "crates/phy-api/src/control.rs",
+      "sha256": "0e01a7740713c90fb8ed662173ee34e813c44c701c9008819f1d09cf20c2fb93"
+    },
+    {
+      "path": "crates/phy-api/src/error.rs",
+      "sha256": "56d6df69c08e5ac818de28661fbbcd0e6511a3b2289261011f86b0f6e0d8421b"
+    },
+    {
+      "path": "crates/phy-api/src/lib.rs",
+      "sha256": "3badafe18d0251b5bca66c66690114062741578beddf6a1c35d7ab0e45f17c87"
+    },
+    {
+      "path": "crates/phy-api/tests/contracts.rs",
+      "sha256": "ac75af0c19bbb01e52a63821b457e1bdbc3e6e62099823e1813f3a45b43d5fc6"
+    },
+    {
+      "path": "tools/release/versions.py",
+      "sha256": "2ef7f4bb6a48fc8d4bf6a5ea28dae488ed2ca88d7cedea47678ac2b1febdc4bf"
+    },
+    {
+      "path": "tools/validation/rust_api_inventory.py",
+      "sha256": "7c3918c0fd11817001b8c0a0eb7252045584d6ba9e37b7d32e7d13c9beeffcb0"
+    },
+    {
+      "path": "tools/validation/test_rust_api_inventory.py",
+      "sha256": "71d41beb77be885b470c82e068f23a656f21e286bdd6f3d9e22be54b0ee52802"
+    }
+  ]
+}

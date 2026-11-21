@@ -10,6 +10,7 @@ license = "Apache-2.0"
 publish = false
 
 [dependencies]
+merlin-api = { path = "../phy-api" }
 fec-codec = { path = "../fec-codec" }
 merlin-dsp = { path = "../dsp" }
 serde = { version = "=1.0.228", features = ["derive"] }

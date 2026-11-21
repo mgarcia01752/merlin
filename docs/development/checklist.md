@@ -317,6 +317,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Depends on: INT-US-LOOP-01, INT-PNM-02.
   Acceptance: Public upstream operations and common lifecycle/error/provenance semantics pass native Rust tests, idle/Busy/ownership/bounds/unsupported/versioned-schema checks. Preserve every downstream import/entrypoint/report, optional analysis-only support and Rust-only independence. Approve namespace-to-crate mapping before compatibility-sensitive edits; accept explicit direction imports/aliases with every exported Rust operation in the authoritative matrix.
   Feature records: [high-level-api/upstream.md](features/high-level-api/upstream.md).
+  Progress: [implemented facade/common contracts and passing compatibility checks](features/high-level-api/namespace-design.md#namespace-implementation-validation); complete per-operation matrix coverage remains open.
 
 <a id="int-py-01"></a>
 - [ ] **INT-PY-01** Expose upstream through the existing native Python distribution.

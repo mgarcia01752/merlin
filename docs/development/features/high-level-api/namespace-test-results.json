@@ -1,0 +1,1108 @@
+{
+  "schema_version": 1,
+  "candidate_record": "docs/development/features/high-level-api/namespace-candidate.json",
+  "candidate_sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8",
+  "host": "x86_64-unknown-linux-gnu",
+  "rustc": "1.85.1",
+  "runs": [
+    {
+      "command": "scripts/cargo-local.sh test -p merlin-api -p merlin --locked",
+      "exit_code": 0,
+      "passed": 8,
+      "cases": [
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "upstream_error_categories_keep_offsets_and_original_domain_causes"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "every_downstream_export_retains_legacy_type_identity"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "shared_precancellation_reaches_both_directions_and_retains_source_context"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "common_cancellation_unblocks_an_acknowledged_upstream_pause"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "upstream_namespace_executes_real_loop_and_preserves_structured_errors"
+        },
+        {
+          "test_file": "crates/phy-api/tests/contracts.rs",
+          "qualified_test_case": "every_category_keeps_legacy_spelling_and_variant_order"
+        },
+        {
+          "test_file": "crates/phy-api/tests/contracts.rs",
+          "qualified_test_case": "clones_threads_and_legacy_atomic_queries_share_one_way_cancellation"
+        }
+      ],
+      "log": "docs/development/local/unified-backend/rust-api-integration/facade-tests.log",
+      "log_sha256": "a97d3a47f286a65e9b9353a138f6293e99c756ddc2ad0afbcba88260273d7788"
+    },
+    {
+      "command": "scripts/cargo-local.sh test -p pnm-input --test high_level_api --locked",
+      "exit_code": 0,
+      "passed": 26,
+      "cases": [
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "cpa_serialization_preserves_saved_workbenches"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "cpa_controls_validate_atomically_and_preserve_idle_settings"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "export_never_overwrites_existing_destination"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "cancellation_preserves_all_requested_entries_without_execution"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "binary_json_all_kinds_and_wrong_kind"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "defaults_derived_grid_overrides_and_immutable_edit"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "channel_nearest_explicit_reuse_ties_and_unset_policy"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "loaded_profile_catalog_survives_source_removal_and_serializes"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "individual_and_exact_epoch_keep_original_mer_values_without_round_trip"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "interpolation_uses_adjacent_unequal_intervals_and_exact_originals"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "default_capture_protocol_matches_explicit_loading"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "missing_contributors_cannot_turn_into_valid_averages_or_interpolations"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "narrower_capture_keeps_bandwidth_explicit"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "nulls_grid_errors_preflight_and_atomic_additions"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "profile_catalog_rejects_malformed_empty_duplicate_and_out_of_domain_ids"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "profile_catalog_discovery_matches_core_json_and_binary_without_selection"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "receiver_selection_is_independent_copied_and_forwarded_for_every_policy"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "runtime_limit_returns_partial_and_continues_batch"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "static_policies_power_math_ids_epochs_and_loading_does_not_run"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "simulation_loading_is_idle_atomic_and_preserves_scoped_measurements"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "aggregate_budget_rejects_addition_and_profile_replacement_atomically"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "loaded_profiles_preserve_selection_ids_and_cancelled_entries"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "created_profile_runs_as_hypothesis_without_fabricated_capture_provenance"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "pilot_estimated_api_matches_direct_engine_fec_and_owns_mode"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "merlin_estimated_api_matches_direct_engine_fec_and_owns_mode"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "high_level_api_matches_direct_engine_and_owns_old_reports"
+        }
+      ],
+      "log": "docs/development/local/unified-backend/rust-api-integration/downstream-api-tests.log",
+      "log_sha256": "d770ae08364434c8182dc759d3b8d60048b178bd8eb1788b15691d09bcdcf46e"
+    },
+    {
+      "command": "scripts/cargo-local.sh test -p docsis-ofdm-fec --test channel_job --locked",
+      "exit_code": 0,
+      "passed": 6,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/channel_job.rs",
+          "qualified_test_case": "pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits"
+        },
+        {
+          "test_file": "crates/ofdm/tests/channel_job.rs",
+          "qualified_test_case": "cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count"
+        },
+        {
+          "test_file": "crates/ofdm/tests/channel_job.rs",
+          "qualified_test_case": "failed_sink_preserves_science_completed_before_the_callback"
+        },
+        {
+          "test_file": "crates/ofdm/tests/channel_job.rs",
+          "qualified_test_case": "whole_word_window_counts_exclude_crossing_and_completion_only_words"
+        },
+        {
+          "test_file": "crates/ofdm/tests/channel_job.rs",
+          "qualified_test_case": "tx_message_and_frame_observation_preserve_channel_results"
+        },
+        {
+          "test_file": "crates/ofdm/tests/channel_job.rs",
+          "qualified_test_case": "paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        }
+      ],
+      "log": "docs/development/local/unified-backend/rust-api-integration/downstream-job-tests.log",
+      "log_sha256": "0aa16e0cd39c80474d5abaf8290815ea48606ef9189870c394579b8990f08364"
+    },
+    {
+      "command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "exit_code": 0,
+      "passed": 83,
+      "cases": [
+        {
+          "test_file": "crates/ofdma/src/lib.rs",
+          "qualified_test_case": "instruments::spectrum::tests::independent_constant_tone_psd_units_identity_and_no_cross_grant_join"
+        },
+        {
+          "test_file": "crates/ofdma/tests/channel_models.rs",
+          "qualified_test_case": "literal_convolution_delay_phase_and_exact_drain_order"
+        },
+        {
+          "test_file": "crates/ofdma/tests/channel_models.rs",
+          "qualified_test_case": "rejected_blocks_preserve_history_rng_cursor_and_terminal_state"
+        },
+        {
+          "test_file": "crates/ofdma/tests/channel_models.rs",
+          "qualified_test_case": "exact_unity_signed_zeros_and_pinned_noise_chunk_invariance"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_qam_bits_3_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_qam_bits_2_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_qam_bits_4_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_qam_bits_6_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_qam_bits_5_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_medium_family_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_qam_bits_7_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_qam_bits_8_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_qam_bits_10_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_short_family_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_qam_bits_9_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_medium_family_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_qam_bits_2_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_qam_bits_3_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_qam_bits_10_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_qam_bits_4_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_qam_bits_5_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_qam_bits_6_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_long_family_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_qam_bits_7_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_short_family_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_qam_bits_11_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_qam_bits_11_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_qam_bits_8_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_long_family_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_qam_bits_9_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz50_qam_bits_12_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/closed_loop.rs",
+          "qualified_test_case": "khz25_qam_bits_12_recovers"
+        },
+        {
+          "test_file": "crates/ofdma/tests/configuration.rs",
+          "qualified_test_case": "explicit_iuc_inventory_and_rejected_candidate_preserve_snapshot"
+        },
+        {
+          "test_file": "crates/ofdma/tests/configuration.rs",
+          "qualified_test_case": "original_numerology_and_all_prefix_rolloff_values"
+        },
+        {
+          "test_file": "crates/ofdma/tests/configuration.rs",
+          "qualified_test_case": "frame_bandwidth_thresholds_are_encompassed_bandwidth"
+        },
+        {
+          "test_file": "crates/ofdma/tests/configuration.rs",
+          "qualified_test_case": "overflow_and_nonfinite_boundaries_reject_without_wrapping"
+        },
+        {
+          "test_file": "crates/ofdma/tests/configuration_json.rs",
+          "qualified_test_case": "direct_nonfinite_rust_edits_never_export_as_missing_json_values"
+        },
+        {
+          "test_file": "crates/ofdma/tests/configuration_json.rs",
+          "qualified_test_case": "source_reserved_width_range_and_cross_field_boundaries_reject"
+        },
+        {
+          "test_file": "crates/ofdma/tests/configuration_json.rs",
+          "qualified_test_case": "control_fields_and_conditional_options_are_independently_exercised"
+        },
+        {
+          "test_file": "crates/ofdma/tests/configuration_json.rs",
+          "qualified_test_case": "unknown_fields_nulls_limits_and_failed_replacement_preserve_session"
+        },
+        {
+          "test_file": "crates/ofdma/tests/configuration_json.rs",
+          "qualified_test_case": "every_applicable_cp_rp_enum_and_loading_pattern_rule_has_a_case"
+        },
+        {
+          "test_file": "crates/ofdma/tests/configuration_json.rs",
+          "qualified_test_case": "examples_roundtrip_complete_inventory_and_actual_both_numerology_runs"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "pre_cancel_does_not_generate_or_claim_recovery"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "asynchronous_cancel_retains_actual_completed_prefix"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "failed_configuration_and_budget_changes_preserve_accepted_settings"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "passive_qam_sa_queries_and_retention_leave_all_science_unchanged"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "acknowledged_paused_time_does_not_consume_active_runtime_budget"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "both_numerologies_high_level_exact_source_coverage_and_owned_results"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker"
+        },
+        {
+          "test_file": "crates/ofdma/tests/grant_plan.rs",
+          "qualified_test_case": "source_threshold_and_two_shortened_word_literals"
+        },
+        {
+          "test_file": "crates/ofdma/tests/grant_plan.rs",
+          "qualified_test_case": "complete_bounded_capacity_sweep_conserves_every_role"
+        },
+        {
+          "test_file": "crates/ofdma/tests/matched_metrics.rs",
+          "qualified_test_case": "explicit_empty_zero_error_and_literal_twenty_db"
+        },
+        {
+          "test_file": "crates/ofdma/tests/measurement_playback.rs",
+          "qualified_test_case": "snapshots_replace_and_adjustments_use_explicit_older_probe_base"
+        },
+        {
+          "test_file": "crates/ofdma/tests/measurement_playback.rs",
+          "qualified_test_case": "literal_power_average_hold_interpolation_nulls_and_boundaries"
+        },
+        {
+          "test_file": "crates/ofdma/tests/prbs.rs",
+          "qualified_test_case": "rejected_calls_and_coverage_gaps_never_advance_state"
+        },
+        {
+          "test_file": "crates/ofdma/tests/prbs.rs",
+          "qualified_test_case": "literal_seed_phase_period_and_chunk_continuity"
+        },
+        {
+          "test_file": "crates/ofdma/tests/pre_eq.rs",
+          "qualified_test_case": "defaults_full_domain_phase_and_invalid_bank_atomicity"
+        },
+        {
+          "test_file": "crates/ofdma/tests/qam_mapping.rs",
+          "qualified_test_case": "maxlog_reference_variance_ties_erasures_and_finite_rejection"
+        },
+        {
+          "test_file": "crates/ofdma/tests/qam_mapping.rs",
+          "qualified_test_case": "independent_annex_labels_and_every_order_mean_energy"
+        },
+        {
+          "test_file": "crates/ofdma/tests/randomization.rs",
+          "qualified_test_case": "literal_mask_and_independent_grant_soft_inverse"
+        },
+        {
+          "test_file": "crates/ofdma/tests/rx_estimation.rs",
+          "qualified_test_case": "linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth"
+        },
+        {
+          "test_file": "crates/ofdma/tests/rx_estimation.rs",
+          "qualified_test_case": "literal_flat_complex_ls_zero_forcing_and_unobserved_failure"
+        },
+        {
+          "test_file": "crates/ofdma/tests/rx_framing.rs",
+          "qualified_test_case": "cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions"
+        },
+        {
+          "test_file": "crates/ofdma/tests/rx_framing.rs",
+          "qualified_test_case": "cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding"
+        },
+        {
+          "test_file": "crates/ofdma/tests/rxmer_channel.rs",
+          "qualified_test_case": "every_bin_draw_order_actual_useful_samples_and_chunk_retry_invariance"
+        },
+        {
+          "test_file": "crates/ofdma/tests/stage_boundaries.rs",
+          "qualified_test_case": "zero_rolloff_is_exact_prefix_then_useful_samples_without_tail"
+        },
+        {
+          "test_file": "crates/ofdma/tests/stage_boundaries.rs",
+          "qualified_test_case": "received_window_discards_numbered_prefix_and_never_repairs_a_missing_sample"
+        },
+        {
+          "test_file": "crates/ofdma/tests/transform_reuse.rs",
+          "qualified_test_case": "shared_transform_preserves_source_bits_and_error_fields"
+        },
+        {
+          "test_file": "crates/ofdma/tests/transforms.rs",
+          "qualified_test_case": "centered_unitary_tones_and_direct_sums"
+        },
+        {
+          "test_file": "crates/ofdma/tests/transmit_window.rs",
+          "qualified_test_case": "numbered_prefix_suffix_and_exact_two_symbol_timeline"
+        },
+        {
+          "test_file": "crates/ofdma/tests/tx_framing.rs",
+          "qualified_test_case": "codeword_information_fill_and_grant_pad_have_distinct_values"
+        },
+        {
+          "test_file": "crates/ofdma/tests/tx_framing.rs",
+          "qualified_test_case": "transmitter_rejection_preserves_source_and_emission_stops_at_declared_support"
+        },
+        {
+          "test_file": "crates/ofdma/tests/upstream_interleaving.rs",
+          "qualified_test_case": "exact_partition_and_first_diagonal_source_cases"
+        },
+        {
+          "test_file": "crates/ofdma/tests/upstream_interleaving.rs",
+          "qualified_test_case": "every_supported_geometry_has_exact_independent_cartesian_coverage"
+        },
+        {
+          "test_file": "crates/ofdma/tests/upstream_pilots.rs",
+          "qualified_test_case": "boosted_short_frame_complement_exception_and_physical_pilot_sequence"
+        },
+        {
+          "test_file": "crates/ofdma/tests/upstream_pilots.rs",
+          "qualified_test_case": "source_literals_and_all_family_role_counts"
+        },
+        {
+          "test_file": "crates/ofdma/tests/waveform_loop.rs",
+          "qualified_test_case": "rejected_and_truncated_samples_preserve_real_coverage"
+        },
+        {
+          "test_file": "crates/ofdma/tests/waveform_loop.rs",
+          "qualified_test_case": "both_modes_all_pilot_patterns_and_cross_frame_words_recover"
+        },
+        {
+          "test_file": "crates/ofdma/tests/waveform_loop.rs",
+          "qualified_test_case": "all_upstream_qam_orders_and_received_pilot_phase_recovery"
+        }
+      ],
+      "log": "docs/development/local/unified-backend/rust-api-integration/upstream-tests.log",
+      "log_sha256": "a8c61520d2f28e0a216900677a0485736a90cd2f86afee3c9ac5327f27dbb31c"
+    },
+    {
+      "command": "scripts/cargo-local.sh test -p docsis-ofdm-fec --no-default-features --locked",
+      "exit_code": 0,
+      "passed": 139,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/src/lib.rs",
+          "qualified_test_case": "signal_processing::modulation::soft_bits::index::tests::geometry_admission_never_substitutes_square_labels_for_cross_qam"
+        },
+        {
+          "test_file": "crates/ofdm/tests/additional_loss.rs",
+          "qualified_test_case": "full_cable_loss_uses_manufacturer_anchors_and_explicit_length_units"
+        },
+        {
+          "test_file": "crates/ofdm/tests/additional_loss.rs",
+          "qualified_test_case": "manual_endpoints_and_zero_length_preserve_unity"
+        },
+        {
+          "test_file": "crates/ofdm/tests/additional_loss.rs",
+          "qualified_test_case": "rejects_nonfinite_bounds_extrapolation_and_excessive_loss"
+        },
+        {
+          "test_file": "crates/ofdm/tests/additional_loss.rs",
+          "qualified_test_case": "typed_serialization_preserves_models_and_rejects_unknown_cable_versions"
+        },
+        {
+          "test_file": "crates/ofdm/tests/carrier_layout.rs",
+          "qualified_test_case": "ncp_uses_descending_preinterleaving_data_and_skips_placeholders_and_zero_loading"
+        },
+        {
+          "test_file": "crates/ofdm/tests/carrier_layout.rs",
+          "qualified_test_case": "physical_plc_and_predefined_pilots_follow_independent_table50_vectors"
+        },
+        {
+          "test_file": "crates/ofdm/tests/carrier_layout.rs",
+          "qualified_test_case": "invalid_geometry_and_collisions_return_errors_without_mutating_inputs"
+        },
+        {
+          "test_file": "crates/ofdm/tests/carrier_layout.rs",
+          "qualified_test_case": "scattered_pilots_cover_both_8k_halves_and_repeat_at_128_symbols"
+        },
+        {
+          "test_file": "crates/ofdm/tests/carrier_layout.rs",
+          "qualified_test_case": "full_pilot_cycle_visits_every_eligible_bin_once_and_preserves_domain_size"
+        },
+        {
+          "test_file": "crates/ofdm/tests/cell_interleaving.rs",
+          "qualified_test_case": "composed_streams_drain_and_rejected_calls_leave_history_unchanged"
+        },
+        {
+          "test_file": "crates/ofdm/tests/cell_interleaving.rs",
+          "qualified_test_case": "frequency_indices_verify_rotation_direction_seed_and_column_bit_reversal"
+        },
+        {
+          "test_file": "crates/ofdm/tests/cell_interleaving.rs",
+          "qualified_test_case": "frequency_maps_are_bijective_at_partial_full_and_spacing_limits"
+        },
+        {
+          "test_file": "crates/ofdm/tests/cell_interleaving.rs",
+          "qualified_test_case": "every_time_depth_preserves_exact_tags_and_dummy_padding"
+        },
+        {
+          "test_file": "crates/ofdm/tests/cell_interleaving.rs",
+          "qualified_test_case": "inverse_reference_lands_on_physical_pilots_without_touching_protected_bins"
+        },
+        {
+          "test_file": "crates/ofdm/tests/cell_randomizer.rs",
+          "qualified_test_case": "lsb_first_register_bits_become_msb_first_labels_including_8k_and_16k"
+        },
+        {
+          "test_file": "crates/ofdm/tests/cell_randomizer.rs",
+          "qualified_test_case": "rejected_inputs_never_advance_registers_or_symbol_sequence"
+        },
+        {
+          "test_file": "crates/ofdm/tests/cell_randomizer.rs",
+          "qualified_test_case": "consecutive_symbols_preserve_state_until_128_boundary_even_with_first_pilot"
+        },
+        {
+          "test_file": "crates/ofdm/tests/cell_randomizer.rs",
+          "qualified_test_case": "published_data_pilot_zero_sequence_matches_every_register_state"
+        },
+        {
+          "test_file": "crates/ofdm/tests/cell_randomizer.rs",
+          "qualified_test_case": "all_256_labels_recover_original_bits_after_mapping_and_soft_descrambling"
+        },
+        {
+          "test_file": "crates/ofdm/tests/cell_randomizer.rs",
+          "qualified_test_case": "mixed_orders_ncp_and_skipped_cells_keep_transmitter_and_receiver_synchronized"
+        },
+        {
+          "test_file": "crates/ofdm/tests/channel_power.rs",
+          "qualified_test_case": "gain_target_attenuation_and_independent_noise_have_distinct_references"
+        },
+        {
+          "test_file": "crates/ofdm/tests/channel_power.rs",
+          "qualified_test_case": "malformed_bounds_and_unreferenced_electrical_choices_reject"
+        },
+        {
+          "test_file": "crates/ofdm/tests/channel_power.rs",
+          "qualified_test_case": "unitary_data_density_calibrates_to_explicit_six_mhz_reference"
+        },
+        {
+          "test_file": "crates/ofdm/tests/constellation_mer.rs",
+          "qualified_test_case": "tx_reference_does_not_hide_wrong_decisions"
+        },
+        {
+          "test_file": "crates/ofdm/tests/constellation_mer.rs",
+          "qualified_test_case": "known_complex_errors_use_power_sums_and_not_average_db"
+        },
+        {
+          "test_file": "crates/ofdm/tests/constellation_mer.rs",
+          "qualified_test_case": "exceptional_readings_remain_explicit_and_json_safe"
+        },
+        {
+          "test_file": "crates/ofdm/tests/constellation_mer.rs",
+          "qualified_test_case": "boosted_pilots_and_full_selection_are_not_rescaled_or_display_sampled"
+        },
+        {
+          "test_file": "crates/ofdm/tests/constellation_mer.rs",
+          "qualified_test_case": "row_index_matches_exhaustive_distances_for_every_supported_order"
+        },
+        {
+          "test_file": "crates/ofdm/tests/continuous_pilot_placement.rs",
+          "qualified_test_case": "isolated_narrow_region_center_poor_bins_and_bounds"
+        },
+        {
+          "test_file": "crates/ofdm/tests/continuous_pilot_placement.rs",
+          "qualified_test_case": "count_edges_plc_and_deterministic_disturbance_both_spacings"
+        },
+        {
+          "test_file": "crates/ofdm/tests/continuous_pilot_placement.rs",
+          "qualified_test_case": "actual_active_span_and_predefined_pilot_coverage_are_respected"
+        },
+        {
+          "test_file": "crates/ofdm/tests/documents.rs",
+          "qualified_test_case": "bad_schemas_grids_and_nonfinite_values_are_rejected"
+        },
+        {
+          "test_file": "crates/ofdm/tests/documents.rs",
+          "qualified_test_case": "candidate_round_trip_and_protected_roles"
+        },
+        {
+          "test_file": "crates/ofdm/tests/duration_timing.rs",
+          "qualified_test_case": "duration_plan_matches_independent_sample_arithmetic_and_legacy_schedule"
+        },
+        {
+          "test_file": "crates/ofdm/tests/duration_timing.rs",
+          "qualified_test_case": "fractional_ticks_symbol_edges_and_invalid_overflow_are_explicit"
+        },
+        {
+          "test_file": "crates/ofdm/tests/input_format.rs",
+          "qualified_test_case": "contents_determine_format_without_filename_assumptions"
+        },
+        {
+          "test_file": "crates/ofdm/tests/lte_ingress.rs",
+          "qualified_test_case": "nulls_symmetry_and_physical_frequency_alignment"
+        },
+        {
+          "test_file": "crates/ofdm/tests/lte_ingress.rs",
+          "qualified_test_case": "partial_lte_loading_protects_plc_and_starts_with_a_small_span"
+        },
+        {
+          "test_file": "crates/ofdm/tests/lte_ingress.rs",
+          "qualified_test_case": "independent_equal_power_and_shoulder_anchors"
+        },
+        {
+          "test_file": "crates/ofdm/tests/lte_ingress.rs",
+          "qualified_test_case": "rejects_invalid_power_readings_grids_and_coverage"
+        },
+        {
+          "test_file": "crates/ofdm/tests/ncp_message.rs",
+          "qualified_test_case": "message_bytes_and_flags_follow_figure92"
+        },
+        {
+          "test_file": "crates/ofdm/tests/ofdm_modulation.rs",
+          "qualified_test_case": "data_registry_covers_optional_16k_without_claiming_simulation"
+        },
+        {
+          "test_file": "crates/ofdm/tests/ofdm_modulation.rs",
+          "qualified_test_case": "both_protocol_scopes_allow_16k_analysis_with_an_explicit_device_cap"
+        },
+        {
+          "test_file": "crates/ofdm/tests/pilot_power.rs",
+          "qualified_test_case": "invalid_references_underflow_and_overflow_are_rejected"
+        },
+        {
+          "test_file": "crates/ofdm/tests/pilot_power.rs",
+          "qualified_test_case": "two_times_rms_is_four_times_power_and_six_db_boost"
+        },
+        {
+          "test_file": "crates/ofdm/tests/pilot_sequence.rs",
+          "qualified_test_case": "published_bits_and_independent_thirteen_stage_diagram_match"
+        },
+        {
+          "test_file": "crates/ofdm/tests/pilot_signals.rs",
+          "qualified_test_case": "different_fft_numerologies_cannot_be_mixed"
+        },
+        {
+          "test_file": "crates/ofdm/tests/pilot_signals.rs",
+          "qualified_test_case": "continuous_and_scattered_values_follow_physical_bins_over_full_cycle"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_block_interleaving.rs",
+          "qualified_test_case": "soft_inverse_preserves_exact_bit_significance_sign_and_magnitude"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_block_interleaving.rs",
+          "qualified_test_case": "received_blocks_and_soft_input_require_complete_finite_values"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_block_interleaving.rs",
+          "qualified_test_case": "full_coordinate_vectors_and_every_nibble_basis_match_both_figures"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_descriptors.rs",
+          "qualified_test_case": "crc_check_strings_and_packet_checksum_rejection"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_descriptors.rs",
+          "qualified_test_case": "fixed_descriptors_include_edges_plc_all_pilots_and_profile_defaults"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_descriptors.rs",
+          "qualified_test_case": "received_descriptor_semantics_and_scheduler_settings_are_checked"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_descriptors.rs",
+          "qualified_test_case": "reassembly_handles_split_headers_continuations_and_crc_failure_atomically"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_descriptors.rs",
+          "qualified_test_case": "schedule_repeats_and_reassembles_without_tx_packet_boundaries"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_geometry.rs",
+          "qualified_test_case": "frame_capacities_follow_both_fft_sizes"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_information.rs",
+          "qualified_test_case": "information_size_is_exactly_one_encoder_input"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_information.rs",
+          "qualified_test_case": "information_bits_follow_msb_first_transmission_order"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_message_channel.rs",
+          "qualified_test_case": "idle_and_packet_pointer_headers_follow_table77"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_message_channel.rs",
+          "qualified_test_case": "invalid_headers_truncation_and_pointer_bounds_are_rejected"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_nibbles.rs",
+          "qualified_test_case": "invalid_sizes_and_values_are_rejected_without_mutation"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_nibbles.rs",
+          "qualified_test_case": "msb_first_groups_and_every_bit_basis_have_exact_labels"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_preamble.rs",
+          "qualified_test_case": "all_preamble_columns_match_both_rendered_tables_and_repeat_phase"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_randomization.rs",
+          "qualified_test_case": "plc_does_not_read_or_advance_data_ncp_state"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_randomization.rs",
+          "qualified_test_case": "rejected_inputs_preserve_state_before_and_after_frame_boundary"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_randomization.rs",
+          "qualified_test_case": "published_first_mask_is_label_e_and_soft_inverse_preserves_magnitudes"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_randomization.rs",
+          "qualified_test_case": "both_grids_match_polynomial_oracle_across_three_frames"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_timestamp.rs",
+          "qualified_test_case": "invalid_phase_and_overflow_fail_without_wrapping_or_mutation"
+        },
+        {
+          "test_file": "crates/ofdm/tests/plc_timestamp.rs",
+          "qualified_test_case": "timestamp_fields_have_exact_network_order_and_sample_units"
+        },
+        {
+          "test_file": "crates/ofdm/tests/profile_lab.rs",
+          "qualified_test_case": "edits_preserve_special_and_unknown_carriers"
+        },
+        {
+          "test_file": "crates/ofdm/tests/profile_lab.rs",
+          "qualified_test_case": "individual_intervals_expose_impairments_and_missing_readings"
+        },
+        {
+          "test_file": "crates/ofdm/tests/profile_lab.rs",
+          "qualified_test_case": "exact_grids_and_explicit_time_matches"
+        },
+        {
+          "test_file": "crates/ofdm/tests/public_paths.rs",
+          "qualified_test_case": "scenario_and_profile_compatibility_imports_keep_the_same_types"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_mapping.rs",
+          "qualified_test_case": "control_labels_match_phy_figures99_and100_independently_of_resource_order"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_mapping.rs",
+          "qualified_test_case": "invalid_orders_labels_and_nonfinite_metrics_return_errors"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_mapping.rs",
+          "qualified_test_case": "every_256qam_label_matches_figure108_and_quadrant_reflections"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_mapping.rs",
+          "qualified_test_case": "all_256qam_cells_recover_eight_msb_first_bits_without_channel_noise"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_mapping.rs",
+          "qualified_test_case": "embedded_tables_have_normative_energy_and_unique_coordinates_through_16k"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_mapping.rs",
+          "qualified_test_case": "higher_orders_and_control_references_use_same_softbit_contract"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_slicing.rs",
+          "qualified_test_case": "exact_ties_choose_lowest_label_and_outside_points_still_slice"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_slicing.rs",
+          "qualified_test_case": "malformed_samples_and_unsupported_constellations_reject"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_slicing.rs",
+          "qualified_test_case": "decisions_cover_every_order_and_preserve_received_minus_reference_error"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_soft_index.rs",
+          "qualified_test_case": "bpsk_matches_full_scan"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_soft_index.rs",
+          "qualified_test_case": "qam16_matches_full_scan"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_soft_index.rs",
+          "qualified_test_case": "cross128_matches_full_scan"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_soft_index.rs",
+          "qualified_test_case": "qam256_matches_full_scan"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_soft_index.rs",
+          "qualified_test_case": "qam64_matches_full_scan"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_soft_index.rs",
+          "qualified_test_case": "qpsk_matches_full_scan"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_soft_index.rs",
+          "qualified_test_case": "qam1024_matches_full_scan"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_soft_index.rs",
+          "qualified_test_case": "cross512_matches_full_scan"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_soft_index.rs",
+          "qualified_test_case": "cross2048_matches_full_scan"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_soft_index.rs",
+          "qualified_test_case": "qam4096_matches_full_scan"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_soft_index.rs",
+          "qualified_test_case": "concurrent_first_use_keeps_reference_bits_identical"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_soft_index.rs",
+          "qualified_test_case": "cross8192_matches_full_scan"
+        },
+        {
+          "test_file": "crates/ofdm/tests/qam_soft_index.rs",
+          "qualified_test_case": "qam16384_matches_full_scan"
+        },
+        {
+          "test_file": "crates/ofdm/tests/receiver_configuration.rs",
+          "qualified_test_case": "independent_descriptor_change_counts_are_preserved_not_equated"
+        },
+        {
+          "test_file": "crates/ofdm/tests/receiver_configuration.rs",
+          "qualified_test_case": "inferred_envelope_does_not_claim_transmitter_occupied_bandwidth_is_signaled"
+        },
+        {
+          "test_file": "crates/ofdm/tests/receiver_configuration.rs",
+          "qualified_test_case": "source_channel_bootstrap_and_same_generation_conflicts_are_rejected_atomically"
+        },
+        {
+          "test_file": "crates/ofdm/tests/receiver_configuration.rs",
+          "qualified_test_case": "rejected_inputs_preserve_last_valid_configuration_and_close_gate_until_valid_repeat"
+        },
+        {
+          "test_file": "crates/ofdm/tests/receiver_configuration.rs",
+          "qualified_test_case": "all_orders_wait_for_complete_set_then_build_independent_received_settings"
+        },
+        {
+          "test_file": "crates/ofdm/tests/receiver_diagnostics.rs",
+          "qualified_test_case": "llr_statistics_preserve_actual_values_and_empty_observations"
+        },
+        {
+          "test_file": "crates/ofdm/tests/receiver_diagnostics.rs",
+          "qualified_test_case": "impulse_delay_and_gain_use_independent_direct_tap_vector"
+        },
+        {
+          "test_file": "crates/ofdm/tests/receiver_mode_names.rs",
+          "qualified_test_case": "cm_channel_name_preserves_default_alias_and_saved_configuration"
+        },
+        {
+          "test_file": "crates/ofdm/tests/receiver_profiles.rs",
+          "qualified_test_case": "late_ocd_checks_cached_dpd_ranges_without_partially_accepting_bad_geometry"
+        },
+        {
+          "test_file": "crates/ofdm/tests/receiver_profiles.rs",
+          "qualified_test_case": "duplicates_missing_coverage_and_out_of_grid_are_rejected_before_commit"
+        },
+        {
+          "test_file": "crates/ofdm/tests/receiver_profiles.rs",
+          "qualified_test_case": "specifics_override_defaults_in_either_tlv_order_and_ocd_protection_wins"
+        },
+        {
+          "test_file": "crates/ofdm/tests/receiver_profiles.rs",
+          "qualified_test_case": "ncp_zero_loading_is_preserved_but_positive_orders_must_be_uniform_and_present"
+        },
+        {
+          "test_file": "crates/ofdm/tests/rxmer_designer.rs",
+          "qualified_test_case": "cosine_period_and_round_trip_distance_have_independent_anchors"
+        },
+        {
+          "test_file": "crates/ofdm/tests/rxmer_designer.rs",
+          "qualified_test_case": "notch_scope_is_inclusive_ten_through_twenty_of_fifty"
+        },
+        {
+          "test_file": "crates/ofdm/tests/rxmer_designer.rs",
+          "qualified_test_case": "invalid_bounds_and_outputs_reject_without_clipping"
+        },
+        {
+          "test_file": "crates/ofdm/tests/rxmer_designer.rs",
+          "qualified_test_case": "random_variation_is_reproducible_aligned_and_precedes_notch"
+        },
+        {
+          "test_file": "crates/ofdm/tests/rxmer_designer.rs",
+          "qualified_test_case": "signed_tilt_and_exact_value_replacements_preserve_gaps"
+        },
+        {
+          "test_file": "crates/ofdm/tests/rxmer_designer.rs",
+          "qualified_test_case": "random_variation_has_expected_moments_and_zero_is_identity"
+        },
+        {
+          "test_file": "crates/ofdm/tests/symbol_packing.rs",
+          "qualified_test_case": "pilot_placeholders_do_not_consume_data_or_pointer_ranks"
+        },
+        {
+          "test_file": "crates/ofdm/tests/symbol_packing.rs",
+          "qualified_test_case": "rejected_calls_preserve_pending_data_and_symbol_sequence"
+        },
+        {
+          "test_file": "crates/ofdm/tests/symbol_packing.rs",
+          "qualified_test_case": "tight_end_boundary_adds_null_and_carries_tail_instead_of_overfilling_ncp"
+        },
+        {
+          "test_file": "crates/ofdm/tests/symbol_packing.rs",
+          "qualified_test_case": "multiple_starts_and_filler_reserve_their_own_entries_plus_crc"
+        },
+        {
+          "test_file": "crates/ofdm/tests/symbol_packing.rs",
+          "qualified_test_case": "ncp_modulations_empty_symbols_and_4k_limits_are_explicit"
+        },
+        {
+          "test_file": "crates/ofdm/tests/transmission.rs",
+          "qualified_test_case": "rejects_invalid_bandwidth_prefix_and_rolloff_combinations"
+        },
+        {
+          "test_file": "crates/ofdm/tests/transmission.rs",
+          "qualified_test_case": "one_second_8k_schedule_uses_prefix_and_overlapped_rolloff"
+        },
+        {
+          "test_file": "crates/ofdm/tests/transmission.rs",
+          "qualified_test_case": "spacing_specific_depth_and_4k_timing_follow_phy"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_prefix.rs",
+          "qualified_test_case": "invalid_geometry_and_nonfinite_samples_are_rejected"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_prefix.rs",
+          "qualified_test_case": "all_prefix_lengths_copy_the_tail_and_rx_selects_exact_useful_samples"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_receiver.rs",
+          "qualified_test_case": "protected_extraction_retains_bin_identity_and_scattered_placeholders"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_receiver.rs",
+          "qualified_test_case": "known_complex_gain_and_rms_are_removed_without_estimating_the_channel"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_receiver.rs",
+          "qualified_test_case": "framing_preserves_offsets_across_arbitrary_blocks_and_reports_partial_tail"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_spectrum.rs",
+          "qualified_test_case": "silence_and_nonfinite_inputs_remain_explicit"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_spectrum.rs",
+          "qualified_test_case": "hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_timing.rs",
+          "qualified_test_case": "timing_budget_has_independent_units_round_trip_and_unknown_velocity"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_timing.rs",
+          "qualified_test_case": "window_zoom_is_bounded_for_both_spacings_and_every_valid_prefix_roll_pair"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_transforms.rs",
+          "qualified_test_case": "transforms_reject_shape_nan_and_overflow"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_transforms.rs",
+          "qualified_test_case": "independent_fft_impulse_and_quarter_tone_have_expected_scale_and_bin"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_transforms.rs",
+          "qualified_test_case": "dense_complex_grid_preserves_energy_and_matches_direct_idft_samples"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_transforms.rs",
+          "qualified_test_case": "independent_center_dc_quarter_tone_and_low_edge_vectors_match_phy"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_window.rs",
+          "qualified_test_case": "sample_clock_overflow_and_zero_rolloff_have_explicit_results"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_window.rs",
+          "qualified_test_case": "overlap_add_matches_independent_shifted_sum_and_rejected_calls_preserve_state"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_window.rs",
+          "qualified_test_case": "every_permitted_window_matches_half_sample_sine_definition_and_energy"
+        }
+      ],
+      "log": "docs/development/local/unified-backend/rust-api-integration/analysis-only.log",
+      "log_sha256": "7f26323aebf3c6618963059ff1c326e8959f4698069c2dfed822a1000dfdbb6f"
+    }
+  ],
+  "additional_checks": [
+    "Direction-only and common-only locked Cargo checks pass; opposite PHY absent from direction-only cargo tree.",
+    "Workspace formatting and targeted all-target Clippy deny warnings.",
+    "38 validation-tool and 5 release-version tests pass.",
+    "Python and Qt locked dependency trees resolve; old package identity/version/source/checksum tuples are preserved; new entries are local docsis-ofdma/merlin-api only."
+  ]
+}

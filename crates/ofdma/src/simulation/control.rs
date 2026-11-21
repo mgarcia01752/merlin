@@ -52,6 +52,7 @@ pub struct ProgressSnapshot {
 
 struct State {
     cancel: AtomicBool,
+    shared_cancellation: Option<merlin_api::RunControl>,
     claimed: AtomicBool,
     progress: Mutex<ProgressSnapshot>,
     pause: Mutex<PauseState>,
@@ -84,9 +85,25 @@ impl RunControl {
     ///
     /// Returns an idle handle; cloning shares one request, not another worker.
     pub fn new() -> Self {
+        Self::create(None)
+    }
+    /// Creates directional lifecycle state sharing a common stop request.
+    ///
+    /// # Arguments
+    /// * `cancellation` - Owned common token; its clones can stop this worker.
+    ///
+    /// # Returns
+    /// An idle control with independent upstream pause/progress/Busy state.
+    /// Cancelling this control also cancels the shared token. A paused worker
+    /// checks externally requested cancellation at most every 10ms of waiting.
+    pub fn with_cancellation(cancellation: merlin_api::RunControl) -> Self {
+        Self::create(Some(cancellation))
+    }
+    fn create(shared_cancellation: Option<merlin_api::RunControl>) -> Self {
         Self {
             inner: Arc::new(State {
                 cancel: AtomicBool::new(false),
+                shared_cancellation,
                 claimed: AtomicBool::new(false),
                 pause: Mutex::new(PauseState {
                     requested: false,
@@ -111,6 +128,9 @@ impl RunControl {
     pub fn cancel(&self) {
         let _pause = self.inner.pause.lock().unwrap_or_else(|p| p.into_inner());
         self.inner.cancel.store(true, Ordering::Release);
+        if let Some(shared) = &self.inner.shared_cancellation {
+            shared.cancel();
+        }
         self.inner.wake.notify_all();
     }
     /// Requests pause at the next safe worker boundary without blocking callers.
@@ -143,11 +163,20 @@ impl RunControl {
                 .unwrap_or_else(|p| p.into_inner())
                 .status = RunStatus::Paused;
             while state.requested && !self.is_cancelled() {
-                state = self
-                    .inner
-                    .wake
-                    .wait(state)
-                    .unwrap_or_else(|p| p.into_inner());
+                if self.inner.shared_cancellation.is_some() {
+                    state = self
+                        .inner
+                        .wake
+                        .wait_timeout(state, Duration::from_millis(10))
+                        .unwrap_or_else(|p| p.into_inner())
+                        .0;
+                } else {
+                    state = self
+                        .inner
+                        .wake
+                        .wait(state)
+                        .unwrap_or_else(|p| p.into_inner());
+                }
             }
             if let Some(since) = state.since.take() {
                 state.accumulated += since.elapsed();
@@ -170,6 +199,11 @@ impl RunControl {
     /// True remains true; create another handle for a fresh uncancelled request.
     pub fn is_cancelled(&self) -> bool {
         self.inner.cancel.load(Ordering::Acquire)
+            || self
+                .inner
+                .shared_cancellation
+                .as_ref()
+                .is_some_and(merlin_api::RunControl::is_cancelled)
     }
     /// Copies current bounded progress independently of a running session.
     ///
@@ -201,6 +235,16 @@ impl RunControl {
             .unwrap_or_else(|p| p.into_inner())
             .accumulated = Duration::ZERO;
         Ok(Lease(self.clone()))
+    }
+}
+
+impl merlin_api::Cancellation for RunControl {
+    /// Reads directional and optional common cancellation without changing state.
+    ///
+    /// # Returns
+    /// True after either shared request is cancelled; pause is a separate state.
+    fn is_cancelled(&self) -> bool {
+        self.is_cancelled()
     }
 }
 

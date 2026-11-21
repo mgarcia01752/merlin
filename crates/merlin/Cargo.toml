@@ -1,0 +1,22 @@
+[package]
+name = "merlin"
+version = "0.4.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+publish = false
+description = "Thin public namespaces for independent MERLIN PHY APIs"
+
+[features]
+default = ["downstream", "upstream"]
+downstream = ["dep:docsis-ofdm-fec"]
+upstream = ["dep:docsis-ofdma"]
+
+[dependencies]
+docsis-ofdm-fec = { path = "../ofdm", default-features = false, features = ["high-level-api"], optional = true }
+docsis-ofdma = { path = "../ofdma", default-features = false, optional = true }
+merlin-api = { path = "../phy-api" }
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "deny"

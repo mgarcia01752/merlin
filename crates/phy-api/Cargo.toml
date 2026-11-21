@@ -1,0 +1,18 @@
+[package]
+name = "merlin-api"
+version = "0.4.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+publish = false
+description = "Shared MERLIN cancellation and error category contracts"
+
+[dependencies]
+serde = { version = "=1.0.228", features = ["derive"] }
+
+[dev-dependencies]
+serde_json = "=1.0.145"
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "deny"

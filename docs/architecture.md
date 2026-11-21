@@ -117,12 +117,12 @@ Delivery gates: [INT-LICENSE-01](development/checklist.md#int-license-01).
 
 | Component | Current owner | Integration design and compatibility |
 | --- | --- | --- |
-| Unified Rust root | Not implemented | Selected thin Cargo/library `merlin` in `crates/merlin`; only re-export direction APIs and common contracts. No scientific implementation or core dependency back to this facade. |
-| Common API contracts | Not extracted | Planned Cargo `merlin-api` / library `merlin_api` in `crates/phy-api`; shared cancellation query/control and existing error categories only. Directional limits/reports/errors remain directional. |
+| Unified Rust root | `crates/merlin`, Cargo/library `merlin` | Implemented thin facade; only re-export direction APIs and common contracts. No scientific implementation or core dependency back to this facade. |
+| Common API contracts | `crates/phy-api`, Cargo `merlin-api` / library `merlin_api` | Implemented leaf; shared cancellation query/control and existing error categories only. Directional limits/reports/errors remain directional. |
 | Downstream PHY | `crates/ofdm`, Cargo `docsis-ofdm-fec` | Retain package, public imports, control channels, interleavers, waveform, received configuration and report schemas. |
 | Common FEC | `crates/fec-codec` | `src/upstream_ldpc/` now owns upstream definitions/codec and independent source tests; existing BCH, downstream LDPC, shortening, NCP and PLC remain. |
 | Generic DSP | `crates/dsp`, Cargo `merlin-dsp`; existing directional numerical owners retained | Shared centered unitary 2K/4K/8K FFT and one-step PRBS15 recurrence; downstream wrappers preserve geometry/errors/state. Independent/frozen equivalence and hot-path measurements precede consumer rewiring; INT-DSP-01 now has passing consumer acceptance. No generic channel/QAM/measurement state extraction. |
-| Upstream PHY | `crates/ofdma`, package `docsis-ofdma` | Independent typed configuration, TX/channel/received-only RX, bounded session, strict versioned document admission and instruments are implemented; facade/native Python/CLI convergence remain gated. |
+| Upstream PHY | `crates/ofdma`, package `docsis-ofdma` | Independent typed configuration, TX/channel/received-only RX, bounded session, strict versioned document admission and instruments are implemented; native Python/CLI and final API matrix acceptance remain gated. |
 | Native measurement input | `crates/pnm-input` | Implemented `src/upstream/` owns bounded binary admission and complete measured association; core accepts an immutable typed handoff and retains original provenance. |
 | CLI | `crates/cli`, executable `ofdm-fec` | Add upstream operations via public Rust APIs; retain every existing command and output contract. No second executable. |
 | Native Python | `bindings/python`, package `merlin` | Retain existing imports and exports; add upstream native wrappers only after Rust operation parity. No second distribution or Python science. |
@@ -137,13 +137,13 @@ The downstream `pnm-input` Cargo feature is not a dependency back to the adapter
 
 ```mermaid
 flowchart TD
-    CLI[Existing CLI] -.-> ROOT[Selected merlin facade]
+    CLI[Existing CLI] -.-> ROOT[merlin facade]
     PY[Existing native Python adapter] -.-> ROOT
-    ROOT -.-> DS[Downstream PHY]
-    ROOT -.-> US[Upstream PHY]
-    ROOT -.-> API[Planned merlin-api contracts]
-    DS -.-> API
-    US -.-> API
+    ROOT --> DS[Downstream PHY]
+    ROOT --> US[Upstream PHY]
+    ROOT --> API[merlin-api contracts]
+    DS --> API
+    US --> API
     PY --> INPUT[Native PNM input adapter]
     CLI -.-> INPUT
     INPUT --> DS
@@ -593,8 +593,18 @@ Active feature detail: [paired Rust/Python convergence](development/features/hig
 
 Delivery gates: [INT-US-LOOP-01](development/checklist.md#int-us-loop-01), [INT-RUST-01](development/checklist.md#int-rust-01), [INT-PY-01](development/checklist.md#int-py-01), [INT-CLI-01](development/checklist.md#int-cli-01).
 
-Retain `crates/ofdm/src/api/` and current downstream imports. Add proposed
-`crates/ofdma/src/api/{session,error,reports}.rs` as the upstream typed API, sharing
+Retain `crates/ofdm/src/api/` and current downstream imports. The implemented
+`merlin::{downstream,upstream}` facade re-exports those independent APIs.
+`merlin::common` re-exports the `merlin-api` leaf: Cancellation, RunControl and
+the unchanged fifteen ErrorCode variants. Downstream RunControl/ErrorCode are
+exact re-exports, while rich upstream pause/progress state remains directional.
+An explicit common-token bridge also cancels a paused upstream worker through
+a bounded condvar wait; no worker or callback is added to the common leaf.
+The upstream ApiError retains original causes and legacy code strings and adds
+a shared typed category query. [Namespace implementation validation](development/features/high-level-api/namespace-design.md#namespace-implementation-validation)
+records compatibility/build evidence; the complete operation matrix remains open.
+ The implemented
+`crates/ofdma/src/api/{session,error,measured,reports}.rs` owns the upstream typed API, sharing
 lifecycle/error/provenance conventions where semantics match. The existing
 `merlin.Simulation` remains valid; an upstream controller is additive and does
 not force one giant configuration or rename downstream exports. Final public

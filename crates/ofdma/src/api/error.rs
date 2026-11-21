@@ -46,6 +46,42 @@ pub enum ApiError {
 }
 
 impl ApiError {
+    /// Reads the shared nominal category while preserving directional causes.
+    ///
+    /// # Returns
+    /// A common category without parsing human-readable diagnostic text. Legacy
+    /// code() strings remain available, including the Serialization diagnostic.
+    pub fn category(&self) -> merlin_api::ErrorCode {
+        use merlin_api::ErrorCode;
+        match self {
+            Self::Capture { category, .. } => match category {
+                CaptureFailure::InvalidInput => ErrorCode::InvalidInput,
+                CaptureFailure::Unsupported => ErrorCode::UnsupportedCapability,
+                CaptureFailure::ResourceLimit => ErrorCode::ResourceLimit,
+            },
+            Self::AdapterFailure(_) => ErrorCode::Engine,
+            Self::MissingSetting => ErrorCode::MissingSetting,
+            Self::Serialization(error) => {
+                if error.is_syntax() || error.is_data() || error.is_eof() {
+                    ErrorCode::InvalidInput
+                } else if error.is_io() {
+                    ErrorCode::Io
+                } else {
+                    ErrorCode::Engine
+                }
+            }
+            Self::Domain(error) => match error {
+                PhyError::InvalidInput { .. } => ErrorCode::InvalidInput,
+                PhyError::Unsupported { .. } => ErrorCode::UnsupportedCapability,
+                PhyError::ResourceLimit { .. } => ErrorCode::ResourceLimit,
+                PhyError::Association {
+                    field: "control.busy" | "session.busy",
+                } => ErrorCode::Busy,
+                PhyError::Association { .. } => ErrorCode::AssociationFailed,
+                PhyError::Codec { .. } => ErrorCode::Engine,
+            },
+        }
+    }
     /// Returns a stable machine-readable category without parsing diagnostics.
     ///
     /// Native bindings use the same category and retain the human cause text.

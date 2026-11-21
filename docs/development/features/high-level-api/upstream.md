@@ -1,6 +1,6 @@
 # Converged public Rust and native Python APIs
 
-The [selected exact namespace mapping](namespace-design.md) uses a minimal `merlin` facade, independent PHY owners, a neutral common contract leaf and one real Python package. [INT-API-MAP-01](../../checklist.md#int-api-map-01) records the design decision; public exports still await their runtime gates.
+The [selected exact namespace mapping](namespace-design.md) uses a minimal `merlin` facade, independent PHY owners, a neutral common contract leaf and one real Python package. [INT-API-MAP-01](../../checklist.md#int-api-map-01) records the design decision; Rust exports now pass namespace compatibility checks; operation coverage and native delivery remain gated.
 
 Active feature detail, subordinate to [canonical architecture](../../../architecture.md#unified-rust-python-and-cli-apis).
 The [requirements baseline](../../../requirements.md) owns mandatory behavior; the
@@ -13,8 +13,9 @@ This is the active feature design for converging direction-specific operations t
 the existing public Rust engine and native Python distribution. Existing downstream
 Rust/Python APIs, imports, schemas, examples and saved-workbench contracts remain
 implemented within their recorded supported scope. Initial upstream typed Rust
-composition now passes local synthetic session acceptance. Final facade/common
-contracts and native wrappers remain at their delivery gates. Measured Rust
+composition now passes local synthetic session acceptance. The real facade/common
+contracts now pass targeted Rust checks; complete operation coverage and native
+wrappers remain at their delivery gates. Measured Rust
 admission now uses the adapter-owned MeasuredExperiment and core-owned typed
 MeasuredConfiguration handoff; no core-to-capture dependency is introduced.
 

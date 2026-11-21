@@ -9,6 +9,7 @@ use crate::{
     simulation::test_points::{ProbeObserver, ProbeStats, TestPointProbe},
     SimulationError,
 };
+use merlin_api::Cancellation;
 use serde::{Deserialize, Serialize};
 use std::{
     sync::atomic::{AtomicBool, Ordering},
@@ -161,6 +162,51 @@ pub fn run_channel_controlled(
     observer: &mut impl ProbeObserver,
     progress: impl FnMut(ChannelProgress),
 ) -> Result<ChannelJobResult, SimulationError> {
+    run_controlled_with_cancellation(settings, limits, cancel, paused, probe, observer, progress)
+}
+
+/// Runs a public controller through the same scientific job loop.
+///
+/// # Arguments
+/// * `settings`, `limits` - Frozen scientific input and finite job budgets.
+/// * `cancel` - Read-only shared stop query, checked at existing step boundaries.
+/// * `probe`, `observer` - Existing bounded passive observation owners.
+/// * `progress` - Existing after-step progress sink.
+///
+/// # Returns
+/// The unchanged complete/partial channel result and retained outcomes.
+///
+/// # Errors
+/// Propagates the same admission/construction failures as run_channel.
+pub(crate) fn run_channel_with_cancellation(
+    settings: &ChannelRunSettings,
+    limits: &ChannelJobLimits,
+    cancel: &impl Cancellation,
+    probe: &mut TestPointProbe,
+    observer: &mut impl ProbeObserver,
+    progress: impl FnMut(ChannelProgress),
+) -> Result<ChannelJobResult, SimulationError> {
+    run_controlled_with_cancellation(
+        settings,
+        limits,
+        cancel,
+        &AtomicBool::new(false),
+        probe,
+        observer,
+        progress,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn run_controlled_with_cancellation(
+    settings: &ChannelRunSettings,
+    limits: &ChannelJobLimits,
+    cancel: &impl Cancellation,
+    paused: &AtomicBool,
+    probe: &mut TestPointProbe,
+    observer: &mut impl ProbeObserver,
+    progress: impl FnMut(ChannelProgress),
+) -> Result<ChannelJobResult, SimulationError> {
     let started = Instant::now();
     let pause_time = std::cell::Cell::new(std::time::Duration::ZERO);
     run_with_clock(
@@ -180,7 +226,7 @@ pub fn run_channel_controlled(
         || {
             if paused.load(Ordering::Relaxed) {
                 let since = Instant::now();
-                while paused.load(Ordering::Relaxed) && !cancel.load(Ordering::Relaxed) {
+                while paused.load(Ordering::Relaxed) && !cancel.is_cancelled() {
                     std::thread::sleep(std::time::Duration::from_millis(10));
                 }
                 pause_time.set(pause_time.get() + since.elapsed());
@@ -192,7 +238,7 @@ pub fn run_channel_controlled(
 fn run_with_clock(
     settings: &ChannelRunSettings,
     limits: &ChannelJobLimits,
-    cancel: &AtomicBool,
+    cancel: &impl Cancellation,
     probe: &mut TestPointProbe,
     observer: &mut impl ProbeObserver,
     mut progress: impl FnMut(ChannelProgress),
@@ -206,7 +252,7 @@ fn run_with_clock(
     let mut error = None;
     let status = loop {
         wait();
-        if cancel.load(Ordering::Relaxed) {
+        if cancel.is_cancelled() {
             break ChannelJobStatus::Cancelled;
         }
         if elapsed() >= limits.max_runtime_ms {

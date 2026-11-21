@@ -12,9 +12,9 @@ acceptance. Source inspection took place at `402106f0b85605e38dbc1aa755b3799e693
 
 The [selected namespace-to-Cargo mapping](namespace-design.md) supersedes the
 initial crate-alias/common-ownership alternatives. The user requires a literal
-`merlin::{downstream,upstream,common}` root. A minimal planned Cargo/library
-`merlin` facade re-exports existing `docsis_ofdm_fec::api`, planned
-`docsis_ofdma::api` and the planned neutral `merlin_api` contracts. This is justified
+`merlin::{downstream,upstream,common}` root. The implemented minimal Cargo/library
+`merlin` facade re-exports existing `docsis_ofdm_fec::api`, implemented
+`docsis_ofdma::api` and the neutral `merlin_api` contracts. This is justified
 by independent PHY usability and exact backward compatibility; neither PHY depends
 on the facade or the other PHY. Common contracts live in their own small leaf,
 never in a downstream-specific owner that upstream must import.
@@ -39,7 +39,7 @@ These are verified existing owners, not hypothetical API names:
 | Rust domain objects | [configuration.rs](../../../../crates/ofdm/src/api/configuration.rs), [inputs.rs](../../../../crates/ofdm/src/api/inputs.rs), [units.rs](../../../../crates/ofdm/src/api/units.rs), [reports.rs](../../../../crates/ofdm/src/api/reports.rs), [error.rs](../../../../crates/ofdm/src/api/error.rs). Existing constructors/getters/builders are preserved; enumerate every export into the final matrix before convergence acceptance. |
 | Native capture/workbench/export | [pnm-input/lib.rs](../../../../crates/pnm-input/src/lib.rs), [workbench.rs](../../../../crates/pnm-input/src/workbench.rs), [rxmer_export](../../../../crates/pnm-input/src/rxmer_export/mod.rs). Rust file admission, discovery and provenance remain authoritative. |
 | Python registrations | [lib.rs](../../../../bindings/python/src/lib.rs), [controller.rs](../../../../bindings/python/src/controller.rs), [inputs.rs](../../../../bindings/python/src/inputs.rs), [quantities.rs](../../../../bindings/python/src/quantities.rs), [options.rs](../../../../bindings/python/src/options.rs), [receiver.rs](../../../../bindings/python/src/receiver.rs), [reports.rs](../../../../bindings/python/src/reports.rs), [workbench.rs](../../../../bindings/python/src/workbench.rs), [rxmer_export.rs](../../../../bindings/python/src/rxmer_export.rs). No new namespaces are registered. |
-| Implemented upstream foundation | [fec-codec upstream_ldpc](../../../../crates/fec-codec/src/upstream_ldpc/mod.rs), three code families, shortening, independent source vectors, shared sparse encoder mechanism. [Executed acceptance](../unified-backend/fec-validation.md), committed in `343b07d9209dc10f3c21d80ae2222a60432f684a`. No upstream PHY/session/Python facade is implemented. |
+| Implemented upstream foundation | [fec-codec upstream_ldpc](../../../../crates/fec-codec/src/upstream_ldpc/mod.rs), three code families, shortening, independent source vectors, shared sparse encoder mechanism. [Executed acceptance](../unified-backend/fec-validation.md), committed in `343b07d9209dc10f3c21d80ae2222a60432f684a`. The independent upstream PHY/session and measured adapter now pass local Rust acceptance; native Python remains gated. |
 
 ## Downstream session operation rows
 
@@ -116,7 +116,7 @@ future aliases, submodules or upstream operations. Exact current cases are T1–
 | Direction / operation | Rust / Python namespace and signature | Ownership, units, errors, lifecycle and reports | Requirements / task / evidence |
 | --- | --- | --- | --- |
 | Downstream remaining domain factories, getters, reports, capture/workbench loading/export and diagnostics | Current modules in the inventory above; add exact operation rows before acceptance, preserving all existing signatures | Existing typed defaults/units/schemas, owned native values, create-new exports and idle loading remain binding; no blanket parity claim for unpaired helpers | REQ-DS-API-01, REQ-COM-API-09; INT-RUST-01/INT-PY-01/INT-DOC-02; matrix coverage gap, existing backfill/history retained. |
-| Explicit downstream alias/import | Planned `merlin::downstream` facade re-export; real `merlin.downstream` Python module; existing signatures preserved | Same types/engine; root imports unchanged | REQ-COM-API-07/08; INT-RUST-01/INT-PY-01; planned, no executed evidence. |
+| Explicit downstream alias/import | Implemented `merlin::downstream` facade re-export; planned real `merlin.downstream` Python module; existing signatures preserved | Same types/engine; root imports unchanged | REQ-COM-API-07/08; INT-RUST-01/INT-PY-01; Rust namespace cases pass, native namespace execution pending. |
 | Upstream configure/validate/prepare | Planned `merlin::upstream` re-exporting `docsis_ofdma::api`, and `merlin.upstream`; exact type/method signatures await typed implementation and review | Owned immutable UCD/IUC/grant/source views, explicit grid/units/bounds, received-only RX; load/prepare idle and atomic | REQ-US-API-01/02, REQ-COM-API-03/06/07/08/09; INT-US-CONFIG-01 then INT-RUST-01/INT-PY-01; planned. |
 | Upstream run/report/control | Same planned namespaces; no fabricated `run`/`report`/pause method | Freeze accepted generation; Busy/unsupported/bounds/decoder outcomes and partial reports; pause only after preservation proof | REQ-COM-LIFE-01/02/03, REQ-US-API-01/02; INT-US-LOOP-01 then INT-RUST-01/INT-PY-01; planned. |
 | Upstream capture/discovery/association | Planned upstream Rust and one native package; signatures await verified parsers and accepted plan | Exact bytes/hashes/grid/identity/time/update/reference planes; explicit invalid/unsupported/association status | REQ-US-PNM-01/02/03/04, REQ-COM-API-05/09; INT-PNM-01/02 then INT-RUST-01/INT-PY-01; planned. |

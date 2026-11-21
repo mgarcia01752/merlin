@@ -9,17 +9,15 @@ use crate::{
     signal_processing::channel::impairments::{ChannelImpairments, NoiseModel},
     simulation::{
         channel::{
+            job::run_channel_with_cancellation,
             measurement_playback::{MeasurementPlayback, PlaybackMode},
-            run_channel, ChannelJobLimits, ChannelRunSettings,
+            ChannelJobLimits, ChannelRunSettings,
         },
         test_points::{NoopObserver, TestPointProbe},
     },
 };
 use serde::Serialize;
-use std::sync::{
-    atomic::{AtomicBool, AtomicU64, Ordering},
-    Arc,
-};
+use std::sync::atomic::{AtomicU64, Ordering};
 static NEXT_SCOPE: AtomicU64 = AtomicU64::new(1);
 macro_rules! identifier {
     ($name:ident) => {
@@ -149,25 +147,7 @@ impl EvaluationOptions {
         self
     }
 }
-/// Cloneable Send+Sync cooperative cancellation, independent of controller locking.
-#[derive(Debug, Clone, Default)]
-pub struct RunControl {
-    pub(crate) cancel: Arc<AtomicBool>,
-}
-impl RunControl {
-    /// Creates a fresh uncancelled control.
-    /// # Returns
-    /// Shareable control; one-way cancellation affects future dispatch too.
-    pub fn new() -> Self {
-        Self::default()
-    }
-    /// Requests cooperative stop at the next bounded engine boundary.
-    /// # Returns
-    /// Unit; already completed scientific results remain owned.
-    pub fn cancel(&self) {
-        self.cancel.store(true, Ordering::Relaxed);
-    }
-}
+pub use merlin_api::RunControl;
 /// Selected contributors and original provenance, including explicit response reuse.
 #[derive(Debug, Clone, Serialize)]
 pub struct MeasurementSources {
@@ -784,7 +764,7 @@ impl Merlin {
                 scope: self.scope,
                 slot: self.runs * 256 + index,
             };
-            if control.cancel.load(Ordering::Relaxed) {
+            if control.is_cancelled() {
                 entries.push(ExperimentEntry::not_started(
                     id,
                     profile.profile_id(),
@@ -796,10 +776,10 @@ impl Merlin {
                 max_runtime_ms: self.options.limits.runtime.0,
                 max_retained_words: self.options.limits.retained_words.0,
             };
-            let result = run_channel(
+            let result = run_channel_with_cancellation(
                 &experiment.settings,
                 &limits,
-                &control.cancel,
+                control,
                 &mut TestPointProbe::disabled(),
                 &mut NoopObserver,
                 |_| {},
@@ -814,9 +794,6 @@ impl Merlin {
             ));
         }
         self.runs += 1;
-        Ok(BatchReport::new(
-            entries,
-            control.cancel.load(Ordering::Relaxed),
-        ))
+        Ok(BatchReport::new(entries, control.is_cancelled()))
     }
 }

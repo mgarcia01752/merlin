@@ -3,26 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Recoverable high-level API diagnostics; callers never parse display strings for categories.
+pub use merlin_api::ErrorCode;
 use serde::Serialize;
-/// Stable error category independent of diagnostic wording.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-pub enum ErrorCode {
-    InvalidInput,
-    UnsupportedFormat,
-    UnsupportedDecoderContract,
-    UnsupportedCapability,
-    MissingSetting,
-    IncompatibleGrid,
-    IncompatibleRoles,
-    InvalidIdentifier,
-    AssociationFailed,
-    AmbiguousTimestamp,
-    MissingCoverage,
-    ResourceLimit,
-    Io,
-    Busy,
-    Engine,
-}
 /// Structured preflight/import failure with optional original engine diagnostic.
 #[derive(Debug, Clone, Serialize)]
 pub struct ApiError {

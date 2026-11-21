@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "completion_authority": "docs/development/checklist.md",
+  "records": [
+    {
+      "requirement_id": "REQ-US-API-01",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/namespace-design.md",
+      "checklist_task": "INT-RUST-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/api/session.rs",
+      "symbol": "Simulation::run",
+      "test_file": "crates/merlin/tests/namespaces.rs",
+      "qualified_test_case": "upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+      "validation_command": "scripts/cargo-local.sh test -p merlin-api -p merlin --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/namespace-candidate.json",
+        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8"
+      },
+      "status": "integrated-validated namespace slice; full INT-RUST-01 operation coverage remains open",
+      "limitations": "Exact type identity and targeted engine/lifecycle regressions; no native Python namespace/wheel, final CLI or hosted/field interoperability acceptance."
+    },
+    {
+      "requirement_id": "REQ-COM-API-03",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/namespace-design.md",
+      "checklist_task": "INT-RUST-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/api/session.rs",
+      "symbol": "Simulation::run",
+      "test_file": "crates/merlin/tests/namespaces.rs",
+      "qualified_test_case": "upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+      "validation_command": "scripts/cargo-local.sh test -p merlin-api -p merlin --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/namespace-candidate.json",
+        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8"
+      },
+      "status": "integrated-validated namespace slice; full INT-RUST-01 operation coverage remains open",
+      "limitations": "Exact type identity and targeted engine/lifecycle regressions; no native Python namespace/wheel, final CLI or hosted/field interoperability acceptance."
+    },
+    {
+      "requirement_id": "REQ-COM-API-06",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/namespace-design.md",
+      "checklist_task": "INT-RUST-01",
+      "implementing_crate": "docsis-ofdma",
+      "source_file": "crates/ofdma/src/configuration/document.rs",
+      "symbol": "ConfigurationDocument::from_json",
+      "test_file": "crates/ofdma/tests/configuration_json.rs",
+      "qualified_test_case": "source_reserved_width_range_and_cross_field_boundaries_reject",
+      "validation_command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/namespace-candidate.json",
+        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8"
+      },
+      "status": "integrated-validated namespace slice; full INT-RUST-01 operation coverage remains open",
+      "limitations": "Exact type identity and targeted engine/lifecycle regressions; no native Python namespace/wheel, final CLI or hosted/field interoperability acceptance."
+    },
+    {
+      "requirement_id": "REQ-DS-API-01",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/namespace-design.md",
+      "checklist_task": "INT-RUST-01",
+      "implementing_crate": "merlin",
+      "source_file": "crates/merlin/src/lib.rs",
+      "symbol": "downstream::Simulation",
+      "test_file": "crates/merlin/tests/namespaces.rs",
+      "qualified_test_case": "every_downstream_export_retains_legacy_type_identity",
+      "validation_command": "scripts/cargo-local.sh test -p merlin-api -p merlin --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/namespace-candidate.json",
+        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8"
+      },
+      "status": "integrated-validated namespace slice; full INT-RUST-01 operation coverage remains open",
+      "limitations": "Exact type identity and targeted engine/lifecycle regressions; no native Python namespace/wheel, final CLI or hosted/field interoperability acceptance."
+    },
+    {
+      "requirement_id": "REQ-COM-API-07",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/namespace-design.md",
+      "checklist_task": "INT-RUST-01",
+      "implementing_crate": "merlin",
+      "source_file": "crates/merlin/src/lib.rs",
+      "symbol": "upstream::Simulation",
+      "test_file": "crates/merlin/tests/namespaces.rs",
+      "qualified_test_case": "upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+      "validation_command": "scripts/cargo-local.sh test -p merlin-api -p merlin --locked",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/namespace-candidate.json",
+        "sha256": "c0cd4a3df9e821162138934aff50e3439d6a168aa321c0569a0d9c71d67f84d8"
+      },
+      "status": "integrated-validated namespace slice; full INT-RUST-01 operation coverage remains open",
+      "limitations": "Exact type identity and targeted engine/lifecycle regressions; no native Python namespace/wheel, final CLI or hosted/field interoperability acceptance."
+    }
+  ]
+}

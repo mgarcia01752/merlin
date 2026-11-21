@@ -12,6 +12,25 @@ binary/JSON and file conveniences; it directly uses pinned Apache-2.0 `pnm`
 For searchable class/method documentation generated from the actual APIs, see
 the [generated Rust/Python reference](../../reference/api-reference.md).
 
+## Direction namespaces
+
+The workspace's thin `merlin` crate exposes the independent engines through
+`merlin::downstream::Simulation` and `merlin::upstream::Simulation`. Both direction
+features are enabled by default; either can be selected independently. Existing
+`docsis_ofdm_fec::api::{Simulation, Merlin}` imports remain valid and refer to the
+same downstream types. No new published Cargo artifact is implied.
+
+`merlin::common` contains shared error categories and cooperative cancellation.
+The downstream RunControl is the common type. The upstream RunControl retains
+its own pause/progress state and can share a common token through
+`RunControl::with_cancellation`. Configuration, limits and reports remain
+direction-specific. The [upstream guide](../upstream/README.md) describes supported
+synthetic and capture-backed models.
+
+The existing Python `merlin.Simulation` retains downstream behavior. Real native
+direction modules and their installed-wheel acceptance are still being integrated;
+the new Rust paths do not imply that those Python imports are already available.
+
 ## Rust workflow
 
 This simple example loads one modulation-profile capture and one RxMER

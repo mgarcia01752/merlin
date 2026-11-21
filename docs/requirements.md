@@ -82,7 +82,7 @@ records current inspected operations and remaining coverage explicitly.
 
 | ID | Required behavior | Architecture / implementation owner | Acceptance / delivery |
 | --- | --- | --- | --- |
-| <a id="req-com-api-07"></a>REQ-COM-API-07 | Rust SHALL expose explicit downstream and upstream public namespaces with distinct directional configuration and compatible common lifecycle/error/report conventions. Preserve `docsis-ofdm-fec`, `docsis_ofdm_fec::api::{Merlin,Simulation}` and all existing downstream imports/behavior through compatible aliases or re-exports. Present the final namespace-to-crate mapping for approval before compatibility-sensitive export changes; conceptual names are not implemented symbols. | [API architecture](architecture.md#unified-rust-python-and-cli-apis); existing `crates/ofdm/src/api/`, planned `crates/ofdma/src/api/`; common leaf/facade ownership requires review. | [INT-PLAN-01](development/checklist.md#int-plan-01) records the proposal; [INT-RUST-01](development/checklist.md#int-rust-01) delivers it after upstream loop acceptance. Preserve `crates/ofdm/tests/public_paths.rs`; add direction import/alias/typed configuration tests at the approved paths and execute Rust-only and analysis-only regressions.  Selected architecture: [namespace design](development/features/high-level-api/namespace-design.md); [INT-API-MAP-01](development/checklist.md#int-api-map-01) records the exact mapping without accepting its implementation. |
+| <a id="req-com-api-07"></a>REQ-COM-API-07 | Rust SHALL expose explicit downstream and upstream public namespaces with distinct directional configuration and compatible common lifecycle/error/report conventions. Preserve `docsis-ofdm-fec`, `docsis_ofdm_fec::api::{Merlin,Simulation}` and all existing downstream imports/behavior through compatible aliases or re-exports. Present the final namespace-to-crate mapping for approval before compatibility-sensitive export changes; conceptual names are not implemented symbols. | [API architecture](architecture.md#unified-rust-python-and-cli-apis); existing `crates/ofdm/src/api/` and `crates/ofdma/src/api/`; approved facade/common ownership is implemented, with complete operation coverage still gated. | [INT-PLAN-01](development/checklist.md#int-plan-01) records the proposal; [INT-RUST-01](development/checklist.md#int-rust-01) delivers it after upstream loop acceptance. Preserve `crates/ofdm/tests/public_paths.rs`; add direction import/alias/typed configuration tests at the approved paths and execute Rust-only and analysis-only regressions.  Selected architecture: [namespace design](development/features/high-level-api/namespace-design.md); [INT-API-MAP-01](development/checklist.md#int-api-map-01) records the exact mapping without accepting its implementation. |
 | <a id="req-com-api-08"></a>REQ-COM-API-08 | One native Python distribution SHALL support standard `merlin.downstream` and `merlin.upstream` imports mirroring Rust direction separation while preserving root `merlin.Simulation`, `merlin.Merlin`, existing classes, signatures and saved-workbench semantics. Select real packages or native submodules using verified direct import, initialization, discovery, typing, wheel and installed-distribution behavior on declared Python 3.10+ environments. | [API architecture](architecture.md#unified-rust-python-and-cli-apis); existing `bindings/python/{pyproject.toml,src/}`; planned upstream native modules. All science remains in Rust. | [INT-PLAN-01](development/checklist.md#int-plan-01) records alternatives; [INT-PY-01](development/checklist.md#int-py-01) requires native import/discovery/alias/ownership/concurrency and deterministic parity cases plus installed wheel checks. Preserve `bindings/python/tests/{test_api,test_parity,test_workbench}.py`; new direction import tests remain planned.  Selected architecture: [namespace design](development/features/high-level-api/namespace-design.md); [INT-API-MAP-01](development/checklist.md#int-api-map-01) records the exact mapping without accepting its implementation. |
 | <a id="req-com-api-09"></a>REQ-COM-API-09 | Maintain one authoritative operation-level API compatibility matrix with direction, operation, actual Rust namespace and exact signature, Python import and exact signature, input ownership, units, structured errors, lifecycle, report/schema, existing/new/alias compatibility, stable requirement/task, exact tests, executed evidence and explicit status. Never label hypothetical symbols or source-only passes as implemented/accepted MERLIN APIs. | [API architecture](architecture.md#unified-rust-python-and-cli-apis); [compatibility matrix](development/features/high-level-api/compatibility-matrix.md); existing export owners and planned upstream API. | [INT-PLAN-01](development/checklist.md#int-plan-01) establishes inspected inventory/seed rows and gaps. [INT-RUST-01](development/checklist.md#int-rust-01), [INT-PY-01](development/checklist.md#int-py-01) and [INT-DOC-02](development/checklist.md#int-doc-02) require every exported operation to have exact verified implementation/native test/evidence coverage.  Selected architecture: [namespace design](development/features/high-level-api/namespace-design.md); [INT-API-MAP-01](development/checklist.md#int-api-map-01) records the exact mapping without accepting its implementation. |
 | <a id="req-com-trace-01"></a>REQ-COM-TRACE-01 | Every applicable backend requirement SHALL trace architecture → requirement → checklist → implementation → test → validation. Record stable ID, architecture owner, feature design, checklist task, crate, exact source file, symbol/stage, test file, exact case, validation command, observed result, commit SHA, status and limitations. Distinguish planned, implemented-unvalidated, integrated-validated, failed/blocked, deferred and historical-source evidence; paths alone never establish passes. Preserve existing evidence and identify its precision/coverage gaps. | [Traceability ownership](architecture.md#requirements-and-historical-evidence-ownership); existing source/backfill indexes and feature validation records; [record contract](development/features/unified-backend/master-prompt-review.md#implementation-evidence-contract). | [INT-PLAN-01](development/checklist.md#int-plan-01) maps every master clause and records gaps. Each implementation task fills its fourteen fields before acceptance; [INT-DOC-02](development/checklist.md#int-doc-02) and [INT-ACCEPT-01](development/checklist.md#int-accept-01) require complete backend coverage with executed unified-workspace evidence. Historical working-candidate SHA limitations must remain explicit. |
@@ -93,7 +93,8 @@ records current inspected operations and remaining coverage explicitly.
 Each contract below retains the pinned source's observable behavior and acceptance
 except the explicitly recorded local-policy adaptations. Source aliases and exact
 source text remain fingerprinted/pinned; common contracts also bind existing
-MERLIN behavior. All new upstream consumers await the indicated integration task.
+MERLIN behavior. Each new upstream consumer requires its indicated integration acceptance; current
+completed/remaining states are owned by the official checklist.
 
 ### Shared source contracts
 
@@ -158,6 +159,8 @@ Delivery: [**INT-RUST-01**](development/checklist.md#int-rust-01); source alias 
 
 Feature records: [high-level-api/upstream.md](development/features/high-level-api/upstream.md).
 
+Rust namespace slice: [exact implementation/test record](development/features/high-level-api/namespace-evidence.json), keyed by `REQ-COM-API-03`; complete operation/native coverage remains at INT-RUST-01/INT-PY-01.
+
 #### REQ-COM-API-04
 
 Native Python execution SHALL release the interpreter lock during long Rust work and serialize mutable session access with explicit Busy behavior.
@@ -193,6 +196,8 @@ Implementation: `crates/ofdma/src/api/session.rs`. Acceptance owner: `crates/ofd
 Delivery: [**INT-RUST-01**](development/checklist.md#int-rust-01); source alias `REQ-API-06`.
 
 Feature records: [high-level-api/upstream.md](development/features/high-level-api/upstream.md).
+
+Rust namespace slice: [exact implementation/test record](development/features/high-level-api/namespace-evidence.json), keyed by `REQ-COM-API-06`; complete operation/native coverage remains at INT-RUST-01/INT-PY-01.
 
 #### REQ-COM-LIFE-01
 
@@ -860,6 +865,8 @@ Implementation: `crates/ofdma/src/api/session.rs`. Acceptance owner: `crates/ofd
 Delivery: [**INT-RUST-01**](development/checklist.md#int-rust-01); source alias `REQ-API-01`.
 
 Feature records: [high-level-api/upstream.md](development/features/high-level-api/upstream.md).
+
+Rust namespace slice: [exact implementation/test record](development/features/high-level-api/namespace-evidence.json), keyed by `REQ-US-API-01`; complete operation/native coverage remains at INT-RUST-01/INT-PY-01.
 
 #### REQ-US-API-02
 

@@ -14,6 +14,7 @@ pnm-input = ["dep:serde_json", "dep:sha2"]
 simulation = ["dep:fec-codec", "dep:serde_json", "dep:sha2"]
 
 [dependencies]
+merlin-api = { path = "../phy-api" }
 merlin-dsp = { path = "../dsp" }
 log.workspace = true
 serde = { version = "=1.0.228", features = ["derive", "rc"] }

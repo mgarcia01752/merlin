@@ -23,6 +23,7 @@ pub use crate::types::Iq;
 pub use crate::PhyError;
 pub use error::{ApiError, ApiResult, CaptureFailure};
 pub use measured::MeasuredConfiguration;
+pub use merlin_api::ErrorCode;
 pub(crate) use reports::bounded_json;
 pub use reports::ReportJson;
 pub use session::Simulation;

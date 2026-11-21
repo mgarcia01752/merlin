@@ -21,21 +21,20 @@ The facade is therefore technically justified. It contains module declarations,
 rustdoc and `pub use` declarations only: no science, controllers, input decoding,
 conversion, validation, lifecycle implementation or result reshaping.
 
-Facade, common-contract and new Python paths/packages below remain planned;
-DSP implementation is tracked separately at INT-DSP-01. This namespace decision
-creates no placeholder crate. Implement the facade only when its upstream exports exist at INT-RUST-01;
-implement the small common contract leaf when both PHY APIs need it. The current
-backend continuation begins at INT-DSP-01, not an early namespace scaffold.
+The Rust facade and common contract leaf are now implemented after accepted
+upstream and measured prerequisites. Python package paths below remain planned
+until INT-PY-01. The implementation unit and validation record below identify
+current exports; complete operation-matrix coverage still gates INT-RUST-01.
 
 | Cargo package | Library name / directory | Ownership and permitted dependencies |
 | --- | --- | --- |
-| `merlin` (planned) | `merlin`, `crates/merlin` | Thin public re-exports; depends on `docsis-ofdm-fec`, `docsis-ofdma`, `merlin-api`; no dependency on native PNM, CLI, PyO3 or Qt. |
-| `docsis-ofdm-fec` (existing) | `docsis_ofdm_fec`, `crates/ofdm` | Current downstream engine and API remain in place; common DSP/FEC and eventual contract leaf only. Preserve current package/library names and feature behavior. |
-| `docsis-ofdma` (planned) | `docsis_ofdma`, `crates/ofdma` | Upstream engine and typed `api` module; DSP/FEC and contract leaf only. No dependency on downstream or facade. |
-| `merlin-api` (planned) | `merlin_api`, `crates/phy-api` | Small dependency leaf for genuinely common cancellation/error categories. Safe Rust plus existing pinned serde only; no DSP, engine, FEC, input, adapter or facade dependencies. |
+| `merlin` (implemented) | `merlin`, `crates/merlin` | Thin public re-exports; depends on `docsis-ofdm-fec`, `docsis-ofdma`, `merlin-api`; no dependency on native PNM, CLI, PyO3 or Qt. |
+| `docsis-ofdm-fec` (existing) | `docsis_ofdm_fec`, `crates/ofdm` | Current downstream engine and API remain in place; common DSP/FEC and common contract leaf only. Preserve current package/library names and feature behavior. |
+| `docsis-ofdma` (implemented) | `docsis_ofdma`, `crates/ofdma` | Upstream engine and typed `api` module; DSP/FEC and common contract leaf only. No dependency on downstream or facade. |
+| `merlin-api` (implemented) | `merlin_api`, `crates/phy-api` | Small dependency leaf for genuinely common cancellation/error categories. Safe Rust plus existing pinned serde only; no DSP, engine, FEC, input, adapter or facade dependencies. |
 | `merlin-dsp` (INT-DSP-01 delivery) | `merlin_dsp`, `crates/dsp` | Bounded shared numerical primitives; no API/PHY/adapter dependency. This is separate from the public namespace facade. |
 | `fec-codec` (existing) | `fec_codec`, `crates/fec-codec` | Existing shared mechanisms and separate normative code families. No new facade/API dependency. |
-| `pnm-input` (existing) | `pnm_input`, `crates/pnm-input` | Native file/capture adapter; existing downstream and pinned parser, eventual upstream; neither PHY points back here. |
+| `pnm-input` (existing) | `pnm_input`, `crates/pnm-input` | Native file/capture adapter; existing downstream and pinned parser, implemented upstream; neither PHY points back here. |
 | `ofdm-fec-cli` (existing) | Existing `ofdm-fec` binary, `crates/cli` | Adapter uses public direction APIs/facade and native input; retains syntax/output/exit statuses. |
 | `merlin-python` (existing) | Planned private extension `_native`, `bindings/python` | One PyO3 extension, depends on facade plus native input. Distribution metadata remains `merlin-ofdm`; public Python import root remains `merlin`. Internal library/module rename is tested as a packaging change, not a second extension/distribution. |
 
@@ -48,7 +47,7 @@ facade activation enables existing `high-level-api` on its dependency, with
 `cargo check -p merlin --no-default-features --features upstream` must not compile
 downstream, and vice versa. Existing direct analysis-only OFDM builds remain valid.
 
-Exact facade manifest template, planned and not added to the workspace yet:
+Implemented [facade manifest](../../../../crates/merlin/Cargo.toml):
 
 ```toml
 [package]
@@ -73,7 +72,7 @@ docsis-ofdma = { path = "../ofdma", default-features = false, optional = true }
 merlin-api = { path = "../phy-api" }
 ```
 
-The planned upstream crate exports its typed `api` without a separate runtime
+The upstream crate exports its typed `api` without a separate runtime
 feature; optionality is the facade's dependency switch. The contract leaf uses
 the existing pinned serde `=1.0.228` with derive for `ErrorCode`. The facade
 adds no direct serde, DSP, codec or native-runtime dependency. Internal path
@@ -90,23 +89,23 @@ paths remain planned; solid core/input edges already exist.
 
 ```mermaid
 flowchart TD
-    USER[External Rust application] -.-> ROOT[merlin facade]
+    USER[External Rust application] --> ROOT[merlin facade]
     PY[merlin Python package / one private extension] -.-> ROOT
     CLI[Existing CLI] -.-> ROOT
     PY -.-> INPUT[pnm-input]
     CLI -.-> INPUT
-    ROOT -.-> DS[docsis-ofdm-fec]
-    ROOT -.-> US[docsis-ofdma]
-    ROOT -.-> API[merlin-api contracts]
-    DS -.-> API
-    US -.-> API
+    ROOT --> DS[docsis-ofdm-fec]
+    ROOT --> US[docsis-ofdma]
+    ROOT --> API[merlin-api contracts]
+    DS --> API
+    US --> API
     INPUT --> DS
-    INPUT -.-> US
+    INPUT --> US
     INPUT --> PNM[Pinned pnm decoder]
     DS --> DSP[merlin-dsp]
-    US -.-> DSP
+    US --> DSP
     DS --> FEC[fec-codec]
-    US -.-> FEC
+    US --> FEC
 ```
 
 The facade never becomes a dependency of either PHY, shared leaf or PNM adapter.
@@ -117,10 +116,10 @@ either engine without installing/linking a facade, Python or Qt.
 
 ## Exact public re-exports
 
-Proposed declarations only; none of these new exports exists yet:
+Implemented declarations from [the facade](../../../../crates/merlin/src/lib.rs):
 
 ```rust
-// crates/merlin/src/lib.rs (planned facade, not engine code)
+// crates/merlin/src/lib.rs: re-exports only
 #![forbid(unsafe_code)]
 
 #[cfg(feature = "downstream")]
@@ -160,8 +159,8 @@ The common leaf initially owns only contracts proven direction-neutral:
 The common leaf contains no scientific algorithm. To preserve the old public
 engine functions accepting `&AtomicBool`, keep those signatures and delegate to
 an internal generic cancellation-query path. The high-level controller can use
-that internal path with the shared control. This adaptation is an explicit
-INT-RUST-01 implementation/test gate; it is not performed by this design decision.
+that internal path with the shared control. This adaptation now passes the
+INT-RUST-01 namespace implementation cases and downstream API/lifecycle regressions.
 No mutable flag escape hatch or reinterpretation of completed partial results.
 
 Keep `RunLimits`, progress, reports, engine errors, OCD/DPD and UCD/IUC models
@@ -216,18 +215,18 @@ source-tree imports or `sys.path` injection.
 All current downstream method signatures remain exactly those in the
 [operation matrix](compatibility-matrix.md#downstream-session-operation-rows).
 This namespace decision adds re-exports, not new downstream methods. The common
-additive `RunControl::is_cancelled` and trait signatures above are planned; Python
+additive `RunControl::is_cancelled` and trait signatures above are implemented in Rust; Python
 may expose the read-only status through a documented method in its matrix row.
 Upstream operation signatures accompany typed stage API development and are
 finalized only against real stage models. Do not interpret the namespace mapping
 as approval of hypothetical universal `Configuration`/`Report` types or pause support.
 
-| Planned exact test owner / case | Required assertion | Requirement / gate |
+| Exact test owner / case (Python rows remain planned) | Required assertion | Requirement / gate |
 | --- | --- | --- |
-| `crates/merlin/tests/namespace_paths.rs::downstream_reexports_preserve_type_identity` | Pass one `Simulation`, `Merlin`, configuration, options, error and report through both old/new Rust paths without conversion. | REQ-COM-API-07, REQ-DS-API-01; INT-RUST-01. |
-| `crates/merlin/tests/namespace_paths.rs::upstream_exports_resolve_without_downstream_configuration` | Imports reach real upstream session/domain owners; no downstream nominal types in upstream configuration. | REQ-COM-API-07, REQ-US-API-01; INT-RUST-01. |
-| `crates/phy-api/tests/control.rs::clones_share_irreversible_cancellation` | Original constructor/default/clone/cancel behavior, pre-cancellation and relaxed query; no exposed reset. | REQ-COM-API-07; INT-RUST-01. |
-| `crates/merlin/tests/namespace_paths.rs::shared_control_reaches_both_direction_engines` | Same common control cancels actual bounded native Rust loops and preserves their completed science. | REQ-COM-LIFE-02, REQ-COM-API-07; INT-RUST-01. |
+| `crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity` | Pass one `Simulation`, `Merlin`, configuration, options, error and report through both old/new Rust paths without conversion. | REQ-COM-API-07, REQ-DS-API-01; INT-RUST-01. |
+| `crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors` | Imports reach real upstream session/domain owners; no downstream nominal types in upstream configuration. | REQ-COM-API-07, REQ-US-API-01; INT-RUST-01. |
+| `crates/phy-api/tests/contracts.rs::clones_threads_and_legacy_atomic_queries_share_one_way_cancellation` | Original constructor/default/clone/cancel behavior, pre-cancellation and relaxed query; no exposed reset. | REQ-COM-API-07; INT-RUST-01. |
+| `crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context` | Same common control cancels actual bounded native Rust loops and preserves their completed science. | REQ-COM-LIFE-02, REQ-COM-API-07; INT-RUST-01. |
 | `bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity` | All three real modules import outside checkout; root and downstream class identity and every original export/signature/default/error match. | REQ-COM-API-08/09, REQ-DS-API-01; INT-PY-01. |
 | `bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload` | `importlib.util.find_spec`, `pkgutil`, `.pyi`, `py.typed` and one extension are present in installed wheel. | REQ-COM-API-08; INT-PY-01. |
 | `bindings/python/tests/test_upstream_parity.py::UpstreamParity.test_native_direction_runs` | Native upstream values/errors/results/provenance/lifetime/control agree with direct Rust; no PyO3/stub-only acceptance. | REQ-US-API-02, REQ-COM-API-05; INT-PY-01. |
@@ -243,22 +242,22 @@ matrix entry and fourteen-field evidence record before its delivery task closes.
 
 ## File dispositions and decision status
 
-Add (planned): `crates/merlin/{Cargo.toml,src/lib.rs,tests/namespace_paths.rs}`;
-`crates/phy-api/{Cargo.toml,src/lib.rs,src/control.rs,src/error.rs,tests/control.rs}`;
-Python package/type files shown above; `bindings/python/tests/test_namespaces.py`.
+Added: `crates/merlin/{Cargo.toml,src/lib.rs,tests/namespaces.rs}` and
+`crates/phy-api/{Cargo.toml,src/lib.rs,src/control.rs,src/error.rs,tests/contracts.rs}`.
+Python package/type files shown above and `bindings/python/tests/test_namespaces.py`
+remain planned. Existing Python/Qt locks gain only new local package/edge records;
+every prior package identity/version/checksum is preserved.
 Reuse the existing downstream API and source-derived upstream owners. Edit at
 implementation: root workspace/version/license/package inventories, PHY manifests
 and API re-exports, downstream controller/error/internal channel cancellation
 adapter, native registration/pyproject/library target and build/reference tooling.
 Remove no existing public export, record, test, scientific implementation or fixture.
 
-This records the selected mapping under the user's instruction to finalize it
-and continue dependency-ordered integration. It closes no namespace/runtime gate.
-Planning/FEC remain completed. The facade/common/Python namespace code waits for
-INT-RUST-01/INT-PY-01 and their dependencies; INT-DSP-01 can proceed now. No further
-architecture choice blocks that DSP work. If the selected package names/common
-export set is changed before API implementation, update this design and review
-compatibility first. No upstream Qt implementation or release/publication is authorized.
+The selected mapping remains approved, with namespace implementation evidence
+below. Planning/FEC remain completed. INT-RUST-01 stays open for the complete
+operation matrix; Python namespaces still wait for INT-PY-01. Changes to the
+selected package names/common export set require a compatible design update.
+No upstream Qt implementation or release/publication is authorized.
 
 Design verification: the declared package graph was checked with the existing
 dependency-cycle validator and contains no cycle, PHY-to-PHY or PHY-to-facade edge.
@@ -267,3 +266,63 @@ links and the 30-node task graph. The existing 35 documentation/traceability too
 cases pass; this does not execute the planned facade import or wheel namespace
 tests above. Actual DSP consumer/native acceptance is recorded separately in
 [DSP validation](../signal-processing/validation.md).
+
+## INT-RUST-01 implementation unit
+
+Prerequisites now accepted: synthetic core plus native measured admission at
+`0557423`. Implement the selected facade and common contract leaf with the exact
+manifest/export design above; both real direction APIs now exist.
+
+| Inspected owner / symbol | Contract and gap | Decision / concrete files |
+| --- | --- | --- |
+| `crates/ofdm/src/api/error.rs::ErrorCode` | Fifteen public categories with serde names/order; common nominal type needed. | SHARE into new `crates/phy-api/src/error.rs`; preserve old API re-export and every variant. |
+| `crates/ofdm/src/api/controller.rs::RunControl` | Cloneable one-way relaxed AtomicBool cancellation; private flag accessed by controller. | SHARE into new `crates/phy-api/src/control.rs`; replace private flag access with query trait, preserve new/cancel and add is_cancelled. |
+| `crates/ofdm/src/simulation/channel/job.rs::run_channel_controlled` | Public AtomicBool signatures and bounded scientific step ordering are established. | ADAPT internal cancellation-query helper only; keep old functions/signatures and delegate to the same job loop. No atomic handle is exposed. |
+| `crates/ofdma/src/simulation/control.rs::RunControl` | Rich pause/progress/Busy state is directional and cannot be collapsed into the simple common token. | SEPARATE rich state; implement common Cancellation and additive with_cancellation bridge. Existing controls retain their original wake/flag behavior. |
+| `crates/ofdma/src/api/error.rs::ApiError` | Original structured domain/capture/serialization causes plus legacy string code. | SEPARATE error objects; add category returning shared ErrorCode, retaining code() and original causes. |
+| Real `docsis_ofdm_fec::api::*` and `docsis_ofdma::api::*` | Existing export owners now callable independently. | REUSE by pub use only in new `crates/merlin/src/lib.rs`; facade owns no implementation. |
+
+The optional upstream `RunControl::with_cancellation(common::RunControl)` keeps
+pause/progress/Busy state in the upstream owner and observes the shared one-way
+request. Cancelling either bridged handle sets the common request. A paused
+bridged worker waits on its existing condvar with a 10ms timeout, so cancellation
+through the common handle remains reachable without callbacks or a helper thread.
+Unbridged controls preserve their existing notification-based wait. This bounded
+waiting does not advance source, noise, waveform or decoder state. Test both
+pre-cancel and cancellation after an acknowledged pause, plus retained outcomes.
+
+Acceptance files: new `crates/merlin/tests/namespaces.rs` for exact legacy/common
+identity, both real direction sessions and shared cancellation; new
+`crates/phy-api/tests/contracts.rs` for clone/thread/AtomicBool queries and literal
+category serialization; existing downstream high-level/loop and upstream lifecycle
+cases for behavior. Direction-only Cargo dependency trees/builds must exclude the
+opposite PHY. Preserve independent analysis-only builds and record exact candidate,
+commands/cases, public operation signatures and remaining native Python gates.
+
+### Namespace implementation validation
+
+The real facade has no executable library logic. All 71 documented downstream
+exported types/aliases are checked for exact legacy identity, including generic
+Resolved/ApiResult representatives. Tests execute a real upstream loop and verify
+structured error categories/causes/offsets, cancellation propagation, acknowledged
+pause cancellation and owned source context. The common fifteen-category spellings
+and order have independent literal checks. Existing public AtomicBool job
+signatures remain unchanged, with the same loop and relaxed query semantics.
+
+Passing checks: 8 facade/common cases, 26 downstream high-level API cases,
+6 downstream channel lifecycle cases, 83 upstream engine cases, direction-only
+and common-only builds, downstream analysis-only tests, Clippy and formatting.
+Direction-only dependency trees exclude the opposite PHY. One ignored transform
+benchmark remains intentionally separate from these regressions and was already
+executed at DSP/TX acceptance. Native namespace/wheel acceptance remains pending.
+
+Compiler-generated public export discovery now uses
+`tools/validation/rust_api_inventory.py`, with independent wildcard/module,
+macro/trait and stale-target cases in `test_rust_api_inventory.py`. It inventories
+fresh rustdoc, never stale directory contents; source/export facts do not claim
+scientific execution. The operation matrix still needs its complete individual
+operation rows before INT-RUST-01 can close. No accepted planning/FEC task reopens.
+
+Exact evidence: [candidate](namespace-candidate.json), [executed cases](namespace-test-results.json)
+and [requirement slices](namespace-evidence.json). These accept the namespace unit
+only; the official task remains open for complete operation mapping.
