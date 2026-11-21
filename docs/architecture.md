@@ -276,7 +276,9 @@ Typed upstream TX composition is implemented, with stage tests recorded in
 Combined CONFIG/TX acceptance remains open until document/session gates pass.
 Typed channel transport and restricted residual playback are implemented with
 [local channel evidence](development/features/ofdma/design.md#int-us-ch-01-channel-implementation-unit).
-Normal RX composition below remains **planned for MERLIN**; standalone LDPC
+Normal received-only RX composition now has
+[local stage and internal loop evidence](development/features/ofdma/design.md#int-us-rx-01-received-only-receiver-implementation-unit).
+Combined document/session/backend acceptance remains open; standalone LDPC
 encoding/decoding now has the codec owners and acceptance identified below. The retained
 [stage contracts](development/features/unified-backend/references/upstream-stage-contracts.md)
 preserve detailed scientific definitions, source equations/tables, reference
@@ -364,7 +366,7 @@ Requirement: [REQ-US-TX-04](requirements.md#req-us-tx-04); delivery: **INT-US-TX
 
 OFDMA framing must apply the accepted pilot pattern, known signs, role/loading plan, block partitioning and joint interleaving/address order.
 
-Implemented owner: `crates/ofdma/src/transmitter/framing.rs`; acceptance tests: `crates/ofdma/tests/resource_interleaving.rs`.
+Implemented owner: `crates/ofdma/src/transmitter/framing.rs`; acceptance tests: `crates/ofdma/tests/upstream_interleaving.rs`.
 Requirement: [REQ-US-TX-05](requirements.md#req-us-tx-05); delivery: **INT-US-TX-01**.
 
 ### US-TX-06: CM Pre-Eq
@@ -378,7 +380,7 @@ Requirement: [REQ-US-TX-06](requirements.md#req-us-tx-06); delivery: **INT-US-TX
 
 IFFT must transform complete accepted 2K/50 kHz or 4K/25 kHz physical grids at 102.4 Msamples/s using the defined centered unitary convention.
 
-Implemented owner: `crates/ofdma/src/signal_processing/transform.rs`; acceptance tests: `crates/ofdma/tests/waveform_transform.rs`.
+Implemented owner: `crates/ofdma/src/signal_processing/transform.rs`; acceptance tests: `crates/ofdma/tests/transforms.rs`.
 Requirement: [REQ-US-TX-07](requirements.md#req-us-tx-07); delivery: **INT-US-TX-01**.
 
 ### US-TX-08: Prefix, window and sample assembly
@@ -434,42 +436,42 @@ Requirement: [REQ-US-CH-06](requirements.md#req-us-ch-06); delivery: **INT-US-CH
 
 Burst framing must derive timing from accepted RX configuration and preserve actual indexed blocks and explicit missing intervals.
 
-Add (planned) owner: `crates/ofdma/src/receiver/framing.rs`; acceptance tests: `crates/ofdma/tests/rx_framing.rs`.
+Implemented owner: `crates/ofdma/src/receiver/framing.rs`; acceptance tests: `crates/ofdma/tests/rx_framing.rs`.
 Requirement: [REQ-US-RX-01](requirements.md#req-us-rx-01); delivery: **INT-US-RX-01**.
 
 ### US-RX-02: Useful-symbol extraction
 
 Useful-symbol extraction must select exactly the scheduled N-sample windows without silently filling incomplete windows.
 
-Add (planned) owner: `crates/ofdma/src/receiver/framing.rs`; acceptance tests: `crates/ofdma/tests/rx_framing.rs`.
+Implemented owner: `crates/ofdma/src/receiver/framing.rs`; acceptance tests: `crates/ofdma/tests/rx_framing.rs`.
 Requirement: [REQ-US-RX-02](requirements.md#req-us-rx-02); delivery: **INT-US-RX-01**.
 
 ### US-RX-03: Centered unitary FFT
 
 FFT must produce raw physical bins using the inverse of the accepted centered unitary TX convention.
 
-Implemented owner: `crates/ofdma/src/signal_processing/transform.rs`; acceptance tests: `crates/ofdma/tests/waveform_transform.rs`.
+Implemented owner: `crates/ofdma/src/signal_processing/transform.rs`; acceptance tests: `crates/ofdma/tests/transforms.rs`.
 Requirement: [REQ-US-RX-03](requirements.md#req-us-rx-03); delivery: **INT-US-RX-01**.
 
 ### US-RX-04: Received-pilot estimation and equalization
 
 Channel estimation/equalization must estimate effective C×H from received known pilots using the declared FrameFlatLs or FramePilotLinear policy and explicit zero-forcing validity.
 
-Add (planned) owner: `crates/ofdma/src/signal_processing/estimation.rs`; acceptance tests: `crates/ofdma/tests/rx_estimation.rs`.
+Implemented owner: `crates/ofdma/src/signal_processing/estimation.rs`; acceptance tests: `crates/ofdma/tests/rx_estimation.rs`.
 Requirement: [REQ-US-RX-04](requirements.md#req-us-rx-04); delivery: **INT-US-RX-01**.
 
 ### US-RX-05: Resource extraction and inverse interleaving
 
 Resource extraction must independently invert the accepted resource/interleaving order and preserve unavailable scheduled cells and their bit positions.
 
-Add (planned) owner: `crates/ofdma/src/receiver/mod.rs`; acceptance tests: `crates/ofdma/tests/rx_resources.rs`.
+Implemented owner: `crates/ofdma/src/receiver/mod.rs`; acceptance tests: `crates/ofdma/tests/rx_resources.rs`.
 Requirement: [REQ-US-RX-05](requirements.md#req-us-rx-05); delivery: **INT-US-RX-01**.
 
 ### US-RX-06: Soft QAM demapping
 
 Soft demapping must produce MSB-first finite MaxLog natural-log P(0)/P(1) metrics from shared upstream labels/scales and a valid ReferenceVariance.
 
-Add (planned) owner: `crates/ofdma/src/signal_processing/demapping.rs`; acceptance tests: `crates/ofdma/tests/soft_metrics.rs`.
+Implemented owner: `crates/ofdma/src/signal_processing/demapping.rs`; acceptance tests: `crates/ofdma/tests/soft_metrics.rs`.
 Requirement: [REQ-US-RX-06](requirements.md#req-us-rx-06); delivery: **INT-US-RX-01**.
 
 ### US-RX-07: Soft PHY derandomization
@@ -494,7 +496,7 @@ Requirement: [REQ-US-RX-08](requirements.md#req-us-rx-08); delivery: **INT-FEC-0
 
 Information deframing must remove only receiver-known residual fill and retain actual complete/partial/failed meaningful decisions and coverage.
 
-Add (planned) owner: `crates/ofdma/src/receiver/framing.rs`; acceptance tests: `crates/ofdma/tests/rx_framing.rs`.
+Implemented owner: `crates/ofdma/src/receiver/framing.rs`; acceptance tests: `crates/ofdma/tests/rx_framing.rs`.
 Requirement: [REQ-US-RX-09](requirements.md#req-us-rx-09); delivery: **INT-US-RX-01**.
 
 ### Unified channel and measurement reference planes

@@ -310,6 +310,36 @@
       "source": "crates/phy/tests/measurement_playback.rs",
       "destination": "crates/ofdma/tests/measurement_playback.rs",
       "source_sha256": "95bba23c92970fc1e0206c42dfcba76327056af4f9915419779b69c23f3957f3"
+    },
+    {
+      "source": "crates/phy/src/receiver/framing.rs",
+      "destination": "crates/ofdma/src/receiver/framing.rs",
+      "source_sha256": "83a71533ec2247f63af68d69226d8e07d3cfa66dd048e7d3fe7a5769243db815"
+    },
+    {
+      "source": "crates/phy/src/receiver/mod.rs",
+      "destination": "crates/ofdma/src/receiver/mod.rs",
+      "source_sha256": "d66ab12b73a13a684a15bd116fd7223954631bb08fed0c3f59fa7dda4f369917"
+    },
+    {
+      "source": "crates/phy/src/signal_processing/estimation.rs",
+      "destination": "crates/ofdma/src/signal_processing/estimation.rs",
+      "source_sha256": "af86ebc7568823d5e3a21e4848bebd89faed0029af4a474a441403e616207b50"
+    },
+    {
+      "source": "crates/phy/tests/rx_framing.rs",
+      "destination": "crates/ofdma/tests/rx_framing.rs",
+      "source_sha256": "dd9ff9be5fd3e2f8a7667cef1266af8075c4728a92b82442e02aee8c21d5f94c"
+    },
+    {
+      "source": "crates/phy/tests/rx_estimation.rs",
+      "destination": "crates/ofdma/tests/rx_estimation.rs",
+      "source_sha256": "e5b721af1efd08e255cbbcaffc112149e3547a8b7f89a0b5d768f903712bc62e"
+    },
+    {
+      "source": "crates/phy/tests/waveform_loop.rs",
+      "destination": "crates/ofdma/tests/waveform_loop.rs",
+      "source_sha256": "4d9bc9fa9549070976afe2e9fffa5b675528a75479d2c8a23d149328b664d9a6"
     }
   ]
 }

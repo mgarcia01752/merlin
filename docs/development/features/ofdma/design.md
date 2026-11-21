@@ -171,3 +171,50 @@ Expectations and original source hashes remain unchanged.
 Private output: `docs/development/local/unified-backend/channel-integration/rust-tests.log`.
 High-level full-schedule/observer acceptance remains pending and the task stays
 unchecked. [User guide](../../../user/upstream/channel.md).
+
+## INT-US-RX-01: received-only receiver implementation unit
+
+Channel checkpoint `1432238` supplies indexed observed samples. Adapt source
+`crates/phy/src/receiver/{mod,framing}.rs` and
+`signal_processing/estimation.rs` to their matching OFDMA owners.
+Reuse shared resource/FEC/transform and implemented MaxLog/soft randomizer stages.
+Do not pass TX objects, source seed/bits, actual C/H, codeword truth or simulator
+identities beyond legitimate run/configuration/grant association into RX.
+
+| Source symbol | Contract / evidence | Gap | Decision / destination |
+| --- | --- | --- | --- |
+| `Receiver::{new,for_observation,push,gap,finish}` | Configured timing; finite contiguous input; missing windows retain positions; transactional rejected calls | Local nine-stage composition | ADAPT `crates/ofdma/src/receiver/framing.rs`; separate normal RX from external source verifier |
+| `estimate`, `equalize` | FrameFlatLs / bracketed FramePilotLinear from received known pilots; estimate effective C×H; stable complex division | Local estimator | ADAPT `crates/ofdma/src/signal_processing/estimation.rs`; no supplied-truth correction |
+| `max_log`, `Randomizer23::apply_llrs`, shared `LdpcCodec` | Positive-for-zero finite soft metrics, independent sign anchors, explicit shortened-zero priors and actual decoding outcomes | Local inverse composition | REUSE accepted owners; no BCH or ranging puncturing |
+
+Add unchanged source tests `rx_framing`, `rx_estimation`, `waveform_loop`.
+The latter runs actual PRBS→TX→channel→received-only RX→independent verifier,
+including both numerologies, all pilot patterns, supported loading and truncated
+coverage. It is internal loop evidence, not external interoperability.
+Preserve failed decisions, parity/convergence/iterations/fill and source errors
+as distinct results. Missing symbols never compact logical source positions.
+
+### Receiver unit validation
+
+[Candidate fingerprint](receiver-candidate.json) records base `1432238`, SHA-256
+`ed66405c4780ffcf62ada209df752c4844afb4d58e225e0753418c2140823fd5`. Rust 1.85.1:
+`test -p docsis-ofdma --locked` passed 34 cases, one explicit benchmark ignored;
+Clippy all targets with warnings denied and formatting passed.
+
+Exact source-independent received-only cases remain unchanged in
+`crates/ofdma/tests/rx_framing.rs`, `rx_estimation.rs` and `waveform_loop.rs`.
+The three actual waveform-loop cases are
+`waveform_loop.rs::both_modes_all_pilot_patterns_and_cross_frame_words_recover`,
+`waveform_loop.rs::all_upstream_qam_orders_and_received_pilot_phase_recovery` and
+`waveform_loop.rs::rejected_and_truncated_samples_preserve_real_coverage`.
+Their source comparator is external to RX, and expected source bits never enter
+normal decisions. Both modes/all 14 pilot patterns and loading 2..12 run through
+actual recovery; complementary-cell BPSK is exercised as prescribed.
+The waveform-loop group completed in 1.17 seconds in this host run.
+
+Private output: `docs/development/local/unified-backend/receiver-integration/rust-tests.log`.
+This validates direct typed stages and an internal reference loop. The combined
+CONFIG/TX/CH/RX tasks remain unchecked until the broader session/document/schedule
+acceptance. It is not hardware or external interoperability evidence.
+
+[Receiver user guide](../../../user/upstream/receiver.md).

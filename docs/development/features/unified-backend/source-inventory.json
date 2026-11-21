@@ -5443,25 +5443,25 @@
             "requirement": "REQ-US-RX-01",
             "kind": "module",
             "path": "crates/ofdma/src/receiver/framing.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-01",
             "kind": "test",
             "path": "crates/ofdma/tests/rx_framing.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-02",
             "kind": "module",
             "path": "crates/ofdma/src/receiver/framing.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-02",
             "kind": "test",
             "path": "crates/ofdma/tests/rx_framing.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-03",
@@ -5479,19 +5479,19 @@
             "requirement": "REQ-US-RX-04",
             "kind": "module",
             "path": "crates/ofdma/src/signal_processing/estimation.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-04",
             "kind": "test",
             "path": "crates/ofdma/tests/rx_estimation.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-05",
             "kind": "module",
             "path": "crates/ofdma/src/receiver/mod.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-05",
@@ -5545,13 +5545,13 @@
             "requirement": "REQ-US-RX-09",
             "kind": "module",
             "path": "crates/ofdma/src/receiver/framing.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-09",
             "kind": "test",
             "path": "crates/ofdma/tests/rx_framing.rs",
-            "state": "planned"
+            "state": "existing"
           }
         ],
         "acceptance_sha256": "ecb214ed1df7fe2f401d0692a9a888ba892c69e63504e4272e3f8a7ab36b7363"

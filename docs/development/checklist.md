@@ -275,6 +275,8 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-processing-order).
   Depends on: INT-US-CH-01, INT-US-TX-01.
   Acceptance: US-RX-01..09 pass configured timing/window/FFT, FrameFlatLs/FramePilotLinear, inverse resources, finite MaxLog, soft mask, shortening/LDPC and information coverage tests without hidden TX/H/C/source truth; missing data never compacts positions.
+  Progress: [received-only RX and direct loop](features/ofdma/design.md#int-us-rx-01-received-only-receiver-implementation-unit)
+  pass locally; combined configuration/session acceptance remains open.
   Feature records: [ofdma/receiver.md](features/ofdma/receiver.md).
 
 <a id="int-us-loop-01"></a>

@@ -9,3 +9,5 @@ already available. The [official checklist](../../development/checklist.md#unifi
 tracks delivery.
 
 [Typed channel simulator and measurement reference planes](channel.md).
+
+[Received-only receiver and independent comparison](receiver.md).

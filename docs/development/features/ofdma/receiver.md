@@ -7,7 +7,8 @@ documentation only. Current integration evidence is never inferred from source c
 
 ## Support, inputs and outputs
 
-The local upstream receiver remains planned under INT-US-RX-01. Its standalone LDPC
+The typed upstream receiver is implemented with [local received-only and waveform-loop evidence](design.md#int-us-rx-01-received-only-receiver-implementation-unit).
+Combined task acceptance remains open under INT-US-RX-01. Its standalone LDPC
 leaf has INT-FEC-01 evidence. Normal RX gets received indexed samples and legitimate
 accepted receiver configuration; it receives no original bits/PRBS seed, injected
 H/C, noise/RNG parameters, expected transmitted cells or hidden scheduler truth.
@@ -63,15 +64,15 @@ linked; nonexistent local paths are explicitly planned, not passing evidence.
 
 | Stable requirement | Delivery / acceptance | Implementation and test owner |
 | --- | --- | --- |
-| [REQ-US-RX-01](../../../requirements.md#req-us-rx-01) | [INT-US-RX-01](../../checklist.md#int-us-rx-01) | Module: `crates/ofdma/src/receiver/framing.rs` (planned); Test: `crates/ofdma/tests/rx_framing.rs` (planned) |
-| [REQ-US-RX-02](../../../requirements.md#req-us-rx-02) | [INT-US-RX-01](../../checklist.md#int-us-rx-01) | Module: `crates/ofdma/src/receiver/framing.rs` (planned); Test: `crates/ofdma/tests/rx_framing.rs` (planned) |
+| [REQ-US-RX-01](../../../requirements.md#req-us-rx-01) | [INT-US-RX-01](../../checklist.md#int-us-rx-01) | Module: `crates/ofdma/src/receiver/framing.rs`; Test: `crates/ofdma/tests/rx_framing.rs` |
+| [REQ-US-RX-02](../../../requirements.md#req-us-rx-02) | [INT-US-RX-01](../../checklist.md#int-us-rx-01) | Module: `crates/ofdma/src/receiver/framing.rs`; Test: `crates/ofdma/tests/rx_framing.rs` |
 | [REQ-US-RX-03](../../../requirements.md#req-us-rx-03) | [INT-US-RX-01](../../checklist.md#int-us-rx-01) | Module: `crates/ofdma/src/signal_processing/transform.rs`; Test: `crates/ofdma/tests/waveform_transform.rs` (planned) |
-| [REQ-US-RX-04](../../../requirements.md#req-us-rx-04) | [INT-US-RX-01](../../checklist.md#int-us-rx-01) | Module: `crates/ofdma/src/signal_processing/estimation.rs` (planned); Test: `crates/ofdma/tests/rx_estimation.rs` (planned) |
-| [REQ-US-RX-05](../../../requirements.md#req-us-rx-05) | [INT-US-RX-01](../../checklist.md#int-us-rx-01) | Module: `crates/ofdma/src/receiver/mod.rs` (planned); Test: `crates/ofdma/tests/rx_resources.rs` (planned) |
+| [REQ-US-RX-04](../../../requirements.md#req-us-rx-04) | [INT-US-RX-01](../../checklist.md#int-us-rx-01) | Module: `crates/ofdma/src/signal_processing/estimation.rs`; Test: `crates/ofdma/tests/rx_estimation.rs` |
+| [REQ-US-RX-05](../../../requirements.md#req-us-rx-05) | [INT-US-RX-01](../../checklist.md#int-us-rx-01) | Module: `crates/ofdma/src/receiver/mod.rs`; Test: `crates/ofdma/tests/rx_resources.rs` (planned) |
 | [REQ-US-RX-06](../../../requirements.md#req-us-rx-06) | [INT-US-RX-01](../../checklist.md#int-us-rx-01) | Module: `crates/ofdma/src/signal_processing/demapping.rs`; Test: `crates/ofdma/tests/soft_metrics.rs` (planned) |
 | [REQ-US-RX-07](../../../requirements.md#req-us-rx-07) | [INT-US-RX-01](../../checklist.md#int-us-rx-01) | Module: `crates/ofdma/src/bit_processing/randomizer.rs`; Test: `crates/ofdma/tests/randomization.rs` |
 | [REQ-US-RX-08](../../../requirements.md#req-us-rx-08) | [INT-FEC-01](../../checklist.md#int-fec-01) | Module: [crates/fec-codec/src/upstream_ldpc/codec.rs](../../../../crates/fec-codec/src/upstream_ldpc/codec.rs); Test: [crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs](../../../../crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs); Test: [crates/fec-codec/src/upstream_ldpc/tests.rs](../../../../crates/fec-codec/src/upstream_ldpc/tests.rs) |
-| [REQ-US-RX-09](../../../requirements.md#req-us-rx-09) | [INT-US-RX-01](../../checklist.md#int-us-rx-01) | Module: `crates/ofdma/src/receiver/framing.rs` (planned); Test: `crates/ofdma/tests/rx_framing.rs` (planned) |
+| [REQ-US-RX-09](../../../requirements.md#req-us-rx-09) | [INT-US-RX-01](../../checklist.md#int-us-rx-01) | Module: `crates/ofdma/src/receiver/framing.rs`; Test: `crates/ofdma/tests/rx_framing.rs` |
 
 Related delivery gates: [INT-US-RX-01](../../checklist.md#int-us-rx-01), [INT-FEC-01](../../checklist.md#int-fec-01), [INT-DEFER-01](../../checklist.md#int-defer-01).
 
