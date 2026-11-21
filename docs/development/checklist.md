@@ -243,6 +243,9 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-configuration-and-source).
   Depends on: INT-DSP-01.
   Acceptance: Local module registration, supported/domain-valid distinctions, complete source-field coverage and typed idle session foundation pass. Independent grant capacities, all three codeword families, fill/pad/source bookkeeping, PRBS phase/period/seed/range and rejection atomicity pass before waveform use.
+  Progress: typed configuration, grants/resources and continuous source are registered;
+  [typed foundation evidence](features/ofdma/design.md#validation) covers this unit only.
+  Full document admission, source-field coverage and session acceptance remain open.
   Public exports follow the [selected exact mapping](features/high-level-api/namespace-design.md); initial typed upstream stage APIs precede final facade convergence. No empty namespace scaffold.
   Feature records: [ofdma/configuration.md](features/ofdma/configuration.md).
 

@@ -270,6 +270,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "docsis-ofdma"
+version = "0.4.0"
+dependencies = [
+ "fec-codec",
+ "merlin-dsp",
+ "serde",
+]
+
+[[package]]
 name = "either"
 version = "1.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

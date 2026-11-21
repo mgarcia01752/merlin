@@ -9,7 +9,7 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[2]
-MANIFESTS = ('crates/dsp/Cargo.toml', 'crates/ofdm/Cargo.toml', 'crates/fec-codec/Cargo.toml',
+MANIFESTS = ('crates/ofdma/Cargo.toml', 'crates/dsp/Cargo.toml', 'crates/ofdm/Cargo.toml', 'crates/fec-codec/Cargo.toml',
              'crates/cli/Cargo.toml', 'crates/pnm-input/Cargo.toml',
              'bindings/python/Cargo.toml',
              'apps/qt/Cargo.toml')

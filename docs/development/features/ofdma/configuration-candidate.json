@@ -1,0 +1,170 @@
+{
+  "base_revision": "3a2f7468307278468bdc60b1d2ee9ef45c7a2e85",
+  "sha256": "aec4d4f00e995a0229d25f52a254b169550902977b7f3a412595300cd66884f2",
+  "files": [
+    {
+      "path": "Cargo.lock",
+      "sha256": "62716e817946c16aac5d8cb4584b1c02cb6c97cf33e374fae8ac3036cd6a20a1"
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "a60216ce4e9b899831dacdfcbcf7e6890dc3f22c9277ddc64ed44ec60b2695fc"
+    },
+    {
+      "path": "crates/ofdma/Cargo.toml",
+      "sha256": "98b8952b2374309dbf1e96927a0814c2123f5517938fda07a1733e43dabeb02a"
+    },
+    {
+      "path": "crates/ofdma/src/bit_processing/mod.rs",
+      "sha256": "07f4b318fbd38521654fff8c27ea756a9214dc504223e033828f24a6f5fa1abf"
+    },
+    {
+      "path": "crates/ofdma/src/bit_processing/pilot_sequence.rs",
+      "sha256": "a0b9e6cb3459e409a9fb108c6c022448883ad8f1d5252ca23fb58822927641fe"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/burst.rs",
+      "sha256": "149c9207e2ca6e264430141bd024a170abc1eca4100bc44630e2736c9fc92e54"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/grant.rs",
+      "sha256": "bc35d620f048dc9955df4db36adfc405ee4cc3fb2f972dcc399b61eca6746970"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/guards.rs",
+      "sha256": "bfed2cd36cab7bb7a4ff4348b77555310893c8d722e690d7baac9586b2fef383"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/mod.rs",
+      "sha256": "2a08926ef3ab9392936248ca189f656bdc368473a7fea15c09007efadfe77af8"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/profile.rs",
+      "sha256": "190b8eab01de9eb1bc05f22cb6cb01161978404532895878e6e9a75241f726fb"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/receiver.rs",
+      "sha256": "5297c458629cf222ec774a1f8394ff869b3137770e45648dd6e1c16f79278fe3"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/serde_limits.rs",
+      "sha256": "90cdbd039c866afc853d63e3da2f48168bb5b9747b74b5ea0712c5a3ca9fa4b7"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "sha256": "2359d2789cb7954ec2760c8a5450f28dc41e4e8d175c6144a7afc7669521bccd"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "sha256": "ebef03cb90ce5f227878b718cd25266e981d110838125f03a3dbf080af1e6ced"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/mod.rs",
+      "sha256": "b1f57800f6b18821aaef6e7c6e01da8cbf4dcd0146161dc24ea311c122e7f7fc"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "sha256": "5069afdbb57cc30b23be91cd85c7444ac168f6638e75fd00cd15ce77ddf95798"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/waveform.rs",
+      "sha256": "6d7e22178aa4c7d8a1514a377979a68d8c9b9063a2d239c5af9a7a8e44cdc2b3"
+    },
+    {
+      "path": "crates/ofdma/src/error.rs",
+      "sha256": "a9cd209bfba351e38a4d89de0ff73b6c2648257c443cd06370ed7b07d3982c55"
+    },
+    {
+      "path": "crates/ofdma/src/grant/fec_selection.rs",
+      "sha256": "83813139d150e061532c952d6e13ab38f7fbd6792357a335eb16dbb6dd0d8bfe"
+    },
+    {
+      "path": "crates/ofdma/src/grant/mod.rs",
+      "sha256": "24afc8e14d3653a366e46c726a503e381e2a9282d3c7454700491e84e87443b8"
+    },
+    {
+      "path": "crates/ofdma/src/grant/plan.rs",
+      "sha256": "87746f08b6e02ae4f6623367fb05e5fbfb7747dbdcb6743d9e5f826b2cf4107e"
+    },
+    {
+      "path": "crates/ofdma/src/lib.rs",
+      "sha256": "27ef9a73ce3f80b2fe74a64e26e1debf9ae534fb2f1bb32171aa6f4ff52cb073"
+    },
+    {
+      "path": "crates/ofdma/src/resources/grid.rs",
+      "sha256": "4be528f0a7f14588dba508960b00817fc111356c5c7a0dd9ef8a1704296debaf"
+    },
+    {
+      "path": "crates/ofdma/src/resources/interleaving_blocks.rs",
+      "sha256": "f533f41a46d415ea92e05385f696f62dd267e4037f6e37ec1c8db74a4e3d1c73"
+    },
+    {
+      "path": "crates/ofdma/src/resources/mod.rs",
+      "sha256": "cf9bf2a1021bad1954b32741765465ffb6506ad16767baba99c4989b4c2a9a8b"
+    },
+    {
+      "path": "crates/ofdma/src/resources/permutation.rs",
+      "sha256": "a82022e3839fb3b9adbf07b10d63f15c53e9e67e8f29507d2b012ee56f0eaf7e"
+    },
+    {
+      "path": "crates/ofdma/src/resources/pilot_patterns.rs",
+      "sha256": "c21210635b5c9ba5e2f14c7298cae1800cd7de172750241f7801b0f9f86bb8fe"
+    },
+    {
+      "path": "crates/ofdma/src/source/mod.rs",
+      "sha256": "7d69aaefac51a54018f7d265e9f49aee84bf803ca5a47489a7fd8aaeba461b2e"
+    },
+    {
+      "path": "crates/ofdma/src/source/prbs15.rs",
+      "sha256": "e3e69475d4959414b86837ecc9d01c633cb7340a71a6574596dedb6429c29626"
+    },
+    {
+      "path": "crates/ofdma/src/source/verifier.rs",
+      "sha256": "ff8bbefd88c126874d2d7d4303b7e5447d38c156ef63da0ef39fe86fc20d0c16"
+    },
+    {
+      "path": "crates/ofdma/src/types/bits.rs",
+      "sha256": "71cb89e6bed20454596e31f9569adb6b5ce8c5515630e69b067bea5ef83dca70"
+    },
+    {
+      "path": "crates/ofdma/src/types/iq.rs",
+      "sha256": "2a4e9d9f8834b63b0b7350c6ebec998e26fd59b09012bc8705de035d45c33c41"
+    },
+    {
+      "path": "crates/ofdma/src/types/mod.rs",
+      "sha256": "f8a771fce21bdbe75eeeda7f5e5f873682dc984d5f62dd78bd277d2741d354cf"
+    },
+    {
+      "path": "crates/ofdma/src/types/samples.rs",
+      "sha256": "e4af17c7f362cfbd1350fcf6720b5b26a07e6a67747d291061429be2221dad66"
+    },
+    {
+      "path": "crates/ofdma/tests/common/mod.rs",
+      "sha256": "1d3e830af1396957755aece8a045d2710a81a99501536ecb14f5ff8bf3fec036"
+    },
+    {
+      "path": "crates/ofdma/tests/configuration.rs",
+      "sha256": "f7a0742dbd5c47424f20c79bcbe22134c9a2cb3083130e95e21f49a11039610f"
+    },
+    {
+      "path": "crates/ofdma/tests/grant_plan.rs",
+      "sha256": "8640524cecf1f61908e0eccbcc1e8fe644975b7dff2d22c8ea3668a27784e832"
+    },
+    {
+      "path": "crates/ofdma/tests/prbs.rs",
+      "sha256": "766c997182ab157fe41f89d63a1b37e13d6e3c029782c957f4f6596581895aae"
+    },
+    {
+      "path": "crates/ofdma/tests/upstream_interleaving.rs",
+      "sha256": "432a98a76da178211f215d1e352401a53dc77b2451b677db60e8ef6ffa5b0af0"
+    },
+    {
+      "path": "crates/ofdma/tests/upstream_pilots.rs",
+      "sha256": "2085545f820682c809ff604f0bad587c220355ca1d1f44bf75b199c7c6aae895"
+    },
+    {
+      "path": "tools/release/versions.py",
+      "sha256": "a4928034a99d4242dc1c749d046628098eb16a7e4172276df0dc0024324f160b"
+    }
+  ]
+}

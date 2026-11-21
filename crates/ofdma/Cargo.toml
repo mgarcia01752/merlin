@@ -1,0 +1,19 @@
+# Copyright 2026 DOCSIS OFDM Channel Sim contributors
+# SPDX-License-Identifier: Apache-2.0
+[package]
+name = "docsis-ofdma"
+description = "Safe bounded DOCSIS upstream OFDMA stages"
+version = "0.4.0"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+publish = false
+
+[dependencies]
+fec-codec = { path = "../fec-codec" }
+merlin-dsp = { path = "../dsp" }
+serde = { version = "=1.0.228", features = ["derive"] }
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "deny"

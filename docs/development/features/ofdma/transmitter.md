@@ -62,7 +62,7 @@ linked; nonexistent local paths are explicitly planned, not passing evidence.
 
 | Stable requirement | Delivery / acceptance | Implementation and test owner |
 | --- | --- | --- |
-| [REQ-US-TX-01](../../../requirements.md#req-us-tx-01) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/grant/plan.rs` (planned); Test: `crates/ofdma/tests/grant_plan.rs` (planned) |
+| [REQ-US-TX-01](../../../requirements.md#req-us-tx-01) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/grant/plan.rs`; Test: `crates/ofdma/tests/grant_plan.rs` |
 | [REQ-US-TX-02](../../../requirements.md#req-us-tx-02) | [INT-FEC-01](../../checklist.md#int-fec-01) | Module: [crates/fec-codec/src/upstream_ldpc/codec.rs](../../../../crates/fec-codec/src/upstream_ldpc/codec.rs); Test: [crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs](../../../../crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs); Test: [crates/fec-codec/src/upstream_ldpc/tests.rs](../../../../crates/fec-codec/src/upstream_ldpc/tests.rs) |
 | [REQ-US-TX-03](../../../requirements.md#req-us-tx-03) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/bit_processing/randomizer.rs` (planned); Test: `crates/ofdma/tests/randomization.rs` (planned) |
 | [REQ-US-TX-04](../../../requirements.md#req-us-tx-04) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/signal_processing/qam.rs` (planned); Test: `crates/ofdma/tests/qam_mapping.rs` (planned) |

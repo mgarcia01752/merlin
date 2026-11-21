@@ -8,8 +8,9 @@ documentation only. Current integration evidence is never inferred from source c
 ## Scope and support
 
 This is the active local design for UCD/IUC, represented MAP/grant/minislot state
-and continuous source contracts. Local OFDMA configuration and source modules remain
-planned under INT-US-CONFIG-01. The retained 108-row source coverage matrix is
+and continuous source contracts. Typed OFDMA configuration, grants/resources and source modules now exist in
+`crates/ofdma`; [implementation evidence](design.md) records the tested subset.
+Document admission and full session coverage remain open under INT-US-CONFIG-01. The retained 108-row source coverage matrix is
 historical format/domain evidence, not current MERLIN execution or a raw MAC parser.
 
 ## Inputs, outputs and ownership
@@ -26,10 +27,10 @@ identity without claiming their execution. Ranging, probes and profile-testing
 modes stay explicitly unsupported until their own independent implementation gates.
 No real scheduler, modem control, SNMP/TFTP or device capture is introduced.
 
-Planned owners include `crates/ofdma/src/configuration/ucd/{mod,channel,controls,profiles}.rs`,
+Implemented typed owners include `crates/ofdma/src/configuration/ucd/{mod,channel,controls,profiles}.rs`,
 `configuration/{grant,profile,waveform}.rs`, `resources/{grid,permutation,pilot_patterns}.rs`
 and `grant/{mod,plan,fec_selection}.rs`. These paths are relative to `crates/ofdma/src/`
-where abbreviated and are planned. Resource planning supplies one consistent physical
+where abbreviated. Resource planning supplies one consistent physical
 cell visit order/capacity to grant framing, TX and RX; do not duplicate pilot counters.
 
 ## State, source truth and atomic admission
@@ -39,7 +40,7 @@ bank/measurement transitions before publishing a new generation or consuming sou
 Failure leaves the prior configuration and source position intact. Preserve temporal
 coverage and version tags rather than guessing defaults from a later capture.
 
-The continuous PRBS15 source and its independent verifier are separate planned owners
+The continuous PRBS15 source and its independent verifier are separate implemented owners
 under `crates/ofdma/src/source/{prbs15,verifier}.rs`. Preserve recurrence, seed/bit
 order, absolute position and chunk continuity from the source contract. Grant resets
 apply to the 23-bit PHY randomizer, not this source. Account separately for meaningful
@@ -70,16 +71,16 @@ linked; nonexistent local paths are explicitly planned, not passing evidence.
 
 | Stable requirement | Delivery / acceptance | Implementation and test owner |
 | --- | --- | --- |
-| [REQ-US-CFG-01](../../../requirements.md#req-us-cfg-01) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/configuration/ucd/mod.rs` (planned); Test: `crates/ofdma/tests/configuration_json.rs` (planned) |
-| [REQ-US-CFG-02](../../../requirements.md#req-us-cfg-02) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/configuration/ucd/mod.rs` (planned); Test: `crates/ofdma/tests/configuration_json.rs` (planned) |
-| [REQ-US-CFG-03](../../../requirements.md#req-us-cfg-03) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/configuration/ucd/mod.rs` (planned); Test: `crates/ofdma/tests/configuration_json.rs` (planned) |
-| [REQ-US-CFG-04](../../../requirements.md#req-us-cfg-04) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/configuration/ucd/mod.rs` (planned); Test: `crates/ofdma/tests/configuration_json.rs` (planned) |
-| [REQ-US-CFG-05](../../../requirements.md#req-us-cfg-05) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/configuration/ucd/mod.rs` (planned); Test: `crates/ofdma/tests/configuration_json.rs` (planned) |
-| [REQ-US-CFG-06](../../../requirements.md#req-us-cfg-06) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/configuration/ucd/mod.rs` (planned); Test: `crates/ofdma/tests/configuration_json.rs` (planned) |
-| [REQ-US-PRBS-01](../../../requirements.md#req-us-prbs-01) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/source/prbs15.rs` (planned); Test: `crates/ofdma/tests/prbs.rs` (planned) |
-| [REQ-US-PRBS-02](../../../requirements.md#req-us-prbs-02) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/source/prbs15.rs` (planned); Test: `crates/ofdma/tests/prbs.rs` (planned) |
-| [REQ-US-PRBS-03](../../../requirements.md#req-us-prbs-03) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/source/prbs15.rs` (planned); Test: `crates/ofdma/tests/prbs.rs` (planned) |
-| [REQ-US-PRBS-04](../../../requirements.md#req-us-prbs-04) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/source/prbs15.rs` (planned); Test: `crates/ofdma/tests/prbs.rs` (planned) |
+| [REQ-US-CFG-01](../../../requirements.md#req-us-cfg-01) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/configuration/ucd/mod.rs`; Test: `crates/ofdma/tests/configuration_json.rs` (planned) |
+| [REQ-US-CFG-02](../../../requirements.md#req-us-cfg-02) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/configuration/ucd/mod.rs`; Test: `crates/ofdma/tests/configuration_json.rs` (planned) |
+| [REQ-US-CFG-03](../../../requirements.md#req-us-cfg-03) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/configuration/ucd/mod.rs`; Test: `crates/ofdma/tests/configuration_json.rs` (planned) |
+| [REQ-US-CFG-04](../../../requirements.md#req-us-cfg-04) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/configuration/ucd/mod.rs`; Test: `crates/ofdma/tests/configuration_json.rs` (planned) |
+| [REQ-US-CFG-05](../../../requirements.md#req-us-cfg-05) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/configuration/ucd/mod.rs`; Test: `crates/ofdma/tests/configuration_json.rs` (planned) |
+| [REQ-US-CFG-06](../../../requirements.md#req-us-cfg-06) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/configuration/ucd/mod.rs`; Test: `crates/ofdma/tests/configuration_json.rs` (planned) |
+| [REQ-US-PRBS-01](../../../requirements.md#req-us-prbs-01) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/source/prbs15.rs`; Test: `crates/ofdma/tests/prbs.rs` |
+| [REQ-US-PRBS-02](../../../requirements.md#req-us-prbs-02) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/source/prbs15.rs`; Test: `crates/ofdma/tests/prbs.rs` |
+| [REQ-US-PRBS-03](../../../requirements.md#req-us-prbs-03) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/source/prbs15.rs`; Test: `crates/ofdma/tests/prbs.rs` |
+| [REQ-US-PRBS-04](../../../requirements.md#req-us-prbs-04) | [INT-US-CONFIG-01](../../checklist.md#int-us-config-01) | Module: `crates/ofdma/src/source/prbs15.rs`; Test: `crates/ofdma/tests/prbs.rs` |
 
 Related delivery gates: [INT-US-CONFIG-01](../../checklist.md#int-us-config-01).
 

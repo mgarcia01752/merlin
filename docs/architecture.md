@@ -234,7 +234,8 @@ Active feature detail: [OFDMA configuration, grants and source](development/feat
 
 Delivery gates: [INT-US-CONFIG-01](development/checklist.md#int-us-config-01).
 
-Proposed `crates/ofdma/src/configuration/` owns UCD/IUC, represented MAP/grant,
+Registered `docsis-ofdma` (`docsis_ofdma`) in `crates/ofdma` now owns the typed
+foundation. `crates/ofdma/src/configuration/` owns UCD/IUC, represented MAP/grant,
 profile/resource/loading and separately validated TX/RX projections. Generic
 versioned JSON, captured UCD inspection and actual execution support are distinct.
 Retain inspectable optional/reserved controls without claiming ranging/probing
@@ -242,22 +243,25 @@ execution. Configuration load/preview is idle and atomic. Source format tags mus
 be explicitly translated/versioned; renaming product identity must not relabel
 raw original bytes or silently accept an incompatible schema.
 
-Register the proposed member in `Cargo.toml` with `crates/ofdma/Cargo.toml` and
+The independent member is registered in `Cargo.toml` with `crates/ofdma/Cargo.toml` and
 `crates/ofdma/src/lib.rs`. Concrete configuration owners are
 `crates/ofdma/src/configuration/ucd/{mod,channel,controls,profiles}.rs` and
 `crates/ofdma/src/configuration/{grant,profile,waveform}.rs`; shared resource
 planning uses `crates/ofdma/src/resources/{grid,permutation,pilot_patterns}.rs`
-and `crates/ofdma/src/grant/{mod,plan,fec_selection}.rs`. All are Add (planned),
-not placeholders to create before the reuse/architecture gate passes.
+and `crates/ofdma/src/grant/{mod,plan,fec_selection}.rs`. These owners are now
+implemented. Versioned document admission and the complete idle session remain
+open within INT-US-CONFIG-01; the typed reference milestone precedes them.
 
-Proposed `crates/ofdma/src/source/{prbs15,verifier}.rs` owns continuous source and
+`crates/ofdma/src/source/{prbs15,verifier}.rs` owns continuous source and
 independent verification. Grant boundaries reset the 23-bit PHY randomizer, not
 PRBS15. Source accounting separates meaningful data, information-fill ones,
 shortening zeros, parity and zero grant pad; invalid/backpressured work consumes
 no extra source. The verifier alone receives original truth, checks positions/
 coverage and preserves failed recovered decisions. Reuse the existing PRBS only
 after exact recurrence, seed, phase, bit order and chunk equivalence checks.
-Planned tests: `crates/ofdma/tests/{configuration,configuration_json,prbs}.rs`.
+Existing tests: `crates/ofdma/tests/{configuration,grant_plan,prbs,upstream_pilots,upstream_interleaving}.rs`.
+Document admission tests `crates/ofdma/tests/configuration_json.rs` remain planned.
+See [the implementation record](development/features/ofdma/design.md#int-us-config-01-typed-foundation).
 
 ### Unified upstream processing order
 

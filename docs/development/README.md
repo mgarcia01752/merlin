@@ -143,3 +143,6 @@ Channel conditioning and shared TapPoint instruments (UI-RF-01):
 
 Use the [PNM RxMER/FEC skill](../../skills/docsis-pnm-rxmer-fec/SKILL.md) for
 reviewed CableLabs guidance, searchable V05/V02 text and original PDF links.
+
+Latest [backend execution authorization](backend-execution-authorization.md) permits
+focused local commits and continuous integration, with no push or release.

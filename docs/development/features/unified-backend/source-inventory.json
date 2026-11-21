@@ -5102,7 +5102,7 @@
             "requirement": "REQ-COM-SYS-03",
             "kind": "module",
             "path": "crates/ofdma/src/lib.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-DS-PHY-01",
@@ -5155,7 +5155,7 @@
             "requirement": "REQ-US-CFG-01",
             "kind": "module",
             "path": "crates/ofdma/src/configuration/ucd/mod.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CFG-01",
@@ -5167,7 +5167,7 @@
             "requirement": "REQ-US-CFG-02",
             "kind": "module",
             "path": "crates/ofdma/src/configuration/ucd/mod.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CFG-02",
@@ -5179,7 +5179,7 @@
             "requirement": "REQ-US-CFG-03",
             "kind": "module",
             "path": "crates/ofdma/src/configuration/ucd/mod.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CFG-03",
@@ -5191,7 +5191,7 @@
             "requirement": "REQ-US-CFG-04",
             "kind": "module",
             "path": "crates/ofdma/src/configuration/ucd/mod.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CFG-04",
@@ -5203,7 +5203,7 @@
             "requirement": "REQ-US-CFG-05",
             "kind": "module",
             "path": "crates/ofdma/src/configuration/ucd/mod.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CFG-05",
@@ -5215,7 +5215,7 @@
             "requirement": "REQ-US-CFG-06",
             "kind": "module",
             "path": "crates/ofdma/src/configuration/ucd/mod.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-CFG-06",
@@ -5227,49 +5227,49 @@
             "requirement": "REQ-US-PRBS-01",
             "kind": "module",
             "path": "crates/ofdma/src/source/prbs15.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PRBS-01",
             "kind": "test",
             "path": "crates/ofdma/tests/prbs.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PRBS-02",
             "kind": "module",
             "path": "crates/ofdma/src/source/prbs15.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PRBS-02",
             "kind": "test",
             "path": "crates/ofdma/tests/prbs.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PRBS-03",
             "kind": "module",
             "path": "crates/ofdma/src/source/prbs15.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PRBS-03",
             "kind": "test",
             "path": "crates/ofdma/tests/prbs.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PRBS-04",
             "kind": "module",
             "path": "crates/ofdma/src/source/prbs15.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PRBS-04",
             "kind": "test",
             "path": "crates/ofdma/tests/prbs.rs",
-            "state": "planned"
+            "state": "existing"
           }
         ],
         "acceptance_sha256": "417e175763c0f51079cd6868f7ae6a0fcda644745ad70e4566577a7ff2c964f6"
@@ -5307,13 +5307,13 @@
             "requirement": "REQ-US-TX-01",
             "kind": "module",
             "path": "crates/ofdma/src/grant/plan.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-01",
             "kind": "test",
             "path": "crates/ofdma/tests/grant_plan.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-02",

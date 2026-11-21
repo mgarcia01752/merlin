@@ -1,0 +1,180 @@
+{
+  "source_revision": "69b38071cd3ebebc4eb96849f82b7871ab8da5ec",
+  "files": [
+    {
+      "source": "crates/phy/src/configuration/burst.rs",
+      "destination": "crates/ofdma/src/configuration/burst.rs",
+      "source_sha256": "502bce5c19d4a31fb9c1baa596cacab707d4f6a721a624fb646e4b671547ade6"
+    },
+    {
+      "source": "crates/phy/src/configuration/grant.rs",
+      "destination": "crates/ofdma/src/configuration/grant.rs",
+      "source_sha256": "4be7a37b18b2eb7bbc1cabaa8cff0b58d5fee4c5f7236fef62b616d948f66bf9"
+    },
+    {
+      "source": "crates/phy/src/configuration/guards.rs",
+      "destination": "crates/ofdma/src/configuration/guards.rs",
+      "source_sha256": "609e42e41eed0026e020cb10a7df9304b6ab64c1c24392ef71f319dba574f24b"
+    },
+    {
+      "source": "crates/phy/src/configuration/mod.rs",
+      "destination": "crates/ofdma/src/configuration/mod.rs",
+      "source_sha256": "e8246d4b0ff5cdfa5d5ad19e6a9a13bbdc68b905ad8914cdca0878040bf66a5d"
+    },
+    {
+      "source": "crates/phy/src/configuration/profile.rs",
+      "destination": "crates/ofdma/src/configuration/profile.rs",
+      "source_sha256": "2df95af068006debe0b627565a980fabca57c3d2420ec6846d6082804abb2224"
+    },
+    {
+      "source": "crates/phy/src/configuration/receiver.rs",
+      "destination": "crates/ofdma/src/configuration/receiver.rs",
+      "source_sha256": "32a97a889d8646a1cea5e96dc4be3ed1587842c4d5f026f30059221134695423"
+    },
+    {
+      "source": "crates/phy/src/configuration/serde_limits.rs",
+      "destination": "crates/ofdma/src/configuration/serde_limits.rs",
+      "source_sha256": "856b179c0ecfca6078be6405b6681c5f3e8e7a3c5aea2fb992555aa7b5b39b60"
+    },
+    {
+      "source": "crates/phy/src/configuration/ucd/channel.rs",
+      "destination": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "source_sha256": "43c604106de587797e05faa2fc14610960f998d27dd3453e0fb82777d050947b"
+    },
+    {
+      "source": "crates/phy/src/configuration/ucd/controls.rs",
+      "destination": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "source_sha256": "d0e3185a8f555a011b4bc028a12f474582f6d03927ed34bc67d3dbd1539fb7a0"
+    },
+    {
+      "source": "crates/phy/src/configuration/ucd/mod.rs",
+      "destination": "crates/ofdma/src/configuration/ucd/mod.rs",
+      "source_sha256": "bf052d40ea10e0d0f76d7510b5af1fb4b2090e579a4e14ec0793f273bf9909f7"
+    },
+    {
+      "source": "crates/phy/src/configuration/ucd/profiles.rs",
+      "destination": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "source_sha256": "ab690f47284a413d4321d56c1d942c7148d616f15e91e66f506aa136e99fe760"
+    },
+    {
+      "source": "crates/phy/src/configuration/waveform.rs",
+      "destination": "crates/ofdma/src/configuration/waveform.rs",
+      "source_sha256": "085444c6e28781ed7473af0ff81c0d8994c6271f931fcd92b9b7f86583ebcfd2"
+    },
+    {
+      "source": "crates/phy/src/grant/fec_selection.rs",
+      "destination": "crates/ofdma/src/grant/fec_selection.rs",
+      "source_sha256": "7ddf29c43f19ba0412a5987c9a70f53f3b785b4d0a6df2ccbbf43385c680325b"
+    },
+    {
+      "source": "crates/phy/src/grant/mod.rs",
+      "destination": "crates/ofdma/src/grant/mod.rs",
+      "source_sha256": "cc4d267eb2376e82e6fb405771df1559a29f3b4d5e459a1eaa4481663ece2ee5"
+    },
+    {
+      "source": "crates/phy/src/grant/plan.rs",
+      "destination": "crates/ofdma/src/grant/plan.rs",
+      "source_sha256": "75054e71151dcbfdec3831e854b7a34690a10ec2aa7030e392870e1946fad693"
+    },
+    {
+      "source": "crates/phy/src/resources/grid.rs",
+      "destination": "crates/ofdma/src/resources/grid.rs",
+      "source_sha256": "8c0997bb72643c8a6e4319460bf30085b13a0c53594fdb0dea9b6c2bc6c1a048"
+    },
+    {
+      "source": "crates/phy/src/resources/interleaving_blocks.rs",
+      "destination": "crates/ofdma/src/resources/interleaving_blocks.rs",
+      "source_sha256": "2376bae01946c254c543b4174c5e7de3e3628d64c965d0965fb38950ef116563"
+    },
+    {
+      "source": "crates/phy/src/resources/mod.rs",
+      "destination": "crates/ofdma/src/resources/mod.rs",
+      "source_sha256": "cc2344133ed451d01d1fd1dd1e42e6df3743db95494cb1bfa03bfa1ec046fa47"
+    },
+    {
+      "source": "crates/phy/src/resources/permutation.rs",
+      "destination": "crates/ofdma/src/resources/permutation.rs",
+      "source_sha256": "07e10925749133a5428250ef2f26e09a8c10c3c3d41bf99e83cf7896c214abe1"
+    },
+    {
+      "source": "crates/phy/src/resources/pilot_patterns.rs",
+      "destination": "crates/ofdma/src/resources/pilot_patterns.rs",
+      "source_sha256": "436f3bde5e2b5c35470a8a221e082fd07230878ca17ec8510ba5607be251c523"
+    },
+    {
+      "source": "crates/phy/src/source/mod.rs",
+      "destination": "crates/ofdma/src/source/mod.rs",
+      "source_sha256": "8c04d04fe2bf58b664729b18553140b4b5141b40e04ac36b9778de4ab9507f7b"
+    },
+    {
+      "source": "crates/phy/src/source/prbs15.rs",
+      "destination": "crates/ofdma/src/source/prbs15.rs",
+      "source_sha256": "55676fc0727787627de8988cf4ee9d1f9ccaeb174e817fd3122f4a3712b35c22"
+    },
+    {
+      "source": "crates/phy/src/source/verifier.rs",
+      "destination": "crates/ofdma/src/source/verifier.rs",
+      "source_sha256": "c32466fb6e0b6865d1ecf428130d15651dd7b4746b17065044b8075e013dc3d9"
+    },
+    {
+      "source": "crates/phy/src/types/bits.rs",
+      "destination": "crates/ofdma/src/types/bits.rs",
+      "source_sha256": "893cb48ef90bc97dcebb4ec978fa14dd731a4faae24089dcb2ef8de37f903b4e"
+    },
+    {
+      "source": "crates/phy/src/types/iq.rs",
+      "destination": "crates/ofdma/src/types/iq.rs",
+      "source_sha256": "0cb94b81ddd02cfcd05cda3f02f3e63a02b48ca220dc3a13f27c3fb7b0d6bef9"
+    },
+    {
+      "source": "crates/phy/src/types/mod.rs",
+      "destination": "crates/ofdma/src/types/mod.rs",
+      "source_sha256": "be889bbc627d40144ae7643cadf4d5a81c6ac49787ba9ae3491333f6d5eeb80f"
+    },
+    {
+      "source": "crates/phy/src/types/samples.rs",
+      "destination": "crates/ofdma/src/types/samples.rs",
+      "source_sha256": "45079e43cbbb0d6bdca2b1b1ab3a9f7a96f23bfb1579b7e8e54ac315872d3218"
+    },
+    {
+      "source": "crates/phy/src/error.rs",
+      "destination": "crates/ofdma/src/error.rs",
+      "source_sha256": "7594180c9aef1119b8f6b42850c6c524dab0663f3930e19e6cdacad68914a948"
+    },
+    {
+      "source": "crates/phy/tests/configuration.rs",
+      "destination": "crates/ofdma/tests/configuration.rs",
+      "source_sha256": "609b0eaa8f600368605cc5478d3f3b320891322fd2b501900e6d3b267478d721"
+    },
+    {
+      "source": "crates/phy/tests/grant_plan.rs",
+      "destination": "crates/ofdma/tests/grant_plan.rs",
+      "source_sha256": "29d7f55143d9183450c4d0da18b5f072dd5dccba9d17c24659a9f586fd01b112"
+    },
+    {
+      "source": "crates/phy/tests/prbs.rs",
+      "destination": "crates/ofdma/tests/prbs.rs",
+      "source_sha256": "6c1687031b28f9bdaa3ffdf3f11a529c4ab6bdd59fdfd7b0267a453990d359b0"
+    },
+    {
+      "source": "crates/phy/tests/upstream_pilots.rs",
+      "destination": "crates/ofdma/tests/upstream_pilots.rs",
+      "source_sha256": "720ce3665ecd4099e420d1d346431ed4e22446f81cb75e78ad5fd77b00a625e5"
+    },
+    {
+      "source": "crates/phy/tests/upstream_interleaving.rs",
+      "destination": "crates/ofdma/tests/upstream_interleaving.rs",
+      "source_sha256": "1944459b290f6b955181391b0359cf3cae9e9d2925fd8799f9395edf8d1887b6"
+    },
+    {
+      "source": "crates/phy/tests/common/mod.rs",
+      "destination": "crates/ofdma/tests/common/mod.rs",
+      "source_sha256": "9be12cc53188d90d302bc0c0a0f465f0c0b27cc177e25c948aa00bba0bc0608b"
+    },
+    {
+      "source": "crates/phy/src/bit_processing/pilot_sequence.rs",
+      "destination": "crates/ofdma/src/bit_processing/pilot_sequence.rs",
+      "source_sha256": "256d761ef99e13b1a3a3cd022ca9416185bf00c0c5c33073097cad035d0851b1"
+    }
+  ]
+}
