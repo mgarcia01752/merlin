@@ -5337,31 +5337,31 @@
             "requirement": "REQ-US-TX-03",
             "kind": "module",
             "path": "crates/ofdma/src/bit_processing/randomizer.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-03",
             "kind": "test",
             "path": "crates/ofdma/tests/randomization.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-04",
             "kind": "module",
             "path": "crates/ofdma/src/signal_processing/qam.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-04",
             "kind": "test",
             "path": "crates/ofdma/tests/qam_mapping.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-05",
             "kind": "module",
             "path": "crates/ofdma/src/transmitter/framing.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-05",
@@ -5373,19 +5373,19 @@
             "requirement": "REQ-US-TX-06",
             "kind": "module",
             "path": "crates/ofdma/src/signal_processing/pre_eq.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-06",
             "kind": "test",
             "path": "crates/ofdma/tests/pre_eq.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-07",
             "kind": "module",
             "path": "crates/ofdma/src/signal_processing/transform.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-07",
@@ -5397,13 +5397,13 @@
             "requirement": "REQ-US-TX-08",
             "kind": "module",
             "path": "crates/ofdma/src/transmitter/assembly.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-08",
             "kind": "test",
             "path": "crates/ofdma/tests/tx_framing.rs",
-            "state": "planned"
+            "state": "existing"
           }
         ],
         "acceptance_sha256": "64846a106b30044f952b65cc940c54d21c593813c73f9f1f0d083652f95daf99"
@@ -5467,7 +5467,7 @@
             "requirement": "REQ-US-RX-03",
             "kind": "module",
             "path": "crates/ofdma/src/signal_processing/transform.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-03",
@@ -5503,7 +5503,7 @@
             "requirement": "REQ-US-RX-06",
             "kind": "module",
             "path": "crates/ofdma/src/signal_processing/demapping.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-06",
@@ -5515,13 +5515,13 @@
             "requirement": "REQ-US-RX-07",
             "kind": "module",
             "path": "crates/ofdma/src/bit_processing/randomizer.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-07",
             "kind": "test",
             "path": "crates/ofdma/tests/randomization.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-RX-08",
@@ -5690,13 +5690,13 @@
             "requirement": "REQ-US-TX-06",
             "kind": "module",
             "path": "crates/ofdma/src/signal_processing/pre_eq.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-TX-06",
             "kind": "test",
             "path": "crates/ofdma/tests/pre_eq.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PNM-02",

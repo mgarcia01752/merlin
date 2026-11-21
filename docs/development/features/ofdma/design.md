@@ -71,3 +71,60 @@ TX/receiver comparisons remain pending. No waveform support, Python namespace,
 external interoperability, Qt/hosted/platform acceptance is inferred.
 Private command output is retained in
 `docs/development/local/unified-backend/config-integration/rust-tests.log`.
+
+## INT-US-TX-01: transmitter implementation unit
+
+Checkpoint `07969fd` accepted the typed foundation. REQ-US-CFG-05 explicitly
+places the typed reference loop before JSON/capture loaders; implementation units
+may now validate direct typed stages, while the combined CONFIG and TX tasks stay
+unchecked until their complete dependency acceptance is available.
+
+Adapt source `crates/phy/src/transmitter/`, `bit_processing/randomizer.rs`,
+`signal_processing/{qam,qam_tables,demapping,pre_eq,cyclic_extension,transmit_window}.rs`
+and synthetic `measurements/` into matching `crates/ofdma/src/` owners. Demapping
+is included only to independently validate mapping/soft signs; normal RX composition
+remains a later unit. Pre-Eq replay is a typed TX input contract, separate from
+capture decoding and measured association.
+
+| Source symbol | Contract / evidence | Gap | Decision / destination |
+| --- | --- | --- | --- |
+| `Transform::{new,forward,inverse}` | Source 2K/4K centered unitary Iq; independent direct sums | Duplicate butterflies | ADAPT typed finite/error wrapper over `merlin_dsp::transform`; retain named-field Iq JSON, no unsafe reinterpretation |
+| `qam_tables::coordinates` and source `build.rs` | Same raw large tables/control-label permutation; source-only 8/32-QAM literals | Local embedding | REUSE existing `crates/ofdm/resources/qam-table` bytes at build time; SEPARATE directional integer table generation and upstream normalization, no downstream engine dependency |
+| `Transmitter::new/next_frame`, `encode_grant`, `BurstAssembler` | Transactional source, all eight stages, bounded frame emission | Local composition | ADAPT to `crates/ofdma/src/transmitter/`; no source truth in receiver |
+| `PreEqBank`, `PreEqPlayback` | Corrective C with explicit normalization and corresponding-probe event bases | Local TX inputs | ADAPT to signal_processing/measurements; physical H remains a separate future owner |
+
+Add source tests `randomization`, `qam_mapping`, `pre_eq`, `transforms` and
+`transmit_window` without changing expected values. Add a frozen source-transform
+comparison/benchmark because typed array conversion changes a hot path.
+QAM resources remain single-source files owned by the existing provenance record;
+both PHY crates are scientifically independent. Current source builds require the
+repository resource tree; publish=false crates do not claim standalone crates.io
+source packages. Package inventory checks must retain these build-time resources.
+
+### Transmitter unit validation
+
+[Candidate fingerprint](transmitter-candidate.json) pins base `07969fd` plus
+SHA-256 `3adc71f7244df1cb9092552402ea3d2735b3bf4504f6b68939445770d5fe5fd1`.
+`test -p docsis-ofdma --locked` passed 21 cases with the explicit benchmark ignored.
+`clippy -p docsis-ofdma --all-targets --locked -- -D warnings` passed;
+`fmt --all -- --check` passed. Commands use the existing Rust 1.85.1 environment.
+
+Exact new independent cases:
+`crates/ofdma/tests/tx_framing.rs::codeword_information_fill_and_grant_pad_have_distinct_values`,
+`crates/ofdma/tests/tx_framing.rs::transmitter_rejection_preserves_source_and_emission_stops_at_declared_support`,
+and `crates/ofdma/tests/transform_reuse.rs::shared_transform_preserves_source_bits_and_error_fields`.
+The preserved source cases in randomization, QAM mapping, Pre-Eq, transforms and
+transmit window passed with unchanged literal expectations. Source plan tests from
+the previous checkpoint remain passing.
+
+`test -p docsis-ofdma --release --locked --test transform_reuse -- --include-ignored --nocapture`
+passed both the equivalence case and explicit paired benchmark. Fifteen alternating
+100-call batches after warmup gave median inverse times 31.366/31.673 microseconds
+(source/shared adapter) at 2K, ratio 1.010, and 88.730/64.914 at 4K, ratio 0.732.
+This is one host observation. Typed conversion adds two bounded vectors per call;
+no unsafe layout cast or allocation profiler was used. No universal speed claim.
+
+Private outputs: `docs/development/local/unified-backend/tx-integration/`.
+The combined task remains unchecked; full JSON/source-field/session and later
+received-only loop acceptance are not inferred. The
+[user guide](../../../user/upstream/transmitter.md) describes the current stages.

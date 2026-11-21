@@ -59,7 +59,7 @@ linked; nonexistent local paths are explicitly planned, not passing evidence.
 
 | Stable requirement | Delivery / acceptance | Implementation and test owner |
 | --- | --- | --- |
-| [REQ-US-TX-06](../../../requirements.md#req-us-tx-06) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/signal_processing/pre_eq.rs` (planned); Test: `crates/ofdma/tests/pre_eq.rs` (planned) |
+| [REQ-US-TX-06](../../../requirements.md#req-us-tx-06) | [INT-US-TX-01](../../checklist.md#int-us-tx-01) | Module: `crates/ofdma/src/signal_processing/pre_eq.rs`; Test: `crates/ofdma/tests/pre_eq.rs` |
 | [REQ-US-PNM-02](../../../requirements.md#req-us-pnm-02) | [INT-PNM-02](../../checklist.md#int-pnm-02) | Module: `crates/pnm-input/src/upstream/association.rs` (planned); Test: `crates/pnm-input/tests/upstream_association.rs` (planned) |
 | [REQ-US-PNM-03](../../../requirements.md#req-us-pnm-03) | [INT-PNM-02](../../checklist.md#int-pnm-02) | Module: `crates/pnm-input/src/upstream/association.rs` (planned); Test: `crates/pnm-input/tests/upstream_association.rs` (planned) |
 | [REQ-US-PNM-04](../../../requirements.md#req-us-pnm-04) | [INT-PNM-02](../../checklist.md#int-pnm-02) | Module: `crates/pnm-input/src/upstream/association.rs` (planned); Test: `crates/pnm-input/tests/upstream_association.rs` (planned) |

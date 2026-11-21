@@ -1,0 +1,266 @@
+{
+  "base_revision": "07969fd8aeceab9fbe63ca3e456879950f0e1a19",
+  "sha256": "3adc71f7244df1cb9092552402ea3d2735b3bf4504f6b68939445770d5fe5fd1",
+  "files": [
+    {
+      "path": "Cargo.lock",
+      "sha256": "62716e817946c16aac5d8cb4584b1c02cb6c97cf33e374fae8ac3036cd6a20a1"
+    },
+    {
+      "path": "Cargo.toml",
+      "sha256": "a60216ce4e9b899831dacdfcbcf7e6890dc3f22c9277ddc64ed44ec60b2695fc"
+    },
+    {
+      "path": "crates/ofdma/Cargo.toml",
+      "sha256": "98b8952b2374309dbf1e96927a0814c2123f5517938fda07a1733e43dabeb02a"
+    },
+    {
+      "path": "crates/ofdma/build.rs",
+      "sha256": "7450bd531046d43c440f2959c9c3a5d63dc15a18daf50d0811f09b186a4cef76"
+    },
+    {
+      "path": "crates/ofdma/src/bit_processing/mod.rs",
+      "sha256": "c73efe8ac94648e513e6e16f3db4917f51710ce80d99bc470e378186fb6b600d"
+    },
+    {
+      "path": "crates/ofdma/src/bit_processing/pilot_sequence.rs",
+      "sha256": "a0b9e6cb3459e409a9fb108c6c022448883ad8f1d5252ca23fb58822927641fe"
+    },
+    {
+      "path": "crates/ofdma/src/bit_processing/randomizer.rs",
+      "sha256": "371d090271e2e0673a2fad4d6ae9332d6a8a853175c9501e272bd04413d8fede"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/burst.rs",
+      "sha256": "149c9207e2ca6e264430141bd024a170abc1eca4100bc44630e2736c9fc92e54"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/grant.rs",
+      "sha256": "bc35d620f048dc9955df4db36adfc405ee4cc3fb2f972dcc399b61eca6746970"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/guards.rs",
+      "sha256": "bfed2cd36cab7bb7a4ff4348b77555310893c8d722e690d7baac9586b2fef383"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/mod.rs",
+      "sha256": "2a08926ef3ab9392936248ca189f656bdc368473a7fea15c09007efadfe77af8"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/profile.rs",
+      "sha256": "190b8eab01de9eb1bc05f22cb6cb01161978404532895878e6e9a75241f726fb"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/receiver.rs",
+      "sha256": "5297c458629cf222ec774a1f8394ff869b3137770e45648dd6e1c16f79278fe3"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/serde_limits.rs",
+      "sha256": "90cdbd039c866afc853d63e3da2f48168bb5b9747b74b5ea0712c5a3ca9fa4b7"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "sha256": "2359d2789cb7954ec2760c8a5450f28dc41e4e8d175c6144a7afc7669521bccd"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "sha256": "ebef03cb90ce5f227878b718cd25266e981d110838125f03a3dbf080af1e6ced"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/mod.rs",
+      "sha256": "b1f57800f6b18821aaef6e7c6e01da8cbf4dcd0146161dc24ea311c122e7f7fc"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "sha256": "5069afdbb57cc30b23be91cd85c7444ac168f6638e75fd00cd15ce77ddf95798"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/waveform.rs",
+      "sha256": "6d7e22178aa4c7d8a1514a377979a68d8c9b9063a2d239c5af9a7a8e44cdc2b3"
+    },
+    {
+      "path": "crates/ofdma/src/error.rs",
+      "sha256": "a9cd209bfba351e38a4d89de0ff73b6c2648257c443cd06370ed7b07d3982c55"
+    },
+    {
+      "path": "crates/ofdma/src/grant/fec_selection.rs",
+      "sha256": "83813139d150e061532c952d6e13ab38f7fbd6792357a335eb16dbb6dd0d8bfe"
+    },
+    {
+      "path": "crates/ofdma/src/grant/mod.rs",
+      "sha256": "24afc8e14d3653a366e46c726a503e381e2a9282d3c7454700491e84e87443b8"
+    },
+    {
+      "path": "crates/ofdma/src/grant/plan.rs",
+      "sha256": "87746f08b6e02ae4f6623367fb05e5fbfb7747dbdcb6743d9e5f826b2cf4107e"
+    },
+    {
+      "path": "crates/ofdma/src/lib.rs",
+      "sha256": "31c0780baa6e856cb94c94893dbe4060f4aa1c0c332d4933f4d242a197df4775"
+    },
+    {
+      "path": "crates/ofdma/src/measurements/mod.rs",
+      "sha256": "ef436e0a7525ce27ac06c06afb74b26fa251b23785561dece2282a0b82b3afad"
+    },
+    {
+      "path": "crates/ofdma/src/measurements/pre_eq.rs",
+      "sha256": "3438377f076af6d8f806839e4f00014a76c4f46f31a0fd68293c6e8ca6dc988b"
+    },
+    {
+      "path": "crates/ofdma/src/measurements/rxmer.rs",
+      "sha256": "5536619ef23fb7d11c3eb8a121326f1a41fdb7ec57cad51042fe3c25d56b0112"
+    },
+    {
+      "path": "crates/ofdma/src/resources/grid.rs",
+      "sha256": "4be528f0a7f14588dba508960b00817fc111356c5c7a0dd9ef8a1704296debaf"
+    },
+    {
+      "path": "crates/ofdma/src/resources/interleaving_blocks.rs",
+      "sha256": "f533f41a46d415ea92e05385f696f62dd267e4037f6e37ec1c8db74a4e3d1c73"
+    },
+    {
+      "path": "crates/ofdma/src/resources/mod.rs",
+      "sha256": "cf9bf2a1021bad1954b32741765465ffb6506ad16767baba99c4989b4c2a9a8b"
+    },
+    {
+      "path": "crates/ofdma/src/resources/permutation.rs",
+      "sha256": "a82022e3839fb3b9adbf07b10d63f15c53e9e67e8f29507d2b012ee56f0eaf7e"
+    },
+    {
+      "path": "crates/ofdma/src/resources/pilot_patterns.rs",
+      "sha256": "c21210635b5c9ba5e2f14c7298cae1800cd7de172750241f7801b0f9f86bb8fe"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/cyclic_extension.rs",
+      "sha256": "b4b7900ae5db7f424af490303c56f175a689ccdade23684eb3c3c9db20784050"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/demapping.rs",
+      "sha256": "c5f0d158b13b17c6906ebfe7e686105af97b15e9d3eb921251edbe97fe2ee0ca"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/mod.rs",
+      "sha256": "eb8888e1c28c69da8487b5ec0af431240acbfa72f82ca63bbc0072bdf251b38b"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/pre_eq.rs",
+      "sha256": "ddc4fcdad0929346781043dd15eb225891791381aff036c644fc163cae860e48"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/qam.rs",
+      "sha256": "5cbe958f3866bbd6877b716f3edc46e2698dcd5664e697b7faa53759f577b1e1"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/qam_tables.rs",
+      "sha256": "eeab6de9d62c92485111dcac870c76a27064a6cf33d6be1fcaf3d277046d8620"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/transform.rs",
+      "sha256": "4e8659d71de61c2652eb5477963bfc85c7a369daa3038d85ec3676fbe3866a1b"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/transmit_window.rs",
+      "sha256": "742b7b4f219503fafa2ae9ee5bbfee0ad8426c8d330e58b90fbd3d9f042b122c"
+    },
+    {
+      "path": "crates/ofdma/src/source/mod.rs",
+      "sha256": "7d69aaefac51a54018f7d265e9f49aee84bf803ca5a47489a7fd8aaeba461b2e"
+    },
+    {
+      "path": "crates/ofdma/src/source/prbs15.rs",
+      "sha256": "e3e69475d4959414b86837ecc9d01c633cb7340a71a6574596dedb6429c29626"
+    },
+    {
+      "path": "crates/ofdma/src/source/verifier.rs",
+      "sha256": "ff8bbefd88c126874d2d7d4303b7e5447d38c156ef63da0ef39fe86fc20d0c16"
+    },
+    {
+      "path": "crates/ofdma/src/transmitter/assembly.rs",
+      "sha256": "8b7c3c6129c79dcc135f0a5964690280ff4915d878377aff18592a27f3f41b96"
+    },
+    {
+      "path": "crates/ofdma/src/transmitter/framer.rs",
+      "sha256": "20ed59d61d11c0df628a6f14e8658083e5793c93061b30526ff7ddfd74f4f499"
+    },
+    {
+      "path": "crates/ofdma/src/transmitter/framing.rs",
+      "sha256": "5c8c6ed31df946cae3ff785e832ab58550d494936b76faa0f6fa568e2039cbe0"
+    },
+    {
+      "path": "crates/ofdma/src/transmitter/mod.rs",
+      "sha256": "baab4a8062fb0a9b1083ab85bd611360cd17480eff979112a70c32fe82f5a8c2"
+    },
+    {
+      "path": "crates/ofdma/src/types/bits.rs",
+      "sha256": "71cb89e6bed20454596e31f9569adb6b5ce8c5515630e69b067bea5ef83dca70"
+    },
+    {
+      "path": "crates/ofdma/src/types/iq.rs",
+      "sha256": "2a4e9d9f8834b63b0b7350c6ebec998e26fd59b09012bc8705de035d45c33c41"
+    },
+    {
+      "path": "crates/ofdma/src/types/mod.rs",
+      "sha256": "f8a771fce21bdbe75eeeda7f5e5f873682dc984d5f62dd78bd277d2741d354cf"
+    },
+    {
+      "path": "crates/ofdma/src/types/samples.rs",
+      "sha256": "e4af17c7f362cfbd1350fcf6720b5b26a07e6a67747d291061429be2221dad66"
+    },
+    {
+      "path": "crates/ofdma/tests/common/mod.rs",
+      "sha256": "1d3e830af1396957755aece8a045d2710a81a99501536ecb14f5ff8bf3fec036"
+    },
+    {
+      "path": "crates/ofdma/tests/configuration.rs",
+      "sha256": "f7a0742dbd5c47424f20c79bcbe22134c9a2cb3083130e95e21f49a11039610f"
+    },
+    {
+      "path": "crates/ofdma/tests/grant_plan.rs",
+      "sha256": "8640524cecf1f61908e0eccbcc1e8fe644975b7dff2d22c8ea3668a27784e832"
+    },
+    {
+      "path": "crates/ofdma/tests/prbs.rs",
+      "sha256": "766c997182ab157fe41f89d63a1b37e13d6e3c029782c957f4f6596581895aae"
+    },
+    {
+      "path": "crates/ofdma/tests/pre_eq.rs",
+      "sha256": "26baa0ddc11655245a6f54e7a25b3810a20361ac358180c1f677bfd1e1c58855"
+    },
+    {
+      "path": "crates/ofdma/tests/qam_mapping.rs",
+      "sha256": "7795f65ebe1438b6795c7d625ed160f9f49dd6fd4f0e3603d83b22a6be85b6dd"
+    },
+    {
+      "path": "crates/ofdma/tests/randomization.rs",
+      "sha256": "3c5d172b6c6b96501a022b487f8972ae3e5d71159ac10e326872000ca13f35b2"
+    },
+    {
+      "path": "crates/ofdma/tests/support/legacy_transform.rs",
+      "sha256": "339b57d7ba7338838a71c6092a20e562db068fd291314c88ce07388527a8156b"
+    },
+    {
+      "path": "crates/ofdma/tests/transform_reuse.rs",
+      "sha256": "a15bdee401784458956f3db61a861008ebbe476e4cc8c1c9a1bfef83d7a17949"
+    },
+    {
+      "path": "crates/ofdma/tests/transforms.rs",
+      "sha256": "9b3bc10d43c0de1741cf64b6f319d4e8994b0ff50297eb0421b56a0559861979"
+    },
+    {
+      "path": "crates/ofdma/tests/transmit_window.rs",
+      "sha256": "b5571ab9954c0fad185eee28e8144252c2463865f91fa0edf0be215e4d700518"
+    },
+    {
+      "path": "crates/ofdma/tests/tx_framing.rs",
+      "sha256": "385583233399406b65bd69090cdff84b1deaa231e6f33896890a9d4a3d0fbfe2"
+    },
+    {
+      "path": "crates/ofdma/tests/upstream_interleaving.rs",
+      "sha256": "432a98a76da178211f215d1e352401a53dc77b2451b677db60e8ef6ffa5b0af0"
+    },
+    {
+      "path": "crates/ofdma/tests/upstream_pilots.rs",
+      "sha256": "2085545f820682c809ff604f0bad587c220355ca1d1f44bf75b199c7c6aae895"
+    }
+  ]
+}

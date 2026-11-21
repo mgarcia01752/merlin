@@ -255,6 +255,8 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-processing-order).
   Depends on: INT-US-CONFIG-01.
   Acceptance: Each US-TX-01..08 typed boundary passes independent source/order/label/pilot/permutation/Pre-Eq/transform/window vectors for both numerologies and declared supported orders/patterns, including chunk/state/invalid-input cases and exact source accounting.
+  Progress: [typed TX implementation unit](features/ofdma/design.md#int-us-tx-01-transmitter-implementation-unit)
+  is locally tested; combined configuration/TX acceptance remains open.
   Feature records: [ofdma/transmitter.md](features/ofdma/transmitter.md), [ofdma/pre-equalization.md](features/ofdma/pre-equalization.md).
 
 <a id="int-us-ch-01"></a>

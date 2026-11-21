@@ -271,7 +271,10 @@ requirement/task/module/test boundaries.
 
 Delivery gates: [INT-US-TX-01](development/checklist.md#int-us-tx-01), [INT-US-RX-01](development/checklist.md#int-us-rx-01).
 
-Upstream stage composition below remains **planned for MERLIN**; standalone LDPC
+Typed upstream TX composition is implemented, with stage tests recorded in
+[the implementation record](development/features/ofdma/design.md#int-us-tx-01-transmitter-implementation-unit).
+Combined CONFIG/TX acceptance remains open until document/session gates pass.
+Channel and normal RX composition below remain **planned for MERLIN**; standalone LDPC
 encoding/decoding now has the codec owners and acceptance identified below. The retained
 [stage contracts](development/features/unified-backend/references/upstream-stage-contracts.md)
 preserve detailed scientific definitions, source equations/tables, reference
@@ -327,7 +330,7 @@ as implemented does not check its MERLIN integration task.
 
 Grant framing must derive coded capacity and the upstream codeword sequence from accepted resources/loading while separating meaningful bytes, information-fill ones, shortening zeros, parity and zero grant pad.
 
-Add (planned) owner: `crates/ofdma/src/grant/plan.rs`; acceptance tests: `crates/ofdma/tests/grant_plan.rs`.
+Implemented owner: `crates/ofdma/src/grant/plan.rs`; acceptance tests: `crates/ofdma/tests/grant_plan.rs`.
 Requirement: [REQ-US-TX-01](requirements.md#req-us-tx-01); delivery: **INT-US-TX-01**.
 
 ### US-TX-02: LDPC encoding and shortening
@@ -345,42 +348,42 @@ Requirement: [REQ-US-TX-02](requirements.md#req-us-tx-02); delivery: **INT-FEC-0
 
 PHY randomization must use the defined 23-bit grant seed, first-bit/tap convention and per-grant reset over exactly the transmitted bit positions.
 
-Add (planned) owner: `crates/ofdma/src/bit_processing/randomizer.rs`; acceptance tests: `crates/ofdma/tests/randomization.rs`.
+Implemented owner: `crates/ofdma/src/bit_processing/randomizer.rs`; acceptance tests: `crates/ofdma/tests/randomization.rs`.
 Requirement: [REQ-US-TX-03](requirements.md#req-us-tx-03); delivery: **INT-US-TX-01**.
 
 ### US-TX-04: Cell words and upstream QAM
 
 QAM mapping must form MSB-first cell words in accepted visit order using exact upstream labels, normalization and role-dependent loading.
 
-Add (planned) owner: `crates/ofdma/src/signal_processing/qam.rs`; acceptance tests: `crates/ofdma/tests/qam_mapping.rs`.
+Implemented owner: `crates/ofdma/src/signal_processing/qam.rs`; acceptance tests: `crates/ofdma/tests/qam_mapping.rs`.
 Requirement: [REQ-US-TX-04](requirements.md#req-us-tx-04); delivery: **INT-US-TX-01**.
 
 ### US-TX-05: Pilots, resources and joint interleaving
 
 OFDMA framing must apply the accepted pilot pattern, known signs, role/loading plan, block partitioning and joint interleaving/address order.
 
-Add (planned) owner: `crates/ofdma/src/transmitter/framing.rs`; acceptance tests: `crates/ofdma/tests/resource_interleaving.rs`.
+Implemented owner: `crates/ofdma/src/transmitter/framing.rs`; acceptance tests: `crates/ofdma/tests/resource_interleaving.rs`.
 Requirement: [REQ-US-TX-05](requirements.md#req-us-tx-05); delivery: **INT-US-TX-01**.
 
 ### US-TX-06: CM Pre-Eq
 
 Pre-EQ must apply one accepted complex corrective bank after role scaling and before IFFT, preserving the distinction between C and injected H.
 
-Add (planned) owner: `crates/ofdma/src/signal_processing/pre_eq.rs`; acceptance tests: `crates/ofdma/tests/pre_eq.rs`.
+Implemented owner: `crates/ofdma/src/signal_processing/pre_eq.rs`; acceptance tests: `crates/ofdma/tests/pre_eq.rs`.
 Requirement: [REQ-US-TX-06](requirements.md#req-us-tx-06); delivery: **INT-US-TX-01**.
 
 ### US-TX-07: Centered unitary IFFT
 
 IFFT must transform complete accepted 2K/50 kHz or 4K/25 kHz physical grids at 102.4 Msamples/s using the defined centered unitary convention.
 
-Add (planned) owner: `crates/ofdma/src/signal_processing/transform.rs`; acceptance tests: `crates/ofdma/tests/waveform_transform.rs`.
+Implemented owner: `crates/ofdma/src/signal_processing/transform.rs`; acceptance tests: `crates/ofdma/tests/waveform_transform.rs`.
 Requirement: [REQ-US-TX-07](requirements.md#req-us-tx-07); delivery: **INT-US-TX-01**.
 
 ### US-TX-08: Prefix, window and sample assembly
 
 Sample assembly must apply the specified CP/RP, cyclic extension, taper and overlap while retaining exact useful/prefix origins, burst edges, tails and explicit guards.
 
-Add (planned) owner: `crates/ofdma/src/transmitter/assembly.rs`; acceptance tests: `crates/ofdma/tests/tx_framing.rs`.
+Implemented owner: `crates/ofdma/src/transmitter/assembly.rs`; acceptance tests: `crates/ofdma/tests/tx_framing.rs`.
 Requirement: [REQ-US-TX-08](requirements.md#req-us-tx-08); delivery: **INT-US-TX-01**.
 
 ### US-CH-01: Indexed sample admission
@@ -443,7 +446,7 @@ Requirement: [REQ-US-RX-02](requirements.md#req-us-rx-02); delivery: **INT-US-RX
 
 FFT must produce raw physical bins using the inverse of the accepted centered unitary TX convention.
 
-Add (planned) owner: `crates/ofdma/src/signal_processing/transform.rs`; acceptance tests: `crates/ofdma/tests/waveform_transform.rs`.
+Implemented owner: `crates/ofdma/src/signal_processing/transform.rs`; acceptance tests: `crates/ofdma/tests/waveform_transform.rs`.
 Requirement: [REQ-US-RX-03](requirements.md#req-us-rx-03); delivery: **INT-US-RX-01**.
 
 ### US-RX-04: Received-pilot estimation and equalization
@@ -471,7 +474,7 @@ Requirement: [REQ-US-RX-06](requirements.md#req-us-rx-06); delivery: **INT-US-RX
 
 Soft derandomization must independently regenerate the grant mask and reverse LLR signs before LDPC without changing magnitude or position.
 
-Add (planned) owner: `crates/ofdma/src/bit_processing/randomizer.rs`; acceptance tests: `crates/ofdma/tests/randomization.rs`.
+Implemented owner: `crates/ofdma/src/bit_processing/randomizer.rs`; acceptance tests: `crates/ofdma/tests/randomization.rs`.
 Requirement: [REQ-US-RX-07](requirements.md#req-us-rx-07); delivery: **INT-US-RX-01**.
 
 ### US-RX-08: Shortening restoration and LDPC decoding

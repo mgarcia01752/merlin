@@ -5,3 +5,5 @@
 //! Direction-specific physical-bin pilot sequence and PHY masks.
 mod pilot_sequence;
 pub use pilot_sequence::pilot_reference;
+mod randomizer;
+pub use randomizer::Randomizer23;
