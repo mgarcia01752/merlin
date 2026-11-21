@@ -160,7 +160,7 @@ fn sparse_substitution_matches_upstream_on_synthetic_shifted_parity_blocks() {
 #[test]
 #[ignore = "Explicit bounded encoder microbenchmark; no simulation or capture I/O"]
 fn benchmark_encoder_methods_only() {
-    println!("parity_bits upstream_setup_us sparse_setup_us upstream_encode_us sparse_encode_us");
+    println!("parity_bits upstream_setup_us sparse_setup_us upstream_encode_us sparse_encode_us byte_encode_us");
     for parity_bits in BENCHMARK_SIZES {
         let matrix = synthetic_matrix(parity_bits);
         let data = message(matrix.num_cols() - matrix.num_rows());
@@ -176,6 +176,7 @@ fn benchmark_encoder_methods_only() {
         let sparse_setup = start.elapsed().as_secs_f64() * 1e6 / SETUP_REPEATS as f64;
         let sparse = SparseEncoder::from_h(&matrix).unwrap();
         let encoder = Encoder::from_h(&matrix).unwrap();
+        let information: Vec<u8> = data.iter().map(|bit| u8::from(!bit.is_zero())).collect();
         let start = Instant::now();
         for _ in 0..ENCODE_REPEATS {
             black_box(encoder.encode(black_box(&data)));
@@ -186,8 +187,40 @@ fn benchmark_encoder_methods_only() {
             black_box(sparse.encode(black_box(&data)));
         }
         let sparse_encode = start.elapsed().as_secs_f64() * 1e6 / ENCODE_REPEATS as f64;
-        println!("{parity_bits} {setup:.3} {sparse_setup:.3} {encode:.3} {sparse_encode:.3}");
+        let start = Instant::now();
+        for _ in 0..ENCODE_REPEATS {
+            black_box(sparse.encode_bits(black_box(&information)));
+        }
+        let byte_encode = start.elapsed().as_secs_f64() * 1e6 / ENCODE_REPEATS as f64;
+        println!("{parity_bits} {setup:.3} {sparse_setup:.3} {encode:.3} {sparse_encode:.3} {byte_encode:.3}");
         assert_eq!(sparse.encode(&data), encoder.encode(&data));
+        let expected: Vec<u8> = encoder
+            .encode(&data)
+            .iter()
+            .map(|bit| u8::from(!bit.is_zero()))
+            .collect();
+        assert_eq!(sparse.encode_bits(&information), expected);
         assert_syndrome(&matrix, &encoder.encode(&data));
+    }
+}
+
+#[test]
+fn byte_encoding_matches_independent_dense_solver_without_changing_plan_or_input() {
+    for parity_bits in [16, 80, 192, 384] {
+        let matrix = synthetic_matrix(parity_bits);
+        let data = message(matrix.num_cols() - matrix.num_rows());
+        let information: Vec<u8> = data.iter().map(|bit| u8::from(!bit.is_zero())).collect();
+        let original = information.clone();
+        let expected = Encoder::from_h(&matrix).unwrap().encode(&data);
+        let expected_bits: Vec<u8> = expected
+            .iter()
+            .map(|bit| u8::from(!bit.is_zero()))
+            .collect();
+        let sparse = SparseEncoder::from_h(&matrix).unwrap();
+        assert_eq!(sparse.encode_bits(&information), expected_bits);
+        assert_eq!(sparse.encode(&data), expected);
+        assert_eq!(sparse.encode_bits(&information), expected_bits);
+        assert_eq!(information, original);
+        assert_syndrome(&matrix, &expected);
     }
 }

@@ -234,3 +234,26 @@ general-purpose Gaussian solver. See the
 [synthetic method benchmark and validation](../development/features/sparse-encoder/design.md)
 for the runnable unit benchmark, timing results and limitations. Those numbers
 measure encoder methods only and do not predict end-to-end simulation speed.
+
+## Upstream data LDPC
+
+The separate Rust namespace `fec_codec::upstream_ldpc` provides
+`DocsisLdpcCode`, validated `LdpcSettings`, `LdpcCodec` and owned `DecodeResult`.
+It implements the upstream long (N=16200/K=14400), medium (5940/5040) and short
+(1120/840) mother codes with their own source-checked matrices. Matching long-code
+dimensions do not make the downstream matrix interchangeable. Ordinary upstream
+data coding has no outer BCH stage.
+
+Encoding accepts exactly the configured binary information count and preserves
+shortened trailing-zero coordinates internally. Decoding accepts finite natural-log
+P(0)/P(1) LLRs, positive for zero, with a validated 1..100 iteration work budget.
+Results retain actual iterations, final decisions, parity and shortened-zero checks,
+including nonconvergence. Compare recovered information with the original source
+independently: convergence/parity alone cannot establish correct recovery.
+
+This is a standalone codec boundary, not an implemented upstream waveform,
+grant selector or DOCSIS receiver. The existing downstream CLI loop and public
+imports retain their behavior. Native Python upstream operations follow the later
+Rust unity-loop/API integration gates; no early Python codec facade is added.
+See the [source and reuse review](../development/features/unified-backend/reuse-review.md)
+and [Rust implementation](../../crates/fec-codec/src/upstream_ldpc/mod.rs).

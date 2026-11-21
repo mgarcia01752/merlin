@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MORGANA contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Sparse systematic encoding for parity matrices admitting substitution.
@@ -116,6 +117,30 @@ impl SparseEncoder {
                 .inputs
                 .iter()
                 .fold(GF2::zero(), |sum, column| sum + word[*column]);
+        }
+        word
+    }
+
+    /// Encodes validated binary information with the same immutable sparse plan.
+    ///
+    /// # Arguments
+    /// * `information` - Exactly the configured information count, each value 0 or 1.
+    ///   Public upstream admission validates length and values before this operation.
+    /// # Returns
+    /// One owned systematic information/parity buffer, without changing inputs or
+    /// plan state. Allocation and edge traversal match the source byte encoder.
+    /// # Panics
+    /// Panics for an internal caller's incorrect length. Public codecs validate
+    /// the complete mother information buffer before calling this private helper.
+    pub(crate) fn encode_bits(&self, information: &[u8]) -> Vec<u8> {
+        assert_eq!(information.len(), self.information_bits);
+        let mut word = vec![0; self.codeword_bits];
+        word[..information.len()].copy_from_slice(information);
+        for equation in &self.equations {
+            word[equation.pivot] = equation
+                .inputs
+                .iter()
+                .fold(0, |parity, column| parity ^ word[*column]);
         }
         word
     }

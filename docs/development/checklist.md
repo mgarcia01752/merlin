@@ -105,7 +105,7 @@ completion owner. Older review/validation snapshots do not override later states
   This closes backfill documentation, not the gaps or unified runtime acceptance.
 
 <a id="ds-gap-01"></a>
-- [ ] **DS-GAP-01** Resolve the historical source-organization compatibility gap.
+- [x] **DS-GAP-01** Resolve the historical source-organization compatibility gap.
   Requirement: [ARCH-02](../requirements.md#ds-arch-02).
   Architecture: [module boundaries](../architecture.md#modules-and-stage-boundaries).
   Owners: `crates/{ofdm,fec-codec,cli}/src/`.
@@ -115,9 +115,10 @@ completion owner. Older review/validation snapshots do not override later states
   retained imports, standalone codec use, schemas and seeded behavior. Record
   exact commands/results and scope; do not manufacture an old pre-refactor pass.
   [Evidence gap](features/downstream-requirements/design.md#targeted-evidence-gaps).
+  Evidence: [pre-import baseline](features/unified-backend/baseline.md).
 
 <a id="ds-gap-02"></a>
-- [ ] **DS-GAP-02** Resolve incomplete early numerical-stage execution records.
+- [x] **DS-GAP-02** Resolve incomplete early numerical-stage execution records.
   Requirements: [FEC-01](../requirements.md#ds-fec-01),
   [FEC-02](../requirements.md#ds-fec-02), [QAM-01](../requirements.md#ds-qam-01),
   [RAND-01](../requirements.md#ds-rand-01), [CFG-01](../requirements.md#ds-cfg-01).
@@ -132,9 +133,10 @@ completion owner. Older review/validation snapshots do not override later states
   label/LLR signs, reset/clocking and timing limits. Record selected commands,
   results and limitations in MERLIN; no full historical-process replay required.
   [Evidence gap](features/downstream-requirements/design.md#targeted-evidence-gaps).
+  Evidence: [pre-import baseline](features/unified-backend/baseline.md).
 
 <a id="ds-gap-03"></a>
-- [ ] **DS-GAP-03** Resolve DPD preview/full-view acceptance specificity.
+- [x] **DS-GAP-03** Resolve DPD preview/full-view acceptance specificity.
   Requirements: [UI-DPD-VIEW-01](../requirements.md#ds-ui-dpd-view-01),
   [UI-DPD-VIEW-02](../requirements.md#ds-ui-dpd-view-02).
   Architecture: [profile input](../architecture.md#downstream-profile-input-dialog).
@@ -146,13 +148,15 @@ completion owner. Older review/validation snapshots do not override later states
   record actual results and build the latest executable if UI code changes.
   Existing native/installed lifecycle tasks retain their separate open states.
   [Evidence gap](features/downstream-requirements/design.md#targeted-evidence-gaps).
+  Evidence: [dedicated DPD viewer acceptance](features/pnm-measurement-inputs/profile-view.md).
 
 ## Unified backend integration
 
 These are integration tasks in the unified MERLIN workspace, not copied source
 checkmarks. [Canonical architecture](../architecture.md#unified-backend-integration),
 [requirements](../requirements.md) and [source/document inventory](features/unified-backend/source-review.md)
-govern scope. All new runtime gates remain open. INT-DOC-01 is design consolidation;
+govern scope. The baseline and standalone FEC gates have local acceptance below;
+later DSP, PHY, input and adapter gates remain open. INT-DOC-01 is design consolidation;
 INT-DOC-02 is the final ten-condition documentation acceptance after runtime tests.
 Existing downstream and SKILL-US-01 statuses remain unchanged. Each task's
 architecture owner identifies concrete implementation/test paths and dispositions.
@@ -165,32 +169,36 @@ architecture owner identifies concrete implementation/test paths and disposition
   Acceptance: Complete all source document/requirement/task dispositions, preserve downstream IDs/statuses/API clauses, resolve local links and dependency/coverage checks. Documentation only; final runtime correspondence remains INT-DOC-02.
 
 <a id="int-base-01"></a>
-- [ ] **INT-BASE-01** Establish reproducible unified-workspace regression baseline.
+- [x] **INT-BASE-01** Establish reproducible unified-workspace regression baseline.
   Requirements: [REQ-DS-PHY-01](../requirements.md#req-ds-phy-01), [REQ-COM-SYS-05](../requirements.md#req-com-sys-05).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-acceptance-and-final-documentation-gate).
   Depends on: INT-DOC-01, DS-REQ-01.
   Acceptance: Record exact source/target/toolchain/locks and run the existing MERLIN regression/analysis-only/examples/native API baselines. Source results stay separately labeled; no invented external interoperability.
+  Evidence: [pre-import baseline](features/unified-backend/baseline.md).
 
 <a id="int-license-01"></a>
-- [ ] **INT-LICENSE-01** Review scientific source rights, notices and dependency contracts.
+- [x] **INT-LICENSE-01** Review scientific source rights, notices and dependency contracts.
   Requirements: [REQ-COM-NFR-02](../requirements.md#req-com-nfr-02), [REQ-DS-DELIVERY-01](../requirements.md#req-ds-delivery-01).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-crate-ownership).
   Depends on: INT-DOC-01.
   Acceptance: Inventory each imported file/resource and transitive dependency with source/version/license/notices/modifications and artifact obligations; preserve Apache/MIT science and GPL Qt boundary. Resolve actual reuse permissions before import; retain both lock audits and pins.
+  Evidence: [pre-import review](features/unified-backend/reuse-review.md).
 
 <a id="int-reuse-01"></a>
-- [ ] **INT-REUSE-01** Audit function-level DSP/FEC reuse and final leaf placement.
+- [x] **INT-REUSE-01** Audit function-level DSP/FEC reuse and final leaf placement.
   Requirements: [REQ-COM-SYS-03](../requirements.md#req-com-sys-03), [REQ-COM-REUSE-01](../requirements.md#req-com-reuse-01).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-shared-dsp-and-fec).
   Depends on: INT-BASE-01, INT-LICENSE-01.
   Acceptance: Map exact source/target symbols as SHARE/REUSE/ADAPT/SEPARATE/DEFER, check every numerical convention and consumer, settle concrete file/test paths, record compatibility/performance baselines and architecture-review decisions before scientific migration.
+  Evidence: [pre-import review](features/unified-backend/reuse-review.md).
 
 <a id="int-fec-01"></a>
-- [ ] **INT-FEC-01** Integrate independently source-checked upstream LDPC families.
+- [x] **INT-FEC-01** Integrate independently source-checked upstream LDPC families.
   Requirements: [REQ-COM-SYS-05](../requirements.md#req-com-sys-05), [REQ-US-TX-02](../requirements.md#req-us-tx-02), [REQ-US-RX-08](../requirements.md#req-us-rx-08), [REQ-DS-FEC-01](../requirements.md#req-ds-fec-01), [REQ-COM-REUSE-01](../requirements.md#req-com-reuse-01).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-shared-dsp-and-fec).
   Depends on: INT-REUSE-01.
   Acceptance: All three families pass original row/edge/frozen-parity, shortening, failed-decision/iteration/known-zero/truth cases in fec-codec; all downstream BCH/LDPC/NCP/PLC regressions pass. No BCH on ordinary upstream data, no regenerated golden expectations.
+  Evidence: [MERLIN codec and regression results](features/unified-backend/fec-validation.md).
 
 <a id="int-dsp-01"></a>
 - [ ] **INT-DSP-01** Consolidate proven common numerical kernels.
@@ -236,7 +244,7 @@ architecture owner identifies concrete implementation/test paths and disposition
 
 <a id="int-pnm-01"></a>
 - [ ] **INT-PNM-01** Integrate source-derived upstream capture inspectors and decoders.
-  Requirements: .
+  Requirements: [REQ-US-PNM-01](../requirements.md#req-us-pnm-01), [REQ-US-PNM-02](../requirements.md#req-us-pnm-02), [REQ-US-PNM-03](../requirements.md#req-us-pnm-03).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-pnm-and-capture-admission).
   Depends on: INT-US-LOOP-01.
   Acceptance: Reuse verified pinned parser capabilities; UCD multipart/envelope, CCAP RxMER and applied/last-update Pre-Eq pass source-derived independent length/offset/scaling/sentinel/flag/overflow/original-byte tests locally. Unknown metadata remains inspectable; no guessed association.

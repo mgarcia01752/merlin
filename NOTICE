@@ -78,3 +78,17 @@ documented local cache/dependency-policy adaptations. Original source documents,
 independent vectors and scientific attributions remain identified in
 docs/development/features/unified-backend/source-inventory.json.
 No private specification PDF, extracted corpus or captured device data is imported.
+
+Upstream LDPC definitions, bounded codec and independent tests under
+crates/fec-codec/src/upstream_ldpc/ adapt Apache-2.0 scientific source from
+https://github.com/PyPNMApps/morgana at revision
+69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
+Copyright 2026 MORGANA contributors. Original notices are preserved.
+Modifications: MERLIN module ownership/imports, reuse of MERLIN's existing sparse
+encoder plan, and typed plan-error mapping. The byte-buffer encoding operation in
+crates/fec-codec/src/sparse_encoder.rs adapts the source byte loop; the original
+downstream GF2 operation remains unchanged. Matrices, independent source fixtures
+and golden values are retained, not regenerated. This import includes neither a
+legacy product controller nor PDE instructional/specification/capture material.
+See docs/development/features/unified-backend/scientific-source-review.json and
+reuse-review.md for source hashes, destinations and acceptance scope.

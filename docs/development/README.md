@@ -10,13 +10,18 @@ acceptance in both directions. The [unified backend consolidation](features/unif
 links the [complete source review](features/unified-backend/source-review.md),
 [integration gates](checklist.md#unified-backend-integration) and
 [documentation validation](features/unified-backend/validation.md).
-This is a planned integration design; final implementation/documentation acceptance
-remains open until the unified workspace passes its corresponding runtime tests.
+The [pre-import baseline](features/unified-backend/baseline.md),
+[reuse review](features/unified-backend/reuse-review.md) and
+[standalone upstream LDPC acceptance](features/unified-backend/fec-validation.md)
+record the first implementation step. Final implementation/documentation acceptance
+remains open until the remaining unified-workspace gates pass.
 
 The [downstream requirements backfill](features/downstream-requirements/design.md)
 links historical tasks, detailed stage/API contracts, current owners and located
 evidence. Its [validation](features/downstream-requirements/validation.md) separates
-documentation closure from three open targeted evidence gaps and integration tests.
+the original documentation checkpoint from later acceptance. The three targeted
+gaps now have [current or recovered evidence](features/unified-backend/baseline.md);
+final integration tests remain separate.
 
 The [unified OFDM/OFDMA integration guide](ofdm-ofdma-integration-guide.md)
 preserves the full user-supplied master prompt for backend integration planning.

@@ -1,5 +1,25 @@
 # Unified documentation validation and completion boundary
 
+Current checkpoint: the sections below preserve the original INT-DOC-01 review.
+The [pre-import baseline](baseline.md), [rights/reuse decisions](reuse-review.md)
+and [standalone upstream LDPC results](fec-validation.md) now accept INT-BASE-01,
+INT-LICENSE-01, INT-REUSE-01 and INT-FEC-01. DS-GAP-01/02 have scoped current
+evidence; DS-GAP-03 has recovered historical DPD evidence. Final runtime and
+documentation acceptance remain open.
+
+The follow-up traceability audit repaired INT-PNM-01 with REQ-US-PNM-01/02/03
+and added focused return links at existing requirement/architecture owners.
+All 21 integration tasks now have nonempty matching references in both the
+official checklist and inventory. `tools/validation/integration_traceability.py`
+checks task → requirement → task and task → architecture → task links; its eight
+cases include empty references, wrong targets, missing returns and boundary leakage.
+Full validation-tool discovery passes nine tests. Existing IDs and historical
+checkbox lines remain intact except newly evidenced open-to-complete gates.
+All 515 canonical requirements and two compatibility aliases remain navigable;
+all 59 source clauses, 93 original API clauses, 46 document dispositions and 52
+source evidence identities are preserved. The current dependency graph has 27
+known acyclic nodes. Maintained local links resolve after this implementation.
+
 Scope: INT-DOC-01 at MERLIN baseline
 `fa26de619b5d28a442c42e46ad1ed19262a9d08a`, source
 `69b38071cd3ebebc4eb96849f82b7871ab8da5ec`.

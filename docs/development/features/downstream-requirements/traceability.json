@@ -20,9 +20,10 @@
         "crates/fec-codec/tests/concatenated.rs"
       ],
       "records": [
-        "docs/development/features/source-organization/architecture.md"
+        "docs/development/features/source-organization/architecture.md",
+        "docs/development/features/unified-backend/baseline.md"
       ],
-      "gap": "DS-GAP-01"
+      "gap": null
     },
     "observer": {
       "architecture": "docs/architecture.md#test-points-and-data-access",
@@ -138,9 +139,10 @@
         "crates/fec-codec/tests/concatenated.rs"
       ],
       "records": [
-        "docs/development/features/rust-only-signal-processing/architecture.md"
+        "docs/development/features/rust-only-signal-processing/architecture.md",
+        "docs/development/features/unified-backend/baseline.md"
       ],
-      "gap": "DS-GAP-02"
+      "gap": null
     },
     "shortening": {
       "architecture": "docs/architecture.md#downstream-fec-shortening-fec-03",
@@ -169,9 +171,10 @@
         "crates/ofdm/tests/qam_reference_tables.rs"
       ],
       "records": [
-        "docs/development/features/qam-mapping/architecture.md"
+        "docs/development/features/qam-mapping/architecture.md",
+        "docs/development/features/unified-backend/baseline.md"
       ],
-      "gap": "DS-GAP-02"
+      "gap": null
     },
     "slicing": {
       "architecture": "docs/architecture.md#qam-coding-and-diagnostic-decisions-qam-0203",
@@ -241,9 +244,10 @@
         "crates/ofdm/tests/cell_randomizer.rs"
       ],
       "records": [
-        "docs/development/features/cell-randomizer/architecture.md"
+        "docs/development/features/cell-randomizer/architecture.md",
+        "docs/development/features/unified-backend/baseline.md"
       ],
-      "gap": "DS-GAP-02"
+      "gap": null
     },
     "packing": {
       "architecture": "docs/architecture.md#transmission-and-receiver-flow",
@@ -317,9 +321,10 @@
         "crates/ofdm/tests/duration_timing.rs"
       ],
       "records": [
-        "docs/development/features/single-channel-transmission/architecture.md"
+        "docs/development/features/single-channel-transmission/architecture.md",
+        "docs/development/features/unified-backend/baseline.md"
       ],
-      "gap": "DS-GAP-02"
+      "gap": null
     },
     "layout": {
       "architecture": "docs/architecture.md#transmission-and-receiver-flow",
@@ -963,17 +968,17 @@
     "dpd-view": {
       "architecture": "docs/architecture.md#downstream-profile-input-dialog",
       "owners": [
-        "apps/qt/src",
-        "apps/qt/qml"
+        "apps/qt/src/inputs/profile_input/plot.rs",
+        "apps/qt/qml/inputs/profile_input/ProfilePlotDialog.qml",
+        "apps/qt/qml/inputs/profile_input/ProfileChart.qml"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"
       ],
       "records": [
-        "docs/development/features/transmitter-spectrum/validation.md",
-        "docs/development/features/rxmer-workbench/validation.md"
+        "docs/development/features/pnm-measurement-inputs/profile-view.md"
       ],
-      "gap": "DS-GAP-03"
+      "gap": null
     },
     "ubuntu": {
       "architecture": "docs/architecture.md#ubuntu-2204-desktop-delivery-and-release-notification",
@@ -11613,5 +11618,25 @@
       "anchor": "ds-doc-r5"
     }
   ],
-  "inherited_requirements_index": "docs/development/features/unified-backend/source-inventory.json"
+  "inherited_requirements_index": "docs/development/features/unified-backend/source-inventory.json",
+  "evidence_reconciliation": [
+    {
+      "task": "DS-GAP-03",
+      "record": "docs/development/features/pnm-measurement-inputs/profile-view.md",
+      "reviewed_at_commit": "9007feaf231f8f1b331baf6f7559efce89516f54",
+      "result": "Recovered explicit Ubuntu adapter/QML/Clippy/native-view evidence for both UI-DPD-VIEW-01/02; no Qt rerun or new platform claim."
+    },
+    {
+      "task": "DS-GAP-01",
+      "record": "docs/development/features/unified-backend/baseline.md",
+      "reviewed_at_commit": "9007feaf231f8f1b331baf6f7559efce89516f54",
+      "result": "Scoped current MERLIN execution closes the earlier missing-record gap; original historical marks/text remain unchanged."
+    },
+    {
+      "task": "DS-GAP-02",
+      "record": "docs/development/features/unified-backend/baseline.md",
+      "reviewed_at_commit": "9007feaf231f8f1b331baf6f7559efce89516f54",
+      "result": "Scoped current MERLIN execution closes the earlier missing-record gap; original historical marks/text remain unchanged."
+    }
+  ]
 }

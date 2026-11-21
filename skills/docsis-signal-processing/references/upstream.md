@@ -35,6 +35,10 @@ owner. Do not build a universal receiver around per-sample direction switches.
 
 ## Upstream FEC and waveform composition
 
+Standalone upstream LDPC lives in `crates/fec-codec/src/upstream_ldpc/` and
+reuses `crates/fec-codec/src/sparse_encoder.rs`. Keep grant/waveform composition
+with the planned upstream PHY owner; this codec import does not implement it.
+
 Audit each declared QC-LDPC family independently: matrix dimensions and cells,
 right-shift orientation, systematic information/parity order, shortening coordinates,
 codeword selection, LLR sign/scale and bounded decoder iterations. Matching N/K

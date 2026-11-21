@@ -55,6 +55,10 @@ later named refinements, with each old result's original limits preserved.
 
 ## Targeted evidence gaps
 
+These findings describe the backfill checkpoint. All three now have scoped
+[current or recovered evidence](../unified-backend/baseline.md); their original
+findings and acceptance criteria remain below for historical traceability.
+
 | Task | Missing or incomplete evidence | Acceptance / affected requirements |
 | --- | --- | --- |
 | [DS-GAP-01](../../checklist.md#ds-gap-01) | Source-organization record describes pre/post validation to perform but records no execution result. This does not establish a failed refactor. | Recover an attributable result or run focused public-path/standalone-codec and deterministic CLI compatibility checks. ARCH-02; preserve imports, JSON and seeded draw order. |

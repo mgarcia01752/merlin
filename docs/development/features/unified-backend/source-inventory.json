@@ -205,8 +205,12 @@
       "shared": false,
       "architecture": "us-tx-02-ldpc-encoding-and-shortening",
       "owner": "crates/fec-codec/src/upstream_ldpc/codec.rs",
-      "test": "crates/fec-codec/tests/upstream_source_audit.rs",
-      "task": "INT-FEC-01"
+      "test": "crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs",
+      "task": "INT-FEC-01",
+      "additional_tests": [
+        "crates/fec-codec/src/upstream_ldpc/tests.rs"
+      ],
+      "integration_evidence": "docs/development/features/unified-backend/fec-validation.md"
     },
     {
       "source_id": "REQ-TX-03",
@@ -445,8 +449,12 @@
       "shared": false,
       "architecture": "us-rx-08-shortening-restoration-and-ldpc-decoding",
       "owner": "crates/fec-codec/src/upstream_ldpc/codec.rs",
-      "test": "crates/fec-codec/tests/upstream_source_audit.rs",
-      "task": "INT-FEC-01"
+      "test": "crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs",
+      "task": "INT-FEC-01",
+      "additional_tests": [
+        "crates/fec-codec/src/upstream_ldpc/tests.rs"
+      ],
+      "integration_evidence": "docs/development/features/unified-backend/fec-validation.md"
     },
     {
       "source_id": "REQ-RX-09",
@@ -902,7 +910,11 @@
       ],
       "architecture": "unified-pnm-and-capture-admission",
       "acceptance": "Reuse verified pinned parser capabilities; UCD multipart/envelope, CCAP RxMER and applied/last-update Pre-Eq pass source-derived independent length/offset/scaling/sentinel/flag/overflow/original-byte tests locally. Unknown metadata remains inspectable; no guessed association.",
-      "requirements": []
+      "requirements": [
+        "REQ-US-PNM-01",
+        "REQ-US-PNM-02",
+        "REQ-US-PNM-03"
+      ]
     },
     {
       "id": "INT-PNM-02",
@@ -3841,6 +3853,6 @@
       "DS-GAP-03"
     ],
     "index": "docs/development/features/downstream-requirements/traceability.json",
-    "status": "Documentation backfill complete; targeted gaps and integrated runtime acceptance remain pending."
+    "status": "Documentation backfill complete; DS-GAP-01/02 have current scoped results and DS-GAP-03 has recovered historical evidence. Final integrated runtime acceptance remains pending."
   }
 }

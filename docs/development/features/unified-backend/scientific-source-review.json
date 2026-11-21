@@ -1,0 +1,2619 @@
+{
+  "source_revision": "69b38071cd3ebebc4eb96849f82b7871ab8da5ec",
+  "merlin_baseline": "9007feaf231f8f1b331baf6f7559efce89516f54",
+  "scope": "Scientific Rust code, existing attributed QAM resources and authored test fixtures only. Exclude engineering/PDE material, specification corpora, real captures, source Cargo locks, obsolete product wrappers and installers.",
+  "files": [
+    {
+      "source": "crates/ldpc/Cargo.toml",
+      "sha256": "fa08d3d9ddab767f78bfc4af03d44ec6d99596097a679176dabbfa62f875f15b",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/fec-codec/Cargo.toml"
+      ],
+      "state": "Manifest merged as test-only edges to already pinned MERLIN packages; no source package/lock imported",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications.",
+      "target_sha256": {
+        "crates/fec-codec/Cargo.toml": "d607268719fe2667ded5b1a42e584c1845174f87e4b57ccb6f24dd453c752857"
+      },
+      "integration_evidence": "docs/development/features/unified-backend/fec-validation.md"
+    },
+    {
+      "source": "crates/ldpc/src/codec.rs",
+      "sha256": "5db78447937351e464dea175726f7fa6329e5f2dfd1f9a3d7947f5f71e3b0091",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/fec-codec/src/upstream_ldpc/codec.rs"
+      ],
+      "state": "Integrated and validated in MERLIN at INT-FEC-01; source checkout unchanged",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications.",
+      "target_sha256": {
+        "crates/fec-codec/src/upstream_ldpc/codec.rs": "0e850e20fbd161ca000a39cc7f420d64c43fd132a280609e8017038dbcda2bf7"
+      },
+      "integration_evidence": "docs/development/features/unified-backend/fec-validation.md"
+    },
+    {
+      "source": "crates/ldpc/src/definitions.rs",
+      "sha256": "9c3d320fec52f13735dcb1b29bc4ffe549adb3885335671907fdea9690607779",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/fec-codec/src/upstream_ldpc/definitions.rs"
+      ],
+      "state": "Integrated and validated in MERLIN at INT-FEC-01; source checkout unchanged",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications.",
+      "target_sha256": {
+        "crates/fec-codec/src/upstream_ldpc/definitions.rs": "9c8d50037e49ac0eb037f760ad3d46ec529d9dd0d7280004e32122353b7d3fd4"
+      },
+      "integration_evidence": "docs/development/features/unified-backend/fec-validation.md"
+    },
+    {
+      "source": "crates/ldpc/src/error.rs",
+      "sha256": "6150bce6bc3c40a8449246c3686e00e3612b0e4f32a399e991c04d3b67d0faf0",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/fec-codec/src/upstream_ldpc/error.rs"
+      ],
+      "state": "Integrated and validated in MERLIN at INT-FEC-01; source checkout unchanged",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications.",
+      "target_sha256": {
+        "crates/fec-codec/src/upstream_ldpc/error.rs": "6395af87f0536aff451937eba7fab3509299286c38afdbd0ac579dde6f9fa90f"
+      },
+      "integration_evidence": "docs/development/features/unified-backend/fec-validation.md"
+    },
+    {
+      "source": "crates/ldpc/src/lib.rs",
+      "sha256": "3898ea8d4830c0e7d8a3c52e2318d9ec3121963198f4debd74cb489f1d20441d",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/fec-codec/src/upstream_ldpc/mod.rs"
+      ],
+      "state": "Integrated and validated in MERLIN at INT-FEC-01; source checkout unchanged",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications.",
+      "target_sha256": {
+        "crates/fec-codec/src/upstream_ldpc/mod.rs": "38b0a55995425765edd51a3d189bea9f518749dff3e8f0b29ccb9406d481c41c"
+      },
+      "integration_evidence": "docs/development/features/unified-backend/fec-validation.md"
+    },
+    {
+      "source": "crates/ldpc/src/sparse_encoder.rs",
+      "sha256": "ace51dde50b98a3e3f37d4fc033a6737288ac1a642bb7e8bebb1dcb82a7e5eb2",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/fec-codec/src/sparse_encoder.rs"
+      ],
+      "state": "Existing MERLIN sparse plan reused; source byte encoding adapted; downstream GF2 operation unchanged; validated at INT-FEC-01",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications.",
+      "target_sha256": {
+        "crates/fec-codec/src/sparse_encoder.rs": "459cddcda811e6354b775800a183cc4a95c39e992bd65057f7d2e8905cf1666f"
+      },
+      "integration_evidence": "docs/development/features/unified-backend/fec-validation.md"
+    },
+    {
+      "source": "crates/ldpc/src/tests/oracle.rs",
+      "sha256": "4ab8de4e4e2d737733dfefa298611799ef133005340a519ccf6e55d984e36c38",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/fec-codec/src/upstream_ldpc/tests/oracle.rs"
+      ],
+      "state": "Integrated and validated in MERLIN at INT-FEC-01; source checkout unchanged",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications.",
+      "target_sha256": {
+        "crates/fec-codec/src/upstream_ldpc/tests/oracle.rs": "7af547496d42e43761ff9a775f9fd2f9b0352320a8a87ca0bf29afdebde3e975"
+      },
+      "integration_evidence": "docs/development/features/unified-backend/fec-validation.md"
+    },
+    {
+      "source": "crates/ldpc/src/tests/source_audit.rs",
+      "sha256": "7250bed0faba265f19bf391a78beed01bd125e0093fb8dad232e2247cbda4886",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs"
+      ],
+      "state": "Integrated and validated in MERLIN at INT-FEC-01; source checkout unchanged",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications.",
+      "target_sha256": {
+        "crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs": "9683fc264e721d0f102ee662199238850b599d2b469203d8578e811bdf714fb6"
+      },
+      "integration_evidence": "docs/development/features/unified-backend/fec-validation.md"
+    },
+    {
+      "source": "crates/ldpc/src/tests/source_fixtures.rs",
+      "sha256": "58e21ff4ef8f450f4867f2d18569732ed848f1b9a90f410ea4d832b7aba86a77",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/fec-codec/src/upstream_ldpc/tests/source_fixtures.rs"
+      ],
+      "state": "Integrated and validated in MERLIN at INT-FEC-01; source checkout unchanged",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications.",
+      "target_sha256": {
+        "crates/fec-codec/src/upstream_ldpc/tests/source_fixtures.rs": "f0afc8b087836587a732ac5416fbd457ba00e0c3b83c349ce5f58cb23364aa4b"
+      },
+      "integration_evidence": "docs/development/features/unified-backend/fec-validation.md"
+    },
+    {
+      "source": "crates/ldpc/src/tests.rs",
+      "sha256": "16b94f1c8f84e91e39ff35c89bbd9b704619b03e795fcaede8b13459ca35095e",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/fec-codec/src/upstream_ldpc/tests.rs"
+      ],
+      "state": "Integrated and validated in MERLIN at INT-FEC-01; source checkout unchanged",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications.",
+      "target_sha256": {
+        "crates/fec-codec/src/upstream_ldpc/tests.rs": "035b3fd65c457e2404d369ba4399e9bb0a8ba43a84ec716e4ba5985c5deca76e"
+      },
+      "integration_evidence": "docs/development/features/unified-backend/fec-validation.md"
+    },
+    {
+      "source": "crates/phy/Cargo.toml",
+      "sha256": "aeeead57346a3e8b8b79306564d4630fe8cf9cb1a9c6ca8c41d1c8c41d4d3f1b",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/Cargo.toml"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/build.rs",
+      "sha256": "fdf8403dfc48cec625ad6f179ef99cd67cbca0d70dead0faa2990c7b17d3bb1f",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/dsp/build.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/resources/qam-table/1024QAM_table.txt",
+      "sha256": "5fa129396987afce51a3aac5b4a2851cf1637894fa0d8013a7af00bb7133151d",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/ofdm/resources/qam-table/1024QAM_table.txt"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/resources/qam-table/128QAM_table.txt",
+      "sha256": "47f1b644d7e1df00d181c5b74f1469a38bcd748922275e6f03d7066d17f72f67",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/ofdm/resources/qam-table/128QAM_table.txt"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/resources/qam-table/16QAM_table.txt",
+      "sha256": "dd6d4a320418ffada704fa7f76192c30ff400427fefe16acb49d16c9dcbd6306",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/ofdm/resources/qam-table/16QAM_table.txt"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/resources/qam-table/2048QAM_table.txt",
+      "sha256": "99aa9567c09677f73a27324a1062b984aef89f7f1d06b5cf443c21497942511a",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/ofdm/resources/qam-table/2048QAM_table.txt"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/resources/qam-table/256QAM_table.txt",
+      "sha256": "6572a2c4d0c889ba21c90f7892fe564f6dd0212523867c4a6061b7565811a7ee",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/ofdm/resources/qam-table/256QAM_table.txt"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/resources/qam-table/2QAM_table.txt",
+      "sha256": "9edb585543fb9e9b6a2b5c3d7f29b6b2734798001a6ad8732cff8c9b05e8acaf",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/ofdm/resources/qam-table/2QAM_table.txt"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/resources/qam-table/4096QAM_table.txt",
+      "sha256": "b875214454063be6dde49b4d6d09b87b20c8cc60c77eacdfc17115751892a6fc",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/ofdm/resources/qam-table/4096QAM_table.txt"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/resources/qam-table/4QAM_table.txt",
+      "sha256": "52a5f33b03c1c13d0bfc27079128792459c9720d95587ba42a74d6c257fa8280",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/ofdm/resources/qam-table/4QAM_table.txt"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/resources/qam-table/512QAM_table.txt",
+      "sha256": "4f40fb442999ee1435839ba7a94ef9ce70cab4269ce8b921d9fb287317231f77",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/ofdm/resources/qam-table/512QAM_table.txt"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/resources/qam-table/64QAM_table.txt",
+      "sha256": "c79f6fedca4542ce6b87371ae541d087ea0b6011442c7f21dd64b8ec8ec5a682",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/ofdm/resources/qam-table/64QAM_table.txt"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/resources/qam-table/LICENSE",
+      "sha256": "507435d71ab5dacd16fd13e968649a1940b72b67faa6381124200ec5d0162ef3",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/ofdm/resources/qam-table/LICENSE"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/resources/qam-table/NOTICE",
+      "sha256": "067995de122a64cc41a5d561c3c79c1ba0b88f81e965506000d60d66ca3092a7",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/ofdm/resources/qam-table/NOTICE"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/resources/qam-table/provenance.json",
+      "sha256": "9ac1841a469638308d1b2389aae0dd8554c4477cca7ccdc1a9e578ec08266237",
+      "license": "Apache-2.0",
+      "decision": "RETAIN",
+      "targets": [
+        "docs/development/features/unified-backend/scientific-source-review.json"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/bit_processing/mod.rs",
+      "sha256": "dfccc5123d63fcc510c2d669d89d979a23c0c71cd91c113663fbe5fefa4101e7",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/bit_processing/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/bit_processing/pilot_sequence.rs",
+      "sha256": "256d761ef99e13b1a3a3cd022ca9416185bf00c0c5c33073097cad035d0851b1",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/bit_processing/pilot_sequence.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/bit_processing/randomizer.rs",
+      "sha256": "49f79e22934eca691fc6b8f06dbd60a9f2a6f4b0327231207105c07202afdbe4",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/bit_processing/randomizer.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/channel/mod.rs",
+      "sha256": "5282921e1c26d8a8e1a7cbbfbd35b71ec0317cb90920f2b7023d0ef091388fae",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/channel/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/channel/residual.rs",
+      "sha256": "6d86f4ed08b8dd07f28c8c03c6d19c67f10246336594997f803f0d69f1a87dad",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/channel/residual.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/channel/stream.rs",
+      "sha256": "f2ff310ad2a28c5fcda67cc897d9697c9f1a62c34c5861a647a6b9e40e8c2185",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/channel/stream.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/configuration/burst.rs",
+      "sha256": "502bce5c19d4a31fb9c1baa596cacab707d4f6a721a624fb646e4b671547ade6",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/configuration/burst.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/configuration/grant.rs",
+      "sha256": "4be7a37b18b2eb7bbc1cabaa8cff0b58d5fee4c5f7236fef62b616d948f66bf9",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/configuration/grant.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/configuration/guards.rs",
+      "sha256": "609e42e41eed0026e020cb10a7df9304b6ab64c1c24392ef71f319dba574f24b",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/configuration/guards.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/configuration/mod.rs",
+      "sha256": "e8246d4b0ff5cdfa5d5ad19e6a9a13bbdc68b905ad8914cdca0878040bf66a5d",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/configuration/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/configuration/profile.rs",
+      "sha256": "2df95af068006debe0b627565a980fabca57c3d2420ec6846d6082804abb2224",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/configuration/profile.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/configuration/receiver.rs",
+      "sha256": "32a97a889d8646a1cea5e96dc4be3ed1587842c4d5f026f30059221134695423",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/configuration/receiver.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/configuration/serde_limits.rs",
+      "sha256": "856b179c0ecfca6078be6405b6681c5f3e8e7a3c5aea2fb992555aa7b5b39b60",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/configuration/serde_limits.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/configuration/ucd/channel.rs",
+      "sha256": "43c604106de587797e05faa2fc14610960f998d27dd3453e0fb82777d050947b",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/configuration/ucd/channel.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/configuration/ucd/controls.rs",
+      "sha256": "d0e3185a8f555a011b4bc028a12f474582f6d03927ed34bc67d3dbd1539fb7a0",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/configuration/ucd/controls.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/configuration/ucd/mod.rs",
+      "sha256": "bf052d40ea10e0d0f76d7510b5af1fb4b2090e579a4e14ec0793f273bf9909f7",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/configuration/ucd/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/configuration/ucd/profiles.rs",
+      "sha256": "ab690f47284a413d4321d56c1d942c7148d616f15e91e66f506aa136e99fe760",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/configuration/ucd/profiles.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/configuration/waveform.rs",
+      "sha256": "085444c6e28781ed7473af0ff81c0d8994c6271f931fcd92b9b7f86583ebcfd2",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/configuration/waveform.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/error.rs",
+      "sha256": "7594180c9aef1119b8f6b42850c6c524dab0663f3930e19e6cdacad68914a948",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/error.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/grant/fec_selection.rs",
+      "sha256": "7ddf29c43f19ba0412a5987c9a70f53f3b785b4d0a6df2ccbbf43385c680325b",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/grant/fec_selection.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/grant/mod.rs",
+      "sha256": "cc4d267eb2376e82e6fb405771df1559a29f3b4d5e459a1eaa4481663ece2ee5",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/grant/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/grant/plan.rs",
+      "sha256": "75054e71151dcbfdec3831e854b7a34690a10ec2aa7030e392870e1946fad693",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/grant/plan.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/instruments/metrics.rs",
+      "sha256": "4388f4bdb5159b6bb667a6bdbafa676d25004a991cd89b1032637c4e6c0f6dbc",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/instruments/metrics.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/instruments/mod.rs",
+      "sha256": "b03ed715ba15a0f243cc78718e8631580be356023fb7601725f554912195d5fc",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/instruments/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/instruments/observer.rs",
+      "sha256": "2902595e10bf3c21b56167151b72020d26a0f0d1781976dc8fb20617357d15b2",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/instruments/observer.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/instruments/spectrum.rs",
+      "sha256": "7391a3371e92a77ac8583bfcccf458712d52922a1ed97b00792b328dccb06e8e",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/instruments/spectrum.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/lib.rs",
+      "sha256": "b4a30c6dc4f38cb6ba8d83df32fbd0674f552c60b920ed239dbb1127ef12d073",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/lib.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/measurements/mod.rs",
+      "sha256": "e10c653cb86e3c8cf994904f8f487838dd78d571b03b2914cfd0a1c64972325e",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/measurements/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/measurements/pre_eq.rs",
+      "sha256": "6ad2cba8e9828cf971099e3d22938cbe372797c46a68d530f75543bc2883256c",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/measurements/pre_eq.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/measurements/rxmer.rs",
+      "sha256": "d339e481b627591b9f6674b997364e3335000245dd5ddfb78332e69b25663b18",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/measurements/rxmer.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/receiver/framing.rs",
+      "sha256": "83a71533ec2247f63af68d69226d8e07d3cfa66dd048e7d3fe7a5769243db815",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/receiver/framing.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/receiver/mod.rs",
+      "sha256": "d66ab12b73a13a684a15bd116fd7223954631bb08fed0c3f59fa7dda4f369917",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/receiver/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/resources/grid.rs",
+      "sha256": "8c0997bb72643c8a6e4319460bf30085b13a0c53594fdb0dea9b6c2bc6c1a048",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/resources/grid.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/resources/interleaving_blocks.rs",
+      "sha256": "2376bae01946c254c543b4174c5e7de3e3628d64c965d0965fb38950ef116563",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/resources/interleaving_blocks.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/resources/mod.rs",
+      "sha256": "cc2344133ed451d01d1fd1dd1e42e6df3743db95494cb1bfa03bfa1ec046fa47",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/resources/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/resources/permutation.rs",
+      "sha256": "07e10925749133a5428250ef2f26e09a8c10c3c3d41bf99e83cf7896c214abe1",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/resources/permutation.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/resources/pilot_patterns.rs",
+      "sha256": "436f3bde5e2b5c35470a8a221e082fd07230878ca17ec8510ba5607be251c523",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/resources/pilot_patterns.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/signal_processing/cyclic_extension.rs",
+      "sha256": "d5e23e2ea4eee6887cdd5701516744984b2d747a491fcea06f4bec8fce2dce08",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/signal_processing/cyclic_extension.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/signal_processing/demapping.rs",
+      "sha256": "5690a5ec6f82b82152da33543753391520881d3bc44b1d7cfb277295845f1e4f",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/signal_processing/demapping.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/signal_processing/estimation.rs",
+      "sha256": "af86ebc7568823d5e3a21e4848bebd89faed0029af4a474a441403e616207b50",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/signal_processing/estimation.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/signal_processing/mod.rs",
+      "sha256": "30c54c0d846c53415deb760ce2d95eca8beac19f6650cc9ddeffc4f6cd020627",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/signal_processing/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/signal_processing/pre_eq.rs",
+      "sha256": "3c3c2f4360d1b7a55e04a690cdf4c35fc0a86e6ec88f5e49158173c916198f2d",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/signal_processing/pre_eq.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/signal_processing/qam.rs",
+      "sha256": "e5a9f798068de5b848718017a8b21d347ace74856657a4af766aed05fcb6cf8b",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/signal_processing/qam.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/signal_processing/qam_tables.rs",
+      "sha256": "58ab8284227475d2576aea8d0f53ece059d07f7dfe07605b5ba415f94c104671",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/signal_processing/qam_tables.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/signal_processing/transform.rs",
+      "sha256": "85df4447d11a66deb028cc4f9a047a7d763c24a0885cc14827948bcb6dbc89d1",
+      "license": "Apache-2.0",
+      "decision": "SHARE",
+      "targets": [
+        "crates/ofdma/src/signal_processing/transform.rs",
+        "crates/dsp/src/transform.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/signal_processing/transmit_window.rs",
+      "sha256": "089c323029245b4312794c8b0bcc8e8e286f2b973593e13c2f86f20457ee35e2",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/signal_processing/transmit_window.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/simulation/control.rs",
+      "sha256": "98f8b74c411c9a098d8b218215f3fef7be81dda0d32fdb53afbabb1a706d5b20",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/simulation/control.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/simulation/mod.rs",
+      "sha256": "1118a368634d90b9d8b9bbc049f55e960f5994e550ffb4652ef17fa160db4b36",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/simulation/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/simulation/report.rs",
+      "sha256": "3ff00d2558bb205df6542ac84d7f1f1c6f33c7b6e2316c534c4e96812242859f",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/simulation/report.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/simulation/request.rs",
+      "sha256": "cf24bb99a481c79cb6c94930b4f516ce0e9a6eaddc31a1996500362598a006db",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/simulation/request.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/simulation/run.rs",
+      "sha256": "6eb3f4fe53122f5be55d9eb4d2720a80bf8481811b2838dc47c2e90ee7ba1d46",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/simulation/run.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/source/mod.rs",
+      "sha256": "8c04d04fe2bf58b664729b18553140b4b5141b40e04ac36b9778de4ab9507f7b",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/source/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/source/prbs15.rs",
+      "sha256": "55676fc0727787627de8988cf4ee9d1f9ccaeb174e817fd3122f4a3712b35c22",
+      "license": "Apache-2.0",
+      "decision": "SHARE",
+      "targets": [
+        "crates/ofdma/src/source/prbs15.rs",
+        "crates/dsp/src/prbs15.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/source/verifier.rs",
+      "sha256": "c32466fb6e0b6865d1ecf428130d15651dd7b4746b17065044b8075e013dc3d9",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/source/verifier.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/transmitter/assembly.rs",
+      "sha256": "b541fedcd23ef0d921a46c55ba21044f9f3e86c191b568c5fe71ca68785e1d89",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/transmitter/assembly.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/transmitter/framer.rs",
+      "sha256": "016abdf4fdcdb4e87e258d15f442208de6768dbe4864bc338fd993f39418d26a",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/transmitter/framer.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/transmitter/framing.rs",
+      "sha256": "d70f6b5b05693597c260025f303ad4868c5c5f1208c5206bd47f51062937e9ca",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/transmitter/framing.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/transmitter/mod.rs",
+      "sha256": "9d82dcb0504da1a59c1606755b085dfcddb4fcd61d371f28e157135a8fbb23c4",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/transmitter/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/types/bits.rs",
+      "sha256": "893cb48ef90bc97dcebb4ec978fa14dd731a4faae24089dcb2ef8de37f903b4e",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/types/bits.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/types/iq.rs",
+      "sha256": "0cb94b81ddd02cfcd05cda3f02f3e63a02b48ca220dc3a13f27c3fb7b0d6bef9",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/types/iq.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/types/mod.rs",
+      "sha256": "be889bbc627d40144ae7643cadf4d5a81c6ac49787ba9ae3491333f6d5eeb80f",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/types/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/src/types/samples.rs",
+      "sha256": "45079e43cbbb0d6bdca2b1b1ab3a9f7a96f23bfb1579b7e8e54ac315872d3218",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/types/samples.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/channel_models.rs",
+      "sha256": "3b39d8361d8453c3c81adedae9666dd28857ad2baa8ae9d3632aeadfab8f1f03",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/channel_models.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/common/mod.rs",
+      "sha256": "9be12cc53188d90d302bc0c0a0f465f0c0b27cc177e25c948aa00bba0bc0608b",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/configuration.rs",
+      "sha256": "609b0eaa8f600368605cc5478d3f3b320891322fd2b501900e6d3b267478d721",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/pnm-input/tests/upstream_configuration.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/grant_plan.rs",
+      "sha256": "29d7f55143d9183450c4d0da18b5f072dd5dccba9d17c24659a9f586fd01b112",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/grant_plan.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/matched_metrics.rs",
+      "sha256": "fd2babcfc8ee581932571c1d9df1f09001e2cb5dcacd7ad5adefda5ef0d9bb97",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/matched_metrics.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/measurement_playback.rs",
+      "sha256": "95bba23c92970fc1e0206c42dfcba76327056af4f9915419779b69c23f3957f3",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/measurement_playback.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/prbs.rs",
+      "sha256": "6c1687031b28f9bdaa3ffdf3f11a529c4ab6bdd59fdfd7b0267a453990d359b0",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/prbs.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/pre_eq.rs",
+      "sha256": "b105be83e22dac4444b3797f0b1c61c035da4469712bdbff33ed4017207ec370",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/pre_eq.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/qam_mapping.rs",
+      "sha256": "c76888c955435eea48aece518955af187e75398d6e0e05a130de9d7732e66ed4",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/qam_mapping.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/randomization.rs",
+      "sha256": "2aec91fa6fe96f31fe1f0202a16418901b8e5274c9dcc3eb6d38f48c3ca94e87",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/randomization.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/rx_estimation.rs",
+      "sha256": "e5b721af1efd08e255cbbcaffc112149e3547a8b7f89a0b5d768f903712bc62e",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/rx_estimation.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/rx_framing.rs",
+      "sha256": "dd9ff9be5fd3e2f8a7667cef1266af8075c4728a92b82442e02aee8c21d5f94c",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/rx_framing.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/rxmer_channel.rs",
+      "sha256": "eb350a489fd357d5001b751640f11e8f2ac96ff818e48ba8debbd40542c61b93",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/rxmer_channel.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/transforms.rs",
+      "sha256": "540b6490625a449e214de9e4206a037925a91102e817028e417c0cda4a091028",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/transforms.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/transmit_window.rs",
+      "sha256": "9c9802fb870db96ebad6a2ce7584c2e6f77bf5f9994c60640ebfa3a40b5de858",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/transmit_window.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/upstream_interleaving.rs",
+      "sha256": "1944459b290f6b955181391b0359cf3cae9e9d2925fd8799f9395edf8d1887b6",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/upstream_interleaving.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/upstream_pilots.rs",
+      "sha256": "720ce3665ecd4099e420d1d346431ed4e22446f81cb75e78ad5fd77b00a625e5",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/upstream_pilots.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/phy/tests/waveform_loop.rs",
+      "sha256": "4d9bc9fa9549070976afe2e9fffa5b675528a75479d2c8a23d149328b664d9a6",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/waveform_loop.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/Cargo.toml",
+      "sha256": "1c87ac87d20e69e11505cbc0fe8c512d128d986877992849236433d9fb65a732",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/Cargo.toml"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/examples/inspect_rxmer.rs",
+      "sha256": "3d5b6a75d95cff94ce96b477889300806b94549d939002cb4ec84ee0e03be795",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "examples/api/rust/upstream/inspect_rxmer.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/examples/inspect_ucd.rs",
+      "sha256": "1a5ad8eb7ac03f31cca7b5815c428b2b5647bd203367f9d284cdf4ccc734e64e",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "examples/api/rust/upstream/inspect_ucd.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/examples/ldpc_loop.rs",
+      "sha256": "8877036fcd317eef28b34643c88d175ff821d82d0f697faa30b7c0e9d5f64dee",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "examples/api/rust/upstream/ldpc_loop.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/examples/upstream_captures.rs",
+      "sha256": "7463d86c3b8770bcc39c07d0bb3ced6be766cf471f2f08fc86ffa9af7748b169",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "examples/api/rust/upstream/upstream_captures.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/examples/upstream_document.rs",
+      "sha256": "7312bf6e0823f97382d64adb29d27cdbabd82a19c09cd1a420d0ad6a1f619da6",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "examples/api/rust/upstream/upstream_document.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/examples/upstream_loop.rs",
+      "sha256": "0ce97739858a70f9848b26d835de754fd5a40284cfcc478f578d9f972689bc48",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "examples/api/rust/upstream/upstream_loop.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/examples/upstream_measurements.rs",
+      "sha256": "d5bfbfd6e9706730529722c3a7cae6bc4b0720243684b785d2fb484874463605",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "examples/api/rust/upstream/upstream_measurements.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/api/error.rs",
+      "sha256": "ab13b68c431a8fdf94354dec9e1e65efe98576f35a284b151ba7651a815a8e71",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/api/error.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/api/mod.rs",
+      "sha256": "e7a0af5bf46f597b9b66dd8cdbe139915778cce7f6f4240f9bd55192750a06e5",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/api/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/api/reports.rs",
+      "sha256": "49ceb68dd7acc9441c66d29e234e652233cb5ac0b095049c54748527eff1920a",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/api/reports.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/api/session.rs",
+      "sha256": "724f5bb53989a7ffd0abb7d6ad8b7721aaebebfd5cc3d668fd8d6d8d55842aa7",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/api/session.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/inputs/measured.rs",
+      "sha256": "48c9aa526bef37f726ca054f665dcfcdc92a3cddb6e5f171f300e6399a2be583",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/pnm-input/src/upstream/association.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/inputs/mod.rs",
+      "sha256": "ff54ce334702fc79094acf5bf51086757bff6b26b2d629298417d3d275320e1e",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/pnm-input/src/upstream/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/inputs/pre_eq.rs",
+      "sha256": "a7e9bcdb7b5edf97d8b527d7579dc7150df4918f76e25da8c18c4176e5833b46",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/pnm-input/src/upstream/pre_eq.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/inputs/rxmer.rs",
+      "sha256": "ddb782a537fa1ae73638dd6407ca24742c1d6d16f0965f9dcc8f44a6cb1ad1e4",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/pnm-input/src/upstream/rxmer.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/inputs/synthetic.rs",
+      "sha256": "f24050ec7ad918f83f829a66f24b4ecdb0f552165dd15fa46b726af8b691b958",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/simulation/request.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/inputs/ucd.rs",
+      "sha256": "2c4cd05d12ed96c3f22fa8b74446903084cbce37f14df46ab9f95149a7b1e1e1",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/pnm-input/src/upstream/ucd.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/inputs/ucd_projection.rs",
+      "sha256": "9f1b485223e1947fe349867379d73f525a79fbcb81d07162043fd3dfc6a99083",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/pnm-input/src/upstream/ucd_projection.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/inputs/us_configuration.rs",
+      "sha256": "551e249883f595c64e3f3fa85b98f8cdc49d8dc731c48127e78b121aac0f4171",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/configuration/document.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/lib.rs",
+      "sha256": "c9f57a72a68bfe3ac411b682f2b7e6b2f785ab75e00bd39b8ebdab7615b0ea18",
+      "license": "Apache-2.0",
+      "decision": "REUSE",
+      "targets": [
+        "crates/fec-codec/src/upstream_ldpc/mod.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/src/report.rs",
+      "sha256": "5b270d67a61186d875c63a071375e4321412d5911aca61e8e2729e4138f04745",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/src/api/reports/fec.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/tests/configuration_json.rs",
+      "sha256": "1e4ea0b6038ae4b9eb3ddee411f8a797c44dd036545adeb7edc2b137451d6328",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/pnm-input/tests/upstream_configuration_json.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/tests/experiment.rs",
+      "sha256": "ed073bc07b9731e0e4c6acb74aea6271e7555e2d96ed0ff9dbdcb67b10bd69c5",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/ofdma/tests/experiment.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/tests/measured_experiment.rs",
+      "sha256": "7f7355a43410b4385705ce371bf4817a247d0d04984c56e6a9a6da818509b8e2",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/pnm-input/tests/upstream_measured_experiment.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/tests/pre_eq_capture.rs",
+      "sha256": "69a24102dde88e8ae30eba52e6afaa9d6048a482c564e5cea88d2de21a634478",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/pnm-input/tests/upstream_pre_eq_capture.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/tests/rxmer_capture.rs",
+      "sha256": "21a42536e663c92b57d3451e7981ea5808e819aa68de231c20081f4a460cb880",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/pnm-input/tests/upstream_rxmer_capture.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    },
+    {
+      "source": "crates/morgana/tests/ucd_capture.rs",
+      "sha256": "3506336ebc4db1894265f3efc28428edc4537bfb56db555ef58147c54e4b9beb",
+      "license": "Apache-2.0",
+      "decision": "ADAPT",
+      "targets": [
+        "crates/pnm-input/tests/upstream_ucd_capture.rs"
+      ],
+      "state": "reviewed candidate; no source code imported yet",
+      "notice": "Preserve original copyright/SPDX and root/scoped QAM notices; record modifications."
+    }
+  ],
+  "host_dependency_packages": {
+    "source": [
+      {
+        "name": "anstream",
+        "version": "1.0.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "anstyle",
+        "version": "1.0.14",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "anstyle-parse",
+        "version": "1.0.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "anstyle-query",
+        "version": "1.1.5",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "autocfg",
+        "version": "1.5.1",
+        "license": "Apache-2.0 OR MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "bitflags",
+        "version": "2.13.2",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "block-buffer",
+        "version": "0.10.4",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "cfg-if",
+        "version": "1.0.5",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "cfg_aliases",
+        "version": "0.2.2",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "clap",
+        "version": "4.6.9",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "clap_builder",
+        "version": "4.6.7",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "clap_derive",
+        "version": "4.6.9",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "clap_lex",
+        "version": "1.1.2",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "colorchoice",
+        "version": "1.0.5",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "console",
+        "version": "0.15.11",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "cpufeatures",
+        "version": "0.2.17",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "crossbeam-deque",
+        "version": "0.8.8",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "crossbeam-epoch",
+        "version": "0.9.21",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "crossbeam-utils",
+        "version": "0.8.23",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "crypto-common",
+        "version": "0.1.7",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "ctrlc",
+        "version": "3.5.3",
+        "license": "MIT/Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "digest",
+        "version": "0.10.7",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "either",
+        "version": "1.19.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "enum-iterator",
+        "version": "2.3.0",
+        "license": "0BSD",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "enum-iterator-derive",
+        "version": "1.5.0",
+        "license": "0BSD",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "generic-array",
+        "version": "0.14.7",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "getrandom",
+        "version": "0.3.4",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "heck",
+        "version": "0.5.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "humantime",
+        "version": "2.4.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "is_terminal_polyfill",
+        "version": "1.70.2",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "itoa",
+        "version": "1.0.19",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "ldpc-toolbox",
+        "version": "0.10.1",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "libc",
+        "version": "0.2.191",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "libm",
+        "version": "0.2.16",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "matrixmultiply",
+        "version": "0.3.11",
+        "license": "MIT/Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "memchr",
+        "version": "2.8.3",
+        "license": "Unlicense OR MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "morgana",
+        "version": "0.1.0",
+        "license": "Apache-2.0",
+        "source": null
+      },
+      {
+        "name": "morgana-cli",
+        "version": "0.1.0",
+        "license": "Apache-2.0",
+        "source": null
+      },
+      {
+        "name": "morgana-ldpc",
+        "version": "0.1.0",
+        "license": "Apache-2.0",
+        "source": null
+      },
+      {
+        "name": "morgana-phy",
+        "version": "0.1.0",
+        "license": "Apache-2.0",
+        "source": null
+      },
+      {
+        "name": "ndarray",
+        "version": "0.16.1",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "nix",
+        "version": "0.32.0",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "num-complex",
+        "version": "0.4.6",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "num-integer",
+        "version": "0.1.47",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "num-traits",
+        "version": "0.2.19",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "num_cpus",
+        "version": "1.17.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "once_cell",
+        "version": "1.21.4",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "ppv-lite86",
+        "version": "0.2.21",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "proc-macro2",
+        "version": "1.0.107",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "quote",
+        "version": "1.0.47",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rand",
+        "version": "0.9.5",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rand_chacha",
+        "version": "0.9.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rand_core",
+        "version": "0.9.5",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rand_distr",
+        "version": "0.5.1",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rawpointer",
+        "version": "0.2.1",
+        "license": "MIT/Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rayon",
+        "version": "1.12.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rayon-core",
+        "version": "1.13.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "ryu",
+        "version": "1.0.23",
+        "license": "Apache-2.0 OR BSL-1.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "serde",
+        "version": "1.0.228",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "serde_core",
+        "version": "1.0.228",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "serde_derive",
+        "version": "1.0.228",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "serde_json",
+        "version": "1.0.145",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "sha2",
+        "version": "0.10.9",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "strsim",
+        "version": "0.11.1",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "syn",
+        "version": "1.0.109",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "syn",
+        "version": "2.0.119",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "syn",
+        "version": "3.0.10",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "termination",
+        "version": "0.1.2",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "termination_attrib",
+        "version": "0.1.1",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "thiserror",
+        "version": "2.0.21",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "thiserror-impl",
+        "version": "2.0.21",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "typenum",
+        "version": "1.20.1",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "unicode-ident",
+        "version": "1.0.27",
+        "license": "(MIT OR Apache-2.0) AND Unicode-3.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "unicode-width",
+        "version": "0.2.3",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "utf8parse",
+        "version": "0.2.2",
+        "license": "Apache-2.0 OR MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "version_check",
+        "version": "0.9.5",
+        "license": "MIT/Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "zerocopy",
+        "version": "0.8.63",
+        "license": "BSD-2-Clause OR Apache-2.0 OR MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      }
+    ],
+    "merlin": [
+      {
+        "name": "aho-corasick",
+        "version": "1.1.5",
+        "license": "Unlicense OR MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "anstream",
+        "version": "1.0.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "anstyle",
+        "version": "1.0.14",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "anstyle-parse",
+        "version": "1.0.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "anstyle-query",
+        "version": "1.1.5",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "autocfg",
+        "version": "1.5.1",
+        "license": "Apache-2.0 OR MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "base64",
+        "version": "0.22.1",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "bitflags",
+        "version": "2.13.2",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "block-buffer",
+        "version": "0.10.4",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "cfg-if",
+        "version": "1.0.5",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "cfg_aliases",
+        "version": "0.2.2",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "clap",
+        "version": "4.6.7",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "clap_builder",
+        "version": "4.6.7",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "clap_derive",
+        "version": "4.6.7",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "clap_lex",
+        "version": "1.1.1",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "colorchoice",
+        "version": "1.0.5",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "console",
+        "version": "0.15.11",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "cpufeatures",
+        "version": "0.2.17",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "crossbeam-deque",
+        "version": "0.8.8",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "crossbeam-epoch",
+        "version": "0.9.21",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "crossbeam-utils",
+        "version": "0.8.23",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "crypto-common",
+        "version": "0.1.7",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "ctrlc",
+        "version": "3.5.2",
+        "license": "MIT/Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "delaunator",
+        "version": "1.0.2",
+        "license": "ISC",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "digest",
+        "version": "0.10.7",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "docsis-ofdm-fec",
+        "version": "0.4.0",
+        "license": "Apache-2.0",
+        "source": null
+      },
+      {
+        "name": "either",
+        "version": "1.19.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "enum-iterator",
+        "version": "2.3.0",
+        "license": "0BSD",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "enum-iterator-derive",
+        "version": "1.5.0",
+        "license": "0BSD",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "env_filter",
+        "version": "2.0.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "env_logger",
+        "version": "0.11.11",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "errno",
+        "version": "0.3.14",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "fastrand",
+        "version": "2.5.0",
+        "license": "Apache-2.0 OR MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "fec-codec",
+        "version": "0.4.0",
+        "license": "Apache-2.0 AND MIT",
+        "source": null
+      },
+      {
+        "name": "generic-array",
+        "version": "0.14.7",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "getrandom",
+        "version": "0.3.4",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "heck",
+        "version": "0.5.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "humantime",
+        "version": "2.4.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "is_terminal_polyfill",
+        "version": "1.70.2",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "itoa",
+        "version": "1.0.18",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "ldpc-toolbox",
+        "version": "0.10.1",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "libc",
+        "version": "0.2.191",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "libm",
+        "version": "0.2.16",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "linux-raw-sys",
+        "version": "0.12.1",
+        "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "log",
+        "version": "0.4.35",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "matrixmultiply",
+        "version": "0.3.11",
+        "license": "MIT/Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "memchr",
+        "version": "2.8.3",
+        "license": "Unlicense OR MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "ndarray",
+        "version": "0.16.1",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "nix",
+        "version": "0.31.3",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "num-complex",
+        "version": "0.4.6",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "num-integer",
+        "version": "0.1.47",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "num-traits",
+        "version": "0.2.19",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "num_cpus",
+        "version": "1.17.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "ofdm-fec-cli",
+        "version": "0.4.0",
+        "license": "Apache-2.0",
+        "source": null
+      },
+      {
+        "name": "once_cell",
+        "version": "1.21.4",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "pin-project-lite",
+        "version": "0.2.17",
+        "license": "Apache-2.0 OR MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "pnm",
+        "version": "0.3.6",
+        "license": "Apache-2.0",
+        "source": "git+https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git?rev=5fbd5561f3e06b73486546b5ffa520279080a5eb#5fbd5561f3e06b73486546b5ffa520279080a5eb"
+      },
+      {
+        "name": "pnm-input",
+        "version": "0.4.0",
+        "license": "Apache-2.0",
+        "source": null
+      },
+      {
+        "name": "ppv-lite86",
+        "version": "0.2.21",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "proc-macro2",
+        "version": "1.0.107",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "quote",
+        "version": "1.0.47",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rand",
+        "version": "0.9.5",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rand_chacha",
+        "version": "0.9.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rand_core",
+        "version": "0.9.5",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rand_distr",
+        "version": "0.5.1",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rawpointer",
+        "version": "0.2.1",
+        "license": "MIT/Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rayon",
+        "version": "1.12.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rayon-core",
+        "version": "1.13.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "regex",
+        "version": "1.13.1",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "regex-automata",
+        "version": "0.4.18",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "regex-syntax",
+        "version": "0.8.11",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "robust",
+        "version": "0.2.3",
+        "license": "MIT/Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "rustix",
+        "version": "1.1.6",
+        "license": "Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "ryu",
+        "version": "1.0.23",
+        "license": "Apache-2.0 OR BSL-1.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "serde",
+        "version": "1.0.228",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "serde_core",
+        "version": "1.0.228",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "serde_derive",
+        "version": "1.0.228",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "serde_json",
+        "version": "1.0.145",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "sha2",
+        "version": "0.10.9",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "strsim",
+        "version": "0.11.1",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "syn",
+        "version": "1.0.109",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "syn",
+        "version": "2.0.119",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "syn",
+        "version": "3.0.9",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "tempfile",
+        "version": "3.23.0",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "termination",
+        "version": "0.1.2",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "termination_attrib",
+        "version": "0.1.1",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "thiserror",
+        "version": "2.0.21",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "thiserror-impl",
+        "version": "2.0.21",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "tracing",
+        "version": "0.1.41",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "tracing-attributes",
+        "version": "0.1.31",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "tracing-core",
+        "version": "0.1.36",
+        "license": "MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "typenum",
+        "version": "1.20.1",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "unicode-ident",
+        "version": "1.0.27",
+        "license": "(MIT OR Apache-2.0) AND Unicode-3.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "unicode-width",
+        "version": "0.2.3",
+        "license": "MIT OR Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "utf8parse",
+        "version": "0.2.2",
+        "license": "Apache-2.0 OR MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "version_check",
+        "version": "0.9.5",
+        "license": "MIT/Apache-2.0",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      },
+      {
+        "name": "zerocopy",
+        "version": "0.8.63",
+        "license": "BSD-2-Clause OR Apache-2.0 OR MIT",
+        "source": "registry+https://github.com/rust-lang/crates.io-index"
+      }
+    ]
+  },
+  "shared_version_differences": [
+    {
+      "name": "clap",
+      "source": "4.6.9",
+      "target": "4.6.7",
+      "decision": "Keep target lock version; no source lock copied."
+    },
+    {
+      "name": "clap_derive",
+      "source": "4.6.9",
+      "target": "4.6.7",
+      "decision": "Keep target lock version; no source lock copied."
+    },
+    {
+      "name": "clap_lex",
+      "source": "1.1.2",
+      "target": "1.1.1",
+      "decision": "Keep target lock version; no source lock copied."
+    },
+    {
+      "name": "ctrlc",
+      "source": "3.5.3",
+      "target": "3.5.2",
+      "decision": "Keep target lock version; no source lock copied."
+    },
+    {
+      "name": "itoa",
+      "source": "1.0.19",
+      "target": "1.0.18",
+      "decision": "Keep target lock version; no source lock copied."
+    },
+    {
+      "name": "nix",
+      "source": "0.32.0",
+      "target": "0.31.3",
+      "decision": "Keep target lock version; no source lock copied."
+    },
+    {
+      "name": "syn",
+      "source": "3.0.10",
+      "target": "3.0.9",
+      "decision": "Keep target lock version; no source lock copied."
+    }
+  ],
+  "rights_evidence": [
+    "LICENSE",
+    "NOTICE",
+    "crates/phy/resources/qam-table/LICENSE",
+    "crates/phy/resources/qam-table/NOTICE"
+  ],
+  "fixture_evidence": [
+    "examples/measurements/ucd/README.md",
+    "examples/measurements/rxmer/README.md",
+    "examples/measurements/pre-eq/README.md",
+    "examples/measurements/measured/README.md"
+  ],
+  "publication": "Not authorized; source/artifact notices remain an INT-TOOLS-01 distribution gate."
+}

@@ -48,8 +48,8 @@ owns direction-specific upstream scientific contracts; the
 [testing reference](../skills/scientific-testing/references/upstream.md) owns their
 acceptance method; the [paired API reference](../skills/public-api/references/paired-api.md)
 owns API design/parity review. Existing PHY editions and local discovery links
-are reused. These are documentation responsibilities only; upstream engine/crate
-placement, source-code migration and validation remain planned integration work.
+are reused. This skill migration changed guidance only; current runtime ownership
+and MERLIN acceptance are tracked in the unified backend sections below.
 
 ## Requirements and historical evidence ownership
 
@@ -66,17 +66,22 @@ superseded pending states. Later named refinements govern current behavior;
 neither a test path nor a prior source-repository pass establishes a new run.
 Missing execution records stay explicit coverage gaps with targeted acceptance
 tasks. Original completed tasks retain their marks while those gaps remain open.
-DS-REQ-01 closes documentation backfill only. DS-GAP-01..03 and all applicable
-unified-workspace gates must close before final backend acceptance. Broader
+DS-REQ-01 closes documentation backfill only. DS-GAP-01..03 now have
+[scoped current or recovered evidence](development/features/unified-backend/baseline.md).
+All applicable unified-workspace gates must close before final backend acceptance. Broader
 native/installed/hosted checks retain their existing separate task owners.
 
 ## Unified backend integration
 
+Delivery gates: [INT-DOC-01](development/checklist.md#int-doc-01).
+
 This section is the authoritative **integration design** alongside the unchanged
 implemented downstream architecture below. The source review is pinned to
 `69b38071cd3ebebc4eb96849f82b7871ab8da5ec`; MERLIN baseline is
-`fa26de619b5d28a442c42e46ad1ed19262a9d08a`. **No upstream runtime or shared DSP
-crate has been migrated at this documentation checkpoint.** Source acceptance
+`fa26de619b5d28a442c42e46ad1ed19262a9d08a`. That initial documentation checkpoint
+contained no upstream runtime. The first additive implementation now supplies
+[standalone upstream LDPC](development/features/unified-backend/fec-validation.md)
+in the existing FEC crate; upstream PHY and shared DSP migration remain pending. Source acceptance
 reports are historical evidence, never MERLIN integration passes. The
 [requirements baseline](requirements.md), [integration checklist](development/checklist.md#unified-backend-integration)
 and [document dispositions](development/features/unified-backend/source-review.md)
@@ -84,10 +89,12 @@ provide behavior, delivery status and provenance respectively.
 
 ### Unified crate ownership
 
+Delivery gates: [INT-LICENSE-01](development/checklist.md#int-license-01).
+
 | Component | Current owner | Integration design and compatibility |
 | --- | --- | --- |
 | Downstream PHY | `crates/ofdm`, Cargo `docsis-ofdm-fec` | Retain package, public imports, control channels, interleavers, waveform, received configuration and report schemas. |
-| Common FEC | `crates/fec-codec` | Extend with `src/upstream_ldpc/` definitions/codec and independent source tests; keep existing BCH, downstream LDPC, shortening, NCP and PLC. |
+| Common FEC | `crates/fec-codec` | `src/upstream_ldpc/` now owns upstream definitions/codec and independent source tests; existing BCH, downstream LDPC, shortening, NCP and PLC remain. |
 | Generic DSP | Existing numerical owners in `crates/ofdm/src/signal_processing/` | `crates/dsp` is conditional, not an existing crate. Extract only kernels proven equivalent and valuable by INT-REUSE-01/INT-DSP-01. |
 | Upstream PHY | Not present | Add proposed `crates/ofdma`, package `docsis-ofdma`; collapse source scientific/facade functionality into focused local modules and `src/api/`, not former product crates. |
 | Native measurement input | `crates/pnm-input` | Extend bounded adapters with `src/upstream/`; own binary envelope decoding, file I/O and raw-byte admission; core PHY owns typed observation/configuration semantics. |
@@ -126,6 +133,8 @@ analysis-only builds and existing feature behavior remain supported.
 
 ### Unified shared DSP and FEC
 
+Delivery gates: [INT-REUSE-01](development/checklist.md#int-reuse-01), [INT-FEC-01](development/checklist.md#int-fec-01), [INT-DSP-01](development/checklist.md#int-dsp-01).
+
 FEC mechanisms may share sparse adjacency, systematic encoder plans, bounded
 decoder setup/iteration accounting and syndrome operations only where semantics
 match. Upstream code definitions remain independently source-checked: long
@@ -135,8 +144,13 @@ upstream scheduled data has neither downstream BCH nor ranging-only puncturing.
 Preserve shortened known-zero consistency separately from convergence/parity and
 original payload truth. `fec-codec` remains usable without modulation/channel models.
 
-Planned FEC files: `crates/fec-codec/src/upstream_ldpc/{definitions,codec,mod}.rs`
-and `crates/fec-codec/tests/upstream_source_audit.rs`. Existing
+The first additive backend implementation is
+`crates/fec-codec/src/upstream_ldpc/{definitions,codec,error,mod}.rs`, with
+independent `tests.rs` and `tests/{oracle,source_audit,source_fixtures}.rs`.
+It reuses the existing private sparse plan through a byte-buffer operation;
+the downstream GF2 operation and existing root codec imports remain unchanged.
+This is the standalone codec boundary; grant selection, upstream transport and
+native Python support remain later gates. Existing
 [downstream codec tests](../crates/fec-codec/tests/codec.rs),
 [normative checks](../crates/fec-codec/tests/normative.rs) and
 [shortening tests](../crates/fec-codec/tests/shortening_codec.rs) remain.
@@ -175,6 +189,8 @@ relevant suites, not only these representative files.
 
 ### Unified upstream configuration and source
 
+Delivery gates: [INT-US-CONFIG-01](development/checklist.md#int-us-config-01).
+
 Proposed `crates/ofdma/src/configuration/` owns UCD/IUC, represented MAP/grant,
 profile/resource/loading and separately validated TX/RX projections. Generic
 versioned JSON, captured UCD inspection and actual execution support are distinct.
@@ -202,7 +218,10 @@ Planned tests: `crates/ofdma/tests/{configuration,configuration_json,prbs}.rs`.
 
 ### Unified upstream processing order
 
-All entries below are **planned for MERLIN**. The retained
+Delivery gates: [INT-US-TX-01](development/checklist.md#int-us-tx-01), [INT-US-RX-01](development/checklist.md#int-us-rx-01).
+
+Upstream stage composition below remains **planned for MERLIN**; standalone LDPC
+encoding/decoding now has the codec owners and acceptance identified below. The retained
 [stage contracts](development/features/unified-backend/references/upstream-stage-contracts.md)
 preserve detailed scientific definitions, source equations/tables, reference
 planes and limitations at the pinned source revision. That reference is historical;
@@ -264,7 +283,11 @@ Requirement: [REQ-US-TX-01](requirements.md#req-us-tx-01); delivery: **INT-US-TX
 
 Encoding must use the selected source-verified upstream long/medium/short LDPC family with systematic order and exact shortening semantics. All three code families must pass source audit and codec acceptance before dependent waveform implementation.
 
-Add (planned) owner: `crates/fec-codec/src/upstream_ldpc/codec.rs`; acceptance tests: `crates/fec-codec/tests/upstream_source_audit.rs`.
+Implemented standalone owner: `crates/fec-codec/src/upstream_ldpc/codec.rs`;
+acceptance tests: `crates/fec-codec/src/upstream_ldpc/tests.rs` and
+`crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs`.
+[Codec acceptance](development/features/unified-backend/fec-validation.md)
+precedes integration with the planned upstream transport.
 Requirement: [REQ-US-TX-02](requirements.md#req-us-tx-02); delivery: **INT-FEC-01**.
 
 ### US-TX-03: Grant-seeded PHY randomization
@@ -404,7 +427,11 @@ Requirement: [REQ-US-RX-07](requirements.md#req-us-rx-07); delivery: **INT-US-RX
 
 LDPC integration must restore shortening exactly once through the existing codec contract and retain real decoder outcomes.
 
-Add (planned) owner: `crates/fec-codec/src/upstream_ldpc/codec.rs`; acceptance tests: `crates/fec-codec/tests/upstream_source_audit.rs`.
+Implemented standalone owner: `crates/fec-codec/src/upstream_ldpc/codec.rs`;
+acceptance tests: `crates/fec-codec/src/upstream_ldpc/tests.rs` and
+`crates/fec-codec/src/upstream_ldpc/tests/source_audit.rs`.
+[Codec acceptance](development/features/unified-backend/fec-validation.md)
+precedes integration with the planned upstream transport.
 Requirement: [REQ-US-RX-08](requirements.md#req-us-rx-08); delivery: **INT-FEC-01**.
 
 ### US-RX-09: Information deframing
@@ -415,6 +442,8 @@ Add (planned) owner: `crates/ofdma/src/receiver/framing.rs`; acceptance tests: `
 Requirement: [REQ-US-RX-09](requirements.md#req-us-rx-09); delivery: **INT-US-RX-01**.
 
 ### Unified channel and measurement reference planes
+
+Delivery gates: [INT-US-CH-01](development/checklist.md#int-us-ch-01).
 
 Preserve `Y[k] = X[k] C[k] H[k] + N[k]`: C is transmitter correction, H physical
 response, N impairment and Y the received observation. Received known pilots
@@ -447,6 +476,8 @@ control and independent comparison acceptance belongs in
 
 ### Unified PNM and capture admission
 
+Delivery gates: [INT-PNM-01](development/checklist.md#int-pnm-01), [INT-PNM-02](development/checklist.md#int-pnm-02).
+
 Extend `crates/pnm-input/src/upstream/{ucd,rxmer,pre_eq,association}.rs` and tests
 `crates/pnm-input/tests/{upstream_ucd,upstream_rxmer,upstream_pre_eq,upstream_association}.rs`.
 Reuse the exact pinned decoder only for verified formats; any missing upstream
@@ -474,6 +505,8 @@ Existing downstream [input ownership](#pnm-measurement-input-direction),
 [workbench tests](../crates/pnm-input/tests/workbench.rs) remain compatible.
 
 ### Unified Rust Python and CLI APIs
+
+Delivery gates: [INT-US-LOOP-01](development/checklist.md#int-us-loop-01), [INT-RUST-01](development/checklist.md#int-rust-01), [INT-PY-01](development/checklist.md#int-py-01), [INT-CLI-01](development/checklist.md#int-cli-01).
 
 Retain `crates/ofdm/src/api/` and current downstream imports. Add proposed
 `crates/ofdma/src/api/{session,error,reports}.rs` as the upstream typed API, sharing
@@ -505,6 +538,8 @@ interleaver/overlap/update/receiver state at defined safe boundaries.
 
 ### Unified normative evidence and exclusions
 
+Delivery gates: [INT-TOOLS-01](development/checklist.md#int-tools-01), [INT-DEFER-01](development/checklist.md#int-defer-01).
+
 Preserve PHY 3.1 I20 §7.4.1 (processing), §7.4.3/Table8 (FEC), §7.4.4–7
 (randomization/mapping/interleaving), §7.4.9–10 (transform/prefix/window),
 §7.4.15–17 (distinct ranging/probes/pilots/Pre-Eq), and §9.4.8 (upstream RxMER).
@@ -529,6 +564,8 @@ SNMP/TFTP, multi-CM scheduler/MAC service or Python sidecar is introduced. Exist
 Ubuntu/Windows delivery, two CI entrypoints and all release/security gates remain.
 
 ### Unified acceptance and final documentation gate
+
+Delivery gates: [INT-BASE-01](development/checklist.md#int-base-01), [INT-REG-01](development/checklist.md#int-reg-01), [INT-DOC-02](development/checklist.md#int-doc-02), [INT-ACCEPT-01](development/checklist.md#int-accept-01).
 
 INT-DOC-01 accepts only the consolidated design/requirement/task records.
 INT-DOC-02 remains open until implemented paths, skills, API/user docs and observed

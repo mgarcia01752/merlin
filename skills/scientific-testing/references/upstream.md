@@ -8,6 +8,11 @@ MERLIN. Record source paths and exact expected-value origins in the feature desi
 
 ## Independent codec evidence
 
+The current standalone owner is `crates/fec-codec/src/upstream_ldpc/`, with
+`tests.rs` and `tests/{source_audit,source_fixtures,oracle}.rs`. Run its cases
+inside MERLIN; [integration evidence](../../../docs/development/features/unified-backend/fec-validation.md)
+accepts codecs only. Upstream waveform/receiver acceptance remains separate.
+
 For every declared upstream family, preserve independent source-table checks for
 matrix dimensions, entries, shift orientation and row/edge fingerprints. Keep
 frozen parity expectations where available. Verify the exact pinned source before

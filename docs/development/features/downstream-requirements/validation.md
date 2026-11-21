@@ -1,5 +1,10 @@
 # DS-REQ-01 documentation validation
 
+Current reconciliation: [the pre-import baseline](../unified-backend/baseline.md)
+records scoped execution for DS-GAP-01/02 and recovered historical DPD evidence
+for DS-GAP-03. All three gap tasks are now complete. The original documentation
+checkpoint and its then-open states remain below; final backend acceptance is separate.
+
 Reviewed on 2026-11-20 against MERLIN commit
 `c91e2c86845c192aa5a6550fb77bbd232c5780e7`, branch
 `merge-merlin-morgana`. This records documentation checks executed during backfill,

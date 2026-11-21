@@ -14,6 +14,7 @@ pub mod plc;
 pub mod shortening;
 mod sparse_encoder;
 pub mod statistics;
+pub mod upstream_ldpc;
 
 // Retain established root imports while implementation lives with each codec.
 pub use bch::{decode_bch, encode_bch, BchResult};

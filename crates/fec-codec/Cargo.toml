@@ -11,3 +11,8 @@ log.workspace = true
 ldpc-toolbox = "=0.10.1"
 ndarray = "=0.16.1"
 num-traits = "=0.2.19"
+
+[dev-dependencies]
+rand = "=0.9.5"
+rand_chacha = "=0.9.0"
+rand_distr = "=0.5.1"

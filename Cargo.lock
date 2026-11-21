@@ -344,6 +344,9 @@ dependencies = [
  "log",
  "ndarray",
  "num-traits",
+ "rand",
+ "rand_chacha",
+ "rand_distr",
  "serde",
 ]
 
