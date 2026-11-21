@@ -794,11 +794,27 @@
       ]
     },
     {
+      "id": "INT-PLAN-01",
+      "requirements": [
+        "REQ-COM-API-07",
+        "REQ-COM-API-08",
+        "REQ-COM-API-09",
+        "REQ-COM-TRACE-01",
+        "REQ-COM-TRACE-02"
+      ],
+      "architecture": "requirements-and-historical-evidence-ownership",
+      "dependencies": [
+        "DOC-ORG-01",
+        "INT-FEC-01"
+      ]
+    },
+    {
       "id": "INT-DSP-01",
       "title": "Consolidate proven common numerical kernels",
       "dependencies": [
         "INT-FEC-01",
-        "INT-REUSE-01"
+        "INT-REUSE-01",
+        "INT-PLAN-01"
       ],
       "architecture": "unified-shared-dsp-and-fec",
       "acceptance": "Prove FFT/bin/normalization, QAM/LLR, PRBS continuity, channel/noise equivalence for each extracted kernel; benchmark changed hot paths, preserve re-exports and downstream results. Create dsp only if justified; a documented direct-reuse/no-new-crate decision must pass the same equivalence checks.",
@@ -945,7 +961,10 @@
       "requirements": [
         "REQ-US-API-01",
         "REQ-COM-API-03",
-        "REQ-COM-API-06"
+        "REQ-COM-API-06",
+        "REQ-DS-API-01",
+        "REQ-COM-API-07",
+        "REQ-COM-API-09"
       ]
     },
     {
@@ -959,7 +978,10 @@
       "requirements": [
         "REQ-US-API-02",
         "REQ-COM-API-04",
-        "REQ-COM-API-05"
+        "REQ-COM-API-05",
+        "REQ-DS-API-01",
+        "REQ-COM-API-08",
+        "REQ-COM-API-09"
       ]
     },
     {
@@ -987,7 +1009,8 @@
       "acceptance": "Validate local manifests/locks/version/pins/notices, examples and package member inventories without silently changing toolchains, two CI entrypoints or native target scope. Preserve caches and generated Python-guide policy; installed/hosted claims require separate actual evidence.",
       "requirements": [
         "REQ-COM-NFR-03",
-        "REQ-DS-DELIVERY-01"
+        "REQ-DS-DELIVERY-01",
+        "REQ-COM-TRACE-02"
       ]
     },
     {
@@ -1024,7 +1047,9 @@
       "architecture": "unified-acceptance-and-final-documentation-gate",
       "acceptance": "Meet all ten user documentation completion conditions: one architecture/requirements/checklist; complete requirement/task evidence; resolving links; skills name actual final modules; no obsolete user-facing branding; docs match implemented support and every newly accepted capability has local integrated evidence.",
       "requirements": [
-        "REQ-COM-DOC-01"
+        "REQ-COM-DOC-01",
+        "REQ-COM-TRACE-01",
+        "REQ-COM-API-09"
       ]
     },
     {
@@ -1040,7 +1065,9 @@
       "requirements": [
         "REQ-COM-NFR-04",
         "REQ-COM-DOC-01",
-        "REQ-DS-DELIVERY-01"
+        "REQ-DS-DELIVERY-01",
+        "REQ-COM-TRACE-01",
+        "REQ-COM-TRACE-02"
       ]
     },
     {
@@ -5956,5 +5983,781 @@
       "runtime_validation": "No new scientific/Qt acceptance; documentation checks only",
       "record": "docs/development/features/unified-backend/validation.md#doc-org-01-functional-documentation-acceptance"
     }
+  },
+  "master_prompt_review": {
+    "source": "docs/development/backend-integration-master-guide.md",
+    "sha256": "3ccc608d2de2f8dc1221276ba25209e6664fd1d53cc8d7e9fbca8ffb9a778af5",
+    "review_baseline": "402106f0b85605e38dbc1aa755b3799e6939b024",
+    "review": "docs/development/features/unified-backend/master-prompt-review.md",
+    "api_matrix": "docs/development/features/high-level-api/compatibility-matrix.md",
+    "requirements": [
+      {
+        "id": "REQ-COM-API-07",
+        "anchor": "req-com-api-07"
+      },
+      {
+        "id": "REQ-COM-API-08",
+        "anchor": "req-com-api-08"
+      },
+      {
+        "id": "REQ-COM-API-09",
+        "anchor": "req-com-api-09"
+      },
+      {
+        "id": "REQ-COM-TRACE-01",
+        "anchor": "req-com-trace-01"
+      },
+      {
+        "id": "REQ-COM-TRACE-02",
+        "anchor": "req-com-trace-02"
+      }
+    ],
+    "clauses": [
+      {
+        "id": "MASTER-TITLE",
+        "heading": "MERLIN \u2014 Unified DOCSIS OFDM/OFDMA Backend Integration",
+        "line": 1,
+        "sha256": "b023677158001d1ae1cf9077fadb1c4b2787d65bcd8aab04a9f51b193b8ea1e1",
+        "requirements": [
+          "REQ-COM-NFR-04",
+          "REQ-DS-API-01",
+          "REQ-DS-UI-01",
+          "REQ-COM-API-07",
+          "REQ-COM-API-08"
+        ],
+        "tasks": [
+          "INT-ACCEPT-01",
+          "INT-REG-01",
+          "INT-RUST-01",
+          "INT-PY-01"
+        ]
+      },
+      {
+        "id": "MASTER-SUBTITLE",
+        "heading": "Master Codex Implementation Prompt",
+        "line": 3,
+        "sha256": "50da2d4f169a3364ee67e96b4782aa843bd85b3044e34f2ce650a0945ac98823",
+        "requirements": [
+          "REQ-COM-NFR-04",
+          "REQ-DS-API-01",
+          "REQ-DS-UI-01",
+          "REQ-COM-API-07",
+          "REQ-COM-API-08"
+        ],
+        "tasks": [
+          "INT-ACCEPT-01",
+          "INT-REG-01",
+          "INT-RUST-01",
+          "INT-PY-01"
+        ]
+      },
+      {
+        "id": "MASTER-ROLE",
+        "heading": "Role",
+        "line": 5,
+        "sha256": "2c0b6fc9c60160c72d33d9c797f1e39265a92fb0de0241e60220e711b17f0ee5",
+        "requirements": [
+          "REQ-COM-NFR-04",
+          "REQ-DS-API-01",
+          "REQ-DS-UI-01",
+          "REQ-COM-API-07",
+          "REQ-COM-API-08"
+        ],
+        "tasks": [
+          "INT-ACCEPT-01",
+          "INT-REG-01",
+          "INT-RUST-01",
+          "INT-PY-01"
+        ]
+      },
+      {
+        "id": "MASTER-1",
+        "heading": "1. Repository and Git requirements",
+        "line": 26,
+        "sha256": "c1572af2d16858bed4aa537406cc9372f0e59f1b7868259e9bc0b9ba8a050573",
+        "requirements": [
+          "REQ-COM-TRACE-01",
+          "REQ-COM-DOC-01",
+          "REQ-COM-NFR-02",
+          "REQ-DS-DELIVERY-01"
+        ],
+        "tasks": [
+          "INT-PLAN-01",
+          "INT-BASE-01",
+          "INT-LICENSE-01",
+          "INT-DOC-02"
+        ]
+      },
+      {
+        "id": "MASTER-1-COMPLETED",
+        "heading": "Existing completed work",
+        "line": 58,
+        "sha256": "dcec6d2c70fe2d176c9c9ce5395ea38ab2a1765fe6779a1874b35e91227d3fb5",
+        "requirements": [
+          "REQ-COM-TRACE-01",
+          "REQ-COM-DOC-01",
+          "REQ-COM-NFR-02",
+          "REQ-DS-DELIVERY-01"
+        ],
+        "tasks": [
+          "INT-PLAN-01",
+          "INT-BASE-01",
+          "INT-LICENSE-01",
+          "INT-DOC-02"
+        ]
+      },
+      {
+        "id": "MASTER-2",
+        "heading": "2. Mandatory additive-first policy",
+        "line": 75,
+        "sha256": "9b910468d1f0f6ac6522c139ba56498fa96f53ce908fca8336cbc49decf2bc3d",
+        "requirements": [
+          "REQ-COM-REUSE-01",
+          "REQ-DS-PHY-01",
+          "REQ-DS-API-01",
+          "REQ-DS-RUN-01"
+        ],
+        "tasks": [
+          "INT-BASE-01",
+          "INT-DSP-01",
+          "INT-REG-01"
+        ]
+      },
+      {
+        "id": "MASTER-3",
+        "heading": "3. Scientific crate architecture",
+        "line": 100,
+        "sha256": "9cf493a5f4589e5113db6f0f4020978c30adb82c00e65670b6cd0d768be09cd1",
+        "requirements": [
+          "REQ-COM-SYS-03",
+          "REQ-COM-REUSE-01",
+          "REQ-COM-NFR-02"
+        ],
+        "tasks": [
+          "INT-REUSE-01",
+          "INT-DSP-01",
+          "INT-LICENSE-01"
+        ]
+      },
+      {
+        "id": "MASTER-4",
+        "heading": "4. Public Rust API \u2014 mandatory direction separation",
+        "line": 153,
+        "sha256": "0b3c4d691f5c35b9b569b3b59f983ba7242fa998c86f25831150f8b259d382fe",
+        "requirements": [
+          "REQ-COM-API-07",
+          "REQ-COM-API-09",
+          "REQ-DS-API-01",
+          "REQ-US-API-01",
+          "REQ-COM-API-03",
+          "REQ-COM-API-06"
+        ],
+        "tasks": [
+          "INT-PLAN-01",
+          "INT-RUST-01"
+        ]
+      },
+      {
+        "id": "MASTER-4-RULE",
+        "heading": "Fundamental API rule",
+        "line": 155,
+        "sha256": "35cca2ef5ae08f76796fb8095e8d2a5cfb3b9cbe6d5a3afb11376a216eb004af",
+        "requirements": [
+          "REQ-COM-API-07",
+          "REQ-COM-API-09",
+          "REQ-DS-API-01",
+          "REQ-US-API-01",
+          "REQ-COM-API-03",
+          "REQ-COM-API-06"
+        ],
+        "tasks": [
+          "INT-PLAN-01",
+          "INT-RUST-01"
+        ]
+      },
+      {
+        "id": "MASTER-4-1",
+        "heading": "4.1 Downstream API",
+        "line": 198,
+        "sha256": "64d7b48248576f23cc65cae7f9d4835cdc1696e24929c88849646e80d7ab78d4",
+        "requirements": [
+          "REQ-COM-API-07",
+          "REQ-COM-API-09",
+          "REQ-DS-API-01",
+          "REQ-US-API-01",
+          "REQ-COM-API-03",
+          "REQ-COM-API-06"
+        ],
+        "tasks": [
+          "INT-PLAN-01",
+          "INT-RUST-01"
+        ]
+      },
+      {
+        "id": "MASTER-4-2",
+        "heading": "4.2 Upstream API",
+        "line": 237,
+        "sha256": "427a1d964b07544bdab98a16cfa0a5b35472a77683af2b6b6a0de17e60e244b6",
+        "requirements": [
+          "REQ-COM-API-07",
+          "REQ-COM-API-09",
+          "REQ-DS-API-01",
+          "REQ-US-API-01",
+          "REQ-COM-API-03",
+          "REQ-COM-API-06"
+        ],
+        "tasks": [
+          "INT-PLAN-01",
+          "INT-RUST-01"
+        ]
+      },
+      {
+        "id": "MASTER-4-3",
+        "heading": "4.3 Common API contracts",
+        "line": 276,
+        "sha256": "eee769a21360fe52403b3ddc5f2235e1dd2a79d33eeb175fbb9959e5ad79dc41",
+        "requirements": [
+          "REQ-COM-API-07",
+          "REQ-COM-API-09",
+          "REQ-DS-API-01",
+          "REQ-US-API-01",
+          "REQ-COM-API-03",
+          "REQ-COM-API-06"
+        ],
+        "tasks": [
+          "INT-PLAN-01",
+          "INT-RUST-01"
+        ]
+      },
+      {
+        "id": "MASTER-4-4",
+        "heading": "4.4 Cargo namespace implementation",
+        "line": 298,
+        "sha256": "fc4a91eceab68b343f00c94a060c9996e5c44b7c649d6798630ad4c9f2bcf90d",
+        "requirements": [
+          "REQ-COM-API-07",
+          "REQ-COM-API-09",
+          "REQ-DS-API-01",
+          "REQ-US-API-01",
+          "REQ-COM-API-03",
+          "REQ-COM-API-06"
+        ],
+        "tasks": [
+          "INT-PLAN-01",
+          "INT-RUST-01"
+        ]
+      },
+      {
+        "id": "MASTER-5",
+        "heading": "5. Rust API lifecycle",
+        "line": 320,
+        "sha256": "3c99d92d960aac48ec44934c75cffc85948d3daa2b641029da835ee65df95d1c",
+        "requirements": [
+          "REQ-US-API-01",
+          "REQ-COM-LIFE-01",
+          "REQ-COM-LIFE-02",
+          "REQ-COM-LIFE-03",
+          "REQ-COM-API-03"
+        ],
+        "tasks": [
+          "INT-US-LOOP-01",
+          "INT-RUST-01"
+        ]
+      },
+      {
+        "id": "MASTER-6",
+        "heading": "6. Python API \u2014 mirror Rust direction separation",
+        "line": 362,
+        "sha256": "63c88a9c459f34284801e6068f71459b69bde219b4c5251ed62623eeac8d72ba",
+        "requirements": [
+          "REQ-COM-API-08",
+          "REQ-COM-API-09",
+          "REQ-US-API-02",
+          "REQ-COM-API-03",
+          "REQ-COM-API-04",
+          "REQ-COM-API-05",
+          "REQ-DS-API-01"
+        ],
+        "tasks": [
+          "INT-PY-01",
+          "INT-RUST-01"
+        ]
+      },
+      {
+        "id": "MASTER-6-1",
+        "heading": "6.1 Python package architecture",
+        "line": 387,
+        "sha256": "430c981b32e9eb512734e546eac843f3ae2848c3d2486dd4646195fc717e284c",
+        "requirements": [
+          "REQ-COM-API-08",
+          "REQ-COM-API-09",
+          "REQ-US-API-02",
+          "REQ-COM-API-03",
+          "REQ-COM-API-04",
+          "REQ-COM-API-05",
+          "REQ-DS-API-01"
+        ],
+        "tasks": [
+          "INT-PY-01",
+          "INT-RUST-01"
+        ]
+      },
+      {
+        "id": "MASTER-6-2",
+        "heading": "6.2 Python responsibilities",
+        "line": 405,
+        "sha256": "59e3283c5adcf35576925a50c55735ab3ba62fb8b1bc966847f00f72c032e0f1",
+        "requirements": [
+          "REQ-COM-API-08",
+          "REQ-COM-API-09",
+          "REQ-US-API-02",
+          "REQ-COM-API-03",
+          "REQ-COM-API-04",
+          "REQ-COM-API-05",
+          "REQ-DS-API-01"
+        ],
+        "tasks": [
+          "INT-PY-01",
+          "INT-RUST-01"
+        ]
+      },
+      {
+        "id": "MASTER-6-3",
+        "heading": "6.3 Rust/Python parity",
+        "line": 421,
+        "sha256": "011a4d764d49893bfc718c2706f4cc3c6c14da0809968dd4e73a78c8945f7991",
+        "requirements": [
+          "REQ-COM-API-08",
+          "REQ-COM-API-09",
+          "REQ-US-API-02",
+          "REQ-COM-API-03",
+          "REQ-COM-API-04",
+          "REQ-COM-API-05",
+          "REQ-DS-API-01"
+        ],
+        "tasks": [
+          "INT-PY-01",
+          "INT-RUST-01"
+        ]
+      },
+      {
+        "id": "MASTER-7",
+        "heading": "7. Unified API compatibility matrix",
+        "line": 442,
+        "sha256": "5bce280eaa49586858a7787ec3618455f4f60a0402f2abb1dde94b7db588b36c",
+        "requirements": [
+          "REQ-COM-API-09"
+        ],
+        "tasks": [
+          "INT-PLAN-01",
+          "INT-RUST-01",
+          "INT-PY-01"
+        ]
+      },
+      {
+        "id": "MASTER-8",
+        "heading": "8. Mandatory implementation traceability",
+        "line": 474,
+        "sha256": "46a6029f7bb694f33553096ee9e99fa8a280e9a51a61a44d17677d18b9d2b741",
+        "requirements": [
+          "REQ-COM-TRACE-01",
+          "REQ-COM-DOC-01"
+        ],
+        "tasks": [
+          "INT-PLAN-01",
+          "INT-DOC-02",
+          "INT-ACCEPT-01"
+        ]
+      },
+      {
+        "id": "MASTER-9",
+        "heading": "9. Automated traceability validation",
+        "line": 523,
+        "sha256": "95800a1df94c06aaddd15b7eb50a63c86256e57d3ac1ce4bbcad3d69cce48a18",
+        "requirements": [
+          "REQ-COM-TRACE-02",
+          "REQ-COM-TRACE-01"
+        ],
+        "tasks": [
+          "INT-PLAN-01",
+          "INT-TOOLS-01",
+          "INT-ACCEPT-01"
+        ]
+      },
+      {
+        "id": "MASTER-10",
+        "heading": "10. Shared DSP integration",
+        "line": 554,
+        "sha256": "3030df9c30c5b043e758a64501218b0e87383e863e786b9ce70b0d9a66f07b55",
+        "requirements": [
+          "REQ-COM-REUSE-01",
+          "REQ-COM-SYS-03"
+        ],
+        "tasks": [
+          "INT-DSP-01",
+          "INT-REUSE-01"
+        ]
+      },
+      {
+        "id": "MASTER-11",
+        "heading": "11. FEC integration",
+        "line": 592,
+        "sha256": "1a623ee1c6aa5f851509b0b620be302bea5fe3a3edac1d07735c9eb26c725523",
+        "requirements": [
+          "REQ-US-TX-02",
+          "REQ-US-RX-08",
+          "REQ-DS-FEC-01",
+          "REQ-COM-SYS-05",
+          "REQ-COM-REUSE-01"
+        ],
+        "tasks": [
+          "INT-FEC-01",
+          "INT-REG-01"
+        ]
+      },
+      {
+        "id": "MASTER-11-DOWNSTREAM",
+        "heading": "Downstream",
+        "line": 600,
+        "sha256": "21bc8fc19cced731c3de97f6cb1ace413369eb752257fea1be53888e928ccff9",
+        "requirements": [
+          "REQ-US-TX-02",
+          "REQ-US-RX-08",
+          "REQ-DS-FEC-01",
+          "REQ-COM-SYS-05",
+          "REQ-COM-REUSE-01"
+        ],
+        "tasks": [
+          "INT-FEC-01",
+          "INT-REG-01"
+        ]
+      },
+      {
+        "id": "MASTER-11-UPSTREAM",
+        "heading": "Upstream",
+        "line": 607,
+        "sha256": "2a30915a84e3ee735a9ecabd3352e0526feab0cc16b572a427fe0f221d7cfe15",
+        "requirements": [
+          "REQ-US-TX-02",
+          "REQ-US-RX-08",
+          "REQ-DS-FEC-01",
+          "REQ-COM-SYS-05",
+          "REQ-COM-REUSE-01"
+        ],
+        "tasks": [
+          "INT-FEC-01",
+          "INT-REG-01"
+        ]
+      },
+      {
+        "id": "MASTER-12",
+        "heading": "12. Upstream OFDMA backend",
+        "line": 622,
+        "sha256": "666036d2cdce52473a787c76f998e85229cc1443e45654eead7e73f223dca4b8",
+        "requirements": [
+          "REQ-US-CFG-01",
+          "REQ-US-CFG-02",
+          "REQ-US-CFG-03",
+          "REQ-US-CFG-04",
+          "REQ-US-CFG-05",
+          "REQ-US-CFG-06",
+          "REQ-US-PRBS-01",
+          "REQ-US-PRBS-02",
+          "REQ-US-PRBS-03",
+          "REQ-US-PRBS-04",
+          "REQ-US-TX-01",
+          "REQ-US-TX-03",
+          "REQ-US-TX-04",
+          "REQ-US-TX-05",
+          "REQ-US-TX-06",
+          "REQ-US-TX-07",
+          "REQ-US-TX-08",
+          "REQ-US-CH-01",
+          "REQ-US-CH-02",
+          "REQ-US-CH-03",
+          "REQ-US-CH-04",
+          "REQ-US-CH-05",
+          "REQ-US-CH-06",
+          "REQ-US-RX-01",
+          "REQ-US-RX-02",
+          "REQ-US-RX-03",
+          "REQ-US-RX-04",
+          "REQ-US-RX-05",
+          "REQ-US-RX-06",
+          "REQ-US-RX-07",
+          "REQ-US-RX-09",
+          "REQ-US-SYS-01",
+          "REQ-US-SYS-02",
+          "REQ-US-SYS-04",
+          "REQ-COM-OBS-01",
+          "REQ-COM-OBS-02",
+          "REQ-COM-LIFE-01",
+          "REQ-COM-LIFE-02",
+          "REQ-COM-LIFE-03",
+          "REQ-COM-NFR-01",
+          "REQ-COM-SYS-05",
+          "REQ-US-TX-02",
+          "REQ-US-RX-08",
+          "REQ-DS-FEC-01",
+          "REQ-COM-REUSE-01",
+          "REQ-US-OBS-03",
+          "REQ-US-OBS-04"
+        ],
+        "tasks": [
+          "INT-US-CONFIG-01",
+          "INT-US-TX-01",
+          "INT-US-CH-01",
+          "INT-US-RX-01",
+          "INT-US-LOOP-01",
+          "INT-FEC-01",
+          "INT-DEFER-01"
+        ]
+      },
+      {
+        "id": "MASTER-13",
+        "heading": "13. PNM integration",
+        "line": 654,
+        "sha256": "d8baf8ee8a35a0c1f3c6d0b286efe33cb0b9107d894552d09be705d030114a79",
+        "requirements": [
+          "REQ-US-PNM-01",
+          "REQ-US-PNM-02",
+          "REQ-US-PNM-03",
+          "REQ-US-PNM-04",
+          "REQ-DS-INPUT-01",
+          "REQ-COM-API-05"
+        ],
+        "tasks": [
+          "INT-PNM-01",
+          "INT-PNM-02",
+          "INT-REG-01",
+          "INT-PY-01"
+        ]
+      },
+      {
+        "id": "MASTER-14",
+        "heading": "14. Unified CLI",
+        "line": 689,
+        "sha256": "953ed333cfc1d4cb80f4e5a5f8b51570106a6796038a74711b1db22b97c34146",
+        "requirements": [
+          "REQ-COM-IDENTITY-01",
+          "REQ-DS-API-01"
+        ],
+        "tasks": [
+          "INT-CLI-01"
+        ]
+      },
+      {
+        "id": "MASTER-15",
+        "heading": "15. Backend validation requirements",
+        "line": 705,
+        "sha256": "d9e164553ebf6fcc10d40f60dfb86b2bd58f36addd6b69be7a463d46607924b1",
+        "requirements": [
+          "REQ-COM-TRACE-01",
+          "REQ-COM-NFR-04",
+          "REQ-COM-DOC-01"
+        ],
+        "tasks": [
+          "INT-REG-01",
+          "INT-ACCEPT-01"
+        ]
+      },
+      {
+        "id": "MASTER-15-DOWNSTREAM",
+        "heading": "Downstream",
+        "line": 709,
+        "sha256": "252823ff4fdd50a4198ac53c8cc10ec1729b0e775c62df6f1bea5c7ff3ac5237",
+        "requirements": [
+          "REQ-DS-FEC-01",
+          "REQ-DS-PHY-01",
+          "REQ-DS-RUN-01",
+          "REQ-DS-INPUT-01",
+          "REQ-DS-API-01",
+          "REQ-DS-UI-01"
+        ],
+        "tasks": [
+          "INT-REG-01"
+        ]
+      },
+      {
+        "id": "MASTER-15-UPSTREAM",
+        "heading": "Upstream",
+        "line": 725,
+        "sha256": "55367f9d5015d4373225252399ce8651bb325eb9fb9b7e284cfbf212d104cc55",
+        "requirements": [
+          "REQ-US-CFG-01",
+          "REQ-US-CFG-02",
+          "REQ-US-CFG-03",
+          "REQ-US-CFG-04",
+          "REQ-US-CFG-05",
+          "REQ-US-CFG-06",
+          "REQ-US-PRBS-01",
+          "REQ-US-PRBS-02",
+          "REQ-US-PRBS-03",
+          "REQ-US-PRBS-04",
+          "REQ-US-TX-01",
+          "REQ-US-TX-03",
+          "REQ-US-TX-04",
+          "REQ-US-TX-05",
+          "REQ-US-TX-06",
+          "REQ-US-TX-07",
+          "REQ-US-TX-08",
+          "REQ-US-CH-01",
+          "REQ-US-CH-02",
+          "REQ-US-CH-03",
+          "REQ-US-CH-04",
+          "REQ-US-CH-05",
+          "REQ-US-CH-06",
+          "REQ-US-RX-01",
+          "REQ-US-RX-02",
+          "REQ-US-RX-03",
+          "REQ-US-RX-04",
+          "REQ-US-RX-05",
+          "REQ-US-RX-06",
+          "REQ-US-RX-07",
+          "REQ-US-RX-09",
+          "REQ-US-SYS-01",
+          "REQ-US-SYS-02",
+          "REQ-US-SYS-04",
+          "REQ-COM-OBS-01",
+          "REQ-COM-OBS-02",
+          "REQ-COM-LIFE-01",
+          "REQ-COM-LIFE-02",
+          "REQ-COM-LIFE-03",
+          "REQ-COM-NFR-01",
+          "REQ-US-PNM-01",
+          "REQ-US-PNM-02",
+          "REQ-US-PNM-03",
+          "REQ-US-PNM-04",
+          "REQ-COM-SYS-05",
+          "REQ-US-TX-02",
+          "REQ-US-RX-08",
+          "REQ-DS-FEC-01",
+          "REQ-COM-REUSE-01"
+        ],
+        "tasks": [
+          "INT-US-CONFIG-01",
+          "INT-US-TX-01",
+          "INT-US-CH-01",
+          "INT-US-RX-01",
+          "INT-US-LOOP-01",
+          "INT-PNM-02",
+          "INT-FEC-01"
+        ]
+      },
+      {
+        "id": "MASTER-15-API",
+        "heading": "API",
+        "line": 743,
+        "sha256": "58048432050fa8bfc4d04f42fa8780121b44a70157e90f0b9593947770189cd2",
+        "requirements": [
+          "REQ-COM-API-07",
+          "REQ-COM-API-08",
+          "REQ-COM-API-09",
+          "REQ-COM-API-03",
+          "REQ-COM-API-04",
+          "REQ-COM-API-05",
+          "REQ-COM-API-06",
+          "REQ-DS-API-01",
+          "REQ-DS-DELIVERY-01"
+        ],
+        "tasks": [
+          "INT-RUST-01",
+          "INT-PY-01",
+          "INT-REG-01",
+          "INT-TOOLS-01"
+        ]
+      },
+      {
+        "id": "MASTER-16",
+        "heading": "16. Backend-only completion boundary",
+        "line": 761,
+        "sha256": "f36eb15c0050d52371e605bc7933d65ed9cc37430d9372f9a3cffa8ac6488640",
+        "requirements": [
+          "REQ-COM-NFR-04",
+          "REQ-COM-TRACE-01",
+          "REQ-DS-UI-01",
+          "REQ-COM-API-07",
+          "REQ-COM-API-08"
+        ],
+        "tasks": [
+          "INT-ACCEPT-01",
+          "INT-REG-01",
+          "INT-RUST-01",
+          "INT-PY-01"
+        ]
+      },
+      {
+        "id": "MASTER-17",
+        "heading": "17. Documentation updates",
+        "line": 788,
+        "sha256": "ad679765b5692e8429b98f116216a0e84ed8f0d7384b60a6b832039b7f8a67b9",
+        "requirements": [
+          "REQ-COM-DOC-01",
+          "REQ-COM-TRACE-01",
+          "REQ-COM-API-09"
+        ],
+        "tasks": [
+          "INT-DOC-02"
+        ]
+      },
+      {
+        "id": "MASTER-18",
+        "heading": "18. Required workflow",
+        "line": 816,
+        "sha256": "35c24f1621d7c572a218cd989b84afc087577317c8c22030a170020d62482904",
+        "requirements": [
+          "REQ-COM-TRACE-01",
+          "REQ-COM-API-07",
+          "REQ-COM-API-08",
+          "REQ-COM-DOC-01",
+          "REQ-COM-REUSE-01"
+        ],
+        "tasks": [
+          "INT-PLAN-01",
+          "INT-DSP-01",
+          "INT-US-CONFIG-01",
+          "INT-US-LOOP-01",
+          "INT-RUST-01",
+          "INT-PY-01",
+          "INT-DOC-02"
+        ]
+      },
+      {
+        "id": "MASTER-19",
+        "heading": "19. Required initial Codex response",
+        "line": 845,
+        "sha256": "f0c1469f46010d45d87432a0178cac2abcc818c9695207ffa1f001896dcf8be1",
+        "requirements": [
+          "REQ-COM-API-07",
+          "REQ-COM-API-08",
+          "REQ-COM-API-09",
+          "REQ-COM-TRACE-01"
+        ],
+        "tasks": [
+          "INT-PLAN-01",
+          "INT-RUST-01",
+          "INT-PY-01"
+        ]
+      },
+      {
+        "id": "MASTER-FINAL",
+        "heading": "Final objective",
+        "line": 871,
+        "sha256": "dc59f2f57c0c96ea990f97a9a93d7ee75c9fa291135afa9631b8b814c26e81bc",
+        "requirements": [
+          "REQ-COM-NFR-04",
+          "REQ-DS-API-01",
+          "REQ-DS-UI-01",
+          "REQ-COM-API-07",
+          "REQ-COM-API-08"
+        ],
+        "tasks": [
+          "INT-ACCEPT-01",
+          "INT-REG-01",
+          "INT-RUST-01",
+          "INT-PY-01"
+        ]
+      }
+    ]
   }
 }

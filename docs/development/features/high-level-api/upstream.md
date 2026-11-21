@@ -13,6 +13,17 @@ Rust/Python APIs, imports, schemas, examples and saved-workbench contracts remai
 implemented within their recorded supported scope. Upstream Rust composition,
 measured operations and native wrappers remain planned at their linked delivery gates.
 
+The [current backend master review](../unified-backend/master-prompt-review.md)
+adds explicit direction namespaces, package-import acceptance and a fourteen-field
+implementation evidence contract. The single [API compatibility matrix](compatibility-matrix.md)
+owns operation mapping and the namespace proposal; it is initially incomplete for
+the future upstream API. [REQ-COM-API-07](../../../requirements.md#req-com-api-07),
+[REQ-COM-API-08](../../../requirements.md#req-com-api-08) and
+[REQ-COM-API-09](../../../requirements.md#req-com-api-09) refine the existing
+contracts. [INT-PLAN-01](../../checklist.md#int-plan-01) accepts planning only;
+namespace approval precedes compatibility-sensitive implementation. Final delivery
+stays with INT-RUST-01 and INT-PY-01 below.
+
 ## Dependency and operation ownership
 
 Core PHY modules own typed validation, scientific state and results. The planned

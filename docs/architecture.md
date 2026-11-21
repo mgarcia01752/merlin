@@ -76,6 +76,21 @@ DS-REQ-01 closes documentation backfill only. DS-GAP-01..03 now have
 All applicable unified-workspace gates must close before final backend acceptance. Broader
 native/installed/hosted checks retain their existing separate task owners.
 
+The [current backend master prompt](development/backend-integration-master-guide.md)
+is preserved verbatim alongside the earlier integration guide. Its
+[clause review](development/features/unified-backend/master-prompt-review.md)
+maps every heading to this architecture, canonical requirements and delivery gates.
+[INT-PLAN-01](development/checklist.md#int-plan-01) accepts this preflight only;
+it does not accept new runtime capabilities or namespace decisions. New explicit
+contracts are [REQ-COM-API-07](requirements.md#req-com-api-07),
+[REQ-COM-API-08](requirements.md#req-com-api-08),
+[REQ-COM-API-09](requirements.md#req-com-api-09),
+[REQ-COM-TRACE-01](requirements.md#req-com-trace-01) and
+[REQ-COM-TRACE-02](requirements.md#req-com-trace-02).
+Implementation records must carry all fourteen evidence fields described in the
+review. Existing historical acceptance is retained with its original evidence
+precision; missing candidate/test/command details remain gaps, never invented passes.
+
 ## Unified backend integration
 
 Delivery gates: [INT-DOC-01](development/checklist.md#int-doc-01).
@@ -540,6 +555,17 @@ not force one giant configuration or rename downstream exports. Final public
 names/signatures require the INT-RUST-01 compatibility review before implementation.
 A new universal controller/umbrella crate is not an acceptance prerequisite.
 
+Explicit downstream/upstream Rust namespaces are now required by
+[REQ-COM-API-07](requirements.md#req-com-api-07), while the existing Cargo package
+`docsis-ofdm-fec` and `docsis_ofdm_fec::api` exports remain compatible.
+The [namespace proposal and operation matrix](development/features/high-level-api/compatibility-matrix.md)
+distinguish current symbols, proposed aliases and unresolved common leaf ownership.
+The logical `merlin` tree in the prompt is not evidence of an existing Rust crate.
+Present the final namespace-to-crate mapping for approval before any
+compatibility-sensitive export change, including initial upstream API work.
+INT-RUST-01 owns final convergence; upstream typed sessions still accompany stages
+and reach real closed-loop acceptance first. Do not skip those dependencies.
+
 Planned direct Rust contract/parity acceptance is
 `crates/ofdma/tests/api_parity.rs`, alongside `crates/ofdma/tests/closed_loop.rs`.
 
@@ -552,6 +578,15 @@ and pause semantics aligned. No scientific calculations or separate schemas in
 Python. Preserve current saved-workbench schema/recipe behavior; introducing an
 upstream document needs explicit version/migration and both language consumers.
 
+[REQ-COM-API-08](requirements.md#req-com-api-08) adds standard Python imports
+`from merlin.downstream import Simulation` and
+`from merlin.upstream import Simulation`; neither is implemented yet.
+Retain root `merlin.Simulation`/`merlin.Merlin` downstream compatibility and the
+existing distribution. Evaluate real packages versus registered native submodules
+through discovery, typing, wheel and installed Python 3.10+ checks; adding module
+attributes alone cannot satisfy the import contract.
+[REQ-COM-API-09](requirements.md#req-com-api-09) owns the single compatibility matrix.
+
 Add upstream CLI dispatch under `crates/cli/src/commands/upstream.rs` and
 `crates/cli/tests/upstream.rs`; existing commands/output and executable stay intact.
 Existing [native parity tests](../bindings/python/tests/test_parity.py) and
@@ -563,6 +598,14 @@ interleaver/overlap/update/receiver state at defined safe boundaries.
 ### Unified normative evidence and exclusions
 
 Delivery gates: [INT-TOOLS-01](development/checklist.md#int-tools-01), [INT-DEFER-01](development/checklist.md#int-defer-01).
+
+[REQ-COM-TRACE-02](requirements.md#req-com-trace-02) extends the existing
+`tools/validation/integration_traceability.py` and functional-document validator.
+Current prompt coverage/link checks are structural evidence only. The
+[automation coverage register](development/features/unified-backend/master-prompt-review.md#automated-validation-gaps)
+names remaining symbol, exact-test, export and executed-evidence gates; INT-TOOLS-01
+cannot close until those checks cover the integrated backend. Indexes support
+the official checklist and must not assign a second completion state.
 
 Preserve PHY 3.1 I20 §7.4.1 (processing), §7.4.3/Table8 (FEC), §7.4.4–7
 (randomization/mapping/interleaving), §7.4.9–10 (transform/prefix/window),

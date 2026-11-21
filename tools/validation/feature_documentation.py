@@ -295,6 +295,7 @@ def audit(root, migration=False):
     groups = ['requirements', 'api_requirements', 'feature_scoped_requirements', 'engineering_requirements', 'retained_named_requirements', 'broad_preservation_requirements']
     identities = [(r['id'], r['anchor']) for group in groups for r in backfill[group]]
     identities += [(r['id'], r['id'].lower()) for r in inventory['source_requirements']]
+    identities += [(r['id'], r['anchor']) for r in inventory.get('master_prompt_review', {}).get('requirements', [])]
     requirement_anchors = dict(identities)
     if len(requirement_anchors) != len(identities):
         errors.append('Duplicate canonical requirement ID')

@@ -5,6 +5,8 @@
 #
 """Check integration requirement and architecture links in both directions."""
 import argparse
+import ast
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -63,6 +65,111 @@ def _has_link(text, source, destination, fragment):
         if resolved == destination.resolve() and unquote(url.fragment) == fragment:
             return True
     return False
+
+
+def matrix_evidence_errors(root, path):
+    """Resolve exact seed-matrix test cases without claiming they were executed.
+
+    Args:
+        root: Repository containing test source files.
+        path: Repository-relative operation matrix.
+    Returns:
+        Diagnostics for missing Rust cases or Python class/method declarations.
+        This is source discovery only, not native API or scientific acceptance.
+    """
+    errors = []
+    text = (root / path).read_text(encoding="utf-8")
+    # Capture exact backtick-qualified cases, e.g. `tests/a.py::Suite.test_run`.
+    # Group 1 is a relative .rs/.py file; group 2 is a case with optional class.
+    for name, case in re.findall(r"`([\w/.-]+\.(?:rs|py))::([\w.]+)`", text):
+        source = root / name
+        valid = False
+        if source.is_file():
+            body = source.read_text(encoding="utf-8")
+            if source.suffix == ".py":
+                tree = ast.parse(body)
+                for item in tree.body:
+                    if isinstance(item, ast.ClassDef):
+                        valid |= any(isinstance(method, ast.FunctionDef)
+                                     and f"{item.name}.{method.name}" == case
+                                     for method in item.body)
+            else:
+                valid = bool(re.search(r"#\[test\]\s*fn " + re.escape(case) + r"\(", body))
+        if not valid:
+            errors.append(f"API matrix: missing exact test {name}::{case}")
+    return errors
+
+
+def master_prompt_errors(root, inventory):
+    """Check every retained prompt section has a nonempty canonical delivery chain.
+
+    Args:
+        root: Repository directory; inspection never executes backend work.
+        inventory: Existing integration inventory with optional master review.
+    Returns:
+        Structural diagnostics. Absence of the optional review preserves older
+        minimal fixtures; the real repository declares it explicitly.
+    """
+    review = inventory.get("master_prompt_review")
+    if review is None:
+        if any(task["id"] == "INT-PLAN-01" for task in inventory["integration_tasks"]):
+            return ["INT-PLAN-01: missing master prompt review inventory"]
+        return []
+    errors = []
+    for field in ["source", "review", "api_matrix"]:
+        if not (root / review[field]).is_file():
+            errors.append(f"Master prompt: missing {field} file")
+    if errors:
+        return errors
+    source = (root / review["source"]).read_bytes()
+    if hashlib.sha256(source).hexdigest() != review["sha256"]:
+        errors.append("Master prompt: retained source hash differs")
+    text = source.decode("utf-8")
+    # Match each actual source heading, including subordinate clauses. The first
+    # group is heading depth, the second its title; section hashes include text
+    # through the next heading so deleting a mandatory bullet is detected too.
+    headings = list(re.finditer(r"^(#{1,3}) (.+)$", text, re.MULTILINE))
+    clauses = review["clauses"]
+    identifiers = [clause["id"] for clause in clauses]
+    if len(clauses) != len(headings) or len(set(identifiers)) != len(identifiers):
+        errors.append("Master prompt: missing or duplicate clause coverage")
+    tasks = {task["id"]: task for task in inventory["integration_tasks"]}
+    requirements = (root / REQUIREMENTS).read_text(encoding="utf-8")
+    document = (root / review["review"]).read_text(encoding="utf-8")
+    blocks = re.split(r"(?=^\| <a id=)", document, flags=re.MULTILINE)
+    for index, clause in enumerate(clauses):
+        identifier = clause["id"]
+        if index < len(headings):
+            heading = headings[index]
+            end = headings[index + 1].start() if index + 1 < len(headings) else len(text)
+            digest = hashlib.sha256(text[heading.start():end].encode()).hexdigest()
+            line = text[:heading.start()].count("\n") + 1
+            if (clause["heading"], clause["line"], clause["sha256"]) != (heading[2], line, digest):
+                errors.append(f"{identifier}: source clause/line/hash differs")
+        marker = f'<a id="{identifier.lower()}"></a>'
+        block = next((part.splitlines()[0] for part in blocks if marker in part), "")
+        if document.count(marker) != 1:
+            errors.append(f"{identifier}: missing or duplicate review anchor")
+        if not clause["requirements"] or not clause["tasks"]:
+            errors.append(f"{identifier}: empty requirement/task mapping")
+        delivered = set()
+        for task_id in clause["tasks"]:
+            task = tasks.get(task_id)
+            if task is None:
+                errors.append(f"{identifier}: unknown delivery task {task_id}")
+                continue
+            delivered.update(task["requirements"])
+            if not _has_link(block, root / review["review"], root / CHECKLIST, task_id.lower()):
+                errors.append(f"{identifier}: missing task link {task_id}")
+            if not _has_link(block, root / review["review"], root / ARCHITECTURE, task["architecture"]):
+                errors.append(f"{identifier}: missing architecture link for {task_id}")
+        for requirement in clause["requirements"]:
+            if (_requirement_block(requirements, requirement) is None
+                    or requirement not in delivered
+                    or not _has_link(block, root / review["review"], root / REQUIREMENTS, requirement.lower())):
+                errors.append(f"{identifier}: invalid requirement delivery {requirement}")
+    errors.extend(matrix_evidence_errors(root, Path(review["api_matrix"])))
+    return errors
 
 
 def audit(root):
@@ -126,6 +233,7 @@ def audit(root):
         marker = f'<a id="{identifier.lower()}"></a>'
         if checklist.count(marker) != 1:
             errors.append(f"{identifier}: missing or duplicate stable task anchor")
+    errors.extend(master_prompt_errors(root, inventory))
     return errors
 
 

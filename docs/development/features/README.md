@@ -17,6 +17,12 @@ New functional owners: [FEC](fec/design.md), [DSP](signal-processing/design.md),
 [RX](ofdma/receiver.md), [channel](ofdma/channel.md), [Pre-Eq](ofdma/pre-equalization.md),
 [upstream PNM](pnm-measurement-inputs/upstream.md) and [paired APIs](high-level-api/upstream.md).
 
+The [backend master prompt review](unified-backend/master-prompt-review.md) maps
+the current instruction source to canonical requirements and tasks. Its
+[API compatibility matrix](high-level-api/compatibility-matrix.md) records current
+session operations and proposed namespaces; final operation/runtime coverage remains
+with the open API and backend acceptance gates.
+
 Future upstream Qt design remains deferred; existing downstream workbench ownership
 is retained. The [source UI design](unified-backend/references/extension-designs-ui.md)
 is historical guidance, not authorization to create a second application.

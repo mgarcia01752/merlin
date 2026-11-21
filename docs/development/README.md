@@ -28,6 +28,14 @@ preserves the full user-supplied master prompt for backend integration planning.
 It defines intended scope, source pin, reuse audit, compatibility requirements,
 phases and acceptance targets; it does not claim completed integration.
 
+The [current backend master prompt](backend-integration-master-guide.md) is also
+preserved in full. Its [preflight and clause map](features/unified-backend/master-prompt-review.md)
+link every heading to architecture, requirements and official tasks. The
+[API compatibility matrix](features/high-level-api/compatibility-matrix.md) separates
+inspected downstream exports from proposed namespaces and pending runtime evidence.
+Both guides are instruction sources; the canonical documents retain design,
+requirements and status authority. No upstream Qt work is part of this backend gate.
+
 The [upstream skill migration](features/upstream-skills/design.md) records the
 pinned source-skill inventory, local destinations and retained overrides, with
 [guidance validation](features/upstream-skills/validation.md).

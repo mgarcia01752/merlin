@@ -211,11 +211,20 @@ architecture owner identifies concrete implementation/test paths and disposition
   Evidence: [MERLIN codec and regression results](features/unified-backend/fec-validation.md).
   Feature records: [fec/design.md](features/fec/design.md), [ofdma/transmitter.md](features/ofdma/transmitter.md), [ofdma/receiver.md](features/ofdma/receiver.md).
 
+<a id="int-plan-01"></a>
+- [x] **INT-PLAN-01** Reconcile the current backend master prompt before code migration.
+  Requirements: [REQ-COM-API-07](../requirements.md#req-com-api-07), [REQ-COM-API-08](../requirements.md#req-com-api-08), [REQ-COM-API-09](../requirements.md#req-com-api-09), [REQ-COM-TRACE-01](../requirements.md#req-com-trace-01), [REQ-COM-TRACE-02](../requirements.md#req-com-trace-02).
+  Architecture/owners/tests: [traceability ownership](../architecture.md#requirements-and-historical-evidence-ownership).
+  Depends on: DOC-ORG-01, INT-FEC-01.
+  Acceptance: Preserve the complete new prompt; map every heading to canonical requirements, architecture and tasks; inspect existing Rust/Python exports; record a namespace proposal, operation-matrix coverage gaps, fourteen-field evidence contract and automation gaps. Verify links, dependencies, original task history and prompt integrity. This accepts preflight documentation only; namespace approval and runtime/API delivery remain open.
+  Feature records: [master prompt review](features/unified-backend/master-prompt-review.md), [API compatibility matrix](features/high-level-api/compatibility-matrix.md).
+  Evidence: [preflight verification](features/unified-backend/master-prompt-review.md#preflight-verification).
+
 <a id="int-dsp-01"></a>
 - [ ] **INT-DSP-01** Consolidate proven common numerical kernels.
   Requirements: [REQ-COM-REUSE-01](../requirements.md#req-com-reuse-01).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-shared-dsp-and-fec).
-  Depends on: INT-FEC-01, INT-REUSE-01.
+  Depends on: INT-FEC-01, INT-REUSE-01, INT-PLAN-01.
   Acceptance: Prove FFT/bin/normalization, QAM/LLR, PRBS continuity, channel/noise equivalence for each extracted kernel; benchmark changed hot paths, preserve re-exports and downstream results. Create dsp only if justified; a documented direct-reuse/no-new-crate decision must pass the same equivalence checks.
   Feature records: [fec/design.md](features/fec/design.md), [signal-processing/design.md](features/signal-processing/design.md).
 
@@ -225,6 +234,7 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-upstream-configuration-and-source).
   Depends on: INT-DSP-01.
   Acceptance: Local module registration, supported/domain-valid distinctions, complete source-field coverage and typed idle session foundation pass. Independent grant capacities, all three codeword families, fill/pad/source bookkeeping, PRBS phase/period/seed/range and rejection atomicity pass before waveform use.
+  Before changing public exports: obtain namespace-to-crate mapping approval under [master §4.4/§19](features/high-level-api/compatibility-matrix.md#namespace-proposal-for-review); the preflight does not grant it.
   Feature records: [ofdma/configuration.md](features/ofdma/configuration.md).
 
 <a id="int-us-tx-01"></a>
@@ -277,18 +287,18 @@ architecture owner identifies concrete implementation/test paths and disposition
 
 <a id="int-rust-01"></a>
 - [ ] **INT-RUST-01** Converge typed Rust APIs without downstream breakage.
-  Requirements: [REQ-US-API-01](../requirements.md#req-us-api-01), [REQ-COM-API-03](../requirements.md#req-com-api-03), [REQ-COM-API-06](../requirements.md#req-com-api-06).
+  Requirements: [REQ-US-API-01](../requirements.md#req-us-api-01), [REQ-COM-API-03](../requirements.md#req-com-api-03), [REQ-COM-API-06](../requirements.md#req-com-api-06), [REQ-DS-API-01](../requirements.md#req-ds-api-01), [REQ-COM-API-07](../requirements.md#req-com-api-07), [REQ-COM-API-09](../requirements.md#req-com-api-09).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
   Depends on: INT-US-LOOP-01, INT-PNM-02.
-  Acceptance: Public upstream operations and common lifecycle/error/provenance semantics pass native Rust tests, idle/Busy/ownership/bounds/unsupported/versioned-schema checks. Preserve every downstream import/entrypoint/report, optional analysis-only support and Rust-only independence.
+  Acceptance: Public upstream operations and common lifecycle/error/provenance semantics pass native Rust tests, idle/Busy/ownership/bounds/unsupported/versioned-schema checks. Preserve every downstream import/entrypoint/report, optional analysis-only support and Rust-only independence. Approve namespace-to-crate mapping before compatibility-sensitive edits; accept explicit direction imports/aliases with every exported Rust operation in the authoritative matrix.
   Feature records: [high-level-api/upstream.md](features/high-level-api/upstream.md).
 
 <a id="int-py-01"></a>
 - [ ] **INT-PY-01** Expose upstream through the existing native Python distribution.
-  Requirements: [REQ-US-API-02](../requirements.md#req-us-api-02), [REQ-COM-API-04](../requirements.md#req-com-api-04), [REQ-COM-API-05](../requirements.md#req-com-api-05).
+  Requirements: [REQ-US-API-02](../requirements.md#req-us-api-02), [REQ-COM-API-04](../requirements.md#req-com-api-04), [REQ-COM-API-05](../requirements.md#req-com-api-05), [REQ-DS-API-01](../requirements.md#req-ds-api-01), [REQ-COM-API-08](../requirements.md#req-com-api-08), [REQ-COM-API-09](../requirements.md#req-com-api-09).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
   Depends on: INT-RUST-01.
-  Acceptance: Actual native extension exports/types/errors/owned results and independently executed Rust/Python runs agree, including configuration/captures/cancel/pause/Busy/interpreter-lock release. Both languages document the same supported behavior; preserve existing workbench recipes and old Python imports.
+  Acceptance: Actual native extension exports/types/errors/owned results and independently executed Rust/Python runs agree, including configuration/captures/cancel/pause/Busy/interpreter-lock release. Both languages document the same supported behavior; preserve existing workbench recipes and old Python imports. Verify direct downstream/upstream imports, discovery, typing and installed wheels on declared Python 3.10+ environments; attributes alone do not satisfy submodule import acceptance.
   Feature records: [high-level-api/upstream.md](features/high-level-api/upstream.md).
 
 <a id="int-cli-01"></a>
@@ -301,10 +311,10 @@ architecture owner identifies concrete implementation/test paths and disposition
 
 <a id="int-tools-01"></a>
 - [ ] **INT-TOOLS-01** Reconcile dependency, example and delivery inventories.
-  Requirements: [REQ-COM-NFR-03](../requirements.md#req-com-nfr-03), [REQ-DS-DELIVERY-01](../requirements.md#req-ds-delivery-01).
+  Requirements: [REQ-COM-NFR-03](../requirements.md#req-com-nfr-03), [REQ-DS-DELIVERY-01](../requirements.md#req-ds-delivery-01), [REQ-COM-TRACE-02](../requirements.md#req-com-trace-02).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-normative-evidence-and-exclusions).
   Depends on: INT-LICENSE-01, INT-PY-01, INT-CLI-01.
-  Acceptance: Validate local manifests/locks/version/pins/notices, examples and package member inventories without silently changing toolchains, two CI entrypoints or native target scope. Preserve caches and generated Python-guide policy; installed/hosted claims require separate actual evidence.
+  Acceptance: Validate local manifests/locks/version/pins/notices, examples and package member inventories without silently changing toolchains, two CI entrypoints or native target scope. Preserve caches and generated Python-guide policy; installed/hosted claims require separate actual evidence. Close every [traceability automation gap](features/unified-backend/master-prompt-review.md#automated-validation-gaps), including exact symbols/cases, executed evidence and actual native Rust/Python export coverage.
 
 <a id="int-reg-01"></a>
 - [ ] **INT-REG-01** Pass unified downstream and upstream backend regressions.
@@ -316,14 +326,14 @@ architecture owner identifies concrete implementation/test paths and disposition
 
 <a id="int-doc-02"></a>
 - [ ] **INT-DOC-02** Complete final documentation and skill correspondence.
-  Requirements: [REQ-COM-DOC-01](../requirements.md#req-com-doc-01).
+  Requirements: [REQ-COM-DOC-01](../requirements.md#req-com-doc-01), [REQ-COM-TRACE-01](../requirements.md#req-com-trace-01), [REQ-COM-API-09](../requirements.md#req-com-api-09).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-acceptance-and-final-documentation-gate).
   Depends on: INT-REG-01, DS-REQ-01, DOC-ORG-01.
-  Acceptance: Meet all ten user documentation completion conditions: one architecture/requirements/checklist; complete requirement/task evidence; resolving links; skills name actual final modules; no obsolete user-facing branding; docs match implemented support and every newly accepted capability has local integrated evidence.
+  Acceptance: Meet all ten user documentation completion conditions: one architecture/requirements/checklist; complete requirement/task evidence; resolving links; skills name actual final modules; no obsolete user-facing branding; docs match implemented support and every newly accepted capability has local integrated evidence. The master prompt crosswalk, complete operation matrix and fourteen-field requirement records must match actual exported symbols and executed cases.
 
 <a id="int-accept-01"></a>
 - [ ] **INT-ACCEPT-01** Accept the unified backend within declared supported scope.
-  Requirements: [REQ-COM-NFR-04](../requirements.md#req-com-nfr-04), [REQ-COM-DOC-01](../requirements.md#req-com-doc-01), [REQ-DS-DELIVERY-01](../requirements.md#req-ds-delivery-01).
+  Requirements: [REQ-COM-NFR-04](../requirements.md#req-com-nfr-04), [REQ-COM-DOC-01](../requirements.md#req-com-doc-01), [REQ-DS-DELIVERY-01](../requirements.md#req-ds-delivery-01), [REQ-COM-TRACE-01](../requirements.md#req-com-trace-01), [REQ-COM-TRACE-02](../requirements.md#req-com-trace-02).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-acceptance-and-final-documentation-gate).
   Depends on: INT-DOC-02, INT-REG-01, INT-TOOLS-01.
   Acceptance: Review complete requirement/acceptance and numerical/performance/provenance/license matrices for both independently executable directions. All mandatory children pass locally; retain limitations, deferred scope and native/hosted boundaries. No merge, release, publication or push is authorized by acceptance.
