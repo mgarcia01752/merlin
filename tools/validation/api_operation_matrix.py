@@ -82,7 +82,7 @@ def executed_cases(root, paths):
     return result
 
 
-def validate(root, data, exports=None, executions=None):
+def validate(root, data, exports=None, executions=None, native=None):
     """Audit complete operation rows, exact signatures and optional executed scope.
 
     Args:
@@ -90,6 +90,7 @@ def validate(root, data, exports=None, executions=None):
         data: The authoritative seventeen-cell matrix and shared contract cells.
         exports: Optional fresh rustdoc item dictionary for exact export coverage.
         executions: Optional set of actually passed exact test locators.
+        native: Optional actual installed namespace/class/operation inventory.
     Returns:
         Diagnostics; an empty list means the supplied scope is consistent.
         Source/symbol checks alone never establish runtime acceptance.
@@ -142,10 +143,11 @@ def validate(root, data, exports=None, executions=None):
         python = row["tests"]["python"]
         if not python.get("status"):
             errors.append(f"{operation}: missing Python availability/test status")
-        if python.get("status", "").startswith("existing"):
-            for case in python.get("cases", []):
-                if not exact_case(root, case, "python"):
-                    errors.append(f"{operation}: missing exact Python case {case}")
+        for case in python.get("cases", []):
+            if not exact_case(root, case, "python"):
+                errors.append(f"{operation}: missing exact Python case {case}")
+            if native is not None and executions is not None and case not in executions:
+                errors.append(f"{operation}: Python case has no successful execution {case}")
         if exports is not None and operation in source_methods:
             actual = source_methods[operation]
             if row["rust_namespace"] != source_namespaces[operation]:
@@ -169,6 +171,96 @@ def validate(root, data, exports=None, executions=None):
     if exports is not None:
         errors.extend(f"{operation}: exported operation lacks a matrix row"
                       for operation in sorted(source_methods.keys() - seen))
+    if native is not None:
+        errors.extend(validate_native(root, data, native, executions))
+    return errors
+
+
+def validate_native(root, data, native, executions=None):
+    """Require complete actual native exports, exact signatures and named cases.
+
+    Args:
+        root: Checkout or independent validation fixture root.
+        data: Same authoritative matrix, including language-specific projections.
+        native: Actual installed inventory; mocked metadata is unit-test input only.
+        executions: Optional successful Rust/Python case locators.
+    Returns:
+        Diagnostics for omissions, stale aliases/signatures, owners or execution.
+        Metadata checks establish availability, never scientific branch coverage.
+    """
+    errors, actual = [], {}
+    expected_types = {}
+    for direction, classes in native.get('namespaces', {}).items():
+        expected_types[direction] = []
+        for cls in classes:
+            expected_types[direction].append({key: cls[key] for key in
+                ('name', 'canonical_name', 'module', 'signature', 'constructible')})
+            for item in cls['operations']:
+                actual[f"merlin.{direction}.{cls['name']}.{item['name']}"] = item
+    if data.get('native_type_exports') != expected_types:
+        errors.append('Native class/alias/constructor/module inventory differs from matrix')
+    declared, rust_rows = set(), {row['operation']: row for row in data['operations']}
+    types = {item['export'] for items in data['type_exports'].values() for item in items}
+    requirements = (root / 'docs/requirements.md').read_text(encoding='utf-8')
+    checklist = (root / 'docs/development/checklist.md').read_text(encoding='utf-8')
+    for row in data.get('python_operations', []):
+        operation = row.get('operation', '<missing>')
+        if set(row) != COLUMNS or any(value in (None, '', [], {}) for value in row.values()):
+            errors.append(f'{operation}: missing/nonempty seventeen-cell native contract')
+            continue
+        if operation in declared:
+            errors.append(f'{operation}: duplicate native operation')
+        declared.add(operation)
+        item = actual.get(operation)
+        if item is None:
+            errors.append(f'{operation}: no actual native export')
+            continue
+        direction = operation.split('.')[1]
+        if row['direction'] != direction or row['python_namespace'] != 'merlin.' + direction:
+            errors.append(f'{operation}: stale native namespace/direction')
+        python = row['python_type_method']
+        if any(python.get(key) != item[key] for key in ('name', 'kind', 'signature')):
+            errors.append(f'{operation}: stale native signature/descriptor')
+        rust = row['rust_type_method']
+        source = root / rust['source_file']
+        if not source.is_file() or rust['symbol'] not in source.read_text(encoding='utf-8'):
+            errors.append(f'{operation}: missing native Rust conversion owner')
+        if rust['export'] not in types or row['rust_namespace'] != rust['export'].rsplit('::', 1)[0]:
+            errors.append(f'{operation}: missing public Rust type owner')
+        delegated = rust.get('delegated_operation')
+        if delegated is not None:
+            target = rust_rows.get(delegated)
+            if target is None or target['rust_type_method']['signature'] != rust['signature']:
+                errors.append(f'{operation}: stale delegated Rust operation/signature')
+        for target in rust.get('delegated_operations', []):
+            actual_target = rust_rows.get(target['operation'])
+            if actual_target is None or any(actual_target['rust_type_method'][key] != target[key]
+                                            for key in ('signature', 'source_file')):
+                errors.append(f'{operation}: stale composed Rust operation/owner')
+        for field in REFERENCES:
+            if not data.get('contracts', {}).get(row[field], '').strip():
+                errors.append(f'{operation}: unresolved native {field} contract')
+        for identifier in row['requirement']:
+            if not _requirement_block(requirements, identifier):
+                errors.append(f'{operation}: unknown native requirement {identifier}')
+        for task in row['checklist']:
+            if f'**{task}**' not in checklist:
+                errors.append(f'{operation}: unknown native task {task}')
+        python_cases = row['tests']['python'].get('cases', [])
+        if not python_cases:
+            errors.append(f'{operation}: missing native acceptance cases')
+        for language, cases in [('rust', row['tests']['rust']), ('python', python_cases)]:
+            for case in cases:
+                if not exact_case(root, case, language):
+                    errors.append(f'{operation}: missing exact {language} case {case}')
+                if executions is not None and case not in executions:
+                    errors.append(f'{operation}: native owner case has no successful execution {case}')
+    errors.extend(f'{operation}: native export lacks a matrix row'
+                  for operation in sorted(actual.keys() - declared))
+    for row in data['operations']:
+        operation = row['python_type_method'].get('native_operation')
+        if operation is not None and operation not in declared:
+            errors.append(f"{row['operation']}: Rust/Python operation reference is unresolved")
     return errors
 
 
@@ -181,15 +273,18 @@ def main():
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--exports", type=Path)
+    parser.add_argument("--native-exports", type=Path)
     parser.add_argument("--executed-record", type=Path, action="append", default=[])
     args = parser.parse_args()
     data = json.loads((ROOT / MATRIX).read_text(encoding="utf-8"))
     exports = json.loads(args.exports.read_text(encoding="utf-8")) if args.exports else None
+    native = json.loads(args.native_exports.read_text(encoding="utf-8")) if args.native_exports else None
     executions = executed_cases(ROOT, args.executed_record) if args.executed_record else None
-    errors = validate(ROOT, data, exports, executions)
+    errors = validate(ROOT, data, exports, executions, native)
     if errors:
         raise SystemExit("\n".join(errors))
-    print(f"API operation matrix: {len(data['operations'])} complete rows; declared scope passes")
+    print(f"API operation matrix: {len(data['operations'])} Rust / "
+          f"{len(data.get('python_operations', []))} native rows; declared scope passes")
 
 
 if __name__ == "__main__":

@@ -48,6 +48,39 @@ def public_members(value):
                   if not name.startswith("_") or name in protocols)
 
 
+def public_operations(value):
+    """Inspect exact native signatures and descriptors without running a session.
+
+    Args:
+        value: Exported native class; aliases retain their own public paths.
+    Returns:
+        Constructor, methods, properties and constants with explicit kinds.
+        Properties are never evaluated and constants are never constructed.
+    Raises:
+        ValueError if a callable lacks a discoverable native signature.
+    """
+    result = []
+    members = public_members(value)
+    if '__new__' in vars(value):
+        members = ['__init__', *members]
+    for name in members:
+        member = value if name == '__init__' else getattr(value, name)
+        if name == '__init__' or callable(member) and not isinstance(member, type(value)):
+            kind = 'method'
+            if name == '__init__':
+                kind = 'constructor'
+            try:
+                signature = str(inspect.signature(member))
+            except (TypeError, ValueError) as cause:
+                raise ValueError(f'Native signature unavailable: {value.__name__}.{name}') from cause
+        elif inspect.isdatadescriptor(member):
+            kind, signature = 'property', None
+        else:
+            kind, signature = 'constant', None
+        result.append({'name': name, 'kind': kind, 'signature': signature})
+    return result
+
+
 def sphinx_docstring(lines):
     """Convert Rust section/inline markup without inventing parameter semantics.
 

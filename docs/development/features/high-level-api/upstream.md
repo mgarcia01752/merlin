@@ -1,6 +1,6 @@
 # Converged public Rust and native Python APIs
 
-The [selected exact namespace mapping](namespace-design.md) uses a minimal `merlin` facade, independent PHY owners, a neutral common contract leaf and one real Python package. [INT-API-MAP-01](../../checklist.md#int-api-map-01) records the design decision; Rust exports now pass namespace compatibility checks; operation coverage and native delivery remain gated.
+The [selected exact namespace mapping](namespace-design.md) uses a minimal `merlin` facade, independent PHY owners, a neutral common contract leaf and one real Python package. [INT-API-MAP-01](../../checklist.md#int-api-map-01) records the design decision; Rust and native Python exports now pass namespace and complete operation coverage acceptance; final workspace regressions remain gated.
 
 Active feature detail, subordinate to [canonical architecture](../../../architecture.md#unified-rust-python-and-cli-apis).
 The [requirements baseline](../../../requirements.md) owns mandatory behavior; the
@@ -15,7 +15,7 @@ Rust/Python APIs, imports, schemas, examples and saved-workbench contracts remai
 implemented within their recorded supported scope. Initial upstream typed Rust
 composition now passes local synthetic session acceptance. The real facade/common
 contracts now pass targeted Rust checks; complete Rust operation coverage is accepted; native
-wrappers pass the installed namespace unit with full native operation traceability still open. Measured Rust
+wrappers and complete native operation traceability now pass local INT-PY-01 acceptance. Measured Rust
 admission now uses the adapter-owned MeasuredExperiment and core-owned typed
 MeasuredConfiguration handoff; no core-to-capture dependency is introduced.
 
@@ -89,10 +89,10 @@ linked; nonexistent local paths are explicitly planned, not passing evidence.
 | Stable requirement | Delivery / acceptance | Implementation and test owner |
 | --- | --- | --- |
 | [REQ-US-API-01](../../../requirements.md#req-us-api-01) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/merlin/tests/namespaces.rs` |
-| [REQ-US-API-02](../../../requirements.md#req-us-api-02) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `bindings/python/tests/test_upstream_experiment.py` (planned) |
+| [REQ-US-API-02](../../../requirements.md#req-us-api-02) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `bindings/python/tests/test_upstream_experiment.py` |
 | [REQ-COM-API-03](../../../requirements.md#req-com-api-03) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/merlin/tests/namespaces.rs` |
-| [REQ-COM-API-04](../../../requirements.md#req-com-api-04) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `bindings/python/tests/test_upstream_experiment.py` (planned) |
-| [REQ-COM-API-05](../../../requirements.md#req-com-api-05) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `bindings/python/tests/test_upstream_experiment.py` (planned) |
+| [REQ-COM-API-04](../../../requirements.md#req-com-api-04) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `bindings/python/tests/test_upstream_experiment.py` |
+| [REQ-COM-API-05](../../../requirements.md#req-com-api-05) | [INT-PY-01](../../checklist.md#int-py-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `bindings/python/tests/test_upstream_experiment.py` |
 | [REQ-COM-API-06](../../../requirements.md#req-com-api-06) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: `crates/ofdma/src/api/session.rs`; Test: `crates/merlin/tests/namespaces.rs` |
 | [REQ-DS-API-01](../../../requirements.md#req-ds-api-01) | [INT-REG-01](../../checklist.md#int-reg-01) | Module: [crates/ofdm/src/api](../../../../crates/ofdm/src/api); Module: [bindings/python/src](../../../../bindings/python/src); Test: [bindings/python/tests/test_api.py](../../../../bindings/python/tests/test_api.py); Test: [bindings/python/tests/test_parity.py](../../../../bindings/python/tests/test_parity.py) |
 | [REQ-COM-IDENTITY-01](../../../requirements.md#req-com-identity-01) | [INT-RUST-01](../../checklist.md#int-rust-01) | Module: [crates/ofdm/src/api](../../../../crates/ofdm/src/api); Module: [bindings/python/src](../../../../bindings/python/src); Test: [bindings/python/tests/test_api.py](../../../../bindings/python/tests/test_api.py) |
@@ -222,3 +222,30 @@ negative cases reject omissions, changes, missing namespace files and two binari
 INT-PY-01 stays open until the operation matrix covers actual native exports and
 signatures with executed-case references. This accepted unit is not final backend
 acceptance and does not imply hosted/package publication.
+
+### Native operation coverage acceptance
+
+The subsequent [operation candidate](python-operation-candidate.json),
+[executed cases](python-operation-test-results.json) and
+[requirement evidence](python-operation-evidence.json) close INT-PY-01 locally.
+The one authoritative matrix now has 364 Rust rows and 373 native rows, each with
+seventeen explicit cells. Native constructors, methods, properties, constants and
+language-specific field/Serde projections retain actual signatures, Rust type and
+conversion owners. No Rust function is invented for a field or enum projection.
+All 88 directional/common class exports match installed metadata; every original
+root class, alias, constructor/default and member signature is preserved (59 exports).
+
+Two targeted native cases close gaps in the retained source tests: normalized-bank
+generation and initialize semantics; owned accepted configurations; preview/source
+counts; original spectrum ticks and centered Hz. These pass in addition to the
+46 installed namespace-unit cases. Forty-six validation-tool and twenty Python-tool
+cases pass, including rejection of omitted exports, stale defaults/descriptors,
+wrong aliases/owners, unexecuted evidence and changed legacy signatures. The native
+binary remains the tested namespace-unit revision `a09605a`.
+
+The exact compiler/native/executed-case audit command is retained in the evidence.
+Metadata establishes availability and declared signatures; scientific acceptance
+comes from the named Rust/native owner cases and retained independent vectors.
+No exhaustive internal branch coverage, external interoperability, Windows runtime
+or other interpreter execution is claimed. Final workspace regressions, generated
+directional references and overall backend acceptance remain later checklist gates.

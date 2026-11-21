@@ -1,0 +1,43 @@
+{
+  "base_revision": "a09605a5548ee35c3293d7de03d7f709bafe22f8",
+  "scope": "Complete native operation traceability, exact installed/legacy metadata checks and two targeted conversion cases. Native implementation/wheel are unchanged from the accepted namespace unit.",
+  "sha256": "c97ba3ab68eef6cab6491b3f6de093431a2c6167efe353e134dcb81bf62edce2",
+  "files": [
+    {
+      "path": "bindings/python/tests/test_upstream_operations.py",
+      "sha256": "d16ee4e9bee21e95b59d81b3ae67db8b25ad06d3d82dc9c66ae15b0dbb6576fd"
+    },
+    {
+      "path": "docs/development/features/high-level-api/operation-matrix.json",
+      "sha256": "ea7d66c752b15a79d9ae9d55fec2689029487aba6ff96c2191dc271116038f8b"
+    },
+    {
+      "path": "tools/python/api_reference_support.py",
+      "sha256": "96a81e5b14023912bf3304cda21e93da00b158e6be3476bbb36586418ba91864"
+    },
+    {
+      "path": "tools/python/build_api_reference.py",
+      "sha256": "8a7f39589c12b240747ca3e68be88da39774df93292bfc98a528130d6857a5a7"
+    },
+    {
+      "path": "tools/python/test_api_reference.py",
+      "sha256": "60e3d0b98489f1273c1db6914b817be318e8b9752f979659cf883182af73df3f"
+    },
+    {
+      "path": "tools/validation/api_operation_matrix.py",
+      "sha256": "c505c4b2638ea077f70957c55493571ccb3335711f2b6445377bf84c2f883801"
+    },
+    {
+      "path": "tools/validation/native_api_inventory.py",
+      "sha256": "a7363d2c11bb6b29e34d5f5c09117e787b0bd8312cd687b7f768fff435f7b0bc"
+    },
+    {
+      "path": "tools/validation/test_api_operation_matrix.py",
+      "sha256": "9494038ad4d98f6305121943045193ac6d5f54314f1a1796c3565140defd3979"
+    },
+    {
+      "path": "tools/validation/test_native_api_inventory.py",
+      "sha256": "e71f0279c627f5a24e3032a1f8d767998d6fe593ef516ca1ef0966121ff18cfe"
+    }
+  ]
+}

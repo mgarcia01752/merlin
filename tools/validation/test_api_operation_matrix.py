@@ -10,7 +10,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from api_operation_matrix import COLUMNS, executed_cases, validate
+from api_operation_matrix import COLUMNS, executed_cases, validate, validate_native
 
 
 class OperationMatrixTests(unittest.TestCase):
@@ -107,6 +107,58 @@ class OperationMatrixTests(unittest.TestCase):
             path.write_text(json.dumps(changed))
             with self.assertRaises(ValueError):
                 executed_cases(self.root, ['run.json'])
+
+    def native_fixture(self):
+        """Define a distinct native constructor and its real core conversion owner."""
+        cls = {'name': 'Value', 'canonical_name': 'Value', 'module': 'merlin.upstream',
+               'signature': '()', 'constructible': True}
+        native = {'namespaces': {'upstream': [{**cls, 'operations': [
+            {'name': '__init__', 'kind': 'constructor', 'signature': '()'}]}]}}
+        data = deepcopy(self.data)
+        data['type_exports'] = {'upstream': [{'export': 'merlin::upstream::Value'}]}
+        data['native_type_exports'] = {'upstream': [cls]}
+        row = deepcopy(data['operations'][0])
+        row.update(operation='merlin.upstream.Value.__init__',
+            rust_type_method={'export': 'merlin::upstream::Value', 'source_file': 'src/api.rs',
+                              'symbol': 'Value', 'signature': self.method['signature'],
+                              'delegated_operation': self.method['operation']},
+            python_type_method={'name': '__init__', 'kind': 'constructor', 'signature': '()'})
+        data['python_operations'] = [row]
+        executions = self.executions | {'tests/native.py::NativeTests.test_real'}
+        return data, native, executions
+
+    def test_native_complete_alias_signature_and_executed_owner_contract(self):
+        """Require actual native rows and preserve deliberate typed projections."""
+        data, native, executions = self.native_fixture()
+        self.assertEqual(validate_native(self.root, data, native, executions), [])
+        data['python_operations'][0]['rust_type_method']['delegated_operation'] = None
+        self.assertEqual(validate_native(self.root, data, native, executions), [])
+
+    def test_native_omission_drift_and_unexecuted_evidence_are_rejected(self):
+        """New exports, stale defaults, wrong owners and declared-only tests fail."""
+        for mutation in ('omitted', 'signature', 'alias', 'owner', 'core', 'composed', 'duplicate'):
+            data, native, executions = self.native_fixture()
+            row = data['python_operations'][0]
+            if mutation == 'omitted':
+                data['python_operations'] = []
+            elif mutation == 'signature':
+                row['python_type_method']['signature'] = '(count=1)'
+            elif mutation == 'alias':
+                data['native_type_exports']['upstream'][0]['canonical_name'] = 'Other'
+            elif mutation == 'owner':
+                row['rust_type_method']['symbol'] = 'Missing'
+            elif mutation == 'core':
+                row['rust_type_method']['signature'] = 'pub fn new() -> Other'
+            elif mutation == 'composed':
+                row['rust_type_method']['delegated_operations'] = [
+                    {'operation': self.method['operation'], 'signature': 'pub fn new() -> Other',
+                     'source_file': 'src/api.rs'}]
+            else:
+                data['python_operations'].append(deepcopy(row))
+            self.assertTrue(validate_native(self.root, data, native, executions), mutation)
+        data, native, executions = self.native_fixture()
+        self.assertTrue(any('no successful execution' in error for error in
+                            validate_native(self.root, data, native, self.executions)))
 
 
 if __name__ == '__main__':

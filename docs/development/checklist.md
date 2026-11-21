@@ -320,18 +320,23 @@ architecture owner identifies concrete implementation/test paths and disposition
   Progress: [implemented facade/common contracts and passing compatibility checks](features/high-level-api/namespace-design.md#namespace-implementation-validation); [complete operation coverage](features/high-level-api/upstream.md#rust-api-acceptance) now passes compiler-export and executed Rust case checks.
 
 <a id="int-py-01"></a>
-- [ ] **INT-PY-01** Expose upstream through the existing native Python distribution.
+- [x] **INT-PY-01** Expose upstream through the existing native Python distribution.
   Requirements: [REQ-US-API-02](../requirements.md#req-us-api-02), [REQ-COM-API-04](../requirements.md#req-com-api-04), [REQ-COM-API-05](../requirements.md#req-com-api-05), [REQ-DS-API-01](../requirements.md#req-ds-api-01), [REQ-COM-API-08](../requirements.md#req-com-api-08), [REQ-COM-API-09](../requirements.md#req-com-api-09).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
   Depends on: INT-RUST-01.
   Acceptance: Actual native extension exports/types/errors/owned results and independently executed Rust/Python runs agree, including configuration/captures/cancel/pause/Busy/interpreter-lock release. Both languages document the same supported behavior; preserve existing workbench recipes and old Python imports. Verify direct downstream/upstream imports, discovery, typing and installed wheels on declared Python 3.10+ environments; attributes alone do not satisfy submodule import acceptance.
   Feature records: [high-level-api/upstream.md](features/high-level-api/upstream.md).
 
-  Progress: [native namespace implementation unit](features/high-level-api/python-evidence.json)
+  Acceptance: [native namespace implementation unit](features/high-level-api/python-evidence.json)
   passes 46 installed Linux/CPython 3.10 cases, including fresh direct Rust parity,
   original downstream workbenches/Designer recipes and common-token cancellation.
   One-extension wheel/discovery/typing/legal payload and both legacy FEC examples
-  pass. Complete native operation-matrix reconciliation remains open.
+  pass. [Complete native operation coverage](features/high-level-api/python-operation-evidence.json)
+  matches all 373 installed entries and 88 directional/common class exports;
+  all 59 legacy root exports/signatures/defaults are preserved. Two additional
+  native conversion cases close targeted gaps (48 native cases total across the
+  recorded runs). Other interpreter/platform runtime and final regression gates
+  remain separate.
 
 <a id="int-cli-01"></a>
 - [ ] **INT-CLI-01** Add upstream commands to the existing CLI.

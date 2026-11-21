@@ -605,7 +605,7 @@ a shared typed category query. [Namespace implementation validation](development
 records compatibility/build evidence. The [complete operation rows](development/features/high-level-api/operation-matrix.json)
 now pass compiler-export and executed Rust case checks. Native namespace execution
 also passes the [installed-wheel unit](development/features/high-level-api/python-evidence.json);
-complete native operation coverage remains open under INT-PY-01.
+complete native operation coverage now passes [INT-PY-01 acceptance](development/features/high-level-api/python-operation-evidence.json).
 The implemented
 `crates/ofdma/src/api/{session,error,measured,reports}.rs` owns the upstream typed API, sharing
 lifecycle/error/provenance conventions where semantics match. The existing

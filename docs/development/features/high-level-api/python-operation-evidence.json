@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "completion_authority": "docs/development/checklist.md",
+  "records": [
+    {
+      "requirement_id": "REQ-COM-API-09",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/upstream.md",
+      "checklist_task": "INT-PY-01",
+      "implementing_crate": "merlin-python plus development validation tools",
+      "source_file": "tools/validation/api_operation_matrix.py",
+      "symbol": "validate_native",
+      "test_file": "tools/validation/test_api_operation_matrix.py",
+      "qualified_test_case": "OperationMatrixTests.test_native_omission_drift_and_unexecuted_evidence_are_rejected",
+      "validation_command": "python3 -B tools/validation/api_operation_matrix.py --exports docs/development/local/unified-backend/rust-api-integration/rust-exports.json --native-exports docs/development/local/unified-backend/python-namespace-integration/native-exports.json --executed-record docs/development/features/high-level-api/namespace-test-results.json --executed-record docs/development/features/high-level-api/operation-test-results.json --executed-record docs/development/features/high-level-api/python-test-results.json --executed-record docs/development/features/high-level-api/python-operation-test-results.json --executed-record docs/development/features/pnm-measurement-inputs/decoder-test-results.json --executed-record docs/development/features/pnm-measurement-inputs/association-test-results.json",
+      "observed_result": "API operation matrix: 364 Rust / 373 native rows; declared scope passes; 373 actual installed native entries, all 59 legacy root class exports/defaults/member signatures preserved; positive/negative native validation cases pass",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/python-operation-candidate.json",
+        "sha256": "c97ba3ab68eef6cab6491b3f6de093431a2c6167efe353e134dcb81bf62edce2",
+        "native_revision": "a09605a5548ee35c3293d7de03d7f709bafe22f8"
+      },
+      "status": "integrated-validated local native operation traceability; INT-PY-01 acceptance",
+      "limitations": "Linux x86_64 CPython 3.10 installed runtime only. Metadata establishes availability/signatures; declared owner cases establish behavioral scope, not exhaustive internal branch coverage. Original source tests do not replace MERLIN execution."
+    }
+  ],
+  "native_inventory_sha256": "d683c3dd07d7a08cf98688b2de0c132267df66da7c411dbd18d419f0467a0370",
+  "native_sha256": "82351725d51bf0516d197753c6585b45dda21b7cdcf2ff05f09b4a430d07115c",
+  "legacy_compatibility": {
+    "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+    "preserved_class_exports": 59,
+    "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+  },
+  "accepted_namespace_unit": "docs/development/features/high-level-api/python-evidence.json",
+  "executed_cases": "docs/development/features/high-level-api/python-operation-test-results.json",
+  "corrected_coverage_gaps": "Additional native conversions cover normalized-bank generation/initialize event, owned configurations/preview/source count, original spectrum sample ticks and baseband Hz. Core numerical source vectors and existing independent Rust checks remain authoritative."
+}

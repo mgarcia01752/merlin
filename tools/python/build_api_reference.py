@@ -16,7 +16,7 @@ import subprocess
 import sys
 import time
 
-from api_reference_support import public_classes, public_members
+from api_reference_support import public_classes, public_members, public_operations
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = ROOT / "local/api-reference"
@@ -50,7 +50,7 @@ def native_inventory(module, expected_version):
             signature = None
         classes.append({"name": name, "canonical_name": value.__name__,
                         "signature": signature, "constructible": "__new__" in vars(value),
-                        "members": public_members(value)})
+                        "members": public_members(value), "operations": public_operations(value)})
     namespaces = {}
     for name in ("downstream", "upstream", "common"):
         direction = getattr(module, name, None)
@@ -65,7 +65,7 @@ def native_inventory(module, expected_version):
             exported.append({"name": public, "canonical_name": value.__name__,
                              "module": value.__module__, "signature": signature,
                              "constructible": "__new__" in vars(value),
-                             "members": public_members(value)})
+                             "members": public_members(value), "operations": public_operations(value)})
         namespaces[name] = exported
     return {"version": expected_version, "native_artifact": str(artifact),
             "classes": classes, "namespaces": namespaces}

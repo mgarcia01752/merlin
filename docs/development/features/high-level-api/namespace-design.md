@@ -23,7 +23,7 @@ conversion, validation, lifecycle implementation or result reshaping.
 
 The Rust facade and common contract leaf are now implemented after accepted
 upstream and measured prerequisites. Python package paths below are implemented and pass the installed namespace
-unit; INT-PY-01 remains open for complete native operation coverage. The implementation unit and validation record below identify
+unit; INT-PY-01 now records [complete native operation acceptance](python-operation-evidence.json). The implementation unit and validation record below identify
 current exports; complete Rust operation coverage is recorded in the matrix acceptance below.
 
 | Cargo package | Library name / directory | Ownership and permitted dependencies |
@@ -255,7 +255,7 @@ Remove no existing public export, record, test, scientific implementation or fix
 
 The selected mapping remains approved, with namespace implementation evidence
 below. Planning/FEC remain completed. INT-RUST-01 now has complete Rust
-operation coverage; Python namespace execution now passes the [installed unit](python-evidence.json); complete native operation traceability remains INT-PY-01. Changes to the
+operation coverage; Python namespace execution now passes the [installed unit](python-evidence.json); [complete native operation traceability](python-operation-evidence.json) now passes INT-PY-01. Changes to the
 selected package names/common export set require a compatible design update.
 No upstream Qt implementation or release/publication is authorized.
 

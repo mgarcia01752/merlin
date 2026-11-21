@@ -1,0 +1,304 @@
+{
+  "schema_version": 1,
+  "candidate_sha256": "c97ba3ab68eef6cab6491b3f6de093431a2c6167efe353e134dcb81bf62edce2",
+  "native_revision": "a09605a5548ee35c3293d7de03d7f709bafe22f8",
+  "runs": [
+    {
+      "command": "Installed private venv python -I -B -m unittest discover -s bindings/python/tests -p test_upstream_operations.py -v",
+      "exit_code": 0,
+      "passed": 2,
+      "elapsed_seconds": 0.042,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_upstream_operations.py",
+          "qualified_test_case": "OperationConversions.test_normalized_bank_generation_and_initialize_event_through_rust"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_operations.py",
+          "qualified_test_case": "OperationConversions.test_owned_configuration_preview_and_actual_report_field_projections"
+        }
+      ]
+    },
+    {
+      "command": "python3 -B -m unittest discover -s tools/validation -p 'test_*.py' -v",
+      "exit_code": 0,
+      "passed": 46,
+      "elapsed_seconds": 4.264,
+      "cases": [
+        {
+          "test_file": "tools/validation/test_api_operation_matrix.py",
+          "qualified_test_case": "OperationMatrixTests.test_complete_contract_and_exact_export_execution"
+        },
+        {
+          "test_file": "tools/validation/test_api_operation_matrix.py",
+          "qualified_test_case": "OperationMatrixTests.test_failed_or_mismatched_run_records_do_not_become_evidence"
+        },
+        {
+          "test_file": "tools/validation/test_api_operation_matrix.py",
+          "qualified_test_case": "OperationMatrixTests.test_missing_empty_duplicate_and_unknown_references"
+        },
+        {
+          "test_file": "tools/validation/test_api_operation_matrix.py",
+          "qualified_test_case": "OperationMatrixTests.test_native_complete_alias_signature_and_executed_owner_contract"
+        },
+        {
+          "test_file": "tools/validation/test_api_operation_matrix.py",
+          "qualified_test_case": "OperationMatrixTests.test_native_omission_drift_and_unexecuted_evidence_are_rejected"
+        },
+        {
+          "test_file": "tools/validation/test_api_operation_matrix.py",
+          "qualified_test_case": "OperationMatrixTests.test_stale_signature_missing_export_and_unexecuted_case"
+        },
+        {
+          "test_file": "tools/validation/test_api_operation_matrix.py",
+          "qualified_test_case": "OperationMatrixTests.test_wrong_namespace_direction_and_duplicate_execution_are_rejected"
+        },
+        {
+          "test_file": "tools/validation/test_external_vectors.py",
+          "qualified_test_case": "AdmissionTests.test_bounded_manifest_checksums_paths_and_explicit_unexecuted_status"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_all_canonical_return_paths"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_current_fec_locator_and_stale_negative_case"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_dependency_cycle"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_existing_owner_cannot_be_a_missing_plan"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_existing_owner_requires_a_feature_reference"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_explicit_anchor_collision"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_fenced_examples_are_not_navigation"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_history_allows_only_the_new_documentation_task"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_missing_fragment"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_missing_local_file"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_named_aliases_and_punctuation"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_planned_owner_requires_an_explicit_marker"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_real_checkout"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_relative_links_spaces_images_and_duplicate_headings"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_reorganization_preserves_exact_prior_navigation"
+        },
+        {
+          "test_file": "tools/validation/test_feature_documentation.py",
+          "qualified_test_case": "DocumentationValidationTests.test_unknown_dependency"
+        },
+        {
+          "test_file": "tools/validation/test_integration_traceability.py",
+          "qualified_test_case": "IntegrationTraceabilityTests.test_empty_requirement_field_and_inventory"
+        },
+        {
+          "test_file": "tools/validation/test_integration_traceability.py",
+          "qualified_test_case": "IntegrationTraceabilityTests.test_missing_architecture_backlink"
+        },
+        {
+          "test_file": "tools/validation/test_integration_traceability.py",
+          "qualified_test_case": "IntegrationTraceabilityTests.test_missing_requirement_backlink"
+        },
+        {
+          "test_file": "tools/validation/test_integration_traceability.py",
+          "qualified_test_case": "IntegrationTraceabilityTests.test_requirement_cannot_borrow_the_next_task_references"
+        },
+        {
+          "test_file": "tools/validation/test_integration_traceability.py",
+          "qualified_test_case": "IntegrationTraceabilityTests.test_task_inventory_and_requirement_mismatch"
+        },
+        {
+          "test_file": "tools/validation/test_integration_traceability.py",
+          "qualified_test_case": "IntegrationTraceabilityTests.test_unknown_or_wrong_fragment"
+        },
+        {
+          "test_file": "tools/validation/test_integration_traceability.py",
+          "qualified_test_case": "IntegrationTraceabilityTests.test_valid_contract_and_real_repository"
+        },
+        {
+          "test_file": "tools/validation/test_integration_traceability.py",
+          "qualified_test_case": "IntegrationTraceabilityTests.test_wrong_architecture_forward_reference"
+        },
+        {
+          "test_file": "tools/validation/test_master_prompt_traceability.py",
+          "qualified_test_case": "MasterPromptTraceabilityTests.test_complete_prompt_and_exact_cases"
+        },
+        {
+          "test_file": "tools/validation/test_master_prompt_traceability.py",
+          "qualified_test_case": "MasterPromptTraceabilityTests.test_deleted_mandatory_bullet_changes_source_and_section_hash"
+        },
+        {
+          "test_file": "tools/validation/test_master_prompt_traceability.py",
+          "qualified_test_case": "MasterPromptTraceabilityTests.test_duplicate_clause_identity"
+        },
+        {
+          "test_file": "tools/validation/test_master_prompt_traceability.py",
+          "qualified_test_case": "MasterPromptTraceabilityTests.test_empty_mapping"
+        },
+        {
+          "test_file": "tools/validation/test_master_prompt_traceability.py",
+          "qualified_test_case": "MasterPromptTraceabilityTests.test_missing_architecture_and_requirement_review_links"
+        },
+        {
+          "test_file": "tools/validation/test_master_prompt_traceability.py",
+          "qualified_test_case": "MasterPromptTraceabilityTests.test_python_case_qualifies_actual_class"
+        },
+        {
+          "test_file": "tools/validation/test_master_prompt_traceability.py",
+          "qualified_test_case": "MasterPromptTraceabilityTests.test_review_cannot_be_removed_while_preflight_task_remains"
+        },
+        {
+          "test_file": "tools/validation/test_master_prompt_traceability.py",
+          "qualified_test_case": "MasterPromptTraceabilityTests.test_rust_case_is_a_test_not_a_same_named_helper"
+        },
+        {
+          "test_file": "tools/validation/test_master_prompt_traceability.py",
+          "qualified_test_case": "MasterPromptTraceabilityTests.test_unknown_delivery_or_undelivered_requirement"
+        },
+        {
+          "test_file": "tools/validation/test_master_prompt_traceability.py",
+          "qualified_test_case": "MasterPromptTraceabilityTests.test_unmapped_subheading"
+        },
+        {
+          "test_file": "tools/validation/test_native_api_inventory.py",
+          "qualified_test_case": "LegacyNativeInventoryTests.test_all_old_defaults_aliases_and_descriptors_survive_additive_changes"
+        },
+        {
+          "test_file": "tools/validation/test_rust_api_inventory.py",
+          "qualified_test_case": "RustdocExportTests.test_free_functions_keep_one_name_and_missing_current_targets_fail"
+        },
+        {
+          "test_file": "tools/validation/test_rust_api_inventory.py",
+          "qualified_test_case": "RustdocExportTests.test_glob_keeps_namespace_modules_extend_it_and_stale_items_are_absent"
+        },
+        {
+          "test_file": "tools/validation/test_rust_api_inventory.py",
+          "qualified_test_case": "RustdocExportTests.test_macro_generated_methods_and_required_trait_declarations_are_complete"
+        }
+      ]
+    },
+    {
+      "command": "python3 -B -m unittest discover -s tools/python -p 'test_*.py' -v",
+      "exit_code": 0,
+      "passed": 20,
+      "elapsed_seconds": 0.105,
+      "cases": [
+        {
+          "test_file": "tools/python/test_api_reference.py",
+          "qualified_test_case": "ApiReferenceTests.test_alias_links_to_verified_canonical_members"
+        },
+        {
+          "test_file": "tools/python/test_api_reference.py",
+          "qualified_test_case": "ApiReferenceTests.test_coverage_check_rejects_omitted_members_and_hidden_arguments"
+        },
+        {
+          "test_file": "tools/python/test_api_reference.py",
+          "qualified_test_case": "ApiReferenceTests.test_discovery_preserves_aliases_without_constructing_objects"
+        },
+        {
+          "test_file": "tools/python/test_api_reference.py",
+          "qualified_test_case": "ApiReferenceTests.test_exact_operation_inventory_does_not_construct_or_read_properties"
+        },
+        {
+          "test_file": "tools/python/test_api_reference.py",
+          "qualified_test_case": "ApiReferenceTests.test_markup_conversion_preserves_semantics_and_original_lines"
+        },
+        {
+          "test_file": "tools/python/test_api_reference.py",
+          "qualified_test_case": "ApiReferenceTests.test_maturin_wrapper_uses_native_exports_without_documenting_wrapper_module"
+        },
+        {
+          "test_file": "tools/python/test_api_reference.py",
+          "qualified_test_case": "ApiReferenceTests.test_member_discovery_does_not_evaluate_getters"
+        },
+        {
+          "test_file": "tools/python/test_api_reference.py",
+          "qualified_test_case": "ApiReferenceTests.test_native_identity_and_version_are_required"
+        },
+        {
+          "test_file": "tools/python/test_api_reference.py",
+          "qualified_test_case": "ApiReferenceTests.test_private_extension_is_selected_before_the_legacy_import_shim"
+        },
+        {
+          "test_file": "tools/python/test_integration_doc.py",
+          "qualified_test_case": "IntegrationDocumentTests.test_check_is_read_only_and_writes_are_idempotent"
+        },
+        {
+          "test_file": "tools/python/test_integration_doc.py",
+          "qualified_test_case": "IntegrationDocumentTests.test_invalid_metadata_and_tokens_preserve_existing_document"
+        },
+        {
+          "test_file": "tools/python/test_integration_doc.py",
+          "qualified_test_case": "IntegrationDocumentTests.test_redirected_output_and_inputs_are_rejected"
+        },
+        {
+          "test_file": "tools/python/test_integration_doc.py",
+          "qualified_test_case": "IntegrationDocumentTests.test_versions_refresh_every_install_pin_without_claiming_publication"
+        },
+        {
+          "test_file": "tools/python/test_wheel_tools.py",
+          "qualified_test_case": "WheelToolTests.test_cold_cache_fetch_precedes_offline_notices_on_each_host"
+        },
+        {
+          "test_file": "tools/python/test_wheel_tools.py",
+          "qualified_test_case": "WheelToolTests.test_complete_notice_bytes_are_required_in_actual_archive"
+        },
+        {
+          "test_file": "tools/python/test_wheel_tools.py",
+          "qualified_test_case": "WheelToolTests.test_failed_partial_or_incorrect_fec_results_block_staging"
+        },
+        {
+          "test_file": "tools/python/test_wheel_tools.py",
+          "qualified_test_case": "WheelToolTests.test_namespace_payload_and_single_binary_are_required"
+        },
+        {
+          "test_file": "tools/python/test_wheel_tools.py",
+          "qualified_test_case": "WheelToolTests.test_native_linux_and_windows_build_commands"
+        },
+        {
+          "test_file": "tools/python/test_wheel_tools.py",
+          "qualified_test_case": "WheelToolTests.test_version_abi_platform_and_notices_are_required"
+        },
+        {
+          "test_file": "tools/python/test_wheel_tools.py",
+          "qualified_test_case": "WheelToolTests.test_windows_linker_comes_from_active_compiler_not_git_bash"
+        }
+      ]
+    }
+  ],
+  "scope": "Two new actual native conversion cases plus development-tool tests. The other 46 installed-wheel cases remain exact accepted namespace-unit evidence in python-test-results.json; this is not a new run of those cases."
+}

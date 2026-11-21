@@ -5868,7 +5868,7 @@
             "requirement": "REQ-US-API-02",
             "kind": "test",
             "path": "bindings/python/tests/test_upstream_experiment.py",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-COM-API-03",
@@ -5892,7 +5892,7 @@
             "requirement": "REQ-COM-API-04",
             "kind": "test",
             "path": "bindings/python/tests/test_upstream_experiment.py",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-COM-API-05",
@@ -5904,7 +5904,7 @@
             "requirement": "REQ-COM-API-05",
             "kind": "test",
             "path": "bindings/python/tests/test_upstream_experiment.py",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-COM-API-06",

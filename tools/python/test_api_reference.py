@@ -11,7 +11,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
-from api_reference_support import public_classes, public_members, sphinx_docstring
+from api_reference_support import public_classes, public_members, public_operations, sphinx_docstring
 from build_api_reference import native_inventory, validate_pages
 
 
@@ -49,6 +49,23 @@ class ApiReferenceTests(unittest.TestCase):
         self.assertIn("# Arguments", lines)
         self.assertIn("Owned partial results.", result)
         self.assertEqual(sphinx_docstring(["``existing``"]), ["``existing``"])
+
+    def test_exact_operation_inventory_does_not_construct_or_read_properties(self):
+        """Preserve constructor defaults and descriptor kinds without evaluation."""
+        class Value:
+            def __new__(cls, count=7):
+                raise AssertionError('Constructor evaluated')
+            @property
+            def quantity(self):
+                raise AssertionError('Getter evaluated')
+            def run(self, *, control=None):
+                raise AssertionError('Operation evaluated')
+            ZERO = 0
+        operations = {item['name']: item for item in public_operations(Value)}
+        self.assertEqual(operations['__init__']['signature'], '(count=7)')
+        self.assertEqual(operations['run']['signature'], '(self, *, control=None)')
+        self.assertEqual(operations['quantity']['kind'], 'property')
+        self.assertEqual(operations['ZERO']['kind'], 'constant')
 
     def test_native_identity_and_version_are_required(self):
         """Reject a pure Python replacement and a mismatched installed version."""
