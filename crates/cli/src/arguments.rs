@@ -5,12 +5,15 @@
 //! Command-line syntax and small request fields.
 use std::path::PathBuf;
 const HELP: &str = r#"Usage: ofdm-fec <simulate|evaluate|channel|import-pnm> --input FILE --output FILE [--scenario FILE --candidate FILE --frame INDEX]
+       ofdm-fec upstream <run|preview|measured|ucd|rxmer|pre-eq> --input FILE --output FILE
 
 Commands:
   simulate  Run a seeded short8/9 uniform16-QAM coding experiment.
   evaluate  Generate/evaluate a candidate from a decoded scenario JSON.
   channel   Run the duration-based reference or impaired OFDM channel.
   import-pnm Import three decoded PNM JSON files into a scenario.
+  upstream  Run/preview upstream configuration, run a measured plan,
+            or inspect original UCD/RxMER/Pre-Eq capture bytes.
 
 Use --payload-file FILE with channel and source.kind=file for exact text/binary bytes.
 Use --recovered-file FILE with file-source channel jobs for recovered original bytes.
@@ -25,6 +28,7 @@ RUST_LOG controls stderr logging (default: info)."#;
 #[derive(Default)]
 pub(crate) struct Arguments {
     pub(crate) command: String,
+    pub(crate) upstream_operation: Option<String>,
     pub(crate) input: PathBuf,
     pub(crate) output: PathBuf,
     pub(crate) scenario: Option<PathBuf>,
@@ -62,6 +66,19 @@ pub(crate) fn parse() -> Result<Option<Arguments>, String> {
             .map_err(|_| "Invalid command encoding.")?,
         ..Default::default()
     };
+    if arguments.command == "upstream" {
+        let operation = values.next().ok_or("upstream requires an operation.")?;
+        let operation = operation
+            .into_string()
+            .map_err(|_| "Invalid upstream operation encoding.")?;
+        if !matches!(
+            operation.as_str(),
+            "run" | "preview" | "measured" | "ucd" | "rxmer" | "pre-eq"
+        ) {
+            return Err("Unknown upstream operation. Use --help.".into());
+        }
+        arguments.upstream_operation = Some(operation);
+    }
     while let Some(option) = values.next() {
         let value = values.next().ok_or("Each option requires a value.")?;
         match option.to_str() {
@@ -103,6 +120,15 @@ pub(crate) fn parse() -> Result<Option<Arguments>, String> {
     }
     if arguments.command != "channel" && arguments.probes_output.is_some() {
         return Err("--probes-output applies to channel only.".into());
+    }
+    if arguments.command == "upstream"
+        && (arguments.scenario.is_some()
+            || arguments.candidate.is_some()
+            || arguments.settings.is_some()
+            || arguments.profile.is_some()
+            || arguments.frame_supplied)
+    {
+        return Err("Downstream options do not apply to upstream commands.".into());
     }
     Ok(Some(arguments))
 }

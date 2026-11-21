@@ -91,9 +91,9 @@ paths remain planned; solid core/input edges already exist.
 flowchart TD
     USER[External Rust application] --> ROOT[merlin facade]
     PY[merlin Python package / one private extension] --> ROOT
-    CLI[Existing CLI] -.-> ROOT
+    CLI[Existing CLI] --> ROOT
     PY --> INPUT[pnm-input]
-    CLI -.-> INPUT
+    CLI --> INPUT
     ROOT --> DS[docsis-ofdm-fec]
     ROOT --> US[docsis-ofdma]
     ROOT --> API[merlin-api contracts]

@@ -339,12 +339,17 @@ architecture owner identifies concrete implementation/test paths and disposition
   remain separate.
 
 <a id="int-cli-01"></a>
-- [ ] **INT-CLI-01** Add upstream commands to the existing CLI.
+- [x] **INT-CLI-01** Add upstream commands to the existing CLI.
   Requirements: [REQ-COM-IDENTITY-01](../requirements.md#req-com-identity-01), [REQ-DS-API-01](../requirements.md#req-ds-api-01).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-rust-python-and-cli-apis).
   Depends on: INT-RUST-01.
   Acceptance: All existing commands/output schemas still pass; new upstream commands use canonical Rust operations, bounded JSON/I/O and create-new export behavior. No parallel executable or algorithm implementation.
   Feature records: [high-level-api/upstream.md](features/high-level-api/upstream.md).
+  Acceptance evidence: [exact candidate and requirement records](features/high-level-api/cli-evidence.json),
+  [32 executed CLI cases](features/high-level-api/cli-test-results.json): all 23
+  original downstream cases plus nine upstream cases pass. Both numerologies,
+  measured/raw provenance, idle preview, direct Rust parity, failed recovery,
+  actual Linux Ctrl-C and protected input/output limits pass; CLI Clippy/fmt pass.
 
 <a id="int-tools-01"></a>
 - [ ] **INT-TOOLS-01** Reconcile dependency, example and delivery inventories.

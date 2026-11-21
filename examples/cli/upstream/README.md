@@ -22,8 +22,18 @@ Run actual bounded acceptance with:
 scripts/cargo-local.sh test -p docsis-ofdma --locked --test configuration_json
 ```
 
-The unified CLI dispatch and Basic Python API are being integrated; command and
-installed-wheel examples follow those acceptance gates. The
+Use the same existing executable for idle preview and execution:
+
+```bash
+target/debug/ofdm-fec upstream preview --input examples/cli/upstream/us-50khz.json --output upstream-preview.json
+target/debug/ofdm-fec upstream run --input examples/cli/upstream/us-50khz.json --output upstream-report.json
+```
+
+Choose new output paths; existing files are never replaced. The
+[CLI guide](../../../docs/user/upstream/cli.md) explains captured plans, raw input
+inspection and nonzero status with retained incomplete reports. The
+[installed native Python example](../../api/python/run_upstream.py) uses the same
+Rust engine. The
 [upstream user guide](../../../docs/user/upstream/README.md) describes current support.
 
 Adapted from Apache-2.0 source revision

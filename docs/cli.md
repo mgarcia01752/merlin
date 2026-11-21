@@ -4,6 +4,11 @@ The CLI accepts decoded simulation scenarios as JSON and calls the public Rust
 API. Binary capture adapters are separate from the simulation core. Run `ofdm-fec --help` for options.
 Outputs must be new files; existing destinations are never replaced.
 
+`upstream <run|preview|measured|ucd|rxmer|pre-eq>` adds direction-specific
+operations through the same executable. See the [upstream CLI guide](user/upstream/cli.md)
+for exact inputs, idle preview, captured plans, retained incomplete reports and
+Ctrl-C behavior. Existing downstream commands retain their syntax and schemas.
+
 `import-pnm` converts current decoder JSON for RxMER, channel response and profiles
 into a scenario. `channel --scenario` uses explicit measured selection, or the
 channel request can select sample AWGN. See the [impaired waveform guide](user/impairments/experiments.md)

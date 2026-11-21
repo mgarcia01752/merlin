@@ -24,6 +24,7 @@ settings and are not included in desktop installers.
 | `channel-power.json` | Inspect amplifier, attenuation and receiver-noise power settings. | `channel` |
 | `channel-probes.json` | Export bounded intermediate test-point observations as JSONL. | `channel --probes-output` |
 | `payloads/message.txt` | Provide known original bytes for the file-payload example and an independent byte comparison. | `--payload-file` |
+| [upstream/](upstream/README.md) | Preview/run explicit OFDMA configuration, including both numerologies and synthetic playback. | `upstream preview` or `upstream run` |
 
 ## Run an example
 

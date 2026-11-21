@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "completion_authority": "docs/development/checklist.md",
+  "records": [
+    {
+      "requirement_id": "REQ-COM-IDENTITY-01",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/upstream.md#int-cli-01-existing-executable-integration",
+      "checklist_task": "INT-CLI-01",
+      "implementing_crate": "ofdm-fec-cli",
+      "source_file": "crates/cli/src/commands/upstream.rs",
+      "symbol": "run",
+      "test_file": "crates/cli/tests/upstream.rs",
+      "qualified_test_case": "generic_50khz_actual_cli_matches_direct_rust",
+      "validation_command": "scripts/cargo-local.sh test -p ofdm-fec-cli --locked -- --nocapture",
+      "observed_result": "pass; all 32 current CLI cases, including 23 preserved downstream cases and nine upstream cases",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/cli-candidate.json",
+        "sha256": "268dd137350203ec59f27fd6e29e81068236874e2f3814574d8987725835be19"
+      },
+      "status": "integrated-validated INT-CLI-01",
+      "limitations": "Closed-loop/direct-Rust adapter acceptance, not external interoperability. Linux actual SIGINT only; final whole-workspace and hosted/native delivery gates remain separate."
+    },
+    {
+      "requirement_id": "REQ-DS-API-01",
+      "architecture_owner": "docs/architecture.md#unified-rust-python-and-cli-apis",
+      "feature_design": "docs/development/features/high-level-api/upstream.md#int-cli-01-existing-executable-integration",
+      "checklist_task": "INT-CLI-01",
+      "implementing_crate": "ofdm-fec-cli",
+      "source_file": "crates/cli/src/commands/mod.rs",
+      "symbol": "run",
+      "test_file": "crates/cli/tests/commands.rs",
+      "qualified_test_case": "evaluates_and_simulates_with_shared_json_contracts",
+      "validation_command": "scripts/cargo-local.sh test -p ofdm-fec-cli --locked -- --nocapture",
+      "observed_result": "pass; all 32 current CLI cases, including 23 preserved downstream cases and nine upstream cases",
+      "tested_candidate": {
+        "record": "docs/development/features/high-level-api/cli-candidate.json",
+        "sha256": "268dd137350203ec59f27fd6e29e81068236874e2f3814574d8987725835be19"
+      },
+      "status": "integrated-validated INT-CLI-01",
+      "limitations": "Closed-loop/direct-Rust adapter acceptance, not external interoperability. Linux actual SIGINT only; final whole-workspace and hosted/native delivery gates remain separate."
+    }
+  ],
+  "executed_cases": "docs/development/features/high-level-api/cli-test-results.json",
+  "scientific_scope": "Separate CLI processes match canonical Rust configurations/options/plans/provenance/bit coverage/errors/decoder words for 2K/50 kHz and 4K/25 kHz, generic and measured plans. Process-local run/generation counters and elapsed time are not scientific equality fields.",
+  "io_scope": "Exact original capture documents/bytes; malformed/truncated/schema/options rejection; 16 MiB input cap; actual large original-byte report exceeds output cap before destination creation; occupied destinations never replaced; explicit incomplete recovery and actual Ctrl-C retain reports."
+}

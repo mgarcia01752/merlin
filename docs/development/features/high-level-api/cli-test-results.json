@@ -1,0 +1,226 @@
+{
+  "schema_version": 1,
+  "candidate_sha256": "268dd137350203ec59f27fd6e29e81068236874e2f3814574d8987725835be19",
+  "host": "Linux x86_64; Cargo/Rust 1.85.1; existing local pinned toolchain and Cargo cache",
+  "environment": {
+    "PATH_prefix": "/home/dev01/Projects/merlin/local/toolchains/rust-1.85.1-ylt882zx/bin",
+    "CARGO_HOME": "/home/dev01/Projects/merlin/local/backend-integration-cargo"
+  },
+  "runs": [
+    {
+      "command": "scripts/cargo-local.sh test -p ofdm-fec-cli --locked -- --nocapture",
+      "target": "crates/cli/src/main.rs",
+      "exit_code": 0,
+      "passed": 0,
+      "elapsed_seconds": 0.0,
+      "cases": []
+    },
+    {
+      "command": "scripts/cargo-local.sh test -p ofdm-fec-cli --locked -- --nocapture",
+      "target": "crates/cli/tests/channel.rs",
+      "exit_code": 0,
+      "passed": 4,
+      "elapsed_seconds": 6.55,
+      "cases": [
+        {
+          "test_file": "crates/cli/tests/channel.rs",
+          "qualified_test_case": "channel_rejects_explicit_frame_option_including_zero"
+        },
+        {
+          "test_file": "crates/cli/tests/channel.rs",
+          "qualified_test_case": "invalid_requests_and_existing_probe_destination_do_not_create_results"
+        },
+        {
+          "test_file": "crates/cli/tests/channel.rs",
+          "qualified_test_case": "channel_command_exports_shared_science_and_selected_jsonl_without_clobber"
+        },
+        {
+          "test_file": "crates/cli/tests/channel.rs",
+          "qualified_test_case": "channel_power_settings_use_the_shared_rust_contract"
+        }
+      ]
+    },
+    {
+      "command": "scripts/cargo-local.sh test -p ofdm-fec-cli --locked -- --nocapture",
+      "target": "crates/cli/tests/commands.rs",
+      "exit_code": 0,
+      "passed": 1,
+      "elapsed_seconds": 0.61,
+      "cases": [
+        {
+          "test_file": "crates/cli/tests/commands.rs",
+          "qualified_test_case": "evaluates_and_simulates_with_shared_json_contracts"
+        }
+      ]
+    },
+    {
+      "command": "scripts/cargo-local.sh test -p ofdm-fec-cli --locked -- --nocapture",
+      "target": "crates/cli/tests/constellation.rs",
+      "exit_code": 0,
+      "passed": 2,
+      "elapsed_seconds": 10.34,
+      "cases": [
+        {
+          "test_file": "crates/cli/tests/constellation.rs",
+          "qualified_test_case": "invalid_capture_configuration_is_rejected_before_export"
+        },
+        {
+          "test_file": "crates/cli/tests/constellation.rs",
+          "qualified_test_case": "paired_channel_cli_exports_default_count_and_preserves_existing_destinations"
+        }
+      ]
+    },
+    {
+      "command": "scripts/cargo-local.sh test -p ofdm-fec-cli --locked -- --nocapture",
+      "target": "crates/cli/tests/file_payload.rs",
+      "exit_code": 0,
+      "passed": 2,
+      "elapsed_seconds": 7.74,
+      "cases": [
+        {
+          "test_file": "crates/cli/tests/file_payload.rs",
+          "qualified_test_case": "cli_rejects_source_mismatch_targets_seeds_and_oversized_files_before_creating_output"
+        },
+        {
+          "test_file": "crates/cli/tests/file_payload.rs",
+          "qualified_test_case": "actual_cli_recovers_text_and_binary_and_matches_shared_core_without_leaking_bytes"
+        }
+      ]
+    },
+    {
+      "command": "scripts/cargo-local.sh test -p ofdm-fec-cli --locked -- --nocapture",
+      "target": "crates/cli/tests/logging.rs",
+      "exit_code": 0,
+      "passed": 3,
+      "elapsed_seconds": 1.69,
+      "cases": [
+        {
+          "test_file": "crates/cli/tests/logging.rs",
+          "qualified_test_case": "help_and_version_stay_on_stdout_without_log_noise"
+        },
+        {
+          "test_file": "crates/cli/tests/logging.rs",
+          "qualified_test_case": "terminal_errors_log_once_to_stderr_and_filters_do_not_change_exit_status"
+        },
+        {
+          "test_file": "crates/cli/tests/logging.rs",
+          "qualified_test_case": "filters_preserve_json_results_and_existing_destination_protection"
+        }
+      ]
+    },
+    {
+      "command": "scripts/cargo-local.sh test -p ofdm-fec-cli --locked -- --nocapture",
+      "target": "crates/cli/tests/pnm_import.rs",
+      "exit_code": 0,
+      "passed": 10,
+      "elapsed_seconds": 12.13,
+      "cases": [
+        {
+          "test_file": "crates/cli/tests/pnm_import.rs",
+          "qualified_test_case": "contract_request_version_two_admits_known_exports_and_rejects_unknown_producers"
+        },
+        {
+          "test_file": "crates/cli/tests/pnm_import.rs",
+          "qualified_test_case": "actual_import_command_hashes_exact_json_and_refuses_clobber_and_bad_epochs"
+        },
+        {
+          "test_file": "crates/cli/tests/pnm_import.rs",
+          "qualified_test_case": "synthetic_24mhz_profile_1_loads_through_import_and_channel"
+        },
+        {
+          "test_file": "crates/cli/tests/pnm_import.rs",
+          "qualified_test_case": "synthetic_24mhz_profile_3_loads_through_import_and_channel"
+        },
+        {
+          "test_file": "crates/cli/tests/pnm_import.rs",
+          "qualified_test_case": "synthetic_24mhz_profile_2_loads_through_import_and_channel"
+        },
+        {
+          "test_file": "crates/cli/tests/pnm_import.rs",
+          "qualified_test_case": "synthetic_90mhz_profile_0_loads_through_import_and_channel"
+        },
+        {
+          "test_file": "crates/cli/tests/pnm_import.rs",
+          "qualified_test_case": "synthetic_24mhz_profile_0_loads_through_import_and_channel"
+        },
+        {
+          "test_file": "crates/cli/tests/pnm_import.rs",
+          "qualified_test_case": "synthetic_90mhz_profile_1_loads_through_import_and_channel"
+        },
+        {
+          "test_file": "crates/cli/tests/pnm_import.rs",
+          "qualified_test_case": "synthetic_90mhz_profile_2_loads_through_import_and_channel"
+        },
+        {
+          "test_file": "crates/cli/tests/pnm_import.rs",
+          "qualified_test_case": "synthetic_90mhz_profile_3_loads_through_import_and_channel"
+        }
+      ]
+    },
+    {
+      "command": "scripts/cargo-local.sh test -p ofdm-fec-cli --locked -- --nocapture",
+      "target": "crates/cli/tests/receiver_measurements.rs",
+      "exit_code": 0,
+      "passed": 1,
+      "elapsed_seconds": 7.37,
+      "cases": [
+        {
+          "test_file": "crates/cli/tests/receiver_measurements.rs",
+          "qualified_test_case": "pilot_receiver_json_matches_shared_rust_and_preserves_no_clobber"
+        }
+      ]
+    },
+    {
+      "command": "scripts/cargo-local.sh test -p ofdm-fec-cli --locked -- --nocapture",
+      "target": "crates/cli/tests/upstream.rs",
+      "exit_code": 0,
+      "passed": 9,
+      "elapsed_seconds": 2.49,
+      "cases": [
+        {
+          "test_file": "crates/cli/tests/upstream.rs",
+          "qualified_test_case": "preview_exports_only_the_idle_rust_plan_for_both_numerologies"
+        },
+        {
+          "test_file": "crates/cli/tests/upstream.rs",
+          "qualified_test_case": "sigint_reaches_the_existing_handler_and_retains_a_cancelled_report"
+        },
+        {
+          "test_file": "crates/cli/tests/upstream.rs",
+          "qualified_test_case": "capture_inspection_uses_exact_decoded_rust_documents_and_originals"
+        },
+        {
+          "test_file": "crates/cli/tests/upstream.rs",
+          "qualified_test_case": "failed_source_recovery_retains_completed_decoder_outcomes_and_nonzero_exit"
+        },
+        {
+          "test_file": "crates/cli/tests/upstream.rs",
+          "qualified_test_case": "invalid_commands_schemas_limits_and_existing_destinations_are_rejected"
+        },
+        {
+          "test_file": "crates/cli/tests/upstream.rs",
+          "qualified_test_case": "generic_50khz_actual_cli_matches_direct_rust"
+        },
+        {
+          "test_file": "crates/cli/tests/upstream.rs",
+          "qualified_test_case": "generic_25khz_actual_cli_matches_direct_rust"
+        },
+        {
+          "test_file": "crates/cli/tests/upstream.rs",
+          "qualified_test_case": "bounded_output_rejects_large_preserved_originals_before_destination_creation"
+        },
+        {
+          "test_file": "crates/cli/tests/upstream.rs",
+          "qualified_test_case": "measured_plans_preserve_original_provenance_and_both_rust_loops"
+        }
+      ]
+    }
+  ],
+  "scope": "All 23 original downstream CLI cases plus nine additive upstream cases. Times are Cargo-reported per-test-binary durations, not a new full command wall-time measurement.",
+  "other_checks": [
+    "CLI all-target Clippy with -D warnings passed in 13.63 s; workspace formatting passed.",
+    "Nine-case focused upstream run also passed in 2.57 s."
+  ],
+  "corrected_attempt": "Initial new test expected Failed for zero physical H; the established engine honestly completes erased observations with source-bit errors. Test now preserves Completed status, actual failed recovery and nonzero CLI exit; no scientific code changed.",
+  "limitations": "Actual SIGINT check is Unix-gated and ran locally on Linux; Windows CLI lifecycle is not established. Native desktop packaging and Qt are unchanged."
+}

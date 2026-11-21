@@ -27,9 +27,14 @@ fn main() {
         };
         let cancel = Arc::new(AtomicBool::new(false));
         let signal = cancel.clone();
-        ctrlc::set_handler(move || signal.store(true, Ordering::Relaxed))
-            .map_err(|error| error.to_string())?;
-        commands::run(arguments, &cancel)
+        let upstream_cancel = merlin::common::RunControl::new();
+        let upstream_signal = upstream_cancel.clone();
+        ctrlc::set_handler(move || {
+            signal.store(true, Ordering::Relaxed);
+            upstream_signal.cancel();
+        })
+        .map_err(|error| error.to_string())?;
+        commands::run(arguments, &cancel, &upstream_cancel)
     })();
     if let Err(error) = result {
         log::error!("command-failed error={error}");

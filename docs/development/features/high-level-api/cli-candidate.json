@@ -1,0 +1,91 @@
+{
+  "base_revision": "086ecb8887d442579036275d2583463502c0b2a4",
+  "scope": "Existing CLI plus additive directional dispatch, canonical API/input dependencies and exact CLI test sources; science unchanged from accepted core.",
+  "sha256": "268dd137350203ec59f27fd6e29e81068236874e2f3814574d8987725835be19",
+  "files": [
+    {
+      "path": "Cargo.lock",
+      "sha256": "7997979cae4e897cebb5105e596bd9a3f08886b59b31edd343eb9a23a37d983b"
+    },
+    {
+      "path": "crates/cli/Cargo.toml",
+      "sha256": "0d84bd8453e0f186cf9736944ad3d8f322979474135dde61bb1a20ba230a423a"
+    },
+    {
+      "path": "crates/cli/src/arguments.rs",
+      "sha256": "b7618afa1ff2e2c793b4a9a0cf0a191209c68e6be4a5de0d53650327ca32ebf2"
+    },
+    {
+      "path": "crates/cli/src/commands/channel.rs",
+      "sha256": "d9f9d7f5810933604199807556860138ba7f07afa7d7ecf730ca510820ba0305"
+    },
+    {
+      "path": "crates/cli/src/commands/evaluate.rs",
+      "sha256": "bfab4f9aad0443fd6816a5b28b0400481080961aa870115b51e1d87106482c1a"
+    },
+    {
+      "path": "crates/cli/src/commands/import_pnm.rs",
+      "sha256": "119238d577a8eb10b77519268cbd713708ccaaf8c9904145c7e6d69b3f30ed28"
+    },
+    {
+      "path": "crates/cli/src/commands/mod.rs",
+      "sha256": "e6d07e72341d50f903f924c000a7971392d0c88624a5125ff6d287573944c550"
+    },
+    {
+      "path": "crates/cli/src/commands/simulate.rs",
+      "sha256": "0957e5e5c22db484459be6c9dbf07428fed853a559b8efa1ca74d7cfa8c5a584"
+    },
+    {
+      "path": "crates/cli/src/commands/upstream.rs",
+      "sha256": "ed4012e3f41d2c56f7c125750c93eafe59bab8b51d30f08aa36c1e3c3548d3ec"
+    },
+    {
+      "path": "crates/cli/src/json_io.rs",
+      "sha256": "afbf046642af67e4b9154318fdef9da87b284542a204dd31a8cf0ae4d105946f"
+    },
+    {
+      "path": "crates/cli/src/logging/mod.rs",
+      "sha256": "7180c3978e568a1cd53ad004565af73e373ae583be86e273f3cd683f9752ec32"
+    },
+    {
+      "path": "crates/cli/src/main.rs",
+      "sha256": "3d3e83e8db878834976a7feac6541f001ac7be6aa15cf56d88554f894d72c945"
+    },
+    {
+      "path": "crates/cli/src/source_io/mod.rs",
+      "sha256": "0847a89f33142ddf59a51e51d36a9815c71f3794a3e78ca09799465f3fcadfce"
+    },
+    {
+      "path": "crates/cli/tests/channel.rs",
+      "sha256": "cf560ec8f8eab813e7cb3bd6e4b079e4a4406a084f72e5b1bce470241ae91fcc"
+    },
+    {
+      "path": "crates/cli/tests/commands.rs",
+      "sha256": "18911ae954c09be5190ffd60bd95075f01f0c535f8337c7bb23b603c4786f1a1"
+    },
+    {
+      "path": "crates/cli/tests/constellation.rs",
+      "sha256": "19c8dfd15f3de121674453792ff24c797141f0b458e7b8725b183fc4ab0550dc"
+    },
+    {
+      "path": "crates/cli/tests/file_payload.rs",
+      "sha256": "66bb3e4f2fff65e3db4019c42483679e681e3271716f2b47d54345ff244701f6"
+    },
+    {
+      "path": "crates/cli/tests/logging.rs",
+      "sha256": "2d43784d23c83585ae0b886d1c8e5ba28abadcf3d0e1d99327784f3c2a99893e"
+    },
+    {
+      "path": "crates/cli/tests/pnm_import.rs",
+      "sha256": "2e3cb21a66cd1b427244403c465ff84e0e7a4c93d1c3baf39ff618cfb32e107c"
+    },
+    {
+      "path": "crates/cli/tests/receiver_measurements.rs",
+      "sha256": "e33bea462278b3f3d28436512afd3072ded7eb732ddbad6417825031108e180a"
+    },
+    {
+      "path": "crates/cli/tests/upstream.rs",
+      "sha256": "40e46d5383263b97272b8bff3b53d6c7d421760d57b5f07efa48efe69c23be67"
+    }
+  ]
+}

@@ -8,7 +8,9 @@ The independent upstream Rust engine has local synthetic backend acceptance:
 - [Received-only receiver](receiver.md).
 - [Bounded sessions and reports](session.md).
 - [Measurement admission](measurements.md).
+- [Directional CLI](cli.md).
 
-Native PNM capture-backed runs also have local acceptance. The public facade,
-native Python namespaces, CLI dispatch
-and final regression acceptance follow the [official checklist](../../development/checklist.md#unified-backend-integration).
+Native PNM capture-backed runs, the public Rust facade,
+[native Python namespaces](../python/upstream.md) and directional CLI have local
+acceptance. Final regression acceptance follows the
+[official checklist](../../development/checklist.md#unified-backend-integration).

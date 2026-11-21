@@ -592,6 +592,8 @@ dependencies = [
  "docsis-ofdm-fec",
  "env_logger",
  "log",
+ "merlin",
+ "pnm-input",
  "serde",
  "serde_json",
  "tempfile",

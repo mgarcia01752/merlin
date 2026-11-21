@@ -105,7 +105,9 @@ in the existing FEC crate. Shared FFT/PRBS15 kernels now have a numerical leaf i
 `crates/dsp`, with passing [consumer acceptance](development/features/signal-processing/validation.md). Upstream PHY
 now includes an independent typed engine/session with local
 [synthetic backend acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
-Capture adapters and final API/CLI convergence remain pending. Source acceptance
+Capture adapters, Rust/native Python APIs and directional CLI now have local
+acceptance; final tooling, unified regressions and documentation gates remain.
+Source acceptance
 reports are historical evidence, never MERLIN integration passes. The
 [requirements baseline](requirements.md), [integration checklist](development/checklist.md#unified-backend-integration)
 and [document dispositions](development/features/unified-backend/source-review.md)
@@ -122,30 +124,33 @@ Delivery gates: [INT-LICENSE-01](development/checklist.md#int-license-01).
 | Downstream PHY | `crates/ofdm`, Cargo `docsis-ofdm-fec` | Retain package, public imports, control channels, interleavers, waveform, received configuration and report schemas. |
 | Common FEC | `crates/fec-codec` | `src/upstream_ldpc/` now owns upstream definitions/codec and independent source tests; existing BCH, downstream LDPC, shortening, NCP and PLC remain. |
 | Generic DSP | `crates/dsp`, Cargo `merlin-dsp`; existing directional numerical owners retained | Shared centered unitary 2K/4K/8K FFT and one-step PRBS15 recurrence; downstream wrappers preserve geometry/errors/state. Independent/frozen equivalence and hot-path measurements precede consumer rewiring; INT-DSP-01 now has passing consumer acceptance. No generic channel/QAM/measurement state extraction. |
-| Upstream PHY | `crates/ofdma`, package `docsis-ofdma` | Independent typed configuration, TX/channel/received-only RX, bounded session, strict versioned document admission and instruments are implemented; native Python/CLI and final unified regression acceptance remain gated. |
+| Upstream PHY | `crates/ofdma`, package `docsis-ofdma` | Independent typed configuration, TX/channel/received-only RX, bounded session, strict versioned document admission and instruments are implemented; Rust/native Python/CLI consumers pass local acceptance. Final unified regression acceptance remains gated. |
 | Native measurement input | `crates/pnm-input` | Implemented `src/upstream/` owns bounded binary admission and complete measured association; core accepts an immutable typed handoff and retains original provenance. |
-| CLI | `crates/cli`, executable `ofdm-fec` | Add upstream operations via public Rust APIs; retain every existing command and output contract. No second executable. |
-| Native Python | `bindings/python`, package `merlin` | Retain existing imports and exports; add upstream native wrappers only after Rust operation parity. No second distribution or Python science. |
+| CLI | `crates/cli`, executable `ofdm-fec` | Implemented upstream operations via facade/native input; retain every existing command and output contract. No second executable. |
+| Native Python | `bindings/python`, package `merlin` | One private `_native` extension and real downstream/upstream/common modules; existing imports/exports retain identity. No second distribution or Python science. |
 | Qt | `apps/qt` | Existing downstream presentation stays unchanged; upstream UI implementation is outside this backend integration. |
 
-**Current dependency direction:** CLI → downstream → optional FEC;
-`pnm-input` → downstream/upstream APIs and exact pinned `pnm`; native Python → downstream
-API and `pnm-input`. The independent Qt adapter retains its current dependencies.
+**Current dependency direction:** CLI/native Python → facade and `pnm-input`;
+the CLI also retains its direct downstream dependency for existing handlers.
+Both independent PHYs → common API/DSP/FEC leaves;
+`pnm-input` → downstream/upstream APIs and exact pinned `pnm`.
+The independent Qt adapter retains its current dependencies.
 The downstream `pnm-input` Cargo feature is not a dependency back to the adapter.
 
-**Selected dependency direction (dashed edges remain planned):**
+**Implemented dependency direction:**
 
 ```mermaid
 flowchart TD
-    CLI[Existing CLI] -.-> ROOT[merlin facade]
-    PY[Existing native Python adapter] -.-> ROOT
+    CLI[Existing CLI] --> ROOT[merlin facade]
+    PY[Existing native Python adapter] --> ROOT
     ROOT --> DS[Downstream PHY]
+    CLI --> DS
     ROOT --> US[Upstream PHY]
     ROOT --> API[merlin-api contracts]
     DS --> API
     US --> API
     PY --> INPUT[Native PNM input adapter]
-    CLI -.-> INPUT
+    CLI --> INPUT
     INPUT --> DS
     INPUT --> US
     INPUT --> PNM[Exact pinned PNM decoder]
@@ -663,8 +668,14 @@ root native class identities, distribution metadata `merlin-ofdm` and old import
 Installed-wheel imports must run in fresh processes outside the source checkout.
 [REQ-COM-API-09](requirements.md#req-com-api-09) owns the single compatibility matrix.
 
-Add upstream CLI dispatch under `crates/cli/src/commands/upstream.rs` and
-`crates/cli/tests/upstream.rs`; existing commands/output and executable stay intact.
+Upstream CLI dispatch now lives in `crates/cli/src/commands/upstream.rs` with
+`crates/cli/tests/upstream.rs` acceptance. The existing executable accepts upstream
+run/preview, measured plans and raw UCD/RxMER/Pre-Eq inspection through the facade
+and native input adapter. The original signal handler requests both the unchanged
+downstream AtomicBool and common upstream stop token. Existing commands/output
+stay intact; the bounded JSON owner retains create-new output and failed recovery
+reports. [CLI acceptance](development/features/high-level-api/cli-evidence.json)
+records direct Rust/process parity and the complete downstream CLI regression scope.
 Existing [native parity tests](../bindings/python/tests/test_parity.py) and
 [workbench parity](../bindings/python/tests/test_workbench.py) remain mandatory.
 Loading/preparing stays idle; only explicit run executes a frozen accepted plan.

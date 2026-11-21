@@ -249,3 +249,57 @@ comes from the named Rust/native owner cases and retained independent vectors.
 No exhaustive internal branch coverage, external interoperability, Windows runtime
 or other interpreter execution is claimed. Final workspace regressions, generated
 directional references and overall backend acceptance remain later checklist gates.
+
+## INT-CLI-01 existing executable integration
+
+Preserve all four existing commands, version text, output schemas and exit handling.
+Add `ofdm-fec upstream <run|preview|measured|ucd|rxmer|pre-eq> --input FILE --output FILE`
+through the current parser/dispatcher. Run and preview accept the generic upstream
+configuration; measured accepts the complete captured association plan; the three
+capture queries export Rust-decoded documents without simulation. Reject downstream
+options on upstream commands instead of silently ignoring them.
+
+Reuse `json_io`'s 16 MiB bounded input/output and create-new transactional exports.
+Raw capture adapters retain original bytes and exact grids/metadata. Generic and
+measured admission remain idle; only run/measured explicitly execute. Preserve
+incomplete/failed/cancelled reports before returning a nonzero exit status, without
+equating terminal completion with full source recovery. Preview never clocks source.
+The existing signal handler requests both its original downstream AtomicBool and
+the common stop token, bridged into upstream control; no polling thread or second
+signal handler is added. No CLI pause/progress API is advertised.
+
+| Inspected owner | Decision / destination |
+| --- | --- |
+| `crates/cli/src/{main,arguments}.rs` and `commands/mod.rs` | EDIT additive directional parsing/dispatch and shared signal request; preserve downstream syntax and handlers. |
+| `crates/cli/src/json_io.rs` | REUSE bounded original bytes and pre-serialized create-new output; no second I/O implementation. |
+| `crates/merlin/src/lib.rs`, `pnm-input::upstream` | REUSE accepted public session and capture/association APIs; add only adapter dependencies to the CLI manifest. |
+| Source `crates/cli/src/{args,command,json_io}.rs` at pinned revision | Retain as inspected reference; do not copy the standalone executable, fixture-RNG/LDPC experiment or duplicate file adapter. |
+
+Added `crates/cli/src/commands/upstream.rs` and
+`crates/cli/tests/upstream.rs`. Test both numerologies, idle preview, measured
+provenance, exact raw captures, invalid schemas/options/limits, occupied destinations,
+failed report retention, actual Ctrl-C where supported and direct Rust science
+parity. Run every existing downstream CLI regression before acceptance. Update
+CLI/user/example guides and fourteen-field evidence; final overall backend gates
+remain separate. Requirements: REQ-COM-IDENTITY-01 and REQ-DS-API-01 through
+[INT-CLI-01](../../checklist.md#int-cli-01), using the accepted upstream API owner.
+
+### CLI acceptance
+
+The [candidate](cli-candidate.json), [32 named executed cases](cli-test-results.json)
+and [requirement evidence](cli-evidence.json) close INT-CLI-01. All 23 original
+downstream CLI cases pass with the nine new upstream cases. Direct Rust/process
+parity covers both numerologies and generic/measured admission. Five raw capture
+variants retain the exact Rust documents/originals; truncated data rejects. Idle
+preview, actual Linux SIGINT, occupied paths and 16 MiB input/output bounds pass.
+The output-limit case preserves a large original whitespace prefix rather than
+discarding provenance to fit the report.
+
+A destructive zero-H channel completes receiver observations with source-bit
+errors, as the accepted engine already specifies. The CLI retains that Completed
+report and decoder outcomes while returning status 1 for failed source recovery.
+The initial new test's stronger Failed-state expectation was corrected; no
+scientific implementation changed. CLI all-target Clippy passes (13.63 s), as does
+workspace formatting. Cargo's recorded per-binary test times remain distinct from
+scientific determinism and full-command performance. No Windows signal lifecycle,
+Qt upstream UI, hosted execution or package publication is claimed.
