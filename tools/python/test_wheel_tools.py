@@ -12,7 +12,7 @@ import subprocess
 from unittest.mock import patch, Mock, call
 
 from build_wheel import build_command, prepare_notices, validate_notices, windows_build_environment
-from smoke_wheel import inspect_wheel, validate_example_output
+from smoke_wheel import inspect_wheel, validate_example_output, validate_upstream_output
 
 
 class WheelToolTests(unittest.TestCase):
@@ -162,6 +162,17 @@ class WheelToolTests(unittest.TestCase):
                 archive.writestr('merlin/second.so', b'not a real extension')
             with self.assertRaisesRegex(ValueError, 'single native extension'):
                 inspect_wheel(wheel, '1.2.3', 'cp310', 'linux_x86_64')
+
+    def test_actual_upstream_inventory_and_recovery_output_are_required(self):
+        """Fixture-specific acceptance rejects stale namespaces and partial reports."""
+        complete = ('Profiles discovered by Rust: [5, 13]\nStatus: Completed\n'
+                    'Compared source bits: 1976\nBit errors: 0\n')
+        validate_upstream_output(complete)
+        for output in (complete.replace('Completed', 'Cancelled'),
+                       complete.replace('1976', '0'), complete.replace('errors: 0', 'errors: 1'),
+                       complete.replace('[5, 13]', '[5]'), complete + complete):
+            with self.assertRaises(ValueError):
+                validate_upstream_output(output)
 
 
 if __name__ == '__main__':

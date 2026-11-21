@@ -234,6 +234,8 @@ def audit(root):
         if checklist.count(marker) != 1:
             errors.append(f"{identifier}: missing or duplicate stable task anchor")
     errors.extend(master_prompt_errors(root, inventory))
+    from implementation_evidence import audit as implementation_audit
+    errors.extend(implementation_audit(root, inventory))
     return errors
 
 
@@ -245,12 +247,42 @@ def main():
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=ROOT)
+    parser.add_argument('--acceptance', action='store_true',
+                        help='Also require fresh compiler/native exports and compiled test discovery')
+    parser.add_argument('--rust-exports', type=Path)
+    parser.add_argument('--native-exports', type=Path)
+    parser.add_argument('--test-catalog', type=Path)
+    parser.add_argument('--cargo-metadata', type=Path)
     args = parser.parse_args()
+    inputs = (args.rust_exports, args.native_exports, args.test_catalog, args.cargo_metadata)
+    if args.acceptance and not all(inputs):
+        parser.error('--acceptance requires all four compiler/native/discovery input paths')
+    if not args.acceptance and any(inputs):
+        parser.error('Compiler/native input paths require --acceptance')
     errors = audit(args.root.resolve())
+    if args.acceptance:
+        from api_operation_matrix import executed_cases, validate
+        from implementation_evidence import audit as implementation_audit, compiled_cases
+        root = args.root.resolve()
+        inventory = json.loads((root / INVENTORY).read_text())
+        catalog = inventory['implementation_acceptance']
+        matrix = json.loads((root / catalog['operation_matrix']).read_text())
+        compiled = compiled_cases(root, json.loads(args.cargo_metadata.read_text()),
+                                  json.loads(args.test_catalog.read_text()))
+        errors.extend(implementation_audit(root, inventory, compiled))
+        errors.extend(validate(root, matrix, json.loads(args.rust_exports.read_text()),
+                               executed_cases(root, catalog['execution_files']),
+                               json.loads(args.native_exports.read_text())))
+        for row in matrix['operations']:
+            for locator in row['tests']['rust']:
+                if tuple(locator.split('::', 1)) not in compiled:
+                    errors.append(f'{locator}: API acceptance case is not in compiled discovery')
     for error in errors:
         print(error)
     if not errors:
-        print("Integration traceability: all task, requirement and architecture links pass")
+        print("Integration traceability: task/requirement/architecture and recorded implementation chains pass")
+        if args.acceptance:
+            print('Fresh Rust/native export and compiled-case acceptance passes')
     return int(bool(errors))
 
 

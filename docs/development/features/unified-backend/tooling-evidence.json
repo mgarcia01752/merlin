@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "completion_authority": "docs/development/checklist.md",
+  "records": [
+    {
+      "requirement_id": "REQ-COM-NFR-03",
+      "architecture_owner": "docs/architecture.md#unified-normative-evidence-and-exclusions",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-tools-01-executed-implementation-traceability",
+      "checklist_task": "INT-TOOLS-01",
+      "implementing_crate": "tools (development validation/delivery tooling, not a Cargo crate)",
+      "source_file": "tools/release/versions.py",
+      "symbol": "synchronize",
+      "test_file": "tools/release/test_versions.py",
+      "qualified_test_case": "VersionPropagationTests.test_two_versions_and_dependency_preservation",
+      "validation_command": "python3 -B -m unittest discover -s tools/release -p 'test_*.py' -v",
+      "observed_result": "pass; 190 development-tool cases, actual 48-case installed native parity, compiler/export/compiled-case audit and local package inventories",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/tooling-candidate.json",
+        "sha256": "314f9de8224ae30cd105d0f8fe8e02caf0a3f189e98150ce39ba57e896d9947d"
+      },
+      "status": "integrated-validated INT-TOOLS-01",
+      "limitations": "Local Linux/CPython 3.10 evidence. Mock packaging/platform fixtures are contract checks; actual CLI archive uses tested debug binary. No hosted/native installer/release/Windows runtime or final whole-backend acceptance claim."
+    },
+    {
+      "requirement_id": "REQ-DS-DELIVERY-01",
+      "architecture_owner": "docs/architecture.md#unified-normative-evidence-and-exclusions",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-tools-01-executed-implementation-traceability",
+      "checklist_task": "INT-TOOLS-01",
+      "implementing_crate": "tools (development validation/delivery tooling, not a Cargo crate)",
+      "source_file": "tools/packaging/common.py",
+      "symbol": "stage",
+      "test_file": "tools/packaging/test_packaging.py",
+      "qualified_test_case": "PackageTests.test_matching_binary_resources_licenses_and_checksums",
+      "validation_command": "python3 -B -m unittest discover -s tools/packaging -p 'test_*.py' -v",
+      "observed_result": "pass; 190 development-tool cases, actual 48-case installed native parity, compiler/export/compiled-case audit and local package inventories",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/tooling-candidate.json",
+        "sha256": "314f9de8224ae30cd105d0f8fe8e02caf0a3f189e98150ce39ba57e896d9947d"
+      },
+      "status": "integrated-validated INT-TOOLS-01",
+      "limitations": "Local Linux/CPython 3.10 evidence. Mock packaging/platform fixtures are contract checks; actual CLI archive uses tested debug binary. No hosted/native installer/release/Windows runtime or final whole-backend acceptance claim."
+    },
+    {
+      "requirement_id": "REQ-COM-TRACE-02",
+      "architecture_owner": "docs/architecture.md#unified-normative-evidence-and-exclusions",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-tools-01-executed-implementation-traceability",
+      "checklist_task": "INT-TOOLS-01",
+      "implementing_crate": "tools (development validation/delivery tooling, not a Cargo crate)",
+      "source_file": "tools/validation/implementation_evidence.py",
+      "symbol": "audit",
+      "test_file": "tools/validation/test_implementation_evidence.py",
+      "qualified_test_case": "ImplementationEvidenceTests.test_failed_unexecuted_and_candidate_mismatched_runs_fail",
+      "validation_command": "python3 -B -m unittest discover -s tools/validation -p 'test_*.py' -v",
+      "observed_result": "pass; 190 development-tool cases, actual 48-case installed native parity, compiler/export/compiled-case audit and local package inventories",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/tooling-candidate.json",
+        "sha256": "314f9de8224ae30cd105d0f8fe8e02caf0a3f189e98150ce39ba57e896d9947d"
+      },
+      "status": "integrated-validated INT-TOOLS-01",
+      "limitations": "Local Linux/CPython 3.10 evidence. Mock packaging/platform fixtures are contract checks; actual CLI archive uses tested debug binary. No hosted/native installer/release/Windows runtime or final whole-backend acceptance claim."
+    }
+  ],
+  "tool_test_cases": 190,
+  "fresh_installed_native_cases": 48,
+  "registered_api_workflows": 12,
+  "compiled_discovery_cases": 608,
+  "compiler_export_operations": {
+    "downstream": 202,
+    "upstream": 91,
+    "common": 4,
+    "native-input": 65
+  },
+  "explicit_api_rows": {
+    "rust": 364,
+    "native": 373
+  },
+  "native_wheel_smoke": {
+    "status": "passed",
+    "platform": "linux",
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "extension": "merlin/_native.cpython-310-x86_64-linux-gnu.so",
+    "wheel": "merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "imported_native": "/tmp/merlin-wheel-test-w7cqzaav/venv/lib/python3.10/site-packages/merlin/_native.cpython-310-x86_64-linux-gnu.so",
+    "example_elapsed_seconds": 1.3595170470071025,
+    "examples": [
+      {
+        "name": "run_single_capture.py",
+        "elapsed_seconds": 0.6713732939970214
+      },
+      {
+        "name": "run_single_capture_cm_chan_est.py",
+        "elapsed_seconds": 0.6581897110154387
+      },
+      {
+        "name": "run_upstream.py",
+        "elapsed_seconds": 0.029954041994642466
+      }
+    ],
+    "stdout": "Profiles discovered by Rust: [5, 13]\nStatus: Completed\nCompared source bits: 1976\nBit errors: 0\n",
+    "stderr": "",
+    "sha256": "85bc94aabef79206b699e49bd6125c49b039335a75a5ea151916115cafc13db5",
+    "elapsed_seconds": 4.570454761007568
+  },
+  "cli_archive_inventory": {
+    "archive": "merlin-cli_0.4.0_linux_amd64.tar.gz",
+    "sha256": "c2e4defe09761a81663833055ead580d5d587dcafaf633be9a5efb1ddcae714e",
+    "members": 932,
+    "required_payloads": [
+      "examples/cli/upstream/us-50khz.json",
+      "examples/cli/upstream/us-25khz.json",
+      "examples/measurements/upstream/measured/capture-driven.json",
+      "docs/user/upstream/cli.md",
+      "docs/user/python/upstream.md",
+      "third-party/manifest.json",
+      "NOTICE",
+      "fec-codec-LICENSE-MIT"
+    ],
+    "scope": "Local package inventory using the tested debug CLI; no optimized release/installer/publication claim."
+  },
+  "lock_identity_audit": {
+    "baseline": "3a2f7468307278468bdc60b1d2ee9ef45c7a2e85",
+    "records": [
+      {
+        "path": "Cargo.lock",
+        "third_party_packages": 119,
+        "unchanged": true
+      },
+      {
+        "path": "bindings/python/Cargo.lock",
+        "third_party_packages": 121,
+        "unchanged": true
+      },
+      {
+        "path": "apps/qt/Cargo.lock",
+        "third_party_packages": 202,
+        "unchanged": true
+      }
+    ]
+  },
+  "source_log_location": "docs/development/local/unified-backend/tooling-integration",
+  "scope": "Implementation/data catalog supplements the official checklist; no separate completion authority. Historical accepted formats and original requirements/checkmarks remain unchanged."
+}

@@ -17,6 +17,11 @@ SOURCE_CRATES = {
     "merlin_api": "crates/phy-api",
     "pnm_input": "crates/pnm-input",
 }
+API_NAMESPACES = {
+    'docsis_ofdm_fec::api': 'merlin::downstream',
+    'docsis_ofdma::api': 'merlin::upstream',
+    'merlin_api': 'merlin::common',
+}
 
 
 class SymbolPage(HTMLParser):
@@ -191,6 +196,59 @@ def inventory(namespace, index, documentation_root):
     return sorted(result, key=lambda item: item["export"])
 
 
+def resolve_reexport_owners(data, root):
+    """Resolve omitted rustdoc source links through explicit public Rust imports.
+
+    Args:
+        data: Fresh compiler inventory from every canonical direction/API root.
+        root: Source checkout containing the actual public re-export declarations.
+    Returns:
+        None; fills missing owners only after exact import/type/signature agreement.
+    Raises:
+        ValueError when an owner cannot be proven. Identical type names alone
+        never establish identity across independent PHY crates.
+    """
+    from implementation_evidence import rust_code
+    exports = {item['export']: item for items in data.values() for item in items}
+    for item in exports.values():
+        missing = [method for method in item['methods'] if method['source_file'] is None]
+        if not missing:
+            continue
+        parts = item['export'].split('::')
+        owner = SOURCE_CRATES.get(parts[0])
+        if owner is None:
+            raise ValueError(f"No source crate for public re-export: {item['export']}")
+        directory = root / owner / 'src'
+        module = directory.joinpath(*parts[1:-1])
+        paths = [module.with_suffix('.rs'), module / 'mod.rs'] if len(parts) > 2 else [directory / 'lib.rs']
+        source = next((path for path in paths if path.is_file()), None)
+        origins = set()
+        if source is not None:
+            # Explicit grouped pub use, e.g. docsis_ofdma::api::{ApiError, ApiResult}.
+            # Groups are full source namespace and comma-delimited names/aliases.
+            for match in re.finditer(r'\bpub\s+use\s+([\w:]+)::\{([^{}]+)\}\s*;', rust_code(source.read_text())):
+                namespace = API_NAMESPACES.get(match[1])
+                if namespace is None:
+                    continue
+                for entry in match[2].split(','):
+                    names = entry.strip().split(' as ')
+                    if names[-1].strip() == parts[-1]:
+                        origins.add(namespace + '::' + names[0].strip())
+        if len(origins) != 1:
+            raise ValueError(f"No unique explicit source for re-export: {item['export']}")
+        original = exports.get(origins.pop())
+        if original is None or original['kind'] != item['kind']:
+            raise ValueError(f"Re-export kind/identity is not in compiler inventory: {item['export']}")
+        for method in missing:
+            candidates = [value for value in original['methods']
+                if value['operation'].rsplit('::', 1)[-1] == method['operation'].rsplit('::', 1)[-1]
+                and value['signature'] == method['signature'] and value['source_file'] is not None]
+            if len(candidates) != 1:
+                raise ValueError(f"Re-export method has no exact canonical owner: {method['operation']}")
+            method['source_file'] = candidates[0]['source_file']
+            method['reexport_origin'] = original['export']
+
+
 def main():
     """Write generated export facts for freshly built root/API/adapter rustdoc.
 
@@ -209,6 +267,7 @@ def main():
     }
     data = {name: inventory(namespace, args.docs / path, args.docs)
             for name, (namespace, path) in roots.items()}
+    resolve_reexport_owners(data, Path(__file__).resolve().parents[2])
     args.output.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
     print("Rustdoc exports:", {name: sum(len(item["methods"]) for item in items)
                               for name, items in data.items()})

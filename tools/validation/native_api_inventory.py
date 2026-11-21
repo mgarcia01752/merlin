@@ -6,6 +6,7 @@
 """Discover actual installed native PHY exports without executing scientific work."""
 import argparse
 import hashlib
+import importlib.machinery
 import json
 from pathlib import Path
 import sys
@@ -54,6 +55,10 @@ def main():
     parser.add_argument('--legacy-inventory', type=Path)
     args = parser.parse_args()
     import merlin
+    native = getattr(merlin, '_native', None)
+    spec = getattr(native, '__spec__', None)
+    if spec is None or not isinstance(spec.loader, importlib.machinery.ExtensionFileLoader):
+        raise ValueError('Installed native inventory requires the real extension loader, not a stub')
     inventory = native_inventory(merlin, (ROOT / 'VERSION').read_text().strip())
     artifact = Path(inventory['native_artifact'])
     if not artifact.is_relative_to(Path(sys.prefix).resolve()):

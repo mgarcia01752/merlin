@@ -150,3 +150,55 @@ private/build/cached corpora; never write evidence, source fixtures or task stat
 from the validator. Tests cover path/fragments, preservation, planned/current
 locators, aliases and dependency rejection. The completion report records actual
 checks and omissions; no simulation/Qt tests are needed for documentation changes.
+
+## INT-TOOLS-01: Executed implementation traceability
+
+Extend the existing traceability tool with focused implementation-evidence checks,
+using the official checklist as the sole status owner. Add an evidence catalog to
+the existing source inventory: record files, successful named-run records and
+explicit pre-integration historical exceptions. Do not restage or reopen accepted
+planning/FEC/history to force a new evidence format.
+
+Each newly accepted runtime task must cover its declared requirements with all
+fourteen evidence fields, exact architecture/design/task links, source symbols,
+qualified acceptance cases, successful execution and a valid candidate fingerprint.
+Verify historical candidate contents against their actual descendant Git revision
+when later accepted work changes a file; do not compare old checkpoints blindly
+to current bytes. Reject unknown or duplicate identities, unexecuted/failed cases,
+missing owner symbols, mismatched fingerprints and premature completion. Current
+compiler Rust exports and installed native metadata remain separate actual inputs
+to the complete API matrix. Compile-only discovery is not execution evidence.
+
+Reuse `integration_traceability.py`, `feature_documentation.py`, compiler
+`rust_api_inventory.py`, installed `native_api_inventory.py` and
+`api_operation_matrix.py`. Added `tools/validation/implementation_evidence.py`
+and focused independent negative fixtures in
+`tools/validation/test_implementation_evidence.py`; integrate the new checks into
+the existing audit rather than introducing another completion tracker. Compiled
+nextest case discovery may resolve qualified crate-root unit cases alongside
+syntax-aware Python discovery; successful named records still establish execution.
+
+Audit every local manifest/lock/version/pin/NOTICE and the actual package/example
+inventories. Preserve existing dependency pins, the two workflow entrypoints,
+native platform scope, stable profiles and useful build caches. Run the tool,
+packaging, release, installer and example checks appropriate to any affected owner.
+Record exact commands, candidate, outcomes and local/hosted limits. This task
+does not accept final regressions, generated documentation or the whole backend;
+INT-REG-01, INT-DOC-02 and INT-ACCEPT-01 remain dependency-ordered gates.
+
+The implemented `tools/testing/native_api.py` creates a fresh private environment,
+generates eight upstream and existing downstream/Designer references through
+separate Rust processes, runs every installed native case outside the source
+package and records actual exports. It never calculates science in Python or
+installs system packages. `tools/testing/api_examples.py` now registers twelve
+directional workflows; wheel smoke retains both old downstream fixtures and adds
+the upstream fixture/direct module imports. Package tests retain new examples and
+guides. The preflight workflow fetches full Git history to verify historical
+candidate objects; its two-entrypoint/native-target/security design is unchanged.
+
+Default traceability checks recorded chains and current declarations. Explicit
+`--acceptance` additionally requires compiler exports, installed native exports,
+nextest discovery and matching Cargo metadata; omitting an input fails. Neither
+mode recreates an old test run. The code/test owners are
+`tools/validation/{implementation_evidence,test_implementation_evidence}.py`,
+`tools/testing/{native_api,test_native_api}.py` and the existing adapter/tool suites.

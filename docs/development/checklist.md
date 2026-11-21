@@ -352,11 +352,18 @@ architecture owner identifies concrete implementation/test paths and disposition
   actual Linux Ctrl-C and protected input/output limits pass; CLI Clippy/fmt pass.
 
 <a id="int-tools-01"></a>
-- [ ] **INT-TOOLS-01** Reconcile dependency, example and delivery inventories.
+- [x] **INT-TOOLS-01** Reconcile dependency, example and delivery inventories.
   Requirements: [REQ-COM-NFR-03](../requirements.md#req-com-nfr-03), [REQ-DS-DELIVERY-01](../requirements.md#req-ds-delivery-01), [REQ-COM-TRACE-02](../requirements.md#req-com-trace-02).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-normative-evidence-and-exclusions).
   Depends on: INT-LICENSE-01, INT-PY-01, INT-CLI-01.
   Acceptance: Validate local manifests/locks/version/pins/notices, examples and package member inventories without silently changing toolchains, two CI entrypoints or native target scope. Preserve caches and generated Python-guide policy; installed/hosted claims require separate actual evidence. Close every [traceability automation gap](features/unified-backend/master-prompt-review.md#automated-validation-gaps), including exact symbols/cases, executed evidence and actual native Rust/Python export coverage.
+  Feature record: [executed traceability design](features/unified-backend/design.md#int-tools-01-executed-implementation-traceability).
+  Acceptance evidence: [candidate/requirement records](features/unified-backend/tooling-evidence.json)
+  and [190 tool cases plus 48 fresh installed native cases](features/unified-backend/tooling-test-results.json).
+  Exact compiler/native/compiled-case acceptance, all three unchanged third-party
+  lock inventories, twelve example targets, real CLI archive and three wheel
+  smokes pass locally. Historical formats/states remain preserved; hosted and
+  final regression/documentation/backend gates remain separate.
 
 <a id="int-reg-01"></a>
 - [ ] **INT-REG-01** Pass unified downstream and upstream backend regressions.

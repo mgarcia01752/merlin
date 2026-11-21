@@ -89,6 +89,21 @@ def validate_example_output(output):
         raise ValueError(f"Installed-wheel example result differs from fixture: {output}")
 
 
+def validate_upstream_output(output):
+    """Require the bounded upstream fixture's real inventory and source recovery.
+
+    Args:
+        output: Installed native example stdout; the example queries Rust inventory.
+    Raises:
+        ValueError for incomplete recovery, missing output or fixture drift.
+        These expected IDs belong to this fixed fixture, not a general catalog.
+    """
+    expected = ['Profiles discovered by Rust: [5, 13]', 'Status: Completed',
+                'Compared source bits: 1976', 'Bit errors: 0']
+    if output.splitlines() != expected:
+        raise ValueError(f'Installed upstream result differs from fixture: {output}')
+
+
 def main():
     """Install into a fresh temporary venv, run the API example, then stage checksums.
 
@@ -134,6 +149,11 @@ def main():
                             '--no-deps', str(wheel)], cwd=isolated, env=environment, check=True)
             # Verify import resolves inside the fresh environment and has the source version.
             probe = ("import merlin,sys; from pathlib import Path; "
+                     "import merlin.downstream as d, merlin.upstream as u, merlin.common as c; "
+                     "assert d.Simulation is merlin.Simulation; "
+                     "assert u.Simulation is not d.Simulation; "
+                     "assert c.RunControl is merlin.RunControl; "
+                     "assert u.ErrorCode is c.ErrorCode; "
                      f"assert merlin.__version__ == {version!r}; "
                      "native=getattr(merlin,'_native',getattr(merlin,'merlin',merlin)); "
                      "assert Path(native.__file__).resolve().is_relative_to(Path(sys.prefix).resolve()); "
@@ -143,7 +163,10 @@ def main():
             report['imported_native'] = imported.stdout.strip()
             report['example_elapsed_seconds'] = 0.0
             report['examples'] = []
-            for example in (EXAMPLE, EXAMPLE.with_name('run_single_capture_cm_chan_est.py')):
+            examples = [(EXAMPLE, validate_example_output),
+                        (EXAMPLE.with_name('run_single_capture_cm_chan_est.py'), validate_example_output),
+                        (EXAMPLE.with_name('run_upstream.py'), validate_upstream_output)]
+            for example, validate in examples:
                 example_started = time.perf_counter()
                 try:
                     result = subprocess.run([str(executable), '-I', str(example)], cwd=isolated,
@@ -157,7 +180,7 @@ def main():
                 report['stdout'] = result.stdout
                 report['stderr'] = result.stderr
                 print(result.stdout, end='')
-                validate_example_output(result.stdout)
+                validate(result.stdout)
 
         args.output.mkdir(parents=True, exist_ok=False)
         shutil.copy2(wheel, args.output / wheel.name)

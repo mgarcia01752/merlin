@@ -1,0 +1,67 @@
+{
+  "base_revision": "890731f035144c3c9ee8b26bf3b395d94b11088d",
+  "scope": "Execution/identity/export validation, actual native/reference runner, package/example integration and full-history preflight; scientific implementations unchanged.",
+  "sha256": "314f9de8224ae30cd105d0f8fe8e02caf0a3f189e98150ce39ba57e896d9947d",
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "0e1e0890c5547abbc88db5e76aadb5df24d5dfe56b0392a2fbdeff12238ba004"
+    },
+    {
+      "path": "docs/development/features/unified-backend/source-inventory.json",
+      "sha256": "68df4db096958140b92234c4204121e5fcc062904421945846fb59bb0408c44f"
+    },
+    {
+      "path": "tools/packaging/test_packaging.py",
+      "sha256": "61b76fedd4815709d0fb9d2f54d24f403eb77f5549cd73c5cc69d65279b17c5e"
+    },
+    {
+      "path": "tools/python/smoke_wheel.py",
+      "sha256": "ab15dfd2bb8293401036343ef60f1650e339bb8881d1a2a6312defdb619f3277"
+    },
+    {
+      "path": "tools/python/test_wheel_tools.py",
+      "sha256": "00bd21a5e59c088dbd0cb133892ee61b9eacd4bb8b827655a546a41bec1001b3"
+    },
+    {
+      "path": "tools/testing/api_examples.py",
+      "sha256": "063107477ff960e0fd2a993ee8e7b45c97cc4b21f95a839b7835035757e44b26"
+    },
+    {
+      "path": "tools/testing/native_api.py",
+      "sha256": "f128154b30ede2d51ced7385f636ccfad6d43747b93c38c87895c8567b6b024f"
+    },
+    {
+      "path": "tools/testing/test_native_api.py",
+      "sha256": "a2a43677d545ef5301249f8f4147e1f3e1c0b298ee88355eff33e7c9e0eae172"
+    },
+    {
+      "path": "tools/validation/implementation_evidence.py",
+      "sha256": "ca5a9977b9b10abc96ba0a145795fe0ec546c4cc09f20ba2d21a20676fe40090"
+    },
+    {
+      "path": "tools/validation/integration_traceability.py",
+      "sha256": "5dff3df87e6d18fab9daa05d4173ece7d514b2e5c1423e0f413649f851cb1f78"
+    },
+    {
+      "path": "tools/validation/native_api_inventory.py",
+      "sha256": "c71966d282334dc0d482379fdc9e502d4dd9cb05bb4208d8a54b3c53f433c7da"
+    },
+    {
+      "path": "tools/validation/rust_api_inventory.py",
+      "sha256": "ddd75624adc24c1d08e36bb74fba08027a01b657deb57e9d5f832405eb3df049"
+    },
+    {
+      "path": "tools/validation/test_implementation_evidence.py",
+      "sha256": "3d9b270cee31cf2ed6d833075ea1b2e1b34f9c5f5363280c632ba6f18246b03d"
+    },
+    {
+      "path": "tools/validation/test_native_api_inventory.py",
+      "sha256": "cf630768d6bc3fd97719cdff4e3998461c8348ef3a2f799948bedfb9d7eb900d"
+    },
+    {
+      "path": "tools/validation/test_rust_api_inventory.py",
+      "sha256": "de1e9d891007f8103d5ab68d9bd8f85d88e87a3d0663c635aa7d12e5a2e7f643"
+    }
+  ]
+}

@@ -8,7 +8,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from rust_api_inventory import inventory
+from rust_api_inventory import inventory, resolve_reexport_owners
 
 
 class RustdocExportTests(unittest.TestCase):
@@ -67,6 +67,28 @@ class RustdocExportTests(unittest.TestCase):
             rows = inventory("public", root / "index.html", root)
             self.assertEqual(rows[0]["methods"][0]["operation"], "public::load")
             self.assertEqual(rows[0]["methods"][0]["signature"], "pub fn load(bytes: &[u8]) -> Result<Value, Error>")
+
+    def test_external_reexport_without_source_links_uses_exact_origin_not_type_name(self):
+        """Two same-named PHY types remain distinct when rustdoc omits source links."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'crates/pnm-input/src/upstream/mod.rs'
+            source.parent.mkdir(parents=True)
+            source.write_text('pub use docsis_ofdma::api::{ApiError, ApiResult};\n')
+            def item(export, owner):
+                return {'export': export, 'kind': 'enum', 'methods': [
+                    {'operation': export + '::code', 'signature': 'pub fn code(&self) -> Code', 'source_file': owner}]}
+            data = {'downstream': [item('merlin::downstream::ApiError', 'crates/ofdm/src/api/error.rs')],
+                    'upstream': [item('merlin::upstream::ApiError', 'crates/ofdma/src/api/error.rs')],
+                    'native-input': [item('pnm_input::upstream::ApiError', None)]}
+            resolve_reexport_owners(data, root)
+            method = data['native-input'][0]['methods'][0]
+            self.assertEqual(method['source_file'], 'crates/ofdma/src/api/error.rs')
+            self.assertEqual(method['reexport_origin'], 'merlin::upstream::ApiError')
+            method['source_file'] = None
+            source.write_text('// pub use docsis_ofdma::api::{ApiError};\n')
+            with self.assertRaisesRegex(ValueError, 'unique explicit source'):
+                resolve_reexport_owners(data, root)
 
 
 if __name__ == "__main__":

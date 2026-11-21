@@ -6855,5 +6855,81 @@
       "scope": "Only the frozen test constructor parameter documentation changed; numerical code is identical.",
       "check": "All six shared-kernel cases rerun successfully; fmt check passes."
     }
+  },
+  "implementation_acceptance": {
+    "completion_authority": "docs/development/checklist.md",
+    "scope": "New runtime evidence format is additive. Already accepted planning/FEC/DSP at the verified pre-migration checkpoint retains its original evidence format; no historical acceptance is recreated. Recorded named runs establish their declared scope; actual compiler/native acceptance is a separate explicit gate.",
+    "historical_tasks": [
+      {
+        "task": "INT-DOC-01",
+        "revision": "3a2f7468307278468bdc60b1d2ee9ef45c7a2e85",
+        "evidence": "docs/development/features/unified-backend/source-review.md",
+        "reason": "Already completed at the approved pre-migration checkpoint; retain original local validation and requirement history without reopening its process."
+      },
+      {
+        "task": "INT-BASE-01",
+        "revision": "3a2f7468307278468bdc60b1d2ee9ef45c7a2e85",
+        "evidence": "docs/development/features/unified-backend/baseline.md",
+        "reason": "Already completed at the approved pre-migration checkpoint; retain original local validation and requirement history without reopening its process."
+      },
+      {
+        "task": "INT-LICENSE-01",
+        "revision": "3a2f7468307278468bdc60b1d2ee9ef45c7a2e85",
+        "evidence": "docs/development/features/unified-backend/reuse-review.md",
+        "reason": "Already completed at the approved pre-migration checkpoint; retain original local validation and requirement history without reopening its process."
+      },
+      {
+        "task": "INT-REUSE-01",
+        "revision": "3a2f7468307278468bdc60b1d2ee9ef45c7a2e85",
+        "evidence": "docs/development/features/unified-backend/scientific-source-review.json",
+        "reason": "Already completed at the approved pre-migration checkpoint; retain original local validation and requirement history without reopening its process."
+      },
+      {
+        "task": "INT-FEC-01",
+        "revision": "3a2f7468307278468bdc60b1d2ee9ef45c7a2e85",
+        "evidence": "docs/development/features/unified-backend/fec-validation.md",
+        "reason": "Already completed at the approved pre-migration checkpoint; retain original local validation and requirement history without reopening its process."
+      },
+      {
+        "task": "INT-PLAN-01",
+        "revision": "3a2f7468307278468bdc60b1d2ee9ef45c7a2e85",
+        "evidence": "docs/development/features/unified-backend/master-prompt-review.md",
+        "reason": "Already completed at the approved pre-migration checkpoint; retain original local validation and requirement history without reopening its process."
+      },
+      {
+        "task": "INT-API-MAP-01",
+        "revision": "3a2f7468307278468bdc60b1d2ee9ef45c7a2e85",
+        "evidence": "docs/development/features/high-level-api/namespace-design.md",
+        "reason": "Already completed at the approved pre-migration checkpoint; retain original local validation and requirement history without reopening its process."
+      },
+      {
+        "task": "INT-DSP-01",
+        "revision": "3a2f7468307278468bdc60b1d2ee9ef45c7a2e85",
+        "evidence": "docs/development/features/signal-processing/validation.md",
+        "reason": "Already completed at the approved pre-migration checkpoint; retain original local validation and requirement history without reopening its process."
+      }
+    ],
+    "operation_matrix": "docs/development/features/high-level-api/operation-matrix.json",
+    "evidence_files": [
+      "docs/development/features/ofdma/implementation-evidence.json",
+      "docs/development/features/pnm-measurement-inputs/implementation-evidence.json",
+      "docs/development/features/high-level-api/namespace-evidence.json",
+      "docs/development/features/high-level-api/operation-evidence.json",
+      "docs/development/features/high-level-api/python-evidence.json",
+      "docs/development/features/high-level-api/python-operation-evidence.json",
+      "docs/development/features/high-level-api/cli-evidence.json",
+      "docs/development/features/unified-backend/tooling-evidence.json"
+    ],
+    "execution_files": [
+      "docs/development/features/ofdma/session-test-results.json",
+      "docs/development/features/pnm-measurement-inputs/decoder-test-results.json",
+      "docs/development/features/pnm-measurement-inputs/association-test-results.json",
+      "docs/development/features/high-level-api/namespace-test-results.json",
+      "docs/development/features/high-level-api/operation-test-results.json",
+      "docs/development/features/high-level-api/python-test-results.json",
+      "docs/development/features/high-level-api/python-operation-test-results.json",
+      "docs/development/features/high-level-api/cli-test-results.json",
+      "docs/development/features/unified-backend/tooling-test-results.json"
+    ]
   }
 }

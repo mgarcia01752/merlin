@@ -684,6 +684,13 @@ interleaver/overlap/update/receiver state at defined safe boundaries.
 
 ### Unified normative evidence and exclusions
 
+The [implementation traceability gate](development/features/unified-backend/design.md#int-tools-01-executed-implementation-traceability)
+now validates fourteen-field records, exact declarations/executed cases and
+historical candidate identities through the existing audit. Explicit acceptance
+also requires real compiler/native exports and compiled Cargo test discovery.
+The official checklist remains the sole completion authority; retained historical
+formats do not transfer standalone source acceptance to new MERLIN functionality.
+
 Delivery gates: [INT-TOOLS-01](development/checklist.md#int-tools-01), [INT-DEFER-01](development/checklist.md#int-defer-01).
 
 [REQ-COM-TRACE-02](requirements.md#req-com-trace-02) extends the existing

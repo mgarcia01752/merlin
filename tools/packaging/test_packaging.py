@@ -72,7 +72,10 @@ class PackageTests(unittest.TestCase):
                 run.return_value.stdout = f"ofdm-fec {version()}\n"
                 payload = stage(binary, root / "payload")
             resources = payload / "share/merlin"
-            for name in ("LICENSE", "NOTICE", "fec-codec-LICENSE-MIT", "examples/cli/awgn.json", "crates/ofdm/resources/qam-table/NOTICE"):
+            for name in ("LICENSE", "NOTICE", "fec-codec-LICENSE-MIT", "examples/cli/awgn.json", "crates/ofdm/resources/qam-table/NOTICE",
+                         "examples/cli/upstream/us-50khz.json", "examples/cli/upstream/us-25khz.json",
+                         "examples/measurements/upstream/measured/capture-driven.json",
+                         "docs/user/upstream/cli.md", "docs/user/python/upstream.md"):
                 self.assertTrue((resources / name).is_file(), name)
             examples = resources / "examples/workbench"
             manifest = json.loads((examples / "manifest.json").read_text())

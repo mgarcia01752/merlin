@@ -5,12 +5,29 @@
 #
 """Protect legacy native metadata against permissive namespace acceptance."""
 from copy import deepcopy
+from pathlib import Path
+from types import SimpleNamespace
+import sys
+import tempfile
 import unittest
+from unittest.mock import patch
 
-from native_api_inventory import verify_legacy
+from native_api_inventory import main, verify_legacy
 
 
 class LegacyNativeInventoryTests(unittest.TestCase):
+    def test_native_inventory_rejects_python_stubs_before_writing_evidence(self):
+        """A .so-looking path cannot replace a real extension import loader."""
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / 'inventory.json'
+            fake = SimpleNamespace(_native=SimpleNamespace(
+                __file__='pretend.so', __spec__=SimpleNamespace(loader=object())))
+            with patch.dict(sys.modules, {'merlin': fake}), patch.object(sys, 'argv',
+                    ['native_api_inventory.py', '--output', str(output)]):
+                with self.assertRaisesRegex(ValueError, 'real extension loader'):
+                    main()
+            self.assertFalse(output.exists())
+
     def test_all_old_defaults_aliases_and_descriptors_survive_additive_changes(self):
         """Extra members are valid; changed signatures and property kinds are not."""
         old = {'name': 'Alias', 'canonical_name': 'Value', 'signature': '(count=7)',

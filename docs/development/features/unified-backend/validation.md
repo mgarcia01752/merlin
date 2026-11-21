@@ -1,5 +1,9 @@
 # Unified documentation validation and completion boundary
 
+The earlier sections preserve their named historical checkpoints. Current progress
+is owned by the [official checklist](../../checklist.md); the latest tooling
+acceptance section below records the additive runtime-evidence audit.
+
 Current checkpoint: the sections below preserve the original INT-DOC-01 review.
 The [pre-import baseline](baseline.md), [rights/reuse decisions](reuse-review.md)
 and [standalone upstream LDPC results](fec-validation.md) now accept INT-BASE-01,
@@ -194,3 +198,56 @@ backend implementation gate; downstream history and all other task states are
 preserved. Final runtime/module/API correspondence, final documentation acceptance
 and unified backend acceptance remain open at INT-REG-01 / INT-DOC-02 /
 INT-ACCEPT-01. No commit, push, merge, publication or installation was performed.
+
+## INT-TOOLS-01: Implementation and delivery tooling
+
+The [candidate](tooling-candidate.json), [executed cases](tooling-test-results.json)
+and [requirement evidence](tooling-evidence.json) retain exact local validation inputs
+and scope. The official checklist alone owns task completion.
+
+The [implementation design](design.md#int-tools-01-executed-implementation-traceability)
+extends the existing traceability audit with fourteen-field requirement records,
+exact source symbols/cases, successful named executions and real candidate Git
+identities. Its explicit acceptance mode also joins fresh compiler/native exports
+and nextest discovery to exact Cargo targets. Eight previously completed
+planning/FEC/DSP gates retain their verified original formats and acceptance states.
+
+Reproduce installed native parity using a newly built ABI-matching wheel and a new
+ignored output directory (no system installation or output replacement):
+
+```bash
+python3 -B tools/testing/native_api.py --wheel-dir local/python-wheels \
+  --output docs/development/local/unified-backend/native-check
+```
+
+This runner creates eight independent upstream Rust reference results, existing
+downstream selection/workbench/Designer references, a private native environment,
+all installed tests and actual native export metadata. Development Python only
+orchestrates the checks. The regular wheel smoke also runs both original downstream
+examples plus the bounded upstream example and verifies actual directional imports.
+The standard Rust example runner now owns twelve workflows.
+
+Historical fingerprint verification requires the relevant Git objects. Preflight
+therefore fetches full history; preserve reviewed acceptance checkpoints when
+integrating branches. Source archives remain usable for simulation but do not
+provide this historical Git-identity audit by themselves. The two CI entrypoints,
+all security checks and declared native targets remain unchanged. Local checks do
+not establish hosted execution, Windows runtime or native installer lifecycles.
+
+Local acceptance passes: 190 development-tool cases, all 48 installed native cases
+with fresh Rust references, 364 Rust/373 native operation rows and 608 compiled
+case identities (discovery, not execution of the full suite). The fresh compiler
+inventory resolves an omitted rustdoc source link through the exact explicit
+public import, preserving distinct same-named PHY errors; its independent negative
+case rejects name-only or comment-only guesses. Historical source/candidate
+identities and every newly accepted task's requirement chain pass the full audit.
+
+All twelve registered example workflows match actual Cargo targets. The actual
+local CLI archive has 932 members, including upstream examples/guides/notices and
+no private caches/build trees. It uses the already tested debug binary and is
+package-inventory evidence. The wheel passes both old 82-codeword downstream
+smokes and the complete 1,976-bit upstream fixture. The three locks retain exactly
+119/121/202 third-party name/version/source/checksum tuples from the pre-migration
+checkpoint; version metadata and the generated Python guide agree. No dependency
+pin or native delivery target changed. Final whole-workspace regressions remain
+INT-REG-01; no release, system installation or publication occurred.

@@ -185,20 +185,22 @@ tested working diff/artifact as well as its base SHA.
 [INT-TOOLS-01](../../checklist.md#int-tools-01), with final coverage at INT-ACCEPT-01.
 This table describes current versus remaining checks, not a parallel task list.
 
-| Required category (master §9) | Existing/preflight coverage | Remaining acceptance |
+| Required category (master §9) | Implemented acceptance coverage | Final use |
 | --- | --- | --- |
-| Missing implementation owners; invalid/stale paths | Functional record owner states, 127 backfill routes, specific FEC owner guard; planned paths distinguished | Exact file coverage for each newly implemented requirement/symbol, not only directory owners. |
-| Missing public API symbols | Source inventory and explicit current/proposed API rows | Parse/resolve every mapped Rust export and inspect actual native Python exports, qualified signatures and module imports; reject removed/misnamed symbols. |
-| Missing acceptance cases | Existing declared test files, exact seed matrix cases | Verify exact test case discovery for every new backend requirement and every exported operation; no path-only passes. |
-| Missing executed evidence | Linked historical baseline/FEC records and truthful `not run` planning states | Machine-check required command/result/candidate/limitations fields against actual acceptance records for all newly accepted work. |
-| Requirement/task/architecture links | Existing full bidirectional task guard, current 37-clause prompt map, five additive IDs | Keep checks current after each integration step. |
-| Duplicate requirement/task IDs and invalid aliases | Existing canonical identity, explicit anchor, task label and historical alias guards | Extend identity inventory for each new requirement; verify no undeclared definitions. |
-| Unmatched Rust/Python exports | Existing actual-native reference inventory tool and seed matrix with intentional Rust-only `prepare` | Full operation coverage/signature/status validation and explicit justified native-adapter-only or Rust-only distinctions. No blanket name equality. |
-| Incorrect documentation completion/status | Official unchecked gates; preflight checks against canonical links and task state | Reject integrated-validated records lacking required executed cases or prematurely completed final/API tasks; preserve accepted legacy history. |
+| Missing implementation owners; invalid/stale paths | Fourteen-field record checks resolve concrete crate/file/symbol owners; historical candidates match real Git descendants. | INT-TOOLS-01; repeated at final acceptance. |
+| Missing public API symbols | Compiler rustdoc inventory, actual installed native inventory and the complete seventeen-cell operation matrix reject removed/misnamed symbols and stale signatures. | Explicit traceability `--acceptance` mode. |
+| Missing acceptance cases | Exact Rust module/Python class/function discovery plus fresh nextest-to-Cargo target identities. | Every newly accepted requirement and mapped operation. |
+| Missing executed evidence | Successful named-run records require command, exit, count/identity and known candidate fingerprints; accepted tasks need every declared requirement chain. | Recorded execution is distinct from current compilation and fresh runtime. |
+| Requirement/task/architecture links | Existing bidirectional task/requirement/architecture and 37-clause prompt checks remain. | Every audit. |
+| Duplicate requirement/task IDs and invalid aliases | Canonical document identity guards plus duplicate implementation/native-operation checks. | Preserve historical aliases/states. |
+| Unmatched Rust/Python exports | All 364 Rust rows and 373 installed native entries, with explicit typed-field/constructor/Serde and Rust-only differences. | No blanket name equality or invented counterpart methods. |
+| Incorrect documentation completion/status | Official checklist remains authoritative; new accepted tasks without full executed requirement chains fail; eight pre-existing accepted planning/FEC/DSP exceptions are verified against their actual old checklist. | Final/API gates stay separate until their own acceptance. |
 
-A successful structural audit does not claim that the remaining semantic/native
-checks above are implemented. Extend the current tooling as stages land; keep
-INT-TOOLS-01, INT-DOC-02 and INT-ACCEPT-01 open until the full contract passes.
+[INT-TOOLS-01 validation](validation.md#int-tools-01-implementation-and-delivery-tooling)
+records actual local checks and platform limits. The original preflight's missing
+checks are now implemented; final whole-workspace regression, documentation and
+backend acceptance still require their own evidence. Compilation/metadata alone
+never establishes scientific execution.
 
 ## File dispositions
 

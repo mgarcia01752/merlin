@@ -10,7 +10,20 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-EXAMPLES = ("run_single_capture", "run_all_profiles", "run_single_capture_cm_chan_est")
+EXAMPLES = (
+    ('pnm-input', 'run_single_capture', ()),
+    ('pnm-input', 'run_all_profiles', ()),
+    ('pnm-input', 'run_single_capture_cm_chan_est', ()),
+    ('merlin', 'upstream_session', ()),
+    ('docsis-ofdma', 'upstream_loop', ()),
+    ('docsis-ofdma', 'upstream_measurements', ()),
+    ('docsis-ofdma', 'upstream_document', ()),
+    ('docsis-ofdma', 'upstream_document', ('synthetic',)),
+    ('pnm-input', 'inspect_ucd', ()),
+    ('pnm-input', 'inspect_rxmer', ()),
+    ('pnm-input', 'upstream_captures', ()),
+    ('pnm-input', 'upstream_captures', ('25',)),
+)
 TIMEOUT_SECONDS = 900
 
 
@@ -44,10 +57,14 @@ def main():
     """Execute the fixture-backed Rust entry workflows and print total wall time."""
     started = time.perf_counter()
     try:
-        for example in EXAMPLES:
-            run_example(["bash", str(ROOT / "scripts/cargo-local.sh"), "run", "-p", "pnm-input",
-                         "--example", example, "--locked"],
-                        ROOT / "local/api-example-tests" / f"{example}.log")
+        for package, example, arguments in EXAMPLES:
+            command = ['bash', str(ROOT / 'scripts/cargo-local.sh'), 'run', '-p', package,
+                       '--example', example, '--locked']
+            if arguments:
+                command += ['--', *arguments]
+            suffix = '-'.join(arguments)
+            name = example + ('-' + suffix if suffix else '')
+            run_example(command, ROOT / 'local/api-example-tests' / (name + '.log'))
     finally:
         print(f"API example checks total: {time.perf_counter() - started:.2f}s", flush=True)
 
