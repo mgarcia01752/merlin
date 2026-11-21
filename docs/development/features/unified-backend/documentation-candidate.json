@@ -1,0 +1,103 @@
+{
+  "base_revision": "559c49e523b1d59b1ae8b48ff190cb15a785751b",
+  "scope": "Current documentation/skill/reference-generation source after full scientific regression; no scientific implementation or dependency changes. Final record/link audit follows creation of these evidence files.",
+  "sha256": "14a4b9415029ec9d0b536acc7cdd56bc055f77548220051a44911adb7b47fead",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "2f431284970cf126d062e9558b521fb4912d16595eef3424855b6f73eca50aba"
+    },
+    {
+      "path": "README.md",
+      "sha256": "dfe7cf99858117643af90173e47f9c20ca0a67c9ee6b444926db41515c6fe2aa"
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "9863b5c66243fd26b5f1de48ba9d00709c2aca04762f604726366e6214497cd8"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "89c301c8979b9abd70e2d681c6f8cb7ae9968140a984cb61b9bc1cd23798bd9b"
+    },
+    {
+      "path": "docs/development/checklist.md",
+      "sha256": "7fea7f0aae4d8a9e9eb0be96943afe801a0d6a152580c835912fe62989d29d38"
+    },
+    {
+      "path": "docs/development/features/high-level-api/compatibility-matrix.md",
+      "sha256": "98b8a31e74209256d83556fe5da4b03617ef9d92b8d70674edae92f108d18c69"
+    },
+    {
+      "path": "docs/development/features/high-level-api/namespace-design.md",
+      "sha256": "6b499e29274d9438cb81228e523b56de4ced8ef47be6791806f6a162b34e2f02"
+    },
+    {
+      "path": "docs/development/features/high-level-api/upstream.md",
+      "sha256": "3bc95017a117aaf0d4cdf410c58bbf2bff005a56d68d693668a3f712ba8017b5"
+    },
+    {
+      "path": "docs/development/features/unified-backend/design.md",
+      "sha256": "65b6dbc21f57a890ebbdd5d23576bc515a76fea6cc33b5084a1f0710d29e5d4a"
+    },
+    {
+      "path": "docs/development/features/unified-backend/master-prompt-review.md",
+      "sha256": "cd3f12eb10eee1a374352570ad685d69ab6de21936bef255e5a0344f923181f1"
+    },
+    {
+      "path": "docs/development/features/unified-backend/source-inventory.json",
+      "sha256": "2d7fb36fe55b1ac8541fe64717940a316a287294c5a55a89c9fef68a6b1f6de9"
+    },
+    {
+      "path": "docs/development/features/unified-backend/validation.md",
+      "sha256": "dbdeb2aa53250e5ab99ff0ffbd8be74457fc448ced86eaa84dc39334ee806342"
+    },
+    {
+      "path": "docs/development/status.md",
+      "sha256": "139346ca51931f315f405e1e527532745a99ea1c9952b39ef981a98d0e335425"
+    },
+    {
+      "path": "docs/reference/api-reference.md",
+      "sha256": "fabdb61a630390fb975d37d7ba73a333bb9956b6d05aafaa81296cceb5f7b505"
+    },
+    {
+      "path": "docs/reference/ofdm-support.md",
+      "sha256": "752ab397db9843c0f63b1c98c92811b0d9b10c743c7fea413ea3df51a3601ddc"
+    },
+    {
+      "path": "docs/reference/python-api/index.rst",
+      "sha256": "dee539602f259bdfc7c1a538b8339a4de1cd058f25b6fff621949a7fc9913e3d"
+    },
+    {
+      "path": "docs/user/upstream/README.md",
+      "sha256": "62fcfc2b2a11df191a4830c3a6fb2d2b263f01f6b0120d71a206c4fb089a406e"
+    },
+    {
+      "path": "examples/api/README.md",
+      "sha256": "1a4f1d2d9efc7cfdc05faca0a3df4ad96ca3ffc22b8475daa930d46f8b029fe9"
+    },
+    {
+      "path": "skills/docsis-signal-processing/references/upstream.md",
+      "sha256": "f3bd5b6a01fea24631fddf85a1acb1f2c9c3c213f99cca3e6225b4476fc9343d"
+    },
+    {
+      "path": "skills/public-api/SKILL.md",
+      "sha256": "92f5a4b6a2b124fd64c90f3ce6bc86ce0c18345a13523036c245647d8c5b73cc"
+    },
+    {
+      "path": "skills/public-api/references/paired-api.md",
+      "sha256": "70586afa364db8c9f0b658383c0911036815b4ae570854aaa423aeea4cd91d29"
+    },
+    {
+      "path": "skills/scientific-testing/references/upstream.md",
+      "sha256": "5aafaaf95122e27035e25acf45a4a1524276f40f1949023b99c0251f7319d007"
+    },
+    {
+      "path": "tools/python/build_api_reference.py",
+      "sha256": "46c7cfa239b69acde35b9dbcfd3d1e182b082dc7729da8d05bcdb9d7703c30a3"
+    },
+    {
+      "path": "tools/python/test_api_reference.py",
+      "sha256": "96bf122d347b02b96363b3be3cfade9a225f3de0b4d5fbb5fa71b5a5d6c806ae"
+    }
+  ]
+}

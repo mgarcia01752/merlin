@@ -227,3 +227,24 @@ cases, elapsed times, failures/corrections and host/platform limits. Existing
 downstream history stays completed; new integration evidence belongs to INT-REG-01.
 The architecture/requirement/checklist links and final documentation/whole-backend
 acceptance remain separate subsequent gates. No publication, merge or release.
+
+## INT-DOC-02: Final runtime and documentation correspondence
+
+Reconcile current summaries and canonical skills with the accepted Rust/native
+Python/CLI/PNM owners and INT-REG-01 evidence. Preserve historical sections, stable
+IDs, source clauses, document dispositions and the three authoritative baselines.
+No scientific implementation, public behavior, saved recipe or dependency changes.
+
+Edit `tools/python/build_api_reference.py` and its focused negative tests to
+generate pages for every installed root/directional/common import. Resolve aliases
+to their actual native canonical modules; same-named upstream/downstream types
+remain distinct. Require class anchors, canonical members and search output.
+Build strict Sphinx 8.1.3 pages from the accepted installed wheel, and warnings-denied
+rustdoc for the facade, independent PHYs, common contracts and PNM owner. Record
+the actual native hash and namespace inventory. Generated HTML stays ignored.
+
+Update only current overview/status wording, API-reference instructions, paired
+examples and skill owner paths. Link the final ten-condition review and exact
+requirement/acceptance records. Existing link/ID/dependency/source-preservation
+validators and real export/compiled-case acceptance remain required; a successful
+reference render does not substitute for the scientific regression gate.

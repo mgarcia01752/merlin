@@ -11,7 +11,7 @@
 *Modulation, Encoding, Reception, Link Impairments & Noise*
 
 [![Status: Under development](https://img.shields.io/badge/Status-Under_development-yellow)](docs/development/status.md)
-[![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-blue)](VERSION)
+[![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-blue)](VERSION)
 [![Master](https://github.com/mgarcia01752/merlin/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/mgarcia01752/merlin/actions/workflows/ci.yml)
 [![Release](https://github.com/mgarcia01752/merlin/actions/workflows/release.yml/badge.svg)](https://github.com/mgarcia01752/merlin/actions/workflows/release.yml)
 [![Rust 1.85.1](https://img.shields.io/badge/Rust-1.85.1-000000?logo=rust&logoColor=white)](rust-toolchain.toml)
@@ -28,6 +28,13 @@ an applied modulation profile. Compare recovered data with the original source
 to measure bit errors, decoding failures, corrections and iteration counts.
 All signal processing and FEC run in Rust. Full CMTS MAC services and
 multi-channel operation are outside the simulator's scope.
+
+The unified backend also provides an independent [upstream OFDMA engine](docs/user/upstream/README.md),
+with typed configuration, CM TX, channel, received-only CMTS RX and measured
+UCD/RxMER/Pre-Eq admission. Rust exposes `merlin::{downstream,upstream,common}`;
+one native Python distribution mirrors those namespaces and preserves
+`merlin.Simulation`. The [upstream CLI](docs/user/upstream/cli.md) uses the existing
+executable. The Qt workbench continues to present downstream OFDM only.
 
 Install the desktop workbench: [Ubuntu DEB](docs/user/install/ubuntu-desktop.md) ·
 [Windows MSI](docs/user/install/windows.md). Windows native validation is pending;

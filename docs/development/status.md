@@ -1,16 +1,26 @@
 # Development status
 
-Reviewed against the local source and checklist on **2026-11-10**.
-Version source: root `VERSION`, currently **0.1.0**. This describes the current
+Current backend status follows the [official integration checklist](checklist.md#unified-backend-integration)
+and [local validation record](features/unified-backend/validation.md).
+Version source: root `VERSION`, currently **0.4.0**. This describes the current
 checkout, not a published release, platform certification or interoperability claim.
 
 MERLIN — DOCSIS OFDM Simulation Toolkit — has grown from an isolated FEC
 experiment into a standalone Rust
 **downstream OFDM waveform and FEC simulation engine**. Its minimum closed-loop milestone is complete for the documented supported
 configurations: MERLIN TX → channel model → MERLIN RX → original-source comparison.
-OFDMA and multi-channel simulation remain outside the implemented scope.
+The independent upstream OFDMA backend now implements typed configuration, CM TX,
+channel, received-only CMTS RX, bounded sessions and measured UCD/RxMER/Pre-Eq
+admission. One Rust facade and one native Python distribution expose directional
+namespaces; the existing CLI also runs upstream. Full unified regressions pass.
+Final documentation and backend acceptance follow their checklist gates.
+Multi-channel simulation and upstream Qt remain outside the implemented scope.
 Continue work through the [development workspace](README.md), which links public
 feature records and defines the ignored local evidence/output location.
+
+The downstream milestone narratives below retain their historical scope and
+experiment values. Current directional ownership is defined by the architecture;
+old platform/publication statements do not establish new runtime acceptance.
 
 ## Completed milestones
 
@@ -69,9 +79,9 @@ known timing/PLC phase. No full blind modem-acquisition claim is made.
 | --- | --- | --- |
 | Receiver extensions | Arbitrary RF acquisition, sample-rate error and severe-channel tracking remain outside the bounded minimum model | Future receiver extensions |
 | Measurement evolution | Future explicit correlated/burst models; streaming dynamic DPD/NCP activation is implemented, duration CLI remains fixed-profile | Future model extensions |
-| Cross-platform validation | Windows/macOS native builds/runtime after the later workflow push | QA-06 |
-| Product interfaces | Native installer lifecycle/release execution; optional Python bindings and remaining Qt instrumentation | QA-07, API-01, UI-01 |
-| Later PHY scope | OFDMA, channel bonding/multiple channels and FDX-specific behavior | LATER-01, LATER-02 |
+| Cross-platform validation | Windows native/hosted runtime and installer evidence; macOS remains deferred | QA-06 |
+| Product interfaces | Native installer lifecycle/release execution; remaining Qt instrumentation and wider platform Python validation | QA-07, API-01, UI-01 |
+| Later PHY scope | Wider upstream modes/acquisition/ranging, upstream Qt, channel bonding/multiple channels and FDX-specific behavior | INT-DEFER-01, LATER-02 |
 
 This table groups outstanding work; it does not reorder the official checklist
 or authorize implementation. Select the next task using its dependencies and

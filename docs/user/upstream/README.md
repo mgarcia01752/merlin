@@ -12,5 +12,6 @@ The independent upstream Rust engine has local synthetic backend acceptance:
 
 Native PNM capture-backed runs, the public Rust facade,
 [native Python namespaces](../python/upstream.md) and directional CLI have local
-acceptance. Final regression acceptance follows the
+acceptance, including complete unified Rust regressions and existing downstream Qt
+compatibility. Current documentation/backend gates and retained limits follow the
 [official checklist](../../development/checklist.md#unified-backend-integration).

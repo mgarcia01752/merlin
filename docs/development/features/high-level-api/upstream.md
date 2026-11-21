@@ -1,6 +1,6 @@
 # Converged public Rust and native Python APIs
 
-The [selected exact namespace mapping](namespace-design.md) uses a minimal `merlin` facade, independent PHY owners, a neutral common contract leaf and one real Python package. [INT-API-MAP-01](../../checklist.md#int-api-map-01) records the design decision; Rust and native Python exports now pass namespace and complete operation coverage acceptance; final workspace regressions remain gated.
+The [selected exact namespace mapping](namespace-design.md) uses a minimal `merlin` facade, independent PHY owners, a neutral common contract leaf and one real Python package. [INT-API-MAP-01](../../checklist.md#int-api-map-01) records the design decision; Rust and native Python exports now pass namespace and complete operation coverage acceptance; full unified workspace regressions also pass locally; final backend review follows the official checklist.
 
 Active feature detail, subordinate to [canonical architecture](../../../architecture.md#unified-rust-python-and-cli-apis).
 The [requirements baseline](../../../requirements.md) owns mandatory behavior; the
@@ -22,8 +22,7 @@ MeasuredConfiguration handoff; no core-to-capture dependency is introduced.
 The [current backend master review](../unified-backend/master-prompt-review.md)
 adds explicit direction namespaces, package-import acceptance and a fourteen-field
 implementation evidence contract. The single [API compatibility matrix](compatibility-matrix.md)
-owns operation mapping and the namespace proposal; it is initially incomplete for
-the future upstream API. [REQ-COM-API-07](../../../requirements.md#req-com-api-07),
+owns the complete implemented operation mapping and selected namespace design. [REQ-COM-API-07](../../../requirements.md#req-com-api-07),
 [REQ-COM-API-08](../../../requirements.md#req-com-api-08) and
 [REQ-COM-API-09](../../../requirements.md#req-com-api-09) refine the existing
 contracts. [INT-PLAN-01](../../checklist.md#int-plan-01) accepts planning only;
@@ -111,6 +110,10 @@ Retained source records describe their original checkout and limitations; test
 paths above do not claim a new pass. Final integrated backend acceptance stays open.
 
 ## INT-RUST-01 complete operation coverage
+
+Historical Rust checkpoint: the following design/acceptance text records
+`854caec`. Subsequent installed native acceptance is recorded under INT-PY-01
+below; current export coverage is owned by the complete operation matrix.
 
 Namespace checkpoint `c6e3065` provides the real crates and tests. Complete the
 existing compatibility matrix with compiler-discovered explicit public methods,

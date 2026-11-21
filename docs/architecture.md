@@ -106,7 +106,10 @@ in the existing FEC crate. Shared FFT/PRBS15 kernels now have a numerical leaf i
 now includes an independent typed engine/session with local
 [synthetic backend acceptance](development/features/ofdma/design.md#session-and-core-acceptance).
 Capture adapters, Rust/native Python APIs and directional CLI now have local
-acceptance; final tooling, unified regressions and documentation gates remain.
+acceptance. Tooling and full unified regressions, including unchanged downstream Qt
+compatibility, now pass locally; final documentation/backend review follows the
+official checklist. The [regression record](development/features/unified-backend/validation.md#int-reg-01-complete-unified-workspace-regression)
+retains exact candidates, executed cases and platform/security boundaries.
 Source acceptance
 reports are historical evidence, never MERLIN integration passes. The
 [requirements baseline](requirements.md), [integration checklist](development/checklist.md#unified-backend-integration)
@@ -124,7 +127,7 @@ Delivery gates: [INT-LICENSE-01](development/checklist.md#int-license-01).
 | Downstream PHY | `crates/ofdm`, Cargo `docsis-ofdm-fec` | Retain package, public imports, control channels, interleavers, waveform, received configuration and report schemas. |
 | Common FEC | `crates/fec-codec` | `src/upstream_ldpc/` now owns upstream definitions/codec and independent source tests; existing BCH, downstream LDPC, shortening, NCP and PLC remain. |
 | Generic DSP | `crates/dsp`, Cargo `merlin-dsp`; existing directional numerical owners retained | Shared centered unitary 2K/4K/8K FFT and one-step PRBS15 recurrence; downstream wrappers preserve geometry/errors/state. Independent/frozen equivalence and hot-path measurements precede consumer rewiring; INT-DSP-01 now has passing consumer acceptance. No generic channel/QAM/measurement state extraction. |
-| Upstream PHY | `crates/ofdma`, package `docsis-ofdma` | Independent typed configuration, TX/channel/received-only RX, bounded session, strict versioned document admission and instruments are implemented; Rust/native Python/CLI consumers pass local acceptance. Final unified regression acceptance remains gated. |
+| Upstream PHY | `crates/ofdma`, package `docsis-ofdma` | Independent typed configuration, TX/channel/received-only RX, bounded session, strict versioned document admission and instruments are implemented; Rust/native Python/CLI consumers pass local acceptance. Full unified local regression passes; supported scope and wider platform boundaries remain explicit. |
 | Native measurement input | `crates/pnm-input` | Implemented `src/upstream/` owns bounded binary admission and complete measured association; core accepts an immutable typed handoff and retains original provenance. |
 | CLI | `crates/cli`, executable `ofdm-fec` | Implemented upstream operations via facade/native input; retain every existing command and output contract. No second executable. |
 | Native Python | `bindings/python`, package `merlin` | One private `_native` extension and real downstream/upstream/common modules; existing imports/exports retain identity. No second distribution or Python science. |
@@ -170,7 +173,8 @@ analysis-only builds and existing feature behavior remain supported.
 
 Active feature detail: [FEC mechanisms and distinct code families](development/features/fec/design.md)
 and [shared numerical conventions](development/features/signal-processing/design.md).
-Their documentation acceptance does not close pending DSP extraction.
+Their initial documentation acceptance was separate from the executed DSP
+consumer acceptance linked below.
 
 Delivery gates: [INT-REUSE-01](development/checklist.md#int-reuse-01), [INT-FEC-01](development/checklist.md#int-fec-01), [INT-DSP-01](development/checklist.md#int-dsp-01).
 
@@ -179,7 +183,7 @@ Shared numerical evidence is recorded in [DSP integration validation](developmen
 downstream `waveform::transform` retains mode selection and exact error mapping.
 `merlin_dsp::prbs15::step` owns one recurrence transition; source owners retain
 seed/absolute position, resource validation, identity and independent verifier policy.
-Source-stage wrappers remain planned until their own migration gates pass. The
+Both PHY wrappers now use these kernels through their accepted migration gates. The
 [frozen former-kernel fixture](../crates/dsp/tests/support/legacy_transform.rs)
 is test-only equivalence evidence, separate from independent Fourier/PRBS checks.
 
@@ -197,8 +201,9 @@ The first additive backend implementation is
 independent `tests.rs` and `tests/{oracle,source_audit,source_fixtures}.rs`.
 It reuses the existing private sparse plan through a byte-buffer operation;
 the downstream GF2 operation and existing root codec imports remain unchanged.
-This is the standalone codec boundary; grant selection, upstream transport and
-native Python support remain later gates. Existing
+This describes the first standalone codec checkpoint. Subsequent grant selection,
+upstream transport and native Python delivery have their own accepted integration
+records in the unified sections. Existing
 [downstream codec tests](../crates/fec-codec/tests/codec.rs),
 [normative checks](../crates/fec-codec/tests/normative.rs) and
 [shortening tests](../crates/fec-codec/tests/shortening_codec.rs) remain.
@@ -285,8 +290,8 @@ Typed channel transport and restricted residual playback are implemented with
 [local channel evidence](development/features/ofdma/design.md#int-us-ch-01-channel-implementation-unit).
 Normal received-only RX composition now has
 [local stage and internal loop evidence](development/features/ofdma/design.md#int-us-rx-01-received-only-receiver-implementation-unit).
-Document/session and synthetic stage acceptance now pass locally; final backend
-regression and adapter acceptance remain open; standalone LDPC
+Document/session, synthetic stage, adapter and full unified regression acceptance
+now pass locally; standalone LDPC
 encoding/decoding now has the codec owners and acceptance identified below. The retained
 [stage contracts](development/features/unified-backend/references/upstream-stage-contracts.md)
 preserve detailed scientific definitions, source equations/tables, reference
@@ -697,8 +702,8 @@ Delivery gates: [INT-TOOLS-01](development/checklist.md#int-tools-01), [INT-DEFE
 `tools/validation/integration_traceability.py` and functional-document validator.
 Current prompt coverage/link checks are structural evidence only. The
 [automation coverage register](development/features/unified-backend/master-prompt-review.md#automated-validation-gaps)
-names remaining symbol, exact-test, export and executed-evidence gates; INT-TOOLS-01
-cannot close until those checks cover the integrated backend. Indexes support
+names the symbol, exact-test, export and executed-evidence checks now implemented
+and accepted under INT-TOOLS-01, and repeated at final acceptance. Indexes support
 the official checklist and must not assign a second completion state.
 
 Preserve PHY 3.1 I20 §7.4.1 (processing), §7.4.3/Table8 (FEC), §7.4.4–7
@@ -750,7 +755,9 @@ closed-loop configurations. Existing normative/source-table checks remain in
 place. These results do not claim external modem/CMTS interoperability. The
 [closed-loop design](development/features/closed-loop-validation/design.md) and
 [evidence](development/features/closed-loop-validation/validation.md) define the
-minimum; Qt, Python, native delivery, OFDMA and multiple channels remain later work.
+minimum for that historical downstream checkpoint. Subsequent Qt, native Python
+and OFDMA backend delivery is tracked in the unified sections above; multiple
+channels and wider native/hosted acceptance remain separate.
 
 ## Terminology: cell and symbol
 

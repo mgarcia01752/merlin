@@ -4,8 +4,10 @@
 
 Use this when planning or changing shared APIs, including explicitly scoped
 upstream work. Keep MERLIN's current Rust imports, Python package, CLI behavior
-and saved-workbench contract. No new controller/configuration names are selected
-by this procedure, and no upstream operation is implied to exist yet.
+and saved-workbench contract. Current exports and executed parity belong to the
+[single operation matrix](../../../docs/development/features/high-level-api/compatibility-matrix.md).
+The upstream Rust owner is `crates/ofdma/src/api`; native conversions live in
+`bindings/python/src/upstream`. This procedure alone establishes no new support.
 
 ## Inventory and file placement
 

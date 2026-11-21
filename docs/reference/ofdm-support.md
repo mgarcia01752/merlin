@@ -1,6 +1,7 @@
 # Downstream OFDM scope and modulation coverage
 
-DOCSIS OFDM Channel Sim is DOCSIS-focused. Build the downstream OFDM engine first; OFDMA is deferred.
+This page describes the existing downstream engine. The independently executable
+upstream backend has its own [supported-scope guide](../user/upstream/README.md).
 The product target is profile evaluation and real FEC simulation across the data
 constellations allowed by the pinned DOCSIS3.1/4.0 downstream definitions.
 

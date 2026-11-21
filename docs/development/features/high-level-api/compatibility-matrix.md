@@ -19,7 +19,8 @@ roundtrip and retain exact named historical MERLIN component cases. The
 engine/lifecycle and analysis-only execution. Historical source results are not
 substituted for these MERLIN runs.
 
-## Namespace proposal for review
+<a id="namespace-proposal-for-review"></a>
+## Selected namespace implementation
 
 The [selected namespace-to-Cargo mapping](namespace-design.md) supersedes the
 initial crate-alias/common-ownership alternatives. The user requires a literal
@@ -36,7 +37,7 @@ Root `merlin.Simulation` remains the same downstream native type. Real native
 namespaces/classes, type files and installed-wheel execution now pass INT-PY-01.
 [INT-API-MAP-01](../../checklist.md#int-api-map-01) documents the exact mapping;
 INT-RUST-01/INT-PY-01 record implementation acceptance.
-The complete exports, dependency graph, compatibility behavior, planned common
+The complete exports, dependency graph, compatibility behavior, implemented common
 signatures and named acceptance tests are in that selected design. This matrix
 continues to own the existing exact session signatures and parity rows below.
 
@@ -50,7 +51,7 @@ These are verified existing owners, not hypothetical API names:
 | Rust domain objects | [configuration.rs](../../../../crates/ofdm/src/api/configuration.rs), [inputs.rs](../../../../crates/ofdm/src/api/inputs.rs), [units.rs](../../../../crates/ofdm/src/api/units.rs), [reports.rs](../../../../crates/ofdm/src/api/reports.rs), [error.rs](../../../../crates/ofdm/src/api/error.rs). Existing constructors/getters/builders are preserved; enumerate every export into the final matrix before convergence acceptance. |
 | Native capture/workbench/export | [pnm-input/lib.rs](../../../../crates/pnm-input/src/lib.rs), [workbench.rs](../../../../crates/pnm-input/src/workbench.rs), [rxmer_export](../../../../crates/pnm-input/src/rxmer_export/mod.rs). Rust file admission, discovery and provenance remain authoritative. |
 | Python registrations | [lib.rs](../../../../bindings/python/src/lib.rs), [controller.rs](../../../../bindings/python/src/controller.rs), [inputs.rs](../../../../bindings/python/src/inputs.rs), [quantities.rs](../../../../bindings/python/src/quantities.rs), [options.rs](../../../../bindings/python/src/options.rs), [receiver.rs](../../../../bindings/python/src/receiver.rs), [reports.rs](../../../../bindings/python/src/reports.rs), [workbench.rs](../../../../bindings/python/src/workbench.rs), [rxmer_export.rs](../../../../bindings/python/src/rxmer_export.rs), and [upstream registration](../../../../bindings/python/src/upstream/mod.rs). One private binary serves the real package modules. |
-| Implemented upstream foundation | [fec-codec upstream_ldpc](../../../../crates/fec-codec/src/upstream_ldpc/mod.rs), three code families, shortening, independent source vectors, shared sparse encoder mechanism. [Executed acceptance](../unified-backend/fec-validation.md), committed in `343b07d9209dc10f3c21d80ae2222a60432f684a`. The independent upstream PHY/session and measured adapter now pass local Rust acceptance; native Python remains gated. |
+| Implemented upstream foundation | [fec-codec upstream_ldpc](../../../../crates/fec-codec/src/upstream_ldpc/mod.rs), three code families, shortening, independent source vectors, shared sparse encoder mechanism. [Executed acceptance](../unified-backend/fec-validation.md), committed in `343b07d9209dc10f3c21d80ae2222a60432f684a`. The independent upstream PHY/session and measured adapter now pass local Rust acceptance; native Python now passes its separate installed-wheel acceptance. More recent full regression evidence is linked from the official checklist. |
 
 ## Downstream session operation rows
 

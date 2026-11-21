@@ -380,11 +380,16 @@ architecture owner identifies concrete implementation/test paths and disposition
   platform/installer boundaries remain explicit. Final documentation is next.
 
 <a id="int-doc-02"></a>
-- [ ] **INT-DOC-02** Complete final documentation and skill correspondence.
+- [x] **INT-DOC-02** Complete final documentation and skill correspondence.
   Requirements: [REQ-COM-DOC-01](../requirements.md#req-com-doc-01), [REQ-COM-TRACE-01](../requirements.md#req-com-trace-01), [REQ-COM-API-09](../requirements.md#req-com-api-09).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-acceptance-and-final-documentation-gate).
   Depends on: INT-REG-01, DS-REQ-01, DOC-ORG-01.
   Acceptance: Meet all ten user documentation completion conditions: one architecture/requirements/checklist; complete requirement/task evidence; resolving links; skills name actual final modules; no obsolete user-facing branding; docs match implemented support and every newly accepted capability has local integrated evidence. The master prompt crosswalk, complete operation matrix and fourteen-field requirement records must match actual exported symbols and executed cases.
+  Acceptance evidence: [ten-condition review](features/unified-backend/validation.md#int-doc-02-final-documentation-correspondence)
+  and [exact documentation requirement chains](features/unified-backend/documentation-evidence.json).
+  All 520 IDs, 59 source clauses, 430 downstream task mappings, 12 skills and
+  24 discovery links remain intact. Strict references cover 147 native class
+  imports; 80 tool cases and fresh export/compiled-case acceptance pass.
 
 <a id="int-accept-01"></a>
 - [ ] **INT-ACCEPT-01** Accept the unified backend within declared supported scope.

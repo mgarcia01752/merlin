@@ -3,10 +3,11 @@
 [Skill](../SKILL.md) · [Architecture](../../../docs/architecture.md) ·
 [Integration planning guide](../../../docs/development/ofdm-ofdma-integration-guide.md)
 
-These rules guide explicitly scoped upstream work. Their presence does not mean
-MERLIN contains an upstream implementation or that a source backend's completion
-claims have been reproduced locally. Keep downstream contracts intact and follow
-the reviewed integration architecture before moving scientific implementations.
+The integrated upstream owner is `crates/ofdma/src/{configuration,transmitter,channel,receiver,api}`;
+`crates/pnm-input/src/upstream` owns measurement admission. Follow the
+[local session acceptance](../../../docs/development/features/ofdma/design.md#session-and-core-acceptance)
+and official checklist for supported scope. Keep downstream contracts intact;
+source-repository results remain historical evidence.
 
 ## Evidence and stage ownership
 
@@ -37,7 +38,8 @@ owner. Do not build a universal receiver around per-sample direction switches.
 
 Standalone upstream LDPC lives in `crates/fec-codec/src/upstream_ldpc/` and
 reuses `crates/fec-codec/src/sparse_encoder.rs`. Keep grant/waveform composition
-with the planned upstream PHY owner; this codec import does not implement it.
+in `crates/ofdma/src/{configuration,transmitter,receiver}`. Shared FFT/PRBS kernels live in
+`crates/dsp`; directional wrappers retain waveform/state/reference-plane semantics.
 
 Audit each declared QC-LDPC family independently: matrix dimensions and cells,
 right-shift orientation, systematic information/parity order, shortening coordinates,

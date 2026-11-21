@@ -8,8 +8,9 @@ baseline and delivery checklist. Reconcile both source repositories through the
 [unified documentation record](docs/development/features/unified-backend/design.md).
 Preserve original IDs, technical references and independent vectors. Source-only
 passes or completed source design gates never establish MERLIN runtime acceptance.
-Final skill/module/user-document correspondence remains pending until integrated
-implementation and its required local acceptance pass.
+Current integration evidence and final skill/module/user-document correspondence
+are linked from that record and the official checklist. Keep historical planning
+states separate from current support.
 
 Use the [local skill catalog](skills/README.md) for task-specific guidance.
 Apply [development-workflow](skills/development-workflow/SKILL.md) to planning
@@ -34,7 +35,8 @@ library and CLI. Work exclusively in this repository unless scope is changed.
 For Qt framework reuse, read-only inspection of PNM-Viewer-Toolkit is authorized;
 all modifications remain in MERLIN. Follow coding-style for reuse and licensing.
 
-Focus on downstream OFDM first. OFDMA is deferred. Two simulation modes are the
+Preserve the implemented downstream OFDM and upstream OFDMA backend scopes in
+`docs/architecture.md`. Upstream Qt remains deferred. Downstream simulation modes are the
 ideal/reference experiment and measurement-driven analysis using RxMER, downstream
 channel estimates and an applied modulation profile. Support is developed against
 pinned DOCSIS3.1/4.0 evidence up to16384-QAM; do not equate a recognized order with
@@ -43,8 +45,11 @@ an implemented full coding chain or assume an optional modem capability.
 The [upstream skill migration](docs/development/features/upstream-skills/design.md)
 adds integration guidance under the existing signal-processing, scientific-testing
 and public-API skills. Use their upstream references for explicitly scoped work.
-This guidance migration does not implement OFDMA, transfer source-repository
-authorizations or change current downstream/API/Qt acceptance.
+That guidance migration is historical; subsequent backend acceptance belongs to
+the unified checklist. Source-repository permissions and pass states do not transfer.
+The current backend execution authorization is retained in
+`docs/development/backend-execution-authorization.md`; it authorizes focused local
+commits and continuation for this integration, without pushes or Qt expansion.
 
 The minimum engine is a MERLIN-only closed loop: source → MERLIN TX → channel
 model → MERLIN RX → compare recovered bits against the original source. Another
@@ -53,7 +58,8 @@ prerequisite. Preserve normative/source-table checks and honest decoder outcomes
 do not describe closed-loop results as external interoperability evidence.
 
 The CLI functional MVP is complete within its documented supported scope.
-Native Qt UI development is the next phase; Qt is presentation only. Follow
+The existing native Qt UI is presentation only; upstream Qt is outside this backend
+phase. Follow
 the UI section in docs/architecture.md and docs/development/ui-checklist.md,
 starting left to right with OFDM Channel Descriptor (OCD). The Qt workbench
 shell, Rust-validated timing/interleaving editor, PRBS-TX source editor and DPD
@@ -76,7 +82,10 @@ Shared capabilities requested through Python must land in the public Rust API
 first with matching validation/domain semantics, then be exposed by Python.
 Discover capture inventories through Rust; do not hardcode profile catalogs in
 examples that promise all profiles. See the high-level API requirements.
-Dependencies point from CLI/future adapters to docsis-ofdm-fec to fec-codec.
+CLI/native Python depend on the thin `merlin` facade and `pnm-input`; the CLI
+retains its direct downstream dependency for legacy handlers. Independent PHYs
+depend on common API/DSP/FEC leaves; neither PHY depends on the facade, Python,
+Qt or the other PHY. See the canonical dependency graph.
 
 Apply skills/coding-style, skills/scientific-testing, and the applicable versioned
 PHY skill. Apply skills/public-api to public models and operations and

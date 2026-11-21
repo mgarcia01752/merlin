@@ -2,9 +2,10 @@
 
 [Skill](../SKILL.md) · [Scientific contracts](../../docsis-signal-processing/references/upstream.md)
 
-Use these checks when integrating or modifying upstream science. This procedure
-does not assert that its cases or corresponding runtime stages already exist in
-MERLIN. Record source paths and exact expected-value origins in the feature design.
+Use these checks when modifying upstream science under `crates/ofdma`, the shared
+`crates/dsp`/`crates/fec-codec` leaves and `crates/pnm-input/src/upstream`. Existing
+integrated cases and evidence are linked from the [upstream design](../../../docs/development/features/ofdma/design.md).
+Record exact expected-value origins; this procedure alone accepts no new support.
 
 ## Independent codec evidence
 

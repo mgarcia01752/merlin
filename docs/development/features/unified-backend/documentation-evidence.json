@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "completion_authority": "docs/development/checklist.md",
+  "records": [
+    {
+      "requirement_id": "REQ-COM-DOC-01",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-doc-02-final-runtime-and-documentation-correspondence",
+      "checklist_task": "INT-DOC-02",
+      "implementing_crate": "tools (documentation/reference validation; not a Cargo crate)",
+      "source_file": "tools/python/build_api_reference.py",
+      "symbol": "generate_sources",
+      "test_file": "tools/python/test_api_reference.py",
+      "qualified_test_case": "ApiReferenceTests.test_namespace_generation_and_coverage_reject_missing_alias_or_member",
+      "validation_command": "python3 -B -m unittest discover -s tools/python -p 'test_*.py' -v",
+      "observed_result": "pass; 23 Python tool and 57 validation cases, actual strict Rustdoc/Sphinx rendering for all root/directional/common exports, skill validation and fresh compiler/native/compiled-case acceptance",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/documentation-candidate.json",
+        "sha256": "14a4b9415029ec9d0b536acc7cdd56bc055f77548220051a44911adb7b47fead"
+      },
+      "status": "integrated-validated INT-DOC-02",
+      "limitations": "Reference runtime verified locally with Sphinx 8.1.3 / CPython 3.10 and the accepted Linux native wheel. Historical documents retain original evidence precision. No hosted publication, Windows reference build, native installer lifecycle or upstream UI acceptance."
+    },
+    {
+      "requirement_id": "REQ-COM-TRACE-01",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-doc-02-final-runtime-and-documentation-correspondence",
+      "checklist_task": "INT-DOC-02",
+      "implementing_crate": "tools (documentation/reference validation; not a Cargo crate)",
+      "source_file": "tools/validation/integration_traceability.py",
+      "symbol": "audit",
+      "test_file": "tools/validation/test_integration_traceability.py",
+      "qualified_test_case": "IntegrationTraceabilityTests.test_valid_contract_and_real_repository",
+      "validation_command": "python3 -B -m unittest discover -s tools/validation -p 'test_*.py' -v",
+      "observed_result": "pass; 23 Python tool and 57 validation cases, actual strict Rustdoc/Sphinx rendering for all root/directional/common exports, skill validation and fresh compiler/native/compiled-case acceptance",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/documentation-candidate.json",
+        "sha256": "14a4b9415029ec9d0b536acc7cdd56bc055f77548220051a44911adb7b47fead"
+      },
+      "status": "integrated-validated INT-DOC-02",
+      "limitations": "Reference runtime verified locally with Sphinx 8.1.3 / CPython 3.10 and the accepted Linux native wheel. Historical documents retain original evidence precision. No hosted publication, Windows reference build, native installer lifecycle or upstream UI acceptance."
+    },
+    {
+      "requirement_id": "REQ-COM-API-09",
+      "architecture_owner": "docs/architecture.md#unified-acceptance-and-final-documentation-gate",
+      "feature_design": "docs/development/features/unified-backend/design.md#int-doc-02-final-runtime-and-documentation-correspondence",
+      "checklist_task": "INT-DOC-02",
+      "implementing_crate": "tools (documentation/reference validation; not a Cargo crate)",
+      "source_file": "tools/python/build_api_reference.py",
+      "symbol": "reference_entries",
+      "test_file": "tools/python/test_api_reference.py",
+      "qualified_test_case": "ApiReferenceTests.test_namespace_resolution_keeps_same_named_direction_types_distinct",
+      "validation_command": "python3 -B -m unittest discover -s tools/python -p 'test_*.py' -v",
+      "observed_result": "pass; 23 Python tool and 57 validation cases, actual strict Rustdoc/Sphinx rendering for all root/directional/common exports, skill validation and fresh compiler/native/compiled-case acceptance",
+      "tested_candidate": {
+        "record": "docs/development/features/unified-backend/documentation-candidate.json",
+        "sha256": "14a4b9415029ec9d0b536acc7cdd56bc055f77548220051a44911adb7b47fead"
+      },
+      "status": "integrated-validated INT-DOC-02",
+      "limitations": "Reference runtime verified locally with Sphinx 8.1.3 / CPython 3.10 and the accepted Linux native wheel. Historical documents retain original evidence precision. No hosted publication, Windows reference build, native installer lifecycle or upstream UI acceptance."
+    }
+  ],
+  "canonical_requirements": 520,
+  "source_requirements": 59,
+  "downstream_task_mappings": 430,
+  "skills": 12,
+  "relative_discovery_links": 24,
+  "documentation_conditions": 10,
+  "scope": "Additive final correspondence; original technical documentation, numerical vectors, normative references and historical acceptance retained."
+}

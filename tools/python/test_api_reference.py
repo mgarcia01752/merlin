@@ -12,7 +12,7 @@ import unittest
 from unittest.mock import patch
 
 from api_reference_support import public_classes, public_members, public_operations, sphinx_docstring
-from build_api_reference import native_inventory, validate_pages
+from build_api_reference import native_inventory, validate_pages, reference_entries, generate_sources
 
 
 class ApiReferenceTests(unittest.TestCase):
@@ -101,12 +101,12 @@ class ApiReferenceTests(unittest.TestCase):
             root = Path(directory)
             (root / "python").mkdir()
             page = root / "python/Merlin.html"
-            page.write_text('<h1>Merlin</h1>')
+            page.write_text('<h1 id="merlin.Merlin">Merlin</h1>')
             inventory = {"classes": [{"name": "Merlin", "members": ["run"]}]}
             with patch("build_api_reference.OUTPUT", root):
                 with self.assertRaisesRegex(ValueError, "Missing generated API member"):
                     validate_pages(inventory)
-                page.write_text('<a id="merlin.Merlin.run">Interpreter token</a>')
+                page.write_text('<a id="merlin.Merlin"></a><a id="merlin.Merlin.run">Interpreter token</a>')
                 with self.assertRaisesRegex(ValueError, "Hidden interpreter"):
                     validate_pages(inventory)
 
@@ -117,7 +117,7 @@ class ApiReferenceTests(unittest.TestCase):
             (root / "python").mkdir()
             (root / "python/Merlin.html").write_text('<a id="merlin.Merlin"></a>')
             canonical = root / "python/Simulation.html"
-            canonical.write_text('<a id="merlin.Simulation.run"></a>')
+            canonical.write_text('<a id="merlin.Simulation"></a><a id="merlin.Simulation.run"></a>')
             for name in ("search.html", "searchindex.js", "genindex.html"):
                 (root / "python" / name).write_text("")
             inventory = {"classes": [
@@ -125,10 +125,54 @@ class ApiReferenceTests(unittest.TestCase):
                 {"name": "Simulation", "canonical_name": "Simulation", "members": ["run"]}]}
             with patch("build_api_reference.OUTPUT", root):
                 validate_pages(inventory)
-                canonical.write_text("")
+                canonical.write_text('<a id="merlin.Simulation"></a>')
                 with self.assertRaisesRegex(ValueError, "Missing generated API member"):
                     validate_pages(inventory)
 
+
+    def test_namespace_resolution_keeps_same_named_direction_types_distinct(self):
+        """Document real upstream classes while aliases retain their import paths."""
+        root = {"name": "Simulation", "module": "merlin", "canonical_name": "Simulation",
+                "constructible": True, "members": ["run"]}
+        upstream = dict(root, module="merlin.upstream")
+        inventory = {"classes": [root], "namespaces": {
+            "downstream": [root], "upstream": [upstream], "common": []}}
+        entries = {entry["full_name"]: entry for entry in reference_entries(inventory)}
+        self.assertEqual(entries["merlin.downstream.Simulation"]["target_name"], "merlin.Simulation")
+        self.assertEqual(entries["merlin.upstream.Simulation"]["target_name"], "merlin.upstream.Simulation")
+        self.assertNotEqual(entries["merlin.upstream.Simulation"]["page"], entries["merlin.Simulation"]["page"])
+        inventory["namespaces"]["upstream"].append(upstream)
+        with self.assertRaisesRegex(ValueError, "Duplicate documented import"):
+            reference_entries(inventory)
+
+    def test_namespace_generation_and_coverage_reject_missing_alias_or_member(self):
+        """Require directional pages and aliases, including canonical member coverage."""
+        root = {"name": "Simulation", "module": "merlin", "canonical_name": "Simulation",
+                "constructible": True, "members": ["run"]}
+        upstream = dict(root, module="merlin.upstream")
+        inventory = {"classes": [root], "namespaces": {"downstream": [root], "upstream": [upstream]}}
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            with patch("build_api_reference.OUTPUT", output):
+                source = generate_sources(inventory)
+                self.assertIn(".. autoclass:: merlin.upstream.Simulation", (source / "upstream/Simulation.rst").read_text())
+                self.assertIn(":doc:`/Simulation`", (source / "downstream/Simulation.rst").read_text())
+                self.assertIn("Simulation", (source / "upstream/index.rst").read_text())
+                for entry in reference_entries(inventory):
+                    page = output / "python" / (entry["page"] + ".html")
+                    page.parent.mkdir(parents=True, exist_ok=True)
+                    page.write_text(f'<a id="{entry["full_name"]}"></a><a id="{entry["full_name"]}.run"></a>')
+                for name in ("search.html", "searchindex.js", "genindex.html"):
+                    (output / "python" / name).write_text("")
+                validate_pages(inventory)
+                alias = output / "python/downstream/Simulation.html"
+                alias.write_text("")
+                with self.assertRaisesRegex(ValueError, "Missing generated API class: merlin.downstream"):
+                    validate_pages(inventory)
+                alias.write_text('<a id="merlin.downstream.Simulation"></a>')
+                (output / "python/upstream/Simulation.html").write_text('<a id="merlin.upstream.Simulation"></a>')
+                with self.assertRaisesRegex(ValueError, "Missing generated API member: merlin.upstream"):
+                    validate_pages(inventory)
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,6 @@
 # Backend master prompt preflight and traceability
 
-Later decision: the [selected exact namespace design](../high-level-api/namespace-design.md) resolves the initial facade/common/Python alternatives below. The preflight results and completed planning/FEC history remain a historical checkpoint; namespace implementation stays gated.
+Later decision: the [selected exact namespace design](../high-level-api/namespace-design.md) resolves the initial facade/common/Python alternatives below. The preflight results and completed planning/FEC history remain a historical checkpoint; subsequent namespace implementation and full regression acceptance are linked from the [current validation record](validation.md).
 
 Delivery: [INT-PLAN-01](../../checklist.md#int-plan-01). Design authority remains
 [architecture](../../../architecture.md#requirements-and-historical-evidence-ownership),
@@ -198,8 +198,8 @@ This table describes current versus remaining checks, not a parallel task list.
 
 [INT-TOOLS-01 validation](validation.md#int-tools-01-implementation-and-delivery-tooling)
 records actual local checks and platform limits. The original preflight's missing
-checks are now implemented; final whole-workspace regression, documentation and
-backend acceptance still require their own evidence. Compilation/metadata alone
+checks are now implemented. Whole-workspace regression, final documentation and
+backend review use their own named records in the current validation document. Compilation/metadata alone
 never establishes scientific execution.
 
 ## File dispositions

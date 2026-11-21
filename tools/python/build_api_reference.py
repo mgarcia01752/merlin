@@ -5,6 +5,7 @@
 #
 """Build local Basic Rust API and Basic Python API HTML, without publication."""
 import argparse
+import hashlib
 import html
 import importlib.machinery
 import inspect
@@ -49,7 +50,7 @@ def native_inventory(module, expected_version):
         except (TypeError, ValueError):
             signature = None
         classes.append({"name": name, "canonical_name": value.__name__,
-                        "signature": signature, "constructible": "__new__" in vars(value),
+                        "module": value.__module__, "signature": signature, "constructible": "__new__" in vars(value),
                         "members": public_members(value), "operations": public_operations(value)})
     namespaces = {}
     for name in ("downstream", "upstream", "common"):
@@ -71,58 +72,94 @@ def native_inventory(module, expected_version):
             "classes": classes, "namespaces": namespaces}
 
 
-def generate_sources(inventory):
-    """Stage Sphinx sources and one autodoc page per exported native class.
+def reference_entries(inventory):
+    """Resolve each exported import name to one canonical documented class.
 
     Args:
-        inventory: Validated native class inventory, including aliases.
+        inventory: Root and directional class metadata from the installed wheel.
     Returns:
-        Ignored generated source directory, with no modifications to tracked guides.
+        Entries with full import names, page paths and canonical member targets.
+        Aliases retain their own class anchor and link to the owning class page.
+    """
+    groups = [("merlin", inventory["classes"])]
+    groups.extend(("merlin." + name, items)
+                  for name, items in inventory.get("namespaces", {}).items())
+    entries = {}
+    for module, items in groups:
+        for item in items:
+            name = item["name"]
+            full_name = module + "." + name
+            if full_name in entries:
+                raise ValueError(f"Duplicate documented import: {full_name}")
+            prefix = module.removeprefix("merlin").lstrip(".").replace(".", "/")
+            page = (Path(prefix) / name).as_posix()
+            entries[full_name] = {"full_name": full_name, "page": page,
+                                  "item": item, "module": module}
+    for entry in entries.values():
+        item = entry["item"]
+        canonical = item.get("module", entry["module"]) + "." + item.get("canonical_name", item["name"])
+        target = entries.get(canonical, entry)
+        entry["target_name"] = target["full_name"]
+        entry["target_page"] = target["page"]
+    return list(entries.values())
+
+
+def generate_sources(inventory):
+    """Stage searchable root and namespace pages from installed native exports.
+
+    Args:
+        inventory: Validated native class inventory, including exact aliases.
+    Returns:
+        Ignored generated source directory; tracked guides remain unchanged.
     """
     source = OUTPUT / "python-source"
     shutil.copytree(ROOT / "docs/reference/python-api", source, dirs_exist_ok=True)
-    listing = ["Classes and domain types", "========================", "",
-               ".. toctree::", "   :maxdepth: 1", ""]
-    for item in inventory["classes"]:
-        name = item["name"]
-        listing.append(f"   {name}")
+    listings = {}
+    for entry in reference_entries(inventory):
+        item, name = entry["item"], entry["full_name"]
+        listings.setdefault(entry["module"], []).append(item["name"])
         notice = ""
         if not item["constructible"]:
             notice = "Use the documented factory methods or returned results; no public constructor is provided.\n\n"
-        text = (f"{name}\n{'=' * len(name)}\n\n{notice}.. currentmodule:: merlin\n\n"
+        text = (f"{name}\n{'=' * len(name)}\n\n{notice}"
                 f".. autoclass:: {name}\n   :members:\n   :undoc-members:\n"
                 "   :special-members: __iter__, __len__, __getitem__\n")
-        canonical = item.get("canonical_name", name)
-        exported = {entry["name"] for entry in inventory["classes"]}
-        if canonical != name and canonical in exported:
+        if entry["target_name"] != name:
             text = (f"{name}\n{'=' * len(name)}\n\n"
-                    f"Compatibility alias for :class:`merlin.{canonical}`.\n\n"
-                    f".. autoclass:: merlin.{name}\n\n"
-                    f"See :doc:`{canonical}` for all methods and properties.\n")
-        (source / f"{name}.rst").write_text(text, encoding="utf-8")
-    (source / "classes.rst").write_text("\n".join(listing) + "\n", encoding="utf-8")
+                    f"Alias for :class:`{entry['target_name']}`; both imports name the same native class.\n\n"
+                    f".. autoclass:: {name}\n\n"
+                    f"See :doc:`/{entry['target_page']}` for all methods and properties.\n")
+        path = source / (entry["page"] + ".rst")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+    for module, names in listings.items():
+        prefix = module.removeprefix("merlin").lstrip(".")
+        title = module + (" compatibility imports" if not prefix else " namespace")
+        listing = [title, "=" * len(title), "", ".. toctree::", "   :maxdepth: 1", ""]
+        listing.extend("   " + name for name in names)
+        path = source / prefix / "index.rst" if prefix else source / "classes.rst"
+        path.write_text("\n".join(listing) + "\n", encoding="utf-8")
     return source
 
 
 def validate_pages(inventory):
-    """Require searchable output and every declared public native member anchor.
+    """Require each import anchor, canonical member and searchable index.
 
     Args:
-        inventory: Native export inventory used to generate the pages.
+        inventory: Actual native export inventory used for this Sphinx build.
     Raises:
-        ValueError if Sphinx omits a class/member, search page or readable docstring.
+        ValueError for missing class/member anchors or leaked interpreter tokens.
+        OSError for absent generated pages or search artifacts.
     """
-    for item in inventory["classes"]:
-        name = item["name"]
-        page = (OUTPUT / "python" / f"{name}.html").read_text(encoding="utf-8")
-        canonical = item.get("canonical_name", name)
-        exported = {entry["name"] for entry in inventory["classes"]}
-        target = canonical if canonical in exported else name
-        member_page = (OUTPUT / "python" / f"{target}.html").read_text(encoding="utf-8")
-        if target != name and f'id="merlin.{name}"' not in page:
-            raise ValueError(f"Missing generated API alias: {name}")
-        for member in item["members"]:
-            if f'id="merlin.{target}.{member}"' not in member_page:
+    for entry in reference_entries(inventory):
+        name = entry["full_name"]
+        page = (OUTPUT / "python" / (entry["page"] + ".html")).read_text(encoding="utf-8")
+        if f'id="{name}"' not in page:
+            raise ValueError(f"Missing generated API class: {name}")
+        member_page = (OUTPUT / "python" / (entry["target_page"] + ".html")).read_text(encoding="utf-8")
+        target_name = entry["target_name"]
+        for member in entry["item"]["members"]:
+            if f'id="{target_name}.{member}"' not in member_page:
                 raise ValueError(f"Missing generated API member: {name}.{member}")
         if "Interpreter token" in page or "* `py`" in page:
             raise ValueError(f"Hidden interpreter argument leaked into {name} docs")
@@ -150,6 +187,7 @@ def main():
     if sphinx.__version__ != "8.1.3":
         raise ValueError("Install tools/python/api-docs-requirements.txt in this local environment")
     inventory = native_inventory(merlin, (ROOT / "VERSION").read_text().strip())
+    inventory["native_sha256"] = hashlib.sha256(Path(inventory["native_artifact"]).read_bytes()).hexdigest()
     # Output ownership is fixed to ignored local/: reject redirected staging.
     for directory in (ROOT / "local", OUTPUT):
         if directory.is_symlink():
@@ -174,7 +212,8 @@ def main():
     if not args.python_only:
         environment["RUSTDOCFLAGS"] = environment.get("RUSTDOCFLAGS", "") + " -D warnings"
         subprocess.run([str(ROOT / "scripts/cargo-local.sh"), "doc", "-p", "docsis-ofdm-fec",
-                        "-p", "pnm-input", "--features", "high-level-api", "--no-deps",
+                        "-p", "pnm-input", "-p", "merlin", "-p", "merlin-api",
+                        "-p", "docsis-ofdma", "--features", "high-level-api", "--no-deps",
                         "--locked", "--target-dir", str(ROOT / "target")],
                        cwd=ROOT, env=environment, check=True)
         shutil.copytree(ROOT / "target/doc", OUTPUT / "rust", dirs_exist_ok=True)
@@ -185,7 +224,8 @@ def main():
     validate_pages(inventory)
     (OUTPUT / "inventory.json").write_text(json.dumps(inventory, indent=2) + "\n", encoding="utf-8")
     links = [("python/index.html", "Basic Python API"),
-             ("rust/docsis_ofdm_fec/api/index.html", "Basic Rust API"),
+             ("rust/merlin/index.html", "Unified Rust API"),
+             ("rust/docsis_ofdm_fec/api/index.html", "Legacy downstream Rust API"),
              ("rust/pnm_input/index.html", "Rust PNM inputs and Workbench"),
              ("../../docs/reference/api-reference.md", "Build instructions and scope"),
              ("../../examples/api/README.md", "Matching Rust and Python examples")]
@@ -197,7 +237,7 @@ def main():
         f'<p>Version {html.escape(inventory["version"])}; generated locally from Rust and the native extension.</p>'
         f'<ul>{body}</ul></html>\n', encoding="utf-8")
     print(f"API reference: {OUTPUT / 'index.html'}")
-    print(f"Documented {len(inventory['classes'])} exported Python classes")
+    print(f"Documented {len(reference_entries(inventory))} Python class imports across root and namespaces")
     print(f"Total API reference build time: {time.perf_counter() - started:.2f}s")
 
 

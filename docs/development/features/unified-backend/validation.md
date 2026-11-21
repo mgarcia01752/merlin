@@ -1,10 +1,9 @@
 # Unified documentation validation and completion boundary
 
 The earlier sections preserve their named historical checkpoints. Current progress
-is owned by the [official checklist](../../checklist.md); the latest tooling
-acceptance section below records the additive runtime-evidence audit.
+is owned by the [official checklist](../../checklist.md); the final regression and documentation sections below record current local acceptance.
 
-Current checkpoint: the sections below preserve the original INT-DOC-01 review.
+Historical checkpoint: the following sections preserve the original INT-DOC-01 review.
 The [pre-import baseline](baseline.md), [rights/reuse decisions](reuse-review.md)
 and [standalone upstream LDPC results](fec-validation.md) now accept INT-BASE-01,
 INT-LICENSE-01, INT-REUSE-01 and INT-FEC-01. DS-GAP-01/02 have scoped current
@@ -284,3 +283,36 @@ All three locks pass the unsuppressed security audit with zero vulnerabilities;
 in the run record. Dependency pins and original downstream acceptance remain intact.
 Local Linux results do not establish Windows/hosted/native-installation or external
 modem/CMTS interoperability. Final documentation and backend review remain separate.
+
+## INT-DOC-02: Final documentation correspondence
+
+The [documentation candidate](documentation-candidate.json),
+[requirement records](documentation-evidence.json) and
+[80 exact tool cases plus actual reference build](documentation-test-results.json)
+accept the following ten conditions after INT-REG-01. Earlier sections retain
+their named historical checkpoints; the official checklist owns current status.
+
+| Completion condition | Reconciled current evidence |
+| --- | --- |
+| One authoritative architecture | `docs/architecture.md` owns the crate graph, scientific stages/reference planes, PNM handoff and public adapters. Feature designs refine it. |
+| One requirements baseline | `docs/requirements.md` retains all 520 canonical IDs, compatibility anchors and source clauses. |
+| One official checklist | `docs/development/checklist.md` retains original task IDs/states; integration tasks and the subordinate UI checklist keep their declared owners. |
+| Applicable upstream requirements represented | All 59 pinned source clauses and their local dispositions remain in the source inventory; wider unsupported work stays explicitly deferred. |
+| Traceable acceptance for integration tasks | Every accepted task has exact requirement/architecture/task/owner/test/candidate/observed-result chains, or a verified historical exception. |
+| Resolving internal references | Maintained link/fragment, dependency, ID and return-link checks pass; former compatibility anchors remain available. |
+| Agent Skills name final owners | Twelve canonical skills and 24 relative discovery links validate; upstream science, input admission, APIs and native conversions name actual final modules. |
+| Current MERLIN identity | Maintained user/reference/example guidance exposes MERLIN namespaces. Former source identities remain only in legal/provenance or explicitly historical records. |
+| Documentation matches implementation | Current status/AGENTS/API guides reflect both Rust backends and one native distribution; the Qt workbench remains downstream-only. Strict Rustdoc/Sphinx renders actual installed exports, 147 class import pages and every public member anchor. |
+| Accepted functionality has integration evidence | Complete local regression, actual installed-native/Rust parity and CLI/PNM/Qt checks link exact source manifests and successful named cases; source-only results remain historical. |
+
+The reference builder now separates real upstream classes from same-named
+downstream classes, while alias import pages link to canonical member pages.
+Negative tests reject duplicate imports, omitted alias anchors and missing
+directional members. The actual installed artifact hash is recorded in the run
+summary. Strict compiler/native/compiled-case acceptance passes against freshly
+generated metadata: 364 explicit Rust operations and 373 native operations.
+Generated pages stay under ignored `local/api-reference`; no HTML, wheel, build
+cache, private input or source corpus is shipped. All normative definitions,
+original downstream evidence and source design/validation dispositions are retained.
+Broader platforms, native installers/updaters, external interoperability and
+INT-DEFER-01 remain outside this local backend/documentation acceptance.

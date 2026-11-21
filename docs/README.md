@@ -4,7 +4,8 @@
 
 | Guide | Start here |
 | --- | --- |
-| [UI Guide](user/workbench.md) | Workbench configuration, instruments, runs and saved projects |
+| [UI Guide](user/workbench.md) | Downstream workbench configuration, instruments, runs and saved projects |
+| [Upstream OFDMA](user/upstream/README.md) | Rust engine, configuration, stages, measurements and directional CLI |
 | [Rust API Guide](reference/public-api.md) | Simulation entry points, typed inputs, results and stage APIs |
 | [Python Guide](user/python/README.md) | Native Rust bindings, wheel setup and [downstream installation](user/python/integration.md) |
 
@@ -15,6 +16,7 @@
 ## Command line
 
 - [Channel CLI](user/channel-runner/cli.md)
+- [Upstream CLI](user/upstream/cli.md)
 - [Other CLI experiments](cli.md)
 - [Windows desktop MSI](user/install/windows.md)
 - [Native CLI installation](user/install/README.md)

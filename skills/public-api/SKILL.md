@@ -12,17 +12,19 @@ It applies to explicitly scoped upstream work while preserving the existing
 downstream surface and saved-workbench compatibility below.
 
 For unified backend work, the [canonical adapter design](../../docs/architecture.md#unified-rust-python-and-cli-apis)
-retains `crates/ofdm/src/api` and `bindings/python`; planned upstream operations
-belong in `crates/ofdma/src/api`, with native input admission in `crates/pnm-input`.
-Follow that planned/current distinction rather than retaining source facade names
-or forcing upstream algorithms into downstream-specific models. Final paths and
-API/user documentation require INT-DOC-02 acceptance after actual integration.
+retains `crates/ofdm/src/api` and implements upstream operations in
+`crates/ofdma/src/api`, with native input admission in `crates/pnm-input/src/upstream`.
+`bindings/python/src/upstream` converts those Rust contracts. Preserve directional
+models and the [executed operation matrix](../../docs/development/features/high-level-api/compatibility-matrix.md);
+new support still requires explicit integrated acceptance.
 
 The [selected namespace mapping](../../docs/development/features/high-level-api/namespace-design.md)
-plans a thin Cargo/library `merlin` facade and independent `merlin-api` contract
-leaf, plus one real Python package with a private native extension. These owners
-remain planned until the API delivery gates; preserve the existing downstream
-exports and root native `merlin.Simulation` without an early placeholder facade.
+uses the implemented re-export-only `crates/merlin` facade and independent
+`crates/phy-api` contract leaf. Neither PHY depends on the facade or the other PHY.
+One native Python distribution has real import-only `merlin.downstream`,
+`merlin.upstream` and `merlin.common` modules under `bindings/python/python/merlin`,
+backed by one `_native` extension. Preserve old Rust imports and root
+`merlin.Simulation`; require installed-wheel imports and Rust/native parity.
 
 DOCSIS OFDM Channel Sim owns a standalone Rust simulation core. The native Qt
 interface and optional Python package must call the same algorithms. The canonical Basic Rust API lives under `crates/ofdm/src/api`; the optional

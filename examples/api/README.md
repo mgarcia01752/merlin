@@ -215,6 +215,19 @@ DOCSIS 3.1 interpretation. Advanced examples keep explicit protocol choices
 where they construct an OCD directly. File-format versions do not select a
 protocol automatically.
 
+## Upstream session in both languages
+
+The paired [Rust facade example](../../crates/merlin/examples/upstream_session.rs)
+and [native Python example](python/run_upstream.py) discover the bundled upstream
+profile inventory, execute the same 50 kHz fixture and retain actual decoder/source
+comparison outcomes. See the [Rust guide](../../docs/user/upstream/README.md) and
+[Python guide](../../docs/user/python/upstream.md) for configuration and limits.
+
+```bash
+scripts/cargo-local.sh run -p merlin --example upstream_session --locked
+local/api-python-test/bin/python examples/api/python/run_upstream.py
+```
+
 ## Simulation sessions and timed checks
 
 The basic Rust/Python examples create a Simulation, load the profile collection,
@@ -223,7 +236,9 @@ validated OCD to the Simulation constructor (Rust: `with_ocd`). Saved-workbench
 examples continue to use Workbench and the same simulation engine.
 
 `scripts/test-local.sh example` runs the existing example unit tests plus the
-single-capture, all-profile and explicit CM channel-estimate Rust API examples. Each API check prints elapsed
+twelve registered Rust workflows: the three downstream API examples plus upstream
+session, loop, measured/synthetic document and capture inspections for both
+numerologies. Each API check prints elapsed
 wall time including incremental compilation and retains logs/JSON under
 `local/api-example-tests/`. The all phase, guarded checks and shared CI include
 these checks. Failure still emits elapsed time and fails the gate.

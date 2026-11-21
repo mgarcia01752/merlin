@@ -221,7 +221,7 @@ Upstream operation signatures accompany typed stage API development and are
 finalized only against real stage models. Do not interpret the namespace mapping
 as approval of hypothetical universal `Configuration`/`Report` types or pause support.
 
-| Exact test owner / case (Python rows remain planned) | Required assertion | Requirement / gate |
+| Original design test owner / case (Python rows were planned) | Required assertion | Requirement / gate |
 | --- | --- | --- |
 | `crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity` | Pass one `Simulation`, `Merlin`, configuration, options, error and report through both old/new Rust paths without conversion. | REQ-COM-API-07, REQ-DS-API-01; INT-RUST-01. |
 | `crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors` | Imports reach real upstream session/domain owners; no downstream nominal types in upstream configuration. | REQ-COM-API-07, REQ-US-API-01; INT-RUST-01. |
@@ -268,6 +268,10 @@ tests above. Actual DSP consumer/native acceptance is recorded separately in
 [DSP validation](../signal-processing/validation.md).
 
 ## INT-RUST-01 implementation unit
+
+Historical implementation checkpoint `c6e3065`: the following text preserves its
+then-pending native gates. Subsequent Rust and installed native operation
+acceptance is recorded in [the API integration record](upstream.md).
 
 Prerequisites now accepted: synthetic core plus native measured admission at
 `0557423`. Implement the selected facade and common contract leaf with the exact
