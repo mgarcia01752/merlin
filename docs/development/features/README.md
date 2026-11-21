@@ -7,6 +7,8 @@
 - [Unified backend architecture, requirements and checklist consolidation](unified-backend/design.md)
   · [source dispositions and evidence](unified-backend/source-review.md)
   · [validation and remaining acceptance](unified-backend/validation.md)
+  · [proposed functional documentation organization](unified-backend/feature-documentation-plan.md)
+  · [complete proposed file and reference map](unified-backend/feature-documentation-inventory.json)
 
 - [Upstream skill migration (SKILL-US-01)](upstream-skills/design.md)
   · [validation](upstream-skills/validation.md)
