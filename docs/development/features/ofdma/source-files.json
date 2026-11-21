@@ -550,6 +550,16 @@
       "source": "crates/morgana/tests/measured_experiment.rs",
       "destination": "crates/pnm-input/tests/upstream_ucd_projection.rs",
       "source_sha256": "7f7355a43410b4385705ce371bf4817a247d0d04984c56e6a9a6da818509b8e2"
+    },
+    {
+      "source": "crates/morgana/src/inputs/measured.rs",
+      "destination": "crates/pnm-input/src/upstream/association.rs",
+      "source_sha256": "48c9aa526bef37f726ca054f665dcfcdc92a3cddb6e5f171f300e6399a2be583"
+    },
+    {
+      "source": "crates/morgana/tests/measured_experiment.rs",
+      "destination": "crates/pnm-input/tests/upstream_association.rs",
+      "source_sha256": "7f7355a43410b4385705ce371bf4817a247d0d04984c56e6a9a6da818509b8e2"
     }
   ]
 }

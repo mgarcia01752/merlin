@@ -18,4 +18,5 @@ Origin: the approved source revision
 records original hashes. Hex fixtures are byte-identical; JSON plans change only
 the configuration/plan format identifiers to the explicit MERLIN schema names.
 Decode tests read hex as octets rather than generating golden data from production
-encoders. Complete measured playback has its separate INT-PNM-02 acceptance gate.
+encoders. Complete measured playback now passes local Rust INT-PNM-02 acceptance. Native
+Python/CLI exposure and final unified regression remain separate gates.

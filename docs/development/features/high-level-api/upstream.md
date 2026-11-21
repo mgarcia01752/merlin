@@ -14,7 +14,9 @@ the existing public Rust engine and native Python distribution. Existing downstr
 Rust/Python APIs, imports, schemas, examples and saved-workbench contracts remain
 implemented within their recorded supported scope. Initial upstream typed Rust
 composition now passes local synthetic session acceptance. Final facade/common
-contracts, measured operations and native wrappers remain at their delivery gates.
+contracts and native wrappers remain at their delivery gates. Measured Rust
+admission now uses the adapter-owned MeasuredExperiment and core-owned typed
+MeasuredConfiguration handoff; no core-to-capture dependency is introduced.
 
 The [current backend master review](../unified-backend/master-prompt-review.md)
 adds explicit direction namespaces, package-import acceptance and a fourteen-field

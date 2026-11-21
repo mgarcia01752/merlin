@@ -90,6 +90,29 @@ impl Simulation {
         self.generation = generation;
         Ok(())
     }
+    /// Atomically accepts a capture-adapter-prepared measured configuration.
+    ///
+    /// Loading is idle. Original generic context remains separate from captured
+    /// channel projection, and reports retain provenance on cancellation.
+    ///
+    /// # Arguments
+    /// * `prepared` - Owned, fully admitted measured input and execution settings.
+    ///
+    /// # Returns
+    /// Unit after replacing configuration, settings and generation together.
+    ///
+    /// # Errors
+    /// Returns a resource error if no new session identity can be allocated;
+    /// failure preserves all previously accepted input and settings.
+    pub fn configure_measured(&mut self, prepared: super::MeasuredConfiguration) -> ApiResult<()> {
+        let generation = next_id()?;
+        self.configuration = Some(prepared.configuration);
+        self.options = prepared.options;
+        self.document = Some(prepared.document);
+        self.measured_provenance = Some(prepared.provenance_json);
+        self.generation = generation;
+        Ok(())
+    }
     /// Borrows the retained original generic document, including unused presets.
     ///
     /// Returns None for a typed-only configuration; later option changes are

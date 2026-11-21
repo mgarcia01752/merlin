@@ -3,10 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Native bounded upstream measurement admission, separate from PHY processing.
+mod association;
 mod pre_eq;
 mod rxmer;
 mod ucd;
 mod ucd_projection;
+pub use association::{
+    CaptureAssociation, CaptureEvent, CaptureProbe, CaptureSource, MeasuredExperiment,
+};
 use docsis_ofdma::api::Iq;
 pub use docsis_ofdma::api::{ApiError, ApiResult, CaptureFailure};
 pub use pre_eq::{PreEqCapture, PreEqCaptureKind, PreEqHeader};

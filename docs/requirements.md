@@ -783,7 +783,7 @@ Integration references: [INT-PNM-01](development/checklist.md#int-pnm-01).
 
 Feature records: [pnm-measurement-inputs/upstream.md](development/features/pnm-measurement-inputs/upstream.md).
 
-MERLIN decoder slice: [exact implementation/test record](development/features/pnm-measurement-inputs/implementation-evidence.json), keyed by `REQ-US-PNM-01`; full requirement remains gated by INT-PNM-02.
+MERLIN decoder slice: [exact implementation/test record](development/features/pnm-measurement-inputs/implementation-evidence.json), keyed by `REQ-US-PNM-01`; whole-plan acceptance is recorded under INT-PNM-02 in that same evidence inventory.
 
 #### REQ-US-PNM-02
 
@@ -798,7 +798,7 @@ Integration references: [INT-PNM-01](development/checklist.md#int-pnm-01).
 
 Feature records: [ofdma/pre-equalization.md](development/features/ofdma/pre-equalization.md), [pnm-measurement-inputs/upstream.md](development/features/pnm-measurement-inputs/upstream.md).
 
-MERLIN decoder slice: [exact implementation/test record](development/features/pnm-measurement-inputs/implementation-evidence.json), keyed by `REQ-US-PNM-02`; full requirement remains gated by INT-PNM-02.
+MERLIN decoder slice: [exact implementation/test record](development/features/pnm-measurement-inputs/implementation-evidence.json), keyed by `REQ-US-PNM-02`; whole-plan acceptance is recorded under INT-PNM-02 in that same evidence inventory.
 
 #### REQ-US-PNM-03
 
@@ -813,7 +813,7 @@ Integration references: [INT-PNM-01](development/checklist.md#int-pnm-01).
 
 Feature records: [ofdma/pre-equalization.md](development/features/ofdma/pre-equalization.md), [pnm-measurement-inputs/upstream.md](development/features/pnm-measurement-inputs/upstream.md).
 
-MERLIN decoder slice: [exact implementation/test record](development/features/pnm-measurement-inputs/implementation-evidence.json), keyed by `REQ-US-PNM-03`; full requirement remains gated by INT-PNM-02.
+MERLIN decoder slice: [exact implementation/test record](development/features/pnm-measurement-inputs/implementation-evidence.json), keyed by `REQ-US-PNM-03`; whole-plan acceptance is recorded under INT-PNM-02 in that same evidence inventory.
 
 #### REQ-US-PNM-04
 
@@ -826,6 +826,8 @@ Implementation: `crates/pnm-input/src/upstream/association.rs`. Acceptance owner
 Delivery: [**INT-PNM-02**](development/checklist.md#int-pnm-02); source alias `REQ-PNM-04`.
 
 Feature records: [ofdma/pre-equalization.md](development/features/ofdma/pre-equalization.md), [pnm-measurement-inputs/upstream.md](development/features/pnm-measurement-inputs/upstream.md).
+
+MERLIN execution: [exact implementation/test record](development/features/pnm-measurement-inputs/implementation-evidence.json), keyed by `REQ-US-PNM-04`; [association acceptance](development/features/pnm-measurement-inputs/upstream.md#measured-association-acceptance).
 
 #### REQ-US-OBS-03
 

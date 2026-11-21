@@ -18,7 +18,7 @@
         "record": "docs/development/features/pnm-measurement-inputs/decoder-candidate.json",
         "sha256": "d3d40573563b81007487e356672cc587d816782a962ac6ccfe3b901a20792dc9"
       },
-      "status": "integrated-validated decoder slice; whole requirement remains gated by INT-PNM-02",
+      "status": "integrated-validated decoder slice; whole requirement is tracked separately at INT-PNM-02",
       "limitations": "Authored synthetic format evidence; complete-plan association/playback and public language adapters remain separate. Multipart output is derived, with physical originals retained by callers. No hardware interoperability claim."
     },
     {
@@ -37,7 +37,7 @@
         "record": "docs/development/features/pnm-measurement-inputs/decoder-candidate.json",
         "sha256": "d3d40573563b81007487e356672cc587d816782a962ac6ccfe3b901a20792dc9"
       },
-      "status": "integrated-validated decoder slice; whole requirement remains gated by INT-PNM-02",
+      "status": "integrated-validated decoder slice; whole requirement is tracked separately at INT-PNM-02",
       "limitations": "Authored synthetic format evidence; complete-plan association/playback and public language adapters remain separate. Multipart output is derived, with physical originals retained by callers. No hardware interoperability claim."
     },
     {
@@ -56,8 +56,84 @@
         "record": "docs/development/features/pnm-measurement-inputs/decoder-candidate.json",
         "sha256": "d3d40573563b81007487e356672cc587d816782a962ac6ccfe3b901a20792dc9"
       },
-      "status": "integrated-validated decoder slice; whole requirement remains gated by INT-PNM-02",
+      "status": "integrated-validated decoder slice; whole requirement is tracked separately at INT-PNM-02",
       "limitations": "Authored synthetic format evidence; complete-plan association/playback and public language adapters remain separate. Multipart output is derived, with physical originals retained by callers. No hardware interoperability claim."
+    },
+    {
+      "requirement_id": "REQ-US-PNM-01",
+      "architecture_owner": "docs/architecture.md#unified-pnm-and-capture-admission",
+      "feature_design": "docs/development/features/pnm-measurement-inputs/upstream.md",
+      "checklist_task": "INT-PNM-02",
+      "implementing_crate": "pnm-input",
+      "source_file": "crates/pnm-input/src/upstream/association.rs",
+      "symbol": "MeasuredExperiment::admit",
+      "test_file": "crates/pnm-input/tests/upstream_association.rs",
+      "qualified_test_case": "captured_ucd_and_both_pnm_inputs_drive_actual_loop_with_original_provenance",
+      "validation_command": "scripts/cargo-local.sh test -p pnm-input --locked --test upstream_association --test upstream_ucd --test upstream_ucd_projection --test upstream_rxmer --test upstream_pre_eq",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/pnm-measurement-inputs/association-candidate.json",
+        "sha256": "2756a1faa5c98aab35a2238c19751912bf023f7fad003c0e47a56cf7e1926870"
+      },
+      "status": "integrated-validated; official checklist owns completion",
+      "limitations": "Authored synthetic captures and explicit external context; normalized corrective C and unity residual RxMER model only. Independent field/hardware interoperability and native Python/CLI adapters are not established by these Rust tests."
+    },
+    {
+      "requirement_id": "REQ-US-PNM-02",
+      "architecture_owner": "docs/architecture.md#unified-pnm-and-capture-admission",
+      "feature_design": "docs/development/features/pnm-measurement-inputs/upstream.md",
+      "checklist_task": "INT-PNM-02",
+      "implementing_crate": "pnm-input",
+      "source_file": "crates/pnm-input/src/upstream/association.rs",
+      "symbol": "MeasuredExperiment::prepare",
+      "test_file": "crates/pnm-input/tests/upstream_association.rs",
+      "qualified_test_case": "measured_power_policies_snapshots_init_adjust_and_composition_preflight",
+      "validation_command": "scripts/cargo-local.sh test -p pnm-input --locked --test upstream_association --test upstream_ucd --test upstream_ucd_projection --test upstream_rxmer --test upstream_pre_eq",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/pnm-measurement-inputs/association-candidate.json",
+        "sha256": "2756a1faa5c98aab35a2238c19751912bf023f7fad003c0e47a56cf7e1926870"
+      },
+      "status": "integrated-validated; official checklist owns completion",
+      "limitations": "Authored synthetic captures and explicit external context; normalized corrective C and unity residual RxMER model only. Independent field/hardware interoperability and native Python/CLI adapters are not established by these Rust tests."
+    },
+    {
+      "requirement_id": "REQ-US-PNM-03",
+      "architecture_owner": "docs/architecture.md#unified-pnm-and-capture-admission",
+      "feature_design": "docs/development/features/pnm-measurement-inputs/upstream.md",
+      "checklist_task": "INT-PNM-02",
+      "implementing_crate": "pnm-input",
+      "source_file": "crates/pnm-input/src/upstream/association.rs",
+      "symbol": "MeasuredExperiment::prepare",
+      "test_file": "crates/pnm-input/tests/upstream_association.rs",
+      "qualified_test_case": "multiple_updates_keep_corresponding_older_bases_and_cancel_keeps_sources",
+      "validation_command": "scripts/cargo-local.sh test -p pnm-input --locked --test upstream_association --test upstream_ucd --test upstream_ucd_projection --test upstream_rxmer --test upstream_pre_eq",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/pnm-measurement-inputs/association-candidate.json",
+        "sha256": "2756a1faa5c98aab35a2238c19751912bf023f7fad003c0e47a56cf7e1926870"
+      },
+      "status": "integrated-validated; official checklist owns completion",
+      "limitations": "Authored synthetic captures and explicit external context; normalized corrective C and unity residual RxMER model only. Independent field/hardware interoperability and native Python/CLI adapters are not established by these Rust tests."
+    },
+    {
+      "requirement_id": "REQ-US-PNM-04",
+      "architecture_owner": "docs/architecture.md#unified-pnm-and-capture-admission",
+      "feature_design": "docs/development/features/pnm-measurement-inputs/upstream.md",
+      "checklist_task": "INT-PNM-02",
+      "implementing_crate": "pnm-input",
+      "source_file": "crates/pnm-input/src/upstream/association.rs",
+      "symbol": "MeasuredExperiment::admit",
+      "test_file": "crates/pnm-input/tests/upstream_association.rs",
+      "qualified_test_case": "every_capture_association_and_late_update_is_admitted_atomically",
+      "validation_command": "scripts/cargo-local.sh test -p pnm-input --locked --test upstream_association --test upstream_ucd --test upstream_ucd_projection --test upstream_rxmer --test upstream_pre_eq",
+      "observed_result": "pass",
+      "tested_candidate": {
+        "record": "docs/development/features/pnm-measurement-inputs/association-candidate.json",
+        "sha256": "2756a1faa5c98aab35a2238c19751912bf023f7fad003c0e47a56cf7e1926870"
+      },
+      "status": "integrated-validated; official checklist owns completion",
+      "limitations": "Authored synthetic captures and explicit external context; normalized corrective C and unity residual RxMER model only. Independent field/hardware interoperability and native Python/CLI adapters are not established by these Rust tests."
     }
   ],
   "component_regression": {
@@ -67,5 +143,13 @@
     "log": "docs/development/local/unified-backend/pnm-integration/all-input-tests.log",
     "log_sha256": "d940968ed998d1072b9df5d508463d14dc75f72f138cf120f9b3687d20ba32c6",
     "scope": "44 existing downstream/shared cases and 15 upstream decoder cases; subsequent source changes before final targeted run were documentation banners only."
+  },
+  "upstream_regression": {
+    "command": "scripts/cargo-local.sh test -p docsis-ofdma --locked",
+    "exit_code": 0,
+    "passed": 83,
+    "log": "docs/development/local/unified-backend/pnm-integration/core-regression.log",
+    "log_sha256": "3f0a6c2822be035e9aed92ca98d0550b7a5e359d64169ff3326dd32f0f228105",
+    "candidate_record": "docs/development/features/pnm-measurement-inputs/association-candidate.json"
   }
 }

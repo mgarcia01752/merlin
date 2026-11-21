@@ -31,6 +31,23 @@ checks. No header bytes are rewritten. Update files still require external
 operation, application status, corresponding probe and base-bank context.
 
 Measured correction C is distinct from physical channel H and receive noise.
-Whole-plan association and playback remain a separate acceptance gate; native
-Python and CLI exposure follow the public API gates. Existing downstream capture
+Whole-plan association and playback now pass local Rust acceptance.
+`MeasuredExperiment::from_json` admits bounded plan JSON; `admit` prepares the
+core-owned input for `Simulation::configure_measured`. Loading is idle and failed
+admission preserves the previous session. Native Python and CLI exposure follow
+the public API gates. Existing downstream capture
 admission keeps its established contracts.
+
+
+Plans require explicit CM/CMTS identity, CCAP-interface mapping when RxMER is used,
+source-time bounds, exact UCD/grid compatibility and source interpretation evidence.
+RxMER selection, equal-weight power average, hold or interpolation is explicit;
+source epochs are retained separately from replay offsets. No frequency resampling
+or missing-bin invention occurs. Updates require application status and their
+corresponding probe/base; an older base can remain valid when that exact probe
+observed it. Entire schedules are checked before a run begins.
+
+The supported measured-RxMER model uses unity physical H and unity effective C
+throughout, without added timing/noise impairments. Pre-Eq-only input does not need
+invented CCAP or RxMER metadata. Original files, raw plan JSON and hashes survive
+completed/cancelled reports; normalized effective banks remain derived values.

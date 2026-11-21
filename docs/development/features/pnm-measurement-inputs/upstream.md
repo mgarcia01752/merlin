@@ -10,7 +10,7 @@ documentation only. Current integration evidence is never inferred from source c
 The existing native `pnm-input` adapter remains the I/O/raw-byte owner. Current
 downstream support and the PNM setup/source pin remain unchanged. Upstream UCD,
 RxMER and Pre-Eq admission is implemented under INT-PNM-01; whole-plan association and
-actual measured playback require INT-PNM-02. A source decoder name or historical
+actual measured playback are now accepted locally under INT-PNM-02. A source decoder name or historical
 source pass does not prove support in MERLIN's exact pinned decoder.
 
 ## Three separate operations
@@ -42,7 +42,7 @@ unsupported file versions. A complete future schedule is checked before source w
 
 The adapter depends on core PHY types/APIs; core PHY never depends back on file I/O.
 Raw owners are `crates/pnm-input/src/upstream/{ucd,ucd_projection,rxmer,pre_eq}.rs`;
-`association.rs` remains the next implementation unit.
+`association.rs` owns complete-plan association and the typed core handoff.
 Verify actual exact-version decoder support per format before reuse; missing support
 requires its own reviewed bounded Rust owner and independent format evidence.
 No vendored PNM Viewer, network capture/control or Python calculations are added.
@@ -68,10 +68,10 @@ linked; nonexistent local paths are explicitly planned, not passing evidence.
 
 | Stable requirement | Delivery / acceptance | Implementation and test owner |
 | --- | --- | --- |
-| [REQ-US-PNM-01](../../../requirements.md#req-us-pnm-01) | [INT-PNM-02](../../checklist.md#int-pnm-02) | Module: `crates/pnm-input/src/upstream/association.rs` (planned); Test: `crates/pnm-input/tests/upstream_association.rs` (planned) |
-| [REQ-US-PNM-02](../../../requirements.md#req-us-pnm-02) | [INT-PNM-02](../../checklist.md#int-pnm-02) | Module: `crates/pnm-input/src/upstream/association.rs` (planned); Test: `crates/pnm-input/tests/upstream_association.rs` (planned) |
-| [REQ-US-PNM-03](../../../requirements.md#req-us-pnm-03) | [INT-PNM-02](../../checklist.md#int-pnm-02) | Module: `crates/pnm-input/src/upstream/association.rs` (planned); Test: `crates/pnm-input/tests/upstream_association.rs` (planned) |
-| [REQ-US-PNM-04](../../../requirements.md#req-us-pnm-04) | [INT-PNM-02](../../checklist.md#int-pnm-02) | Module: `crates/pnm-input/src/upstream/association.rs` (planned); Test: `crates/pnm-input/tests/upstream_association.rs` (planned) |
+| [REQ-US-PNM-01](../../../requirements.md#req-us-pnm-01) | [INT-PNM-02](../../checklist.md#int-pnm-02) | Module: `crates/pnm-input/src/upstream/association.rs`; Test: `crates/pnm-input/tests/upstream_association.rs` |
+| [REQ-US-PNM-02](../../../requirements.md#req-us-pnm-02) | [INT-PNM-02](../../checklist.md#int-pnm-02) | Module: `crates/pnm-input/src/upstream/association.rs`; Test: `crates/pnm-input/tests/upstream_association.rs` |
+| [REQ-US-PNM-03](../../../requirements.md#req-us-pnm-03) | [INT-PNM-02](../../checklist.md#int-pnm-02) | Module: `crates/pnm-input/src/upstream/association.rs`; Test: `crates/pnm-input/tests/upstream_association.rs` |
+| [REQ-US-PNM-04](../../../requirements.md#req-us-pnm-04) | [INT-PNM-02](../../checklist.md#int-pnm-02) | Module: `crates/pnm-input/src/upstream/association.rs`; Test: `crates/pnm-input/tests/upstream_association.rs` |
 
 Related delivery gates: [INT-PNM-01](../../checklist.md#int-pnm-01), [INT-PNM-02](../../checklist.md#int-pnm-02).
 
@@ -127,6 +127,54 @@ broader component run. No original field input or normative PDF was newly acquir
 - [Exact requirement slices](implementation-evidence.json).
 - [User guide](../../../user/upstream/measurements.md).
 
-INT-PNM-01 accepts bounded inspection/projection only. REQ-US-PNM-01..03 still
-require complete-plan association/playback under INT-PNM-02; decoder tests alone
-cannot accept policy selection, update lineage or actual capture-driven runs.
+INT-PNM-01 accepts bounded inspection/projection only. Whole REQ-US-PNM-01..03
+acceptance is recorded below under INT-PNM-02; decoder tests alone cannot accept
+policy selection, update lineage or actual capture-driven runs.
+
+## INT-PNM-02 measured association implementation unit
+
+Build on decoder checkpoint `41d86d7`. Adapt the source measured association owner
+into the already planned `crates/pnm-input/src/upstream/association.rs`, with its
+full source test matrix in `tests/upstream_association.rs`. Reuse the accepted
+UCD projection, capture observations, core PreEqPlayback/RxmerPlayback and preview;
+do not repeat numerical models or add a PHY-to-adapter dependency.
+
+| Inspected source path / symbol | Contract and gap | Decision / destination |
+| --- | --- | --- |
+| `morgana/crates/morgana/src/inputs/measured.rs::MeasuredExperiment::prepare` | Explicit identity/grid/source-time/probe lineage, whole-plan preflight; decoder APIs now exist locally. | ADAPT into `crates/pnm-input/src/upstream/association.rs`; retain every bound and association check. |
+| `morgana/crates/morgana/src/api/session.rs::configure_measured` | Source facade directly owns parsers; copying it into PHY would invert the approved dependency. | ADAPT handoff: core-owned `MeasuredConfiguration` in `crates/ofdma/src/api/measured.rs`, constructed by adapter admission and consumed atomically by the real session. |
+| `crates/ofdma/src/api/session.rs::configure_document` | Idle atomic replacement already validates before mutation. | REUSE ordering for `configure_measured`; preserve original generic document separately from projected execution input. |
+| `morgana/crates/morgana/tests/measured_experiment.rs` | Independent authored capture cohorts, literal power/timestamp expectations and actual both-geometry loops. | ADAPT imports and prepared handoff; preserve all seven association cases and assertions. The eighth source multipart case remains in decoder tests. |
+
+`MeasuredExperiment::admit` returns an owned `MeasuredConfiguration` containing
+resolved experiment/options, the original generic document and bounded versioned
+provenance. Its core constructor rechecks domain readiness and provenance format
+before session mutation; it does not decode captures or certify caller-supplied
+provenance claims. `Simulation::configure_measured` replaces all accepted settings
+and generation only after validation succeeds. Native adapters parse measured JSON
+through pnm-input, then call this same typed core method. No core JSON capture
+loader or extension trait is needed.
+
+Preserve original plan/file bytes, hashes and epochs in completed and partial
+reports; source epochs never become synthetic activation offsets. Entire future
+schedules are checked before source/RNG consumption. Accept power-domain selection,
+average/hold/interpolation and applied/snapshot/initialize/adjust context only in
+the supported unity-residual composition, with no measured-C-as-H inference.
+
+### Measured association acceptance
+
+All 23 upstream input cases pass: the 15 decoder cases plus seven preserved source
+association cases and one new typed-handoff case. Both captured numerologies run
+the actual source→TX→channel→received-only RX loop and recover source bits.
+Literal power-domain average/interpolation, original plan/file hashes, older
+corresponding bases, excluded zero records, future incompatible updates and
+failed-admission state are checked. Pre-cancelled reports keep measured provenance;
+later generic input clears future provenance without changing old owned reports.
+The 83 upstream engine regressions, Clippy with warnings denied and formatting pass.
+
+- [Tested association candidate](association-candidate.json).
+- [Executed input cases](association-test-results.json).
+- [Seven requirement slices and regression records](implementation-evidence.json).
+
+This accepts Rust capture admission and playback, not native Python/CLI exposure,
+field interoperability, arbitrary Pre-Eq inverse-H inference or Qt development.

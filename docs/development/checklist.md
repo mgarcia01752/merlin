@@ -302,12 +302,13 @@ architecture owner identifies concrete implementation/test paths and disposition
   Acceptance evidence: [15 decoder cases and downstream input regressions](features/pnm-measurement-inputs/upstream.md#decoder-acceptance).
 
 <a id="int-pnm-02"></a>
-- [ ] **INT-PNM-02** Integrate explicit measured association and playback.
+- [x] **INT-PNM-02** Integrate explicit measured association and playback.
   Requirements: [REQ-US-PNM-01](../requirements.md#req-us-pnm-01), [REQ-US-PNM-02](../requirements.md#req-us-pnm-02), [REQ-US-PNM-03](../requirements.md#req-us-pnm-03), [REQ-US-PNM-04](../requirements.md#req-us-pnm-04).
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-pnm-and-capture-admission).
   Depends on: INT-PNM-01, INT-US-CONFIG-01, INT-US-CH-01.
   Acceptance: Complete-plan UCD/CM/CCAP-interface/grid/time mapping, source coverage, power-domain selection/average/hold/interpolation and corresponding-probe Set/Adjust schedules pass. Validate later events before consumption; actual captured-plan runs preserve originals and reject incompatible C/H/RxMER combinations atomically.
   Feature records: [ofdma/channel.md](features/ofdma/channel.md), [ofdma/pre-equalization.md](features/ofdma/pre-equalization.md), [pnm-measurement-inputs/upstream.md](features/pnm-measurement-inputs/upstream.md).
+  Acceptance evidence: [23 input cases and 83 core regressions](features/pnm-measurement-inputs/upstream.md#measured-association-acceptance).
 
 <a id="int-rust-01"></a>
 - [ ] **INT-RUST-01** Converge typed Rust APIs without downstream breakage.

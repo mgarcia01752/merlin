@@ -122,14 +122,14 @@ Delivery gates: [INT-LICENSE-01](development/checklist.md#int-license-01).
 | Downstream PHY | `crates/ofdm`, Cargo `docsis-ofdm-fec` | Retain package, public imports, control channels, interleavers, waveform, received configuration and report schemas. |
 | Common FEC | `crates/fec-codec` | `src/upstream_ldpc/` now owns upstream definitions/codec and independent source tests; existing BCH, downstream LDPC, shortening, NCP and PLC remain. |
 | Generic DSP | `crates/dsp`, Cargo `merlin-dsp`; existing directional numerical owners retained | Shared centered unitary 2K/4K/8K FFT and one-step PRBS15 recurrence; downstream wrappers preserve geometry/errors/state. Independent/frozen equivalence and hot-path measurements precede consumer rewiring; INT-DSP-01 now has passing consumer acceptance. No generic channel/QAM/measurement state extraction. |
-| Upstream PHY | `crates/ofdma`, package `docsis-ofdma` | Independent typed configuration, TX/channel/received-only RX, bounded session, strict versioned document admission and instruments are implemented; facade/native Python/PNM/CLI convergence remain gated. |
-| Native measurement input | `crates/pnm-input` | Extend bounded adapters with `src/upstream/`; own binary envelope decoding, file I/O and raw-byte admission; core PHY owns typed observation/configuration semantics. |
+| Upstream PHY | `crates/ofdma`, package `docsis-ofdma` | Independent typed configuration, TX/channel/received-only RX, bounded session, strict versioned document admission and instruments are implemented; facade/native Python/CLI convergence remain gated. |
+| Native measurement input | `crates/pnm-input` | Implemented `src/upstream/` owns bounded binary admission and complete measured association; core accepts an immutable typed handoff and retains original provenance. |
 | CLI | `crates/cli`, executable `ofdm-fec` | Add upstream operations via public Rust APIs; retain every existing command and output contract. No second executable. |
 | Native Python | `bindings/python`, package `merlin` | Retain existing imports and exports; add upstream native wrappers only after Rust operation parity. No second distribution or Python science. |
 | Qt | `apps/qt` | Existing downstream presentation stays unchanged; upstream UI implementation is outside this backend integration. |
 
 **Current dependency direction:** CLI → downstream → optional FEC;
-`pnm-input` → downstream API and exact pinned `pnm`; native Python → downstream
+`pnm-input` → downstream/upstream APIs and exact pinned `pnm`; native Python → downstream
 API and `pnm-input`. The independent Qt adapter retains its current dependencies.
 The downstream `pnm-input` Cargo feature is not a dependency back to the adapter.
 
@@ -140,19 +140,19 @@ flowchart TD
     CLI[Existing CLI] -.-> ROOT[Selected merlin facade]
     PY[Existing native Python adapter] -.-> ROOT
     ROOT -.-> DS[Downstream PHY]
-    ROOT -.-> US[Proposed upstream PHY]
+    ROOT -.-> US[Upstream PHY]
     ROOT -.-> API[Planned merlin-api contracts]
     DS -.-> API
     US -.-> API
     PY --> INPUT[Native PNM input adapter]
     CLI -.-> INPUT
     INPUT --> DS
-    INPUT -.-> US
+    INPUT --> US
     INPUT --> PNM[Exact pinned PNM decoder]
     DS --> FEC[Common FEC mechanisms and separate code definitions]
-    US -.-> FEC
+    US --> FEC
     DS --> DSP[Shared numerical DSP kernels]
-    US -.-> DSP
+    US --> DSP
 ```
 
 No core PHY/FEC/DSP depends on CLI, Python, Qt, native input adapter or another
@@ -547,9 +547,9 @@ correction-bank/application handoff after raw adapter admission.
 Delivery gates: [INT-PNM-01](development/checklist.md#int-pnm-01), [INT-PNM-02](development/checklist.md#int-pnm-02).
 
 Implemented raw admission is owned by `crates/pnm-input/src/upstream/{ucd,ucd_projection,rxmer,pre_eq}.rs`;
-whole-plan association remains planned in `association.rs`. Raw acceptance tests are
+`association.rs` owns complete measured admission. Raw acceptance tests are
 `crates/pnm-input/tests/{upstream_ucd,upstream_ucd_projection,upstream_rxmer,upstream_pre_eq}.rs`;
-whole-plan cases remain planned in `upstream_association.rs`.
+whole-plan cases are in `upstream_association.rs`.
 The Pre-Eq adapter reuses the exact pinned typed decoder for minor zero and its
 fixed-point kernel for the approved opaque-minor profile without rewriting bytes.
 UCD and CCAP major2 RxMER use bounded source-derived owners because the pin lacks
@@ -572,6 +572,16 @@ Missing/ambiguous/stale bases reject atomically. Preserve source timestamps
 separately from synthetic symbol offsets and original updates separately from
 normalized effective banks. Measured C is neither physical H nor receive noise.
 Preflight the entire selected schedule before any source/RNG consumption.
+
+`MeasuredExperiment::admit` in the native adapter returns core-owned
+`docsis_ofdma::api::MeasuredConfiguration`. The independent core constructor
+validates domain readiness and the bounded versioned provenance envelope; it
+does not parse files or certify caller-supplied capture claims. The session
+accepts that immutable handoff atomically through `configure_measured`, retaining
+original generic context separately from captured projection. Completed/partial
+reports retain the entire original measured plan and source hashes.
+[Local input acceptance](development/features/pnm-measurement-inputs/upstream.md#measured-association-acceptance)
+covers both geometries and rejects incompatible future updates before work.
 
 Existing downstream [input ownership](#pnm-measurement-input-direction),
 [binary/API tests](../crates/pnm-input/tests/high_level_api.rs) and

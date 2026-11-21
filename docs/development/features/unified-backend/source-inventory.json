@@ -5702,37 +5702,37 @@
             "requirement": "REQ-US-PNM-02",
             "kind": "module",
             "path": "crates/pnm-input/src/upstream/association.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PNM-02",
             "kind": "test",
             "path": "crates/pnm-input/tests/upstream_association.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PNM-03",
             "kind": "module",
             "path": "crates/pnm-input/src/upstream/association.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PNM-03",
             "kind": "test",
             "path": "crates/pnm-input/tests/upstream_association.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PNM-04",
             "kind": "module",
             "path": "crates/pnm-input/src/upstream/association.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PNM-04",
             "kind": "test",
             "path": "crates/pnm-input/tests/upstream_association.rs",
-            "state": "planned"
+            "state": "existing"
           }
         ],
         "acceptance_sha256": "bc7632794fa77e04c02110c5affd9d04f5238c0af1422f0a01f76c9df0ec81eb"
@@ -5768,49 +5768,49 @@
             "requirement": "REQ-US-PNM-01",
             "kind": "module",
             "path": "crates/pnm-input/src/upstream/association.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PNM-01",
             "kind": "test",
             "path": "crates/pnm-input/tests/upstream_association.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PNM-02",
             "kind": "module",
             "path": "crates/pnm-input/src/upstream/association.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PNM-02",
             "kind": "test",
             "path": "crates/pnm-input/tests/upstream_association.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PNM-03",
             "kind": "module",
             "path": "crates/pnm-input/src/upstream/association.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PNM-03",
             "kind": "test",
             "path": "crates/pnm-input/tests/upstream_association.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PNM-04",
             "kind": "module",
             "path": "crates/pnm-input/src/upstream/association.rs",
-            "state": "planned"
+            "state": "existing"
           },
           {
             "requirement": "REQ-US-PNM-04",
             "kind": "test",
             "path": "crates/pnm-input/tests/upstream_association.rs",
-            "state": "planned"
+            "state": "existing"
           }
         ],
         "acceptance_sha256": "c560376bad979e787446d1fef756ca28b6d2ff70e2a12ef64479421caf5b8c80"

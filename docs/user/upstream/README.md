@@ -9,5 +9,6 @@ The independent upstream Rust engine has local synthetic backend acceptance:
 - [Bounded sessions and reports](session.md).
 - [Measurement admission](measurements.md).
 
-PNM capture-backed runs, the public facade, native Python namespaces, CLI dispatch
+Native PNM capture-backed runs also have local acceptance. The public facade,
+native Python namespaces, CLI dispatch
 and final regression acceptance follow the [official checklist](../../development/checklist.md#unified-backend-integration).

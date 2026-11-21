@@ -4,6 +4,7 @@
  */
 //! Typed idle upstream simulation sessions over the independent Rust engine.
 mod error;
+mod measured;
 mod reports;
 mod session;
 pub use crate::channel::ChannelConfig;
@@ -21,6 +22,7 @@ pub use crate::simulation::{
 pub use crate::types::Iq;
 pub use crate::PhyError;
 pub use error::{ApiError, ApiResult, CaptureFailure};
+pub use measured::MeasuredConfiguration;
 pub(crate) use reports::bounded_json;
 pub use reports::ReportJson;
 pub use session::Simulation;
