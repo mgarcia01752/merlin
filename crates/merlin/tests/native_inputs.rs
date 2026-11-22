@@ -123,3 +123,35 @@ fn facade_designer_uses_typed_owners_and_preserves_original_profile_identity() {
     assert_eq!(output.source_kind(), "merlin_synthetic_rxmer");
     assert_eq!(output.values().len(), grid.sample_count);
 }
+
+#[test]
+fn facade_profile_capture_keeps_binary_json_science_and_original_sources() {
+    let first = downstream::NamedCapture::new("original binary", PROFILE.to_vec()).unwrap();
+    let second = downstream::NamedCapture::new("original JSON", DECODED_PROFILE.to_vec()).unwrap();
+    let binary = downstream::inputs::CaptureLoader::profile_capture(&first).unwrap();
+    let decoded = downstream::inputs::CaptureLoader::profile_capture(&second).unwrap();
+    assert_eq!(binary.profile_ids(), [0, 1, 2, 3]);
+    assert_eq!(binary.profile_ids(), decoded.profile_ids());
+    for id in binary.profile_ids() {
+        assert_eq!(binary.summary(*id).unwrap(), decoded.summary(*id).unwrap());
+        assert_eq!(
+            binary.schemes(*id, 0, 256).unwrap().schemes,
+            decoded.schemes(*id, 0, 256).unwrap().schemes
+        );
+    }
+    assert_eq!(binary.provenance().original_bytes(), PROFILE);
+    assert_eq!(decoded.provenance().original_bytes(), DECODED_PROFILE);
+    let view = binary
+        .inspect(&downstream::ProfileViewRequest {
+            max_buckets: 16,
+            ..Default::default()
+        })
+        .unwrap();
+    assert!(
+        view.series
+            .iter()
+            .map(|series| series.buckets.len())
+            .sum::<usize>()
+            <= 16
+    );
+}

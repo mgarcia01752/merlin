@@ -10,6 +10,8 @@ and file conveniences through the existing pinned native adapter. Independent
 core consumers may still enable `high-level-api` and use `pnm-input` directly.
 Neither route needs Qt or Python. See [passive input admission](input-admission.md)
 for timing/source contracts and Rust/Python parity.
+[Original profile inspection](profile-inspection.md) covers complete source
+catalogs, compact schemes and bounded scientific views.
 
 For searchable class/method documentation generated from the actual APIs, see
 the [generated Rust/Python reference](../../reference/api-reference.md).

@@ -60,6 +60,18 @@ fn decode(input: &NamedCapture, kind: u8) -> ApiResult<(NamedCapture, Option<Dec
     ))
 }
 impl CaptureLoader {
+    /// Loads a complete read-only source profile catalog for scientific inspection.
+    /// # Arguments
+    /// * `input` - Exact bounded binary PNM or decoder JSON; filename never selects format.
+    /// # Returns
+    /// Immutable source catalog/header/schemes, retaining byte-sized source identities.
+    /// # Errors
+    /// Preserves existing native decoder/contract/profile/grid/resource failures.
+    pub fn profile_capture(input: &NamedCapture) -> ApiResult<ProfileCapture> {
+        let (decoded, contract) = decode(input, 10)?;
+        ProfileCapture::from_decoded(input, &decoded, contract)
+    }
+
     /// Discovers captured profile identities through native binary/JSON decoding.
     ///
     /// # Arguments

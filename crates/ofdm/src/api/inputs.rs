@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Immutable capture ownership and explicit JSON/typed conversion boundaries.
+mod profile_capture;
 use super::*;
 use crate::{
     profile::candidate::{CandidateProfile, CapturedProfile},
@@ -11,6 +12,7 @@ use crate::{
         ChannelFrame, FrequencyGrid, RxMerFrame,
     },
 };
+pub use profile_capture::*;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use std::sync::Arc;

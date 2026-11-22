@@ -959,6 +959,12 @@ Optional native `inputs::RxMerDesign` wraps the existing version-1 saved Designe
 evaluator with immutable typed flat/imported baselines and noncompounding recipe
 replacement. Exact envelopes, original roles/grid/epochs and backend source-kind
 labels remain explicit; Python is bounded transport/ownership only.
+Read-only `ProfileCapture` retains the complete encoded source profile catalog,
+compact schemes and original header/order without widening legacy simulation
+`ProfileId`. Its bounded raw metrics and `Dpd::summary`/`view` reuse the existing
+assignment, ideal Shannon and useful-symbol-rate owners. The shared parser omits
+inspection arrays for legacy scientific callers; see
+[profile contracts and parity](user/api/profile-inspection.md).
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

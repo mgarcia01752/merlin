@@ -279,6 +279,60 @@ results. Re-run existing Designer numerical and saved-WB actual FEC parity tests
 and fresh installed-wheel acceptance before Qt adoption. Channel composition,
 profile scientific summaries and idle TX preview remain open afterward.
 
+### UIU-API-01: profile capture inspection unit
+
+The Qt inspector uses decoded compact source schemes, original u8 profile IDs,
+per-role loadings, an uncoded data-capacity estimate and ideal Shannon bounds.
+The existing simulation `ProfileId` remains 0..15. Preserve both contracts:
+new read-only `ProfileCapture` retains the complete encoded source catalog,
+including byte-sized IDs that cannot be passed to the legacy simulation API.
+Do not widen that quantity, discard source IDs or infer simulation acceptance.
+UIU-API-02 must reconcile actual full-loop source-ID behavior before Qt migration.
+
+Move the existing Apache standalone profile parser into focused
+`crates/ofdm/src/scenario/pnm_json/profiles.rs`. Keep `import_profiles` as its
+compatibility entry and preserve validation order/messages, limits, assignment
+roles, source grids, hashes and epochs. The shared parser optionally retains
+validated compact schemes/header metadata for inspection; ordinary import callers
+must not allocate inspection arrays. Add curated serialized metadata models in
+`profile_metadata.rs`; reuse `ModulationAssignment` and `minimum_snr_db` unchanged,
+including PLC data/preamble distinction, unknown/reserved codes and zero loading.
+
+Add `crates/ofdm/src/api/inputs/profile_capture.rs`,
+`profile_capture/models.rs` and `profile_capture/views.rs`; edit
+`crates/ofdm/src/api/inputs.rs` for registration,
+re-exported through existing API/facade. `ProfileCapture::from_bytes` admits decoded
+JSON; `from_decoded` preserves original/intermediate bytes and decoder contract.
+`CaptureLoader::profile_capture` in the existing native adapter handles binary/
+JSON with the same pinned decoder; no second parser goes into Qt. Immutable
+`profile_ids`, `metadata`, `provenance`, `summary(raw_id)`, `schemes(raw_id, start,
+limit)` and `inspect(ProfileViewRequest)` expose bounded source-owned information.
+The scheme window caps returned rows at 256 and preserves code, source order,
+original offsets/frequencies, role, physical constellation and ideal bounds.
+
+`ProfileViewRequest` owns optional selected raw IDs (None = complete inventory,
+empty = no traces), selected roles, BitLoading/IdealShannonSnr metric, original
+MeasurementViewport and total bucket budget 1..2048. Preserve sorted/deduplicated
+selection and zero-count/full-grid behavior. Backend results carry exact grid,
+raw metric extrema/gaps and role-specific spans/counts/loadings, bounded per
+selected profile by the divided total budget. Qt retains pixel transforms/colors/
+labels and existing components; it computes no capacity or Shannon reference.
+A summary reports role counts and `sum(data bits)*spacing` as an uncoded nominal
+capacity, separate from net simulated payload throughput and receiver MER limits.
+`Dpd::summary`/`view` reuse the same numerical owners where semantically valid.
+
+Edit `crates/pnm-input/src/lib.rs` for native loader dispatch.
+Add native `bindings/python/src/profile_capture.rs`, register it in
+`bindings/python/src/lib.rs`, and edit the existing root/downstream/legacy
+aliases/stubs for immutable request/capture classes. Add tests in `bindings/python/tests/test_profile_capture.py`.
+Rust/core/native cases cover binary/JSON catalog equality, complete source IDs,
+exact compact schemes, independent capacity/Shannon/frequency anchors, protected
+roles, missing markers, window/budget bounds, immutable results, original bytes
+and unchanged legacy ProfileId behavior. Add the Rust cases under
+`crates/ofdm/tests/api_profile_capture.rs` and `crates/merlin/tests/native_inputs.rs`;
+rerun affected parser tests, Clippy and installed-wheel regressions before Qt
+adoption. Existing scientific stage/FEC acceptance remains untouched.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

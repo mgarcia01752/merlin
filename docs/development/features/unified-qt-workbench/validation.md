@@ -318,3 +318,31 @@ No source document, capture or completed checklist history was replaced. New typ
 configuration aliases remain re-exports; scientific evaluation stays with its
 existing Rust owner. Profile scientific summaries, channel composition and idle
 TX previews still keep UIU-API-01 unchecked before Qt consumer migration.
+
+## UIU-API-01 profile inspection unit
+
+Read-only `ProfileCapture` exposes original complete source catalogs/schemes and
+bounded authoritative metric views. Existing Dpd summary/view reuse its numerical
+owners; legacy ProfileId remains 0..15. [Exact candidate/test/wheel record](profile-inspection-evidence.json),
+[owner/design](design.md#uiu-api-01-profile-capture-inspection-unit),
+[Rust/Python contract](../../../user/api/profile-inspection.md) and
+[architecture](../../../architecture.md#unified-qt-public-api-boundary) trace to
+[UIU-API-01](../../checklist.md#task-uiu-api-01).
+
+Five new core cases plus five existing parser/contract cases pass. Independent
+vectors preserve ID 200 and unassigned code 255, source order/header/frequencies,
+PLC data/preamble separation, raw zero/absent loadings, role counts, uncoded
+capacity and ideal Shannon extrema. Legacy/opt-in imports yield identical
+scientific profiles/errors; old callers omit inspection arrays. Twelve facade
+cases verify binary/JSON scientific equivalence and retained original bytes.
+All 72 native-input cases pass, including existing WB/Designer/real-FEC history.
+Warnings-denied facade/native-input/binding Clippy, format/version/guide checks
+pass. A fresh Linux CPython 3.10 wheel passes all 67 native cases, including four
+profile-inspection cases and actual direct-Rust reference/WB/Designer regressions.
+
+Source recognition preserves the full encoded byte catalog without broadening
+legacy simulation admission or claiming a new coding/receiver mode. UIU-API-02
+and UIU-DS-01 retain the explicit source-ID full-loop compatibility gate.
+No Qt source, normative assignment table, Shannon/rate kernel or completed
+historical checkbox changed. Channel composition and idle TX previews remain
+open before parent task acceptance and Qt consumer migration.

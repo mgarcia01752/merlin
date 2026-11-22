@@ -9,6 +9,7 @@ mod designer;
 mod inputs;
 mod measurement;
 mod options;
+mod profile_capture;
 mod quantities;
 mod receiver;
 mod reports;
@@ -66,6 +67,7 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     }
     quantities::register(module)?;
     admission::register(module)?;
+    profile_capture::register(module)?;
     designer::register(module)?;
     sequence::register(module)?;
     inputs::register(module)?;

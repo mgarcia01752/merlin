@@ -69,3 +69,5 @@ from . import MeasurementSequence as MeasurementSequence
 from . import MeasurementSequenceOptions as MeasurementSequenceOptions
 from . import RxMerDesign as RxMerDesign
 from . import RxMerDesignPosition as RxMerDesignPosition
+from . import ProfileCapture as ProfileCapture
+from . import ProfileViewRequest as ProfileViewRequest
