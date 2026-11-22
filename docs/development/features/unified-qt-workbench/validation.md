@@ -855,3 +855,47 @@ UIU-DS-01 owns Qt adoption and UIU-SESSION-01 owns aggregate UI result budgets.
 Existing downstream implementation and completed history remain intact. This is
 local backend/API acceptance, not new Qt, hosted, installer, publication, measured
 RF compliance or external interoperability evidence.
+
+## UIU-API-03 idle upstream resource-grid accepted
+
+The [candidate evidence](resource-grid-evidence.json) and
+[executed cases](api-03-resource-grid-operation-test-results.json) establish the
+bounded idle observation for REQ-UIU-02/14/24 and
+[UIU-API-03](../../checklist.md#task-uiu-api-03). The
+[exact design](design.md#uiu-api-03-idle-upstream-resource-grid-observation) and
+[user guide](../../../user/upstream/resource-grid.md) describe the implemented
+Rust/native Python contracts. Allocation comes from ResourcePlan; this unit adds
+no pilot placement, interleaving, receiver or Qt scientific algorithm.
+
+Five public grid cases and two existing independent pilot cases pass in the
+complete upstream run: 88 passed, one preexisting performance benchmark ignored.
+Sixteen facade cases pass. Literal edge pilots retain carriers 100/107/116/123
+at symbols 0/2, and the loaded body minislot has two known and two complementary
+cells with 44/92 ordinary cells at 50/25 kHz. Every admitted pattern, frame size
+and numerology preserves original visits, loading, gains and bit offsets.
+Selected zero-loaded, excluded and unallocated physical positions remain distinct.
+Independent timing anchors preserve the second-frame prefix at tick 16960 and
+symbol-two prefix/useful starts at 21248/21344. Full capacities 328/656 bits are
+unchanged by zoom. A nonzero-noise actual closed loop verifies unchanged source,
+noise, receiver outcomes and configuration identity after inspection.
+
+The final Linux CPython 3.10 wheel passes all 114 installed cases without skips,
+including four new grid cases. Real import/default metadata, invalid conversion,
+shared bounds, unchanged accepted state, owned result lifetime, paused-session
+Busy/cancel cleanup and separate Rust-process parity at both spacings pass.
+Snapshots retain their configured allocation plane before CM Pre-Eq; they do not
+claim actual waveform observations, physical H or received C×H. Queries cover
+the configured base grant, without inventing later batch identities.
+
+Workspace and native all-target Clippy, both formatting checks, 77 tooling cases,
+documentation/traceability and the dependency-boundary audit pass. Compiler and
+installed inventories append two Rust and two native operations, giving 522/505
+rows. Every previous row and historical alias correction remains intact. All 178
+Qt sources match their accepted baseline; three direct dependencies and 45 frozen
+legacy source files remain migration debt. The most recent complete downstream
+Rust regression remains the passing API-02 run above; it was not rerun for this
+additive upstream projection.
+
+UIU-API-03 is complete. UIU-US-04 separately owns Qt rendering, zoom/inspection,
+batched geometry and object bounds. Evidence is local Rust/installed-wheel
+acceptance, with no new hosted, native installer or interoperability claim.

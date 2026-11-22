@@ -21,6 +21,7 @@ from smoke_wheel import inspect_wheel
 
 REFERENCES = (
     ('REFERENCE', 'docsis-ofdma', 'upstream_loop', ()),
+    ('RESOURCE_GRID', 'docsis-ofdma', 'upstream_resource_grid', ()),
     ('MEASUREMENTS', 'docsis-ofdma', 'upstream_measurements', ()),
     ('DOCUMENT', 'docsis-ofdma', 'upstream_document', ()),
     ('SYNTHETIC', 'docsis-ofdma', 'upstream_document', ('synthetic',)),

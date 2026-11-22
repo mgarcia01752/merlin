@@ -5,9 +5,9 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "e7a87421c487e1825c92c538e6431bcf133d6548 plus exact complete-catalog/sweep and final API-02 candidate manifest",
-    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-sweep-native-final/native-exports.json",
-    "native_sha256": "95dfc43ba1e7a563c1587c60636a9f9196ecb88dd1160d4f91a514b9560a2c01",
+    "revision": "fca3aa5bf6e26388bba690030c5be439d9526323 plus exact resource-grid candidate manifest",
+    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-03-resource-grid-native-final/native-exports.json",
+    "native_sha256": "aed881487aefdbae3383a991c3477fdaf582527027d66169f700bc405855ce60",
     "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
     "legacy_compatibility": {
       "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
@@ -83,7 +83,10 @@
     "units.uiu-api-02-channel-spectrum": "Actual normalized complex-sample PSD or explicit millivolt-squared/Hz calibration with bucket dBmV/Hz, original physical FFT grid and sample origins. ChannelPower integrates the complete occupied envelope including internal holes independently of zoom. Amplifier views declare gain-only amplitude; CPA/H/noise are excluded from the derived boundary, while receiver input is actual modeled output. Missing history and zero logarithmic readings remain absent.",
     "evidence.uiu-api-02-sweep": "../unified-qt-workbench/sweep-evidence.json, ../unified-qt-workbench/api-02-sweep-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-complete-catalog-and-bounded-sweep-unit: exact source/wheel hashes, full Rust regression, native cases and original ID/selection/control evidence.",
     "status.uiu-api-02-sweep": "Implemented complete original source catalog admission and bounded all-before-run sweep preflight, preserving edited current loading, sorted originals, independent controlled execution and partial results. Full API-02 backend acceptance is recorded; Qt adoption remains UIU-DS-01.",
-    "units.uiu-api-02-sweep": "Raw encoded source IDs retain u8 inventory; checked run IDs retain ProfileId 0..15. Selection positions are distinct from profile IDs. Source observation duration excludes acquisition/drain and wall time; summed active host budgets retain per-profile pause semantics. Assignment and retained-word counts are finite application policies, not normative PHY limits."
+    "units.uiu-api-02-sweep": "Raw encoded source IDs retain u8 inventory; checked run IDs retain ProfileId 0..15. Selection positions are distinct from profile IDs. Source observation duration excludes acquisition/drain and wall time; summed active host budgets retain per-profile pause semantics. Assignment and retained-word counts are finite application policies, not normative PHY limits.",
+    "evidence.uiu-api-03-resource-grid": "../unified-qt-workbench/resource-grid-evidence.json, ../unified-qt-workbench/api-03-resource-grid-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-03-idle-upstream-resource-grid-accepted: exact source/wheel hashes, executed cases and independent original-coordinate vectors.",
+    "status.uiu-api-03-resource-grid": "Implemented bounded idle configured allocation with unchanged generation and source/noise state. API-03 backend acceptance passes; Qt viewer remains UIU-US-04.",
+    "units.uiu-api-03-resource-grid": "Original zero-based physical FFT carriers and frame/grant symbols; 102.4-MHz sample ticks, configured frame identity and original coded-bit offsets remain distinct. Planned pilot/complementary gains precede CM Pre-Eq. Counts describe the rectangle; complete ResourcePlan capacity is independent of zoom. Cell and JSON budgets are separate application policies."
   },
   "type_exports": {
     "downstream": [
@@ -1219,6 +1222,30 @@
       },
       {
         "export": "merlin::upstream::ucd::TimestampSnapshot",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ResourceGridCell",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ResourceGridCounts",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ResourceGridRegion",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ResourceGridRequest",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ResourceGridRole",
+        "kind": "enum"
+      },
+      {
+        "export": "merlin::upstream::ResourceGridSnapshot",
         "kind": "struct"
       }
     ],
@@ -28005,6 +28032,118 @@
       },
       "evidence": "evidence.uiu-api-02-sweep",
       "status": "status.uiu-api-02-sweep"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::ResourceGridSnapshot::to_json",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn to_json(&self) -> ApiResult<String>",
+        "source_file": "crates/ofdma/src/api/resources.rs",
+        "rustdoc": "docsis_ofdma/api/struct.ResourceGridSnapshot.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.ResourceGridSnapshot.to_json",
+        "declaration": "merlin.upstream.ResourceGridSnapshot.to_json"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-03-resource-grid",
+      "error_behavior": "errors.us",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<String>",
+        "scope": "Owned configured allocation or lossless bounded JSON, retaining original coordinates, roles, timing and visit metadata; no source or waveform executes."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-14",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_resource_grid.rs::literal_edge_pilots_zero_exclusion_unallocated_timing_and_full_capacity_keep_original_coordinates",
+          "crates/ofdma/tests/api_resource_grid.rs::all_admitted_patterns_frame_sizes_and_numerologies_preserve_authoritative_visit_metadata",
+          "crates/ofdma/tests/api_resource_grid.rs::missing_invalid_and_work_bounded_queries_preserve_generation_original_state_and_owned_results",
+          "crates/ofdma/tests/api_resource_grid.rs::configured_grid_observation_does_not_advance_source_noise_receiver_or_configuration_identity",
+          "crates/ofdma/tests/api_resource_grid.rs::adjacent_loaded_body_minislot_preserves_independent_pilot_and_complementary_counts",
+          "crates/ofdma/tests/upstream_pilots.rs::source_literals_and_all_family_role_counts",
+          "crates/ofdma/tests/upstream_pilots.rs::boosted_short_frame_complement_exception_and_physical_pilot_sequence"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/Busy and separate direct-Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_all_patterns_and_shared_bounds_keep_physical_holes_and_original_state",
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_busy_session_guard_and_cancel_restore_resource_query_without_hidden_execution",
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_literal_physical_roles_timing_original_capacity_and_owned_importable_snapshot",
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_separate_rust_process_grid_coordinates_roles_and_metadata_match_at_both_spacings"
+          ],
+          "scope": "Independent literal edge/body/zero/exclusion coordinates, all admitted patterns and frame sizes, both numerologies, original timing/capacity, unchanged generation and noisy actual-run outcomes; no simulated I/Q invented."
+        }
+      },
+      "evidence": "evidence.uiu-api-03-resource-grid",
+      "status": "status.uiu-api-03-resource-grid"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::Simulation::resource_grid",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn resource_grid( &self, request: ResourceGridRequest, ) -> ApiResult<ResourceGridSnapshot>",
+        "source_file": "crates/ofdma/src/api/session.rs",
+        "rustdoc": "docsis_ofdma/api/struct.Simulation.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.Simulation.resource_grid",
+        "declaration": "merlin.upstream.Simulation.resource_grid"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-03-resource-grid",
+      "error_behavior": "errors.us",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<ResourceGridSnapshot>",
+        "scope": "Owned configured allocation or lossless bounded JSON, retaining original coordinates, roles, timing and visit metadata; no source or waveform executes."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-14",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_resource_grid.rs::literal_edge_pilots_zero_exclusion_unallocated_timing_and_full_capacity_keep_original_coordinates",
+          "crates/ofdma/tests/api_resource_grid.rs::all_admitted_patterns_frame_sizes_and_numerologies_preserve_authoritative_visit_metadata",
+          "crates/ofdma/tests/api_resource_grid.rs::missing_invalid_and_work_bounded_queries_preserve_generation_original_state_and_owned_results",
+          "crates/ofdma/tests/api_resource_grid.rs::configured_grid_observation_does_not_advance_source_noise_receiver_or_configuration_identity",
+          "crates/ofdma/tests/api_resource_grid.rs::adjacent_loaded_body_minislot_preserves_independent_pilot_and_complementary_counts",
+          "crates/ofdma/tests/upstream_pilots.rs::source_literals_and_all_family_role_counts",
+          "crates/ofdma/tests/upstream_pilots.rs::boosted_short_frame_complement_exception_and_physical_pilot_sequence"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/Busy and separate direct-Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_all_patterns_and_shared_bounds_keep_physical_holes_and_original_state",
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_busy_session_guard_and_cancel_restore_resource_query_without_hidden_execution",
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_literal_physical_roles_timing_original_capacity_and_owned_importable_snapshot",
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_separate_rust_process_grid_coordinates_roles_and_metadata_match_at_both_spacings"
+          ],
+          "scope": "Independent literal edge/body/zero/exclusion coordinates, all admitted patterns and frame sizes, both numerologies, original timing/capacity, unchanged generation and noisy actual-run outcomes; no simulated I/Q invented."
+        }
+      },
+      "evidence": "evidence.uiu-api-03-resource-grid",
+      "status": "status.uiu-api-03-resource-grid"
     }
   ],
   "executed_records": [
@@ -28024,7 +28163,8 @@
     "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -59645,6 +59785,130 @@
       },
       "evidence": "evidence.uiu-api-02-sweep",
       "status": "status.uiu-api-02-sweep"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.ResourceGridSnapshot.to_json",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::ResourceGridSnapshot",
+        "source_file": "bindings/python/src/upstream/simulation/grid.rs",
+        "symbol": "PyResourceGridSnapshot",
+        "signature": "pub fn to_json(&self) -> ApiResult<String>",
+        "mapping": "Checked native arguments dispatch the typed public Rust query or serializer with the GIL released. Existing Busy/session lease ownership is reused. No Python pilot placement, timing or scientific algorithm.",
+        "delegated_operation": "merlin::upstream::ResourceGridSnapshot::to_json",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "to_json",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "ResourceGridSnapshot.to_json"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-03-resource-grid",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::ResourceGridSnapshot",
+        "scope": "Owned actual configured-grid snapshot and identical Rust JSON; results outlive session reconfiguration/destruction."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-14",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_resource_grid.rs::literal_edge_pilots_zero_exclusion_unallocated_timing_and_full_capacity_keep_original_coordinates",
+          "crates/ofdma/tests/api_resource_grid.rs::all_admitted_patterns_frame_sizes_and_numerologies_preserve_authoritative_visit_metadata",
+          "crates/ofdma/tests/api_resource_grid.rs::missing_invalid_and_work_bounded_queries_preserve_generation_original_state_and_owned_results",
+          "crates/ofdma/tests/api_resource_grid.rs::configured_grid_observation_does_not_advance_source_noise_receiver_or_configuration_identity",
+          "crates/ofdma/tests/api_resource_grid.rs::adjacent_loaded_body_minislot_preserves_independent_pilot_and_complementary_counts",
+          "crates/ofdma/tests/upstream_pilots.rs::source_literals_and_all_family_role_counts",
+          "crates/ofdma/tests/upstream_pilots.rs::boosted_short_frame_complement_exception_and_physical_pilot_sequence"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/Busy and separate direct-Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_all_patterns_and_shared_bounds_keep_physical_holes_and_original_state",
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_busy_session_guard_and_cancel_restore_resource_query_without_hidden_execution",
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_literal_physical_roles_timing_original_capacity_and_owned_importable_snapshot",
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_separate_rust_process_grid_coordinates_roles_and_metadata_match_at_both_spacings"
+          ],
+          "scope": "Independent literal edge/body/zero/exclusion coordinates, all admitted patterns and frame sizes, both numerologies, original timing/capacity, unchanged generation and noisy actual-run outcomes; no simulated I/Q invented."
+        }
+      },
+      "evidence": "evidence.uiu-api-03-resource-grid",
+      "status": "status.uiu-api-03-resource-grid"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.Simulation.resource_grid",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::Simulation",
+        "source_file": "bindings/python/src/upstream/simulation/grid.rs",
+        "symbol": "PySimulation",
+        "signature": "pub fn resource_grid( &self, request: ResourceGridRequest, ) -> ApiResult<ResourceGridSnapshot>",
+        "mapping": "Checked native arguments dispatch the typed public Rust query or serializer with the GIL released. Existing Busy/session lease ownership is reused. No Python pilot placement, timing or scientific algorithm.",
+        "delegated_operation": "merlin::upstream::Simulation::resource_grid",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "resource_grid",
+        "kind": "method",
+        "signature": "(self, /, frame_index=0, first_symbol=0, symbol_count=1, first_carrier=0, carrier_count=0, max_cells=16384)",
+        "declaration": "Simulation.resource_grid"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-03-resource-grid",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::Simulation",
+        "scope": "Owned actual configured-grid snapshot and identical Rust JSON; results outlive session reconfiguration/destruction."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-14",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_resource_grid.rs::literal_edge_pilots_zero_exclusion_unallocated_timing_and_full_capacity_keep_original_coordinates",
+          "crates/ofdma/tests/api_resource_grid.rs::all_admitted_patterns_frame_sizes_and_numerologies_preserve_authoritative_visit_metadata",
+          "crates/ofdma/tests/api_resource_grid.rs::missing_invalid_and_work_bounded_queries_preserve_generation_original_state_and_owned_results",
+          "crates/ofdma/tests/api_resource_grid.rs::configured_grid_observation_does_not_advance_source_noise_receiver_or_configuration_identity",
+          "crates/ofdma/tests/api_resource_grid.rs::adjacent_loaded_body_minislot_preserves_independent_pilot_and_complementary_counts",
+          "crates/ofdma/tests/upstream_pilots.rs::source_literals_and_all_family_role_counts",
+          "crates/ofdma/tests/upstream_pilots.rs::boosted_short_frame_complement_exception_and_physical_pilot_sequence"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/Busy and separate direct-Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_all_patterns_and_shared_bounds_keep_physical_holes_and_original_state",
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_busy_session_guard_and_cancel_restore_resource_query_without_hidden_execution",
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_literal_physical_roles_timing_original_capacity_and_owned_importable_snapshot",
+            "bindings/python/tests/test_upstream_resource_grid.py::UpstreamResourceGridTests.test_separate_rust_process_grid_coordinates_roles_and_metadata_match_at_both_spacings"
+          ],
+          "scope": "Independent literal edge/body/zero/exclusion coordinates, all admitted patterns and frame sizes, both numerologies, original timing/capacity, unchanged generation and noisy actual-run outcomes; no simulated I/Q invented."
+        }
+      },
+      "evidence": "evidence.uiu-api-03-resource-grid",
+      "status": "status.uiu-api-03-resource-grid"
     }
   ],
   "native_type_exports": {
@@ -60324,6 +60588,13 @@
         "constructible": true
       },
       {
+        "name": "ResourceGridSnapshot",
+        "canonical_name": "ResourceGridSnapshot",
+        "module": "merlin.upstream",
+        "signature": "()",
+        "constructible": false
+      },
+      {
         "name": "RunControl",
         "canonical_name": "RunControl",
         "module": "merlin.upstream",
@@ -60544,6 +60815,18 @@
       "revision": "af0c628f4c785703d5a96bd3af1c4986587747d9 plus exact calibrated channel/amplifier candidate manifest",
       "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-channel-spectrum-native/native-exports.json",
       "native_sha256": "0e0dcbbd711557bbfed799786db1950de4453b0bb7dd0d2c263fdb45b34368bc",
+      "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "e7a87421c487e1825c92c538e6431bcf133d6548 plus exact complete-catalog/sweep and final API-02 candidate manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-sweep-native-final/native-exports.json",
+      "native_sha256": "95dfc43ba1e7a563c1587c60636a9f9196ecb88dd1160d4f91a514b9560a2c01",
       "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
       "legacy_compatibility": {
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",

@@ -54,3 +54,8 @@ Rust borrowed views and generic Serde helpers deliberately have language-specifi
 mappings recorded in the matrix. Python contains no simulation calculations or
 required subprocess sidecar. Native platform acceptance is recorded separately
 from source support and packaging configuration.
+
+The [configured resource-grid API](../upstream/resource-grid.md) supplies original
+allocation/pilot coordinates through an owned native snapshot without starting a
+waveform run. It preserves physical holes and original grant timing; Python
+performs no pilot placement or scientific reconstruction.

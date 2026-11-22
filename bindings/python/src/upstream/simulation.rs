@@ -1,11 +1,13 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
  * Changes: local facade/input ownership and public namespace.
  */
 //! Short-held session slot, Rust worker and cooperative interpreter signal stop.
+mod grid;
 use super::{
     api,
     configuration::{PyConfig, PyOptions},
@@ -263,8 +265,16 @@ impl PySimulation {
     }
 }
 
+/// Registers direction controls, owned resource snapshots and the existing native session.
+/// # Arguments
+/// * `module` - Existing private upstream conversion namespace; registration starts no work.
+/// # Returns
+/// Unit after real native types are registered.
+/// # Errors
+/// Propagates Python type/module allocation and registration failures.
 pub(crate) fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<PyControl>()?;
+    module.add_class::<grid::PyResourceGridSnapshot>()?;
     module.add_class::<PySimulation>()?;
     Ok(())
 }

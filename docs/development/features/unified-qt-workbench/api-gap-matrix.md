@@ -148,7 +148,7 @@ source-catalog/sweep parity and final API-02 backend acceptance also pass below.
 
 | Existing owner | Current contract | Planned extension | Acceptance |
 | --- | --- | --- | --- |
-| [ResourcePlan](../../../../crates/ofdma/src/resources/grid.rs), [pilot patterns](../../../../crates/ofdma/src/resources/pilot_patterns.rs) | `Simulation::preview()` returns counts/plan summaries, not authoritative per-cell physical allocation | UIU-API-03: proposed `Simulation::resource_grid(&self, request: ResourceGridRequest) -> ApiResult<ResourceGridSnapshot>`. Request bounds symbol/physical-carrier windows and maximum returned cells/spans. Snapshot carries configuration generation, original coordinates, actual roles/pattern/grant/IUC identity and counts. Reuse scientific ResourcePlan, never reconstruct pilots in QML. | All accepted numerologies/patterns, independent literal pilot coordinates, guard/exclusion/assignment edges, invalid/oversized/out-of-window requests, no source/run/config mutation; native Python installed-wheel operation and same snapshot fields; Qt viewport geometry separately. |
+| [ResourcePlan](../../../../crates/ofdma/src/resources/grid.rs), [pilot patterns](../../../../crates/ofdma/src/resources/pilot_patterns.rs) | `Simulation::preview()` retains its existing plan summary; the new idle query provides authoritative physical allocation | UIU-API-03 implemented `Simulation::resource_grid(&self, request: ResourceGridRequest) -> ApiResult<ResourceGridSnapshot>` and bounded `to_json`. [Exact fields/budgets](design.md#uiu-api-03-idle-upstream-resource-grid-observation) retain configuration generation, original coordinates/timing, roles/pattern/grant/IUC identity and full-plan capacity independently of zoom. ResourcePlan remains the scientific authority. | [Backend acceptance](validation.md#uiu-api-03-idle-upstream-resource-grid-accepted): 88 upstream, 16 facade and 114 installed native cases; literal edge/body pilots, zero/exclusion/unallocated positions, all admitted patterns/frame sizes/numerologies, limits, noisy-run invariance, owned snapshots, Busy/cancel and separate-process parity. Qt viewer remains UIU-US-04. |
 | [Native workbench loader](../../../../crates/pnm-input/src/workbench), [Qt project schema](../../../../apps/qt/src/workbench/project_file.rs), updater recovery | Existing schema 1/2 DS input API works; Qt alone owns some serialized validation and file lifecycle; no US project envelope | UIU-API-05: typed direction-tagged project envelope in native input adapter, DS legacy importer and US configuration/measured provenance project. Public byte admission/serialization/load/run through facade; Qt retains chooser, dirty guards, safe write/replacement and private recovery transport only. | Exact legacy DS semantics, UI→Rust/Python load and execute, Rust/Python→UI round trip, malformed/wrong-direction/oversized/hash mismatch/unsupported version, no mutation on failure, future fields/version policy; installed wheel tests. |
 
 Source inspection also has a compatibility boundary: existing Qt retains raw u8
@@ -158,10 +158,9 @@ quantity. API-02 now explicitly tests the legacy rejection outside 0..15, mixed
 source-catalog admission and original selected loading. DS-01 must preserve this
 accepted behavior when replacing Qt's legacy route.
 
-The resource-grid signature is a design proposal. Before its implementation,
-define exact exported model fields, numeric budgets, ordering, missing values,
-overflow behavior and native Python names in that focused API task. Apply the
-same pre-code review to every other extension: specify signatures and parity,
+The resource-grid operation now has implemented fields, numeric budgets,
+ordering, missing-value/overflow behavior and native names with focused acceptance.
+Apply the same pre-code review to every other extension: specify signatures and parity,
 reuse existing symbols where sufficient, then add independent tests and commit
 the API unit before its Qt consumer. This plan does not advertise new operations
 as callable or require exposing private structures wholesale.

@@ -911,6 +911,79 @@ API-02 regression gate is now satisfied by the
 Qt adoption remains a separate task. The [unit evidence](validation.md#uiu-api-02-complete-catalog-and-bounded-sweep-unit)
 records exact source/wheel hashes and independent selection/control cases.
 
+### UIU-API-03 idle upstream resource-grid observation
+
+REQ-UIU-02/14/24 and UIU-API-03 add
+`Simulation::resource_grid(&self, request: ResourceGridRequest) -> ApiResult<ResourceGridSnapshot>`.
+The accepted session stays idle and its configuration generation is unchanged.
+This is the configured base grant's allocation, not actual received/transmitted
+I/Q and not a reconstruction in Qt. Reuse ResourcePlan::new, its original visits,
+CellRole/loading/gain/bit offsets, immutable UsConfiguration and grant::select.
+No new pilot/interleaving algorithm or supported mode is introduced.
+
+ResourceGridRequest has frame_index, first_symbol, symbol_count, first_carrier,
+carrier_count and max_cells (all usize). Default selects frame zero, symbol zero,
+one symbol, the full original FFT carrier span and a 16384-cell budget. Zero
+symbol/carrier count selects the remaining original frame/FFT extent. Work must
+be positive and at most MAX_RESOURCE_GRID_CELLS=16384; validate frame, extents,
+checked products and caller budget before constructing a ResourcePlan or copying
+cells. The separate JSON transport ceiling is eight MiB. Both are application
+policies, unrelated to normative minislot sizes or execution resource limits.
+
+ResourceGridSnapshot contains the merlin.upstream.resource_grid export format,
+independent schema version 1, configuration_generation, transmission_planned
+(from the existing grant selector) and an owned ResourceGridRegion. The region
+retains grant ID/epoch/first-frame/frame-count, selected profile/IUC, numerology,
+FFT/sample-rate/spacing, CP/RP/stride, original frame index/identity/prefix origin,
+resolved original symbol/carrier viewport, full frame/grant coded capacity and
+visit count, per-window role counts and bounded cells. Sample/frame arithmetic
+is checked and never infers sample time from an arbitrary absolute frame ID.
+A snapshot remains usable after session reconfiguration/destruction.
+
+Cells are ordered by increasing frame symbol then physical carrier, matching
+symbol X and physical-carrier Y in the future viewer. Each cell keeps frame and
+grant-relative symbol, physical carrier, prefix/useful sample origins, role,
+original minislot index/pattern/configured loading and grant-selection flag.
+For actual ResourcePlan visits, preserve original joint-interleaver visit index,
+cell loading, amplitude gain, frame-relative and grant-relative coded-bit offsets.
+Do not compact physical holes or derive roles from zero-valued samples. Excluded,
+zero-loaded selected minislots and unallocated locations stay distinct; absent
+visits have no invented gain or bit position. Unselected profile minislots may
+retain configured metadata, while their resource role stays unallocated.
+Complementary cells carry data at the existing lower loading; known pilots carry
+no coded bits. Capacity comes from the full plan independently of the viewport.
+
+`ResourceGridSnapshot::to_json() -> ApiResult<String>` reuses bounded_json with
+MAX_RESOURCE_GRID_JSON_BYTES, keeping serialization separate from science.
+Native Python adds an actual importable merlin.upstream.ResourceGridSnapshot with
+to_json(), and Simulation.resource_grid(frame_index=0, first_symbol=0,
+symbol_count=1, first_carrier=0, carrier_count=0, max_cells=16384). Defaults reuse
+the Rust request; explicit introspection metadata is pinned by an installed test.
+The adapter uses the existing Busy/session lease guard, releases the GIL for
+work and returns an owned snapshot. No Python/Qt scientific calculations.
+
+| Disposition | Owner/files | Contract and acceptance |
+| --- | --- | --- |
+| Reuse | `crates/ofdma/src/resources/grid.rs`, `crates/ofdma/src/resources/pilot_patterns.rs`, `crates/ofdma/src/configuration/` and `crates/ofdma/src/grant/` | Authoritative allocation, original physical visits/roles/gains, unchanged mode admission and full-plan coding decision. |
+| Add | `crates/ofdma/src/resources/view.rs` | Bounded rectangular projection of the existing plan, original coordinates and distinct holes; no pilot placement algorithm. |
+| Add/Edit | `crates/ofdma/src/api/resources.rs`, `crates/ofdma/src/api/mod.rs`, `crates/ofdma/src/api/session.rs`, `crates/ofdma/src/resources/mod.rs` | Typed re-exports, generation/plan wrapper and bounded export; public operation remains read-only. |
+| Add/Edit | `bindings/python/src/upstream/simulation/grid.rs`, `bindings/python/src/upstream/simulation.rs`, `bindings/python/python/merlin/upstream.py`, `bindings/python/python/merlin/upstream.pyi` | Existing access_long guard and typed snapshot conversion, exact defaults and installed namespace. |
+| Add | `crates/ofdma/tests/api_resource_grid.rs`, `bindings/python/tests/test_upstream_resource_grid.py` | Independent literal pilot/edge/zero/exclusion coordinates, all admitted patterns/frame sizes/numerologies, bounds, timing, ownership, generation and actual-run invariance, installed-wheel direct-process parity. |
+| Add/Edit | `crates/ofdma/examples/upstream_resource_grid.rs`, `tools/testing/native_api.py`, `docs/user/upstream/resource-grid.md`, `docs/user/upstream/README.md`, `docs/user/python/upstream.md` | Real separate-process reference and a focused module guide, without changing prior example outputs. |
+
+Pinned evidence remains CM-SP-PHYv3.1-I20-230419 section 7.4.16, PDF pages
+101-104, Figures 38-42 and the already accepted independent upstream pilot tests.
+The current extraction was inspected for CM edge/body and complementary semantics;
+this unit does not claim a new rendered-PDF verification or change normative
+support. All new observations require passing MERLIN tests; Qt viewer acceptance
+remains UIU-US-04 after this focused public API commit.
+
+The [backend acceptance](validation.md#uiu-api-03-idle-upstream-resource-grid-accepted)
+records 88 upstream/16 facade/114 installed native passes, core/native Clippy,
+77 tooling passes and exact source/wheel hashes. All prior API rows, alias history
+and Qt source hashes are preserved. UIU-API-03 is complete; UIU-US-04 still owns
+actual viewport rendering, interaction and bounded Qt object acceptance.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

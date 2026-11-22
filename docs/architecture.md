@@ -1099,6 +1099,17 @@ non-simulation roles; this lexical gate does not replace scientific-owner review
 Requirements: [REQ-UIU-02](requirements.md#req-uiu-02), [REQ-UIU-03](requirements.md#req-uiu-03), [REQ-UIU-09](requirements.md#req-uiu-09), [REQ-UIU-24](requirements.md#req-uiu-24).
 Delivery: [UIU-BOUND-01](development/checklist.md#task-uiu-bound-01), [UIU-API-01](development/checklist.md#task-uiu-api-01), [UIU-API-02](development/checklist.md#task-uiu-api-02), [UIU-API-03](development/checklist.md#task-uiu-api-03), [UIU-API-04](development/checklist.md#task-uiu-api-04), [UIU-API-05](development/checklist.md#task-uiu-api-05).
 
+UIU-API-03 implements a bounded idle upstream resource grid. The focused
+`crates/ofdma/src/resources/view.rs` projection reuses ResourcePlan visits and
+original configuration metadata, retaining pilots/data/complementary, exclusions,
+zero-loaded minislots and unallocated physical positions. The public session
+operation returns owned original frame/sample coordinates and unchanged
+configuration generation, with Rust/native Python parity and finite cell/JSON
+budgets. It introduces no pilot placement or Qt scientific algorithm. See the
+[resource-grid owner/signature design](development/features/unified-qt-workbench/design.md#uiu-api-03-idle-upstream-resource-grid-observation).
+The [backend acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-03-idle-upstream-resource-grid-accepted)
+passes upstream/facade and installed-wheel checks; its Qt viewer remains UIU-US-04.
+
 ### Unified Qt source ownership
 
 One native executable, `Merlin.Workbench` URI and current Main resource entry URL
@@ -1174,9 +1185,9 @@ The approval supplies visual placement authorization; UIU-US-01 remains subject
 to its shell dependencies and actual Qt rendering/interaction acceptance.
 
 The OFDMA resource-grid viewer has symbol index on X and physical subcarrier
-index on Y. A new bounded idle upstream API observation must expose authoritative
+index on Y. The accepted bounded idle upstream API observation exposes authoritative
 allocation/pilot coordinates and actual roles, grant/IUC/pattern metadata and
-counts. Qt only renders/inspects these results with bounded batched drawing,
+counts. The planned Qt viewer only renders/inspects these results with bounded batched drawing,
 zoom/pan and selection. No pilot placement/allocation or one-object-per-cell grid
 belongs in QML. Preserve accepted operating modes and normative evidence in the
 backend; no wider PHY capability is implied by a visible control.

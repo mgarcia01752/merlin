@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -10,6 +11,7 @@ mod grid;
 mod interleaving_blocks;
 mod permutation;
 mod pilot_patterns;
+pub(crate) mod view;
 pub use grid::{Cell, CellRole, ResourcePlan};
 pub use interleaving_blocks::block_sizes;
 pub use permutation::addresses;

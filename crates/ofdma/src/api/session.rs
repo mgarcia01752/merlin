@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -142,6 +143,32 @@ impl Simulation {
                 .ok_or(ApiError::MissingSetting)?,
             &self.options,
         )?)
+    }
+    /// Inspects the authoritative configured base-grant allocation without executing science.
+    /// # Arguments
+    /// * `request` - Original frame/symbol/carrier viewport and at-most-16384 cell budget.
+    /// # Returns
+    /// Owned resource roles, original visits/timing and unchanged accepted generation.
+    /// No source/RNG advances and no receiver or transmitter is started.
+    /// # Errors
+    /// MissingSetting before configure; shared frame/extent/resource/overflow errors otherwise.
+    pub fn resource_grid(
+        &self,
+        request: super::ResourceGridRequest,
+    ) -> ApiResult<super::ResourceGridSnapshot> {
+        let configuration = self
+            .configuration
+            .as_ref()
+            .ok_or(ApiError::MissingSetting)?;
+        let grid = crate::resources::view::view(&configuration.us_configuration, request)?;
+        let transmission_planned = crate::grant::select(grid.grant_bits)?.transmit;
+        Ok(super::ResourceGridSnapshot {
+            format: super::resources::RESOURCE_GRID_FORMAT,
+            schema_version: super::resources::RESOURCE_GRID_SCHEMA_VERSION,
+            configuration_generation: self.generation,
+            transmission_planned,
+            grid,
+        })
     }
     /// Runs the complete finite experiment using a fresh cancellation handle.
     ///

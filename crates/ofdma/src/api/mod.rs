@@ -6,6 +6,7 @@
 mod error;
 mod measured;
 mod reports;
+mod resources;
 mod session;
 pub use crate::channel::ChannelConfig;
 pub use crate::configuration::*;
@@ -26,4 +27,5 @@ pub use measured::MeasuredConfiguration;
 pub use merlin_api::ErrorCode;
 pub(crate) use reports::bounded_json;
 pub use reports::ReportJson;
+pub use resources::*;
 pub use session::Simulation;
