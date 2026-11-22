@@ -1059,6 +1059,99 @@ remain labelled projection tests. Original API rows, report schema, scientific
 algorithms and all Qt sources remain unchanged. UIU-API-04 stays unchecked for its
 received-estimate/response/soft and remaining instrument gaps.
 
+### UIU-API-04 configured response and periodic impulse unit
+
+REQ-UIU-02/12/18/24 next expose configured deterministic C, H and C×H through
+typed Rust operations, separately from the still-pending actual received-pilot
+estimate. A configured response is a diagnostic of admitted settings, not a
+measured channel, an actual received observation or a normal receiver input.
+
+The exact proposed operations are
+`Simulation::configured_response(&self, request: ConfiguredResponseRequest) -> ApiResult<ConfiguredResponseSnapshot>`
+and `BatchReport::configured_response(&self, request: ConfiguredResponseRequest) -> PhyResult<ConfiguredResponseSnapshot>`.
+The idle operation requires accepted configuration and preserves generation;
+the report operation uses its frozen original configuration. Neither executes a
+waveform, channel stream, source, receiver or RNG. The existing native Busy guard
+applies to the idle session, while report queries remain independent/owned.
+
+ConfiguredResponseSource has CmPreEq, PhysicalChannel and Composite, serialized
+as cm_pre_eq, physical_channel and composite. ConfiguredResponseRequest contains
+source, grant_symbol, first_carrier, carrier_count, maximum_points and
+include_impulse. Default is PhysicalChannel, original base-grant symbol/carrier
+zero, remaining full FFT, maximum_points=4096 and include_impulse=false. Validate
+the original symbol/carrier extents and positive frequency-point budget before
+numerical work. MAX_CONFIGURED_RESPONSE_POINTS=4096 is a frequency-display
+application policy. The separate MAX_CONFIGURED_IMPULSE_SAMPLES=4096 bounds the
+complete periodic impulse; equal values have different purposes. No RF frequency
+origin is inferred from a physical FFT index.
+
+Reuse PreEqPlayback::at(grant_symbol), or the original static PreEqBank, for C.
+Retain its actual bank generation, independently of replay event/probe IDs. Reuse
+the centered unitary upstream Transform (shared merlin-dsp kernel) to derive the
+configured FIR transfer from original causal taps. Include the admitted integer
+delay and constant phase from ChannelConfig, including the actual channel owner's
+initial phase reduction modulo one turn before trigonometry. Explicit nonzero frequency offset
+makes H time varying, so PhysicalChannel/Composite static queries reject with an
+unsupported diagnostic; an independent C-only query remains valid. Noise and
+RxMER residual effects are excluded from this deterministic transfer and remain
+explicit metadata. Existing measured-composition restrictions remain unchanged.
+
+For N original centered bins, deterministic transfer is
+
+\[
+H[k]=e^{j\phi}e^{-j2\pi f_k d/f_s}\sqrt{N}\,\mathrm{FFT}_{u}(h)[k],
+\qquad G[k]=C[k]H[k].
+\]
+
+The optional impulse is the complete periodic diagnostic
+`IFFT_u(G)/sqrt(N)` (or selected C/H), computed before frequency viewport
+selection. Its period is N sample ticks; delays wrap modulo N. It must never be
+labelled an unaliased causal echo or a measured impulse. Excluded zeros in C are
+preserved, so they contribute their actual periodic mask response. H remains the
+configured physical transfer even on unused/excluded signal carriers.
+
+ConfiguredResponseSnapshot retains source/reference-plane/units, optional
+configuration generation and run ID, original base grant/profile/IUC and selected
+grant symbol, C bank generation when applicable, FFT/sample clock/spacing,
+original viewport, physical delay/phase/frequency-offset/noise settings, whether
+RxMER residual impairment is configured, frequency points and optional periodic
+impulse. A report with no started grant has no fabricated retained run/generation
+identity. Each frequency point has original carrier, centered baseband Hz,
+excluded flag, complex transfer, optional amplitude dB and phase radians. Impulse
+points retain original periodic sample index/time seconds, complex value and
+optional dB relative to the complete-period peak. Exact zeros have no logarithmic
+or phase reading; use no arbitrary floor. Reject nonfinite/overflowing numerical
+results. Zoom cannot alter the complete impulse, source settings or identities.
+
+Native Python mirrors both methods as
+`configured_response(source="physical_channel", grant_symbol=0, first_carrier=0,
+carrier_count=0, maximum_points=4096, include_impulse=False) -> dict`.
+Checked strings select the Rust enum; native conversion releases the GIL, reuses
+Rust validation and returns owned ordinary data. Introspection defaults must be
+tested against actual installed signatures. No response/phase/impulse math in
+Python or Qt, and no new scientific dependency between PHY crates.
+
+| Inspected owner/files | Contract / missing observation | Decision / destination |
+| --- | --- | --- |
+| `crates/ofdma/src/signal_processing/pre_eq.rs`, `crates/ofdma/src/measurements/pre_eq.rs` | Original normalized corrective C, excluded zeros and admitted per-symbol replay | Reuse coefficients/at/generation; no event or inverse-H reconstruction. |
+| `crates/ofdma/src/channel/stream.rs` | Actual causal FIR, independent noise, delay FIFO and emitted-clock phase rotation; no static transfer observation | Adapt deterministic settings in proposed `crates/ofdma/src/instruments/response.rs`; exclude noise/residual and reject time-varying H. |
+| `crates/ofdma/src/signal_processing/transform.rs`, `crates/dsp/src/transform.rs` | Shared centered unitary FFT/IFFT with independent existing vectors | Reuse plans/normalization; keep upstream geometry and reference semantics separate from downstream response owners. |
+| `crates/ofdma/src/api/session.rs`, `crates/ofdma/src/instruments/mod.rs`, `crates/ofdma/src/api/mod.rs` | Idle/frozen configuration and high-level export owners | Add typed projection wrapper/re-exports; no receiver truth input or existing report/schema changes. |
+| `bindings/python/src/upstream/simulation.rs`, `bindings/python/src/upstream/reports.rs`, `bindings/python/src/upstream/mod.rs`, `bindings/python/python/merlin/upstream.pyi`; proposed `bindings/python/src/upstream/simulation/response.rs`, `bindings/python/src/upstream/reports/response.rs`, `bindings/python/src/upstream/response.rs` | Existing session guard and owned report/native dictionaries | Add thin dispatch and one shared string/request converter for two real consumers, with identical checked defaults and errors. |
+| Proposed `crates/ofdma/tests/api_configured_response.rs`, `bindings/python/tests/test_upstream_configured_response.py`, `crates/ofdma/examples/upstream_configured_response.rs`; `tools/testing/native_api.py` | New numerical/public/native contract requires independent acceptance | Literal unity/complex FIR/delay/two-tap phase and periodic impulse, C normalization/replay/masks, all planes/both numerologies, zoom/zero/missing/bounds/overflow/unsupported-CFO, source/noise invariance, Busy/ownership and separate-process parity. |
+| Proposed `docs/user/upstream/response.md`; upstream/Python guide indexes | New configured diagnostic versus unavailable estimated/soft observations | Add a focused guide; preserve API-04 pending estimate/soft/constellation gaps. |
+
+The [unit acceptance](validation.md#uiu-api-04-configured-response-and-periodic-impulse-unit)
+records eight focused cases, 103 complete upstream/16 facade/124 installed native
+passes, core/native Clippy and 77 tooling passes. The first complete native run
+had an existing second-pause timeout; the unchanged case passed alone and in 50
+diagnostic repetitions, followed by a passing full-suite retry of the exact wheel.
+Original failure/reference hashes remain recorded; no timeout or test was removed.
+Actual receiver-estimate/soft retention remains subsequent API-04 work, and the
+parent task stays unchecked. The [user guide](../../../user/upstream/response.md)
+distinguishes configured deterministic and periodic data from actual received
+observations and unaliased causal echoes.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

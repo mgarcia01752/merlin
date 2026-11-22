@@ -6,6 +6,7 @@ The independent upstream Rust engine has local synthetic backend acceptance:
 - [Transmitter](transmitter.md).
 - [Configured resource grid](resource-grid.md).
 - [Channel and reference planes](channel.md).
+- [Configured response and periodic impulse](response.md).
 - [Received-only receiver](receiver.md).
 - [Bounded sessions and reports](session.md).
 - [Recovery and decoder views](recovery.md).

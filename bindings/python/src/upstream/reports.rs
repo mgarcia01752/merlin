@@ -8,6 +8,7 @@
  */
 //! Owned native report/query values; no Python computation or engine replay.
 mod recovery;
+mod response;
 use super::{api, configuration::tap, error};
 use api::ReportJson;
 use pyo3::prelude::*;

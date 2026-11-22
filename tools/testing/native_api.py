@@ -23,6 +23,7 @@ REFERENCES = (
     ('REFERENCE', 'docsis-ofdma', 'upstream_loop', ()),
     ('RESOURCE_GRID', 'docsis-ofdma', 'upstream_resource_grid', ()),
     ('RECOVERY', 'docsis-ofdma', 'upstream_recovery_views', ()),
+    ('CONFIGURED_RESPONSE', 'docsis-ofdma', 'upstream_configured_response', ()),
     ('MEASUREMENTS', 'docsis-ofdma', 'upstream_measurements', ()),
     ('DOCUMENT', 'docsis-ofdma', 'upstream_document', ()),
     ('SYNTHETIC', 'docsis-ofdma', 'upstream_document', ('synthetic',)),

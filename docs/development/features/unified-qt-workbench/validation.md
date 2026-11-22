@@ -944,3 +944,54 @@ constellation/reference contracts keep UIU-API-04 unchecked. Qt adoption remains
 separate. The [user guide](../../../user/upstream/recovery.md) describes these
 limits; no new hosted, installed-desktop or external interoperability evidence is
 claimed. The latest complete downstream Rust regression remains API-02 above.
+
+## UIU-API-04 configured response and periodic impulse unit
+
+The [candidate evidence](response-evidence.json),
+[executed cases](api-04-response-operation-test-results.json) and
+[exact model/owner design](design.md#uiu-api-04-configured-response-and-periodic-impulse-unit)
+trace this focused unit to REQ-UIU-02/12/18/24 and
+[UIU-API-04](../../checklist.md#task-uiu-api-04). Idle sessions and frozen reports
+expose configured corrective C, deterministic H and their composite, with an
+optional complete periodic inverse. Actual received-pilot estimates remain
+separate. Existing C replay, channel settings and the shared unitary transform
+remain the authorities; no waveform or RNG is executed by these queries.
+
+Eight focused API/scientific cases pass in the complete upstream run: 103 passed,
+one preexisting performance benchmark ignored. Sixteen facade cases pass. At
+both spacings, the literal two-tap h=[1,0.5], delay two and quarter-turn phase give
+H(DC)=1.5j, H(-fs/4)=0.5-j, H(fs/4)=-0.5-j and H(-fs/2)=0.5j. Periodic impulse
+samples two/three are j/0.5j, with -6.020599913279624 dB for the second sample
+relative to the full-period peak. Raw corrective 2j normalizes to j over every
+nonexcluded carrier. Replay event 17 retains actual bank generation 11.
+Excluded zeros, full-impulse zoom independence, missing/zero/budget/overflow
+states and nonzero-CFO static-H rejection pass. Negative and 1e308-radian phases
+are compared with the actual channel owner. Passive queries preserve noisy-run
+decisions and frozen identities; never-started reports invent no run/generation.
+
+All five new installed response cases passed on the first complete native run.
+That run failed an existing second-pause acknowledgement deadline. The unchanged
+case then passed alone and in 50 diagnostic repetitions. Its cause was not
+reproduced; no timeout, assertion or historical test was changed. A full retry of
+the exact Linux CPython 3.10 wheel passes all 124 installed cases without skips.
+The retry reuses the preceding candidate's unchanged successful separate Rust
+process outputs, with exact output/command hashes retained. The failed initial
+run and isolated/repeated logs remain in the evidence; they are not counted as a
+passing suite. Later lifecycle acceptance must continue running this regression.
+
+Installed defaults, all configured planes/units/periodic samples, checked errors,
+original replay metadata, independent owned dictionaries, Busy/cancel cleanup and
+separate Rust-process parity at both spacings pass. Workspace/native all-target
+Clippy, both formatting checks and all 77 tooling cases pass. Exact compiler/native
+inventories append two Rust/two native operations (527/510 total), preserving every
+earlier row and historical alias correction. All 178 Qt sources and current
+three-dependency/45-file boundary debt remain unchanged. No receiver, codec,
+scientific channel implementation, report schema or existing default changes.
+
+This is a configured deterministic diagnostic with a complete N-sample periodic
+inverse. It excludes noise/RxMER residuals and does not claim measured H, a
+received C×H estimate, unaliased causal echo support or finite-burst/window/ISI
+reconstruction. The [user guide](../../../user/upstream/response.md) states these
+limits. Actual receiver-estimate/soft and remaining constellation/reference work
+keep UIU-API-04 unchecked. Evidence remains local Rust/native Python acceptance;
+no new Qt, hosted, installer or interoperability claim is made.

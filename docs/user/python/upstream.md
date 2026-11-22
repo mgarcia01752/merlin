@@ -64,3 +64,8 @@ Actual reports also expose [recovery and decoder views](../upstream/recovery.md)
 `verification()`, `fec_summary()` and bounded `fec_words(...)` return owned
 dictionaries from typed Rust projections. They preserve partial coverage and
 independent source/decoder outcomes without exporting a whole report.
+
+The [configured response diagnostic](../upstream/response.md) is available on an
+idle Simulation and frozen BatchReport. It distinguishes admitted C, deterministic
+H and their composite, with optional complete periodic impulse data. It does not
+replace actual received-pilot estimates or calculate science in Python.

@@ -170,6 +170,28 @@ impl Simulation {
             grid,
         })
     }
+    /// Inspects configured C, deterministic H or their composite without starting a simulation.
+    /// # Arguments
+    /// * `request` - Original base-grant symbol/frequency window, finite budget and impulse opt-in.
+    /// # Returns
+    /// Owned configured transfer and optional periodic inverse with the unchanged accepted generation.
+    /// Source, receiver, channel stream and RNG state do not advance.
+    /// # Errors
+    /// MissingSetting before configure; shared extent, budget, finite-arithmetic and static-H
+    /// capability failures otherwise. Nonzero frequency offset rejects H/composite queries.
+    pub fn configured_response(
+        &self,
+        request: super::ConfiguredResponseRequest,
+    ) -> ApiResult<super::ConfiguredResponseSnapshot> {
+        let configuration = self
+            .configuration
+            .as_ref()
+            .ok_or(ApiError::MissingSetting)?;
+        let mut response = crate::instruments::response::configured(configuration, request)?;
+        response.configuration_generation = Some(self.generation);
+        Ok(response)
+    }
+
     /// Runs the complete finite experiment using a fresh cancellation handle.
     ///
     /// Returns owned completed/partial report; shared engine errors retain causes.

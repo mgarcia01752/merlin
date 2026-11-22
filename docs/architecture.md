@@ -1119,6 +1119,18 @@ preserves independent source versus decoder outcomes and avoids whole-report UI
 copies or adapter calculations. Receiver-estimate/soft retention and explicit
 C/H/estimated C×H response queries remain separate pending API-04 work.
 
+The implemented [configured response unit](development/features/unified-qt-workbench/design.md#uiu-api-04-configured-response-and-periodic-impulse-unit)
+exposes admitted corrective C, deterministic physical H and their composite
+through the existing idle session and frozen report. The focused
+`crates/ofdma/src/instruments/response.rs` owner reuses upstream C replay,
+channel settings and the shared transform; explicit time-varying H rejects static
+queries. Optional impulse data is a complete periodic diagnostic with explicit
+aliasing and units, independent of frequency zoom. Actual received-pilot estimates
+remain separate and require real receiver retention before public exposure.
+The [unit evidence](development/features/unified-qt-workbench/validation.md#uiu-api-04-configured-response-and-periodic-impulse-unit)
+records local core/native acceptance and the retained initial pause-test timeout
+followed by successful unchanged-case checks and complete installed-suite retry.
+
 ### Unified Qt source ownership
 
 One native executable, `Merlin.Workbench` URI and current Main resource entry URL

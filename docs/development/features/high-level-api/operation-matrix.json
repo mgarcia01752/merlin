@@ -5,9 +5,9 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "59f27aa0de8999e1d596d1f6040208d332be8596 plus exact recovery candidate manifest",
-    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-04-recovery-native/native-exports.json",
-    "native_sha256": "6384af52faeec8eb6e3c4122a8aba7c64c98a73045ec2286e92e7d34edf86603",
+    "revision": "8c625a299084ff807af127f197b5e5e709f352e5 plus exact configured-response candidate manifest",
+    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-04-response-native-retry/native-exports.json",
+    "native_sha256": "d0850af80c669a97c72aa04d8dc069f6351832500093576806c5c9dbc5fe68bc",
     "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
     "legacy_compatibility": {
       "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
@@ -89,7 +89,10 @@
     "units.uiu-api-03-resource-grid": "Original zero-based physical FFT carriers and frame/grant symbols; 102.4-MHz sample ticks, configured frame identity and original coded-bit offsets remain distinct. Planned pilot/complementary gains precede CM Pre-Eq. Counts describe the rectangle; complete ResourcePlan capacity is independent of zoom. Cell and JSON budgets are separate application policies.",
     "evidence.uiu-api-04-recovery": "../unified-qt-workbench/recovery-evidence.json, ../unified-qt-workbench/api-04-recovery-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-04-bounded-recovery-view-unit: exact source/wheel hashes, actual completed/cancelled/failed runs and independent family/shortening vectors.",
     "status.uiu-api-04-recovery": "Implemented bounded original-word paging and independent verification/FEC scalar projections. Receiver-estimate/response/soft and remaining instrument gaps keep API-04 open; no Qt adoption.",
-    "units.uiu-api-04-recovery": "Original meaningful source bit positions, encoded-grant offsets, upstream mother/information/shortening dimensions, actual completed decoder iterations and independent source Hamming errors. Pending outcomes and unavailable BER/maxima remain explicit. Page word count and aggregate copied mother/information/payload decision bits are separate application policies; totals do not depend on viewport."
+    "units.uiu-api-04-recovery": "Original meaningful source bit positions, encoded-grant offsets, upstream mother/information/shortening dimensions, actual completed decoder iterations and independent source Hamming errors. Pending outcomes and unavailable BER/maxima remain explicit. Page word count and aggregate copied mother/information/payload decision bits are separate application policies; totals do not depend on viewport.",
+    "evidence.uiu-api-04-response": "../unified-qt-workbench/response-evidence.json, ../unified-qt-workbench/api-04-response-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-04-configured-response-and-periodic-impulse-unit: exact source/wheel hashes, independent transfer/periodic impulse anchors, real channel phase and native ownership/Busy/parity.",
+    "status.uiu-api-04-response": "Implemented configured deterministic C/H/composite and optional complete periodic inverse. Actual received-estimate/soft/constellation gaps keep API-04 open; no Qt adoption.",
+    "units.uiu-api-04-response": "Original physical FFT indices, centered baseband Hz, dimensionless complex sample-amplitude transfer, twenty-log magnitude dB and phase radians with exact-zero readings absent. C bank generation is distinct from replay event/probe identity. Complete periodic inverse uses IFFT_u/sqrt(N), original sample indices/time seconds and full-period peak-relative dB; delay aliases modulo N. Frequency display and full impulse policies are independent; configured noise/residuals are excluded, and nonzero-CFO static H rejects."
   },
   "type_exports": {
     "downstream": [
@@ -1269,6 +1272,30 @@
       },
       {
         "export": "merlin::upstream::VerificationSnapshot",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ConfiguredResponsePoint",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ConfiguredResponseRequest",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ConfiguredResponseSnapshot",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ConfiguredResponseSource",
+        "kind": "enum"
+      },
+      {
+        "export": "merlin::upstream::PeriodicImpulse",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::PeriodicImpulsePoint",
         "kind": "struct"
       }
     ],
@@ -28377,6 +28404,146 @@
       },
       "evidence": "evidence.uiu-api-04-recovery",
       "status": "status.uiu-api-04-recovery"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::BatchReport::configured_response",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn configured_response( &self, request: ConfiguredResponseRequest, ) -> PhyResult<ConfiguredResponseSnapshot>",
+        "source_file": "crates/ofdma/src/instruments/response.rs",
+        "rustdoc": "docsis_ofdma/simulation/struct.BatchReport.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.BatchReport.configured_response",
+        "declaration": "merlin.upstream.BatchReport.configured_response"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-response",
+      "error_behavior": "errors.us",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "PhyResult<ConfiguredResponseSnapshot>",
+        "scope": "Owned configured C/H/composite transfer and optional full periodic inverse; original frequency/symbol/C-bank identities, units, noise exclusions and delay aliasing remain explicit. No source, channel stream, receiver or RNG executes."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_configured_response.rs::literal_complex_two_tap_delay_phase_and_periodic_impulse_match_both_numerologies",
+          "crates/ofdma/tests/api_configured_response.rs::corrective_c_composite_excluded_zeros_and_full_impulse_are_independent_of_zoom",
+          "crates/ofdma/tests/api_configured_response.rs::selected_original_symbol_uses_actual_replay_bank_generation_independently_of_event_ids",
+          "crates/ofdma/tests/api_configured_response.rs::zero_transfer_cyclic_delay_alias_and_time_varying_h_have_explicit_states",
+          "crates/ofdma/tests/api_configured_response.rs::missing_invalid_overflowing_queries_preserve_accepted_settings_and_owned_snapshots",
+          "crates/ofdma/tests/api_configured_response.rs::passive_configured_queries_preserve_noisy_actual_recovery_and_frozen_report_identity",
+          "crates/ofdma/tests/api_configured_response.rs::pre_cancelled_report_does_not_invent_a_retained_execution_identity",
+          "crates/ofdma/tests/api_configured_response.rs::configured_constant_phase_matches_the_actual_channel_owner_for_wrapped_and_large_angles",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/Busy/replay/zero/CFO and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_busy_session_guard_preserves_the_same_configured_generation_after_cancel",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_literal_two_tap_transfer_phase_periodic_inverse_and_installed_defaults",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_missing_bounds_zero_transfer_cfo_and_never_started_identity_states",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_original_c_replay_excluded_zeros_zoom_and_owned_frozen_report_data",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_separate_rust_process_planes_units_full_periodic_values_and_metadata_match"
+          ],
+          "scope": "Independent complex two-tap/delay/phase transfer and full periodic inverse at both spacings, whole-bank C normalization/exclusions/replay, original identities/metadata, full-impulse zoom invariance, zero/overflow/missing states, actual channel phase wrapping, noisy run invariance and native Busy/owned frozen reports."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-response",
+      "status": "status.uiu-api-04-response"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::Simulation::configured_response",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn configured_response( &self, request: ConfiguredResponseRequest, ) -> ApiResult<ConfiguredResponseSnapshot>",
+        "source_file": "crates/ofdma/src/api/session.rs",
+        "rustdoc": "docsis_ofdma/api/struct.Simulation.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.Simulation.configured_response",
+        "declaration": "merlin.upstream.Simulation.configured_response"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-response",
+      "error_behavior": "errors.us",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<ConfiguredResponseSnapshot>",
+        "scope": "Owned configured C/H/composite transfer and optional full periodic inverse; original frequency/symbol/C-bank identities, units, noise exclusions and delay aliasing remain explicit. No source, channel stream, receiver or RNG executes."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_configured_response.rs::literal_complex_two_tap_delay_phase_and_periodic_impulse_match_both_numerologies",
+          "crates/ofdma/tests/api_configured_response.rs::corrective_c_composite_excluded_zeros_and_full_impulse_are_independent_of_zoom",
+          "crates/ofdma/tests/api_configured_response.rs::selected_original_symbol_uses_actual_replay_bank_generation_independently_of_event_ids",
+          "crates/ofdma/tests/api_configured_response.rs::zero_transfer_cyclic_delay_alias_and_time_varying_h_have_explicit_states",
+          "crates/ofdma/tests/api_configured_response.rs::missing_invalid_overflowing_queries_preserve_accepted_settings_and_owned_snapshots",
+          "crates/ofdma/tests/api_configured_response.rs::passive_configured_queries_preserve_noisy_actual_recovery_and_frozen_report_identity",
+          "crates/ofdma/tests/api_configured_response.rs::pre_cancelled_report_does_not_invent_a_retained_execution_identity",
+          "crates/ofdma/tests/api_configured_response.rs::configured_constant_phase_matches_the_actual_channel_owner_for_wrapped_and_large_angles",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/Busy/replay/zero/CFO and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_busy_session_guard_preserves_the_same_configured_generation_after_cancel",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_literal_two_tap_transfer_phase_periodic_inverse_and_installed_defaults",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_missing_bounds_zero_transfer_cfo_and_never_started_identity_states",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_original_c_replay_excluded_zeros_zoom_and_owned_frozen_report_data",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_separate_rust_process_planes_units_full_periodic_values_and_metadata_match"
+          ],
+          "scope": "Independent complex two-tap/delay/phase transfer and full periodic inverse at both spacings, whole-bank C normalization/exclusions/replay, original identities/metadata, full-impulse zoom invariance, zero/overflow/missing states, actual channel phase wrapping, noisy run invariance and native Busy/owned frozen reports."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-response",
+      "status": "status.uiu-api-04-response"
     }
   ],
   "executed_records": [
@@ -28398,7 +28565,8 @@
     "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -60371,6 +60539,158 @@
       },
       "evidence": "evidence.uiu-api-04-recovery",
       "status": "status.uiu-api-04-recovery"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.BatchReport.configured_response",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::BatchReport",
+        "source_file": "bindings/python/src/upstream/reports/response.rs",
+        "symbol": "PyBatchReport",
+        "signature": "pub fn configured_response( &self, request: ConfiguredResponseRequest, ) -> PhyResult<ConfiguredResponseSnapshot>",
+        "mapping": "One shared checked native source/request converter serves idle-session and frozen-report operations. Rust numerical work and serialization release the GIL; existing session Busy guard and direct JSON-to-object ownership are reused. No Python response, phase, normalization or inverse-transform algorithm.",
+        "delegated_operation": "merlin::upstream::BatchReport::configured_response",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "configured_response",
+        "kind": "method",
+        "signature": "(self, /, source='physical_channel', grant_symbol=0, first_carrier=0, carrier_count=0, maximum_points=4096, include_impulse=False)",
+        "declaration": "BatchReport.configured_response"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-response",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::BatchReport",
+        "scope": "Owned dictionaries of the exact typed configured response and complete periodic impulse; original numerical data and optional retained identities outlive report/session disposal. No received estimate or unaliased causal impulse is invented."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_configured_response.rs::literal_complex_two_tap_delay_phase_and_periodic_impulse_match_both_numerologies",
+          "crates/ofdma/tests/api_configured_response.rs::corrective_c_composite_excluded_zeros_and_full_impulse_are_independent_of_zoom",
+          "crates/ofdma/tests/api_configured_response.rs::selected_original_symbol_uses_actual_replay_bank_generation_independently_of_event_ids",
+          "crates/ofdma/tests/api_configured_response.rs::zero_transfer_cyclic_delay_alias_and_time_varying_h_have_explicit_states",
+          "crates/ofdma/tests/api_configured_response.rs::missing_invalid_overflowing_queries_preserve_accepted_settings_and_owned_snapshots",
+          "crates/ofdma/tests/api_configured_response.rs::passive_configured_queries_preserve_noisy_actual_recovery_and_frozen_report_identity",
+          "crates/ofdma/tests/api_configured_response.rs::pre_cancelled_report_does_not_invent_a_retained_execution_identity",
+          "crates/ofdma/tests/api_configured_response.rs::configured_constant_phase_matches_the_actual_channel_owner_for_wrapped_and_large_angles",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/Busy/replay/zero/CFO and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_busy_session_guard_preserves_the_same_configured_generation_after_cancel",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_literal_two_tap_transfer_phase_periodic_inverse_and_installed_defaults",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_missing_bounds_zero_transfer_cfo_and_never_started_identity_states",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_original_c_replay_excluded_zeros_zoom_and_owned_frozen_report_data",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_separate_rust_process_planes_units_full_periodic_values_and_metadata_match"
+          ],
+          "scope": "Independent complex two-tap/delay/phase transfer and full periodic inverse at both spacings, whole-bank C normalization/exclusions/replay, original identities/metadata, full-impulse zoom invariance, zero/overflow/missing states, actual channel phase wrapping, noisy run invariance and native Busy/owned frozen reports."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-response",
+      "status": "status.uiu-api-04-response"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.Simulation.configured_response",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::Simulation",
+        "source_file": "bindings/python/src/upstream/simulation/response.rs",
+        "symbol": "PySimulation",
+        "signature": "pub fn configured_response( &self, request: ConfiguredResponseRequest, ) -> ApiResult<ConfiguredResponseSnapshot>",
+        "mapping": "One shared checked native source/request converter serves idle-session and frozen-report operations. Rust numerical work and serialization release the GIL; existing session Busy guard and direct JSON-to-object ownership are reused. No Python response, phase, normalization or inverse-transform algorithm.",
+        "delegated_operation": "merlin::upstream::Simulation::configured_response",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "configured_response",
+        "kind": "method",
+        "signature": "(self, /, source='physical_channel', grant_symbol=0, first_carrier=0, carrier_count=0, maximum_points=4096, include_impulse=False)",
+        "declaration": "Simulation.configured_response"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-response",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::Simulation",
+        "scope": "Owned dictionaries of the exact typed configured response and complete periodic impulse; original numerical data and optional retained identities outlive report/session disposal. No received estimate or unaliased causal impulse is invented."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_configured_response.rs::literal_complex_two_tap_delay_phase_and_periodic_impulse_match_both_numerologies",
+          "crates/ofdma/tests/api_configured_response.rs::corrective_c_composite_excluded_zeros_and_full_impulse_are_independent_of_zoom",
+          "crates/ofdma/tests/api_configured_response.rs::selected_original_symbol_uses_actual_replay_bank_generation_independently_of_event_ids",
+          "crates/ofdma/tests/api_configured_response.rs::zero_transfer_cyclic_delay_alias_and_time_varying_h_have_explicit_states",
+          "crates/ofdma/tests/api_configured_response.rs::missing_invalid_overflowing_queries_preserve_accepted_settings_and_owned_snapshots",
+          "crates/ofdma/tests/api_configured_response.rs::passive_configured_queries_preserve_noisy_actual_recovery_and_frozen_report_identity",
+          "crates/ofdma/tests/api_configured_response.rs::pre_cancelled_report_does_not_invent_a_retained_execution_identity",
+          "crates/ofdma/tests/api_configured_response.rs::configured_constant_phase_matches_the_actual_channel_owner_for_wrapped_and_large_angles",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/Busy/replay/zero/CFO and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_busy_session_guard_preserves_the_same_configured_generation_after_cancel",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_literal_two_tap_transfer_phase_periodic_inverse_and_installed_defaults",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_missing_bounds_zero_transfer_cfo_and_never_started_identity_states",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_original_c_replay_excluded_zeros_zoom_and_owned_frozen_report_data",
+            "bindings/python/tests/test_upstream_configured_response.py::UpstreamConfiguredResponse.test_separate_rust_process_planes_units_full_periodic_values_and_metadata_match"
+          ],
+          "scope": "Independent complex two-tap/delay/phase transfer and full periodic inverse at both spacings, whole-bank C normalization/exclusions/replay, original identities/metadata, full-impulse zoom invariance, zero/overflow/missing states, actual channel phase wrapping, noisy run invariance and native Busy/owned frozen reports."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-response",
+      "status": "status.uiu-api-04-response"
     }
   ],
   "native_type_exports": {
@@ -61301,6 +61621,18 @@
       "revision": "fca3aa5bf6e26388bba690030c5be439d9526323 plus exact resource-grid candidate manifest",
       "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-03-resource-grid-native-final/native-exports.json",
       "native_sha256": "aed881487aefdbae3383a991c3477fdaf582527027d66169f700bc405855ce60",
+      "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "59f27aa0de8999e1d596d1f6040208d332be8596 plus exact recovery candidate manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-04-recovery-native/native-exports.json",
+      "native_sha256": "6384af52faeec8eb6e3c4122a8aba7c64c98a73045ec2286e92e7d34edf86603",
       "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
       "legacy_compatibility": {
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",

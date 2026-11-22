@@ -11,8 +11,11 @@ mod session;
 pub use crate::channel::ChannelConfig;
 pub use crate::configuration::*;
 pub use crate::instruments::{
-    FecSummary, FecWordPage, FecWordRequest, FecWordSnapshot, QamSnapshot, SpectrumSnapshot, Tap,
-    VerificationSnapshot, MAX_FEC_PAGE_DECISION_BITS, MAX_FEC_PAGE_WORDS,
+    ConfiguredResponsePoint, ConfiguredResponseRequest, ConfiguredResponseSnapshot,
+    ConfiguredResponseSource, FecSummary, FecWordPage, FecWordRequest, FecWordSnapshot,
+    PeriodicImpulse, PeriodicImpulsePoint, QamSnapshot, SpectrumSnapshot, Tap,
+    VerificationSnapshot, MAX_CONFIGURED_IMPULSE_SAMPLES, MAX_CONFIGURED_RESPONSE_POINTS,
+    MAX_FEC_PAGE_DECISION_BITS, MAX_FEC_PAGE_WORDS,
 };
 pub use crate::measurements::{
     PowerSnapshot, PreEqEvent, PreEqOperation, PreEqPlayback, ProbeReference, RxmerPlayback,
