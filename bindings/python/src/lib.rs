@@ -11,6 +11,7 @@ mod full_loop;
 mod inputs;
 mod measurement;
 mod options;
+mod physical;
 mod profile_capture;
 mod quantities;
 mod receiver;

@@ -681,6 +681,141 @@ fn policy() -> FullLoopObservationPolicy {
 }
 
 #[test]
+fn configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid() {
+    let transmission = TransmissionConfiguration::new(TransmissionSettings::default()).unwrap();
+    let bytes =
+        include_bytes!("../../../examples/measurements/single-channel/modulation_profile.json");
+    let profile = Dpd::from_bytes(
+        &NamedCapture::new("source", bytes.to_vec()).unwrap(),
+        ProfileId::new(0).unwrap(),
+    )
+    .unwrap();
+    let preview = transmission.physical_layout(&profile, 1, 7, 5).unwrap();
+    assert_eq!(preview.reference_plane, "configured_physical_layout");
+    assert_eq!(preview.layout.fft_bins, 8192);
+    assert_eq!(preview.layout.first_bin, 7);
+    assert_eq!(preview.layout.carriers[0].physical_bin, 7);
+    assert_eq!(preview.key, *profile.key());
+    assert_eq!(preview.key.grid.sample_count, 7480);
+    let mut encoded: Value = serde_json::from_slice(bytes).unwrap();
+    encoded["profiles"][0]["profile_id"] = json!(200);
+    let capture = ProfileCapture::from_bytes(
+        &NamedCapture::new("catalog", serde_json::to_vec(&encoded).unwrap()).unwrap(),
+    )
+    .unwrap();
+    let high_id = transmission
+        .physical_layout_capture(&capture, 200, u64::MAX, 0, 0)
+        .unwrap();
+    assert_eq!(high_id.profile_id, 200);
+    assert_eq!(high_id.layout.carriers.len(), 8192);
+    assert_eq!(high_id.key, preview.key);
+    assert!(ProfileId::new(200).is_err());
+    for (start, count) in [(8192, 0), (8191, 2), (usize::MAX, 1), (0, 8193)] {
+        assert!(transmission
+            .physical_layout(&profile, 0, start, count)
+            .is_err());
+    }
+    assert!(transmission
+        .physical_layout_capture(&capture, 255, 0, 0, 0)
+        .is_err());
+}
+
+#[test]
+fn actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history() {
+    let result = request()
+        .with_observations(policy())
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    for stage in [FullLoopStage::PhysicalBins, FullLoopStage::RxFft] {
+        let raw = result
+            .stage(
+                stage,
+                0,
+                FullLoopStageViewport {
+                    start: 7,
+                    count: 13,
+                },
+            )
+            .unwrap();
+        let bins = result.physical_bins(stage, 0, 7, 13).unwrap();
+        assert_eq!(bins.element_start, 7);
+        assert_eq!(bins.context, raw.context);
+        assert_eq!(bins.total_elements, 8192);
+        assert_eq!(bins.power_units, "normalized_bin_power");
+        let originals = match raw.data {
+            FullLoopStageData::OptionalIq(values) => values,
+            FullLoopStageData::Iq(values) => values.into_iter().map(Some).collect(),
+            _ => unreachable!(),
+        };
+        for (bin, original) in bins.bins.iter().zip(originals) {
+            assert_eq!(bin.iq, original);
+            assert_eq!(bin.linear_power, original.map(|[i, q]| i * i + q * q));
+        }
+        assert_eq!(bins.bins[0].physical_bin, 7);
+        assert_eq!(bins.layout.carriers[0].physical_bin, 7);
+    }
+    let full = result
+        .physical_bins(FullLoopStage::PhysicalBins, 0, 0, 0)
+        .unwrap();
+    assert_eq!(full.bins.len(), 8192);
+    assert_eq!(full.bins[0].linear_power, Some(0.0));
+    assert_eq!(full.bins[0].power_db, None);
+    for bin in full.bins.iter().filter(|bin| bin.iq.is_none()) {
+        assert_eq!(bin.linear_power, None);
+        assert_eq!(bin.power_db, None);
+    }
+    for stage in [
+        FullLoopStage::PayloadMapped,
+        FullLoopStage::PayloadInterleaved,
+    ] {
+        let raw = result
+            .stage(
+                stage,
+                0,
+                FullLoopStageViewport {
+                    start: 7,
+                    count: 13,
+                },
+            )
+            .unwrap();
+        let cells = result.transmit_cells(stage, 0, 7, 13).unwrap();
+        let FullLoopStageData::TransportCells(originals) = raw.data else {
+            unreachable!()
+        };
+        assert_eq!(cells.context, raw.context);
+        assert_eq!(cells.cells[0].cell_index, 7);
+        for (cell, value) in cells.cells.iter().zip(originals) {
+            assert_eq!(cell.value, value);
+            if stage == FullLoopStage::PayloadMapped {
+                assert_eq!(
+                    cell.role,
+                    Some(cells.context.transmit_cell_roles.as_ref().unwrap()[cell.cell_index])
+                );
+            }
+        }
+        for (start, count) in [(usize::MAX, 1), (0, 8193), (0, usize::MAX)] {
+            assert!(result.transmit_cells(stage, 0, start, count).is_err());
+        }
+    }
+    for (start, count) in [(usize::MAX, 1), (8191, 2), (0, 8193)] {
+        assert!(result
+            .physical_bins(FullLoopStage::PhysicalBins, 0, start, count)
+            .is_err());
+    }
+    assert!(result
+        .physical_bins(FullLoopStage::TxIfft, 0, 0, 0)
+        .is_err());
+    assert!(result
+        .transmit_cells(FullLoopStage::PhysicalBins, 0, 0, 0)
+        .is_err());
+    assert!(result
+        .physical_bins(FullLoopStage::PhysicalBins, usize::MAX, 0, 1)
+        .is_err());
+    assert_eq!(result.report().summary.comparison.bit_errors, 0);
+}
+
+#[test]
 fn actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors() {
     let original = request();
     let selected = original.with_observations(policy()).unwrap();

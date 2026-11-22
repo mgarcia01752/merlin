@@ -996,8 +996,8 @@ composition/layout and receiver diagnostic owners. Exact contiguous sample origi
 bound PSD accumulation; missing history stops the span. Configured H and retained
 receiver H-hat use explicit separate sources/reference planes and original excluded
 gaps. Python converts owned results and releases the interpreter lock during work;
-neither adapter introduces scientific calculations. Remaining physical-spectrum/
-role queries and complete catalog/sweep compatibility remain API-02 gates.
+neither adapter introduces scientific calculations. Remaining calibrated spectrum,
+ordered-frame PSD and complete catalog/sweep compatibility remain API-02 gates.
 `api/full_loop/messages` inspects actual retained TX PLC frames through the existing
 frame parser, CRC-validated MAC reassembler and descriptor owner. Typed TLV meanings
 reuse decoded receiver settings and accepted modulation metadata; adapters only
@@ -1023,6 +1023,20 @@ or coding-order LDPC values, kept as separate planes. [Reference/soft contracts]
 return scientific geometry/statistics only; adapters own pixel coordinates, labels
 and colors. Direct bin-edge comparisons preserve tiny signed likelihood values;
 no probabilities, empirical BER or decoder changes are inferred.
+
+`api/physical` inspects configured full-FFT roles through existing captured-layout
+admission and the physical layout owner, preserving original source identity/grid.
+`api/full_loop/physical` queries actual retained TX bins or raw RX FFT bins and
+uses the waveform owner for instantaneous squared magnitude, without another FFT
+or per-Hz PSD scaling. Known zero and unavailable history remain distinct.
+`api/full_loop/transmit_cells` preserves typed mapped/interleaved values and
+actual optional packing roles. A separate metadata-only interleaver projects
+roles only for the first proven aligned source symbol; later history stays
+unknown. All queries are bounded to 8192 bins/cells, retain original context and
+reuse backend role geometry. Qt retains screen coordinates, labels and colors.
+See the [physical view contract](user/api/physical-views.md). Channel-power
+calibration, explicit ordered-frame PSD and complete catalog/sweep compatibility
+remain separate API-02 gates.
 
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 

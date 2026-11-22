@@ -8,6 +8,7 @@ mod control;
 mod instruments;
 mod observations;
 mod options;
+mod physical;
 mod request;
 mod result;
 mod soft;

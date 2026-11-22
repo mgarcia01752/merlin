@@ -680,6 +680,59 @@ endpoint/index vectors, finite-work rejection and actual/direct-process parity.
 Trace through existing REQ-UIU-02/07/09/16/19/24 and UIU-API-02; physical-spectrum/
 role audit and complete catalog/sweep compatibility remain subsequent gates.
 
+### UIU-API-02 physical-bin and transmitted-role unit
+
+Add passive `TransmissionConfiguration::physical_layout` and
+`physical_layout_capture` queries over accepted Dpd or original ProfileCapture
+inputs. Reuse captured-layout admission and `CarrierLayout::symbol_roles`; return
+the authoritative original FFT grid, requested physical carriers/roles, fixed PLC
+bounds and at most 1024 role spans. Keep source-capture identity/grid separate from
+the full physical FFT layout. This is configured geometry, not an observed run or
+proof that an arbitrary encoded profile ID supports full simulation.
+
+Add `FullLoopResult::physical_bins(stage, snapshot, start, count)` over actual
+retained TX physical bins or raw RX FFT bins. Return original context/extent,
+authoritative phase-specific roles and actual I/Q, linear bin power and dB power.
+Preserve known zero bins separately from unavailable history. Do not transform
+frequency bins again or label instantaneous bin power as PSD/Hz. Bound a query
+to 8192 original bins; compute power through a focused waveform numerical owner
+and reuse the layout-view owner. No QML reconstruction of pilot/PLC positions.
+
+Add `FullLoopResult::transmit_cells(stage, snapshot, start, count)` for original
+mapped/interleaved transport-cell observations. Preserve the typed original value,
+absolute cell index and optional actual packing role. A focused payload diagnostic
+owner may invoke the existing generic SymbolInterleaver on retained role metadata
+only for the first demonstrably aligned source symbol. Missing, misaligned or
+later history remains unknown; roles are never inferred from I/Q positions and no
+live transmitter/source/interleaver advances. PLC roles come from their actual
+stage identity, not inferred payload labels.
+
+Validate both numerologies' existing layout/pilot vectors, dynamic role positions,
+original offsets, exact 3+4j power and zero/missing distinctions, invalid windows/
+overflow, independent role-interleaver vectors and actual/direct-process parity.
+Native Python mirrors all queries and releases the GIL. Trace through existing
+REQ-UIU-02/07/09/16/17/24 and UIU-API-02. Subsequent spectrum work must explicitly
+cover existing channel-power calibration and legacy ordered per-frame stage PSD
+observations without changing the accepted contiguous-sample spectrum operation.
+Complete catalog/sweep and final API-02 acceptance remain separate gates.
+
+The focused file/owner map for this unit is:
+
+| Disposition | Owner/files | Contract |
+| --- | --- | --- |
+| Reuse | `transmission/layout/physical.rs`, `simulation/channel/measurement.rs` | Existing captured-layout admission and channel-symbol roles; no new pilot placement. |
+| Add | `transmission/layout/view.rs`, `signal_processing/waveform/bin_power.rs` | Original FFT layout window/spans and instantaneous complex-bin power, separate from PSD. |
+| Add | `simulation/payload/role_projection.rs` | Metadata-only first-aligned-symbol projection through the existing generic interleaver. |
+| Add | `api/physical.rs`, `api/full_loop/physical.rs`, `api/full_loop/transmit_cells.rs` | Immutable configured and actual retained typed public queries. |
+| Add | `bindings/python/src/physical.rs`, `bindings/python/src/full_loop/physical.rs` | Thin owned conversions with the GIL released. |
+| Edit | `crates/ofdm/tests/api_full_loop_observations.rs`, `crates/ofdm/examples/api_full_loop.rs`, `bindings/python/python/merlin/__init__.pyi` | Original-value/geometry/bounds tests, direct-process reference and matching native signatures. |
+| Add | `bindings/python/tests/test_physical_views.py` | Installed-wheel originals, phase/role provenance, limits, ownership and direct Rust parity. |
+| Edit | Existing parent module registrations | Register the focused modules and public re-exports; no new dependency or Qt source change. |
+
+Paths in the first five rows are relative to `crates/ofdm/src/` unless prefixed
+with `bindings/`. Existing public methods/defaults and raw-stage query limits are
+preserved. Source-only and planning passes cannot establish Qt acceptance.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

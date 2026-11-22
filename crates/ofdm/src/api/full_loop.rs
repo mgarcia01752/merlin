@@ -9,8 +9,10 @@ mod instruments;
 mod messages;
 mod observations;
 mod options;
+mod physical;
 mod request;
 mod result;
+mod transmit_cells;
 use super::*;
 pub use cells::*;
 pub use control::*;
@@ -18,9 +20,11 @@ pub use instruments::*;
 pub use messages::*;
 pub use observations::*;
 pub use options::*;
+pub use physical::*;
 pub use request::*;
 pub use result::*;
 use std::sync::Arc;
+pub use transmit_cells::*;
 
 /// Owned accepted directional inputs; cloning preserves immutable original/source ownership.
 #[derive(Clone)]

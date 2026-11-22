@@ -654,3 +654,43 @@ The static operations retain both native Simulation/Merlin alias paths and their
 explicit delegation to the same public Rust Simulation operations.
 Qt sources and original scientific producers are unchanged; no Qt adoption is
 claimed. Physical-spectrum/role and complete catalog/sweep parity keep API-02 open.
+
+## UIU-API-02 physical-bin and transmitted-role unit
+
+The [physical-view manifest](physical-view-evidence.json) and
+[executed operation record](api-02-physical-operation-test-results.json) preserve
+candidate source hashes, exact named cases and installed-wheel/reference commands.
+The [public contract](../../../user/api/physical-views.md) distinguishes configured
+geometry from observed I/Q and physical Data locations from transported roles.
+
+Four additive Rust/native operations provide configured original full-FFT roles,
+actual retained TX/raw-RX bin I/Q and instantaneous power, and typed mapped/
+interleaved transport cells with proven optional packing provenance. No original
+producer, default retention policy, raw-stage limit or normalized contiguous PSD
+operation changes. A separate metadata-only interleaver transports roles only for
+the first aligned retained source symbol; later or insufficient history stays
+unknown. No GPL Qt numerical code was copied.
+
+Validation passed 17 API/layout cases, all 28 library cases (six new focused
+owners), 139 analysis-only cases with doctest checks, workspace/native Clippy
+with warnings denied, formatting and 77 validation-tool cases. The independent
+numerical anchors cover both 4K/8K physical grids, fixed PLC/pilot coordinates,
+3+4j power=25, zero versus unavailable power, finite overflow rejection and an
+NI=8/depth=2 role vector with four true history gaps. The actual loop compares
+original context, offsets, I/Q and typed cell values. Acquisition uses explicit
+BPSK filler; no test assumes every retained event contains a gap.
+
+The fresh local Linux CPython 3.10 wheel passes 102 installed native cases,
+including three focused idle/actual/direct-Rust-process cases. Full original
+source hashes agree; loader-specific provenance names/contracts are tested
+separately. Numerical output is compared recursively with explicit floating-point
+tolerance. Editing returned dictionaries cannot change retained results.
+
+Compiler/installed inventories trace 511 Rust and 494 native operation rows;
+all previous 507/490 row prefixes and historical alias corrections remain intact.
+All 178 Qt files remain unchanged, and the existing 45-file/3-dependency migration
+boundary remains frozen. This unit does not establish Qt adoption or UI acceptance.
+Calibrated channel spectra/power, explicit ordered-frame PSD, legacy scalar
+amplifier-boundary views, complete source-catalog/sweep compatibility and final
+API-02 acceptance remain open. No hosted, installer, publication, external
+interoperability or wider PHY support is claimed.

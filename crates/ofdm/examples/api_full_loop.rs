@@ -68,10 +68,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "region":Simulation::decision_region(128,0,1.0)?,
         "cells":observed.cell_soft_view(FullLoopCellQuery {count:3,..Default::default()})?,
         "decoder":observed.decoder_soft_view(0)?});
+    let physical = json!({
+        "layout": observed.inputs().transmission.physical_layout(&observed.inputs().profile, 1, 350, 10)?,
+        "tx": observed.physical_bins(FullLoopStage::PhysicalBins, 0, 350, 10)?,
+        "rx": observed.physical_bins(FullLoopStage::RxFft, 0, 350, 10)?,
+        "mapped": observed.transmit_cells(FullLoopStage::PayloadMapped, 0, 7, 13)?,
+        "interleaved": observed.transmit_cells(FullLoopStage::PayloadInterleaved, 0, 7, 13)?,
+    });
     println!(
         "{}",
         serde_json::to_string(
-            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages,"instruments":instruments,"messages":observed.plc_messages()?,"cells":cells,"slicer":slicer})
+            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages,"instruments":instruments,"messages":observed.plc_messages()?,"cells":cells,"slicer":slicer,"physical":physical})
         )?
     );
     Ok(())

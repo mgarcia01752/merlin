@@ -5,9 +5,9 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "1fd4160bb2e35013135f1002d03e0e6dd8d0fbe2 plus exact slicer-reference/soft-view candidate manifest",
-    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-slicer-native-final/native-exports.json",
-    "native_sha256": "aa594b091e30b51408c9780c412dd05e2737ced20461bdb4e131698d7cc646a0",
+    "revision": "86a2aa0560b2bd4f57d74fb3533a467c63b35dcf plus exact physical-bin/transmit-role candidate manifest",
+    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-physical-native/native-exports.json",
+    "native_sha256": "ee8459bbef4715f93e3617ecfc0ecca533b064f22ce96047b5a238dfc4659e6f",
     "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
     "legacy_compatibility": {
       "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
@@ -73,7 +73,9 @@
     "evidence.uiu-api-02-cells": "../unified-qt-workbench/receiver-cell-evidence.json, ../unified-qt-workbench/api-02-cell-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-selected-receiver-cell-unit: actual current source/wheel/scientific cases, plus explicit compiler alias correction preserving original records.",
     "status.uiu-api-02-cells": "Implemented bounded actual receiver cell selection, all-selected nearest/TX-reference MER and physical decisions/actual soft statistics. Parent API-02 remains open for remaining physical/soft-display/reference views and complete catalog/sweep parity; no Qt adoption.",
     "evidence.uiu-api-02-slicer": "../unified-qt-workbench/slicer-view-evidence.json, ../unified-qt-workbench/api-02-slicer-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-slicer-reference-and-soft-view-unit: actual source/wheel and exact successful owner/scientific/native cases.",
-    "status.uiu-api-02-slicer": "Implemented owned labelled references, finite decision regions and actual selected-cell/coding-order soft views. Physical-spectrum/role and complete source-catalog/sweep parity keep API-02 open; no Qt adoption."
+    "status.uiu-api-02-slicer": "Implemented owned labelled references, finite decision regions and actual selected-cell/coding-order soft views. Physical-spectrum/role and complete source-catalog/sweep parity keep API-02 open; no Qt adoption.",
+    "evidence.uiu-api-02-physical": "../unified-qt-workbench/physical-view-evidence.json, ../unified-qt-workbench/api-02-physical-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-physical-bin-and-transmitted-role-unit: actual source/wheel and exact successful owner/scientific/native cases.",
+    "status.uiu-api-02-physical": "Implemented original full-FFT role inspection, actual retained bin power and typed transmitted-cell packing provenance. Calibrated/ordered-frame spectrum and complete catalog/sweep parity keep API-02 open; no Qt adoption."
   },
   "type_exports": {
     "downstream": [
@@ -879,6 +881,42 @@
       },
       {
         "export": "merlin::downstream::QamRelativeReference",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::ConfiguredPhysicalLayout",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopPhysicalBin",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopPhysicalBins",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopTransmitCell",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopTransmitCells",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::PhysicalCarrierRole",
+        "kind": "enum"
+      },
+      {
+        "export": "merlin::downstream::PhysicalLayoutCarrier",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::PhysicalLayoutView",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::PhysicalRoleSpan",
         "kind": "struct"
       }
     ],
@@ -26967,6 +27005,302 @@
       },
       "evidence": "evidence.uiu-api-02-slicer",
       "status": "status.uiu-api-02-slicer"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::physical_bins",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn physical_bins( &self, stage: FullLoopStage, snapshot: usize, start: usize, count: usize, ) -> ApiResult<FullLoopPhysicalBins>",
+        "source_file": "crates/ofdm/src/api/full_loop/physical.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.physical_bins",
+        "declaration": "merlin.downstream.FullLoopResult.physical_bins"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopPhysicalBins>",
+        "scope": "Owned configured full-FFT roles and actual retained TX/RX bin I/Q and instantaneous power or transmitted typed cells with proven optional packing provenance; no source/transport advancement, hidden run or role inference from I/Q."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/carrier_layout.rs::physical_plc_and_predefined_pilots_follow_independent_table50_vectors",
+          "crates/ofdm/tests/carrier_layout.rs::scattered_pilots_cover_both_8k_halves_and_repeat_at_128_symbols",
+          "crates/ofdm/tests/carrier_layout.rs::full_pilot_cycle_visits_every_eligible_bin_once_and_preserves_domain_size",
+          "crates/ofdm/tests/carrier_layout.rs::invalid_geometry_and_collisions_return_errors_without_mutating_inputs",
+          "crates/ofdm/tests/carrier_layout.rs::ncp_uses_descending_preinterleaving_data_and_skips_placeholders_and_zero_loading",
+          "crates/ofdm/src/transmission/layout/view.rs::original_4k_8k_layout_windows_keep_literal_plc_pilot_and_frequency_vectors",
+          "crates/ofdm/src/transmission/layout/view.rs::physical_window_bounds_reject_before_unchecked_arithmetic",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::literal_bin_power_preserves_known_zero_and_missing_history",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::nonfinite_or_overflowing_bin_power_is_rejected",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::independent_eight_cell_roles_preserve_delay_gaps_and_frequency_order",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::later_misaligned_missing_or_other_run_roles_remain_unavailable"
+        ],
+        "python": {
+          "status": "installed native numerical/bounds/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_actual_bin_power_and_typed_transmit_cells_match_retained_originals",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_direct_rust_process_layout_bins_and_transmit_roles_match",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_idle_layout_original_grid_raw_catalog_ids_and_owned_windows"
+          ],
+          "scope": "Independent 4K/8K physical layout anchors, literal bin power/zero/missing and first-symbol role-transport vectors, actual original values/context, bounded windows, source identity/ownership and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-physical",
+      "status": "status.uiu-api-02-physical"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::transmit_cells",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn transmit_cells( &self, stage: FullLoopStage, snapshot: usize, start: usize, count: usize, ) -> ApiResult<FullLoopTransmitCells>",
+        "source_file": "crates/ofdm/src/api/full_loop/transmit_cells.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.transmit_cells",
+        "declaration": "merlin.downstream.FullLoopResult.transmit_cells"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopTransmitCells>",
+        "scope": "Owned configured full-FFT roles and actual retained TX/RX bin I/Q and instantaneous power or transmitted typed cells with proven optional packing provenance; no source/transport advancement, hidden run or role inference from I/Q."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/carrier_layout.rs::physical_plc_and_predefined_pilots_follow_independent_table50_vectors",
+          "crates/ofdm/tests/carrier_layout.rs::scattered_pilots_cover_both_8k_halves_and_repeat_at_128_symbols",
+          "crates/ofdm/tests/carrier_layout.rs::full_pilot_cycle_visits_every_eligible_bin_once_and_preserves_domain_size",
+          "crates/ofdm/tests/carrier_layout.rs::invalid_geometry_and_collisions_return_errors_without_mutating_inputs",
+          "crates/ofdm/tests/carrier_layout.rs::ncp_uses_descending_preinterleaving_data_and_skips_placeholders_and_zero_loading",
+          "crates/ofdm/src/transmission/layout/view.rs::original_4k_8k_layout_windows_keep_literal_plc_pilot_and_frequency_vectors",
+          "crates/ofdm/src/transmission/layout/view.rs::physical_window_bounds_reject_before_unchecked_arithmetic",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::literal_bin_power_preserves_known_zero_and_missing_history",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::nonfinite_or_overflowing_bin_power_is_rejected",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::independent_eight_cell_roles_preserve_delay_gaps_and_frequency_order",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::later_misaligned_missing_or_other_run_roles_remain_unavailable"
+        ],
+        "python": {
+          "status": "installed native numerical/bounds/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_actual_bin_power_and_typed_transmit_cells_match_retained_originals",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_direct_rust_process_layout_bins_and_transmit_roles_match",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_idle_layout_original_grid_raw_catalog_ids_and_owned_windows"
+          ],
+          "scope": "Independent 4K/8K physical layout anchors, literal bin power/zero/missing and first-symbol role-transport vectors, actual original values/context, bounded windows, source identity/ownership and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-physical",
+      "status": "status.uiu-api-02-physical"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::TransmissionConfiguration::physical_layout",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn physical_layout( &self, profile: &Dpd, channel_symbol: u64, start: usize, count: usize, ) -> ApiResult<ConfiguredPhysicalLayout>",
+        "source_file": "crates/ofdm/src/api/physical.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.TransmissionConfiguration.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.TransmissionConfiguration.physical_layout",
+        "declaration": "merlin.downstream.TransmissionConfiguration.physical_layout"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<ConfiguredPhysicalLayout>",
+        "scope": "Owned configured full-FFT roles and actual retained TX/RX bin I/Q and instantaneous power or transmitted typed cells with proven optional packing provenance; no source/transport advancement, hidden run or role inference from I/Q."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/carrier_layout.rs::physical_plc_and_predefined_pilots_follow_independent_table50_vectors",
+          "crates/ofdm/tests/carrier_layout.rs::scattered_pilots_cover_both_8k_halves_and_repeat_at_128_symbols",
+          "crates/ofdm/tests/carrier_layout.rs::full_pilot_cycle_visits_every_eligible_bin_once_and_preserves_domain_size",
+          "crates/ofdm/tests/carrier_layout.rs::invalid_geometry_and_collisions_return_errors_without_mutating_inputs",
+          "crates/ofdm/tests/carrier_layout.rs::ncp_uses_descending_preinterleaving_data_and_skips_placeholders_and_zero_loading",
+          "crates/ofdm/src/transmission/layout/view.rs::original_4k_8k_layout_windows_keep_literal_plc_pilot_and_frequency_vectors",
+          "crates/ofdm/src/transmission/layout/view.rs::physical_window_bounds_reject_before_unchecked_arithmetic",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::literal_bin_power_preserves_known_zero_and_missing_history",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::nonfinite_or_overflowing_bin_power_is_rejected",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::independent_eight_cell_roles_preserve_delay_gaps_and_frequency_order",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::later_misaligned_missing_or_other_run_roles_remain_unavailable"
+        ],
+        "python": {
+          "status": "installed native numerical/bounds/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_actual_bin_power_and_typed_transmit_cells_match_retained_originals",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_direct_rust_process_layout_bins_and_transmit_roles_match",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_idle_layout_original_grid_raw_catalog_ids_and_owned_windows"
+          ],
+          "scope": "Independent 4K/8K physical layout anchors, literal bin power/zero/missing and first-symbol role-transport vectors, actual original values/context, bounded windows, source identity/ownership and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-physical",
+      "status": "status.uiu-api-02-physical"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::TransmissionConfiguration::physical_layout_capture",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn physical_layout_capture( &self, capture: &ProfileCapture, profile_id: u8, channel_symbol: u64, start: usize, count: usize, ) -> ApiResult<ConfiguredPhysicalLayout>",
+        "source_file": "crates/ofdm/src/api/physical.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.TransmissionConfiguration.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.TransmissionConfiguration.physical_layout_capture",
+        "declaration": "merlin.downstream.TransmissionConfiguration.physical_layout_capture"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<ConfiguredPhysicalLayout>",
+        "scope": "Owned configured full-FFT roles and actual retained TX/RX bin I/Q and instantaneous power or transmitted typed cells with proven optional packing provenance; no source/transport advancement, hidden run or role inference from I/Q."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/carrier_layout.rs::physical_plc_and_predefined_pilots_follow_independent_table50_vectors",
+          "crates/ofdm/tests/carrier_layout.rs::scattered_pilots_cover_both_8k_halves_and_repeat_at_128_symbols",
+          "crates/ofdm/tests/carrier_layout.rs::full_pilot_cycle_visits_every_eligible_bin_once_and_preserves_domain_size",
+          "crates/ofdm/tests/carrier_layout.rs::invalid_geometry_and_collisions_return_errors_without_mutating_inputs",
+          "crates/ofdm/tests/carrier_layout.rs::ncp_uses_descending_preinterleaving_data_and_skips_placeholders_and_zero_loading",
+          "crates/ofdm/src/transmission/layout/view.rs::original_4k_8k_layout_windows_keep_literal_plc_pilot_and_frequency_vectors",
+          "crates/ofdm/src/transmission/layout/view.rs::physical_window_bounds_reject_before_unchecked_arithmetic",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::literal_bin_power_preserves_known_zero_and_missing_history",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::nonfinite_or_overflowing_bin_power_is_rejected",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::independent_eight_cell_roles_preserve_delay_gaps_and_frequency_order",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::later_misaligned_missing_or_other_run_roles_remain_unavailable"
+        ],
+        "python": {
+          "status": "installed native numerical/bounds/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_actual_bin_power_and_typed_transmit_cells_match_retained_originals",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_direct_rust_process_layout_bins_and_transmit_roles_match",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_idle_layout_original_grid_raw_catalog_ids_and_owned_windows"
+          ],
+          "scope": "Independent 4K/8K physical layout anchors, literal bin power/zero/missing and first-symbol role-transport vectors, actual original values/context, bounded windows, source identity/ownership and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-physical",
+      "status": "status.uiu-api-02-physical"
     }
   ],
   "executed_records": [
@@ -26982,7 +27316,8 @@
     "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -57581,6 +57916,326 @@
       },
       "evidence": "evidence.uiu-api-02-slicer",
       "status": "status.uiu-api-02-slicer"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.physical_bins",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/physical.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn physical_bins( &self, stage: FullLoopStage, snapshot: usize, start: usize, count: usize, ) -> ApiResult<FullLoopPhysicalBins>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::physical_bins",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "physical_bins",
+        "kind": "method",
+        "signature": "(self, /, stage, snapshot=0, start=0, count=0)",
+        "declaration": "FullLoopResult.physical_bins"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned original layout geometry, instantaneous normalized FFT-bin power and actual typed transport cells/optional roles, with original context, offsets and retained extents; no hidden execution or invented observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/carrier_layout.rs::physical_plc_and_predefined_pilots_follow_independent_table50_vectors",
+          "crates/ofdm/tests/carrier_layout.rs::scattered_pilots_cover_both_8k_halves_and_repeat_at_128_symbols",
+          "crates/ofdm/tests/carrier_layout.rs::full_pilot_cycle_visits_every_eligible_bin_once_and_preserves_domain_size",
+          "crates/ofdm/tests/carrier_layout.rs::invalid_geometry_and_collisions_return_errors_without_mutating_inputs",
+          "crates/ofdm/tests/carrier_layout.rs::ncp_uses_descending_preinterleaving_data_and_skips_placeholders_and_zero_loading",
+          "crates/ofdm/src/transmission/layout/view.rs::original_4k_8k_layout_windows_keep_literal_plc_pilot_and_frequency_vectors",
+          "crates/ofdm/src/transmission/layout/view.rs::physical_window_bounds_reject_before_unchecked_arithmetic",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::literal_bin_power_preserves_known_zero_and_missing_history",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::nonfinite_or_overflowing_bin_power_is_rejected",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::independent_eight_cell_roles_preserve_delay_gaps_and_frequency_order",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::later_misaligned_missing_or_other_run_roles_remain_unavailable"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_actual_bin_power_and_typed_transmit_cells_match_retained_originals",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_direct_rust_process_layout_bins_and_transmit_roles_match",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_idle_layout_original_grid_raw_catalog_ids_and_owned_windows"
+          ],
+          "scope": "Separate direct Rust-process configured layout, actual bins/power and transmit roles, literal original indices, finite/work/absent-data rejection and owned original results."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-physical",
+      "status": "status.uiu-api-02-physical"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.transmit_cells",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/physical.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn transmit_cells( &self, stage: FullLoopStage, snapshot: usize, start: usize, count: usize, ) -> ApiResult<FullLoopTransmitCells>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::transmit_cells",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "transmit_cells",
+        "kind": "method",
+        "signature": "(self, /, stage, snapshot=0, start=0, count=0)",
+        "declaration": "FullLoopResult.transmit_cells"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned original layout geometry, instantaneous normalized FFT-bin power and actual typed transport cells/optional roles, with original context, offsets and retained extents; no hidden execution or invented observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/carrier_layout.rs::physical_plc_and_predefined_pilots_follow_independent_table50_vectors",
+          "crates/ofdm/tests/carrier_layout.rs::scattered_pilots_cover_both_8k_halves_and_repeat_at_128_symbols",
+          "crates/ofdm/tests/carrier_layout.rs::full_pilot_cycle_visits_every_eligible_bin_once_and_preserves_domain_size",
+          "crates/ofdm/tests/carrier_layout.rs::invalid_geometry_and_collisions_return_errors_without_mutating_inputs",
+          "crates/ofdm/tests/carrier_layout.rs::ncp_uses_descending_preinterleaving_data_and_skips_placeholders_and_zero_loading",
+          "crates/ofdm/src/transmission/layout/view.rs::original_4k_8k_layout_windows_keep_literal_plc_pilot_and_frequency_vectors",
+          "crates/ofdm/src/transmission/layout/view.rs::physical_window_bounds_reject_before_unchecked_arithmetic",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::literal_bin_power_preserves_known_zero_and_missing_history",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::nonfinite_or_overflowing_bin_power_is_rejected",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::independent_eight_cell_roles_preserve_delay_gaps_and_frequency_order",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::later_misaligned_missing_or_other_run_roles_remain_unavailable"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_actual_bin_power_and_typed_transmit_cells_match_retained_originals",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_direct_rust_process_layout_bins_and_transmit_roles_match",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_idle_layout_original_grid_raw_catalog_ids_and_owned_windows"
+          ],
+          "scope": "Separate direct Rust-process configured layout, actual bins/power and transmit roles, literal original indices, finite/work/absent-data rejection and owned original results."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-physical",
+      "status": "status.uiu-api-02-physical"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.TransmissionConfiguration.physical_layout",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::TransmissionConfiguration",
+        "source_file": "bindings/python/src/physical.rs",
+        "symbol": "PyTransmission",
+        "signature": "pub fn physical_layout( &self, profile: &Dpd, channel_symbol: u64, start: usize, count: usize, ) -> ApiResult<ConfiguredPhysicalLayout>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::TransmissionConfiguration::physical_layout",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "physical_layout",
+        "kind": "method",
+        "signature": "(self, /, profile, channel_symbol=0, start=0, count=0)",
+        "declaration": "TransmissionConfiguration.physical_layout"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::TransmissionConfiguration",
+        "scope": "Owned original layout geometry, instantaneous normalized FFT-bin power and actual typed transport cells/optional roles, with original context, offsets and retained extents; no hidden execution or invented observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/carrier_layout.rs::physical_plc_and_predefined_pilots_follow_independent_table50_vectors",
+          "crates/ofdm/tests/carrier_layout.rs::scattered_pilots_cover_both_8k_halves_and_repeat_at_128_symbols",
+          "crates/ofdm/tests/carrier_layout.rs::full_pilot_cycle_visits_every_eligible_bin_once_and_preserves_domain_size",
+          "crates/ofdm/tests/carrier_layout.rs::invalid_geometry_and_collisions_return_errors_without_mutating_inputs",
+          "crates/ofdm/tests/carrier_layout.rs::ncp_uses_descending_preinterleaving_data_and_skips_placeholders_and_zero_loading",
+          "crates/ofdm/src/transmission/layout/view.rs::original_4k_8k_layout_windows_keep_literal_plc_pilot_and_frequency_vectors",
+          "crates/ofdm/src/transmission/layout/view.rs::physical_window_bounds_reject_before_unchecked_arithmetic",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::literal_bin_power_preserves_known_zero_and_missing_history",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::nonfinite_or_overflowing_bin_power_is_rejected",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::independent_eight_cell_roles_preserve_delay_gaps_and_frequency_order",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::later_misaligned_missing_or_other_run_roles_remain_unavailable"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_actual_bin_power_and_typed_transmit_cells_match_retained_originals",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_direct_rust_process_layout_bins_and_transmit_roles_match",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_idle_layout_original_grid_raw_catalog_ids_and_owned_windows"
+          ],
+          "scope": "Separate direct Rust-process configured layout, actual bins/power and transmit roles, literal original indices, finite/work/absent-data rejection and owned original results."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-physical",
+      "status": "status.uiu-api-02-physical"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.TransmissionConfiguration.physical_layout_capture",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::TransmissionConfiguration",
+        "source_file": "bindings/python/src/physical.rs",
+        "symbol": "PyTransmission",
+        "signature": "pub fn physical_layout_capture( &self, capture: &ProfileCapture, profile_id: u8, channel_symbol: u64, start: usize, count: usize, ) -> ApiResult<ConfiguredPhysicalLayout>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::TransmissionConfiguration::physical_layout_capture",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "physical_layout_capture",
+        "kind": "method",
+        "signature": "(self, /, capture, profile_id, channel_symbol=0, start=0, count=0)",
+        "declaration": "TransmissionConfiguration.physical_layout_capture"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::TransmissionConfiguration",
+        "scope": "Owned original layout geometry, instantaneous normalized FFT-bin power and actual typed transport cells/optional roles, with original context, offsets and retained extents; no hidden execution or invented observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/carrier_layout.rs::physical_plc_and_predefined_pilots_follow_independent_table50_vectors",
+          "crates/ofdm/tests/carrier_layout.rs::scattered_pilots_cover_both_8k_halves_and_repeat_at_128_symbols",
+          "crates/ofdm/tests/carrier_layout.rs::full_pilot_cycle_visits_every_eligible_bin_once_and_preserves_domain_size",
+          "crates/ofdm/tests/carrier_layout.rs::invalid_geometry_and_collisions_return_errors_without_mutating_inputs",
+          "crates/ofdm/tests/carrier_layout.rs::ncp_uses_descending_preinterleaving_data_and_skips_placeholders_and_zero_loading",
+          "crates/ofdm/src/transmission/layout/view.rs::original_4k_8k_layout_windows_keep_literal_plc_pilot_and_frequency_vectors",
+          "crates/ofdm/src/transmission/layout/view.rs::physical_window_bounds_reject_before_unchecked_arithmetic",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::literal_bin_power_preserves_known_zero_and_missing_history",
+          "crates/ofdm/src/signal_processing/waveform/bin_power.rs::nonfinite_or_overflowing_bin_power_is_rejected",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::independent_eight_cell_roles_preserve_delay_gaps_and_frequency_order",
+          "crates/ofdm/src/simulation/payload/role_projection.rs::later_misaligned_missing_or_other_run_roles_remain_unavailable"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_actual_bin_power_and_typed_transmit_cells_match_retained_originals",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_direct_rust_process_layout_bins_and_transmit_roles_match",
+            "bindings/python/tests/test_physical_views.py::PhysicalViewTests.test_idle_layout_original_grid_raw_catalog_ids_and_owned_windows"
+          ],
+          "scope": "Separate direct Rust-process configured layout, actual bins/power and transmit roles, literal original indices, finite/work/absent-data rejection and owned original results."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-physical",
+      "status": "status.uiu-api-02-physical"
     }
   ],
   "native_type_exports": {
@@ -58425,6 +59080,18 @@
       "revision": "bd1392eba31cfaa18c615453d54e5d74bde9ef5a plus exact receiver-cell candidate manifest",
       "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-cell-native/native-exports.json",
       "native_sha256": "eab465db02390e62e517962221ef56436967dc097e23e945761790062acde9fe",
+      "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "1fd4160bb2e35013135f1002d03e0e6dd8d0fbe2 plus exact slicer-reference/soft-view candidate manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-slicer-native-final/native-exports.json",
+      "native_sha256": "aa594b091e30b51408c9780c412dd05e2737ced20461bdb4e131698d7cc646a0",
       "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
       "legacy_compatibility": {
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
