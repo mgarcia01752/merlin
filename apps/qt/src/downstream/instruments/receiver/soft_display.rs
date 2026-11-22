@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Bounded display projections of retained soft decisions; never decoder inputs.
-use docsis_ofdm_fec::signal_processing::modulation::reference_for_order;
+use merlin::downstream::Simulation;
 use serde_json::{json, Value};
 const DISPLAY_LIMIT: f64 = 100.0;
 const BIN_COUNT: usize = 40;
@@ -47,57 +47,34 @@ pub(super) fn confidence(values: &[f64]) -> Value {
         "count":values.len(),"sequence":sequence,
         "sequence_limit":values.iter().map(|v|v.abs()).fold(1.0_f64,f64::max)})
 }
-/// Clips the selected symbol's Voronoi region against the complete reference.
+/// Queries the backend's selected-symbol region against its complete reference.
 /// # Arguments
 /// * `order`, `label` - Existing physical constellation and nearest label.
 /// # Returns
-/// Normalized local reference points, exact decision polygon and viewport radius.
+/// Normalized local reference points, exact decision polygon and viewport radius;
+/// unsupported or out-of-range selectors return an empty object.
 pub(super) fn neighborhood(order: usize, label: usize) -> Value {
-    let Some(reference) = reference_for_order(order) else {
+    let Ok(order) = u16::try_from(order) else {
         return json!({});
     };
-    let center = reference.iq[label];
-    let mut neighbors: Vec<_> = reference
-        .iq
+    let Ok(label) = u16::try_from(label) else {
+        return json!({});
+    };
+    // This view uses the existing unit-energy reference plane, not received gain.
+    let Ok(region) = Simulation::decision_region(order, label, 1.0) else {
+        return json!({});
+    };
+    let references: Vec<_> = region
+        .nearby_references
         .iter()
-        .map(|p| [p[0] - center[0], p[1] - center[1]])
+        .map(|reference| reference.relative_iq)
         .collect();
-    neighbors.sort_by(|a, b| (a[0] * a[0] + a[1] * a[1]).total_cmp(&(b[0] * b[0] + b[1] * b[1])));
-    let spacing = neighbors
-        .iter()
-        .map(|p| p[0].hypot(p[1]))
-        .find(|d| *d > 0.0)
-        .unwrap_or(1.0);
-    let radius = spacing * 2.5;
-    let mut polygon = vec![
-        [-radius, -radius],
-        [radius, -radius],
-        [radius, radius],
-        [-radius, radius],
-    ];
-    for point in neighbors.iter().skip(1) {
-        let bound = (point[0] * point[0] + point[1] * point[1]) / 2.0;
-        let mut clipped = Vec::new();
-        for index in 0..polygon.len() {
-            let a = polygon[index];
-            let b = polygon[(index + 1) % polygon.len()];
-            let da = a[0] * point[0] + a[1] * point[1] - bound;
-            let db = b[0] * point[0] + b[1] * point[1] - bound;
-            if da <= 0.0 {
-                clipped.push(a);
-            }
-            if (da <= 0.0) != (db <= 0.0) {
-                let fraction = da / (da - db);
-                clipped.push([
-                    a[0] + fraction * (b[0] - a[0]),
-                    a[1] + fraction * (b[1] - a[1]),
-                ]);
-            }
-        }
-        polygon = clipped;
-    }
-    neighbors.truncate(49);
-    json!({"center":center,"radius":radius,"references":neighbors,"polygon":polygon})
+    json!({
+        "center": region.center_iq,
+        "radius": region.viewport_half_extent,
+        "references": references,
+        "polygon": region.vertices_relative,
+    })
 }
 
 #[cfg(test)]
@@ -120,17 +97,28 @@ mod tests {
         assert_eq!(result["sequence"][0]["high"], 100.0);
     }
     #[test]
+    fn invalid_reference_selectors_return_empty_geometry() {
+        // Unsupported order three; label sixteen is just outside 16-QAM.
+        for (order, label) in [(3, 0), (16, 16), (usize::MAX, 0), (16, usize::MAX)] {
+            assert_eq!(neighborhood(order, label), json!({}));
+        }
+    }
+
+    #[test]
     fn decision_region_contains_only_nearest_reference_for_square_and_cross_qam() {
         for order in [16, 128, 4096] {
-            let reference = reference_for_order(order).unwrap();
+            // Independent coverage anchors: square 16-QAM, cross 128-QAM and
+            // the previously covered 4096-QAM reference; label zero, unit energy.
+            let reference = Simulation::constellation_reference(order as u16, 1.0, 0, 0).unwrap();
             let result = neighborhood(order, 0);
             for vertex in result["polygon"].as_array().unwrap() {
                 let x = vertex[0].as_f64().unwrap();
                 let y = vertex[1].as_f64().unwrap();
                 let distance = x * x + y * y;
-                for point in reference.iq {
-                    let dx = x + reference.iq[0][0] - point[0];
-                    let dy = y + reference.iq[0][1] - point[1];
+                for point in &reference.points {
+                    let dx = x + reference.points[0].iq[0] - point.iq[0];
+                    let dy = y + reference.points[0].iq[1] - point.iq[1];
+                    // Independent squared-distance floating-point tolerance.
                     assert!(distance <= dx * dx + dy * dy + 1e-10);
                 }
             }

@@ -1374,3 +1374,29 @@ existing backend/API/Python evidence remains applicable because its owners are
 unchanged. Original failed preparatory guard/cache checks remain distinguished
 from successful acceptance. Final boundary, numerical review, session isolation
 and hosted/installed lifecycle acceptance remain separate tasks.
+
+## UIU-DS-01 decision-region facade accepted
+
+The [receiver-region evidence](downstream-region-evidence.json) records removal
+of Qt's duplicate nearest-reference sorting and polygon clipping. The adapter
+queries accepted `Simulation::decision_region` at the existing unit-energy plane
+and maps owned coordinates into the same four display fields. Unsupported and
+out-of-range selectors produce empty geometry without indexing a private table.
+No public API, backend algorithm, saved setting or QML contract changes.
+
+The original histogram and geometric-containment tests remain, covering square
+16-QAM, cross 128-QAM and 4096-QAM with the same numerical assertions. Reference
+coordinates now come from public `constellation_reference`. A third focused case
+covers unsupported and overflowing order/label selectors. All three scoped Rust
+cases, three QML soft-display cases and sixteen boundary regressions pass, with
+Qt formatting/Clippy, optimized build and six native project/startup checks.
+Every other active guard and the original snapshot remain exact. The retired
+entry retains its history; 43 frozen files and 143 direct scientific access sites
+remain alongside three dependency exceptions.
+
+The confidence histogram implementation remains byte-for-byte unchanged and
+still needs the coupled receiver-result migration. Retiring this direct-import
+entry does not accept that numerical presentation or the parent task. Final
+numeric, zero-exception, session and unified runtime gates remain pending. Existing
+backend/Rust-Python scientific acceptance remains unchanged; no non-Qt rerun was
+needed for this consumer-only replacement.

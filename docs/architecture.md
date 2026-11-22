@@ -1179,8 +1179,10 @@ calls remain unchanged behind the explicit relocated legacy guard until DS-01's
 public-API adoption units remove them. The first settings adapter now uses
 `merlin::downstream::TransmissionConfiguration` for admission and symbol timing;
 its sample-rate display uses the named SI conversion under
-`src/shared/presentation/constants.rs`. All other scientific consumers retain
-their guarded migration status. This is partial API adoption, not final
+`src/shared/presentation/constants.rs`. Receiver nearest-symbol display geometry
+also comes from `Simulation::decision_region`; Qt maps its owned display fields.
+The existing confidence histogram still awaits result-backed adoption. Remaining
+scientific consumers retain their migration status. This is partial API adoption, not final
 API-boundary or session-isolation acceptance.
 
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).

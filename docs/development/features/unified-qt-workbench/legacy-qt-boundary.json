@@ -569,17 +569,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/instruments/receiver/soft_display.rs",
-      "sha256": "d4be913c06a242898401b6b7677b7205dad0965e744fa8cbaaa5d8d76ac253c9",
-      "sites": [
-        {
-          "line": 6,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/instruments/receiver/verification.rs",
       "sha256": "fceeed06ad8f860f887167c9ab01cb69c3dcaac388debba2155c7cc1e8525648",
       "sites": [
@@ -2620,6 +2609,23 @@
       "unit": "OFDM settings facade",
       "reason": "Public facade owns configuration admission and symbol timing; no direct scientific crate access remains.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-ofdm-settings-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/soft_display.rs",
+        "sha256": "d4be913c06a242898401b6b7677b7205dad0965e744fa8cbaaa5d8d76ac253c9",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver decision-region facade",
+      "reason": "Nearest-reference geometry comes from the accepted public query; no direct scientific crate access remains. Existing confidence histogram still awaits coupled result-backed adoption.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-decision-region-facade-accepted"
     }
   ]
 }

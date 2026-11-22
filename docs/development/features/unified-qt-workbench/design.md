@@ -1720,3 +1720,31 @@ This unit delivers part of REQ-UIU-02/03/08/09 under UIU-DS-01, with the canonic
 [public API boundary](../../../architecture.md#unified-qt-public-api-boundary)
 and [task](../../checklist.md#task-uiu-ds-01) retaining ownership. No new public API,
 persisted setting, UI control, scientific mode or user-visible wording is introduced.
+
+## UIU-DS-01 receiver decision-region facade unit
+
+The next independent consumer is
+`apps/qt/src/downstream/instruments/receiver/soft_display.rs::neighborhood`.
+Replace its local nearest-reference sorting and half-plane clipping with accepted
+`merlin::downstream::Simulation::decision_region`. Keep the existing normalized
+unit-amplitude display plane, `center`, `radius`, `references` and `polygon` JSON
+fields and empty unsupported result. Configuration, waveform, receiver decisions
+and decoder inputs remain unchanged. The backend supplies all geometry; Qt maps
+owned fields and reference coordinates only. No new public API is required.
+
+| Path and symbol | Existing contract / gap | Decision and owner |
+| --- | --- | --- |
+| `receiver/soft_display.rs::neighborhood` | Existing private table access and duplicate clipping | ADAPT to the public decision-region query and retire the file's direct-access guard entry. |
+| `Simulation::decision_region` / `constellation_reference` | Accepted Rust/Python geometry and independent scientific tests | REUSE unchanged; use public reference pages in the existing Qt geometric containment test. |
+| `receiver/soft_display.rs::confidence` | Existing retained-value histogram with unchanged caller contract | DEFER its result-backed projection to the coupled receiver-result adoption; no new histogram algorithm or scientific acceptance in this unit. |
+| `legacy-qt-boundary.json` | One whole-file source exception | RETIRE the exact prior entry; preserve its history and every remaining exception unchanged. |
+
+This is partial UIU-DS-01 delivery for REQ-UIU-02/03/08/09 under the
+[public API boundary](../../../architecture.md#unified-qt-public-api-boundary).
+Preserve all existing test assertions and square/cross-QAM parameter coverage.
+Add rejected-order/label/width handling, keeping valid view geometry compatible.
+Run targeted Qt Rust geometry/histogram and QML soft-display cases, Qt Clippy,
+the strict boundary and its negative cases, then build and smoke the optimized
+native executable. Backend, native Python and saved-project owners are unchanged.
+The parent remains unchecked; histogram/result migration and final numeric review
+retain their separate acceptance obligations.
