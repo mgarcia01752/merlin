@@ -71,6 +71,26 @@ impl PySequenceOptions {
         }))
     }
 
+    /// Queries Rust's replay capacity without a profile, captures or admitted sequence.
+    ///
+    /// # Arguments
+    /// * `transmission` - Immutable native validated OFDM clock/numerology.
+    /// * `duration` - Checked source observation duration, distinct from host runtime.
+    ///
+    /// # Returns
+    /// Bounded original-capture capacity; static modes ignore the dormant interval.
+    /// Inputs remain unchanged and no source, capture, profile or simulation is created.
+    ///
+    /// # Errors
+    /// Shared zero-temporal-interval and timing failures raise ApiError.
+    fn capacity(
+        &self,
+        transmission: &PyTransmission,
+        duration: &PyObservationDuration,
+    ) -> PyResult<usize> {
+        self.0.capacity(&transmission.0, duration.0).map_err(error)
+    }
+
     /// Reads the accepted policy name without changing scientific state.
     /// # Returns
     /// single, average, hold or interpolate.

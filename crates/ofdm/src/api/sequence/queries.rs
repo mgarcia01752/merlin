@@ -2,8 +2,49 @@
  * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-//! Pure bounded queries over an admitted immutable measurement sequence.
+//! Pure bounded clock/capacity queries and admitted immutable measurement observations.
 use super::*;
+
+impl MeasurementSequenceOptions {
+    /// Queries replay selection capacity before profile or capture admission.
+    ///
+    /// # Arguments
+    /// * `transmission` - Immutable validated OFDM sample-clock/numerology configuration.
+    /// * `duration` - Checked source observation interval, distinct from host runtime.
+    ///
+    /// # Returns
+    /// One for Single, the shared capture bound for static Average, or bounded temporal
+    /// reachability strictly before the observation ends. Static modes ignore a dormant
+    /// interval; epoch tolerance does not change the synthetic clock. No input mutates,
+    /// and no source, capture, profile, RNG or simulation is created or executed.
+    ///
+    /// # Errors
+    /// Preserves timing/overflow/insufficient-symbol errors; InvalidInput for a zero
+    /// temporal interval, which cannot define a replay clock.
+    pub fn capacity(
+        &self,
+        transmission: &TransmissionConfiguration,
+        duration: ObservationDuration,
+    ) -> ApiResult<usize> {
+        let symbols = transmission.timing(duration)?.complete_symbols;
+        match self.mode {
+            MeasurementMode::Single => Ok(1),
+            MeasurementMode::Average => Ok(MAX_SEQUENCE_CAPTURES),
+            MeasurementMode::Hold | MeasurementMode::Interpolate => {
+                if self.interval_symbols == 0 {
+                    return Err(ApiError::new(
+                        ErrorCode::InvalidInput,
+                        "Replay interval must be greater than zero.",
+                    ));
+                }
+                Ok(
+                    ((symbols.saturating_sub(1) / self.interval_symbols).saturating_add(1))
+                        .min(MAX_SEQUENCE_CAPTURES as u64) as usize,
+                )
+            }
+        }
+    }
+}
 
 impl MeasurementSequence {
     /// Reports the accepted synthetic clock without altering original capture times.
@@ -29,13 +70,7 @@ impl MeasurementSequence {
     /// # Errors
     /// Preserves exact timing/overflow/insufficient-symbol errors.
     pub fn capacity(&self, duration: ObservationDuration) -> ApiResult<usize> {
-        let symbols = self.transmission.timing(duration)?.complete_symbols;
-        Ok(match self.options.mode {
-            MeasurementMode::Single => 1,
-            MeasurementMode::Average => MAX_PLAYBACK_FRAMES,
-            _ => ((symbols.saturating_sub(1) / self.options.interval_symbols).saturating_add(1))
-                .min(MAX_PLAYBACK_FRAMES as u64) as usize,
-        })
+        self.options.capacity(&self.transmission, duration)
     }
 
     /// Queries normalized residual powers at an explicit synthetic physical symbol.

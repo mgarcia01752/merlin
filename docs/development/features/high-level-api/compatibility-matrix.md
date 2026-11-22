@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-564 explicit public Rust operations and 537 installed native Python entries with
+565 explicit public Rust operations and 538 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/source-profile-compatibility-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/idle-replay-capacity-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 112 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -22,6 +22,14 @@ Original byte IDs can receive editor geometry checks without becoming run IDs.
 All previous 563/536 rows, class exports, constructors and signatures remain
 unchanged. Its 11 Rust and 13 installed native cases establish scoped acceptance;
 Qt consumption remains UIU-DS-01. Completed API/FEC/planning gates stay closed.
+
+The [idle replay-capacity prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-idle-replay-capacity-api-accepted)
+adds one options query in each language and retains every earlier row/export.
+Admitted sequences delegate to the same clock calculation. Six Rust and thirteen
+installed native cases pass strict clock/interval boundaries and original sequence
+behavior, with [exact execution records](../unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json).
+The query needs no scientific inputs and does not change existing observation
+duration admission. Qt selection-status adoption remains UIU-DS-01.
 
 The additive [UIU-API-01 admission/preview acceptance](../unified-qt-workbench/validation.md#uiu-api-01-public-admission-accepted)
 appends 99 Rust and 75 native rows, retaining every original row and historical

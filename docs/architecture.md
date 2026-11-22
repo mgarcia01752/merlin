@@ -1198,6 +1198,11 @@ now provides a passive public OCD/source-catalog check with
 [paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-source-profile-compatibility-api-accepted).
 Original byte-sized source IDs remain separate from checked run IDs. The operation
 reuses existing backend geometry validation; its Qt consumer remains pending.
+The next [idle replay-capacity prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-idle-replay-capacity-api-prerequisite)
+now exposes the existing clock query on immutable sequence options before profile/
+capture admission, with [paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-replay-capacity-api-accepted).
+Admitted sequences share that backend query without narrowing their duration
+domain. Qt's selection-status consumer remains pending.
 
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).

@@ -1850,3 +1850,52 @@ with exact callable metadata and preserved prior rows. Eleven Rust and thirteen
 installed-native cases pass; the source/test-style assertion corrections remain
 recorded separately. The public extension is ready for its focused commit before
 any Qt source-catalog consumer changes.
+
+## UIU-DS-01 idle replay-capacity API prerequisite
+
+The live `bridge/measurement_input.rs::selection_status` calls
+`measurement_input/model.rs::Options::capacity` once CWB timing is accepted,
+including when no profile or measurement sequence can yet be admitted. The
+existing public `MeasurementSequence::capacity` requires that admitted sequence.
+Do not invent dummy scientific inputs or keep a second temporal-capacity formula
+inside Qt. This is the next actual UIU-DS-01 admission-observation gap, under
+REQ-UIU-02/07/09; completed planning/FEC/API milestones remain unchanged.
+
+Independently validated Rust operation on the existing immutable options model:
+
+```rust
+pub fn capacity(
+    &self,
+    transmission: &TransmissionConfiguration,
+    duration: ObservationDuration,
+) -> ApiResult<usize>;
+```
+
+Python mirrors this as
+`MeasurementSequenceOptions.capacity(transmission: TransmissionConfiguration, duration: ObservationDuration) -> int`.
+Move the existing public sequence query's clock/strict-end capacity calculation
+to this options operation, then delegate the original method to it. Preserve the
+original API's accepted observation-duration domain and Single/Average/temporal
+results. Zero temporal intervals receive a structured InvalidInput rather than
+division by zero; static modes continue to ignore dormant intervals. The shared
+capture-count bound stays authoritative. Association tolerance remains separate
+from the synthetic replay clock. No source, capture, profile, RNG or run is needed.
+Qt's existing narrower CWB duration admission remains its consumer policy; this
+query must not narrow the pre-existing sequence API.
+
+| Path and symbol | Existing contract / gap | Decision and owner |
+| --- | --- | --- |
+| `crates/ofdm/src/api/sequence/queries.rs::MeasurementSequence::capacity` | Existing exact public clock query, needs admitted inputs | SHARE its calculation through `MeasurementSequenceOptions::capacity` in the same owner and delegate the unchanged method. |
+| `bindings/python/src/sequence.rs::PySequenceOptions` | Existing native immutable options, deferred interval admission | ADD thin Rust delegation and matching shipped stub; retain constructor/defaults and argument conversions. |
+| `crates/ofdm/tests/api_measurement_sequence.rs`, native counterpart | Original admitted-sequence timing/power/ownership cases | RETAIN and extend with literal both-spacing strict boundaries, zero/static/maximum intervals, resource saturation and unchanged timing/options. |
+| Current architecture, checklist and operation matrix | Idle capacity currently exists only in Qt | LINK the exact public prerequisite and paired evidence; keep Qt sources and guard debt frozen until separately validated/committed. |
+
+Validate Rust first, then a fresh installed native wheel, existing sequence and
+admission cases, Clippy/format/analysis-only checks and exact API metadata. Commit
+this API prerequisite independently before the Qt consumer migration. This adds
+no resource budget, waveform mode, schema, dependency or scientific algorithm.
+
+The [idle-capacity API prerequisite is accepted](validation.md#uiu-ds-01-idle-replay-capacity-api-accepted)
+with six Rust and thirteen installed native cases, exact operation tracing and
+preserved prior exports. The calculation now has one backend implementation.
+Qt's consumer remains unchanged until the independent API commit succeeds.

@@ -1479,3 +1479,33 @@ small additive query receiving scoped acceptance rather than a claimed full reru
 The Qt tree, executable, dependency records and all 40 current guard entries remain
 unchanged in this prerequisite. Commit this public extension before adapting its
 profile editor consumer. UIU-DS-01 and final numeric/unified runtime gates stay open.
+
+## UIU-DS-01 idle replay-capacity API accepted
+
+The [idle-capacity evidence](idle-replay-capacity-evidence.json) accepts the next
+backend prerequisite before its Qt consumer. Rust
+`MeasurementSequenceOptions::capacity` and its native Python method expose the
+existing complete-symbol clock calculation without a profile, captures or sequence.
+The previous admitted-sequence method delegates to that same owner. Existing
+duration admission, resource saturation, static modes and temporal results remain
+compatible; zero temporal intervals return InvalidInput rather than dividing by zero.
+Static modes ignore dormant intervals and original epoch tolerance remains separate.
+
+Six Rust sequence cases and thirteen installed native sequence/admission/namespace
+cases pass. Independent 1-ms anchors cover 23/44 complete symbols for 25/50 kHz
+with a 512-sample prefix, strict final-symbol positions, zero/static/maximum intervals,
+the existing one-hour API duration domain and 256-capture saturation. Options and
+timing remain unchanged, and original admitted-sequence power/ownership cases pass.
+No source or RNG advances; this reports possible positions, not admitted inputs.
+
+Root/native Clippy, formatting, analysis-only compilation and 34 API metadata
+regressions pass. Fresh complete-feature rustdoc and actual installed native metadata
+validate all 565 Rust/538 native operation rows against recorded executions. Every
+previous row, class export, constructor and signature remains exact. Full historical
+backend/native acceptance is retained separately from this scoped additive query.
+
+All Qt sources and forty current guard entries remain unchanged; the three
+scientific dependency exceptions and 140 direct sites still require migration.
+Commit the API prerequisite before adapting selection status. No resource policy,
+operating mode, schema or dependency is added. UIU-DS-01 and final numeric/unified
+runtime acceptance remain open.

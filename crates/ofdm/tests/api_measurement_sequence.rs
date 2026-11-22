@@ -42,6 +42,69 @@ fn close(left: f64, right: f64) {
 }
 
 #[test]
+fn idle_capacity_has_literal_strict_boundaries_without_profile_or_captures() {
+    // Independent one-millisecond anchors with a 512-sample CP: 25 kHz has
+    // 23 complete 42.5-us symbols; 50 kHz has 44 complete 22.5-us symbols.
+    let duration = ObservationDuration::from_milliseconds(1).unwrap();
+    for (spacing, complete_symbols) in [
+        (SubcarrierSpacing::Khz25, 23),
+        (SubcarrierSpacing::Khz50, 44),
+    ] {
+        let configuration = TransmissionConfiguration::new(TransmissionSettings {
+            subcarrier_spacing: spacing,
+            ..Default::default()
+        })
+        .unwrap();
+        let before = serde_json::to_value(configuration.settings()).unwrap();
+        for mode in [MeasurementMode::Hold, MeasurementMode::Interpolate] {
+            let mut policy = MeasurementSequenceOptions {
+                mode,
+                interval_symbols: complete_symbols - 1,
+                tolerance: AssociationTolerance::ZERO,
+            };
+            assert_eq!(policy.capacity(&configuration, duration).unwrap(), 2);
+            policy.interval_symbols = complete_symbols;
+            assert_eq!(policy.capacity(&configuration, duration).unwrap(), 1);
+            policy.interval_symbols = u64::MAX;
+            assert_eq!(policy.capacity(&configuration, duration).unwrap(), 1);
+            policy.interval_symbols = 0;
+            assert_eq!(
+                policy
+                    .capacity(&configuration, duration)
+                    .unwrap_err()
+                    .code(),
+                ErrorCode::InvalidInput
+            );
+            assert_eq!(policy.interval_symbols, 0);
+            policy.interval_symbols = 1;
+            assert_eq!(
+                policy.capacity(&configuration, duration).unwrap() as u64,
+                complete_symbols
+            );
+            // Independent existing policy/domain anchors: at most 256 captures,
+            // with the accepted one-hour observation domain retained for this API.
+            let long_duration = ObservationDuration::from_milliseconds(3_600_000).unwrap();
+            assert_eq!(policy.capacity(&configuration, long_duration).unwrap(), 256);
+        }
+        for (mode, expected) in [
+            (MeasurementMode::Single, 1),
+            (MeasurementMode::Average, 256),
+        ] {
+            let policy = MeasurementSequenceOptions {
+                mode,
+                interval_symbols: 0, // Dormant static interval is intentionally ignored.
+                tolerance: AssociationTolerance::ZERO,
+            };
+            assert_eq!(policy.capacity(&configuration, duration).unwrap(), expected);
+        }
+        assert_eq!(
+            serde_json::to_value(configuration.settings()).unwrap(),
+            before
+        );
+    }
+}
+
+#[test]
 fn average_names_every_original_with_equal_linear_power_weight() {
     let originals = vec![measured(40.0), measured(20.0), measured(30.0)];
     let hashes = originals

@@ -32,6 +32,37 @@ def sequence(mode, captures):
 
 
 class MeasurementSequenceTests(unittest.TestCase):
+    def test_idle_capacity_literal_clock_boundaries_need_no_admitted_sequence(self):
+        # Independent CP=512 anchors: 23 complete symbols at 25 kHz and
+        # 44 complete symbols at 50 kHz per millisecond (42.5/22.5 us periods).
+        duration = m.ObservationDuration(1)
+        maximum_interval = (1 << 64) - 1  # Independent unsigned 64-bit interval bound.
+        for spacing, complete_symbols in [(25000, 23), (50000, 44)]:
+            settings = m.TransmissionConfiguration().settings
+            settings['subcarrier_spacing'] = str(spacing)
+            configuration = m.TransmissionConfiguration.from_json(json.dumps(settings).encode())
+            before = configuration.to_json()
+            for mode in ('hold', 'interpolate'):
+                policy = m.MeasurementSequenceOptions(mode, complete_symbols - 1)
+                self.assertEqual(policy.capacity(configuration, duration), 2)
+                self.assertEqual(policy.interval_symbols, complete_symbols - 1)
+                for interval, expected in [(complete_symbols, 1), (maximum_interval, 1), (1, complete_symbols)]:
+                    policy = m.MeasurementSequenceOptions(mode, interval)
+                    self.assertEqual(policy.capacity(configuration, duration), expected)
+                # Preserve the API's one-hour observation domain and its
+                # independent existing 256-capture resource saturation.
+                self.assertEqual(policy.capacity(configuration, m.ObservationDuration(3600000)), 256)
+                invalid = m.MeasurementSequenceOptions(mode, 0)
+                with self.assertRaises(m.ApiError) as error:
+                    invalid.capacity(configuration, duration)
+                self.assertEqual(error.exception.code, m.ErrorCode.InvalidInput)
+                self.assertEqual(invalid.interval_symbols, 0)
+            for mode, expected in [('single', 1), ('average', 256)]:
+                policy = m.MeasurementSequenceOptions(mode, 0)
+                self.assertEqual(policy.capacity(configuration, duration), expected)
+                self.assertEqual(policy.interval_symbols, 0)
+            self.assertEqual(configuration.to_json(), before)
+
     def test_average_names_every_original_and_retains_owned_copies(self):
         originals = [measured(40), measured(20), measured(30)]
         hashes = [v.provenance['original_sha256'] for v in originals]

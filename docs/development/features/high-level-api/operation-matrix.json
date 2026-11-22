@@ -5,14 +5,14 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "a38ad2d06eb8ab61d96994ed731c2cb2ffc09f99 plus exact DS-01 source compatibility candidate",
-    "inventory_command": "Installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/ds-01-source-compat-native-final/native-exports.json",
-    "native_sha256": "28457da57868f89080ab815aa5f4036a9a9cef8e1acb8d5c3896b575fc5bcc83",
-    "scope": "Fresh installed CPython 3.10 metadata and 13 scoped admission/catalog/namespace cases. Every previous export/signature preserved; prior complete 150-case scientific acceptance remains historical evidence.",
+    "revision": "4ce4833e88b3f505826e29a5dba9123c2869888b plus exact DS-01 idle capacity candidate",
+    "inventory_command": "Installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/ds-01-idle-capacity-native/native-exports.json",
+    "native_sha256": "086f66c4b54edc1b1e39558a616c4bc1481d281ab2316b7b192c7921d8906a8a",
+    "scope": "Fresh installed CPython 3.10 metadata and 13 scoped sequence/admission/namespace cases. Original complete backend/native acceptance remains historical; every previous operation/export stays exact.",
     "preserved_prior_inventory": {
-      "sha256": "76d64fb80b03f11e984a7e9c16c13d8d02299f9c443aa4598d0720ff9f6cc01d",
-      "root_and_namespace_operation_instances": 936,
-      "scope": "Exact previous class/alias/constructor metadata and each operation kind/signature; additive method only."
+      "sha256": "db3e24732ae387e1b2eb0bffec8629bc28284cc3fbae4219595961c0cb26c44c",
+      "root_and_namespace_operation_instances": 938,
+      "scope": "Exact prior class/alias/constructor metadata and operation kind/signature; additive options capacity method only."
     }
   },
   "contracts": {
@@ -113,7 +113,9 @@
     "evidence.uiu-api-05-project": "../unified-qt-workbench/project-evidence.json, ../unified-qt-workbench/api-05-project-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-05-direction-project-unit preserve exact source/wheel/command/test hashes, actual Rust/native scientific parity and prior history.",
     "status.uiu-api-05-project": "Accepted UIU-API-05 public project backend: full747-case Rust workspace,139 analysis,14 API examples,4 fixture-generator and150 installed native cases pass. Direction-tagged input admission/serialization returns existing independent DS requests and US sessions. Qt Open/Save/dirty/recovery adoption and concurrent runtime remain separate tasks.",
     "evidence.uiu-ds-01-source-compat": "../unified-qt-workbench/source-profile-compatibility-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-source-profile-compatibility-api-accepted: scoped Rust/native catalog/admission checks, actual installed metadata, unchanged originals and exact prior-operation preservation.",
-    "status.uiu-ds-01-source-compat": "Implemented passive source-catalog OCD geometry for original byte IDs, without run admission. Scoped backend prerequisite accepted; Qt adoption and final runtime gates remain UIU-DS-01/UIU-QA-01."
+    "status.uiu-ds-01-source-compat": "Implemented passive source-catalog OCD geometry for original byte IDs, without run admission. Scoped backend prerequisite accepted; Qt adoption and final runtime gates remain UIU-DS-01/UIU-QA-01.",
+    "evidence.uiu-ds-01-idle-capacity": "../unified-qt-workbench/idle-replay-capacity-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-idle-replay-capacity-api-accepted: literal both-clock strict boundaries, fresh installed native query and exact original API/Qt preservation.",
+    "status.uiu-ds-01-idle-capacity": "Implemented passive capacity on immutable sequence options, shared by the unchanged admitted-sequence method. Scoped paired prerequisite accepted; Qt selection-status adoption and final UI gates remain UIU-DS-01/UIU-QA-01."
   },
   "type_exports": {
     "downstream": [
@@ -32046,6 +32048,53 @@
       },
       "evidence": "evidence.uiu-ds-01-source-compat",
       "status": "status.uiu-ds-01-source-compat"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::MeasurementSequenceOptions::capacity",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn capacity( &self, transmission: &TransmissionConfiguration, duration: ObservationDuration, ) -> ApiResult<usize>",
+        "source_file": "crates/ofdm/src/api/sequence/queries.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.MeasurementSequenceOptions.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.MeasurementSequenceOptions.capacity",
+        "declaration": "merlin.downstream.MeasurementSequenceOptions.capacity"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<usize>",
+        "scope": "Permitted capture positions before the complete-symbol observation boundary, bounded by the existing collection policy. No actual selected count, profile/capture admission, source/RNG state or run. Static modes ignore dormant intervals; zero temporal interval rejects."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_measurement_sequence.rs::idle_capacity_has_literal_strict_boundaries_without_profile_or_captures"
+        ],
+        "python": {
+          "status": "installed native owner acceptance",
+          "cases": [
+            "bindings/python/tests/test_measurement_sequence.py::MeasurementSequenceTests.test_idle_capacity_literal_clock_boundaries_need_no_admitted_sequence"
+          ],
+          "scope": "Both 25/50 kHz clocks, strict final-symbol boundaries, zero/static/maximum intervals, one-hour observation domain and resource saturation without scientific inputs."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-idle-capacity",
+      "status": "status.uiu-ds-01-idle-capacity"
     }
   ],
   "executed_records": [
@@ -32074,7 +32123,8 @@
     "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -66908,6 +66958,59 @@
       },
       "evidence": "evidence.uiu-ds-01-source-compat",
       "status": "status.uiu-ds-01-source-compat"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.MeasurementSequenceOptions.capacity",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::MeasurementSequenceOptions",
+        "source_file": "bindings/python/src/sequence.rs",
+        "symbol": "PySequenceOptions",
+        "signature": "pub fn capacity( &self, transmission: &TransmissionConfiguration, duration: ObservationDuration, ) -> ApiResult<usize>",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "merlin::downstream::MeasurementSequenceOptions::capacity",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "capacity",
+        "kind": "method",
+        "signature": "(self, /, transmission, duration)",
+        "declaration": "MeasurementSequenceOptions.capacity"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::MeasurementSequenceOptions",
+        "scope": "Owned finite integer capacity from Rust. Caller retains immutable timing/options; no profile/capture/sequence construction. Rust errors retain categories and primitive conversion errors stay native."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_measurement_sequence.rs::idle_capacity_has_literal_strict_boundaries_without_profile_or_captures"
+        ],
+        "python": {
+          "status": "installed native owner acceptance",
+          "cases": [
+            "bindings/python/tests/test_measurement_sequence.py::MeasurementSequenceTests.test_idle_capacity_literal_clock_boundaries_need_no_admitted_sequence"
+          ],
+          "scope": "Both 25/50 kHz clocks, strict final-symbol boundaries, zero/static/maximum intervals, one-hour observation domain and resource saturation without scientific inputs."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-idle-capacity",
+      "status": "status.uiu-ds-01-idle-capacity"
     }
   ],
   "native_type_exports": {
@@ -67972,6 +68075,18 @@
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
         "preserved_class_exports": 59,
         "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "a38ad2d06eb8ab61d96994ed731c2cb2ffc09f99 plus exact DS-01 source compatibility candidate",
+      "inventory_command": "Installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/ds-01-source-compat-native-final/native-exports.json",
+      "native_sha256": "28457da57868f89080ab815aa5f4036a9a9cef8e1acb8d5c3896b575fc5bcc83",
+      "scope": "Fresh installed CPython 3.10 metadata and 13 scoped admission/catalog/namespace cases. Every previous export/signature preserved; prior complete 150-case scientific acceptance remains historical evidence.",
+      "preserved_prior_inventory": {
+        "sha256": "76d64fb80b03f11e984a7e9c16c13d8d02299f9c443aa4598d0720ff9f6cc01d",
+        "root_and_namespace_operation_instances": 936,
+        "scope": "Exact previous class/alias/constructor metadata and each operation kind/signature; additive method only."
       }
     }
   ],

@@ -75,6 +75,7 @@ measurement planner with identical grid, epoch, required-coverage and mode check
 | --- | --- | --- |
 | `MeasurementSequence::new(&Dpd, &TransmissionConfiguration, Vec<RxMer>, MeasurementSequenceOptions)` | `MeasurementSequence(profile, transmission, captures, options)` | Unique originals in caller order; maximum 256 captures, 4,000,000 values and 96 MiB original bytes. Count rejects before traversal; aggregate limits reject before backend frame cloning. |
 | `MeasurementSequenceOptions { mode, interval_symbols, tolerance }` | `MeasurementSequenceOptions(mode="single", interval_symbols=1, tolerance=None)` | Typed original-epoch tolerance; Python None requires exact epoch matching. Temporal modes require a positive symbol interval. |
+| `MeasurementSequenceOptions::capacity(&TransmissionConfiguration, ObservationDuration)` | `options.capacity(transmission, duration) -> int` | Idle source-clock reachability before a profile/capture/sequence exists; the same backend query used by admitted sequences. Static modes ignore dormant intervals; zero temporal intervals reject. |
 | `info() -> MeasurementSequenceInfo` | `.info() -> dict` | Mode/count and synthetic symbol interval/span in milliseconds; original epochs stay in provenance. |
 | `capture(usize) -> ApiResult<&RxMer>` | `.capture(index) -> RxMer` | Rust borrows the immutable original; Python returns an independently owned capture snapshot. Invalid positions reject. |
 | `at(u64) -> MeasurementResidual` | `.at(symbol) -> dict` | Dimensionless normalized residual power on the original grid plus every actual contributor's index, linear-power weight and provenance. |
@@ -91,24 +92,32 @@ residual power, preserving missing-value semantics; it does no dB interpolation.
 `capacity` returns one for Single, 256 for Average, or the bounded number of
 possible temporal positions in the requested complete-symbol duration. It does
 not report how many captures were selected. `info().source_count` reports that.
+Options can query this capacity before sequence admission without dummy scientific
+inputs. It preserves the existing checked observation-duration domain, independently
+of the Qt CWB's narrower duration policy. The result describes positions before
+the complete-symbol boundary; it does not validate selected capture count,
+original epochs, profile compatibility or run readiness. No source or RNG advances.
 
 ```python
-from merlin.downstream import AssociationTolerance, MeasurementSequence, MeasurementSequenceOptions
+from merlin.downstream import AssociationTolerance, MeasurementSequence, MeasurementSequenceOptions, ObservationDuration
 
 # profile, transmission and captures are previously admitted inputs.
 options = MeasurementSequenceOptions("interpolate", 10, AssociationTolerance(90000))
+capacity = options.capacity(transmission, ObservationDuration(1))  # One-ms source window; no sequence needed.
 sequence = MeasurementSequence(profile, transmission, captures, options)
 midpoint = sequence.at(5)  # original contributor epochs are retained
 ```
 
 The immutable sequence supports independent concurrent queries; Python releases
 the GIL for backend admission and bounded scientific queries. Returned dictionaries
-are caller-owned copies. Construction and query errors do not change accepted
-captures or another sequence. Original/capture previews and equivalent sequence
-previews remain distinct. This operation does not extend the legacy saved-WB
-loader's single/average policy; temporal saved-project integration remains tracked
-under UIU-API-05. Designer, channel composition and idle TX previews still await
-separate API acceptance.
+are caller-owned copies; scalar clock/capacity metadata uses immutable native reads.
+Construction and query errors do not change accepted captures or another sequence.
+Original/capture previews and equivalent sequence previews remain distinct.
+Legacy saved-WB loaders retain their documented single/average scope; the
+independent [saved full-loop preparation](saved-full-loop.md) supports accepted
+temporal projects. Designer admission below, [channel previews](channel-preview.md)
+and [idle TX previews](transmitter-preview.md) have their accepted backend contracts.
+Their remaining Qt adoption belongs to UIU-DS-01.
 
 ## Immutable RxMER Designer inputs
 

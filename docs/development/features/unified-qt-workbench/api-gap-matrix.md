@@ -208,3 +208,13 @@ resource, operating-mode or schema change is introduced.
 preserves every prior operation/export and completed planning/FEC/API gate.
 Qt consumers and their frozen debt remain UIU-DS-01 work; this backend extension
 is committed before any source-catalog admission replacement.
+
+## UIU-DS-01 idle replay-capacity follow-up
+
+The [idle-capacity prerequisite](design.md#uiu-ds-01-idle-replay-capacity-api-prerequisite)
+exposes the existing query through immutable `MeasurementSequenceOptions` before
+profile/capture admission. The admitted sequence delegates to the same backend
+calculation; no dummy inputs or duplicated Qt clock logic are required.
+[Scoped paired acceptance](validation.md#uiu-ds-01-idle-replay-capacity-api-accepted)
+preserves the original API duration domain and all prior operation rows.
+Qt selection status and its narrower CWB admission remain UIU-DS-01 consumer work.
