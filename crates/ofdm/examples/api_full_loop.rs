@@ -64,10 +64,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     });
     let cells = json!({"qam":observed.qam(FullLoopCellQuery {count:5,..Default::default()})?,
         "decisions":observed.cell_decisions(FullLoopCellQuery {count:3,..Default::default()})?});
+    let slicer = json!({"reference":Simulation::constellation_reference(128,2.0,3,5)?,
+        "region":Simulation::decision_region(128,0,1.0)?,
+        "cells":observed.cell_soft_view(FullLoopCellQuery {count:3,..Default::default()})?,
+        "decoder":observed.decoder_soft_view(0)?});
     println!(
         "{}",
         serde_json::to_string(
-            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages,"instruments":instruments,"messages":observed.plc_messages()?,"cells":cells})
+            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages,"instruments":instruments,"messages":observed.plc_messages()?,"cells":cells,"slicer":slicer})
         )?
     );
     Ok(())

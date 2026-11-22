@@ -78,7 +78,8 @@ print(window['element_start'], window['context']['sample_start_index'])
 
 The passive numerical operations below reuse those actual observations and existing
 scientific owners. [Selected receiver cells](full-loop-cells.md) add actual paired
-QAM/MER and bounded physical decisions. Remaining physical/reference/soft-display
+QAM/MER and bounded physical decisions; [reference and soft-value views](slicer-views.md)
+provide finite geometry and actual likelihood summaries. Physical-spectrum/role
 views and full source-catalog/sweep compatibility remain UIU-API-02 gates before
 Qt adoption.
 

@@ -5,6 +5,8 @@
 //! Bounded numeric receiver diagnostics; none are production decoder inputs.
 #[cfg(all(feature = "simulation", feature = "pnm-input"))]
 pub(crate) mod decisions;
+#[cfg(all(feature = "simulation", feature = "pnm-input"))]
+pub(crate) mod soft_view;
 use crate::{error::invalid, transmission::SubcarrierSpacing, types::IqPair, SimulationError};
 use serde::Serialize;
 

@@ -647,6 +647,37 @@ instantaneous FFT-bin power and authoritative physical-role views before their Q
 calls migrate; raw I/Q does not authorize Qt to compute scientific observations.
 No Qt presentation source changes during this unit.
 
+### UIU-API-02 slicer reference and soft-view unit
+
+Add passive `Simulation::constellation_reference(order, amplitude, start, count)`
+and `Simulation::decision_region(order, label, amplitude)` operations. Their
+scientific owner is a focused module under existing modulation/slicing, using the
+original label-ordered reference tables. Return owned labelled reference points
+(at most 4096 per query) or a finite local nearest-reference region, at most 49
+neighbor points and 64 polygon vertices. The region is the intersection of all
+reference half planes with an explicit finite viewport; it does not claim a
+bounded outer Voronoi cell. Validate order/label, positive finite amplitude,
+coordinate overflow and work limits. Preserve unit-energy versus known physical
+reference amplitude explicitly. These static operations never configure a session
+or run a PHY/source.
+
+Add `FullLoopResult::cell_soft_view(query)` and `decoder_soft_view(snapshot)` over
+actual existing selected-cell and retained coding-order LDPC observations. The
+existing receiver diagnostic owner supplies finite LLR statistics, two explicit
+40-bin display histograms spanning (-100,100) and (-10,10), endpoint counts and
+at most 1024 original-index min/max groups. Bound input to 32768 values, preserve
+original offsets/context and distinguish selected physical cells from coding
+order. No probabilities, empirical BER or new decoder inputs are inferred.
+
+Implement numerical preparation independently in Apache Rust owners; do not copy
+GPL Qt code. The backend returns scientific numbers and geometry; Qt retains pixel
+coordinates, labels, colors and chart layout. Python converts typed public calls
+to owned dictionaries and releases the GIL. Add independent BPSK/scale/region
+constraints, every accepted constellation geometry, literal histogram boundary/
+endpoint/index vectors, finite-work rejection and actual/direct-process parity.
+Trace through existing REQ-UIU-02/07/09/16/19/24 and UIU-API-02; physical-spectrum/
+role audit and complete catalog/sweep compatibility remain subsequent gates.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

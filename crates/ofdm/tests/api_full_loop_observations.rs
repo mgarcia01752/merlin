@@ -305,6 +305,103 @@ fn empty_and_invalid_cell_views_preserve_retained_availability_and_original_owne
 }
 
 #[test]
+fn static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs() {
+    use docsis_ofdm_fec::signal_processing::receiver::diagnostics::llr_statistics;
+    let reference = Simulation::constellation_reference(2, 2.0, 0, 0).unwrap();
+    assert_eq!(reference.points[0].iq, [2.0, 0.0]);
+    assert_eq!(reference.points[1].iq, [-2.0, 0.0]);
+    let region = Simulation::decision_region(2, 0, 1.0).unwrap();
+    assert_eq!(region.center_iq, [1.0, 0.0]);
+    assert_eq!(region.viewport_half_extent, 5.0);
+    assert_eq!(
+        Simulation::constellation_reference(8, 1.0, 0, 0)
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::UnsupportedCapability
+    );
+    assert_eq!(
+        Simulation::constellation_reference(16384, 1.0, 0, 4097)
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::ResourceLimit
+    );
+    assert_eq!(
+        Simulation::decision_region(16, 16, 1.0)
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::InvalidIdentifier
+    );
+    assert!(Simulation::decision_region(16, 0, f64::NAN).is_err());
+    let original = request();
+    let missing = original.run(&FullLoopControl::new()).unwrap();
+    assert_eq!(
+        missing.decoder_soft_view(0).err().unwrap().code(),
+        ErrorCode::MissingCoverage
+    );
+    let result = original
+        .with_observations(policy())
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    let cells = result
+        .qam(FullLoopCellQuery {
+            count: 3,
+            ..Default::default()
+        })
+        .unwrap();
+    let values: Vec<_> = cells
+        .cells
+        .iter()
+        .flat_map(|cell| cell.llrs.iter().copied())
+        .collect();
+    let view = result
+        .cell_soft_view(FullLoopCellQuery {
+            count: 3,
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!(view.source_plane, "post_descrambling_cell_llrs");
+    assert_eq!(view.selection.displayed_cells, 3);
+    assert_eq!(
+        serde_json::to_value(&view.view.statistics).unwrap(),
+        serde_json::to_value(llr_statistics(&values).unwrap()).unwrap()
+    );
+    assert_eq!(
+        view.view.full.shown_values
+            + view.view.negative_limit_count
+            + view.view.positive_limit_count,
+        values.len()
+    );
+    let decoder = result.decoder_soft_view(0).unwrap();
+    assert_eq!(decoder.total_elements, 16200);
+    assert_eq!(decoder.element_start, 0);
+    assert_eq!(decoder.view.statistics.count, 16200);
+    assert!(decoder.view.sequence.len() <= 1024);
+    assert_eq!(decoder.view.sequence.last().unwrap().last, 16199);
+    assert_eq!(
+        serde_json::to_value(&decoder.view.statistics).unwrap(),
+        serde_json::to_value(result.llr_statistics(0).unwrap().statistics).unwrap()
+    );
+    assert!(result.decoder_soft_view(usize::MAX).is_err());
+    let pilot = result
+        .cell_soft_view(FullLoopCellQuery {
+            stream: FullLoopCellStream::ContinuousPilots,
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!(pilot.view.statistics.count, 0);
+    assert!(pilot.view.sequence.is_empty());
+    assert_eq!(result.report().summary.comparison.bit_errors, 0);
+    assert_eq!(
+        serde_json::to_value(result.decoder_soft_view(0).unwrap()).unwrap(),
+        serde_json::to_value(result.decoder_soft_view(0).unwrap()).unwrap()
+    );
+}
+
+#[test]
 fn passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner() {
     use docsis_ofdm_fec::signal_processing::waveform::spectrum::estimate;
     let result = request()

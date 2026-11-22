@@ -14,6 +14,7 @@ mod options;
 mod profile_capture;
 mod quantities;
 mod receiver;
+mod references;
 mod reports;
 mod rxmer_export;
 mod sequence;

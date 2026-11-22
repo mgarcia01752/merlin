@@ -10,6 +10,7 @@ mod observations;
 mod options;
 mod request;
 mod result;
+mod soft;
 mod worker;
 use crate::{api, error, object_from_json};
 use control::PyFullLoopControl;

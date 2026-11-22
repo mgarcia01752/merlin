@@ -6,6 +6,7 @@
 mod models;
 mod queries;
 mod selection;
+mod soft;
 use super::*;
 pub use crate::signal_processing::{
     modulation::{
@@ -15,6 +16,7 @@ pub use crate::signal_processing::{
 };
 pub use models::*;
 use selection::{Cell, Selected};
+pub use soft::*;
 
 impl FullLoopCellQuery {
     /// Admits a strict bounded receiver selection without touching any report or source.

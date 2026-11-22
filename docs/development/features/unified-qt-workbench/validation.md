@@ -613,3 +613,41 @@ five native operations (503/484 total), with fresh compiled/installed signatures
 and passing named cases. No Qt source changes or Qt-adoption claim occur. Remaining
 decision-region/ideal-reference, detailed soft-display, physical-view audit and
 complete source-catalog/sweep gates keep API-02 unchecked.
+
+## UIU-API-02 slicer reference and soft-view unit
+
+[Exact source/test/wheel evidence](slicer-view-evidence.json),
+[owner/design](design.md#uiu-api-02-slicer-reference-and-soft-view-unit),
+[paired contract](../../../user/api/slicer-views.md) and
+[executed cases](api-02-slicer-operation-test-results.json) trace through the
+[architecture](../../../architecture.md#unified-qt-public-api-boundary) to the
+still-open [parent task](../../checklist.md#task-uiu-api-02).
+
+Fifteen targeted integration/scientific cases and twenty-two library cases pass.
+Six focused numerical-owner cases cover every accepted reference geometry,
+independent BPSK half-plane/viewport and known-amplitude vectors, original label
+paging, finite/unsupported/work errors, literal histogram endpoints/zero/indices
+and bounded exact extrema. Every tested decision-region vertex is checked against
+every original reference using independent squared distances. Closed boundaries
+retain the original slicer's lowest-label tie rule; outer regions are explicitly
+clipped to a finite viewport rather than claimed bounded.
+
+An additional float-boundary audit found that offset-based histogram placement
+could round a tiny negative value into the zero bin, or an immediately preceding
+float into the next interval. The new diagnostic owner now uses direct comparisons
+against explicit bin edges. Independent tiny-sign and adjacent-float vectors pass;
+no original likelihood value, decoder operation or existing API result is changed.
+The final targeted Rust run, current Clippy and rebuilt installed wheel use this
+corrected candidate. The earlier transient wheel is not acceptance evidence.
+
+Actual public queries preserve physical-cell versus coding-order soft planes,
+original offsets/totals, absent/protected data, finite work and independent owned
+results. All 139 analysis-only cases/doctest checks and warnings-denied facade/
+native-input/binding Clippy pass. The final Linux CPython 3.10 wheel passes all 99
+native cases, including three new cases and separate Rust-process reference,
+region and actual soft-view results. The matrix appends four Rust/six native
+operations (507/490 total), preserving all previous rows and alias-history records.
+The static operations retain both native Simulation/Merlin alias paths and their
+explicit delegation to the same public Rust Simulation operations.
+Qt sources and original scientific producers are unchanged; no Qt adoption is
+claimed. Physical-spectrum/role and complete catalog/sweep parity keep API-02 open.

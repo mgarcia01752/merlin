@@ -23,6 +23,8 @@ TX/RX data with explicit phase/reference/grid metadata and finite budgets,
 plus passive PSD, response, actual LDPC-input statistics and retained TX PLC messages.
 [Receiver cell observations](full-loop-cells.md) preserve actual matched QAM,
 all-selected MER and bounded physical decisions across payload/control/pilot roles.
+[Reference and soft-value views](slicer-views.md) provide original labelled
+constellations, finite decision regions and actual bounded likelihood summaries.
 
 For searchable class/method documentation generated from the actual APIs, see
 the [generated Rust/Python reference](../../reference/api-reference.md).

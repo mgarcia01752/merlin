@@ -5,9 +5,9 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "bd1392eba31cfaa18c615453d54e5d74bde9ef5a plus exact receiver-cell candidate manifest",
-    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-cell-native/native-exports.json",
-    "native_sha256": "eab465db02390e62e517962221ef56436967dc097e23e945761790062acde9fe",
+    "revision": "1fd4160bb2e35013135f1002d03e0e6dd8d0fbe2 plus exact slicer-reference/soft-view candidate manifest",
+    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-slicer-native-final/native-exports.json",
+    "native_sha256": "aa594b091e30b51408c9780c412dd05e2737ced20461bdb4e131698d7cc646a0",
     "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
     "legacy_compatibility": {
       "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
@@ -71,7 +71,9 @@
     "evidence.uiu-api-02-messages": "../unified-qt-workbench/plc-message-evidence.json, ../unified-qt-workbench/api-02-message-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-retained-plc-message-unit: actual source/wheel and exact successful owner/scientific/native cases.",
     "status.uiu-api-02-messages": "Implemented actual retained TX PLC frame/MAC/descriptor inspection with exact bytes, typed fields, original offsets and checked sample coverage. Selected-cell and complete catalog/sweep parity keep API-02 open; no Qt adoption.",
     "evidence.uiu-api-02-cells": "../unified-qt-workbench/receiver-cell-evidence.json, ../unified-qt-workbench/api-02-cell-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-selected-receiver-cell-unit: actual current source/wheel/scientific cases, plus explicit compiler alias correction preserving original records.",
-    "status.uiu-api-02-cells": "Implemented bounded actual receiver cell selection, all-selected nearest/TX-reference MER and physical decisions/actual soft statistics. Parent API-02 remains open for remaining physical/soft-display/reference views and complete catalog/sweep parity; no Qt adoption."
+    "status.uiu-api-02-cells": "Implemented bounded actual receiver cell selection, all-selected nearest/TX-reference MER and physical decisions/actual soft statistics. Parent API-02 remains open for remaining physical/soft-display/reference views and complete catalog/sweep parity; no Qt adoption.",
+    "evidence.uiu-api-02-slicer": "../unified-qt-workbench/slicer-view-evidence.json, ../unified-qt-workbench/api-02-slicer-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-slicer-reference-and-soft-view-unit: actual source/wheel and exact successful owner/scientific/native cases.",
+    "status.uiu-api-02-slicer": "Implemented owned labelled references, finite decision regions and actual selected-cell/coding-order soft views. Physical-spectrum/role and complete source-catalog/sweep parity keep API-02 open; no Qt adoption."
   },
   "type_exports": {
     "downstream": [
@@ -837,6 +839,46 @@
       },
       {
         "export": "merlin::downstream::FullLoopQamView",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopCellSoftView",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopDecoderSoftView",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopSoftEnvelope",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopSoftHistogram",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopSoftHistogramBin",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopSoftValueView",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::QamDecisionRegion",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::QamReferencePoint",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::QamReferenceView",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::QamRelativeReference",
         "kind": "struct"
       }
     ],
@@ -26625,6 +26667,306 @@
       },
       "evidence": "evidence.uiu-api-02-cells",
       "status": "status.uiu-api-02-cells"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::cell_soft_view",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn cell_soft_view( &self, query: FullLoopCellQuery, ) -> ApiResult<FullLoopCellSoftView>",
+        "source_file": "crates/ofdm/src/api/full_loop/cells/soft.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.cell_soft_view",
+        "declaration": "merlin.downstream.FullLoopResult.cell_soft_view"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopCellSoftView>",
+        "scope": "Owned original labelled reference coordinates/finite nearest-region geometry or actual selected-cell/coding-order soft statistics, fixed histograms and original-index extrema; no session/source execution or decoder change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::bpsk_region_has_independent_half_plane_box_and_known_amplitude_geometry",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::every_accepted_reference_region_is_bounded_and_its_vertices_are_nearest_to_selected_label",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::reference_pages_keep_original_labels_and_reject_unsupported_or_nonfinite_work",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::direct_edges_preserve_tiny_signed_values_and_adjacent_float_interval_membership",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::fixed_histograms_preserve_literal_edges_endpoints_zero_and_original_indices",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::bounded_extrema_keep_every_value_and_invalid_observations_never_disappear"
+        ],
+        "python": {
+          "status": "installed native numerical/bounds/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_actual_cell_and_decoder_soft_sequences_keep_distinct_original_extents",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_direct_rust_process_reference_region_and_actual_soft_views_match",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_static_reference_labels_scaling_region_and_finite_limits"
+          ],
+          "scope": "Independent BPSK/scale/nearest-region constraints across all accepted references, literal histogram/endpoint/index and adjacent-float vectors, actual soft planes, work/finite/empty errors and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-slicer",
+      "status": "status.uiu-api-02-slicer"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::decoder_soft_view",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn decoder_soft_view( &self, snapshot: usize, ) -> ApiResult<FullLoopDecoderSoftView>",
+        "source_file": "crates/ofdm/src/api/full_loop/cells/soft.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.decoder_soft_view",
+        "declaration": "merlin.downstream.FullLoopResult.decoder_soft_view"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopDecoderSoftView>",
+        "scope": "Owned original labelled reference coordinates/finite nearest-region geometry or actual selected-cell/coding-order soft statistics, fixed histograms and original-index extrema; no session/source execution or decoder change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::bpsk_region_has_independent_half_plane_box_and_known_amplitude_geometry",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::every_accepted_reference_region_is_bounded_and_its_vertices_are_nearest_to_selected_label",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::reference_pages_keep_original_labels_and_reject_unsupported_or_nonfinite_work",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::direct_edges_preserve_tiny_signed_values_and_adjacent_float_interval_membership",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::fixed_histograms_preserve_literal_edges_endpoints_zero_and_original_indices",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::bounded_extrema_keep_every_value_and_invalid_observations_never_disappear"
+        ],
+        "python": {
+          "status": "installed native numerical/bounds/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_actual_cell_and_decoder_soft_sequences_keep_distinct_original_extents",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_direct_rust_process_reference_region_and_actual_soft_views_match",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_static_reference_labels_scaling_region_and_finite_limits"
+          ],
+          "scope": "Independent BPSK/scale/nearest-region constraints across all accepted references, literal histogram/endpoint/index and adjacent-float vectors, actual soft planes, work/finite/empty errors and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-slicer",
+      "status": "status.uiu-api-02-slicer"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::Simulation::constellation_reference",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn constellation_reference( order: u16, amplitude: f64, start: usize, count: usize, ) -> ApiResult<QamReferenceView>",
+        "source_file": "crates/ofdm/src/api/references.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.Simulation.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.Simulation.constellation_reference",
+        "declaration": "merlin.downstream.Simulation.constellation_reference"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<QamReferenceView>",
+        "scope": "Owned original labelled reference coordinates/finite nearest-region geometry or actual selected-cell/coding-order soft statistics, fixed histograms and original-index extrema; no session/source execution or decoder change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::bpsk_region_has_independent_half_plane_box_and_known_amplitude_geometry",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::every_accepted_reference_region_is_bounded_and_its_vertices_are_nearest_to_selected_label",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::reference_pages_keep_original_labels_and_reject_unsupported_or_nonfinite_work",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::direct_edges_preserve_tiny_signed_values_and_adjacent_float_interval_membership",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::fixed_histograms_preserve_literal_edges_endpoints_zero_and_original_indices",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::bounded_extrema_keep_every_value_and_invalid_observations_never_disappear"
+        ],
+        "python": {
+          "status": "installed native numerical/bounds/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_actual_cell_and_decoder_soft_sequences_keep_distinct_original_extents",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_direct_rust_process_reference_region_and_actual_soft_views_match",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_static_reference_labels_scaling_region_and_finite_limits"
+          ],
+          "scope": "Independent BPSK/scale/nearest-region constraints across all accepted references, literal histogram/endpoint/index and adjacent-float vectors, actual soft planes, work/finite/empty errors and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-slicer",
+      "status": "status.uiu-api-02-slicer"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::Simulation::decision_region",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn decision_region( order: u16, label: u16, amplitude: f64, ) -> ApiResult<QamDecisionRegion>",
+        "source_file": "crates/ofdm/src/api/references.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.Simulation.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.Simulation.decision_region",
+        "declaration": "merlin.downstream.Simulation.decision_region"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<QamDecisionRegion>",
+        "scope": "Owned original labelled reference coordinates/finite nearest-region geometry or actual selected-cell/coding-order soft statistics, fixed histograms and original-index extrema; no session/source execution or decoder change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::bpsk_region_has_independent_half_plane_box_and_known_amplitude_geometry",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::every_accepted_reference_region_is_bounded_and_its_vertices_are_nearest_to_selected_label",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::reference_pages_keep_original_labels_and_reject_unsupported_or_nonfinite_work",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::direct_edges_preserve_tiny_signed_values_and_adjacent_float_interval_membership",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::fixed_histograms_preserve_literal_edges_endpoints_zero_and_original_indices",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::bounded_extrema_keep_every_value_and_invalid_observations_never_disappear"
+        ],
+        "python": {
+          "status": "installed native numerical/bounds/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_actual_cell_and_decoder_soft_sequences_keep_distinct_original_extents",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_direct_rust_process_reference_region_and_actual_soft_views_match",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_static_reference_labels_scaling_region_and_finite_limits"
+          ],
+          "scope": "Independent BPSK/scale/nearest-region constraints across all accepted references, literal histogram/endpoint/index and adjacent-float vectors, actual soft planes, work/finite/empty errors and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-slicer",
+      "status": "status.uiu-api-02-slicer"
     }
   ],
   "executed_records": [
@@ -26639,7 +26981,8 @@
     "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -56752,6 +57095,492 @@
       },
       "evidence": "evidence.uiu-api-02-cells",
       "status": "status.uiu-api-02-cells"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.cell_soft_view",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/soft.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn cell_soft_view( &self, query: FullLoopCellQuery, ) -> ApiResult<FullLoopCellSoftView>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::cell_soft_view",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "cell_soft_view",
+        "kind": "method",
+        "signature": "(self, /, query=None)",
+        "declaration": "FullLoopResult.cell_soft_view"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned original reference/decision-region geometry and actual selected-cell/coding-order soft summaries, explicit original offsets/totals and independent finite viewports; no hidden execution or invented observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::bpsk_region_has_independent_half_plane_box_and_known_amplitude_geometry",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::every_accepted_reference_region_is_bounded_and_its_vertices_are_nearest_to_selected_label",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::reference_pages_keep_original_labels_and_reject_unsupported_or_nonfinite_work",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::direct_edges_preserve_tiny_signed_values_and_adjacent_float_interval_membership",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::fixed_histograms_preserve_literal_edges_endpoints_zero_and_original_indices",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::bounded_extrema_keep_every_value_and_invalid_observations_never_disappear"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_actual_cell_and_decoder_soft_sequences_keep_distinct_original_extents",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_direct_rust_process_reference_region_and_actual_soft_views_match",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_static_reference_labels_scaling_region_and_finite_limits"
+          ],
+          "scope": "Separate direct Rust-process reference/region/soft views, exact label/scale/endpoint/index anchors, finite/work/absent-data rejection and owned original results."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-slicer",
+      "status": "status.uiu-api-02-slicer"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.decoder_soft_view",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/soft.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn decoder_soft_view( &self, snapshot: usize, ) -> ApiResult<FullLoopDecoderSoftView>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::decoder_soft_view",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "decoder_soft_view",
+        "kind": "method",
+        "signature": "(self, /, snapshot=0)",
+        "declaration": "FullLoopResult.decoder_soft_view"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned original reference/decision-region geometry and actual selected-cell/coding-order soft summaries, explicit original offsets/totals and independent finite viewports; no hidden execution or invented observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::bpsk_region_has_independent_half_plane_box_and_known_amplitude_geometry",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::every_accepted_reference_region_is_bounded_and_its_vertices_are_nearest_to_selected_label",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::reference_pages_keep_original_labels_and_reject_unsupported_or_nonfinite_work",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::direct_edges_preserve_tiny_signed_values_and_adjacent_float_interval_membership",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::fixed_histograms_preserve_literal_edges_endpoints_zero_and_original_indices",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::bounded_extrema_keep_every_value_and_invalid_observations_never_disappear"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_actual_cell_and_decoder_soft_sequences_keep_distinct_original_extents",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_direct_rust_process_reference_region_and_actual_soft_views_match",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_static_reference_labels_scaling_region_and_finite_limits"
+          ],
+          "scope": "Separate direct Rust-process reference/region/soft views, exact label/scale/endpoint/index anchors, finite/work/absent-data rejection and owned original results."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-slicer",
+      "status": "status.uiu-api-02-slicer"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.Merlin.constellation_reference",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::Simulation",
+        "source_file": "bindings/python/src/references.rs",
+        "symbol": "PyMerlin",
+        "signature": "pub fn constellation_reference( order: u16, amplitude: f64, start: usize, count: usize, ) -> ApiResult<QamReferenceView>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::Simulation::constellation_reference",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "constellation_reference",
+        "kind": "method",
+        "signature": "(order, amplitude=1.0, start=0, count=0)",
+        "declaration": "Merlin.constellation_reference"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::Simulation",
+        "scope": "Owned original reference/decision-region geometry and actual selected-cell/coding-order soft summaries, explicit original offsets/totals and independent finite viewports; no hidden execution or invented observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::bpsk_region_has_independent_half_plane_box_and_known_amplitude_geometry",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::every_accepted_reference_region_is_bounded_and_its_vertices_are_nearest_to_selected_label",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::reference_pages_keep_original_labels_and_reject_unsupported_or_nonfinite_work",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::direct_edges_preserve_tiny_signed_values_and_adjacent_float_interval_membership",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::fixed_histograms_preserve_literal_edges_endpoints_zero_and_original_indices",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::bounded_extrema_keep_every_value_and_invalid_observations_never_disappear"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_actual_cell_and_decoder_soft_sequences_keep_distinct_original_extents",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_direct_rust_process_reference_region_and_actual_soft_views_match",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_static_reference_labels_scaling_region_and_finite_limits"
+          ],
+          "scope": "Separate direct Rust-process reference/region/soft views, exact label/scale/endpoint/index anchors, finite/work/absent-data rejection and owned original results."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-slicer",
+      "status": "status.uiu-api-02-slicer"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.Merlin.decision_region",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::Simulation",
+        "source_file": "bindings/python/src/references.rs",
+        "symbol": "PyMerlin",
+        "signature": "pub fn decision_region( order: u16, label: u16, amplitude: f64, ) -> ApiResult<QamDecisionRegion>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::Simulation::decision_region",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "decision_region",
+        "kind": "method",
+        "signature": "(order, label, amplitude=1.0)",
+        "declaration": "Merlin.decision_region"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::Simulation",
+        "scope": "Owned original reference/decision-region geometry and actual selected-cell/coding-order soft summaries, explicit original offsets/totals and independent finite viewports; no hidden execution or invented observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::bpsk_region_has_independent_half_plane_box_and_known_amplitude_geometry",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::every_accepted_reference_region_is_bounded_and_its_vertices_are_nearest_to_selected_label",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::reference_pages_keep_original_labels_and_reject_unsupported_or_nonfinite_work",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::direct_edges_preserve_tiny_signed_values_and_adjacent_float_interval_membership",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::fixed_histograms_preserve_literal_edges_endpoints_zero_and_original_indices",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::bounded_extrema_keep_every_value_and_invalid_observations_never_disappear"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_actual_cell_and_decoder_soft_sequences_keep_distinct_original_extents",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_direct_rust_process_reference_region_and_actual_soft_views_match",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_static_reference_labels_scaling_region_and_finite_limits"
+          ],
+          "scope": "Separate direct Rust-process reference/region/soft views, exact label/scale/endpoint/index anchors, finite/work/absent-data rejection and owned original results."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-slicer",
+      "status": "status.uiu-api-02-slicer"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.Simulation.constellation_reference",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::Simulation",
+        "source_file": "bindings/python/src/references.rs",
+        "symbol": "PyMerlin",
+        "signature": "pub fn constellation_reference( order: u16, amplitude: f64, start: usize, count: usize, ) -> ApiResult<QamReferenceView>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::Simulation::constellation_reference",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "constellation_reference",
+        "kind": "method",
+        "signature": "(order, amplitude=1.0, start=0, count=0)",
+        "declaration": "Simulation.constellation_reference"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::Simulation",
+        "scope": "Owned original reference/decision-region geometry and actual selected-cell/coding-order soft summaries, explicit original offsets/totals and independent finite viewports; no hidden execution or invented observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::bpsk_region_has_independent_half_plane_box_and_known_amplitude_geometry",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::every_accepted_reference_region_is_bounded_and_its_vertices_are_nearest_to_selected_label",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::reference_pages_keep_original_labels_and_reject_unsupported_or_nonfinite_work",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::direct_edges_preserve_tiny_signed_values_and_adjacent_float_interval_membership",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::fixed_histograms_preserve_literal_edges_endpoints_zero_and_original_indices",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::bounded_extrema_keep_every_value_and_invalid_observations_never_disappear"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_actual_cell_and_decoder_soft_sequences_keep_distinct_original_extents",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_direct_rust_process_reference_region_and_actual_soft_views_match",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_static_reference_labels_scaling_region_and_finite_limits"
+          ],
+          "scope": "Separate direct Rust-process reference/region/soft views, exact label/scale/endpoint/index anchors, finite/work/absent-data rejection and owned original results."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-slicer",
+      "status": "status.uiu-api-02-slicer"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.Simulation.decision_region",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::Simulation",
+        "source_file": "bindings/python/src/references.rs",
+        "symbol": "PyMerlin",
+        "signature": "pub fn decision_region( order: u16, label: u16, amplitude: f64, ) -> ApiResult<QamDecisionRegion>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::Simulation::decision_region",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "decision_region",
+        "kind": "method",
+        "signature": "(order, label, amplitude=1.0)",
+        "declaration": "Simulation.decision_region"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::Simulation",
+        "scope": "Owned original reference/decision-region geometry and actual selected-cell/coding-order soft summaries, explicit original offsets/totals and independent finite viewports; no hidden execution or invented observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::bpsk_region_has_independent_half_plane_box_and_known_amplitude_geometry",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::every_accepted_reference_region_is_bounded_and_its_vertices_are_nearest_to_selected_label",
+          "crates/ofdm/src/signal_processing/modulation/slicing/views.rs::reference_pages_keep_original_labels_and_reject_unsupported_or_nonfinite_work",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::direct_edges_preserve_tiny_signed_values_and_adjacent_float_interval_membership",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::fixed_histograms_preserve_literal_edges_endpoints_zero_and_original_indices",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/soft_view.rs::bounded_extrema_keep_every_value_and_invalid_observations_never_disappear"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_actual_cell_and_decoder_soft_sequences_keep_distinct_original_extents",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_direct_rust_process_reference_region_and_actual_soft_views_match",
+            "bindings/python/tests/test_slicer_views.py::SlicerViewTests.test_static_reference_labels_scaling_region_and_finite_limits"
+          ],
+          "scope": "Separate direct Rust-process reference/region/soft views, exact label/scale/endpoint/index anchors, finite/work/absent-data rejection and owned original results."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-slicer",
+      "status": "status.uiu-api-02-slicer"
     }
   ],
   "native_type_exports": {
@@ -57584,6 +58413,18 @@
       "revision": "3ccc9ce74477ebee0cc35d7ed79db711eb576d34 plus exact PLC-message candidate manifest",
       "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-message-native/native-exports.json",
       "native_sha256": "f580e2a6609b4b287694732c9d961c7a1ddf450ae5f9d9ef13aaf661cbf55dad",
+      "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "bd1392eba31cfaa18c615453d54e5d74bde9ef5a plus exact receiver-cell candidate manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-cell-native/native-exports.json",
+      "native_sha256": "eab465db02390e62e517962221ef56436967dc097e23e945761790062acde9fe",
       "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
       "legacy_compatibility": {
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",

@@ -982,7 +982,7 @@ UIU-API-02 adds immutable [typed full-loop requests](user/api/full-loop.md) unde
 safe-boundary pause/cancel/progress and owned actual partial reports. Native
 conversions under `bindings/python/src/full_loop` release the interpreter lock and
 map interrupts to cooperative cancellation. Existing evaluation Simulation/Merlin
-operations remain compatible. Remaining physical/reference/soft-display queries
+operations remain compatible. Remaining physical-spectrum/role queries
 and complete source-catalog/sweep parity remain explicit gates before Qt adoption.
 `api/full_loop/observations` owns validated opt-in selection and finite typed copies
 of core test-point events, with bounded queries and frozen policy/provenance.
@@ -996,8 +996,8 @@ composition/layout and receiver diagnostic owners. Exact contiguous sample origi
 bound PSD accumulation; missing history stops the span. Configured H and retained
 receiver H-hat use explicit separate sources/reference planes and original excluded
 gaps. Python converts owned results and releases the interpreter lock during work;
-neither adapter introduces scientific calculations. Remaining physical/reference/
-soft-display queries and complete catalog/sweep compatibility remain API-02 gates.
+neither adapter introduces scientific calculations. Remaining physical-spectrum/
+role queries and complete catalog/sweep compatibility remain API-02 gates.
 `api/full_loop/messages` inspects actual retained TX PLC frames through the existing
 frame parser, CRC-validated MAC reassembler and descriptor owner. Typed TLV meanings
 reuse decoded receiver settings and accepted modulation metadata; adapters only
@@ -1014,6 +1014,15 @@ separate from coding-order decoder input. The [cell contract](user/api/full-loop
 preserves original wire/source identities, known pilot amplitude, unavailable
 references and honest empty selections. Native queries own their results and
 release the interpreter lock; no Qt/Python scientific calculation is introduced.
+`api/references` exposes finite labelled reference pages and center-relative
+nearest-reference regions through the existing table/slicing owner. The backend
+intersects every reference constraint with an explicit finite viewport, preserving
+original labels, known amplitude and lowest-label tie semantics. Receiver diagnostic
+`soft_view` supplies bounded histograms and original-index extrema over actual cell
+or coding-order LDPC values, kept as separate planes. [Reference/soft contracts](user/api/slicer-views.md)
+return scientific geometry/statistics only; adapters own pixel coordinates, labels
+and colors. Direct bin-edge comparisons preserve tiny signed likelihood values;
+no probabilities, empirical BER or decoder changes are inferred.
 
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 

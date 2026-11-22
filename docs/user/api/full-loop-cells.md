@@ -80,8 +80,10 @@ post-descrambling semantics. Soft statistics summarize at most 2048 selected cel
 starting at the display offset, with explicit contributing-cell accounting.
 They remain separate from [coding-order LDPC input](full-loop-observations.md).
 
-Decision-region/ideal-reference and detailed soft-display operations remain
-follow-up API work before Qt adoption. Traceability:
+[Reference/decision-region and detailed soft-value views](slicer-views.md) supply
+the remaining slicer data through public Rust operations. Physical-spectrum/role
+views and complete catalog/sweep parity remain API-02 gates before Qt adoption.
+Traceability:
 [architecture](../../architecture.md#unified-qt-public-api-boundary),
 [requirements](../../requirements.md#req-uiu-16),
 [design](../../development/features/unified-qt-workbench/design.md#uiu-api-02-selected-receiver-cell-unit)

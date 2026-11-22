@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-503 explicit public Rust operations and 484 installed native Python entries with
+507 explicit public Rust operations and 490 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current native operation acceptance](../unified-qt-workbench/receiver-cell-evidence.json)
+is a readable subset of this one matrix. [Current native operation acceptance](../unified-qt-workbench/slicer-view-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 107 directional/common class exports and 59 preserved legacy root exports. Named
 owner regressions establish behavioral scope; metadata alone is not scientific
@@ -62,6 +62,16 @@ evidence remain unchanged. This corrects traceability without reopening complete
 planning, FEC or historical acceptance. [Correction evidence](../unified-qt-workbench/receiver-cell-evidence.json)
 records the exact scope. Remaining physical/reference/soft-display and catalog/sweep
 gates still keep API-02 open.
+
+The [slicer reference/soft-view unit](../unified-qt-workbench/validation.md#uiu-api-02-slicer-reference-and-soft-view-unit)
+adds four Rust/six native rows with [actual executed cases](../unified-qt-workbench/api-02-slicer-operation-test-results.json)
+and a 99-case installed wheel. Labelled references, finite nearest-region geometry
+and actual physical-cell/coding-order soft summaries pass bounded paired checks.
+Direct bin-edge comparisons preserve tiny signed values and adjacent floats.
+All previous rows, alias-correction archives and scientific/native history remain
+unchanged. Physical-spectrum/role and complete catalog/sweep gates remain open.
+The two static reference operations are available through both preserved native
+`Simulation` and `Merlin` aliases; all four alias paths delegate to Rust `Simulation`.
 
 The [operation run records](operation-test-results.json) add a targeted measured-plan
 roundtrip and retain exact named historical MERLIN component cases. The

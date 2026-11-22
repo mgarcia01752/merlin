@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Diagnostic nearest-symbol decisions; the FEC receiver continues to use soft bits.
+#[cfg(all(feature = "simulation", feature = "pnm-input"))]
+pub(crate) mod views;
 use crate::{
     error::invalid,
     signal_processing::modulation::{reference_for_order, SymbolLabel},
