@@ -1116,8 +1116,8 @@ implemented `crates/ofdma/src/instruments/recovery.rs` owner supplies typed scal
 verification/FEC summaries and bounded original completed-word paging. Its
 [focused acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-bounded-recovery-view-unit)
 preserves independent source versus decoder outcomes and avoids whole-report UI
-copies or adapter calculations. Subsequent response and actual receiver-estimate
-units are described below; remaining instrument contracts keep API-04 open.
+copies or adapter calculations. The response, actual receiver-estimate, soft and
+display units below complete the identified instrument contracts.
 
 The implemented [configured response unit](development/features/unified-qt-workbench/design.md#uiu-api-04-configured-response-and-periodic-impulse-unit)
 exposes admitted corrective C, deterministic physical H and their composite
@@ -1126,7 +1126,7 @@ through the existing idle session and frozen report. The focused
 channel settings and the shared transform; explicit time-varying H rejects static
 queries. Optional impulse data is a complete periodic diagnostic with explicit
 aliasing and units, independent of frequency zoom. Actual received-pilot estimates
-remain separate and require real receiver retention before public exposure.
+remain separate through the implemented receiver retention described below.
 The [unit evidence](development/features/unified-qt-workbench/validation.md#uiu-api-04-configured-response-and-periodic-impulse-unit)
 records local core/native acceptance and the retained initial pause-test timeout
 followed by successful unchanged-case checks and complete installed-suite retry.
@@ -1136,23 +1136,24 @@ retains completed normal receiver estimates with opt-in aggregate frame/scalar
 budgets, preserving default behavior and transactional/cancellation boundaries.
 Its typed report views keep missing bins and actual C×H estimates separate from
 configured-response diagnostics. Its [scoped Rust/native acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-actual-received-pilot-estimate-unit)
-preserves existing science/defaults. Remaining instrument work keeps
-UIU-API-04 open; full regressions remain the final integration gate.
+preserves existing science/defaults. The complete instrument contracts also pass
+the final backend integration gate linked below.
 
 The implemented [soft-metric retention unit](development/features/unified-qt-workbench/design.md#uiu-api-04-actual-receiver-soft-metric-retention-unit)
 exposes actual normal-receiver demapper/derandomized cells and completed LDPC-input
 words through independent opt-in aggregate budgets. Its
 [scoped Rust/native acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-actual-receiver-soft-observation-unit)
 preserves default behavior, estimate limits and completed decoder outcomes.
-Decoded decisions do not substitute for missing soft observations. Remaining
-instrument contracts and final full regression keep API-04 open.
+Decoded decisions do not substitute for missing soft observations.
 
 The implemented [upstream display contracts](development/features/unified-qt-workbench/design.md#uiu-api-04-constellation-pairing-and-received-response-display-unit)
 expose backend-normalized compatible QAM references, exact actual-stage
 pairings and amplitude/phase of retained received-pilot estimates. Raw stage
 planes stay distinct; unsupported overlays never substitute configured truth.
 [Scoped acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-qam-pairing-and-received-response-display-unit)
-passes; the final API-04 integration gate remains pending before parent completion.
+passes. The [final API-04 backend acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-upstream-instrument-backend-accepted)
+passes the full Rust and installed native suites, completing the backend task.
+Qt adoption and rendering remain separate delivery tasks.
 
 ### Unified Qt source ownership
 

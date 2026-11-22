@@ -1000,8 +1000,11 @@ estimates and per-cell/word soft observations were not retained by the original
 report; they cannot be recovered by reading the final decoded bits. Third,
 response/impulse and constellation reference queries need authoritative Rust
 operations with explicit C, H and estimated C×H planes. The configured-response
-and actual estimate-retention units below now have scoped acceptance; soft and
-the remaining display unit below and final integration gate own API-04 completion.
+and actual estimate-retention, soft and display units below have scoped acceptance.
+The [final backend gate](validation.md#uiu-api-04-upstream-instrument-backend-accepted)
+also passes, completing API-04. Per-unit statements about remaining gaps below
+record their historical acceptance boundaries; the official checklist owns
+current status. Qt adoption remains separate.
 
 The first implementation unit adds these exact Rust operations on the existing
 owned BatchReport, through `merlin::upstream`:
@@ -1057,14 +1060,14 @@ records seven focused Rust cases, the complete 95-case upstream package, 16 faca
 cases, 119 installed native cases, core/native Clippy and 77 tooling passes. Actual
 destructive-channel outcomes remain failed, and deliberately edited flag fixtures
 remain labelled projection tests. Original API rows, report schema, scientific
-algorithms and all Qt sources remain unchanged. UIU-API-04 stays unchecked for its
-received-estimate/response/soft and remaining instrument gaps.
+algorithms and all Qt sources remain unchanged. At that unit's acceptance,
+UIU-API-04 stayed unchecked for subsequent instrument gaps, now accepted above.
 
 ### UIU-API-04 constellation, pairing and received-response display unit
 
 REQ-UIU-02/12/16/18/24 require the remaining authoritative display contracts.
 This design preceded implementation; [scoped acceptance](validation.md#uiu-api-04-qam-pairing-and-received-response-display-unit)
-now passes, with the final parent integration gate pending. Existing raw QAM/PSD, actual pilot
+now passes, followed by the final parent backend gate linked above. Existing raw QAM/PSD, actual pilot
 estimates and soft/FEC views stay authoritative; no new simulation interface.
 
 Add `BatchReport::qam_constellation(QamConstellationRequest)` for actual retained

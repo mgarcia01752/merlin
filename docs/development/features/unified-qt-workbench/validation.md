@@ -1143,3 +1143,39 @@ establish a full-band impulse. The [user guide](../../../user/upstream/qam-views
 states those limits. The parent remains unchecked until its full integration gate
 passes. Qt adoption, hosted jobs, installers and external interoperability remain
 separate; no such acceptance is claimed by this unit.
+
+## UIU-API-04 upstream instrument backend accepted
+
+Candidate `6a1e4d43d25e2adff8cf88eadf85c9a08144b660` passes the final
+[backend gate](api-04-final-evidence.json) for
+[UIU-API-04](../../checklist.md#task-uiu-api-04). The five preceding instrument
+units preserve their scoped scientific and API evidence. Together they close the
+identified gaps for QAM/PSD, configured C/H/composite and periodic impulse,
+actual received-pilot estimates, actual cell/word soft inputs, FEC and independent
+source verification. Unsupported planes remain explicit.
+
+`scripts/test-local.sh all` passes 732 workspace tests, four fixture-generator
+cases, twelve API example processes and 139 analysis-only cases in 468 seconds.
+All doctest phases pass. Three existing explicitly ignored host-performance
+observations remain excluded; no correctness cases were added to exclusions.
+
+The exact current Linux CPython 3.10 wheel passes all 139 installed native cases
+without skips in 71.904 seconds; reference/install/inventory preparation brings
+the complete native gate to 82.406 seconds. Fourteen separate upstream/PNM Rust
+reference programs are refreshed. Seven downstream reference files from the
+previous accepted 124-case candidate are reused after an exact unchanged-owner
+and lock comparison from `b16c36119d5ae79fc3547c9797c9c661029598fa` to this
+candidate. Their current hashes, prior receipt, comparison command, wheel hash
+and every executed native case are retained in the gate record. The full Rust
+gate independently re-executes downstream runtime regressions and examples.
+
+The operation matrix remains 541 Rust/524 native rows with its original IDs,
+assertions and alias/revision history intact. All 178 Qt source hashes remain
+unchanged. Prior warnings-denied Clippy, formatting and scoped acceptance stay
+linked from each unit. The preceding intermittent pause timeout remains recorded;
+this passing complete run establishes no root cause or fix.
+
+API-04 is complete within its declared backend support. Qt instrument adoption,
+native rendering, hosted jobs, installer lifecycle, hardware and external
+interoperability remain separate gates. The next eligible task is API-05's
+direction-aware public project admission.
