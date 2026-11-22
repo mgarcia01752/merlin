@@ -19,6 +19,24 @@ metadata, Python guide consistency and diff whitespace checks pass. No scientifi
 or Qt runtime acceptance is claimed by this planning task. Execution continues
 with UIU-BASE-01's fresh Qt baseline.
 
+## UIU-BASE-01: fresh Qt baseline accepted
+
+Candidate `e033152f815fb896deeab20b02a6c3d69978cc8f` passes the fresh Qt baseline.
+The [machine-readable record](baseline-evidence.json) includes exact case names,
+command outcomes, source-inventory/log/executable hashes and native output.
+`scripts/qt-desktop.sh check` passes format, warnings-denied Clippy, all 87 Rust
+tests, native executable build and 89 offscreen/software QML checks in 296.682 s.
+The real downstream closed-loop, profile sweep, calibrated/estimated receiver,
+Designer and project-restoration cases pass within the Rust adapter suite.
+
+The fresh executable accepts all four curated workbench files. Two XCB desktop
+smokes (empty and single-channel project) exit successfully with Fusion style
+and no stderr/import/type errors. Current DISPLAY/XAUTHORITY were discovered;
+preferences were isolated without modifying a user's open workbench. All 178
+application hashes still match the original inventory. No caches were cleaned.
+This is Linux checkout evidence; Windows, installed updates and a manually
+driven native run are not claimed. UIU-BOUND-01 is the next eligible task.
+
 ## Planning checks
 
 Candidate: `feature/unified-qt-workbench` based on

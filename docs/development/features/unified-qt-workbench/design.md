@@ -67,6 +67,21 @@ master phase order where these prerequisites require it.
 
 ## Reuse review
 
+### UIU-BASE-01: fresh downstream baseline
+
+Reuse the accepted application and existing Qt test owners without changing
+source or fixtures. Inputs are the pinned source inventory and four curated
+workbenches; outputs are an exact pre-migration test/build/native-startup record.
+Run `scripts/qt-desktop.sh check` with existing Rust 1.85.1 and Qt 6.8.3, retain
+caches/profiles, then validate all four files and launch the fresh executable
+both empty and with the single-channel project. Native checks use isolated
+preferences and the current desktop display. Existing adapter tests exercise
+actual bounded downstream runs; startup smoke does not claim manual UI execution.
+The [baseline evidence](baseline-evidence.json) records all 87 Rust cases,
+89 QML checks, six native checks and unchanged hashes for all 178 Qt files.
+
+### Existing owner decisions
+
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |
 | --- | --- | --- | --- |
 | [Facade](../../../../crates/merlin/src/lib.rs), public direction re-exports | Thin crate; both independent PHYs already usable; accepted backend compatibility | Qt still imports downstream internals | REUSE facade; ADAPT Qt call sites after typed API extensions, never add science to facade. |

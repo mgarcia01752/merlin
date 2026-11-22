@@ -435,12 +435,12 @@ blocker for earlier eligible API/downstream work after plan approval.
   Evidence: [planning acceptance](features/unified-qt-workbench/validation.md#uiu-plan-01-accepted-planning-baseline); 178 hashes, 27 requirement IDs, 21 tasks and 31 acyclic dependency edges pass. Historical downstream/backend states remain intact.
 
 <a id="task-uiu-base-01"></a>
-- [ ] **UIU-BASE-01** Establish a fresh downstream Qt baseline before moving source.
+- [x] **UIU-BASE-01** Establish a fresh downstream Qt baseline before moving source.
   Requirements: [REQ-UIU-01](../requirements.md#req-uiu-01), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).
   Dependencies: [UIU-PLAN-01](#task-uiu-plan-01).
   Architecture/files: [baseline owner](../architecture.md#unified-qt-workbench), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Record exact candidate/toolchain, existing Qt Rust and QML results, native build/startup and current DS/project smoke. Prior backend evidence is historical context.
-  Evidence: [baseline acceptance plan](features/unified-qt-workbench/validation.md#baseline); pending implementation/acceptance.
+  Evidence: [fresh baseline acceptance](features/unified-qt-workbench/validation.md#uiu-base-01-fresh-qt-baseline-accepted) and [exact cases/source hashes](features/unified-qt-workbench/baseline-evidence.json): format/Clippy/build, 87 Rust tests, 89 QML checks, four project validators and two XCB startup smokes pass. All 178 application hashes are unchanged; Windows/installed lifecycle remains unverified.
 
 <a id="task-uiu-bound-01"></a>
 - [ ] **UIU-BOUND-01** Enforce the public-API boundary before migration.
