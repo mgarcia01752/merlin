@@ -8,6 +8,7 @@ The independent upstream Rust engine has local synthetic backend acceptance:
 - [Channel and reference planes](channel.md).
 - [Received-only receiver](receiver.md).
 - [Bounded sessions and reports](session.md).
+- [Recovery and decoder views](recovery.md).
 - [Measurement admission](measurements.md).
 - [Directional CLI](cli.md).
 

@@ -899,3 +899,48 @@ additive upstream projection.
 UIU-API-03 is complete. UIU-US-04 separately owns Qt rendering, zoom/inspection,
 batched geometry and object bounds. Evidence is local Rust/installed-wheel
 acceptance, with no new hosted, native installer or interoperability claim.
+
+## UIU-API-04 bounded recovery view unit
+
+The [candidate evidence](recovery-evidence.json),
+[executed cases](api-04-recovery-operation-test-results.json) and
+[exact owner/signature design](design.md#uiu-api-04-upstream-instrument-gaps-and-report-views)
+trace this focused unit to REQ-UIU-02/12/19/20/24 and
+[UIU-API-04](../../checklist.md#task-uiu-api-04). Typed verification, whole-report
+FEC summaries and bounded original completed-word pages reuse the existing
+receiver, grant and independent PRBS verifier data. No scientific algorithm,
+decoder behavior, original report field or existing default changes.
+
+Seven focused cases pass inside the complete upstream package run: 95 passed,
+one preexisting performance benchmark ignored. Sixteen facade cases pass.
+Independent 50-kHz contiguous allocation anchors give capacities 2820/8516/22756
+bits and source counts 1976/6776/19776 for 8/24/64 minislots. Retained information
+lengths [840,420,720], [5040,840,420,476] and [14400,4620,756] preserve upstream
+short/medium/long selection, shortening and borrowing. Both numerologies retain
+exact original decisions, flags, code dimensions, source/coded offsets and paging
+continuations. A second grant retains source start 1976; its last short word
+starts at 3236. The first word copies exactly 2800 mother/information/payload bits.
+
+Actual complete, cooperatively cancelled and destructive-channel runs establish
+runtime outcomes. Generated, compared and unverified source coverage stays
+separate, unavailable BER/maxima remain absent, and failed decoder decisions are
+retained. Deliberately edited flag/metadata fixtures prove projection independence
+and explicit rejection; they are not reported as actual decoder experiments.
+The destructive-channel test initially assumed valid parity, failed, and was
+corrected to retain the actual parity/nonconvergence failures before acceptance.
+
+The exact Linux CPython 3.10 wheel passes all 119 installed cases without skips,
+including five new recovery cases. Installed defaults, integer conversion and
+shared position/copy budgets, independent owned dictionaries, original decisions,
+actual cancellation/failure and separate Rust-process parity at both spacings pass.
+Workspace/native all-target Clippy, both formatting checks and all 77 tooling
+cases pass. Exact compiled/installed inventories append three Rust and three native
+operations (525/508 total), preserving all earlier rows and alias history. All 178
+Qt sources and the three-dependency/45-file boundary debt remain unchanged.
+
+This accepts only the recovery-view unit. Received-pilot estimates, explicit
+C/H/estimated C×H response/impulse views, actual soft retention and remaining
+constellation/reference contracts keep UIU-API-04 unchecked. Qt adoption remains
+separate. The [user guide](../../../user/upstream/recovery.md) describes these
+limits; no new hosted, installed-desktop or external interoperability evidence is
+claimed. The latest complete downstream Rust regression remains API-02 above.

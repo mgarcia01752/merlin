@@ -59,3 +59,8 @@ The [configured resource-grid API](../upstream/resource-grid.md) supplies origin
 allocation/pilot coordinates through an owned native snapshot without starting a
 waveform run. It preserves physical holes and original grant timing; Python
 performs no pilot placement or scientific reconstruction.
+
+Actual reports also expose [recovery and decoder views](../upstream/recovery.md):
+`verification()`, `fec_summary()` and bounded `fec_words(...)` return owned
+dictionaries from typed Rust projections. They preserve partial coverage and
+independent source/decoder outcomes without exporting a whole report.

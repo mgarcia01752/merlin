@@ -1,11 +1,13 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
  * Changes: local facade/input ownership and public namespace.
  */
 //! Owned native report/query values; no Python computation or engine replay.
+mod recovery;
 use super::{api, configuration::tap, error};
 use api::ReportJson;
 use pyo3::prelude::*;

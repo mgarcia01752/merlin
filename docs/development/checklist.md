@@ -481,7 +481,7 @@ and implementation/acceptance remain pending; earlier eligible tasks continue.
   Dependencies: [UIU-BOUND-01](#task-uiu-bound-01).
   Architecture/files: [api owner](../architecture.md#unified-qt-public-api-boundary), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Map every required window to existing/new typed observations; validate real stage/tap/response/soft/FEC data, bounds, reference planes, unsupported modes and Python parity before Qt exposure.
-  Evidence: [api acceptance plan](features/unified-qt-workbench/validation.md#api); pending implementation/acceptance.
+  Evidence: [instrument audit and exact recovery-view contract](features/unified-qt-workbench/design.md#uiu-api-04-upstream-instrument-gaps-and-report-views); [bounded recovery views](features/unified-qt-workbench/validation.md#uiu-api-04-bounded-recovery-view-unit) pass 95 upstream, 16 facade and 119 installed native cases, Clippy, 77 tooling cases and exact 525/508 operation tracing. Original flags/decisions, independent family/shortening/source offsets, paging limits and actual cancelled/failed outcomes are preserved. Receiver-estimate/response/soft and remaining instrument acceptance keep this task unchecked; no Qt adoption yet.
 
 <a id="task-uiu-api-05"></a>
 - [ ] **UIU-API-05** Define and implement direction-aware public project admission.

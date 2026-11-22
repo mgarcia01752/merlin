@@ -5,9 +5,9 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "fca3aa5bf6e26388bba690030c5be439d9526323 plus exact resource-grid candidate manifest",
-    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-03-resource-grid-native-final/native-exports.json",
-    "native_sha256": "aed881487aefdbae3383a991c3477fdaf582527027d66169f700bc405855ce60",
+    "revision": "59f27aa0de8999e1d596d1f6040208d332be8596 plus exact recovery candidate manifest",
+    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-04-recovery-native/native-exports.json",
+    "native_sha256": "6384af52faeec8eb6e3c4122a8aba7c64c98a73045ec2286e92e7d34edf86603",
     "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
     "legacy_compatibility": {
       "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
@@ -86,7 +86,10 @@
     "units.uiu-api-02-sweep": "Raw encoded source IDs retain u8 inventory; checked run IDs retain ProfileId 0..15. Selection positions are distinct from profile IDs. Source observation duration excludes acquisition/drain and wall time; summed active host budgets retain per-profile pause semantics. Assignment and retained-word counts are finite application policies, not normative PHY limits.",
     "evidence.uiu-api-03-resource-grid": "../unified-qt-workbench/resource-grid-evidence.json, ../unified-qt-workbench/api-03-resource-grid-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-03-idle-upstream-resource-grid-accepted: exact source/wheel hashes, executed cases and independent original-coordinate vectors.",
     "status.uiu-api-03-resource-grid": "Implemented bounded idle configured allocation with unchanged generation and source/noise state. API-03 backend acceptance passes; Qt viewer remains UIU-US-04.",
-    "units.uiu-api-03-resource-grid": "Original zero-based physical FFT carriers and frame/grant symbols; 102.4-MHz sample ticks, configured frame identity and original coded-bit offsets remain distinct. Planned pilot/complementary gains precede CM Pre-Eq. Counts describe the rectangle; complete ResourcePlan capacity is independent of zoom. Cell and JSON budgets are separate application policies."
+    "units.uiu-api-03-resource-grid": "Original zero-based physical FFT carriers and frame/grant symbols; 102.4-MHz sample ticks, configured frame identity and original coded-bit offsets remain distinct. Planned pilot/complementary gains precede CM Pre-Eq. Counts describe the rectangle; complete ResourcePlan capacity is independent of zoom. Cell and JSON budgets are separate application policies.",
+    "evidence.uiu-api-04-recovery": "../unified-qt-workbench/recovery-evidence.json, ../unified-qt-workbench/api-04-recovery-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-04-bounded-recovery-view-unit: exact source/wheel hashes, actual completed/cancelled/failed runs and independent family/shortening vectors.",
+    "status.uiu-api-04-recovery": "Implemented bounded original-word paging and independent verification/FEC scalar projections. Receiver-estimate/response/soft and remaining instrument gaps keep API-04 open; no Qt adoption.",
+    "units.uiu-api-04-recovery": "Original meaningful source bit positions, encoded-grant offsets, upstream mother/information/shortening dimensions, actual completed decoder iterations and independent source Hamming errors. Pending outcomes and unavailable BER/maxima remain explicit. Page word count and aggregate copied mother/information/payload decision bits are separate application policies; totals do not depend on viewport."
   },
   "type_exports": {
     "downstream": [
@@ -1246,6 +1249,26 @@
       },
       {
         "export": "merlin::upstream::ResourceGridSnapshot",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::FecSummary",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::FecWordPage",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::FecWordRequest",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::FecWordSnapshot",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::VerificationSnapshot",
         "kind": "struct"
       }
     ],
@@ -28144,6 +28167,216 @@
       },
       "evidence": "evidence.uiu-api-03-resource-grid",
       "status": "status.uiu-api-03-resource-grid"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::BatchReport::verification",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn verification(&self) -> PhyResult<VerificationSnapshot>",
+        "source_file": "crates/ofdma/src/instruments/recovery.rs",
+        "rustdoc": "docsis_ofdma/simulation/struct.BatchReport.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.BatchReport.verification",
+        "declaration": "merlin.upstream.BatchReport.verification"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-recovery",
+      "error_behavior": "errors.us",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "PhyResult<VerificationSnapshot>",
+        "scope": "Owned scalar independent verification/FEC summary or bounded original completed-word page; actual decoder flags, dimensions, source offsets, decisions and pending outcomes remain distinct. No source or decoding executes."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_recovery_views.rs::independent_short_medium_long_selection_offsets_and_original_decisions_are_owned_and_bounded",
+          "crates/ofdma/tests/api_recovery_views.rs::both_numerologies_preserve_scalars_across_pages_continuations_empty_end_and_invalid_queries",
+          "crates/ofdma/tests/api_recovery_views.rs::pre_cancel_and_no_transmission_preserve_empty_actual_outcomes_and_absent_metrics",
+          "crates/ofdma/tests/api_recovery_views.rs::actual_cancellation_retains_completed_decoder_words_and_unverified_source_denominators",
+          "crates/ofdma/tests/api_recovery_views.rs::projection_fixtures_keep_flags_independent_and_reject_inconsistent_dimensions_without_panics",
+          "crates/ofdma/tests/api_recovery_views.rs::actual_destructive_channel_preserves_real_failed_outcomes_and_source_errors",
+          "crates/ofdma/tests/api_recovery_views.rs::original_grant_ids_and_continuous_source_positions_survive_paging_across_grants",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/cancel/failure and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_actual_cancellation_retains_completed_words_and_source_coverage",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_actual_original_shortening_source_offsets_owned_decisions_and_exact_defaults",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_bounds_continuations_end_positions_and_scalar_totals_are_independent_of_pages",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_precancel_and_actual_destructive_channel_preserve_unavailable_and_failed_outcomes",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_separate_rust_process_actual_views_match_both_numerologies"
+          ],
+          "scope": "Independent short/medium/long selection/borrowing/source offsets, exact original decisions, bounded paging and continuations, empty/no-transmission/partial/failed states, independent flags, ownership and both numerologies."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-recovery",
+      "status": "status.uiu-api-04-recovery"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::BatchReport::fec_summary",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn fec_summary(&self) -> PhyResult<FecSummary>",
+        "source_file": "crates/ofdma/src/instruments/recovery.rs",
+        "rustdoc": "docsis_ofdma/simulation/struct.BatchReport.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.BatchReport.fec_summary",
+        "declaration": "merlin.upstream.BatchReport.fec_summary"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-recovery",
+      "error_behavior": "errors.us",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "PhyResult<FecSummary>",
+        "scope": "Owned scalar independent verification/FEC summary or bounded original completed-word page; actual decoder flags, dimensions, source offsets, decisions and pending outcomes remain distinct. No source or decoding executes."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_recovery_views.rs::independent_short_medium_long_selection_offsets_and_original_decisions_are_owned_and_bounded",
+          "crates/ofdma/tests/api_recovery_views.rs::both_numerologies_preserve_scalars_across_pages_continuations_empty_end_and_invalid_queries",
+          "crates/ofdma/tests/api_recovery_views.rs::pre_cancel_and_no_transmission_preserve_empty_actual_outcomes_and_absent_metrics",
+          "crates/ofdma/tests/api_recovery_views.rs::actual_cancellation_retains_completed_decoder_words_and_unverified_source_denominators",
+          "crates/ofdma/tests/api_recovery_views.rs::projection_fixtures_keep_flags_independent_and_reject_inconsistent_dimensions_without_panics",
+          "crates/ofdma/tests/api_recovery_views.rs::actual_destructive_channel_preserves_real_failed_outcomes_and_source_errors",
+          "crates/ofdma/tests/api_recovery_views.rs::original_grant_ids_and_continuous_source_positions_survive_paging_across_grants",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/cancel/failure and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_actual_cancellation_retains_completed_words_and_source_coverage",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_actual_original_shortening_source_offsets_owned_decisions_and_exact_defaults",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_bounds_continuations_end_positions_and_scalar_totals_are_independent_of_pages",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_precancel_and_actual_destructive_channel_preserve_unavailable_and_failed_outcomes",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_separate_rust_process_actual_views_match_both_numerologies"
+          ],
+          "scope": "Independent short/medium/long selection/borrowing/source offsets, exact original decisions, bounded paging and continuations, empty/no-transmission/partial/failed states, independent flags, ownership and both numerologies."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-recovery",
+      "status": "status.uiu-api-04-recovery"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::BatchReport::fec_words",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn fec_words(&self, request: FecWordRequest) -> PhyResult<FecWordPage>",
+        "source_file": "crates/ofdma/src/instruments/recovery.rs",
+        "rustdoc": "docsis_ofdma/simulation/struct.BatchReport.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.BatchReport.fec_words",
+        "declaration": "merlin.upstream.BatchReport.fec_words"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-recovery",
+      "error_behavior": "errors.us",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "PhyResult<FecWordPage>",
+        "scope": "Owned scalar independent verification/FEC summary or bounded original completed-word page; actual decoder flags, dimensions, source offsets, decisions and pending outcomes remain distinct. No source or decoding executes."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_recovery_views.rs::independent_short_medium_long_selection_offsets_and_original_decisions_are_owned_and_bounded",
+          "crates/ofdma/tests/api_recovery_views.rs::both_numerologies_preserve_scalars_across_pages_continuations_empty_end_and_invalid_queries",
+          "crates/ofdma/tests/api_recovery_views.rs::pre_cancel_and_no_transmission_preserve_empty_actual_outcomes_and_absent_metrics",
+          "crates/ofdma/tests/api_recovery_views.rs::actual_cancellation_retains_completed_decoder_words_and_unverified_source_denominators",
+          "crates/ofdma/tests/api_recovery_views.rs::projection_fixtures_keep_flags_independent_and_reject_inconsistent_dimensions_without_panics",
+          "crates/ofdma/tests/api_recovery_views.rs::actual_destructive_channel_preserves_real_failed_outcomes_and_source_errors",
+          "crates/ofdma/tests/api_recovery_views.rs::original_grant_ids_and_continuous_source_positions_survive_paging_across_grants",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/cancel/failure and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_actual_cancellation_retains_completed_words_and_source_coverage",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_actual_original_shortening_source_offsets_owned_decisions_and_exact_defaults",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_bounds_continuations_end_positions_and_scalar_totals_are_independent_of_pages",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_precancel_and_actual_destructive_channel_preserve_unavailable_and_failed_outcomes",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_separate_rust_process_actual_views_match_both_numerologies"
+          ],
+          "scope": "Independent short/medium/long selection/borrowing/source offsets, exact original decisions, bounded paging and continuations, empty/no-transmission/partial/failed states, independent flags, ownership and both numerologies."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-recovery",
+      "status": "status.uiu-api-04-recovery"
     }
   ],
   "executed_records": [
@@ -28164,7 +28397,8 @@
     "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -59909,6 +60143,234 @@
       },
       "evidence": "evidence.uiu-api-03-resource-grid",
       "status": "status.uiu-api-03-resource-grid"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.BatchReport.fec_summary",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::BatchReport",
+        "source_file": "bindings/python/src/upstream/reports/recovery.rs",
+        "symbol": "PyBatchReport",
+        "signature": "pub fn fec_summary(&self) -> PhyResult<FecSummary>",
+        "mapping": "Checked native positions/budgets dispatch typed public Rust report projections with the GIL released. JSON-to-object conversion returns independent owned dictionaries. No Python source comparison, FEC aggregation or decoding algorithm.",
+        "delegated_operation": "merlin::upstream::BatchReport::fec_summary",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "fec_summary",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "BatchReport.fec_summary"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-recovery",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::BatchReport",
+        "scope": "Owned dictionaries of exact typed Rust scalar summaries or original completed-word pages; nested arrays are independent copies and outlive report/session disposal."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_recovery_views.rs::independent_short_medium_long_selection_offsets_and_original_decisions_are_owned_and_bounded",
+          "crates/ofdma/tests/api_recovery_views.rs::both_numerologies_preserve_scalars_across_pages_continuations_empty_end_and_invalid_queries",
+          "crates/ofdma/tests/api_recovery_views.rs::pre_cancel_and_no_transmission_preserve_empty_actual_outcomes_and_absent_metrics",
+          "crates/ofdma/tests/api_recovery_views.rs::actual_cancellation_retains_completed_decoder_words_and_unverified_source_denominators",
+          "crates/ofdma/tests/api_recovery_views.rs::projection_fixtures_keep_flags_independent_and_reject_inconsistent_dimensions_without_panics",
+          "crates/ofdma/tests/api_recovery_views.rs::actual_destructive_channel_preserves_real_failed_outcomes_and_source_errors",
+          "crates/ofdma/tests/api_recovery_views.rs::original_grant_ids_and_continuous_source_positions_survive_paging_across_grants",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/cancel/failure and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_actual_cancellation_retains_completed_words_and_source_coverage",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_actual_original_shortening_source_offsets_owned_decisions_and_exact_defaults",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_bounds_continuations_end_positions_and_scalar_totals_are_independent_of_pages",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_precancel_and_actual_destructive_channel_preserve_unavailable_and_failed_outcomes",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_separate_rust_process_actual_views_match_both_numerologies"
+          ],
+          "scope": "Independent short/medium/long selection/borrowing/source offsets, exact original decisions, bounded paging and continuations, empty/no-transmission/partial/failed states, independent flags, ownership and both numerologies."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-recovery",
+      "status": "status.uiu-api-04-recovery"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.BatchReport.fec_words",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::BatchReport",
+        "source_file": "bindings/python/src/upstream/reports/recovery.rs",
+        "symbol": "PyBatchReport",
+        "signature": "pub fn fec_words(&self, request: FecWordRequest) -> PhyResult<FecWordPage>",
+        "mapping": "Checked native positions/budgets dispatch typed public Rust report projections with the GIL released. JSON-to-object conversion returns independent owned dictionaries. No Python source comparison, FEC aggregation or decoding algorithm.",
+        "delegated_operation": "merlin::upstream::BatchReport::fec_words",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "fec_words",
+        "kind": "method",
+        "signature": "(self, /, grant_index=0, first_word=0, maximum_words=1, max_decision_bits=262144)",
+        "declaration": "BatchReport.fec_words"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-recovery",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::BatchReport",
+        "scope": "Owned dictionaries of exact typed Rust scalar summaries or original completed-word pages; nested arrays are independent copies and outlive report/session disposal."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_recovery_views.rs::independent_short_medium_long_selection_offsets_and_original_decisions_are_owned_and_bounded",
+          "crates/ofdma/tests/api_recovery_views.rs::both_numerologies_preserve_scalars_across_pages_continuations_empty_end_and_invalid_queries",
+          "crates/ofdma/tests/api_recovery_views.rs::pre_cancel_and_no_transmission_preserve_empty_actual_outcomes_and_absent_metrics",
+          "crates/ofdma/tests/api_recovery_views.rs::actual_cancellation_retains_completed_decoder_words_and_unverified_source_denominators",
+          "crates/ofdma/tests/api_recovery_views.rs::projection_fixtures_keep_flags_independent_and_reject_inconsistent_dimensions_without_panics",
+          "crates/ofdma/tests/api_recovery_views.rs::actual_destructive_channel_preserves_real_failed_outcomes_and_source_errors",
+          "crates/ofdma/tests/api_recovery_views.rs::original_grant_ids_and_continuous_source_positions_survive_paging_across_grants",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/cancel/failure and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_actual_cancellation_retains_completed_words_and_source_coverage",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_actual_original_shortening_source_offsets_owned_decisions_and_exact_defaults",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_bounds_continuations_end_positions_and_scalar_totals_are_independent_of_pages",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_precancel_and_actual_destructive_channel_preserve_unavailable_and_failed_outcomes",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_separate_rust_process_actual_views_match_both_numerologies"
+          ],
+          "scope": "Independent short/medium/long selection/borrowing/source offsets, exact original decisions, bounded paging and continuations, empty/no-transmission/partial/failed states, independent flags, ownership and both numerologies."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-recovery",
+      "status": "status.uiu-api-04-recovery"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.BatchReport.verification",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::BatchReport",
+        "source_file": "bindings/python/src/upstream/reports/recovery.rs",
+        "symbol": "PyBatchReport",
+        "signature": "pub fn verification(&self) -> PhyResult<VerificationSnapshot>",
+        "mapping": "Checked native positions/budgets dispatch typed public Rust report projections with the GIL released. JSON-to-object conversion returns independent owned dictionaries. No Python source comparison, FEC aggregation or decoding algorithm.",
+        "delegated_operation": "merlin::upstream::BatchReport::verification",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "verification",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "BatchReport.verification"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-recovery",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::BatchReport",
+        "scope": "Owned dictionaries of exact typed Rust scalar summaries or original completed-word pages; nested arrays are independent copies and outlive report/session disposal."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_recovery_views.rs::independent_short_medium_long_selection_offsets_and_original_decisions_are_owned_and_bounded",
+          "crates/ofdma/tests/api_recovery_views.rs::both_numerologies_preserve_scalars_across_pages_continuations_empty_end_and_invalid_queries",
+          "crates/ofdma/tests/api_recovery_views.rs::pre_cancel_and_no_transmission_preserve_empty_actual_outcomes_and_absent_metrics",
+          "crates/ofdma/tests/api_recovery_views.rs::actual_cancellation_retains_completed_decoder_words_and_unverified_source_denominators",
+          "crates/ofdma/tests/api_recovery_views.rs::projection_fixtures_keep_flags_independent_and_reject_inconsistent_dimensions_without_panics",
+          "crates/ofdma/tests/api_recovery_views.rs::actual_destructive_channel_preserves_real_failed_outcomes_and_source_errors",
+          "crates/ofdma/tests/api_recovery_views.rs::original_grant_ids_and_continuous_source_positions_survive_paging_across_grants",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget"
+        ],
+        "python": {
+          "status": "installed native actual/defaults/limits/ownership/cancel/failure and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_actual_cancellation_retains_completed_words_and_source_coverage",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_actual_original_shortening_source_offsets_owned_decisions_and_exact_defaults",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_bounds_continuations_end_positions_and_scalar_totals_are_independent_of_pages",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_precancel_and_actual_destructive_channel_preserve_unavailable_and_failed_outcomes",
+            "bindings/python/tests/test_upstream_recovery_views.py::UpstreamRecoveryViews.test_separate_rust_process_actual_views_match_both_numerologies"
+          ],
+          "scope": "Independent short/medium/long selection/borrowing/source offsets, exact original decisions, bounded paging and continuations, empty/no-transmission/partial/failed states, independent flags, ownership and both numerologies."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-recovery",
+      "status": "status.uiu-api-04-recovery"
     }
   ],
   "native_type_exports": {
@@ -60827,6 +61289,18 @@
       "revision": "e7a87421c487e1825c92c538e6431bcf133d6548 plus exact complete-catalog/sweep and final API-02 candidate manifest",
       "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-sweep-native-final/native-exports.json",
       "native_sha256": "95dfc43ba1e7a563c1587c60636a9f9196ecb88dd1160d4f91a514b9560a2c01",
+      "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "fca3aa5bf6e26388bba690030c5be439d9526323 plus exact resource-grid candidate manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-03-resource-grid-native-final/native-exports.json",
+      "native_sha256": "aed881487aefdbae3383a991c3477fdaf582527027d66169f700bc405855ce60",
       "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
       "legacy_compatibility": {
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",

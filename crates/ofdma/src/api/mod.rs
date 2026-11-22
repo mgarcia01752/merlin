@@ -10,7 +10,10 @@ mod resources;
 mod session;
 pub use crate::channel::ChannelConfig;
 pub use crate::configuration::*;
-pub use crate::instruments::{QamSnapshot, SpectrumSnapshot, Tap};
+pub use crate::instruments::{
+    FecSummary, FecWordPage, FecWordRequest, FecWordSnapshot, QamSnapshot, SpectrumSnapshot, Tap,
+    VerificationSnapshot, MAX_FEC_PAGE_DECISION_BITS, MAX_FEC_PAGE_WORDS,
+};
 pub use crate::measurements::{
     PowerSnapshot, PreEqEvent, PreEqOperation, PreEqPlayback, ProbeReference, RxmerPlayback,
     RxmerPolicy, SyntheticRxmer,

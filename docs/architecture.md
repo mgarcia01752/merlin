@@ -1110,6 +1110,15 @@ budgets. It introduces no pilot placement or Qt scientific algorithm. See the
 The [backend acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-03-idle-upstream-resource-grid-accepted)
 passes upstream/facade and installed-wheel checks; its Qt viewer remains UIU-US-04.
 
+UIU-API-04's [instrument audit and report-view design](development/features/unified-qt-workbench/design.md#uiu-api-04-upstream-instrument-gaps-and-report-views)
+reuses upstream actual QAM/PSD and existing decoded/verification reports. The
+implemented `crates/ofdma/src/instruments/recovery.rs` owner supplies typed scalar
+verification/FEC summaries and bounded original completed-word paging. Its
+[focused acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-bounded-recovery-view-unit)
+preserves independent source versus decoder outcomes and avoids whole-report UI
+copies or adapter calculations. Receiver-estimate/soft retention and explicit
+C/H/estimated C×H response queries remain separate pending API-04 work.
+
 ### Unified Qt source ownership
 
 One native executable, `Merlin.Workbench` URI and current Main resource entry URL

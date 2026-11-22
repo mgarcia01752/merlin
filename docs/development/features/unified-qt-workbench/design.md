@@ -984,6 +984,81 @@ records 88 upstream/16 facade/114 installed native passes, core/native Clippy,
 and Qt source hashes are preserved. UIU-API-03 is complete; UIU-US-04 still owns
 actual viewport rendering, interaction and bounded Qt object acceptance.
 
+### UIU-API-04 upstream instrument gaps and report views
+
+REQ-UIU-02/12/16/17/18/19/20/24 require real upstream observations before Qt
+adoption. Existing `BatchReport::qam` and `spectrum` already expose selected actual
+I/Q, original coordinates, normalized rectangular PSD and explicit unavailable
+history. Existing GrantReport/DecodedWord preserve actual decoder decisions,
+iterations and independent source comparison. Reuse these owners and their
+existing tests; do not add a second simulation interface or algorithms in Qt.
+
+The audit identifies three separate gaps. First, the UI needs bounded typed FEC
+paging and scalar verification summaries without copying/parsing an entire report
+or calculating scientific aggregates in the adapter. Second, receiver pilot
+estimates and per-cell/word soft observations are not retained by the existing
+report; they cannot be recovered by reading the final decoded bits. Third,
+response/impulse and constellation reference queries need authoritative Rust
+operations with explicit C, H and estimated C×H planes. The latter gaps remain
+pending; acceptance of the report-view unit alone does not complete UIU-API-04.
+
+The first implementation unit adds these exact Rust operations on the existing
+owned BatchReport, through `merlin::upstream`:
+
+- `verification(&self) -> PhyResult<VerificationSnapshot>` copies actual status,
+  source seed, planned/generated/compared/unverified/error counts, optional BER,
+  recovery flag and grant/codeword/coverage counts. PRBS15 truth remains the
+  independent verifier's result; parity/convergence never implies source recovery.
+- `fec_summary(&self) -> PhyResult<FecSummary>` counts planned/completed/pending
+  words, independent convergence/parity/shortening/fill failures, actual iteration
+  sum/maximum and hard-decision changes. Zero completed words have no maximum.
+- `fec_words(&self, request: FecWordRequest) -> PhyResult<FecWordPage>` selects one
+  started grant by original index and a completed-word ordinal window. It returns
+  original grant identity, word ordinal/source offsets, upstream code-family and
+  shortening dimensions, unchanged decoder flags/iterations and actual decisions.
+  No BCH stage or unavailable soft metrics are invented.
+
+FecWordRequest has grant_index, first_word, maximum_words and max_decision_bits.
+Defaults select grant/word zero, one word and 262144 copied decision bits. The
+independent application ceilings are 32 words and 262144 decision bits; count all
+copied mother, information and payload vectors before allocating the page.
+Out-of-range grants/starts, zero/oversized budgets, inconsistent original word
+metadata and arithmetic overflow reject. A start exactly at the completed-word
+end returns an empty page; partial/unprocessed words are not substituted.
+FecWordPage retains the selected grant identity, total completed/pending word
+counts, returned first position and optional next position. Scalar totals remain
+independent of page size and detail budgets. Querying never runs a source, decoder
+or random generator, and returned owned data outlives the report/session.
+
+Python mirrors `report.verification() -> dict`, `report.fec_summary() -> dict`
+and `report.fec_words(grant_index=0, first_word=0, maximum_words=1,
+max_decision_bits=262144) -> dict`. Native conversion releases the GIL for Rust
+query/serialization, uses the same validation/errors and returns owned ordinary
+Python data. No extra Python scientific calculation or whole-report fallback.
+
+| Inspected owner / files | Current contract and gap | Decision / destination |
+| --- | --- | --- |
+| `crates/ofdma/src/simulation/report.rs`, `crates/ofdma/src/receiver/framing.rs`, `crates/ofdma/src/grant/plan.rs` | Actual completed/partial decisions and independent verifier counts already exist; no bounded detail projection | Reuse original data and dimensions; add focused `crates/ofdma/src/instruments/recovery.rs`; do not change receiver behavior or report schema. |
+| `crates/ofdma/src/instruments/observer.rs`, `crates/ofdma/src/instruments/spectrum.rs` | Accepted bounded actual QAM/PSD owners; no retained receiver estimates or soft words | Reuse QAM/PSD; keep new response/soft retention as subsequent API-04 units before Qt exposure. |
+| `crates/ofdma/src/api/mod.rs`, `crates/ofdma/src/instruments/mod.rs` | Direction public export/ownership | Edit focused module registration and typed high-level re-exports. |
+| `bindings/python/src/upstream/reports.rs`, proposed `bindings/python/src/upstream/reports/recovery.rs`, `bindings/python/python/merlin/upstream.pyi` | Existing owned report and shared JSON-to-object conversion | Add thin methods on the existing report, exact installed defaults and dictionary parity. |
+| Proposed `crates/ofdma/tests/api_recovery_views.rs`, `bindings/python/tests/test_upstream_recovery_views.py`, `crates/ofdma/examples/upstream_recovery_views.rs`; `tools/testing/native_api.py` | Existing source/codec/experiment cases remain; focused new projections need acceptance | Add independent completed/empty/partial/failed flag, family/shortening/offset, budget/paging/ownership tests and a separate Rust-process reference. |
+| Proposed `docs/user/upstream/recovery.md`; upstream/Python guide indexes | Document actual projection scope separately from missing LLR/response views | Add focused user guide and retain explicit parent-task gaps. |
+
+This unit changes no scientific algorithm or normative mode. Existing upstream
+code definitions retain PHY I20 section 7.4.3.2/source vectors and original notices.
+New projection tests must not relabel fabricated failure fixtures as actual decoder
+experiments: use them only to prove that the projection preserves independent flags.
+Actual completed and cooperatively cancelled MERLIN runs establish runtime evidence.
+
+The [recovery-view unit acceptance](validation.md#uiu-api-04-bounded-recovery-view-unit)
+records seven focused Rust cases, the complete 95-case upstream package, 16 facade
+cases, 119 installed native cases, core/native Clippy and 77 tooling passes. Actual
+destructive-channel outcomes remain failed, and deliberately edited flag fixtures
+remain labelled projection tests. Original API rows, report schema, scientific
+algorithms and all Qt sources remain unchanged. UIU-API-04 stays unchecked for its
+received-estimate/response/soft and remaining instrument gaps.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |
