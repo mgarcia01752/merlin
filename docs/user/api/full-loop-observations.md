@@ -77,7 +77,7 @@ print(window['element_start'], window['context']['sample_start_index'])
 ```
 
 The passive numerical operations below reuse those actual observations and existing
-scientific owners. Selected-cell/soft-decision views, decoded-message queries and
+scientific owners. Selected-cell/soft-decision views and
 full source-catalog/sweep compatibility remain UIU-API-02 acceptance gates before
 Qt adoption.
 
@@ -118,6 +118,41 @@ an event. These statistics describe that retained window, not all words or the
 run's decoder performance. No query changes inputs, retention counts, source
 state or completed science. Rust returns owned typed results; Python returns
 independent dictionaries and releases the GIL during numerical preparation.
+
+## Retained TX PLC messages
+
+Rust `result.plc_messages()?` and Python `result.plc_messages()` return an owned
+report from actual retained `tx.plc.message` events. Enable that stage explicitly
+or use `FullLoopObservationPolicy` defaults before running. No retained stage
+raises a missing-coverage error. The query parses at most 64 original frames and
+returns at most 32 complete CRC-validated MAC packets, with exact packet bytes,
+source addresses, descriptor identities and typed decoded TLVs. Each TLV retains
+its encoded value and absolute type-byte offset inside the complete MAC packet.
+OCD timing/geometry meanings reuse received-channel decoding. DPD zero loading
+has no constellation; NCP QPSK remains distinct from downstream data-QAM support.
+Recognized modulation metadata does not establish a supported coding chain.
+
+The reference plane is `tx_plc_message_construction`. A constructed frame can be
+retained before any of its samples are emitted. Each packet records its last
+carrying original context and checked frame-end sample. `completely_transmitted`
+is true only when actual transmitted samples reach that boundary. These records
+are TX observations; they do not assert received MAC-message acceptance.
+
+Nonconsecutive, truncated or invalid frames stop reassembly. Earlier complete
+packets remain available with a structured `issue` identifying the failing
+retained-frame index; `pending_bytes` describes the current incomplete MAC packet.
+`processed_frames` counts successfully parsed/reassembled frames, even if a later
+descriptor in that frame is rejected. Query frame/packet limits are reported
+separately; the original observation policy/stats still describe earlier capture
+limits or dropped copies. Missing bytes and descriptors are never synthesized.
+
+```python
+messages = result.plc_messages()
+for packet in messages['messages']:
+    print(packet['descriptor']['profile_id'], packet['completely_transmitted'])
+    for field in packet['descriptor']['fields']:
+        print(field['offset'], field['meaning'])
+```
 
 Traceability: [architecture](../../architecture.md#unified-qt-public-api-boundary),
 [requirements](../../requirements.md#req-uiu-16),

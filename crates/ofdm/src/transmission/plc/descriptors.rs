@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Fixed OCD/ProfileA/NCP DPD, MULPI I25 §6.4.40–41, Tables69/70.
+#[cfg(all(feature = "simulation", feature = "pnm-input"))]
+pub(crate) mod inspection;
 use super::mac_packets::{ManagementPacket, DPD_MESSAGE_TYPE, OCD_MESSAGE_TYPE};
 use crate::{
     error::invalid,

@@ -63,6 +63,83 @@ fn request_with_receiver(receiver_mode: ReceiverMode) -> FullLoopRequest {
 }
 
 #[test]
+fn actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners() {
+    use docsis_ofdm_fec::transmission::plc::{descriptors::parse, mac_packets::ManagementPacket};
+    let original = request();
+    let disabled = original.run(&FullLoopControl::new()).unwrap();
+    assert_eq!(
+        disabled.plc_messages().err().unwrap().code(),
+        ErrorCode::MissingCoverage
+    );
+    let result = original
+        .with_observations(policy())
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    let report = result.plc_messages().unwrap();
+    assert_eq!(report.reference_plane, "tx_plc_message_construction");
+    assert!(report.retained_frames > 0 && report.retained_frames <= 64);
+    assert_eq!(report.processed_frames, report.retained_frames);
+    assert!(report.messages.iter().any(|m| m.message_type == 49));
+    assert!(report
+        .messages
+        .iter()
+        .any(|m| m.descriptor.profile_id == Some(0)));
+    assert!(report
+        .messages
+        .iter()
+        .any(|m| m.descriptor.profile_id == Some(255)));
+    assert!(report.messages.len() <= 32);
+    assert!(report.issue.is_none());
+    for message in &report.messages {
+        let packet = ManagementPacket::from_bytes(&message.packet_bytes).unwrap();
+        let parsed = parse(&packet).unwrap();
+        assert_eq!(packet.message_type(), message.message_type);
+        assert_eq!(packet.source_address(), message.source_address);
+        assert_eq!(parsed.channel_id, message.descriptor.channel_id);
+        assert_eq!(parsed.profile_id, message.descriptor.profile_id);
+        assert_eq!(parsed.tlvs.len(), message.descriptor.fields.len());
+        for (tlv, field) in parsed.tlvs.iter().zip(&message.descriptor.fields) {
+            assert_eq!(tlv.value, field.value);
+            assert_eq!(message.packet_bytes[field.offset], field.kind);
+            assert_eq!(
+                &message.packet_bytes[field.offset + 2..field.offset + 2 + field.value.len()],
+                field.value
+            );
+        }
+        let symbol = message.last_frame_context.channel_symbol_index.unwrap();
+        assert_eq!(message.last_frame_end_sample, (symbol + 128) * 8704);
+        assert_eq!(
+            message.completely_transmitted,
+            result.report().summary.total_transmitted_samples >= message.last_frame_end_sample
+        );
+    }
+    let truncated = original
+        .with_observations(
+            FullLoopObservationPolicy::new(FullLoopObservationInput {
+                max_elements_per_event: 16,
+                ..Default::default()
+            })
+            .unwrap(),
+        )
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    let report = truncated.plc_messages().unwrap();
+    assert!(report.messages.is_empty());
+    assert_eq!(report.processed_frames, 0);
+    assert_eq!(
+        report.issue.unwrap().error.code(),
+        ErrorCode::MissingCoverage
+    );
+    assert_eq!(truncated.report().summary.comparison.bit_errors, 0);
+    assert_eq!(
+        serde_json::to_value(result.plc_messages().unwrap()).unwrap(),
+        serde_json::to_value(result.plc_messages().unwrap()).unwrap()
+    );
+}
+
+#[test]
 fn passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner() {
     use docsis_ofdm_fec::signal_processing::waveform::spectrum::estimate;
     let result = request()

@@ -5,9 +5,9 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "6449463d02cef9ace27eb431eee482aefd7aaf85 plus exact numerical-query candidate manifest",
-    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-instrument-native-final/native-exports.json",
-    "native_sha256": "4ab03a20d63756ba1c3d79a573e7ac01cd300ecb0f46a8bb75744f61a3fb5730",
+    "revision": "3ccc9ce74477ebee0cc35d7ed79db711eb576d34 plus exact PLC-message candidate manifest",
+    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-message-native/native-exports.json",
+    "native_sha256": "f580e2a6609b4b287694732c9d961c7a1ddf450ae5f9d9ef13aaf661cbf55dad",
     "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
     "legacy_compatibility": {
       "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
@@ -67,7 +67,9 @@
     "status.uiu-api-02-retention": "Implemented typed actual stage retention and bounded queries; local Rust/native/legacy Qt/analysis acceptance. Parent API-02 remains open for numerical/message and complete catalog/sweep parity; no Qt consumer migration.",
     "errors.simulation": "Original typed SimulationError code/message from the named scientific/metadata owner. Native high-level operations preserve it through structured ApiError conversion; no string parsing or substitute calculation.",
     "evidence.uiu-api-02-instruments": "../unified-qt-workbench/numerical-query-evidence.json, ../unified-qt-workbench/api-02-instrument-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-passive-numerical-query-unit: actual source/wheel and exact successful owner/scientific/native cases.",
-    "status.uiu-api-02-instruments": "Implemented passive actual time-sample PSD, configured H/retained receiver H-hat and coding-order LDPC LLR statistics. Selected-cell/message and complete source-catalog/sweep parity keep API-02 open; no Qt adoption."
+    "status.uiu-api-02-instruments": "Implemented passive actual time-sample PSD, configured H/retained receiver H-hat and coding-order LDPC LLR statistics. Selected-cell/message and complete source-catalog/sweep parity keep API-02 open; no Qt adoption.",
+    "evidence.uiu-api-02-messages": "../unified-qt-workbench/plc-message-evidence.json, ../unified-qt-workbench/api-02-message-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-retained-plc-message-unit: actual source/wheel and exact successful owner/scientific/native cases.",
+    "status.uiu-api-02-messages": "Implemented actual retained TX PLC frame/MAC/descriptor inspection with exact bytes, typed fields, original offsets and checked sample coverage. Selected-cell and complete catalog/sweep parity keep API-02 open; no Qt adoption."
   },
   "type_exports": {
     "downstream": [
@@ -765,6 +767,30 @@
       },
       {
         "export": "merlin::downstream::ResponseDiagnostics",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopDescriptor",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopDescriptorField",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopDescriptorMeaning",
+        "kind": "enum"
+      },
+      {
+        "export": "merlin::downstream::FullLoopMessageIssue",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopPlcMessage",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopPlcMessages",
         "kind": "struct"
       }
     ],
@@ -26185,6 +26211,75 @@
       },
       "evidence": "evidence.uiu-api-02-instruments",
       "status": "status.uiu-api-02-instruments"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::plc_messages",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn plc_messages(&self) -> ApiResult<FullLoopPlcMessages>",
+        "source_file": "crates/ofdm/src/api/full_loop/messages.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.plc_messages",
+        "declaration": "merlin.downstream.FullLoopResult.plc_messages"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopPlcMessages>",
+        "scope": "Owned bounded original TX packets and typed descriptor fields, exact bytes/offsets/source identities, last carrying context and actual sample coverage; earlier complete packets survive a structured later frame issue."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/plc_descriptors.rs::crc_check_strings_and_packet_checksum_rejection",
+          "crates/ofdm/tests/plc_descriptors.rs::fixed_descriptors_include_edges_plc_all_pilots_and_profile_defaults",
+          "crates/ofdm/tests/plc_descriptors.rs::schedule_repeats_and_reassembles_without_tx_packet_boundaries",
+          "crates/ofdm/tests/plc_descriptors.rs::reassembly_handles_split_headers_continuations_and_crc_failure_atomically",
+          "crates/ofdm/tests/plc_descriptors.rs::received_descriptor_semantics_and_scheduler_settings_are_checked",
+          "crates/ofdm/tests/plc_frame.rs::idle_frame_has_one_timestamp_and_exact_capacity_at_both_spacings",
+          "crates/ofdm/tests/plc_frame.rs::packet_fragment_frames_preserve_pointer_and_source_bytes",
+          "crates/ofdm/tests/plc_frame.rs::invalid_capacity_crc_and_unsupported_blocks_do_not_produce_a_frame",
+          "crates/ofdm/src/api/full_loop/messages.rs::fixed_packet_fields_offsets_and_exact_transmission_end_are_independent_anchors",
+          "crates/ofdm/src/api/full_loop/messages.rs::gaps_truncation_and_invalid_bytes_stop_without_erasing_prior_packets",
+          "crates/ofdm/src/api/full_loop/messages.rs::repeated_valid_frames_obey_packet_and_frame_work_budgets",
+          "crates/ofdm/src/transmission/plc/descriptors/inspection.rs::fixed_ocd_views_reuse_received_timing_and_preserve_all_original_wire_offsets",
+          "crates/ofdm/src/transmission/plc/descriptors/inspection.rs::descriptor_zero_loading_and_ncp_qpsk_keep_distinct_typed_meanings"
+        ],
+        "python": {
+          "status": "installed native numerical/bounds/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop_messages.py::FullLoopMessageTests.test_absent_and_truncated_messages_do_not_fabricate_packets_or_change_science",
+            "bindings/python/tests/test_full_loop_messages.py::FullLoopMessageTests.test_actual_packet_bytes_meanings_offsets_coverage_and_owned_queries",
+            "bindings/python/tests/test_full_loop_messages.py::FullLoopMessageTests.test_direct_rust_process_actual_packet_bytes_and_typed_views_match"
+          ],
+          "scope": "Actual original packet bytes/offsets/decoded meanings, both numerologies, precise sample-end coverage, missing/gapped/truncated/invalid frames, earlier packet preservation, explicit budgets and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-messages",
+      "status": "status.uiu-api-02-messages"
     }
   ],
   "executed_records": [
@@ -26197,7 +26292,8 @@
     "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -55830,6 +55926,81 @@
       },
       "evidence": "evidence.uiu-api-02-instruments",
       "status": "status.uiu-api-02-instruments"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.plc_messages",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/result.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn plc_messages(&self) -> ApiResult<FullLoopPlcMessages>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::plc_messages",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "plc_messages",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopResult.plc_messages"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned actual TX PLC packet views with typed meanings, original bytes/offsets/context and checked transmitted-sample coverage; no hidden run, message regeneration or reconstructed segments."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/plc_descriptors.rs::crc_check_strings_and_packet_checksum_rejection",
+          "crates/ofdm/tests/plc_descriptors.rs::fixed_descriptors_include_edges_plc_all_pilots_and_profile_defaults",
+          "crates/ofdm/tests/plc_descriptors.rs::schedule_repeats_and_reassembles_without_tx_packet_boundaries",
+          "crates/ofdm/tests/plc_descriptors.rs::reassembly_handles_split_headers_continuations_and_crc_failure_atomically",
+          "crates/ofdm/tests/plc_descriptors.rs::received_descriptor_semantics_and_scheduler_settings_are_checked",
+          "crates/ofdm/tests/plc_frame.rs::idle_frame_has_one_timestamp_and_exact_capacity_at_both_spacings",
+          "crates/ofdm/tests/plc_frame.rs::packet_fragment_frames_preserve_pointer_and_source_bytes",
+          "crates/ofdm/tests/plc_frame.rs::invalid_capacity_crc_and_unsupported_blocks_do_not_produce_a_frame",
+          "crates/ofdm/src/api/full_loop/messages.rs::fixed_packet_fields_offsets_and_exact_transmission_end_are_independent_anchors",
+          "crates/ofdm/src/api/full_loop/messages.rs::gaps_truncation_and_invalid_bytes_stop_without_erasing_prior_packets",
+          "crates/ofdm/src/api/full_loop/messages.rs::repeated_valid_frames_obey_packet_and_frame_work_budgets",
+          "crates/ofdm/src/transmission/plc/descriptors/inspection.rs::fixed_ocd_views_reuse_received_timing_and_preserve_all_original_wire_offsets",
+          "crates/ofdm/src/transmission/plc/descriptors/inspection.rs::descriptor_zero_loading_and_ncp_qpsk_keep_distinct_typed_meanings"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_full_loop_messages.py::FullLoopMessageTests.test_absent_and_truncated_messages_do_not_fabricate_packets_or_change_science",
+            "bindings/python/tests/test_full_loop_messages.py::FullLoopMessageTests.test_actual_packet_bytes_meanings_offsets_coverage_and_owned_queries",
+            "bindings/python/tests/test_full_loop_messages.py::FullLoopMessageTests.test_direct_rust_process_actual_packet_bytes_and_typed_views_match"
+          ],
+          "scope": "Fresh direct Rust-process packet views plus independent packet/TLV/sample-boundary anchors, unavailable/truncated capture reports, immutable owned data and preserved native regressions."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-messages",
+      "status": "status.uiu-api-02-messages"
     }
   ],
   "native_type_exports": {
@@ -56631,6 +56802,18 @@
       "revision": "c097cb60410349ca8f1212d8d1f409152d678a9a plus exact stage-retention candidate manifest",
       "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-retention-native/native-exports.json",
       "native_sha256": "c722941805d6a75ca307e079ac8f4bb51e1766a43261e855cfe5aad9898dce54",
+      "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "6449463d02cef9ace27eb431eee482aefd7aaf85 plus exact numerical-query candidate manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-instrument-native-final/native-exports.json",
+      "native_sha256": "4ab03a20d63756ba1c3d79a573e7ac01cd300ecb0f46a8bb75744f61a3fb5730",
       "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
       "legacy_compatibility": {
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",

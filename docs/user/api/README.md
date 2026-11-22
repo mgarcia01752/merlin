@@ -20,7 +20,7 @@ controls, owned actual samples/PSD and symbol/window timing.
 execution and owned complete/partial scientific reports.
 [Retained stage observations](full-loop-observations.md) add opt-in actual
 TX/RX data with explicit phase/reference/grid metadata and finite budgets,
-plus passive PSD, response and actual LDPC-input statistics.
+plus passive PSD, response, actual LDPC-input statistics and retained TX PLC messages.
 
 For searchable class/method documentation generated from the actual APIs, see
 the [generated Rust/Python reference](../../reference/api-reference.md).

@@ -536,3 +536,40 @@ The exact matrix appends three Rust/three native rows (498/478 total), preserves
 all old rows/history and validates fresh compiled/installed signatures and actual
 successful cases. Selected-cell/message and complete source-catalog/sweep parity
 remain mandatory before API-02 completion and downstream Qt migration.
+
+## UIU-API-02 retained PLC message unit
+
+[Exact source/test/wheel evidence](plc-message-evidence.json),
+[owner/design](design.md#uiu-api-02-retained-plc-message-unit),
+[paired contract](../../../user/api/full-loop-observations.md#retained-tx-plc-messages)
+and [executed cases](api-02-message-operation-test-results.json) trace through the
+[architecture](../../../architecture.md#unified-qt-public-api-boundary) to the
+still-open [parent task](../../checklist.md#task-uiu-api-02).
+
+Fifteen targeted integration cases pass: seven actual retention/numerical/message
+API cases and eight existing fixed PLC descriptor/CRC/reassembly/frame cases.
+Eleven library cases also pass, including five focused message/descriptor-owner
+cases. Independent fixed packet bytes establish channel/profile/change identity,
+default 256-QAM assignment, exact TLV offsets and source address. Both numerologies
+preserve received timing/geometry meanings and every original encoded field. Zero
+loading, NCP QPSK and recognized 16384-QAM metadata remain distinct; reserved OCD
+parameters reject through the existing receiver decoder rather than guessed values.
+
+Literal sample boundaries prove that a packet remains scheduled one sample before
+its carrying frame ends and becomes completely transmitted at that boundary.
+Zero stride and arithmetic overflow reject. Gapped, truncated and corrupted later
+frames stop with a structured issue and preserve earlier complete packets. Repeated
+valid frames prove the 32-packet and 64-frame work limits. Real full-loop output
+supplies CRC-validated OCD, data DPD and NCP DPD bytes, matching original source
+offsets and actual transmitted-sample coverage. Missing stage coverage rejects;
+truncated capture returns an explicit issue without changing completed science.
+
+All 139 analysis-only cases/doctest checks and warnings-denied facade/native-input/
+binding Clippy pass. The fresh installed Linux CPython 3.10 wheel passes all 92
+native cases, including three new message cases and exact separate-process Rust
+packet/view parity. Owned query dictionaries cannot alter retained originals.
+The matrix appends one Rust/one native operation (499/479 total), preserves every
+old row/history and checks fresh compiler/installed signatures and actual passing
+cases. Qt sources and original scientific operations remain unchanged; prior Qt
+compatibility/build evidence applies, with no claim of Qt adoption. Selected-cell
+queries and complete source-catalog/sweep parity still keep API-02 incomplete.

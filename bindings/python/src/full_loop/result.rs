@@ -10,6 +10,23 @@ use pyo3::types::PyBytes;
 pub(super) struct PyFullLoopResult(pub(super) api::FullLoopResult);
 #[pymethods]
 impl PyFullLoopResult {
+    /// Inspects actual retained TX PLC messages through the public frame/MAC/descriptor owner.
+    /// # Returns
+    /// Owned report of at most 32 CRC-validated packets from 64 original frames, typed TLV
+    /// meanings/byte offsets, original bytes and explicit actual transmission coverage.
+    /// Earlier packets survive an invalid/missing later frame with a structured report issue.
+    /// # Errors
+    /// Shared absent-coverage/timing or transport failures raise ApiError; work releases the GIL.
+    fn plc_messages(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
+        let text = py
+            .detach(|| {
+                let result = self.0.plc_messages()?;
+                serde_json::to_string(&result).map_err(transport_error)
+            })
+            .map_err(error)?;
+        object_from_json(py, &text)
+    }
+
     /// Copies the actual bounded complete/partial scientific job report without rerunning it.
     /// # Returns
     /// Owned report dictionary including real status/FEC/PRBS/settings and retained details.

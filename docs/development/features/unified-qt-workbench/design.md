@@ -585,6 +585,31 @@ truncated data, work/viewport/nonfinite rejection, repeated immutable queries,
 real pilot-estimated H-hat and separate direct-process Rust/native results.
 Selected-cell/message and complete source-catalog/sweep parity keep API-02 open.
 
+### UIU-API-02 retained PLC message unit
+
+Add `FullLoopResult::plc_messages()` over actual retained `tx.plc.message` events,
+reusing the existing frame parser, CRC-validated MAC reassembler and descriptor
+decoder. Bound processing to 64 original frames and 32 packets. Preserve complete
+packet bytes, source address, descriptor identity, TLV offsets/encoded bytes and
+typed field meanings. Semantic field decoding belongs to the existing descriptor
+owner, reusing received-channel settings and accepted modulation tables; Qt only
+formats those typed values. Do not copy GPL presentation algorithms into the core.
+
+Original construction capture does not establish physical transmission. Report
+whether the final carrying frame's end is within actual transmitted sample count,
+using the existing 128-symbol frame constant and accepted symbol stride with
+checked arithmetic. Preserve each packet's last carrying original context. Stop
+at missing, truncated, nonconsecutive or invalid frames, retaining earlier complete
+packets and an explicit structured issue/pending-byte count. Never bridge missing
+segments or silently substitute reconstructed messages.
+
+Native Python converts the same bounded owned report with the GIL released. Test
+both numerologies' descriptor meanings and byte offsets through independent fixed
+anchors, normative existing packet/CRC/reassembly vectors, actual scheduled-versus-
+transmitted coverage, unavailable/truncated/gapped data and direct-process parity.
+This closes message inspection only; selected-cell and complete source-catalog/
+sweep parity still keep API-02 open before Qt adoption.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

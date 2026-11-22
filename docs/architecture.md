@@ -975,14 +975,14 @@ explicitly generates a bounded private TX snapshot through the existing owner.
 Its one-shot public control reports cancellation/progress without global result
 storage. [Idle TX contracts](user/api/transmitter-preview.md) preserve actual
 post-overlap/pre-channel samples/PSD and expose authoritative symbol timing/window
-coefficients for presentation. Full-loop controls and retained stages remain a
-separate API extension gate.
+coefficients for presentation. Full-loop controls and retained stages belong to
+the separate API-02 contracts below.
 UIU-API-02 adds immutable [typed full-loop requests](user/api/full-loop.md) under
 `crates/ofdm/src/api/full_loop` over the existing controlled job, with independent
 safe-boundary pause/cancel/progress and owned actual partial reports. Native
 conversions under `bindings/python/src/full_loop` release the interpreter lock and
 map interrupts to cooperative cancellation. Existing evaluation Simulation/Merlin
-operations remain compatible. Retained stage/query and complete source-catalog/
+operations remain compatible. Selected-cell queries and complete source-catalog/
 sweep parity remain explicit acceptance gates before Qt adoption.
 `api/full_loop/observations` owns validated opt-in selection and finite typed copies
 of core test-point events, with bounded queries and frozen policy/provenance.
@@ -996,8 +996,15 @@ composition/layout and receiver diagnostic owners. Exact contiguous sample origi
 bound PSD accumulation; missing history stops the span. Configured H and retained
 receiver H-hat use explicit separate sources/reference planes and original excluded
 gaps. Python converts owned results and releases the interpreter lock during work;
-neither adapter introduces scientific calculations. Selected-cell/message queries
+neither adapter introduces scientific calculations. Selected-cell queries
 and complete catalog/sweep compatibility remain API-02 gates.
+`api/full_loop/messages` inspects actual retained TX PLC frames through the existing
+frame parser, CRC-validated MAC reassembler and descriptor owner. Typed TLV meanings
+reuse decoded receiver settings and accepted modulation metadata; adapters only
+format labels/hex. The bounded report retains exact bytes, offsets, final carrying
+context and checked sample coverage, distinguishing construction from completed
+transmission. Missing/invalid segments stop with an explicit issue and preserve
+earlier complete packets; no messages are regenerated from current configuration.
 
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 

@@ -10,7 +10,7 @@ use serde::Serialize;
 pub const MAX_MANAGEMENT_PDU_BYTES: usize = 2000;
 /// Four MAC header octets plus two-byte HCS.
 pub const MAC_HEADER_BYTES: usize = 6;
-const MANAGEMENT_HEADER_BYTES: usize = 20;
+pub(super) const MANAGEMENT_HEADER_BYTES: usize = 20;
 const FCS_BYTES: usize = 4;
 pub(super) const MANAGEMENT_FC: u8 = 0xc2;
 /// Smallest supported frame, including one descriptor-body byte.
