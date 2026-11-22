@@ -7,6 +7,7 @@
  * Changes: local facade/input ownership and public namespace.
  */
 //! Owned native report/query values; no Python computation or engine replay.
+mod qam_views;
 mod receiver_observations;
 mod recovery;
 mod response;

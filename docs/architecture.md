@@ -1147,6 +1147,13 @@ preserves default behavior, estimate limits and completed decoder outcomes.
 Decoded decisions do not substitute for missing soft observations. Remaining
 instrument contracts and final full regression keep API-04 open.
 
+The implemented [upstream display contracts](development/features/unified-qt-workbench/design.md#uiu-api-04-constellation-pairing-and-received-response-display-unit)
+expose backend-normalized compatible QAM references, exact actual-stage
+pairings and amplitude/phase of retained received-pilot estimates. Raw stage
+planes stay distinct; unsupported overlays never substitute configured truth.
+[Scoped acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-qam-pairing-and-received-response-display-unit)
+passes; the final API-04 integration gate remains pending before parent completion.
+
 ### Unified Qt source ownership
 
 One native executable, `Merlin.Workbench` URI and current Main resource entry URL

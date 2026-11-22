@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Configured deterministic transfers and explicitly periodic impulse diagnostics.
+use super::transfer::{amplitude_db, frequency_hz, phase};
 use crate::{
     configuration::SAMPLE_RATE_HZ,
     error::{invalid, limit},
@@ -18,8 +19,6 @@ use std::{collections::BTreeSet, f64::consts::TAU};
 pub const MAX_CONFIGURED_RESPONSE_POINTS: usize = 4096;
 /// Complete periodic-impulse application budget, independent of the frequency viewport.
 pub const MAX_CONFIGURED_IMPULSE_SAMPLES: usize = 4096;
-/// Dimensionless complex-amplitude ratios use twenty times their base-ten logarithm.
-const AMPLITUDE_DECIBEL_FACTOR: f64 = 20.0;
 
 /// Admitted deterministic diagnostic source; none denotes a received-pilot estimate.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -295,7 +294,7 @@ pub(crate) fn configured(
                 frequency_hz: frequency_hz(carrier, length, mode.spacing_hz()),
                 excluded: exclusions.contains(&carrier),
                 value,
-                amplitude_db: amplitude_db(value)?,
+                amplitude_db: amplitude_db(value, "configured_response.magnitude")?,
                 phase_radians: phase(value),
             })
         })
@@ -347,15 +346,18 @@ fn periodic_impulse(transform: &Transform, transfer: &[Iq]) -> PhyResult<Periodi
         }
         peak_amplitude = peak_amplitude.max(magnitude);
     }
-    let peak_db = amplitude_db(Iq {
-        re: peak_amplitude,
-        im: 0.0,
-    })?;
+    let peak_db = amplitude_db(
+        Iq {
+            re: peak_amplitude,
+            im: 0.0,
+        },
+        "configured_response.magnitude",
+    )?;
     let points = samples
         .into_iter()
         .enumerate()
         .map(|(sample_index, value)| {
-            let relative_power_db = amplitude_db(value)?
+            let relative_power_db = amplitude_db(value, "configured_response.magnitude")?
                 .zip(peak_db)
                 .map(|(value_db, peak_db)| value_db - peak_db);
             Ok(PeriodicImpulsePoint {
@@ -373,27 +375,4 @@ fn periodic_impulse(transform: &Transform, transfer: &[Iq]) -> PhyResult<Periodi
         peak_amplitude,
         points,
     })
-}
-
-fn frequency_hz(carrier: usize, length: usize, spacing_hz: u32) -> f64 {
-    (carrier as f64 - length as f64 / 2.0) * f64::from(spacing_hz)
-}
-
-fn amplitude_db(value: Iq) -> PhyResult<Option<f64>> {
-    let magnitude = value.re.hypot(value.im);
-    if !magnitude.is_finite() {
-        return Err(invalid("configured_response.magnitude"));
-    }
-    if magnitude == 0.0 {
-        return Ok(None);
-    }
-    Ok(Some(AMPLITUDE_DECIBEL_FACTOR * magnitude.log10()))
-}
-
-fn phase(value: Iq) -> Option<f64> {
-    if value.re == 0.0 && value.im == 0.0 {
-        None
-    } else {
-        Some(value.im.atan2(value.re))
-    }
 }

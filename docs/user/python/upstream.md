@@ -72,6 +72,10 @@ Actual reports also expose [recovery and decoder views](../upstream/recovery.md)
 dictionaries from typed Rust projections. They preserve partial coverage and
 independent source/decoder outcomes without exporting a whole report.
 
+The [QAM reference/pairing API](../upstream/qam-views.md) supplies compatible
+backend-normalized observations, canonical labels and exact original stage
+associations through `qam_constellation(...)` and `qam_pairing(...)`.
+
 Soft diagnostics use [actual Rust receiver observations](../upstream/soft-observations.md).
 Compose `SoftObservationPolicy` onto `ReceiverObservationPolicy` before running;
 `soft_observations()`, bounded `soft_cells(...)` and `soft_word(...)` return

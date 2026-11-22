@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Opt-in bounded retention of actual completed received-pilot estimates.
+use super::transfer::{amplitude_db, frequency_hz, phase};
 use crate::{
     configuration::{Estimator, Numerology, UsConfiguration, SAMPLE_RATE_HZ},
     error::{invalid, limit},
@@ -180,6 +181,10 @@ pub struct ReceiverEstimatePoint {
     pub frequency_hz: f64,
     /// Actual optional estimator output; zero and unavailable remain distinct.
     pub value: Option<Iq>,
+    /// Twenty-log magnitude of the actual estimate, absent for missing or exact-zero bins.
+    pub amplitude_db: Option<f64>,
+    /// Principal phase in radians of the actual estimate, absent for missing or exact-zero bins.
+    pub phase_radians: Option<f64>,
 }
 
 /// Owned actual effective C×H estimate, separate from configured deterministic transfers.
@@ -355,12 +360,20 @@ impl BatchReport {
         }
         let spacing = frame.mode.spacing_hz();
         let points = (request.first_carrier..end)
-            .map(|physical_carrier| ReceiverEstimatePoint {
-                physical_carrier,
-                frequency_hz: (physical_carrier as f64 - (length / 2) as f64) * f64::from(spacing),
-                value: frame.estimates[physical_carrier],
+            .map(|physical_carrier| {
+                let value = frame.estimates[physical_carrier];
+                Ok(ReceiverEstimatePoint {
+                    physical_carrier,
+                    frequency_hz: frequency_hz(physical_carrier, length, spacing),
+                    value,
+                    amplitude_db: value
+                        .map(|value| amplitude_db(value, "receiver_estimate.magnitude"))
+                        .transpose()?
+                        .flatten(),
+                    phase_radians: value.and_then(phase),
+                })
             })
-            .collect();
+            .collect::<PhyResult<Vec<_>>>()?;
         Ok(ReceiverEstimateSnapshot {
             frame: frame_identity((request.retained_index, frame)),
             reference_plane: "received_pilot_effective_c_times_h",
@@ -392,16 +405,17 @@ fn frame_identity(
 
 /// Serializes actual immutable shared observation records without exposing Arc ownership.
 /// # Arguments
+/// * `Value`, `SerializerType` - Concrete observation record and serialization destination types.
 /// * `frames` - Bounded actual retained values; concrete estimate/cell/word consumers share this adapter.
 /// * `serializer` - Existing Rust serialization destination; no scientific processing occurs.
 /// # Returns
 /// Serialized sequence with unchanged record order and values.
 /// # Errors
 /// Propagates destination/record serialization failures without mutating observations.
-pub(super) fn serialize_records<Value: Serialize, S: Serializer>(
+pub(super) fn serialize_records<Value: Serialize, SerializerType: Serializer>(
     frames: &[Arc<Value>],
-    serializer: S,
-) -> Result<S::Ok, S::Error> {
+    serializer: SerializerType,
+) -> Result<SerializerType::Ok, SerializerType::Error> {
     let mut sequence = serializer.serialize_seq(Some(frames.len()))?;
     for frame in frames {
         sequence.serialize_element(frame.as_ref())?;

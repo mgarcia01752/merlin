@@ -597,3 +597,39 @@ fn upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retent
         FIRST_WORD_INPUT_LLRS
     );
 }
+
+#[test]
+fn upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs() {
+    const RETAINED_POINT_BUDGET: usize = 8192;
+    let mut simulation = upstream::Simulation::new(Default::default()).unwrap();
+    simulation
+        .configure_json(include_bytes!(
+            "../../../examples/cli/upstream/us-50khz.json"
+        ))
+        .unwrap();
+    simulation
+        .set_options(upstream::ExperimentOptions {
+            retained_points: RETAINED_POINT_BUDGET,
+            retained_taps: vec![upstream::Tap::TxGrid, upstream::Tap::RxEqualized],
+            ..Default::default()
+        })
+        .unwrap();
+    let report = simulation.run().unwrap();
+    let view = report
+        .qam_constellation(upstream::QamConstellationRequest::default())
+        .unwrap();
+    assert_eq!(
+        view.normalization,
+        upstream::QamNormalization::ReceiverUnitReference
+    );
+    assert!(!view.references.is_empty());
+    let pairs = report
+        .qam_pairing(upstream::QamPairRequest::default())
+        .unwrap();
+    assert!(pairs.matched_total > 0);
+    assert_eq!(pairs.pairs[0].left.identity, pairs.pairs[0].right.identity);
+    assert_eq!(
+        TypeId::of::<upstream::CellRole>(),
+        TypeId::of::<docsis_ofdma::resources::CellRole>()
+    );
+}

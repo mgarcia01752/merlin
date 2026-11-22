@@ -1093,3 +1093,53 @@ transmitted input, excluding restored shortened priors; posterior LLRs are not
 claimed. The [user guide](../../../user/upstream/soft-observations.md) explains
 these boundaries. Remaining response-display/constellation references and Qt
 adoption keep API-04 unchecked. No hosted, installer or interoperability claim.
+
+## UIU-API-04 QAM pairing and received-response display unit
+
+The [candidate evidence](qam-display-evidence.json),
+[executed cases](api-04-display-operation-test-results.json) and
+[exact display/association design](design.md#uiu-api-04-constellation-pairing-and-received-response-display-unit)
+trace REQ-UIU-02/12/16/18/24 to API-04. Actual compatible QAM now has canonical
+source-labelled references and backend unit normalization. Original raw values,
+identities and role/loading remain paired with the derived display. Actual role
+gains are retained privately at the existing ResourcePlan observation boundary,
+without changing original QAM output or default serialized reports.
+
+Twenty-two scoped upstream cases pass, including six new scientific/API cases
+and existing configured/received response and QAM-owner cases. Nineteen facade
+cases pass, including one new direct public QAM/pairing execution. Literal upstream
+16-QAM labels 0/7/10 are (3,3)/(1,-1)/(-1,3) divided by sqrt(10). Boosted pilots
+retain zero payload bits and raw power three, while the recorded sqrt(3) gain
+normalizes their actual observations to unit power with canonical BPSK references.
+The largest supported upstream 4096-point constellation and independent copy
+limits pass. Pre-Eq/raw-FFT incompatible overlays reject, preserving raw access.
+
+Both numerologies retain every original coordinate through exact stage pairing.
+The boosted fixtures have 112/240 matches and sixteen unpaired TX pilots. Capping
+preserves whole selected/matched/unpaired counts and left retention order. Failed
+and never-started histories remain empty/unpaired rather than fabricated. Queries
+preserve actual noisy words, BER and matched MER. The original raw QAM and main
+report JSON omit the private gain ledger.
+
+Actual received-pilot -1+2j has amplitude6.989700043360188 dB and principal
+phase2.0344439357957027 rad at both spacings. Missing and exact-zero estimates have
+no logarithmic/phase readings. The shared robust transfer projection preserves
+existing configured phase/impulse/overflow behavior and original error contexts;
+no configured response replaces actual receiver data or fills missing support.
+
+The installed Linux CPython 3.10 wheel passes nineteen scoped cases without skips:
+four new display cases plus existing estimate/configured-response and namespace
+cases. Three fresh separate Rust-process references cover full observations,
+labels, original pairs and actual received display values. Core/facade and native
+Clippy, formatting, metadata tools and strict operation traceability pass as
+recorded. Exact inventories append two Rust/two native operations (541/524 total).
+The previous received-query rows are archived before adding field-level evidence;
+all original IDs/assertions and alias history remain. All 178 Qt sources are intact.
+
+Identified API-04 instrument gaps now have scoped backend acceptance within their
+declared support. Pair counts describe retained histories rather than source/FEC
+coverage; raw stage planes stay distinct and missing spectral support does not
+establish a full-band impulse. The [user guide](../../../user/upstream/qam-views.md)
+states those limits. The parent remains unchecked until its full integration gate
+passes. Qt adoption, hosted jobs, installers and external interoperability remain
+separate; no such acceptance is claimed by this unit.

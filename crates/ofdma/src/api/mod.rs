@@ -24,10 +24,16 @@ pub use crate::instruments::{
     MAX_RECEIVER_SOFT_CELLS, MAX_RECEIVER_SOFT_WORDS, MAX_RECEIVER_SOFT_WORD_LLRS,
     MAX_SOFT_CELL_PAGE_CELLS, MAX_SOFT_CELL_PAGE_LLRS, MAX_SOFT_WORD_QUERY_LLRS,
 };
+pub use crate::instruments::{
+    QamConstellationRequest, QamConstellationSnapshot, QamNormalization, QamPair, QamPairRequest,
+    QamPairSnapshot, QamPoint, QamReferencePoint, QamReferenceSample,
+    MAX_QAM_CONSTELLATION_REFERENCES, MAX_QAM_PAIR_POINTS, MAX_QAM_QUERY_POINTS,
+};
 pub use crate::measurements::{
     PowerSnapshot, PreEqEvent, PreEqOperation, PreEqPlayback, ProbeReference, RxmerPlayback,
     RxmerPolicy, SyntheticRxmer,
 };
+pub use crate::resources::CellRole;
 pub use crate::signal_processing::PreEqBank;
 pub use crate::simulation::{
     BatchReport, ExperimentConfig, ExperimentOptions, ExperimentPreview, GrantReport,

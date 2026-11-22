@@ -7,8 +7,16 @@
  * Changes: local crate ownership and shared DSP/FEC imports.
  */
 //! Passive bounded owned QAM/SA snapshots; queries never rerun science.
+mod constellation;
 mod metrics;
+mod pairing;
+pub use constellation::{
+    QamConstellationRequest, QamConstellationSnapshot, QamNormalization, QamReferencePoint,
+    QamReferenceSample, MAX_QAM_CONSTELLATION_REFERENCES,
+};
+pub use pairing::{QamPair, QamPairRequest, QamPairSnapshot, MAX_QAM_PAIR_POINTS};
 pub(crate) mod soft;
+mod transfer;
 pub use soft::{
     SoftCellPage, SoftCellRequest, SoftCellSnapshot, SoftObservationPolicy,
     SoftObservationPolicyInfo, SoftObservationSummary, SoftWordIdentity, SoftWordRequest,
@@ -37,5 +45,5 @@ pub use response::{
 mod observer;
 pub use metrics::{MatchedMer, MerValue};
 mod spectrum;
-pub use observer::{ObservationStore, QamPoint, QamSnapshot, Tap};
+pub use observer::{ObservationStore, QamPoint, QamSnapshot, Tap, MAX_QAM_QUERY_POINTS};
 pub use spectrum::SpectrumSnapshot;

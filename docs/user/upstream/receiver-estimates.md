@@ -67,6 +67,11 @@ in hertz, estimator and dimensionless complex transfer. Zero carrier count means
 the remaining FFT; copied points have an independent 4096-point application cap.
 Queries and later session changes cannot modify an existing report.
 
+The Rust query also supplies amplitude dB and principal phase radians from each
+actual optional estimate, using the shared transfer-projection owner. Missing
+or exact-zero values have no logarithmic or phase reading and no arbitrary floor.
+See [QAM and response display contracts](qam-views.md).
+
 Unknown or unused carriers remain unavailable (`None`/JSON null). Actual zero
 estimates remain complex zeros. Deep-null correction admission stays with the
 receiver. Complete frames with missing observations can have entirely unavailable

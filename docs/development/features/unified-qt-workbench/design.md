@@ -1001,7 +1001,7 @@ report; they cannot be recovered by reading the final decoded bits. Third,
 response/impulse and constellation reference queries need authoritative Rust
 operations with explicit C, H and estimated C×H planes. The configured-response
 and actual estimate-retention units below now have scoped acceptance; soft and
-remaining reference/display contracts keep UIU-API-04 open.
+the remaining display unit below and final integration gate own API-04 completion.
 
 The first implementation unit adds these exact Rust operations on the existing
 owned BatchReport, through `merlin::upstream`:
@@ -1059,6 +1059,79 @@ destructive-channel outcomes remain failed, and deliberately edited flag fixture
 remain labelled projection tests. Original API rows, report schema, scientific
 algorithms and all Qt sources remain unchanged. UIU-API-04 stays unchecked for its
 received-estimate/response/soft and remaining instrument gaps.
+
+### UIU-API-04 constellation, pairing and received-response display unit
+
+REQ-UIU-02/12/16/18/24 require the remaining authoritative display contracts.
+This design preceded implementation; [scoped acceptance](validation.md#uiu-api-04-qam-pairing-and-received-response-display-unit)
+now passes, with the final parent integration gate pending. Existing raw QAM/PSD, actual pilot
+estimates and soft/FEC views stay authoritative; no new simulation interface.
+
+Add `BatchReport::qam_constellation(QamConstellationRequest)` for actual retained
+`TxGrid` or `RxEqualized` cells at one original payload loading. Loading zero
+selects known pilots and uses BPSK reference geometry without relabelling pilot
+payload bits. Retain the original canonical Cell.gain alongside each point in a
+private bounded trace ledger omitted from serialization. The existing recorder
+already receives this authoritative ResourcePlan cell; no resource plan is rebuilt
+by a query and no configured replacement can invent an original gain. Return each original QamPoint paired with its backend
+unit-reference value; TX removes its actual prescribed role gain, while RX
+equalized cells are already at unit reference. Reuse upstream `map_symbol` for
+every labelled ideal reference and explicit MSB-first labelling/normalization.
+
+The new request has tap, loading, maximum_points and maximum_references. Default
+selects RxEqualized, loading four and independent 4096 observed/reference-point
+budgets. Name the existing raw-QAM copied-point ceiling once and reuse it for the
+same observed-point purpose; keep the reference-geometry budget separate despite
+its equal value. Validate both limits and supported order before copying.
+Return original identities/coordinates, actual tap, exact normalization plane,
+whole retained matching-point count and whether the display is capped. Existing
+raw QAM remains unchanged. TxPreEq and RxFft have different physical planes;
+unit-reference overlays reject there rather than borrowing configured H/C or
+assuming a stationary correction. Their actual raw observations remain available.
+
+Add `BatchReport::qam_pairing(QamPairRequest)` to match two actually retained
+stage traces by exact run/generation/grant/frame/symbol/physical carrier. Request
+fields are left/right taps, optional loading and maximum_pairs (default TxGrid,
+RxEqualized, all loadings and 4096 pairs). Use a separate named pair-copy policy.
+Scan the already bounded histories, validate duplicate coordinates and return
+original point pairs in left-record order, whole selected/matched/unpaired counts
+and explicit display capping. No source-truth replay, interpolation or waveform
+matching. Unretained taps are unavailable; retained empty/partial observations
+can return empty pairs without claiming successful reception. The raw stage
+planes remain distinct; pairing does not normalize channel effects.
+
+Extend non-exhaustive ReceiverEstimatePoint with optional amplitude_db and
+phase_radians from the actual optional estimate. Missing or exact-zero values
+have no log/phase reading. Share the existing configured-response robust complex
+magnitude/log/phase/frequency projection in a focused `instruments/transfer.rs`
+owner; keep its twenty-log amplitude convention and configured error fields.
+Actual received queries use their own error context. Do not infer a complete
+impulse from missing frequency support. Configured periodic impulses retain their
+existing explicit aliasing contract.
+
+Python mirrors the two typed report operations as owned dictionaries with checked
+tap names and matching defaults. Rust projection/query/serialization releases
+the GIL; no adapter role normalization, reference construction, association or
+response math. Existing query signatures and default whole-report JSON remain
+unchanged. Re-export actual QamPoint/CellRole under the high-level upstream API
+so consumers need no internal scientific module imports.
+
+| Inspected owner / files | Current contract and gap | Decision / concrete destination |
+| --- | --- | --- |
+| `crates/ofdma/src/instruments/observer.rs::qam`, `QamPoint`, private Trace | Bounded actual stage points; no authoritative unit reference or pairing | REUSE original observations/coordinates; retain original Cell.gain privately without changing serialized defaults, name the existing query ceiling and permit focused sibling views to read bounded traces. |
+| `crates/ofdma/src/resources/grid.rs::ResourcePlan`, `signal_processing/qam.rs::map_symbol` | Authoritative role gains, source geometry/labels and unit energy | REUSE unchanged owners; no duplicate pilot/resource or constellation algorithm. |
+| Proposed `crates/ofdma/src/instruments/constellation.rs`, `pairing.rs`; `instruments/mod.rs`, `api/mod.rs` | Missing typed bounded display/association operations | ADD focused queries/models and EDIT high-level exports. |
+| `crates/ofdma/src/instruments/response.rs`, `receiver.rs`; proposed `transfer.rs` | Configured amplitude/phase projection already exists; received view lacks it | SHARE identical numerical projection for two real consumers, preserving source/error/reference-plane distinctions. |
+| `bindings/python/src/upstream/reports.rs`; proposed `upstream/reports/qam_views.rs`; upstream stubs | Existing Rust-owned report conversion and tap-name admission | ADD thin GIL-released dispatch and matching declarations; validate actual estimate fields through the new paired native cases. |
+| Proposed `crates/ofdma/tests/api_qam_views.rs`, `crates/ofdma/examples/upstream_qam_views.rs`, `bindings/python/tests/test_upstream_qam_views.py`; existing estimate/response tests | Remaining display acceptance absent | ADD independent labels/gains/complex dB/phase anchors, actual coordinate pairings, original counts/caps, both modes, unavailable/unsupported/partial states, passive noisy outcomes and installed Rust/native parity. |
+| Proposed `docs/user/upstream/qam-views.md`; existing response/estimate/Python guides | Scientific display planes and unsupported overlays need explicit user documentation | ADD focused guide and reconcile current acceptance without restructuring historical records. |
+
+Validate the changed scientific/API owners and installed namespace/observation
+consumers. Preserve original operation rows when appending the two methods;
+archive the previous received-query row before adding new field-level evidence.
+After all required instrument gaps close, perform the API-04 integration gate
+before checking the parent task. Full regression evidence remains separate from
+the per-unit scoped passes and from future Qt consumer acceptance.
 
 ### UIU-API-04 actual receiver soft-metric retention unit
 

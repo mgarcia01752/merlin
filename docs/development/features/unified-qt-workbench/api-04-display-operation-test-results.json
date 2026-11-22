@@ -1,0 +1,414 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "exit_code": 0,
+      "passed": 41,
+      "cases": [
+        {
+          "test_file": "crates/ofdma/tests/api_qam_views.rs",
+          "qualified_test_case": "literal_upstream_labels_and_recorded_boosted_pilot_gain_normalize_both_modes"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_qam_views.rs",
+          "qualified_test_case": "exact_pairing_keeps_all_original_coordinates_counts_and_capped_left_order"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_qam_views.rs",
+          "qualified_test_case": "reference_geometry_and_actual_display_use_independent_budgets_and_keep_supported_maximum"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_qam_views.rs",
+          "qualified_test_case": "unsupported_planes_raw_availability_and_actual_failed_or_never_started_histories_are_explicit"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_qam_views.rs",
+          "qualified_test_case": "passive_display_queries_preserve_noisy_science_and_original_report_json_shape"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_qam_views.rs",
+          "qualified_test_case": "actual_received_response_has_literal_db_phase_and_explicit_missing_zero_readings"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_configured_response.rs",
+          "qualified_test_case": "literal_complex_two_tap_delay_phase_and_periodic_impulse_match_both_numerologies"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_configured_response.rs",
+          "qualified_test_case": "corrective_c_composite_excluded_zeros_and_full_impulse_are_independent_of_zoom"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_configured_response.rs",
+          "qualified_test_case": "selected_original_symbol_uses_actual_replay_bank_generation_independently_of_event_ids"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_configured_response.rs",
+          "qualified_test_case": "zero_transfer_cyclic_delay_alias_and_time_varying_h_have_explicit_states"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_configured_response.rs",
+          "qualified_test_case": "missing_invalid_overflowing_queries_preserve_accepted_settings_and_owned_snapshots"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_configured_response.rs",
+          "qualified_test_case": "passive_configured_queries_preserve_noisy_actual_recovery_and_frozen_report_identity"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_configured_response.rs",
+          "qualified_test_case": "pre_cancelled_report_does_not_invent_a_retained_execution_identity"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_configured_response.rs",
+          "qualified_test_case": "configured_constant_phase_matches_the_actual_channel_owner_for_wrapped_and_large_angles"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_receiver_estimates.rs",
+          "qualified_test_case": "both_modes_retain_actual_complex_effective_response_and_original_physical_holes"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_receiver_estimates.rs",
+          "qualified_test_case": "observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_receiver_estimates.rs",
+          "qualified_test_case": "aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_receiver_estimates.rs",
+          "qualified_test_case": "invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_receiver_estimates.rs",
+          "qualified_test_case": "window_budgets_and_owned_results_preserve_full_original_optional_estimates"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_receiver_estimates.rs",
+          "qualified_test_case": "zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent"
+        },
+        {
+          "test_file": "crates/ofdma/tests/qam_mapping.rs",
+          "qualified_test_case": "independent_annex_labels_and_every_order_mean_energy"
+        },
+        {
+          "test_file": "crates/ofdma/tests/qam_mapping.rs",
+          "qualified_test_case": "maxlog_reference_variance_ties_erasures_and_finite_rejection"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "upstream_namespace_executes_real_loop_and_preserves_structured_errors"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "shared_precancellation_reaches_both_directions_and_retains_source_context"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "common_cancellation_unblocks_an_acknowledged_upstream_pause"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "every_downstream_export_retains_legacy_type_identity"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "upstream_error_categories_keep_offsets_and_original_domain_causes"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "upstream_facade_retains_actual_receiver_estimates_through_independent_owner"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_renamed_stage_types_use_documented_public_imports_and_original_geometry"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_native_profiles_preserve_catalog_roles_grids_and_original_octets"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_workbench_load_is_idle_owned_and_keeps_legacy_validation"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_upstream_ucd_keeps_literal_header_and_source_identity"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_upstream_rxmer_retains_quarter_db_and_missing_readings"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_designer_uses_typed_owners_and_preserves_original_profile_identity"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_profile_capture_keeps_binary_json_science_and_original_sources"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_configured_channel_preview_uses_public_typed_configuration_and_inputs"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_idle_tx_timing_and_precancel_use_public_immutable_contracts"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        }
+      ],
+      "scope": "22 scoped upstream cases (six new display) and 19 facade cases (one new); full API-04 integration acceptance remains pending."
+    },
+    {
+      "exit_code": 0,
+      "passed": 19,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_upstream_qam_views.py",
+          "qualified_test_case": "UpstreamQamViews.test_bounds_unsupported_raw_planes_empty_failure_and_passive_noisy_outcomes"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_qam_views.py",
+          "qualified_test_case": "UpstreamQamViews.test_installed_defaults_actual_labels_recorded_gain_and_received_phase_both_modes"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_qam_views.py",
+          "qualified_test_case": "UpstreamQamViews.test_pairing_original_coordinates_whole_counts_caps_and_owned_data"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_qam_views.py",
+          "qualified_test_case": "UpstreamQamViews.test_separate_rust_process_full_observations_labels_pairs_and_received_display_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+          "qualified_test_case": "UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+          "qualified_test_case": "UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+          "qualified_test_case": "UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+          "qualified_test_case": "UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+          "qualified_test_case": "UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+          "qualified_test_case": "UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_configured_response.py",
+          "qualified_test_case": "UpstreamConfiguredResponse.test_busy_session_guard_preserves_the_same_configured_generation_after_cancel"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_configured_response.py",
+          "qualified_test_case": "UpstreamConfiguredResponse.test_literal_two_tap_transfer_phase_periodic_inverse_and_installed_defaults"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_configured_response.py",
+          "qualified_test_case": "UpstreamConfiguredResponse.test_missing_bounds_zero_transfer_cfo_and_never_started_identity_states"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_configured_response.py",
+          "qualified_test_case": "UpstreamConfiguredResponse.test_original_c_replay_excluded_zeros_zoom_and_owned_frozen_report_data"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_configured_response.py",
+          "qualified_test_case": "UpstreamConfiguredResponse.test_separate_rust_process_planes_units_full_periodic_values_and_metadata_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ],
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "run",
+            "-p",
+            "docsis-ofdma",
+            "--example",
+            "upstream_qam_views",
+            "--locked"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin",
+          "exit_code": 0,
+          "label": "qam_views",
+          "elapsed_seconds": 4.12717203500506
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "run",
+            "-p",
+            "docsis-ofdma",
+            "--example",
+            "upstream_receiver_estimates",
+            "--locked"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin",
+          "exit_code": 0,
+          "label": "receiver_estimates",
+          "elapsed_seconds": 1.1120010269951308
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "run",
+            "-p",
+            "docsis-ofdma",
+            "--example",
+            "upstream_configured_response",
+            "--locked"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin",
+          "exit_code": 0,
+          "label": "configured_response",
+          "elapsed_seconds": 0.993778026997461
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "--no-deps",
+            "/home/dev01/Projects/merlin/local/python-wheels-unified-ui-qam-views/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final",
+          "exit_code": 0,
+          "label": "install",
+          "elapsed_seconds": 0.4895809339941479
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_upstream_qam_views.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final",
+          "exit_code": 0,
+          "label": "qam-view-tests",
+          "elapsed_seconds": 0.2713956759980647
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_upstream_receiver_estimates.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final",
+          "exit_code": 0,
+          "label": "receiver-tests",
+          "elapsed_seconds": 0.26568719001079444
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_upstream_configured_response.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final",
+          "exit_code": 0,
+          "label": "configured-response-tests",
+          "elapsed_seconds": 0.5080416040000273
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_namespaces.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final",
+          "exit_code": 0,
+          "label": "namespace-tests",
+          "elapsed_seconds": 0.13639473599323537
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/installed/bin/python",
+            "-I",
+            "-B",
+            "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+            "--output",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/native-exports.json"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final",
+          "exit_code": 0,
+          "label": "native-inventory",
+          "elapsed_seconds": 0.18144754999957513
+        }
+      ],
+      "wheel_sha256": "72d7a7610723602928ca090ee79926c5af0048c78379c22654eabd2d6e0db3c0",
+      "scope": "Targeted installed Linux CPython 3.10 QAM/receiver/response and namespace acceptance. Full native/Rust/Qt regression remains the final integration gate."
+    }
+  ]
+}

@@ -16,6 +16,9 @@ use crate::{
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
+/// Copied actual QAM-point application ceiling shared by raw and normalized queries.
+pub const MAX_QAM_QUERY_POINTS: usize = 4096;
+
 /// Stable scientific test point; time samples and frequency cells stay distinct.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum Tap {
@@ -72,7 +75,10 @@ pub(crate) struct Trace {
     pub(crate) origin: Option<u64>,
     pub(crate) identity: Option<Identity>,
     pub(crate) samples: Vec<Iq>,
-    points: Vec<QamPoint>,
+    pub(super) points: Vec<QamPoint>,
+    // Actual ResourcePlan role gains stay paired with points without changing report JSON.
+    #[serde(skip)]
+    pub(super) role_gains: Vec<f64>,
 }
 
 /// Immutable after-run retention owner; recording is passive and crate-private.
@@ -103,6 +109,7 @@ impl ObservationStore {
                         identity: None,
                         samples: Vec::new(),
                         points: Vec::new(),
+                        role_gains: Vec::new(),
                     },
                 )
             })
@@ -125,7 +132,7 @@ impl ObservationStore {
     /// `maximum` is 1..4096. Missing/unretained data is a typed unavailable result,
     /// never a replay. Filtering and query frequency cannot alter scientific state.
     pub fn qam(&self, tap: Tap, loading: Option<u8>, maximum: usize) -> PhyResult<QamSnapshot> {
-        if !(1..=4096).contains(&maximum) {
+        if !(1..=MAX_QAM_QUERY_POINTS).contains(&maximum) {
             return Err(invalid("qam_query.maximum"));
         }
         let trace = self.traces.get(&tap).ok_or(PhyError::Unsupported {
@@ -209,5 +216,6 @@ impl ObservationStore {
             loading: cell.loading,
             value,
         });
+        trace.role_gains.push(cell.gain);
     }
 }
