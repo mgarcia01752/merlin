@@ -6,7 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtTest
 import "../qml/shared/theme"
-import "../qml/instruments/slicer"
+import "../qml/downstream/instruments/slicer"
 Pane {
     id:window;width:1160;height:820;visible:true
     Theme {id:theme}

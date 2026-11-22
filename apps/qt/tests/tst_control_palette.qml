@@ -7,8 +7,8 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtTest
 import "../qml/shared/theme"
-import "../qml/instruments/qam"
-import "../qml/instruments/spectrum"
+import "../qml/downstream/instruments/qam"
+import "../qml/downstream/instruments/spectrum"
 
 Pane {
     id: window

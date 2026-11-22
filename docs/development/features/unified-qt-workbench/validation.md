@@ -1307,3 +1307,43 @@ as the final architecture. Scientific instrument sharing still needs its own
 actual direction consumers. Final numeric/full UI gates, hosted jobs, Windows
 installed lifecycle and external interoperability remain separate. UIU-DS-01 is
 now the next eligible official checklist task.
+
+## UIU-DS-01 downstream placement prerequisite accepted
+
+The [placement evidence](downstream-placement-evidence.json) accepts the structural
+prerequisite only. All 104 approved moves are implemented: 45 existing Rust owners
+under `src/downstream/` and 59 QML views under their direction-specific destinations.
+One module-wiring file declares existing Rust children. QObject entries remain
+in `src/bridge/`, the module remains `Merlin.Workbench` and Main's resource URL is
+unchanged. Its instantiated view is now the approved `DownstreamWorkbench` type.
+
+All 55 existing changed Rust source bodies match their prior versions after
+reversing only module/resource paths and normalizing Rust formatting. All 59 moved
+QML bodies match after excluding import lines. Values, handlers, source vectors,
+scientific operations and serialized contracts are unchanged. Compile-time
+resources still resolve to the same original inputs. Thirty live owner/test
+locators and maintained navigation/skill references now point to current paths.
+The master prompt and archived upstream extension remain verbatim historical
+sources; they are not rewritten as current locator tables.
+
+The [original guard](legacy-qt-boundary-initial.json) is retained verbatim.
+The current guard contains explicit reviewed relocation proofs, the same three
+dependencies, 45 frozen files and 145 scientific access sites. Whole-file checks
+remain strict; sixteen negative/regression cases pass. No operation expansion or
+new exception is accepted by a file move.
+
+The Qt check phases pass formatting, Clippy, all 87 existing Rust cases and a
+development build. Their function identities are preserved under the new module
+prefix. The first source-loaded QML pass exposed an implicit former-shell import;
+an explicit import restores the same scope. The targeted QML rerun passes all 89
+original case IDs without skips. The optimized native build and six fresh release
+XCB/Fusion workbench/startup smokes pass without stderr. Failed aggregate-check
+receipts remain preserved; the evidence distinguishes their successful Rust phases
+from the later passing QML/build commands.
+
+UIU-DS-01 remains unchecked. Its next units must replace scientific calls with
+accepted facade operations, remove all direct scientific dependencies and legacy
+guard entries, and preserve actual downstream behavior. This placement does not
+accept the final API boundary, session isolation or shared scientific instruments.
+No non-Qt source/public API changed, so no non-Qt workspace rerun was needed.
+Hosted/Windows installed lifecycle and interoperability remain separate gates.

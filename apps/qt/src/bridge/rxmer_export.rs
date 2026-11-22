@@ -4,7 +4,7 @@
  */
 //! Export worker snapshots; encoding and filesystem publication belong to pnm-input.
 use super::measurement_input::bridge;
-use crate::inputs::measurement_input::designer::Request;
+use crate::downstream::inputs::measurement_input::designer::Request;
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 use docsis_ofdm_fec::scenario::RxMerFrame;
@@ -134,7 +134,7 @@ impl bridge::MeasurementInputs {
                 });
                 let diagnostic = match &pnm_check {
                     Err(error) if error.code == "out_of_range" => {
-                        crate::help::static_diagnostic("RxmerPnmExportRange")
+                        crate::downstream::help::static_diagnostic("RxmerPnmExportRange")
                     }
                     _ => Value::Null,
                 };

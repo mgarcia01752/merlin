@@ -8,6 +8,7 @@ import QtQuick.Layouts
 import Merlin.Workbench
 import "shell"
 import "shared/theme"
+import "downstream"
 
 ApplicationWindow {
     id: window
@@ -68,7 +69,7 @@ ApplicationWindow {
             }
         }
     }
-    Workbench {
+    DownstreamWorkbench {
         id: workbench
         enabled: !updates.state.installing
         anchors.fill: parent

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Native project Open/Save coordinator with validation before adoption.
-use crate::workbench::{project_file::Project, session as workbench_session};
+use crate::downstream::workbench::{project_file::Project, session as workbench_session};
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::{QString, QUrl};
 use serde_json::json;
@@ -84,7 +84,7 @@ pub mod bridge {
 #[derive(Default)]
 pub struct WorkbenchFileRust {
     path: Option<PathBuf>,
-    loader: crate::workbench::project_load::Loader,
+    loader: crate::downstream::workbench::project_load::Loader,
 }
 fn path(url: &str) -> Result<PathBuf, String> {
     QUrl::from(&QString::from(url))

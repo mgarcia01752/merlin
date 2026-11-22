@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! PRBS-TX source editing; generators and scientific validation remain in the core.
-use crate::inputs::source_input::model;
+use crate::downstream::inputs::source_input::model;
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 use model::SourceModel;
@@ -66,11 +66,12 @@ pub struct SourceInputRust {
 impl bridge::SourceInput {
     /// Adopts already validated project source state on the GUI thread.
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
-        if let Some(model) = crate::workbench::project_load::take(|prepared| prepared.source.take())
+        if let Some(model) =
+            crate::downstream::workbench::project_load::take(|prepared| prepared.source.take())
         {
             self.as_mut().rust_mut().model = model;
         } else if let Ok(model) =
-            model::SourceModel::from_saved(&crate::workbench::session::saved("source"))
+            model::SourceModel::from_saved(&crate::downstream::workbench::session::saved("source"))
         {
             self.as_mut().rust_mut().model = model;
         }
@@ -128,8 +129,8 @@ impl bridge::SourceInput {
     pub fn apply(mut self: core::pin::Pin<&mut Self>, document: &QString) -> QString {
         let result = self.as_mut().rust_mut().model.accept(&document.to_string());
         if result.is_ok() {
-            crate::workbench::session::set_source(self.rust().model.snapshot());
-            crate::workbench::session::put_saved("source", self.rust().model.export());
+            crate::downstream::workbench::session::set_source(self.rust().model.snapshot());
+            crate::downstream::workbench::session::put_saved("source", self.rust().model.export());
         }
         QString::from(result.err().unwrap_or_default())
     }

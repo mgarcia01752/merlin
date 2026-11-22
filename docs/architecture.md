@@ -1172,6 +1172,12 @@ original contents. Coupled menu/settings/update shell views remain in their
 current `qml/shell` location until UIU-SHELL-01; scientific views remain directional
 migration work. The [organization design](development/features/unified-qt-workbench/design.md#uiu-org-01-shared-presentation-organization)
 owns the focused relocation; [ORG-01 acceptance](development/features/unified-qt-workbench/validation.md#uiu-org-01-generic-presentation-accepted) records passing Qt/native evidence.
+The [DS-01 placement prerequisite](development/features/unified-qt-workbench/validation.md#uiu-ds-01-downstream-placement-prerequisite-accepted)
+now places existing downstream Rust owners in `apps/qt/src/downstream/` and views
+in `apps/qt/qml/downstream/`, including `DownstreamWorkbench.qml`. Current scientific
+calls remain unchanged behind the explicit relocated legacy guard until DS-01's
+public-API adoption units remove them. This is accepted source organization, not
+final API-boundary or session-isolation acceptance.
 
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
@@ -1688,7 +1694,7 @@ UI-ORG-01 groups QML under `shell`, `theme`, `components`, `about`, `inputs`,
 `workbenches` and `instruments`; Main.qml remains the embedded bootstrap.
 Instrument windows/charts are grouped by spectrum, QAM, response, slicer, FEC,
 messages and stages. Input directories use the corresponding Rust owner names.
-Qt-facing instrument providers now live under `apps/qt/src/instruments/`, with
+Qt-facing instrument providers now live under `apps/qt/src/downstream/instruments/`, with
 cohesive transmitter/receiver and shared spectrum modules. Existing root Rust
 paths are retained through re-exports or the existing QObject bridges. Pinned
 CXX-Qt requires those bridge files to stay together for this QML module.

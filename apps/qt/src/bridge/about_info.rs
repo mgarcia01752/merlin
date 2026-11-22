@@ -46,7 +46,7 @@ impl bridge::AboutInfo {
     /// # Returns
     /// Bounded title/Markdown JSON; unknown keys never become file paths.
     pub fn faq_document(&self, code: &QString) -> QString {
-        QString::from(crate::help::faq_document(&code.to_string()).to_string())
+        QString::from(crate::downstream::help::faq_document(&code.to_string()).to_string())
     }
     /// Reports the build's package version without I/O.
     /// # Returns

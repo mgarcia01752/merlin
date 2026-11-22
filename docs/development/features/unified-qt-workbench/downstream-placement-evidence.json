@@ -1,0 +1,4388 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Downstream placement prerequisite",
+  "status": "accepted placement only; parent and public scientific adoption remain incomplete",
+  "base_commit": "15b16a4aad7bef5aecd29e7716115c126830e76e",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-04",
+    "REQ-UIU-08",
+    "REQ-UIU-09"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-source-ownership",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "moves": {
+    "apps/qt/qml/inputs/measurement_input/ChannelResponseDialog.qml": "apps/qt/qml/downstream/measurements/ChannelResponseDialog.qml",
+    "apps/qt/qml/inputs/measurement_input/MeasurementCaptureTree.qml": "apps/qt/qml/downstream/measurements/MeasurementCaptureTree.qml",
+    "apps/qt/qml/inputs/measurement_input/MeasurementInputDialog.qml": "apps/qt/qml/downstream/measurements/MeasurementInputDialog.qml",
+    "apps/qt/qml/inputs/measurement_input/MeasurementPlaybackControls.qml": "apps/qt/qml/downstream/measurements/MeasurementPlaybackControls.qml",
+    "apps/qt/qml/inputs/measurement_input/MeasurementPlot.qml": "apps/qt/qml/downstream/measurements/MeasurementPlot.qml",
+    "apps/qt/qml/inputs/measurement_input/MeasurementViewer.qml": "apps/qt/qml/downstream/measurements/MeasurementViewer.qml",
+    "apps/qt/qml/inputs/measurement_input/RxmerDesignScope.qml": "apps/qt/qml/downstream/measurements/RxmerDesignScope.qml",
+    "apps/qt/qml/inputs/measurement_input/RxmerDesignerDialog.qml": "apps/qt/qml/downstream/measurements/RxmerDesignerDialog.qml",
+    "apps/qt/qml/inputs/measurement_input/RxmerInputDialog.qml": "apps/qt/qml/downstream/measurements/RxmerInputDialog.qml",
+    "apps/qt/qml/inputs/measurement_input/RxmerPnmExportDialog.qml": "apps/qt/qml/downstream/measurements/RxmerPnmExportDialog.qml",
+    "apps/qt/qml/inputs/ofdm_settings/OfdmSettingsDialog.qml": "apps/qt/qml/downstream/configuration/ofdm_settings/OfdmSettingsDialog.qml",
+    "apps/qt/qml/inputs/profile_input/ProfileBandwidthDialog.qml": "apps/qt/qml/downstream/configuration/profile_input/ProfileBandwidthDialog.qml",
+    "apps/qt/qml/inputs/profile_input/ProfileChart.qml": "apps/qt/qml/downstream/configuration/profile_input/ProfileChart.qml",
+    "apps/qt/qml/inputs/profile_input/ProfileInputDialog.qml": "apps/qt/qml/downstream/configuration/profile_input/ProfileInputDialog.qml",
+    "apps/qt/qml/inputs/profile_input/ProfilePlotDialog.qml": "apps/qt/qml/downstream/configuration/profile_input/ProfilePlotDialog.qml",
+    "apps/qt/qml/inputs/source_input/SourceInputDialog.qml": "apps/qt/qml/downstream/configuration/source_input/SourceInputDialog.qml",
+    "apps/qt/qml/instruments/fec/FecAllocationChart.qml": "apps/qt/qml/downstream/instruments/fec/FecAllocationChart.qml",
+    "apps/qt/qml/instruments/fec/FecCodewordTable.qml": "apps/qt/qml/downstream/instruments/fec/FecCodewordTable.qml",
+    "apps/qt/qml/instruments/fec/FecControlTable.qml": "apps/qt/qml/downstream/instruments/fec/FecControlTable.qml",
+    "apps/qt/qml/instruments/fec/FecIterationChart.qml": "apps/qt/qml/downstream/instruments/fec/FecIterationChart.qml",
+    "apps/qt/qml/instruments/fec/ReceiverFecDialog.qml": "apps/qt/qml/downstream/instruments/fec/ReceiverFecDialog.qml",
+    "apps/qt/qml/instruments/messages/TransmitterMessageDialog.qml": "apps/qt/qml/downstream/instruments/messages/TransmitterMessageDialog.qml",
+    "apps/qt/qml/instruments/profile_performance/ProfilePerformanceDialog.qml": "apps/qt/qml/downstream/instruments/profile_performance/ProfilePerformanceDialog.qml",
+    "apps/qt/qml/instruments/qam/ReceiverCellControls.qml": "apps/qt/qml/downstream/instruments/qam/ReceiverCellControls.qml",
+    "apps/qt/qml/instruments/qam/ReceiverQamDialog.qml": "apps/qt/qml/downstream/instruments/qam/ReceiverQamDialog.qml",
+    "apps/qt/qml/instruments/qam/TapQamDialog.qml": "apps/qt/qml/downstream/instruments/qam/TapQamDialog.qml",
+    "apps/qt/qml/instruments/qam/TransmitterQamDialog.qml": "apps/qt/qml/downstream/instruments/qam/TransmitterQamDialog.qml",
+    "apps/qt/qml/instruments/qam/TransmitterScatter.qml": "apps/qt/qml/downstream/instruments/qam/TransmitterScatter.qml",
+    "apps/qt/qml/instruments/response/ReceiverResponseDialog.qml": "apps/qt/qml/downstream/instruments/response/ReceiverResponseDialog.qml",
+    "apps/qt/qml/instruments/selection/InstrumentChoice.qml": "apps/qt/qml/downstream/instruments/selection/InstrumentChoice.qml",
+    "apps/qt/qml/instruments/slicer/ReceiverSlicerDialog.qml": "apps/qt/qml/downstream/instruments/slicer/ReceiverSlicerDialog.qml",
+    "apps/qt/qml/instruments/slicer/SoftDiagnosticPlot.qml": "apps/qt/qml/downstream/instruments/slicer/SoftDiagnosticPlot.qml",
+    "apps/qt/qml/instruments/spectrum/SpectrumAnalyzerDialog.qml": "apps/qt/qml/downstream/instruments/spectrum/SpectrumAnalyzerDialog.qml",
+    "apps/qt/qml/instruments/spectrum/SpectrumPlot.qml": "apps/qt/qml/downstream/instruments/spectrum/SpectrumPlot.qml",
+    "apps/qt/qml/instruments/spectrum/SymbolTimingDialog.qml": "apps/qt/qml/downstream/instruments/spectrum/SymbolTimingDialog.qml",
+    "apps/qt/qml/instruments/spectrum/SymbolTimingPanel.qml": "apps/qt/qml/downstream/instruments/spectrum/SymbolTimingPanel.qml",
+    "apps/qt/qml/instruments/spectrum/SymbolTimingPlot.qml": "apps/qt/qml/downstream/instruments/spectrum/SymbolTimingPlot.qml",
+    "apps/qt/qml/instruments/stages/TransmitterStageDialog.qml": "apps/qt/qml/downstream/instruments/stages/TransmitterStageDialog.qml",
+    "apps/qt/qml/instruments/stages/TransmitterStageLegend.qml": "apps/qt/qml/downstream/instruments/stages/TransmitterStageLegend.qml",
+    "apps/qt/qml/instruments/stages/TransmitterStagePlot.qml": "apps/qt/qml/downstream/instruments/stages/TransmitterStagePlot.qml",
+    "apps/qt/qml/shell/SectionPreviewDialog.qml": "apps/qt/qml/downstream/configuration/SectionPreviewDialog.qml",
+    "apps/qt/qml/shell/Workbench.qml": "apps/qt/qml/downstream/DownstreamWorkbench.qml",
+    "apps/qt/qml/workbenches/channel/ChannelAmplifierDialog.qml": "apps/qt/qml/downstream/channel/ChannelAmplifierDialog.qml",
+    "apps/qt/qml/workbenches/channel/ChannelAttenuatorDialog.qml": "apps/qt/qml/downstream/channel/ChannelAttenuatorDialog.qml",
+    "apps/qt/qml/workbenches/channel/ChannelConfigurationDialog.qml": "apps/qt/qml/downstream/channel/ChannelConfigurationDialog.qml",
+    "apps/qt/qml/workbenches/channel/ChannelFilterDialog.qml": "apps/qt/qml/downstream/channel/ChannelFilterDialog.qml",
+    "apps/qt/qml/workbenches/channel/ChannelInstrumentDialog.qml": "apps/qt/qml/downstream/channel/ChannelInstrumentDialog.qml",
+    "apps/qt/qml/workbenches/channel/ChannelLossDialog.qml": "apps/qt/qml/downstream/channel/ChannelLossDialog.qml",
+    "apps/qt/qml/workbenches/channel/ChannelModelCard.qml": "apps/qt/qml/downstream/channel/ChannelModelCard.qml",
+    "apps/qt/qml/workbenches/channel/ChannelResponsePreviewDialog.qml": "apps/qt/qml/downstream/channel/ChannelResponsePreviewDialog.qml",
+    "apps/qt/qml/workbenches/channel/ChannelWorkbenchDialog.qml": "apps/qt/qml/downstream/channel/ChannelWorkbenchDialog.qml",
+    "apps/qt/qml/workbenches/channel/ConditioningSymbol.qml": "apps/qt/qml/downstream/channel/ConditioningSymbol.qml",
+    "apps/qt/qml/workbenches/receiver/ReceiverConfigurationDialog.qml": "apps/qt/qml/downstream/receiver/ReceiverConfigurationDialog.qml",
+    "apps/qt/qml/workbenches/receiver/ReceiverWorkbenchDialog.qml": "apps/qt/qml/downstream/receiver/ReceiverWorkbenchDialog.qml",
+    "apps/qt/qml/workbenches/transmitter/TransmitterGraphCard.qml": "apps/qt/qml/downstream/transmitter/TransmitterGraphCard.qml",
+    "apps/qt/qml/workbenches/transmitter/TransmitterWorkbenchDialog.qml": "apps/qt/qml/downstream/transmitter/TransmitterWorkbenchDialog.qml",
+    "apps/qt/qml/workbenches/verification/VerificationBarChart.qml": "apps/qt/qml/downstream/receiver/VerificationBarChart.qml",
+    "apps/qt/qml/workbenches/verification/VerificationDialog.qml": "apps/qt/qml/downstream/receiver/VerificationDialog.qml",
+    "apps/qt/qml/workbenches/workbench/WorkbenchConfigurationDialog.qml": "apps/qt/qml/downstream/configuration/WorkbenchConfigurationDialog.qml",
+    "apps/qt/src/help.rs": "apps/qt/src/downstream/help.rs",
+    "apps/qt/src/inputs/channel_model.rs": "apps/qt/src/downstream/inputs/channel_model.rs",
+    "apps/qt/src/inputs/measurement_input/designer.rs": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+    "apps/qt/src/inputs/measurement_input/document.rs": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+    "apps/qt/src/inputs/measurement_input/mod.rs": "apps/qt/src/downstream/inputs/measurement_input/mod.rs",
+    "apps/qt/src/inputs/measurement_input/model.rs": "apps/qt/src/downstream/inputs/measurement_input/model.rs",
+    "apps/qt/src/inputs/measurement_input/plc.rs": "apps/qt/src/downstream/inputs/measurement_input/plc.rs",
+    "apps/qt/src/inputs/measurement_input/preview.rs": "apps/qt/src/downstream/inputs/measurement_input/preview.rs",
+    "apps/qt/src/inputs/mod.rs": "apps/qt/src/downstream/inputs/mod.rs",
+    "apps/qt/src/inputs/profile_input/document.rs": "apps/qt/src/downstream/inputs/profile_input/document.rs",
+    "apps/qt/src/inputs/profile_input/mod.rs": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
+    "apps/qt/src/inputs/profile_input/plot.rs": "apps/qt/src/downstream/inputs/profile_input/plot.rs",
+    "apps/qt/src/inputs/source_input/mod.rs": "apps/qt/src/downstream/inputs/source_input/mod.rs",
+    "apps/qt/src/inputs/source_input/model.rs": "apps/qt/src/downstream/inputs/source_input/model.rs",
+    "apps/qt/src/instruments/channel/mod.rs": "apps/qt/src/downstream/instruments/channel/mod.rs",
+    "apps/qt/src/instruments/mod.rs": "apps/qt/src/downstream/instruments/mod.rs",
+    "apps/qt/src/instruments/receiver/diagnostics.rs": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+    "apps/qt/src/instruments/receiver/fec.rs": "apps/qt/src/downstream/instruments/receiver/fec.rs",
+    "apps/qt/src/instruments/receiver/mod.rs": "apps/qt/src/downstream/instruments/receiver/mod.rs",
+    "apps/qt/src/instruments/receiver/performance.rs": "apps/qt/src/downstream/instruments/receiver/performance.rs",
+    "apps/qt/src/instruments/receiver/qam_history.rs": "apps/qt/src/downstream/instruments/receiver/qam_history.rs",
+    "apps/qt/src/instruments/receiver/selection.rs": "apps/qt/src/downstream/instruments/receiver/selection.rs",
+    "apps/qt/src/instruments/receiver/soft_display.rs": "apps/qt/src/downstream/instruments/receiver/soft_display.rs",
+    "apps/qt/src/instruments/receiver/verification.rs": "apps/qt/src/downstream/instruments/receiver/verification.rs",
+    "apps/qt/src/instruments/receiver/views.rs": "apps/qt/src/downstream/instruments/receiver/views.rs",
+    "apps/qt/src/instruments/spectrum/mod.rs": "apps/qt/src/downstream/instruments/spectrum/mod.rs",
+    "apps/qt/src/instruments/spectrum/plc.rs": "apps/qt/src/downstream/instruments/spectrum/plc.rs",
+    "apps/qt/src/instruments/spectrum/symbol_timing.rs": "apps/qt/src/downstream/instruments/spectrum/symbol_timing.rs",
+    "apps/qt/src/instruments/transmitter/capture.rs": "apps/qt/src/downstream/instruments/transmitter/capture.rs",
+    "apps/qt/src/instruments/transmitter/channel_input.rs": "apps/qt/src/downstream/instruments/transmitter/channel_input.rs",
+    "apps/qt/src/instruments/transmitter/graphs/mod.rs": "apps/qt/src/downstream/instruments/transmitter/graphs/mod.rs",
+    "apps/qt/src/instruments/transmitter/graphs/physical.rs": "apps/qt/src/downstream/instruments/transmitter/graphs/physical.rs",
+    "apps/qt/src/instruments/transmitter/messages.rs": "apps/qt/src/downstream/instruments/transmitter/messages.rs",
+    "apps/qt/src/instruments/transmitter/mod.rs": "apps/qt/src/downstream/instruments/transmitter/mod.rs",
+    "apps/qt/src/instruments/transmitter/preview.rs": "apps/qt/src/downstream/instruments/transmitter/preview.rs",
+    "apps/qt/src/instruments/transmitter/qam_points.rs": "apps/qt/src/downstream/instruments/transmitter/qam_points.rs",
+    "apps/qt/src/instruments/transmitter/tlv_fields.rs": "apps/qt/src/downstream/instruments/transmitter/tlv_fields.rs",
+    "apps/qt/src/instruments/transmitter/views.rs": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+    "apps/qt/src/simulation/closed_loop.rs": "apps/qt/src/downstream/simulation/closed_loop.rs",
+    "apps/qt/src/simulation/mod.rs": "apps/qt/src/downstream/simulation/mod.rs",
+    "apps/qt/src/simulation/run_timing.rs": "apps/qt/src/downstream/simulation/run_timing.rs",
+    "apps/qt/src/workbench/mod.rs": "apps/qt/src/downstream/workbench/mod.rs",
+    "apps/qt/src/workbench/project_file.rs": "apps/qt/src/downstream/workbench/project_file.rs",
+    "apps/qt/src/workbench/project_load.rs": "apps/qt/src/downstream/workbench/project_load.rs",
+    "apps/qt/src/workbench/session.rs": "apps/qt/src/downstream/workbench/session.rs"
+  },
+  "path_adaptation_stage": [
+    {
+      "original": "apps/qt/build.rs",
+      "destination": "apps/qt/build.rs",
+      "original_sha256": "a863ab30932837a94f1e27f2b20f56726057e200aa0661bb613ecaa88abefaf5",
+      "sha256": "452d7e03d1f5400d9d4ba2c2f9941e4f87d06684a21df9ca0a862b91d3a05c7a",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/Main.qml",
+      "destination": "apps/qt/qml/Main.qml",
+      "original_sha256": "64663e202128b0afe801d113fb41cb9e0b8a9b65265cf7c792e50117a4f2d47d",
+      "sha256": "5e7f36d8b4ded9758d20d1a02f596a648b997da9d2d04065cee83cec55aabf65",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/ChannelResponseDialog.qml",
+      "destination": "apps/qt/qml/downstream/measurements/ChannelResponseDialog.qml",
+      "original_sha256": "d2084877a738909956b49dfffebc7be1095b5661f701735982ba41cf9da686d5",
+      "sha256": "d2084877a738909956b49dfffebc7be1095b5661f701735982ba41cf9da686d5",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/MeasurementCaptureTree.qml",
+      "destination": "apps/qt/qml/downstream/measurements/MeasurementCaptureTree.qml",
+      "original_sha256": "bb6668b2efe65581c6867ed4c29d76a798039845624d6afbc25329ed8fd60f00",
+      "sha256": "bb6668b2efe65581c6867ed4c29d76a798039845624d6afbc25329ed8fd60f00",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/MeasurementInputDialog.qml",
+      "destination": "apps/qt/qml/downstream/measurements/MeasurementInputDialog.qml",
+      "original_sha256": "4c091e9ce43fbdb25bb132d07962839e31cc560fd7fb12de4b11c82e6719e589",
+      "sha256": "4c091e9ce43fbdb25bb132d07962839e31cc560fd7fb12de4b11c82e6719e589",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/MeasurementPlaybackControls.qml",
+      "destination": "apps/qt/qml/downstream/measurements/MeasurementPlaybackControls.qml",
+      "original_sha256": "78949aa21c7ca7afca1d24cc85e004c21ca15efe0dc9ff514b6a9b4586de1f85",
+      "sha256": "78949aa21c7ca7afca1d24cc85e004c21ca15efe0dc9ff514b6a9b4586de1f85",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/MeasurementPlot.qml",
+      "destination": "apps/qt/qml/downstream/measurements/MeasurementPlot.qml",
+      "original_sha256": "ed842c331b708675b603152105f1dab46926146fb9a88c061645678cbfb26138",
+      "sha256": "ed842c331b708675b603152105f1dab46926146fb9a88c061645678cbfb26138",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/MeasurementViewer.qml",
+      "destination": "apps/qt/qml/downstream/measurements/MeasurementViewer.qml",
+      "original_sha256": "fe2f3e78db64fb93adc2b2323132afa7de253bf636a1ea1480f44b95b3a2fd2d",
+      "sha256": "fe2f3e78db64fb93adc2b2323132afa7de253bf636a1ea1480f44b95b3a2fd2d",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/RxmerDesignScope.qml",
+      "destination": "apps/qt/qml/downstream/measurements/RxmerDesignScope.qml",
+      "original_sha256": "0f2c1519d313f42d0d7a73bc4c5fdb7f165040e2fa4f5210d8ec0450ba4a4768",
+      "sha256": "0f2c1519d313f42d0d7a73bc4c5fdb7f165040e2fa4f5210d8ec0450ba4a4768",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/RxmerDesignerDialog.qml",
+      "destination": "apps/qt/qml/downstream/measurements/RxmerDesignerDialog.qml",
+      "original_sha256": "7de651145f4290fe846ac4abf39dab6b668d506f773dfc474b67930d3da10cc8",
+      "sha256": "7de651145f4290fe846ac4abf39dab6b668d506f773dfc474b67930d3da10cc8",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/RxmerInputDialog.qml",
+      "destination": "apps/qt/qml/downstream/measurements/RxmerInputDialog.qml",
+      "original_sha256": "222d1689f0bf4f4511d15d6467a2f5ba5b1dfdd0c737eed0d9564d0c619fb15a",
+      "sha256": "222d1689f0bf4f4511d15d6467a2f5ba5b1dfdd0c737eed0d9564d0c619fb15a",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/RxmerPnmExportDialog.qml",
+      "destination": "apps/qt/qml/downstream/measurements/RxmerPnmExportDialog.qml",
+      "original_sha256": "ec9773c5b6d4a682bdc6b74eb4dc496103d0edec6b67c7f000977f33f63b472c",
+      "sha256": "ec9773c5b6d4a682bdc6b74eb4dc496103d0edec6b67c7f000977f33f63b472c",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/ofdm_settings/OfdmSettingsDialog.qml",
+      "destination": "apps/qt/qml/downstream/configuration/ofdm_settings/OfdmSettingsDialog.qml",
+      "original_sha256": "f3b571969863e689c87d7588cc9566b83097b6b6446539534f017e22c7c67212",
+      "sha256": "7d788b5d391acf2dde77f49dec2540d5525b04649c623065993d20a288b255bd",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/profile_input/ProfileBandwidthDialog.qml",
+      "destination": "apps/qt/qml/downstream/configuration/profile_input/ProfileBandwidthDialog.qml",
+      "original_sha256": "d28bb9eb2708bc2fb0b993ad4adaf56139ccc3a13e35b017dcc3d34a04360a1e",
+      "sha256": "445206583ee4df3baabbe18a4d182f1cc1b7ef96d123eef50406619e3eda5baf",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/profile_input/ProfileChart.qml",
+      "destination": "apps/qt/qml/downstream/configuration/profile_input/ProfileChart.qml",
+      "original_sha256": "df4e572c2f20bd274a55c23edea15a418c9f7a74d87f78a2b253a05bdb44e746",
+      "sha256": "bbd3fbfb229c3d2f6fcadf1d4d814f4567ff5833e5ce125bb8df1b4ca74b6993",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/profile_input/ProfileInputDialog.qml",
+      "destination": "apps/qt/qml/downstream/configuration/profile_input/ProfileInputDialog.qml",
+      "original_sha256": "8e1352bcd7d6214b6aa37bda3358fc262a16ce8b0c6216142c56446ac1a0c11f",
+      "sha256": "b624bc774f31a89549e03aade8d7dc5c049835973e9fc5b6e102433994f6f1e8",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/profile_input/ProfilePlotDialog.qml",
+      "destination": "apps/qt/qml/downstream/configuration/profile_input/ProfilePlotDialog.qml",
+      "original_sha256": "a6107ae50aed035b26523970abbc9fd241c0a06cd8da189ecb732408f0f2ddcf",
+      "sha256": "d25f223ed083afb3a3e6f66072eb6c74d93a5bcbd7a62ae17a72797ddb3271a4",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/source_input/SourceInputDialog.qml",
+      "destination": "apps/qt/qml/downstream/configuration/source_input/SourceInputDialog.qml",
+      "original_sha256": "ec8a34569084979a942fe1fec632109f7dab8a4876b9ca486ff5d91a1684fb87",
+      "sha256": "ada82d840e76836efb13fd3cb7e746bc8b48931bf55f8ae19ca3982fcf2a0769",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/fec/FecAllocationChart.qml",
+      "destination": "apps/qt/qml/downstream/instruments/fec/FecAllocationChart.qml",
+      "original_sha256": "bf4a2ea07bfb1dec55c3c100c97b459d8b1a6750bd420389bfcfce30a2d3202f",
+      "sha256": "bf4a2ea07bfb1dec55c3c100c97b459d8b1a6750bd420389bfcfce30a2d3202f",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/fec/FecCodewordTable.qml",
+      "destination": "apps/qt/qml/downstream/instruments/fec/FecCodewordTable.qml",
+      "original_sha256": "0d1bbaccfc15d9d93ae28b7ac94676302acc96169e86a654ef786f333b714525",
+      "sha256": "0d1bbaccfc15d9d93ae28b7ac94676302acc96169e86a654ef786f333b714525",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/fec/FecControlTable.qml",
+      "destination": "apps/qt/qml/downstream/instruments/fec/FecControlTable.qml",
+      "original_sha256": "169da7fa0b0a0757cac73d2ffa3abf7aa2439320f624f1539a93c1a0d950118b",
+      "sha256": "169da7fa0b0a0757cac73d2ffa3abf7aa2439320f624f1539a93c1a0d950118b",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/fec/FecIterationChart.qml",
+      "destination": "apps/qt/qml/downstream/instruments/fec/FecIterationChart.qml",
+      "original_sha256": "b92f0e1e77081623991a4fa26e8a5ed730adde2eb2ef262bf7b2c5fe77f314e9",
+      "sha256": "b92f0e1e77081623991a4fa26e8a5ed730adde2eb2ef262bf7b2c5fe77f314e9",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/fec/ReceiverFecDialog.qml",
+      "destination": "apps/qt/qml/downstream/instruments/fec/ReceiverFecDialog.qml",
+      "original_sha256": "5397a97f0fcb5a0f8bbb93fe9d92f7459439d24d29b805ccf8507dcf7b7fe924",
+      "sha256": "b880c2ed667612f0597616d021310c9d98aa8113c94cd433678a816412deb457",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/messages/TransmitterMessageDialog.qml",
+      "destination": "apps/qt/qml/downstream/instruments/messages/TransmitterMessageDialog.qml",
+      "original_sha256": "12d1f069690241585a78a58f9202a3a3424110f14d425f5470792a9bc604eaa0",
+      "sha256": "1216c7573b3b37101f9d243d0db4d4524db1b6f8b0498148812fc5abef69e84b",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/profile_performance/ProfilePerformanceDialog.qml",
+      "destination": "apps/qt/qml/downstream/instruments/profile_performance/ProfilePerformanceDialog.qml",
+      "original_sha256": "bedf40fd0fef118b9975b22f6eb5dbb01cf8cd1b7c9fc8c0daa03944b76e41b4",
+      "sha256": "451ef1b43537228cf05d83525e8213903165d81e020e12d79837d8fd87d69203",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/qam/ReceiverCellControls.qml",
+      "destination": "apps/qt/qml/downstream/instruments/qam/ReceiverCellControls.qml",
+      "original_sha256": "0cda49b832d5ca418e55d2e07762ec3101e8e013ea8b324dded22b09583954b0",
+      "sha256": "63d2bf1a58f18b41fc0b388da047afacc4feccde867460be95dcdf7e315eb74e",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/qam/ReceiverQamDialog.qml",
+      "destination": "apps/qt/qml/downstream/instruments/qam/ReceiverQamDialog.qml",
+      "original_sha256": "f320ed990e20cc92fffd3cfd39af5cbeda198ac287012208747d96284087b930",
+      "sha256": "c8ebfca044c77574515de381028a0dd6eb5618ddab4be6ad24b0b30ec6677bc5",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/qam/TapQamDialog.qml",
+      "destination": "apps/qt/qml/downstream/instruments/qam/TapQamDialog.qml",
+      "original_sha256": "c7206500f4a988a6270acab6d2badfe9519f84698132bcffae445d1cd8f6ce4d",
+      "sha256": "eda313e0cc816e2cdf833398d21778aa0f61206ba483ddac472b83cd2d74ea9a",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/qam/TransmitterQamDialog.qml",
+      "destination": "apps/qt/qml/downstream/instruments/qam/TransmitterQamDialog.qml",
+      "original_sha256": "f19b231d1d24aef109470cd5a2fbd873a2f862e9a58b395bc782ff97aa72e4fa",
+      "sha256": "502c9c0423e2ccee74efaa5dc3c9c205caf5630a395c6a796166223db2f9878f",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/qam/TransmitterScatter.qml",
+      "destination": "apps/qt/qml/downstream/instruments/qam/TransmitterScatter.qml",
+      "original_sha256": "7fa930879d337517e66e727c0e0f1e6a505fe36beb3863486d3f0310a09c9262",
+      "sha256": "7fa930879d337517e66e727c0e0f1e6a505fe36beb3863486d3f0310a09c9262",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/response/ReceiverResponseDialog.qml",
+      "destination": "apps/qt/qml/downstream/instruments/response/ReceiverResponseDialog.qml",
+      "original_sha256": "551d794c91eb93db4bffa8504d3ec2bef8855e0e7e447ab8207910de3a4f43ab",
+      "sha256": "ff9ec86eaa5bbb062d898a9b0626832b830a972721a7fb142b2b89a49f210a83",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/selection/InstrumentChoice.qml",
+      "destination": "apps/qt/qml/downstream/instruments/selection/InstrumentChoice.qml",
+      "original_sha256": "694d45f5b6752994e05847f42a851cc823a8ab4d08bb15065644cf551bfeb5cf",
+      "sha256": "a4a6becaeb57adf4151479ca9b100958413c627fe737d514da62db2bff1e0aa1",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/slicer/ReceiverSlicerDialog.qml",
+      "destination": "apps/qt/qml/downstream/instruments/slicer/ReceiverSlicerDialog.qml",
+      "original_sha256": "0461a1b7b41875ca8d2cbb1d3dbbdfa9ced37fddb88b0e5a2620008f72f8f4c1",
+      "sha256": "4887e7307e2f99266595f1f26ea996b795a0a8829bbe7630e68266def4eb1f83",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/slicer/SoftDiagnosticPlot.qml",
+      "destination": "apps/qt/qml/downstream/instruments/slicer/SoftDiagnosticPlot.qml",
+      "original_sha256": "bed8071b5ea32d2d1df206234d19a719505b9108970b2618a16cb0b34ec3a6ff",
+      "sha256": "bed8071b5ea32d2d1df206234d19a719505b9108970b2618a16cb0b34ec3a6ff",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/spectrum/SpectrumAnalyzerDialog.qml",
+      "destination": "apps/qt/qml/downstream/instruments/spectrum/SpectrumAnalyzerDialog.qml",
+      "original_sha256": "943d1d9227d2bb899110988009b07acd66c94cded1b9c2fad1f819021de033ca",
+      "sha256": "da265404a3ed70aa67f97f12be883dce4275a1367a7c773f1ee3b2404c9d60e7",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/spectrum/SpectrumPlot.qml",
+      "destination": "apps/qt/qml/downstream/instruments/spectrum/SpectrumPlot.qml",
+      "original_sha256": "e0c258226e99b632c9eabc7da7aa079ada37cfa225f56d4b4afdbec93f24dbc8",
+      "sha256": "cef66ab78cf0bffd557302f2421666e7680a7d4e67b410b1e8de2ba5513d43b2",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/spectrum/SymbolTimingDialog.qml",
+      "destination": "apps/qt/qml/downstream/instruments/spectrum/SymbolTimingDialog.qml",
+      "original_sha256": "375da658cdcb7cb908669303418681b193fe3bd37070584cd0f11a5556ebac48",
+      "sha256": "71dad2299701902c202f6b6567c15a43e869f21b8d4ae985d8951ea06b6ab7bc",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/spectrum/SymbolTimingPanel.qml",
+      "destination": "apps/qt/qml/downstream/instruments/spectrum/SymbolTimingPanel.qml",
+      "original_sha256": "13573f58f3695925f20c3e6a1ff7c9f3f56bcb81311b73f96d7b1b5111bdbea9",
+      "sha256": "13573f58f3695925f20c3e6a1ff7c9f3f56bcb81311b73f96d7b1b5111bdbea9",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/spectrum/SymbolTimingPlot.qml",
+      "destination": "apps/qt/qml/downstream/instruments/spectrum/SymbolTimingPlot.qml",
+      "original_sha256": "aae7bb1013551b1fba3d144eca138596ed146dcfcc3044786054dd889aaa0176",
+      "sha256": "aae7bb1013551b1fba3d144eca138596ed146dcfcc3044786054dd889aaa0176",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/stages/TransmitterStageDialog.qml",
+      "destination": "apps/qt/qml/downstream/instruments/stages/TransmitterStageDialog.qml",
+      "original_sha256": "c24148035ca784ea1a1a322aaa1b7b1580388b9f03b303b095320385d06f1401",
+      "sha256": "11f31fd88a3230572b9505d1d478350a099165cf12e238823740ad0cf263673c",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/stages/TransmitterStageLegend.qml",
+      "destination": "apps/qt/qml/downstream/instruments/stages/TransmitterStageLegend.qml",
+      "original_sha256": "a831b2d8deb93af93f40c560de3ae237762a801c171b390809951f4f2be6e566",
+      "sha256": "a831b2d8deb93af93f40c560de3ae237762a801c171b390809951f4f2be6e566",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/stages/TransmitterStagePlot.qml",
+      "destination": "apps/qt/qml/downstream/instruments/stages/TransmitterStagePlot.qml",
+      "original_sha256": "931949662563162d2a8b57dc5fd6fd7b9e68e1fb83eb9bb92324226f237a7796",
+      "sha256": "931949662563162d2a8b57dc5fd6fd7b9e68e1fb83eb9bb92324226f237a7796",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/shell/SectionPreviewDialog.qml",
+      "destination": "apps/qt/qml/downstream/configuration/SectionPreviewDialog.qml",
+      "original_sha256": "2aeecc4ada1a1a163481b428e61e552fc4a7ff200084bc6c1b80a323d0abf271",
+      "sha256": "36d6b0f5283cfd5c7517043228c27baafb03ef5938f6bed851b449f67d857ffb",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/shell/Workbench.qml",
+      "destination": "apps/qt/qml/downstream/DownstreamWorkbench.qml",
+      "original_sha256": "4e30db844ed8fdbc8e2c8048374daec1b1c1e90d104571668980f355d24d3e12",
+      "sha256": "b1c2a7ef68559a14970b95eb570d06249ac2e6a46949b3b54fcb60ff95fbed2c",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelAmplifierDialog.qml",
+      "destination": "apps/qt/qml/downstream/channel/ChannelAmplifierDialog.qml",
+      "original_sha256": "c66447f0b0f6708603bbd079ad0f3b05ce24e1a0e43c369d04dd22e61fd8f0d7",
+      "sha256": "c66447f0b0f6708603bbd079ad0f3b05ce24e1a0e43c369d04dd22e61fd8f0d7",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelAttenuatorDialog.qml",
+      "destination": "apps/qt/qml/downstream/channel/ChannelAttenuatorDialog.qml",
+      "original_sha256": "35a966d7d7c10ce17511a2d2e98a94403b373b459d34c1806e5b94e87d7de2c7",
+      "sha256": "35a966d7d7c10ce17511a2d2e98a94403b373b459d34c1806e5b94e87d7de2c7",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelConfigurationDialog.qml",
+      "destination": "apps/qt/qml/downstream/channel/ChannelConfigurationDialog.qml",
+      "original_sha256": "7de4a3204c3993026fd2587d445fc3ecc5f7d0596ae7764792b6b5068f6c196b",
+      "sha256": "c00dae0980ca2e093d3169e9873fa4645af04137540bc53e3a305049b36189bf",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelFilterDialog.qml",
+      "destination": "apps/qt/qml/downstream/channel/ChannelFilterDialog.qml",
+      "original_sha256": "1475857b50c8e589bdf7fd6a1dca87b5956dbee8e6dedbfc7f28a94301f23a6c",
+      "sha256": "1475857b50c8e589bdf7fd6a1dca87b5956dbee8e6dedbfc7f28a94301f23a6c",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelInstrumentDialog.qml",
+      "destination": "apps/qt/qml/downstream/channel/ChannelInstrumentDialog.qml",
+      "original_sha256": "7b6c8bfae3bba6c8f346e02651999ace45fe56076037977a0455cd1cbc7caedb",
+      "sha256": "de5faf072e488c9ad8d184c2dc3cbd184b705ca0f692049e6e07f56eb99dac39",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelLossDialog.qml",
+      "destination": "apps/qt/qml/downstream/channel/ChannelLossDialog.qml",
+      "original_sha256": "b17639b0de009e3672c9c4ed4943d39606ffb70e96eb8034f736cb5300b38843",
+      "sha256": "b17639b0de009e3672c9c4ed4943d39606ffb70e96eb8034f736cb5300b38843",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelModelCard.qml",
+      "destination": "apps/qt/qml/downstream/channel/ChannelModelCard.qml",
+      "original_sha256": "f336534a6151dd631949fd8f7adc550af6f5cb5da2b426282b18c7ed5429271c",
+      "sha256": "f336534a6151dd631949fd8f7adc550af6f5cb5da2b426282b18c7ed5429271c",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelResponsePreviewDialog.qml",
+      "destination": "apps/qt/qml/downstream/channel/ChannelResponsePreviewDialog.qml",
+      "original_sha256": "ece74e94db44403b33e283d63860142a2ee5203d55f3335c75dd873f275406d8",
+      "sha256": "6fa4f42dc7b602bd75de519b6e659983f706e461f3bfed2636b161ec5cd879fc",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelWorkbenchDialog.qml",
+      "destination": "apps/qt/qml/downstream/channel/ChannelWorkbenchDialog.qml",
+      "original_sha256": "01c8d1ba05be5394c0aa984456a4a281c234c43000f96aab3a289ed3ee28dc8f",
+      "sha256": "6343bd235b0750d97c57eb4a59321656749681d7dd6658ecbbadd862f77f53f9",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ConditioningSymbol.qml",
+      "destination": "apps/qt/qml/downstream/channel/ConditioningSymbol.qml",
+      "original_sha256": "c8119c714076757b7cdfa1fbfbaf6ad103d305e69cee9e70a264597554608f9e",
+      "sha256": "c8119c714076757b7cdfa1fbfbaf6ad103d305e69cee9e70a264597554608f9e",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/receiver/ReceiverConfigurationDialog.qml",
+      "destination": "apps/qt/qml/downstream/receiver/ReceiverConfigurationDialog.qml",
+      "original_sha256": "ca7aa89aa121a485aa826f1fd0840f644e2123d6a3a2ade34624894bd6f9c913",
+      "sha256": "ca7aa89aa121a485aa826f1fd0840f644e2123d6a3a2ade34624894bd6f9c913",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/receiver/ReceiverWorkbenchDialog.qml",
+      "destination": "apps/qt/qml/downstream/receiver/ReceiverWorkbenchDialog.qml",
+      "original_sha256": "bd16c963e41ac755e394b76da0ff3c97fefd38f3267fd2b12c09554ffd4a9d9f",
+      "sha256": "35beea439e7d667692c4ae14bf0222dbc266f77e910f73171483bc94abd4bdad",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/transmitter/TransmitterGraphCard.qml",
+      "destination": "apps/qt/qml/downstream/transmitter/TransmitterGraphCard.qml",
+      "original_sha256": "81b25bae37d3cbce2b9983ac5b6d1f67e9654de2a5e7a7ba771bade3caa9d68d",
+      "sha256": "ad87ffe64395e1cb8549713b649d7599d913c4f304284d570c1d574327dfef2b",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/transmitter/TransmitterWorkbenchDialog.qml",
+      "destination": "apps/qt/qml/downstream/transmitter/TransmitterWorkbenchDialog.qml",
+      "original_sha256": "60799b7350cfcc473328a87de61c88471915e59435afd2da2cca4d9b9d215c8d",
+      "sha256": "f70677096f9b0270099d0c8af3df1e707d203b7546744815d76bff8ec1152919",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/verification/VerificationBarChart.qml",
+      "destination": "apps/qt/qml/downstream/receiver/VerificationBarChart.qml",
+      "original_sha256": "3dbec4542307502a13286302dbbb0a3c633cfe691c3be4c99830eee92a396a23",
+      "sha256": "3dbec4542307502a13286302dbbb0a3c633cfe691c3be4c99830eee92a396a23",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/verification/VerificationDialog.qml",
+      "destination": "apps/qt/qml/downstream/receiver/VerificationDialog.qml",
+      "original_sha256": "51fd63eb04b09cc6d6ef7346967bedf201cf617e2b31a1397cf4edcc435fbd3a",
+      "sha256": "51fd63eb04b09cc6d6ef7346967bedf201cf617e2b31a1397cf4edcc435fbd3a",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/workbench/WorkbenchConfigurationDialog.qml",
+      "destination": "apps/qt/qml/downstream/configuration/WorkbenchConfigurationDialog.qml",
+      "original_sha256": "7eeaf10ee59bb21f8e59e484eb526dc2236258104889b80b26272d621ff90c37",
+      "sha256": "7eeaf10ee59bb21f8e59e484eb526dc2236258104889b80b26272d621ff90c37",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/bridge/about_info.rs",
+      "destination": "apps/qt/src/bridge/about_info.rs",
+      "original_sha256": "026803769e937f5bef1b39ecd084aa94e9384bce16ed402ccccd88f27dae6ec7",
+      "sha256": "dbc7160c336c688cfe28e8213f224d7fb729dfbb26fd1cdf17a2c4424e9c252a",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/bridge/closed_loop.rs",
+      "destination": "apps/qt/src/bridge/closed_loop.rs",
+      "original_sha256": "a25df73430ced76176462646ce6bdd593c8276c90aba022432ea271c09b66404",
+      "sha256": "9fb1dbeee45974d5eaaa708fc2b6349f4054aee6feee84885d8f1b03a757cb17",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/bridge/measurement_input.rs",
+      "destination": "apps/qt/src/bridge/measurement_input.rs",
+      "original_sha256": "b10fcfa45e011614dfa85563409e019e7327649d09e471ed2e91d3c5d87679c4",
+      "sha256": "6fee8086e2e5440c9514b90e8bf29b648addd75f95a97f5133a4589df4eba895",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/bridge/profile_input.rs",
+      "destination": "apps/qt/src/bridge/profile_input.rs",
+      "original_sha256": "8faa55895e860ed7296658e7a459d5f26eb54b1f18ad64a198bb7bcc13b03d05",
+      "sha256": "c44cdbbd92e922bba4819805bd16d6541c1e42f6bf297fa66e3db25301a85fcb",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/bridge/receiver_instruments.rs",
+      "destination": "apps/qt/src/bridge/receiver_instruments.rs",
+      "original_sha256": "9db740aa78778e5520a3536a1c87ca0204ce1676c78d3c3f95d792927e4efc9f",
+      "sha256": "1833c34ba0fb30f3a9069749a782402018ce89dfb3408b8e38183dc46e9c5d57",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/bridge/rxmer_designer.rs",
+      "destination": "apps/qt/src/bridge/rxmer_designer.rs",
+      "original_sha256": "da36549cb20f6e37a58b1756d80fba669ed167cf79eee01d43a972abbbcc79ac",
+      "sha256": "e92b66bacf06b74c67baddcd75f3f1fe3488d5ac57af276e4f3507bb6a308c98",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/bridge/rxmer_export.rs",
+      "destination": "apps/qt/src/bridge/rxmer_export.rs",
+      "original_sha256": "c9e2a29f709c7d893018a095292cf41bec1b23365e6b8542aafea9e523837063",
+      "sha256": "4b3cf78f815588359f8957edaabc8a95bb4df7b2aa1917030aa250cdc06fff8d",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/bridge/source_input.rs",
+      "destination": "apps/qt/src/bridge/source_input.rs",
+      "original_sha256": "1a172eeab7ec64493c6039ddc56e12206bd94485be6e9f25f948cfb264141131",
+      "sha256": "da1a024d45cf7fbdca466b5f779c2342185843cb0847dbfa456f4d28ab6802bb",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/bridge/transmitter_analyzer.rs",
+      "destination": "apps/qt/src/bridge/transmitter_analyzer.rs",
+      "original_sha256": "c4e16c9272e41484ba452bf2b1f184247c3e4408fc22f565cd58df1d9bcc41d0",
+      "sha256": "1f00846c2e99975c6eebd4d73f46de4d2b9a2f3b1a518d8ba10f01b3389185c3",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/bridge/workbench_file.rs",
+      "destination": "apps/qt/src/bridge/workbench_file.rs",
+      "original_sha256": "dea500fb6e7ecc49a972d19c8f288ff6ee0a9250a9b07e2abf34669bdae67066",
+      "sha256": "bf191542686a08ab27e8b6b74f117ce43db22aa1a1e45166a801ed2dac481c70",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/help.rs",
+      "destination": "apps/qt/src/downstream/help.rs",
+      "original_sha256": "acc63121799801502e19985ecfc63bc5721f98e0e9cc50f2125b564bb7404754",
+      "sha256": "7ce0afe841d8c02efa9a230770ff106b847f85d30185a3442681c684bb3e9ad6",
+      "moved": true,
+      "resource_relocations": [
+        {
+          "original": "../../../resources/help/diagnostics.json",
+          "destination": "../../../../resources/help/diagnostics.json",
+          "resource": "resources/help/diagnostics.json"
+        },
+        {
+          "original": "../../../docs/user/faq.md",
+          "destination": "../../../../docs/user/faq.md",
+          "resource": "docs/user/faq.md"
+        }
+      ],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/inputs/channel_model.rs",
+      "destination": "apps/qt/src/downstream/inputs/channel_model.rs",
+      "original_sha256": "fa5b96b80524ad12e9e3661de97ec9af027c2b3b00dc3a3ac1f5bedbaa2b452b",
+      "sha256": "69b480798105c0dc3feb34773e1c6b193821e7adbc391692c66d239bea6160b8",
+      "moved": true,
+      "resource_relocations": [
+        {
+          "original": "../../../../examples/workbench/single/workbench.merlin.json",
+          "destination": "../../../../../examples/workbench/single/workbench.merlin.json",
+          "resource": "examples/workbench/single/workbench.merlin.json"
+        }
+      ],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/inputs/measurement_input/designer.rs",
+      "destination": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+      "original_sha256": "0980d220a25db83613230ed06251aad9e92788f1a3863376bec69633e8cc756c",
+      "sha256": "0b0894ff6f8b36e6aafb14f8e8091ba715c4aa0073a1f01fc30410343543a2c9",
+      "moved": true,
+      "resource_relocations": [
+        {
+          "original": "../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json",
+          "destination": "../../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json",
+          "resource": "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+        },
+        {
+          "original": "../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json",
+          "destination": "../../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json",
+          "resource": "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+        }
+      ],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/inputs/measurement_input/document.rs",
+      "destination": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+      "original_sha256": "318a1513704161370baa9abc0806c1c16f7773e82692702a1d408822cd64aa80",
+      "sha256": "318a1513704161370baa9abc0806c1c16f7773e82692702a1d408822cd64aa80",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/inputs/measurement_input/mod.rs",
+      "destination": "apps/qt/src/downstream/inputs/measurement_input/mod.rs",
+      "original_sha256": "e7b1730bb592aadad2db50aa7a06fd88d942b7d67209dcd18a1a3dc09fff9860",
+      "sha256": "e7b1730bb592aadad2db50aa7a06fd88d942b7d67209dcd18a1a3dc09fff9860",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/inputs/measurement_input/model.rs",
+      "destination": "apps/qt/src/downstream/inputs/measurement_input/model.rs",
+      "original_sha256": "709915ed9d776ae5ae567593ec53f7fb169589885534c73fe4078053765bd0dd",
+      "sha256": "2724987ec78d7e24bb3b50ee124c78e43d9258275f0fea9c3e8223d8139bbd38",
+      "moved": true,
+      "resource_relocations": [
+        {
+          "original": "../../../../../examples/measurements/single-channel/modulation_profile.json",
+          "destination": "../../../../../../examples/measurements/single-channel/modulation_profile.json",
+          "resource": "examples/measurements/single-channel/modulation_profile.json"
+        },
+        {
+          "original": "../../../../../examples/measurements/rxmer-fec-stress/rxmer-baseline.bin",
+          "destination": "../../../../../../examples/measurements/rxmer-fec-stress/rxmer-baseline.bin",
+          "resource": "examples/measurements/rxmer-fec-stress/rxmer-baseline.bin"
+        },
+        {
+          "original": "../../../../../examples/measurements/single-channel/rxmer-center-notch-12db.json",
+          "destination": "../../../../../../examples/measurements/single-channel/rxmer-center-notch-12db.json",
+          "resource": "examples/measurements/single-channel/rxmer-center-notch-12db.json"
+        },
+        {
+          "original": "../../../../../examples/measurements/single-channel/channel_estimation.json",
+          "destination": "../../../../../../examples/measurements/single-channel/channel_estimation.json",
+          "resource": "examples/measurements/single-channel/channel_estimation.json"
+        },
+        {
+          "original": "../../../../../examples/measurements/single-channel/rxmer-center-notch-12db.json",
+          "destination": "../../../../../../examples/measurements/single-channel/rxmer-center-notch-12db.json",
+          "resource": "examples/measurements/single-channel/rxmer-center-notch-12db.json"
+        }
+      ],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/inputs/measurement_input/plc.rs",
+      "destination": "apps/qt/src/downstream/inputs/measurement_input/plc.rs",
+      "original_sha256": "922f02813f8a4c66bbd5b98ef16faa4bd055cdf3f2f2fb776055ab4aed3fd1d7",
+      "sha256": "4a92b802177e31afa36779b24cc2933573cdd3ba0e0cbb4b1e26c6a9058abcf5",
+      "moved": true,
+      "resource_relocations": [
+        {
+          "original": "../../../../../examples/measurements/single-channel/modulation_profile.json",
+          "destination": "../../../../../../examples/measurements/single-channel/modulation_profile.json",
+          "resource": "examples/measurements/single-channel/modulation_profile.json"
+        }
+      ],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/inputs/measurement_input/preview.rs",
+      "destination": "apps/qt/src/downstream/inputs/measurement_input/preview.rs",
+      "original_sha256": "81f0f6032b4cb37c9905c92598fccd750ffd15c200a4a0dd672228b0dc0da74b",
+      "sha256": "e5dce5309fa37ffd6cdd18acf5173fb34dadcbccd29982f768845415a932a37b",
+      "moved": true,
+      "resource_relocations": [
+        {
+          "original": "../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json",
+          "destination": "../../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json",
+          "resource": "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+        }
+      ],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/inputs/mod.rs",
+      "destination": "apps/qt/src/downstream/inputs/mod.rs",
+      "original_sha256": "ddb063caaa705d4d4db18ab1cd9daa52e35e374400237496d402ca0e414a8008",
+      "sha256": "ddb063caaa705d4d4db18ab1cd9daa52e35e374400237496d402ca0e414a8008",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/inputs/profile_input/document.rs",
+      "destination": "apps/qt/src/downstream/inputs/profile_input/document.rs",
+      "original_sha256": "43e2795e53c04b92a530c18287471230a4e08b01f02165ad5bcba64c73d1b482",
+      "sha256": "43e2795e53c04b92a530c18287471230a4e08b01f02165ad5bcba64c73d1b482",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/inputs/profile_input/mod.rs",
+      "destination": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
+      "original_sha256": "19588f871ff459c629816f41361ad744cb44b6472b322142ad0d8c12c7ba0bd1",
+      "sha256": "d3201357eb959101d0c1e9e8da299376424a51f2e9c9bc4ff591a7ce2b38c05e",
+      "moved": true,
+      "resource_relocations": [
+        {
+          "original": "../../../../../examples/measurements/single-channel/modulation_profile.bin",
+          "destination": "../../../../../../examples/measurements/single-channel/modulation_profile.bin",
+          "resource": "examples/measurements/single-channel/modulation_profile.bin"
+        },
+        {
+          "original": "../../../../../examples/measurements/single-channel/modulation_profile.json",
+          "destination": "../../../../../../examples/measurements/single-channel/modulation_profile.json",
+          "resource": "examples/measurements/single-channel/modulation_profile.json"
+        }
+      ],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/inputs/profile_input/plot.rs",
+      "destination": "apps/qt/src/downstream/inputs/profile_input/plot.rs",
+      "original_sha256": "af9efc4bd433e241745629a0ac8158bbbe3d6b022cce7e86b9648e26a1c433ac",
+      "sha256": "af9efc4bd433e241745629a0ac8158bbbe3d6b022cce7e86b9648e26a1c433ac",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/inputs/source_input/mod.rs",
+      "destination": "apps/qt/src/downstream/inputs/source_input/mod.rs",
+      "original_sha256": "e18a6eb94b2eaa51e5ea8bb4579830f871dc7c1533ed429c293fc7a92cbb0411",
+      "sha256": "e18a6eb94b2eaa51e5ea8bb4579830f871dc7c1533ed429c293fc7a92cbb0411",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/inputs/source_input/model.rs",
+      "destination": "apps/qt/src/downstream/inputs/source_input/model.rs",
+      "original_sha256": "8c037d3bd76ac2538ea11d1816fc2072fb056616556f8b307cc031f0714ef351",
+      "sha256": "d7d67d5082a3fed26823c4443b38126e82df50bb60016fd7b574acd151912bff",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/channel/mod.rs",
+      "destination": "apps/qt/src/downstream/instruments/channel/mod.rs",
+      "original_sha256": "71d3db52d4506cc2559edaa7011aace00330646992518a43de5f9ea7da082c7d",
+      "sha256": "dc27180e1cd3b23cc5b0a08bdae76261a8062d75a002452cc2bd7885c1e8e635",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/mod.rs",
+      "destination": "apps/qt/src/downstream/instruments/mod.rs",
+      "original_sha256": "57c6e79e6b14a216865d9f06af0aeac1dbdf1998d53b3d0de63233020a8305b6",
+      "sha256": "57c6e79e6b14a216865d9f06af0aeac1dbdf1998d53b3d0de63233020a8305b6",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/receiver/diagnostics.rs",
+      "destination": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+      "original_sha256": "6987638a192508dd6e91f1477f5f47bb5e4f5affeb090d115eb044924babf629",
+      "sha256": "0a30767c77340c499dc259baf9b530a7b8186c33f9a8e5af7009361931ac6482",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/receiver/fec.rs",
+      "destination": "apps/qt/src/downstream/instruments/receiver/fec.rs",
+      "original_sha256": "dc339e82ae92667089f867599f86e0927d3742bdb426efa58a1178993bde8c89",
+      "sha256": "939b06152646797e5e0a31fc0f4a71a9222dd6c6fb107d677b8a9f86cca348a9",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/receiver/mod.rs",
+      "destination": "apps/qt/src/downstream/instruments/receiver/mod.rs",
+      "original_sha256": "157d4273ac21c25354ef77c50c0eea901723a1dd4105d25411dfb9fc69b0a007",
+      "sha256": "157d4273ac21c25354ef77c50c0eea901723a1dd4105d25411dfb9fc69b0a007",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/receiver/performance.rs",
+      "destination": "apps/qt/src/downstream/instruments/receiver/performance.rs",
+      "original_sha256": "fa2776c102efc2176db25313168df55a53163e75d4183ed9cae3977a32453ff6",
+      "sha256": "4226fd5315c90493ae002ab836a89e043bbbe73cd917e5fa7bc7ca4a85289f76",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/receiver/qam_history.rs",
+      "destination": "apps/qt/src/downstream/instruments/receiver/qam_history.rs",
+      "original_sha256": "2e35d3baca08efb43f102219bd9c7065a348b495ef3260fd69246a5b2887e9b1",
+      "sha256": "0d9912772744fd131614ae43b42dbd150183aab4d6839ea0e34c84dc17c93483",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/receiver/selection.rs",
+      "destination": "apps/qt/src/downstream/instruments/receiver/selection.rs",
+      "original_sha256": "cec25646b4e9d757d1c1756d845da6f575a27b9514f97039508a830a8c7da2d4",
+      "sha256": "14182c1a7192f45c3de50b2e3d2c0fd46476696aee2e585fc9961b589acef563",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/receiver/soft_display.rs",
+      "destination": "apps/qt/src/downstream/instruments/receiver/soft_display.rs",
+      "original_sha256": "d4be913c06a242898401b6b7677b7205dad0965e744fa8cbaaa5d8d76ac253c9",
+      "sha256": "d4be913c06a242898401b6b7677b7205dad0965e744fa8cbaaa5d8d76ac253c9",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/receiver/verification.rs",
+      "destination": "apps/qt/src/downstream/instruments/receiver/verification.rs",
+      "original_sha256": "fceeed06ad8f860f887167c9ab01cb69c3dcaac388debba2155c7cc1e8525648",
+      "sha256": "fceeed06ad8f860f887167c9ab01cb69c3dcaac388debba2155c7cc1e8525648",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/receiver/views.rs",
+      "destination": "apps/qt/src/downstream/instruments/receiver/views.rs",
+      "original_sha256": "f016f76536b00224eb971a47a2e0bd7fa9de4f79a493a293138452cd698fa280",
+      "sha256": "b1038df7e26d87c1c9b9fedaec376dc0654b7a259b36312ed1f9e77cd751a604",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/spectrum/mod.rs",
+      "destination": "apps/qt/src/downstream/instruments/spectrum/mod.rs",
+      "original_sha256": "47cea86ad53db7b81f6499e5d52394fc1aa5504aeabdcd9856183ca08510d5aa",
+      "sha256": "47cea86ad53db7b81f6499e5d52394fc1aa5504aeabdcd9856183ca08510d5aa",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/spectrum/plc.rs",
+      "destination": "apps/qt/src/downstream/instruments/spectrum/plc.rs",
+      "original_sha256": "b76c2e17ef8f87486ebdfcd3a59a5b04b1a716861d05bebe0c670b3fcfbe610a",
+      "sha256": "b76c2e17ef8f87486ebdfcd3a59a5b04b1a716861d05bebe0c670b3fcfbe610a",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/spectrum/symbol_timing.rs",
+      "destination": "apps/qt/src/downstream/instruments/spectrum/symbol_timing.rs",
+      "original_sha256": "8d45c5f3e0c219525a2371e7ad9c87c8c4131eb7f565339da6284f241b4634f7",
+      "sha256": "8d45c5f3e0c219525a2371e7ad9c87c8c4131eb7f565339da6284f241b4634f7",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/transmitter/capture.rs",
+      "destination": "apps/qt/src/downstream/instruments/transmitter/capture.rs",
+      "original_sha256": "7449f43b85007f65d1adfbec906f76329b8f2ddd1f67a295084e55c3891dd940",
+      "sha256": "7449f43b85007f65d1adfbec906f76329b8f2ddd1f67a295084e55c3891dd940",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/transmitter/channel_input.rs",
+      "destination": "apps/qt/src/downstream/instruments/transmitter/channel_input.rs",
+      "original_sha256": "0a76dcedfd703cc04ec0669bac83b47007fe06bd800e9cb09b8689758da80e73",
+      "sha256": "9ef3cd7b47fc6f066c710fc35e806b19d9f3b4976f3da50f96e860779173126a",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/transmitter/graphs/mod.rs",
+      "destination": "apps/qt/src/downstream/instruments/transmitter/graphs/mod.rs",
+      "original_sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68",
+      "sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/transmitter/graphs/physical.rs",
+      "destination": "apps/qt/src/downstream/instruments/transmitter/graphs/physical.rs",
+      "original_sha256": "836a25a11a68186fe8bc1287b05b76c6d2ac01c08a5a85eb22c1c4c313e31fc0",
+      "sha256": "836a25a11a68186fe8bc1287b05b76c6d2ac01c08a5a85eb22c1c4c313e31fc0",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/transmitter/messages.rs",
+      "destination": "apps/qt/src/downstream/instruments/transmitter/messages.rs",
+      "original_sha256": "c2fb517f9afd5b3eead6963c54b7b54330eedce196c11e475fe0d7ddbccf0e81",
+      "sha256": "8e5a1da5964070d45a9dd588ee31580c075a5e91a9bf8e066cfaa8cdbc9b851d",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/transmitter/mod.rs",
+      "destination": "apps/qt/src/downstream/instruments/transmitter/mod.rs",
+      "original_sha256": "4a5ade4958be22366c65e6a056873389e24e1341d3bb486b6bd1e5e61d7f1623",
+      "sha256": "4a5ade4958be22366c65e6a056873389e24e1341d3bb486b6bd1e5e61d7f1623",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/transmitter/preview.rs",
+      "destination": "apps/qt/src/downstream/instruments/transmitter/preview.rs",
+      "original_sha256": "32850ff76a746fe4b76d3873dc683ce3ee8d088ce86add4890bca2db91ce92f4",
+      "sha256": "aa62a767fa9aed8bc4098da71e47ee9b1e5e655dfcf6600675abd2ca8a0eea7f",
+      "moved": true,
+      "resource_relocations": [
+        {
+          "original": "../../../../../examples/measurements/single-channel/modulation_profile.json",
+          "destination": "../../../../../../examples/measurements/single-channel/modulation_profile.json",
+          "resource": "examples/measurements/single-channel/modulation_profile.json"
+        }
+      ],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/transmitter/qam_points.rs",
+      "destination": "apps/qt/src/downstream/instruments/transmitter/qam_points.rs",
+      "original_sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf",
+      "sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/transmitter/tlv_fields.rs",
+      "destination": "apps/qt/src/downstream/instruments/transmitter/tlv_fields.rs",
+      "original_sha256": "6929e413fb4d8fe6b60885e4beb19211a5148505d01df6fa6e5fc74d4b76f4e5",
+      "sha256": "39e3291a4677c2faa9ebfc635fdfb1643dc5fbaf3507a7a29dc3ad50d68d363a",
+      "moved": true,
+      "resource_relocations": [
+        {
+          "original": "../../../../../resources/registry/plc-descriptor-tlvs.json",
+          "destination": "../../../../../../resources/registry/plc-descriptor-tlvs.json",
+          "resource": "resources/registry/plc-descriptor-tlvs.json"
+        }
+      ],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/instruments/transmitter/views.rs",
+      "destination": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+      "original_sha256": "707ef817678d59b33c95421d99699563a2f1a8af593274312f1cead12a229325",
+      "sha256": "7dfffc3502bfa20788897fd6382950c2916ba1bed2df925f82c8244839d31e69",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/main.rs",
+      "destination": "apps/qt/src/main.rs",
+      "original_sha256": "eb127a52c4fd7888f5f6ce0a5201721ce8bf66dbabb73a3100552e494c81edf0",
+      "sha256": "e1201ad8925e59af42e66c2258d43741ebdcde067fe77fcb06f55560dec5a021",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/simulation/closed_loop.rs",
+      "destination": "apps/qt/src/downstream/simulation/closed_loop.rs",
+      "original_sha256": "e83a517f3969ff30caae9618411e4af9c1cde81c87fb97e5c56ab97d0b297914",
+      "sha256": "45472df12a40a64f51ed001a2eddfb6e67d7bfbeeaeaa2771e27caebab734761",
+      "moved": true,
+      "resource_relocations": [
+        {
+          "original": "../../../../examples/measurements/single-channel/modulation_profile.json",
+          "destination": "../../../../../examples/measurements/single-channel/modulation_profile.json",
+          "resource": "examples/measurements/single-channel/modulation_profile.json"
+        },
+        {
+          "original": "../../../../examples/measurements/single-channel/rxmer.json",
+          "destination": "../../../../../examples/measurements/single-channel/rxmer.json",
+          "resource": "examples/measurements/single-channel/rxmer.json"
+        },
+        {
+          "original": "../../../../examples/measurements/single-channel/modulation_profile.json",
+          "destination": "../../../../../examples/measurements/single-channel/modulation_profile.json",
+          "resource": "examples/measurements/single-channel/modulation_profile.json"
+        }
+      ],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/simulation/mod.rs",
+      "destination": "apps/qt/src/downstream/simulation/mod.rs",
+      "original_sha256": "8d5437f964d31359c2f92fcd02bbff58d758a8b493cd1ded788ef10455f664b9",
+      "sha256": "8d5437f964d31359c2f92fcd02bbff58d758a8b493cd1ded788ef10455f664b9",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/simulation/run_timing.rs",
+      "destination": "apps/qt/src/downstream/simulation/run_timing.rs",
+      "original_sha256": "3c7ba9f75e99546bff9213288c4e74f1eab06979961a31a72100cff5a629617c",
+      "sha256": "972ff0f4198091cceb83d3ccd167bab8d67fbb3537709a9881aa10218f29cad8",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/workbench/mod.rs",
+      "destination": "apps/qt/src/downstream/workbench/mod.rs",
+      "original_sha256": "76371d720ec66965f04a95fd17e67c3b37a03e97632d472e5bd204363906eb4a",
+      "sha256": "76371d720ec66965f04a95fd17e67c3b37a03e97632d472e5bd204363906eb4a",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/workbench/project_file.rs",
+      "destination": "apps/qt/src/downstream/workbench/project_file.rs",
+      "original_sha256": "985fdead4ff07756f5b4f06cc152a8cc36c8259871520ac596c85b0e69b2dc85",
+      "sha256": "4bbb9ee67fe8410127dfcee7e54b597a3d8df59d14625796bcb55245862157f6",
+      "moved": true,
+      "resource_relocations": [
+        {
+          "original": "../../../../examples/measurements/single-channel/modulation_profile.bin",
+          "destination": "../../../../../examples/measurements/single-channel/modulation_profile.bin",
+          "resource": "examples/measurements/single-channel/modulation_profile.bin"
+        },
+        {
+          "original": "../../../../examples/measurements/rxmer-fec-stress/rxmer-baseline.bin",
+          "destination": "../../../../../examples/measurements/rxmer-fec-stress/rxmer-baseline.bin",
+          "resource": "examples/measurements/rxmer-fec-stress/rxmer-baseline.bin"
+        }
+      ],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/workbench/project_load.rs",
+      "destination": "apps/qt/src/downstream/workbench/project_load.rs",
+      "original_sha256": "895d38151b1992b7fa932a84a3ec20109b8512dd7505225bee083f481e98c1e8",
+      "sha256": "8275d5aa9e8b6970843a9d610411e287de6210a63400ed31a89f976c0260ffa6",
+      "moved": true,
+      "resource_relocations": [
+        {
+          "original": "../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json",
+          "destination": "../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json",
+          "resource": "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+        }
+      ],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/src/workbench/session.rs",
+      "destination": "apps/qt/src/downstream/workbench/session.rs",
+      "original_sha256": "439f869b04539487f831fe53bddb1ec4568215e413d840ca060b4174c170750d",
+      "sha256": "439f869b04539487f831fe53bddb1ec4568215e413d840ca060b4174c170750d",
+      "moved": true,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/tests/tst_control_palette.qml",
+      "destination": "apps/qt/tests/tst_control_palette.qml",
+      "original_sha256": "e4ab205ee8f23594275e327a2b96cce7896c802394076dba7b8643a4b8f473a5",
+      "sha256": "c346a2bd0d61670f563058a378e9527a379d86deb94fcfb4582806f01f759a85",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/tests/tst_response_view.qml",
+      "destination": "apps/qt/tests/tst_response_view.qml",
+      "original_sha256": "9432c27918eb5b6213ea15c14c0622d4b263f1bebc7bf1fa462d0de20c2be56f",
+      "sha256": "1ef6b062b89c8ede87286e994236c63168f7d22299cee7ecda2bf831f857875b",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/tests/tst_rxmer_designer.qml",
+      "destination": "apps/qt/tests/tst_rxmer_designer.qml",
+      "original_sha256": "0119d45f4dede87dd14b9ef01bdfb4397143a62521e4e830a9135a2d253dec62",
+      "sha256": "170c00de379c35d7d19c8fc7f13ccab5866084b1fffaef5451d72d4eac08b016",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/tests/tst_soft_diagnostics.qml",
+      "destination": "apps/qt/tests/tst_soft_diagnostics.qml",
+      "original_sha256": "0c22c2b237f9bf731c2144ad326251b382498bee67719515d83ea7f99e7366d4",
+      "sha256": "b7a293d5bff4967ba739fabb65c742b9b9267d0bc9c7d4e33cff1842a48475b0",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/tests/tst_workbench.qml",
+      "destination": "apps/qt/tests/tst_workbench.qml",
+      "original_sha256": "261aad026c8967df7725c7fd562455bbe39f85b5b98b5374ee21eff197c062db",
+      "sha256": "5b46d995d6b279dede05488f7efacf5e057a59bb6f28b5d0701d3b2824813d8d",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "docs/architecture.md",
+      "destination": "docs/architecture.md",
+      "original_sha256": "86ffb942976af85d78f0f946171882ab0f6541d3b0adefa9b18dad63aec6d903",
+      "sha256": "61bc669f46b66c3c135a9e246882f2b5465cb4239339608079fa439157cc7127",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "docs/development/features/rf-power-budget/design.md",
+      "destination": "docs/development/features/rf-power-budget/design.md",
+      "original_sha256": "6201d9f2d9d3295b7dec9756b42b096d39063eed4a75295466020b3ea5e4ca1c",
+      "sha256": "d8328552e4a0b5397537e42f79c03ce23dbfb4823d96391690deaf95521be653",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "docs/development/features/unified-backend/references/extension-designs-ui.md",
+      "destination": "docs/development/features/unified-backend/references/extension-designs-ui.md",
+      "original_sha256": "2d22362f52b0ff4eeae8a81f085e86eddcf3b359ac22b62f0b11a4cafb0616e3",
+      "sha256": "70ec06b3b8995c852d08e3f7e6cc9be6933c82933fd132efc063347bcc35dd0a",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "docs/development/features/unified-qt-workbench/api-gap-matrix.md",
+      "destination": "docs/development/features/unified-qt-workbench/api-gap-matrix.md",
+      "original_sha256": "40d5534fd57051bcf052199729966f392783ce0d240d9f786cb15283d647ccc4",
+      "sha256": "8a3beb0464ebc89c7cdb8c99faa2166bdb14468e91e2e4449723dbb750b3f9e4",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "docs/development/features/unified-qt-workbench/design.md",
+      "destination": "docs/development/features/unified-qt-workbench/design.md",
+      "original_sha256": "68ad0dac9f234c7e92e49bbbffae70d3c0fa458c9014e9fbdd7cb45c2efbe572",
+      "sha256": "fb93c477de7dc217f0ed4854deb3e9a62c7b82eff8d81a4d0e06d0e15bbd5b21",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "docs/development/features/unified-qt-workbench/master-guide.md",
+      "destination": "docs/development/features/unified-qt-workbench/master-guide.md",
+      "original_sha256": "e62d30ab5953ddbd02cab50eebd0d07850081fa48613aef0690e632fcd22008a",
+      "sha256": "c2e7e9758c7a47fafd631ffe016aa08d5232b00873d7917213d4f01c48815c7c",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "docs/development/features/windows-desktop/design.md",
+      "destination": "docs/development/features/windows-desktop/design.md",
+      "original_sha256": "3c55d1292e12b616ce921f004c1b6425fd327893d0a6b01494b428f31b87f237",
+      "sha256": "301aa32dd143957eafc0fdf725d78501b646fea6f2fbcb4a990ffc15d8a85912",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "docs/reference/documents.md",
+      "destination": "docs/reference/documents.md",
+      "original_sha256": "290c26bc40673bb50b56526400253daaa59df4a71806ddb411eeeb0a7a91116c",
+      "sha256": "c6625bf3206198dd75071f07540eb5685b3fa4e9ded86d9776126c337b80ba9b",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "docs/requirements.md",
+      "destination": "docs/requirements.md",
+      "original_sha256": "02a311d154037f0cb5ecbb97051d261fc99c7dba58fbe6867cb77910f1456800",
+      "sha256": "4f93b8abebe5779d2c59a7d28d1023dade12764affeb8464ca853a9295447c93",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "skills/coding-style/SKILL.md",
+      "destination": "skills/coding-style/SKILL.md",
+      "original_sha256": "c771767ae4720b57eee2cfbef8460df1ff4401ebfb7c8c80b394a6ba1812b7f0",
+      "sha256": "4880478a7634b42e3f52fc3ae4d058eae9b1aa82547ab7a00103a26e782d7c37",
+      "moved": false,
+      "resource_relocations": [],
+      "numeric_tokens_unchanged": true
+    }
+  ],
+  "live_owner_relocations": [
+    {
+      "route": "rf",
+      "kind": "owners",
+      "original": "apps/qt/qml/workbenches/channel/ChannelAmplifierDialog.qml",
+      "destination": "apps/qt/qml/downstream/channel/ChannelAmplifierDialog.qml"
+    },
+    {
+      "route": "channel-ui",
+      "kind": "owners",
+      "original": "apps/qt/qml/workbenches/channel/ChannelWorkbenchDialog.qml",
+      "destination": "apps/qt/qml/downstream/channel/ChannelWorkbenchDialog.qml"
+    },
+    {
+      "route": "timing-ui",
+      "kind": "owners",
+      "original": "apps/qt/qml/instruments/spectrum",
+      "destination": "apps/qt/qml/downstream/instruments/spectrum"
+    },
+    {
+      "route": "tx-ui",
+      "kind": "owners",
+      "original": "apps/qt/src/instruments/transmitter",
+      "destination": "apps/qt/src/downstream/instruments/transmitter"
+    },
+    {
+      "route": "tx-ui",
+      "kind": "owners",
+      "original": "apps/qt/qml/workbenches/transmitter/TransmitterWorkbenchDialog.qml",
+      "destination": "apps/qt/qml/downstream/transmitter/TransmitterWorkbenchDialog.qml"
+    },
+    {
+      "route": "qt-core",
+      "kind": "owners",
+      "original": "apps/qt/src/workbench/session.rs",
+      "destination": "apps/qt/src/downstream/workbench/session.rs"
+    },
+    {
+      "route": "qt-core",
+      "kind": "owners",
+      "original": "apps/qt/qml/shell/Workbench.qml",
+      "destination": "apps/qt/qml/downstream/DownstreamWorkbench.qml"
+    },
+    {
+      "route": "qt-shell",
+      "kind": "owners",
+      "original": "apps/qt/qml/shell/Workbench.qml",
+      "destination": "apps/qt/qml/downstream/DownstreamWorkbench.qml"
+    },
+    {
+      "route": "dpd-view",
+      "kind": "owners",
+      "original": "apps/qt/src/inputs/profile_input/plot.rs",
+      "destination": "apps/qt/src/downstream/inputs/profile_input/plot.rs"
+    },
+    {
+      "route": "dpd-view",
+      "kind": "owners",
+      "original": "apps/qt/qml/inputs/profile_input/ProfilePlotDialog.qml",
+      "destination": "apps/qt/qml/downstream/configuration/profile_input/ProfilePlotDialog.qml"
+    },
+    {
+      "route": "dpd-view",
+      "kind": "owners",
+      "original": "apps/qt/qml/inputs/profile_input/ProfileChart.qml",
+      "destination": "apps/qt/qml/downstream/configuration/profile_input/ProfileChart.qml"
+    },
+    {
+      "route": "profile-perf",
+      "kind": "owners",
+      "original": "apps/qt/src/instruments/receiver",
+      "destination": "apps/qt/src/downstream/instruments/receiver"
+    },
+    {
+      "route": "wb-config",
+      "kind": "owners",
+      "original": "apps/qt/src/workbench/project_file.rs",
+      "destination": "apps/qt/src/downstream/workbench/project_file.rs"
+    },
+    {
+      "route": "wb-config",
+      "kind": "owners",
+      "original": "apps/qt/qml/workbenches/workbench/WorkbenchConfigurationDialog.qml",
+      "destination": "apps/qt/qml/downstream/configuration/WorkbenchConfigurationDialog.qml"
+    },
+    {
+      "route": "fec-ui",
+      "kind": "owners",
+      "original": "apps/qt/src/instruments/receiver",
+      "destination": "apps/qt/src/downstream/instruments/receiver"
+    },
+    {
+      "route": "fec-ui",
+      "kind": "owners",
+      "original": "apps/qt/qml/instruments/fec",
+      "destination": "apps/qt/qml/downstream/instruments/fec"
+    },
+    {
+      "route": "run-time",
+      "kind": "owners",
+      "original": "apps/qt/src/simulation/run_timing.rs",
+      "destination": "apps/qt/src/downstream/simulation/run_timing.rs"
+    },
+    {
+      "route": "qam-dots",
+      "kind": "owners",
+      "original": "apps/qt/qml/instruments/qam",
+      "destination": "apps/qt/qml/downstream/instruments/qam"
+    },
+    {
+      "route": "help",
+      "kind": "owners",
+      "original": "apps/qt/src/help.rs",
+      "destination": "apps/qt/src/downstream/help.rs"
+    },
+    {
+      "route": "help",
+      "kind": "owners",
+      "original": "apps/qt/qml/instruments/spectrum",
+      "destination": "apps/qt/qml/downstream/instruments/spectrum"
+    },
+    {
+      "route": "open",
+      "kind": "owners",
+      "original": "apps/qt/src/workbench/project_load.rs",
+      "destination": "apps/qt/src/downstream/workbench/project_load.rs"
+    },
+    {
+      "route": "qam-mer",
+      "kind": "owners",
+      "original": "apps/qt/src/instruments/receiver",
+      "destination": "apps/qt/src/downstream/instruments/receiver"
+    },
+    {
+      "route": "restore",
+      "kind": "owners",
+      "original": "apps/qt/src/workbench",
+      "destination": "apps/qt/src/downstream/workbench"
+    },
+    {
+      "route": "qam-runs",
+      "kind": "owners",
+      "original": "apps/qt/src/instruments/receiver",
+      "destination": "apps/qt/src/downstream/instruments/receiver"
+    },
+    {
+      "route": "receiver-ui",
+      "kind": "owners",
+      "original": "apps/qt/src/instruments/receiver",
+      "destination": "apps/qt/src/downstream/instruments/receiver"
+    },
+    {
+      "route": "receiver-ui",
+      "kind": "owners",
+      "original": "apps/qt/qml/workbenches/receiver/ReceiverWorkbenchDialog.qml",
+      "destination": "apps/qt/qml/downstream/receiver/ReceiverWorkbenchDialog.qml"
+    },
+    {
+      "route": "response-ui",
+      "kind": "owners",
+      "original": "apps/qt/src/instruments/receiver",
+      "destination": "apps/qt/src/downstream/instruments/receiver"
+    },
+    {
+      "route": "response-ui",
+      "kind": "owners",
+      "original": "apps/qt/qml/instruments/response",
+      "destination": "apps/qt/qml/downstream/instruments/response"
+    },
+    {
+      "route": "spectrum",
+      "kind": "owners",
+      "original": "apps/qt/qml/instruments/spectrum",
+      "destination": "apps/qt/qml/downstream/instruments/spectrum"
+    },
+    {
+      "route": "verify-ui",
+      "kind": "owners",
+      "original": "apps/qt/qml/workbenches/verification/VerificationDialog.qml",
+      "destination": "apps/qt/qml/downstream/receiver/VerificationDialog.qml"
+    }
+  ],
+  "rust_body_preservation": {
+    "paths": [
+      "apps/qt/src/bridge/about_info.rs",
+      "apps/qt/src/bridge/closed_loop.rs",
+      "apps/qt/src/bridge/measurement_input.rs",
+      "apps/qt/src/bridge/profile_input.rs",
+      "apps/qt/src/bridge/receiver_instruments.rs",
+      "apps/qt/src/bridge/rxmer_designer.rs",
+      "apps/qt/src/bridge/rxmer_export.rs",
+      "apps/qt/src/bridge/source_input.rs",
+      "apps/qt/src/bridge/transmitter_analyzer.rs",
+      "apps/qt/src/bridge/workbench_file.rs",
+      "apps/qt/src/help.rs",
+      "apps/qt/src/inputs/channel_model.rs",
+      "apps/qt/src/inputs/measurement_input/designer.rs",
+      "apps/qt/src/inputs/measurement_input/document.rs",
+      "apps/qt/src/inputs/measurement_input/mod.rs",
+      "apps/qt/src/inputs/measurement_input/model.rs",
+      "apps/qt/src/inputs/measurement_input/plc.rs",
+      "apps/qt/src/inputs/measurement_input/preview.rs",
+      "apps/qt/src/inputs/mod.rs",
+      "apps/qt/src/inputs/profile_input/document.rs",
+      "apps/qt/src/inputs/profile_input/mod.rs",
+      "apps/qt/src/inputs/profile_input/plot.rs",
+      "apps/qt/src/inputs/source_input/mod.rs",
+      "apps/qt/src/inputs/source_input/model.rs",
+      "apps/qt/src/instruments/channel/mod.rs",
+      "apps/qt/src/instruments/mod.rs",
+      "apps/qt/src/instruments/receiver/diagnostics.rs",
+      "apps/qt/src/instruments/receiver/fec.rs",
+      "apps/qt/src/instruments/receiver/mod.rs",
+      "apps/qt/src/instruments/receiver/performance.rs",
+      "apps/qt/src/instruments/receiver/qam_history.rs",
+      "apps/qt/src/instruments/receiver/selection.rs",
+      "apps/qt/src/instruments/receiver/soft_display.rs",
+      "apps/qt/src/instruments/receiver/verification.rs",
+      "apps/qt/src/instruments/receiver/views.rs",
+      "apps/qt/src/instruments/spectrum/mod.rs",
+      "apps/qt/src/instruments/spectrum/plc.rs",
+      "apps/qt/src/instruments/spectrum/symbol_timing.rs",
+      "apps/qt/src/instruments/transmitter/capture.rs",
+      "apps/qt/src/instruments/transmitter/channel_input.rs",
+      "apps/qt/src/instruments/transmitter/graphs/mod.rs",
+      "apps/qt/src/instruments/transmitter/graphs/physical.rs",
+      "apps/qt/src/instruments/transmitter/messages.rs",
+      "apps/qt/src/instruments/transmitter/mod.rs",
+      "apps/qt/src/instruments/transmitter/preview.rs",
+      "apps/qt/src/instruments/transmitter/qam_points.rs",
+      "apps/qt/src/instruments/transmitter/tlv_fields.rs",
+      "apps/qt/src/instruments/transmitter/views.rs",
+      "apps/qt/src/simulation/closed_loop.rs",
+      "apps/qt/src/simulation/mod.rs",
+      "apps/qt/src/simulation/run_timing.rs",
+      "apps/qt/src/workbench/mod.rs",
+      "apps/qt/src/workbench/project_file.rs",
+      "apps/qt/src/workbench/project_load.rs",
+      "apps/qt/src/workbench/session.rs"
+    ],
+    "source_bodies_preserved": true
+  },
+  "case_preservation": {
+    "old_rust_cases": [
+      "bridge::ofdm_settings::tests::registry_defaults_and_choices_match_core",
+      "bridge::ofdm_settings::tests::rejected_edits_preserve_accepted_settings",
+      "bridge::rxmer_designer::tests::adoption_is_atomic_remaps_selection_and_rejects_stale_completion",
+      "bridge::rxmer_designer::tests::cancellation_discards_even_a_completed_success_and_profile_changes_reject",
+      "help::tests::catalog_targets_are_unique_and_bundled",
+      "help::tests::faq_sections_support_windows_and_unix_line_endings",
+      "help::tests::minimum_duration_obeys_whole_symbol_boundaries",
+      "help::tests::over_limit_help_never_recommends_an_invalid_ui_duration",
+      "help::tests::unavailable_qam_help_is_registered_and_unknown_states_stay_unclassified",
+      "help::tests::unknown_errors_keep_original_text_and_no_guessed_help",
+      "inputs::channel_model::tests::combined_preview_is_bounded_and_preserves_admission_diagnostics",
+      "inputs::channel_model::tests::saved_models_preserve_units_and_legacy_off_without_accepting_version_drift",
+      "inputs::measurement_input::designer::tests::designed_flat_mer_drives_residual_power_and_real_fec",
+      "inputs::measurement_input::designer::tests::envelope_roundtrip_reopens_originals_without_compounding",
+      "inputs::measurement_input::designer::tests::flat_scope_preview_plc_and_cancellation_preserve_inputs",
+      "inputs::measurement_input::designer::tests::pnm_export_range_uses_full_grid_and_guards_recipe_results",
+      "inputs::measurement_input::designer::tests::preview_zoom_uses_original_offsets_shared_axes_and_bounded_plc_window",
+      "inputs::measurement_input::designer::tests::random_variation_requires_flat_and_survives_envelope_roundtrip",
+      "inputs::measurement_input::model::tests::binary_json_shared_viewer_and_atomic_drafts_preserve_original_inputs",
+      "inputs::measurement_input::model::tests::combined_modes_and_render_requests_reject_invalid_controls",
+      "inputs::measurement_input::model::tests::replay_capacity_uses_strict_observation_boundary_and_mode",
+      "inputs::measurement_input::model::tests::selection_keeps_originals_and_round_trips_a_single_shot",
+      "inputs::measurement_input::plc::tests::plc_region_spans_first_to_last_and_clips_when_zoomed",
+      "inputs::measurement_input::preview::tests::sparse_animation_uses_original_order_and_bounded_viewports",
+      "inputs::profile_input::tests::binary_and_json_use_the_same_profile_validation",
+      "inputs::profile_input::tests::profile_inspection_overlays_metrics_and_filters_preserve_capture",
+      "inputs::profile_input::tests::profile_plot_preserves_source_grid_roles_and_bounds",
+      "inputs::profile_input::tests::staged_failures_removal_and_profile_rejection_preserve_accepted_input",
+      "inputs::source_input::model::tests::acceptance_rejection_cancel_and_modes_preserve_source_snapshot",
+      "inputs::source_input::model::tests::finite_fill_bounds_empty_equal_and_partial_byte_targets",
+      "instruments::receiver::fec::tests::allocations_keep_failures_distinct_and_empty_denominators_finite",
+      "instruments::receiver::fec::tests::histogram_preserves_internal_gaps_and_trims_unused_range",
+      "instruments::receiver::fec::tests::recovery_never_counts_rejected_or_source_mismatched_words_as_success",
+      "instruments::receiver::performance::tests::plc_band_uses_selected_profile_centers_and_clips_without_decimation",
+      "instruments::receiver::qam_history::tests::archive_reduction_preserves_real_identity_and_missing_runs_never_fall_back",
+      "instruments::receiver::selection::tests::mer_uses_selected_cells_beyond_display_cap_and_separate_reference_planes",
+      "instruments::receiver::soft_display::tests::decision_region_contains_only_nearest_reference_for_square_and_cross_qam",
+      "instruments::receiver::soft_display::tests::histogram_conserves_limits_and_zero_and_sequence_extrema",
+      "instruments::receiver::verification::tests::zero_counts_and_mixed_outcomes_keep_honest_coordinates",
+      "instruments::spectrum::plc::tests::plc_bounds_follow_spacing_layout_and_clipped_viewports",
+      "instruments::spectrum::symbol_timing::tests::both_ffts_and_all_valid_prefix_tapers_preserve_core_weights_and_overlap",
+      "instruments::spectrum::symbol_timing::tests::cp_and_roll_changes_move_timing_without_self_rescaling_the_overview",
+      "instruments::transmitter::graphs::physical::tests::bins_preserve_peak_missing_power_and_layout_roles_within_bounds",
+      "instruments::transmitter::graphs::tests::digital_and_raster_coordinates_preserve_bits_offsets_and_unknowns",
+      "instruments::transmitter::graphs::tests::ordered_iq_is_not_a_constellation_or_a_fabricated_permutation",
+      "instruments::transmitter::messages::tests::scheduled_frame_is_not_claimed_emitted_until_its_last_sample",
+      "instruments::transmitter::preview::tests::accepted_timing_refreshes_without_simulation_and_vf_changes_only_distance",
+      "instruments::transmitter::preview::tests::generated_baseband_and_capture_axes_share_one_immutable_spectrum",
+      "instruments::transmitter::preview::tests::readiness_cancellation_and_stale_generation_preserve_accepted_inputs",
+      "instruments::transmitter::qam_points::tests::rare_ncp_survives_reduction_and_unknown_is_never_colored_as_data",
+      "instruments::transmitter::qam_points::tests::roles_follow_actual_interleaver_and_unavailable_history_stays_unknown",
+      "instruments::transmitter::tlv_fields::tests::assignment_ranges_default_loading_and_byte_offsets_remain_distinct",
+      "instruments::transmitter::tlv_fields::tests::registry_covers_only_the_implemented_subset_with_unique_keys",
+      "instruments::transmitter::tlv_fields::tests::timing_fields_use_core_tables_and_preserve_reserved_values",
+      "platform::example_directory::tests::installed_and_development_layouts_resolve_without_launch_directory",
+      "platform::input_file::tests::local_reads_preserve_bytes_and_reject_remote_oversize_and_nonregular_inputs",
+      "platform::startup::tests::invalid_or_conflicting_requests_are_rejected_before_gui_startup",
+      "platform::startup::tests::startup_inputs_preserve_paths_and_require_explicit_stdin",
+      "platform::updates::download::tests::platform_independent_download_verification_bounds_and_hash",
+      "platform::updates::install::tests::actual_deb_identity_must_match_selected_release",
+      "platform::updates::install::tests::bounded_hash_copy_rejects_corruption_truncation_and_overflow",
+      "platform::updates::install::tests::identity_and_redirects_are_restricted",
+      "platform::updates::install::tests::private_staging_cleans_up_and_checkout_cannot_install",
+      "platform::updates::release::tests::canonical_is_preferred_and_legacy_support_cannot_mask_invalid_metadata",
+      "platform::updates::release::tests::foreign_missing_duplicate_and_unverified_assets_never_notify",
+      "platform::updates::release::tests::stable_baseline_asset_and_numeric_versions",
+      "platform::updates::release::tests::windows_requires_exact_verified_desktop_msi",
+      "platform::updates::report::tests::bounded_log_decodes_windows_utf16_and_preserves_failure",
+      "platform::updates::report::tests::profile_redaction_handles_case_and_separator_variants",
+      "platform::updates::tests::completion_preserves_preference_and_failure_is_nonblocking",
+      "platform::updates::windows::tests::checkout_never_installs_and_internal_entry_remains_closed",
+      "platform::updates::windows::tests::verified_msi_metadata_and_bounded_restart_result",
+      "simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+      "simulation::closed_loop::tests::channel193_rxmer_controls_tx_reference_mer_while_nearest_points_are_optimistic",
+      "simulation::closed_loop::tests::independent_sweep_preserves_each_profile_and_legacy_run_options",
+      "simulation::closed_loop::tests::mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance",
+      "simulation::closed_loop::tests::selected_profiles_are_ordered_validated_and_persisted_without_running",
+      "simulation::run_timing::tests::elapsed_advances_without_progress_and_freezes_before_late_ui_poll",
+      "simulation::run_timing::tests::formatting_and_profile_progress_are_separate_from_simulated_time",
+      "workbench::project_file::tests::curated_workbenches_restore_matching_originals_and_prepare_full_requests",
+      "workbench::project_file::tests::self_contained_project_roundtrip_preserves_originals_and_rejects_corruption",
+      "workbench::project_file::tests::version_two_profile_selection_roundtrips_and_legacy_remains_explicit",
+      "workbench::project_load::tests::bounded_stream_preserves_bytes_limits_and_cancellation",
+      "workbench::project_load::tests::command_line_file_preserves_destination_and_rejects_invalid_json",
+      "workbench::project_load::tests::errors_and_cancelled_success_do_not_publish_partial_inputs",
+      "workbench::project_load::tests::polling_does_not_wait_and_cancel_retains_single_worker_guard",
+      "workbench::project_load::tests::real_multi_capture_workbench_prepares_editors_off_thread"
+    ],
+    "current_rust_cases": [
+      "bridge::ofdm_settings::tests::registry_defaults_and_choices_match_core",
+      "bridge::ofdm_settings::tests::rejected_edits_preserve_accepted_settings",
+      "bridge::rxmer_designer::tests::adoption_is_atomic_remaps_selection_and_rejects_stale_completion",
+      "bridge::rxmer_designer::tests::cancellation_discards_even_a_completed_success_and_profile_changes_reject",
+      "downstream::help::tests::catalog_targets_are_unique_and_bundled",
+      "downstream::help::tests::faq_sections_support_windows_and_unix_line_endings",
+      "downstream::help::tests::minimum_duration_obeys_whole_symbol_boundaries",
+      "downstream::help::tests::over_limit_help_never_recommends_an_invalid_ui_duration",
+      "downstream::help::tests::unavailable_qam_help_is_registered_and_unknown_states_stay_unclassified",
+      "downstream::help::tests::unknown_errors_keep_original_text_and_no_guessed_help",
+      "downstream::inputs::channel_model::tests::combined_preview_is_bounded_and_preserves_admission_diagnostics",
+      "downstream::inputs::channel_model::tests::saved_models_preserve_units_and_legacy_off_without_accepting_version_drift",
+      "downstream::inputs::measurement_input::designer::tests::designed_flat_mer_drives_residual_power_and_real_fec",
+      "downstream::inputs::measurement_input::designer::tests::envelope_roundtrip_reopens_originals_without_compounding",
+      "downstream::inputs::measurement_input::designer::tests::flat_scope_preview_plc_and_cancellation_preserve_inputs",
+      "downstream::inputs::measurement_input::designer::tests::pnm_export_range_uses_full_grid_and_guards_recipe_results",
+      "downstream::inputs::measurement_input::designer::tests::preview_zoom_uses_original_offsets_shared_axes_and_bounded_plc_window",
+      "downstream::inputs::measurement_input::designer::tests::random_variation_requires_flat_and_survives_envelope_roundtrip",
+      "downstream::inputs::measurement_input::model::tests::binary_json_shared_viewer_and_atomic_drafts_preserve_original_inputs",
+      "downstream::inputs::measurement_input::model::tests::combined_modes_and_render_requests_reject_invalid_controls",
+      "downstream::inputs::measurement_input::model::tests::replay_capacity_uses_strict_observation_boundary_and_mode",
+      "downstream::inputs::measurement_input::model::tests::selection_keeps_originals_and_round_trips_a_single_shot",
+      "downstream::inputs::measurement_input::plc::tests::plc_region_spans_first_to_last_and_clips_when_zoomed",
+      "downstream::inputs::measurement_input::preview::tests::sparse_animation_uses_original_order_and_bounded_viewports",
+      "downstream::inputs::profile_input::tests::binary_and_json_use_the_same_profile_validation",
+      "downstream::inputs::profile_input::tests::profile_inspection_overlays_metrics_and_filters_preserve_capture",
+      "downstream::inputs::profile_input::tests::profile_plot_preserves_source_grid_roles_and_bounds",
+      "downstream::inputs::profile_input::tests::staged_failures_removal_and_profile_rejection_preserve_accepted_input",
+      "downstream::inputs::source_input::model::tests::acceptance_rejection_cancel_and_modes_preserve_source_snapshot",
+      "downstream::inputs::source_input::model::tests::finite_fill_bounds_empty_equal_and_partial_byte_targets",
+      "downstream::instruments::receiver::fec::tests::allocations_keep_failures_distinct_and_empty_denominators_finite",
+      "downstream::instruments::receiver::fec::tests::histogram_preserves_internal_gaps_and_trims_unused_range",
+      "downstream::instruments::receiver::fec::tests::recovery_never_counts_rejected_or_source_mismatched_words_as_success",
+      "downstream::instruments::receiver::performance::tests::plc_band_uses_selected_profile_centers_and_clips_without_decimation",
+      "downstream::instruments::receiver::qam_history::tests::archive_reduction_preserves_real_identity_and_missing_runs_never_fall_back",
+      "downstream::instruments::receiver::selection::tests::mer_uses_selected_cells_beyond_display_cap_and_separate_reference_planes",
+      "downstream::instruments::receiver::soft_display::tests::decision_region_contains_only_nearest_reference_for_square_and_cross_qam",
+      "downstream::instruments::receiver::soft_display::tests::histogram_conserves_limits_and_zero_and_sequence_extrema",
+      "downstream::instruments::receiver::verification::tests::zero_counts_and_mixed_outcomes_keep_honest_coordinates",
+      "downstream::instruments::spectrum::plc::tests::plc_bounds_follow_spacing_layout_and_clipped_viewports",
+      "downstream::instruments::spectrum::symbol_timing::tests::both_ffts_and_all_valid_prefix_tapers_preserve_core_weights_and_overlap",
+      "downstream::instruments::spectrum::symbol_timing::tests::cp_and_roll_changes_move_timing_without_self_rescaling_the_overview",
+      "downstream::instruments::transmitter::graphs::physical::tests::bins_preserve_peak_missing_power_and_layout_roles_within_bounds",
+      "downstream::instruments::transmitter::graphs::tests::digital_and_raster_coordinates_preserve_bits_offsets_and_unknowns",
+      "downstream::instruments::transmitter::graphs::tests::ordered_iq_is_not_a_constellation_or_a_fabricated_permutation",
+      "downstream::instruments::transmitter::messages::tests::scheduled_frame_is_not_claimed_emitted_until_its_last_sample",
+      "downstream::instruments::transmitter::preview::tests::accepted_timing_refreshes_without_simulation_and_vf_changes_only_distance",
+      "downstream::instruments::transmitter::preview::tests::generated_baseband_and_capture_axes_share_one_immutable_spectrum",
+      "downstream::instruments::transmitter::preview::tests::readiness_cancellation_and_stale_generation_preserve_accepted_inputs",
+      "downstream::instruments::transmitter::qam_points::tests::rare_ncp_survives_reduction_and_unknown_is_never_colored_as_data",
+      "downstream::instruments::transmitter::qam_points::tests::roles_follow_actual_interleaver_and_unavailable_history_stays_unknown",
+      "downstream::instruments::transmitter::tlv_fields::tests::assignment_ranges_default_loading_and_byte_offsets_remain_distinct",
+      "downstream::instruments::transmitter::tlv_fields::tests::registry_covers_only_the_implemented_subset_with_unique_keys",
+      "downstream::instruments::transmitter::tlv_fields::tests::timing_fields_use_core_tables_and_preserve_reserved_values",
+      "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+      "downstream::simulation::closed_loop::tests::channel193_rxmer_controls_tx_reference_mer_while_nearest_points_are_optimistic",
+      "downstream::simulation::closed_loop::tests::independent_sweep_preserves_each_profile_and_legacy_run_options",
+      "downstream::simulation::closed_loop::tests::mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance",
+      "downstream::simulation::closed_loop::tests::selected_profiles_are_ordered_validated_and_persisted_without_running",
+      "downstream::simulation::run_timing::tests::elapsed_advances_without_progress_and_freezes_before_late_ui_poll",
+      "downstream::simulation::run_timing::tests::formatting_and_profile_progress_are_separate_from_simulated_time",
+      "downstream::workbench::project_file::tests::curated_workbenches_restore_matching_originals_and_prepare_full_requests",
+      "downstream::workbench::project_file::tests::self_contained_project_roundtrip_preserves_originals_and_rejects_corruption",
+      "downstream::workbench::project_file::tests::version_two_profile_selection_roundtrips_and_legacy_remains_explicit",
+      "downstream::workbench::project_load::tests::bounded_stream_preserves_bytes_limits_and_cancellation",
+      "downstream::workbench::project_load::tests::command_line_file_preserves_destination_and_rejects_invalid_json",
+      "downstream::workbench::project_load::tests::errors_and_cancelled_success_do_not_publish_partial_inputs",
+      "downstream::workbench::project_load::tests::polling_does_not_wait_and_cancel_retains_single_worker_guard",
+      "downstream::workbench::project_load::tests::real_multi_capture_workbench_prepares_editors_off_thread",
+      "platform::example_directory::tests::installed_and_development_layouts_resolve_without_launch_directory",
+      "platform::input_file::tests::local_reads_preserve_bytes_and_reject_remote_oversize_and_nonregular_inputs",
+      "platform::startup::tests::invalid_or_conflicting_requests_are_rejected_before_gui_startup",
+      "platform::startup::tests::startup_inputs_preserve_paths_and_require_explicit_stdin",
+      "platform::updates::download::tests::platform_independent_download_verification_bounds_and_hash",
+      "platform::updates::install::tests::actual_deb_identity_must_match_selected_release",
+      "platform::updates::install::tests::bounded_hash_copy_rejects_corruption_truncation_and_overflow",
+      "platform::updates::install::tests::identity_and_redirects_are_restricted",
+      "platform::updates::install::tests::private_staging_cleans_up_and_checkout_cannot_install",
+      "platform::updates::release::tests::canonical_is_preferred_and_legacy_support_cannot_mask_invalid_metadata",
+      "platform::updates::release::tests::foreign_missing_duplicate_and_unverified_assets_never_notify",
+      "platform::updates::release::tests::stable_baseline_asset_and_numeric_versions",
+      "platform::updates::release::tests::windows_requires_exact_verified_desktop_msi",
+      "platform::updates::report::tests::bounded_log_decodes_windows_utf16_and_preserves_failure",
+      "platform::updates::report::tests::profile_redaction_handles_case_and_separator_variants",
+      "platform::updates::tests::completion_preserves_preference_and_failure_is_nonblocking",
+      "platform::updates::windows::tests::checkout_never_installs_and_internal_entry_remains_closed",
+      "platform::updates::windows::tests::verified_msi_metadata_and_bounded_restart_result"
+    ],
+    "qml_cases": [
+      "qmltestrunner::SharedButtons::initTestCase()",
+      "qmltestrunner::SharedButtons::test_keyboard_disabled_and_theme_states()",
+      "qmltestrunner::SharedButtons::test_standard_dialog_roles()",
+      "qmltestrunner::SharedButtons::cleanupTestCase()",
+      "qmltestrunner::ControlPalette::initTestCase()",
+      "qmltestrunner::ControlPalette::test_dropdown_and_spin_text_contrast_in_both_themes()",
+      "qmltestrunner::ControlPalette::test_plc_band_is_visible_and_below_spectrum_trace()",
+      "qmltestrunner::ControlPalette::cleanupTestCase()",
+      "qmltestrunner::ResponseView::initTestCase()",
+      "qmltestrunner::ResponseView::test_frequency_and_echo_controls()",
+      "qmltestrunner::ResponseView::cleanupTestCase()",
+      "qmltestrunner::RxmerDesigner::initTestCase()",
+      "qmltestrunner::RxmerDesigner::test_cancel_does_not_stage_and_new_flat_source_is_explicit()",
+      "qmltestrunner::RxmerDesigner::test_direction_reverses_signed_tilt_without_changing_magnitude_or_zoom()",
+      "qmltestrunner::RxmerDesigner::test_json_save_remains_available_outside_binary_range()",
+      "qmltestrunner::RxmerDesigner::test_notch_mouse_steps_fit_editor_with_large_font()",
+      "qmltestrunner::RxmerDesigner::test_notch_steps_keep_band_edge_bounds_scope_and_zoom()",
+      "qmltestrunner::RxmerDesigner::test_pnm_export_uses_rust_guard_and_keeps_draft()",
+      "qmltestrunner::RxmerDesigner::test_random_variation_only_for_flat_source()",
+      "qmltestrunner::RxmerDesigner::test_recipe_and_capture_scope_are_independent()",
+      "qmltestrunner::RxmerDesigner::test_restore_switches_between_range_and_all()",
+      "qmltestrunner::RxmerDesigner::test_ripple_steps_preserve_fractional_entry_and_limits()",
+      "qmltestrunner::RxmerDesigner::test_tilt_steps_keep_text_entry_keyboard_and_limits()",
+      "qmltestrunner::RxmerDesigner::test_unchecked_tilt_disables_controls_and_retains_draft()",
+      "qmltestrunner::RxmerDesigner::test_zoom_plc_navigation_and_capture_changes_keep_window()",
+      "qmltestrunner::RxmerDesigner::cleanupTestCase()",
+      "qmltestrunner::SoftDiagnostics::initTestCase()",
+      "qmltestrunner::SoftDiagnostics::test_tabs_bounds_scope_and_empty_state()",
+      "qmltestrunner::SoftDiagnostics::cleanupTestCase()",
+      "qmltestrunner::TooltipTiming::initTestCase()",
+      "qmltestrunner::TooltipTiming::test_attached_shared_button()",
+      "qmltestrunner::TooltipTiming::test_explicit_context_help()",
+      "qmltestrunner::TooltipTiming::cleanupTestCase()",
+      "qmltestrunner::Updates::initTestCase()",
+      "qmltestrunner::Updates::test_chip_is_on_menu_right_and_starts_directly()",
+      "qmltestrunner::Updates::test_error_report_requires_click_and_handles_browser_failure()",
+      "qmltestrunner::Updates::test_manual_check_and_preference()",
+      "qmltestrunner::Updates::test_run_lock_and_recovery_failure_prevent_install()",
+      "qmltestrunner::Updates::test_windows_update_saves_recovery_and_starts_installer()",
+      "qmltestrunner::Updates::cleanupTestCase()",
+      "qmltestrunner::Workbench::initTestCase()",
+      "qmltestrunner::Workbench::test_about_actions_fit_minimum_window_in_both_themes()",
+      "qmltestrunner::Workbench::test_apply_cancel_footers_align_and_reject()",
+      "qmltestrunner::Workbench::test_block_readiness_colors_and_reasons()",
+      "qmltestrunner::Workbench::test_channel_power_controls_cancel_apply_and_tap_symmetry()",
+      "qmltestrunner::Workbench::test_channel_stages_tap_routing_and_loss_draft_cancel()",
+      "qmltestrunner::Workbench::test_contextual_help_hover_keyboard_and_offline_faq()",
+      "qmltestrunner::Workbench::test_controls_and_theme()",
+      "qmltestrunner::Workbench::test_fec_overview_profiles_tabs_and_partial_empty_states()",
+      "qmltestrunner::Workbench::test_full_symbol_timing_popup_keyboard_and_resize()",
+      "qmltestrunner::Workbench::test_loading_modal_stays_responsive_and_cancels_without_adoption()",
+      "qmltestrunner::Workbench::test_mce_draft_cancel_apply_chip_and_channel_independence()",
+      "qmltestrunner::Workbench::test_ofdm_cancel_and_reopen()",
+      "qmltestrunner::Workbench::test_ofdm_tree_and_blank_profile()",
+      "qmltestrunner::Workbench::test_preview_blocks_need_attention()",
+      "qmltestrunner::Workbench::test_profile_dialog_bounds_at_minimum_window()",
+      "qmltestrunner::Workbench::test_profile_staging_apply_cancel_and_remove()",
+      "qmltestrunner::Workbench::test_receiver_configuration_comparison_and_run_controls()",
+      "qmltestrunner::Workbench::test_receiver_profile_performance_navigation_and_scope()",
+      "qmltestrunner::Workbench::test_receiver_retained_filters_response_soft_and_fec_navigation()",
+      "qmltestrunner::Workbench::test_receiver_signal_views_and_independent_spectrum_taps()",
+      "qmltestrunner::Workbench::test_render()",
+      "qmltestrunner::Workbench::test_response_display_labels_follow_retained_mode()",
+      "qmltestrunner::Workbench::test_run_elapsed_survives_completion_pause_and_stationary_symbols()",
+      "qmltestrunner::Workbench::test_rxmer_capture_animation_step_pause_end_and_close()",
+      "qmltestrunner::Workbench::test_rxmer_preview_layout_is_stable_at_minimum_size()",
+      "qmltestrunner::Workbench::test_rxmer_selection_draft_and_single_shot_controls()",
+      "qmltestrunner::Workbench::test_sections(ofdm)",
+      "qmltestrunner::Workbench::test_sections(source)",
+      "qmltestrunner::Workbench::test_sections(tx)",
+      "qmltestrunner::Workbench::test_sections(channel)",
+      "qmltestrunner::Workbench::test_sections(rx)",
+      "qmltestrunner::Workbench::test_sections(verify)",
+      "qmltestrunner::Workbench::test_sections(profile)",
+      "qmltestrunner::Workbench::test_sections(ce)",
+      "qmltestrunner::Workbench::test_sections(mer)",
+      "qmltestrunner::Workbench::test_shared_measurement_viewers_and_joint_channel_readiness()",
+      "qmltestrunner::Workbench::test_source_options_and_accepted_readiness()",
+      "qmltestrunner::Workbench::test_start_requires_every_block_complete()",
+      "qmltestrunner::Workbench::test_transmitter_graph_cards_and_details()",
+      "qmltestrunner::Workbench::test_transmitter_graphs_empty_keyboard_and_minimum_layout()",
+      "qmltestrunner::Workbench::test_transmitter_readiness_analyzer_zoom_and_invalidation()",
+      "qmltestrunner::Workbench::test_transmitter_stage_message_and_qam_navigation()",
+      "qmltestrunner::Workbench::test_verification_partial_results_running_and_empty_state()",
+      "qmltestrunner::Workbench::test_waveform_channel_apply_and_cancel_preserve_receiver_mode()",
+      "qmltestrunner::Workbench::test_workbench_configuration_entry_choices()",
+      "qmltestrunner::Workbench::test_workbench_configuration_lifecycle_and_profile_selection()",
+      "qmltestrunner::Workbench::test_workbench_input_restore_discards_drafts_without_apply()",
+      "qmltestrunner::Workbench::cleanupTestCase()"
+    ],
+    "all_case_identities_preserved_except_approved_rust_module_prefix": true
+  },
+  "boundary_review": {
+    "dependencies_unchanged": 3,
+    "frozen_files": 45,
+    "scientific_sites_unchanged": 145,
+    "proof": [
+      {
+        "original": "apps/qt/src/bridge/closed_loop.rs",
+        "destination": "apps/qt/src/bridge/closed_loop.rs",
+        "original_sha256": "a25df73430ced76176462646ce6bdd593c8276c90aba022432ea271c09b66404",
+        "sha256": "26a6aec55ed8c63af892633a73272f7768f2147c7c219b6aa694aa4ae70cb3b3",
+        "original_sites": [
+          {
+            "line": 143,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 144,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/bridge/measurement_input.rs",
+        "destination": "apps/qt/src/bridge/measurement_input.rs",
+        "original_sha256": "b10fcfa45e011614dfa85563409e019e7327649d09e471ed2e91d3c5d87679c4",
+        "sha256": "3d14e4b9cf784cef228bd6466552f54ab1997330079e2e44fcee16cee92807af",
+        "original_sites": [
+          {
+            "line": 9,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 262,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 297,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 298,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 386,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 396,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 396,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 400,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 677,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 9,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 262,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 297,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 298,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 386,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 396,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 396,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 400,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 688,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/bridge/ofdm_settings.rs",
+        "destination": "apps/qt/src/bridge/ofdm_settings.rs",
+        "original_sha256": "1707490db07900bf2ee8f060f38059ff0ca6f97c41eab7c4f3d196a1b25f6b98",
+        "sha256": "1707490db07900bf2ee8f060f38059ff0ca6f97c41eab7c4f3d196a1b25f6b98",
+        "original_sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/bridge/receiver_instruments.rs",
+        "destination": "apps/qt/src/bridge/receiver_instruments.rs",
+        "original_sha256": "9db740aa78778e5520a3536a1c87ca0204ce1676c78d3c3f95d792927e4efc9f",
+        "sha256": "63b3ba1fef522fa1ec2dd01f17ef22104d8e0379766e0e22158710b74b4d52b3",
+        "original_sites": [
+          {
+            "line": 9,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 9,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/bridge/rxmer_designer.rs",
+        "destination": "apps/qt/src/bridge/rxmer_designer.rs",
+        "original_sha256": "da36549cb20f6e37a58b1756d80fba669ed167cf79eee01d43a972abbbcc79ac",
+        "sha256": "e92b66bacf06b74c67baddcd75f3f1fe3488d5ac57af276e4f3507bb6a308c98",
+        "original_sites": [
+          {
+            "line": 186,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 225,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 186,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 225,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/bridge/rxmer_export.rs",
+        "destination": "apps/qt/src/bridge/rxmer_export.rs",
+        "original_sha256": "c9e2a29f709c7d893018a095292cf41bec1b23365e6b8542aafea9e523837063",
+        "sha256": "4b3cf78f815588359f8957edaabc8a95bb4df7b2aa1917030aa250cdc06fff8d",
+        "original_sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 11,
+            "root": "pnm_input"
+          }
+        ],
+        "sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 11,
+            "root": "pnm_input"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/bridge/source_input.rs",
+        "destination": "apps/qt/src/bridge/source_input.rs",
+        "original_sha256": "1a172eeab7ec64493c6039ddc56e12206bd94485be6e9f25f948cfb264141131",
+        "sha256": "08782a51209dbf4339932646c85bd7da4bda2102024ff24a20487a4abb175ecd",
+        "original_sites": [
+          {
+            "line": 97,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 98,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/bridge/workbench_file.rs",
+        "destination": "apps/qt/src/bridge/workbench_file.rs",
+        "original_sha256": "dea500fb6e7ecc49a972d19c8f288ff6ee0a9250a9b07e2abf34669bdae67066",
+        "sha256": "bf191542686a08ab27e8b6b74f117ce43db22aa1a1e45166a801ed2dac481c70",
+        "original_sites": [
+          {
+            "line": 147,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 147,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/help.rs",
+        "destination": "apps/qt/src/downstream/help.rs",
+        "original_sha256": "acc63121799801502e19985ecfc63bc5721f98e0e9cc50f2125b564bb7404754",
+        "sha256": "7ce0afe841d8c02efa9a230770ff106b847f85d30185a3442681c684bb3e9ad6",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 269,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 387,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 269,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 387,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/inputs/channel_model.rs",
+        "destination": "apps/qt/src/downstream/inputs/channel_model.rs",
+        "original_sha256": "fa5b96b80524ad12e9e3661de97ec9af027c2b3b00dc3a3ac1f5bedbaa2b452b",
+        "sha256": "c6492bc7acdd955855aff8c1587b2c125505f6e7d4fbf25f48004a703847497f",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 183,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 185,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 250,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 255,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 273,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 281,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 284,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 187,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 189,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 254,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 259,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 277,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 285,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 288,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/inputs/measurement_input/designer.rs",
+        "destination": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+        "original_sha256": "0980d220a25db83613230ed06251aad9e92788f1a3863376bec69633e8cc756c",
+        "sha256": "ed5e4e559916656e660dfb0d47824285d73c555d616e7edd3176b9da0c2a6339",
+        "original_sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 562,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 585,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 618,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 637,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 638,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 675,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 799,
+            "root": "pnm_input"
+          },
+          {
+            "line": 801,
+            "root": "pnm_input"
+          },
+          {
+            "line": 810,
+            "root": "pnm_input"
+          },
+          {
+            "line": 812,
+            "root": "pnm_input"
+          },
+          {
+            "line": 816,
+            "root": "pnm_input"
+          },
+          {
+            "line": 818,
+            "root": "pnm_input"
+          }
+        ],
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 563,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 586,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 619,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 638,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 639,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 676,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 801,
+            "root": "pnm_input"
+          },
+          {
+            "line": 803,
+            "root": "pnm_input"
+          },
+          {
+            "line": 812,
+            "root": "pnm_input"
+          },
+          {
+            "line": 814,
+            "root": "pnm_input"
+          },
+          {
+            "line": 818,
+            "root": "pnm_input"
+          },
+          {
+            "line": 820,
+            "root": "pnm_input"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/inputs/measurement_input/document.rs",
+        "destination": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+        "original_sha256": "318a1513704161370baa9abc0806c1c16f7773e82692702a1d408822cd64aa80",
+        "sha256": "318a1513704161370baa9abc0806c1c16f7773e82692702a1d408822cd64aa80",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 13,
+            "root": "pnm"
+          },
+          {
+            "line": 13,
+            "root": "pnm"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 13,
+            "root": "pnm"
+          },
+          {
+            "line": 13,
+            "root": "pnm"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/inputs/measurement_input/mod.rs",
+        "destination": "apps/qt/src/downstream/inputs/measurement_input/mod.rs",
+        "original_sha256": "e7b1730bb592aadad2db50aa7a06fd88d942b7d67209dcd18a1a3dc09fff9860",
+        "sha256": "e7b1730bb592aadad2db50aa7a06fd88d942b7d67209dcd18a1a3dc09fff9860",
+        "original_sites": [
+          {
+            "line": 14,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 15,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 14,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 15,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/inputs/measurement_input/model.rs",
+        "destination": "apps/qt/src/downstream/inputs/measurement_input/model.rs",
+        "original_sha256": "709915ed9d776ae5ae567593ec53f7fb169589885534c73fe4078053765bd0dd",
+        "sha256": "7f43afe35d8561a2c2b8c62ceb10cc6f1ed46c0ee602113013994b3e95b54f55",
+        "original_sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 265,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 555,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 266,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 556,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/inputs/measurement_input/plc.rs",
+        "destination": "apps/qt/src/downstream/inputs/measurement_input/plc.rs",
+        "original_sha256": "922f02813f8a4c66bbd5b98ef16faa4bd055cdf3f2f2fb776055ab4aed3fd1d7",
+        "sha256": "4a92b802177e31afa36779b24cc2933573cdd3ba0e0cbb4b1e26c6a9058abcf5",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 67,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 68,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 67,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 68,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/inputs/measurement_input/preview.rs",
+        "destination": "apps/qt/src/downstream/inputs/measurement_input/preview.rs",
+        "original_sha256": "81f0f6032b4cb37c9905c92598fccd750ffd15c200a4a0dd672228b0dc0da74b",
+        "sha256": "8ccfd28aae358e93407f1164c4d4ca8f73942fe9376e2a6dc9121730c3f7ab64",
+        "original_sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/inputs/profile_input/document.rs",
+        "destination": "apps/qt/src/downstream/inputs/profile_input/document.rs",
+        "original_sha256": "43e2795e53c04b92a530c18287471230a4e08b01f02165ad5bcba64c73d1b482",
+        "sha256": "43e2795e53c04b92a530c18287471230a4e08b01f02165ad5bcba64c73d1b482",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 12,
+            "root": "pnm"
+          },
+          {
+            "line": 12,
+            "root": "pnm"
+          },
+          {
+            "line": 242,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 12,
+            "root": "pnm"
+          },
+          {
+            "line": 12,
+            "root": "pnm"
+          },
+          {
+            "line": 242,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/inputs/profile_input/mod.rs",
+        "destination": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
+        "original_sha256": "19588f871ff459c629816f41361ad744cb44b6472b322142ad0d8c12c7ba0bd1",
+        "sha256": "d3201357eb959101d0c1e9e8da299376424a51f2e9c9bc4ff591a7ce2b38c05e",
+        "original_sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 191,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 217,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 191,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 217,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/inputs/profile_input/plot.rs",
+        "destination": "apps/qt/src/downstream/inputs/profile_input/plot.rs",
+        "original_sha256": "af9efc4bd433e241745629a0ac8158bbbe3d6b022cce7e86b9648e26a1c433ac",
+        "sha256": "af9efc4bd433e241745629a0ac8158bbbe3d6b022cce7e86b9648e26a1c433ac",
+        "original_sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 136,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 136,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/inputs/source_input/model.rs",
+        "destination": "apps/qt/src/downstream/inputs/source_input/model.rs",
+        "original_sha256": "8c037d3bd76ac2538ea11d1816fc2072fb056616556f8b307cc031f0714ef351",
+        "sha256": "cd749e45a92804507a7d12c84b780c41a19deb767ca845c83fb5758f820a5aa4",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 245,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 245,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/channel/mod.rs",
+        "destination": "apps/qt/src/downstream/instruments/channel/mod.rs",
+        "original_sha256": "71d3db52d4506cc2559edaa7011aace00330646992518a43de5f9ea7da082c7d",
+        "sha256": "1d9fc006c24c42b2f52e7fece5179e59b3672f0e374e759ed7e6c8cbb08fcd1f",
+        "original_sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 183,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 189,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 185,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 191,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/receiver/diagnostics.rs",
+        "destination": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+        "original_sha256": "6987638a192508dd6e91f1477f5f47bb5e4f5affeb090d115eb044924babf629",
+        "sha256": "0a30767c77340c499dc259baf9b530a7b8186c33f9a8e5af7009361931ac6482",
+        "original_sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 145,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 145,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/receiver/fec.rs",
+        "destination": "apps/qt/src/downstream/instruments/receiver/fec.rs",
+        "original_sha256": "dc339e82ae92667089f867599f86e0927d3742bdb426efa58a1178993bde8c89",
+        "sha256": "939b06152646797e5e0a31fc0f4a71a9222dd6c6fb107d677b8a9f86cca348a9",
+        "original_sites": [
+          {
+            "line": 30,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 113,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 30,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 113,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/receiver/performance.rs",
+        "destination": "apps/qt/src/downstream/instruments/receiver/performance.rs",
+        "original_sha256": "fa2776c102efc2176db25313168df55a53163e75d4183ed9cae3977a32453ff6",
+        "sha256": "4226fd5315c90493ae002ab836a89e043bbbe73cd917e5fa7bc7ca4a85289f76",
+        "original_sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 26,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 26,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/receiver/qam_history.rs",
+        "destination": "apps/qt/src/downstream/instruments/receiver/qam_history.rs",
+        "original_sha256": "2e35d3baca08efb43f102219bd9c7065a348b495ef3260fd69246a5b2887e9b1",
+        "sha256": "0d9912772744fd131614ae43b42dbd150183aab4d6839ea0e34c84dc17c93483",
+        "original_sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 21,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 151,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 21,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 151,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/receiver/selection.rs",
+        "destination": "apps/qt/src/downstream/instruments/receiver/selection.rs",
+        "original_sha256": "cec25646b4e9d757d1c1756d845da6f575a27b9514f97039508a830a8c7da2d4",
+        "sha256": "14182c1a7192f45c3de50b2e3d2c0fd46476696aee2e585fc9961b589acef563",
+        "original_sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 18,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 20,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 128,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 130,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 265,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 280,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 329,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 18,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 20,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 128,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 130,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 265,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 280,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 329,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/receiver/soft_display.rs",
+        "destination": "apps/qt/src/downstream/instruments/receiver/soft_display.rs",
+        "original_sha256": "d4be913c06a242898401b6b7677b7205dad0965e744fa8cbaaa5d8d76ac253c9",
+        "sha256": "d4be913c06a242898401b6b7677b7205dad0965e744fa8cbaaa5d8d76ac253c9",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/receiver/verification.rs",
+        "destination": "apps/qt/src/downstream/instruments/receiver/verification.rs",
+        "original_sha256": "fceeed06ad8f860f887167c9ab01cb69c3dcaac388debba2155c7cc1e8525648",
+        "sha256": "fceeed06ad8f860f887167c9ab01cb69c3dcaac388debba2155c7cc1e8525648",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/receiver/views.rs",
+        "destination": "apps/qt/src/downstream/instruments/receiver/views.rs",
+        "original_sha256": "f016f76536b00224eb971a47a2e0bd7fa9de4f79a493a293138452cd698fa280",
+        "sha256": "b1038df7e26d87c1c9b9fedaec376dc0654b7a259b36312ed1f9e77cd751a604",
+        "original_sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 35,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 35,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/spectrum/mod.rs",
+        "destination": "apps/qt/src/downstream/instruments/spectrum/mod.rs",
+        "original_sha256": "47cea86ad53db7b81f6499e5d52394fc1aa5504aeabdcd9856183ca08510d5aa",
+        "sha256": "47cea86ad53db7b81f6499e5d52394fc1aa5504aeabdcd9856183ca08510d5aa",
+        "original_sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/spectrum/plc.rs",
+        "destination": "apps/qt/src/downstream/instruments/spectrum/plc.rs",
+        "original_sha256": "b76c2e17ef8f87486ebdfcd3a59a5b04b1a716861d05bebe0c670b3fcfbe610a",
+        "sha256": "b76c2e17ef8f87486ebdfcd3a59a5b04b1a716861d05bebe0c670b3fcfbe610a",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 44,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 44,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/spectrum/symbol_timing.rs",
+        "destination": "apps/qt/src/downstream/instruments/spectrum/symbol_timing.rs",
+        "original_sha256": "8d45c5f3e0c219525a2371e7ad9c87c8c4131eb7f565339da6284f241b4634f7",
+        "sha256": "8d45c5f3e0c219525a2371e7ad9c87c8c4131eb7f565339da6284f241b4634f7",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 140,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 140,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/transmitter/capture.rs",
+        "destination": "apps/qt/src/downstream/instruments/transmitter/capture.rs",
+        "original_sha256": "7449f43b85007f65d1adfbec906f76329b8f2ddd1f67a295084e55c3891dd940",
+        "sha256": "7449f43b85007f65d1adfbec906f76329b8f2ddd1f67a295084e55c3891dd940",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/transmitter/channel_input.rs",
+        "destination": "apps/qt/src/downstream/instruments/transmitter/channel_input.rs",
+        "original_sha256": "0a76dcedfd703cc04ec0669bac83b47007fe06bd800e9cb09b8689758da80e73",
+        "sha256": "9ef3cd7b47fc6f066c710fc35e806b19d9f3b4976f3da50f96e860779173126a",
+        "original_sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/transmitter/graphs/mod.rs",
+        "destination": "apps/qt/src/downstream/instruments/transmitter/graphs/mod.rs",
+        "original_sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68",
+        "sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68",
+        "original_sites": [
+          {
+            "line": 25,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 25,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/transmitter/graphs/physical.rs",
+        "destination": "apps/qt/src/downstream/instruments/transmitter/graphs/physical.rs",
+        "original_sha256": "836a25a11a68186fe8bc1287b05b76c6d2ac01c08a5a85eb22c1c4c313e31fc0",
+        "sha256": "836a25a11a68186fe8bc1287b05b76c6d2ac01c08a5a85eb22c1c4c313e31fc0",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 98,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 99,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 98,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 99,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/transmitter/messages.rs",
+        "destination": "apps/qt/src/downstream/instruments/transmitter/messages.rs",
+        "original_sha256": "c2fb517f9afd5b3eead6963c54b7b54330eedce196c11e475fe0d7ddbccf0e81",
+        "sha256": "8e5a1da5964070d45a9dd588ee31580c075a5e91a9bf8e066cfaa8cdbc9b851d",
+        "original_sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/transmitter/preview.rs",
+        "destination": "apps/qt/src/downstream/instruments/transmitter/preview.rs",
+        "original_sha256": "32850ff76a746fe4b76d3873dc683ce3ee8d088ce86add4890bca2db91ce92f4",
+        "sha256": "aa62a767fa9aed8bc4098da71e47ee9b1e5e655dfcf6600675abd2ca8a0eea7f",
+        "original_sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 228,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 281,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 312,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 228,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 281,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 312,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/transmitter/qam_points.rs",
+        "destination": "apps/qt/src/downstream/instruments/transmitter/qam_points.rs",
+        "original_sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf",
+        "sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf",
+        "original_sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 131,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 131,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/transmitter/tlv_fields.rs",
+        "destination": "apps/qt/src/downstream/instruments/transmitter/tlv_fields.rs",
+        "original_sha256": "6929e413fb4d8fe6b60885e4beb19211a5148505d01df6fa6e5fc74d4b76f4e5",
+        "sha256": "39e3291a4677c2faa9ebfc635fdfb1643dc5fbaf3507a7a29dc3ad50d68d363a",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/instruments/transmitter/views.rs",
+        "destination": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+        "original_sha256": "707ef817678d59b33c95421d99699563a2f1a8af593274312f1cead12a229325",
+        "sha256": "7dfffc3502bfa20788897fd6382950c2916ba1bed2df925f82c8244839d31e69",
+        "original_sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 189,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 189,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/simulation/closed_loop.rs",
+        "destination": "apps/qt/src/downstream/simulation/closed_loop.rs",
+        "original_sha256": "e83a517f3969ff30caae9618411e4af9c1cde81c87fb97e5c56ab97d0b297914",
+        "sha256": "2e0b32b4150fb405f4abd9b2bd48f67522c8223d1730e2893234c5e3ade616b6",
+        "original_sites": [
+          {
+            "line": 9,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 44,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 45,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 131,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 200,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 209,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 452,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 459,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 580,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 580,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 715,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 716,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 719,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 752,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 789,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1018,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1022,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1136,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1137,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 9,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 44,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 45,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 131,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 200,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 209,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 452,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 459,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 580,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 580,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 720,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 721,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 724,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 757,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 794,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1033,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1037,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1155,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1156,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/simulation/run_timing.rs",
+        "destination": "apps/qt/src/downstream/simulation/run_timing.rs",
+        "original_sha256": "3c7ba9f75e99546bff9213288c4e74f1eab06979961a31a72100cff5a629617c",
+        "sha256": "65c02f34f43415720e6c6a3c0714d89d1af984711b5cff0ff4a01ba18383e082",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/workbench/project_file.rs",
+        "destination": "apps/qt/src/downstream/workbench/project_file.rs",
+        "original_sha256": "985fdead4ff07756f5b4f06cc152a8cc36c8259871520ac596c85b0e69b2dc85",
+        "sha256": "b09096855d35825e23fe574b5d04ff9f69b638e859c5f0b1fb869c8cdae6d193",
+        "original_sites": [
+          {
+            "line": 17,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 330,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 336,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 463,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 17,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 336,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 342,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 471,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      },
+      {
+        "original": "apps/qt/src/workbench/session.rs",
+        "destination": "apps/qt/src/downstream/workbench/session.rs",
+        "original_sha256": "439f869b04539487f831fe53bddb1ec4568215e413d840ca060b4174c170750d",
+        "sha256": "439f869b04539487f831fe53bddb1ec4568215e413d840ca060b4174c170750d",
+        "original_sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 19,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 24,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 25,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 27,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 90,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 98,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 148,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 157,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 19,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 24,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 25,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 27,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 90,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 98,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 148,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 157,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "canonical_source_equal_after_reversing_only_approved_paths": true
+      }
+    ]
+  },
+  "qml_bodies_preserved_except_imports": [
+    "apps/qt/qml/downstream/measurements/ChannelResponseDialog.qml",
+    "apps/qt/qml/downstream/measurements/MeasurementCaptureTree.qml",
+    "apps/qt/qml/downstream/measurements/MeasurementInputDialog.qml",
+    "apps/qt/qml/downstream/measurements/MeasurementPlaybackControls.qml",
+    "apps/qt/qml/downstream/measurements/MeasurementPlot.qml",
+    "apps/qt/qml/downstream/measurements/MeasurementViewer.qml",
+    "apps/qt/qml/downstream/measurements/RxmerDesignScope.qml",
+    "apps/qt/qml/downstream/measurements/RxmerDesignerDialog.qml",
+    "apps/qt/qml/downstream/measurements/RxmerInputDialog.qml",
+    "apps/qt/qml/downstream/measurements/RxmerPnmExportDialog.qml",
+    "apps/qt/qml/downstream/configuration/ofdm_settings/OfdmSettingsDialog.qml",
+    "apps/qt/qml/downstream/configuration/profile_input/ProfileBandwidthDialog.qml",
+    "apps/qt/qml/downstream/configuration/profile_input/ProfileChart.qml",
+    "apps/qt/qml/downstream/configuration/profile_input/ProfileInputDialog.qml",
+    "apps/qt/qml/downstream/configuration/profile_input/ProfilePlotDialog.qml",
+    "apps/qt/qml/downstream/configuration/source_input/SourceInputDialog.qml",
+    "apps/qt/qml/downstream/instruments/fec/FecAllocationChart.qml",
+    "apps/qt/qml/downstream/instruments/fec/FecCodewordTable.qml",
+    "apps/qt/qml/downstream/instruments/fec/FecControlTable.qml",
+    "apps/qt/qml/downstream/instruments/fec/FecIterationChart.qml",
+    "apps/qt/qml/downstream/instruments/fec/ReceiverFecDialog.qml",
+    "apps/qt/qml/downstream/instruments/messages/TransmitterMessageDialog.qml",
+    "apps/qt/qml/downstream/instruments/profile_performance/ProfilePerformanceDialog.qml",
+    "apps/qt/qml/downstream/instruments/qam/ReceiverCellControls.qml",
+    "apps/qt/qml/downstream/instruments/qam/ReceiverQamDialog.qml",
+    "apps/qt/qml/downstream/instruments/qam/TapQamDialog.qml",
+    "apps/qt/qml/downstream/instruments/qam/TransmitterQamDialog.qml",
+    "apps/qt/qml/downstream/instruments/qam/TransmitterScatter.qml",
+    "apps/qt/qml/downstream/instruments/response/ReceiverResponseDialog.qml",
+    "apps/qt/qml/downstream/instruments/selection/InstrumentChoice.qml",
+    "apps/qt/qml/downstream/instruments/slicer/ReceiverSlicerDialog.qml",
+    "apps/qt/qml/downstream/instruments/slicer/SoftDiagnosticPlot.qml",
+    "apps/qt/qml/downstream/instruments/spectrum/SpectrumAnalyzerDialog.qml",
+    "apps/qt/qml/downstream/instruments/spectrum/SpectrumPlot.qml",
+    "apps/qt/qml/downstream/instruments/spectrum/SymbolTimingDialog.qml",
+    "apps/qt/qml/downstream/instruments/spectrum/SymbolTimingPanel.qml",
+    "apps/qt/qml/downstream/instruments/spectrum/SymbolTimingPlot.qml",
+    "apps/qt/qml/downstream/instruments/stages/TransmitterStageDialog.qml",
+    "apps/qt/qml/downstream/instruments/stages/TransmitterStageLegend.qml",
+    "apps/qt/qml/downstream/instruments/stages/TransmitterStagePlot.qml",
+    "apps/qt/qml/downstream/configuration/SectionPreviewDialog.qml",
+    "apps/qt/qml/downstream/DownstreamWorkbench.qml",
+    "apps/qt/qml/downstream/channel/ChannelAmplifierDialog.qml",
+    "apps/qt/qml/downstream/channel/ChannelAttenuatorDialog.qml",
+    "apps/qt/qml/downstream/channel/ChannelConfigurationDialog.qml",
+    "apps/qt/qml/downstream/channel/ChannelFilterDialog.qml",
+    "apps/qt/qml/downstream/channel/ChannelInstrumentDialog.qml",
+    "apps/qt/qml/downstream/channel/ChannelLossDialog.qml",
+    "apps/qt/qml/downstream/channel/ChannelModelCard.qml",
+    "apps/qt/qml/downstream/channel/ChannelResponsePreviewDialog.qml",
+    "apps/qt/qml/downstream/channel/ChannelWorkbenchDialog.qml",
+    "apps/qt/qml/downstream/channel/ConditioningSymbol.qml",
+    "apps/qt/qml/downstream/receiver/ReceiverConfigurationDialog.qml",
+    "apps/qt/qml/downstream/receiver/ReceiverWorkbenchDialog.qml",
+    "apps/qt/qml/downstream/transmitter/TransmitterGraphCard.qml",
+    "apps/qt/qml/downstream/transmitter/TransmitterWorkbenchDialog.qml",
+    "apps/qt/qml/downstream/receiver/VerificationBarChart.qml",
+    "apps/qt/qml/downstream/receiver/VerificationDialog.qml",
+    "apps/qt/qml/downstream/configuration/WorkbenchConfigurationDialog.qml"
+  ],
+  "successful_qml_and_build": {
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/visual-workspace",
+        "exit_code": 0,
+        "elapsed_seconds": 19.885341545988922,
+        "log": "docs/development/local/unified-qt-workbench/ds-01-placement-qml-final.log"
+      },
+      {
+        "command": [
+          "scripts/qt-desktop.sh",
+          "build"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin",
+        "exit_code": 0,
+        "elapsed_seconds": 98.07284200600407,
+        "log": "docs/development/local/unified-qt-workbench/ds-01-placement-build-accepted.log"
+      }
+    ],
+    "scope": "QML-only explicit shell import corrected after the unchanged Rust87/Clippy/development build passed; preserve the earlier failed check receipt."
+  },
+  "native_smokes": {
+    "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+    "sha256": "d6b79ede8c4e7db8cf0e6ee26922a60521016228ccbb8b8f52a8e970ba3ce905",
+    "display": ":0",
+    "display_dimensions": [
+      "dimensions:    1280x800 pixels (338x211 millimeters)"
+    ],
+    "qt_sdk_version": "6.8.3",
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.041421561007155105,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/multi-rxmer/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.05009352600609418,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4476313639897853,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.02859204899868928,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--smoke-test"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.0243435409938684,
+        "stdout": "MERLIN_QT_STYLE=Fusion\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--smoke-test",
+          "--workbench",
+          "examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.0099822009942727,
+        "stdout": "MERLIN_QT_STYLE=Fusion\n",
+        "stderr": ""
+      }
+    ]
+  },
+  "validation": {
+    "qt_rust_passed": 87,
+    "qml_passed": 89,
+    "negative_boundary_cases": 16,
+    "qml_unique_registrations": 82,
+    "non_qt_source_unchanged": true,
+    "dependency_set_unchanged": 3,
+    "frozen_files": 45,
+    "scientific_sites_unchanged": 145,
+    "initial_guard_preserved_verbatim": true
+  },
+  "checks": [
+    {
+      "log": "docs/development/local/unified-qt-workbench/ds-01-placement-qt-check-final.log",
+      "sha256": "78c21b6368a9735c556d44243b3db1be24b053a0c6733ccc6586612ea376ac2b"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/ds-01-placement-qml-final.log",
+      "sha256": "0ee1a2756f9da781ec64253fef3885c98b7715255b8143df482e3377d789d6f3"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/ds-01-placement-build-accepted.log",
+      "sha256": "7ad1c47ba318fec93645a3d144e37138d6e05770281a7cc60e88319cfb4a86db"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/ds-01-placement-boundary-tests.log",
+      "sha256": "db19e036feb3bd21f184aff2f5b53541aee1712b2984cd8485a04ba4edc43724"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/ds-01-placement-display.log",
+      "sha256": "054270c5620d6041a66c4a42de1dc11d8aa923226e637353f81ca4edb56c6b3d"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/ds-01-placement-docs.log",
+      "sha256": "10849c1798a957aa9ae435b20bde14f6de43cce68a0c08282eb597052313dac4"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/ds-01-placement-docs-final.log",
+      "sha256": "35ce2d3a20e9a1a8498862bd9689c23e140b4dda000ad6e3abcc3e3d833c1950"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/ds-01-placement-trace.log",
+      "sha256": "4815641791db39aa3e4d48e76217eb7aff10013ebbb24fc256295cd48506621f"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/ds-01-placement-versions.log",
+      "sha256": "7b61879f1cb4b977cc3d3404d0ecfcefc8c021a25ae4834bdf03315749a172fd"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/ds-01-placement-guide.log",
+      "sha256": "e723e8bfc25c24b2cc62f0ef7ef61a1e048449cc3d681f1fbfbdee1009de8e8c"
+    }
+  ],
+  "findings": [
+    "Initial namespace compilation exposed one relative bridge PLC-annotation path; explicit downstream qualification preserves the same target and canonical source equivalence.",
+    "The first aggregate Qt check passed Rust87/Clippy/format/development build but its QML stage failed at a formerly implicit shell-directory type. An explicit shell import restores that scope. Only QML/import data changed afterward: targeted QML89 and optimized build pass; the earlier aggregate check remains recorded with its failure.",
+    "Original master prompt and archived upstream extension design remain byte-identical; they are historical source, not current locator tables. Current owner routes and navigation move separately."
+  ],
+  "scope": "104 approved file moves:45 existing Rust owners and59 QML views, plus one downstream module-wiring file. Other existing Rust bodies preserve semantics after reversing only module/resource paths. No scientific operations, scalar values, handlers or serialized contracts changed.",
+  "remaining": [
+    "Replace legacy scientific calls with accepted merlin facade operations",
+    "Remove all three direct scientific dependencies and all45 legacy exceptions before parent completion",
+    "Session isolation, shell/upstream/shared instruments/file/recovery and final numerical/UI acceptance"
+  ],
+  "limitations": [
+    "Placement acceptance is not final API-boundary or shared scientific-instrument acceptance",
+    "Local Linux Qt6.8.3 XCB/Fusion; no hosted/installed Windows lifecycle/interoperability claim"
+  ],
+  "current_files": [
+    {
+      "path": "apps/qt/build.rs",
+      "sha256": "452d7e03d1f5400d9d4ba2c2f9941e4f87d06684a21df9ca0a862b91d3a05c7a"
+    },
+    {
+      "path": "apps/qt/qml/Main.qml",
+      "sha256": "5e7f36d8b4ded9758d20d1a02f596a648b997da9d2d04065cee83cec55aabf65"
+    },
+    {
+      "path": "apps/qt/qml/downstream/DownstreamWorkbench.qml",
+      "sha256": "c2856918923b399f7e4dcaa29b07c78512907c3c0165b39394cd82125eedd755"
+    },
+    {
+      "path": "apps/qt/qml/downstream/channel/ChannelAmplifierDialog.qml",
+      "sha256": "c66447f0b0f6708603bbd079ad0f3b05ce24e1a0e43c369d04dd22e61fd8f0d7"
+    },
+    {
+      "path": "apps/qt/qml/downstream/channel/ChannelAttenuatorDialog.qml",
+      "sha256": "35a966d7d7c10ce17511a2d2e98a94403b373b459d34c1806e5b94e87d7de2c7"
+    },
+    {
+      "path": "apps/qt/qml/downstream/channel/ChannelConfigurationDialog.qml",
+      "sha256": "c00dae0980ca2e093d3169e9873fa4645af04137540bc53e3a305049b36189bf"
+    },
+    {
+      "path": "apps/qt/qml/downstream/channel/ChannelFilterDialog.qml",
+      "sha256": "1475857b50c8e589bdf7fd6a1dca87b5956dbee8e6dedbfc7f28a94301f23a6c"
+    },
+    {
+      "path": "apps/qt/qml/downstream/channel/ChannelInstrumentDialog.qml",
+      "sha256": "de5faf072e488c9ad8d184c2dc3cbd184b705ca0f692049e6e07f56eb99dac39"
+    },
+    {
+      "path": "apps/qt/qml/downstream/channel/ChannelLossDialog.qml",
+      "sha256": "b17639b0de009e3672c9c4ed4943d39606ffb70e96eb8034f736cb5300b38843"
+    },
+    {
+      "path": "apps/qt/qml/downstream/channel/ChannelModelCard.qml",
+      "sha256": "f336534a6151dd631949fd8f7adc550af6f5cb5da2b426282b18c7ed5429271c"
+    },
+    {
+      "path": "apps/qt/qml/downstream/channel/ChannelResponsePreviewDialog.qml",
+      "sha256": "6fa4f42dc7b602bd75de519b6e659983f706e461f3bfed2636b161ec5cd879fc"
+    },
+    {
+      "path": "apps/qt/qml/downstream/channel/ChannelWorkbenchDialog.qml",
+      "sha256": "6343bd235b0750d97c57eb4a59321656749681d7dd6658ecbbadd862f77f53f9"
+    },
+    {
+      "path": "apps/qt/qml/downstream/channel/ConditioningSymbol.qml",
+      "sha256": "c8119c714076757b7cdfa1fbfbaf6ad103d305e69cee9e70a264597554608f9e"
+    },
+    {
+      "path": "apps/qt/qml/downstream/configuration/SectionPreviewDialog.qml",
+      "sha256": "36d6b0f5283cfd5c7517043228c27baafb03ef5938f6bed851b449f67d857ffb"
+    },
+    {
+      "path": "apps/qt/qml/downstream/configuration/WorkbenchConfigurationDialog.qml",
+      "sha256": "7eeaf10ee59bb21f8e59e484eb526dc2236258104889b80b26272d621ff90c37"
+    },
+    {
+      "path": "apps/qt/qml/downstream/configuration/ofdm_settings/OfdmSettingsDialog.qml",
+      "sha256": "7d788b5d391acf2dde77f49dec2540d5525b04649c623065993d20a288b255bd"
+    },
+    {
+      "path": "apps/qt/qml/downstream/configuration/profile_input/ProfileBandwidthDialog.qml",
+      "sha256": "445206583ee4df3baabbe18a4d182f1cc1b7ef96d123eef50406619e3eda5baf"
+    },
+    {
+      "path": "apps/qt/qml/downstream/configuration/profile_input/ProfileChart.qml",
+      "sha256": "bbd3fbfb229c3d2f6fcadf1d4d814f4567ff5833e5ce125bb8df1b4ca74b6993"
+    },
+    {
+      "path": "apps/qt/qml/downstream/configuration/profile_input/ProfileInputDialog.qml",
+      "sha256": "b624bc774f31a89549e03aade8d7dc5c049835973e9fc5b6e102433994f6f1e8"
+    },
+    {
+      "path": "apps/qt/qml/downstream/configuration/profile_input/ProfilePlotDialog.qml",
+      "sha256": "d25f223ed083afb3a3e6f66072eb6c74d93a5bcbd7a62ae17a72797ddb3271a4"
+    },
+    {
+      "path": "apps/qt/qml/downstream/configuration/source_input/SourceInputDialog.qml",
+      "sha256": "ada82d840e76836efb13fd3cb7e746bc8b48931bf55f8ae19ca3982fcf2a0769"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/fec/FecAllocationChart.qml",
+      "sha256": "bf4a2ea07bfb1dec55c3c100c97b459d8b1a6750bd420389bfcfce30a2d3202f"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/fec/FecCodewordTable.qml",
+      "sha256": "0d1bbaccfc15d9d93ae28b7ac94676302acc96169e86a654ef786f333b714525"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/fec/FecControlTable.qml",
+      "sha256": "169da7fa0b0a0757cac73d2ffa3abf7aa2439320f624f1539a93c1a0d950118b"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/fec/FecIterationChart.qml",
+      "sha256": "b92f0e1e77081623991a4fa26e8a5ed730adde2eb2ef262bf7b2c5fe77f314e9"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/fec/ReceiverFecDialog.qml",
+      "sha256": "b880c2ed667612f0597616d021310c9d98aa8113c94cd433678a816412deb457"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/messages/TransmitterMessageDialog.qml",
+      "sha256": "1216c7573b3b37101f9d243d0db4d4524db1b6f8b0498148812fc5abef69e84b"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/profile_performance/ProfilePerformanceDialog.qml",
+      "sha256": "451ef1b43537228cf05d83525e8213903165d81e020e12d79837d8fd87d69203"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/qam/ReceiverCellControls.qml",
+      "sha256": "63d2bf1a58f18b41fc0b388da047afacc4feccde867460be95dcdf7e315eb74e"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/qam/ReceiverQamDialog.qml",
+      "sha256": "c8ebfca044c77574515de381028a0dd6eb5618ddab4be6ad24b0b30ec6677bc5"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/qam/TapQamDialog.qml",
+      "sha256": "eda313e0cc816e2cdf833398d21778aa0f61206ba483ddac472b83cd2d74ea9a"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/qam/TransmitterQamDialog.qml",
+      "sha256": "502c9c0423e2ccee74efaa5dc3c9c205caf5630a395c6a796166223db2f9878f"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/qam/TransmitterScatter.qml",
+      "sha256": "7fa930879d337517e66e727c0e0f1e6a505fe36beb3863486d3f0310a09c9262"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/response/ReceiverResponseDialog.qml",
+      "sha256": "ff9ec86eaa5bbb062d898a9b0626832b830a972721a7fb142b2b89a49f210a83"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/selection/InstrumentChoice.qml",
+      "sha256": "a4a6becaeb57adf4151479ca9b100958413c627fe737d514da62db2bff1e0aa1"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/slicer/ReceiverSlicerDialog.qml",
+      "sha256": "4887e7307e2f99266595f1f26ea996b795a0a8829bbe7630e68266def4eb1f83"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/slicer/SoftDiagnosticPlot.qml",
+      "sha256": "bed8071b5ea32d2d1df206234d19a719505b9108970b2618a16cb0b34ec3a6ff"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/spectrum/SpectrumAnalyzerDialog.qml",
+      "sha256": "da265404a3ed70aa67f97f12be883dce4275a1367a7c773f1ee3b2404c9d60e7"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/spectrum/SpectrumPlot.qml",
+      "sha256": "cef66ab78cf0bffd557302f2421666e7680a7d4e67b410b1e8de2ba5513d43b2"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/spectrum/SymbolTimingDialog.qml",
+      "sha256": "71dad2299701902c202f6b6567c15a43e869f21b8d4ae985d8951ea06b6ab7bc"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/spectrum/SymbolTimingPanel.qml",
+      "sha256": "13573f58f3695925f20c3e6a1ff7c9f3f56bcb81311b73f96d7b1b5111bdbea9"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/spectrum/SymbolTimingPlot.qml",
+      "sha256": "aae7bb1013551b1fba3d144eca138596ed146dcfcc3044786054dd889aaa0176"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/stages/TransmitterStageDialog.qml",
+      "sha256": "11f31fd88a3230572b9505d1d478350a099165cf12e238823740ad0cf263673c"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/stages/TransmitterStageLegend.qml",
+      "sha256": "a831b2d8deb93af93f40c560de3ae237762a801c171b390809951f4f2be6e566"
+    },
+    {
+      "path": "apps/qt/qml/downstream/instruments/stages/TransmitterStagePlot.qml",
+      "sha256": "931949662563162d2a8b57dc5fd6fd7b9e68e1fb83eb9bb92324226f237a7796"
+    },
+    {
+      "path": "apps/qt/qml/downstream/measurements/ChannelResponseDialog.qml",
+      "sha256": "d2084877a738909956b49dfffebc7be1095b5661f701735982ba41cf9da686d5"
+    },
+    {
+      "path": "apps/qt/qml/downstream/measurements/MeasurementCaptureTree.qml",
+      "sha256": "bb6668b2efe65581c6867ed4c29d76a798039845624d6afbc25329ed8fd60f00"
+    },
+    {
+      "path": "apps/qt/qml/downstream/measurements/MeasurementInputDialog.qml",
+      "sha256": "4c091e9ce43fbdb25bb132d07962839e31cc560fd7fb12de4b11c82e6719e589"
+    },
+    {
+      "path": "apps/qt/qml/downstream/measurements/MeasurementPlaybackControls.qml",
+      "sha256": "78949aa21c7ca7afca1d24cc85e004c21ca15efe0dc9ff514b6a9b4586de1f85"
+    },
+    {
+      "path": "apps/qt/qml/downstream/measurements/MeasurementPlot.qml",
+      "sha256": "ed842c331b708675b603152105f1dab46926146fb9a88c061645678cbfb26138"
+    },
+    {
+      "path": "apps/qt/qml/downstream/measurements/MeasurementViewer.qml",
+      "sha256": "fe2f3e78db64fb93adc2b2323132afa7de253bf636a1ea1480f44b95b3a2fd2d"
+    },
+    {
+      "path": "apps/qt/qml/downstream/measurements/RxmerDesignScope.qml",
+      "sha256": "0f2c1519d313f42d0d7a73bc4c5fdb7f165040e2fa4f5210d8ec0450ba4a4768"
+    },
+    {
+      "path": "apps/qt/qml/downstream/measurements/RxmerDesignerDialog.qml",
+      "sha256": "7de651145f4290fe846ac4abf39dab6b668d506f773dfc474b67930d3da10cc8"
+    },
+    {
+      "path": "apps/qt/qml/downstream/measurements/RxmerInputDialog.qml",
+      "sha256": "222d1689f0bf4f4511d15d6467a2f5ba5b1dfdd0c737eed0d9564d0c619fb15a"
+    },
+    {
+      "path": "apps/qt/qml/downstream/measurements/RxmerPnmExportDialog.qml",
+      "sha256": "ec9773c5b6d4a682bdc6b74eb4dc496103d0edec6b67c7f000977f33f63b472c"
+    },
+    {
+      "path": "apps/qt/qml/downstream/receiver/ReceiverConfigurationDialog.qml",
+      "sha256": "ca7aa89aa121a485aa826f1fd0840f644e2123d6a3a2ade34624894bd6f9c913"
+    },
+    {
+      "path": "apps/qt/qml/downstream/receiver/ReceiverWorkbenchDialog.qml",
+      "sha256": "35beea439e7d667692c4ae14bf0222dbc266f77e910f73171483bc94abd4bdad"
+    },
+    {
+      "path": "apps/qt/qml/downstream/receiver/VerificationBarChart.qml",
+      "sha256": "3dbec4542307502a13286302dbbb0a3c633cfe691c3be4c99830eee92a396a23"
+    },
+    {
+      "path": "apps/qt/qml/downstream/receiver/VerificationDialog.qml",
+      "sha256": "51fd63eb04b09cc6d6ef7346967bedf201cf617e2b31a1397cf4edcc435fbd3a"
+    },
+    {
+      "path": "apps/qt/qml/downstream/transmitter/TransmitterGraphCard.qml",
+      "sha256": "ad87ffe64395e1cb8549713b649d7599d913c4f304284d570c1d574327dfef2b"
+    },
+    {
+      "path": "apps/qt/qml/downstream/transmitter/TransmitterWorkbenchDialog.qml",
+      "sha256": "f70677096f9b0270099d0c8af3df1e707d203b7546744815d76bff8ec1152919"
+    },
+    {
+      "path": "apps/qt/src/bridge/about_info.rs",
+      "sha256": "dbc7160c336c688cfe28e8213f224d7fb729dfbb26fd1cdf17a2c4424e9c252a"
+    },
+    {
+      "path": "apps/qt/src/bridge/closed_loop.rs",
+      "sha256": "26a6aec55ed8c63af892633a73272f7768f2147c7c219b6aa694aa4ae70cb3b3"
+    },
+    {
+      "path": "apps/qt/src/bridge/measurement_input.rs",
+      "sha256": "3d14e4b9cf784cef228bd6466552f54ab1997330079e2e44fcee16cee92807af"
+    },
+    {
+      "path": "apps/qt/src/bridge/profile_input.rs",
+      "sha256": "21c7dc21eed574f57f2eaa69032db32fe64bbf47f031f33b7485ab69111a0d0a"
+    },
+    {
+      "path": "apps/qt/src/bridge/receiver_instruments.rs",
+      "sha256": "63b3ba1fef522fa1ec2dd01f17ef22104d8e0379766e0e22158710b74b4d52b3"
+    },
+    {
+      "path": "apps/qt/src/bridge/rxmer_designer.rs",
+      "sha256": "e92b66bacf06b74c67baddcd75f3f1fe3488d5ac57af276e4f3507bb6a308c98"
+    },
+    {
+      "path": "apps/qt/src/bridge/rxmer_export.rs",
+      "sha256": "4b3cf78f815588359f8957edaabc8a95bb4df7b2aa1917030aa250cdc06fff8d"
+    },
+    {
+      "path": "apps/qt/src/bridge/source_input.rs",
+      "sha256": "08782a51209dbf4339932646c85bd7da4bda2102024ff24a20487a4abb175ecd"
+    },
+    {
+      "path": "apps/qt/src/bridge/transmitter_analyzer.rs",
+      "sha256": "1f00846c2e99975c6eebd4d73f46de4d2b9a2f3b1a518d8ba10f01b3389185c3"
+    },
+    {
+      "path": "apps/qt/src/bridge/workbench_file.rs",
+      "sha256": "bf191542686a08ab27e8b6b74f117ce43db22aa1a1e45166a801ed2dac481c70"
+    },
+    {
+      "path": "apps/qt/src/downstream/help.rs",
+      "sha256": "7ce0afe841d8c02efa9a230770ff106b847f85d30185a3442681c684bb3e9ad6"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/channel_model.rs",
+      "sha256": "c6492bc7acdd955855aff8c1587b2c125505f6e7d4fbf25f48004a703847497f"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+      "sha256": "ed5e4e559916656e660dfb0d47824285d73c555d616e7edd3176b9da0c2a6339"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+      "sha256": "318a1513704161370baa9abc0806c1c16f7773e82692702a1d408822cd64aa80"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/mod.rs",
+      "sha256": "e7b1730bb592aadad2db50aa7a06fd88d942b7d67209dcd18a1a3dc09fff9860"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/model.rs",
+      "sha256": "7f43afe35d8561a2c2b8c62ceb10cc6f1ed46c0ee602113013994b3e95b54f55"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/plc.rs",
+      "sha256": "4a92b802177e31afa36779b24cc2933573cdd3ba0e0cbb4b1e26c6a9058abcf5"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/preview.rs",
+      "sha256": "8ccfd28aae358e93407f1164c4d4ca8f73942fe9376e2a6dc9121730c3f7ab64"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/mod.rs",
+      "sha256": "ddb063caaa705d4d4db18ab1cd9daa52e35e374400237496d402ca0e414a8008"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/profile_input/document.rs",
+      "sha256": "43e2795e53c04b92a530c18287471230a4e08b01f02165ad5bcba64c73d1b482"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
+      "sha256": "d3201357eb959101d0c1e9e8da299376424a51f2e9c9bc4ff591a7ce2b38c05e"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/profile_input/plot.rs",
+      "sha256": "af9efc4bd433e241745629a0ac8158bbbe3d6b022cce7e86b9648e26a1c433ac"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/source_input/mod.rs",
+      "sha256": "e18a6eb94b2eaa51e5ea8bb4579830f871dc7c1533ed429c293fc7a92cbb0411"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/source_input/model.rs",
+      "sha256": "cd749e45a92804507a7d12c84b780c41a19deb767ca845c83fb5758f820a5aa4"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/channel/mod.rs",
+      "sha256": "1d9fc006c24c42b2f52e7fece5179e59b3672f0e374e759ed7e6c8cbb08fcd1f"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/mod.rs",
+      "sha256": "57c6e79e6b14a216865d9f06af0aeac1dbdf1998d53b3d0de63233020a8305b6"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+      "sha256": "0a30767c77340c499dc259baf9b530a7b8186c33f9a8e5af7009361931ac6482"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/fec.rs",
+      "sha256": "939b06152646797e5e0a31fc0f4a71a9222dd6c6fb107d677b8a9f86cca348a9"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/mod.rs",
+      "sha256": "157d4273ac21c25354ef77c50c0eea901723a1dd4105d25411dfb9fc69b0a007"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/performance.rs",
+      "sha256": "4226fd5315c90493ae002ab836a89e043bbbe73cd917e5fa7bc7ca4a85289f76"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/qam_history.rs",
+      "sha256": "0d9912772744fd131614ae43b42dbd150183aab4d6839ea0e34c84dc17c93483"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/selection.rs",
+      "sha256": "14182c1a7192f45c3de50b2e3d2c0fd46476696aee2e585fc9961b589acef563"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/soft_display.rs",
+      "sha256": "d4be913c06a242898401b6b7677b7205dad0965e744fa8cbaaa5d8d76ac253c9"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/verification.rs",
+      "sha256": "fceeed06ad8f860f887167c9ab01cb69c3dcaac388debba2155c7cc1e8525648"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/views.rs",
+      "sha256": "b1038df7e26d87c1c9b9fedaec376dc0654b7a259b36312ed1f9e77cd751a604"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/spectrum/mod.rs",
+      "sha256": "47cea86ad53db7b81f6499e5d52394fc1aa5504aeabdcd9856183ca08510d5aa"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/spectrum/plc.rs",
+      "sha256": "b76c2e17ef8f87486ebdfcd3a59a5b04b1a716861d05bebe0c670b3fcfbe610a"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/spectrum/symbol_timing.rs",
+      "sha256": "8d45c5f3e0c219525a2371e7ad9c87c8c4131eb7f565339da6284f241b4634f7"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/capture.rs",
+      "sha256": "7449f43b85007f65d1adfbec906f76329b8f2ddd1f67a295084e55c3891dd940"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/channel_input.rs",
+      "sha256": "9ef3cd7b47fc6f066c710fc35e806b19d9f3b4976f3da50f96e860779173126a"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/graphs/mod.rs",
+      "sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/graphs/physical.rs",
+      "sha256": "836a25a11a68186fe8bc1287b05b76c6d2ac01c08a5a85eb22c1c4c313e31fc0"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/messages.rs",
+      "sha256": "8e5a1da5964070d45a9dd588ee31580c075a5e91a9bf8e066cfaa8cdbc9b851d"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/mod.rs",
+      "sha256": "4a5ade4958be22366c65e6a056873389e24e1341d3bb486b6bd1e5e61d7f1623"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/preview.rs",
+      "sha256": "aa62a767fa9aed8bc4098da71e47ee9b1e5e655dfcf6600675abd2ca8a0eea7f"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/qam_points.rs",
+      "sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/tlv_fields.rs",
+      "sha256": "39e3291a4677c2faa9ebfc635fdfb1643dc5fbaf3507a7a29dc3ad50d68d363a"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+      "sha256": "7dfffc3502bfa20788897fd6382950c2916ba1bed2df925f82c8244839d31e69"
+    },
+    {
+      "path": "apps/qt/src/downstream/mod.rs",
+      "sha256": "2478c8b50241d02123eabe3e13551a43f8bf0563f5b17b74f8725192e262bad0"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop.rs",
+      "sha256": "2e0b32b4150fb405f4abd9b2bd48f67522c8223d1730e2893234c5e3ade616b6"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/mod.rs",
+      "sha256": "8d5437f964d31359c2f92fcd02bbff58d758a8b493cd1ded788ef10455f664b9"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/run_timing.rs",
+      "sha256": "65c02f34f43415720e6c6a3c0714d89d1af984711b5cff0ff4a01ba18383e082"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/mod.rs",
+      "sha256": "76371d720ec66965f04a95fd17e67c3b37a03e97632d472e5bd204363906eb4a"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/project_file.rs",
+      "sha256": "b09096855d35825e23fe574b5d04ff9f69b638e859c5f0b1fb869c8cdae6d193"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/project_load.rs",
+      "sha256": "4dba7f1c3cb08d3a3fae704342d7c02a1c41e7d89629c1c6f93b2b14b9c53809"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/session.rs",
+      "sha256": "439f869b04539487f831fe53bddb1ec4568215e413d840ca060b4174c170750d"
+    },
+    {
+      "path": "apps/qt/src/main.rs",
+      "sha256": "9bda987dc1ec51157de639af897590c63932ef85f1a031a9f740bf4ed5d91e1b"
+    },
+    {
+      "path": "apps/qt/tests/tst_control_palette.qml",
+      "sha256": "c346a2bd0d61670f563058a378e9527a379d86deb94fcfb4582806f01f759a85"
+    },
+    {
+      "path": "apps/qt/tests/tst_response_view.qml",
+      "sha256": "1ef6b062b89c8ede87286e994236c63168f7d22299cee7ecda2bf831f857875b"
+    },
+    {
+      "path": "apps/qt/tests/tst_rxmer_designer.qml",
+      "sha256": "170c00de379c35d7d19c8fc7f13ccab5866084b1fffaef5451d72d4eac08b016"
+    },
+    {
+      "path": "apps/qt/tests/tst_soft_diagnostics.qml",
+      "sha256": "b7a293d5bff4967ba739fabb65c742b9b9267d0bc9c7d4e33cff1842a48475b0"
+    },
+    {
+      "path": "apps/qt/tests/tst_workbench.qml",
+      "sha256": "5b46d995d6b279dede05488f7efacf5e057a59bb6f28b5d0701d3b2824813d8d"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "99d9041de7be0e09ff65ffa0d2ab6e28e839bfd9ca9c4120342122d46029bf46"
+    },
+    {
+      "path": "docs/development/checklist.md",
+      "sha256": "f705cef20a06816bf54107d2cc118d782fcc03b5fb12bccac6634b8ba82d4960"
+    },
+    {
+      "path": "docs/development/features/downstream-requirements/traceability.json",
+      "sha256": "75cb7ece2d5acedff8914e8e7ced132285e086c74431a2f5407b9a5ee0277cf2"
+    },
+    {
+      "path": "docs/development/features/rf-power-budget/design.md",
+      "sha256": "d8328552e4a0b5397537e42f79c03ce23dbfb4823d96391690deaf95521be653"
+    },
+    {
+      "path": "docs/development/features/unified-qt-workbench/api-gap-matrix.md",
+      "sha256": "6aa1c53e313b42958dd31f05f507eff527f92b7217d7e00aa84c30bfe5ec0949"
+    },
+    {
+      "path": "docs/development/features/unified-qt-workbench/design.md",
+      "sha256": "12b5068d732906642591f8f545c63806d7ef6cfbb975b39456739e08ce035c32"
+    },
+    {
+      "path": "docs/development/features/unified-qt-workbench/legacy-qt-boundary-initial.json",
+      "sha256": "1be86c5bd5fedd6e5542646477da14d6368489a08f103bd6d958fe07f9b20eae"
+    },
+    {
+      "path": "docs/development/features/unified-qt-workbench/legacy-qt-boundary.json",
+      "sha256": "d6fc5e8b7fa0d088fa8b58e79e61a8b8cd26272d99829158dfcb9ff7cab32cec"
+    },
+    {
+      "path": "docs/development/features/unified-qt-workbench/validation.md",
+      "sha256": "49689e976b09cd73dadc10dad08f60518a770f059922fe313cd45d85f160cda6"
+    },
+    {
+      "path": "docs/development/features/windows-desktop/design.md",
+      "sha256": "301aa32dd143957eafc0fdf725d78501b646fea6f2fbcb4a990ffc15d8a85912"
+    },
+    {
+      "path": "docs/reference/documents.md",
+      "sha256": "c6625bf3206198dd75071f07540eb5685b3fa4e9ded86d9776126c337b80ba9b"
+    },
+    {
+      "path": "docs/requirements.md",
+      "sha256": "7f1b39410b4c1afa5ffae1d5a86fe7771f6fa3286725706fa6e5620170a277ee"
+    },
+    {
+      "path": "skills/coding-style/SKILL.md",
+      "sha256": "4880478a7634b42e3f52fc3ae4d058eae9b1aa82547ab7a00103a26e782d7c37"
+    }
+  ]
+}

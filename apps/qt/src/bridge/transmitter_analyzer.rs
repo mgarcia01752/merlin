@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Qt adapter for transmitter readiness and bounded worker spectrum queries.
-use crate::instruments::transmitter::preview as model;
+use crate::downstream::instruments::transmitter::preview as model;
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 
@@ -168,13 +168,13 @@ impl bridge::TransmitterAnalyzer {
     /// Status JSON; input changes cancel old jobs and invalidate stale samples.
     pub fn configure(mut self: core::pin::Pin<&mut Self>, settings: &QString) -> QString {
         if let Some(model) =
-            crate::workbench::project_load::take(|prepared| prepared.transmitter.take())
+            crate::downstream::workbench::project_load::take(|prepared| prepared.transmitter.take())
         {
             self.as_mut().rust_mut().model.cancel();
             self.as_mut().rust_mut().model = model;
             return QString::from(self.rust().model.status().to_string());
         }
-        let inputs = crate::workbench::session::snapshot();
+        let inputs = crate::downstream::workbench::session::snapshot();
         let model = &mut self.as_mut().rust_mut().model;
         model.configure(&settings.to_string(), inputs);
         QString::from(model.status().to_string())

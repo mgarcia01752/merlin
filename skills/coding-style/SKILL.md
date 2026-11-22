@@ -421,7 +421,7 @@ QAM, response, slicer, FEC, messages or stage inspection. Keep each window in it
 own file, with its dedicated charts/controls nearby. Use `components` for controls
 shared across features; do not accumulate a new flat catch-all folder.
 
-Keep Qt-facing instrument adapters under `apps/qt/src/instruments/`, with cohesive
+Keep Qt-facing instrument adapters under `apps/qt/src/downstream/instruments/`, with cohesive
 TX/RX providers, channel TP routing and shared spectrum formatting. Align QML and Rust by feature and
 responsibility where practical; do not force one-to-one directory mirroring or
 split a shared provider merely to match chart names. Core algorithms remain in

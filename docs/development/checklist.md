@@ -505,7 +505,7 @@ and implementation/acceptance remain pending; earlier eligible tasks continue.
   Dependencies: [UIU-ORG-01](#task-uiu-org-01), [UIU-API-02](#task-uiu-api-02).
   Architecture/files: [organization owner](../architecture.md#unified-qt-source-ownership), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Adopt validated facade operations, remove matching legacy guard entries, preserve existing presentation/readiness/instruments/results, tests and project semantics; build latest Qt executable.
-  Evidence: [accepted generic presentation organization](features/unified-qt-workbench/validation.md#uiu-org-01-generic-presentation-accepted) and [exact move/build/native record](features/unified-qt-workbench/organization-evidence.json): 15 byte-identical moves, 82 unique QML registrations, 87 Qt Rust/89 QML cases, optimized build and six native XCB/Fusion smokes. Current owner/skill links resolve; coupled shell views and scientific API migration remain separate tasks.
+  Evidence: [accepted placement prerequisite](features/unified-qt-workbench/validation.md#uiu-ds-01-downstream-placement-prerequisite-accepted), [exact source/case/native record](features/unified-qt-workbench/downstream-placement-evidence.json). 104 moves preserve values, operations and existing 87 Rust/89 QML cases; 16 boundary cases, optimized build and six native smokes pass. Scientific facade adoption, three dependencies and 45 frozen legacy files remain incomplete; keep this parent unchecked.
 
 <a id="task-uiu-session-01"></a>
 - [ ] **UIU-SESSION-01** Make direction sessions explicit and serialize initial dispatch.

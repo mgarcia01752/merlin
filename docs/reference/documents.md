@@ -79,4 +79,4 @@ layout are unchanged; these envelopes occupy ordinary embedded measurement slots
 
 See [RxMER Designer](../user/measurement-inputs/rxmer-designer.md), its
 [design](../development/features/rxmer-designer/design.md) and the
-[typed envelope adapter](../../apps/qt/src/inputs/measurement_input/designer.rs).
+[typed envelope adapter](../../apps/qt/src/downstream/inputs/measurement_input/designer.rs).

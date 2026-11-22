@@ -8,6 +8,7 @@ import QtTest
 import "../qml/shared/components"
 import "../qml/shell"
 import "../qml/shared/theme"
+import "../qml/downstream"
 
 Pane {
     id: window
@@ -263,7 +264,7 @@ Pane {
         onAboutRequested: workbench.aboutPopup.open()
         onFaqRequested: workbench.openHelp("")
     }
-    Workbench {
+    DownstreamWorkbench {
         id: workbench
         anchors { top: appMenu.bottom; bottom: parent.bottom; left: parent.left; right: parent.right }
         theme: theme; settingsBackend: backend; profileBackend: profileBackend; sourceBackend: sourceBackend; transmitterBackend: transmitterBackend; measurementBackend: measurementBackend; aboutBackend: aboutBackend; receiverBackend: receiverBackend; runBackend: runBackend; fileBackend: fileBackend
@@ -277,7 +278,7 @@ Pane {
     }
     Component {
         id: gatingWorkbenchComponent
-        Workbench { width: 1240; height: 780; visible: false }
+        DownstreamWorkbench { width: 1240; height: 780; visible: false }
     }
     TestCase {
         name: "Workbench"

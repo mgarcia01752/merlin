@@ -6,7 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtTest
 import "../qml/shared/theme"
-import "../qml/instruments/response"
+import "../qml/downstream/instruments/response"
 Pane {
     id:window;width:1160;height:760;visible:true
     Theme {id:theme}

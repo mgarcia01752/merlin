@@ -4,8 +4,8 @@
  */
 //! Designer batch lifecycle; the GUI adopts only a complete, current draft.
 use super::measurement_input::bridge;
-use crate::help::AdmissionError;
-use crate::inputs::measurement_input::{
+use crate::downstream::help::AdmissionError;
+use crate::downstream::inputs::measurement_input::{
     designer::{Request, Session},
     document::Capture,
     model::{Model, Options},
@@ -52,7 +52,7 @@ impl bridge::MeasurementInputs {
             if self.rust().designer_work.is_some() {
                 return Err("Wait for the previous Designer operation to stop.".into());
             }
-            let profile = crate::workbench::session::snapshot()
+            let profile = crate::downstream::workbench::session::snapshot()
                 .profile
                 .ok_or("Apply a modulation profile before opening RxMER Designer.")?;
             let session = Session::begin(&self.rust().model.draft_rx, Arc::new(profile))?;
@@ -160,7 +160,7 @@ impl bridge::MeasurementInputs {
             Err(_) => Err("Designer worker ended unexpectedly.".into()),
         };
         let work = self.as_mut().rust_mut().designer_work.take().unwrap();
-        let profile = crate::workbench::session::snapshot().profile;
+        let profile = crate::downstream::workbench::session::snapshot().profile;
         let result = adopt(
             work,
             result,
@@ -241,7 +241,7 @@ fn adopt(
 mod tests {
     use super::*;
     fn fixture() -> (Session, Model) {
-        let project: crate::workbench::project_file::Project = serde_json::from_slice(
+        let project: crate::downstream::workbench::project_file::Project = serde_json::from_slice(
             include_bytes!("../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json"),
         )
         .unwrap();

@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Bounded receiver instruments over one shared immutable closed-loop result.
-use crate::instruments::receiver::views;
-pub(crate) use crate::instruments::receiver::{diagnostics, selection};
+use crate::downstream::instruments::receiver::views;
+pub(crate) use crate::downstream::instruments::receiver::{diagnostics, selection};
 use cxx_qt_lib::QString;
 use docsis_ofdm_fec::simulation::test_points::TestPointId;
 use serde_json::{json, Value};
@@ -165,7 +165,8 @@ impl bridge::ReceiverInstruments {
     /// Bounded JSON, preserving accepted inputs and other instrument selections.
     pub fn performance(&self, profile_id: i32, start: i32, count: i32) -> QString {
         QString::from(
-            crate::instruments::receiver::performance::view(profile_id, start, count).to_string(),
+            crate::downstream::instruments::receiver::performance::view(profile_id, start, count)
+                .to_string(),
         )
     }
 
@@ -235,7 +236,9 @@ impl bridge::ReceiverInstruments {
     /// # Returns
     /// Bounded FEC counters, graph values, records and profile catalog JSON.
     pub fn fec_profile(&self, profile_id: i32) -> QString {
-        QString::from(crate::instruments::receiver::performance::fec_view(profile_id).to_string())
+        QString::from(
+            crate::downstream::instruments::receiver::performance::fec_view(profile_id).to_string(),
+        )
     }
 
     /// Maps a presentation choice to the core's registered test-point identity.
@@ -245,7 +248,7 @@ impl bridge::ReceiverInstruments {
     /// Shared SA state with retained tap availability and explicit reference planes.
     pub fn spectrum(&self, tap: i32) -> QString {
         let mut state = spectrum_state(tap);
-        if let Some(result) = crate::simulation::closed_loop::latest() {
+        if let Some(result) = crate::downstream::simulation::closed_loop::latest() {
             let available = usize::try_from(tap)
                 .ok()
                 .and_then(|i| result.observations.taps.get(i))

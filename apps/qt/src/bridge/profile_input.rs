@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! DPD input lifecycle and filesystem adapter; all scientific validation is Rust.
-use crate::inputs::profile_input::document;
-pub use crate::inputs::profile_input::ProfileModel as ProfileInputRust;
+use crate::downstream::inputs::profile_input::document;
+pub use crate::downstream::inputs::profile_input::ProfileModel as ProfileInputRust;
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 use document::MAX_INPUT_BYTES;
@@ -111,7 +111,10 @@ impl bridge::ProfileInput {
                 .as_ref()
                 .ok_or_else(|| "Open a profile file first.".into())
                 .and_then(|capture| {
-                    crate::inputs::profile_input::plot::inspect(capture, &request.to_string())
+                    crate::downstream::inputs::profile_input::plot::inspect(
+                        capture,
+                        &request.to_string(),
+                    )
                 }),
         )
     }
@@ -129,7 +132,7 @@ impl bridge::ProfileInput {
                 .draft
                 .as_ref()
                 .ok_or("Open a profile file first.")?;
-            crate::inputs::profile_input::plot::viewport(
+            crate::downstream::inputs::profile_input::plot::viewport(
                 capture,
                 u8::try_from(profile_id).map_err(|_| "Invalid profile ID.")?,
                 usize::try_from(start).map_err(|_| "Invalid start offset.")?,
@@ -139,11 +142,14 @@ impl bridge::ProfileInput {
     }
     /// Adopts already validated project captures without a file-picker round trip.
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
-        let model = crate::workbench::project_load::take(|prepared| prepared.profile.take())
-            .map(Ok)
-            .unwrap_or_else(|| {
-                ProfileInputRust::from_saved(&crate::workbench::session::saved("profile"))
-            });
+        let model =
+            crate::downstream::workbench::project_load::take(|prepared| prepared.profile.take())
+                .map(Ok)
+                .unwrap_or_else(|| {
+                    ProfileInputRust::from_saved(&crate::downstream::workbench::session::saved(
+                        "profile",
+                    ))
+                });
         if let Ok(model) = model {
             self.as_mut().rust_mut().draft = model.draft;
             self.as_mut().rust_mut().accepted = model.accepted;
@@ -228,16 +234,16 @@ impl bridge::ProfileInput {
                 .as_ref()
                 .and_then(|(capture, id)| capture.profile(*id).ok())
                 .cloned();
-            crate::workbench::session::set_profile(selected);
-            crate::workbench::session::set_profiles(
+            crate::downstream::workbench::session::set_profile(selected);
+            crate::downstream::workbench::session::set_profiles(
                 self.rust()
                     .accepted
                     .as_ref()
                     .map(|(capture, _)| capture.profiles.as_ref().clone())
                     .unwrap_or_default(),
             );
-            let section=self.rust().accepted.as_ref().map(|(c,id)|json!({"file":crate::workbench::project_file::encode(&c.name,&c.original),"profile_id":id})).unwrap_or(Value::Null);
-            crate::workbench::session::put_saved("profile", section);
+            let section=self.rust().accepted.as_ref().map(|(c,id)|json!({"file":crate::downstream::workbench::project_file::encode(&c.name,&c.original),"profile_id":id})).unwrap_or(Value::Null);
+            crate::downstream::workbench::session::put_saved("profile", section);
         }
         QString::from(result.err().unwrap_or_default())
     }

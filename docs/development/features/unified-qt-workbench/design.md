@@ -1374,13 +1374,13 @@ observations and unaliased causal echoes.
 | --- | --- | --- | --- |
 | [Facade](../../../../crates/merlin/src/lib.rs), public direction re-exports | Thin crate; both independent PHYs already usable; accepted backend compatibility | Qt still imports downstream internals | REUSE facade; ADAPT Qt call sites after typed API extensions, never add science to facade. |
 | [Qt organization](../qt-source-organization/design.md), [build registration](../../../../apps/qt/build.rs) | Accepted UI-ORG-01/02; pinned CXX-Qt bridge directory constraint | No direction split | ADAPT group ownership; retain all registered bridges in `src/bridge/`, same QML URI, entry URL and executable. |
-| [Closed loop](../../../../apps/qt/src/simulation/closed_loop.rs), `latest`/`Observations` | Bounded downstream worker and retained observations; inline tests | Private high-level-API gap; thread-local single result | SEPARATE per direction; scientific operations move behind public API, adapter retains dispatch and ownership only. |
-| [Downstream inputs](../../../../apps/qt/src/inputs), [project file](../../../../apps/qt/src/workbench/project_file.rs) | Existing editors, capture admission, Designer and schema 1/2 persistence | Validation/preview still depends on lower scientific owners | ADAPT through public typed admission and backend project contracts before deleting legacy routes. |
+| [Closed loop](../../../../apps/qt/src/downstream/simulation/closed_loop.rs), `latest`/`Observations` | Bounded downstream worker and retained observations; inline tests | Private high-level-API gap; thread-local single result | SEPARATE per direction; scientific operations move behind public API, adapter retains dispatch and ownership only. |
+| [Downstream inputs](../../../../apps/qt/src/downstream/inputs), [project file](../../../../apps/qt/src/downstream/workbench/project_file.rs) | Existing editors, capture admission, Designer and schema 1/2 persistence | Validation/preview still depends on lower scientific owners | ADAPT through public typed admission and backend project contracts before deleting legacy routes. |
 | [Native input crate](../../../../crates/pnm-input/src/lib.rs), [workbench](../../../../crates/pnm-input/src/workbench) | Bounded binary/JSON, provenance, saved-workbench execution; Apache-2.0 | Initial facade exposure is now implemented; direction-aware unified project envelope remains pending | REUSE owners; optional facade input feature/re-exports, extend adapter-owned project contract, preserve existing imports. |
 | [Upstream session](../../../../crates/ofdma/src/api/session.rs), `preview`/`run_with_control` | Validated configuration and bounded controlled runs already accepted | Grid coordinates and some instrument views not public API | REUSE session; small observation extensions in upstream API, scientific construction stays in owning modules. |
 | [ResourcePlan](../../../../crates/ofdma/src/resources/grid.rs) | Authoritative physical cell/pilot allocation | High-level `ExperimentPreview` gives counts, not cell coordinates | ADAPT via bounded idle grid operation; no QML resource reconstruction. |
-| [SpectrumPlot](../../../../apps/qt/qml/instruments/spectrum/SpectrumPlot.qml), [scatter](../../../../apps/qt/qml/instruments/qam/TransmitterScatter.qml), [response](../../../../apps/qt/qml/instruments/response/ReceiverResponseDialog.qml) | Existing downstream Canvas/viewport presentation and QtTests | No real upstream consumers; direction-specific labels/overlays mixed in | DEFER scientific shared acceptance; extract proven presentation only after two real API-backed consumers and tests. |
-| [FEC presentation](../../../../apps/qt/qml/instruments/fec), [receiver providers](../../../../apps/qt/src/instruments/receiver) | Actual downstream counters/LLR/iteration views | Upstream LDPC data differs from downstream BCH/control chains | ADAPT chart/table widgets; SEPARATE semantics, code families and unavailable states. |
+| [SpectrumPlot](../../../../apps/qt/qml/downstream/instruments/spectrum/SpectrumPlot.qml), [scatter](../../../../apps/qt/qml/downstream/instruments/qam/TransmitterScatter.qml), [response](../../../../apps/qt/qml/downstream/instruments/response/ReceiverResponseDialog.qml) | Existing downstream Canvas/viewport presentation and QtTests | No real upstream consumers; direction-specific labels/overlays mixed in | DEFER scientific shared acceptance; extract proven presentation only after two real API-backed consumers and tests. |
+| [FEC presentation](../../../../apps/qt/qml/downstream/instruments/fec), [receiver providers](../../../../apps/qt/src/downstream/instruments/receiver) | Actual downstream counters/LLR/iteration views | Upstream LDPC data differs from downstream BCH/control chains | ADAPT chart/table widgets; SEPARATE semantics, code families and unavailable states. |
 | [Platform](../../../../apps/qt/src/platform) | Native pickers, update HTTP/install/recovery, logging, theming | Recovery currently assumes one downstream project | REUSE infrastructure; adapt recovery after project API; no new install authorization. |
 
 ## Master-guide coverage
@@ -1499,7 +1499,7 @@ mutating the accepted project. Per-direction API configuration stays separate.
 | `crates/merlin/src/lib.rs` | Re-export-only optional input feature | EDIT curated common project exports after implementation; preserve all old exports. |
 | `bindings/python/src/workbench.rs`, `full_loop/sweep.rs`, proposed `project.rs`; upstream simulation wrapper | Existing native objects and Busy/error conversion | ADAPT ownership conversion only; import-only modules/stubs remain aligned. |
 | Proposed `crates/pnm-input/tests/workbench_full_loop.rs`, `project.rs`; native project tests and Rust example | Direction/schema/idle/round-trip and actual-run evidence missing | ADD targeted independent input/settings/bounds/cancelled and actual engine parity cases. |
-| `apps/qt/src/workbench/project_file.rs` | GPL presentation file lifecycle and UI-produced legacy schema | REUSE schema fixtures as compatibility evidence; no Qt code migration in this API unit. |
+| `apps/qt/src/downstream/workbench/project_file.rs` | GPL presentation file lifecycle and UI-produced legacy schema | REUSE schema fixtures as compatibility evidence; no Qt code migration in this API unit. |
 
 Acceptance covers old fixtures and a saved Designer recipe, exact original bytes,
 file fill/bit order, temporal order/capacity, receiver/channel settings, unsupported
@@ -1626,3 +1626,53 @@ former directories are removed so link checks also reflect a clean checkout.
 The initial standalone boundary invocation lacked the Qt Cargo environment; the
 supported Qt check wrapper supplies its pinned cache/toolchain and passes that
 boundary check. This is an environment invocation correction, not a bypass.
+
+## UIU-DS-01 downstream placement prerequisite
+
+REQ-UIU-02/03/04/08/09 and the accepted inventory govern downstream
+adoption. First isolate existing downstream owners without changing scientific
+operations: the inventory has 104 actual moves and nine bridge entries retained
+in place. Rust inputs/instruments/simulation/workbench/help move under
+`apps/qt/src/downstream/`; QML moves to its approved direction-specific destinations,
+including `downstream/DownstreamWorkbench.qml`. Root Main and tests instantiate
+that renamed presentation type while keeping the module and Main entry URL.
+CXX-Qt QObject entry files stay together. A small `downstream/mod.rs` declares
+existing child owners; there is no new engine or duplicate scientific logic.
+
+Rebase internal Rust module paths and literal compile-time resource paths, relative
+QML imports, explicit build registrations, live owner/test locators and skills.
+Do not change scalar values, handlers, settings, source vectors, scientific crate
+calls or serialized contracts in this placement unit. Merge only identical QML
+imports when approved destinations converge. All original tests remain exercised
+through their new module/file locations, with original function names preserved.
+
+The accepted boundary plan explicitly permits reviewed file moves to update exact
+legacy locators without expanding operations. Preserve the [original guard record](legacy-qt-boundary-initial.json)
+verbatim as a historical initial record, alongside the [current locators](legacy-qt-boundary.json). Update each current legacy path/hash only
+after verifying equivalent scientific access roots/counts and path-only source
+changes; keep all three existing dependency records and 45 legacy entries. The
+guard remains strict for every current whole-file hash and rejects new accesses.
+No new scientific import or engine operation is authorized by a relocation.
+
+| Existing owner | Placement decision / acceptance |
+| --- | --- |
+| `src/{inputs,instruments,simulation,workbench}` and `src/help.rs` | SEPARATE under `src/downstream/`; existing scientific callers remain frozen until the subsequent public-API conversion. |
+| `qml/inputs`, `qml/workbenches`, `qml/instruments`, selected shell views | SEPARATE using every exact approved inventory destination; retain shared presentation imports from ORG-01. |
+| `src/bridge` | REUSE entries in place; adapt private Rust references only. |
+| `build.rs`, Main, Qt tests and compile-time fixture references | ADAPT paths and the renamed direction workbench type; unchanged resource/module/native identity. |
+| Active downstream requirement routes and skills | ADAPT current locators; retain original IDs, historical states and original evidence. |
+| Scientific call adoption | DEFER to the next focused DS-01 units using the already accepted public APIs; the parent remains unchecked until no direct scientific dependencies/exceptions remain and actual compatibility passes. |
+
+Acceptance for placement is Qt formatting/Clippy, the unchanged strict dependency
+set and scientific operation count, all existing Qt Rust/QML cases, fresh native
+build/startup/project smokes and documentation traceability. No non-Qt source or
+public API changes are required. This unit does not accept the final API boundary,
+scientific instrument sharing, new session isolation or upstream UI behavior.
+
+The [placement prerequisite is accepted](validation.md#uiu-ds-01-downstream-placement-prerequisite-accepted)
+with exact source/case preservation and current Qt/native evidence. One relative
+bridge path and one implicit QML shell-directory dependency were corrected without
+changing their original targets or assertions. The aggregate QML failure remains
+recorded separately from the passing Rust phases and later QML/native commands.
+The next scientific adoption units consume the already accepted public APIs;
+placement does not remove or accept any frozen scientific migration debt.

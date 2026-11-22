@@ -6,14 +6,12 @@
 #![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
 
 mod bridge;
-mod help;
-mod inputs;
-mod instruments;
+mod downstream;
 mod platform;
-mod simulation;
-mod workbench;
 use cxx_qt_lib::{QGuiApplication, QQmlApplicationEngine, QString, QUrl};
-pub(crate) use instruments::{spectrum as spectrum_view, transmitter as transmitter_instruments};
+pub(crate) use downstream::instruments::{
+    spectrum as spectrum_view, transmitter as transmitter_instruments,
+};
 
 /// Starts the native workbench and its Rust simulation adapters.
 ///
@@ -48,7 +46,7 @@ fn main() {
     {
         let check = || -> Result<(), String> {
             let path = arguments.get(1).ok_or("Provide a workbench JSON path.")?;
-            workbench::project_file::check_file(std::path::Path::new(path))
+            downstream::workbench::project_file::check_file(std::path::Path::new(path))
         };
         if let Err(message) = check() {
             eprintln!("{message}");

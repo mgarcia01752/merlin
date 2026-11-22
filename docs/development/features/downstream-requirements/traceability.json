@@ -727,7 +727,7 @@
       "architecture": "docs/architecture.md#channel-composition-preview-ui-ch-02--wave-ch-compose-01",
       "owners": [
         "crates/ofdm/src/signal_processing/channel/power.rs",
-        "apps/qt/qml/workbenches/channel/ChannelAmplifierDialog.qml"
+        "apps/qt/qml/downstream/channel/ChannelAmplifierDialog.qml"
       ],
       "tests": [
         "crates/ofdm/tests/channel_power.rs",
@@ -755,7 +755,7 @@
     "channel-ui": {
       "architecture": "docs/architecture.md#channel-composition-preview-ui-ch-02--wave-ch-compose-01",
       "owners": [
-        "apps/qt/qml/workbenches/channel/ChannelWorkbenchDialog.qml",
+        "apps/qt/qml/downstream/channel/ChannelWorkbenchDialog.qml",
         "crates/ofdm/src/signal_processing/channel/composition.rs"
       ],
       "tests": [
@@ -798,7 +798,7 @@
     "timing-ui": {
       "architecture": "docs/architecture.md#sa-symbol-timing-and-cable-panel-ui-sa-04",
       "owners": [
-        "apps/qt/qml/instruments/spectrum"
+        "apps/qt/qml/downstream/instruments/spectrum"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"
@@ -825,8 +825,8 @@
     "tx-ui": {
       "architecture": "docs/architecture.md#graphical-transmitter-test-points",
       "owners": [
-        "apps/qt/src/instruments/transmitter",
-        "apps/qt/qml/workbenches/transmitter/TransmitterWorkbenchDialog.qml"
+        "apps/qt/src/downstream/instruments/transmitter",
+        "apps/qt/qml/downstream/transmitter/TransmitterWorkbenchDialog.qml"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"
@@ -855,8 +855,8 @@
     "qt-core": {
       "architecture": "docs/architecture.md#ui-merlin-simulation-workbench",
       "owners": [
-        "apps/qt/src/workbench/session.rs",
-        "apps/qt/qml/shell/Workbench.qml"
+        "apps/qt/src/downstream/workbench/session.rs",
+        "apps/qt/qml/downstream/DownstreamWorkbench.qml"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"
@@ -870,7 +870,7 @@
       "architecture": "docs/architecture.md#ofdm-editor-registry-and-application-navigation",
       "owners": [
         "apps/qt/qml/Main.qml",
-        "apps/qt/qml/shell/Workbench.qml"
+        "apps/qt/qml/downstream/DownstreamWorkbench.qml"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"
@@ -968,9 +968,9 @@
     "dpd-view": {
       "architecture": "docs/architecture.md#downstream-profile-input-dialog",
       "owners": [
-        "apps/qt/src/inputs/profile_input/plot.rs",
-        "apps/qt/qml/inputs/profile_input/ProfilePlotDialog.qml",
-        "apps/qt/qml/inputs/profile_input/ProfileChart.qml"
+        "apps/qt/src/downstream/inputs/profile_input/plot.rs",
+        "apps/qt/qml/downstream/configuration/profile_input/ProfilePlotDialog.qml",
+        "apps/qt/qml/downstream/configuration/profile_input/ProfileChart.qml"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"
@@ -1012,7 +1012,7 @@
       "architecture": "docs/architecture.md#receiver-profile-performance",
       "owners": [
         "crates/ofdm/src/simulation/channel/performance.rs",
-        "apps/qt/src/instruments/receiver"
+        "apps/qt/src/downstream/instruments/receiver"
       ],
       "tests": [
         "crates/ofdm/tests/receiver_profiles.rs",
@@ -1055,8 +1055,8 @@
     "wb-config": {
       "architecture": "docs/architecture.md#main-wb-configuration-and-explicit-profile-selection-ui-wb-config-01",
       "owners": [
-        "apps/qt/src/workbench/project_file.rs",
-        "apps/qt/qml/workbenches/workbench/WorkbenchConfigurationDialog.qml"
+        "apps/qt/src/downstream/workbench/project_file.rs",
+        "apps/qt/qml/downstream/configuration/WorkbenchConfigurationDialog.qml"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"
@@ -1098,8 +1098,8 @@
     "fec-ui": {
       "architecture": "docs/architecture.md#fec-monitor-presentation-ui-fec-02",
       "owners": [
-        "apps/qt/src/instruments/receiver",
-        "apps/qt/qml/instruments/fec"
+        "apps/qt/src/downstream/instruments/receiver",
+        "apps/qt/qml/downstream/instruments/fec"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"
@@ -1112,7 +1112,7 @@
     "run-time": {
       "architecture": "docs/architecture.md#run-wall-timing-ui-run-time-01",
       "owners": [
-        "apps/qt/src/simulation/run_timing.rs"
+        "apps/qt/src/downstream/simulation/run_timing.rs"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"
@@ -1138,7 +1138,7 @@
     "qam-dots": {
       "architecture": "docs/architecture.md#received-qam-markers-ui-qam-dots-01",
       "owners": [
-        "apps/qt/qml/instruments/qam"
+        "apps/qt/qml/downstream/instruments/qam"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"
@@ -1151,8 +1151,8 @@
     "help": {
       "architecture": "docs/architecture.md#contextual-help-and-spectrum-details",
       "owners": [
-        "apps/qt/src/help.rs",
-        "apps/qt/qml/instruments/spectrum"
+        "apps/qt/src/downstream/help.rs",
+        "apps/qt/qml/downstream/instruments/spectrum"
       ],
       "tests": [
         "crates/ofdm/tests/channel_playback.rs",
@@ -1219,7 +1219,7 @@
     "open": {
       "architecture": "docs/architecture.md#command-line-workbench-startup-and-diagnostics",
       "owners": [
-        "apps/qt/src/workbench/project_load.rs",
+        "apps/qt/src/downstream/workbench/project_load.rs",
         "apps/qt/qml/shell/WorkbenchLoadingDialog.qml"
       ],
       "tests": [
@@ -1248,7 +1248,7 @@
       "architecture": "docs/architecture.md#nearest-point-mer-estimator-ui-qam-mer-01",
       "owners": [
         "crates/ofdm/src/signal_processing/modulation/mer.rs",
-        "apps/qt/src/instruments/receiver"
+        "apps/qt/src/downstream/instruments/receiver"
       ],
       "tests": [
         "crates/ofdm/tests/constellation_mer.rs",
@@ -1262,7 +1262,7 @@
     "restore": {
       "architecture": "docs/architecture.md#restore-workbench-inputs-ui-input-restore-01",
       "owners": [
-        "apps/qt/src/workbench",
+        "apps/qt/src/downstream/workbench",
         "apps/qt/qml/shell"
       ],
       "tests": [
@@ -1276,7 +1276,7 @@
     "qam-runs": {
       "architecture": "docs/architecture.md#run-specific-qam-and-reference-mer-ui-qam-runs-02",
       "owners": [
-        "apps/qt/src/instruments/receiver",
+        "apps/qt/src/downstream/instruments/receiver",
         "crates/ofdm/src/simulation/channel/constellation/model.rs"
       ],
       "tests": [
@@ -1571,8 +1571,8 @@
     "receiver-ui": {
       "architecture": "docs/architecture.md#receiver-workbench",
       "owners": [
-        "apps/qt/src/instruments/receiver",
-        "apps/qt/qml/workbenches/receiver/ReceiverWorkbenchDialog.qml"
+        "apps/qt/src/downstream/instruments/receiver",
+        "apps/qt/qml/downstream/receiver/ReceiverWorkbenchDialog.qml"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml",
@@ -1587,8 +1587,8 @@
     "response-ui": {
       "architecture": "docs/architecture.md#receiver-channel-estimation-ch-est-rx-and-pilotplc-analyzers",
       "owners": [
-        "apps/qt/src/instruments/receiver",
-        "apps/qt/qml/instruments/response"
+        "apps/qt/src/downstream/instruments/receiver",
+        "apps/qt/qml/downstream/instruments/response"
       ],
       "tests": [
         "apps/qt/tests/tst_response_view.qml"
@@ -1616,7 +1616,7 @@
       "architecture": "docs/architecture.md#shared-spectrum-analyzer-sa-and-transmitter-readiness",
       "owners": [
         "crates/ofdm/src/simulation/transmitter_preview.rs",
-        "apps/qt/qml/instruments/spectrum"
+        "apps/qt/qml/downstream/instruments/spectrum"
       ],
       "tests": [
         "crates/ofdm/tests/transmitter_preview.rs",
@@ -1643,7 +1643,7 @@
     "verify-ui": {
       "architecture": "docs/architecture.md#qt-closed-loop-execution-and-workbench-files",
       "owners": [
-        "apps/qt/qml/workbenches/verification/VerificationDialog.qml"
+        "apps/qt/qml/downstream/receiver/VerificationDialog.qml"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Shared measurement editor/OS adapter; all interpretation stays in Rust.
-use crate::inputs::measurement_input::{document, model};
+use crate::downstream::inputs::measurement_input::{document, model};
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 use docsis_ofdm_fec::transmission::TransmissionSettings;
@@ -230,7 +230,7 @@ pub mod bridge {
 #[derive(Default)]
 pub struct MeasurementInputsRust {
     pub(super) model: Model,
-    pub(super) designer: Option<crate::inputs::measurement_input::designer::Session>,
+    pub(super) designer: Option<crate::downstream::inputs::measurement_input::designer::Session>,
     pub(super) designer_work: Option<super::rxmer_designer::Work>,
     pub(super) designer_export: Option<super::rxmer_export::State>,
 }
@@ -250,7 +250,7 @@ fn parse_selection<T: serde::de::DeserializeOwned>(document: &str) -> Result<T, 
 }
 impl MeasurementInputsRust {
     pub(super) fn metadata(&self, rxmer: bool) -> Value {
-        let profile = crate::workbench::session::snapshot().profile;
+        let profile = crate::downstream::workbench::session::snapshot().profile;
         let mut options = self.model.options.clone();
         if !rxmer {
             options.tolerance_seconds = self.model.response_tolerance;
@@ -289,7 +289,7 @@ impl MeasurementInputsRust {
         options: &Options,
         settings: &TransmissionSettings,
     ) -> Result<Value, String> {
-        let profile = crate::workbench::session::snapshot().profile;
+        let profile = crate::downstream::workbench::session::snapshot().profile;
         if rxmer {
             let plan = Model::playback(&self.model.draft_rx, options, settings, profile.as_ref())?;
             let (symbols, ms) = plan.span();
@@ -336,12 +336,12 @@ impl bridge::MeasurementInputs {
                 .rust()
                 .model
                 .preview_frame(&options, position, start, count)?;
-            let profile = crate::workbench::session::snapshot().profile;
+            let profile = crate::downstream::workbench::session::snapshot().profile;
             if let Some(capture) = value["source_index"]
                 .as_u64()
                 .and_then(|index| self.rust().model.draft_rx.get(index as usize))
             {
-                super::super::inputs::measurement_input::plc::annotate(
+                crate::downstream::inputs::measurement_input::plc::annotate(
                     &mut value,
                     &capture.key().grid,
                     profile
@@ -379,7 +379,7 @@ impl bridge::MeasurementInputs {
                 .map(|captures| captures.len())
                 .unwrap_or(0);
             let loaded = self.rust().model.draft_rx.len();
-            let run: Option<crate::simulation::closed_loop::Options> =
+            let run: Option<crate::downstream::simulation::closed_loop::Options> =
                 parse(&run_options.to_string())?;
             let Some(run) = run else {
                 return Ok(
@@ -412,13 +412,13 @@ impl bridge::MeasurementInputs {
 
     /// Adopts original captures/options after complete project validation.
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
-        if let Some(model) =
-            crate::workbench::project_load::take(|prepared| prepared.measurements.take())
-        {
+        if let Some(model) = crate::downstream::workbench::project_load::take(|prepared| {
+            prepared.measurements.take()
+        }) {
             self.as_mut().rust_mut().model = model;
-        } else if let Ok(model) =
-            Model::from_saved(&crate::workbench::session::saved("measurements"))
-        {
+        } else if let Ok(model) = Model::from_saved(&crate::downstream::workbench::session::saved(
+            "measurements",
+        )) {
             self.as_mut().rust_mut().model = model;
         }
     }
@@ -531,7 +531,7 @@ impl bridge::MeasurementInputs {
     /// # Returns
     /// Bounded viewport or diagnostic with no stale points.
     pub fn view(&self, rxmer: bool, request: &QString, settings: &QString) -> QString {
-        let profile = crate::workbench::session::snapshot().profile;
+        let profile = crate::downstream::workbench::session::snapshot().profile;
         let result = parse_selection::<ChartRequest>(&request.to_string()).and_then(|request| {
             parse::<TransmissionSettings>(&settings.to_string()).and_then(|settings| {
                 self.rust()
@@ -572,21 +572,26 @@ impl bridge::MeasurementInputs {
                 model.response_tolerance = options.tolerance_seconds;
             }
             if rxmer {
-                let profile = crate::workbench::session::snapshot().profile;
+                let profile = crate::downstream::workbench::session::snapshot().profile;
                 let published = model.published(profile.as_ref())?;
-                crate::workbench::session::set_playback(published.playback);
+                crate::downstream::workbench::session::set_playback(published.playback);
             } else {
-                crate::workbench::session::set_response(model.accepted_response.as_ref().and_then(
-                    |capture| match &capture.measurement {
-                        document::Measurement::Response(frame) => Some(frame.as_ref().clone()),
-                        _ => None,
-                    },
-                ));
+                crate::downstream::workbench::session::set_response(
+                    model.accepted_response.as_ref().and_then(|capture| {
+                        match &capture.measurement {
+                            document::Measurement::Response(frame) => Some(frame.as_ref().clone()),
+                            _ => None,
+                        }
+                    }),
+                );
             }
             Ok(())
         });
         if result.is_ok() {
-            crate::workbench::session::put_saved("measurements", self.rust().model.export());
+            crate::downstream::workbench::session::put_saved(
+                "measurements",
+                self.rust().model.export(),
+            );
         }
         QString::from(result.err().unwrap_or_default())
     }
@@ -595,8 +600,10 @@ impl bridge::MeasurementInputs {
     /// Small JSON configuration without original measurement arrays.
     pub fn loss_current(&self) -> QString {
         QString::from(
-            serde_json::to_string(&crate::workbench::session::snapshot().additional_loss)
-                .unwrap_or_default(),
+            serde_json::to_string(
+                &crate::downstream::workbench::session::snapshot().additional_loss,
+            )
+            .unwrap_or_default(),
         )
     }
     /// Validates and previews a draft through the shared Rust channel planner.
@@ -607,7 +614,7 @@ impl bridge::MeasurementInputs {
     /// Bounded gain chart or error, without changing accepted state.
     pub fn loss_preview(&self, document: &QString, settings: &QString) -> QString {
         let result = parse(&document.to_string()).and_then(|loss| {
-            crate::inputs::channel_model::preview(&loss, &parse(&settings.to_string())?)
+            crate::downstream::inputs::channel_model::preview(&loss, &parse(&settings.to_string())?)
         });
         QString::from(
             result
@@ -627,12 +634,15 @@ impl bridge::MeasurementInputs {
         settings: &QString,
     ) -> QString {
         let result = parse(&document.to_string()).and_then(|loss| {
-            crate::inputs::channel_model::preview(&loss, &parse(&settings.to_string())?)?;
-            crate::workbench::session::put_saved(
+            crate::downstream::inputs::channel_model::preview(
+                &loss,
+                &parse(&settings.to_string())?,
+            )?;
+            crate::downstream::workbench::session::put_saved(
                 "channel_model",
-                crate::inputs::channel_model::saved(&loss),
+                crate::downstream::inputs::channel_model::saved(&loss),
             );
-            crate::workbench::session::set_additional_loss(loss);
+            crate::downstream::workbench::session::set_additional_loss(loss);
             Ok(())
         });
         QString::from(result.err().unwrap_or_default())
@@ -643,16 +653,16 @@ impl bridge::MeasurementInputs {
     /// # Returns
     /// Independent RxMER/response statuses and joint Channel Simulator readiness.
     pub fn state(&self, settings: &QString) -> QString {
-        let profile = crate::workbench::session::snapshot().profile;
+        let profile = crate::downstream::workbench::session::snapshot().profile;
         let settings = parse::<TransmissionSettings>(&settings.to_string());
         let model = &self.rust().model;
         if let Ok(inputs) = model.published(profile.as_ref()) {
-            crate::workbench::session::set_playback(inputs.playback);
-            crate::workbench::session::set_response(inputs.response);
+            crate::downstream::workbench::session::set_playback(inputs.playback);
+            crate::downstream::workbench::session::set_response(inputs.response);
         }
         QString::from(
             model
-                .state(settings, &crate::workbench::session::snapshot())
+                .state(settings, &crate::downstream::workbench::session::snapshot())
                 .to_string(),
         )
     }
@@ -664,7 +674,8 @@ impl bridge::MeasurementInputs {
     /// Typed scalar JSON; missing legacy settings use core defaults.
     pub fn power_current(&self) -> QString {
         QString::from(
-            serde_json::to_string(&crate::workbench::session::snapshot().power).unwrap_or_default(),
+            serde_json::to_string(&crate::downstream::workbench::session::snapshot().power)
+                .unwrap_or_default(),
         )
     }
     /// Commits a bounded validated power draft and its saved section atomically.
@@ -679,11 +690,11 @@ impl bridge::MeasurementInputs {
             )
             .and_then(|power| {
                 power.validate().map_err(|e| e.to_string())?;
-                crate::workbench::session::put_saved(
+                crate::downstream::workbench::session::put_saved(
                     "channel_power",
-                    crate::inputs::channel_model::saved_power(&power),
+                    crate::downstream::inputs::channel_model::saved_power(&power),
                 );
-                crate::workbench::session::set_power(power);
+                crate::downstream::workbench::session::set_power(power);
                 Ok(())
             });
         QString::from(result.err().unwrap_or_default())
@@ -694,7 +705,7 @@ impl bridge::MeasurementInputs {
     /// # Returns
     /// Bounded identity/readiness JSON with no implicit simulation dispatch.
     pub fn tap_state(&self, tap: i32) -> QString {
-        QString::from(crate::instruments::channel::state(tap).to_string())
+        QString::from(crate::downstream::instruments::channel::state(tap).to_string())
     }
     /// Queries the shared spectrum estimator at a frozen channel boundary.
     /// # Arguments
@@ -706,7 +717,8 @@ impl bridge::MeasurementInputs {
     /// Bounded viewport; Channel Power is integrated independently of zoom.
     pub fn tap_spectrum(&self, tap: i32, start: i32, count: i32, capture_axis: bool) -> QString {
         QString::from(
-            crate::instruments::channel::spectrum(tap, start, count, capture_axis).to_string(),
+            crate::downstream::instruments::channel::spectrum(tap, start, count, capture_axis)
+                .to_string(),
         )
     }
     /// Queries raw channel I/Q through the common QAM presentation provider.
@@ -716,6 +728,8 @@ impl bridge::MeasurementInputs {
     /// # Returns
     /// Bounded points with original coordinates, or explicit unavailable state.
     pub fn tap_qam(&self, tap: i32, query: &QString) -> QString {
-        QString::from(crate::instruments::channel::qam(tap, &query.to_string()).to_string())
+        QString::from(
+            crate::downstream::instruments::channel::qam(tap, &query.to_string()).to_string(),
+        )
     }
 }

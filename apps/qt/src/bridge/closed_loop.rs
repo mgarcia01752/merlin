@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Qt lifecycle adapter for the existing Rust closed-loop engine.
-use crate::simulation::closed_loop as model;
+use crate::downstream::simulation::closed_loop as model;
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 #[cxx_qt::bridge]
@@ -78,7 +78,7 @@ pub mod bridge {
 #[derive(Default)]
 pub struct ClosedLoopRust {
     pub(crate) model: model::Model,
-    admission_diagnostic: Option<Box<crate::help::Diagnostic>>,
+    admission_diagnostic: Option<Box<crate::downstream::help::Diagnostic>>,
 }
 impl bridge::ClosedLoop {
     /// Resolves accepted inputs and invalidates prior results.
@@ -103,16 +103,17 @@ impl bridge::ClosedLoop {
     pub fn channel_preview(&self, settings: &QString) -> QString {
         let result = (|| {
             if settings.to_string().len() > 4096 {
-                return Err(crate::help::AdmissionError::from(
+                return Err(crate::downstream::help::AdmissionError::from(
                     "Settings too large".to_string(),
                 ));
             }
-            let transmission = serde_json::from_str(&settings.to_string())
-                .map_err(|error| crate::help::AdmissionError::from(error.to_string()))?;
+            let transmission = serde_json::from_str(&settings.to_string()).map_err(|error| {
+                crate::downstream::help::AdmissionError::from(error.to_string())
+            })?;
             let options = self.rust().model.options.clone().unwrap_or_default();
-            crate::inputs::channel_model::combined_preview(
+            crate::downstream::inputs::channel_model::combined_preview(
                 &transmission,
-                &crate::workbench::session::snapshot(),
+                &crate::downstream::workbench::session::snapshot(),
                 &options.channel_filter,
             )
         })();
@@ -129,7 +130,7 @@ impl bridge::ClosedLoop {
         options: &QString,
         settings: &QString,
     ) -> QString {
-        let prepare = || -> Result<model::Options, crate::help::AdmissionError> {
+        let prepare = || -> Result<model::Options, crate::downstream::help::AdmissionError> {
             if self.rust().model.state()["busy"].as_bool() == Some(true) {
                 return Err(
                     "Stop the simulation before changing receiver or channel settings.".into(),
@@ -146,9 +147,9 @@ impl bridge::ClosedLoop {
             options
                 .mce
                 .validate()
-                .map_err(crate::help::AdmissionError::classified)?;
-            options.validate(&crate::workbench::session::snapshot())?;
-            let inputs = crate::workbench::session::snapshot();
+                .map_err(crate::downstream::help::AdmissionError::classified)?;
+            options.validate(&crate::downstream::workbench::session::snapshot())?;
+            let inputs = crate::downstream::workbench::session::snapshot();
             if inputs.source.is_some() && inputs.profile.is_some() && inputs.playback.is_some() {
                 model::prepare(&transmission, &inputs, &options)?;
             }
@@ -189,7 +190,7 @@ impl bridge::ClosedLoop {
         settings: &QString,
     ) {
         if let Some(model) =
-            crate::workbench::project_load::take(|prepared| prepared.receiver.take())
+            crate::downstream::workbench::project_load::take(|prepared| prepared.receiver.take())
         {
             self.as_mut().rust_mut().model.invalidate();
             self.as_mut().rust_mut().model = model;
