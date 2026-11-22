@@ -376,6 +376,67 @@ H/echo/epoch/fit rejection. Re-run affected channel composition/filter/power tes
 Clippy and installed-wheel regressions before Qt consumers change. Idle TX preview
 remains open after this unit.
 
+### UIU-API-01: bounded idle transmitter preview unit
+
+REUSE `simulation::transmitter_preview::TransmitterPreviewRequest` and its actual
+TX/PSD pipeline; keep original `generate(&AtomicBool, progress)` usable and add a
+`generate_with_cancellation(&impl Cancellation, progress)` delegate for the shared
+one-way token. No DSP, coding, scheduling or source algorithm changes.
+ADAPT under new `crates/ofdm/src/api/transmitter.rs` and focused `transmitter/`
+modules: immutable `TransmitterPreviewRequest::new(&TransmissionConfiguration,
+&Dpd, &SourceInput)` and `from_capture(..., &ProfileCapture, raw_id, ...)` admit
+through the existing owner. The existing preview supports source IDs 0..15 and
+bootstraps Profile A; source ID 16+ continues to reject. It is separate from the
+later full-loop source-ID compatibility gate. Freeze original provenance/source
+and settings; no source advances until explicit `generate(&TransmitterPreviewControl)`.
+
+A cloneable one-shot control owns cancellation and atomic bounded progress only.
+Its `snapshot` reports idle/running/completed/cancelled/failed and completed/total
+symbol counts. Concurrent/repeated execution with the same control rejects Busy;
+fresh controls permit deterministic independent previews. Cancel is one-way;
+no pause is promised. Errors/cancellation retain caller inputs and prior results;
+failed generation returns no accepted new preview. The request starts no worker;
+callers dispatch synchronous generation outside their UI/interpreter locks.
+
+The owned result retains actual bounded I/Q/PSD with immutable metadata/key/sources,
+post-overlap/pre-channel reference plane and source-bit/EOF/warmup accounting.
+`sample_view(start,count)` returns at most 4096 contiguous actual samples with
+absolute sample origin (zero count selects up to this limit); `spectrum(start,count)`
+returns existing min/max buckets (at most 2048; zero count selects remaining FFT),
+original frequency metadata and normalized-unit density semantics. Keep numerical
+FFT/PSD/grouping in the existing waveform owner. No fabricated/reconstructed
+physical stages or messages; those remain API-02. Add `TransmissionConfiguration`
+`symbol_timing(Option<velocity>)` and `window()` through existing geometry/window
+owners so Qt timing graphics need only position/format authoritative coefficients.
+
+Add `bindings/python/src/transmitter.rs` and focused native result module, register
+classes/aliases/stubs; frozen requests/results release the GIL for generation and
+queries, expose owned dictionaries, and permit another Python thread to poll/cancel
+the control. Rust operations map directly to matching Python methods, with `None`
+for unknown velocity and optional fresh control for explicit generation. Add
+`crates/ofdm/tests/api_transmitter_preview.rs` and native
+`bindings/python/tests/test_transmitter_preview.py`; compare actual old-owner
+samples/PSD, independent sample-count/timing/FFT anchors, deterministic regeneration,
+finite file/EOF, invalid raw IDs/windows/settings and cross-thread cancellation/
+Busy/progress/owned-result behavior. Extend facade tests and installed-wheel parity
+before parent API-01 acceptance. Add the direct-Rust example at
+`crates/ofdm/examples/api_transmitter_preview.rs`, register its required feature in
+`crates/ofdm/Cargo.toml`, and extend `tools/testing/native_api.py` with its separate
+reference process. The installed native test compares actual selected samples,
+PSD extrema, timing and progress against this generated reference. No Qt source
+or historical acceptance changes.
+
+Final API-01 inventory reconciliation is part of this acceptance gate. Refresh
+compiler/native inventories without replacing historical run records. Extend
+`tools/validation/rust_api_inventory.py` only where actual new explicit scientific
+re-exports omit source links: resolve the exact declared import through its freshly
+built canonical rustdoc module, preserving kind/method/signature/source identity.
+Add independent provenance/collision/signature rejection cases in
+`tools/validation/test_rust_api_inventory.py`. Append exact operation/export rows
+and focused test/evidence links to the existing authoritative operation matrix;
+retain every original row and historical evidence. Compiler discovery and actual
+native exports must both match before the parent task can be checked.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

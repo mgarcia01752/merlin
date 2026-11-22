@@ -80,6 +80,39 @@ impl PyTransmission {
         object_from_json(py, &self.to_json()?)
     }
 
+    /// Reads the authoritative bounded symbol timing and optional ideal cable-delay budget.
+    /// # Arguments
+    /// * `velocity_factor` - Explicit speed/c in (0,1]; None leaves distances unavailable.
+    /// # Returns
+    /// Owned times/coefficients and optional feet; no source/run is created.
+    /// # Errors
+    /// Shared nonfinite/invalid velocity errors raise ApiError.
+    #[pyo3(signature=(velocity_factor=None))]
+    fn symbol_timing(&self, py: Python<'_>, velocity_factor: Option<f64>) -> PyResult<Py<PyAny>> {
+        let text = py
+            .detach(|| {
+                let result = self.0.symbol_timing(velocity_factor)?;
+                serde_json::to_string(&result).map_err(crate::transmitter::transport_error)
+            })
+            .map_err(error)?;
+        object_from_json(py, &text)
+    }
+
+    /// Copies complete original sample-clock transmit-window coefficients and geometry.
+    /// # Returns
+    /// Owned weights; downstream presentation only positions/formats the existing coefficients.
+    /// # Errors
+    /// Shared geometry/transport failures raise ApiError; no waveform stream starts.
+    fn window(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
+        let text = py
+            .detach(|| {
+                let result = self.0.window()?;
+                serde_json::to_string(&result).map_err(crate::transmitter::transport_error)
+            })
+            .map_err(error)?;
+        object_from_json(py, &text)
+    }
+
     /// Plans source-symbol timing entirely through the public Rust timing operation.
     ///
     /// # Arguments

@@ -133,6 +133,11 @@ def main():
             path = run(command, output, environment, key.lower(), report['commands'])
             json.loads(path.read_text())
             environment['MERLIN_UPSTREAM_RUST_' + key + '_JSON'] = str(path)
+        transmitter = run([*cargo, 'run', '-p', 'docsis-ofdm-fec', '--example',
+                           'api_transmitter_preview', '--features', 'high-level-api', '--locked'],
+                          output, environment, 'transmitter', report['commands'])
+        json.loads(transmitter.read_text())
+        environment['MERLIN_TRANSMITTER_PARITY'] = str(transmitter)
         policies = output / 'policies'
         run([*cargo, 'run', '-p', 'pnm-input', '--example', 'run_rxmer_selection_parity',
              '--locked', '--', str(policies)], output, environment, 'policies', report['commands'])
@@ -164,7 +169,7 @@ def main():
             'native-inventory', report['commands'], cwd=output)
         report['reference_environment'] = {key: value for key, value in environment.items()
             if key.startswith('MERLIN_UPSTREAM_RUST_') or key in
-            ('MERLIN_API_PARITY', 'MERLIN_WB_PARITY', 'MERLIN_DESIGNER_PARITY')}
+            ('MERLIN_API_PARITY', 'MERLIN_WB_PARITY', 'MERLIN_DESIGNER_PARITY', 'MERLIN_TRANSMITTER_PARITY')}
         report['status'] = 'passed'
         print(f"Installed native API: {report['passed']} cases pass", flush=True)
     finally:

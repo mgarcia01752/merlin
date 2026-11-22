@@ -373,3 +373,50 @@ created. Existing legacy API admission delegates to shared private helpers with
 unchanged validation semantics. No Qt source, scientific kernel, historical
 checkbox or saved-project contract changed. Bounded idle TX preview remains open
 before the parent task can be accepted.
+
+## UIU-API-01 idle TX preview unit
+
+[Exact candidate/test/wheel evidence](transmitter-preview-evidence.json),
+[typed design/owners](design.md#uiu-api-01-bounded-idle-transmitter-preview-unit) and
+[paired API guide](../../../user/api/transmitter-preview.md) document the bounded
+idle request, one-shot Busy/cancel/progress control and immutable actual results.
+Twelve targeted Rust cases and 14 facade cases pass. Existing-owner comparisons
+preserve actual samples/PSD; independent timing/count/window anchors cover
+135168 samples, first sample 130560, 32 averages, 37500 Hz Hann ENBW, 42.5 µs symbol,
+1.875 µs guard and exact overlap sums. Finite EOF/hash/ownership, deterministic
+regeneration, unsupported encoded IDs and overflow/window/cable-velocity rejection
+pass. A separate Rust process supplies selected I/Q/PSD/timing/progress references.
+
+The final Linux CPython 3.10 wheel passes all 76 native cases, including five new
+idle-TX cases, real cross-thread cancellation/Busy/progress while the GIL is
+released, owned query results and direct-process parity. An initial new assertion
+used the wrong provenance dictionary key; it was corrected before the final pass.
+The wheel implementation was unchanged. Draft Rust tests also corrected an explicit
+profile selection and literal distance arithmetic; final candidate tests pass.
+No Qt source or numerical algorithm changed. Original low-level atomic cancellation
+imports and generation semantics remain available.
+
+## UIU-API-01 public admission accepted
+
+The [official task](../../checklist.md#task-uiu-api-01) now has passing local
+acceptance for all scoped admission/editor/preview units above. The
+[authoritative operation matrix](../high-level-api/compatibility-matrix.md) appends
+99 Rust and 75 native rows without changing any of its original 364/373 rows.
+Fresh compiler/native discovery checks 463 Rust rows (461 discoverable methods
+plus two preserved hidden Serde helpers) and 448 native rows, including exact
+signatures, owners, types and explicit language differences. Every referenced new
+owner test has an [actual passing execution record](api-01-operation-test-results.json).
+The compiler-inventory resolver uses explicit imported namespaces, canonical
+compiler signatures and linked primitive-alias declarations; seven independent
+inventory cases reject missing/ambiguous owners and signature/type drift.
+
+The final complete `scripts/test-local.sh all` passes in 420 seconds: 635 workspace
+cases, doctest checks, four fixture-example cases, 12 API example processes and
+139 analysis-only cases. Workspace/facade/native-input/binding all-target Clippy
+with warnings denied, format/version/guide and actual Qt boundary checks pass.
+Fourteen testing-tool cases and the reconciled validation-tool suite pass.
+Original architecture, requirement IDs, completed history and all old operation
+rows/evidence remain intact. No Qt source changed and the frozen boundary debt
+remains for UIU-DS-01. This accepts public admission locally; UIU-API-02 retains
+controlled downstream jobs and observations, followed by the remaining official
+Qt tasks and final native/platform gates.

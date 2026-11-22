@@ -34,7 +34,8 @@ use crate::{
     types::{modulation::CarrierType, IqPair, PLC_FRAME_SYMBOLS},
     SimulationError,
 };
-use std::sync::atomic::{AtomicBool, Ordering};
+use merlin_api::Cancellation;
+use std::sync::atomic::AtomicBool;
 
 /// Frozen supported inputs, independent of Qt, filenames and active simulation jobs.
 #[derive(Clone)]
@@ -141,10 +142,26 @@ impl TransmitterPreviewRequest {
     pub fn generate(
         &self,
         cancel: &AtomicBool,
+        progress: impl FnMut(usize, usize),
+    ) -> Result<TransmitterPreview, SimulationError> {
+        self.generate_with_cancellation(cancel, progress)
+    }
+
+    /// Generates the same bounded preview with a shared one-way cancellation query.
+    /// # Arguments
+    /// * `cancel` - Read-only stop token, checked at the existing symbol/FFT boundaries.
+    /// * `progress` - Observation-only completed/total symbol counts.
+    /// # Returns
+    /// Actual post-overlap samples and PSD with the original source/priming semantics.
+    /// # Errors
+    /// Preserves existing cancellation, TX and FFT failures without changing inputs.
+    pub fn generate_with_cancellation(
+        &self,
+        cancel: &impl Cancellation,
         mut progress: impl FnMut(usize, usize),
     ) -> Result<TransmitterPreview, SimulationError> {
         let check = || {
-            if cancel.load(Ordering::Relaxed) {
+            if cancel.is_cancelled() {
                 return Err(invalid("TX spectrum generation cancelled."));
             }
             Ok(())

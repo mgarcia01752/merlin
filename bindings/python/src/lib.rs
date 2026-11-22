@@ -16,6 +16,7 @@ mod receiver;
 mod reports;
 mod rxmer_export;
 mod sequence;
+mod transmitter;
 mod workbench;
 use merlin::downstream as api;
 mod upstream;
@@ -72,6 +73,7 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     profile_capture::register(module)?;
     designer::register(module)?;
     sequence::register(module)?;
+    transmitter::register(module)?;
     inputs::register(module)?;
     receiver::register(module)?;
     options::register(module)?;

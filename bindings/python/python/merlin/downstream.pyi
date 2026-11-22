@@ -72,3 +72,6 @@ from . import RxMerDesignPosition as RxMerDesignPosition
 from . import ProfileCapture as ProfileCapture
 from . import ProfileViewRequest as ProfileViewRequest
 from . import ChannelConfiguration as ChannelConfiguration
+from . import TransmitterPreviewRequest as TransmitterPreviewRequest
+from . import TransmitterPreviewControl as TransmitterPreviewControl
+from . import TransmitterPreview as TransmitterPreview

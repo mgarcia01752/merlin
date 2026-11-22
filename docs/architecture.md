@@ -970,6 +970,13 @@ the same spatial/epoch/coverage and channel-composition owners as execution.
 Its [configured transfer preview](user/api/channel-preview.md) retains full original
 grids and inputs, actual filter diagnostics and bounded before-receiver views;
 it creates no waveform/filter stream or simulation state.
+`TransmitterPreviewRequest` freezes accepted source/profile/timing admission and
+explicitly generates a bounded private TX snapshot through the existing owner.
+Its one-shot public control reports cancellation/progress without global result
+storage. [Idle TX contracts](user/api/transmitter-preview.md) preserve actual
+post-overlap/pre-channel samples/PSD and expose authoritative symbol timing/window
+coefficients for presentation. Full-loop controls and retained stages remain a
+separate API extension gate.
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

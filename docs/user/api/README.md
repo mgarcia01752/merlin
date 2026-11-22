@@ -14,6 +14,8 @@ for timing/source contracts and Rust/Python parity.
 catalogs, compact schemes and bounded scientific views.
 [Configured channel preview](channel-preview.md) documents immutable loss/power/
 filter admission and authoritative transfer observations.
+[Idle TX previews](transmitter-preview.md) provide explicit bounded generation,
+controls, owned actual samples/PSD and symbol/window timing.
 
 For searchable class/method documentation generated from the actual APIs, see
 the [generated Rust/Python reference](../../reference/api-reference.md).

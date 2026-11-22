@@ -165,8 +165,8 @@ assert observation.source_kind == "merlin_synthetic_rxmer"
 
 The [profile inspector](profile-inspection.md) exposes original compact schemes
 and scientific summaries through the same facade. [Configured channel previews](channel-preview.md)
-provide typed loss/power/filter admission and authoritative transfer data. Idle
-transmitter previews remain separate acceptance work. These design operations preserve the existing
+provide typed loss/power/filter admission and authoritative transfer data. [Idle transmitter previews](transmitter-preview.md)
+provide explicit private TX generation and authoritative timing/window data. These design operations preserve the existing
 saved-recipe schema and its shared Rust/native-Python workbench behavior.
 
 Optional Rust facade feature `native-input` exposes existing

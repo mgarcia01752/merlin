@@ -90,6 +90,69 @@ class RustdocExportTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'unique explicit source'):
                 resolve_reexport_owners(data, root)
 
+    def test_explicit_scientific_reexport_resolves_canonical_compiler_owner_and_rejects_drift(self):
+        """Only the declared module and exact compiler signature establish provenance."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'crates/pnm-input/src/lib.rs'
+            source.parent.mkdir(parents=True)
+            source.write_text('pub use docsis_ofdm_fec::signal_processing::rxmer_designer::{CaptureScope};')
+            docs = root / 'doc'
+            module = docs / 'docsis_ofdm_fec/signal_processing/rxmer_designer'
+            module.mkdir(parents=True)
+            (module / 'index.html').write_text('<a class="enum" href="enum.CaptureScope.html" title="enum owner::CaptureScope">CaptureScope</a>')
+            page = module / 'enum.CaptureScope.html'
+            page.write_text('<a class="src" href="../../../src/docsis_ofdm_fec/signal_processing/rxmer_designer/config.rs.html#10">Source</a><h4 class="code-header">pub fn validate(&amp;self) -&gt; Result&lt;(), Error&gt;</h4>')
+            method = {'operation': 'pnm_input::CaptureScope::validate', 'signature': 'pub fn validate(&self) -> Result<(), Error>', 'source_file': None}
+            data = {'native-input': [{'export': 'pnm_input::CaptureScope', 'kind': 'enum', 'methods': [method]}]}
+            resolve_reexport_owners(data, root, docs)
+            self.assertEqual(method['source_file'], 'crates/ofdm/src/signal_processing/rxmer_designer/config.rs')
+            self.assertEqual(method['reexport_origin'], 'docsis_ofdm_fec::signal_processing::rxmer_designer::CaptureScope')
+            method['source_file'] = None
+            method['signature'] = 'pub fn validate(&self, replacement: bool) -> Result<(), Error>'
+            with self.assertRaisesRegex(ValueError, 'exact canonical owner'):
+                resolve_reexport_owners(data, root, docs)
+            source.write_text('pub use unknown::signal_processing::{CaptureScope};')
+            with self.assertRaisesRegex(ValueError, 'unique explicit source'):
+                resolve_reexport_owners(data, root, docs)
+
+    def test_two_explicit_import_origins_never_choose_a_same_named_type(self):
+        """Ambiguous explicit imports reject instead of guessing source ownership."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'crates/pnm-input/src/lib.rs'
+            source.parent.mkdir(parents=True)
+            source.write_text('pub use docsis_ofdm_fec::api::{ApiError}; pub use docsis_ofdma::api::{ApiError};')
+            data = {'native-input': [{'export': 'pnm_input::ApiError', 'kind': 'enum', 'methods': [
+                {'operation': 'pnm_input::ApiError::code', 'signature': 'pub fn code(&self) -> Code', 'source_file': None}]}]}
+            with self.assertRaisesRegex(ValueError, 'unique explicit source'):
+                resolve_reexport_owners(data, root)
+
+    def test_compiler_linked_primitive_alias_allows_exact_expansion_but_not_type_drift(self):
+        """Rustdoc may expand an imported alias; only its actual declaration resolves it."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'crates/pnm-input/src/lib.rs'
+            source.parent.mkdir(parents=True)
+            source.write_text('pub use docsis_ofdm_fec::signal_processing::rxmer_designer::{RippleSpacing};')
+            docs = root / 'doc'
+            module = docs / 'docsis_ofdm_fec/signal_processing/rxmer_designer'
+            module.mkdir(parents=True)
+            (module / 'index.html').write_text('<a class="enum" href="enum.RippleSpacing.html" title="enum owner::RippleSpacing">RippleSpacing</a>')
+            (module / 'enum.RippleSpacing.html').write_text('<a class="src" href="../../../src/docsis_ofdm_fec/signal_processing/rxmer_designer.rs.html#10">Source</a><h4 class="code-header">pub fn frequency_hz(&amp;self) -&gt; <a class="type" href="../../types/type.FrequencyHz.html" title="type owner::FrequencyHz">FrequencyHz</a></h4>')
+            types = docs / 'docsis_ofdm_fec/types'
+            types.mkdir()
+            alias = types / 'type.FrequencyHz.html'
+            alias.write_text('<pre class="item-decl">pub type FrequencyHz = u32;</pre>')
+            method = {'operation': 'pnm_input::RippleSpacing::frequency_hz', 'signature': 'pub fn frequency_hz(&self) -> u32', 'source_file': None}
+            data = {'native-input': [{'export': 'pnm_input::RippleSpacing', 'kind': 'enum', 'methods': [method]}]}
+            resolve_reexport_owners(data, root, docs)
+            self.assertEqual(method['source_file'], 'crates/ofdm/src/signal_processing/rxmer_designer.rs')
+            method['source_file'] = None
+            alias.write_text('<pre class="item-decl">pub type FrequencyHz = u64;</pre>')
+            with self.assertRaisesRegex(ValueError, 'exact canonical owner'):
+                resolve_reexport_owners(data, root, docs)
+
 
 if __name__ == "__main__":
     unittest.main()

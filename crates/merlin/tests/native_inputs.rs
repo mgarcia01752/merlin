@@ -184,3 +184,26 @@ fn facade_configured_channel_preview_uses_public_typed_configuration_and_inputs(
         .all(|sample| *sample == [1.0, 0.0]));
     assert_eq!(preview.sources[0].original_bytes(), PROFILE);
 }
+
+#[test]
+fn facade_idle_tx_timing_and_precancel_use_public_immutable_contracts() {
+    let input = downstream::NamedCapture::new("profile", PROFILE.to_vec()).unwrap();
+    let profile =
+        downstream::inputs::CaptureLoader::profile(&input, downstream::ProfileId::new(0).unwrap())
+            .unwrap();
+    let transmission =
+        downstream::TransmissionConfiguration::new(downstream::TransmissionSettings::default())
+            .unwrap();
+    assert_eq!(transmission.symbol_timing(None).unwrap().symbol_us, 42.5);
+    let source = downstream::SourceInput::prbs15(downstream::PrbsSeed::new(32767).unwrap());
+    let request =
+        downstream::TransmitterPreviewRequest::new(&transmission, &profile, &source).unwrap();
+    let control = downstream::TransmitterPreviewControl::new();
+    control.cancel();
+    assert!(request.generate(&control).is_err());
+    assert_eq!(
+        control.snapshot().state,
+        downstream::TransmitterPreviewState::Cancelled
+    );
+    assert_eq!(control.snapshot().completed_symbols, 0);
+}

@@ -196,12 +196,42 @@ def inventory(namespace, index, documentation_root):
     return sorted(result, key=lambda item: item["export"])
 
 
-def resolve_reexport_owners(data, root):
+def compiler_primitive_aliases(method, documentation_root):
+    """Read primitive type-alias declarations linked by the canonical compiler page.
+
+    Args:
+        method: Canonical rustdoc method with its actual item page.
+        documentation_root: Fresh compiler output boundary, or None.
+    Returns:
+        A map of exact linked alias names to their compiler-declared primitives.
+        Unknown/compound aliases remain unresolved; names alone are never evidence.
+    """
+    if documentation_root is None or 'rustdoc' not in method:
+        return {}
+    root = Path(documentation_root).resolve()
+    page = root / method['rustdoc']
+    aliases = {}
+    for link in read_page(page).links:
+        if link['class'] != 'type':
+            continue
+        href = urlsplit(link['href'])
+        target = (page.parent / unquote(href.path)).resolve()
+        if href.scheme or not target.is_relative_to(root) or not target.is_file():
+            continue
+        for declaration, _ in read_page(target).headers:
+            match = re.fullmatch(r'pub type (\w+) = (bool|[ui](?:8|16|32|64|128|size)|f(?:32|64));', declaration)
+            if match:
+                aliases[match[1]] = match[2]
+    return aliases
+
+
+def resolve_reexport_owners(data, root, documentation_root=None):
     """Resolve omitted rustdoc source links through explicit public Rust imports.
 
     Args:
         data: Fresh compiler inventory from every canonical direction/API root.
         root: Source checkout containing the actual public re-export declarations.
+        documentation_root: Optional freshly built canonical rustdoc for explicit imported modules.
     Returns:
         None; fills missing owners only after exact import/type/signature agreement.
     Raises:
@@ -227,8 +257,8 @@ def resolve_reexport_owners(data, root):
             # Explicit grouped pub use, e.g. docsis_ofdma::api::{ApiError, ApiResult}.
             # Groups are full source namespace and comma-delimited names/aliases.
             for match in re.finditer(r'\bpub\s+use\s+([\w:]+)::\{([^{}]+)\}\s*;', rust_code(source.read_text())):
-                namespace = API_NAMESPACES.get(match[1])
-                if namespace is None:
+                namespace = API_NAMESPACES.get(match[1], match[1])
+                if match[1].split('::')[0] not in SOURCE_CRATES:
                     continue
                 for entry in match[2].split(','):
                     names = entry.strip().split(' as ')
@@ -236,13 +266,31 @@ def resolve_reexport_owners(data, root):
                         origins.add(namespace + '::' + names[0].strip())
         if len(origins) != 1:
             raise ValueError(f"No unique explicit source for re-export: {item['export']}")
-        original = exports.get(origins.pop())
+        origin = origins.pop()
+        original = exports.get(origin)
+        if original is None and documentation_root is not None:
+            namespace = origin.rsplit('::', 1)[0]
+            index = Path(documentation_root).joinpath(*namespace.split('::'), 'index.html')
+            if index.is_file():
+                candidates = [value for value in inventory(namespace, index, Path(documentation_root))
+                              if value['export'] == origin]
+                if len(candidates) == 1:
+                    original = candidates[0]
         if original is None or original['kind'] != item['kind']:
             raise ValueError(f"Re-export kind/identity is not in compiler inventory: {item['export']}")
         for method in missing:
-            candidates = [value for value in original['methods']
-                if value['operation'].rsplit('::', 1)[-1] == method['operation'].rsplit('::', 1)[-1]
-                and value['signature'] == method['signature'] and value['source_file'] is not None]
+            candidates = []
+            for value in original['methods']:
+                if (value['operation'].rsplit('::', 1)[-1] != method['operation'].rsplit('::', 1)[-1]
+                        or value['source_file'] is None):
+                    continue
+                signature = value['signature']
+                if signature != method['signature']:
+                    aliases = compiler_primitive_aliases(value, documentation_root)
+                    for name, primitive in aliases.items():
+                        signature = re.sub(r'\b' + re.escape(name) + r'\b', primitive, signature)
+                if signature == method['signature']:
+                    candidates.append(value)
             if len(candidates) != 1:
                 raise ValueError(f"Re-export method has no exact canonical owner: {method['operation']}")
             method['source_file'] = candidates[0]['source_file']
@@ -267,7 +315,7 @@ def main():
     }
     data = {name: inventory(namespace, args.docs / path, args.docs)
             for name, (namespace, path) in roots.items()}
-    resolve_reexport_owners(data, Path(__file__).resolve().parents[2])
+    resolve_reexport_owners(data, Path(__file__).resolve().parents[2], args.docs)
     args.output.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
     print("Rustdoc exports:", {name: sum(len(item["methods"]) for item in items)
                               for name, items in data.items()})

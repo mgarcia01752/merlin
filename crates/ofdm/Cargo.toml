@@ -101,3 +101,7 @@ required-features = ["simulation"]
 name = "prepare_channel_widths"
 path = "examples/channel_widths/main.rs"
 required-features = ["simulation"]
+
+[[example]]
+name = "api_transmitter_preview"
+required-features = ["high-level-api"]
