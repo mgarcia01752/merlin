@@ -492,12 +492,12 @@ and implementation/acceptance remain pending; earlier eligible tasks continue.
   Evidence: [selected project schema, ownership, reuse and acceptance design](features/unified-qt-workbench/design.md#uiu-api-05-direction-aware-public-project-admission); [saved full-loop prerequisite acceptance](features/unified-qt-workbench/validation.md#uiu-api-05-saved-downstream-full-loop-unit) preserves file/fill, playback, independent response tolerance and old loader behavior. [direction-project backend acceptance](features/unified-qt-workbench/validation.md#uiu-api-05-project-backend-accepted) passes legacy/schema-3 DS/US round trips, actual scientific runs, original-source and input-aggregate admission. Full Rust747/analysis139/14examples/4fixture and installed native150 pass; scoped Clippy/formatting/strict563Rust/536native tracing pass. Qt file/dirty/recovery adoption remains in its dependent tasks.
 
 <a id="task-uiu-org-01"></a>
-- [ ] **UIU-ORG-01** Move proven generic shell/theme/dialog infrastructure by inventory.
+- [x] **UIU-ORG-01** Move proven generic shell/theme/dialog infrastructure by inventory.
   Requirements: [REQ-UIU-04](../requirements.md#req-uiu-04), [REQ-UIU-25](../requirements.md#req-uiu-25).
   Dependencies: [UIU-BOUND-01](#task-uiu-bound-01).
   Architecture/files: [organization owner](../architecture.md#unified-qt-source-ownership), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Focused moves with notices, explicit registrations/imports/resources, all bridge entries together, same module/entry/executable; matching Qt checks and native build. Do not pre-accept scientific instruments as shared.
-  Evidence: [organization acceptance plan](features/unified-qt-workbench/validation.md#organization); pending implementation/acceptance.
+  Evidence: [accepted generic presentation organization](features/unified-qt-workbench/validation.md#uiu-org-01-generic-presentation-accepted) and [exact move/build/native record](features/unified-qt-workbench/organization-evidence.json): 15 byte-identical moves, 82 unique QML registrations, 87 Qt Rust/89 QML cases, optimized build and six native XCB/Fusion smokes. Current owner/skill links resolve; coupled shell views and scientific API migration remain separate tasks.
 
 <a id="task-uiu-ds-01"></a>
 - [ ] **UIU-DS-01** Organize downstream owners and migrate legacy scientific calls.
@@ -505,7 +505,7 @@ and implementation/acceptance remain pending; earlier eligible tasks continue.
   Dependencies: [UIU-ORG-01](#task-uiu-org-01), [UIU-API-02](#task-uiu-api-02).
   Architecture/files: [organization owner](../architecture.md#unified-qt-source-ownership), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Adopt validated facade operations, remove matching legacy guard entries, preserve existing presentation/readiness/instruments/results, tests and project semantics; build latest Qt executable.
-  Evidence: [organization acceptance plan](features/unified-qt-workbench/validation.md#organization); pending implementation/acceptance.
+  Evidence: [accepted generic presentation organization](features/unified-qt-workbench/validation.md#uiu-org-01-generic-presentation-accepted) and [exact move/build/native record](features/unified-qt-workbench/organization-evidence.json): 15 byte-identical moves, 82 unique QML registrations, 87 Qt Rust/89 QML cases, optimized build and six native XCB/Fusion smokes. Current owner/skill links resolve; coupled shell views and scientific API migration remain separate tasks.
 
 <a id="task-uiu-session-01"></a>
 - [ ] **UIU-SESSION-01** Make direction sessions explicit and serialize initial dispatch.

@@ -4,7 +4,7 @@
  */
 import QtQuick
 import QtQuick.Controls
-import "../components"
+import "../shared/components"
 WorkbenchDialog {
     property string message: ""
     title:"MERLIN Workbench File"

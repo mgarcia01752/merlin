@@ -7,7 +7,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Merlin.Workbench
 import "shell"
-import "theme"
+import "shared/theme"
 
 ApplicationWindow {
     id: window

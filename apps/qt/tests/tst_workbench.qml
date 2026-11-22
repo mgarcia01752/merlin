@@ -5,9 +5,9 @@
 import QtQuick
 import QtQuick.Controls
 import QtTest
-import "../qml/components"
+import "../qml/shared/components"
 import "../qml/shell"
-import "../qml/theme"
+import "../qml/shared/theme"
 
 Pane {
     id: window

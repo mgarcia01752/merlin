@@ -495,7 +495,7 @@ do not need an artificial mixed-role legend.
 ## Structured binary and TLV inspectors
 
 Present TLV breakdowns as an aligned folding tree grid rather than one full-width
-button per record. Reuse `apps/qt/qml/components/TlvTreeGrid.qml` for bounded tree JSON, with
+button per record. Reuse `apps/qt/qml/shared/components/TlvTreeGrid.qml` for bounded tree JSON, with
 Field/Value and Type/Length/Offset columns, indentation, disclosure controls,
 Expand All/Collapse All and keyboard navigation. Preserve exact bytes and clear
 absolute-offset semantics; decoded child fields are not automatically nested

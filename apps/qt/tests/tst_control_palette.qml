@@ -6,7 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtTest
-import "../qml/theme"
+import "../qml/shared/theme"
 import "../qml/instruments/qam"
 import "../qml/instruments/spectrum"
 

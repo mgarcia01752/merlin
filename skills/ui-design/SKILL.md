@@ -24,7 +24,7 @@ screenshots. Review existing Apply buttons when changing this shared pattern.
 
 ## Required action-button style
 
-Use `apps/qt/qml/components/WorkbenchActionButton.qml` for ordinary action
+Use `apps/qt/qml/shared/components/WorkbenchActionButton.qml` for ordinary action
 buttons in every frame: inputs, workbenches, instruments, settings and About.
 Reuse its rounded corners, theme colors, sizing, padding and hover/pressed/focus/
 disabled states; do not introduce plain `Button` controls or copied decorations
@@ -108,7 +108,7 @@ visible UI behavior. Normal UI keeps timing diagnostics out of the loading view.
 ## Global tooltip delay
 
 Every MERLIN mouse-over tooltip waits **one second** before appearing. The
-single timing definition is `tooltipDelayMs` in `apps/qt/qml/theme/Theme.qml`.
+single timing definition is `tooltipDelayMs` in `apps/qt/qml/shared/theme/Theme.qml`.
 Bind attached tooltips with `ToolTip.delay: theme.tooltipDelayMs`; explicit
 `ToolTip` objects bind `delay` to their owning theme. Shared action buttons
 supply this default as well. Never duplicate a numeric delay in a view or add

@@ -1,0 +1,1458 @@
+{
+  "schema_version": 1,
+  "task": "UIU-ORG-01",
+  "status": "accepted",
+  "base_commit": "ca588e2e390a4c1feaf976eb91c397f870d34d24",
+  "requirements": [
+    "REQ-UIU-04",
+    "REQ-UIU-25"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-source-ownership",
+  "checklist": "docs/development/checklist.md#task-uiu-org-01",
+  "scope": "Generic components/theme/about only; scalar values, handlers, notices and scientific owners unchanged. Coupled shell lifecycle stays for SHELL-01.",
+  "moves": [
+    {
+      "original": "apps/qt/qml/about/AboutDialog.qml",
+      "destination": "apps/qt/qml/shared/about/AboutDialog.qml",
+      "original_sha256": "7e99d2e1a4d6bae7e72a387d543fb10d74cdd2867a4687240e8256215b3e822f",
+      "sha256": "7e99d2e1a4d6bae7e72a387d543fb10d74cdd2867a4687240e8256215b3e822f",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/about/FaqDialog.qml",
+      "destination": "apps/qt/qml/shared/about/FaqDialog.qml",
+      "original_sha256": "645b7a6125e714ee79ef30b79d1d6a6b34de002b6daf436d804f052e40b4cb34",
+      "sha256": "645b7a6125e714ee79ef30b79d1d6a6b34de002b6daf436d804f052e40b4cb34",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/about/LicenseDialog.qml",
+      "destination": "apps/qt/qml/shared/about/LicenseDialog.qml",
+      "original_sha256": "5afa3ef24cf4479e84ec7816074b45810ad68cfae72aff03a9c7aa5b35e3a85b",
+      "sha256": "5afa3ef24cf4479e84ec7816074b45810ad68cfae72aff03a9c7aa5b35e3a85b",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/ApplyCancelFooter.qml",
+      "destination": "apps/qt/qml/shared/components/ApplyCancelFooter.qml",
+      "original_sha256": "ad5a1a737496c315d3e2f0e07f56be6933f2bad7c7298e873eeba51949d5fe3b",
+      "sha256": "ad5a1a737496c315d3e2f0e07f56be6933f2bad7c7298e873eeba51949d5fe3b",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/ChartNavigation.qml",
+      "destination": "apps/qt/qml/shared/components/ChartNavigation.qml",
+      "original_sha256": "f3a8cafb94b90ab629f3a6f99b7b5ab2a6e3e22abb55388e689bccb035983107",
+      "sha256": "f3a8cafb94b90ab629f3a6f99b7b5ab2a6e3e22abb55388e689bccb035983107",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/Connection.qml",
+      "destination": "apps/qt/qml/shared/components/Connection.qml",
+      "original_sha256": "5e5e55c978b4319d7b8796599c8de9a6e7b698c54ede94876dba45c56a1ae59e",
+      "sha256": "5e5e55c978b4319d7b8796599c8de9a6e7b698c54ede94876dba45c56a1ae59e",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/ContextualStatus.qml",
+      "destination": "apps/qt/qml/shared/components/ContextualStatus.qml",
+      "original_sha256": "117cc28b9f9d6f95b80018cda8b0fc7c57c8450cfcc28b3f9647d503f4674406",
+      "sha256": "117cc28b9f9d6f95b80018cda8b0fc7c57c8450cfcc28b3f9647d503f4674406",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/ReceiverChip.qml",
+      "destination": "apps/qt/qml/shared/components/ReceiverChip.qml",
+      "original_sha256": "82c1f703d63ac27b334c0671689c6aa9c978e73a9ca33df0fa5ed4b1889ca22f",
+      "sha256": "82c1f703d63ac27b334c0671689c6aa9c978e73a9ca33df0fa5ed4b1889ca22f",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/StageChip.qml",
+      "destination": "apps/qt/qml/shared/components/StageChip.qml",
+      "original_sha256": "02781aab7ca2176ed434a2f1b8965844d583f3317790c2f282610da419f3741b",
+      "sha256": "02781aab7ca2176ed434a2f1b8965844d583f3317790c2f282610da419f3741b",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/TlvTreeGrid.qml",
+      "destination": "apps/qt/qml/shared/components/TlvTreeGrid.qml",
+      "original_sha256": "202c178bafeca4dd7f3f633122a5e2590012f4eea327a2552250d79f2790542e",
+      "sha256": "202c178bafeca4dd7f3f633122a5e2590012f4eea327a2552250d79f2790542e",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/WorkbenchActionButton.qml",
+      "destination": "apps/qt/qml/shared/components/WorkbenchActionButton.qml",
+      "original_sha256": "46b75f9dd54915377795493f5c5cd014326e1fa8bd6c08b10f3c74015569903f",
+      "sha256": "46b75f9dd54915377795493f5c5cd014326e1fa8bd6c08b10f3c74015569903f",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/WorkbenchBlock.qml",
+      "destination": "apps/qt/qml/shared/components/WorkbenchBlock.qml",
+      "original_sha256": "9795f822b5ab3be13ee0c647df54a736fccabfaccba6d9c92bd1a825d93e667f",
+      "sha256": "9795f822b5ab3be13ee0c647df54a736fccabfaccba6d9c92bd1a825d93e667f",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/WorkbenchDialog.qml",
+      "destination": "apps/qt/qml/shared/components/WorkbenchDialog.qml",
+      "original_sha256": "a25345c864e1a6b949750d64da4adc8b776a2201398661ee88b2a26073307cfb",
+      "sha256": "a25345c864e1a6b949750d64da4adc8b776a2201398661ee88b2a26073307cfb",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/theme/Theme.qml",
+      "destination": "apps/qt/qml/shared/theme/Theme.qml",
+      "original_sha256": "9d4256abfaad5f6ff77ec735d85bae967f51de3547afd82b4568ecc0287dfc96",
+      "sha256": "9d4256abfaad5f6ff77ec735d85bae967f51de3547afd82b4568ecc0287dfc96",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/theme/ThemePalette.qml",
+      "destination": "apps/qt/qml/shared/theme/ThemePalette.qml",
+      "original_sha256": "a4a694c742bbf2a3894d0df34ea3a87699523538937fbb33ad0b9fc37fd040ad",
+      "sha256": "a4a694c742bbf2a3894d0df34ea3a87699523538937fbb33ad0b9fc37fd040ad",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    }
+  ],
+  "path_adaptation_stage": [
+    {
+      "original": "apps/qt/build.rs",
+      "destination": "apps/qt/build.rs",
+      "original_sha256": "e5c3c6afc9d502439512f045a344814835a08bbf41b6702e68e54ba21a0fbf9b",
+      "sha256": "a863ab30932837a94f1e27f2b20f56726057e200aa0661bb613ecaa88abefaf5",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/Main.qml",
+      "destination": "apps/qt/qml/Main.qml",
+      "original_sha256": "b3b80d2e88b9fbddf26e24866110001a3282a7b2bdab45379192065a19a52d3f",
+      "sha256": "64663e202128b0afe801d113fb41cb9e0b8a9b65265cf7c792e50117a4f2d47d",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/about/AboutDialog.qml",
+      "destination": "apps/qt/qml/shared/about/AboutDialog.qml",
+      "original_sha256": "7e99d2e1a4d6bae7e72a387d543fb10d74cdd2867a4687240e8256215b3e822f",
+      "sha256": "7e99d2e1a4d6bae7e72a387d543fb10d74cdd2867a4687240e8256215b3e822f",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/about/FaqDialog.qml",
+      "destination": "apps/qt/qml/shared/about/FaqDialog.qml",
+      "original_sha256": "645b7a6125e714ee79ef30b79d1d6a6b34de002b6daf436d804f052e40b4cb34",
+      "sha256": "645b7a6125e714ee79ef30b79d1d6a6b34de002b6daf436d804f052e40b4cb34",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/about/LicenseDialog.qml",
+      "destination": "apps/qt/qml/shared/about/LicenseDialog.qml",
+      "original_sha256": "5afa3ef24cf4479e84ec7816074b45810ad68cfae72aff03a9c7aa5b35e3a85b",
+      "sha256": "5afa3ef24cf4479e84ec7816074b45810ad68cfae72aff03a9c7aa5b35e3a85b",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/ApplyCancelFooter.qml",
+      "destination": "apps/qt/qml/shared/components/ApplyCancelFooter.qml",
+      "original_sha256": "ad5a1a737496c315d3e2f0e07f56be6933f2bad7c7298e873eeba51949d5fe3b",
+      "sha256": "ad5a1a737496c315d3e2f0e07f56be6933f2bad7c7298e873eeba51949d5fe3b",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/ChartNavigation.qml",
+      "destination": "apps/qt/qml/shared/components/ChartNavigation.qml",
+      "original_sha256": "f3a8cafb94b90ab629f3a6f99b7b5ab2a6e3e22abb55388e689bccb035983107",
+      "sha256": "f3a8cafb94b90ab629f3a6f99b7b5ab2a6e3e22abb55388e689bccb035983107",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/Connection.qml",
+      "destination": "apps/qt/qml/shared/components/Connection.qml",
+      "original_sha256": "5e5e55c978b4319d7b8796599c8de9a6e7b698c54ede94876dba45c56a1ae59e",
+      "sha256": "5e5e55c978b4319d7b8796599c8de9a6e7b698c54ede94876dba45c56a1ae59e",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/ContextualStatus.qml",
+      "destination": "apps/qt/qml/shared/components/ContextualStatus.qml",
+      "original_sha256": "117cc28b9f9d6f95b80018cda8b0fc7c57c8450cfcc28b3f9647d503f4674406",
+      "sha256": "117cc28b9f9d6f95b80018cda8b0fc7c57c8450cfcc28b3f9647d503f4674406",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/ReceiverChip.qml",
+      "destination": "apps/qt/qml/shared/components/ReceiverChip.qml",
+      "original_sha256": "82c1f703d63ac27b334c0671689c6aa9c978e73a9ca33df0fa5ed4b1889ca22f",
+      "sha256": "82c1f703d63ac27b334c0671689c6aa9c978e73a9ca33df0fa5ed4b1889ca22f",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/StageChip.qml",
+      "destination": "apps/qt/qml/shared/components/StageChip.qml",
+      "original_sha256": "02781aab7ca2176ed434a2f1b8965844d583f3317790c2f282610da419f3741b",
+      "sha256": "02781aab7ca2176ed434a2f1b8965844d583f3317790c2f282610da419f3741b",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/TlvTreeGrid.qml",
+      "destination": "apps/qt/qml/shared/components/TlvTreeGrid.qml",
+      "original_sha256": "202c178bafeca4dd7f3f633122a5e2590012f4eea327a2552250d79f2790542e",
+      "sha256": "202c178bafeca4dd7f3f633122a5e2590012f4eea327a2552250d79f2790542e",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/WorkbenchActionButton.qml",
+      "destination": "apps/qt/qml/shared/components/WorkbenchActionButton.qml",
+      "original_sha256": "46b75f9dd54915377795493f5c5cd014326e1fa8bd6c08b10f3c74015569903f",
+      "sha256": "46b75f9dd54915377795493f5c5cd014326e1fa8bd6c08b10f3c74015569903f",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/WorkbenchBlock.qml",
+      "destination": "apps/qt/qml/shared/components/WorkbenchBlock.qml",
+      "original_sha256": "9795f822b5ab3be13ee0c647df54a736fccabfaccba6d9c92bd1a825d93e667f",
+      "sha256": "9795f822b5ab3be13ee0c647df54a736fccabfaccba6d9c92bd1a825d93e667f",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/components/WorkbenchDialog.qml",
+      "destination": "apps/qt/qml/shared/components/WorkbenchDialog.qml",
+      "original_sha256": "a25345c864e1a6b949750d64da4adc8b776a2201398661ee88b2a26073307cfb",
+      "sha256": "a25345c864e1a6b949750d64da4adc8b776a2201398661ee88b2a26073307cfb",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/MeasurementInputDialog.qml",
+      "destination": "apps/qt/qml/inputs/measurement_input/MeasurementInputDialog.qml",
+      "original_sha256": "97d86cfe79d68f64698729c6f4092a5134180b7af82fd5d7ea0333a324043e4d",
+      "sha256": "4c091e9ce43fbdb25bb132d07962839e31cc560fd7fb12de4b11c82e6719e589",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/MeasurementPlaybackControls.qml",
+      "destination": "apps/qt/qml/inputs/measurement_input/MeasurementPlaybackControls.qml",
+      "original_sha256": "2a2a9df030d0e1e2d24bc093fbaa946d4268b32422b24b8e63d8d6d6c2577964",
+      "sha256": "78949aa21c7ca7afca1d24cc85e004c21ca15efe0dc9ff514b6a9b4586de1f85",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/MeasurementPlot.qml",
+      "destination": "apps/qt/qml/inputs/measurement_input/MeasurementPlot.qml",
+      "original_sha256": "077c216c5bc753d6705fc950fcef43ce558f96890e10ae783c89e5d9844a286d",
+      "sha256": "ed842c331b708675b603152105f1dab46926146fb9a88c061645678cbfb26138",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/MeasurementViewer.qml",
+      "destination": "apps/qt/qml/inputs/measurement_input/MeasurementViewer.qml",
+      "original_sha256": "5331dc788f6f3cbd6333e994cd3e372e3cf0864804333ed821ebd8dd91e53dc8",
+      "sha256": "fe2f3e78db64fb93adc2b2323132afa7de253bf636a1ea1480f44b95b3a2fd2d",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/RxmerDesignerDialog.qml",
+      "destination": "apps/qt/qml/inputs/measurement_input/RxmerDesignerDialog.qml",
+      "original_sha256": "d7bb6f825eacb57968f3db3936a7cb062b4130f19eabce0f5de8c4765e25db58",
+      "sha256": "7de651145f4290fe846ac4abf39dab6b668d506f773dfc474b67930d3da10cc8",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/measurement_input/RxmerPnmExportDialog.qml",
+      "destination": "apps/qt/qml/inputs/measurement_input/RxmerPnmExportDialog.qml",
+      "original_sha256": "3b3eb8a59099cb950320ba5a07f2e259e156df03ced87e2d42065bb8bf449e5b",
+      "sha256": "ec9773c5b6d4a682bdc6b74eb4dc496103d0edec6b67c7f000977f33f63b472c",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/ofdm_settings/OfdmSettingsDialog.qml",
+      "destination": "apps/qt/qml/inputs/ofdm_settings/OfdmSettingsDialog.qml",
+      "original_sha256": "623392134aeb7442297818bbf71f42a3c3729bd0b0b1c58f20bdd7c44e03e50d",
+      "sha256": "f3b571969863e689c87d7588cc9566b83097b6b6446539534f017e22c7c67212",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/profile_input/ProfileBandwidthDialog.qml",
+      "destination": "apps/qt/qml/inputs/profile_input/ProfileBandwidthDialog.qml",
+      "original_sha256": "5d3e3fa1633359df6855c259e75d00cbdd078b6d6f86053ce8a3b68b3d9ef67a",
+      "sha256": "d28bb9eb2708bc2fb0b993ad4adaf56139ccc3a13e35b017dcc3d34a04360a1e",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/profile_input/ProfileChart.qml",
+      "destination": "apps/qt/qml/inputs/profile_input/ProfileChart.qml",
+      "original_sha256": "1c768b92169c8bebce07d6ca10dfc3cda3ac22e39c41ba6c88d24c3aaeb1188b",
+      "sha256": "df4e572c2f20bd274a55c23edea15a418c9f7a74d87f78a2b253a05bdb44e746",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/profile_input/ProfileInputDialog.qml",
+      "destination": "apps/qt/qml/inputs/profile_input/ProfileInputDialog.qml",
+      "original_sha256": "d113e57858edf0810348922752ae0f98f1b51aa48712e9b2604fb9553eb91988",
+      "sha256": "8e1352bcd7d6214b6aa37bda3358fc262a16ce8b0c6216142c56446ac1a0c11f",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/profile_input/ProfilePlotDialog.qml",
+      "destination": "apps/qt/qml/inputs/profile_input/ProfilePlotDialog.qml",
+      "original_sha256": "96a4ebe0def7490cebcd334c3c4f2733a5ad054d37070c5e8dce0e90d4d19b66",
+      "sha256": "a6107ae50aed035b26523970abbc9fd241c0a06cd8da189ecb732408f0f2ddcf",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/inputs/source_input/SourceInputDialog.qml",
+      "destination": "apps/qt/qml/inputs/source_input/SourceInputDialog.qml",
+      "original_sha256": "53fe443e2649364fe624f378c11f4bda7720ee05ac9545c379413f838e3dd670",
+      "sha256": "ec8a34569084979a942fe1fec632109f7dab8a4876b9ca486ff5d91a1684fb87",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/fec/ReceiverFecDialog.qml",
+      "destination": "apps/qt/qml/instruments/fec/ReceiverFecDialog.qml",
+      "original_sha256": "c8af22babe2a1a558134eac84ce22eda8912ea40f1916e63f3cc50f9f83c6472",
+      "sha256": "5397a97f0fcb5a0f8bbb93fe9d92f7459439d24d29b805ccf8507dcf7b7fe924",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/messages/TransmitterMessageDialog.qml",
+      "destination": "apps/qt/qml/instruments/messages/TransmitterMessageDialog.qml",
+      "original_sha256": "5fa497a1355f1dfd69385060bce2c3770c75add0dcadc6a0d3f74647649745ca",
+      "sha256": "12d1f069690241585a78a58f9202a3a3424110f14d425f5470792a9bc604eaa0",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/profile_performance/ProfilePerformanceDialog.qml",
+      "destination": "apps/qt/qml/instruments/profile_performance/ProfilePerformanceDialog.qml",
+      "original_sha256": "4e5944c842326cd56871f2deeaf35b78e012cd79ccc264f167d572f47bfd3361",
+      "sha256": "bedf40fd0fef118b9975b22f6eb5dbb01cf8cd1b7c9fc8c0daa03944b76e41b4",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/qam/ReceiverCellControls.qml",
+      "destination": "apps/qt/qml/instruments/qam/ReceiverCellControls.qml",
+      "original_sha256": "89b4897248e985b837685dce9ef47b544ff2d475eb41300b56bfbb2562d61b95",
+      "sha256": "0cda49b832d5ca418e55d2e07762ec3101e8e013ea8b324dded22b09583954b0",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/qam/ReceiverQamDialog.qml",
+      "destination": "apps/qt/qml/instruments/qam/ReceiverQamDialog.qml",
+      "original_sha256": "3d7896c0cffdc58b4417446ac6a0169d31b758bc06ad8569dcb243a82f37a64f",
+      "sha256": "f320ed990e20cc92fffd3cfd39af5cbeda198ac287012208747d96284087b930",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/qam/TapQamDialog.qml",
+      "destination": "apps/qt/qml/instruments/qam/TapQamDialog.qml",
+      "original_sha256": "b4040467263430f7c7613e3e60f1a51a7c1975bdfcd8e938bd259003f57778be",
+      "sha256": "c7206500f4a988a6270acab6d2badfe9519f84698132bcffae445d1cd8f6ce4d",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/qam/TransmitterQamDialog.qml",
+      "destination": "apps/qt/qml/instruments/qam/TransmitterQamDialog.qml",
+      "original_sha256": "4016521f74f7e7a4d2fcffa8ccb106997de91abe205cc5362557aa4a48bcb992",
+      "sha256": "f19b231d1d24aef109470cd5a2fbd873a2f862e9a58b395bc782ff97aa72e4fa",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/response/ReceiverResponseDialog.qml",
+      "destination": "apps/qt/qml/instruments/response/ReceiverResponseDialog.qml",
+      "original_sha256": "9662260903e429a34073cea161ae605808113a23ebb73b4194f6233b5a1f08d4",
+      "sha256": "551d794c91eb93db4bffa8504d3ec2bef8855e0e7e447ab8207910de3a4f43ab",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/selection/InstrumentChoice.qml",
+      "destination": "apps/qt/qml/instruments/selection/InstrumentChoice.qml",
+      "original_sha256": "120c8daf6dca8f7bfcdfe240d285890ed1e437ffd3c71cf74da95f24b262f864",
+      "sha256": "694d45f5b6752994e05847f42a851cc823a8ab4d08bb15065644cf551bfeb5cf",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/slicer/ReceiverSlicerDialog.qml",
+      "destination": "apps/qt/qml/instruments/slicer/ReceiverSlicerDialog.qml",
+      "original_sha256": "507c0ed025a0fe538e9aaba7059a492dbb8eff880621b40de1b015966868d0eb",
+      "sha256": "0461a1b7b41875ca8d2cbb1d3dbbdfa9ced37fddb88b0e5a2620008f72f8f4c1",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/spectrum/SpectrumAnalyzerDialog.qml",
+      "destination": "apps/qt/qml/instruments/spectrum/SpectrumAnalyzerDialog.qml",
+      "original_sha256": "672546e3efbe794d285a3f965e87302eea1429635dabd4c2467e14b908f42f94",
+      "sha256": "943d1d9227d2bb899110988009b07acd66c94cded1b9c2fad1f819021de033ca",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/spectrum/SpectrumPlot.qml",
+      "destination": "apps/qt/qml/instruments/spectrum/SpectrumPlot.qml",
+      "original_sha256": "45adad8db65c53cacd8695334ad62747b3a8204c0a4dc7a2097c18ea9faf3186",
+      "sha256": "e0c258226e99b632c9eabc7da7aa079ada37cfa225f56d4b4afdbec93f24dbc8",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/spectrum/SymbolTimingDialog.qml",
+      "destination": "apps/qt/qml/instruments/spectrum/SymbolTimingDialog.qml",
+      "original_sha256": "c7b680a766a3d4a7e3aac1afd1722e62ee7249ccb262de33bcc844e893d1fbed",
+      "sha256": "375da658cdcb7cb908669303418681b193fe3bd37070584cd0f11a5556ebac48",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/instruments/stages/TransmitterStageDialog.qml",
+      "destination": "apps/qt/qml/instruments/stages/TransmitterStageDialog.qml",
+      "original_sha256": "3d7bc5794c9c0272e24b837bfd43958dbaf1105514155005ec114e281df141f0",
+      "sha256": "c24148035ca784ea1a1a322aaa1b7b1580388b9f03b303b095320385d06f1401",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/shell/SectionPreviewDialog.qml",
+      "destination": "apps/qt/qml/shell/SectionPreviewDialog.qml",
+      "original_sha256": "8693349e8296349eebca6f7cb0652e389baf3acaa4e421260221354d398f2432",
+      "sha256": "2aeecc4ada1a1a163481b428e61e552fc4a7ff200084bc6c1b80a323d0abf271",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/shell/SettingsDialog.qml",
+      "destination": "apps/qt/qml/shell/SettingsDialog.qml",
+      "original_sha256": "f79ac0a95f8ba59e188e016613e9623468602e3bcbdebc5f59c87b2f021ef27f",
+      "sha256": "97e715df5915c9557d1d320dd80d95d96c40667f8145c9a07de6b25b02e2aaaa",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/shell/UpdateDialog.qml",
+      "destination": "apps/qt/qml/shell/UpdateDialog.qml",
+      "original_sha256": "26ddd35aa07838436d28a7c1bf58441d87b9e77439484cfd80b3f4bfc9478b00",
+      "sha256": "6653b3e9ad8afff565b3b2ac841248aa7581ab01e1cade431e0399d1df76a0e3",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/shell/UpdateNotification.qml",
+      "destination": "apps/qt/qml/shell/UpdateNotification.qml",
+      "original_sha256": "563bdaf912d020cd880e8c057cd4873bf4b3a7ef87ad6096827488db860435bc",
+      "sha256": "c255fc9740d783431f3ebb85d0ed0b32d4aebce84dee09c53be2765de0b07816",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/shell/Workbench.qml",
+      "destination": "apps/qt/qml/shell/Workbench.qml",
+      "original_sha256": "714243ee3f7593c2fc9c3f8e45debd6f8b959309a18a40be10b53835b03f816e",
+      "sha256": "4e30db844ed8fdbc8e2c8048374daec1b1c1e90d104571668980f355d24d3e12",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/shell/WorkbenchEntryDialog.qml",
+      "destination": "apps/qt/qml/shell/WorkbenchEntryDialog.qml",
+      "original_sha256": "8c11aade91a441a450b4a56fa8f7f0b33833f985d4d7d0b04ba99d8f4cb4d0ae",
+      "sha256": "b1d8b7e786a1ce36b2f4b9e72c1956bb4225e7d4292b97e412615a0c4e6742b8",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/shell/WorkbenchFileFeedback.qml",
+      "destination": "apps/qt/qml/shell/WorkbenchFileFeedback.qml",
+      "original_sha256": "5697f166777696e92934bbdea2ea573990cf42cd944e0736f90738554bbc24c1",
+      "sha256": "144e2c63d462302f7850d88372218a540c9c4cff3ca2ad9ce243e36c9e6bee1d",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/shell/WorkbenchLoadingDialog.qml",
+      "destination": "apps/qt/qml/shell/WorkbenchLoadingDialog.qml",
+      "original_sha256": "35d2cd4c6b1b359f68a058a26f0a488035c061c52ac056a70df64e98701efd01",
+      "sha256": "9ff5a8528360d7d75e520078f731220142b2cf30473f80ff09891a8b69720040",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/theme/Theme.qml",
+      "destination": "apps/qt/qml/shared/theme/Theme.qml",
+      "original_sha256": "9d4256abfaad5f6ff77ec735d85bae967f51de3547afd82b4568ecc0287dfc96",
+      "sha256": "9d4256abfaad5f6ff77ec735d85bae967f51de3547afd82b4568ecc0287dfc96",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/theme/ThemePalette.qml",
+      "destination": "apps/qt/qml/shared/theme/ThemePalette.qml",
+      "original_sha256": "a4a694c742bbf2a3894d0df34ea3a87699523538937fbb33ad0b9fc37fd040ad",
+      "sha256": "a4a694c742bbf2a3894d0df34ea3a87699523538937fbb33ad0b9fc37fd040ad",
+      "moved": true,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelAmplifierDialog.qml",
+      "destination": "apps/qt/qml/workbenches/channel/ChannelAmplifierDialog.qml",
+      "original_sha256": "0266b72e6b3297552bc38c927863b2e1894b0dead21b443ed4768031af5829cc",
+      "sha256": "c66447f0b0f6708603bbd079ad0f3b05ce24e1a0e43c369d04dd22e61fd8f0d7",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelAttenuatorDialog.qml",
+      "destination": "apps/qt/qml/workbenches/channel/ChannelAttenuatorDialog.qml",
+      "original_sha256": "390f93b8ca4ef6e67f89947bd591f369cf954b558f7a6d4ea408ccf451d15d92",
+      "sha256": "35a966d7d7c10ce17511a2d2e98a94403b373b459d34c1806e5b94e87d7de2c7",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelConfigurationDialog.qml",
+      "destination": "apps/qt/qml/workbenches/channel/ChannelConfigurationDialog.qml",
+      "original_sha256": "c234d79607fa8f5e5487d8d3ce704fc6aa8e5a1eedc78d4c8088d67ad94eac7b",
+      "sha256": "7de4a3204c3993026fd2587d445fc3ecc5f7d0596ae7764792b6b5068f6c196b",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelFilterDialog.qml",
+      "destination": "apps/qt/qml/workbenches/channel/ChannelFilterDialog.qml",
+      "original_sha256": "8cb8317f81a653f6687178a5335d5edf9f03129e4d995cb7f02d529b35422be4",
+      "sha256": "1475857b50c8e589bdf7fd6a1dca87b5956dbee8e6dedbfc7f28a94301f23a6c",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelInstrumentDialog.qml",
+      "destination": "apps/qt/qml/workbenches/channel/ChannelInstrumentDialog.qml",
+      "original_sha256": "aca59269d419888ce276743d9d1c9a04a4dab203c4371b449c37505ccd242cb5",
+      "sha256": "7b6c8bfae3bba6c8f346e02651999ace45fe56076037977a0455cd1cbc7caedb",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelLossDialog.qml",
+      "destination": "apps/qt/qml/workbenches/channel/ChannelLossDialog.qml",
+      "original_sha256": "c80451b7628aa853b286f000464fcdc2b19b8661642c184f6406da5c87277411",
+      "sha256": "b17639b0de009e3672c9c4ed4943d39606ffb70e96eb8034f736cb5300b38843",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelModelCard.qml",
+      "destination": "apps/qt/qml/workbenches/channel/ChannelModelCard.qml",
+      "original_sha256": "c35e65d0a4c6325df1a64697d41329fcd21377fe3e713da8dc80e7ab7acad435",
+      "sha256": "f336534a6151dd631949fd8f7adc550af6f5cb5da2b426282b18c7ed5429271c",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelResponsePreviewDialog.qml",
+      "destination": "apps/qt/qml/workbenches/channel/ChannelResponsePreviewDialog.qml",
+      "original_sha256": "a635a4217c5166842d8ef87b888193859b2791279a00455772e683d40924327a",
+      "sha256": "ece74e94db44403b33e283d63860142a2ee5203d55f3335c75dd873f275406d8",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/channel/ChannelWorkbenchDialog.qml",
+      "destination": "apps/qt/qml/workbenches/channel/ChannelWorkbenchDialog.qml",
+      "original_sha256": "204dbd365202613af3e201dbd5da723a9fe92b3424677f1cad8733b9771fcea8",
+      "sha256": "01c8d1ba05be5394c0aa984456a4a281c234c43000f96aab3a289ed3ee28dc8f",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/receiver/ReceiverConfigurationDialog.qml",
+      "destination": "apps/qt/qml/workbenches/receiver/ReceiverConfigurationDialog.qml",
+      "original_sha256": "aae7b2584efebccfa6ae38f9588661dbf6d8a30222f2b004109342df516a3f40",
+      "sha256": "ca7aa89aa121a485aa826f1fd0840f644e2123d6a3a2ade34624894bd6f9c913",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/receiver/ReceiverWorkbenchDialog.qml",
+      "destination": "apps/qt/qml/workbenches/receiver/ReceiverWorkbenchDialog.qml",
+      "original_sha256": "3dd50825d234bfa90ca61484a87ef40e2112403e26284c6385109fe5516143d5",
+      "sha256": "bd16c963e41ac755e394b76da0ff3c97fefd38f3267fd2b12c09554ffd4a9d9f",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/transmitter/TransmitterGraphCard.qml",
+      "destination": "apps/qt/qml/workbenches/transmitter/TransmitterGraphCard.qml",
+      "original_sha256": "213468183eac65fa3d0582e0c317ce914a63b963b573d3facc41c7547f41b81a",
+      "sha256": "81b25bae37d3cbce2b9983ac5b6d1f67e9654de2a5e7a7ba771bade3caa9d68d",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/transmitter/TransmitterWorkbenchDialog.qml",
+      "destination": "apps/qt/qml/workbenches/transmitter/TransmitterWorkbenchDialog.qml",
+      "original_sha256": "1d58b723bde712d6c68e8d20508fc4a4612e16f7bdf57c9e30a9e0b4f10e938a",
+      "sha256": "60799b7350cfcc473328a87de61c88471915e59435afd2da2cca4d9b9d215c8d",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/verification/VerificationDialog.qml",
+      "destination": "apps/qt/qml/workbenches/verification/VerificationDialog.qml",
+      "original_sha256": "454cc26613be345e9d66dbc6d4de3b027a9b5f12f26c0711be6ec880364dc51a",
+      "sha256": "51fd63eb04b09cc6d6ef7346967bedf201cf617e2b31a1397cf4edcc435fbd3a",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/qml/workbenches/workbench/WorkbenchConfigurationDialog.qml",
+      "destination": "apps/qt/qml/workbenches/workbench/WorkbenchConfigurationDialog.qml",
+      "original_sha256": "bad7426a9099484ea4e90ecfc438f1f11eda360a0a279f2f4498bc6f993bee02",
+      "sha256": "7eeaf10ee59bb21f8e59e484eb526dc2236258104889b80b26272d621ff90c37",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/tests/tst_buttons.qml",
+      "destination": "apps/qt/tests/tst_buttons.qml",
+      "original_sha256": "0b50607b49ce0f4f66831efd0023c46c3b0e6c94ec7bdc0c26c2e4bf2aae603a",
+      "sha256": "7bac556a2d01172f50384077f4d3a5f5d45f35abfb916bfff8c250bc9c5238f3",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/tests/tst_control_palette.qml",
+      "destination": "apps/qt/tests/tst_control_palette.qml",
+      "original_sha256": "5a5ca3932f62e39a85ae99f2f160c138991cfdf192d32ef2fbe725106b881a6c",
+      "sha256": "e4ab205ee8f23594275e327a2b96cce7896c802394076dba7b8643a4b8f473a5",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/tests/tst_response_view.qml",
+      "destination": "apps/qt/tests/tst_response_view.qml",
+      "original_sha256": "b7db83ce244715cb831952e1ac473aa3e98129a7772eba138bfa9423c312651a",
+      "sha256": "9432c27918eb5b6213ea15c14c0622d4b263f1bebc7bf1fa462d0de20c2be56f",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/tests/tst_rxmer_designer.qml",
+      "destination": "apps/qt/tests/tst_rxmer_designer.qml",
+      "original_sha256": "b9908081ee1533569a1da07fd84a0897b546e62c21438363488940b4e164046f",
+      "sha256": "0119d45f4dede87dd14b9ef01bdfb4397143a62521e4e830a9135a2d253dec62",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/tests/tst_soft_diagnostics.qml",
+      "destination": "apps/qt/tests/tst_soft_diagnostics.qml",
+      "original_sha256": "ba8d7e70ea12219bf8b1e091212d832e381fc410e16fbcd312a61e048d0812e8",
+      "sha256": "0c22c2b237f9bf731c2144ad326251b382498bee67719515d83ea7f99e7366d4",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/tests/tst_tooltips.qml",
+      "destination": "apps/qt/tests/tst_tooltips.qml",
+      "original_sha256": "15706948e6c40d6a66ce8c1c3561977edd45850a30bdbc7b4e01e789a1bab8a2",
+      "sha256": "bd6a64eeab9f2ff38d5959eee4ede3c5ad1df044f58ed28ec221cc9439d237ab",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/tests/tst_updates.qml",
+      "destination": "apps/qt/tests/tst_updates.qml",
+      "original_sha256": "3f86bc23c831c4458d1d9c43cf7d5bd012bed3c0235f0f714b083bfb509a75ab",
+      "sha256": "dab99cd399f918170e53b14708cafe9f7fcdaa811786d82ee49b7937bcb8403d",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "apps/qt/tests/tst_workbench.qml",
+      "destination": "apps/qt/tests/tst_workbench.qml",
+      "original_sha256": "0eaed1625801328e8e729f14aec57f6f6dfa863da933c8179d1d4dde426c76d2",
+      "sha256": "261aad026c8967df7725c7fd562455bbe39f85b5b98b5374ee21eff197c062db",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "docs/requirements.md",
+      "destination": "docs/requirements.md",
+      "original_sha256": "68949baab1f688db9d0edb9124b6d2da3eeff3d3581d76d625272836a67f1fdc",
+      "sha256": "100c5de25d733c16812affff25190c684f628450bba1a8521523eb12461c50d0",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "skills/coding-style/SKILL.md",
+      "destination": "skills/coding-style/SKILL.md",
+      "original_sha256": "5a7ecaaa63218eddfc6131b8fa9bcc9dfa6a42de07e2fbfb39eac7842eec9564",
+      "sha256": "c771767ae4720b57eee2cfbef8460df1ff4401ebfb7c8c80b394a6ba1812b7f0",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    },
+    {
+      "original": "skills/ui-design/SKILL.md",
+      "destination": "skills/ui-design/SKILL.md",
+      "original_sha256": "5e59aaa10648f2eea9902e63aa02794048ff42353d1f3dc5f78baa662dd64c3b",
+      "sha256": "d2419bd06c6589b9de9e0763ede427bd82af8df1794607c27a93680a3bcab91a",
+      "moved": false,
+      "numeric_tokens_unchanged": true
+    }
+  ],
+  "live_requirement_owner_relocations": [
+    {
+      "route": "terms",
+      "original": "apps/qt/qml/about/AboutDialog.qml",
+      "destination": "apps/qt/qml/shared/about/AboutDialog.qml"
+    },
+    {
+      "route": "buttons",
+      "original": "apps/qt/qml/components",
+      "destination": "apps/qt/qml/shared/components"
+    },
+    {
+      "route": "buttons",
+      "original": "apps/qt/qml/theme",
+      "destination": "apps/qt/qml/shared/theme"
+    },
+    {
+      "route": "about",
+      "original": "apps/qt/qml/about/AboutDialog.qml",
+      "destination": "apps/qt/qml/shared/about/AboutDialog.qml"
+    },
+    {
+      "route": "tooltip",
+      "original": "apps/qt/qml/components",
+      "destination": "apps/qt/qml/shared/components"
+    },
+    {
+      "route": "zoom",
+      "original": "apps/qt/qml/components",
+      "destination": "apps/qt/qml/shared/components"
+    }
+  ],
+  "current_files": [
+    {
+      "path": "apps/qt/build.rs",
+      "sha256": "a863ab30932837a94f1e27f2b20f56726057e200aa0661bb613ecaa88abefaf5"
+    },
+    {
+      "path": "apps/qt/qml/Main.qml",
+      "sha256": "64663e202128b0afe801d113fb41cb9e0b8a9b65265cf7c792e50117a4f2d47d"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/MeasurementInputDialog.qml",
+      "sha256": "4c091e9ce43fbdb25bb132d07962839e31cc560fd7fb12de4b11c82e6719e589"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/MeasurementPlaybackControls.qml",
+      "sha256": "78949aa21c7ca7afca1d24cc85e004c21ca15efe0dc9ff514b6a9b4586de1f85"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/MeasurementPlot.qml",
+      "sha256": "ed842c331b708675b603152105f1dab46926146fb9a88c061645678cbfb26138"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/MeasurementViewer.qml",
+      "sha256": "fe2f3e78db64fb93adc2b2323132afa7de253bf636a1ea1480f44b95b3a2fd2d"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/RxmerDesignerDialog.qml",
+      "sha256": "7de651145f4290fe846ac4abf39dab6b668d506f773dfc474b67930d3da10cc8"
+    },
+    {
+      "path": "apps/qt/qml/inputs/measurement_input/RxmerPnmExportDialog.qml",
+      "sha256": "ec9773c5b6d4a682bdc6b74eb4dc496103d0edec6b67c7f000977f33f63b472c"
+    },
+    {
+      "path": "apps/qt/qml/inputs/ofdm_settings/OfdmSettingsDialog.qml",
+      "sha256": "f3b571969863e689c87d7588cc9566b83097b6b6446539534f017e22c7c67212"
+    },
+    {
+      "path": "apps/qt/qml/inputs/profile_input/ProfileBandwidthDialog.qml",
+      "sha256": "d28bb9eb2708bc2fb0b993ad4adaf56139ccc3a13e35b017dcc3d34a04360a1e"
+    },
+    {
+      "path": "apps/qt/qml/inputs/profile_input/ProfileChart.qml",
+      "sha256": "df4e572c2f20bd274a55c23edea15a418c9f7a74d87f78a2b253a05bdb44e746"
+    },
+    {
+      "path": "apps/qt/qml/inputs/profile_input/ProfileInputDialog.qml",
+      "sha256": "8e1352bcd7d6214b6aa37bda3358fc262a16ce8b0c6216142c56446ac1a0c11f"
+    },
+    {
+      "path": "apps/qt/qml/inputs/profile_input/ProfilePlotDialog.qml",
+      "sha256": "a6107ae50aed035b26523970abbc9fd241c0a06cd8da189ecb732408f0f2ddcf"
+    },
+    {
+      "path": "apps/qt/qml/inputs/source_input/SourceInputDialog.qml",
+      "sha256": "ec8a34569084979a942fe1fec632109f7dab8a4876b9ca486ff5d91a1684fb87"
+    },
+    {
+      "path": "apps/qt/qml/instruments/fec/ReceiverFecDialog.qml",
+      "sha256": "5397a97f0fcb5a0f8bbb93fe9d92f7459439d24d29b805ccf8507dcf7b7fe924"
+    },
+    {
+      "path": "apps/qt/qml/instruments/messages/TransmitterMessageDialog.qml",
+      "sha256": "12d1f069690241585a78a58f9202a3a3424110f14d425f5470792a9bc604eaa0"
+    },
+    {
+      "path": "apps/qt/qml/instruments/profile_performance/ProfilePerformanceDialog.qml",
+      "sha256": "bedf40fd0fef118b9975b22f6eb5dbb01cf8cd1b7c9fc8c0daa03944b76e41b4"
+    },
+    {
+      "path": "apps/qt/qml/instruments/qam/ReceiverCellControls.qml",
+      "sha256": "0cda49b832d5ca418e55d2e07762ec3101e8e013ea8b324dded22b09583954b0"
+    },
+    {
+      "path": "apps/qt/qml/instruments/qam/ReceiverQamDialog.qml",
+      "sha256": "f320ed990e20cc92fffd3cfd39af5cbeda198ac287012208747d96284087b930"
+    },
+    {
+      "path": "apps/qt/qml/instruments/qam/TapQamDialog.qml",
+      "sha256": "c7206500f4a988a6270acab6d2badfe9519f84698132bcffae445d1cd8f6ce4d"
+    },
+    {
+      "path": "apps/qt/qml/instruments/qam/TransmitterQamDialog.qml",
+      "sha256": "f19b231d1d24aef109470cd5a2fbd873a2f862e9a58b395bc782ff97aa72e4fa"
+    },
+    {
+      "path": "apps/qt/qml/instruments/response/ReceiverResponseDialog.qml",
+      "sha256": "551d794c91eb93db4bffa8504d3ec2bef8855e0e7e447ab8207910de3a4f43ab"
+    },
+    {
+      "path": "apps/qt/qml/instruments/selection/InstrumentChoice.qml",
+      "sha256": "694d45f5b6752994e05847f42a851cc823a8ab4d08bb15065644cf551bfeb5cf"
+    },
+    {
+      "path": "apps/qt/qml/instruments/slicer/ReceiverSlicerDialog.qml",
+      "sha256": "0461a1b7b41875ca8d2cbb1d3dbbdfa9ced37fddb88b0e5a2620008f72f8f4c1"
+    },
+    {
+      "path": "apps/qt/qml/instruments/spectrum/SpectrumAnalyzerDialog.qml",
+      "sha256": "943d1d9227d2bb899110988009b07acd66c94cded1b9c2fad1f819021de033ca"
+    },
+    {
+      "path": "apps/qt/qml/instruments/spectrum/SpectrumPlot.qml",
+      "sha256": "e0c258226e99b632c9eabc7da7aa079ada37cfa225f56d4b4afdbec93f24dbc8"
+    },
+    {
+      "path": "apps/qt/qml/instruments/spectrum/SymbolTimingDialog.qml",
+      "sha256": "375da658cdcb7cb908669303418681b193fe3bd37070584cd0f11a5556ebac48"
+    },
+    {
+      "path": "apps/qt/qml/instruments/stages/TransmitterStageDialog.qml",
+      "sha256": "c24148035ca784ea1a1a322aaa1b7b1580388b9f03b303b095320385d06f1401"
+    },
+    {
+      "path": "apps/qt/qml/shared/about/AboutDialog.qml",
+      "sha256": "7e99d2e1a4d6bae7e72a387d543fb10d74cdd2867a4687240e8256215b3e822f"
+    },
+    {
+      "path": "apps/qt/qml/shared/about/FaqDialog.qml",
+      "sha256": "645b7a6125e714ee79ef30b79d1d6a6b34de002b6daf436d804f052e40b4cb34"
+    },
+    {
+      "path": "apps/qt/qml/shared/about/LicenseDialog.qml",
+      "sha256": "5afa3ef24cf4479e84ec7816074b45810ad68cfae72aff03a9c7aa5b35e3a85b"
+    },
+    {
+      "path": "apps/qt/qml/shared/components/ApplyCancelFooter.qml",
+      "sha256": "ad5a1a737496c315d3e2f0e07f56be6933f2bad7c7298e873eeba51949d5fe3b"
+    },
+    {
+      "path": "apps/qt/qml/shared/components/ChartNavigation.qml",
+      "sha256": "f3a8cafb94b90ab629f3a6f99b7b5ab2a6e3e22abb55388e689bccb035983107"
+    },
+    {
+      "path": "apps/qt/qml/shared/components/Connection.qml",
+      "sha256": "5e5e55c978b4319d7b8796599c8de9a6e7b698c54ede94876dba45c56a1ae59e"
+    },
+    {
+      "path": "apps/qt/qml/shared/components/ContextualStatus.qml",
+      "sha256": "117cc28b9f9d6f95b80018cda8b0fc7c57c8450cfcc28b3f9647d503f4674406"
+    },
+    {
+      "path": "apps/qt/qml/shared/components/ReceiverChip.qml",
+      "sha256": "82c1f703d63ac27b334c0671689c6aa9c978e73a9ca33df0fa5ed4b1889ca22f"
+    },
+    {
+      "path": "apps/qt/qml/shared/components/StageChip.qml",
+      "sha256": "02781aab7ca2176ed434a2f1b8965844d583f3317790c2f282610da419f3741b"
+    },
+    {
+      "path": "apps/qt/qml/shared/components/TlvTreeGrid.qml",
+      "sha256": "202c178bafeca4dd7f3f633122a5e2590012f4eea327a2552250d79f2790542e"
+    },
+    {
+      "path": "apps/qt/qml/shared/components/WorkbenchActionButton.qml",
+      "sha256": "46b75f9dd54915377795493f5c5cd014326e1fa8bd6c08b10f3c74015569903f"
+    },
+    {
+      "path": "apps/qt/qml/shared/components/WorkbenchBlock.qml",
+      "sha256": "9795f822b5ab3be13ee0c647df54a736fccabfaccba6d9c92bd1a825d93e667f"
+    },
+    {
+      "path": "apps/qt/qml/shared/components/WorkbenchDialog.qml",
+      "sha256": "a25345c864e1a6b949750d64da4adc8b776a2201398661ee88b2a26073307cfb"
+    },
+    {
+      "path": "apps/qt/qml/shared/theme/Theme.qml",
+      "sha256": "9d4256abfaad5f6ff77ec735d85bae967f51de3547afd82b4568ecc0287dfc96"
+    },
+    {
+      "path": "apps/qt/qml/shared/theme/ThemePalette.qml",
+      "sha256": "a4a694c742bbf2a3894d0df34ea3a87699523538937fbb33ad0b9fc37fd040ad"
+    },
+    {
+      "path": "apps/qt/qml/shell/SectionPreviewDialog.qml",
+      "sha256": "2aeecc4ada1a1a163481b428e61e552fc4a7ff200084bc6c1b80a323d0abf271"
+    },
+    {
+      "path": "apps/qt/qml/shell/SettingsDialog.qml",
+      "sha256": "97e715df5915c9557d1d320dd80d95d96c40667f8145c9a07de6b25b02e2aaaa"
+    },
+    {
+      "path": "apps/qt/qml/shell/UpdateDialog.qml",
+      "sha256": "6653b3e9ad8afff565b3b2ac841248aa7581ab01e1cade431e0399d1df76a0e3"
+    },
+    {
+      "path": "apps/qt/qml/shell/UpdateNotification.qml",
+      "sha256": "c255fc9740d783431f3ebb85d0ed0b32d4aebce84dee09c53be2765de0b07816"
+    },
+    {
+      "path": "apps/qt/qml/shell/Workbench.qml",
+      "sha256": "4e30db844ed8fdbc8e2c8048374daec1b1c1e90d104571668980f355d24d3e12"
+    },
+    {
+      "path": "apps/qt/qml/shell/WorkbenchEntryDialog.qml",
+      "sha256": "b1d8b7e786a1ce36b2f4b9e72c1956bb4225e7d4292b97e412615a0c4e6742b8"
+    },
+    {
+      "path": "apps/qt/qml/shell/WorkbenchFileFeedback.qml",
+      "sha256": "144e2c63d462302f7850d88372218a540c9c4cff3ca2ad9ce243e36c9e6bee1d"
+    },
+    {
+      "path": "apps/qt/qml/shell/WorkbenchLoadingDialog.qml",
+      "sha256": "9ff5a8528360d7d75e520078f731220142b2cf30473f80ff09891a8b69720040"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelAmplifierDialog.qml",
+      "sha256": "c66447f0b0f6708603bbd079ad0f3b05ce24e1a0e43c369d04dd22e61fd8f0d7"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelAttenuatorDialog.qml",
+      "sha256": "35a966d7d7c10ce17511a2d2e98a94403b373b459d34c1806e5b94e87d7de2c7"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelConfigurationDialog.qml",
+      "sha256": "7de4a3204c3993026fd2587d445fc3ecc5f7d0596ae7764792b6b5068f6c196b"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelFilterDialog.qml",
+      "sha256": "1475857b50c8e589bdf7fd6a1dca87b5956dbee8e6dedbfc7f28a94301f23a6c"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelInstrumentDialog.qml",
+      "sha256": "7b6c8bfae3bba6c8f346e02651999ace45fe56076037977a0455cd1cbc7caedb"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelLossDialog.qml",
+      "sha256": "b17639b0de009e3672c9c4ed4943d39606ffb70e96eb8034f736cb5300b38843"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelModelCard.qml",
+      "sha256": "f336534a6151dd631949fd8f7adc550af6f5cb5da2b426282b18c7ed5429271c"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelResponsePreviewDialog.qml",
+      "sha256": "ece74e94db44403b33e283d63860142a2ee5203d55f3335c75dd873f275406d8"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/channel/ChannelWorkbenchDialog.qml",
+      "sha256": "01c8d1ba05be5394c0aa984456a4a281c234c43000f96aab3a289ed3ee28dc8f"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/receiver/ReceiverConfigurationDialog.qml",
+      "sha256": "ca7aa89aa121a485aa826f1fd0840f644e2123d6a3a2ade34624894bd6f9c913"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/receiver/ReceiverWorkbenchDialog.qml",
+      "sha256": "bd16c963e41ac755e394b76da0ff3c97fefd38f3267fd2b12c09554ffd4a9d9f"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/transmitter/TransmitterGraphCard.qml",
+      "sha256": "81b25bae37d3cbce2b9983ac5b6d1f67e9654de2a5e7a7ba771bade3caa9d68d"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/transmitter/TransmitterWorkbenchDialog.qml",
+      "sha256": "60799b7350cfcc473328a87de61c88471915e59435afd2da2cca4d9b9d215c8d"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/verification/VerificationDialog.qml",
+      "sha256": "51fd63eb04b09cc6d6ef7346967bedf201cf617e2b31a1397cf4edcc435fbd3a"
+    },
+    {
+      "path": "apps/qt/qml/workbenches/workbench/WorkbenchConfigurationDialog.qml",
+      "sha256": "7eeaf10ee59bb21f8e59e484eb526dc2236258104889b80b26272d621ff90c37"
+    },
+    {
+      "path": "apps/qt/tests/tst_buttons.qml",
+      "sha256": "7bac556a2d01172f50384077f4d3a5f5d45f35abfb916bfff8c250bc9c5238f3"
+    },
+    {
+      "path": "apps/qt/tests/tst_control_palette.qml",
+      "sha256": "e4ab205ee8f23594275e327a2b96cce7896c802394076dba7b8643a4b8f473a5"
+    },
+    {
+      "path": "apps/qt/tests/tst_response_view.qml",
+      "sha256": "9432c27918eb5b6213ea15c14c0622d4b263f1bebc7bf1fa462d0de20c2be56f"
+    },
+    {
+      "path": "apps/qt/tests/tst_rxmer_designer.qml",
+      "sha256": "0119d45f4dede87dd14b9ef01bdfb4397143a62521e4e830a9135a2d253dec62"
+    },
+    {
+      "path": "apps/qt/tests/tst_soft_diagnostics.qml",
+      "sha256": "0c22c2b237f9bf731c2144ad326251b382498bee67719515d83ea7f99e7366d4"
+    },
+    {
+      "path": "apps/qt/tests/tst_tooltips.qml",
+      "sha256": "bd6a64eeab9f2ff38d5959eee4ede3c5ad1df044f58ed28ec221cc9439d237ab"
+    },
+    {
+      "path": "apps/qt/tests/tst_updates.qml",
+      "sha256": "dab99cd399f918170e53b14708cafe9f7fcdaa811786d82ee49b7937bcb8403d"
+    },
+    {
+      "path": "apps/qt/tests/tst_workbench.qml",
+      "sha256": "261aad026c8967df7725c7fd562455bbe39f85b5b98b5374ee21eff197c062db"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "86ffb942976af85d78f0f946171882ab0f6541d3b0adefa9b18dad63aec6d903"
+    },
+    {
+      "path": "docs/development/checklist.md",
+      "sha256": "9347387fae546397ff03f023295ba146939616b583b88b95ad9be2dfe855a3e2"
+    },
+    {
+      "path": "docs/development/features/downstream-requirements/traceability.json",
+      "sha256": "c0bc0d8762b9d8f1973524d659a8d5eccd18cffd1fde76dddb75f3ddf6170d25"
+    },
+    {
+      "path": "docs/development/features/unified-qt-workbench/design.md",
+      "sha256": "c4efe352c652750ff312800f8bcc8f8324b9a8dc42e5528ab60ef2cda081ff1d"
+    },
+    {
+      "path": "docs/development/features/unified-qt-workbench/validation.md",
+      "sha256": "b6b16864612a4f4cef2150bcb6703e25192ea94cd5e59aa648d153265154e178"
+    },
+    {
+      "path": "docs/requirements.md",
+      "sha256": "02a311d154037f0cb5ecbb97051d261fc99c7dba58fbe6867cb77910f1456800"
+    },
+    {
+      "path": "skills/coding-style/SKILL.md",
+      "sha256": "c771767ae4720b57eee2cfbef8460df1ff4401ebfb7c8c80b394a6ba1812b7f0"
+    },
+    {
+      "path": "skills/ui-design/SKILL.md",
+      "sha256": "d2419bd06c6589b9de9e0763ede427bd82af8df1794607c27a93680a3bcab91a"
+    }
+  ],
+  "qt_checks": {
+    "commands": [
+      {
+        "command": [
+          "scripts/qt-desktop.sh",
+          "check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 317.52163249500154,
+        "log": "docs/development/local/unified-qt-workbench/org-01-qt-check.log"
+      },
+      {
+        "command": [
+          "scripts/qt-desktop.sh",
+          "build"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 267.75170210699434,
+        "log": "docs/development/local/unified-qt-workbench/org-01-qt-build.log"
+      }
+    ],
+    "qt_sdk": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64"
+  },
+  "native_smokes": {
+    "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+    "sha256": "bfb230ac7f17a69c7b71b53f17db563e52835db457e2b00b983fc7778b2396f7",
+    "display": ":0",
+    "display_dimensions": [
+      "dimensions:    1280x800 pixels (338x211 millimeters)"
+    ],
+    "qt_sdk_version": "6.8.3",
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.05478771599882748,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/multi-rxmer/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.057638307989691384,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.5114260260015726,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.030907054009730928,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--smoke-test"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.2395146190101514,
+        "stdout": "MERLIN_QT_STYLE=Fusion\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--smoke-test",
+          "--workbench",
+          "examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.8984111230092822,
+        "stdout": "MERLIN_QT_STYLE=Fusion\n",
+        "stderr": ""
+      }
+    ]
+  },
+  "acceptance": {
+    "qt_rust_cases": 87,
+    "qml_cases": 89,
+    "qml_skipped": 0,
+    "qt_rust_cases_named": [
+      "help::tests::minimum_duration_obeys_whole_symbol_boundaries",
+      "bridge::ofdm_settings::tests::registry_defaults_and_choices_match_core",
+      "help::tests::unavailable_qam_help_is_registered_and_unknown_states_stay_unclassified",
+      "bridge::ofdm_settings::tests::rejected_edits_preserve_accepted_settings",
+      "help::tests::over_limit_help_never_recommends_an_invalid_ui_duration",
+      "help::tests::unknown_errors_keep_original_text_and_no_guessed_help",
+      "inputs::channel_model::tests::saved_models_preserve_units_and_legacy_off_without_accepting_version_drift",
+      "help::tests::catalog_targets_are_unique_and_bundled",
+      "help::tests::faq_sections_support_windows_and_unix_line_endings",
+      "inputs::channel_model::tests::combined_preview_is_bounded_and_preserves_admission_diagnostics",
+      "bridge::rxmer_designer::tests::adoption_is_atomic_remaps_selection_and_rejects_stale_completion",
+      "bridge::rxmer_designer::tests::cancellation_discards_even_a_completed_success_and_profile_changes_reject",
+      "inputs::measurement_input::designer::tests::flat_scope_preview_plc_and_cancellation_preserve_inputs",
+      "inputs::measurement_input::model::tests::replay_capacity_uses_strict_observation_boundary_and_mode",
+      "inputs::measurement_input::model::tests::combined_modes_and_render_requests_reject_invalid_controls",
+      "inputs::measurement_input::model::tests::binary_json_shared_viewer_and_atomic_drafts_preserve_original_inputs",
+      "inputs::measurement_input::plc::tests::plc_region_spans_first_to_last_and_clips_when_zoomed",
+      "inputs::measurement_input::model::tests::selection_keeps_originals_and_round_trips_a_single_shot",
+      "inputs::profile_input::tests::binary_and_json_use_the_same_profile_validation",
+      "inputs::measurement_input::designer::tests::envelope_roundtrip_reopens_originals_without_compounding",
+      "inputs::measurement_input::designer::tests::random_variation_requires_flat_and_survives_envelope_roundtrip",
+      "inputs::source_input::model::tests::acceptance_rejection_cancel_and_modes_preserve_source_snapshot",
+      "inputs::source_input::model::tests::finite_fill_bounds_empty_equal_and_partial_byte_targets",
+      "instruments::receiver::fec::tests::allocations_keep_failures_distinct_and_empty_denominators_finite",
+      "instruments::receiver::fec::tests::histogram_preserves_internal_gaps_and_trims_unused_range",
+      "instruments::receiver::fec::tests::recovery_never_counts_rejected_or_source_mismatched_words_as_success",
+      "instruments::receiver::performance::tests::plc_band_uses_selected_profile_centers_and_clips_without_decimation",
+      "instruments::receiver::qam_history::tests::archive_reduction_preserves_real_identity_and_missing_runs_never_fall_back",
+      "inputs::profile_input::tests::profile_inspection_overlays_metrics_and_filters_preserve_capture",
+      "instruments::receiver::selection::tests::mer_uses_selected_cells_beyond_display_cap_and_separate_reference_planes",
+      "inputs::profile_input::tests::staged_failures_removal_and_profile_rejection_preserve_accepted_input",
+      "instruments::receiver::verification::tests::zero_counts_and_mixed_outcomes_keep_honest_coordinates",
+      "instruments::spectrum::plc::tests::plc_bounds_follow_spacing_layout_and_clipped_viewports",
+      "instruments::receiver::soft_display::tests::histogram_conserves_limits_and_zero_and_sequence_extrema",
+      "instruments::receiver::soft_display::tests::decision_region_contains_only_nearest_reference_for_square_and_cross_qam",
+      "instruments::spectrum::symbol_timing::tests::cp_and_roll_changes_move_timing_without_self_rescaling_the_overview",
+      "instruments::transmitter::graphs::tests::digital_and_raster_coordinates_preserve_bits_offsets_and_unknowns",
+      "instruments::transmitter::graphs::tests::ordered_iq_is_not_a_constellation_or_a_fabricated_permutation",
+      "instruments::transmitter::messages::tests::scheduled_frame_is_not_claimed_emitted_until_its_last_sample",
+      "inputs::profile_input::tests::profile_plot_preserves_source_grid_roles_and_bounds",
+      "instruments::transmitter::graphs::physical::tests::bins_preserve_peak_missing_power_and_layout_roles_within_bounds",
+      "instruments::transmitter::preview::tests::accepted_timing_refreshes_without_simulation_and_vf_changes_only_distance",
+      "instruments::transmitter::qam_points::tests::rare_ncp_survives_reduction_and_unknown_is_never_colored_as_data",
+      "instruments::transmitter::qam_points::tests::roles_follow_actual_interleaver_and_unavailable_history_stays_unknown",
+      "instruments::transmitter::tlv_fields::tests::assignment_ranges_default_loading_and_byte_offsets_remain_distinct",
+      "instruments::transmitter::tlv_fields::tests::registry_covers_only_the_implemented_subset_with_unique_keys",
+      "instruments::transmitter::tlv_fields::tests::timing_fields_use_core_tables_and_preserve_reserved_values",
+      "instruments::transmitter::preview::tests::readiness_cancellation_and_stale_generation_preserve_accepted_inputs",
+      "platform::example_directory::tests::installed_and_development_layouts_resolve_without_launch_directory",
+      "platform::input_file::tests::local_reads_preserve_bytes_and_reject_remote_oversize_and_nonregular_inputs",
+      "platform::startup::tests::invalid_or_conflicting_requests_are_rejected_before_gui_startup",
+      "platform::startup::tests::startup_inputs_preserve_paths_and_require_explicit_stdin",
+      "platform::updates::download::tests::platform_independent_download_verification_bounds_and_hash",
+      "platform::updates::install::tests::bounded_hash_copy_rejects_corruption_truncation_and_overflow",
+      "platform::updates::install::tests::identity_and_redirects_are_restricted",
+      "platform::updates::install::tests::private_staging_cleans_up_and_checkout_cannot_install",
+      "platform::updates::release::tests::canonical_is_preferred_and_legacy_support_cannot_mask_invalid_metadata",
+      "instruments::spectrum::symbol_timing::tests::both_ffts_and_all_valid_prefix_tapers_preserve_core_weights_and_overlap",
+      "platform::updates::release::tests::foreign_missing_duplicate_and_unverified_assets_never_notify",
+      "platform::updates::release::tests::windows_requires_exact_verified_desktop_msi",
+      "platform::updates::release::tests::stable_baseline_asset_and_numeric_versions",
+      "platform::updates::report::tests::profile_redaction_handles_case_and_separator_variants",
+      "platform::updates::tests::completion_preserves_preference_and_failure_is_nonblocking",
+      "platform::updates::windows::tests::checkout_never_installs_and_internal_entry_remains_closed",
+      "platform::updates::windows::tests::verified_msi_metadata_and_bounded_restart_result",
+      "platform::updates::report::tests::bounded_log_decodes_windows_utf16_and_preserves_failure",
+      "inputs::measurement_input::designer::tests::pnm_export_range_uses_full_grid_and_guards_recipe_results",
+      "inputs::measurement_input::designer::tests::preview_zoom_uses_original_offsets_shared_axes_and_bounded_plc_window",
+      "inputs::measurement_input::preview::tests::sparse_animation_uses_original_order_and_bounded_viewports",
+      "simulation::closed_loop::tests::selected_profiles_are_ordered_validated_and_persisted_without_running",
+      "simulation::run_timing::tests::elapsed_advances_without_progress_and_freezes_before_late_ui_poll",
+      "simulation::run_timing::tests::formatting_and_profile_progress_are_separate_from_simulated_time",
+      "platform::updates::install::tests::actual_deb_identity_must_match_selected_release",
+      "workbench::project_file::tests::self_contained_project_roundtrip_preserves_originals_and_rejects_corruption",
+      "instruments::transmitter::preview::tests::generated_baseband_and_capture_axes_share_one_immutable_spectrum",
+      "workbench::project_load::tests::bounded_stream_preserves_bytes_limits_and_cancellation",
+      "workbench::project_file::tests::version_two_profile_selection_roundtrips_and_legacy_remains_explicit",
+      "workbench::project_load::tests::command_line_file_preserves_destination_and_rejects_invalid_json",
+      "workbench::project_load::tests::errors_and_cancelled_success_do_not_publish_partial_inputs",
+      "workbench::project_load::tests::polling_does_not_wait_and_cancel_retains_single_worker_guard",
+      "workbench::project_file::tests::curated_workbenches_restore_matching_originals_and_prepare_full_requests",
+      "workbench::project_load::tests::real_multi_capture_workbench_prepares_editors_off_thread",
+      "simulation::closed_loop::tests::mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance",
+      "inputs::measurement_input::designer::tests::designed_flat_mer_drives_residual_power_and_real_fec",
+      "simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+      "simulation::closed_loop::tests::independent_sweep_preserves_each_profile_and_legacy_run_options",
+      "simulation::closed_loop::tests::channel193_rxmer_controls_tx_reference_mer_while_nearest_points_are_optimistic"
+    ],
+    "qml_cases_named": [
+      "qmltestrunner::SharedButtons::initTestCase()",
+      "qmltestrunner::SharedButtons::test_keyboard_disabled_and_theme_states()",
+      "qmltestrunner::SharedButtons::test_standard_dialog_roles()",
+      "qmltestrunner::SharedButtons::cleanupTestCase()",
+      "qmltestrunner::ControlPalette::initTestCase()",
+      "qmltestrunner::ControlPalette::test_dropdown_and_spin_text_contrast_in_both_themes()",
+      "qmltestrunner::ControlPalette::test_plc_band_is_visible_and_below_spectrum_trace()",
+      "qmltestrunner::ControlPalette::cleanupTestCase()",
+      "qmltestrunner::ResponseView::initTestCase()",
+      "qmltestrunner::ResponseView::test_frequency_and_echo_controls()",
+      "qmltestrunner::ResponseView::cleanupTestCase()",
+      "qmltestrunner::RxmerDesigner::initTestCase()",
+      "qmltestrunner::RxmerDesigner::test_cancel_does_not_stage_and_new_flat_source_is_explicit()",
+      "qmltestrunner::RxmerDesigner::test_direction_reverses_signed_tilt_without_changing_magnitude_or_zoom()",
+      "qmltestrunner::RxmerDesigner::test_json_save_remains_available_outside_binary_range()",
+      "qmltestrunner::RxmerDesigner::test_notch_mouse_steps_fit_editor_with_large_font()",
+      "qmltestrunner::RxmerDesigner::test_notch_steps_keep_band_edge_bounds_scope_and_zoom()",
+      "qmltestrunner::RxmerDesigner::test_pnm_export_uses_rust_guard_and_keeps_draft()",
+      "qmltestrunner::RxmerDesigner::test_random_variation_only_for_flat_source()",
+      "qmltestrunner::RxmerDesigner::test_recipe_and_capture_scope_are_independent()",
+      "qmltestrunner::RxmerDesigner::test_restore_switches_between_range_and_all()",
+      "qmltestrunner::RxmerDesigner::test_ripple_steps_preserve_fractional_entry_and_limits()",
+      "qmltestrunner::RxmerDesigner::test_tilt_steps_keep_text_entry_keyboard_and_limits()",
+      "qmltestrunner::RxmerDesigner::test_unchecked_tilt_disables_controls_and_retains_draft()",
+      "qmltestrunner::RxmerDesigner::test_zoom_plc_navigation_and_capture_changes_keep_window()",
+      "qmltestrunner::RxmerDesigner::cleanupTestCase()",
+      "qmltestrunner::SoftDiagnostics::initTestCase()",
+      "qmltestrunner::SoftDiagnostics::test_tabs_bounds_scope_and_empty_state()",
+      "qmltestrunner::SoftDiagnostics::cleanupTestCase()",
+      "qmltestrunner::TooltipTiming::initTestCase()",
+      "qmltestrunner::TooltipTiming::test_attached_shared_button()",
+      "qmltestrunner::TooltipTiming::test_explicit_context_help()",
+      "qmltestrunner::TooltipTiming::cleanupTestCase()",
+      "qmltestrunner::Updates::initTestCase()",
+      "qmltestrunner::Updates::test_chip_is_on_menu_right_and_starts_directly()",
+      "qmltestrunner::Updates::test_error_report_requires_click_and_handles_browser_failure()",
+      "qmltestrunner::Updates::test_manual_check_and_preference()",
+      "qmltestrunner::Updates::test_run_lock_and_recovery_failure_prevent_install()",
+      "qmltestrunner::Updates::test_windows_update_saves_recovery_and_starts_installer()",
+      "qmltestrunner::Updates::cleanupTestCase()",
+      "qmltestrunner::Workbench::initTestCase()",
+      "qmltestrunner::Workbench::test_about_actions_fit_minimum_window_in_both_themes()",
+      "qmltestrunner::Workbench::test_apply_cancel_footers_align_and_reject()",
+      "qmltestrunner::Workbench::test_block_readiness_colors_and_reasons()",
+      "qmltestrunner::Workbench::test_channel_power_controls_cancel_apply_and_tap_symmetry()",
+      "qmltestrunner::Workbench::test_channel_stages_tap_routing_and_loss_draft_cancel()",
+      "qmltestrunner::Workbench::test_contextual_help_hover_keyboard_and_offline_faq()",
+      "qmltestrunner::Workbench::test_controls_and_theme()",
+      "qmltestrunner::Workbench::test_fec_overview_profiles_tabs_and_partial_empty_states()",
+      "qmltestrunner::Workbench::test_full_symbol_timing_popup_keyboard_and_resize()",
+      "qmltestrunner::Workbench::test_loading_modal_stays_responsive_and_cancels_without_adoption()",
+      "qmltestrunner::Workbench::test_mce_draft_cancel_apply_chip_and_channel_independence()",
+      "qmltestrunner::Workbench::test_ofdm_cancel_and_reopen()",
+      "qmltestrunner::Workbench::test_ofdm_tree_and_blank_profile()",
+      "qmltestrunner::Workbench::test_preview_blocks_need_attention()",
+      "qmltestrunner::Workbench::test_profile_dialog_bounds_at_minimum_window()",
+      "qmltestrunner::Workbench::test_profile_staging_apply_cancel_and_remove()",
+      "qmltestrunner::Workbench::test_receiver_configuration_comparison_and_run_controls()",
+      "qmltestrunner::Workbench::test_receiver_profile_performance_navigation_and_scope()",
+      "qmltestrunner::Workbench::test_receiver_retained_filters_response_soft_and_fec_navigation()",
+      "qmltestrunner::Workbench::test_receiver_signal_views_and_independent_spectrum_taps()",
+      "qmltestrunner::Workbench::test_render()",
+      "qmltestrunner::Workbench::test_response_display_labels_follow_retained_mode()",
+      "qmltestrunner::Workbench::test_run_elapsed_survives_completion_pause_and_stationary_symbols()",
+      "qmltestrunner::Workbench::test_rxmer_capture_animation_step_pause_end_and_close()",
+      "qmltestrunner::Workbench::test_rxmer_preview_layout_is_stable_at_minimum_size()",
+      "qmltestrunner::Workbench::test_rxmer_selection_draft_and_single_shot_controls()",
+      "qmltestrunner::Workbench::test_sections(ofdm)",
+      "qmltestrunner::Workbench::test_sections(source)",
+      "qmltestrunner::Workbench::test_sections(tx)",
+      "qmltestrunner::Workbench::test_sections(channel)",
+      "qmltestrunner::Workbench::test_sections(rx)",
+      "qmltestrunner::Workbench::test_sections(verify)",
+      "qmltestrunner::Workbench::test_sections(profile)",
+      "qmltestrunner::Workbench::test_sections(ce)",
+      "qmltestrunner::Workbench::test_sections(mer)",
+      "qmltestrunner::Workbench::test_shared_measurement_viewers_and_joint_channel_readiness()",
+      "qmltestrunner::Workbench::test_source_options_and_accepted_readiness()",
+      "qmltestrunner::Workbench::test_start_requires_every_block_complete()",
+      "qmltestrunner::Workbench::test_transmitter_graph_cards_and_details()",
+      "qmltestrunner::Workbench::test_transmitter_graphs_empty_keyboard_and_minimum_layout()",
+      "qmltestrunner::Workbench::test_transmitter_readiness_analyzer_zoom_and_invalidation()",
+      "qmltestrunner::Workbench::test_transmitter_stage_message_and_qam_navigation()",
+      "qmltestrunner::Workbench::test_verification_partial_results_running_and_empty_state()",
+      "qmltestrunner::Workbench::test_waveform_channel_apply_and_cancel_preserve_receiver_mode()",
+      "qmltestrunner::Workbench::test_workbench_configuration_entry_choices()",
+      "qmltestrunner::Workbench::test_workbench_configuration_lifecycle_and_profile_selection()",
+      "qmltestrunner::Workbench::test_workbench_input_restore_discards_drafts_without_apply()",
+      "qmltestrunner::Workbench::cleanupTestCase()"
+    ],
+    "native_smokes": 6,
+    "qml_production_registrations": 82,
+    "all_moved_contents_byte_identical": true,
+    "all_other_qml_source_changes_are_relative_imports": true,
+    "qml_registration_uris_and_main_entry_preserved": true,
+    "bridge_entries_remain_together": true,
+    "licenses_notices_desktop_launch_and_branding_preserved": true,
+    "scientific_sources_and_public_api_unchanged": true,
+    "no_non_qt_workspace_retest_needed": true
+  },
+  "checks": [
+    {
+      "log": "docs/development/local/unified-qt-workbench/org-01-qt-check.log",
+      "sha256": "1deb331eef0f66ce1a6630f834ba423ccf9296084462bad84df7502365869c29"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/org-01-qt-build.log",
+      "sha256": "8fc7625ee4639fe09f44bbb704cf0e9b2ecd73dfae7248f7dbf3e0e52940f25f"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/org-01-display.log",
+      "sha256": "054270c5620d6041a66c4a42de1dc11d8aa923226e637353f81ca4edb56c6b3d"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/org-01-docs.log",
+      "sha256": "9c87da87ab183e85fe4ab0632ac86e6b6df48a58b4f31726a182d34a58db0c1d"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/org-01-docs-final.log",
+      "sha256": "a5b57b0449af70775a70c83e9570ef70dfda6de57f616c76c82b82f622649709"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/org-01-trace.log",
+      "sha256": "4815641791db39aa3e4d48e76217eb7aff10013ebbb24fc256295cd48506621f"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/org-01-versions.log",
+      "sha256": "7b61879f1cb4b977cc3d3404d0ecfcefc8c021a25ae4834bdf03315749a172fd"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/org-01-guide.log",
+      "sha256": "e723e8bfc25c24b2cc62f0ef7ef61a1e048449cc3d681f1fbfbdee1009de8e8c"
+    }
+  ],
+  "historical_findings": [
+    "The standalone boundary command lacked the Qt Cargo environment; the supported Qt check wrapper supplies the pinned environment and passes the guard.",
+    "Documentation validation identified six live downstream owner routes to moved files/directories. They now resolve to shared owners; all IDs, states and frozen source evidence remain unchanged."
+  ],
+  "remaining": [
+    "Direction-specific source/API migration under UIU-DS-01",
+    "Coupled shell lifecycle moves under UIU-SHELL-01",
+    "Scientific instrument sharing only after actual direction consumers pass their tasks",
+    "Final numeric and complete UI acceptance"
+  ],
+  "limitations": [
+    "Local Linux Qt6.8.3 XCB/Fusion evidence only; no installed Windows lifecycle or hosted acceptance",
+    "Existing three scientific dependencies/45 frozen legacy files remain for DS-01; this organization does not accept them as the final boundary",
+    "No visual layout/style/value changes; existing user-guide visuals remain accurate"
+  ]
+}

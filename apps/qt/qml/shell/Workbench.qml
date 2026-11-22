@@ -5,8 +5,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../about"
-import "../components"
+import "../shared/about"
+import "../shared/components"
 import "../inputs/measurement_input"
 import "../inputs/ofdm_settings"
 import "../inputs/profile_input"

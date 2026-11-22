@@ -6,7 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtTest
-import "../qml/theme"
+import "../qml/shared/theme"
 import "../qml/inputs/measurement_input"
 Pane {
     id:window;width:1240;height:820;visible:true

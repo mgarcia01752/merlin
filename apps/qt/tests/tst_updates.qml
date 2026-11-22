@@ -7,7 +7,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtTest
 import "../qml/shell"
-import "../qml/theme"
+import "../qml/shared/theme"
 Pane {
     id:window;width:960;height:640;visible:true
     Theme {id:theme}

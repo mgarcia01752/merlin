@@ -1276,3 +1276,34 @@ Qt adoption and lifecycle acceptance. There are no Qt source changes. Concurrent
 runtime, final numeric review, native Qt rendering, hosted jobs, installer lifecycle
 and external interoperability remain their separate gates. UIU-ORG-01 is the next
 eligible official checklist task.
+
+## UIU-ORG-01 generic presentation accepted
+
+The [exact organization evidence](organization-evidence.json) closes
+REQ-UIU-04/25 under UIU-ORG-01. Fifteen generic QML files move to
+`qml/shared/{components,theme,about}` with byte-identical contents, including their
+notices, values, handlers and type names. Existing consumers/tests change only
+relative imports. The pinned 178-file source inventory remains historical evidence.
+Six live downstream requirement owner locators and canonical skill references now
+point to the moved files/directories; original IDs and completed history remain.
+
+`scripts/qt-desktop.sh check` passes the ordinary dependency guard, formatting,
+warnings-denied Clippy, 87 Qt Rust tests, a development native build and 89 QML
+cases without skips. All 82 production QML files remain registered exactly once.
+`scripts/qt-desktop.sh build` passes the optimized native build. Fresh release
+executable checks accept four bundled downstream workbenches and pass normal plus
+loaded-project XCB/Fusion startup without stderr diagnostics. The current display,
+SDK version, binary hash, exact commands and timings are retained in the evidence.
+
+Module URI, Main entry URL, QObject registration placement, package/executable
+identity, branding resources, notices and licenses are preserved. No scientific
+source or public API changed; no non-Qt workspace rerun was needed. There are no
+visual layout or style changes, so existing user-guide visuals remain accurate.
+
+Coupled shell lifecycle views remain for UIU-SHELL-01. The three current direct
+scientific dependencies and 45 frozen legacy source files remain the explicit
+UIU-DS-01 migration boundary; this presentation acceptance does not accept those
+as the final architecture. Scientific instrument sharing still needs its own
+actual direction consumers. Final numeric/full UI gates, hosted jobs, Windows
+installed lifecycle and external interoperability remain separate. UIU-DS-01 is
+now the next eligible official checklist task.

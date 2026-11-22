@@ -5,7 +5,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../components"
+import "../../shared/components"
 import "../../instruments/selection"
 WorkbenchDialog {
     id: dialog

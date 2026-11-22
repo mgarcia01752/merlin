@@ -4,7 +4,7 @@
  */
 import QtQuick
 import QtQuick.Controls
-import "../../components"
+import "../../shared/components"
 
 WorkbenchActionButton {
     id: choice

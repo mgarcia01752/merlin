@@ -5,7 +5,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../components"
+import "../../shared/components"
 ColumnLayout {
     id: controls
     required property var theme

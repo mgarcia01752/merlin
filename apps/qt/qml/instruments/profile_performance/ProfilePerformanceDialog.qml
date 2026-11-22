@@ -5,7 +5,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../components"
+import "../../shared/components"
 import "../../inputs/profile_input"
 WorkbenchDialog {
     id: dialog

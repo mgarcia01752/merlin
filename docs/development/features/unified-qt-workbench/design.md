@@ -1587,3 +1587,42 @@ field admission. No scientific implementation, new crate, dependency cycle or
 Qt component was introduced. The neutral API leaf and independent PHY contracts
 remain unchanged. The user guide is [Direction-specific projects](../../../user/api/projects.md).
 Qt file/dirty/recovery adoption and final integration remain pending tasks.
+
+## UIU-ORG-01 shared presentation organization
+
+REQ-UIU-04/25 and the canonical source-ownership section authorize the next
+presentation-only move. Follow the pinned inventory: move the fifteen QML files
+assigned to ORG-01 from `qml/{components,theme,about}` into the corresponding
+`qml/shared/` folders. Their existing type names, properties, signals, handlers,
+styles, geometry and notices remain unchanged. Rebase relative imports and dynamic
+component URLs at all existing consumers and tests, then update explicit build
+registration. The module remains `Merlin.Workbench`, with the same Main entry URL,
+QObject entry files, executable, branding resources and native launch identity.
+
+| Inspected owner and contract | Decision / exact destination |
+| --- | --- |
+| `qml/components/` WorkbenchDialog/ActionButton/ApplyCancelFooter, blocks/connections/chips/status, ChartNavigation and TlvTreeGrid | SHARE only generic presentation under `apps/qt/qml/shared/components/`; inputs are caller-provided theme/rows/viewports, with no scientific decoding or engine state. |
+| `qml/theme/` Theme/ThemePalette | SHARE existing colors, sizing and one tooltip-delay owner under `apps/qt/qml/shared/theme/`; preserve dark/light propagation and current values. |
+| `qml/about/` About/Faq/License dialogs | SHARE application information/help presentation under `apps/qt/qml/shared/about/`; retain actual bridge providers and notices. |
+| `src/bridge/` entry modules and `src/platform/` native infrastructure | REUSE in place for pinned CXX-Qt registration and current platform ownership; no source move or science extraction. |
+| `qml/shell/` coupled workbench/menu/settings/update views | DEFER their inventory-assigned moves to UIU-SHELL-01; current downstream and update lifecycle remain unchanged here. |
+| `apps/qt/build.rs`, QML consumers and `apps/qt/tests/` | EDIT only resource paths/imports needed by these moves; no URI/type/executable or source-feature change. |
+| Canonical skills and maintained source links | EDIT discovery/navigation paths to moved files; preserve original pinned inventory/evidence as historical records. |
+
+Keep scientific inputs/instruments in their current direction until DS-01 and the
+shared-instrument tasks establish their separate API boundaries and consumers.
+No empty symmetric source trees are needed. Record exact original/destination
+hashes and every adapted consumer in the organization evidence. Existing Qt Rust
+and QML cases, the ordinary dependency guard, native build and fresh native startup
+must pass. This organization has no visible UI behavior change; existing user-guide
+visuals remain applicable. Native smoke must retain real dialog and theme loading.
+
+The initial move preserves all fifteen QML file contents byte-for-byte. Existing
+consumers/tests require only import-path changes, and build registration retains
+all type names, the module URI and Main resource entry. Six downstream backfill
+route owners are current locators and move to the new directories; their IDs,
+tasks, historical acceptance and original pinned evidence are unchanged. Empty
+former directories are removed so link checks also reflect a clean checkout.
+The initial standalone boundary invocation lacked the Qt Cargo environment; the
+supported Qt check wrapper supplies its pinned cache/toolchain and passes that
+boundary check. This is an environment invocation correction, not a bypass.

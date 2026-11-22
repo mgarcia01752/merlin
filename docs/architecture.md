@@ -1166,6 +1166,12 @@ first destinations and consumers/tests are in the inventory and
 [migration plan](development/features/unified-qt-workbench/migration-plan.md#destination-layout).
 Preserve UI-ORG-01/02 acceptance, copyrights, notices and working presentation;
 no unused symmetric placeholder trees or blanket scientific shared modules.
+The initial ORG-01 move places the fifteen existing generic components, theme and
+About/help QML files under `apps/qt/qml/shared/{components,theme,about}` with exact
+original contents. Coupled menu/settings/update shell views remain in their
+current `qml/shell` location until UIU-SHELL-01; scientific views remain directional
+migration work. The [organization design](development/features/unified-qt-workbench/design.md#uiu-org-01-shared-presentation-organization)
+owns the focused relocation; [ORG-01 acceptance](development/features/unified-qt-workbench/validation.md#uiu-org-01-generic-presentation-accepted) records passing Qt/native evidence.
 
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).

@@ -812,7 +812,7 @@
       "architecture": "docs/architecture.md#terminology-cell-and-symbol",
       "owners": [
         "docs/user/terminology.md",
-        "apps/qt/qml/about/AboutDialog.qml"
+        "apps/qt/qml/shared/about/AboutDialog.qml"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"
@@ -1084,8 +1084,8 @@
     "buttons": {
       "architecture": "docs/architecture.md#ui-merlin-simulation-workbench",
       "owners": [
-        "apps/qt/qml/components",
-        "apps/qt/qml/theme"
+        "apps/qt/qml/shared/components",
+        "apps/qt/qml/shared/theme"
       ],
       "tests": [
         "apps/qt/tests/tst_buttons.qml"
@@ -1206,7 +1206,7 @@
     "about": {
       "architecture": "docs/architecture.md#focused-about-and-dropdown-labels-ui-about-01",
       "owners": [
-        "apps/qt/qml/about/AboutDialog.qml"
+        "apps/qt/qml/shared/about/AboutDialog.qml"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"
@@ -1558,7 +1558,7 @@
     "tooltip": {
       "architecture": "docs/architecture.md#ui-merlin-simulation-workbench",
       "owners": [
-        "apps/qt/qml/components"
+        "apps/qt/qml/shared/components"
       ],
       "tests": [
         "apps/qt/tests/tst_tooltips.qml"
@@ -1630,7 +1630,7 @@
     "zoom": {
       "architecture": "docs/architecture.md#chart-zoom-interaction-ui-zoom-01",
       "owners": [
-        "apps/qt/qml/components"
+        "apps/qt/qml/shared/components"
       ],
       "tests": [
         "apps/qt/tests/tst_workbench.qml"

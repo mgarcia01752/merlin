@@ -6,7 +6,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../components"
+import "../../shared/components"
 // Adapted from PNM Viewer RxMerPlaybackControls; original-capture preview only.
 RowLayout {
     id: controls
