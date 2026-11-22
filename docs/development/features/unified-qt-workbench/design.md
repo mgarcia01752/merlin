@@ -1522,3 +1522,68 @@ from scientific sample, observation and result budgets.
 The [scoped acceptance record](validation.md#uiu-api-05-saved-downstream-full-loop-unit)
 closes only this prerequisite. Schema 3, upstream projects, aggregate admission and
 Qt file/recovery adoption remain pending under the parent task.
+
+### UIU-API-05 project envelope implementation details
+
+`Project` retains exact admitted document bytes and direction-specific original
+contents; it does not retain or advance a running simulation. `to_json()` emits
+schema 3 while keeping the embedded legacy/downstream or upstream document string
+unchanged. Downstream observation input is optional and validated through the
+existing public policy before complete-catalog preflight. Upstream options and
+receiver/soft policies use explicit strict transport DTOs and the existing public
+constructors; configuration/measured admission precedes applying saved overrides.
+Returned plans/sessions own their inputs independently of the project.
+
+The collection operation accepts at most two references with distinct directions.
+It reports project count, original serialized document bytes and original-input
+bytes. Downstream original-input accounting includes every embedded original,
+including dormant/unselected inputs. Upstream accounting includes exact original
+configuration/measured document bytes plus each captured source inventory once;
+project wrapper bytes have their separate serialized budget. Checked arithmetic
+and the combined 96 MiB original-input ceiling precede any collection acceptance.
+Scientific runtime/result memory is a separate SESSION-01 contract.
+
+`ProjectError` retains the original directional error and exposes the shared
+`ErrorCode`; the native adapter forwards it through the existing structured
+exception converters. Native `Project.direction` returns the language-appropriate
+string `downstream` or `upstream`; `collection_info` returns an owned dictionary.
+No new native engine, generic configuration or Qt-specific scientific interface
+is introduced. Serialization remains bounded and writes no destination.
+
+The envelope parser uses Serde's borrowed/raw JSON boundary for `contents`, then
+per-direction strict DTOs. The `raw_value` feature on the already pinned serde_json
+preserves duplicate-field rejection in nested contents rather than first folding
+objects into a last-value-wins dictionary. No new package/version is introduced.
+The native collection converter checks length first and accesses only that bounded
+index range, independently of a Python object's iterator implementation.
+
+Upstream generic configuration JSON uses its existing 16 MiB ceiling from
+`crates/ofdma/src/common/constants.rs`. Captured-plan input and measured provenance
+output have separate named policies in the native adapter's common constants;
+their equal current byte values do not couple their formats or evolution.
+
+### UIU-API-05 as-built ownership and acceptance
+
+The [accepted public project backend](validation.md#uiu-api-05-project-backend-accepted)
+implements the selected contract above. `crates/pnm-input/src/project/mod.rs`
+owns the strict envelope, original bytes, direction access and collection metadata;
+`project/upstream.rs` composes existing upstream scientific owners and
+`project/error.rs` preserves original directional causes. `project/tests.rs`
+checks aggregate cached-byte boundary/overflow without large payload allocation.
+`workbench/full_loop.rs` composes downstream admission with its optional existing
+observation policy before complete-catalog preflight.
+
+`crates/merlin/src/lib.rs` only re-exports optional native-input Project contracts.
+`bindings/python/src/project.rs` owns checked conversion and independent native
+handles; the existing upstream session slot supplies Busy/run/cancellation behavior.
+Import-only `common.py` and `common.pyi` expose the real class and matching signatures.
+`crates/pnm-input/tests/project.rs`, the facade namespace test and installed
+`bindings/python/tests/test_project.py` cover both directions and compatibility.
+`examples/api/rust/run_project.rs` supplies an independently executed reference.
+
+Native input and upstream configuration limits use their owning common constants
+modules. The existing pinned serde_json raw-value feature preserves strict nested
+field admission. No scientific implementation, new crate, dependency cycle or
+Qt component was introduced. The neutral API leaf and independent PHY contracts
+remain unchanged. The user guide is [Direction-specific projects](../../../user/api/projects.md).
+Qt file/dirty/recovery adoption and final integration remain pending tasks.

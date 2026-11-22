@@ -8,6 +8,7 @@
 pub mod api;
 pub mod bit_processing;
 pub mod channel;
+pub mod common;
 pub mod configuration;
 mod error;
 pub mod grant;

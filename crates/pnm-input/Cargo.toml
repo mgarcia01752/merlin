@@ -13,7 +13,7 @@ docsis-ofdm-fec = { path = "../ofdm", features = ["high-level-api"] }
 pnm = { git = "https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git", rev = "5fbd5561f3e06b73486546b5ffa520279080a5eb", version = "=0.3.6" }
 
 serde = { version = "=1.0.228", features = ["derive"] }
-serde_json = { version = "=1.0.145", features = ["float_roundtrip"] }
+serde_json = { version = "=1.0.145", features = ["float_roundtrip", "raw_value"] }
 sha2 = "=0.10.9"
 tempfile = "=3.23.0"
 
@@ -27,6 +27,10 @@ path = "../../examples/api/rust/run_single_capture.rs"
 [[example]]
 name = "run_saved_full_loop"
 path = "../../examples/api/rust/run_saved_full_loop.rs"
+
+[[example]]
+name = "run_project"
+path = "../../examples/api/rust/run_project.rs"
 
 [[example]]
 name = "run_rxmer_selection_parity"

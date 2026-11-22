@@ -144,7 +144,7 @@ impl MeasuredExperiment {
     /// Rejects unsupported schema, invalid associations, future schedules, incompatible
     /// composition, resource limits or serialization failure before source consumption.
     pub fn from_json(bytes: &[u8]) -> ApiResult<Self> {
-        if bytes.len() > 16 * 1024 * 1024 {
+        if bytes.len() > crate::common::constants::MAX_MEASURED_EXPERIMENT_BYTES {
             return Err(PhyError::ResourceLimit {
                 field: "measured.document_bytes",
             }
@@ -176,7 +176,10 @@ impl MeasuredExperiment {
     /// composition, resource limits or serialization failure before source consumption.
     pub fn to_json(&self) -> ApiResult<String> {
         self.prepare()?;
-        bounded_json(self, 16 * 1024 * 1024)
+        bounded_json(
+            self,
+            crate::common::constants::MAX_MEASURED_EXPERIMENT_BYTES,
+        )
     }
     /// Projects measured observations into the existing bounded Rust model owners.
     ///
@@ -554,7 +557,7 @@ impl MeasuredExperiment {
                 source_hashes: hashes,
                 model: "normalized-corrective-bank-and-equalized-probe-target-unity-residual",
             },
-            16 * 1024 * 1024,
+            crate::common::constants::MAX_MEASURED_PROVENANCE_BYTES,
         )
     }
 }

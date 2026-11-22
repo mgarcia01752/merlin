@@ -4,12 +4,12 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-545 explicit public Rust operations and 528 installed native Python entries with
+563 explicit public Rust operations and 536 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current native operation acceptance](../unified-qt-workbench/saved-full-loop-evidence.json)
+is a readable subset of this one matrix. [Current native operation acceptance](../unified-qt-workbench/project-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
-111 directional/common class exports and 59 preserved legacy root exports. Named
+112 directional/common class exports and 59 preserved legacy root exports. Named
 owner regressions establish behavioral scope; metadata alone is not scientific
 execution or exhaustive getter-branch coverage.
 
@@ -197,7 +197,7 @@ Named contract references resolve in the data's `contracts` object.
 | --- | --- | --- |
 | Downstream: 394 Rust / 392 native operations | Accepted API, quantities, original inputs, full-loop requests, retained observations and saved full-loop preparation. | Installed native classes preserve legacy root aliases; current scoped and preceding full-gate receipts define behavioral coverage. |
 | Upstream: 147 Rust / 118 native operations | Independent sessions, measured admission, resource plans and actual bounded instrument observations. | Installed native upstream namespace and API-04 backend acceptance; Qt adoption remains separate. |
-| Common: 4 Rust / 18 native operations | Clone/atomic query and one-way control contracts, with directional rich lifecycle retained. | Installed common namespace and enum accessors; the Rust Cancellation trait has no Python class. |
+| Common: 22 Rust / 26 native operations | One-way cancellation plus optional original-preserving Project admission; returned scientific owners remain separate. | Installed common namespace, enum accessors and Project; the Rust Cancellation trait and typed ProjectError remain explicit language differences. |
 
 Rust borrowed views, generic deserializers, validated-owner helpers and native
 file conveniences are recorded with explicit language-only or adapter mappings.
@@ -218,8 +218,17 @@ The [UIU-API-05 prerequisite](../unified-qt-workbench/validation.md#uiu-api-05-s
 adds four Rust/four native operations with
 [exact execution cases](../unified-qt-workbench/api-05-workbench-operation-test-results.json).
 It preserves file/fill, playback and independent H/profile tolerance through the
-existing public requests and sweeps. Every earlier row, assertion and historical
-receipt remains intact. Schema 3, upstream projects, aggregate admission and the
-parent API-05 gate remain pending. API-02/04 partial-unit statements above describe
+existing public requests and sweeps. Every earlier identifier, assertion and historical receipt remains intact. At
+that unit stage, schema 3, upstream projects and aggregate admission were pending;
+the following Project gate closes them. API-02/04 partial-unit statements above describe
 their historical stage; their final accepted gates are linked from the official
 checklist and unified Qt validation record.
+
+## Direction project admission
+
+The [schema-3 project unit](../unified-qt-workbench/validation.md#uiu-api-05-direction-project-unit)
+adds eighteen Rust entries and eight native common.Project operations, with
+[exact executed cases](../unified-qt-workbench/api-05-project-operation-test-results.json).
+The native adapter and facade retain original documents, validate separate
+scientific settings and return independently owned existing requests/sessions.
+Existing operation rows and historical evidence remain intact. [Parent backend acceptance](../unified-qt-workbench/validation.md#uiu-api-05-project-backend-accepted) passes the full Rust/native gate; later Qt file/recovery consumers retain their separate gates.

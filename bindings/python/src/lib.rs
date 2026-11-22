@@ -13,6 +13,7 @@ mod measurement;
 mod options;
 mod physical;
 mod profile_capture;
+mod project;
 mod quantities;
 mod receiver;
 mod references;
@@ -84,6 +85,7 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     reports::register(module)?;
     controller::register(module)?;
     workbench::register(module)?;
+    project::register(module)?;
     upstream::register(module)?;
     Ok(())
 }

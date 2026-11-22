@@ -11,6 +11,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 EXAMPLES = (
+    ('pnm-input', 'run_saved_full_loop', ()),
+    ('pnm-input', 'run_project', ()),
     ('pnm-input', 'run_single_capture', ()),
     ('pnm-input', 'run_all_profiles', ()),
     ('pnm-input', 'run_single_capture_cm_chan_est', ()),

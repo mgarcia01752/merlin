@@ -12,6 +12,7 @@ mod reports;
 mod response;
 mod simulation;
 use pyo3::prelude::*;
+pub(crate) use simulation::PySimulation;
 
 mod api {
     pub use merlin::upstream::inputs::{
@@ -20,7 +21,12 @@ mod api {
     pub use merlin::upstream::*;
 }
 
-fn error(value: impl Into<api::ApiError>) -> PyErr {
+/// Preserves original upstream structured causes in the shared native exception.
+/// # Arguments
+/// * `value` - Owned error convertible to the existing public upstream failure.
+/// # Returns
+/// Exception retaining category, legacy code and any available field/offset.
+pub(crate) fn error(value: impl Into<api::ApiError>) -> PyErr {
     let value = value.into();
     Python::attach(|py| {
         let exception = crate::ApiError::new_err(value.to_string());

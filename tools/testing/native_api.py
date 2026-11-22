@@ -20,6 +20,7 @@ sys.path.insert(0, str(ROOT / 'tools/python'))
 from smoke_wheel import inspect_wheel
 
 REFERENCES = (
+    ('PROJECT', 'pnm-input', 'run_project', ()),
     ('SAVED_FULL_LOOP', 'pnm-input', 'run_saved_full_loop', ()),
     ('REFERENCE', 'docsis-ofdma', 'upstream_loop', ()),
     ('RESOURCE_GRID', 'docsis-ofdma', 'upstream_resource_grid', ()),

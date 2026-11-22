@@ -114,7 +114,7 @@ impl ConfigurationDocument {
     /// Returns an owned source-valid inventory; unknown typed fields, versions,
     /// reserved/conditional values and excessive arrays reject without session effects.
     pub fn from_json(bytes: &[u8]) -> ApiResult<Self> {
-        if bytes.len() > 16 * 1024 * 1024 {
+        if bytes.len() > crate::common::constants::MAX_CONFIGURATION_DOCUMENT_BYTES {
             return Err(PhyError::ResourceLimit {
                 field: "configuration.document_bytes",
             }
@@ -280,7 +280,10 @@ impl ConfigurationDocument {
     /// Returns compact JSON capped at 16 MiB; validates first and never writes a file.
     pub fn to_json(&self) -> ApiResult<String> {
         self.validate()?;
-        crate::api::bounded_json(self, 16 * 1024 * 1024)
+        crate::api::bounded_json(
+            self,
+            crate::common::constants::MAX_CONFIGURATION_DOCUMENT_BYTES,
+        )
     }
 }
 

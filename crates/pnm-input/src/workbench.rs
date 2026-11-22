@@ -13,6 +13,7 @@ use crate::CaptureLoader;
 use base64::{engine::general_purpose::STANDARD, Engine};
 pub use designer::{RxMerDesign, RxMerDesignPosition, MAX_RXMER_RECIPE_BYTES};
 use docsis_ofdm_fec::{api::*, transmission::TransmissionSettings};
+pub(crate) use full_loop::{original_byte_count, prepare};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeSet, io::Read, path::Path, sync::Arc};

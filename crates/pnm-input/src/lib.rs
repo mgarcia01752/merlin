@@ -18,6 +18,7 @@ use std::{
     path::Path,
 };
 pub mod common;
+pub mod project;
 pub mod rxmer_export;
 pub mod upstream;
 pub mod workbench;

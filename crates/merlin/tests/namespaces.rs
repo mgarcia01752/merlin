@@ -13,6 +13,31 @@ const UPSTREAM: &[u8] = include_bytes!("../../../examples/cli/upstream/us-50khz.
 
 #[cfg(feature = "native-input")]
 #[test]
+fn facade_common_projects_return_the_exact_directional_public_types() {
+    let project = common::Project::from_bytes(include_bytes!(
+        "../../../examples/workbench/single/workbench.merlin.json"
+    ))
+    .unwrap();
+    assert_eq!(project.direction(), common::ProjectDirection::Downstream);
+    let plan: downstream::FullLoopSweepPlan = project.downstream_plan().unwrap();
+    assert!(!plan.info().selected_profile_ids.is_empty());
+    let upstream_factory: fn(
+        &common::Project,
+    ) -> Result<upstream::Simulation, common::ProjectError> = common::Project::upstream_simulation;
+    assert_eq!(
+        upstream_factory(&project).err().unwrap().code(),
+        common::ErrorCode::InvalidInput
+    );
+    assert_eq!(
+        common::Project::collection_info(&[&project])
+            .unwrap()
+            .projects,
+        1
+    );
+}
+
+#[cfg(feature = "native-input")]
+#[test]
 fn facade_saved_downstream_preparation_returns_existing_idle_public_plan() {
     let plan: downstream::FullLoopSweepPlan = downstream::inputs::Workbench::prepare_full_loop(
         include_bytes!("../../../examples/workbench/single/workbench.merlin.json"),

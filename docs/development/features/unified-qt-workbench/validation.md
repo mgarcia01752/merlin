@@ -1207,3 +1207,72 @@ Existing Workbench loaders keep their static PRBS contract. There are no Qt sour
 changes. Direction-tagged schema 3, upstream project admission, aggregate input
 budgets and the parent API-05 acceptance gate remain unfinished. Native rendering,
 hosted jobs, installers and external interoperability are separate gates.
+
+## UIU-API-05 direction project unit
+
+The [project evidence](project-evidence.json) and
+[executed operation cases](api-05-project-operation-test-results.json) trace
+REQ-UIU-02/13/22/23/24 to the direction-tagged native project owner and optional
+facade/common export. Six project-input cases, one aggregate cached-byte boundary
+case and eleven facade cases pass. The related seven saved full-loop input cases
+also pass. Fifteen scoped installed Linux CPython 3.10 project/saved-plan/namespace
+cases pass without skips, with fresh separately executed Rust references.
+
+Actual observed downstream PRBS/FEC outcomes and settings match across Rust/native
+Python after schema-3 round trips. Both upstream numerologies execute using
+original configuration or measured-plan documents, explicit option overrides and
+validated receiver/soft observation policies. Original captured source bytes and
+measured-plan lineage survive admission, serialization, project disposal and runs.
+Neither load nor export executes science. Returned plans/sessions own their inputs.
+
+Wrong-direction, malformed/unknown/duplicate fields, unsupported versions,
+corrupt original hashes, invalid observation/run policies, nonregular files and
+oversized sparse files reject without changing an accepted project. Collection
+checks retain every original, reject duplicate/excessive directions and use checked
+byte sums. A private unit instruments only the cached admitted input-byte counter
+to exercise the inclusive 96 MiB boundary and overflow without huge allocations.
+This establishes storage admission, not concurrent runtime or result budgets.
+
+The operation matrix appends eighteen Rust entries (nine facade and nine native
+adapter operations) and eight native common.Project entries, preserving all prior
+545 Rust/528 native rows. Compiler discovery now follows the actual common facade,
+with a regression case for extra re-exports beyond the neutral leaf. The unchanged
+common constructor renders its return as RunControl rather than Self in facade
+rustdoc; exact prior Rust/native rows are archived before reconciling that compiler
+presentation, preserving every ID, signature behavior and acceptance assertion. Strict
+contents parsing uses the existing pinned Serde raw-value feature so duplicate
+fields cannot disappear into an intermediate dictionary.
+
+The parent API-05 full backend gate remains pending until its exact receipts are
+recorded. Qt file choosers, direction routing, dirty-state handling and private
+restart recovery remain their later tasks. All 178 original Qt source hashes are
+unchanged; no Qt rendering, hosted, installer or interoperability claim is made.
+
+## UIU-API-05 project backend accepted
+
+The [exact full-gate evidence](project-evidence.json) closes the public project
+backend prerequisite. `scripts/test-local.sh all` passes 747 workspace cases,
+139 analysis-only cases, fourteen API examples and four fixture-generator cases
+in 667.946 seconds. Workspace and analysis doctest phases pass. Three existing
+explicitly ignored host-performance observations remain excluded; no new
+correctness exclusions were introduced.
+
+The complete installed Linux CPython 3.10 suite passes all 150 cases without skips
+in 83.723 seconds. The first complete native run passed 149 cases and failed the
+new test fixture's Sequence type conversion. That fixture now inherits the declared
+Python interface while retaining its iterator-rejection assertion. No native or
+scientific code changed. The final run reuses the exact unchanged installed wheel
+and all successful separate Rust reference outputs after recording their hashes;
+the original failed receipt, commands and outputs remain intact.
+
+All new Rust/native operations have scoped Clippy, formatting, strict matrix and
+metadata acceptance. The matrix contains 563 Rust/536 native rows. The one common
+constructor compiler presentation correction retains its exact historical rows;
+all operation IDs, earlier test assertions and compatibility history remain.
+The common inventory uses actual facade rustdoc, including optional input exports.
+
+API-05 is complete as a headless backend task. UIU-FILE-01 and UIU-RECOVERY-01 own
+Qt adoption and lifecycle acceptance. There are no Qt source changes. Concurrent
+runtime, final numeric review, native Qt rendering, hosted jobs, installer lifecycle
+and external interoperability remain their separate gates. UIU-ORG-01 is the next
+eligible official checklist task.

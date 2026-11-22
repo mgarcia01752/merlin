@@ -20,108 +20,127 @@ impl Workbench {
     /// Preserves strict schema, integrity, resource and scientific admission errors.
     /// Unsupported versions or modes reject before any run or caller-state change.
     pub fn prepare_full_loop(bytes: &[u8]) -> ApiResult<FullLoopSweepPlan> {
-        if bytes.len() > MAX_WORKBENCH_BYTES {
-            return Err(ApiError::new(
-                ErrorCode::ResourceLimit,
-                "WB exceeds the project byte budget",
-            ));
-        }
-        let document: Document =
-            serde_json::from_slice(bytes).map_err(|cause| invalid(cause.to_string()))?;
-        if ![WORKBENCH_SCHEMA_V1, WORKBENCH_SCHEMA_V2].contains(&document.schema_version)
-            || document.application != "MERLIN"
-        {
-            return Err(unsupported("Unsupported WB schema/application"));
-        }
-        let receiver = document.receiver.ok_or_else(|| {
-            ApiError::new(
-                ErrorCode::MissingSetting,
-                "WB has no accepted receiver settings",
-            )
-        })?;
-        if document.schema_version == WORKBENCH_SCHEMA_V1 && receiver.selected_profile_ids.is_some()
-        {
-            return Err(invalid("Explicit profile selection requires WB schema 2"));
-        }
-        let transmission = TransmissionConfiguration::new(document.transmission)?;
-        let sections = document.sections;
-        check_original_budget(&sections)?;
-        let mut decoded_bytes = 0;
-        let source = source(&sections.source, &mut decoded_bytes)?;
-        let profile_input = sections.profile.file.decode(&mut decoded_bytes)?;
-        let catalog = CaptureLoader::profile_capture(&profile_input)?;
-        let active = ProfileId::new(sections.profile.profile_id)?;
-        let profile = catalog.simulation_profile(active)?;
-        let selection = if let Some(ids) = receiver.selected_profile_ids {
-            FullLoopProfileSelection::Selected(
-                ids.into_iter()
-                    .map(ProfileId::new)
-                    .collect::<ApiResult<_>>()?,
-            )
-        } else if receiver.all_profiles {
-            FullLoopProfileSelection::AllCaptured
-        } else {
-            FullLoopProfileSelection::Current
-        };
-        let measurements = measurements(
-            &sections.measurements,
-            &transmission,
-            &profile,
-            receiver.duration_ms,
-            &mut decoded_bytes,
-        )?;
-        let response = sections
-            .measurements
-            .response
-            .as_ref()
-            .map(|stored| CaptureLoader::channel_estimate(&stored.decode(&mut decoded_bytes)?))
-            .transpose()?;
-        transmission.check_response(
-            &profile,
-            response.as_ref(),
-            AssociationTolerance::new(sections.measurements.response_tolerance)?,
-        )?;
-        let mut channel = ChannelConfigurationInput {
-            filter: receiver.channel_filter,
-            ..Default::default()
-        };
-        if let Some(loss) = sections.channel_model {
-            if loss.schema_version != CHANNEL_MODEL_SCHEMA_VERSION {
-                return Err(unsupported("Unsupported WB channel model version"));
-            }
-            channel.additional_loss = loss.additional_loss;
-        }
-        if let Some(power) = sections.channel_power {
-            if power.schema_version != CHANNEL_POWER_SCHEMA_VERSION {
-                return Err(unsupported("Unsupported WB channel power version"));
-            }
-            channel.power = power.conditioning;
-        }
-        let request = Simulation::prepare_full_loop_with_response_tolerance(
-            FullLoopInputs {
-                transmission,
-                profile,
-                source,
-                measurements,
-                channel: ChannelConfiguration::new(channel)?,
-                response,
-            },
-            FullLoopOptions {
-                duration_ms: receiver.duration_ms,
-                max_iterations: receiver.max_iterations,
-                max_runtime_ms: receiver.max_runtime_ms,
-                noise_seed: receiver.noise_seed,
-                receiver_mode: receiver.receiver_mode,
-                mce: receiver.mce,
-                ..Default::default()
-            },
-            AssociationTolerance::new(sections.measurements.response_tolerance)?,
-        )?;
-        FullLoopSweepPlan::new(&request, &catalog, selection)
+        prepare(bytes, None)
     }
 }
 
-fn check_original_budget(sections: &Sections) -> ApiResult<()> {
+/// Admits saved settings and optional existing observation policy without executing work.
+/// # Arguments
+/// * `bytes` - Original bounded legacy project bytes.
+/// * `observations` - Optional public policy input, validated before catalog preflight.
+/// # Returns
+/// Owned idle sweep plan with unchanged saved scientific settings.
+/// # Errors
+/// Preserves existing input, integrity, scientific and policy admission errors.
+pub(crate) fn prepare(
+    bytes: &[u8],
+    observations: Option<FullLoopObservationInput>,
+) -> ApiResult<FullLoopSweepPlan> {
+    if bytes.len() > MAX_WORKBENCH_BYTES {
+        return Err(ApiError::new(
+            ErrorCode::ResourceLimit,
+            "WB exceeds the project byte budget",
+        ));
+    }
+    let document: Document =
+        serde_json::from_slice(bytes).map_err(|cause| invalid(cause.to_string()))?;
+    if ![WORKBENCH_SCHEMA_V1, WORKBENCH_SCHEMA_V2].contains(&document.schema_version)
+        || document.application != "MERLIN"
+    {
+        return Err(unsupported("Unsupported WB schema/application"));
+    }
+    let receiver = document.receiver.ok_or_else(|| {
+        ApiError::new(
+            ErrorCode::MissingSetting,
+            "WB has no accepted receiver settings",
+        )
+    })?;
+    if document.schema_version == WORKBENCH_SCHEMA_V1 && receiver.selected_profile_ids.is_some() {
+        return Err(invalid("Explicit profile selection requires WB schema 2"));
+    }
+    let transmission = TransmissionConfiguration::new(document.transmission)?;
+    let sections = document.sections;
+    check_original_budget(&sections)?;
+    let mut decoded_bytes = 0;
+    let source = source(&sections.source, &mut decoded_bytes)?;
+    let profile_input = sections.profile.file.decode(&mut decoded_bytes)?;
+    let catalog = CaptureLoader::profile_capture(&profile_input)?;
+    let active = ProfileId::new(sections.profile.profile_id)?;
+    let profile = catalog.simulation_profile(active)?;
+    let selection = if let Some(ids) = receiver.selected_profile_ids {
+        FullLoopProfileSelection::Selected(
+            ids.into_iter()
+                .map(ProfileId::new)
+                .collect::<ApiResult<_>>()?,
+        )
+    } else if receiver.all_profiles {
+        FullLoopProfileSelection::AllCaptured
+    } else {
+        FullLoopProfileSelection::Current
+    };
+    let measurements = measurements(
+        &sections.measurements,
+        &transmission,
+        &profile,
+        receiver.duration_ms,
+        &mut decoded_bytes,
+    )?;
+    let response = sections
+        .measurements
+        .response
+        .as_ref()
+        .map(|stored| CaptureLoader::channel_estimate(&stored.decode(&mut decoded_bytes)?))
+        .transpose()?;
+    transmission.check_response(
+        &profile,
+        response.as_ref(),
+        AssociationTolerance::new(sections.measurements.response_tolerance)?,
+    )?;
+    let mut channel = ChannelConfigurationInput {
+        filter: receiver.channel_filter,
+        ..Default::default()
+    };
+    if let Some(loss) = sections.channel_model {
+        if loss.schema_version != CHANNEL_MODEL_SCHEMA_VERSION {
+            return Err(unsupported("Unsupported WB channel model version"));
+        }
+        channel.additional_loss = loss.additional_loss;
+    }
+    if let Some(power) = sections.channel_power {
+        if power.schema_version != CHANNEL_POWER_SCHEMA_VERSION {
+            return Err(unsupported("Unsupported WB channel power version"));
+        }
+        channel.power = power.conditioning;
+    }
+    let request = Simulation::prepare_full_loop_with_response_tolerance(
+        FullLoopInputs {
+            transmission,
+            profile,
+            source,
+            measurements,
+            channel: ChannelConfiguration::new(channel)?,
+            response,
+        },
+        FullLoopOptions {
+            duration_ms: receiver.duration_ms,
+            max_iterations: receiver.max_iterations,
+            max_runtime_ms: receiver.max_runtime_ms,
+            noise_seed: receiver.noise_seed,
+            receiver_mode: receiver.receiver_mode,
+            mce: receiver.mce,
+            ..Default::default()
+        },
+        AssociationTolerance::new(sections.measurements.response_tolerance)?,
+    )?;
+    let request = if let Some(input) = observations {
+        request.with_observations(FullLoopObservationPolicy::new(input)?)?
+    } else {
+        request
+    };
+    FullLoopSweepPlan::new(&request, &catalog, selection)
+}
+
+fn check_original_budget(sections: &Sections) -> ApiResult<usize> {
     if sections.measurements.rxmer.is_empty() || sections.measurements.rxmer.len() > MAX_CAPTURES {
         return Err(ApiError::new(
             ErrorCode::ResourceLimit,
@@ -138,13 +157,32 @@ fn check_original_budget(sections: &Sections) -> ApiResult<()> {
         }
         total.checked_add(stored.byte_length)
     });
-    if total.is_none_or(|total| total > MAX_TOTAL_ORIGINAL_BYTES) {
+    let total = total.ok_or_else(|| {
+        ApiError::new(
+            ErrorCode::ResourceLimit,
+            "Original byte count exceeds its budget",
+        )
+    })?;
+    if total > MAX_TOTAL_ORIGINAL_BYTES {
         return Err(ApiError::new(
             ErrorCode::ResourceLimit,
             "Combined WB originals exceed the input byte budget",
         ));
     }
-    Ok(())
+    Ok(total)
+}
+
+/// Counts all integrity-checked saved originals; callers have already bounded the JSON.
+/// # Arguments
+/// * `bytes` - Complete original project, already admitted through the shared owner.
+/// # Returns
+/// Checked sum of every declared original, including dormant and unselected inputs.
+/// # Errors
+/// Rejects malformed input, oversized originals, count overflow or aggregate overflow.
+pub(crate) fn original_byte_count(bytes: &[u8]) -> ApiResult<usize> {
+    let document: Document =
+        serde_json::from_slice(bytes).map_err(|cause| invalid(cause.to_string()))?;
+    check_original_budget(&document.sections)
 }
 
 fn source(source: &Source, decoded_bytes: &mut usize) -> ApiResult<SourceInput> {

@@ -1,5 +1,9 @@
 # Run a saved workbench through the API
 
+The [Project API](../api/projects.md) provides direction-aware admission and
+serialization through `merlin.common.Project`; existing loaders below keep their
+downstream behavior.
+
 For saved file/fill sources or hold/interpolate playback, use the
 [public full-loop preparation entry point](../api/saved-full-loop.md). It returns
 the existing controlled request/sweep types and preserves independent response

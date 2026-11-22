@@ -252,6 +252,10 @@ retains `merlin_estimated` for compatibility; input also accepts
 
 ## Load a saved workbench
 
+The [direction-specific Project API](projects.md) admits legacy downstream and
+schema-3 downstream/upstream projects through `merlin::common` and native Python's
+`merlin.common`, preserving original inputs and explicit direction-specific runs.
+
 The [saved full-loop preparation operation](saved-full-loop.md) additionally
 preserves UI file/fill sources, temporal playback and independent H/RxMER
 association policies through the public controlled request/sweep APIs. Loading

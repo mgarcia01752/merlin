@@ -21,3 +21,14 @@ pub const MAX_EMBEDDED_BYTES: usize = 16 * 1024 * 1024;
 pub const MAX_TOTAL_ORIGINAL_BYTES: usize = 96 * 1024 * 1024;
 /// Inclusive number of original RxMER captures retained in a saved project.
 pub const MAX_CAPTURES: usize = 256;
+
+/// Direction-tagged project envelope; legacy downstream versions remain readable.
+pub const PROJECT_SCHEMA_VERSION: u32 = 3;
+/// One independently owned project per supported direction in the initial workspace.
+pub const MAX_PROJECT_COLLECTION_COUNT: usize = 2;
+/// Inclusive aggregate serialized project budget, separate from original input storage.
+pub const MAX_PROJECT_COLLECTION_BYTES: usize = 288 * 1024 * 1024;
+/// Inclusive captured-plan input budget, independent of generic configuration format.
+pub const MAX_MEASURED_EXPERIMENT_BYTES: usize = 16 * 1024 * 1024;
+/// Inclusive measured provenance report budget; not the input admission ceiling.
+pub const MAX_MEASURED_PROVENANCE_BYTES: usize = 16 * 1024 * 1024;

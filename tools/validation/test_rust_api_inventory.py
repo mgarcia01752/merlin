@@ -5,14 +5,39 @@
 #
 """Guard compiler inventory against wildcard, trait and stale-file omissions."""
 from pathlib import Path
+import json
 import tempfile
 import unittest
+from unittest.mock import patch
 
-from rust_api_inventory import inventory, resolve_reexport_owners
+from rust_api_inventory import inventory, main, resolve_reexport_owners
 
 
 class RustdocExportTests(unittest.TestCase):
     """Use independent minimal rustdoc shapes to verify public export discovery."""
+
+    def test_main_discovers_adapter_reexports_from_the_actual_common_facade(self):
+        """A neutral leaf alone cannot enumerate additional facade-owned public exports."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for module in ['docsis_ofdm_fec/api', 'docsis_ofdma/api', 'merlin_api',
+                           'pnm_input', 'merlin/common']:
+                path = root / module / 'index.html'
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text('')
+            (root / 'merlin/common/index.html').write_text(
+                '<a class="struct" href="../../pnm_input/struct.Project.html" '
+                'title="struct pnm_input::Project">Project</a>')
+            (root / 'pnm_input/struct.Project.html').write_text(
+                '<a class="src" href="../src/pnm_input/project/mod.rs.html">Source</a>'
+                '<h4 class="code-header">pub fn direction(&amp;self) -&gt; ProjectDirection</h4>')
+            output = root / 'exports.json'
+            with patch('sys.argv', ['inventory', '--docs', str(root), '--output', str(output)]):
+                main()
+            common = json.loads(output.read_text())['common']
+            self.assertEqual([item['export'] for item in common], ['merlin::common::Project'])
+            self.assertEqual(common[0]['methods'][0]['operation'], 'merlin::common::Project::direction')
+            self.assertEqual(common[0]['methods'][0]['source_file'], 'crates/pnm-input/src/project/mod.rs')
 
     def test_compiler_explicit_rename_preserves_public_name_and_canonical_method_owner(self):
         """A compiler pub-use alias names the caller API; origin names are not extra exports."""

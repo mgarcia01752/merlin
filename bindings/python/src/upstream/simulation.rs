@@ -105,6 +105,16 @@ impl Drop for SessionLease {
 }
 
 impl PySimulation {
+    /// Owns an already configured idle public session without executing or rebuilding it.
+    /// # Arguments
+    /// * `session` - Independent public Rust session admitted by the project adapter.
+    /// # Returns
+    /// Native session slot with the existing Busy, cancellation and worker behavior.
+    pub(crate) fn from_native(session: api::Simulation) -> Self {
+        Self {
+            state: Arc::new(Mutex::new(Some(session))),
+        }
+    }
     fn access<T>(
         &self,
         operation: impl FnOnce(&mut api::Simulation) -> api::ApiResult<T>,

@@ -59,8 +59,8 @@ preserves whichever policy the original request accepted. Neither tolerance
 changes original capture epochs or grids.
 
 Existing `Workbench.from_file/from_bytes` and their legacy batch runs keep their
-documented PRBS/static-playback behavior. Direction-tagged project admission and
-Qt Open/Save integration remain separate pending tasks. See the
+documented PRBS/static-playback behavior. [Direction-tagged project admission](projects.md) now returns these same owned
+plans through the common Project API. Qt Open/Save adoption remains a later task. See the
 [serial sweep contract](full-loop-sweep.md),
 [legacy loader guide](../python/workbench.md) and
 [implementation design](../../development/features/unified-qt-workbench/design.md#uiu-api-05-direction-aware-public-project-admission).

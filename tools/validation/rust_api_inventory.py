@@ -314,7 +314,7 @@ def main():
     roots = {
         "downstream": ("merlin::downstream", "docsis_ofdm_fec/api/index.html"),
         "upstream": ("merlin::upstream", "docsis_ofdma/api/index.html"),
-        "common": ("merlin::common", "merlin_api/index.html"),
+        "common": ("merlin::common", "merlin/common/index.html"),
         "native-input": ("pnm_input", "pnm_input/index.html"),
     }
     data = {name: inventory(namespace, args.docs / path, args.docs)

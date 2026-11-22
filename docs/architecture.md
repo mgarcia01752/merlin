@@ -1186,10 +1186,18 @@ tests, not shared scientific configuration or a different API architecture.
 
 Normal project files remain direction-specific. Open validates/detects direction
 and guards that target tab's dirty state before mutation. Schema 1/2 retain DS
-interpretation; the [selected schema 3 contract](development/features/unified-qt-workbench/design.md#uiu-api-05-direction-aware-public-project-admission) explicitly tags direction. Its implementation/acceptance remains API-05. Backend/native
+interpretation; the [selected schema 3 contract](development/features/unified-qt-workbench/design.md#uiu-api-05-direction-aware-public-project-admission) explicitly tags direction. Its public backend is [accepted under API-05](development/features/unified-qt-workbench/validation.md#uiu-api-05-project-backend-accepted). Backend/native
 input owners admit and serialize scientific project contents through the public
-API with Rust/Python parity. The additive [saved downstream full-loop operation](user/api/saved-full-loop.md) already prepares legacy file/fill, playback and independent response-tolerance settings through those owners; the direction-tagged envelope remains pending. Qt retains chooser, safe filesystem replacement,
-dirty prompts and presentation state. Update recovery privately bundles both
+API with Rust/Python parity. The additive [saved downstream full-loop operation](user/api/saved-full-loop.md) already prepares legacy file/fill, playback and independent response-tolerance settings through those owners; the direction-tagged envelope now admits both directions. Qt retains chooser, safe filesystem replacement,
+dirty prompts and presentation state. The implemented native
+[`Project`](user/api/projects.md) owner lives in `crates/pnm-input/src/project/`
+and is re-exported as `merlin::common::Project` only with `native-input`. It
+retains original documents and returns the existing separate downstream sweep or
+upstream session types. `ProjectError` preserves directional causes and the shared
+error category. The neutral `merlin-api` leaf remains independent of either PHY.
+The [direction-project evidence](development/features/unified-qt-workbench/validation.md#uiu-api-05-direction-project-unit)
+records scoped Rust/native acceptance and the passing full backend gate;
+UIU-FILE-01/UIU-RECOVERY-01 own Qt adoption. Update recovery privately bundles both
 independently valid projects plus active-tab state. All file/capture, viewport,
 worker, retained-result and aggregate-memory budgets remain bounded; errors or
 cancellation preserve accepted inputs/completed trials. See the
