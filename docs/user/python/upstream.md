@@ -60,6 +60,13 @@ allocation/pilot coordinates through an owned native snapshot without starting a
 waveform run. It preserves physical holes and original grant timing; Python
 performs no pilot placement or scientific reconstruction.
 
+Reports can also expose [actual received-pilot estimates](../upstream/receiver-estimates.md)
+when enabled before execution with `ReceiverObservationPolicy`. The session
+setter/getter preserves scientific configuration and default reports remain
+unchanged. `report.receiver_observations()` inventories completed retained frames;
+`report.receiver_estimate()` returns owned optional coefficients with original
+physical coordinates, identities and explicit effective C×H reference plane.
+
 Actual reports also expose [recovery and decoder views](../upstream/recovery.md):
 `verification()`, `fec_summary()` and bounded `fec_words(...)` return owned
 dictionaries from typed Rust projections. They preserve partial coverage and

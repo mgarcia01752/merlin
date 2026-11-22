@@ -8,7 +8,14 @@
  */
 //! Passive bounded owned QAM/SA snapshots; queries never rerun science.
 mod metrics;
+pub(crate) mod receiver;
 mod recovery;
+pub use receiver::{
+    ReceiverEstimateIdentity, ReceiverEstimatePoint, ReceiverEstimateRequest,
+    ReceiverEstimateSnapshot, ReceiverObservationPolicy, ReceiverObservationPolicyInfo,
+    ReceiverObservationSummary, MAX_RECEIVER_ESTIMATE_FRAMES, MAX_RECEIVER_ESTIMATE_POINTS,
+    MAX_RECEIVER_OBSERVATION_SCALARS,
+};
 pub(crate) mod response;
 pub use recovery::{
     FecSummary, FecWordPage, FecWordRequest, FecWordSnapshot, VerificationSnapshot,

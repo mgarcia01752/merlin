@@ -14,3 +14,4 @@ pub use control::{ProgressSnapshot, RunControl, RunStatus};
 pub use report::{BatchReport, GrantReport, RunFailure};
 pub use request::{preview, ExperimentConfig, ExperimentOptions, ExperimentPreview};
 pub use run::run;
+pub(crate) use run::run_observed;

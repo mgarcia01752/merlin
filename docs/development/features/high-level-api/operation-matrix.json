@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "8c625a299084ff807af127f197b5e5e709f352e5 plus exact configured-response candidate manifest",
-    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-04-response-native-retry/native-exports.json",
-    "native_sha256": "d0850af80c669a97c72aa04d8dc069f6351832500093576806c5c9dbc5fe68bc",
-    "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
+    "revision": "b16c36119d5ae79fc3547c9797c9c661029598fa plus receiver-estimate candidate manifest",
+    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-04-estimate-native/native-exports.json",
+    "native_sha256": "89d987fbdc9e16e560ff0e9794fb83322bc3f2b647ceed27e7847cfe02e42dfb",
+    "scope": "Targeted installed Linux CPython 3.10 receiver-observation and namespace acceptance; full native regression deferred to final integration gate.",
     "legacy_compatibility": {
       "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
       "preserved_class_exports": 59,
@@ -92,7 +92,10 @@
     "units.uiu-api-04-recovery": "Original meaningful source bit positions, encoded-grant offsets, upstream mother/information/shortening dimensions, actual completed decoder iterations and independent source Hamming errors. Pending outcomes and unavailable BER/maxima remain explicit. Page word count and aggregate copied mother/information/payload decision bits are separate application policies; totals do not depend on viewport.",
     "evidence.uiu-api-04-response": "../unified-qt-workbench/response-evidence.json, ../unified-qt-workbench/api-04-response-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-04-configured-response-and-periodic-impulse-unit: exact source/wheel hashes, independent transfer/periodic impulse anchors, real channel phase and native ownership/Busy/parity.",
     "status.uiu-api-04-response": "Implemented configured deterministic C/H/composite and optional complete periodic inverse. Actual received-estimate/soft/constellation gaps keep API-04 open; no Qt adoption.",
-    "units.uiu-api-04-response": "Original physical FFT indices, centered baseband Hz, dimensionless complex sample-amplitude transfer, twenty-log magnitude dB and phase radians with exact-zero readings absent. C bank generation is distinct from replay event/probe identity. Complete periodic inverse uses IFFT_u/sqrt(N), original sample indices/time seconds and full-period peak-relative dB; delay aliases modulo N. Frequency display and full impulse policies are independent; configured noise/residuals are excluded, and nonzero-CFO static H rejects."
+    "units.uiu-api-04-response": "Original physical FFT indices, centered baseband Hz, dimensionless complex sample-amplitude transfer, twenty-log magnitude dB and phase radians with exact-zero readings absent. C bank generation is distinct from replay event/probe identity. Complete periodic inverse uses IFFT_u/sqrt(N), original sample indices/time seconds and full-period peak-relative dB; delay aliases modulo N. Frequency display and full impulse policies are independent; configured noise/residuals are excluded, and nonzero-CFO static H rejects.",
+    "evidence.uiu-api-04-receiver-estimates": "../unified-qt-workbench/receiver-estimate-evidence.json, ../unified-qt-workbench/api-04-estimate-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-04-actual-received-pilot-estimate-unit: exact candidate/wheel hashes, 23 scoped upstream and 17 facade cases, 10 installed observation/namespace cases. Historical full regressions remain historical; full final integration acceptance is pending.",
+    "status.uiu-api-04-receiver-estimates": "Implemented opt-in completed received-pilot estimate retention with disabled defaults, bounded aggregate history and passive queries. API-04 remains open for soft metrics and constellation/reference gaps; no Qt adoption.",
+    "units.uiu-api-04-receiver-estimates": "Original physical FFT indices and frame/grant/run/generation identities; centered complex-baseband Hz and dimensionless complex sample-amplitude effective CxH from actual received pilots. Optional bins stay missing; actual zeros remain zero. Separate aggregate frame/scalar and query-copy application budgets; no configured transfer substitution or incomplete-band impulse."
   },
   "type_exports": {
     "downstream": [
@@ -1296,6 +1299,34 @@
       },
       {
         "export": "merlin::upstream::PeriodicImpulsePoint",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ReceiverEstimateIdentity",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ReceiverEstimatePoint",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ReceiverEstimateRequest",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ReceiverEstimateSnapshot",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ReceiverObservationPolicy",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ReceiverObservationPolicyInfo",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::upstream::ReceiverObservationSummary",
         "kind": "struct"
       }
     ],
@@ -28544,6 +28575,582 @@
       },
       "evidence": "evidence.uiu-api-04-response",
       "status": "status.uiu-api-04-response"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::BatchReport::receiver_observations",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn receiver_observations(&self) -> ReceiverObservationSummary",
+        "source_file": "crates/ofdma/src/instruments/receiver.rs",
+        "rustdoc": "docsis_ofdma/simulation/struct.BatchReport.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.BatchReport.receiver_observations",
+        "declaration": "merlin.upstream.BatchReport.receiver_observations"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-receiver-estimates",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ReceiverObservationSummary",
+        "scope": "Original physical FFT indices and frame/grant/run/generation identities; centered complex-baseband Hz and dimensionless complex sample-amplitude effective CxH from actual received pilots. Optional bins stay missing; actual zeros remain zero. Separate aggregate frame/scalar and query-copy application budgets; no configured transfer substitution or incomplete-band impulse."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_receiver_estimates.rs::both_modes_retain_actual_complex_effective_response_and_original_physical_holes",
+          "crates/ofdma/tests/api_receiver_estimates.rs::observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json",
+          "crates/ofdma/tests/api_receiver_estimates.rs::aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history",
+          "crates/ofdma/tests/api_receiver_estimates.rs::invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation",
+          "crates/ofdma/tests/api_receiver_estimates.rs::window_budgets_and_owned_results_preserve_full_original_optional_estimates",
+          "crates/ofdma/tests/api_receiver_estimates.rs::zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent",
+          "crates/ofdma/src/instruments/receiver_tests.rs::invalid_transaction_and_mid_frame_cancel_preserve_previous_completed_estimate",
+          "crates/ofdma/src/instruments/receiver_tests.rs::finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_estimates",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget",
+          "crates/ofdma/tests/rx_framing.rs::cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+          "crates/ofdma/tests/rx_framing.rs::cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+          "crates/ofdma/tests/rx_estimation.rs::literal_flat_complex_ls_zero_forcing_and_unobserved_failure",
+          "crates/ofdma/tests/rx_estimation.rs::linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry",
+          "crates/merlin/tests/native_inputs.rs::facade_native_profiles_preserve_catalog_roles_grids_and_original_octets",
+          "crates/merlin/tests/native_inputs.rs::facade_workbench_load_is_idle_owned_and_keeps_legacy_validation",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_ucd_keeps_literal_header_and_source_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_rxmer_retains_quarter_db_and_missing_readings",
+          "crates/merlin/tests/native_inputs.rs::facade_designer_uses_typed_owners_and_preserves_original_profile_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_profile_capture_keeps_binary_json_science_and_original_sources",
+          "crates/merlin/tests/native_inputs.rs::facade_configured_channel_preview_uses_public_typed_configuration_and_inputs",
+          "crates/merlin/tests/native_inputs.rs::facade_idle_tx_timing_and_precancel_use_public_immutable_contracts",
+          "crates/merlin/tests/native_inputs.rs::facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        ],
+        "python": {
+          "status": "Targeted installed native observation and namespace acceptance, no skips",
+          "cases": [
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual both-mode complex effective response, original physical holes/identities, passive noisy outcomes, global budgets, atomic rejection, owned results, Busy/cancel and separate Rust-process full optional-vector parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-receiver-estimates",
+      "status": "status.uiu-api-04-receiver-estimates"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::BatchReport::receiver_estimate",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn receiver_estimate( &self, request: ReceiverEstimateRequest, ) -> PhyResult<ReceiverEstimateSnapshot>",
+        "source_file": "crates/ofdma/src/instruments/receiver.rs",
+        "rustdoc": "docsis_ofdma/simulation/struct.BatchReport.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.BatchReport.receiver_estimate",
+        "declaration": "merlin.upstream.BatchReport.receiver_estimate"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-receiver-estimates",
+      "error_behavior": "errors.us",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "PhyResult<ReceiverEstimateSnapshot>",
+        "scope": "Original physical FFT indices and frame/grant/run/generation identities; centered complex-baseband Hz and dimensionless complex sample-amplitude effective CxH from actual received pilots. Optional bins stay missing; actual zeros remain zero. Separate aggregate frame/scalar and query-copy application budgets; no configured transfer substitution or incomplete-band impulse."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_receiver_estimates.rs::both_modes_retain_actual_complex_effective_response_and_original_physical_holes",
+          "crates/ofdma/tests/api_receiver_estimates.rs::observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json",
+          "crates/ofdma/tests/api_receiver_estimates.rs::aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history",
+          "crates/ofdma/tests/api_receiver_estimates.rs::invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation",
+          "crates/ofdma/tests/api_receiver_estimates.rs::window_budgets_and_owned_results_preserve_full_original_optional_estimates",
+          "crates/ofdma/tests/api_receiver_estimates.rs::zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent",
+          "crates/ofdma/src/instruments/receiver_tests.rs::invalid_transaction_and_mid_frame_cancel_preserve_previous_completed_estimate",
+          "crates/ofdma/src/instruments/receiver_tests.rs::finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_estimates",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget",
+          "crates/ofdma/tests/rx_framing.rs::cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+          "crates/ofdma/tests/rx_framing.rs::cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+          "crates/ofdma/tests/rx_estimation.rs::literal_flat_complex_ls_zero_forcing_and_unobserved_failure",
+          "crates/ofdma/tests/rx_estimation.rs::linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry",
+          "crates/merlin/tests/native_inputs.rs::facade_native_profiles_preserve_catalog_roles_grids_and_original_octets",
+          "crates/merlin/tests/native_inputs.rs::facade_workbench_load_is_idle_owned_and_keeps_legacy_validation",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_ucd_keeps_literal_header_and_source_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_rxmer_retains_quarter_db_and_missing_readings",
+          "crates/merlin/tests/native_inputs.rs::facade_designer_uses_typed_owners_and_preserves_original_profile_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_profile_capture_keeps_binary_json_science_and_original_sources",
+          "crates/merlin/tests/native_inputs.rs::facade_configured_channel_preview_uses_public_typed_configuration_and_inputs",
+          "crates/merlin/tests/native_inputs.rs::facade_idle_tx_timing_and_precancel_use_public_immutable_contracts",
+          "crates/merlin/tests/native_inputs.rs::facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        ],
+        "python": {
+          "status": "Targeted installed native observation and namespace acceptance, no skips",
+          "cases": [
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual both-mode complex effective response, original physical holes/identities, passive noisy outcomes, global budgets, atomic rejection, owned results, Busy/cancel and separate Rust-process full optional-vector parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-receiver-estimates",
+      "status": "status.uiu-api-04-receiver-estimates"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::ReceiverObservationPolicy::new",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn new( maximum_frames: usize, maximum_scalar_slots: usize, ) -> PhyResult<Self>",
+        "source_file": "crates/ofdma/src/instruments/receiver.rs",
+        "rustdoc": "docsis_ofdma/instruments/struct.ReceiverObservationPolicy.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.ReceiverObservationPolicy.__init__",
+        "declaration": "merlin.upstream.ReceiverObservationPolicy.__init__"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.uiu-api-04-receiver-estimates",
+      "error_behavior": "errors.us",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "PhyResult<Self>",
+        "scope": "Original physical FFT indices and frame/grant/run/generation identities; centered complex-baseband Hz and dimensionless complex sample-amplitude effective CxH from actual received pilots. Optional bins stay missing; actual zeros remain zero. Separate aggregate frame/scalar and query-copy application budgets; no configured transfer substitution or incomplete-band impulse."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_receiver_estimates.rs::both_modes_retain_actual_complex_effective_response_and_original_physical_holes",
+          "crates/ofdma/tests/api_receiver_estimates.rs::observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json",
+          "crates/ofdma/tests/api_receiver_estimates.rs::aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history",
+          "crates/ofdma/tests/api_receiver_estimates.rs::invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation",
+          "crates/ofdma/tests/api_receiver_estimates.rs::window_budgets_and_owned_results_preserve_full_original_optional_estimates",
+          "crates/ofdma/tests/api_receiver_estimates.rs::zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent",
+          "crates/ofdma/src/instruments/receiver_tests.rs::invalid_transaction_and_mid_frame_cancel_preserve_previous_completed_estimate",
+          "crates/ofdma/src/instruments/receiver_tests.rs::finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_estimates",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget",
+          "crates/ofdma/tests/rx_framing.rs::cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+          "crates/ofdma/tests/rx_framing.rs::cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+          "crates/ofdma/tests/rx_estimation.rs::literal_flat_complex_ls_zero_forcing_and_unobserved_failure",
+          "crates/ofdma/tests/rx_estimation.rs::linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry",
+          "crates/merlin/tests/native_inputs.rs::facade_native_profiles_preserve_catalog_roles_grids_and_original_octets",
+          "crates/merlin/tests/native_inputs.rs::facade_workbench_load_is_idle_owned_and_keeps_legacy_validation",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_ucd_keeps_literal_header_and_source_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_rxmer_retains_quarter_db_and_missing_readings",
+          "crates/merlin/tests/native_inputs.rs::facade_designer_uses_typed_owners_and_preserves_original_profile_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_profile_capture_keeps_binary_json_science_and_original_sources",
+          "crates/merlin/tests/native_inputs.rs::facade_configured_channel_preview_uses_public_typed_configuration_and_inputs",
+          "crates/merlin/tests/native_inputs.rs::facade_idle_tx_timing_and_precancel_use_public_immutable_contracts",
+          "crates/merlin/tests/native_inputs.rs::facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        ],
+        "python": {
+          "status": "Targeted installed native observation and namespace acceptance, no skips",
+          "cases": [
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual both-mode complex effective response, original physical holes/identities, passive noisy outcomes, global budgets, atomic rejection, owned results, Busy/cancel and separate Rust-process full optional-vector parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-receiver-estimates",
+      "status": "status.uiu-api-04-receiver-estimates"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::ReceiverObservationPolicy::info",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn info(&self) -> ReceiverObservationPolicyInfo",
+        "source_file": "crates/ofdma/src/instruments/receiver.rs",
+        "rustdoc": "docsis_ofdma/instruments/struct.ReceiverObservationPolicy.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.ReceiverObservationPolicy.info",
+        "declaration": "merlin.upstream.ReceiverObservationPolicy.info"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-receiver-estimates",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ReceiverObservationPolicyInfo",
+        "scope": "Original physical FFT indices and frame/grant/run/generation identities; centered complex-baseband Hz and dimensionless complex sample-amplitude effective CxH from actual received pilots. Optional bins stay missing; actual zeros remain zero. Separate aggregate frame/scalar and query-copy application budgets; no configured transfer substitution or incomplete-band impulse."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_receiver_estimates.rs::both_modes_retain_actual_complex_effective_response_and_original_physical_holes",
+          "crates/ofdma/tests/api_receiver_estimates.rs::observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json",
+          "crates/ofdma/tests/api_receiver_estimates.rs::aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history",
+          "crates/ofdma/tests/api_receiver_estimates.rs::invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation",
+          "crates/ofdma/tests/api_receiver_estimates.rs::window_budgets_and_owned_results_preserve_full_original_optional_estimates",
+          "crates/ofdma/tests/api_receiver_estimates.rs::zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent",
+          "crates/ofdma/src/instruments/receiver_tests.rs::invalid_transaction_and_mid_frame_cancel_preserve_previous_completed_estimate",
+          "crates/ofdma/src/instruments/receiver_tests.rs::finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_estimates",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget",
+          "crates/ofdma/tests/rx_framing.rs::cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+          "crates/ofdma/tests/rx_framing.rs::cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+          "crates/ofdma/tests/rx_estimation.rs::literal_flat_complex_ls_zero_forcing_and_unobserved_failure",
+          "crates/ofdma/tests/rx_estimation.rs::linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry",
+          "crates/merlin/tests/native_inputs.rs::facade_native_profiles_preserve_catalog_roles_grids_and_original_octets",
+          "crates/merlin/tests/native_inputs.rs::facade_workbench_load_is_idle_owned_and_keeps_legacy_validation",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_ucd_keeps_literal_header_and_source_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_rxmer_retains_quarter_db_and_missing_readings",
+          "crates/merlin/tests/native_inputs.rs::facade_designer_uses_typed_owners_and_preserves_original_profile_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_profile_capture_keeps_binary_json_science_and_original_sources",
+          "crates/merlin/tests/native_inputs.rs::facade_configured_channel_preview_uses_public_typed_configuration_and_inputs",
+          "crates/merlin/tests/native_inputs.rs::facade_idle_tx_timing_and_precancel_use_public_immutable_contracts",
+          "crates/merlin/tests/native_inputs.rs::facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        ],
+        "python": {
+          "status": "Targeted installed native observation and namespace acceptance, no skips",
+          "cases": [
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual both-mode complex effective response, original physical holes/identities, passive noisy outcomes, global budgets, atomic rejection, owned results, Busy/cancel and separate Rust-process full optional-vector parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-receiver-estimates",
+      "status": "status.uiu-api-04-receiver-estimates"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::Simulation::set_receiver_observation_policy",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn set_receiver_observation_policy( &mut self, policy: ReceiverObservationPolicy, ) -> ApiResult<()>",
+        "source_file": "crates/ofdma/src/api/session.rs",
+        "rustdoc": "docsis_ofdma/api/struct.Simulation.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.Simulation.set_receiver_observation_policy",
+        "declaration": "merlin.upstream.Simulation.set_receiver_observation_policy"
+      },
+      "input_ownership": "ownership.mutable",
+      "units": "units.uiu-api-04-receiver-estimates",
+      "error_behavior": "errors.us",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "ApiResult<()>",
+        "scope": "Original physical FFT indices and frame/grant/run/generation identities; centered complex-baseband Hz and dimensionless complex sample-amplitude effective CxH from actual received pilots. Optional bins stay missing; actual zeros remain zero. Separate aggregate frame/scalar and query-copy application budgets; no configured transfer substitution or incomplete-band impulse."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_receiver_estimates.rs::both_modes_retain_actual_complex_effective_response_and_original_physical_holes",
+          "crates/ofdma/tests/api_receiver_estimates.rs::observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json",
+          "crates/ofdma/tests/api_receiver_estimates.rs::aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history",
+          "crates/ofdma/tests/api_receiver_estimates.rs::invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation",
+          "crates/ofdma/tests/api_receiver_estimates.rs::window_budgets_and_owned_results_preserve_full_original_optional_estimates",
+          "crates/ofdma/tests/api_receiver_estimates.rs::zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent",
+          "crates/ofdma/src/instruments/receiver_tests.rs::invalid_transaction_and_mid_frame_cancel_preserve_previous_completed_estimate",
+          "crates/ofdma/src/instruments/receiver_tests.rs::finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_estimates",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget",
+          "crates/ofdma/tests/rx_framing.rs::cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+          "crates/ofdma/tests/rx_framing.rs::cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+          "crates/ofdma/tests/rx_estimation.rs::literal_flat_complex_ls_zero_forcing_and_unobserved_failure",
+          "crates/ofdma/tests/rx_estimation.rs::linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry",
+          "crates/merlin/tests/native_inputs.rs::facade_native_profiles_preserve_catalog_roles_grids_and_original_octets",
+          "crates/merlin/tests/native_inputs.rs::facade_workbench_load_is_idle_owned_and_keeps_legacy_validation",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_ucd_keeps_literal_header_and_source_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_rxmer_retains_quarter_db_and_missing_readings",
+          "crates/merlin/tests/native_inputs.rs::facade_designer_uses_typed_owners_and_preserves_original_profile_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_profile_capture_keeps_binary_json_science_and_original_sources",
+          "crates/merlin/tests/native_inputs.rs::facade_configured_channel_preview_uses_public_typed_configuration_and_inputs",
+          "crates/merlin/tests/native_inputs.rs::facade_idle_tx_timing_and_precancel_use_public_immutable_contracts",
+          "crates/merlin/tests/native_inputs.rs::facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        ],
+        "python": {
+          "status": "Targeted installed native observation and namespace acceptance, no skips",
+          "cases": [
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual both-mode complex effective response, original physical holes/identities, passive noisy outcomes, global budgets, atomic rejection, owned results, Busy/cancel and separate Rust-process full optional-vector parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-receiver-estimates",
+      "status": "status.uiu-api-04-receiver-estimates"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::Simulation::receiver_observation_policy",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn receiver_observation_policy(&self) -> ReceiverObservationPolicy",
+        "source_file": "crates/ofdma/src/api/session.rs",
+        "rustdoc": "docsis_ofdma/api/struct.Simulation.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.Simulation.receiver_observation_policy",
+        "declaration": "merlin.upstream.Simulation.receiver_observation_policy"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-receiver-estimates",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ReceiverObservationPolicy",
+        "scope": "Original physical FFT indices and frame/grant/run/generation identities; centered complex-baseband Hz and dimensionless complex sample-amplitude effective CxH from actual received pilots. Optional bins stay missing; actual zeros remain zero. Separate aggregate frame/scalar and query-copy application budgets; no configured transfer substitution or incomplete-band impulse."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_receiver_estimates.rs::both_modes_retain_actual_complex_effective_response_and_original_physical_holes",
+          "crates/ofdma/tests/api_receiver_estimates.rs::observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json",
+          "crates/ofdma/tests/api_receiver_estimates.rs::aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history",
+          "crates/ofdma/tests/api_receiver_estimates.rs::invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation",
+          "crates/ofdma/tests/api_receiver_estimates.rs::window_budgets_and_owned_results_preserve_full_original_optional_estimates",
+          "crates/ofdma/tests/api_receiver_estimates.rs::zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent",
+          "crates/ofdma/src/instruments/receiver_tests.rs::invalid_transaction_and_mid_frame_cancel_preserve_previous_completed_estimate",
+          "crates/ofdma/src/instruments/receiver_tests.rs::finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_estimates",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget",
+          "crates/ofdma/tests/rx_framing.rs::cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+          "crates/ofdma/tests/rx_framing.rs::cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+          "crates/ofdma/tests/rx_estimation.rs::literal_flat_complex_ls_zero_forcing_and_unobserved_failure",
+          "crates/ofdma/tests/rx_estimation.rs::linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry",
+          "crates/merlin/tests/native_inputs.rs::facade_native_profiles_preserve_catalog_roles_grids_and_original_octets",
+          "crates/merlin/tests/native_inputs.rs::facade_workbench_load_is_idle_owned_and_keeps_legacy_validation",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_ucd_keeps_literal_header_and_source_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_rxmer_retains_quarter_db_and_missing_readings",
+          "crates/merlin/tests/native_inputs.rs::facade_designer_uses_typed_owners_and_preserves_original_profile_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_profile_capture_keeps_binary_json_science_and_original_sources",
+          "crates/merlin/tests/native_inputs.rs::facade_configured_channel_preview_uses_public_typed_configuration_and_inputs",
+          "crates/merlin/tests/native_inputs.rs::facade_idle_tx_timing_and_precancel_use_public_immutable_contracts",
+          "crates/merlin/tests/native_inputs.rs::facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        ],
+        "python": {
+          "status": "Targeted installed native observation and namespace acceptance, no skips",
+          "cases": [
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual both-mode complex effective response, original physical holes/identities, passive noisy outcomes, global budgets, atomic rejection, owned results, Busy/cancel and separate Rust-process full optional-vector parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-receiver-estimates",
+      "status": "status.uiu-api-04-receiver-estimates"
     }
   ],
   "executed_records": [
@@ -28566,7 +29173,8 @@
     "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -60691,6 +61299,618 @@
       },
       "evidence": "evidence.uiu-api-04-response",
       "status": "status.uiu-api-04-response"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.BatchReport.receiver_estimate",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::BatchReport",
+        "source_file": "bindings/python/src/upstream/reports/receiver_observations.rs",
+        "symbol": "PyBatchReport",
+        "signature": "pub fn receiver_estimate( &self, request: ReceiverEstimateRequest, ) -> PhyResult<ReceiverEstimateSnapshot>",
+        "mapping": "Checked immutable policy conversion or direct public Rust dispatch. Existing session Busy guard is reused; report queries/serialization release the GIL and return owned dictionaries. No Python estimation, transforms, response substitution or observation algorithms.",
+        "delegated_operation": "merlin::upstream::BatchReport::receiver_estimate",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "receiver_estimate",
+        "kind": "method",
+        "signature": "(self, /, retained_index=0, first_carrier=0, carrier_count=0, maximum_points=4096)",
+        "declaration": "BatchReport.receiver_estimate"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-receiver-estimates",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::BatchReport",
+        "scope": "Original physical FFT indices and frame/grant/run/generation identities; centered complex-baseband Hz and dimensionless complex sample-amplitude effective CxH from actual received pilots. Optional bins stay missing; actual zeros remain zero. Separate aggregate frame/scalar and query-copy application budgets; no configured transfer substitution or incomplete-band impulse."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_receiver_estimates.rs::both_modes_retain_actual_complex_effective_response_and_original_physical_holes",
+          "crates/ofdma/tests/api_receiver_estimates.rs::observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json",
+          "crates/ofdma/tests/api_receiver_estimates.rs::aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history",
+          "crates/ofdma/tests/api_receiver_estimates.rs::invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation",
+          "crates/ofdma/tests/api_receiver_estimates.rs::window_budgets_and_owned_results_preserve_full_original_optional_estimates",
+          "crates/ofdma/tests/api_receiver_estimates.rs::zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent",
+          "crates/ofdma/src/instruments/receiver_tests.rs::invalid_transaction_and_mid_frame_cancel_preserve_previous_completed_estimate",
+          "crates/ofdma/src/instruments/receiver_tests.rs::finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_estimates",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget",
+          "crates/ofdma/tests/rx_framing.rs::cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+          "crates/ofdma/tests/rx_framing.rs::cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+          "crates/ofdma/tests/rx_estimation.rs::literal_flat_complex_ls_zero_forcing_and_unobserved_failure",
+          "crates/ofdma/tests/rx_estimation.rs::linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry",
+          "crates/merlin/tests/native_inputs.rs::facade_native_profiles_preserve_catalog_roles_grids_and_original_octets",
+          "crates/merlin/tests/native_inputs.rs::facade_workbench_load_is_idle_owned_and_keeps_legacy_validation",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_ucd_keeps_literal_header_and_source_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_rxmer_retains_quarter_db_and_missing_readings",
+          "crates/merlin/tests/native_inputs.rs::facade_designer_uses_typed_owners_and_preserves_original_profile_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_profile_capture_keeps_binary_json_science_and_original_sources",
+          "crates/merlin/tests/native_inputs.rs::facade_configured_channel_preview_uses_public_typed_configuration_and_inputs",
+          "crates/merlin/tests/native_inputs.rs::facade_idle_tx_timing_and_precancel_use_public_immutable_contracts",
+          "crates/merlin/tests/native_inputs.rs::facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        ],
+        "python": {
+          "status": "Targeted installed native observation and namespace acceptance, no skips",
+          "cases": [
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual both-mode complex effective response, original physical holes/identities, passive noisy outcomes, global budgets, atomic rejection, owned results, Busy/cancel and separate Rust-process full optional-vector parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-receiver-estimates",
+      "status": "status.uiu-api-04-receiver-estimates"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.BatchReport.receiver_observations",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::BatchReport",
+        "source_file": "bindings/python/src/upstream/reports/receiver_observations.rs",
+        "symbol": "PyBatchReport",
+        "signature": "pub fn receiver_observations(&self) -> ReceiverObservationSummary",
+        "mapping": "Checked immutable policy conversion or direct public Rust dispatch. Existing session Busy guard is reused; report queries/serialization release the GIL and return owned dictionaries. No Python estimation, transforms, response substitution or observation algorithms.",
+        "delegated_operation": "merlin::upstream::BatchReport::receiver_observations",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "receiver_observations",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "BatchReport.receiver_observations"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-receiver-estimates",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::BatchReport",
+        "scope": "Original physical FFT indices and frame/grant/run/generation identities; centered complex-baseband Hz and dimensionless complex sample-amplitude effective CxH from actual received pilots. Optional bins stay missing; actual zeros remain zero. Separate aggregate frame/scalar and query-copy application budgets; no configured transfer substitution or incomplete-band impulse."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_receiver_estimates.rs::both_modes_retain_actual_complex_effective_response_and_original_physical_holes",
+          "crates/ofdma/tests/api_receiver_estimates.rs::observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json",
+          "crates/ofdma/tests/api_receiver_estimates.rs::aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history",
+          "crates/ofdma/tests/api_receiver_estimates.rs::invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation",
+          "crates/ofdma/tests/api_receiver_estimates.rs::window_budgets_and_owned_results_preserve_full_original_optional_estimates",
+          "crates/ofdma/tests/api_receiver_estimates.rs::zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent",
+          "crates/ofdma/src/instruments/receiver_tests.rs::invalid_transaction_and_mid_frame_cancel_preserve_previous_completed_estimate",
+          "crates/ofdma/src/instruments/receiver_tests.rs::finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_estimates",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget",
+          "crates/ofdma/tests/rx_framing.rs::cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+          "crates/ofdma/tests/rx_framing.rs::cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+          "crates/ofdma/tests/rx_estimation.rs::literal_flat_complex_ls_zero_forcing_and_unobserved_failure",
+          "crates/ofdma/tests/rx_estimation.rs::linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry",
+          "crates/merlin/tests/native_inputs.rs::facade_native_profiles_preserve_catalog_roles_grids_and_original_octets",
+          "crates/merlin/tests/native_inputs.rs::facade_workbench_load_is_idle_owned_and_keeps_legacy_validation",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_ucd_keeps_literal_header_and_source_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_rxmer_retains_quarter_db_and_missing_readings",
+          "crates/merlin/tests/native_inputs.rs::facade_designer_uses_typed_owners_and_preserves_original_profile_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_profile_capture_keeps_binary_json_science_and_original_sources",
+          "crates/merlin/tests/native_inputs.rs::facade_configured_channel_preview_uses_public_typed_configuration_and_inputs",
+          "crates/merlin/tests/native_inputs.rs::facade_idle_tx_timing_and_precancel_use_public_immutable_contracts",
+          "crates/merlin/tests/native_inputs.rs::facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        ],
+        "python": {
+          "status": "Targeted installed native observation and namespace acceptance, no skips",
+          "cases": [
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual both-mode complex effective response, original physical holes/identities, passive noisy outcomes, global budgets, atomic rejection, owned results, Busy/cancel and separate Rust-process full optional-vector parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-receiver-estimates",
+      "status": "status.uiu-api-04-receiver-estimates"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.ReceiverObservationPolicy.__init__",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::ReceiverObservationPolicy",
+        "source_file": "bindings/python/src/upstream/receiver_observations.rs",
+        "symbol": "PyReceiverObservationPolicy",
+        "signature": "pub fn new( maximum_frames: usize, maximum_scalar_slots: usize, ) -> PhyResult<Self>",
+        "mapping": "Checked immutable policy conversion or direct public Rust dispatch. Existing session Busy guard is reused; report queries/serialization release the GIL and return owned dictionaries. No Python estimation, transforms, response substitution or observation algorithms.",
+        "delegated_operation": "merlin::upstream::ReceiverObservationPolicy::new",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native constructor",
+        "name": "__init__",
+        "kind": "constructor",
+        "signature": "(maximum_frames=0, maximum_scalar_slots=0)",
+        "declaration": "ReceiverObservationPolicy.__init__"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.uiu-api-04-receiver-estimates",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::ReceiverObservationPolicy",
+        "scope": "Original physical FFT indices and frame/grant/run/generation identities; centered complex-baseband Hz and dimensionless complex sample-amplitude effective CxH from actual received pilots. Optional bins stay missing; actual zeros remain zero. Separate aggregate frame/scalar and query-copy application budgets; no configured transfer substitution or incomplete-band impulse."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_receiver_estimates.rs::both_modes_retain_actual_complex_effective_response_and_original_physical_holes",
+          "crates/ofdma/tests/api_receiver_estimates.rs::observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json",
+          "crates/ofdma/tests/api_receiver_estimates.rs::aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history",
+          "crates/ofdma/tests/api_receiver_estimates.rs::invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation",
+          "crates/ofdma/tests/api_receiver_estimates.rs::window_budgets_and_owned_results_preserve_full_original_optional_estimates",
+          "crates/ofdma/tests/api_receiver_estimates.rs::zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent",
+          "crates/ofdma/src/instruments/receiver_tests.rs::invalid_transaction_and_mid_frame_cancel_preserve_previous_completed_estimate",
+          "crates/ofdma/src/instruments/receiver_tests.rs::finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_estimates",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget",
+          "crates/ofdma/tests/rx_framing.rs::cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+          "crates/ofdma/tests/rx_framing.rs::cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+          "crates/ofdma/tests/rx_estimation.rs::literal_flat_complex_ls_zero_forcing_and_unobserved_failure",
+          "crates/ofdma/tests/rx_estimation.rs::linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry",
+          "crates/merlin/tests/native_inputs.rs::facade_native_profiles_preserve_catalog_roles_grids_and_original_octets",
+          "crates/merlin/tests/native_inputs.rs::facade_workbench_load_is_idle_owned_and_keeps_legacy_validation",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_ucd_keeps_literal_header_and_source_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_rxmer_retains_quarter_db_and_missing_readings",
+          "crates/merlin/tests/native_inputs.rs::facade_designer_uses_typed_owners_and_preserves_original_profile_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_profile_capture_keeps_binary_json_science_and_original_sources",
+          "crates/merlin/tests/native_inputs.rs::facade_configured_channel_preview_uses_public_typed_configuration_and_inputs",
+          "crates/merlin/tests/native_inputs.rs::facade_idle_tx_timing_and_precancel_use_public_immutable_contracts",
+          "crates/merlin/tests/native_inputs.rs::facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        ],
+        "python": {
+          "status": "Targeted installed native observation and namespace acceptance, no skips",
+          "cases": [
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual both-mode complex effective response, original physical holes/identities, passive noisy outcomes, global budgets, atomic rejection, owned results, Busy/cancel and separate Rust-process full optional-vector parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-receiver-estimates",
+      "status": "status.uiu-api-04-receiver-estimates"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.ReceiverObservationPolicy.info",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::ReceiverObservationPolicy",
+        "source_file": "bindings/python/src/upstream/receiver_observations.rs",
+        "symbol": "PyReceiverObservationPolicy",
+        "signature": "pub fn info(&self) -> ReceiverObservationPolicyInfo",
+        "mapping": "Checked immutable policy conversion or direct public Rust dispatch. Existing session Busy guard is reused; report queries/serialization release the GIL and return owned dictionaries. No Python estimation, transforms, response substitution or observation algorithms.",
+        "delegated_operation": "merlin::upstream::ReceiverObservationPolicy::info",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "info",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "ReceiverObservationPolicy.info"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-receiver-estimates",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::ReceiverObservationPolicy",
+        "scope": "Original physical FFT indices and frame/grant/run/generation identities; centered complex-baseband Hz and dimensionless complex sample-amplitude effective CxH from actual received pilots. Optional bins stay missing; actual zeros remain zero. Separate aggregate frame/scalar and query-copy application budgets; no configured transfer substitution or incomplete-band impulse."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_receiver_estimates.rs::both_modes_retain_actual_complex_effective_response_and_original_physical_holes",
+          "crates/ofdma/tests/api_receiver_estimates.rs::observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json",
+          "crates/ofdma/tests/api_receiver_estimates.rs::aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history",
+          "crates/ofdma/tests/api_receiver_estimates.rs::invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation",
+          "crates/ofdma/tests/api_receiver_estimates.rs::window_budgets_and_owned_results_preserve_full_original_optional_estimates",
+          "crates/ofdma/tests/api_receiver_estimates.rs::zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent",
+          "crates/ofdma/src/instruments/receiver_tests.rs::invalid_transaction_and_mid_frame_cancel_preserve_previous_completed_estimate",
+          "crates/ofdma/src/instruments/receiver_tests.rs::finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_estimates",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget",
+          "crates/ofdma/tests/rx_framing.rs::cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+          "crates/ofdma/tests/rx_framing.rs::cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+          "crates/ofdma/tests/rx_estimation.rs::literal_flat_complex_ls_zero_forcing_and_unobserved_failure",
+          "crates/ofdma/tests/rx_estimation.rs::linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry",
+          "crates/merlin/tests/native_inputs.rs::facade_native_profiles_preserve_catalog_roles_grids_and_original_octets",
+          "crates/merlin/tests/native_inputs.rs::facade_workbench_load_is_idle_owned_and_keeps_legacy_validation",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_ucd_keeps_literal_header_and_source_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_rxmer_retains_quarter_db_and_missing_readings",
+          "crates/merlin/tests/native_inputs.rs::facade_designer_uses_typed_owners_and_preserves_original_profile_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_profile_capture_keeps_binary_json_science_and_original_sources",
+          "crates/merlin/tests/native_inputs.rs::facade_configured_channel_preview_uses_public_typed_configuration_and_inputs",
+          "crates/merlin/tests/native_inputs.rs::facade_idle_tx_timing_and_precancel_use_public_immutable_contracts",
+          "crates/merlin/tests/native_inputs.rs::facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        ],
+        "python": {
+          "status": "Targeted installed native observation and namespace acceptance, no skips",
+          "cases": [
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual both-mode complex effective response, original physical holes/identities, passive noisy outcomes, global budgets, atomic rejection, owned results, Busy/cancel and separate Rust-process full optional-vector parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-receiver-estimates",
+      "status": "status.uiu-api-04-receiver-estimates"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.Simulation.receiver_observation_policy",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::Simulation",
+        "source_file": "bindings/python/src/upstream/simulation/receiver_observations.rs",
+        "symbol": "PySimulation",
+        "signature": "pub fn receiver_observation_policy(&self) -> ReceiverObservationPolicy",
+        "mapping": "Checked immutable policy conversion or direct public Rust dispatch. Existing session Busy guard is reused; report queries/serialization release the GIL and return owned dictionaries. No Python estimation, transforms, response substitution or observation algorithms.",
+        "delegated_operation": "merlin::upstream::Simulation::receiver_observation_policy",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "receiver_observation_policy",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "Simulation.receiver_observation_policy"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-04-receiver-estimates",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::Simulation",
+        "scope": "Original physical FFT indices and frame/grant/run/generation identities; centered complex-baseband Hz and dimensionless complex sample-amplitude effective CxH from actual received pilots. Optional bins stay missing; actual zeros remain zero. Separate aggregate frame/scalar and query-copy application budgets; no configured transfer substitution or incomplete-band impulse."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_receiver_estimates.rs::both_modes_retain_actual_complex_effective_response_and_original_physical_holes",
+          "crates/ofdma/tests/api_receiver_estimates.rs::observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json",
+          "crates/ofdma/tests/api_receiver_estimates.rs::aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history",
+          "crates/ofdma/tests/api_receiver_estimates.rs::invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation",
+          "crates/ofdma/tests/api_receiver_estimates.rs::window_budgets_and_owned_results_preserve_full_original_optional_estimates",
+          "crates/ofdma/tests/api_receiver_estimates.rs::zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent",
+          "crates/ofdma/src/instruments/receiver_tests.rs::invalid_transaction_and_mid_frame_cancel_preserve_previous_completed_estimate",
+          "crates/ofdma/src/instruments/receiver_tests.rs::finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_estimates",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget",
+          "crates/ofdma/tests/rx_framing.rs::cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+          "crates/ofdma/tests/rx_framing.rs::cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+          "crates/ofdma/tests/rx_estimation.rs::literal_flat_complex_ls_zero_forcing_and_unobserved_failure",
+          "crates/ofdma/tests/rx_estimation.rs::linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry",
+          "crates/merlin/tests/native_inputs.rs::facade_native_profiles_preserve_catalog_roles_grids_and_original_octets",
+          "crates/merlin/tests/native_inputs.rs::facade_workbench_load_is_idle_owned_and_keeps_legacy_validation",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_ucd_keeps_literal_header_and_source_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_rxmer_retains_quarter_db_and_missing_readings",
+          "crates/merlin/tests/native_inputs.rs::facade_designer_uses_typed_owners_and_preserves_original_profile_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_profile_capture_keeps_binary_json_science_and_original_sources",
+          "crates/merlin/tests/native_inputs.rs::facade_configured_channel_preview_uses_public_typed_configuration_and_inputs",
+          "crates/merlin/tests/native_inputs.rs::facade_idle_tx_timing_and_precancel_use_public_immutable_contracts",
+          "crates/merlin/tests/native_inputs.rs::facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        ],
+        "python": {
+          "status": "Targeted installed native observation and namespace acceptance, no skips",
+          "cases": [
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual both-mode complex effective response, original physical holes/identities, passive noisy outcomes, global budgets, atomic rejection, owned results, Busy/cancel and separate Rust-process full optional-vector parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-receiver-estimates",
+      "status": "status.uiu-api-04-receiver-estimates"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.Simulation.set_receiver_observation_policy",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::Simulation",
+        "source_file": "bindings/python/src/upstream/simulation/receiver_observations.rs",
+        "symbol": "PySimulation",
+        "signature": "pub fn set_receiver_observation_policy( &mut self, policy: ReceiverObservationPolicy, ) -> ApiResult<()>",
+        "mapping": "Checked immutable policy conversion or direct public Rust dispatch. Existing session Busy guard is reused; report queries/serialization release the GIL and return owned dictionaries. No Python estimation, transforms, response substitution or observation algorithms.",
+        "delegated_operation": "merlin::upstream::Simulation::set_receiver_observation_policy",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "set_receiver_observation_policy",
+        "kind": "method",
+        "signature": "(self, /, policy)",
+        "declaration": "Simulation.set_receiver_observation_policy"
+      },
+      "input_ownership": "ownership.mutable",
+      "units": "units.uiu-api-04-receiver-estimates",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::upstream::Simulation",
+        "scope": "Original physical FFT indices and frame/grant/run/generation identities; centered complex-baseband Hz and dimensionless complex sample-amplitude effective CxH from actual received pilots. Optional bins stay missing; actual zeros remain zero. Separate aggregate frame/scalar and query-copy application budgets; no configured transfer substitution or incomplete-band impulse."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-12",
+        "REQ-UIU-18",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-04"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_receiver_estimates.rs::both_modes_retain_actual_complex_effective_response_and_original_physical_holes",
+          "crates/ofdma/tests/api_receiver_estimates.rs::observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json",
+          "crates/ofdma/tests/api_receiver_estimates.rs::aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history",
+          "crates/ofdma/tests/api_receiver_estimates.rs::invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation",
+          "crates/ofdma/tests/api_receiver_estimates.rs::window_budgets_and_owned_results_preserve_full_original_optional_estimates",
+          "crates/ofdma/tests/api_receiver_estimates.rs::zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent",
+          "crates/ofdma/src/instruments/receiver_tests.rs::invalid_transaction_and_mid_frame_cancel_preserve_previous_completed_estimate",
+          "crates/ofdma/src/instruments/receiver_tests.rs::finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_estimates",
+          "crates/ofdma/tests/experiment.rs::both_numerologies_high_level_exact_source_coverage_and_owned_results",
+          "crates/ofdma/tests/experiment.rs::failed_configuration_and_budget_changes_preserve_accepted_settings",
+          "crates/ofdma/tests/experiment.rs::pre_cancel_does_not_generate_or_claim_recovery",
+          "crates/ofdma/tests/experiment.rs::asynchronous_cancel_retains_actual_completed_prefix",
+          "crates/ofdma/tests/experiment.rs::passive_qam_sa_queries_and_retention_leave_all_science_unchanged",
+          "crates/ofdma/tests/experiment.rs::synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success",
+          "crates/ofdma/tests/experiment.rs::pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker",
+          "crates/ofdma/tests/experiment.rs::synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance",
+          "crates/ofdma/tests/experiment.rs::zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery",
+          "crates/ofdma/tests/experiment.rs::explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy",
+          "crates/ofdma/tests/experiment.rs::acknowledged_paused_time_does_not_consume_active_runtime_budget",
+          "crates/ofdma/tests/rx_framing.rs::cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding",
+          "crates/ofdma/tests/rx_framing.rs::cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions",
+          "crates/ofdma/tests/rx_estimation.rs::literal_flat_complex_ls_zero_forcing_and_unobserved_failure",
+          "crates/ofdma/tests/rx_estimation.rs::linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry",
+          "crates/merlin/tests/native_inputs.rs::facade_native_profiles_preserve_catalog_roles_grids_and_original_octets",
+          "crates/merlin/tests/native_inputs.rs::facade_workbench_load_is_idle_owned_and_keeps_legacy_validation",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_ucd_keeps_literal_header_and_source_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_upstream_rxmer_retains_quarter_db_and_missing_readings",
+          "crates/merlin/tests/native_inputs.rs::facade_designer_uses_typed_owners_and_preserves_original_profile_identity",
+          "crates/merlin/tests/native_inputs.rs::facade_profile_capture_keeps_binary_json_science_and_original_sources",
+          "crates/merlin/tests/native_inputs.rs::facade_configured_channel_preview_uses_public_typed_configuration_and_inputs",
+          "crates/merlin/tests/native_inputs.rs::facade_idle_tx_timing_and_precancel_use_public_immutable_contracts",
+          "crates/merlin/tests/native_inputs.rs::facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        ],
+        "python": {
+          "status": "Targeted installed native observation and namespace acceptance, no skips",
+          "cases": [
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks",
+            "bindings/python/tests/test_upstream_receiver_estimates.py::UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual both-mode complex effective response, original physical holes/identities, passive noisy outcomes, global budgets, atomic rejection, owned results, Busy/cancel and separate Rust-process full optional-vector parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-04-receiver-estimates",
+      "status": "status.uiu-api-04-receiver-estimates"
     }
   ],
   "native_type_exports": {
@@ -61370,6 +62590,13 @@
         "constructible": true
       },
       {
+        "name": "ReceiverObservationPolicy",
+        "canonical_name": "ReceiverObservationPolicy",
+        "module": "merlin.upstream",
+        "signature": "(maximum_frames=0, maximum_scalar_slots=0)",
+        "constructible": true
+      },
+      {
         "name": "ResourceGridSnapshot",
         "canonical_name": "ResourceGridSnapshot",
         "module": "merlin.upstream",
@@ -61633,6 +62860,18 @@
       "revision": "59f27aa0de8999e1d596d1f6040208d332be8596 plus exact recovery candidate manifest",
       "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-04-recovery-native/native-exports.json",
       "native_sha256": "6384af52faeec8eb6e3c4122a8aba7c64c98a73045ec2286e92e7d34edf86603",
+      "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "8c625a299084ff807af127f197b5e5e709f352e5 plus exact configured-response candidate manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-04-response-native-retry/native-exports.json",
+      "native_sha256": "d0850af80c669a97c72aa04d8dc069f6351832500093576806c5c9dbc5fe68bc",
       "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
       "legacy_compatibility": {
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",

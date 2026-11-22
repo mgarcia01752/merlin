@@ -24,6 +24,8 @@ Positive soft metrics favor zero. Shortened known zeros are separate from
 missing observations, which become erasures at their original positions.
 
 Input chunks must be contiguous and belong to the accepted run/configuration/grant.
+[Optional bounded estimate retention](receiver-estimates.md) exposes actual
+completed-frame coefficients without replay or configured-response substitution.
 Rejected calls preserve receive state. Explicit gaps and truncated windows keep
 logical bit positions; incomplete samples never become a fabricated FFT window.
 Decoder convergence, parity, known-zero/fill checks, actual iterations and bit

@@ -518,3 +518,39 @@ fn upstream_error_categories_keep_offsets_and_original_domain_causes() {
         assert!(std::error::Error::source(&error).is_some());
     }
 }
+
+#[test]
+fn upstream_facade_retains_actual_receiver_estimates_through_independent_owner() {
+    const RETAINED_FRAME_BUDGET: usize = 1;
+    const RETENTION_SCALAR_BUDGET: usize = 4096;
+    const EXPECTED_FFT_SAMPLES: usize = 2048;
+    let policy =
+        upstream::ReceiverObservationPolicy::new(RETAINED_FRAME_BUDGET, RETENTION_SCALAR_BUDGET)
+            .unwrap();
+    assert_eq!(
+        TypeId::of::<upstream::ReceiverObservationPolicy>(),
+        TypeId::of::<docsis_ofdma::api::ReceiverObservationPolicy>()
+    );
+    let mut simulation = upstream::Simulation::new(Default::default()).unwrap();
+    simulation
+        .configure_json(include_bytes!(
+            "../../../examples/cli/upstream/us-50khz.json"
+        ))
+        .unwrap();
+    simulation.set_receiver_observation_policy(policy).unwrap();
+    assert_eq!(simulation.receiver_observation_policy(), policy);
+    let report = simulation.run().unwrap();
+    assert!(report.reference_recovered);
+    assert_eq!(
+        report.receiver_observations().retained_frames,
+        RETAINED_FRAME_BUDGET
+    );
+    let estimate = report
+        .receiver_estimate(upstream::ReceiverEstimateRequest::default())
+        .unwrap();
+    assert_eq!(estimate.points.len(), EXPECTED_FFT_SAMPLES);
+    assert_eq!(
+        estimate.reference_plane,
+        "received_pilot_effective_c_times_h"
+    );
+}

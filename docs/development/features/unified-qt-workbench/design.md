@@ -999,8 +999,9 @@ or calculating scientific aggregates in the adapter. Second, receiver pilot
 estimates and per-cell/word soft observations are not retained by the existing
 report; they cannot be recovered by reading the final decoded bits. Third,
 response/impulse and constellation reference queries need authoritative Rust
-operations with explicit C, H and estimated C×H planes. The latter gaps remain
-pending; acceptance of the report-view unit alone does not complete UIU-API-04.
+operations with explicit C, H and estimated C×H planes. The configured-response
+and actual estimate-retention units below now have scoped acceptance; soft and
+remaining reference/display contracts keep UIU-API-04 open.
 
 The first implementation unit adds these exact Rust operations on the existing
 owned BatchReport, through `merlin::upstream`:
@@ -1058,6 +1059,68 @@ destructive-channel outcomes remain failed, and deliberately edited flag fixture
 remain labelled projection tests. Original API rows, report schema, scientific
 algorithms and all Qt sources remain unchanged. UIU-API-04 stays unchecked for its
 received-estimate/response/soft and remaining instrument gaps.
+
+### UIU-API-04 received-pilot estimate retention unit
+
+REQ-UIU-02/12/18/24 require actual normal receiver estimates, separately from
+configured-response diagnostics. The design preceded implementation; the
+[scoped acceptance](validation.md#uiu-api-04-actual-received-pilot-estimate-unit)
+now passes. API-04 remains open for soft observations and remaining references.
+
+Add `ReceiverObservationPolicy::new(maximum_frames, maximum_scalar_slots)`
+with private fields, `Default` disabled and an `info()` projection. Independent
+application ceilings are eight retained frames and 262144 scalar slots. Charge
+two scalar slots per complete physical FFT bin, including unavailable bins.
+These limits have separate owners from equal-valued FEC page limits. Enabled
+retention requires space for one estimate in the accepted numerology.
+
+`Simulation::set_receiver_observation_policy(policy)` and
+`receiver_observation_policy()` replace/read the opt-in atomically. Validate all
+configuration entrypoints before adoption. Preserve configuration generation,
+source, options, existing constructors and public ExperimentOptions fields.
+Existing public `simulation::run` remains disabled; the high-level session uses
+the same loop through internal dispatch with its explicit observation policy.
+
+At each completed receive frame, move the already calculated optional estimate
+vector into a bounded owner. Transactional receiver clones share immutable
+retained vectors. No extra FFT, fit, random draw or sample replay. Transfer the
+observer across grants so its budget is global. Capture includes completed
+frames during channel drain and receiver finish. Cancellation preserves completed
+frames; interrupted partial frames claim no complete estimate. Invalid receive
+transactions preserve accepted history.
+
+`BatchReport::receiver_observations()` returns policy, completed/retained/dropped
+counts, used scalar slots and retained identities.
+`receiver_estimate(ReceiverEstimateRequest)` selects retained index and original
+carrier viewport with a separate 4096-point copy ceiling; zero count means the
+remaining FFT. Return owned optional coefficients, original run/grant/generation/
+frame, estimator, FFT/sample-clock/frequency metadata and explicit
+`received_pilot_effective_c_times_h` plane. Unknown bins stay unavailable; zero
+estimates stay actual zeros. Do not infer an impulse from incomplete frequency
+support or fill holes with configured C/H. Validate bounds before copying;
+unretained frames return unavailable.
+
+Python mirrors policy construction/info, session setter/getter and report queries
+through the installed native extension, with GIL release for Rust work. Default
+reports omit the optional observation field, preserving the old JSON shape.
+Project persistence remains API-05.
+
+| Inspected path/symbol | Current contract / gap | Decision and owner |
+| --- | --- | --- |
+| `crates/ofdma/src/signal_processing/estimation.rs::estimate` | Actual optional C×H bins; discarded after frame | REUSE unchanged algorithm; move completed values from `receiver/framing.rs`. |
+| `crates/ofdma/src/receiver/framing.rs::decode_frame`, `push_with_control` | Frame completion and transactional rollback | EDIT optional recorder; immutable shared frames keep transactional clones bounded. |
+| `crates/ofdma/src/instruments/observer.rs::ObservationStore` | Existing I/Q budget and report shape | EDIT optional private store; ADD `crates/ofdma/src/instruments/receiver.rs` for policy, recording and queries. |
+| `crates/ofdma/src/simulation/run.rs::run`, `api/session.rs::Simulation` | One loop, stable constructors/options | ADAPT internal dispatch and observer transfer; preserve public disabled run. |
+| `crates/ofdma/src/instruments/mod.rs`, `crates/ofdma/src/api/mod.rs` | Public export registration | EDIT typed exports; retain facade re-exports. |
+| `bindings/python/src/upstream/mod.rs`, `upstream/simulation.rs`, `upstream/reports.rs`, `bindings/python/python/merlin/upstream.pyi` | Registration, Busy guard and owned reports | EDIT wiring; ADD `upstream/receiver_observations.rs`, `simulation/receiver_observations.rs`, `reports/receiver_observations.rs`. |
+| Proposed `crates/ofdma/tests/api_receiver_estimates.rs`, `crates/ofdma/examples/upstream_receiver_estimates.rs`, `bindings/python/tests/test_upstream_receiver_estimates.py` | No retention acceptance yet | ADD independent complex-gain/plane, both-mode, disabled/passive, budget, identity, partial, rejection and Rust/native parity cases. |
+| Proposed `docs/user/upstream/receiver-estimates.md`; upstream/Python indexes | Estimate support currently pending | ADD focused guide; reconcile after actual validation. |
+
+Validate new cases and existing receiver/experiment owners, installed native
+namespace/estimate cases, formatting and scoped Clippy. Reuse proven unchanged
+reference outputs with hashes rather than regenerating downstream pipelines for
+this unit. Full regression remains the final integration gate. Earlier passes
+do not establish acceptance of this new unit.
 
 ### UIU-API-04 configured response and periodic impulse unit
 

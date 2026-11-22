@@ -8,6 +8,7 @@
  */
 //! Short-held session slot, Rust worker and cooperative interpreter signal stop.
 mod grid;
+mod receiver_observations;
 mod response;
 use super::{
     api,

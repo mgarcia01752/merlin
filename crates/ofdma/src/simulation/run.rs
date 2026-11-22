@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -13,7 +14,9 @@ use super::{
 use crate::{
     channel::{Channel, RxmerChannel},
     error::limit,
-    instruments::{ObservationStore, Tap},
+    instruments::{
+        receiver::ReceiverEstimateStore, ObservationStore, ReceiverObservationPolicy, Tap,
+    },
     receiver::{DecodedWord, Receiver},
     resources::ResourcePlan,
     source::{Prbs15, PrbsVerifier},
@@ -38,6 +41,34 @@ pub fn run(
     generation: u64,
     control: &RunControl,
 ) -> PhyResult<BatchReport> {
+    run_observed(
+        config,
+        options,
+        run_id,
+        generation,
+        control,
+        ReceiverObservationPolicy::default(),
+    )
+}
+
+/// Executes the existing frozen loop with explicit passive receiver observation budgets.
+/// # Arguments
+/// * `config`, `options` - Original admitted science and execution budgets.
+/// * `run_id`, `generation`, `control` - Original association and cooperative lifecycle handle.
+/// * `receiver_policy` - Optional aggregate frame/scalar retention, disabled by the public legacy run.
+/// # Returns
+/// Owned completed/partial science with actual retained estimates; no estimation replay.
+/// # Errors
+/// Preserves existing admission/control errors and rejects insufficient receiver storage before work.
+pub(crate) fn run_observed(
+    config: &ExperimentConfig,
+    options: &ExperimentOptions,
+    run_id: u64,
+    generation: u64,
+    control: &RunControl,
+    receiver_policy: ReceiverObservationPolicy,
+) -> PhyResult<BatchReport> {
+    receiver_policy.validate_mode(config.us_configuration.waveform().numerology())?;
     let planned = preview(config, options)?;
     Identity {
         run: run_id,
@@ -75,6 +106,7 @@ pub fn run(
         elapsed_ms: 0,
         observations: ObservationStore::new(options.retained_points, &options.retained_taps)?,
     };
+    report.observations.receiver_estimates = ReceiverEstimateStore::new(receiver_policy);
     publish(control, &report, run_id, started);
     let mut next_epoch =
         config.us_configuration.grant().epoch_sample - config.guards.leading as u64;
@@ -155,6 +187,7 @@ pub fn run(
             next_epoch,
             next_epoch + channel_support as u64,
         )?;
+        receiver.replace_estimate_store(report.observations.receiver_estimates.take());
         let resources = ResourcePlan::new(&us)?;
         let mut observed_frames = 0;
         report.generated_source_bits += source_range.length();
@@ -289,6 +322,7 @@ pub fn run(
             }
             Ok(())
         })();
+        report.observations.receiver_estimates = receiver.replace_estimate_store(None);
         outcome.unverified_source_bits = source_range.length() - outcome.compared_bits;
         outcome.pending_transmit_samples =
             outcome.planned_transmit_samples - outcome.emitted_samples;

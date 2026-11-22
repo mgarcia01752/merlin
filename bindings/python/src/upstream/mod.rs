@@ -7,6 +7,7 @@ mod capture;
 mod configuration;
 mod document;
 mod measurements;
+mod receiver_observations;
 mod reports;
 mod response;
 mod simulation;
@@ -67,6 +68,7 @@ pub(crate) fn register(parent: &Bound<'_, PyModule>) -> PyResult<()> {
     capture::register(&module)?;
     simulation::register(&module)?;
     reports::register(&module)?;
+    module.add_class::<receiver_observations::PyReceiverObservationPolicy>()?;
     measurements::register(&module)?;
     parent.add("_upstream", module)?;
     Ok(())

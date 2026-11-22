@@ -995,3 +995,50 @@ reconstruction. The [user guide](../../../user/upstream/response.md) states thes
 limits. Actual receiver-estimate/soft and remaining constellation/reference work
 keep UIU-API-04 unchecked. Evidence remains local Rust/native Python acceptance;
 no new Qt, hosted, installer or interoperability claim is made.
+
+## UIU-API-04 actual received-pilot estimate unit
+
+The [candidate evidence](receiver-estimate-evidence.json),
+[executed cases](api-04-estimate-operation-test-results.json) and
+[exact retention design](design.md#uiu-api-04-received-pilot-estimate-retention-unit)
+trace REQ-UIU-02/12/18/24 to the existing API-04 parent. This unit retains actual
+normal receiver estimates after completed frame processing. Disabled defaults,
+existing constructors/options and default report JSON remain compatible.
+
+Scoped Rust acceptance passes 23 upstream cases: six new API/scientific cases,
+two new deterministic observation-boundary cases and fifteen existing receiver/
+experiment cases. Seventeen facade cases pass, including one new actual public
+namespace execution. Literal H=2+j and normalized C=j yield received-pilot
+C×H=-1+2j at both spacings. Original unused carriers stay unavailable; actual
+zero channel yields present complex zero. Complete missing frames retain all
+unavailable estimates. Invalid transactions and cancellation inside the next
+frame preserve the previous completed estimate without a timing race.
+
+Enabled and exhausted observation preserve actual noisy decoded words, BER and
+matched MER. Aggregate frame/scalar limits span grants and preserve original
+run/generation/grant/frame identities. Mode-specific policy admission and typed,
+document and JSON replacement reject atomically. Query windows preserve optional
+physical coordinates; copied data outlives sessions and reports. The native Busy
+guard protects policy access while an acknowledged pause holds the session.
+
+The installed Linux CPython 3.10 wheel passes ten scoped cases without skips:
+six new observation cases and four existing namespace/typing/compatibility cases.
+One fresh separate Rust-process reference supplies every optional physical
+coefficient and metadata at both spacings. Unchanged downstream reference
+pipelines and the complete native/Rust suites were not rerun for this partial
+unit; full regressions remain the final integration gate. The preceding recorded
+pause-timing failure remains unresolved historical evidence, not a fixed defect.
+
+Core/facade and native all-target Clippy pass. Exact compiler/installed inventories
+append six Rust and six native operations (533/516 total), preserving every
+earlier operation and alias correction. All 178 Qt sources remain unchanged.
+Formatting, focused metadata-tool tests, documentation/traceability and strict
+operation checks are recorded with the candidate evidence.
+
+Retention stores complete estimates only; interrupted partial frames are absent.
+Disabled inventory describes observation availability rather than all receiver
+work. Missing frequency support is not converted into a full-band impulse.
+Actual soft metrics, remaining response-display/reference contracts and Qt
+adoption keep API-04 unchecked. The [user guide](../../../user/upstream/receiver-estimates.md)
+states these boundaries. Evidence is local Rust/native acceptance, with no new
+hosted, installer, hardware or external interoperability claim.

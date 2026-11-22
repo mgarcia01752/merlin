@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -69,6 +70,7 @@ pub struct Receiver {
     last_grid: Option<Vec<Iq>>,
     last_corrected: Vec<Iq>,
     last_cells: Vec<(Cell, Option<Iq>)>,
+    receiver_estimates: Option<crate::instruments::receiver::ReceiverEstimateStore>,
 }
 
 impl Receiver {
@@ -121,6 +123,7 @@ impl Receiver {
             last_grid: None,
             last_corrected: Vec::new(),
             last_cells: Vec::new(),
+            receiver_estimates: None,
         })
     }
     /// Accepts an explicit finite receive observation interval independently of B.
@@ -245,6 +248,18 @@ impl Receiver {
     /// cells or changes subsequent masks, confidence or decoding.
     pub fn last_payload_cells(&self) -> &[(Cell, Option<Iq>)] {
         &self.last_cells
+    }
+
+    /// Transfers the optional bounded observer without changing scientific receiver state.
+    /// # Arguments
+    /// * `store` - Aggregate retained history from earlier grants, or None to detach it.
+    /// # Returns
+    /// Previously attached history, including completed frames before cancellation or failure.
+    pub(crate) fn replace_estimate_store(
+        &mut self,
+        store: Option<crate::instruments::receiver::ReceiverEstimateStore>,
+    ) -> Option<crate::instruments::receiver::ReceiverEstimateStore> {
+        std::mem::replace(&mut self.receiver_estimates, store)
     }
 
     fn total_symbols(&self) -> usize {
@@ -386,6 +401,15 @@ impl Receiver {
                 }
                 self.coded_offset += 1;
             }
+        }
+        if let Some(store) = &mut self.receiver_estimates {
+            store.record(
+                &self.config,
+                self.identity,
+                self.config.grant().first_frame + self.frames as u64,
+                self.policy.estimator(),
+                estimates,
+            );
         }
         self.frames += 1;
         self.frame.clear();

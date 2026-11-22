@@ -12,7 +12,7 @@ use super::{
     RunControl,
 };
 use crate::{
-    simulation::{preview, run},
+    simulation::{preview, run_observed},
     PhyError,
 };
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -39,6 +39,7 @@ pub struct Simulation {
     generation: u64,
     document: Option<super::ConfigurationDocument>,
     measured_provenance: Option<String>,
+    receiver_observations: super::ReceiverObservationPolicy,
 }
 
 impl Simulation {
@@ -54,6 +55,7 @@ impl Simulation {
             generation: 0,
             document: None,
             measured_provenance: None,
+            receiver_observations: super::ReceiverObservationPolicy::default(),
         })
     }
     /// Atomically accepts typed synthetic `configuration` through shared admission.
@@ -62,6 +64,8 @@ impl Simulation {
     /// generation and run settings. Loading never runs or consumes source.
     pub fn configure(&mut self, configuration: ExperimentConfig) -> ApiResult<()> {
         preview(&configuration, &self.options)?;
+        self.receiver_observations
+            .validate_mode(configuration.us_configuration.waveform().numerology())?;
         let generation = next_id()?;
         self.configuration = Some(configuration);
         self.document = None;
@@ -83,6 +87,8 @@ impl Simulation {
     /// Unsupported selected execution modes reject before changing accepted state.
     pub fn configure_document(&mut self, document: super::ConfigurationDocument) -> ApiResult<()> {
         let (configuration, options) = document.prepare()?;
+        self.receiver_observations
+            .validate_mode(configuration.us_configuration.waveform().numerology())?;
         let generation = next_id()?;
         self.configuration = Some(configuration);
         self.options = options;
@@ -106,6 +112,13 @@ impl Simulation {
     /// Returns a resource error if no new session identity can be allocated;
     /// failure preserves all previously accepted input and settings.
     pub fn configure_measured(&mut self, prepared: super::MeasuredConfiguration) -> ApiResult<()> {
+        self.receiver_observations.validate_mode(
+            prepared
+                .configuration
+                .us_configuration
+                .waveform()
+                .numerology(),
+        )?;
         let generation = next_id()?;
         self.configuration = Some(prepared.configuration);
         self.options = prepared.options;
@@ -133,6 +146,31 @@ impl Simulation {
         self.options = options;
         Ok(())
     }
+    /// Atomically replaces optional completed receiver-estimate retention budgets.
+    /// # Arguments
+    /// * `policy` - Validated aggregate frame/scalar policy, independent of runtime options.
+    /// # Returns
+    /// Unit without changing accepted generation, source, configuration or existing reports.
+    /// # Errors
+    /// Rejects insufficient scalar space for the accepted numerology, preserving the old policy.
+    pub fn set_receiver_observation_policy(
+        &mut self,
+        policy: super::ReceiverObservationPolicy,
+    ) -> ApiResult<()> {
+        if let Some(configuration) = &self.configuration {
+            policy.validate_mode(configuration.us_configuration.waveform().numerology())?;
+        }
+        self.receiver_observations = policy;
+        Ok(())
+    }
+
+    /// Inspects optional receiver observation budgets without starting work.
+    /// # Returns
+    /// An owned immutable policy; default disables retention independently of I/Q taps.
+    pub fn receiver_observation_policy(&self) -> super::ReceiverObservationPolicy {
+        self.receiver_observations
+    }
+
     /// Returns owned current readiness, resource counts and discovered inventory.
     ///
     /// Missing configuration returns MissingSetting; no processing is triggered.
@@ -208,7 +246,14 @@ impl Simulation {
             .configuration
             .as_ref()
             .ok_or(ApiError::MissingSetting)?;
-        let mut report = run(config, &self.options, next_id()?, self.generation, control)?;
+        let mut report = run_observed(
+            config,
+            &self.options,
+            next_id()?,
+            self.generation,
+            control,
+            self.receiver_observations,
+        )?;
         report.measurement_provenance_json = self.measured_provenance.clone();
         report.source_configuration_json = self
             .document

@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -79,6 +80,8 @@ pub(crate) struct Trace {
 pub struct ObservationStore {
     limit: usize,
     traces: BTreeMap<Tap, Trace>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) receiver_estimates: Option<super::receiver::ReceiverEstimateStore>,
 }
 
 impl ObservationStore {
@@ -114,6 +117,7 @@ impl ObservationStore {
                 limit / taps.len()
             },
             traces,
+            receiver_estimates: None,
         })
     }
     /// Returns an owned bounded QAM snapshot for `tap` and optional `loading`.

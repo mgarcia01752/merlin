@@ -1116,8 +1116,9 @@ implemented `crates/ofdma/src/instruments/recovery.rs` owner supplies typed scal
 verification/FEC summaries and bounded original completed-word paging. Its
 [focused acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-bounded-recovery-view-unit)
 preserves independent source versus decoder outcomes and avoids whole-report UI
-copies or adapter calculations. Receiver-estimate/soft retention and explicit
-C/H/estimated C×H response queries remain separate pending API-04 work.
+copies or adapter calculations. Subsequent response and actual receiver-estimate
+units are described below; soft retention and remaining instrument contracts
+keep API-04 open.
 
 The implemented [configured response unit](development/features/unified-qt-workbench/design.md#uiu-api-04-configured-response-and-periodic-impulse-unit)
 exposes admitted corrective C, deterministic physical H and their composite
@@ -1130,6 +1131,14 @@ remain separate and require real receiver retention before public exposure.
 The [unit evidence](development/features/unified-qt-workbench/validation.md#uiu-api-04-configured-response-and-periodic-impulse-unit)
 records local core/native acceptance and the retained initial pause-test timeout
 followed by successful unchanged-case checks and complete installed-suite retry.
+
+The implemented [received-pilot retention unit](development/features/unified-qt-workbench/design.md#uiu-api-04-received-pilot-estimate-retention-unit)
+retains completed normal receiver estimates with opt-in aggregate frame/scalar
+budgets, preserving default behavior and transactional/cancellation boundaries.
+Its typed report views keep missing bins and actual C×H estimates separate from
+configured-response diagnostics. Its [scoped Rust/native acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-actual-received-pilot-estimate-unit)
+preserves existing science/defaults. Soft and remaining instrument work keep
+UIU-API-04 open; full regressions remain the final integration gate.
 
 ### Unified Qt source ownership
 
