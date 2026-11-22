@@ -1447,3 +1447,35 @@ This accepts the focused presentation contract only. The original result provide
 shared-direction instruments, final numeric review and unified runtime gates remain
 pending under their existing tasks. No backend, Python, saved schema or QML owner
 changes, and no non-Qt scientific rerun is needed.
+
+## UIU-DS-01 source-profile compatibility API accepted
+
+The [source-profile compatibility evidence](source-profile-compatibility-evidence.json)
+accepts the backend prerequisite before its Qt consumer. Rust
+`TransmissionConfiguration::check_profile_capture` and the same native Python
+method borrow an immutable source catalog and original byte-sized identity. They
+delegate to the existing selected-profile lookup and editor grid validator; no
+new geometry rules, simulation, source advance or run-ID admission is introduced.
+The previous `check_profile` operation and all prior behavior remain unchanged.
+
+Six source-catalog and five existing admission Rust cases pass, covering both
+numerologies, original ID 255, absent IDs, spacing/occupied-band failures, unchanged
+original bytes/settings and rejected run identity. Thirteen installed wheel
+admission/catalog/namespace cases pass with native integer conversion boundaries,
+typed error categories and owned provenance. An initial test compared an error
+enum with a string; only the assertion's expected type changed. The exact same
+installed wheel then passes; the failed receipt remains preserved. The initial
+zero-case feature selection, incomplete rustdoc inventory and Rust fixture-style
+failure are preparatory failures, not acceptance evidence.
+
+Core/native Clippy, root/binding formatting, analysis-only compilation and 34 API
+metadata regressions pass. Fresh complete-feature rustdoc and actual installed
+native metadata validate the exact 564 Rust/537 native operation matrix against
+recorded executed cases. Every previous operation row and class export remains
+deep-equal; every previous installed root/namespace operation signature/kind is
+preserved. Original full backend/native acceptance stays historical, with this
+small additive query receiving scoped acceptance rather than a claimed full rerun.
+
+The Qt tree, executable, dependency records and all 40 current guard entries remain
+unchanged in this prerequisite. Commit this public extension before adapting its
+profile editor consumer. UIU-DS-01 and final numeric/unified runtime gates stay open.

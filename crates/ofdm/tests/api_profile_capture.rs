@@ -68,6 +68,80 @@ fn complete_source_catalog_and_compact_schemes_preserve_codes_order_and_header()
 }
 
 #[test]
+fn source_catalog_ocd_compatibility_preserves_byte_ids_without_run_admission() {
+    // Independent upper-byte source ID 255; source ID 199 is absent. Each source
+    // contains four carriers starting at physical carrier 356 in either spacing.
+    for (spacing, spacing_hz) in [
+        (SubcarrierSpacing::Khz25, 25_000),
+        (SubcarrierSpacing::Khz50, 50_000),
+    ] {
+        let mut document: Value = serde_json::from_slice(original().bytes()).unwrap();
+        document["profiles"][0]["profile_id"] = json!(255);
+        document["subcarrier_spacing"] = json!(spacing_hz);
+        let input = NamedCapture::new(
+            "source-boundary.json",
+            serde_json::to_vec(&document).unwrap(),
+        )
+        .unwrap();
+        let capture = ProfileCapture::from_bytes(&input).unwrap();
+        let mut settings = TransmissionSettings {
+            subcarrier_spacing: spacing,
+            ..Default::default()
+        };
+        let configuration = TransmissionConfiguration::new(settings.clone()).unwrap();
+        let before = serde_json::to_value(configuration.settings()).unwrap();
+        configuration.check_profile_capture(&capture, 0).unwrap();
+        configuration.check_profile_capture(&capture, 255).unwrap();
+        assert_eq!(
+            configuration
+                .check_profile_capture(&capture, 199)
+                .unwrap_err()
+                .code(),
+            ErrorCode::InvalidIdentifier
+        );
+        assert!(ProfileId::new(255).is_err());
+        settings.subcarrier_spacing = match spacing {
+            SubcarrierSpacing::Khz25 => SubcarrierSpacing::Khz50,
+            SubcarrierSpacing::Khz50 => SubcarrierSpacing::Khz25,
+        };
+        let mismatch = TransmissionConfiguration::new(settings).unwrap();
+        assert_eq!(
+            mismatch
+                .check_profile_capture(&capture, 255)
+                .unwrap_err()
+                .code(),
+            ErrorCode::IncompatibleGrid
+        );
+        assert_eq!(
+            serde_json::to_value(configuration.settings()).unwrap(),
+            before
+        );
+        assert_eq!(capture.profile_ids(), [0, 255]);
+        assert_eq!(capture.provenance().original_bytes(), input.bytes());
+    }
+
+    let input = NamedCapture::new("complete.json", PROFILE.to_vec()).unwrap();
+    let capture = ProfileCapture::from_bytes(&input).unwrap();
+    let profile = capture
+        .simulation_profile(ProfileId::new(0).unwrap())
+        .unwrap();
+    // Independent occupied-band rejection: the original approximately 187 MHz
+    // source span cannot fit the valid minimum 24 MHz OCD channel.
+    let settings = TransmissionSettings {
+        occupied_bandwidth_hz: 24_000_000,
+        ..Default::default()
+    };
+    let configuration = TransmissionConfiguration::new(settings).unwrap();
+    let source_error = configuration
+        .check_profile_capture(&capture, 0)
+        .unwrap_err();
+    let existing_error = configuration.check_profile(&profile).unwrap_err();
+    assert_eq!(source_error.code(), ErrorCode::IncompatibleGrid);
+    assert_eq!(source_error.code(), existing_error.code());
+    assert_eq!(source_error.message(), existing_error.message());
+}
+
+#[test]
 fn role_capacity_and_bounded_scientific_extrema_have_independent_literals() {
     let input = original();
     let capture = ProfileCapture::from_bytes(&input).unwrap();

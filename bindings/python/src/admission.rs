@@ -7,6 +7,7 @@ use crate::{
     api, error,
     inputs::PyDpd,
     object_from_json,
+    profile_capture::PyProfileCapture,
     quantities::{PyObservationDuration, PyPrbsSeed},
 };
 use pyo3::{prelude::*, types::PyBytes};
@@ -141,6 +142,23 @@ impl PyTransmission {
     /// None on compatibility; shared structured errors otherwise.
     fn check_profile(&self, profile: &PyDpd) -> PyResult<()> {
         self.0.check_profile(&profile.0).map_err(error)
+    }
+
+    /// Checks an original source identity through Rust's existing editor geometry owner.
+    ///
+    /// # Arguments
+    /// * `capture` - Native owned complete source catalog; remains unchanged.
+    /// * `profile_id` - Original byte-sized identity, independent of checked run IDs.
+    ///
+    /// # Returns
+    /// None on compatibility; no source or simulation starts and no input mutates.
+    ///
+    /// # Errors
+    /// Shared missing-ID/grid failures raise ApiError; integer-width errors stay native.
+    fn check_profile_capture(&self, capture: &PyProfileCapture, profile_id: u8) -> PyResult<()> {
+        self.0
+            .check_profile_capture(&capture.0, profile_id)
+            .map_err(error)
     }
 }
 

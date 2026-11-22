@@ -5,14 +5,14 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "c0bc18a826355ba7f9a16f8949477aa34bc15b43 plus exact project candidate manifest",
-    "inventory_command": "Verified unchanged installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-05-project-native-final/native-exports.json",
-    "native_sha256": "c2e91efeefc0cd1ce3c6713245884fe4a1cd680c1a0b34805a5f589d62f18838",
-    "scope": "Complete installed Linux CPython 3.10 gate after correcting the test fixture to inherit its declared Sequence interface. No native/scientific code or independent reference changed.",
-    "legacy_compatibility": {
-      "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
-      "preserved_class_exports": 59,
-      "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+    "revision": "a38ad2d06eb8ab61d96994ed731c2cb2ffc09f99 plus exact DS-01 source compatibility candidate",
+    "inventory_command": "Installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/ds-01-source-compat-native-final/native-exports.json",
+    "native_sha256": "28457da57868f89080ab815aa5f4036a9a9cef8e1acb8d5c3896b575fc5bcc83",
+    "scope": "Fresh installed CPython 3.10 metadata and 13 scoped admission/catalog/namespace cases. Every previous export/signature preserved; prior complete 150-case scientific acceptance remains historical evidence.",
+    "preserved_prior_inventory": {
+      "sha256": "76d64fb80b03f11e984a7e9c16c13d8d02299f9c443aa4598d0720ff9f6cc01d",
+      "root_and_namespace_operation_instances": 936,
+      "scope": "Exact previous class/alias/constructor metadata and each operation kind/signature; additive method only."
     }
   },
   "contracts": {
@@ -111,7 +111,9 @@
     "errors.uiu-api-05-project": "ProjectError retains the original downstream/upstream error and exposes common ErrorCode. Unknown/duplicate fields, wrong direction and malformed inputs reject; unknown versions UnsupportedCapability; byte/count overflow ResourceLimit; file failures Io. Native conversion forwards existing structured exception converters. Failed admission/export never mutates accepted projects or destinations.",
     "compatibility.uiu-api-05-project": "Additive optional native-input facade re-export merlin::common::Project, backed by pnm_input::project. Neutral merlin-api remains PHY-independent; no new scientific implementation or dependency cycle. Old Rust imports, root native Simulation and legacy Workbench loaders remain unchanged. Qt file/recovery consumers are later tasks.",
     "evidence.uiu-api-05-project": "../unified-qt-workbench/project-evidence.json, ../unified-qt-workbench/api-05-project-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-05-direction-project-unit preserve exact source/wheel/command/test hashes, actual Rust/native scientific parity and prior history.",
-    "status.uiu-api-05-project": "Accepted UIU-API-05 public project backend: full747-case Rust workspace,139 analysis,14 API examples,4 fixture-generator and150 installed native cases pass. Direction-tagged input admission/serialization returns existing independent DS requests and US sessions. Qt Open/Save/dirty/recovery adoption and concurrent runtime remain separate tasks."
+    "status.uiu-api-05-project": "Accepted UIU-API-05 public project backend: full747-case Rust workspace,139 analysis,14 API examples,4 fixture-generator and150 installed native cases pass. Direction-tagged input admission/serialization returns existing independent DS requests and US sessions. Qt Open/Save/dirty/recovery adoption and concurrent runtime remain separate tasks.",
+    "evidence.uiu-ds-01-source-compat": "../unified-qt-workbench/source-profile-compatibility-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-source-profile-compatibility-api-accepted: scoped Rust/native catalog/admission checks, actual installed metadata, unchanged originals and exact prior-operation preservation.",
+    "status.uiu-ds-01-source-compat": "Implemented passive source-catalog OCD geometry for original byte IDs, without run admission. Scoped backend prerequisite accepted; Qt adoption and final runtime gates remain UIU-DS-01/UIU-QA-01."
   },
   "type_exports": {
     "downstream": [
@@ -31998,6 +32000,52 @@
       },
       "evidence": "evidence.uiu-api-05-project",
       "status": "status.uiu-api-05-project"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::TransmissionConfiguration::check_profile_capture",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn check_profile_capture( &self, capture: &ProfileCapture, profile_id: u8, ) -> ApiResult<()>",
+        "source_file": "crates/ofdm/src/api/admission.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.TransmissionConfiguration.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.TransmissionConfiguration.check_profile_capture",
+        "declaration": "merlin.downstream.TransmissionConfiguration.check_profile_capture"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.configuration",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<()>",
+        "scope": "Existing spacing/FFT/occupied-band editor geometry on the selected original source grid. Raw u8 IDs remain distinct from ProfileId; no mutation, source advance, simulation or coding/layout readiness claim."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-09"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_profile_capture.rs::source_catalog_ocd_compatibility_preserves_byte_ids_without_run_admission"
+        ],
+        "python": {
+          "status": "installed native owner acceptance",
+          "cases": [
+            "bindings/python/tests/test_profile_capture.py::ProfileCaptureTests.test_source_catalog_ocd_geometry_preserves_byte_ids_and_run_id_limits"
+          ],
+          "scope": "Both numerologies, raw ID 255, absent IDs, incompatible grids/bandwidth, byte conversion bounds and unchanged originals/run-ID rejection."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-compat",
+      "status": "status.uiu-ds-01-source-compat"
     }
   ],
   "executed_records": [
@@ -32025,7 +32073,8 @@
     "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -66807,6 +66856,58 @@
       },
       "evidence": "evidence.uiu-api-05-project",
       "status": "status.uiu-api-05-project"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.TransmissionConfiguration.check_profile_capture",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::TransmissionConfiguration",
+        "source_file": "bindings/python/src/admission.rs",
+        "symbol": "PyTransmission",
+        "signature": "pub fn check_profile_capture( &self, capture: &ProfileCapture, profile_id: u8, ) -> ApiResult<()>",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "merlin::downstream::TransmissionConfiguration::check_profile_capture",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "check_profile_capture",
+        "kind": "method",
+        "signature": "(self, /, capture, profile_id)",
+        "declaration": "TransmissionConfiguration.check_profile_capture"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.configuration",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::TransmissionConfiguration",
+        "scope": "None for compatible original geometry; shared typed errors otherwise. The caller retains immutable inputs. Out-of-byte integers fail native conversion; no run-ID widening or hidden simulation."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-09"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_profile_capture.rs::source_catalog_ocd_compatibility_preserves_byte_ids_without_run_admission"
+        ],
+        "python": {
+          "status": "installed native owner acceptance",
+          "cases": [
+            "bindings/python/tests/test_profile_capture.py::ProfileCaptureTests.test_source_catalog_ocd_geometry_preserves_byte_ids_and_run_id_limits"
+          ],
+          "scope": "Both numerologies, raw ID 255, absent IDs, incompatible grids/bandwidth, byte conversion bounds and unchanged originals/run-ID rejection."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-compat",
+      "status": "status.uiu-ds-01-source-compat"
     }
   ],
   "native_type_exports": {
@@ -67855,6 +67956,18 @@
       "inventory_command": "Installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-05-project-native-scoped/native-exports.json",
       "native_sha256": "c2e91efeefc0cd1ce3c6713245884fe4a1cd680c1a0b34805a5f589d62f18838",
       "scope": "Focused installed Linux CPython 3.10 direction-project, saved full-loop and namespace acceptance. Parent API-05 and final Qt acceptance remain separate.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "c0bc18a826355ba7f9a16f8949477aa34bc15b43 plus exact project candidate manifest",
+      "inventory_command": "Verified unchanged installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-05-project-native-final/native-exports.json",
+      "native_sha256": "c2e91efeefc0cd1ce3c6713245884fe4a1cd680c1a0b34805a5f589d62f18838",
+      "scope": "Complete installed Linux CPython 3.10 gate after correcting the test fixture to inherit its declared Sequence interface. No native/scientific code or independent reference changed.",
       "legacy_compatibility": {
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
         "preserved_class_exports": 59,

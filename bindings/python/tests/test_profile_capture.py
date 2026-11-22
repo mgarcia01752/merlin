@@ -30,6 +30,55 @@ def source():
 
 
 class ProfileCaptureTests(unittest.TestCase):
+    def test_source_catalog_ocd_geometry_preserves_byte_ids_and_run_id_limits(self):
+        # Independent byte-ID boundary 255 and absent source 199; both spacings
+        # retain four original carriers from physical carrier 356.
+        for spacing in (25000, 50000):
+            document = json.loads(source())
+            document['profiles'][0]['profile_id'] = 255
+            document['subcarrier_spacing'] = spacing
+            original = json.dumps(document).encode()
+            capture = m.ProfileCapture.from_bytes('source-boundary.json', original)
+            settings = m.TransmissionConfiguration().settings
+            settings['subcarrier_spacing'] = str(spacing)
+            configuration = m.TransmissionConfiguration.from_json(json.dumps(settings).encode())
+            before = configuration.to_json()
+            self.assertIsNone(configuration.check_profile_capture(capture, 0))
+            self.assertIsNone(configuration.check_profile_capture(capture, 255))
+            with self.assertRaises(m.ApiError) as missing:
+                configuration.check_profile_capture(capture, 199)
+            self.assertEqual(missing.exception.code, m.ErrorCode.InvalidIdentifier)
+            with self.assertRaises(m.ApiError):
+                m.ProfileId(255)
+            for invalid in (-1, 256):  # Just beyond either side of a byte ID.
+                with self.assertRaises(OverflowError):
+                    configuration.check_profile_capture(capture, invalid)
+            if spacing == 25000:
+                settings['subcarrier_spacing'] = '50000'
+            else:
+                settings['subcarrier_spacing'] = '25000'
+            mismatch = m.TransmissionConfiguration.from_json(json.dumps(settings).encode())
+            with self.assertRaises(m.ApiError) as grid:
+                mismatch.check_profile_capture(capture, 255)
+            self.assertEqual(grid.exception.code, m.ErrorCode.IncompatibleGrid)
+            self.assertEqual(configuration.to_json(), before)
+            self.assertEqual(capture.profile_ids, (0, 255))
+            self.assertEqual(capture.provenance['original_sha256'], hashlib.sha256(original).hexdigest())
+
+        capture = m.ProfileCapture.from_file(FIXTURES / 'modulation_profile.json')
+        profile = capture.simulation_profile(m.ProfileId(0))
+        settings = m.TransmissionConfiguration().settings
+        # The approximately 187 MHz source span cannot fit the valid 24 MHz OCD.
+        settings['occupied_bandwidth_hz'] = 24000000
+        configuration = m.TransmissionConfiguration.from_json(json.dumps(settings).encode())
+        with self.assertRaises(m.ApiError) as selected:
+            configuration.check_profile_capture(capture, 0)
+        with self.assertRaises(m.ApiError) as existing:
+            configuration.check_profile(profile)
+        self.assertEqual(selected.exception.code, m.ErrorCode.IncompatibleGrid)
+        self.assertEqual(selected.exception.code, existing.exception.code)
+        self.assertEqual(str(selected.exception), str(existing.exception))
+
     def test_binary_json_inventory_schemes_science_and_original_hashes_match(self):
         binary_bytes = (FIXTURES / 'modulation_profile.bin').read_bytes()
         json_bytes = (FIXTURES / 'modulation_profile.json').read_bytes()

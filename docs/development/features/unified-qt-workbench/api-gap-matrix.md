@@ -194,3 +194,17 @@ configuration language. Every callback/result carries direction, session identit
 accepted configuration generation and run identity. Stale callbacks cannot replace
 current results; closing an instrument does not invalidate the backend run, and
 destroying its owning session cancels/joins or safely drains the bounded worker.
+
+## UIU-DS-01 source-catalog OCD compatibility follow-up
+
+The [source-profile compatibility prerequisite](design.md#uiu-ds-01-source-catalog-ocd-compatibility-api-prerequisite)
+closes the actual editor gap discovered during Qt adoption: original byte-sized
+source IDs need geometry validation without conversion to a checked run ID.
+`TransmissionConfiguration::check_profile_capture` and its installed native Python
+method reuse the existing selected-source lookup/grid validator. No engine,
+resource, operating-mode or schema change is introduced.
+
+[Scoped paired acceptance](validation.md#uiu-ds-01-source-profile-compatibility-api-accepted)
+preserves every prior operation/export and completed planning/FEC/API gate.
+Qt consumers and their frozen debt remain UIU-DS-01 work; this backend extension
+is committed before any source-catalog admission replacement.

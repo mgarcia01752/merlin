@@ -1797,3 +1797,56 @@ boundary/regression checks, formatting/Clippy, optimized build and native smokes
 No new API, scientific calculation, saved schema, QML control or shared-direction
 acceptance is introduced. Backend and Python evidence remains unchanged; the
 parent, result-provider migration and final numeric review remain pending.
+
+## UIU-DS-01 source-catalog OCD compatibility API prerequisite
+
+The next profile-admission consumer exposes an actual gap: Qt's existing
+`profile_input/document.rs::Capture::compatible(profile_id: u8, settings)` checks
+any original source identity, while public `TransmissionConfiguration::check_profile`
+takes `Dpd`, whose checked run identity is limited to 0..15. A source catalog can
+contain IDs through 255. Constructing a run profile just to validate editor
+geometry would reject previously inspectable inputs early. Do not duplicate the
+existing grid checks in a new Qt adapter or widen the run-ID domain.
+
+Implement one passive operation before migrating its Qt consumer:
+
+```rust
+// Implemented and independently validated; no Qt consumer in this unit.
+pub fn check_profile_capture(
+    &self,
+    capture: &ProfileCapture,
+    profile_id: u8,
+) -> ApiResult<()>;
+```
+
+Python mirrors this as
+`TransmissionConfiguration.check_profile_capture(capture: ProfileCapture, profile_id: int) -> None`.
+The selected captured profile supplies its existing validated original grid to
+the same private `check_profile_grid` owner used by `check_profile`. Unknown IDs
+retain `InvalidIdentifier`; spacing/FFT/occupied-band failures retain
+`IncompatibleGrid`. Python integer-width errors remain language conversions.
+The operation borrows immutable inputs, allocates no scientific state, runs no
+source/PHY and never mutates settings, captures or provenance. It does not admit
+the selected source ID for simulation. Existing methods/defaults remain unchanged.
+
+| Path and symbol | Existing contract / gap | Decision and owner |
+| --- | --- | --- |
+| `crates/ofdm/src/api/admission.rs::check_profile_grid` | Existing editor geometry rules, currently callable publicly only through Dpd | REUSE without new rules through a typed source-catalog selection. |
+| `crates/ofdm/src/api/inputs/profile_capture.rs::profile_ref` | Bounded original byte-sized ID lookup with structured errors | REUSE internally; expose no engine/profile implementation. |
+| `bindings/python/src/admission.rs`, native `PyProfileCapture` | Existing native owned immutable source catalog | ADD a thin delegation; update the shipped root stub and inherited downstream namespace. |
+| `crates/ofdm/tests/api_profile_capture.rs`, `bindings/python/tests/test_profile_capture.py` | Independent source-ID/geometry fixtures and ownership checks | EXTEND with both numerologies, byte-ID boundaries, absent IDs, incompatible grids and unchanged run-ID rejection. |
+| Canonical architecture, REQ-UIU-09, UIU-DS-01 and single operation matrix | Missing consumer-specific compatibility observation | LINK the exact operation, owners, paired tests and evidence; preserve accepted API-01/02 history. |
+
+This is a focused UIU-DS-01 prerequisite under REQ-UIU-02/09 and the
+[public API boundary](../../../architecture.md#unified-qt-public-api-boundary),
+not a reopened planning/FEC/API milestone. Validate Rust first, then the installed
+native wheel with actual callable metadata, existing admission/catalog regressions,
+Clippy and exact operation tracing. Commit the API extension independently before
+any Qt capture-admission replacement. Original Qt sources/guard debt stay frozen
+through this prerequisite; no new operating mode, resource policy or schema.
+
+The [paired API prerequisite is accepted](validation.md#uiu-ds-01-source-profile-compatibility-api-accepted)
+with exact callable metadata and preserved prior rows. Eleven Rust and thirteen
+installed-native cases pass; the source/test-style assertion corrections remain
+recorded separately. The public extension is ready for its focused commit before
+any Qt source-catalog consumer changes.

@@ -1,0 +1,262 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Source-catalog OCD compatibility API prerequisite",
+  "status": "scoped backend prerequisite accepted; Qt adoption and parent incomplete",
+  "base_commit": "a38ad2d06eb8ab61d96994ed731c2cb2ffc09f99",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-09"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "crates/ofdm/src/api/admission.rs",
+      "sha256": "5e932354c420d622b2e48d046b677f8fa84ab064eac3d3be34ff442028d67e27"
+    },
+    {
+      "path": "crates/ofdm/tests/api_profile_capture.rs",
+      "sha256": "4213de891da6b5a21c0ddb2c48df2a64aeba3f126c6b77607f39d78a3699c02c"
+    },
+    {
+      "path": "bindings/python/src/admission.rs",
+      "sha256": "de8a33dcc28bf615fff8a3ab6757c20e54978ed327ce2a44231f83deb8a47ef1"
+    },
+    {
+      "path": "bindings/python/python/merlin/__init__.pyi",
+      "sha256": "197f098693f3bba15882699e6fe67297a598386fcd95fe759a82778e2f739ff1"
+    },
+    {
+      "path": "bindings/python/tests/test_profile_capture.py",
+      "sha256": "37288368cf0328df2def185c3d02ed2d64bb8e7978e28d405df6562e306abe3b"
+    }
+  ],
+  "operations": {
+    "rust": "merlin::downstream::TransmissionConfiguration::check_profile_capture",
+    "rust_signature": "pub fn check_profile_capture( &self, capture: &ProfileCapture, profile_id: u8, ) -> ApiResult<()>",
+    "python": "merlin.downstream.TransmissionConfiguration.check_profile_capture",
+    "python_signature": "(self, /, capture, profile_id)",
+    "owner": "Existing ProfileCapture::profile_ref lookup and TransmissionConfiguration::check_profile_grid",
+    "semantics": "Immutable passive selected-source geometry, no run-ID conversion, no source/RNG advance and no coding/layout readiness claim.",
+    "shared_errors": [
+      "InvalidIdentifier",
+      "IncompatibleGrid"
+    ],
+    "python_conversions": "Out-of-byte integer IDs raise OverflowError before Rust domain validation."
+  },
+  "validation": [
+    {
+      "command": "cargo test -p docsis-ofdm-fec --features high-level-api --locked --test api_profile_capture",
+      "exit_code": 0,
+      "passed": 6,
+      "receipt": "ds-01-source-compat-rust-accepted.log"
+    },
+    {
+      "command": "cargo test -p docsis-ofdm-fec --features high-level-api --locked --test api_admission",
+      "exit_code": 0,
+      "passed": 5,
+      "receipt": "ds-01-source-compat-admission.log"
+    },
+    {
+      "command": "cargo clippy -p docsis-ofdm-fec --features high-level-api --all-targets --locked -- -D warnings",
+      "exit_code": 0,
+      "receipt": "ds-01-source-compat-clippy-final.log"
+    },
+    {
+      "command": "cargo clippy --manifest-path bindings/python/Cargo.toml --all-targets --locked -- -D warnings",
+      "exit_code": 0,
+      "receipt": "ds-01-source-compat-python-clippy.log"
+    },
+    {
+      "command": "cargo check -p docsis-ofdm-fec --no-default-features --locked",
+      "exit_code": 0,
+      "receipt": "ds-01-source-compat-analysis-check.log"
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo fmt --manifest-path bindings/python/Cargo.toml -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo doc --workspace --no-deps --locked --features merlin/native-input",
+      "exit_code": 0,
+      "receipt": "ds-01-source-compat-rustdoc-final.log"
+    },
+    {
+      "command": "python3 -B -m unittest discover -s tools/validation -p test_*api*.py -v",
+      "exit_code": 0,
+      "passed": 34,
+      "receipt": "ds-01-source-compat-metadata-tests.log"
+    },
+    {
+      "command": "python3 -B tools/validation/api_operation_matrix.py with fresh Rust/native exports and every recorded execution file",
+      "exit_code": 0,
+      "receipt": "ds-01-source-compat-strict-matrix.log"
+    },
+    {
+      "command": "Same installed native interpreter -I -B -m unittest discover -s bindings/python/tests -p test_profile_capture.py -v",
+      "exit_code": 0,
+      "passed": 5,
+      "receipt": "ds-01-source-compat-native-final/profile-capture-style-accepted.stderr",
+      "reason": "Multiline test branch style only; all values/assertions and wheel unchanged."
+    },
+    {
+      "command": "python3 -B tools/validation/feature_documentation.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -B tools/validation/integration_traceability.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -B tools/release/versions.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -B tools/python/update_integration_doc.py --check",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  ],
+  "installed_native": {
+    "status": "passed",
+    "wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-source-compat/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "wheel_sha256": "32d57a558550771dcf7b4241567fa86bca4eb67675a012fee076e2dbcccfaebd",
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-compat-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_admission.py",
+          "-v"
+        ],
+        "label": "admission",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-compat-native-final",
+        "exit_code": 0,
+        "elapsed_seconds": 0.08998234099999536
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-compat-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_profile_capture.py",
+          "-v"
+        ],
+        "label": "profile-capture",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-compat-native-final",
+        "exit_code": 0,
+        "elapsed_seconds": 0.11303613199561369
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-compat-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_namespaces.py",
+          "-v"
+        ],
+        "label": "namespaces",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-compat-native-final",
+        "exit_code": 0,
+        "elapsed_seconds": 0.17215669799770694
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-compat-native/installed/bin/python",
+          "-I",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-compat-native-final/native-exports.json"
+        ],
+        "label": "native-inventory",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-compat-native-final",
+        "exit_code": 0,
+        "elapsed_seconds": 0.13584792499023024
+      }
+    ]
+  },
+  "inventory_preservation": {
+    "rust_rows_before": 563,
+    "native_rows_before": 536,
+    "rust_rows_now": 564,
+    "native_rows_now": 537,
+    "all_prior_rows_deep_equal": true,
+    "class_exports_deep_equal": true,
+    "preserved_native_operation_instances": 936,
+    "new_rust_signature": "pub fn check_profile_capture( &self, capture: &ProfileCapture, profile_id: u8, ) -> ApiResult<()>",
+    "new_native_signature": "(self, /, capture, profile_id)",
+    "executed_rust_cases": 11,
+    "executed_native_cases": 13
+  },
+  "executed_cases": "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+  "numeric_review": {
+    "new_production_numeric_literals": 0,
+    "test_anchors": [
+      "Raw ID 255 is the independent byte boundary; 199 is absent",
+      "25/50 kHz source spacing and four carriers starting at 356",
+      "24 MHz valid OCD occupancy cannot contain the approximately 187 MHz full source",
+      "Python -1/256 are just outside byte conversion bounds"
+    ],
+    "existing_vectors_and_assertions_unchanged": true,
+    "final_integration_line_by_line_review": "pending UIU-QA-01"
+  },
+  "qt_boundary": {
+    "tree_and_current_record_exactly_unchanged": true,
+    "scientific_dependencies": 3,
+    "frozen_files": 40,
+    "direct_sites": 140,
+    "consumer_implemented": false
+  },
+  "preparatory_failures": [
+    {
+      "receipt": "ds-01-source-compat-rust.log",
+      "reason": "Default features selected zero gated catalog cases; no acceptance claimed. Corrected to explicit high-level-api."
+    },
+    {
+      "receipt": "ds-01-source-compat-clippy.log",
+      "reason": "Two new fixture defaults were assigned after construction. Rewritten as struct initializers without changing values/assertions."
+    },
+    {
+      "receipt": "ds-01-source-compat-native/results.json",
+      "reason": "Four of five profile cases passed; new expected error code was a string instead of the exported enum. Corrected only expected types; exact same installed wheel passes final thirteen cases."
+    },
+    {
+      "receipt": "ds-01-source-compat-rust-exports.json",
+      "reason": "Initial workspace rustdoc omitted facade native-input common exports; complete feature inventory replaces it for acceptance."
+    }
+  ],
+  "limitations": [
+    "Scoped additive API acceptance; no full backend/native scientific rerun claimed",
+    "Existing full API/FEC/planning acceptance and original operation rows remain historical and unchanged",
+    "No Qt consumer, operating mode, resource policy, schema, lock or dependency changes",
+    "Final numeric/unified UI and hosted/installed platform gates remain pending"
+  ]
+}

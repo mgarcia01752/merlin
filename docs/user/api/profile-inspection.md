@@ -17,13 +17,17 @@ namespace. Existing `ProfileId` and simulation behavior remain unchanged.
 | `schemes(raw_id, start, limit)` | `.schemes(profile_id, start=0, limit=256)` | Bounded original compact scheme page, source codes/order and authoritative original offsets/frequencies/constellations. |
 | `inspect(&ProfileViewRequest)` | `.inspect(ProfileViewRequest) -> dict` | Bounded raw metric extrema, original coordinates, selected-role support and actual provenance. |
 | `Dpd::summary()` / `Dpd::view(&ProfileViewRequest)` | `DPD.summary()` / `DPD.view(request)` | Same numerical owner for the one accepted profile, retaining captured/created/edited origin and actual sources. |
+| `TransmissionConfiguration::check_profile_capture(&capture, raw_id)` | `TransmissionConfiguration.check_profile_capture(capture, profile_id)` | Passive editor spacing/FFT/occupied-band check for any original byte-sized ID; no run-profile conversion or simulation. Missing IDs and incompatible grids retain structured errors. |
 
 The capture catalog preserves byte-sized encoded identities, including values
 outside the legacy simulation `ProfileId` domain of 0–15. Source recognition and
 read-only inspection preserve those identities; simulation admission keeps its
-existing domain. The full-loop compatibility gate for source identities remains
-[UIU-API-02](../../development/checklist.md#task-uiu-api-02) before Qt migration.
+existing domain. The [accepted full-loop gate](../../development/features/unified-qt-workbench/validation.md#uiu-api-02-public-full-loop-and-observations-accepted)
+preserves checked run IDs separately from this passive editor check.
 No source ID is silently dropped or treated as an array index.
+The new compatibility operation borrows immutable inputs and returns unit/`None`;
+it does not alter captures or establish coding/layout/run readiness. Python integer
+values outside the byte domain raise conversion errors before shared validation.
 
 ## Metrics and bounds
 
@@ -81,4 +85,7 @@ and omits inspection arrays for existing scientific consumers.
 Traceability: [architecture](../../architecture.md#unified-qt-public-api-boundary),
 [requirements](../../requirements.md#req-uiu-09),
 [design](../../development/features/unified-qt-workbench/design.md#uiu-api-01-profile-capture-inspection-unit)
-and [task](../../development/checklist.md#task-uiu-api-01).
+and [task](../../development/checklist.md#task-uiu-api-01). Source-catalog OCD
+compatibility additionally follows the
+[DS-01 prerequisite](../../development/features/unified-qt-workbench/design.md#uiu-ds-01-source-catalog-ocd-compatibility-api-prerequisite)
+and [consumer migration task](../../development/checklist.md#task-uiu-ds-01).

@@ -143,6 +143,27 @@ impl TransmissionConfiguration {
         self.check_profile_grid(profile.grid())
     }
 
+    /// Checks editor geometry for an original source ID without admitting a run profile.
+    ///
+    /// # Arguments
+    /// * `capture` - Immutable complete source catalog retaining its original grid/provenance.
+    /// * `profile_id` - Original byte-sized source identity, independent of checked run IDs.
+    ///
+    /// # Returns
+    /// Unit when the selected source fits the existing spacing/FFT/bandwidth contract.
+    /// Inputs remain unchanged; no source, channel or receiver is created or executed.
+    ///
+    /// # Errors
+    /// InvalidIdentifier for an absent source; existing IncompatibleGrid errors otherwise.
+    /// Success does not establish supported coding, layout or simulation readiness.
+    pub fn check_profile_capture(
+        &self,
+        capture: &super::ProfileCapture,
+        profile_id: u8,
+    ) -> ApiResult<()> {
+        self.check_profile_grid(&capture.profile_ref(profile_id)?.key.grid)
+    }
+
     pub(crate) fn check_profile_grid(&self, grid: &super::FrequencyGrid) -> ApiResult<()> {
         if grid.spacing_hz != self.settings.subcarrier_spacing.frequency_hz() {
             return Err(ApiError::new(
