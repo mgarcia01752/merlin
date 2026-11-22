@@ -1,7 +1,7 @@
 # Unified Qt Workbench design
 
-Status: proposed planning baseline; no Qt or backend implementation in this unit.
-The user requested agreement on architecture, requirements and tasks first.
+Status: accepted planning baseline; continuous task execution is now authorized.
+The [execution authorization](execution-authorization.md) records the user scope.
 The accepted choices are one active simulation across both tabs initially and
 Save for the active direction's project. These choices do not couple the engines.
 
@@ -58,8 +58,8 @@ CMTS RxMER feeds only the backend's admitted residual model. The user's upstream
 diagram is still needed to finalize visual placement; it does not block API,
 inventory, boundary or downstream planning. Do not invent final visual approval.
 
-No application source moves or API additions belong to this planning unit.
-After planning agreement, take the next eligible official task, establish a fresh
+No application source moves or API additions belong to the planning task.
+Following planning acceptance, take the next eligible official task, establish a fresh
 Qt baseline, then enforce the migration boundary before extending APIs and moving
 their consumers. API extensions are focused, independently validated units before
 Qt adoption. The [migration plan](migration-plan.md#dependency-order) refines the

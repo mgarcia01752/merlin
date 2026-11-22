@@ -4,7 +4,7 @@ This is the subordinate Qt detail checklist. The
 [official developer checklist](checklist.md) owns overall delivery and the
 [canonical requirements baseline](../requirements.md) owns requirements.
 Upstream backend integration did not implement upstream UI. The separate
-[unified Qt plan](features/unified-qt-workbench/design.md) now proposes that UI
+[unified Qt plan](features/unified-qt-workbench/design.md) now defines that UI
 scope; its [official UIU tasks](checklist.md#unified-qt-workbench-delivery) own
 completion status. The initial choices are one active simulation across both
 tabs and Save for the active direction's project. No new Qt implementation is

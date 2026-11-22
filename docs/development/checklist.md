@@ -415,23 +415,24 @@ architecture owner identifies concrete implementation/test paths and disposition
 
 ## Unified Qt Workbench delivery
 
-New UI scope; all tasks below are pending. [Canonical requirements](../requirements.md#unified-qt-workbench-requirements)
+New UI scope; completion is recorded per task. [Canonical requirements](../requirements.md#unified-qt-workbench-requirements)
 and [architecture](../architecture.md#unified-qt-workbench) own behavior/design.
 The [full inventory and migration plan](features/unified-qt-workbench/migration-plan.md)
 refine file ownership. [API gaps](features/unified-qt-workbench/api-gap-matrix.md)
 are prerequisites, not permission for Qt to use private science. Prior backend,
 FEC and UI-ORG acceptance/history are unchanged. The user accepted initial serial
-execution and per-active-direction Save; planning agreement still precedes code.
+execution and per-active-direction Save. [Continuous execution](features/unified-qt-workbench/execution-authorization.md)
+now authorizes local task commits and continuation without routine approval pauses.
 The user's upstream diagram is an explicit prerequisite of UIU-US-01, not a
 blocker for earlier eligible API/downstream work after plan approval.
 
 <a id="task-uiu-plan-01"></a>
-- [ ] **UIU-PLAN-01** Agree the UI planning baseline, full inventory, ownership/API gaps and migration design.
+- [x] **UIU-PLAN-01** Agree the UI planning baseline, full inventory, ownership/API gaps and migration design.
   Requirements: [REQ-UIU-01](../requirements.md#req-uiu-01), [REQ-UIU-04](../requirements.md#req-uiu-04), [REQ-UIU-26](../requirements.md#req-uiu-26), [REQ-UIU-27](../requirements.md#req-uiu-27).
   Dependencies: accepted backend checkpoint; user agreement on this UI plan.
   Architecture/files: [baseline owner](../architecture.md#unified-qt-workbench), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
-  Acceptance: Review 178 tracked paths/hashes, master-clause coverage, requirement/task links, dependency graph and preserved history. Planning agreement remains pending.
-  Evidence: [baseline acceptance plan](features/unified-qt-workbench/validation.md#baseline); pending implementation/acceptance.
+  Acceptance: Review 178 tracked paths/hashes, master-clause coverage, requirement/task links, dependency graph and preserved history. The user accepted the plan by authorizing all 21 delivery tasks.
+  Evidence: [planning acceptance](features/unified-qt-workbench/validation.md#uiu-plan-01-accepted-planning-baseline); 178 hashes, 27 requirement IDs, 21 tasks and 31 acyclic dependency edges pass. Historical downstream/backend states remain intact.
 
 <a id="task-uiu-base-01"></a>
 - [ ] **UIU-BASE-01** Establish a fresh downstream Qt baseline before moving source.

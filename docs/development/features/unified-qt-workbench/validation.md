@@ -1,11 +1,23 @@
 # Unified Qt validation and acceptance
 
 This record distinguishes inspected planning material, historical backend
-evidence and future runtime acceptance. All new UIU implementation tasks are
-pending in the [official checklist](../../checklist.md#unified-qt-workbench-delivery).
-No application/API implementation, source move, Qt build or runtime test was
-performed for this documentation unit. The checkout's branch creation and
-planning document changes do not establish UI acceptance.
+evidence and per-task runtime acceptance. The [official checklist](../../checklist.md#unified-qt-workbench-delivery)
+owns current completion. Initial documentation checks below establish no runtime
+acceptance. Subsequent named task records report only their executed evidence.
+
+## UIU-PLAN-01: accepted planning baseline
+
+The user's [continuous execution instruction](execution-authorization.md) accepts
+the plan at `63844f8` and authorizes implementation/local task commits. The
+planning audit was rerun before task acceptance: all 178 original Qt hashes,
+27 unique requirement IDs, 21 tasks, 31 acyclic edges, requirement/architecture/
+checklist return links, all 19 master sections and original prompt bytes pass.
+Historical checkbox states and explicit anchors remain preserved.
+
+Current-mode feature documentation, backend integration traceability, version
+metadata, Python guide consistency and diff whitespace checks pass. No scientific
+or Qt runtime acceptance is claimed by this planning task. Execution continues
+with UIU-BASE-01's fresh Qt baseline.
 
 ## Planning checks
 

@@ -2328,8 +2328,8 @@ only; the final integration/documentation gates remain open.
 ## Unified Qt Workbench requirements
 
 These are new UI-phase obligations at accepted backend checkpoint `23f63c9`.
-All UIU delivery gates are pending; existing downstream and completed backend
-IDs/history are retained. The [design](development/features/unified-qt-workbench/design.md)
+UIU implementation gates require their own evidence; existing downstream and
+completed backend IDs/history are retained. The [design](development/features/unified-qt-workbench/design.md)
 links the master prompt, API contract, inventory and compatibility matrix.
 Owners below include current scientific crates and planned Qt direction owners;
 new API signatures/paths are proposals until their focused task passes.

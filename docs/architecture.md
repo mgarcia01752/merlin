@@ -897,9 +897,9 @@ is optional future scope.
 
 ## Unified Qt Workbench
 
-This is the proposed architecture for a separate UI delivery after accepted
-backend checkpoint `23f63c9`. The user requested planning agreement before source
-migration. [REQ-UIU-01 through REQ-UIU-27](requirements.md#unified-qt-workbench-requirements)
+This is the accepted architecture for a separate UI delivery after accepted
+backend checkpoint `23f63c9`. The user's [continuous execution authorization](development/features/unified-qt-workbench/execution-authorization.md)
+accepts planning and authorizes task commits. [REQ-UIU-01 through REQ-UIU-27](requirements.md#unified-qt-workbench-requirements)
 and the [UIU delivery tasks](development/checklist.md#unified-qt-workbench-delivery)
 define its obligations and acceptance; no new UI functionality is accepted here.
 See the [design and master-clause map](development/features/unified-qt-workbench/design.md),
