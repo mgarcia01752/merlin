@@ -411,9 +411,189 @@ architecture owner identifies concrete implementation/test paths and disposition
   Architecture/owners/tests: [canonical placement](../architecture.md#unified-normative-evidence-and-exclusions).
   Depends on: none; explicitly deferred outside current delivery.
   Acceptance: Deferred outside this backend migration: upstream GUI, wider acquisition/confidence, fractional timing/phase noise, broad C/H/RxMER synthesis, finite-file transport and ranging/probe execution. Preserve detailed designs and evidence; require separate approval, source checks and implementation tests before exposure. This is not a dependency for backend acceptance.
+  Feature records: [ofdma/receiver.md](features/ofdma/receiver.md), [ofdma/channel.md](features/ofdma/channel.md).
+
+## Unified Qt Workbench delivery
+
+New UI scope; all tasks below are pending. [Canonical requirements](../requirements.md#unified-qt-workbench-requirements)
+and [architecture](../architecture.md#unified-qt-workbench) own behavior/design.
+The [full inventory and migration plan](features/unified-qt-workbench/migration-plan.md)
+refine file ownership. [API gaps](features/unified-qt-workbench/api-gap-matrix.md)
+are prerequisites, not permission for Qt to use private science. Prior backend,
+FEC and UI-ORG acceptance/history are unchanged. The user accepted initial serial
+execution and per-active-direction Save; planning agreement still precedes code.
+The user's upstream diagram is an explicit prerequisite of UIU-US-01, not a
+blocker for earlier eligible API/downstream work after plan approval.
+
+<a id="task-uiu-plan-01"></a>
+- [ ] **UIU-PLAN-01** Agree the UI planning baseline, full inventory, ownership/API gaps and migration design.
+  Requirements: [REQ-UIU-01](../requirements.md#req-uiu-01), [REQ-UIU-04](../requirements.md#req-uiu-04), [REQ-UIU-26](../requirements.md#req-uiu-26), [REQ-UIU-27](../requirements.md#req-uiu-27).
+  Dependencies: accepted backend checkpoint; user agreement on this UI plan.
+  Architecture/files: [baseline owner](../architecture.md#unified-qt-workbench), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Review 178 tracked paths/hashes, master-clause coverage, requirement/task links, dependency graph and preserved history. Planning agreement remains pending.
+  Evidence: [baseline acceptance plan](features/unified-qt-workbench/validation.md#baseline); pending implementation/acceptance.
+
+<a id="task-uiu-base-01"></a>
+- [ ] **UIU-BASE-01** Establish a fresh downstream Qt baseline before moving source.
+  Requirements: [REQ-UIU-01](../requirements.md#req-uiu-01), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).
+  Dependencies: [UIU-PLAN-01](#task-uiu-plan-01).
+  Architecture/files: [baseline owner](../architecture.md#unified-qt-workbench), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Record exact candidate/toolchain, existing Qt Rust and QML results, native build/startup and current DS/project smoke. Prior backend evidence is historical context.
+  Evidence: [baseline acceptance plan](features/unified-qt-workbench/validation.md#baseline); pending implementation/acceptance.
+
+<a id="task-uiu-bound-01"></a>
+- [ ] **UIU-BOUND-01** Enforce the public-API boundary before migration.
+  Requirements: [REQ-UIU-02](../requirements.md#req-uiu-02), [REQ-UIU-03](../requirements.md#req-uiu-03), [REQ-UIU-24](../requirements.md#req-uiu-24).
+  Dependencies: [UIU-BASE-01](#task-uiu-base-01).
+  Architecture/files: [api owner](../architecture.md#unified-qt-public-api-boundary), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Add Cargo identity/source guard and negative alias/direct-call cases, reviewed finite legacy-site list with sunset tasks; no new scientific exceptions.
+  Evidence: [api acceptance plan](features/unified-qt-workbench/validation.md#api); pending implementation/acceptance.
+
+<a id="task-uiu-api-01"></a>
+- [ ] **UIU-API-01** Expose compatible input/editor/preview admission through the facade.
+  Requirements: [REQ-UIU-02](../requirements.md#req-uiu-02), [REQ-UIU-09](../requirements.md#req-uiu-09), [REQ-UIU-13](../requirements.md#req-uiu-13), [REQ-UIU-22](../requirements.md#req-uiu-22), [REQ-UIU-24](../requirements.md#req-uiu-24).
+  Dependencies: [UIU-BOUND-01](#task-uiu-bound-01).
+  Architecture/files: [api owner](../architecture.md#unified-qt-public-api-boundary), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Specify exact typed extensions, native-input re-exports and parity; preserve independent builds and editor/Designer/provenance behavior. Core/API plus installed-wheel tests precede Qt adoption.
+  Evidence: [api acceptance plan](features/unified-qt-workbench/validation.md#api); pending implementation/acceptance.
+
+<a id="task-uiu-api-02"></a>
+- [ ] **UIU-API-02** Complete downstream controlled jobs and retained public observations.
+  Requirements: [REQ-UIU-02](../requirements.md#req-uiu-02), [REQ-UIU-07](../requirements.md#req-uiu-07), [REQ-UIU-09](../requirements.md#req-uiu-09), [REQ-UIU-16](../requirements.md#req-uiu-16), [REQ-UIU-17](../requirements.md#req-uiu-17), [REQ-UIU-18](../requirements.md#req-uiu-18), [REQ-UIU-19](../requirements.md#req-uiu-19), [REQ-UIU-20](../requirements.md#req-uiu-20), [REQ-UIU-24](../requirements.md#req-uiu-24).
+  Dependencies: [UIU-API-01](#task-uiu-api-01).
+  Architecture/files: [api owner](../architecture.md#unified-qt-public-api-boundary), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Typed full-loop request/control/result contracts reuse existing owners; validate pause/cancel/progress, immutable bounded observations, PSD/MER/FEC/PRBS and old outputs plus Python parity. Commit before matching Qt calls migrate.
+  Evidence: [api acceptance plan](features/unified-qt-workbench/validation.md#api); pending implementation/acceptance.
+
+<a id="task-uiu-api-03"></a>
+- [ ] **UIU-API-03** Add bounded idle upstream resource-grid observation.
+  Requirements: [REQ-UIU-02](../requirements.md#req-uiu-02), [REQ-UIU-14](../requirements.md#req-uiu-14), [REQ-UIU-24](../requirements.md#req-uiu-24).
+  Dependencies: [UIU-BOUND-01](#task-uiu-bound-01).
+  Architecture/files: [api owner](../architecture.md#unified-qt-public-api-boundary), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Finalize grid request/snapshot fields/budgets, reuse ResourcePlan and literal coordinate vectors, all accepted patterns/numerologies, no hidden run/mutation and installed-wheel parity. Commit before viewer work.
+  Evidence: [api acceptance plan](features/unified-qt-workbench/validation.md#api); pending implementation/acceptance.
+
+<a id="task-uiu-api-04"></a>
+- [ ] **UIU-API-04** Close only actual upstream instrument API gaps.
+  Requirements: [REQ-UIU-02](../requirements.md#req-uiu-02), [REQ-UIU-12](../requirements.md#req-uiu-12), [REQ-UIU-16](../requirements.md#req-uiu-16), [REQ-UIU-17](../requirements.md#req-uiu-17), [REQ-UIU-18](../requirements.md#req-uiu-18), [REQ-UIU-19](../requirements.md#req-uiu-19), [REQ-UIU-20](../requirements.md#req-uiu-20), [REQ-UIU-24](../requirements.md#req-uiu-24).
+  Dependencies: [UIU-BOUND-01](#task-uiu-bound-01).
+  Architecture/files: [api owner](../architecture.md#unified-qt-public-api-boundary), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Map every required window to existing/new typed observations; validate real stage/tap/response/soft/FEC data, bounds, reference planes, unsupported modes and Python parity before Qt exposure.
+  Evidence: [api acceptance plan](features/unified-qt-workbench/validation.md#api); pending implementation/acceptance.
+
+<a id="task-uiu-api-05"></a>
+- [ ] **UIU-API-05** Define and implement direction-aware public project admission.
+  Requirements: [REQ-UIU-02](../requirements.md#req-uiu-02), [REQ-UIU-13](../requirements.md#req-uiu-13), [REQ-UIU-22](../requirements.md#req-uiu-22), [REQ-UIU-23](../requirements.md#req-uiu-23), [REQ-UIU-24](../requirements.md#req-uiu-24).
+  Dependencies: [UIU-API-01](#task-uiu-api-01), [UIU-API-04](#task-uiu-api-04).
+  Architecture/files: [api owner](../architecture.md#unified-qt-public-api-boundary), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Finalize schema 3 field/version/aggregate budget design; retain schema 1/2 DS semantics; validate original inputs, both direction load/run/serialize and Rust/Python/UI fixture parity before Qt consumer changes.
+  Evidence: [api acceptance plan](features/unified-qt-workbench/validation.md#api); pending implementation/acceptance.
+
+<a id="task-uiu-org-01"></a>
+- [ ] **UIU-ORG-01** Move proven generic shell/theme/dialog infrastructure by inventory.
+  Requirements: [REQ-UIU-04](../requirements.md#req-uiu-04), [REQ-UIU-25](../requirements.md#req-uiu-25).
+  Dependencies: [UIU-BOUND-01](#task-uiu-bound-01).
+  Architecture/files: [organization owner](../architecture.md#unified-qt-source-ownership), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Focused moves with notices, explicit registrations/imports/resources, all bridge entries together, same module/entry/executable; matching Qt checks and native build. Do not pre-accept scientific instruments as shared.
+  Evidence: [organization acceptance plan](features/unified-qt-workbench/validation.md#organization); pending implementation/acceptance.
+
+<a id="task-uiu-ds-01"></a>
+- [ ] **UIU-DS-01** Organize downstream owners and migrate legacy scientific calls.
+  Requirements: [REQ-UIU-02](../requirements.md#req-uiu-02), [REQ-UIU-03](../requirements.md#req-uiu-03), [REQ-UIU-04](../requirements.md#req-uiu-04), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-09](../requirements.md#req-uiu-09).
+  Dependencies: [UIU-ORG-01](#task-uiu-org-01), [UIU-API-02](#task-uiu-api-02).
+  Architecture/files: [organization owner](../architecture.md#unified-qt-source-ownership), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Adopt validated facade operations, remove matching legacy guard entries, preserve existing presentation/readiness/instruments/results, tests and project semantics; build latest Qt executable.
+  Evidence: [organization acceptance plan](features/unified-qt-workbench/validation.md#organization); pending implementation/acceptance.
+
+<a id="task-uiu-session-01"></a>
+- [ ] **UIU-SESSION-01** Make direction sessions explicit and serialize initial dispatch.
+  Requirements: [REQ-UIU-03](../requirements.md#req-uiu-03), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-07](../requirements.md#req-uiu-07).
+  Dependencies: [UIU-DS-01](#task-uiu-ds-01).
+  Architecture/files: [shell owner](../architecture.md#unified-qt-session-and-file-lifecycle), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Remove implicit input/latest-result routing, identify session/generation/run callbacks, keep isolated stores and aggregate retention budgets; test Busy/paused ownership, stale callbacks, cancel/destruction and no cross-tab overwrite.
+  Evidence: [shell acceptance plan](features/unified-qt-workbench/validation.md#shell); pending implementation/acceptance.
+
+<a id="task-uiu-shell-01"></a>
+- [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
+  Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).
+  Dependencies: [UIU-SESSION-01](#task-uiu-session-01).
+  Architecture/files: [shell owner](../architecture.md#unified-qt-session-and-file-lifecycle), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Preserve File/Settings/About/update and DS workbench, remove internal canvas title, retain controls/focus; test switching during idle/run/pause, selections, separate dirty states and second Start rejection.
+  Evidence: [shell acceptance plan](features/unified-qt-workbench/validation.md#shell); pending implementation/acceptance.
+
+<a id="task-uiu-us-01"></a>
+- [ ] **UIU-US-01** Implement approved upstream startup layout and configuration drill-ins.
+  Requirements: [REQ-UIU-10](../requirements.md#req-uiu-10), [REQ-UIU-11](../requirements.md#req-uiu-11), [REQ-UIU-27](../requirements.md#req-uiu-27).
+  Dependencies: [UIU-SHELL-01](#task-uiu-shell-01).
+  Architecture/files: [upstream owner](../architecture.md#unified-qt-upstream-scientific-presentation), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Requires user's upstream diagram/final visual agreement. Keep CM→channel→CMTS samples separate from controls, H/C/C×H/RxMER labels, typed Apply/Cancel and supported-mode admission; no inferred wider support.
+  Evidence: [upstream acceptance plan](features/unified-qt-workbench/validation.md#upstream); pending implementation/acceptance.
+
+<a id="task-uiu-us-02"></a>
+- [ ] **UIU-US-02** Connect upstream execution and direction lifecycle.
+  Requirements: [REQ-UIU-03](../requirements.md#req-uiu-03), [REQ-UIU-07](../requirements.md#req-uiu-07), [REQ-UIU-12](../requirements.md#req-uiu-12), [REQ-UIU-27](../requirements.md#req-uiu-27).
+  Dependencies: [UIU-US-01](#task-uiu-us-01), [UIU-API-04](#task-uiu-api-04).
+  Architecture/files: [upstream owner](../architecture.md#unified-qt-upstream-scientific-presentation), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Only public API worker; actual bounded runs/progress/cancel/partial results, direction-owned controls and results, responsive Qt and downstream isolation. No internal engine access.
+  Evidence: [upstream acceptance plan](features/unified-qt-workbench/validation.md#upstream); pending implementation/acceptance.
+
+<a id="task-uiu-us-03"></a>
+- [ ] **UIU-US-03** Integrate upstream native PNM inputs and viewers.
+  Requirements: [REQ-UIU-13](../requirements.md#req-uiu-13), [REQ-UIU-21](../requirements.md#req-uiu-21).
+  Dependencies: [UIU-US-01](#task-uiu-us-01), [UIU-API-01](#task-uiu-api-01).
+  Architecture/files: [upstream owner](../architecture.md#unified-qt-upstream-scientific-presentation), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Actual UCD/RxMER/Pre-Eq binary/JSON, exact original evidence/association, supported residual restrictions, explicit errors and no changed accepted state on failure.
+  Evidence: [upstream acceptance plan](features/unified-qt-workbench/validation.md#upstream); pending implementation/acceptance.
+
+<a id="task-uiu-us-04"></a>
+- [ ] **UIU-US-04** Render authoritative upstream allocation/pilot grid.
+  Requirements: [REQ-UIU-14](../requirements.md#req-uiu-14).
+  Dependencies: [UIU-US-01](#task-uiu-us-01), [UIU-API-03](#task-uiu-api-03).
+  Architecture/files: [upstream owner](../architecture.md#unified-qt-upstream-scientific-presentation), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Symbol-X/physical-carrier-Y, actual metadata and counts, bounded batched drawing with zoom/pan/inspection/grant selection; geometry/data tests and target-Qt responsiveness/object-budget evidence.
+  Evidence: [upstream acceptance plan](features/unified-qt-workbench/validation.md#upstream); pending implementation/acceptance.
+
+<a id="task-uiu-shared-01"></a>
+- [ ] **UIU-SHARED-01** Extract proven shared QAM/spectrum/response/measurement presentation.
+  Requirements: [REQ-UIU-15](../requirements.md#req-uiu-15), [REQ-UIU-16](../requirements.md#req-uiu-16), [REQ-UIU-17](../requirements.md#req-uiu-17), [REQ-UIU-18](../requirements.md#req-uiu-18), [REQ-UIU-21](../requirements.md#req-uiu-21).
+  Dependencies: [UIU-DS-01](#task-uiu-ds-01), [UIU-US-02](#task-uiu-us-02), [UIU-US-03](#task-uiu-us-03).
+  Architecture/files: [instruments owner](../architecture.md#unified-qt-shared-instruments), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Each extracted scientific renderer needs two real API-backed direction consumers and tests. Keep direction semantics/units/taps/overlays and unavailable states explicit; no numerical science in Qt.
+  Evidence: [instruments acceptance plan](features/unified-qt-workbench/validation.md#instruments); pending implementation/acceptance.
+
+<a id="task-uiu-shared-02"></a>
+- [ ] **UIU-SHARED-02** Share compatible FEC/verification presentation.
+  Requirements: [REQ-UIU-15](../requirements.md#req-uiu-15), [REQ-UIU-19](../requirements.md#req-uiu-19), [REQ-UIU-20](../requirements.md#req-uiu-20).
+  Dependencies: [UIU-SHARED-01](#task-uiu-shared-01).
+  Architecture/files: [instruments owner](../architecture.md#unified-qt-shared-instruments), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Actual DS and US results, correct code families, iterations/LLR bounds, partial outcomes, PRBS identity and BER denominator; two real consumers per extraction and unchanged DS behavior.
+  Evidence: [instruments acceptance plan](features/unified-qt-workbench/validation.md#instruments); pending implementation/acceptance.
+
+<a id="task-uiu-file-01"></a>
+- [ ] **UIU-FILE-01** Wire per-direction project Save/Open and dirty guards.
+  Requirements: [REQ-UIU-22](../requirements.md#req-uiu-22), [REQ-UIU-24](../requirements.md#req-uiu-24).
+  Dependencies: [UIU-API-05](#task-uiu-api-05), [UIU-SHELL-01](#task-uiu-shell-01), [UIU-US-03](#task-uiu-us-03).
+  Architecture/files: [persistence owner](../architecture.md#unified-qt-session-and-file-lifecycle), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Legacy DS plus new DS/US round trips and Rust/Python load/run, direction routing and target-tab dirty guard, cancel/failure preservation, safe writes and both-tab close behavior.
+  Evidence: [persistence acceptance plan](features/unified-qt-workbench/validation.md#persistence); pending implementation/acceptance.
+
+<a id="task-uiu-recovery-01"></a>
+- [ ] **UIU-RECOVERY-01** Preserve both direction projects across application restart/update.
+  Requirements: [REQ-UIU-23](../requirements.md#req-uiu-23).
+  Dependencies: [UIU-FILE-01](#task-uiu-file-01).
+  Architecture/files: [persistence owner](../architecture.md#unified-qt-session-and-file-lifecycle), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Bounded private recovery bundle of independently API-valid projects and active-tab/UI state, atomic restore/failure tests and source-install guards; no installed lifecycle claim without native evidence.
+  Evidence: [persistence acceptance plan](features/unified-qt-workbench/validation.md#persistence); pending implementation/acceptance.
+
+<a id="task-uiu-qa-01"></a>
+- [ ] **UIU-QA-01** Accept unified Qt functionality and reconcile final correspondence.
+  Requirements: [REQ-UIU-01](../requirements.md#req-uiu-01), [REQ-UIU-02](../requirements.md#req-uiu-02), [REQ-UIU-03](../requirements.md#req-uiu-03), [REQ-UIU-04](../requirements.md#req-uiu-04), [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-07](../requirements.md#req-uiu-07), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-09](../requirements.md#req-uiu-09), [REQ-UIU-10](../requirements.md#req-uiu-10), [REQ-UIU-11](../requirements.md#req-uiu-11), [REQ-UIU-12](../requirements.md#req-uiu-12), [REQ-UIU-13](../requirements.md#req-uiu-13), [REQ-UIU-14](../requirements.md#req-uiu-14), [REQ-UIU-15](../requirements.md#req-uiu-15), [REQ-UIU-16](../requirements.md#req-uiu-16), [REQ-UIU-17](../requirements.md#req-uiu-17), [REQ-UIU-18](../requirements.md#req-uiu-18), [REQ-UIU-19](../requirements.md#req-uiu-19), [REQ-UIU-20](../requirements.md#req-uiu-20), [REQ-UIU-21](../requirements.md#req-uiu-21), [REQ-UIU-22](../requirements.md#req-uiu-22), [REQ-UIU-23](../requirements.md#req-uiu-23), [REQ-UIU-24](../requirements.md#req-uiu-24), [REQ-UIU-25](../requirements.md#req-uiu-25), [REQ-UIU-26](../requirements.md#req-uiu-26), [REQ-UIU-27](../requirements.md#req-uiu-27).
+  Dependencies: [UIU-US-04](#task-uiu-us-04), [UIU-SHARED-02](#task-uiu-shared-02), [UIU-RECOVERY-01](#task-uiu-recovery-01).
+  Architecture/files: [acceptance owner](../architecture.md#unified-qt-acceptance), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Acceptance: Both actual direction runs, independent API/wheel/CLI regressions as affected, zero scientific boundary entries, complete inventory disposition/licensing, Qt/native build/launch, scientific presentation and persistence checks, final guides/skills/links/evidence and focused commit report. Record every remaining platform/mode limitation.
+  Evidence: [acceptance acceptance plan](features/unified-qt-workbench/validation.md#acceptance); pending implementation/acceptance.
 
 ## Architecture and module rules
-  Feature records: [ofdma/receiver.md](features/ofdma/receiver.md), [ofdma/channel.md](features/ofdma/channel.md).
 
 <a id="task-arch-01"></a>
 - [x] **ARCH-01** Maintain one canonical architecture and this checklist.

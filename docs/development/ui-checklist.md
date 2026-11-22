@@ -3,8 +3,20 @@
 This is the subordinate Qt detail checklist. The
 [official developer checklist](checklist.md) owns overall delivery and the
 [canonical requirements baseline](../requirements.md) owns requirements.
-Upstream backend integration does not implement upstream UI; its source UI
-design remains deferred under INT-DEFER-01.
+Upstream backend integration did not implement upstream UI. The separate
+[unified Qt plan](features/unified-qt-workbench/design.md) now proposes that UI
+scope; its [official UIU tasks](checklist.md#unified-qt-workbench-delivery) own
+completion status. The initial choices are one active simulation across both
+tabs and Save for the active direction's project. No new Qt implementation is
+accepted by this planning update. INT-DEFER-01's wider PHY deferrals remain.
+
+The UIU task group covers public-API migration and boundary enforcement,
+shared/downstream organization, isolated direction sessions and tabs, upstream
+configuration/execution/PNM/resource-grid windows, proven shared instruments,
+project compatibility, restart recovery and final evidence. See its direct
+requirement/architecture links and dependency edges rather than duplicating
+completion marks here. Existing UI-01 through UI-04 and UI-ORG history below
+retain their original status owners and evidence.
 
 The [downstream contract register](../requirements.md#detailed-downstream-contract-register)
 adds requirement/task/evidence navigation without changing these detail marks.

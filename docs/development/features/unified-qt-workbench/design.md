@@ -1,0 +1,108 @@
+# Unified Qt Workbench design
+
+Status: proposed planning baseline; no Qt or backend implementation in this unit.
+The user requested agreement on architecture, requirements and tasks first.
+The accepted choices are one active simulation across both tabs initially and
+Save for the active direction's project. These choices do not couple the engines.
+
+The branch is `feature/unified-qt-workbench`, created from accepted backend
+`23f63c9558ef659830338f6a61080705ce3d55f1`. Completed backend, FEC and UI-ORG-01/02
+tasks retain their acceptance states. This is a separate UI delivery scope;
+INT-DEFER-01's wider PHY deferrals remain in force.
+
+## Authority and navigation
+
+- [Canonical architecture](../../../architecture.md#unified-qt-workbench)
+- [Canonical requirements](../../../requirements.md#unified-qt-workbench-requirements)
+- [Official tasks](../../checklist.md#unified-qt-workbench-delivery)
+- [Complete source inventory](source-inventory.json)
+- [Migration and ownership plan](migration-plan.md)
+- [API gap and parity matrix](api-gap-matrix.md)
+- [Compatibility matrix](compatibility-matrix.md)
+- [Validation and acceptance plan](validation.md)
+- [Original master guide](master-guide.md)
+- [Additional high-level API contract](high-level-api-contract.md)
+
+The feature files refine the three canonical documents. They are not alternative
+requirements or completion registers. Proposed destination files are written as
+code; current source links resolve to files inspected at this checkpoint.
+
+## Decisions and implementation gates
+
+One native executable and `Merlin.Workbench` module serve two persistent direction
+tabs. Each direction owns its accepted configuration, inputs, session, worker
+control, progress, immutable results, selected instruments, project path and dirty
+state. A shell scheduler admits one active run across both tabs. Switching tabs
+does not stop it; Stop/Pause target the active tab's own session, and the shell
+identifies a run in the other tab without redirecting these controls silently.
+Start in another tab reports the existing active run. A paused run still holds
+the execution slot until completion or cancellation.
+
+Future concurrent operation requires a dispatch-policy change, aggregate CPU and
+memory admission, and concurrent isolation tests. It must not require merging
+scientific configurations or replacing direction-specific public APIs. In
+particular, the current thread-local latest-result and accepted-input stores
+must become explicit session-owned state before two-tab execution is accepted.
+
+Save/Save As write the active direction's project. Open detects and validates the
+direction before applying it to the corresponding tab, then asks about that
+tab's unsaved changes. Legacy schema 1/2 files remain downstream. Cancelling or
+rejecting Open preserves both tabs. Closing the app handles both dirty states.
+Updater recovery preserves both independently valid projects plus presentation
+state; normal Save does not become a combined-workspace format.
+
+The upstream logical flow is fixed: CM transmitter → physical channel → CMTS
+receiver. UCD/IUC/MAP configuration is a control path. Pre-equalization C applies
+at the CM transmitter; physical H and effective C×H keep their reference planes.
+CMTS RxMER feeds only the backend's admitted residual model. The user's upstream
+diagram is still needed to finalize visual placement; it does not block API,
+inventory, boundary or downstream planning. Do not invent final visual approval.
+
+No application source moves or API additions belong to this planning unit.
+After planning agreement, take the next eligible official task, establish a fresh
+Qt baseline, then enforce the migration boundary before extending APIs and moving
+their consumers. API extensions are focused, independently validated units before
+Qt adoption. The [migration plan](migration-plan.md#dependency-order) refines the
+master phase order where these prerequisites require it.
+
+## Reuse review
+
+| Inspected owner | Current contract/evidence | Gap | Decision and destination |
+| --- | --- | --- | --- |
+| [Facade](../../../../crates/merlin/src/lib.rs), public direction re-exports | Thin crate; both independent PHYs already usable; accepted backend compatibility | Qt still imports downstream internals | REUSE facade; ADAPT Qt call sites after typed API extensions, never add science to facade. |
+| [Qt organization](../qt-source-organization/design.md), [build registration](../../../../apps/qt/build.rs) | Accepted UI-ORG-01/02; pinned CXX-Qt bridge directory constraint | No direction split | ADAPT group ownership; retain all registered bridges in `src/bridge/`, same QML URI, entry URL and executable. |
+| [Closed loop](../../../../apps/qt/src/simulation/closed_loop.rs), `latest`/`Observations` | Bounded downstream worker and retained observations; inline tests | Private high-level-API gap; thread-local single result | SEPARATE per direction; scientific operations move behind public API, adapter retains dispatch and ownership only. |
+| [Downstream inputs](../../../../apps/qt/src/inputs), [project file](../../../../apps/qt/src/workbench/project_file.rs) | Existing editors, capture admission, Designer and schema 1/2 persistence | Validation/preview still depends on lower scientific owners | ADAPT through public typed admission and backend project contracts before deleting legacy routes. |
+| [Native input crate](../../../../crates/pnm-input/src/lib.rs), [workbench](../../../../crates/pnm-input/src/workbench) | Bounded binary/JSON, provenance, saved-workbench execution; Apache-2.0 | Not exposed by facade; no direction-aware unified project envelope | REUSE owners; optional facade input feature/re-exports, extend adapter-owned project contract, preserve existing imports. |
+| [Upstream session](../../../../crates/ofdma/src/api/session.rs), `preview`/`run_with_control` | Validated configuration and bounded controlled runs already accepted | Grid coordinates and some instrument views not public API | REUSE session; small observation extensions in upstream API, scientific construction stays in owning modules. |
+| [ResourcePlan](../../../../crates/ofdma/src/resources/grid.rs) | Authoritative physical cell/pilot allocation | High-level `ExperimentPreview` gives counts, not cell coordinates | ADAPT via bounded idle grid operation; no QML resource reconstruction. |
+| [SpectrumPlot](../../../../apps/qt/qml/instruments/spectrum/SpectrumPlot.qml), [scatter](../../../../apps/qt/qml/instruments/qam/TransmitterScatter.qml), [response](../../../../apps/qt/qml/instruments/response/ReceiverResponseDialog.qml) | Existing downstream Canvas/viewport presentation and QtTests | No real upstream consumers; direction-specific labels/overlays mixed in | DEFER scientific shared acceptance; extract proven presentation only after two real API-backed consumers and tests. |
+| [FEC presentation](../../../../apps/qt/qml/instruments/fec), [receiver providers](../../../../apps/qt/src/instruments/receiver) | Actual downstream counters/LLR/iteration views | Upstream LDPC data differs from downstream BCH/control chains | ADAPT chart/table widgets; SEPARATE semantics, code families and unavailable states. |
+| [Platform](../../../../apps/qt/src/platform) | Native pickers, update HTTP/install/recovery, logging, theming | Recovery currently assumes one downstream project | REUSE infrastructure; adapt recovery after project API; no new install authorization. |
+
+## Master-guide coverage
+
+Every numbered master section is routed here; the additional API contract takes
+precedence over master section 13's allowance to call underlying owners.
+
+| Master sections | Canonical requirements | Official delivery tasks |
+| --- | --- | --- |
+| 1–3 baseline, skills, workflow | [01](../../../requirements.md#req-uiu-01), [26](../../../requirements.md#req-uiu-26), [27](../../../requirements.md#req-uiu-27) | UIU-PLAN-01, UIU-BASE-01, UIU-QA-01 |
+| 4 complete audit and organization history | [01](../../../requirements.md#req-uiu-01), [04](../../../requirements.md#req-uiu-04) | UIU-PLAN-01, UIU-ORG-01, UIU-DS-01 |
+| 5–6 source layout, bridge constraint | [03](../../../requirements.md#req-uiu-03), [04](../../../requirements.md#req-uiu-04) | UIU-BOUND-01, UIU-ORG-01, UIU-DS-01 |
+| 7 shared QAM/spectrum/channel/FEC/PRBS/PNM presentation | [15–21](../../../requirements.md#req-uiu-15) | UIU-SHARED-01, UIU-SHARED-02, UIU-US-03 |
+| 8 shell, menus and independent tabs | [05](../../../requirements.md#req-uiu-05), [06](../../../requirements.md#req-uiu-06), [25](../../../requirements.md#req-uiu-25) | UIU-SESSION-01, UIU-SHELL-01 |
+| 9 downstream compatibility | [08](../../../requirements.md#req-uiu-08), [09](../../../requirements.md#req-uiu-09) | UIU-BASE-01, UIU-API-01/02, UIU-DS-01 |
+| 10–11 upstream diagram and drill-ins | [10–13](../../../requirements.md#req-uiu-10), [20](../../../requirements.md#req-uiu-20) | UIU-US-01/02/03, UIU-SHARED-02 |
+| 12 physical resource-grid viewer | [14](../../../requirements.md#req-uiu-14) | UIU-API-03, UIU-US-04 |
+| 13 direction adapters, lifecycle and common presentation | [02](../../../requirements.md#req-uiu-02), [03](../../../requirements.md#req-uiu-03), [06](../../../requirements.md#req-uiu-06), [07](../../../requirements.md#req-uiu-07) | UIU-BOUND-01, UIU-API-01/02/03/04, UIU-SESSION-01, UIU-US-02 |
+| 14 independent direction-aware projects | [22–24](../../../requirements.md#req-uiu-22) | UIU-API-05, UIU-FILE-01, UIU-RECOVERY-01 |
+| 15 dependency order | [01](../../../requirements.md#req-uiu-01), [26](../../../requirements.md#req-uiu-26) | Official task dependencies and migration plan |
+| 16 validation | [24–27](../../../requirements.md#req-uiu-24) | Per-unit acceptance and UIU-QA-01 |
+| 17 focused local commits | [26](../../../requirements.md#req-uiu-26), [27](../../../requirements.md#req-uiu-27) | Validated implementation units; no push/release authorization |
+| 18–19 acceptance and final report | [26](../../../requirements.md#req-uiu-26) | UIU-QA-01 |
+| Additional mandatory API contract, all rules and acceptance clauses | [02](../../../requirements.md#req-uiu-02), [03](../../../requirements.md#req-uiu-03), [09](../../../requirements.md#req-uiu-09), [14](../../../requirements.md#req-uiu-14), [24](../../../requirements.md#req-uiu-24) | Boundary guard, API-first units, downstream migration and final zero-exception audit |
+
+Ranges in this navigation table refer to the individual stable IDs in the
+canonical baseline; exact per-task links and acceptance criteria are in the
+official checklist. No range or planning record establishes runtime acceptance.

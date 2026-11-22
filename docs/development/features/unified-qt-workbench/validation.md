@@ -1,0 +1,148 @@
+# Unified Qt validation and acceptance
+
+This record distinguishes inspected planning material, historical backend
+evidence and future runtime acceptance. All new UIU implementation tasks are
+pending in the [official checklist](../../checklist.md#unified-qt-workbench-delivery).
+No application/API implementation, source move, Qt build or runtime test was
+performed for this documentation unit. The checkout's branch creation and
+planning document changes do not establish UI acceptance.
+
+## Planning checks
+
+Candidate: `feature/unified-qt-workbench` based on
+`23f63c9558ef659830338f6a61080705ce3d55f1`, with this uncommitted documentation
+addition. The inventory pins original application bytes independently of these
+planning documents. Planning checks must verify all 178 tracked Qt paths/hashes,
+27 unique new requirement IDs, 21 unique tasks, nonempty exact requirement sets,
+requirement→task and task→requirement links, architecture ownership, known acyclic
+dependencies, full master-section routing and preserved historical task states.
+Run general current-mode feature documentation and integration traceability
+checks, version/guide consistency and diff whitespace. Actual planning results
+are recorded below. Do not use historical documentation-migration mode
+or modify completed backend inventories to include this new UI phase.
+
+Planning results, 2026-11-21:
+
+- Complete inventory/ad hoc source audit: 178/178 application hashes match both
+  current bytes and accepted HEAD; all destinations are unique and all recorded
+  consumer/test paths exist. No application source was changed.
+- New traceability audit: 27 unique requirement anchors, 21 pending tasks and
+  31 known acyclic dependency edges; exact nonempty task requirement sets,
+  requirement/task return links, architecture return links, all 19 master
+  sections and original prompt bytes verified. Original explicit anchors and
+  every historical checkbox line/state remain present.
+- `python3 -B tools/validation/feature_documentation.py`: passes in current mode;
+  its registered historical inventory covers 520 baseline IDs and 430 downstream
+  task mappings. The additional 27 UIU IDs were checked separately above; the
+  existing tool's count is not an assertion that it registered this new phase.
+- `python3 -B tools/validation/integration_traceability.py`: passes existing
+  backend task/requirement/architecture and recorded implementation chains.
+- `python3 -B tools/release/versions.py`: version metadata agrees at 0.4.0.
+- `python3 -B tools/python/update_integration_doc.py --check`: guide current.
+- `git diff --check`: passes. Changes are documentation only and uncommitted.
+
+These checks accept neither the UI planning decision on the user's behalf nor
+new runtime functionality. No Qt/scientific/Python runtime suite was rerun for
+documentation-only work; fresh UI baseline execution remains UIU-BASE-01.
+
+## Historical baseline
+
+The accepted backend checkpoint retains
+[regression evidence](../unified-backend/regression-evidence.json),
+[documentation evidence](../unified-backend/documentation-evidence.json) and
+[acceptance evidence](../unified-backend/acceptance-evidence.json).
+These are prior evidence, not reruns on new UI work. The accepted Qt source
+organization [UI-ORG-01/02 record](../qt-source-organization/design.md) also remains
+historical; its file/test counts describe that milestone, not today's inventory.
+Do not reopen completed backend/FEC planning or overwrite accepted manifests.
+
+## Baseline
+
+UIU-PLAN-01 requires review/agreement on the actual planning files, source
+inventory and task graph. UIU-BASE-01 then records a fresh pre-migration candidate,
+existing Qt Rust/QtTest checks, native executable build and startup, saved examples
+and bounded downstream run. Capture exact commands/toolchains, source hashes,
+results and any pre-existing failures before code moves. Preserve build caches.
+
+## API
+
+UIU-BOUND-01 verifies actual dependency identities and direct source references,
+with negative renamed/path/fully-qualified cases. Migration exceptions must be
+exact existing sites with sunset owners. Every API extension task finalizes
+signatures/fields/budgets/errors/parity before code, runs independent scientific
+vectors and meaningful API compatibility tests, installs the matching wheel in
+an isolated environment and verifies namespace/operation/project parity there.
+Use relevant existing core/analysis/no-default-features checks; broaden validation
+when shared owners/dependency contracts change. Commit the validated API unit
+before a Qt consumer. Never change scientific expected values to mask drift.
+
+Grid tests cover literal physical coordinates, accepted patterns/numerologies,
+roles/counts/order, bounds/overflow/missing states and idle no-mutation behavior.
+Run/observation tests cover actual stages, configuration/run identities, paired
+data, PSD normalization/units/reference planes, decoder partial outcomes and
+old imports/defaults/results. Native inputs preserve original bytes/hashes,
+timestamps, grids/nulls/exclusions and admitted measurement combinations.
+
+## Organization
+
+UIU-ORG-01/UIU-DS-01 validate each focused file move: production QML registered
+exactly once, QObject files together, maintained imports/includes/resources,
+unchanged entry URL/module/target identity, license/NOTICE preservation, existing
+Qt Rust and QtTest cases and a freshly built native executable. Compare actual
+downstream configuration/readiness/results with the baseline, not just screenshots.
+Qt-only moves use targeted Qt checks; no unnecessary full workspace rebuild.
+
+## Shell
+
+UIU-SESSION-01/UIU-SHELL-01 test two populated sessions, dirty/path/selection
+isolation, active run/paused-slot ownership, second Start rejection, tab switching,
+scoped controls, late/stale/failed/cancelled callbacks, destruction and bounded
+retention. Verify File/Settings/About/updates, removed internal canvas title,
+persistent lower-right controls, focus/keyboard/accessibility, themes and dialogs.
+Tests should enable later dispatch-policy changes without assuming shared science
+state. Future actual concurrent scheduling needs its own aggregate-limit tests.
+
+## Upstream
+
+UIU-US-01 requires the user's diagram/final layout input before visual
+implementation. Verify CM→channel→CMTS samples versus control arrows and all
+H/C/C×H/RxMER labels. UIU-US-02/03 exercise actual admitted synthetic and measured
+runs/input combinations, progress/cancel/partial outcomes and isolated DS state.
+Unsupported combinations are rejected by the public API with consistent UI errors.
+UIU-US-04 compares displayed cells against authoritative snapshots and checks
+axis direction, grant/IUC/pattern/role readouts, pan/zoom/selection, batched object
+count and bounded viewport responsiveness on the target Qt build. A compiled
+placeholder or mock-only scene cannot establish upstream acceptance.
+
+## Instruments
+
+UIU-SHARED-01/02 require two real direction consumers per extracted scientific
+renderer, with direction tests and actual API data. Verify QAM pairing/stage/
+physical identity, spectrum units/window/normalization, response reference planes,
+FEC family/actual iterations/word status/LLR bounds, PRBS recurrence/seed/order,
+BER denominator, partial results, original measurement provenance and explicit
+unavailable states. Keep DS PLC/NCP overlays and BCH semantics out of upstream
+data displays. Pure pixel transforms are reviewed separately from numerical science.
+
+## Persistence
+
+UIU-API-05/UIU-FILE-01 validate legacy schema 1/2 examples and proposed explicit
+direction schema 3 round trips in UI, public Rust and installed Python. Check
+malformed/oversized/wrong-direction/hash/version errors, atomic admission, target
+tab dirty guards, picker/write cancellation, no unintended input/export overwrite
+and app-close handling for both dirty tabs. UIU-RECOVERY-01 validates a bounded
+private bundle of both API-valid projects and restore state, including errors.
+Updater integration tests never install/elevate from a source checkout. Native
+polkit/UAC/installed lifecycle remains pending until actually tested in an
+appropriately authorized environment; preserve existing pending QA tasks.
+
+## Acceptance
+
+UIU-QA-01 requires all dependencies accepted with actual MERLIN-workspace
+evidence, both direction runs, final zero scientific migration exceptions,
+installed-wheel and affected CLI/core regressions, scientific presentation,
+persistence/recovery and freshly built Qt executable. Resolve maintained links,
+reconcile final source inventory/owner/skill/guide correspondence and licenses,
+and report exact source candidates, tests, outcomes, native platform limits,
+remaining scope deferrals and focused commit chronology. New runtime evidence
+belongs here or in linked per-unit records; do not rewrite historical acceptance.

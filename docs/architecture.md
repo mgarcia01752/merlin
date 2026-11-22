@@ -895,7 +895,165 @@ See [component guides](user/qam-processing/README.md) and the
 [External interoperability](development/features/qam-completion/external-vectors.md)
 is optional future scope.
 
+## Unified Qt Workbench
+
+This is the proposed architecture for a separate UI delivery after accepted
+backend checkpoint `23f63c9`. The user requested planning agreement before source
+migration. [REQ-UIU-01 through REQ-UIU-27](requirements.md#unified-qt-workbench-requirements)
+and the [UIU delivery tasks](development/checklist.md#unified-qt-workbench-delivery)
+define its obligations and acceptance; no new UI functionality is accepted here.
+See the [design and master-clause map](development/features/unified-qt-workbench/design.md),
+[complete source inventory](development/features/unified-qt-workbench/source-inventory.json)
+and [API gaps](development/features/unified-qt-workbench/api-gap-matrix.md).
+This new UI scope supersedes the backend phase's upstream-UI deferral only;
+completed backend/FEC gates and wider PHY deferrals are unchanged.
+
+Requirements: [REQ-UIU-01](requirements.md#req-uiu-01).
+Delivery: [UIU-PLAN-01](development/checklist.md#task-uiu-plan-01), [UIU-BASE-01](development/checklist.md#task-uiu-base-01).
+
+### Unified Qt public API boundary
+
+```mermaid
+flowchart TB
+    SHELL["One Qt application: shared menu and persistent direction tabs"]
+    SHELL --> DS["Downstream QML and session adapter"]
+    SHELL --> US["Upstream QML and session adapter"]
+    DS --> BRIDGE["Thin QObject entry files together in src/bridge"]
+    US --> BRIDGE
+    BRIDGE --> FACADE["merlin::downstream / upstream / common"]
+    FACADE --> DAPI["docsis-ofdm-fec::api"]
+    FACADE --> UAPI["docsis-ofdma::api"]
+    FACADE --> INPUT["Optional native-input re-exports: pnm-input"]
+    INPUT --> DAPI
+    INPUT --> UAPI
+    DAPI --> LEAF["Common API / DSP / FEC leaves"]
+    UAPI --> LEAF
+    SHELL --> PLATFORM["Platform I/O, updates, ownership and UI state"]
+```
+
+All new Qt scientific calls use the accepted high-level facade API. Neither QML
+nor QObject/direction adapters invoke internal PHY engines, DSP, FEC, native PNM
+decoders or private science directly. QObject code translates requests, owns UI
+session references, dispatches bounded asynchronous jobs and maps public errors,
+progress and results. Configuration admission, previews, waveform/resource
+construction, scientific measurements and results remain in backend owners.
+The facade adds re-exports/optional feature wiring, never scientific code.
+Independent PHYs do not depend on Qt, Python, the facade or each other.
+
+The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)
+records exact existing lower-level call owners and missing public observations.
+Each gap gets a typed public operation, Rust/Python parity, independent scientific
+and API tests and a focused validated commit before Qt adopts it. Do not solve a
+gap by exposing whole internal modules. Existing downstream API imports and
+Python `merlin.Simulation` retain behavior. An automated Cargo/source boundary
+check initially permits only reviewed pre-existing migration sites with sunset
+tasks; final acceptance requires zero scientific migration entries.
+
+Requirements: [REQ-UIU-02](requirements.md#req-uiu-02), [REQ-UIU-03](requirements.md#req-uiu-03), [REQ-UIU-09](requirements.md#req-uiu-09), [REQ-UIU-24](requirements.md#req-uiu-24).
+Delivery: [UIU-BOUND-01](development/checklist.md#task-uiu-bound-01), [UIU-API-01](development/checklist.md#task-uiu-api-01), [UIU-API-02](development/checklist.md#task-uiu-api-02), [UIU-API-03](development/checklist.md#task-uiu-api-03), [UIU-API-04](development/checklist.md#task-uiu-api-04), [UIU-API-05](development/checklist.md#task-uiu-api-05).
+
+### Unified Qt source ownership
+
+One native executable, `Merlin.Workbench` URI and current Main resource entry URL
+are retained. QML has shared shell/theme/components and separate downstream and
+upstream subtrees. Registered QObject entry files all remain in `src/bridge/`
+for pinned CXX-Qt 0.7.3; direction adapter implementation lives in separate Rust
+subtrees. Platform/update/I/O code remains application infrastructure. Exact
+first destinations and consumers/tests are in the inventory and
+[migration plan](development/features/unified-qt-workbench/migration-plan.md#destination-layout).
+Preserve UI-ORG-01/02 acceptance, copyrights, notices and working presentation;
+no unused symmetric placeholder trees or blanket scientific shared modules.
+
+Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
+Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
+
+### Unified Qt session and file lifecycle
+
+Accepted user choices: **one active run across both tabs initially** and
+**Save the active direction's project**. Each direction owns configuration,
+inputs, accepted generation, session, run identity, worker control, results,
+instrument selections, path and dirty state. Replace current implicit latest
+result/input singletons with explicit session-owned state. Callbacks carry
+direction/session/generation/run identity; stale results cannot overwrite another
+session. Tab switching preserves work and does not stop execution. A paused run
+retains the shared execution slot. Controls target the selected tab's own session;
+another active direction is indicated and a second Start is rejected visibly.
+Future concurrent dispatch requires aggregate resource admission and isolation
+tests, not shared scientific configuration or a different API architecture.
+
+Normal project files remain direction-specific. Open validates/detects direction
+and guards that target tab's dirty state before mutation. Schema 1/2 retain DS
+interpretation; a proposed schema 3 explicitly tags direction. Backend/native
+input owners admit and serialize scientific project contents through the public
+API with Rust/Python parity. Qt retains chooser, safe filesystem replacement,
+dirty prompts and presentation state. Update recovery privately bundles both
+independently valid projects plus active-tab state. All file/capture, viewport,
+worker, retained-result and aggregate-memory budgets remain bounded; errors or
+cancellation preserve accepted inputs/completed trials. See the
+[compatibility matrix](development/features/unified-qt-workbench/compatibility-matrix.md).
+
+Requirements: [REQ-UIU-05](requirements.md#req-uiu-05), [REQ-UIU-06](requirements.md#req-uiu-06), [REQ-UIU-07](requirements.md#req-uiu-07), [REQ-UIU-22](requirements.md#req-uiu-22), [REQ-UIU-23](requirements.md#req-uiu-23).
+Delivery: [UIU-SESSION-01](development/checklist.md#task-uiu-session-01), [UIU-SHELL-01](development/checklist.md#task-uiu-shell-01), [UIU-FILE-01](development/checklist.md#task-uiu-file-01), [UIU-RECOVERY-01](development/checklist.md#task-uiu-recovery-01).
+
+### Unified Qt upstream scientific presentation
+
+The upstream data path is **CM transmitter → physical channel → CMTS receiver**.
+CMTS UCD/numerology/IUC/MAP/grant/resource settings are a distinct control path.
+CM pre-equalization C acts at TX; H, C and C×H remain separately labelled at
+their actual reference planes. CMTS RxMER is a measured observation admitted to
+the supported residual model, not a physical response or arbitrary correction.
+Synthetic and measured modes expose the backend's real combination restrictions.
+The configuration/TX/channel/RX/PNM/verification drill-ins use direction-specific
+models and authoritative stage observations. The user's upstream diagram remains
+an input to final visual placement, not permission to reconstruct scientific flow.
+
+The OFDMA resource-grid viewer has symbol index on X and physical subcarrier
+index on Y. A new bounded idle upstream API observation must expose authoritative
+allocation/pilot coordinates and actual roles, grant/IUC/pattern metadata and
+counts. Qt only renders/inspects these results with bounded batched drawing,
+zoom/pan and selection. No pilot placement/allocation or one-object-per-cell grid
+belongs in QML. Preserve accepted operating modes and normative evidence in the
+backend; no wider PHY capability is implied by a visible control.
+
+Requirements: [REQ-UIU-10](requirements.md#req-uiu-10), [REQ-UIU-11](requirements.md#req-uiu-11), [REQ-UIU-12](requirements.md#req-uiu-12), [REQ-UIU-13](requirements.md#req-uiu-13), [REQ-UIU-14](requirements.md#req-uiu-14).
+Delivery: [UIU-US-01](development/checklist.md#task-uiu-us-01), [UIU-US-02](development/checklist.md#task-uiu-us-02), [UIU-US-03](development/checklist.md#task-uiu-us-03), [UIU-US-04](development/checklist.md#task-uiu-us-04).
+
+### Unified Qt shared instruments
+
+Shared scatter/axes/zoom/navigation, spectrum/response plots, FEC tables/charts,
+verification and provenance widgets consume typed public API data. Numerical
+FFT/PSD, MER/EVM, reference points, response/echo, LLR, bit ordering, resource
+mapping, FEC outcomes and physical metadata remain backend-owned. Pure screen
+transforms, clipping and layout remain presentation. Extract a scientific
+instrument only after two real direction consumers and their tests demonstrate
+compatible semantics. Keep DS PLC/NCP/profile labels, DS H and US H/C/C×H,
+upstream LDPC versus downstream BCH/control chains, missing data and partial
+outcomes explicit. Detailed candidate decisions are in the migration plan.
+
+Requirements: [REQ-UIU-15](requirements.md#req-uiu-15), [REQ-UIU-16](requirements.md#req-uiu-16), [REQ-UIU-17](requirements.md#req-uiu-17), [REQ-UIU-18](requirements.md#req-uiu-18), [REQ-UIU-19](requirements.md#req-uiu-19), [REQ-UIU-20](requirements.md#req-uiu-20), [REQ-UIU-21](requirements.md#req-uiu-21).
+Delivery: [UIU-SHARED-01](development/checklist.md#task-uiu-shared-01), [UIU-SHARED-02](development/checklist.md#task-uiu-shared-02).
+
+### Unified Qt acceptance
+
+All new delivery tasks remain unchecked until matching tests pass in MERLIN.
+The accepted backend evidence is historical context, not a new UI baseline run.
+Establish fresh Qt baseline evidence before code moves. Validate each API extension
+before its Qt consumer; preserve downstream tests/imports/project behavior and
+scientific vectors. Final acceptance requires both direction runs, installed-wheel
+parity, a zero-exception scientific boundary, two-consumer instrument evidence,
+bounded lifecycle/persistence/recovery, Qt Rust/QML checks, native build/launch,
+resolved links/registration and an accurate owner/evidence report. Record actual
+platform and installed-lifecycle limits. Preserve build caches; this phase does
+not authorize pushes, releases, system installs or unsupported wider PHY work.
+
+Requirements: [REQ-UIU-26](requirements.md#req-uiu-26), [REQ-UIU-27](requirements.md#req-uiu-27).
+Delivery: [UIU-QA-01](development/checklist.md#task-uiu-qa-01).
+
 ## UI: MERLIN Simulation Workbench
+
+The opening scheduling statements below describe the historical downstream UI
+milestone. Python/backend delivery has since completed within its accepted scope;
+the proposed unified UI phase above does not reset this downstream history.
 
 The CLI functional MVP is complete for its documented closed-loop configurations.
 The next major phase is the native Qt Quick/QML workbench, initially targeting
