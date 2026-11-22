@@ -21,6 +21,8 @@ execution and owned complete/partial scientific reports.
 [Retained stage observations](full-loop-observations.md) add opt-in actual
 TX/RX data with explicit phase/reference/grid metadata and finite budgets,
 plus passive PSD, response, actual LDPC-input statistics and retained TX PLC messages.
+[Receiver cell observations](full-loop-cells.md) preserve actual matched QAM,
+all-selected MER and bounded physical decisions across payload/control/pilot roles.
 
 For searchable class/method documentation generated from the actual APIs, see
 the [generated Rust/Python reference](../../reference/api-reference.md).

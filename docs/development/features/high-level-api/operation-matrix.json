@@ -5,9 +5,9 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "3ccc9ce74477ebee0cc35d7ed79db711eb576d34 plus exact PLC-message candidate manifest",
-    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-message-native/native-exports.json",
-    "native_sha256": "f580e2a6609b4b287694732c9d961c7a1ddf450ae5f9d9ef13aaf661cbf55dad",
+    "revision": "bd1392eba31cfaa18c615453d54e5d74bde9ef5a plus exact receiver-cell candidate manifest",
+    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-cell-native/native-exports.json",
+    "native_sha256": "eab465db02390e62e517962221ef56436967dc097e23e945761790062acde9fe",
     "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
     "legacy_compatibility": {
       "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
@@ -69,7 +69,9 @@
     "evidence.uiu-api-02-instruments": "../unified-qt-workbench/numerical-query-evidence.json, ../unified-qt-workbench/api-02-instrument-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-passive-numerical-query-unit: actual source/wheel and exact successful owner/scientific/native cases.",
     "status.uiu-api-02-instruments": "Implemented passive actual time-sample PSD, configured H/retained receiver H-hat and coding-order LDPC LLR statistics. Selected-cell/message and complete source-catalog/sweep parity keep API-02 open; no Qt adoption.",
     "evidence.uiu-api-02-messages": "../unified-qt-workbench/plc-message-evidence.json, ../unified-qt-workbench/api-02-message-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-retained-plc-message-unit: actual source/wheel and exact successful owner/scientific/native cases.",
-    "status.uiu-api-02-messages": "Implemented actual retained TX PLC frame/MAC/descriptor inspection with exact bytes, typed fields, original offsets and checked sample coverage. Selected-cell and complete catalog/sweep parity keep API-02 open; no Qt adoption."
+    "status.uiu-api-02-messages": "Implemented actual retained TX PLC frame/MAC/descriptor inspection with exact bytes, typed fields, original offsets and checked sample coverage. Selected-cell and complete catalog/sweep parity keep API-02 open; no Qt adoption.",
+    "evidence.uiu-api-02-cells": "../unified-qt-workbench/receiver-cell-evidence.json, ../unified-qt-workbench/api-02-cell-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-selected-receiver-cell-unit: actual current source/wheel/scientific cases, plus explicit compiler alias correction preserving original records.",
+    "status.uiu-api-02-cells": "Implemented bounded actual receiver cell selection, all-selected nearest/TX-reference MER and physical decisions/actual soft statistics. Parent API-02 remains open for remaining physical/soft-display/reference views and complete catalog/sweep parity; no Qt adoption."
   },
   "type_exports": {
     "downstream": [
@@ -370,7 +372,7 @@
         "kind": "enum"
       },
       {
-        "export": "merlin::downstream::CarrierType",
+        "export": "merlin::downstream::ProfileCarrierRole",
         "kind": "enum"
       },
       {
@@ -466,7 +468,7 @@
         "kind": "struct"
       },
       {
-        "export": "merlin::downstream::PlaybackMode",
+        "export": "merlin::downstream::MeasurementMode",
         "kind": "enum"
       },
       {
@@ -594,7 +596,7 @@
         "kind": "struct"
       },
       {
-        "export": "merlin::downstream::ChannelJobResult",
+        "export": "merlin::downstream::FullLoopReport",
         "kind": "struct"
       },
       {
@@ -650,7 +652,7 @@
         "kind": "struct"
       },
       {
-        "export": "merlin::downstream::CellProbeGrid",
+        "export": "merlin::downstream::FullLoopCellGrid",
         "kind": "struct"
       },
       {
@@ -686,19 +688,19 @@
         "kind": "struct"
       },
       {
-        "export": "merlin::downstream::PhysicalProbeGrid",
+        "export": "merlin::downstream::FullLoopPhysicalGrid",
         "kind": "struct"
       },
       {
-        "export": "merlin::downstream::PilotValue",
+        "export": "merlin::downstream::FullLoopPilotValue",
         "kind": "struct"
       },
       {
-        "export": "merlin::downstream::PlcProbeGrid",
+        "export": "merlin::downstream::FullLoopPlcGrid",
         "kind": "struct"
       },
       {
-        "export": "merlin::downstream::ProbeContext",
+        "export": "merlin::downstream::FullLoopStageContext",
         "kind": "struct"
       },
       {
@@ -706,7 +708,7 @@
         "kind": "enum"
       },
       {
-        "export": "merlin::downstream::RunPhase",
+        "export": "merlin::downstream::FullLoopStagePhase",
         "kind": "enum"
       },
       {
@@ -718,23 +720,23 @@
         "kind": "enum"
       },
       {
-        "export": "merlin::downstream::SignalReference",
+        "export": "merlin::downstream::FullLoopStageReference",
         "kind": "enum"
       },
       {
-        "export": "merlin::downstream::TestPointId",
+        "export": "merlin::downstream::FullLoopStage",
         "kind": "enum"
       },
       {
-        "export": "merlin::downstream::TransmitCellRole",
+        "export": "merlin::downstream::FullLoopCellRole",
         "kind": "enum"
       },
       {
-        "export": "merlin::downstream::TransportCell",
+        "export": "merlin::downstream::FullLoopTransportCell",
         "kind": "enum"
       },
       {
-        "export": "merlin::downstream::WaveformProbeGrid",
+        "export": "merlin::downstream::FullLoopWaveformGrid",
         "kind": "struct"
       },
       {
@@ -762,11 +764,11 @@
         "kind": "struct"
       },
       {
-        "export": "merlin::downstream::LlrStatistics",
+        "export": "merlin::downstream::FullLoopLlrStatistics",
         "kind": "struct"
       },
       {
-        "export": "merlin::downstream::ResponseDiagnostics",
+        "export": "merlin::downstream::FullLoopResponseDiagnostics",
         "kind": "struct"
       },
       {
@@ -791,6 +793,50 @@
       },
       {
         "export": "merlin::downstream::FullLoopPlcMessages",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopCell",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopCellBounds",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopCellDecision",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopCellDecisionRow",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopCellDecisions",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopCellMer",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopCellQuery",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopCellSelection",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopCellStream",
+        "kind": "enum"
+      },
+      {
+        "export": "merlin::downstream::FullLoopHardDecision",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopQamView",
         "kind": "struct"
       }
     ],
@@ -25794,7 +25840,7 @@
     },
     {
       "direction": "downstream",
-      "operation": "merlin::downstream::PlcProbeGrid::for_symbols",
+      "operation": "merlin::downstream::FullLoopPlcGrid::for_symbols",
       "rust_namespace": "merlin::downstream",
       "rust_type_method": {
         "signature": "pub fn for_symbols( spacing: SubcarrierSpacing, symbols: usize, ) -> Result<Self, SimulationError>",
@@ -25870,7 +25916,7 @@
     },
     {
       "direction": "downstream",
-      "operation": "merlin::downstream::PlcProbeGrid::new",
+      "operation": "merlin::downstream::FullLoopPlcGrid::new",
       "rust_namespace": "merlin::downstream",
       "rust_type_method": {
         "signature": "pub fn new(spacing: SubcarrierSpacing) -> Self",
@@ -25946,7 +25992,7 @@
     },
     {
       "direction": "downstream",
-      "operation": "merlin::downstream::ProbeContext::new",
+      "operation": "merlin::downstream::FullLoopStageContext::new",
       "rust_namespace": "merlin::downstream",
       "rust_type_method": {
         "signature": "pub fn new( run_id: &str, configuration_id: &str, phase: RunPhase, ) -> Result<Self, SimulationError>",
@@ -26280,6 +26326,305 @@
       },
       "evidence": "evidence.uiu-api-02-messages",
       "status": "status.uiu-api-02-messages"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopCellMer::unavailable",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn unavailable(sample_count: usize, status: MerStatus) -> Self",
+        "source_file": "crates/ofdm/src/signal_processing/modulation/mer.rs",
+        "rustdoc": "docsis_ofdm_fec/signal_processing/modulation/mer/struct.MerResult.html"
+      },
+      "python_namespace": "none",
+      "python_type_method": {
+        "availability": "Rust-only scientific metadata helper",
+        "declaration": "Native owned metric dictionaries retain the same scientific fields/statuses; no invented native metadata-helper constructor."
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "Self",
+        "scope": "Bounded actual paired receiver cells and original identities, immutable typed selectors, all-selected nearest/TX-reference MER in separate planes and physical diagnostic decisions/actual soft statistics. Owned output windows do not define the scientific population."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-19",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/tests/constellation_mer.rs::known_complex_errors_use_power_sums_and_not_average_db",
+          "crates/ofdm/tests/constellation_mer.rs::exceptional_readings_remain_explicit_and_json_safe",
+          "crates/ofdm/tests/constellation_mer.rs::row_index_matches_exhaustive_distances_for_every_supported_order",
+          "crates/ofdm/tests/constellation_mer.rs::boosted_pilots_and_full_selection_are_not_rescaled_or_display_sampled",
+          "crates/ofdm/tests/constellation_mer.rs::tx_reference_does_not_hide_wrong_decisions",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::all_selected_mer_includes_errors_after_display_cap_and_keeps_reference_planes_separate",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::missing_references_empty_filters_and_output_ownership_remain_explicit",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::strict_query_admission_and_per_operation_windows_reject_without_changing_originals",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::boosted_bpsk_decision_preserves_known_physical_and_unit_reference_coordinates",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::invalid_normalization_or_samples_never_become_finite_diagnostic_decisions",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry"
+        ],
+        "python": {
+          "status": "installed actual-role/selection/scientific/ownership/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_absent_filtered_invalid_and_bounded_views_never_create_history",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_actual_pairings_all_selected_metrics_and_owned_query_parameters",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_all_actual_roles_decisions_and_cell_soft_values_keep_reference_coordinates",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_direct_rust_process_selected_cells_metrics_and_decisions_match"
+          ],
+          "scope": "Literal power vector with errors beyond display cap, all actual roles/pairings/soft values, pilot amplitude, empty/unavailable data, limits/filters, owned results and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-cells",
+      "status": "status.uiu-api-02-cells"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopCellQuery::from_json",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn from_json(bytes: &[u8]) -> ApiResult<Self>",
+        "source_file": "crates/ofdm/src/api/full_loop/cells.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopCellQuery.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopCellQuery.from_json",
+        "declaration": "merlin.downstream.FullLoopCellQuery.from_json"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Bounded actual paired receiver cells and original identities, immutable typed selectors, all-selected nearest/TX-reference MER in separate planes and physical diagnostic decisions/actual soft statistics. Owned output windows do not define the scientific population."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-19",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/tests/constellation_mer.rs::known_complex_errors_use_power_sums_and_not_average_db",
+          "crates/ofdm/tests/constellation_mer.rs::exceptional_readings_remain_explicit_and_json_safe",
+          "crates/ofdm/tests/constellation_mer.rs::row_index_matches_exhaustive_distances_for_every_supported_order",
+          "crates/ofdm/tests/constellation_mer.rs::boosted_pilots_and_full_selection_are_not_rescaled_or_display_sampled",
+          "crates/ofdm/tests/constellation_mer.rs::tx_reference_does_not_hide_wrong_decisions",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::all_selected_mer_includes_errors_after_display_cap_and_keeps_reference_planes_separate",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::missing_references_empty_filters_and_output_ownership_remain_explicit",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::strict_query_admission_and_per_operation_windows_reject_without_changing_originals",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::boosted_bpsk_decision_preserves_known_physical_and_unit_reference_coordinates",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::invalid_normalization_or_samples_never_become_finite_diagnostic_decisions",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry"
+        ],
+        "python": {
+          "status": "installed actual-role/selection/scientific/ownership/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_absent_filtered_invalid_and_bounded_views_never_create_history",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_actual_pairings_all_selected_metrics_and_owned_query_parameters",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_all_actual_roles_decisions_and_cell_soft_values_keep_reference_coordinates",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_direct_rust_process_selected_cells_metrics_and_decisions_match"
+          ],
+          "scope": "Literal power vector with errors beyond display cap, all actual roles/pairings/soft values, pilot amplitude, empty/unavailable data, limits/filters, owned results and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-cells",
+      "status": "status.uiu-api-02-cells"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::qam",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn qam(&self, query: FullLoopCellQuery) -> ApiResult<FullLoopQamView>",
+        "source_file": "crates/ofdm/src/api/full_loop/cells/queries.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.qam",
+        "declaration": "merlin.downstream.FullLoopResult.qam"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopQamView>",
+        "scope": "Bounded actual paired receiver cells and original identities, immutable typed selectors, all-selected nearest/TX-reference MER in separate planes and physical diagnostic decisions/actual soft statistics. Owned output windows do not define the scientific population."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-19",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/tests/constellation_mer.rs::known_complex_errors_use_power_sums_and_not_average_db",
+          "crates/ofdm/tests/constellation_mer.rs::exceptional_readings_remain_explicit_and_json_safe",
+          "crates/ofdm/tests/constellation_mer.rs::row_index_matches_exhaustive_distances_for_every_supported_order",
+          "crates/ofdm/tests/constellation_mer.rs::boosted_pilots_and_full_selection_are_not_rescaled_or_display_sampled",
+          "crates/ofdm/tests/constellation_mer.rs::tx_reference_does_not_hide_wrong_decisions",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::all_selected_mer_includes_errors_after_display_cap_and_keeps_reference_planes_separate",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::missing_references_empty_filters_and_output_ownership_remain_explicit",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::strict_query_admission_and_per_operation_windows_reject_without_changing_originals",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::boosted_bpsk_decision_preserves_known_physical_and_unit_reference_coordinates",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::invalid_normalization_or_samples_never_become_finite_diagnostic_decisions",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry"
+        ],
+        "python": {
+          "status": "installed actual-role/selection/scientific/ownership/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_absent_filtered_invalid_and_bounded_views_never_create_history",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_actual_pairings_all_selected_metrics_and_owned_query_parameters",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_all_actual_roles_decisions_and_cell_soft_values_keep_reference_coordinates",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_direct_rust_process_selected_cells_metrics_and_decisions_match"
+          ],
+          "scope": "Literal power vector with errors beyond display cap, all actual roles/pairings/soft values, pilot amplitude, empty/unavailable data, limits/filters, owned results and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-cells",
+      "status": "status.uiu-api-02-cells"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::cell_decisions",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn cell_decisions( &self, query: FullLoopCellQuery, ) -> ApiResult<FullLoopCellDecisions>",
+        "source_file": "crates/ofdm/src/api/full_loop/cells/queries.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.cell_decisions",
+        "declaration": "merlin.downstream.FullLoopResult.cell_decisions"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopCellDecisions>",
+        "scope": "Bounded actual paired receiver cells and original identities, immutable typed selectors, all-selected nearest/TX-reference MER in separate planes and physical diagnostic decisions/actual soft statistics. Owned output windows do not define the scientific population."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-19",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/tests/constellation_mer.rs::known_complex_errors_use_power_sums_and_not_average_db",
+          "crates/ofdm/tests/constellation_mer.rs::exceptional_readings_remain_explicit_and_json_safe",
+          "crates/ofdm/tests/constellation_mer.rs::row_index_matches_exhaustive_distances_for_every_supported_order",
+          "crates/ofdm/tests/constellation_mer.rs::boosted_pilots_and_full_selection_are_not_rescaled_or_display_sampled",
+          "crates/ofdm/tests/constellation_mer.rs::tx_reference_does_not_hide_wrong_decisions",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::all_selected_mer_includes_errors_after_display_cap_and_keeps_reference_planes_separate",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::missing_references_empty_filters_and_output_ownership_remain_explicit",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::strict_query_admission_and_per_operation_windows_reject_without_changing_originals",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::boosted_bpsk_decision_preserves_known_physical_and_unit_reference_coordinates",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::invalid_normalization_or_samples_never_become_finite_diagnostic_decisions",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry"
+        ],
+        "python": {
+          "status": "installed actual-role/selection/scientific/ownership/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_absent_filtered_invalid_and_bounded_views_never_create_history",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_actual_pairings_all_selected_metrics_and_owned_query_parameters",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_all_actual_roles_decisions_and_cell_soft_values_keep_reference_coordinates",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_direct_rust_process_selected_cells_metrics_and_decisions_match"
+          ],
+          "scope": "Literal power vector with errors beyond display cap, all actual roles/pairings/soft values, pilot amplitude, empty/unavailable data, limits/filters, owned results and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-cells",
+      "status": "status.uiu-api-02-cells"
     }
   ],
   "executed_records": [
@@ -26293,7 +26638,8 @@
     "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -56001,6 +56347,411 @@
       },
       "evidence": "evidence.uiu-api-02-messages",
       "status": "status.uiu-api-02-messages"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopCellQuery.__init__",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopCellQuery",
+        "source_file": "bindings/python/src/full_loop/cells.rs",
+        "symbol": "PyCellQuery",
+        "signature": "pub fn from_json(bytes: &[u8]) -> ApiResult<Self>",
+        "mapping": "Native frozen query ownership and checked public Rust calls with the GIL released. Constructor stream transport admits through public from_json; settings is an independent typed-field dictionary projection.",
+        "delegated_operation": "merlin::downstream::FullLoopCellQuery::from_json",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native constructor",
+        "name": "__init__",
+        "kind": "constructor",
+        "signature": "(stream='payload')",
+        "declaration": "FullLoopCellQuery.__init__"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopCellQuery",
+        "scope": "Owned actual selected cells, scientific metrics/decisions/soft values or immutable query metadata; no new science in Python or Qt."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-19",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/tests/constellation_mer.rs::known_complex_errors_use_power_sums_and_not_average_db",
+          "crates/ofdm/tests/constellation_mer.rs::exceptional_readings_remain_explicit_and_json_safe",
+          "crates/ofdm/tests/constellation_mer.rs::row_index_matches_exhaustive_distances_for_every_supported_order",
+          "crates/ofdm/tests/constellation_mer.rs::boosted_pilots_and_full_selection_are_not_rescaled_or_display_sampled",
+          "crates/ofdm/tests/constellation_mer.rs::tx_reference_does_not_hide_wrong_decisions",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::all_selected_mer_includes_errors_after_display_cap_and_keeps_reference_planes_separate",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::missing_references_empty_filters_and_output_ownership_remain_explicit",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::strict_query_admission_and_per_operation_windows_reject_without_changing_originals",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::boosted_bpsk_decision_preserves_known_physical_and_unit_reference_coordinates",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::invalid_normalization_or_samples_never_become_finite_diagnostic_decisions",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry"
+        ],
+        "python": {
+          "status": "installed native signatures and actual receiver selections",
+          "cases": [
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_absent_filtered_invalid_and_bounded_views_never_create_history",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_actual_pairings_all_selected_metrics_and_owned_query_parameters",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_all_actual_roles_decisions_and_cell_soft_values_keep_reference_coordinates",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_direct_rust_process_selected_cells_metrics_and_decisions_match"
+          ],
+          "scope": "Separate direct Rust-process results, actual-role/coordinate/soft-value cases, all-selected versus displayed metrics, bounded/empty states and owned immutable values."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-cells",
+      "status": "status.uiu-api-02-cells"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopCellQuery.from_json",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopCellQuery",
+        "source_file": "bindings/python/src/full_loop/cells.rs",
+        "symbol": "PyCellQuery",
+        "signature": "pub fn from_json(bytes: &[u8]) -> ApiResult<Self>",
+        "mapping": "Native frozen query ownership and checked public Rust calls with the GIL released. Constructor stream transport admits through public from_json; settings is an independent typed-field dictionary projection.",
+        "delegated_operation": "merlin::downstream::FullLoopCellQuery::from_json",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "from_json",
+        "kind": "method",
+        "signature": "(data)",
+        "declaration": "FullLoopCellQuery.from_json"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopCellQuery",
+        "scope": "Owned actual selected cells, scientific metrics/decisions/soft values or immutable query metadata; no new science in Python or Qt."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-19",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/tests/constellation_mer.rs::known_complex_errors_use_power_sums_and_not_average_db",
+          "crates/ofdm/tests/constellation_mer.rs::exceptional_readings_remain_explicit_and_json_safe",
+          "crates/ofdm/tests/constellation_mer.rs::row_index_matches_exhaustive_distances_for_every_supported_order",
+          "crates/ofdm/tests/constellation_mer.rs::boosted_pilots_and_full_selection_are_not_rescaled_or_display_sampled",
+          "crates/ofdm/tests/constellation_mer.rs::tx_reference_does_not_hide_wrong_decisions",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::all_selected_mer_includes_errors_after_display_cap_and_keeps_reference_planes_separate",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::missing_references_empty_filters_and_output_ownership_remain_explicit",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::strict_query_admission_and_per_operation_windows_reject_without_changing_originals",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::boosted_bpsk_decision_preserves_known_physical_and_unit_reference_coordinates",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::invalid_normalization_or_samples_never_become_finite_diagnostic_decisions",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry"
+        ],
+        "python": {
+          "status": "installed native signatures and actual receiver selections",
+          "cases": [
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_absent_filtered_invalid_and_bounded_views_never_create_history",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_actual_pairings_all_selected_metrics_and_owned_query_parameters",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_all_actual_roles_decisions_and_cell_soft_values_keep_reference_coordinates",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_direct_rust_process_selected_cells_metrics_and_decisions_match"
+          ],
+          "scope": "Separate direct Rust-process results, actual-role/coordinate/soft-value cases, all-selected versus displayed metrics, bounded/empty states and owned immutable values."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-cells",
+      "status": "status.uiu-api-02-cells"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopCellQuery.settings",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopCellQuery",
+        "source_file": "bindings/python/src/full_loop/cells.rs",
+        "symbol": "PyCellQuery",
+        "signature": "Typed Rust field/Serde projection; no invented Rust getter",
+        "mapping": "Native frozen query ownership and checked public Rust calls with the GIL released. Constructor stream transport admits through public from_json; settings is an independent typed-field dictionary projection.",
+        "delegated_operation": null,
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native property",
+        "name": "settings",
+        "kind": "property",
+        "signature": null,
+        "declaration": "FullLoopCellQuery.settings"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopCellQuery",
+        "scope": "Owned actual selected cells, scientific metrics/decisions/soft values or immutable query metadata; no new science in Python or Qt."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-19",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/tests/constellation_mer.rs::known_complex_errors_use_power_sums_and_not_average_db",
+          "crates/ofdm/tests/constellation_mer.rs::exceptional_readings_remain_explicit_and_json_safe",
+          "crates/ofdm/tests/constellation_mer.rs::row_index_matches_exhaustive_distances_for_every_supported_order",
+          "crates/ofdm/tests/constellation_mer.rs::boosted_pilots_and_full_selection_are_not_rescaled_or_display_sampled",
+          "crates/ofdm/tests/constellation_mer.rs::tx_reference_does_not_hide_wrong_decisions",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::all_selected_mer_includes_errors_after_display_cap_and_keeps_reference_planes_separate",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::missing_references_empty_filters_and_output_ownership_remain_explicit",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::strict_query_admission_and_per_operation_windows_reject_without_changing_originals",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::boosted_bpsk_decision_preserves_known_physical_and_unit_reference_coordinates",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::invalid_normalization_or_samples_never_become_finite_diagnostic_decisions",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry"
+        ],
+        "python": {
+          "status": "installed native signatures and actual receiver selections",
+          "cases": [
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_absent_filtered_invalid_and_bounded_views_never_create_history",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_actual_pairings_all_selected_metrics_and_owned_query_parameters",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_all_actual_roles_decisions_and_cell_soft_values_keep_reference_coordinates",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_direct_rust_process_selected_cells_metrics_and_decisions_match"
+          ],
+          "scope": "Separate direct Rust-process results, actual-role/coordinate/soft-value cases, all-selected versus displayed metrics, bounded/empty states and owned immutable values."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-cells",
+      "status": "status.uiu-api-02-cells"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.cell_decisions",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/cells.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn cell_decisions( &self, query: FullLoopCellQuery, ) -> ApiResult<FullLoopCellDecisions>",
+        "mapping": "Native frozen query ownership and checked public Rust calls with the GIL released. Constructor stream transport admits through public from_json; settings is an independent typed-field dictionary projection.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::cell_decisions",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "cell_decisions",
+        "kind": "method",
+        "signature": "(self, /, query=None)",
+        "declaration": "FullLoopResult.cell_decisions"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned actual selected cells, scientific metrics/decisions/soft values or immutable query metadata; no new science in Python or Qt."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-19",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/tests/constellation_mer.rs::known_complex_errors_use_power_sums_and_not_average_db",
+          "crates/ofdm/tests/constellation_mer.rs::exceptional_readings_remain_explicit_and_json_safe",
+          "crates/ofdm/tests/constellation_mer.rs::row_index_matches_exhaustive_distances_for_every_supported_order",
+          "crates/ofdm/tests/constellation_mer.rs::boosted_pilots_and_full_selection_are_not_rescaled_or_display_sampled",
+          "crates/ofdm/tests/constellation_mer.rs::tx_reference_does_not_hide_wrong_decisions",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::all_selected_mer_includes_errors_after_display_cap_and_keeps_reference_planes_separate",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::missing_references_empty_filters_and_output_ownership_remain_explicit",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::strict_query_admission_and_per_operation_windows_reject_without_changing_originals",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::boosted_bpsk_decision_preserves_known_physical_and_unit_reference_coordinates",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::invalid_normalization_or_samples_never_become_finite_diagnostic_decisions",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry"
+        ],
+        "python": {
+          "status": "installed native signatures and actual receiver selections",
+          "cases": [
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_absent_filtered_invalid_and_bounded_views_never_create_history",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_actual_pairings_all_selected_metrics_and_owned_query_parameters",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_all_actual_roles_decisions_and_cell_soft_values_keep_reference_coordinates",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_direct_rust_process_selected_cells_metrics_and_decisions_match"
+          ],
+          "scope": "Separate direct Rust-process results, actual-role/coordinate/soft-value cases, all-selected versus displayed metrics, bounded/empty states and owned immutable values."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-cells",
+      "status": "status.uiu-api-02-cells"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.qam",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/cells.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn qam(&self, query: FullLoopCellQuery) -> ApiResult<FullLoopQamView>",
+        "mapping": "Native frozen query ownership and checked public Rust calls with the GIL released. Constructor stream transport admits through public from_json; settings is an independent typed-field dictionary projection.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::qam",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "qam",
+        "kind": "method",
+        "signature": "(self, /, query=None)",
+        "declaration": "FullLoopResult.qam"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned actual selected cells, scientific metrics/decisions/soft values or immutable query metadata; no new science in Python or Qt."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-19",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/qam_slicing.rs::decisions_cover_every_order_and_preserve_received_minus_reference_error",
+          "crates/ofdm/tests/qam_slicing.rs::exact_ties_choose_lowest_label_and_outside_points_still_slice",
+          "crates/ofdm/tests/qam_slicing.rs::malformed_samples_and_unsupported_constellations_reject",
+          "crates/ofdm/tests/constellation_mer.rs::known_complex_errors_use_power_sums_and_not_average_db",
+          "crates/ofdm/tests/constellation_mer.rs::exceptional_readings_remain_explicit_and_json_safe",
+          "crates/ofdm/tests/constellation_mer.rs::row_index_matches_exhaustive_distances_for_every_supported_order",
+          "crates/ofdm/tests/constellation_mer.rs::boosted_pilots_and_full_selection_are_not_rescaled_or_display_sampled",
+          "crates/ofdm/tests/constellation_mer.rs::tx_reference_does_not_hide_wrong_decisions",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::all_selected_mer_includes_errors_after_display_cap_and_keeps_reference_planes_separate",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::missing_references_empty_filters_and_output_ownership_remain_explicit",
+          "crates/ofdm/src/api/full_loop/cells/queries.rs::strict_query_admission_and_per_operation_windows_reject_without_changing_originals",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::boosted_bpsk_decision_preserves_known_physical_and_unit_reference_coordinates",
+          "crates/ofdm/src/signal_processing/receiver/diagnostics/decisions.rs::invalid_normalization_or_samples_never_become_finite_diagnostic_decisions",
+          "crates/merlin/tests/native_inputs.rs::facade_renamed_stage_types_use_documented_public_imports_and_original_geometry"
+        ],
+        "python": {
+          "status": "installed native signatures and actual receiver selections",
+          "cases": [
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_absent_filtered_invalid_and_bounded_views_never_create_history",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_actual_pairings_all_selected_metrics_and_owned_query_parameters",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_all_actual_roles_decisions_and_cell_soft_values_keep_reference_coordinates",
+            "bindings/python/tests/test_full_loop_cells.py::FullLoopCellTests.test_direct_rust_process_selected_cells_metrics_and_decisions_match"
+          ],
+          "scope": "Separate direct Rust-process results, actual-role/coordinate/soft-value cases, all-selected versus displayed metrics, bounded/empty states and owned immutable values."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-cells",
+      "status": "status.uiu-api-02-cells"
     }
   ],
   "native_type_exports": {
@@ -56199,6 +56950,13 @@
         "canonical_name": "FrequencyHz",
         "module": "merlin",
         "signature": "(value)",
+        "constructible": true
+      },
+      {
+        "name": "FullLoopCellQuery",
+        "canonical_name": "FullLoopCellQuery",
+        "module": "merlin",
+        "signature": "(stream='payload')",
         "constructible": true
       },
       {
@@ -56820,6 +57578,353 @@
         "preserved_class_exports": 59,
         "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
       }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "3ccc9ce74477ebee0cc35d7ed79db711eb576d34 plus exact PLC-message candidate manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-message-native/native-exports.json",
+      "native_sha256": "f580e2a6609b4b287694732c9d961c7a1ddf450ae5f9d9ef13aaf661cbf55dad",
+      "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    }
+  ],
+  "historical_rust_export_corrections": [
+    {
+      "source_revision": "bd1392eba31cfaa18c615453d54e5d74bde9ef5a",
+      "reason": "Compiler pub-use aliases were previously inventoried under canonical origin type names. Actual Rust/facade exports and behavior are unchanged. Current paths now use exact compiler alias declarations and facade import checks.",
+      "compiler_aliases": {
+        "merlin::downstream::CarrierType": "merlin::downstream::ProfileCarrierRole",
+        "merlin::downstream::PlaybackMode": "merlin::downstream::MeasurementMode",
+        "merlin::downstream::ChannelJobResult": "merlin::downstream::FullLoopReport",
+        "merlin::downstream::CellProbeGrid": "merlin::downstream::FullLoopCellGrid",
+        "merlin::downstream::PhysicalProbeGrid": "merlin::downstream::FullLoopPhysicalGrid",
+        "merlin::downstream::PilotValue": "merlin::downstream::FullLoopPilotValue",
+        "merlin::downstream::PlcProbeGrid": "merlin::downstream::FullLoopPlcGrid",
+        "merlin::downstream::ProbeContext": "merlin::downstream::FullLoopStageContext",
+        "merlin::downstream::RunPhase": "merlin::downstream::FullLoopStagePhase",
+        "merlin::downstream::SignalReference": "merlin::downstream::FullLoopStageReference",
+        "merlin::downstream::TestPointId": "merlin::downstream::FullLoopStage",
+        "merlin::downstream::TransmitCellRole": "merlin::downstream::FullLoopCellRole",
+        "merlin::downstream::TransportCell": "merlin::downstream::FullLoopTransportCell",
+        "merlin::downstream::WaveformProbeGrid": "merlin::downstream::FullLoopWaveformGrid",
+        "merlin::downstream::LlrStatistics": "merlin::downstream::FullLoopLlrStatistics",
+        "merlin::downstream::ResponseDiagnostics": "merlin::downstream::FullLoopResponseDiagnostics"
+      },
+      "previous_operations": [
+        {
+          "direction": "downstream",
+          "operation": "merlin::downstream::PlcProbeGrid::for_symbols",
+          "rust_namespace": "merlin::downstream",
+          "rust_type_method": {
+            "signature": "pub fn for_symbols( spacing: SubcarrierSpacing, symbols: usize, ) -> Result<Self, SimulationError>",
+            "source_file": "crates/ofdm/src/simulation/test_points/model.rs",
+            "rustdoc": "docsis_ofdm_fec/simulation/test_points/struct.PlcProbeGrid.html"
+          },
+          "python_namespace": "none",
+          "python_type_method": {
+            "availability": "Rust-only typed metadata/data operation",
+            "declaration": "Native owned stage dictionaries/lists retain the same typed fields and validated high-level query semantics; no invented native metadata constructor or enum helper."
+          },
+          "input_ownership": "ownership.borrowed",
+          "units": "units.report",
+          "error_behavior": "errors.simulation",
+          "lifecycle_behavior": "lifecycle.inspect",
+          "report_contract": {
+            "rust_return": "Result<Self, SimulationError>",
+            "scope": "Owned bounded actual stage data and frozen policy, original phase/reference/grid/role/offset metadata. Original numerical producers remain authoritative. Native projections own copies; named tests do not assert exhaustive helper/getter branches."
+          },
+          "compatibility": "compatibility.ds",
+          "requirement": [
+            "REQ-UIU-02",
+            "REQ-UIU-07",
+            "REQ-UIU-09",
+            "REQ-UIU-16",
+            "REQ-UIU-17",
+            "REQ-UIU-18",
+            "REQ-UIU-19",
+            "REQ-UIU-20",
+            "REQ-UIU-24"
+          ],
+          "checklist": [
+            "UIU-API-02"
+          ],
+          "tests": {
+            "rust": [
+              "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+              "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+              "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+              "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+              "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+              "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+              "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+              "crates/ofdm/tests/pilot_observation.rs::enabled_disabled_and_exhausted_observers_preserve_scientific_results",
+              "crates/ofdm/tests/pilot_observation.rs::callback_or_context_errors_leave_completed_outputs_available",
+              "crates/ofdm/tests/pilot_signals.rs::continuous_and_scattered_values_follow_physical_bins_over_full_cycle",
+              "crates/ofdm/tests/pilot_signals.rs::different_fft_numerologies_cannot_be_mixed",
+              "crates/ofdm/tests/plc_frame_signals.rs::full_frames_map_assemble_extract_and_decode_without_tx_truth",
+              "crates/ofdm/tests/plc_frame_signals.rs::plc_mapper_uses_annex_a_coordinates_energy_and_soft_signs",
+              "crates/ofdm/tests/plc_frame_signals.rs::assembly_preserves_missing_cells_and_rejects_bad_roles_counts_and_values",
+              "crates/ofdm/tests/plc_frame_signals.rs::assembler_consumes_actual_cell_interleaver_history_without_filling_missing_data",
+              "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+              "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+              "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+              "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+              "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+              "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused",
+              "crates/ofdm/src/api/full_loop/observations/store.rs::stage_retention_preserves_missing_explicit_zero_and_original_offset_as_owned_data"
+            ],
+            "python": {
+              "status": "installed native actual stage/resource/direct-process cases",
+              "cases": [
+                "bindings/python/tests/test_full_loop_observations.py::FullLoopObservationTests.test_direct_rust_process_source_pilot_and_actual_waveform_windows_match",
+                "bindings/python/tests/test_full_loop_observations.py::FullLoopObservationTests.test_policy_missing_and_query_limits_reject_without_changing_originals",
+                "bindings/python/tests/test_full_loop_observations.py::FullLoopObservationTests.test_real_capture_keeps_science_source_pilots_grids_phases_and_owned_results",
+                "bindings/python/tests/test_full_loop_observations.py::FullLoopObservationTests.test_retention_byte_exhaustion_is_explicit_and_science_continues"
+              ],
+              "scope": "Actual enabled/disabled science equivalence, phase/grid/source/pilot anchors, budgets, ownership, bounded query and direct-process parity."
+            }
+          },
+          "evidence": "evidence.uiu-api-02-retention",
+          "status": "status.uiu-api-02-retention"
+        },
+        {
+          "direction": "downstream",
+          "operation": "merlin::downstream::PlcProbeGrid::new",
+          "rust_namespace": "merlin::downstream",
+          "rust_type_method": {
+            "signature": "pub fn new(spacing: SubcarrierSpacing) -> Self",
+            "source_file": "crates/ofdm/src/simulation/test_points/model.rs",
+            "rustdoc": "docsis_ofdm_fec/simulation/test_points/struct.PlcProbeGrid.html"
+          },
+          "python_namespace": "none",
+          "python_type_method": {
+            "availability": "Rust-only typed metadata/data operation",
+            "declaration": "Native owned stage dictionaries/lists retain the same typed fields and validated high-level query semantics; no invented native metadata constructor or enum helper."
+          },
+          "input_ownership": "ownership.borrowed",
+          "units": "units.report",
+          "error_behavior": "errors.none",
+          "lifecycle_behavior": "lifecycle.configure",
+          "report_contract": {
+            "rust_return": "Self",
+            "scope": "Owned bounded actual stage data and frozen policy, original phase/reference/grid/role/offset metadata. Original numerical producers remain authoritative. Native projections own copies; named tests do not assert exhaustive helper/getter branches."
+          },
+          "compatibility": "compatibility.ds",
+          "requirement": [
+            "REQ-UIU-02",
+            "REQ-UIU-07",
+            "REQ-UIU-09",
+            "REQ-UIU-16",
+            "REQ-UIU-17",
+            "REQ-UIU-18",
+            "REQ-UIU-19",
+            "REQ-UIU-20",
+            "REQ-UIU-24"
+          ],
+          "checklist": [
+            "UIU-API-02"
+          ],
+          "tests": {
+            "rust": [
+              "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+              "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+              "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+              "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+              "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+              "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+              "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+              "crates/ofdm/tests/pilot_observation.rs::enabled_disabled_and_exhausted_observers_preserve_scientific_results",
+              "crates/ofdm/tests/pilot_observation.rs::callback_or_context_errors_leave_completed_outputs_available",
+              "crates/ofdm/tests/pilot_signals.rs::continuous_and_scattered_values_follow_physical_bins_over_full_cycle",
+              "crates/ofdm/tests/pilot_signals.rs::different_fft_numerologies_cannot_be_mixed",
+              "crates/ofdm/tests/plc_frame_signals.rs::full_frames_map_assemble_extract_and_decode_without_tx_truth",
+              "crates/ofdm/tests/plc_frame_signals.rs::plc_mapper_uses_annex_a_coordinates_energy_and_soft_signs",
+              "crates/ofdm/tests/plc_frame_signals.rs::assembly_preserves_missing_cells_and_rejects_bad_roles_counts_and_values",
+              "crates/ofdm/tests/plc_frame_signals.rs::assembler_consumes_actual_cell_interleaver_history_without_filling_missing_data",
+              "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+              "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+              "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+              "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+              "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+              "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused",
+              "crates/ofdm/src/api/full_loop/observations/store.rs::stage_retention_preserves_missing_explicit_zero_and_original_offset_as_owned_data"
+            ],
+            "python": {
+              "status": "installed native actual stage/resource/direct-process cases",
+              "cases": [
+                "bindings/python/tests/test_full_loop_observations.py::FullLoopObservationTests.test_direct_rust_process_source_pilot_and_actual_waveform_windows_match",
+                "bindings/python/tests/test_full_loop_observations.py::FullLoopObservationTests.test_policy_missing_and_query_limits_reject_without_changing_originals",
+                "bindings/python/tests/test_full_loop_observations.py::FullLoopObservationTests.test_real_capture_keeps_science_source_pilots_grids_phases_and_owned_results",
+                "bindings/python/tests/test_full_loop_observations.py::FullLoopObservationTests.test_retention_byte_exhaustion_is_explicit_and_science_continues"
+              ],
+              "scope": "Actual enabled/disabled science equivalence, phase/grid/source/pilot anchors, budgets, ownership, bounded query and direct-process parity."
+            }
+          },
+          "evidence": "evidence.uiu-api-02-retention",
+          "status": "status.uiu-api-02-retention"
+        },
+        {
+          "direction": "downstream",
+          "operation": "merlin::downstream::ProbeContext::new",
+          "rust_namespace": "merlin::downstream",
+          "rust_type_method": {
+            "signature": "pub fn new( run_id: &str, configuration_id: &str, phase: RunPhase, ) -> Result<Self, SimulationError>",
+            "source_file": "crates/ofdm/src/simulation/test_points/model.rs",
+            "rustdoc": "docsis_ofdm_fec/simulation/test_points/struct.ProbeContext.html"
+          },
+          "python_namespace": "none",
+          "python_type_method": {
+            "availability": "Rust-only typed metadata/data operation",
+            "declaration": "Native owned stage dictionaries/lists retain the same typed fields and validated high-level query semantics; no invented native metadata constructor or enum helper."
+          },
+          "input_ownership": "ownership.borrowed",
+          "units": "units.report",
+          "error_behavior": "errors.simulation",
+          "lifecycle_behavior": "lifecycle.configure",
+          "report_contract": {
+            "rust_return": "Result<Self, SimulationError>",
+            "scope": "Owned bounded actual stage data and frozen policy, original phase/reference/grid/role/offset metadata. Original numerical producers remain authoritative. Native projections own copies; named tests do not assert exhaustive helper/getter branches."
+          },
+          "compatibility": "compatibility.ds",
+          "requirement": [
+            "REQ-UIU-02",
+            "REQ-UIU-07",
+            "REQ-UIU-09",
+            "REQ-UIU-16",
+            "REQ-UIU-17",
+            "REQ-UIU-18",
+            "REQ-UIU-19",
+            "REQ-UIU-20",
+            "REQ-UIU-24"
+          ],
+          "checklist": [
+            "UIU-API-02"
+          ],
+          "tests": {
+            "rust": [
+              "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+              "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+              "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+              "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+              "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+              "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+              "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+              "crates/ofdm/tests/pilot_observation.rs::enabled_disabled_and_exhausted_observers_preserve_scientific_results",
+              "crates/ofdm/tests/pilot_observation.rs::callback_or_context_errors_leave_completed_outputs_available",
+              "crates/ofdm/tests/pilot_signals.rs::continuous_and_scattered_values_follow_physical_bins_over_full_cycle",
+              "crates/ofdm/tests/pilot_signals.rs::different_fft_numerologies_cannot_be_mixed",
+              "crates/ofdm/tests/plc_frame_signals.rs::full_frames_map_assemble_extract_and_decode_without_tx_truth",
+              "crates/ofdm/tests/plc_frame_signals.rs::plc_mapper_uses_annex_a_coordinates_energy_and_soft_signs",
+              "crates/ofdm/tests/plc_frame_signals.rs::assembly_preserves_missing_cells_and_rejects_bad_roles_counts_and_values",
+              "crates/ofdm/tests/plc_frame_signals.rs::assembler_consumes_actual_cell_interleaver_history_without_filling_missing_data",
+              "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+              "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+              "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+              "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+              "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+              "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused",
+              "crates/ofdm/src/api/full_loop/observations/store.rs::stage_retention_preserves_missing_explicit_zero_and_original_offset_as_owned_data"
+            ],
+            "python": {
+              "status": "installed native actual stage/resource/direct-process cases",
+              "cases": [
+                "bindings/python/tests/test_full_loop_observations.py::FullLoopObservationTests.test_direct_rust_process_source_pilot_and_actual_waveform_windows_match",
+                "bindings/python/tests/test_full_loop_observations.py::FullLoopObservationTests.test_policy_missing_and_query_limits_reject_without_changing_originals",
+                "bindings/python/tests/test_full_loop_observations.py::FullLoopObservationTests.test_real_capture_keeps_science_source_pilots_grids_phases_and_owned_results",
+                "bindings/python/tests/test_full_loop_observations.py::FullLoopObservationTests.test_retention_byte_exhaustion_is_explicit_and_science_continues"
+              ],
+              "scope": "Actual enabled/disabled science equivalence, phase/grid/source/pilot anchors, budgets, ownership, bounded query and direct-process parity."
+            }
+          },
+          "evidence": "evidence.uiu-api-02-retention",
+          "status": "status.uiu-api-02-retention"
+        }
+      ],
+      "previous_type_exports": [
+        {
+          "export": "merlin::downstream::CarrierType",
+          "kind": "enum"
+        },
+        {
+          "export": "merlin::downstream::PlaybackMode",
+          "kind": "enum"
+        },
+        {
+          "export": "merlin::downstream::ChannelJobResult",
+          "kind": "struct"
+        },
+        {
+          "export": "merlin::downstream::CellProbeGrid",
+          "kind": "struct"
+        },
+        {
+          "export": "merlin::downstream::PhysicalProbeGrid",
+          "kind": "struct"
+        },
+        {
+          "export": "merlin::downstream::PilotValue",
+          "kind": "struct"
+        },
+        {
+          "export": "merlin::downstream::PlcProbeGrid",
+          "kind": "struct"
+        },
+        {
+          "export": "merlin::downstream::ProbeContext",
+          "kind": "struct"
+        },
+        {
+          "export": "merlin::downstream::RunPhase",
+          "kind": "enum"
+        },
+        {
+          "export": "merlin::downstream::SignalReference",
+          "kind": "enum"
+        },
+        {
+          "export": "merlin::downstream::TestPointId",
+          "kind": "enum"
+        },
+        {
+          "export": "merlin::downstream::TransmitCellRole",
+          "kind": "enum"
+        },
+        {
+          "export": "merlin::downstream::TransportCell",
+          "kind": "enum"
+        },
+        {
+          "export": "merlin::downstream::WaveformProbeGrid",
+          "kind": "struct"
+        },
+        {
+          "export": "merlin::downstream::LlrStatistics",
+          "kind": "struct"
+        },
+        {
+          "export": "merlin::downstream::ResponseDiagnostics",
+          "kind": "struct"
+        }
+      ],
+      "corrected_operations": [
+        {
+          "previous": "merlin::downstream::PlcProbeGrid::for_symbols",
+          "current": "merlin::downstream::FullLoopPlcGrid::for_symbols"
+        },
+        {
+          "previous": "merlin::downstream::PlcProbeGrid::new",
+          "current": "merlin::downstream::FullLoopPlcGrid::new"
+        },
+        {
+          "previous": "merlin::downstream::ProbeContext::new",
+          "current": "merlin::downstream::FullLoopStageContext::new"
+        }
+      ],
+      "evidence": "../unified-qt-workbench/receiver-cell-evidence.json"
     }
   ]
 }

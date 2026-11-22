@@ -610,6 +610,43 @@ transmitted coverage, unavailable/truncated/gapped data and direct-process parit
 This closes message inspection only; selected-cell and complete source-catalog/
 sweep parity still keep API-02 open before Qt adoption.
 
+### UIU-API-02 selected receiver cell unit
+
+Add bounded `FullLoopResult::qam(FullLoopCellQuery)` and
+`cell_decisions(FullLoopCellQuery)` over the actual immutable payload/NCP and
+protected-stream report owners. Explicit streams are payload, NCP, PLC data,
+PLC preamble, continuous pilots and scattered pilots. Preserve matched physical
+bin/frequency/channel-symbol/source-symbol identities, original before/after
+correction I/Q, optional diagnostic TX reference and actual receiver LLRs.
+Pilot reference amplitude is explicitly two; other accepted streams use one.
+
+Queries retain optional profile/order and inclusive physical-bin/channel-symbol
+windows. Automatic order selects the first actually available order after profile
+filtering. Metadata describes the original retained population and actual filtered
+count, including honest empty selections. A contiguous display window copies at
+most 2048 cells; nearest-decision rows are limited to 128. Work remains bounded by
+the existing finite capture owners. Never synthesize missing roles or pair cells
+from independent runs. Each owned result identifies one run; history/session
+routing belongs to the later adapter/batch owners.
+
+Nearest-reference and matched-TX MER use the existing modulation owners over all
+filtered cells, independently of display pagination. Keep raw/corrected and
+nearest/TX-reference metrics distinct. Receiver diagnostic normalization/slicing
+delegates to the existing scientific slicing owner, never Qt or Python, and never
+feeds production FEC. Summarize actual soft values from at most 2048 selected cells
+through the existing likelihood owner, separately from LDPC coding-order data.
+
+Native Python uses an immutable `FullLoopCellQuery` wrapper with strict bounded
+JSON and owned query results. Validate literal role/power/coordinate identities,
+all-selected versus display-window MER, missing references/empty selections,
+unsupported orders/ranges/work limits, exact slicing/soft values, independent
+result ownership and separate direct Rust-process parity. Decision-region geometry,
+ideal-reference and detailed soft-display projection remain explicit follow-up API
+work. The legacy spectrum/physical views also require an explicit audit of bounded
+instantaneous FFT-bin power and authoritative physical-role views before their Qt
+calls migrate; raw I/Q does not authorize Qt to compute scientific observations.
+No Qt presentation source changes during this unit.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

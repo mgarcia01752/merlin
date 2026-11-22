@@ -94,7 +94,11 @@ class SymbolPage(HTMLParser):
             None; completed declarations and links remain owned by this parser.
         """
         if tag == "code" and self.code is not None:
-            glob = "".join(self.code).strip().endswith("::*;")
+            declaration = " ".join("".join(self.code).split())
+            glob = declaration.endswith("::*;")
+            renamed = re.fullmatch(r"pub use [\w:]+ as (\w+);", declaration)
+            if renamed and len(self.code_links) == 1:
+                self.code_links[0]["export_name"] = renamed[1]
             for link in self.code_links:
                 link["glob"] = glob
             self.code = None
@@ -163,7 +167,7 @@ def inventory(namespace, index, documentation_root):
             href = urlsplit(link["href"])
             target = (path.parent / unquote(href.path)).resolve()
             kind = link["class"]
-            name = link["title"].split("::")[-1]
+            name = link.get("export_name", link["title"].split("::")[-1])
             export = scope + "::" + name
             if href.scheme or href.fragment or not target.is_relative_to(root) or target == path:
                 continue

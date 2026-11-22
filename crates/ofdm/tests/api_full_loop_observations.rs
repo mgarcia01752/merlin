@@ -140,6 +140,171 @@ fn actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descript
 }
 
 #[test]
+fn receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values()
+{
+    use docsis_ofdm_fec::signal_processing::modulation::{mer::MerCalculator, slice_symbol};
+    let result = request().run(&FullLoopControl::new()).unwrap();
+    let view = result
+        .qam(FullLoopCellQuery {
+            count: 5,
+            ..Default::default()
+        })
+        .unwrap();
+    let original = result.report().constellation.as_ref().unwrap();
+    assert!(view.selection.selected_cells > 2048);
+    assert_eq!(view.selection.retained_cells, original.pairs.len());
+    assert_eq!(view.cells.len(), 5);
+    for (cell, pair) in view.cells.iter().zip(&original.pairs) {
+        assert_eq!(cell.physical_bin, pair.physical_bin);
+        assert_eq!(cell.frequency_hz, pair.frequency_hz);
+        assert_eq!(cell.channel_symbol_index, pair.channel_symbol_index);
+        assert_eq!(cell.source_symbol_index, Some(pair.source_symbol_index));
+        assert_eq!(cell.before_equalization, pair.before_equalization);
+        assert_eq!(cell.after_equalization, pair.after_equalization);
+        assert_eq!(cell.reference_iq, pair.reference_iq);
+        assert_eq!(cell.llrs, pair.llrs);
+    }
+    let order = view.selection.selected_order.unwrap();
+    let owner = MerCalculator::new(order, 1.0).unwrap();
+    let expected = owner.calculate(
+        original
+            .pairs
+            .iter()
+            .filter(|pair| pair.modulation_order == order)
+            .map(|pair| pair.before_equalization),
+    );
+    assert_eq!(view.raw_nearest_mer, expected);
+    let later = result
+        .qam(FullLoopCellQuery {
+            start: 5,
+            count: 3,
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!(later.raw_nearest_mer, view.raw_nearest_mer);
+    let decisions = result
+        .cell_decisions(FullLoopCellQuery {
+            count: 3,
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!(decisions.rows.len(), 3);
+    assert_eq!(decisions.llr_first_selected_cell, 0);
+    assert_eq!(decisions.llr_selected_cells, 2048);
+    assert!(decisions.llr_statistics.count > 0);
+    for row in &decisions.rows {
+        assert_eq!(
+            row.decision.normalized,
+            slice_symbol(row.cell.modulation_order, row.cell.after_equalization).unwrap()
+        );
+        assert_eq!(
+            row.cell.llrs,
+            original
+                .pairs
+                .iter()
+                .find(|pair| pair.physical_bin == row.cell.physical_bin
+                    && pair.channel_symbol_index == row.cell.channel_symbol_index)
+                .unwrap()
+                .llrs
+        );
+    }
+    for stream in [
+        FullLoopCellStream::Ncp,
+        FullLoopCellStream::PlcData,
+        FullLoopCellStream::PlcPreamble,
+        FullLoopCellStream::ContinuousPilots,
+        FullLoopCellStream::ScatteredPilots,
+    ] {
+        let view = result
+            .qam(FullLoopCellQuery {
+                stream,
+                count: 3,
+                ..Default::default()
+            })
+            .unwrap();
+        assert!(!view.cells.is_empty());
+        let decisions = result
+            .cell_decisions(FullLoopCellQuery {
+                stream,
+                count: 3,
+                ..Default::default()
+            })
+            .unwrap();
+        assert_eq!(decisions.rows.len(), 3);
+        for row in &decisions.rows {
+            let amplitude = row.cell.reference_amplitude;
+            assert_eq!(
+                row.decision.normalized_iq,
+                row.cell.after_equalization.map(|value| value / amplitude)
+            );
+            if matches!(
+                stream,
+                FullLoopCellStream::ContinuousPilots | FullLoopCellStream::ScatteredPilots
+            ) {
+                assert_eq!(amplitude, 2.0);
+                assert_eq!(row.cell.modulation_order, 2);
+            }
+            if !matches!(stream, FullLoopCellStream::Ncp) {
+                assert!(row.cell.llrs.is_empty());
+            }
+        }
+    }
+    assert_eq!(result.report().summary.comparison.bit_errors, 0);
+}
+
+#[test]
+fn empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership() {
+    let result = request().run(&FullLoopControl::new()).unwrap();
+    let empty = result
+        .qam(FullLoopCellQuery {
+            profile_id: Some(255),
+            ..Default::default()
+        })
+        .unwrap();
+    assert!(empty.selection.retained_cells > 0);
+    assert_eq!(empty.selection.selected_cells, 0);
+    assert!(empty.cells.is_empty());
+    assert!(empty.raw_tx_reference_mer.is_none());
+    assert!(result
+        .qam(FullLoopCellQuery {
+            count: 2049,
+            ..Default::default()
+        })
+        .is_err());
+    assert!(result
+        .cell_decisions(FullLoopCellQuery {
+            count: 129,
+            ..Default::default()
+        })
+        .is_err());
+    assert!(result
+        .qam(FullLoopCellQuery {
+            start: usize::MAX,
+            ..Default::default()
+        })
+        .is_err());
+    let mut view = result
+        .qam(FullLoopCellQuery {
+            count: 1,
+            ..Default::default()
+        })
+        .unwrap();
+    let before = view.cells[0].after_equalization;
+    view.cells[0].after_equalization = [99.0, 99.0];
+    assert_eq!(
+        result
+            .qam(FullLoopCellQuery {
+                count: 1,
+                ..Default::default()
+            })
+            .unwrap()
+            .cells[0]
+            .after_equalization,
+        before
+    );
+}
+
+#[test]
 fn passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner() {
     use docsis_ofdm_fec::signal_processing::waveform::spectrum::estimate;
     let result = request()

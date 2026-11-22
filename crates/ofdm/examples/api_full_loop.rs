@@ -62,10 +62,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "response": observed.response(FullLoopResponseQuery::default())?,
         "llr": observed.llr_statistics(0)?,
     });
+    let cells = json!({"qam":observed.qam(FullLoopCellQuery {count:5,..Default::default()})?,
+        "decisions":observed.cell_decisions(FullLoopCellQuery {count:3,..Default::default()})?});
     println!(
         "{}",
         serde_json::to_string(
-            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages,"instruments":instruments,"messages":observed.plc_messages()?})
+            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages,"instruments":instruments,"messages":observed.plc_messages()?,"cells":cells})
         )?
     );
     Ok(())

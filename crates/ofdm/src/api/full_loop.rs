@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Independent full-loop public contracts over the existing downstream controlled job.
+mod cells;
 mod control;
 mod instruments;
 mod messages;
@@ -11,6 +12,7 @@ mod options;
 mod request;
 mod result;
 use super::*;
+pub use cells::*;
 pub use control::*;
 pub use instruments::*;
 pub use messages::*;

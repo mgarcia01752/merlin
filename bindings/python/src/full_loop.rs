@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Native ownership/transport and bounded dispatch over public downstream full-loop contracts.
+mod cells;
 mod control;
 mod instruments;
 mod observations;
@@ -29,6 +30,7 @@ pub(crate) fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<PyFullLoopOptions>()?;
     module.add_class::<PyFullLoopControl>()?;
     module.add_class::<PyFullLoopRequest>()?;
+    module.add_class::<cells::PyCellQuery>()?;
     module.add_class::<observations::PyObservationPolicy>()?;
     module.add_class::<PyFullLoopResult>()
 }

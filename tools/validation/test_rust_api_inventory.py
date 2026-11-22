@@ -14,6 +14,25 @@ from rust_api_inventory import inventory, resolve_reexport_owners
 class RustdocExportTests(unittest.TestCase):
     """Use independent minimal rustdoc shapes to verify public export discovery."""
 
+    def test_compiler_explicit_rename_preserves_public_name_and_canonical_method_owner(self):
+        """A compiler pub-use alias names the caller API; origin names are not extra exports."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'index.html').write_text(
+                '<code>pub use owner::<a class="struct" href="struct.Original.html" '
+                'title="struct owner::Original">Original</a> as PublicName;</code>')
+            (root / 'struct.Original.html').write_text(
+                '<h4 class="code-header">pub fn new() -&gt; Self</h4>')
+            rows = inventory('public', root / 'index.html', root)
+            self.assertEqual([row['export'] for row in rows], ['public::PublicName'])
+            self.assertEqual(rows[0]['methods'][0]['operation'], 'public::PublicName::new')
+            self.assertEqual(rows[0]['methods'][0]['rustdoc'], 'struct.Original.html')
+            (root / 'index.html').write_text(
+                '<code>owner::<a class="struct" href="struct.Original.html" '
+                'title="struct owner::Original">Original</a> as PublicName</code>')
+            self.assertEqual(inventory('public',root / 'index.html',root)[0]['export'],
+                             'public::Original')
+
     def test_glob_keeps_namespace_modules_extend_it_and_stale_items_are_absent(self):
         """A wildcard imports items directly; an actual module adds one component."""
         with tempfile.TemporaryDirectory() as directory:

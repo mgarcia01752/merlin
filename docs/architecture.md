@@ -982,8 +982,8 @@ UIU-API-02 adds immutable [typed full-loop requests](user/api/full-loop.md) unde
 safe-boundary pause/cancel/progress and owned actual partial reports. Native
 conversions under `bindings/python/src/full_loop` release the interpreter lock and
 map interrupts to cooperative cancellation. Existing evaluation Simulation/Merlin
-operations remain compatible. Selected-cell queries and complete source-catalog/
-sweep parity remain explicit acceptance gates before Qt adoption.
+operations remain compatible. Remaining physical/reference/soft-display queries
+and complete source-catalog/sweep parity remain explicit gates before Qt adoption.
 `api/full_loop/observations` owns validated opt-in selection and finite typed copies
 of core test-point events, with bounded queries and frozen policy/provenance.
 The [stage contract](user/api/full-loop-observations.md) keeps actual phases,
@@ -996,8 +996,8 @@ composition/layout and receiver diagnostic owners. Exact contiguous sample origi
 bound PSD accumulation; missing history stops the span. Configured H and retained
 receiver H-hat use explicit separate sources/reference planes and original excluded
 gaps. Python converts owned results and releases the interpreter lock during work;
-neither adapter introduces scientific calculations. Selected-cell queries
-and complete catalog/sweep compatibility remain API-02 gates.
+neither adapter introduces scientific calculations. Remaining physical/reference/
+soft-display queries and complete catalog/sweep compatibility remain API-02 gates.
 `api/full_loop/messages` inspects actual retained TX PLC frames through the existing
 frame parser, CRC-validated MAC reassembler and descriptor owner. Typed TLV meanings
 reuse decoded receiver settings and accepted modulation metadata; adapters only
@@ -1005,6 +1005,15 @@ format labels/hex. The bounded report retains exact bytes, offsets, final carryi
 context and checked sample coverage, distinguishing construction from completed
 transmission. Missing/invalid segments stop with an explicit issue and preserve
 earlier complete packets; no messages are regenerated from current configuration.
+`api/full_loop/cells` selects original payload/NCP and protected report pairs with
+typed role/profile/order/coordinate filters and finite owned output windows.
+Existing modulation owners compute raw/corrected nearest-point and actual matched-TX
+MER across all selected retained cells before pagination. Receiver diagnostic
+normalization delegates to the original slicer; actual cell LLR statistics stay
+separate from coding-order decoder input. The [cell contract](user/api/full-loop-cells.md)
+preserves original wire/source identities, known pilot amplitude, unavailable
+references and honest empty selections. Native queries own their results and
+release the interpreter lock; no Qt/Python scientific calculation is introduced.
 
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 

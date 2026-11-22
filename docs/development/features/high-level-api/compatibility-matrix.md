@@ -4,12 +4,12 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-499 explicit public Rust operations and 479 installed native Python entries with
+503 explicit public Rust operations and 484 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current native operation acceptance](../unified-qt-workbench/plc-message-evidence.json)
+is a readable subset of this one matrix. [Current native operation acceptance](../unified-qt-workbench/receiver-cell-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
-106 directional/common class exports and 59 preserved legacy root exports. Named
+107 directional/common class exports and 59 preserved legacy root exports. Named
 owner regressions establish behavioral scope; metadata alone is not scientific
 execution or exhaustive getter-branch coverage.
 
@@ -45,6 +45,23 @@ and a 92-case installed wheel. Original CRC-validated packet bytes, decoded fiel
 meanings/offsets, checked sample coverage and explicit missing/invalid segments
 pass paired local acceptance. Selected-cell and complete catalog/sweep gates remain
 open. Every earlier row and historical run record is preserved.
+
+The [receiver cell unit](../unified-qt-workbench/validation.md#uiu-api-02-selected-receiver-cell-unit)
+adds four Rust/five native rows with [actual executed cases](../unified-qt-workbench/api-02-cell-operation-test-results.json)
+and a 96-case installed wheel. Actual paired roles/coordinates, all-selected
+nearest/TX-reference MER, physical decisions and retained cell soft values pass.
+
+That audit found a compiler-inventory error: sixteen existing renamed type exports
+and three associated method paths used origin names instead of their public aliases.
+The source exports and scientific behavior were already correct. The current matrix
+uses compiler-declared aliases, verified against the compiled facade and an actual
+import/constructor regression. Its `historical_rust_export_corrections` section
+preserves the three old operation rows and sixteen type records verbatim, with an
+explicit old-to-current mapping. All other prior rows and historical native/scientific
+evidence remain unchanged. This corrects traceability without reopening completed
+planning, FEC or historical acceptance. [Correction evidence](../unified-qt-workbench/receiver-cell-evidence.json)
+records the exact scope. Remaining physical/reference/soft-display and catalog/sweep
+gates still keep API-02 open.
 
 The [operation run records](operation-test-results.json) add a targeted measured-plan
 roundtrip and retain exact named historical MERLIN component cases. The

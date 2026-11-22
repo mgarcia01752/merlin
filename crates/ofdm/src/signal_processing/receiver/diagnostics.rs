@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Bounded numeric receiver diagnostics; none are production decoder inputs.
+#[cfg(all(feature = "simulation", feature = "pnm-input"))]
+pub(crate) mod decisions;
 use crate::{error::invalid, transmission::SubcarrierSpacing, types::IqPair, SimulationError};
 use serde::Serialize;
 

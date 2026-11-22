@@ -77,8 +77,9 @@ print(window['element_start'], window['context']['sample_start_index'])
 ```
 
 The passive numerical operations below reuse those actual observations and existing
-scientific owners. Selected-cell/soft-decision views and
-full source-catalog/sweep compatibility remain UIU-API-02 acceptance gates before
+scientific owners. [Selected receiver cells](full-loop-cells.md) add actual paired
+QAM/MER and bounded physical decisions. Remaining physical/reference/soft-display
+views and full source-catalog/sweep compatibility remain UIU-API-02 gates before
 Qt adoption.
 
 ## Passive numerical observations

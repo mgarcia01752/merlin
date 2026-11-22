@@ -12,6 +12,26 @@ const DECODED_PROFILE: &[u8] =
     include_bytes!("../../../examples/measurements/single-channel/modulation_profile.json");
 const WORKBENCH: &[u8] = include_bytes!("../../../examples/workbench/single/workbench.merlin.json");
 
+#[test]
+fn facade_renamed_stage_types_use_documented_public_imports_and_original_geometry() {
+    let context = downstream::FullLoopStageContext::new(
+        "compiler-alias-regression",
+        "public-facade",
+        downstream::FullLoopStagePhase::Observation,
+    )
+    .unwrap();
+    assert_eq!(context.run_id, "compiler-alias-regression");
+    let single =
+        downstream::FullLoopPlcGrid::for_symbols(downstream::SubcarrierSpacing::Khz25, 1).unwrap();
+    let codeword = downstream::FullLoopPlcGrid::new(downstream::SubcarrierSpacing::Khz25);
+    assert_ne!(single, codeword);
+    assert!(
+        downstream::FullLoopPlcGrid::for_symbols(downstream::SubcarrierSpacing::Khz25, 0).is_err()
+    );
+    // This alias is a re-export of the same scientific metric, not a new implementation.
+    let _metric_constructor = downstream::FullLoopCellMer::unavailable;
+}
+
 fn hex(text: &str) -> Vec<u8> {
     text.split_whitespace()
         .flat_map(|word| {

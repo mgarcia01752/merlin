@@ -573,3 +573,43 @@ old row/history and checks fresh compiler/installed signatures and actual passin
 cases. Qt sources and original scientific operations remain unchanged; prior Qt
 compatibility/build evidence applies, with no claim of Qt adoption. Selected-cell
 queries and complete source-catalog/sweep parity still keep API-02 incomplete.
+
+## UIU-API-02 selected receiver cell unit
+
+[Exact source/test/wheel and alias evidence](receiver-cell-evidence.json),
+[owner/design](design.md#uiu-api-02-selected-receiver-cell-unit),
+[paired contract](../../../user/api/full-loop-cells.md) and
+[executed cases](api-02-cell-operation-test-results.json) trace through the
+[architecture](../../../architecture.md#unified-qt-public-api-boundary) to the
+still-open [parent task](../../checklist.md#task-uiu-api-02).
+
+Seventeen targeted integration/scientific cases, sixteen library cases, sixteen
+facade cases and all 139 analysis-only cases/doctest checks pass. Five focused
+cell/decision owner cases establish an independent 4096-cell BPSK power vector:
+all errors lie beyond the first 2048 displayed cells, yet full-selection raw MER
+is 23.0102999566 dB; filtering to the erroneous half gives 20 dB. Corrected samples
+are perfect-reference, and pagination never changes the measured population.
+Missing matched references disable TX-reference metrics without discarding actual
+nearest-point measurements. Empty/invalid filters, ranges/work limits and owned
+output mutation preserve original availability/science.
+
+Real full-loop tests cover payload, accepted NCP, PLC data/preamble and both pilot
+roles. Every displayed pair retains original physical/source/channel identities
+and I/Q/soft values. A known boosted BPSK vector establishes normalized/physical
+coordinates and distances without fitting. Protected roles keep their empty LLRs;
+physical decisions never replace decoder inputs. Core/facade/native-input and
+binding Clippy pass with warnings denied. The fresh Linux CPython 3.10 wheel passes
+all 96 cases, including four new cell cases and separate Rust-process results.
+
+The compiler audit exposed incorrect documentation names for sixteen existing
+public aliases and three helper method paths. The inventory now reads exact
+compiler `pub use ... as ...` declarations; an independent parser case rejects an
+ordinary expression as alias evidence. Eight inventory cases pass, and an actual
+facade import/constructor case verifies the public paths. Original source exports,
+signatures and scientific acceptance are unchanged. The matrix preserves all three
+prior operation rows and sixteen type records verbatim in its explicit historical
+correction record; other prior rows/history remain unchanged. It adds four Rust/
+five native operations (503/484 total), with fresh compiled/installed signatures
+and passing named cases. No Qt source changes or Qt-adoption claim occur. Remaining
+decision-region/ideal-reference, detailed soft-display, physical-view audit and
+complete source-catalog/sweep gates keep API-02 unchecked.
