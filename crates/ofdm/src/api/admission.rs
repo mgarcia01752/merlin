@@ -1,0 +1,264 @@
+/*
+ * Copyright 2026 MERLIN contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+//! Passive validated editor inputs; execution and scientific stages keep existing owners.
+use super::{ApiError, ApiResult, Dpd, ErrorCode, NamedCapture, ObservationDuration, PrbsSeed};
+use crate::{
+    simulation::source::{
+        file::{FilePayload, PrbsFill},
+        PayloadSourceConfig,
+    },
+    transmission::{DurationTiming, TransmissionSettings},
+};
+use serde::Serialize;
+use sha2::{Digest, Sha256};
+use std::time::Duration;
+
+/// Existing desktop timing-editor byte ceiling, independent of PHY sample limits.
+pub const MAX_TRANSMISSION_DOCUMENT_BYTES: usize = 4096;
+
+/// Validated immutable numerology; accepted source/profile and run state are separate.
+#[derive(Clone, Serialize)]
+#[serde(transparent)]
+pub struct TransmissionConfiguration {
+    settings: TransmissionSettings,
+}
+
+/// Explicit finite append policy with a separately checked PRBS15 fill seed.
+#[derive(Clone, Copy, Serialize)]
+pub struct FileFillPolicy {
+    /// Total meaningful file-plus-fill bits; checked against original input on admission.
+    pub target_bits: u64,
+    /// Independent fill recurrence seed; never a replacement for PHY scrambling.
+    pub seed: PrbsSeed,
+}
+
+/// Passive owned source selection; no source advances and no verifier is retained.
+#[derive(Clone)]
+pub struct SourceInput {
+    pub(crate) configuration: PayloadSourceConfig,
+    seed: Option<PrbsSeed>,
+    name: Option<String>,
+    sha256: Option<String>,
+}
+
+impl FileFillPolicy {
+    /// Validates an independent finite fill policy before a file is selected.
+    ///
+    /// # Arguments
+    /// * `target_bits` - Total meaningful bits, at most the existing finite-file bound.
+    /// * `seed` - Checked nonzero PRBS15 fill seed, independent of continuous source state.
+    ///
+    /// # Returns
+    /// An admitted policy; the selected file separately checks its minimum length.
+    ///
+    /// # Errors
+    /// Preserves existing finite target/work admission without generating any bits.
+    pub fn new(target_bits: u64, seed: PrbsSeed) -> ApiResult<Self> {
+        FilePayload::new(
+            &[],
+            Some(PrbsFill {
+                target_bits,
+                seed: seed.value(),
+            }),
+        )?;
+        Ok(Self { target_bits, seed })
+    }
+}
+
+impl TransmissionConfiguration {
+    /// Validates and owns a numerology snapshot without changing any live session.
+    ///
+    /// # Arguments
+    /// * `settings` - Existing typed bandwidth, spacing, prefix, taper and depth.
+    ///
+    /// # Returns
+    /// Immutable admitted settings, independent of subsequent caller edits.
+    ///
+    /// # Errors
+    /// Preserves existing bandwidth/CP/RP/depth validation and unsupported combinations.
+    pub fn new(settings: TransmissionSettings) -> ApiResult<Self> {
+        settings.validate()?;
+        Ok(Self { settings })
+    }
+
+    /// Admits the existing bounded timing-editor JSON through the typed constructor.
+    ///
+    /// # Arguments
+    /// * `bytes` - UTF-8 settings JSON, at most 4096 bytes; unknown fields reject.
+    ///
+    /// # Returns
+    /// A fresh immutable snapshot; loading never runs or changes another input.
+    ///
+    /// # Errors
+    /// Rejects byte limits, malformed/unknown fields and existing numerology failures.
+    pub fn from_json(bytes: &[u8]) -> ApiResult<Self> {
+        if bytes.len() > MAX_TRANSMISSION_DOCUMENT_BYTES {
+            return Err(ApiError::new(
+                ErrorCode::ResourceLimit,
+                "OCD request exceeds 4096 bytes.",
+            ));
+        }
+        let settings = serde_json::from_slice(bytes)
+            .map_err(|cause| ApiError::new(ErrorCode::InvalidInput, cause.to_string()))?;
+        Self::new(settings)
+    }
+
+    /// Borrows exactly the admitted scientific settings without mutation rights.
+    ///
+    /// # Returns
+    /// Existing typed settings valid for this snapshot's lifetime.
+    pub fn settings(&self) -> &TransmissionSettings {
+        &self.settings
+    }
+
+    /// Plans complete source-symbol timing using the existing integer-clock owner.
+    ///
+    /// # Arguments
+    /// * `duration` - Checked observation duration in milliseconds.
+    ///
+    /// # Returns
+    /// Exact sample/symbol/tail accounting, excluding acquisition and interleaver drain.
+    ///
+    /// # Errors
+    /// Preserves overflow or insufficient-complete-symbol errors; starts no processing.
+    pub fn timing(&self, duration: ObservationDuration) -> ApiResult<DurationTiming> {
+        Ok(self
+            .settings
+            .duration_timing(Duration::from_millis(duration.value()))?)
+    }
+
+    /// Checks the existing profile editor's spacing and occupied-envelope contract.
+    ///
+    /// # Arguments
+    /// * `profile` - Previously admitted immutable profile on its original grid.
+    ///
+    /// # Returns
+    /// Unit for editor compatibility; full TX/transport readiness is a separate operation.
+    ///
+    /// # Errors
+    /// Rejects mismatched spacing, overflow or a source grid outside the accepted channel.
+    pub fn check_profile(&self, profile: &Dpd) -> ApiResult<()> {
+        let grid = profile.grid();
+        if grid.spacing_hz != self.settings.subcarrier_spacing.frequency_hz() {
+            return Err(ApiError::new(
+                ErrorCode::IncompatibleGrid,
+                "Capture spacing differs from the accepted OCD settings.",
+            ));
+        }
+        let end = usize::from(grid.first_subcarrier_index).checked_add(grid.sample_count);
+        let span = (grid.sample_count as u64).checked_mul(u64::from(grid.spacing_hz));
+        if end.is_none_or(|end| end > self.settings.subcarrier_spacing.fft_samples() as usize)
+            || span.is_none_or(|span| span > u64::from(self.settings.occupied_bandwidth_hz))
+        {
+            return Err(ApiError::new(
+                ErrorCode::IncompatibleGrid,
+                "Profile carrier span does not fit the accepted OCD channel.",
+            ));
+        }
+        Ok(())
+    }
+}
+
+impl SourceInput {
+    /// Retains a checked continuous PRBS15 seed without creating a generator.
+    ///
+    /// # Arguments
+    /// * `seed` - Valid nonzero 15-bit recurrence state, distinct from PHY scrambling.
+    ///
+    /// # Returns
+    /// Passive repeatable input; every future explicit run constructs its own stream.
+    pub fn prbs15(seed: PrbsSeed) -> Self {
+        Self {
+            configuration: PayloadSourceConfig::Prbs15,
+            seed: Some(seed),
+            name: None,
+            sha256: None,
+        }
+    }
+
+    /// Owns an exact-byte file selection and optional finite independently seeded fill.
+    ///
+    /// # Arguments
+    /// * `input` - Original named bytes; extensions never select content or bit ordering.
+    /// * `fill` - Optional total meaningful-bit target and independent fill seed.
+    ///
+    /// # Returns
+    /// Immutable validated file source, including empty input, without advancing bits.
+    ///
+    /// # Errors
+    /// Rejects existing 16 MiB/work ceilings or a target shorter than the original file.
+    pub fn file(input: NamedCapture, fill: Option<FileFillPolicy>) -> ApiResult<Self> {
+        let payload = FilePayload::new(
+            input.bytes(),
+            fill.map(|policy| PrbsFill {
+                target_bits: policy.target_bits,
+                seed: policy.seed.value(),
+            }),
+        )?;
+        Ok(Self {
+            configuration: PayloadSourceConfig::File { payload },
+            seed: None,
+            name: Some(input.name().to_owned()),
+            sha256: Some(format!("{:x}", Sha256::digest(input.bytes()))),
+        })
+    }
+
+    /// Reports the scientific source family without inspecting a filename.
+    ///
+    /// # Returns
+    /// `prbs15` for the continuous test recurrence, or `file` for finite exact bytes.
+    pub fn kind(&self) -> &'static str {
+        match self.configuration {
+            PayloadSourceConfig::Prbs15 => "prbs15",
+            PayloadSourceConfig::File { .. } => "file",
+        }
+    }
+
+    /// Reads the continuous-source seed, separate from any finite append policy.
+    ///
+    /// # Returns
+    /// Some for PRBS15; None for a file whose fill seed belongs to its own policy.
+    pub fn prbs_seed(&self) -> Option<PrbsSeed> {
+        self.seed
+    }
+
+    /// Reads the original file identity without using it as a format hint.
+    ///
+    /// # Returns
+    /// Borrowed display name for files, None for continuous PRBS15.
+    pub fn name(&self) -> Option<&str> {
+        self.name.as_deref()
+    }
+
+    /// Borrows exact original file bytes, excluding generated fill and coding padding.
+    ///
+    /// # Returns
+    /// Original immutable bytes for finite files; None for continuous PRBS15.
+    pub fn original_bytes(&self) -> Option<&[u8]> {
+        match &self.configuration {
+            PayloadSourceConfig::Prbs15 => None,
+            PayloadSourceConfig::File { payload } => Some(payload.bytes()),
+        }
+    }
+
+    /// Reads the original input's cryptographic identity without regenerating content.
+    ///
+    /// # Returns
+    /// Lowercase SHA-256 for files; None for a recurrence with no original byte file.
+    pub fn original_sha256(&self) -> Option<&str> {
+        self.sha256.as_deref()
+    }
+
+    /// Reports the finite meaningful-bit target before FEC padding and observation windows.
+    ///
+    /// # Returns
+    /// File-plus-fill target, including zero for an empty file; None for continuous PRBS.
+    pub fn target_bits(&self) -> Option<u64> {
+        match &self.configuration {
+            PayloadSourceConfig::Prbs15 => None,
+            PayloadSourceConfig::File { payload } => Some(payload.target_bits()),
+        }
+    }
+}

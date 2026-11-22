@@ -62,6 +62,9 @@ from ._native import (
     Simulation,
     SubcarrierIndex,
     Weight,
+    FileFillPolicy,
+    SourceInput,
+    TransmissionConfiguration,
     Workbench,
 )
 from ._native import __version__

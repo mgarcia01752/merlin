@@ -4,7 +4,7 @@
  */
 //! Native file/byte conveniences and immutable input snapshots.
 use crate::{api, error, object_from_json, quantities::*};
-use pnm_input::{read_capture, CaptureLoader};
+use merlin::downstream::inputs::{read_capture, CaptureLoader};
 use pyo3::{prelude::*, types::PyTuple};
 use std::path::PathBuf;
 /// Explicit protocol interpretation, independent of file-format revision.

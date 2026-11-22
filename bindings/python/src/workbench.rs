@@ -27,7 +27,7 @@ pub(crate) struct PyWorkbench {
     busy: Mutex<()>,
 }
 impl PyWorkbench {
-    fn from_native(value: pnm_input::Workbench) -> Self {
+    fn from_native(value: merlin::downstream::inputs::Workbench) -> Self {
         let ids = value
             .controllers()
             .iter()
@@ -75,7 +75,7 @@ impl PyWorkbench {
     /// Structured Rust I/O, integrity, unsupported-capability or validation errors.
     #[staticmethod]
     fn from_file(py: Python<'_>, path: PathBuf) -> PyResult<Self> {
-        py.detach(|| pnm_input::Workbench::from_file(path))
+        py.detach(|| merlin::downstream::inputs::Workbench::from_file(path))
             .map(Self::from_native)
             .map_err(error)
     }
@@ -88,7 +88,7 @@ impl PyWorkbench {
     /// Preserves structured Rust size, schema, integrity and capability errors.
     #[staticmethod]
     fn from_bytes(py: Python<'_>, data: &[u8]) -> PyResult<Self> {
-        py.detach(|| pnm_input::Workbench::from_bytes(data))
+        py.detach(|| merlin::downstream::inputs::Workbench::from_bytes(data))
             .map(Self::from_native)
             .map_err(error)
     }

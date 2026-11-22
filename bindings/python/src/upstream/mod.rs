@@ -12,8 +12,10 @@ mod simulation;
 use pyo3::prelude::*;
 
 mod api {
+    pub use merlin::upstream::inputs::{
+        MeasuredExperiment, PreEqCapture, RxmerCapture, UcdCapture,
+    };
     pub use merlin::upstream::*;
-    pub use pnm_input::upstream::{MeasuredExperiment, PreEqCapture, RxmerCapture, UcdCapture};
 }
 
 fn error(value: impl Into<api::ApiError>) -> PyErr {

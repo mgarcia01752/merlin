@@ -467,6 +467,7 @@ dependencies = [
  "docsis-ofdm-fec",
  "docsis-ofdma",
  "merlin-api",
+ "pnm-input",
 ]
 
 [[package]]
@@ -485,7 +486,6 @@ name = "merlin-python"
 version = "0.4.0"
 dependencies = [
  "merlin",
- "pnm-input",
  "pyo3",
  "serde_json",
 ]

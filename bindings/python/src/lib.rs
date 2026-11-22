@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Optional PyO3 conversions only; the high-level Rust API owns all science.
+mod admission;
 mod controller;
 mod inputs;
 mod options;
@@ -61,6 +62,7 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
             .setattr(name, module.py().None())?;
     }
     quantities::register(module)?;
+    admission::register(module)?;
     inputs::register(module)?;
     receiver::register(module)?;
     options::register(module)?;

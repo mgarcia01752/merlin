@@ -65,11 +65,13 @@ name = "merlin"
 default = ["downstream", "upstream"]
 downstream = ["dep:docsis-ofdm-fec"]
 upstream = ["dep:docsis-ofdma"]
+native-input = ["downstream", "upstream", "dep:pnm-input"]
 
 [dependencies]
 docsis-ofdm-fec = { path = "../ofdm", default-features = false, features = ["high-level-api"], optional = true }
 docsis-ofdma = { path = "../ofdma", default-features = false, optional = true }
 merlin-api = { path = "../phy-api" }
+pnm-input = { path = "../pnm-input", optional = true }
 ```
 
 The upstream crate exports its typed `api` without a separate runtime
@@ -92,7 +94,7 @@ flowchart TD
     USER[External Rust application] --> ROOT[merlin facade]
     PY[merlin Python package / one private extension] --> ROOT
     CLI[Existing CLI] --> ROOT
-    PY --> INPUT[pnm-input]
+    ROOT -->|optional native-input| INPUT[pnm-input]
     CLI --> INPUT
     ROOT --> DS[docsis-ofdm-fec]
     ROOT --> US[docsis-ofdma]
@@ -109,7 +111,11 @@ flowchart TD
 ```
 
 The facade never becomes a dependency of either PHY, shared leaf or PNM adapter.
-CLI/Python can depend on both facade and input adapter without introducing a cycle.
+The CLI retains direct input access; native Python now enables facade
+`native-input` and uses directional input re-exports. This optional feature brings
+both existing PHY adapters without changing base/default direction builds.
+[Typed passive admission](../../../user/api/input-admission.md) adds no engine or
+scientific facade implementation.
 Qt retains its existing direct downstream dependencies and receives no upstream UI
 or dependency migration in this phase. Direct consumers may continue importing
 either engine without installing/linking a facade, Python or Qt.

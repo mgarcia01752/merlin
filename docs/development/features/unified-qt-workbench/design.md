@@ -107,6 +107,63 @@ local paths, dev/target dependencies, qualified calls, extern aliases, mutation 
 frozen legacy files, escaped module includes, stale exceptions and final mode.
 No API or application implementation changes belong to this task.
 
+### UIU-API-01: typed transmission and source admission
+
+Add `crates/ofdm/src/api/admission.rs`, exported through the existing API/facade.
+`TransmissionConfiguration::new(TransmissionSettings)` validates and owns an
+immutable settings snapshot; `from_json(&[u8])` admits the same bounded 4096-byte
+editor transport. `settings()` borrows accepted data, `timing(ObservationDuration)`
+delegates to existing integer-clock timing, and `check_profile(&Dpd)` preserves
+the current editor's spacing/envelope admission without claiming TX readiness.
+No constructor starts a stream or changes a configured Simulation.
+
+`SourceInput::prbs15(PrbsSeed)` and
+`SourceInput::file(NamedCapture, Option<FileFillPolicy>)` own validated passive
+source choices. FileFillPolicy contains target bits and checked independent fill
+seed; existing FilePayload owns size/target admission. Read-only mode/seed/target/
+name/hash/original-byte accessors support editors without exposing generators.
+Actual source/verification execution remains API-02 work. PRBS seed and finite
+file-fill seed keep their different meanings.
+
+Expose matching immutable native Python TransmissionConfiguration, SourceInput
+and FileFillPolicy classes through preserved root/compatibility/downstream
+imports and stubs. Python converts arguments and returns Rust timing/metadata;
+it does no timing, source generation or validation calculations. Rust and native
+tests cover literal timing anchors, incompatible profiles, malformed/oversized
+settings, arbitrary original bytes, empty files, fill bounds, bad seeds and
+retained ownership. These operations are shared domain admission, not a second
+Qt simulation interface. Further measurement/channel/Designer previews remain
+open until their own typed API operations pass.
+
+### UIU-API-01: native-input facade implementation unit
+
+Reuse native admission rather than duplicate decoding or project validation.
+Add optional facade feature `native-input`, enabling both direction namespaces
+and the existing `pnm-input` adapter. It intentionally brings both PHY adapters;
+base facade features and independent PHY crates retain their previous graph.
+The facade contains only re-exports:
+
+- `merlin::downstream::inputs::{CaptureLoader, Workbench, read_capture, save_json}`
+  and `merlin::downstream::inputs::rxmer_export` retain their exact existing types,
+  signatures, byte/work limits, errors and non-overwrite contracts.
+- `merlin::upstream::inputs` exposes the existing native UCD/RxMER/Pre-Eq and
+  measured-association contracts; it does not expose receiver/DSP implementations.
+
+Edit `crates/merlin/Cargo.toml` and `src/lib.rs`; add facade-only consumer tests in
+`crates/merlin/tests/native_inputs.rs`. Native Python enables the feature and
+changes its existing admission imports to these facade paths without changing
+public Python methods, defaults or classes. Remove the now-redundant direct
+binding dependency only after all references are routed. Update the two affected
+lockfiles without changing versions/pins. Qt remains unchanged until the complete
+input/preview gap is accepted.
+
+Validate binary and decoded DS identity/grids/provenance, idle WB loading, US
+capture bytes and structured rejection via facade-only consumers, independent
+feature checks, matching Python format/Clippy and fresh installed-wheel namespace,
+input/workbench/Designer/export tests. This native-input unit alone does not
+complete UIU-API-01: missing typed editor/idle-preview operations remain in the
+API gap matrix until separately implemented and validated.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

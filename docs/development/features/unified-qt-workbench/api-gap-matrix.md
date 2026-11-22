@@ -1,6 +1,8 @@
 # Public API gates for Qt
 
-Status: inspected capabilities and proposed extensions, not implemented methods.
+Status: inspected capabilities, accepted input-admission unit and remaining
+proposed extensions. [Input unit evidence](validation.md#uiu-api-01-input-admission-unit)
+does not complete UIU-API-01; other proposals below remain unimplemented.
 The [canonical API boundary](../../../architecture.md#unified-qt-public-api-boundary)
 governs both direction adapters. Qt uses `merlin::downstream`,
 `merlin::upstream` and genuinely compatible contracts under `merlin::common`.
@@ -15,7 +17,7 @@ QML → src/bridge/* → direction Qt adapters → merlin facade
   facade downstream → docsis-ofdm-fec::api → existing DS scientific owners
   facade upstream   → docsis-ofdma::api    → existing US scientific owners
   facade common     → merlin-api          → no PHY/application dependencies
-  facade native-input (planned optional feature) → pnm-input
+  facade native-input (implemented optional feature) → pnm-input
       pnm-input → both independent PHY APIs + pinned native PNM decoder
 PHY crates → common API/DSP/FEC leaves
 ```

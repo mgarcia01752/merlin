@@ -490,6 +490,7 @@ dependencies = [
  "docsis-ofdm-fec",
  "docsis-ofdma",
  "merlin-api",
+ "pnm-input",
 ]
 
 [[package]]

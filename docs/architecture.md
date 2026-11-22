@@ -133,8 +133,11 @@ Delivery gates: [INT-LICENSE-01](development/checklist.md#int-license-01).
 | Native Python | `bindings/python`, package `merlin` | One private `_native` extension and real downstream/upstream/common modules; existing imports/exports retain identity. No second distribution or Python science. |
 | Qt | `apps/qt` | Existing downstream presentation stays unchanged; upstream UI implementation is outside this backend integration. |
 
-**Current dependency direction:** CLI/native Python → facade and `pnm-input`;
-the CLI also retains its direct downstream dependency for existing handlers.
+**Current dependency direction:** native Python → facade with optional
+`native-input` → `pnm-input`; CLI → facade and `pnm-input`. The CLI also retains
+its direct downstream dependency for existing handlers. Base facade defaults and
+independent direction features are unchanged. Native input enables both PHY
+adapters and re-exports existing contracts without scientific implementation.
 Both independent PHYs → common API/DSP/FEC leaves;
 `pnm-input` → downstream/upstream APIs and exact pinned `pnm`.
 The independent Qt adapter retains its current dependencies.
@@ -152,7 +155,7 @@ flowchart TD
     ROOT --> API[merlin-api contracts]
     DS --> API
     US --> API
-    PY --> INPUT[Native PNM input adapter]
+    ROOT -->|optional native-input| INPUT[Native PNM input adapter]
     CLI --> INPUT
     INPUT --> DS
     INPUT --> US
@@ -938,6 +941,12 @@ session references, dispatches bounded asynchronous jobs and maps public errors,
 progress and results. Configuration admission, previews, waveform/resource
 construction, scientific measurements and results remain in backend owners.
 The facade adds re-exports/optional feature wiring, never scientific code.
+The implemented optional `native-input` feature exposes existing directional
+admission under `downstream::inputs` and `upstream::inputs`. Passive downstream
+`TransmissionConfiguration` and `SourceInput` validate timing/profile and exact-byte
+source choices without executing or mutating sessions; see the
+[typed contracts and parity](user/api/input-admission.md). Remaining editor,
+Designer and idle-preview gaps keep UIU-API-01 open; Qt adoption is separate.
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

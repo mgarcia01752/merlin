@@ -201,3 +201,34 @@ reconcile final source inventory/owner/skill/guide correspondence and licenses,
 and report exact source candidates, tests, outcomes, native platform limits,
 remaining scope deferrals and focused commit chronology. New runtime evidence
 belongs here or in linked per-unit records; do not rewrite historical acceptance.
+
+## UIU-API-01 input admission unit
+
+This independently validated unit implements optional native-input facade wiring
+and passive typed transmission/source admission. UIU-API-01 remains unchecked:
+measurement/channel/Designer editor operations and bounded idle TX preview still
+need public API coverage before Qt adoption. No Qt source changed in this unit.
+
+[Exact source/test/wheel record](input-admission-evidence.json) links the accepted
+candidate to [architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[task](../../checklist.md#task-uiu-api-01), the
+[design](design.md#uiu-api-01-typed-transmission-and-source-admission) and
+[method parity/limitations](../../../user/api/input-admission.md).
+
+- Four facade-only native consumers and six existing namespace tests pass.
+- Five API admission cases cover independent integer timing anchors, incompatible
+  profiles, malformed/oversized settings, byte identity, empty EOF, seed/target
+  bounds and retained ownership without running a source.
+- All 68 native-input adapter tests pass, retaining previous project/Designer/FEC,
+  binary and decoded input, export, provenance and measured association checks.
+- A fresh CPython 3.10 Linux wheel passes all 52 installed native API tests,
+  including the four new admission cases and existing direction import identity,
+  actual direct-Rust process parity, saved workbench, Designer and cancellation
+  checks. Python has no direct scientific/native-decoder dependency.
+- Common-only, downstream-only and upstream-only facade builds, formatting and
+  facade/native binding Clippy with warnings denied pass. Lock changes move only
+  the local adapter edge; dependency pins/versions and default features remain.
+
+This is local Linux acceptance, not a published-wheel, external interoperability,
+Qt migration, Windows or installed-desktop lifecycle claim. Historical backend
+acceptance and existing downstream behavior stay in their original records.

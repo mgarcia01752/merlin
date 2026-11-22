@@ -62,3 +62,6 @@ from . import SubcarrierIndex as SubcarrierIndex
 from . import Weight as Weight
 from . import Workbench as Workbench
 __version__: str
+from . import FileFillPolicy as FileFillPolicy
+from . import SourceInput as SourceInput
+from . import TransmissionConfiguration as TransmissionConfiguration

@@ -5,9 +5,11 @@ The Basic Rust API configures MERLIN's existing single-channel source → transm
 second simulator. Loading and preparation never run the experiment; only explicit run methods
 start simulation. Existing low-level APIs, CLI and Qt remain available.
 
-Enable the core's `high-level-api` feature. Add optional `pnm-input` for native
-binary/JSON and file conveniences; it directly uses pinned Apache-2.0 `pnm`
-0.3.6. Neither crate needs Qt or Python.
+Use the `merlin` facade; enable optional `native-input` for directional binary/JSON
+and file conveniences through the existing pinned native adapter. Independent
+core consumers may still enable `high-level-api` and use `pnm-input` directly.
+Neither route needs Qt or Python. See [passive input admission](input-admission.md)
+for timing/source contracts and Rust/Python parity.
 
 For searchable class/method documentation generated from the actual APIs, see
 the [generated Rust/Python reference](../../reference/api-reference.md).
@@ -27,9 +29,10 @@ its own pause/progress state and can share a common token through
 direction-specific. The [upstream guide](../upstream/README.md) describes supported
 synthetic and capture-backed models.
 
-The existing Python `merlin.Simulation` retains downstream behavior. Real native
-direction modules and their installed-wheel acceptance are still being integrated;
-the new Rust paths do not imply that those Python imports are already available.
+The existing Python `merlin.Simulation` retains downstream behavior. Installed
+wheels expose genuine `merlin.downstream`, `merlin.upstream` and `merlin.common`
+modules through one native extension/distribution; compatibility imports retain
+their nominal type identity.
 
 ## Rust workflow
 

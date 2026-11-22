@@ -5,7 +5,7 @@
 //! Native dispatch with GIL release, Busy protection and cooperative signal handling.
 use crate::quantities::PyProfileId;
 use crate::{api, error, inputs::*, options::*, reports::PyBatchReport};
-use pnm_input::{read_capture, CaptureLoader};
+use merlin::downstream::inputs::{read_capture, CaptureLoader};
 use pyo3::prelude::*;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
