@@ -90,7 +90,7 @@ impl FullLoopResult {
                 super::super::super::error::invalid("Retained PSD has no sample origin")
             })?;
         let length = grid.spacing.fft_samples() as usize;
-        let limit = length + (query.max_averages - 1) * (length / 2);
+        let limit = length + (query.max_averages - 1) * (length / owner::WELCH_HOP_DIVISOR);
         let join = matches!(
             query.stage,
             FullLoopStage::TxOverlap
@@ -127,41 +127,59 @@ impl FullLoopResult {
             }
         }
         let spectrum = owner::estimate(grid.spacing, grid.zero_frequency_hz, &samples)?;
-        let count = if query.count == 0 {
-            length.checked_sub(query.start).ok_or_else(|| {
-                super::super::super::error::invalid("PSD viewport starts outside FFT")
-            })?
-        } else {
-            query.count
-        };
-        let buckets = spectrum
-            .buckets(query.start, count)?
-            .into_iter()
-            .map(|bucket| TransmitterSpectrumBucket {
-                first_bin: bucket.first_bin,
-                last_bin: bucket.last_bin,
-                minimum_db: bucket.minimum_db,
-                maximum_db: bucket.maximum_db,
-            })
-            .collect();
         Ok(FullLoopSpectrum {
             stage: query.stage,
             context: first.context.clone(),
             first_sample,
             available_samples: samples.len(),
-            used_samples: length + (spectrum.averages - 1) * (length / 2),
+            used_samples: length + (spectrum.averages - 1) * (length / owner::WELCH_HOP_DIVISOR),
             snapshots_used,
-            power: TransmitterSpectrum {
-                reference_plane,
-                density_units: "normalized_sample_units_squared_per_hz",
-                sample_rate_hz: crate::transmission::settings::SAMPLE_RATE_HZ,
-                zero_frequency_hz: spectrum.zero_frequency_hz,
-                spacing_hz: spectrum.spacing_hz,
-                fft_samples: spectrum.fft_samples,
-                averages: spectrum.averages,
-                equivalent_noise_bandwidth_hz: spectrum.equivalent_noise_bandwidth_hz,
-                buckets,
-            },
+            power: spectrum_view(&spectrum, &query, reference_plane)?,
         })
     }
+}
+
+/// Projects an existing normalized PSD through the unchanged public bucket contract.
+/// # Arguments
+/// * `spectrum` - Full-resolution existing numerical-owner result.
+/// * `query` - Original physical FFT-bin viewport; zero count selects the remaining span.
+/// * `reference_plane` - Actual selected stage identity, independent of sampling basis.
+/// # Returns
+/// Owned bounded original-bin extrema and unchanged normalization metadata.
+/// # Errors
+/// Preserves original viewport/grid/bucket errors without changing scientific values.
+pub(super) fn spectrum_view(
+    spectrum: &owner::PowerSpectrum,
+    query: &FullLoopSpectrumQuery,
+    reference_plane: &'static str,
+) -> ApiResult<TransmitterSpectrum> {
+    let count = if query.count == 0 {
+        spectrum
+            .fft_samples
+            .checked_sub(query.start)
+            .ok_or_else(|| super::super::super::error::invalid("PSD viewport starts outside FFT"))?
+    } else {
+        query.count
+    };
+    let buckets = spectrum
+        .buckets(query.start, count)?
+        .into_iter()
+        .map(|bucket| TransmitterSpectrumBucket {
+            first_bin: bucket.first_bin,
+            last_bin: bucket.last_bin,
+            minimum_db: bucket.minimum_db,
+            maximum_db: bucket.maximum_db,
+        })
+        .collect();
+    Ok(TransmitterSpectrum {
+        reference_plane,
+        density_units: "normalized_sample_units_squared_per_hz",
+        sample_rate_hz: crate::transmission::settings::SAMPLE_RATE_HZ,
+        zero_frequency_hz: spectrum.zero_frequency_hz,
+        spacing_hz: spectrum.spacing_hz,
+        fft_samples: spectrum.fft_samples,
+        averages: spectrum.averages,
+        equivalent_noise_bandwidth_hz: spectrum.equivalent_noise_bandwidth_hz,
+        buckets,
+    })
 }

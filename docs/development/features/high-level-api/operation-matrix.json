@@ -5,9 +5,9 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "86a2aa0560b2bd4f57d74fb3533a467c63b35dcf plus exact physical-bin/transmit-role candidate manifest",
-    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-physical-native/native-exports.json",
-    "native_sha256": "ee8459bbef4715f93e3617ecfc0ecca533b064f22ce96047b5a238dfc4659e6f",
+    "revision": "c78c182c5ec18486580bbe224dc731714f89b16a plus exact ordered-frame spectrum and named-constant candidate manifest",
+    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-sequence-spectrum-style-native/native-exports.json",
+    "native_sha256": "07dfb59325f79670b601cbb5a9ee8022a5047a8b93a3488bf5380afa1f50141c",
     "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
     "legacy_compatibility": {
       "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
@@ -75,7 +75,9 @@
     "evidence.uiu-api-02-slicer": "../unified-qt-workbench/slicer-view-evidence.json, ../unified-qt-workbench/api-02-slicer-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-slicer-reference-and-soft-view-unit: actual source/wheel and exact successful owner/scientific/native cases.",
     "status.uiu-api-02-slicer": "Implemented owned labelled references, finite decision regions and actual selected-cell/coding-order soft views. Physical-spectrum/role and complete source-catalog/sweep parity keep API-02 open; no Qt adoption.",
     "evidence.uiu-api-02-physical": "../unified-qt-workbench/physical-view-evidence.json, ../unified-qt-workbench/api-02-physical-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-physical-bin-and-transmitted-role-unit: actual source/wheel and exact successful owner/scientific/native cases.",
-    "status.uiu-api-02-physical": "Implemented original full-FFT role inspection, actual retained bin power and typed transmitted-cell packing provenance. Calibrated/ordered-frame spectrum and complete catalog/sweep parity keep API-02 open; no Qt adoption."
+    "status.uiu-api-02-physical": "Implemented original full-FFT role inspection, actual retained bin power and typed transmitted-cell packing provenance. Calibrated/ordered-frame spectrum and complete catalog/sweep parity keep API-02 open; no Qt adoption.",
+    "evidence.uiu-api-02-sequence-spectrum": "../unified-qt-workbench/sequence-spectrum-evidence.json, ../unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-ordered-frame-stage-spectrum-unit: candidate/wheel hashes, exact passing cases, original segments and explicit diagnostic sampling basis.",
+    "status.uiu-api-02-sequence-spectrum": "Implemented explicit ordered frame-stage PSD over actual retained samples, original physical intervals, stop reasons and analyzed coverage; original contiguous spectrum is preserved. Calibrated channel spectra, scalar amplifier-boundary and catalog/sweep parity keep API-02 open; no Qt adoption."
   },
   "type_exports": {
     "downstream": [
@@ -918,6 +920,18 @@
       {
         "export": "merlin::downstream::PhysicalRoleSpan",
         "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopSequenceSpectrum",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopSpectrumSegment",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopSpectrumStop",
+        "kind": "enum"
       }
     ],
     "upstream": [
@@ -27301,6 +27315,74 @@
       },
       "evidence": "evidence.uiu-api-02-physical",
       "status": "status.uiu-api-02-physical"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::spectrum_sequence",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn spectrum_sequence( &self, query: FullLoopSpectrumQuery, ) -> ApiResult<FullLoopSequenceSpectrum>",
+        "source_file": "crates/ofdm/src/api/full_loop/instruments/sequence.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.spectrum_sequence",
+        "declaration": "merlin.downstream.FullLoopResult.spectrum_sequence"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopSequenceSpectrum>",
+        "scope": "Owned normalized Welch diagnostic over ordered actual frame-stage samples, original segment coordinates, analyzed coverage, true physical contiguity and explicit collection stop; no continuous-waveform claim, filled history or hidden execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_distinct",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit",
+          "crates/ofdm/src/signal_processing/waveform/stage_sequence.rs::literal_gap_overlap_and_contiguous_sequences_preserve_all_original_coordinates",
+          "crates/ofdm/src/signal_processing/waveform/stage_sequence.rs::missing_or_incompatible_history_stops_without_stitching_or_padding",
+          "crates/ofdm/src/signal_processing/waveform/stage_sequence.rs::initial_offset_work_frame_and_overflow_bounds_are_explicit"
+        ],
+        "python": {
+          "status": "installed native actual/limits/default metadata and independent direct-Rust-process cases",
+          "cases": [
+            "bindings/python/tests/test_spectrum_sequence.py::SpectrumSequenceTests.test_actual_frame_origins_averages_bounds_and_owned_results",
+            "bindings/python/tests/test_spectrum_sequence.py::SpectrumSequenceTests.test_direct_rust_process_ordered_frame_spectra_and_original_segments_match"
+          ],
+          "scope": "Original frame origins, physical gaps/overlaps, exact retained sample ordering, work/finite/index limits, incomplete frame stop, explicit default signature, owned results and separate actual Rust process parity. Independent expected numeric anchors remain separate from production constants."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-sequence-spectrum",
+      "status": "status.uiu-api-02-sequence-spectrum"
     }
   ],
   "executed_records": [
@@ -27317,7 +27399,8 @@
     "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -58236,6 +58319,80 @@
       },
       "evidence": "evidence.uiu-api-02-physical",
       "status": "status.uiu-api-02-physical"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.spectrum_sequence",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/sequence.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn spectrum_sequence( &self, query: FullLoopSpectrumQuery, ) -> ApiResult<FullLoopSequenceSpectrum>",
+        "mapping": "Checked primitive arguments construct the typed public Rust query and release the GIL; native defaults reuse the public Rust default policy, with explicit Python signature metadata tested independently. No sample assembly or numerical algorithm in Python.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::spectrum_sequence",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "spectrum_sequence",
+        "kind": "method",
+        "signature": "(self, /, stage='tx.ifft.samples', snapshot=0, max_averages=32, start=0, count=0)",
+        "declaration": "FullLoopResult.spectrum_sequence"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned normalized ordered-stage diagnostic PSD and original segment/coverage metadata; physical time and logical sequence positions remain separate. Limits and failures match Rust."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_distinct",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit",
+          "crates/ofdm/src/signal_processing/waveform/stage_sequence.rs::literal_gap_overlap_and_contiguous_sequences_preserve_all_original_coordinates",
+          "crates/ofdm/src/signal_processing/waveform/stage_sequence.rs::missing_or_incompatible_history_stops_without_stitching_or_padding",
+          "crates/ofdm/src/signal_processing/waveform/stage_sequence.rs::initial_offset_work_frame_and_overflow_bounds_are_explicit"
+        ],
+        "python": {
+          "status": "installed native actual/limits/default metadata and independent direct-Rust-process cases",
+          "cases": [
+            "bindings/python/tests/test_spectrum_sequence.py::SpectrumSequenceTests.test_actual_frame_origins_averages_bounds_and_owned_results",
+            "bindings/python/tests/test_spectrum_sequence.py::SpectrumSequenceTests.test_direct_rust_process_ordered_frame_spectra_and_original_segments_match"
+          ],
+          "scope": "Original frame origins, physical gaps/overlaps, exact retained sample ordering, work/finite/index limits, incomplete frame stop, explicit default signature, owned results and separate actual Rust process parity. Independent expected numeric anchors remain separate from production constants."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-sequence-spectrum",
+      "status": "status.uiu-api-02-sequence-spectrum"
     }
   ],
   "native_type_exports": {
@@ -59092,6 +59249,18 @@
       "revision": "1fd4160bb2e35013135f1002d03e0e6dd8d0fbe2 plus exact slicer-reference/soft-view candidate manifest",
       "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-slicer-native-final/native-exports.json",
       "native_sha256": "aa594b091e30b51408c9780c412dd05e2737ced20461bdb4e131698d7cc646a0",
+      "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "86a2aa0560b2bd4f57d74fb3533a467c63b35dcf plus exact physical-bin/transmit-role candidate manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-physical-native/native-exports.json",
+      "native_sha256": "ee8459bbef4715f93e3617ecfc0ecca533b064f22ce96047b5a238dfc4659e6f",
       "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
       "legacy_compatibility": {
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",

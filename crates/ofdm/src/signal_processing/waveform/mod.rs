@@ -12,6 +12,8 @@ pub mod ifft;
 pub mod overlap_add;
 pub mod samples;
 pub mod spectrum;
+#[cfg(all(feature = "simulation", feature = "pnm-input"))]
+pub(crate) mod stage_sequence;
 pub mod timing;
 mod transform;
 pub mod windowing;

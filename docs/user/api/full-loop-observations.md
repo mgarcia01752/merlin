@@ -79,9 +79,10 @@ print(window['element_start'], window['context']['sample_start_index'])
 The passive numerical operations below reuse those actual observations and existing
 scientific owners. [Selected receiver cells](full-loop-cells.md) add actual paired
 QAM/MER and bounded physical decisions; [reference and soft-value views](slicer-views.md)
-provide finite geometry and actual likelihood summaries. Physical-spectrum/role
-views and full source-catalog/sweep compatibility remain UIU-API-02 gates before
-Qt adoption.
+provide finite geometry and actual likelihood summaries. [Physical views](physical-views.md)
+preserve original FFT roles/power and typed transmitted-cell provenance. Calibrated
+channel-spectrum, scalar amplifier-boundary and full source-catalog/sweep
+compatibility remain UIU-API-02 gates before Qt adoption.
 
 ## Passive numerical observations
 
@@ -120,6 +121,56 @@ an event. These statistics describe that retained window, not all words or the
 run's decoder performance. No query changes inputs, retention counts, source
 state or completed science. Rust returns owned typed results; Python returns
 independent dictionaries and releases the GIL during numerical preparation.
+
+## Ordered frame-stage spectrum
+
+An IFFT/useful-frame display may inspect successive frames with their prefixes
+omitted. A windowed-frame display may inspect frames that overlap in physical
+time. `spectrum_sequence` provides an explicit diagnostic sequence for these
+retained stages, with matching Rust and native Python behavior. The normal
+`spectrum` operation above retains its physical sample-contiguity rules.
+
+```mermaid
+flowchart LR
+    F[Actual retained frame stages] --> S[Explicit ordered-stage sample sequence]
+    F --> M[Original per-frame symbols and sample origins]
+    S --> W[Existing bounded Welch owner]
+    M --> R[Diagnostic PSD and original segment metadata]
+    W --> R
+```
+
+Only IFFT, prefix, window and receiver useful-frame stages are admitted. Callers
+explicitly retain multiple frames through the existing observation policy; its
+default event limits are unchanged. The query never starts another run or fills
+missing history. It collects consecutive channel symbols with matching identity,
+phase, geometry and reference, checking the original physical symbol stride.
+A missing prefix in a later retained frame or an incomplete earlier frame stops
+collection, with an explicit reason. A final frame can be clipped by the finite
+analysis-work limit. Original gaps and overlaps remain visible in segment metadata.
+
+The result labels its sampling basis `ordered_frame_stage_samples`. It preserves
+each segment's original symbol, sample origin, retained offset/extent and total,
+alongside its diagnostic sequence position/count. `physically_contiguous` reports
+whether the contributing original intervals actually touch; one segment can be
+contiguous even when later history was unavailable. The result does not claim
+that concatenating useful/windowed frames reconstructs a transmitted or received
+continuous waveform.
+
+PSD uses the existing nominal 204.8 MHz analysis clock, original FFT-bin grid,
+periodic Hann window and 50% overlap. Values are normalized sample units squared
+per diagnostic Hz. For discontinuous physical segments this is a stage diagnostic,
+not the continuous RF waveform's PSD. Work remains bounded to 32 averages,
+N + 31*N/2 copied samples, 64 contributing frames and 2048 viewport buckets.
+`available_samples` counts collected values; `used_samples` counts values consumed
+by complete Welch windows. Each segment reports its analyzed share, so an unused
+partial tail is explicit. A truncated prefix frame can supply one complete FFT
+window while still reporting `incomplete_frame`; it cannot be stitched to the
+next retained frame as though its missing suffix existed.
+
+Python defaults to `tx.ifft.samples`. Rust explicitly selects an admitted stage
+in FullLoopSpectrumQuery; that existing query type's Default continues to select
+TX overlap samples for the original `spectrum` operation. Returned dictionaries
+own their values, and queries preserve retention counts, source/RNG and results.
 
 ## Retained TX PLC messages
 

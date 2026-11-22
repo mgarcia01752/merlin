@@ -104,7 +104,9 @@ impl TransmissionConfiguration {
 }
 
 pub(super) fn check_count(count: usize) -> ApiResult<()> {
-    if count > 8192 {
+    // The public physical/cell viewport fits one largest supported FFT grid.
+    let maximum_query_elements = SubcarrierSpacing::Khz25.fft_samples() as usize;
+    if count > maximum_query_elements {
         return Err(ApiError::new(
             ErrorCode::ResourceLimit,
             "Physical query exceeds 8192 elements",

@@ -9,6 +9,9 @@ use crate::{
 };
 use pyo3::prelude::*;
 
+/// Native transport byte ceiling, separate from stage geometry and scientific budgets.
+const MAX_STAGE_IDENTIFIER_BYTES: usize = 128;
+
 #[pymethods]
 impl PyTransmission {
     /// Copies authoritative configured physical roles using Rust's original-grid admission.
@@ -81,7 +84,7 @@ impl PyTransmission {
 /// # Errors
 /// Unknown or oversized identities raise the existing structured ApiError.
 pub(crate) fn stage_id(name: &str) -> PyResult<api::FullLoopStage> {
-    if name.len() > 128 {
+    if name.len() > MAX_STAGE_IDENTIFIER_BYTES {
         return Err(error(api::ApiError::new(
             api::ErrorCode::ResourceLimit,
             "Stage ID exceeds 128 bytes",

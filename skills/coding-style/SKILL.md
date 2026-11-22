@@ -267,8 +267,14 @@ signatures belong to the consuming PNM parser, not this toolkit.
 
 Name mode dimensions, generator parameters, permutations, decoder settings and
 application limits. Keep application safety limits distinct from protocol limits.
-Centralize definitions only when semantics actually match. Mathematical zeroes
-and tiny obvious loop origins need no artificial constants.
+Centralize definitions only when semantics actually match. Equal numeric values
+with different purposes need separate names, owners and rationale; a retained-frame
+budget and a Welch-average budget are separate policies even when both are three.
+Document intentional relationships and derive from authoritative domain owners
+instead of tying independent settings together. Audit changed production code,
+defaults, examples and tests for unexplained literals; keep independent expected
+vectors independent of implementation constants and label their fixture meaning.
+Mathematical zeroes and tiny obvious loop origins need no artificial constants.
 
 Use focused snake_case Rust modules and UpperCamelCase types. Signal-processing code
 must not depend on Qt, a transport or application state. Simulation crates forbid

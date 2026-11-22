@@ -16,6 +16,8 @@ use std::f64::consts::TAU;
 pub const MAX_SPECTRUM_AVERAGES: usize = 32;
 /// Maximum min/max buckets returned for a presentation viewport.
 pub const MAX_SPECTRUM_POINTS: usize = 2048;
+/// Two equal FFT-length parts give the existing 50 percent Welch hop.
+pub(crate) const WELCH_HOP_DIVISOR: usize = 2;
 
 /// Full-resolution centered PSD; powers are normalized sample units squared/Hz.
 #[derive(Clone)]
@@ -65,7 +67,7 @@ pub fn estimate(
     samples: &[IqPair],
 ) -> Result<PowerSpectrum, SimulationError> {
     let length = spacing.fft_samples() as usize;
-    let hop = length / 2;
+    let hop = length / WELCH_HOP_DIVISOR;
     if samples.len() < length || samples.len() > length + (MAX_SPECTRUM_AVERAGES - 1) * hop {
         return Err(invalid(
             "Spectrum needs 1..32 complete overlapping FFT windows.",

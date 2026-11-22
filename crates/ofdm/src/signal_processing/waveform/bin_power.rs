@@ -5,6 +5,9 @@
 //! Instantaneous power of existing complex FFT bins, without another transform or PSD scaling.
 use crate::{error::invalid, SimulationError};
 
+/// Squared complex magnitude is a power ratio, whose dB conversion is 10 log10.
+const POWER_DECIBEL_FACTOR: f64 = 10.0;
+
 /// Computes squared magnitude of an existing FFT bin without PSD scaling.
 /// # Arguments
 /// * `value` - Original complex I/Q; None denotes unavailable history.
@@ -25,7 +28,10 @@ pub(crate) fn bin_power(
     if !power.is_finite() {
         return Err(invalid("FFT-bin power overflows finite units"));
     }
-    Ok((Some(power), (power > 0.0).then(|| 10.0 * power.log10())))
+    Ok((
+        Some(power),
+        (power > 0.0).then(|| POWER_DECIBEL_FACTOR * power.log10()),
+    ))
 }
 
 #[cfg(test)]

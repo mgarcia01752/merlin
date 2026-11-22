@@ -694,3 +694,57 @@ Calibrated channel spectra/power, explicit ordered-frame PSD, legacy scalar
 amplifier-boundary views, complete source-catalog/sweep compatibility and final
 API-02 acceptance remain open. No hosted, installer, publication, external
 interoperability or wider PHY support is claimed.
+
+## UIU-API-02 ordered frame-stage spectrum unit
+
+The [candidate manifest](sequence-spectrum-evidence.json) and
+[executed operation record](api-02-sequence-spectrum-operation-test-results.json)
+link exact source/wheel hashes and named cases. The
+[sampling contract](../../../user/api/full-loop-observations.md#ordered-frame-stage-spectrum)
+keeps logical frame-stage ordering separate from physical sample time.
+
+`FullLoopResult::spectrum_sequence` admits actual IFFT, prefix, window and RX
+useful frames. The waveform owner checks consecutive symbols and original stride,
+retains original segment coordinates, stops at incompatible/incomplete history,
+and reports true physical contiguity and analyzed coverage. Existing Welch math
+and the unchanged PSD viewport projection supply the numerical values. The
+original contiguous `spectrum` operation and default retention limits are preserved.
+
+Validation passes 20 API/scientific cases and all 31 library cases, including
+three independent gap/overlap/stride/offset/truncation/limit vectors. Actual-loop
+queries match literal concatenation of retained original I/Q through the existing
+Welch owner; the original query still uses a single frame at these boundaries.
+A truncated prefix event supplies one complete FFT window, reports its missing
+suffix and stops before joining the next event. Both numerologies retain their
+independent tone/integral/bandwidth checks. Analysis-only tests pass 139 cases
+with doctest checks. Workspace/native Clippy, formatting and 77 validation-tool
+cases pass with warnings denied.
+
+The exact local Linux CPython 3.10 wheel passes all 104 installed native cases,
+including two focused default-metadata/actual/direct-Rust-process cases. The
+accepted default remains 32 and is visible in the real importable method
+signature. A test-only constant rename initially changed the invalid value 33
+into an undefined identifier; after correcting that expression, the complete
+installed suite and metadata inventory were rerun against the identical wheel
+and successful separate Rust references. The failed attempt remains recorded;
+no scientific source or wheel changed during that retry. A final naming-only review
+separated unavailable-snapshot and mutation markers, absolute/relative tolerances
+and transport byte limits, and clarified the borrowed-sample lifetime. A fresh
+wheel and isolated full 104-case suite pass for that final source candidate;
+unchanged successful independent Rust references were retained. The final core
+library and workspace Clippy checks also pass.
+
+The numeric audit derives FFT dimensions from SubcarrierSpacing and Welch work
+from its existing owner. Application frame/role-span/identifier limits have
+separate owners; retention count, Welch average count, view windows and reference/
+source fixtures have distinct names even when values coincide. Independent
+expected test anchors remain independent of implementation constants. The local
+coding-style skill now explicitly requires this purpose/units/rationale audit.
+No accepted numeric limit, source value or existing public behavior changes.
+
+Compiler/native inventories trace 512 Rust and 495 native operations; the prior
+511/494 row prefixes and historical alias corrections remain intact. All 178 Qt
+files remain unchanged and the frozen legacy boundary passes. Calibrated channel
+spectra/power, scalar amplifier-boundary views, complete source-catalog/sweep
+compatibility and final API-02 acceptance remain open. This unit does not establish
+Qt, hosted, installer, external interoperability or wider PHY acceptance.

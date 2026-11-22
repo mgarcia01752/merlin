@@ -11,6 +11,7 @@ mod options;
 mod physical;
 mod request;
 mod result;
+mod sequence;
 mod soft;
 mod worker;
 use crate::{api, error, object_from_json};

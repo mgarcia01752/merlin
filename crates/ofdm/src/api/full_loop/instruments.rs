@@ -4,12 +4,14 @@
  */
 //! Passive numerical queries delegate to existing directional scientific owners.
 mod response;
+mod sequence;
 mod spectrum;
 use super::*;
 pub use crate::signal_processing::receiver::diagnostics::{
     LlrStatistics as FullLoopLlrStatistics, ResponseDiagnostics as FullLoopResponseDiagnostics,
 };
 pub use response::*;
+pub use sequence::*;
 use serde::{Deserialize, Serialize};
 pub use spectrum::*;
 

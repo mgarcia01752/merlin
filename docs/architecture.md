@@ -997,7 +997,7 @@ bound PSD accumulation; missing history stops the span. Configured H and retaine
 receiver H-hat use explicit separate sources/reference planes and original excluded
 gaps. Python converts owned results and releases the interpreter lock during work;
 neither adapter introduces scientific calculations. Remaining calibrated spectrum,
-ordered-frame PSD and complete catalog/sweep compatibility remain API-02 gates.
+scalar amplifier-boundary and complete catalog/sweep compatibility remain API-02 gates.
 `api/full_loop/messages` inspects actual retained TX PLC frames through the existing
 frame parser, CRC-validated MAC reassembler and descriptor owner. Typed TLV meanings
 reuse decoded receiver settings and accepted modulation metadata; adapters only
@@ -1035,8 +1035,18 @@ roles only for the first proven aligned source symbol; later history stays
 unknown. All queries are bounded to 8192 bins/cells, retain original context and
 reuse backend role geometry. Qt retains screen coordinates, labels and colors.
 See the [physical view contract](user/api/physical-views.md). Channel-power
-calibration, explicit ordered-frame PSD and complete catalog/sweep compatibility
-remain separate API-02 gates.
+calibration, scalar amplifier-boundary views and complete catalog/sweep
+compatibility remain separate API-02 gates.
+
+`api/full_loop/instruments/sequence` adds an explicitly ordered frame-stage
+spectrum diagnostic over actual retained IFFT, prefix, window or RX useful frames.
+A focused waveform owner preserves each original channel symbol/sample interval,
+checks consecutive symbols and physical stride, and stops at incompatible or
+incomplete history. It reports diagnostic sequence positions separately from
+physical origins and true contiguity; no prefix gap is filled or overlap added.
+The existing Welch owner and one unchanged PSD viewport projection supply bounded
+normalized values. The original contiguous `spectrum` operation and retention
+defaults remain compatible. See the [sampling-basis contract](user/api/full-loop-observations.md#ordered-frame-stage-spectrum).
 
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 

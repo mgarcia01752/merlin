@@ -681,6 +681,178 @@ fn policy() -> FullLoopObservationPolicy {
 }
 
 #[test]
+fn ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_distinct() {
+    // Fixture policies are independent even where their chosen values coincide.
+    const RETAINED_FRAMES_PER_STAGE: usize = 3;
+    const WELCH_AVERAGES_PER_QUERY: usize = 3;
+    const EXPECTED_FFT_SAMPLES: usize = 8192;
+    const EXPECTED_TWO_FRAME_SAMPLES: usize = 16384;
+    const FIRST_VIEW_BIN: usize = 123;
+    const VIEW_BIN_COUNT: usize = 7;
+    use docsis_ofdm_fec::signal_processing::waveform::spectrum::estimate;
+    let mut input = FullLoopObservationInput::default();
+    let stages = [
+        FullLoopStage::TxIfft,
+        FullLoopStage::TxPrefix,
+        FullLoopStage::TxWindow,
+        FullLoopStage::RxUseful,
+    ];
+    for retention in &mut input.stages {
+        if stages.contains(&retention.stage) {
+            retention.max_events = RETAINED_FRAMES_PER_STAGE;
+        }
+    }
+    let result = request()
+        .with_observations(FullLoopObservationPolicy::new(input).unwrap())
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    let before = serde_json::to_value(result.observation_stats()).unwrap();
+    for stage in stages {
+        let query = FullLoopSpectrumQuery {
+            stage,
+            max_averages: WELCH_AVERAGES_PER_QUERY,
+            start: FIRST_VIEW_BIN,
+            count: VIEW_BIN_COUNT,
+            ..Default::default()
+        };
+        let sequence = result.spectrum_sequence(query.clone()).unwrap();
+        assert_eq!(sequence.sampling_basis, "ordered_frame_stage_samples");
+        assert_eq!(sequence.available_samples, EXPECTED_TWO_FRAME_SAMPLES);
+        assert_eq!(sequence.used_samples, EXPECTED_TWO_FRAME_SAMPLES);
+        assert_eq!(sequence.power.averages, WELCH_AVERAGES_PER_QUERY);
+        assert_eq!(sequence.segments.len(), 2);
+        assert_eq!(sequence.stop, FullLoopSpectrumStop::WorkLimit);
+        assert_eq!(
+            sequence.physically_contiguous,
+            stage == FullLoopStage::TxPrefix
+        );
+        assert_eq!(
+            sequence
+                .segments
+                .iter()
+                .map(|s| s.analyzed_samples)
+                .sum::<usize>(),
+            sequence.used_samples
+        );
+        let original = result.spectrum(query).unwrap();
+        assert_eq!(original.snapshots_used, 1);
+        assert_eq!(original.power.averages, 1);
+        let mut samples = Vec::new();
+        for segment in &sequence.segments {
+            let first = result
+                .stage(
+                    stage,
+                    segment.retained_index,
+                    FullLoopStageViewport { start: 0, count: 1 },
+                )
+                .unwrap();
+            assert_eq!(
+                segment.original_sample_start,
+                first.context.sample_start_index.unwrap()
+            );
+            assert_eq!(segment.total_elements, first.total_elements);
+            assert_eq!(
+                segment.channel_symbol_index,
+                first.context.channel_symbol_index.unwrap()
+            );
+            for start in (0..segment.sample_count).step_by(MAX_STAGE_QUERY_ELEMENTS) {
+                let raw = result
+                    .stage(
+                        stage,
+                        segment.retained_index,
+                        FullLoopStageViewport {
+                            start,
+                            count: MAX_STAGE_QUERY_ELEMENTS.min(segment.sample_count - start),
+                        },
+                    )
+                    .unwrap();
+                let FullLoopStageData::Iq(values) = raw.data else {
+                    unreachable!()
+                };
+                samples.extend(values);
+            }
+        }
+        let grid = sequence.context.physical_grid.unwrap();
+        let direct = estimate(grid.spacing, grid.zero_frequency_hz, &samples).unwrap();
+        for (actual, expected) in sequence
+            .power
+            .buckets
+            .iter()
+            .zip(direct.buckets(FIRST_VIEW_BIN, VIEW_BIN_COUNT).unwrap())
+        {
+            assert_eq!(actual.minimum_db, expected.minimum_db);
+            assert_eq!(actual.maximum_db, expected.maximum_db);
+        }
+    }
+    for stage in [
+        FullLoopStage::PhysicalBins,
+        FullLoopStage::TxOverlap,
+        FullLoopStage::RxFft,
+    ] {
+        assert_eq!(
+            result
+                .spectrum_sequence(FullLoopSpectrumQuery {
+                    stage,
+                    ..Default::default()
+                })
+                .err()
+                .unwrap()
+                .code(),
+            ErrorCode::UnsupportedCapability
+        );
+    }
+    for max_averages in [0, 33, usize::MAX] {
+        assert!(result
+            .spectrum_sequence(FullLoopSpectrumQuery {
+                stage: FullLoopStage::TxIfft,
+                max_averages,
+                ..Default::default()
+            })
+            .is_err());
+    }
+    assert!(result
+        .spectrum_sequence(FullLoopSpectrumQuery {
+            stage: FullLoopStage::TxIfft,
+            start: EXPECTED_FFT_SAMPLES,
+            ..Default::default()
+        })
+        .is_err());
+    assert_eq!(
+        serde_json::to_value(result.observation_stats()).unwrap(),
+        before
+    );
+    assert_eq!(result.report().summary.comparison.bit_errors, 0);
+    let mut truncated = FullLoopObservationInput {
+        max_elements_per_event: EXPECTED_FFT_SAMPLES,
+        ..Default::default()
+    };
+    truncated
+        .stages
+        .iter_mut()
+        .find(|entry| entry.stage == FullLoopStage::TxPrefix)
+        .unwrap()
+        .max_events = RETAINED_FRAMES_PER_STAGE;
+    let partial = request()
+        .with_observations(FullLoopObservationPolicy::new(truncated).unwrap())
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    let view = partial
+        .spectrum_sequence(FullLoopSpectrumQuery {
+            stage: FullLoopStage::TxPrefix,
+            max_averages: WELCH_AVERAGES_PER_QUERY,
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!(view.stop, FullLoopSpectrumStop::IncompleteFrame);
+    assert_eq!(view.segments.len(), 1);
+    assert_eq!(view.available_samples, EXPECTED_FFT_SAMPLES);
+    assert_eq!(view.power.averages, 1);
+    assert!(view.segments[0].retained_elements < view.segments[0].total_elements);
+}
+
+#[test]
 fn configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid() {
     let transmission = TransmissionConfiguration::new(TransmissionSettings::default()).unwrap();
     let bytes =

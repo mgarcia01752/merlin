@@ -733,6 +733,63 @@ Paths in the first five rows are relative to `crates/ofdm/src/` unless prefixed
 with `bindings/`. Existing public methods/defaults and raw-stage query limits are
 preserved. Source-only and planning passes cannot establish Qt acceptance.
 
+### UIU-API-02 ordered frame-stage spectrum unit
+
+Add `FullLoopResult::spectrum_sequence(FullLoopSpectrumQuery)` and matching native
+`FullLoopResult.spectrum_sequence(stage="tx.ifft.samples", snapshot=0,
+max_averages=32, start=0, count=0)`. Only actual IFFT, prefixed, windowed and
+receiver useful-frame stages are admitted. Existing `spectrum` continues to join
+only physically contiguous origins at its admitted boundaries; its signatures,
+defaults and outputs stay compatible.
+
+The new diagnostic concatenates retained consecutive stage frames on an explicit
+ordered-frame sample clock. Preserve each contributing channel symbol, original
+sample origin, element offset/total, retained extent and sequence offset/count.
+Report true physical contiguity and why collection stopped. Missing phase/run/
+configuration/geometry/reference continuity, skipped channel symbols, unexpected
+original stride, partial-frame history or finite work limits stop collection.
+Never fill a gap, overlap-add another signal, rerun a source or silently call this
+a continuous waveform. First-frame selected offsets are preserved; later frames
+must begin at their original element zero. Only fully retained earlier frames
+may precede another segment; the final segment may be clipped by the work bound.
+
+Reuse the existing Welch owner (periodic Hann, 50% overlap, at most 32 averages,
+2048 buckets). Bound assembled work to N + 31*N/2 and 64 contributing frames;
+retain collected versus actually analyzed sample counts and segment coverage.
+The API supplies matching-context admission; a focused waveform owner handles
+sequence/stride/window assembly. No scientific implementation belongs in Qt or
+Python. Observation defaults stay unchanged: a caller explicitly requests more
+than one frame to retain legacy multi-frame diagnostic views.
+
+| Disposition | Owner/files | Contract and acceptance |
+| --- | --- | --- |
+| Reuse | `crates/ofdm/src/simulation/waveform/observation.rs`, `crates/ofdm/src/signal_processing/waveform/spectrum.rs` | Actual frame origins/geometry and existing normalized Welch computation; original source remains unchanged. |
+| Add | `crates/ofdm/src/signal_processing/waveform/stage_sequence.rs` | Bounded original-index segment assembly; independent literal gap/overlap/stride/truncation and overflow vectors. |
+| Add | `crates/ofdm/src/api/full_loop/instruments/sequence.rs` | Typed public query/result, explicit sampling basis, matching contexts and analyzed segment accounting. |
+| Edit | `crates/ofdm/src/api/full_loop/instruments/spectrum.rs` | Reuse one existing PSD-to-public-viewport projection without changing normal spectrum behavior. |
+| Add | `bindings/python/src/full_loop/sequence.rs`, `bindings/python/tests/test_spectrum_sequence.py` | Thin GIL-released operation and installed-wheel source/limits/ownership/direct-Rust parity. |
+| Edit | Parent module registrations, root native stub, actual full-loop example and `crates/ofdm/tests/api_full_loop_observations.rs` | Public re-exports/signature, separate process reference and comparisons against literal concatenation of actual retained frames; existing contiguous query remains distinct. |
+
+The user reinforced the coding-style/no-magic-number rule during this unit.
+Derive the FFT work ceiling from existing SubcarrierSpacing numerology and
+MAX_SPECTRUM_AVERAGES; share the existing 50-percent hop through a named waveform
+constant. Name application frame/role-span/identifier limits separately from PHY
+dimensions. Apply the same additive style correction to the preceding physical
+views without changing its accepted numeric limits or behavior. Keep independent
+literal numerical test anchors distinct from production-derived constants.
+The actual audit keeps FRAME_EVENTS_PER_STAGE and FRAME_SEQUENCE_WELCH_AVERAGES
+separate, as well as reference-page offsets, decision rows and selected soft-cell
+counts. MAX_STAGE_SEQUENCE_FRAMES is application retention policy;
+MAX_PHYSICAL_ROLE_SPANS is overlay policy; MAX_STAGE_IDENTIFIER_BYTES is native
+transport policy. None is reused as a constellation order or PHY dimension merely
+because a value coincides. The example's MER, capture epoch/grid, source seed and
+host/decoder limits also have explicit fixture names. No values change.
+
+
+Trace through REQ-UIU-02/07/09/16/17/24 and UIU-API-02. Calibrated channel-power/
+spectrum, scalar amplifier-boundary and complete source-catalog/sweep compatibility
+remain subsequent gates; this unit does not adopt the API in Qt.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

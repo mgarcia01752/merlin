@@ -7,6 +7,9 @@ use super::{CarrierLayout, PhysicalCarrierRole};
 use crate::{error::invalid, SimulationError};
 use serde::Serialize;
 
+/// Application overlay budget; all requested per-bin roles are still preserved.
+const MAX_PHYSICAL_ROLE_SPANS: usize = 1024;
+
 /// One original increasing-frequency FFT location; Data may transport NCP or filler.
 #[derive(Serialize)]
 #[non_exhaustive]
@@ -60,7 +63,7 @@ pub(crate) fn layout_view(
         .filter(|n| *n > 0)
         .ok_or_else(|| invalid("Physical layout start is outside the original FFT grid"))?;
     let count = if count == 0 { remaining } else { count };
-    if count > remaining || count > 8192 {
+    if count > remaining {
         return Err(invalid(
             "Physical layout window is outside the original FFT grid",
         ));
@@ -85,7 +88,7 @@ pub(crate) fn layout_view(
             end += 1;
         }
         spans += 1;
-        if role_spans.len() < 1024 {
+        if role_spans.len() < MAX_PHYSICAL_ROLE_SPANS {
             role_spans.push(PhysicalRoleSpan {
                 first_bin: first as u16,
                 end_exclusive: end as u16,
