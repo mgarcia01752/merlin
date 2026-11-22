@@ -24,18 +24,39 @@ pub struct FullLoopRequest {
     pub(super) options: FullLoopOptions,
     pub(super) inputs: FullLoopInputs,
     pub(super) observation_policy: Option<FullLoopObservationPolicy>,
+    pub(super) response_tolerance: AssociationTolerance,
+    pub(super) independent_response: bool,
 }
 impl FullLoopRequest {
     pub(super) fn prepare(inputs: FullLoopInputs, options: FullLoopOptions) -> ApiResult<Self> {
+        Self::prepare_with_response_tolerance(inputs, options, None)
+    }
+
+    /// Admits either the existing shared tolerance or an explicit independent H policy.
+    /// # Arguments
+    /// * `inputs`, `options` - Owned accepted scientific inputs and execution limits.
+    /// * `response_tolerance` - Explicit H/profile tolerance, or None for legacy sequence reuse.
+    /// # Returns
+    /// Frozen idle request without source/RNG advancement.
+    /// # Errors
+    /// Preserves existing scientific, association and resource admission failures.
+    pub(super) fn prepare_with_response_tolerance(
+        inputs: FullLoopInputs,
+        options: FullLoopOptions,
+        response_tolerance: Option<AssociationTolerance>,
+    ) -> ApiResult<Self> {
         options.validate()?;
         inputs.transmission.check_profile(&inputs.profile)?;
         let playback = inputs
             .measurements
             .full_loop_playback(&inputs.transmission, &inputs.profile)?;
+        let independent_response = response_tolerance.is_some();
+        let response_tolerance =
+            response_tolerance.unwrap_or(AssociationTolerance::new(playback.tolerance_seconds)?);
         inputs.transmission.check_response(
             &inputs.profile,
             inputs.response.as_ref(),
-            AssociationTolerance::new(playback.tolerance_seconds)?,
+            response_tolerance,
         )?;
         let settings = inputs.transmission.settings();
         let mut run = ChannelRunSettings::new(
@@ -71,11 +92,20 @@ impl FullLoopRequest {
             transitions: vec![],
             frame_index: 0,
             profile_id: inputs.profile.profile_id().value(),
-            channel_index: inputs.response.as_ref().map(|_| 0),
+            // Explicit H admission uses its own profile/epoch policy above. The
+            // legacy path retains the original first-RxMER/H association check.
+            channel_index: if independent_response {
+                None
+            } else {
+                inputs.response.as_ref().map(|_| 0)
+            },
             tolerance_seconds: playback.tolerance_seconds,
             noise_seed: options.noise_seed,
         }
         .apply(&scenario, &mut run)?;
+        if independent_response {
+            run.impairments.response = inputs.response.as_ref().map(|value| value.frame.clone());
+        }
         run.playback = Some(playback);
         run.constellation = options.constellation.clone();
         run.protected_constellation = options.protected_constellation.clone();
@@ -85,6 +115,8 @@ impl FullLoopRequest {
             options,
             inputs,
             observation_policy: None,
+            response_tolerance,
+            independent_response,
         })
     }
 
@@ -100,6 +132,13 @@ impl FullLoopRequest {
     /// Borrowed immutable policy; run state belongs to a separate one-shot control.
     pub fn options(&self) -> &FullLoopOptions {
         &self.options
+    }
+
+    /// Reads the frozen original H/profile epoch-association tolerance.
+    /// # Returns
+    /// Whole-second tolerance, separate from the retained RxMER sequence tolerance.
+    pub fn response_tolerance(&self) -> AssociationTolerance {
+        self.response_tolerance
     }
 
     /// Executes the existing bounded full loop synchronously with safe-boundary controls.

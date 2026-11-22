@@ -25,6 +25,10 @@ name = "run_single_capture"
 path = "../../examples/api/rust/run_single_capture.rs"
 
 [[example]]
+name = "run_saved_full_loop"
+path = "../../examples/api/rust/run_saved_full_loop.rs"
+
+[[example]]
 name = "run_rxmer_selection_parity"
 path = "../../examples/api/rust/run_rxmer_selection_parity.rs"
 

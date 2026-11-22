@@ -252,6 +252,11 @@ retains `merlin_estimated` for compatibility; input also accepts
 
 ## Load a saved workbench
 
+The [saved full-loop preparation operation](saved-full-loop.md) additionally
+preserves UI file/fill sources, temporal playback and independent H/RxMER
+association policies through the public controlled request/sweep APIs. Loading
+stays idle. The legacy loader below retains its existing behavior.
+
 Use `pnm_input::Workbench::from_file(path)` to load embedded captures and saved
 settings directly, without restating scientific constants. Loading preflights
 but does not run; `workbench.run()` returns one owned batch per saved selected

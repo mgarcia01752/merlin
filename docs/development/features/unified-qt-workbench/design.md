@@ -1409,3 +1409,116 @@ precedence over master section 13's allowance to call underlying owners.
 Ranges in this navigation table refer to the individual stable IDs in the
 canonical baseline; exact per-task links and acceptance criteria are in the
 official checklist. No range or planning record establishes runtime acceptance.
+
+
+## UIU-API-05 direction-aware public project admission
+
+REQ-UIU-02/13/22/23/24 require idle, self-contained, bounded projects through both
+APIs. API-01 and API-04 are accepted prerequisites. This design precedes API-05
+implementation; its parent remains unchecked until both directions, installed
+Python, compatibility and aggregate-input gates pass. Qt chooser/dirty/write
+and recovery transport remain FILE-01/RECOVERY-01.
+
+The Apache-2.0 native input adapter owns project admission. The facade only
+re-exports it under optional `native-input`; the `merlin-api` leaf gains no PHY
+or adapter dependency. Independent PHYs and old imports remain unchanged.
+
+### Selected envelope and limits
+
+Schema 1/2 bytes retain downstream interpretation and exact original JSON.
+Schema 3 has exactly `schema_version: 3`, `application: "MERLIN"`,
+`direction: "downstream" | "upstream"` and direction-specific `contents`.
+Unknown typed fields/versions and mismatched payloads reject. Downstream contents
+hold `workbench` (the exact original UTF-8 schema 1/2 document string) and optional
+`observations` (the existing typed FullLoopObservationInput). This keeps original
+embedded bytes/recipes/settings without a second base64 layer or changing the
+legacy schema. No automatic migration rewrites user files.
+
+Upstream contents hold `input` with exactly `kind: "configuration" | "measured"`
+and `document` (exact original configuration/measured-plan JSON string), explicit
+`options` (grants, maximum_samples, chunk_samples, timeout_ms, retained_points,
+retained_taps) and `receiver_observations` (maximum_frames,
+maximum_scalar_slots and optional soft maximum_cells/maximum_words/
+maximum_word_llrs). Existing constructors validate every execution/observation
+setting, including mode-specific admission. C, H, synthetic plans and captured
+source lineage remain owned by their existing documents, never reconstructed by
+Qt. Loading builds an idle accepted candidate; an explicit public request/session
+run remains necessary. Saving never serializes results, live controls or RNG state.
+
+The per-document budget remains 144 MiB, embedded originals 16 MiB each and total
+originals 96 MiB. The existing upstream input document limit remains 16 MiB.
+A collection admits at most two distinct directions, at most 288 MiB serialized
+project bytes and at most 96 MiB combined retained original inputs. These are
+separate named application policies, independent of decoder/sample/result bounds.
+All additions/counts are checked before decoding/retention. Serialization is
+bounded and returns bytes/string only; safe destination replacement belongs to
+Qt. A maximal legacy input may fail schema-3 export if wrapper overhead exceeds
+the unchanged file budget; it remains readable without truncation.
+
+### Operations and implementation units
+
+First add `Workbench::prepare_full_loop(bytes: &[u8]) -> ApiResult<FullLoopSweepPlan>`
+in `crates/pnm-input/src/workbench/full_loop.rs`. Its native static mirror is
+`Workbench.prepare_full_loop(data: bytes) -> FullLoopSweepPlan`. The existing
+Workbench loaders/runs retain their legacy contract. This new entry point uses
+the same strict legacy DTO/integrity decoder and Designer admission, but builds
+the accepted FullLoopInputs/MeasurementSequence/SourceInput/ChannelConfiguration
+and sweep owners. It supports actual UI file/fill sources and single/average/
+hold/interpolate modes without a second engine. Capture selection retains stored
+inventory order; profile selection retains schema-version precedence and sorted
+checked IDs. Profile/H time tolerance stays distinct from RxMER/profile tolerance.
+The audit also finds that the existing full-loop constructor uses the RxMER
+association tolerance for H. Add the compatible public
+`Simulation::prepare_full_loop_with_response_tolerance(inputs, options, tolerance)`
+and native static mirror, plus `FullLoopRequest::response_tolerance()` / native
+property. The existing constructor keeps its behavior. The frozen request and
+sweep carry the separately accepted H tolerance through every selected profile;
+no tolerance is widened or silently substituted. This is an admission-only
+extension in `crates/ofdm/src/api/full_loop/{request,sweep}.rs` and `full_loop.rs`,
+with native conversions in `bindings/python/src/full_loop/request.rs`.
+All selected/unselected original hashes are checked before admission. Run options
+retain duration, noise seed, iterations, receiver mode, MCE, filter, loss and power.
+
+Then add adapter-owned `Project`, `ProjectDirection`, `ProjectError` and resource
+metadata in `crates/pnm-input/src/project/`. Public operations are `from_bytes`,
+`from_file`, `direction`, `original_document`, `to_json`, `downstream_plan`,
+`upstream_simulation` and `collection_info`; they expose existing owned typed
+requests/sessions, not a generic simulation interface. `merlin::common` re-exports
+these optional native-input contracts. Python `merlin.common.Project` mirrors
+them using existing native request/session classes, structured shared categories,
+owned copies and GIL release for admission. Wrong-direction access fails without
+mutating the accepted project. Per-direction API configuration stays separate.
+
+### Reuse and file map
+
+| Path and symbol | Inspected contract / gap | Decision and destination |
+| --- | --- | --- |
+| `crates/pnm-input/src/workbench.rs` Document/Stored/Workbench | Strict legacy integrity, original ownership, Designer; old execution omits file/timeline modes | REUSE DTO/decoding in child `workbench/full_loop.rs`; preserve old loader/run behavior. |
+| `crates/ofdm/src/api/full_loop.rs`, `full_loop/sweep.rs`, `sequence.rs`, `admission.rs`, `channel.rs` | Accepted typed source, playback, channel, request and complete-catalog preflight | REUSE scientific admission and execution; no new scientific calculations. |
+| `crates/pnm-input/src/upstream/association.rs`, `crates/ofdma/src/configuration/document.rs`, `api/session.rs` | Exact original documents, measured association/lineage and atomic idle configuration | REUSE for upstream project candidates, explicit options and observation policies. |
+| `crates/merlin/src/lib.rs` | Re-export-only optional input feature | EDIT curated common project exports after implementation; preserve all old exports. |
+| `bindings/python/src/workbench.rs`, `full_loop/sweep.rs`, proposed `project.rs`; upstream simulation wrapper | Existing native objects and Busy/error conversion | ADAPT ownership conversion only; import-only modules/stubs remain aligned. |
+| Proposed `crates/pnm-input/tests/workbench_full_loop.rs`, `project.rs`; native project tests and Rust example | Direction/schema/idle/round-trip and actual-run evidence missing | ADD targeted independent input/settings/bounds/cancelled and actual engine parity cases. |
+| `apps/qt/src/workbench/project_file.rs` | GPL presentation file lifecycle and UI-produced legacy schema | REUSE schema fixtures as compatibility evidence; no Qt code migration in this API unit. |
+
+Acceptance covers old fixtures and a saved Designer recipe, exact original bytes,
+file fill/bit order, temporal order/capacity, receiver/channel settings, unsupported
+or corrupt/version/hash/aggregate bounds, atomic rejection, owned snapshots and
+bounded deterministic actual runs. Rust/native comparisons use a separate Rust
+process. Record actual elapsed times. Preserve every prior matrix row/assertion,
+append new operations and keep final installed/Qt acceptance distinct.
+
+### UIU-API-05 saved downstream full-loop unit
+
+The first implementation unit adds idle `Workbench::prepare_full_loop` and the
+independent response tolerance operation described above. Existing legacy loaders
+and constructors retain their original behavior. Native document versions and
+shared saved-input budgets now belong to
+`crates/pnm-input/src/common/constants.rs`; `workbench::MAX_WORKBENCH_BYTES`
+remains a public re-export. Channel model and channel power versions have separate
+names because their formats evolve independently. These input limits are separate
+from scientific sample, observation and result budgets.
+
+The [scoped acceptance record](validation.md#uiu-api-05-saved-downstream-full-loop-unit)
+closes only this prerequisite. Schema 3, upstream projects, aggregate admission and
+Qt file/recovery adoption remain pending under the parent task.

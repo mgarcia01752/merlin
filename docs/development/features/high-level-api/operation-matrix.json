@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "189bae5e88228bf459e78f3e17d2785d9085acb1 plus exact QAM/received-display candidate manifest",
-    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-04-display-native-final/native-exports.json",
-    "native_sha256": "14db9aaed873329422f7633e9df086b797207b1a3106990c3a24921f10a190be",
-    "scope": "Targeted installed Linux CPython 3.10 QAM/receiver/response and namespace acceptance. Full native/Rust/Qt regression remains the final integration gate.",
+    "revision": "a2c6342dd78732b9d73042394f4f39d223aab9f8 plus exact saved-full-loop candidate manifest",
+    "inventory_command": "Installed current candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-05-workbench-native-current/native-exports.json",
+    "native_sha256": "b0b267e93f412c9d06a3cb2958344abb0f7579c8f14963bd924098217ed1e83c",
+    "scope": "Focused installed Linux CPython 3.10 saved full-loop and namespace acceptance. Parent API-05 and final Qt acceptance remain separate.",
     "legacy_compatibility": {
       "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
       "preserved_class_exports": 59,
@@ -102,7 +102,10 @@
     "evidence.uiu-api-04-display": "../unified-qt-workbench/qam-display-evidence.json, ../unified-qt-workbench/api-04-display-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-04-qam-pairing-and-received-response-display-unit: exact candidate/wheel, 22 scoped upstream, 19 facade and 19 installed native cases. Full API-04 integration gate remains pending.",
     "status.uiu-api-04-display": "Implemented compatible actual unit-reference QAM/source labels, exact retained-stage pairs and actual received-estimate dB/phase. Raw stage/data/default JSON remain compatible; unsupported overlays remain explicit. Identified API-04 instrument gaps are implemented; final parent integration gate remains pending, with no Qt adoption.",
     "units.uiu-api-04-display": "Original raw stage/run/generation/grant/frame/symbol/carrier/role/loading metadata remains unchanged. TX uses recorded prescribed role gain; RX equalized values already have unit-reference scaling. Canonical upstream MSB-first labels remain independent of pilot zero payload loading. Exact coordinate pairing preserves both raw stage planes and whole retained selected/matched/unpaired counts, separate from FEC/source coverage. Observation, reference and pair-copy budgets have separate owners.",
-    "units.uiu-api-04-display-received": "Original optional received-pilot effective CxH transfer plus twenty-log amplitude dB and principal phase radians, absent for missing and exact-zero estimates. Shared robust projection preserves original frequencies and configured/received error contexts; no floor, full-band impulse inference or configured truth substitution."
+    "units.uiu-api-04-display-received": "Original optional received-pilot effective CxH transfer plus twenty-log amplitude dB and principal phase radians, absent for missing and exact-zero estimates. Shared robust projection preserves original frequencies and configured/received error contexts; no floor, full-band impulse inference or configured truth substitution.",
+    "evidence.uiu-api-05-workbench": "../unified-qt-workbench/saved-full-loop-evidence.json, ../unified-qt-workbench/api-05-workbench-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-05-saved-downstream-full-loop-unit: 7 saved-input, 8 full-loop, 10 facade and 9 installed native cases; exact source/wheel/reference hashes.",
+    "status.uiu-api-05-workbench": "Implemented additive idle legacy-project full-loop preparation and independent H/profile tolerance. Existing constructors, loaders, schemas, original bytes and scientific implementations remain compatible. Direction-tagged schema3, upstream project admission, aggregate inputs and Qt file/recovery adoption keep API-05 open.",
+    "units.uiu-api-05-workbench": "Original file/capture bytes and SHA-256; source/fill bits and separate PRBS seeds; measurement clock in physical OFDM symbols; original epoch association in whole seconds with separate H/profile and RxMER/profile tolerances; bounded explicit run duration/runtime and profile selection."
   },
   "type_exports": {
     "downstream": [
@@ -30203,6 +30206,322 @@
       },
       "evidence": "evidence.uiu-api-04-display",
       "status": "status.uiu-api-04-display"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopRequest::response_tolerance",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn response_tolerance(&self) -> AssociationTolerance",
+        "source_file": "crates/ofdm/src/api/full_loop/request.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopRequest.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopRequest.response_tolerance",
+        "declaration": "FullLoopRequest.response_tolerance"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-05-workbench",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "AssociationTolerance",
+        "scope": "Original file/capture bytes and SHA-256; source/fill bits and separate PRBS seeds; measurement clock in physical OFDM symbols; original epoch association in whole seconds with separate H/profile and RxMER/profile tolerances; bounded explicit run duration/runtime and profile selection. Idle owned plan/request; explicit existing controls execute it."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-22",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-05"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/workbench_full_loop.rs::legacy_and_selected_projects_preserve_idle_settings_and_original_inputs",
+          "crates/pnm-input/tests/workbench_full_loop.rs::saved_response_and_rxmer_epoch_policies_remain_independent",
+          "crates/pnm-input/tests/workbench_full_loop.rs::file_and_fill_keep_exact_bytes_and_dormant_fields_do_not_replace_selection",
+          "crates/pnm-input/tests/workbench_full_loop.rs::timeline_uses_stored_selection_order_and_exact_synthetic_clock_capacity",
+          "crates/pnm-input/tests/workbench_full_loop.rs::designer_recipe_reuses_shared_materialization_without_rewriting_original",
+          "crates/pnm-input/tests/workbench_full_loop.rs::corrupted_unselected_originals_unknown_fields_and_budget_fail_before_adoption",
+          "crates/pnm-input/tests/workbench_full_loop.rs::actual_saved_full_loop_preserves_fec_and_independent_recovered_source",
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/api_full_loop.rs::independent_response_tolerance_preserves_measurement_policy_and_sweep_admission",
+          "crates/ofdm/tests/api_full_loop.rs::mixed_source_catalog_admits_supported_loading_without_losing_raw_ids_or_provenance",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_preflights_sorted_originals_and_preserves_independent_controls_partial_reports_and_retention",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_rejects_complete_invalid_selection_atomically_and_keeps_current_edited_request_exact",
+          "crates/merlin/tests/namespaces.rs::facade_saved_downstream_preparation_returns_existing_idle_public_plan",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+        ],
+        "python": {
+          "status": "Scoped installed saved-project and namespace cases pass without skips",
+          "cases": [
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual saved PRBS/FEC, exact recovered file bytes, typed file/fill and temporal settings, independent timestamp policies, integrity and separate Rust-process parity. No full API-05 or Qt acceptance claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-05-workbench",
+      "status": "status.uiu-api-05-workbench"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::Simulation::prepare_full_loop_with_response_tolerance",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn prepare_full_loop_with_response_tolerance( inputs: FullLoopInputs, options: FullLoopOptions, tolerance: AssociationTolerance, ) -> ApiResult<FullLoopRequest>",
+        "source_file": "crates/ofdm/src/api/full_loop.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.Simulation.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.Simulation.prepare_full_loop_with_response_tolerance",
+        "declaration": "Simulation.prepare_full_loop_with_response_tolerance"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-05-workbench",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopRequest>",
+        "scope": "Original file/capture bytes and SHA-256; source/fill bits and separate PRBS seeds; measurement clock in physical OFDM symbols; original epoch association in whole seconds with separate H/profile and RxMER/profile tolerances; bounded explicit run duration/runtime and profile selection. Idle owned plan/request; explicit existing controls execute it."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-22",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-05"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/workbench_full_loop.rs::legacy_and_selected_projects_preserve_idle_settings_and_original_inputs",
+          "crates/pnm-input/tests/workbench_full_loop.rs::saved_response_and_rxmer_epoch_policies_remain_independent",
+          "crates/pnm-input/tests/workbench_full_loop.rs::file_and_fill_keep_exact_bytes_and_dormant_fields_do_not_replace_selection",
+          "crates/pnm-input/tests/workbench_full_loop.rs::timeline_uses_stored_selection_order_and_exact_synthetic_clock_capacity",
+          "crates/pnm-input/tests/workbench_full_loop.rs::designer_recipe_reuses_shared_materialization_without_rewriting_original",
+          "crates/pnm-input/tests/workbench_full_loop.rs::corrupted_unselected_originals_unknown_fields_and_budget_fail_before_adoption",
+          "crates/pnm-input/tests/workbench_full_loop.rs::actual_saved_full_loop_preserves_fec_and_independent_recovered_source",
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/api_full_loop.rs::independent_response_tolerance_preserves_measurement_policy_and_sweep_admission",
+          "crates/ofdm/tests/api_full_loop.rs::mixed_source_catalog_admits_supported_loading_without_losing_raw_ids_or_provenance",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_preflights_sorted_originals_and_preserves_independent_controls_partial_reports_and_retention",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_rejects_complete_invalid_selection_atomically_and_keeps_current_edited_request_exact",
+          "crates/merlin/tests/namespaces.rs::facade_saved_downstream_preparation_returns_existing_idle_public_plan",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+        ],
+        "python": {
+          "status": "Scoped installed saved-project and namespace cases pass without skips",
+          "cases": [
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual saved PRBS/FEC, exact recovered file bytes, typed file/fill and temporal settings, independent timestamp policies, integrity and separate Rust-process parity. No full API-05 or Qt acceptance claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-05-workbench",
+      "status": "status.uiu-api-05-workbench"
+    },
+    {
+      "direction": "downstream",
+      "operation": "pnm_input::Workbench::prepare_full_loop",
+      "rust_namespace": "pnm_input",
+      "rust_type_method": {
+        "signature": "pub fn prepare_full_loop(bytes: &[u8]) -> ApiResult<FullLoopSweepPlan>",
+        "source_file": "crates/pnm-input/src/workbench/full_loop.rs",
+        "rustdoc": "pnm_input/workbench/struct.Workbench.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.Workbench.prepare_full_loop",
+        "declaration": "Workbench.prepare_full_loop"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-05-workbench",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopSweepPlan>",
+        "scope": "Original file/capture bytes and SHA-256; source/fill bits and separate PRBS seeds; measurement clock in physical OFDM symbols; original epoch association in whole seconds with separate H/profile and RxMER/profile tolerances; bounded explicit run duration/runtime and profile selection. Idle owned plan/request; explicit existing controls execute it."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-22",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-05"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/workbench_full_loop.rs::legacy_and_selected_projects_preserve_idle_settings_and_original_inputs",
+          "crates/pnm-input/tests/workbench_full_loop.rs::saved_response_and_rxmer_epoch_policies_remain_independent",
+          "crates/pnm-input/tests/workbench_full_loop.rs::file_and_fill_keep_exact_bytes_and_dormant_fields_do_not_replace_selection",
+          "crates/pnm-input/tests/workbench_full_loop.rs::timeline_uses_stored_selection_order_and_exact_synthetic_clock_capacity",
+          "crates/pnm-input/tests/workbench_full_loop.rs::designer_recipe_reuses_shared_materialization_without_rewriting_original",
+          "crates/pnm-input/tests/workbench_full_loop.rs::corrupted_unselected_originals_unknown_fields_and_budget_fail_before_adoption",
+          "crates/pnm-input/tests/workbench_full_loop.rs::actual_saved_full_loop_preserves_fec_and_independent_recovered_source",
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/api_full_loop.rs::independent_response_tolerance_preserves_measurement_policy_and_sweep_admission",
+          "crates/ofdm/tests/api_full_loop.rs::mixed_source_catalog_admits_supported_loading_without_losing_raw_ids_or_provenance",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_preflights_sorted_originals_and_preserves_independent_controls_partial_reports_and_retention",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_rejects_complete_invalid_selection_atomically_and_keeps_current_edited_request_exact",
+          "crates/merlin/tests/namespaces.rs::facade_saved_downstream_preparation_returns_existing_idle_public_plan",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+        ],
+        "python": {
+          "status": "Scoped installed saved-project and namespace cases pass without skips",
+          "cases": [
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual saved PRBS/FEC, exact recovered file bytes, typed file/fill and temporal settings, independent timestamp policies, integrity and separate Rust-process parity. No full API-05 or Qt acceptance claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-05-workbench",
+      "status": "status.uiu-api-05-workbench"
+    },
+    {
+      "direction": "downstream",
+      "operation": "pnm_input::workbench::Workbench::prepare_full_loop",
+      "rust_namespace": "pnm_input::workbench",
+      "rust_type_method": {
+        "signature": "pub fn prepare_full_loop(bytes: &[u8]) -> ApiResult<FullLoopSweepPlan>",
+        "source_file": "crates/pnm-input/src/workbench/full_loop.rs",
+        "rustdoc": "pnm_input/workbench/struct.Workbench.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.Workbench.prepare_full_loop",
+        "declaration": "Workbench.prepare_full_loop"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-05-workbench",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopSweepPlan>",
+        "scope": "Original file/capture bytes and SHA-256; source/fill bits and separate PRBS seeds; measurement clock in physical OFDM symbols; original epoch association in whole seconds with separate H/profile and RxMER/profile tolerances; bounded explicit run duration/runtime and profile selection. Idle owned plan/request; explicit existing controls execute it."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-22",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-05"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/workbench_full_loop.rs::legacy_and_selected_projects_preserve_idle_settings_and_original_inputs",
+          "crates/pnm-input/tests/workbench_full_loop.rs::saved_response_and_rxmer_epoch_policies_remain_independent",
+          "crates/pnm-input/tests/workbench_full_loop.rs::file_and_fill_keep_exact_bytes_and_dormant_fields_do_not_replace_selection",
+          "crates/pnm-input/tests/workbench_full_loop.rs::timeline_uses_stored_selection_order_and_exact_synthetic_clock_capacity",
+          "crates/pnm-input/tests/workbench_full_loop.rs::designer_recipe_reuses_shared_materialization_without_rewriting_original",
+          "crates/pnm-input/tests/workbench_full_loop.rs::corrupted_unselected_originals_unknown_fields_and_budget_fail_before_adoption",
+          "crates/pnm-input/tests/workbench_full_loop.rs::actual_saved_full_loop_preserves_fec_and_independent_recovered_source",
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/api_full_loop.rs::independent_response_tolerance_preserves_measurement_policy_and_sweep_admission",
+          "crates/ofdm/tests/api_full_loop.rs::mixed_source_catalog_admits_supported_loading_without_losing_raw_ids_or_provenance",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_preflights_sorted_originals_and_preserves_independent_controls_partial_reports_and_retention",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_rejects_complete_invalid_selection_atomically_and_keeps_current_edited_request_exact",
+          "crates/merlin/tests/namespaces.rs::facade_saved_downstream_preparation_returns_existing_idle_public_plan",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+        ],
+        "python": {
+          "status": "Scoped installed saved-project and namespace cases pass without skips",
+          "cases": [
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual saved PRBS/FEC, exact recovered file bytes, typed file/fill and temporal settings, independent timestamp policies, integrity and separate Rust-process parity. No full API-05 or Qt acceptance claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-05-workbench",
+      "status": "status.uiu-api-05-workbench"
     }
   ],
   "executed_records": [
@@ -30228,7 +30547,8 @@
     "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -63982,6 +64302,346 @@
       },
       "evidence": "evidence.uiu-api-04-display",
       "status": "status.uiu-api-04-display"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopRequest.response_tolerance",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopRequest",
+        "source_file": "bindings/python/src/full_loop/request.rs",
+        "symbol": "PyFullLoopRequest",
+        "signature": "pub fn response_tolerance(&self) -> AssociationTolerance",
+        "mapping": "Checked native conversion and owned public request/plan handles. Rust performs scientific admission, Designer reconstruction and execution; GIL is released for preparation. Existing aliases share the exact native class. No Python science or project reconstruction.",
+        "delegated_operation": "merlin::downstream::FullLoopRequest::response_tolerance",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native property",
+        "name": "response_tolerance",
+        "kind": "property",
+        "signature": null,
+        "declaration": "FullLoopRequest.response_tolerance"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.uiu-api-05-workbench",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopRequest",
+        "scope": "Original file/capture bytes and SHA-256; source/fill bits and separate PRBS seeds; measurement clock in physical OFDM symbols; original epoch association in whole seconds with separate H/profile and RxMER/profile tolerances; bounded explicit run duration/runtime and profile selection."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-22",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-05"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/workbench_full_loop.rs::legacy_and_selected_projects_preserve_idle_settings_and_original_inputs",
+          "crates/pnm-input/tests/workbench_full_loop.rs::saved_response_and_rxmer_epoch_policies_remain_independent",
+          "crates/pnm-input/tests/workbench_full_loop.rs::file_and_fill_keep_exact_bytes_and_dormant_fields_do_not_replace_selection",
+          "crates/pnm-input/tests/workbench_full_loop.rs::timeline_uses_stored_selection_order_and_exact_synthetic_clock_capacity",
+          "crates/pnm-input/tests/workbench_full_loop.rs::designer_recipe_reuses_shared_materialization_without_rewriting_original",
+          "crates/pnm-input/tests/workbench_full_loop.rs::corrupted_unselected_originals_unknown_fields_and_budget_fail_before_adoption",
+          "crates/pnm-input/tests/workbench_full_loop.rs::actual_saved_full_loop_preserves_fec_and_independent_recovered_source",
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/api_full_loop.rs::independent_response_tolerance_preserves_measurement_policy_and_sweep_admission",
+          "crates/ofdm/tests/api_full_loop.rs::mixed_source_catalog_admits_supported_loading_without_losing_raw_ids_or_provenance",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_preflights_sorted_originals_and_preserves_independent_controls_partial_reports_and_retention",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_rejects_complete_invalid_selection_atomically_and_keeps_current_edited_request_exact",
+          "crates/merlin/tests/namespaces.rs::facade_saved_downstream_preparation_returns_existing_idle_public_plan",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+        ],
+        "python": {
+          "status": "Scoped installed saved-project and namespace cases pass without skips",
+          "cases": [
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual saved PRBS/FEC, exact recovered file bytes, typed file/fill and temporal settings, independent timestamp policies, integrity and separate Rust-process parity. No full API-05 or Qt acceptance claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-05-workbench",
+      "status": "status.uiu-api-05-workbench"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.Merlin.prepare_full_loop_with_response_tolerance",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::Simulation",
+        "source_file": "bindings/python/src/full_loop/request.rs",
+        "symbol": "PyMerlin",
+        "signature": "pub fn prepare_full_loop_with_response_tolerance( inputs: FullLoopInputs, options: FullLoopOptions, tolerance: AssociationTolerance, ) -> ApiResult<FullLoopRequest>",
+        "mapping": "Checked native conversion and owned public request/plan handles. Rust performs scientific admission, Designer reconstruction and execution; GIL is released for preparation. Existing aliases share the exact native class. No Python science or project reconstruction.",
+        "delegated_operation": "merlin::downstream::Simulation::prepare_full_loop_with_response_tolerance",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "prepare_full_loop_with_response_tolerance",
+        "kind": "method",
+        "signature": "(transmission, profile, source, measurements, channel, tolerance, response=None, options=None)",
+        "declaration": "Merlin.prepare_full_loop_with_response_tolerance"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.uiu-api-05-workbench",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::Simulation",
+        "scope": "Original file/capture bytes and SHA-256; source/fill bits and separate PRBS seeds; measurement clock in physical OFDM symbols; original epoch association in whole seconds with separate H/profile and RxMER/profile tolerances; bounded explicit run duration/runtime and profile selection."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-22",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-05"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/workbench_full_loop.rs::legacy_and_selected_projects_preserve_idle_settings_and_original_inputs",
+          "crates/pnm-input/tests/workbench_full_loop.rs::saved_response_and_rxmer_epoch_policies_remain_independent",
+          "crates/pnm-input/tests/workbench_full_loop.rs::file_and_fill_keep_exact_bytes_and_dormant_fields_do_not_replace_selection",
+          "crates/pnm-input/tests/workbench_full_loop.rs::timeline_uses_stored_selection_order_and_exact_synthetic_clock_capacity",
+          "crates/pnm-input/tests/workbench_full_loop.rs::designer_recipe_reuses_shared_materialization_without_rewriting_original",
+          "crates/pnm-input/tests/workbench_full_loop.rs::corrupted_unselected_originals_unknown_fields_and_budget_fail_before_adoption",
+          "crates/pnm-input/tests/workbench_full_loop.rs::actual_saved_full_loop_preserves_fec_and_independent_recovered_source",
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/api_full_loop.rs::independent_response_tolerance_preserves_measurement_policy_and_sweep_admission",
+          "crates/ofdm/tests/api_full_loop.rs::mixed_source_catalog_admits_supported_loading_without_losing_raw_ids_or_provenance",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_preflights_sorted_originals_and_preserves_independent_controls_partial_reports_and_retention",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_rejects_complete_invalid_selection_atomically_and_keeps_current_edited_request_exact",
+          "crates/merlin/tests/namespaces.rs::facade_saved_downstream_preparation_returns_existing_idle_public_plan",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+        ],
+        "python": {
+          "status": "Scoped installed saved-project and namespace cases pass without skips",
+          "cases": [
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual saved PRBS/FEC, exact recovered file bytes, typed file/fill and temporal settings, independent timestamp policies, integrity and separate Rust-process parity. No full API-05 or Qt acceptance claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-05-workbench",
+      "status": "status.uiu-api-05-workbench"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.Simulation.prepare_full_loop_with_response_tolerance",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::Simulation",
+        "source_file": "bindings/python/src/full_loop/request.rs",
+        "symbol": "PyMerlin",
+        "signature": "pub fn prepare_full_loop_with_response_tolerance( inputs: FullLoopInputs, options: FullLoopOptions, tolerance: AssociationTolerance, ) -> ApiResult<FullLoopRequest>",
+        "mapping": "Checked native conversion and owned public request/plan handles. Rust performs scientific admission, Designer reconstruction and execution; GIL is released for preparation. Existing aliases share the exact native class. No Python science or project reconstruction.",
+        "delegated_operation": "merlin::downstream::Simulation::prepare_full_loop_with_response_tolerance",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "prepare_full_loop_with_response_tolerance",
+        "kind": "method",
+        "signature": "(transmission, profile, source, measurements, channel, tolerance, response=None, options=None)",
+        "declaration": "Simulation.prepare_full_loop_with_response_tolerance"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.uiu-api-05-workbench",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::Simulation",
+        "scope": "Original file/capture bytes and SHA-256; source/fill bits and separate PRBS seeds; measurement clock in physical OFDM symbols; original epoch association in whole seconds with separate H/profile and RxMER/profile tolerances; bounded explicit run duration/runtime and profile selection."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-22",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-05"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/workbench_full_loop.rs::legacy_and_selected_projects_preserve_idle_settings_and_original_inputs",
+          "crates/pnm-input/tests/workbench_full_loop.rs::saved_response_and_rxmer_epoch_policies_remain_independent",
+          "crates/pnm-input/tests/workbench_full_loop.rs::file_and_fill_keep_exact_bytes_and_dormant_fields_do_not_replace_selection",
+          "crates/pnm-input/tests/workbench_full_loop.rs::timeline_uses_stored_selection_order_and_exact_synthetic_clock_capacity",
+          "crates/pnm-input/tests/workbench_full_loop.rs::designer_recipe_reuses_shared_materialization_without_rewriting_original",
+          "crates/pnm-input/tests/workbench_full_loop.rs::corrupted_unselected_originals_unknown_fields_and_budget_fail_before_adoption",
+          "crates/pnm-input/tests/workbench_full_loop.rs::actual_saved_full_loop_preserves_fec_and_independent_recovered_source",
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/api_full_loop.rs::independent_response_tolerance_preserves_measurement_policy_and_sweep_admission",
+          "crates/ofdm/tests/api_full_loop.rs::mixed_source_catalog_admits_supported_loading_without_losing_raw_ids_or_provenance",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_preflights_sorted_originals_and_preserves_independent_controls_partial_reports_and_retention",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_rejects_complete_invalid_selection_atomically_and_keeps_current_edited_request_exact",
+          "crates/merlin/tests/namespaces.rs::facade_saved_downstream_preparation_returns_existing_idle_public_plan",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+        ],
+        "python": {
+          "status": "Scoped installed saved-project and namespace cases pass without skips",
+          "cases": [
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual saved PRBS/FEC, exact recovered file bytes, typed file/fill and temporal settings, independent timestamp policies, integrity and separate Rust-process parity. No full API-05 or Qt acceptance claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-05-workbench",
+      "status": "status.uiu-api-05-workbench"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.Workbench.prepare_full_loop",
+      "rust_namespace": "pnm_input",
+      "rust_type_method": {
+        "export": "pnm_input::Workbench",
+        "source_file": "bindings/python/src/workbench.rs",
+        "symbol": "PyWorkbench",
+        "signature": "pub fn prepare_full_loop(bytes: &[u8]) -> ApiResult<FullLoopSweepPlan>",
+        "mapping": "Checked native conversion and owned public request/plan handles. Rust performs scientific admission, Designer reconstruction and execution; GIL is released for preparation. Existing aliases share the exact native class. No Python science or project reconstruction.",
+        "delegated_operation": "pnm_input::Workbench::prepare_full_loop",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "prepare_full_loop",
+        "kind": "method",
+        "signature": "(data)",
+        "declaration": "Workbench.prepare_full_loop"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-05-workbench",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "pnm_input::Workbench",
+        "scope": "Original file/capture bytes and SHA-256; source/fill bits and separate PRBS seeds; measurement clock in physical OFDM symbols; original epoch association in whole seconds with separate H/profile and RxMER/profile tolerances; bounded explicit run duration/runtime and profile selection."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-22",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-05"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/workbench_full_loop.rs::legacy_and_selected_projects_preserve_idle_settings_and_original_inputs",
+          "crates/pnm-input/tests/workbench_full_loop.rs::saved_response_and_rxmer_epoch_policies_remain_independent",
+          "crates/pnm-input/tests/workbench_full_loop.rs::file_and_fill_keep_exact_bytes_and_dormant_fields_do_not_replace_selection",
+          "crates/pnm-input/tests/workbench_full_loop.rs::timeline_uses_stored_selection_order_and_exact_synthetic_clock_capacity",
+          "crates/pnm-input/tests/workbench_full_loop.rs::designer_recipe_reuses_shared_materialization_without_rewriting_original",
+          "crates/pnm-input/tests/workbench_full_loop.rs::corrupted_unselected_originals_unknown_fields_and_budget_fail_before_adoption",
+          "crates/pnm-input/tests/workbench_full_loop.rs::actual_saved_full_loop_preserves_fec_and_independent_recovered_source",
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/api_full_loop.rs::independent_response_tolerance_preserves_measurement_policy_and_sweep_admission",
+          "crates/ofdm/tests/api_full_loop.rs::mixed_source_catalog_admits_supported_loading_without_losing_raw_ids_or_provenance",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_preflights_sorted_originals_and_preserves_independent_controls_partial_reports_and_retention",
+          "crates/ofdm/tests/api_full_loop.rs::sweep_rejects_complete_invalid_selection_atomically_and_keeps_current_edited_request_exact",
+          "crates/merlin/tests/namespaces.rs::facade_saved_downstream_preparation_returns_existing_idle_public_plan",
+          "crates/merlin/tests/namespaces.rs::downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "crates/merlin/tests/namespaces.rs::upstream_namespace_executes_real_loop_and_preserves_structured_errors",
+          "crates/merlin/tests/namespaces.rs::shared_precancellation_reaches_both_directions_and_retains_source_context",
+          "crates/merlin/tests/namespaces.rs::common_cancellation_unblocks_an_acknowledged_upstream_pause",
+          "crates/merlin/tests/namespaces.rs::every_downstream_export_retains_legacy_type_identity",
+          "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+        ],
+        "python": {
+          "status": "Scoped installed saved-project and namespace cases pass without skips",
+          "cases": [
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+          ],
+          "scope": "Actual saved PRBS/FEC, exact recovered file bytes, typed file/fill and temporal settings, independent timestamp policies, integrity and separate Rust-process parity. No full API-05 or Qt acceptance claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-05-workbench",
+      "status": "status.uiu-api-05-workbench"
     }
   ],
   "native_type_exports": {
@@ -64975,6 +65635,30 @@
       "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-04-soft-native/native-exports.json",
       "native_sha256": "cf34c0b2a8c6b631b173fba0c785904786fc3b59f3a58298f87fca434e79dee6",
       "scope": "Targeted installed Linux CPython 3.10 soft/receiver/recovery and namespace acceptance. Full native/Rust/Qt regression remains the final integration gate.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "189bae5e88228bf459e78f3e17d2785d9085acb1 plus exact QAM/received-display candidate manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-04-display-native-final/native-exports.json",
+      "native_sha256": "14db9aaed873329422f7633e9df086b797207b1a3106990c3a24921f10a190be",
+      "scope": "Targeted installed Linux CPython 3.10 QAM/receiver/response and namespace acceptance. Full native/Rust/Qt regression remains the final integration gate.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "bbaed98b2ddb0cb37da33191b0c931ece064ac68 plus exact saved-full-loop candidate manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-05-workbench-native-final/native-exports.json",
+      "native_sha256": "68394e41bd4347ea9866f31cbf73ccfe49829d0d1636f66babbd4e042bee3157",
+      "scope": "Focused installed Linux CPython 3.10 saved full-loop and namespace acceptance. Parent API-05 and final Qt acceptance remain separate.",
       "legacy_compatibility": {
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
         "preserved_class_exports": 59,

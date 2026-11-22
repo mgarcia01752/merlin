@@ -4,6 +4,11 @@
  */
 //! Bounded saved-workbench import into existing Qt-independent API controllers.
 mod designer;
+mod full_loop;
+use crate::common::constants::{
+    CHANNEL_MODEL_SCHEMA_VERSION, CHANNEL_POWER_SCHEMA_VERSION, MAX_CAPTURES, MAX_EMBEDDED_BYTES,
+    MAX_TOTAL_ORIGINAL_BYTES, WORKBENCH_SCHEMA_V1, WORKBENCH_SCHEMA_V2,
+};
 use crate::CaptureLoader;
 use base64::{engine::general_purpose::STANDARD, Engine};
 pub use designer::{RxMerDesign, RxMerDesignPosition, MAX_RXMER_RECIPE_BYTES};
@@ -12,11 +17,7 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeSet, io::Read, path::Path, sync::Arc};
 
-/// Maximum complete saved WB JSON size, matching the desktop file budget.
-pub const MAX_WORKBENCH_BYTES: usize = 144 * 1024 * 1024;
-const MAX_EMBEDDED_BYTES: usize = 16 * 1024 * 1024;
-const MAX_TOTAL_ORIGINAL_BYTES: usize = 96 * 1024 * 1024;
-const MAX_CAPTURES: usize = 256;
+pub use crate::common::constants::MAX_WORKBENCH_BYTES;
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -217,7 +218,9 @@ impl Workbench {
             ));
         }
         let doc: Document = serde_json::from_slice(bytes).map_err(|e| invalid(e.to_string()))?;
-        if ![1, 2].contains(&doc.schema_version) || doc.application != "MERLIN" {
+        if ![WORKBENCH_SCHEMA_V1, WORKBENCH_SCHEMA_V2].contains(&doc.schema_version)
+            || doc.application != "MERLIN"
+        {
             return Err(unsupported("Unsupported WB schema/application"));
         }
         doc.transmission.validate()?;
@@ -229,7 +232,7 @@ impl Workbench {
                 "WB has no accepted receiver settings",
             )
         })?;
-        if doc.schema_version == 1 && receiver.selected_profile_ids.is_some() {
+        if doc.schema_version == WORKBENCH_SCHEMA_V1 && receiver.selected_profile_ids.is_some() {
             return Err(invalid("Explicit profile selection requires WB schema 2"));
         }
         if !(1..=1000).contains(&receiver.duration_ms)
@@ -337,13 +340,13 @@ impl Workbench {
             ..Default::default()
         };
         if let Some(loss) = doc.sections.channel_model {
-            if loss.schema_version != 1 {
+            if loss.schema_version != CHANNEL_MODEL_SCHEMA_VERSION {
                 return Err(unsupported("Unsupported WB channel model version"));
             }
             processing.additional_loss = loss.additional_loss;
         }
         if let Some(power) = doc.sections.channel_power {
-            if power.schema_version != 1 {
+            if power.schema_version != CHANNEL_POWER_SCHEMA_VERSION {
                 return Err(unsupported("Unsupported WB channel power version"));
             }
             processing.power = power.conditioning;

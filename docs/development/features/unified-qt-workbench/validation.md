@@ -1179,3 +1179,31 @@ API-04 is complete within its declared backend support. Qt instrument adoption,
 native rendering, hosted jobs, installer lifecycle, hardware and external
 interoperability remain separate gates. The next eligible task is API-05's
 direction-aware public project admission.
+
+## UIU-API-05 saved downstream full-loop unit
+
+The [exact candidate evidence](saved-full-loop-evidence.json) and
+[executed operation cases](api-05-workbench-operation-test-results.json) trace
+REQ-UIU-02/22/24 to the additive legacy-project preparation unit. Seven saved-input
+cases, eight existing/new full-loop cases and ten facade cases pass; nine installed
+Linux CPython 3.10 cases pass without skips. The current candidate also reruns the
+saved-input, independent-response and facade cases after shared constants moved
+to their authoritative native document owner. Receipts distinguish these scoped
+runs from the preceding complete full-loop run.
+
+Original file bytes `81 00 5a` recover exactly with a finite 64-bit target and
+independent fill seed 7, while dormant continuous-source seed zero is ignored.
+An independently established 17-second H/profile difference admits with zero
+RxMER/profile tolerance; 16 seconds rejects. Sweeps preserve both policies.
+All selected and unselected originals are integrity checked. Actual saved PRBS/FEC
+summaries, settings and provenance match a separate Rust-process reference;
+Designer output matches the existing shared materialization. Playback retains
+stored inventory order and physical-symbol intervals, with duration-capacity
+rejection before execution.
+
+The [single operation matrix](../high-level-api/compatibility-matrix.md) appends
+four Rust and four native operations, preserving every previous row and assertion.
+Existing Workbench loaders keep their static PRBS contract. There are no Qt source
+changes. Direction-tagged schema 3, upstream project admission, aggregate input
+budgets and the parent API-05 acceptance gate remain unfinished. Native rendering,
+hosted jobs, installers and external interoperability are separate gates.

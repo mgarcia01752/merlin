@@ -55,4 +55,22 @@ impl Simulation {
     ) -> ApiResult<FullLoopRequest> {
         FullLoopRequest::prepare(inputs, options)
     }
+
+    /// Prepares a request with independent H/profile and RxMER/profile tolerances.
+    /// # Arguments
+    /// * `inputs` - Owned accepted inputs; the measurement sequence retains its own tolerance.
+    /// * `options` - Explicit bounded execution and observation policy.
+    /// * `tolerance` - Maximum whole-second original H/profile epoch distance.
+    /// # Returns
+    /// Owned idle request preserving the separately accepted response tolerance through sweeps.
+    /// Existing prepare_full_loop behavior remains unchanged; no source or RNG advances.
+    /// # Errors
+    /// Preserves scientific, identity, epoch, coverage and resource admission errors.
+    pub fn prepare_full_loop_with_response_tolerance(
+        inputs: FullLoopInputs,
+        options: FullLoopOptions,
+        tolerance: AssociationTolerance,
+    ) -> ApiResult<FullLoopRequest> {
+        FullLoopRequest::prepare_with_response_tolerance(inputs, options, Some(tolerance))
+    }
 }

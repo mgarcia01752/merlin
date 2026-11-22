@@ -9,7 +9,18 @@ use pyo3::types::PySequence;
 
 #[pyclass(from_py_object, frozen, module = "merlin", name = "FullLoopSweepPlan")]
 #[derive(Clone)]
-pub(super) struct PyFullLoopSweepPlan(api::FullLoopSweepPlan);
+pub(crate) struct PyFullLoopSweepPlan(api::FullLoopSweepPlan);
+
+impl PyFullLoopSweepPlan {
+    /// Owns an already validated public plan without reconfiguring or executing it.
+    /// # Arguments
+    /// * `plan` - Idle Rust-owned sweep prepared through the public API.
+    /// # Returns
+    /// Independent native handle retaining the same immutable inputs and policies.
+    pub(crate) fn from_native(plan: api::FullLoopSweepPlan) -> Self {
+        Self(plan)
+    }
+}
 
 #[pymethods]
 impl PyFullLoopSweepPlan {

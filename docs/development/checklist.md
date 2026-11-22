@@ -489,7 +489,7 @@ and implementation/acceptance remain pending; earlier eligible tasks continue.
   Dependencies: [UIU-API-01](#task-uiu-api-01), [UIU-API-04](#task-uiu-api-04).
   Architecture/files: [api owner](../architecture.md#unified-qt-public-api-boundary), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Finalize schema 3 field/version/aggregate budget design; retain schema 1/2 DS semantics; validate original inputs, both direction load/run/serialize and Rust/Python/UI fixture parity before Qt consumer changes.
-  Evidence: [api acceptance plan](features/unified-qt-workbench/validation.md#api); pending implementation/acceptance.
+  Evidence: [selected project schema, ownership, reuse and acceptance design](features/unified-qt-workbench/design.md#uiu-api-05-direction-aware-public-project-admission); [saved full-loop prerequisite acceptance](features/unified-qt-workbench/validation.md#uiu-api-05-saved-downstream-full-loop-unit) preserves file/fill, playback, independent response tolerance and old loader behavior. Schema 3, upstream projects, aggregate admission and the final API-05 gate remain pending.
 
 <a id="task-uiu-org-01"></a>
 - [ ] **UIU-ORG-01** Move proven generic shell/theme/dialog infrastructure by inventory.

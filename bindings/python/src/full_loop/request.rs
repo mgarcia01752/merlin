@@ -52,6 +52,46 @@ impl PyMerlin {
             .map(PyFullLoopRequest)
             .map_err(error)
     }
+
+    /// Preserves independently validated H/profile and RxMER/profile timestamp policies.
+    /// # Arguments
+    /// * `transmission`, `profile`, `source`, `measurements`, `channel` - Accepted passive inputs.
+    /// * `tolerance` - Checked H/profile epoch distance in whole seconds.
+    /// * `response` - Optional original H; None explicitly selects unity.
+    /// * `options` - Optional finite execution policy; None selects existing defaults.
+    /// # Returns
+    /// Owned idle request; preparation releases the GIL and leaves existing sessions unchanged.
+    /// # Errors
+    /// Preserves Rust scientific, association, identity and resource failure categories.
+    #[staticmethod]
+    #[pyo3(signature=(transmission,profile,source,measurements,channel,tolerance,response=None,options=None))]
+    #[allow(clippy::too_many_arguments)]
+    fn prepare_full_loop_with_response_tolerance(
+        py: Python<'_>,
+        transmission: &PyTransmission,
+        profile: &PyDpd,
+        source: &PySourceInput,
+        measurements: &PySequence,
+        channel: &PyChannelConfiguration,
+        tolerance: &crate::quantities::PyAssociationTolerance,
+        response: Option<&PyChannelEstimate>,
+        options: Option<&PyFullLoopOptions>,
+    ) -> PyResult<PyFullLoopRequest> {
+        let inputs = api::FullLoopInputs {
+            transmission: transmission.0.clone(),
+            profile: profile.0.clone(),
+            source: source.0.clone(),
+            measurements: measurements.0.clone(),
+            channel: channel.0.clone(),
+            response: response.map(|value| value.0.clone()),
+        };
+        let options = options.map_or_else(api::FullLoopOptions::default, |value| value.0.clone());
+        py.detach(|| {
+            api::Simulation::prepare_full_loop_with_response_tolerance(inputs, options, tolerance.0)
+        })
+        .map(PyFullLoopRequest)
+        .map_err(error)
+    }
 }
 #[pymethods]
 impl PyFullLoopRequest {
@@ -74,6 +114,14 @@ impl PyFullLoopRequest {
     #[getter]
     fn options(&self) -> PyFullLoopOptions {
         PyFullLoopOptions(self.0.options().clone())
+    }
+
+    /// Copies the accepted H/profile timestamp policy independently of RxMER settings.
+    /// # Returns
+    /// Owned checked tolerance in whole seconds; inspection starts no scientific work.
+    #[getter]
+    fn response_tolerance(&self) -> crate::quantities::PyAssociationTolerance {
+        crate::quantities::PyAssociationTolerance(self.0.response_tolerance())
     }
     /// Executes the existing full loop with independent safe-boundary controls and GIL release.
     /// # Arguments

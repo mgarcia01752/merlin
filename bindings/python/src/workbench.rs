@@ -66,6 +66,23 @@ impl PyWorkbench {
 }
 #[pymethods]
 impl PyWorkbench {
+    /// Prepares saved settings through the public downstream full-loop owners.
+    /// # Arguments
+    /// * `data` - Complete bounded legacy project, retaining file/Designer/timeline choices.
+    /// # Returns
+    /// Owned idle sweep plan; preparation releases the GIL and starts no source or worker.
+    /// # Errors
+    /// Preserves Rust schema, integrity, resource and scientific admission categories.
+    #[staticmethod]
+    fn prepare_full_loop(
+        py: Python<'_>,
+        data: &[u8],
+    ) -> PyResult<crate::full_loop::PyFullLoopSweepPlan> {
+        py.detach(|| merlin::downstream::inputs::Workbench::prepare_full_loop(data))
+            .map(crate::full_loop::PyFullLoopSweepPlan::from_native)
+            .map_err(error)
+    }
+
     /// Loads the saved WB and embedded originals through native Rust preflight.
     /// # Arguments
     /// * `path` - Existing self-contained workbench JSON path.

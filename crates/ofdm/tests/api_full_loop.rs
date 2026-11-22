@@ -300,6 +300,83 @@ fn options_timing_and_identity_failures_leave_accepted_inputs_unchanged() {
     Simulation::prepare_full_loop(original, options()).unwrap();
 }
 
+#[test]
+fn independent_response_tolerance_preserves_measurement_policy_and_sweep_admission() {
+    // Literal 17-second H/profile distance is independent of the zero-second RxMER policy.
+    const RESPONSE_EPOCH_DISTANCE_SECONDS: u32 = 17;
+    let mut original = inputs();
+    let mut response: Value = serde_json::from_slice(include_bytes!(
+        "../../../examples/measurements/single-channel/channel_estimation.json"
+    ))
+    .unwrap();
+    response["pnm_header"]["capture_time"] = json!(
+        original.profile.sources()[0].original_epoch().value() + RESPONSE_EPOCH_DISTANCE_SECONDS
+    );
+    original.response = Some(
+        ChannelEstimate::from_bytes(
+            &NamedCapture::new("independent H", serde_json::to_vec(&response).unwrap()).unwrap(),
+        )
+        .unwrap(),
+    );
+    assert_eq!(
+        Simulation::prepare_full_loop(original.clone(), options())
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::AssociationFailed
+    );
+    let tolerance = AssociationTolerance::new(RESPONSE_EPOCH_DISTANCE_SECONDS).unwrap();
+    let request = Simulation::prepare_full_loop_with_response_tolerance(
+        original.clone(),
+        options(),
+        tolerance,
+    )
+    .unwrap();
+    assert_eq!(
+        request.response_tolerance().value(),
+        RESPONSE_EPOCH_DISTANCE_SECONDS
+    );
+    assert_eq!(
+        request
+            .settings()
+            .playback
+            .as_ref()
+            .unwrap()
+            .tolerance_seconds,
+        0
+    );
+    let catalog = sweep_catalog(&[0, 3]);
+    let plan =
+        FullLoopSweepPlan::new(&request, &catalog, FullLoopProfileSelection::AllCaptured).unwrap();
+    for index in 0..plan.info().selected_profile_ids.len() {
+        assert_eq!(
+            plan.request(index).unwrap().response_tolerance().value(),
+            RESPONSE_EPOCH_DISTANCE_SECONDS
+        );
+        assert_eq!(
+            plan.request(index)
+                .unwrap()
+                .settings()
+                .playback
+                .as_ref()
+                .unwrap()
+                .tolerance_seconds,
+            0
+        );
+    }
+    assert_eq!(
+        Simulation::prepare_full_loop_with_response_tolerance(
+            original,
+            options(),
+            AssociationTolerance::new(RESPONSE_EPOCH_DISTANCE_SECONDS - 1).unwrap(),
+        )
+        .err()
+        .unwrap()
+        .code(),
+        ErrorCode::AssociationFailed
+    );
+}
+
 fn sweep_catalog(ids: &[u8]) -> ProfileCapture {
     let mut document: Value = serde_json::from_slice(PROFILE).unwrap();
     let template = document["profiles"]

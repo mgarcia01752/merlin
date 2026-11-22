@@ -11,6 +11,18 @@ use std::{
 };
 const UPSTREAM: &[u8] = include_bytes!("../../../examples/cli/upstream/us-50khz.json");
 
+#[cfg(feature = "native-input")]
+#[test]
+fn facade_saved_downstream_preparation_returns_existing_idle_public_plan() {
+    let plan: downstream::FullLoopSweepPlan = downstream::inputs::Workbench::prepare_full_loop(
+        include_bytes!("../../../examples/workbench/single/workbench.merlin.json"),
+    )
+    .unwrap();
+    let request: downstream::FullLoopRequest = plan.request(0).unwrap();
+    assert_eq!(request.options().duration_ms, 1);
+    assert!(request.observation_policy().is_none());
+}
+
 #[test]
 fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
     assert_eq!(

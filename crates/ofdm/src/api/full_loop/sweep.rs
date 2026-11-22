@@ -172,7 +172,13 @@ impl FullLoopSweepPlan {
         let prepare = || {
             let mut inputs = self.base.inputs.clone();
             inputs.profile = self.catalog.simulation_profile(*id)?;
-            let request = FullLoopRequest::prepare(inputs, self.base.options.clone())?;
+            let request = FullLoopRequest::prepare_with_response_tolerance(
+                inputs,
+                self.base.options.clone(),
+                self.base
+                    .independent_response
+                    .then_some(self.base.response_tolerance),
+            )?;
             if let Some(policy) = &self.base.observation_policy {
                 request.with_observations(policy.clone())
             } else {

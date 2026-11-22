@@ -1186,9 +1186,9 @@ tests, not shared scientific configuration or a different API architecture.
 
 Normal project files remain direction-specific. Open validates/detects direction
 and guards that target tab's dirty state before mutation. Schema 1/2 retain DS
-interpretation; a proposed schema 3 explicitly tags direction. Backend/native
+interpretation; the [selected schema 3 contract](development/features/unified-qt-workbench/design.md#uiu-api-05-direction-aware-public-project-admission) explicitly tags direction. Its implementation/acceptance remains API-05. Backend/native
 input owners admit and serialize scientific project contents through the public
-API with Rust/Python parity. Qt retains chooser, safe filesystem replacement,
+API with Rust/Python parity. The additive [saved downstream full-loop operation](user/api/saved-full-loop.md) already prepares legacy file/fill, playback and independent response-tolerance settings through those owners; the direction-tagged envelope remains pending. Qt retains chooser, safe filesystem replacement,
 dirty prompts and presentation state. Update recovery privately bundles both
 independently valid projects plus active-tab state. All file/capture, viewport,
 worker, retained-result and aggregate-memory budgets remain bounded; errors or

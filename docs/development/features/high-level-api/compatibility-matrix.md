@@ -4,12 +4,12 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-507 explicit public Rust operations and 490 installed native Python entries with
+545 explicit public Rust operations and 528 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current native operation acceptance](../unified-qt-workbench/slicer-view-evidence.json)
+is a readable subset of this one matrix. [Current native operation acceptance](../unified-qt-workbench/saved-full-loop-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
-107 directional/common class exports and 59 preserved legacy root exports. Named
+111 directional/common class exports and 59 preserved legacy root exports. Named
 owner regressions establish behavioral scope; metadata alone is not scientific
 execution or exhaustive getter-branch coverage.
 
@@ -195,9 +195,9 @@ Named contract references resolve in the data's `contracts` object.
 
 | Row group | Rust scope | Python scope |
 | --- | --- | --- |
-| Downstream: 234 operations | Existing API, expanded quantities, file/workbench/export adapters and exact old/new nominal identity. | Existing root signatures are verified from the actual 0.4.0 extension; directional aliases and a fresh wheel still need INT-PY-01. |
-| Upstream: 126 operations | Independent real session/models, measured admission, raw observations and the two hidden cross-crate Serde helpers. | Planned native declarations come from the reviewed source adapter; new shared cancellation/error mappings are explicit. No new upstream import is currently claimed. |
-| Common: 4 operations | Clone/atomic query and one-way control contracts, with directional rich lifecycle retained. | Common re-exports/query and installed imports remain planned. The Rust Cancellation trait has no Python class. |
+| Downstream: 394 Rust / 392 native operations | Accepted API, quantities, original inputs, full-loop requests, retained observations and saved full-loop preparation. | Installed native classes preserve legacy root aliases; current scoped and preceding full-gate receipts define behavioral coverage. |
+| Upstream: 147 Rust / 118 native operations | Independent sessions, measured admission, resource plans and actual bounded instrument observations. | Installed native upstream namespace and API-04 backend acceptance; Qt adoption remains separate. |
+| Common: 4 Rust / 18 native operations | Clone/atomic query and one-way control contracts, with directional rich lifecycle retained. | Installed common namespace and enum accessors; the Rust Cancellation trait has no Python class. |
 
 Rust borrowed views, generic deserializers, validated-owner helpers and native
 file conveniences are recorded with explicit language-only or adapter mappings.
@@ -208,6 +208,18 @@ an alternative scientific result. Existing root/class signatures remain unchange
 Validation uses `tools/validation/api_operation_matrix.py` with fresh compiler
 exports from `rust_api_inventory.py` and the named executed records. It rejects
 missing/empty cells, unresolved contracts/requirements/tasks, stale owners/signatures,
-missing exact cases, unexecuted Rust cases and uncovered compiler exports. Native
-export-completeness and independent numerical parity remain INT-PY-01/INT-TOOLS-01
-acceptance work. The official checklist alone owns task completion.
+missing exact cases, unexecuted Rust cases and uncovered compiler exports. Installed native exports are checked against their exact inventory and operation rows.
+Named scientific and parity receipts establish behavior within their declared
+scope; the official checklist alone owns task completion.
+
+## Saved downstream full-loop preparation
+
+The [UIU-API-05 prerequisite](../unified-qt-workbench/validation.md#uiu-api-05-saved-downstream-full-loop-unit)
+adds four Rust/four native operations with
+[exact execution cases](../unified-qt-workbench/api-05-workbench-operation-test-results.json).
+It preserves file/fill, playback and independent H/profile tolerance through the
+existing public requests and sweeps. Every earlier row, assertion and historical
+receipt remains intact. Schema 3, upstream projects, aggregate admission and the
+parent API-05 gate remain pending. API-02/04 partial-unit statements above describe
+their historical stage; their final accepted gates are linked from the official
+checklist and unified Qt validation record.

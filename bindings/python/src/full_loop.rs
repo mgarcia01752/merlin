@@ -22,6 +22,7 @@ use options::PyFullLoopOptions;
 use pyo3::prelude::*;
 use request::PyFullLoopRequest;
 use result::PyFullLoopResult;
+pub(crate) use sweep::PyFullLoopSweepPlan;
 fn transport_error(cause: serde_json::Error) -> api::ApiError {
     api::ApiError::new(api::ErrorCode::InvalidInput, cause.to_string())
 }
