@@ -1773,3 +1773,27 @@ cases, optimized build and native project/startup checks. Since no backend or
 persisted schema changes, retain current paired API/scientific evidence. This unit
 does not accept the legacy worker/result providers or session isolation, and keeps
 the parent unchecked. Final numeric review must still inspect all changed owners.
+
+## UIU-DS-01 recovered-data chart contract facade unit
+
+Migrate `apps/qt/src/downstream/instruments/receiver/verification.rs` to the
+accepted `merlin::downstream::FullLoopReport` nominal report. Existing complete
+and partial job fields remain unchanged. This helper formats supplied comparison
+counts into presentation coordinates; it never executes or reconstructs a
+receiver. Keep recovery totals, zero bars, per-word order, incomplete comparisons,
+omitted counts and the original independent coordinate assertions.
+
+| Path and symbol | Existing contract / gap | Decision and owner |
+| --- | --- | --- |
+| `receiver/verification.rs::charts` | Direct nominal engine report import; existing observed counters | REUSE public `FullLoopReport` without changing fields or callers. |
+| `receiver/verification.rs` repeated word limit | Three uses of the same 64-bar presentation cap | SHARE `MAX_VERIFICATION_WORD_BARS` under `src/downstream/common/constants.rs`; distinguish display rows from the independent backend retention budget. |
+| Existing `zero_counts_and_mixed_outcomes_keep_honest_coordinates` | Independent 12:3 ratio, exact zero and attention flags | RETAIN assertions and explain fixture meanings; do not derive expected values from production policy. |
+| `legacy-qt-boundary.json` | One report-type exception | RETIRE the exact entry with history, preserving all other exceptions. |
+
+This is partial UIU-DS-01 delivery for REQ-UIU-02/03/08/09 through the
+[public API boundary](../../../architecture.md#unified-qt-public-api-boundary).
+Run the scoped chart test and current soft-display QML interactions, strict
+boundary/regression checks, formatting/Clippy, optimized build and native smokes.
+No new API, scientific calculation, saved schema, QML control or shared-direction
+acceptance is introduced. Backend and Python evidence remains unchanged; the
+parent, result-provider migration and final numeric review remain pending.

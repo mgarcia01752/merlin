@@ -1425,3 +1425,25 @@ exceptions, 41 frozen files and 141 direct scientific sites remain; UIU-DS-01
 stays unchecked. No backend, Python, persisted schema or QML files changed, so
 existing paired scientific/API evidence remains applicable. Final numeric and
 unified runtime acceptance remain separate.
+
+## UIU-DS-01 verification contract facade accepted
+
+The [recovered-data chart record](downstream-verification-evidence.json) covers
+the public `FullLoopReport` contract and centralized
+`MAX_VERIFICATION_WORD_BARS`. All three display-cap uses now share one downstream
+presentation owner. The unchanged 64-bar policy remains independent of the
+backend retention budget. Recovery/comparison totals, per-word ordering, zero
+coordinates, incomplete comparisons and omitted counts retain their behavior.
+
+Reversing only the nominal report import/name, named cap substitutions and the
+fixture explanation yields the exact original source. The existing independent
+12:3 ratio/zero/attention assertions pass without modification. The scoped Rust
+case, three QML soft-display cases, sixteen boundary regressions, formatting,
+Clippy, optimized build and six native project/startup checks pass. Retire only
+this file's direct report-import exception and preserve its history; 40 frozen
+files and 140 direct scientific sites remain alongside three dependency exceptions.
+
+This accepts the focused presentation contract only. The original result provider,
+shared-direction instruments, final numeric review and unified runtime gates remain
+pending under their existing tasks. No backend, Python, saved schema or QML owner
+changes, and no non-Qt scientific rerun is needed.

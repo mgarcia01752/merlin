@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Recovered-data chart contract facade",
+  "status": "accepted focused chart contract; parent and result provider incomplete",
+  "base_commit": "ff4f555675f0f3f7129a9d34c2d1e559e19f9f83",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-08",
+    "REQ-UIU-09"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/verification.rs",
+      "sha256": "76135bafefe5d63caa0ea12be48e5ac8b5aa04e7b3b4e066672a3e093631e230"
+    },
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "69bad4861593ec8f5658d5b86be92a1eaec139c479957d482d80487ac6222675"
+    }
+  ],
+  "public_contract": "merlin::downstream::FullLoopReport",
+  "numeric_owner": "apps/qt/src/downstream/common/constants.rs::MAX_VERIFICATION_WORD_BARS",
+  "numeric_policy": "Unchanged 64 received-word bars; independent of backend retention. Obvious zero/count normalization stays local; independent 12:3 ratio expectations stay literal and explained.",
+  "preservation": {
+    "exact_original_source_after_alias_constant_and_comment_reversal": true,
+    "existing_test_assertions_unchanged": true,
+    "zero_missing_partial_and_omitted_semantics_unchanged": true,
+    "other_guard_and_dependency_records_exact": true,
+    "backend_python_saved_schema_and_qml_unchanged": true
+  },
+  "boundary": {
+    "scientific_dependencies": 3,
+    "frozen_files": 40,
+    "scientific_sites": 140,
+    "retired_path": "apps/qt/src/downstream/instruments/receiver/verification.rs",
+    "parent_complete": false
+  },
+  "validation": [
+    {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "downstream::instruments::receiver::verification::tests"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 69.31863198299834,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      },
+      "passed": 1,
+      "receipt": "ds-01-verification-rust.json"
+    },
+    {
+      "command": "qmltestrunner -input apps/qt/tests/tst_soft_diagnostics.qml",
+      "passed": 3,
+      "exit_code": 0,
+      "receipt": "ds-01-verification-qml.log"
+    },
+    {
+      "command": "python3 -B tools/validation/qt_api_boundary.py",
+      "exit_code": 0,
+      "receipt": "ds-01-verification-boundary.log"
+    },
+    {
+      "command": "python3 -B -m unittest discover -s tools/validation -p test_qt_api_boundary.py -v",
+      "passed": 16,
+      "exit_code": 0,
+      "receipt": "ds-01-verification-boundary-tests.log"
+    },
+    {
+      "command": "cargo fmt --manifest-path apps/qt/Cargo.toml -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 76.00270491398987,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      },
+      "receipt": "ds-01-verification-clippy.json"
+    },
+    {
+      "command": "scripts/qt-desktop.sh build",
+      "exit_code": 0,
+      "receipt": "ds-01-verification-build.log"
+    },
+    {
+      "command": "run_native_ui_smokes.py ds-01-verification",
+      "passed": 6,
+      "exit_code": 0,
+      "receipt": "ds-01-verification-native-results.json"
+    },
+    {
+      "command": "python3 -B tools/validation/feature_documentation.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -B tools/validation/integration_traceability.py",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  ],
+  "limitations": [
+    "Original result provider and all remaining scientific owners still need migration",
+    "Final line-by-line numeric review and unified runtime acceptance remain pending",
+    "No non-Qt scientific/API/Python owner changed; existing evidence retained",
+    "Hosted/installed behavior remains separate"
+  ],
+  "native_smokes": {
+    "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+    "sha256": "9eaa52d7eb32ef9630d20cad9b29ae5d649e7932f50e37ee764d6eafa78700ee",
+    "display": ":0",
+    "display_dimensions": [
+      "dimensions:    1280x800 pixels (338x211 millimeters)"
+    ],
+    "qt_sdk_version": "6.8.3",
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03848892300447915,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/multi-rxmer/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.05270432999532204,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4847828680067323,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.029927368988865055,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--smoke-test"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.9125402109930292,
+        "stdout": "MERLIN_QT_STYLE=Fusion\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--smoke-test",
+          "--workbench",
+          "examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.8374080089997733,
+        "stdout": "MERLIN_QT_STYLE=Fusion\n",
+        "stderr": ""
+      }
+    ]
+  }
+}

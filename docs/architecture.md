@@ -1185,6 +1185,9 @@ Lifecycle adapter OCD admission uses `TransmissionConfiguration`, while receiver
 tap identities use the public `FullLoopStage` re-export. The receiver-options
 transport ceiling has its own owner under `src/downstream/common/constants.rs`,
 independent of the equally valued OCD limit.
+Recovered-data charts consume the public `FullLoopReport` and supplied comparison
+counts. Their shared word-bar cap belongs to the same downstream constants owner
+and remains independent of backend codeword retention.
 The existing confidence histogram still awaits result-backed adoption. Remaining
 scientific consumers retain their migration status. This is partial API adoption, not final
 API-boundary or session-isolation acceptance.

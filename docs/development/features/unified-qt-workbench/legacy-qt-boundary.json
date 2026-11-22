@@ -547,17 +547,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/instruments/receiver/verification.rs",
-      "sha256": "fceeed06ad8f860f887167c9ab01cb69c3dcaac388debba2155c7cc1e8525648",
-      "sites": [
-        {
-          "line": 6,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/instruments/receiver/views.rs",
       "sha256": "b1038df7e26d87c1c9b9fedaec376dc0654b7a259b36312ed1f9e77cd751a604",
       "sites": [
@@ -2638,6 +2627,23 @@
       "unit": "Lifecycle and receiver contract facade",
       "reason": "Adapter configuration/stage types use accepted facade contracts; existing guarded direction providers remain separate migration debt.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-adapter-contracts-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/verification.rs",
+        "sha256": "fceeed06ad8f860f887167c9ab01cb69c3dcaac388debba2155c7cc1e8525648",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Recovered-data chart contract facade",
+      "reason": "Chart consumes the accepted public report type and supplied comparison counts; no direct scientific crate access remains.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-verification-contract-facade-accepted"
     }
   ]
 }

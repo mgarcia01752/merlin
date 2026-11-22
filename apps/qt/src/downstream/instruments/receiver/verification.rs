@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Bounded presentation coordinates for independent recovered-data comparisons.
-use docsis_ofdm_fec::simulation::channel::ChannelJobResult;
+use crate::downstream::common::constants::MAX_VERIFICATION_WORD_BARS;
+use merlin::downstream::FullLoopReport;
 use serde_json::{json, Value};
 
 fn bars(entries: Vec<(String, u64, bool)>) -> Value {
@@ -26,7 +27,7 @@ fn bars(entries: Vec<(String, u64, bool)>) -> Value {
 /// # Returns
 /// Two normalized count charts, at most 64 word bars and an explicit omitted count.
 /// Zero bars remain zero; unavailable comparisons are marked rather than fabricated.
-pub(super) fn charts(job: &ChannelJobResult) -> Value {
+pub(super) fn charts(job: &FullLoopReport) -> Value {
     let recovery = bars(vec![
         ("Recovered".into(), job.summary.recovered_payloads, false),
         (
@@ -38,7 +39,7 @@ pub(super) fn charts(job: &ChannelJobResult) -> Value {
     let words = bars(
         job.retained_words
             .iter()
-            .take(64)
+            .take(MAX_VERIFICATION_WORD_BARS)
             .filter(|word| word.comparison.bits_tested > 0)
             .map(|word| {
                 (
@@ -51,8 +52,8 @@ pub(super) fn charts(job: &ChannelJobResult) -> Value {
     );
     json!({"recovery":recovery,"word_errors":words,
         "compared":job.summary.comparison.bits_tested>0,
-        "uncompared_retained":job.retained_words.iter().take(64).filter(|word| word.comparison.bits_tested==0).count(),
-        "omitted":job.omitted_word_details.saturating_add(job.retained_words.len().saturating_sub(64) as u64)})
+        "uncompared_retained":job.retained_words.iter().take(MAX_VERIFICATION_WORD_BARS).filter(|word| word.comparison.bits_tested==0).count(),
+        "omitted":job.omitted_word_details.saturating_add(job.retained_words.len().saturating_sub(MAX_VERIFICATION_WORD_BARS) as u64)})
 }
 
 #[cfg(test)]
@@ -65,6 +66,7 @@ mod tests {
         assert_eq!(zero["points"][0]["fraction"], 0.0);
         assert_eq!(zero["maximum"], "0");
         let outcomes = bars(vec![
+            // Independent 12:3 count ratio: the second bar occupies one quarter.
             ("Recovered".into(), 12, false),
             ("Unrecovered".into(), 3, true),
         ]);
