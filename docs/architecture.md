@@ -950,6 +950,11 @@ Designer and idle-preview gaps keep UIU-API-01 open; Qt adoption is separate.
 Original-capture `RxMer::preview` and `ChannelEstimate::preview` reuse the existing
 bounded measurement-view/projection owner, retaining exact full grids, provenance,
 nulls and explicit original H/RxMER units without source or session advancement.
+`MeasurementSequence` adds immutable bounded admission of ordered unique original
+RxMER inputs through the existing residual-power planner. All actual contributor
+weights/epochs remain explicit for static averages and synthetic hold/interpolation.
+Equivalent views use the numerical residual-power owner; `check_response` admits
+explicit unity or captured H with the existing spatial/epoch/coverage contracts.
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

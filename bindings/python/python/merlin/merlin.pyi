@@ -65,3 +65,5 @@ __version__: str
 from . import FileFillPolicy as FileFillPolicy
 from . import SourceInput as SourceInput
 from . import TransmissionConfiguration as TransmissionConfiguration
+from . import MeasurementSequence as MeasurementSequence
+from . import MeasurementSequenceOptions as MeasurementSequenceOptions

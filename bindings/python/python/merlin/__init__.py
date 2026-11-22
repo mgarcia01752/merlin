@@ -63,6 +63,8 @@ from ._native import (
     SubcarrierIndex,
     Weight,
     FileFillPolicy,
+    MeasurementSequence,
+    MeasurementSequenceOptions,
     SourceInput,
     TransmissionConfiguration,
     Workbench,

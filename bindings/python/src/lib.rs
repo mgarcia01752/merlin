@@ -12,6 +12,7 @@ mod quantities;
 mod receiver;
 mod reports;
 mod rxmer_export;
+mod sequence;
 mod workbench;
 use merlin::downstream as api;
 mod upstream;
@@ -64,6 +65,7 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     }
     quantities::register(module)?;
     admission::register(module)?;
+    sequence::register(module)?;
     inputs::register(module)?;
     receiver::register(module)?;
     options::register(module)?;

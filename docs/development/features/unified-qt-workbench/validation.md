@@ -261,3 +261,32 @@ reference outputs remain the comparison evidence. Product behavior is unchanged.
 UIU-API-01 remains unchecked for collection combination/playback, Designer,
 channel composition and idle TX previews. No Qt source, scientific kernel,
 completed historical task or accepted downstream API behavior changed here.
+
+## UIU-API-01 measured sequence unit
+
+The immutable `MeasurementSequence` and `TransmissionConfiguration::check_response`
+reuse existing physical measurement/response admission and preserve original order,
+identity, epochs, bytes and explicit tolerance. [Exact candidate/evidence](measurement-sequence-evidence.json),
+[typed owner/design](design.md#uiu-api-01-measured-sequence-admission-unit),
+[Rust/Python parity and bounds](../../../user/api/input-admission.md#measured-sequence-admission-and-preview)
+and [architecture](../../../architecture.md#unified-qt-public-api-boundary)
+trace back to the still-open [parent task](../../checklist.md#task-uiu-api-01).
+
+Five new API/numerical cases and all three existing playback cases pass. Independent
+anchors cover three-source linear power average and every contributor, interpolation
+half-step, exact synthetic cadence, boundary/last hold, unavailable conversion,
+original ownership, duplicates/counts/epochs/coverage/mode/overflow rejection and
+explicit unity/captured-H tolerance. Both facade/native-binding all-target Clippy
+checks with warnings denied, format checks and the analysis-only test suite
+(139 passing cases) pass. The final rebuilt Linux CPython
+3.10 wheel passes all 59 installed native cases, including four sequence cases,
+parallel immutable queries, old imports, actual Rust references and WB/Designer/FEC
+regressions. A final review tightened overlong-list rejection before traversal;
+only the final candidate/wheel hashes below establish this unit's acceptance.
+
+No original timestamps are combined into a fictional average epoch. Equivalent
+RxMER previews and captured RxMER previews remain different typed results/units.
+No Qt scientific code, saved-project format, historical task state or existing
+Simulation behavior changed. Designer, channel composition and idle TX previews
+remain open before UIU-API-01 completion; legacy temporal project support stays
+under UIU-API-05.

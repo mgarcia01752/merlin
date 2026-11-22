@@ -5,7 +5,7 @@
 //! Residual-power interpretation and controlled Gaussian noise.
 pub mod lte_ingress;
 mod residual;
-pub use residual::equivalent_noise_mer;
+pub use residual::{equivalent_noise_mer, residual_power_mer};
 #[cfg(feature = "simulation")]
 pub mod awgn;
 #[cfg(feature = "simulation")]

@@ -456,7 +456,7 @@ blocker for earlier eligible API/downstream work after plan approval.
   Dependencies: [UIU-BOUND-01](#task-uiu-bound-01).
   Architecture/files: [api owner](../architecture.md#unified-qt-public-api-boundary), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Specify exact typed extensions, native-input re-exports and parity; preserve independent builds and editor/Designer/provenance behavior. Core/API plus installed-wheel tests precede Qt adoption.
-  Evidence: [input-admission unit](features/unified-qt-workbench/validation.md#uiu-api-01-input-admission-unit) and [original measurement previews](features/unified-qt-workbench/validation.md#uiu-api-01-original-measurement-preview-unit) pass scoped core/native-input and installed-wheel checks (latest 55 cases). Collection playback, Designer, channel composition and bounded idle TX preview remain open. No Qt adoption yet.
+  Evidence: [input admission](features/unified-qt-workbench/validation.md#uiu-api-01-input-admission-unit), [original previews](features/unified-qt-workbench/validation.md#uiu-api-01-original-measurement-preview-unit) and [measured sequences](features/unified-qt-workbench/validation.md#uiu-api-01-measured-sequence-unit) pass scoped core/native-input and installed-wheel checks (latest 59 cases). Designer, channel composition and bounded idle TX preview remain open. No Qt adoption yet.
 
 <a id="task-uiu-api-02"></a>
 - [ ] **UIU-API-02** Complete downstream controlled jobs and retained public observations.

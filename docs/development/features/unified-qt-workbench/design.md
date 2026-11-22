@@ -196,6 +196,45 @@ code or new scientific algorithm moves into Apache owners. This unit closes only
 the original-capture preview gap; collection combination/playback, Designer,
 channel composition and idle TX remain open before full UIU-API-01 acceptance.
 
+### UIU-API-01: measured sequence admission unit
+
+Reuse `simulation::channel::measurement_playback::{MeasurementPlayback,
+validate_response}` for exact-grid/epoch/role/response admission and Single,
+Average, Hold and Interpolate residual-power semantics. Add
+`crates/ofdm/src/api/sequence.rs` and focused `sequence/queries.rs`, explicitly
+export existing PlaybackMode as
+`MeasurementMode` and typed `MeasurementSequenceOptions { mode,
+interval_symbols, tolerance }`. `MeasurementSequence::new(&Dpd,
+&TransmissionConfiguration, Vec<RxMer>, MeasurementSequenceOptions)` retains the
+caller's original order and rejects duplicate original hashes, more than 256
+captures/4,000,000 values/96 MiB original bytes before frame cloning.
+
+The immutable sequence exposes `info()`, `capture(index)`, `capacity(duration)`,
+`at(symbol)` and `preview(symbol, viewport)`. Info reports exact synthetic symbol
+cadence/span; original epochs remain in every provenance. `at` returns dimensionless
+normalized residual powers and all actual contributor indexes/weights/provenance:
+average names every equal-weight source, interpolation names its actual endpoints,
+static/held positions name one. Preview reports bounded equivalent RxMER dB,
+explicitly distinct from original measured RxMER. Add a small finite/gap-preserving
+power-to-MER conversion in existing `signal_processing/noise/residual.rs`; no
+averaging or timeline algorithm moves into the adapter or Qt.
+
+`TransmissionConfiguration::check_response(profile, response, tolerance)` reuses
+existing response admission with explicit unity None and original epoch tolerance.
+It creates no run or inferred measurement. Sequence construction/queries never
+advance source/RNG state. Rejected admissions preserve existing captures/sequences.
+
+Add native `bindings/python/src/sequence.rs`, aliases/stubs and
+`bindings/python/tests/test_measurement_sequence.py`. Python constructor accepts
+profile, transmission, capture sequence, typed MeasurementSequenceOptions (mode, interval_symbols and tolerance);
+mode names are single/average/hold/interpolate. It converts to the same Rust
+options, releases the GIL for admission/queries and returns owned dictionaries or
+existing capture snapshots. Add `crates/ofdm/tests/api_measurement_sequence.rs`
+with independent equal-power/half-step/last-hold anchors, clock literals,
+null/coverage/epoch/grid/duplicate/count/overflow and ownership cases. Run matching
+installed-wheel cases and existing playback tests before Qt adoption. Designer,
+channel composition and idle TX gaps remain open.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |
