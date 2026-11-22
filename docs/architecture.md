@@ -947,7 +947,12 @@ and API tests and a focused validated commit before Qt adopts it. Do not solve a
 gap by exposing whole internal modules. Existing downstream API imports and
 Python `merlin.Simulation` retain behavior. An automated Cargo/source boundary
 check initially permits only reviewed pre-existing migration sites with sunset
-tasks; final acceptance requires zero scientific migration entries.
+tasks; final acceptance requires zero scientific migration entries. The implemented
+[Cargo/source guard](../tools/validation/qt_api_boundary.py) uses exact dependency
+records and whole-file hashes from the [legacy record](development/features/unified-qt-workbench/legacy-qt-boundary.json).
+It rejects new/unreviewed direct package identities, including aliases, and is
+called by Qt checks and Master preflight. Infrastructure packages carry explicit
+non-simulation roles; this lexical gate does not replace scientific-owner review.
 
 Requirements: [REQ-UIU-02](requirements.md#req-uiu-02), [REQ-UIU-03](requirements.md#req-uiu-03), [REQ-UIU-09](requirements.md#req-uiu-09), [REQ-UIU-24](requirements.md#req-uiu-24).
 Delivery: [UIU-BOUND-01](development/checklist.md#task-uiu-bound-01), [UIU-API-01](development/checklist.md#task-uiu-api-01), [UIU-API-02](development/checklist.md#task-uiu-api-02), [UIU-API-03](development/checklist.md#task-uiu-api-03), [UIU-API-04](development/checklist.md#task-uiu-api-04), [UIU-API-05](development/checklist.md#task-uiu-api-05).

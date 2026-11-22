@@ -80,6 +80,33 @@ actual bounded downstream runs; startup smoke does not claim manual UI execution
 The [baseline evidence](baseline-evidence.json) records all 87 Rust cases,
 89 QML checks, six native checks and unchanged hashes for all 178 Qt files.
 
+### UIU-BOUND-01: enforce scientific dependency ownership
+
+Add `tools/validation/qt_api_boundary.py` and independent negative fixtures in
+`tools/validation/test_qt_api_boundary.py`. Reuse the existing Rust comment/literal
+masker from `implementation_evidence.py`. Cargo's locked no-dependencies metadata
+identifies actual direct package names, renames, kinds and targets; local manifest
+identity additionally detects a scientific package hidden behind a path alias.
+Transitive scientific dependencies through the facade remain valid. Unknown
+direct packages fail closed; known infrastructure packages have explicit
+non-simulation role justifications in the guard.
+
+The reviewed [legacy boundary record](legacy-qt-boundary.json) freezes existing scientific dependency
+records and whole-file source hashes, with exact root-reference sites and sunset
+task UIU-DS-01. Freezing the entire legacy file also detects a new invocation of
+an already imported alias. It is deliberately stricter than import-line matching:
+even presentation edits in such files require a focused migration/review update.
+There is no automatic refresh flag. New direct scientific access is rejected;
+final mode rejects every remaining exception. Source masking is a bounded lexical
+check, not proof that arbitrary handwritten numerical code is presentation-only.
+Manual scientific-owner review and API parity remain acceptance requirements.
+
+Wire the check into Qt's existing check action and Master preflight, without a
+Qt SDK requirement for the guard itself. Negative fixtures cover Cargo renames,
+local paths, dev/target dependencies, qualified calls, extern aliases, mutation of
+frozen legacy files, escaped module includes, stale exceptions and final mode.
+No API or application implementation changes belong to this task.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

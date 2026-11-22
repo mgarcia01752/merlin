@@ -37,6 +37,31 @@ application hashes still match the original inventory. No caches were cleaned.
 This is Linux checkout evidence; Windows, installed updates and a manually
 driven native run are not claimed. UIU-BOUND-01 is the next eligible task.
 
+## UIU-BOUND-01: public API boundary accepted
+
+The [boundary guard](../../../../tools/validation/qt_api_boundary.py) and its
+[independent tests](../../../../tools/validation/test_qt_api_boundary.py) pass.
+Sixteen boundary cases cover package aliases/path identity, dev/build/target
+dependencies, qualified/grouped/extern imports, comment/raw-string handling,
+unchanged-import/new-alias-call rejection, stale exceptions, source escapes,
+unknown package identities and final zero-debt mode. The native picker's `pnm`
+boolean is correctly classified as infrastructure rather than a crate reference.
+
+All 73 existing/new validation-tool tests and seven development-tool tests pass.
+An initial tool run found the new JSON record lacked a navigation link; adding
+the design/architecture links resolves it and the full tool suite passes.
+Actual locked Cargo metadata/source audit passes with three legacy scientific
+dependencies, 45 frozen files and 145 root-reference sites. The
+[legacy record](legacy-qt-boundary.json) ties these to UIU-DS-01 removal; unknown
+direct packages fail closed. Qt check and Master preflight call the guard.
+Shell syntax, ShellCheck and diff whitespace checks pass. The
+[exact boundary evidence](boundary-evidence.json) identifies tested source bytes.
+
+Application source and scientific behavior are unchanged, so the fresh baseline
+executable remains current; no core/Qt runtime rebuild was needed for this tool
+unit. Hosted CI execution is not claimed. Migration-gate acceptance does not
+satisfy final Qt acceptance while any scientific exception remains.
+
 ## Planning checks
 
 Candidate: `feature/unified-qt-workbench` based on

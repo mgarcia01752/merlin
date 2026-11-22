@@ -1,5 +1,17 @@
 # Qt workbench development
 
+The [unified UI plan](features/unified-qt-workbench/design.md) governs the current
+direction integration. `scripts/qt-desktop.sh check` first runs the
+[public-API boundary guard](../../tools/validation/qt_api_boundary.py), also used
+by Master preflight. It reads locked Cargo metadata without building Qt. Known
+platform/build/presentation dependencies have narrow role justifications; new
+package identities require review rather than bypassing the public facade.
+The [reviewed legacy record](features/unified-qt-workbench/legacy-qt-boundary.json)
+freezes existing direct scientific dependencies and entire legacy source files.
+Migrate a consumer to the validated public API and remove its exception in the
+same focused task. Do not refresh hashes merely to accept additional internal
+calls. The guard's `--final` mode requires zero migration exceptions.
+
 The native workbench includes OCD/DPD/source editors, measurement inputs,
 transmitter/channel/receiver stage navigation, SA/QAM and decoder instruments,
 closed-loop Start/Stop/Pause and self-contained workbench Open/Save.

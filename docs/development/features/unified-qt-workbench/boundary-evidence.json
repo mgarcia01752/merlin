@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "task": "UIU-BOUND-01",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-24"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "base_commit": "c87006fae0a2b78bf8859403f9f3d0e6ffde79d8",
+  "tested_files": [
+    {
+      "path": "tools/validation/qt_api_boundary.py",
+      "sha256": "7687696b33ed65ceb49a59e476adf369fdaa5590dac9a09883b65e1ce06d94f8"
+    },
+    {
+      "path": "tools/validation/test_qt_api_boundary.py",
+      "sha256": "7a51d55755da3afaf5765859a1a4c2448ff57bb4f4a2f69d81a14682bb0c3e3b"
+    },
+    {
+      "path": "scripts/qt-desktop.sh",
+      "sha256": "f8d48fdcc166808d6681cb887f48bb686b7d828b000c3f860c33c0d26547a8e1"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "11d142af15da99733bbead1896c28cbe5338b571f59ad13aacc6dc01271008ab"
+    },
+    {
+      "path": "docs/development/features/unified-qt-workbench/legacy-qt-boundary.json",
+      "sha256": "1be86c5bd5fedd6e5542646477da14d6368489a08f103bd6d958fe07f9b20eae"
+    }
+  ],
+  "boundary_test_cases": [
+    "test_facade_and_transitive_science_are_admitted",
+    "test_renamed_scientific_dependency_is_rejected",
+    "test_unknown_scientific_package_cannot_bypass_a_name_blacklist",
+    "test_path_identity_detects_alias_without_scientific_declared_name",
+    "test_dev_build_and_target_specific_dependencies_are_not_exempt",
+    "test_qualified_import_and_extern_alias_are_rejected",
+    "test_renamed_crate_root_is_detected_in_source",
+    "test_comments_raw_strings_and_lifetimes_are_not_imports",
+    "test_pnm_picker_boolean_is_not_a_scientific_crate_reference",
+    "test_grouped_bare_imports_and_multiline_paths_are_detected",
+    "test_legacy_file_is_exact_and_cannot_gain_an_alias_call",
+    "test_stale_file_record_and_missing_sunset_are_rejected",
+    "test_final_mode_refuses_remaining_legacy_debt",
+    "test_external_module_paths_and_include_are_rejected",
+    "test_wrong_metadata_identity_and_record_schema_fail_closed",
+    "test_original_buffers_are_unchanged"
+  ],
+  "runs": [
+    {
+      "command": "python3 -m unittest discover -s tools/validation -p 'test_*.py'",
+      "exit_code": 0,
+      "passed": 73
+    },
+    {
+      "command": "python3 -m unittest discover -s tools/development/tests -p 'test_*.py'",
+      "exit_code": 0,
+      "passed": 7
+    },
+    {
+      "command": "python3 tools/validation/qt_api_boundary.py",
+      "exit_code": 0,
+      "scientific_dependencies": 3,
+      "frozen_legacy_files": 45,
+      "root_reference_sites": 145
+    },
+    {
+      "command": "bash -n scripts/qt-desktop.sh",
+      "exit_code": 0
+    },
+    {
+      "command": "shellcheck scripts/qt-desktop.sh",
+      "exit_code": 0
+    }
+  ],
+  "limitations": [
+    "Current migration mode permits only exact reviewed legacy debt; final zero-debt acceptance remains pending.",
+    "Lexical source enforcement is complemented by scientific-owner review, not a proof about arbitrary numerical code.",
+    "Hosted CI was not run; no application/scientific code changed."
+  ]
+}

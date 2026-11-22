@@ -47,6 +47,7 @@ case "${ACTION}" in
   lock) "${CARGO[@]}" generate-lockfile --manifest-path "${MANIFEST}" ;;
   build|build-debug) "${CARGO[@]}" build --manifest-path "${MANIFEST}" "${BUILD_PROFILE[@]}" --locked ;;
   check)
+    python3 "${PROJECT_DIR}/tools/validation/qt_api_boundary.py"
     "${CARGO[@]}" fmt --manifest-path "${MANIFEST}" -- --check
     "${CARGO[@]}" clippy --manifest-path "${MANIFEST}" --all-targets --locked -- -D warnings
     "${CARGO[@]}" test --manifest-path "${MANIFEST}" --locked

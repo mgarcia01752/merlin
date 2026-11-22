@@ -25,9 +25,11 @@ the current instruction source to canonical requirements and tasks. Its
 session operations and proposed namespaces; final operation/runtime coverage remains
 with the open API and backend acceptance gates.
 
-Future upstream Qt design remains deferred; existing downstream workbench ownership
-is retained. The [source UI design](unified-backend/references/extension-designs-ui.md)
-is historical guidance, not authorization to create a second application.
+The [unified Qt Workbench](unified-qt-workbench/design.md) now owns the authorized
+UI phase, including its [public-API boundary](unified-qt-workbench/api-gap-matrix.md)
+and [official UIU tasks](../checklist.md#unified-qt-workbench-delivery).
+Existing downstream history is retained. The [source UI design](unified-backend/references/extension-designs-ui.md)
+is historical guidance; the unified phase still delivers one native application.
 
 Reference navigation: [development status](../status.md),
 [subordinate UI checklist](../ui-checklist.md),

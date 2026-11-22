@@ -443,12 +443,12 @@ blocker for earlier eligible API/downstream work after plan approval.
   Evidence: [fresh baseline acceptance](features/unified-qt-workbench/validation.md#uiu-base-01-fresh-qt-baseline-accepted) and [exact cases/source hashes](features/unified-qt-workbench/baseline-evidence.json): format/Clippy/build, 87 Rust tests, 89 QML checks, four project validators and two XCB startup smokes pass. All 178 application hashes are unchanged; Windows/installed lifecycle remains unverified.
 
 <a id="task-uiu-bound-01"></a>
-- [ ] **UIU-BOUND-01** Enforce the public-API boundary before migration.
+- [x] **UIU-BOUND-01** Enforce the public-API boundary before migration.
   Requirements: [REQ-UIU-02](../requirements.md#req-uiu-02), [REQ-UIU-03](../requirements.md#req-uiu-03), [REQ-UIU-24](../requirements.md#req-uiu-24).
   Dependencies: [UIU-BASE-01](#task-uiu-base-01).
   Architecture/files: [api owner](../architecture.md#unified-qt-public-api-boundary), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Add Cargo identity/source guard and negative alias/direct-call cases, reviewed finite legacy-site list with sunset tasks; no new scientific exceptions.
-  Evidence: [api acceptance plan](features/unified-qt-workbench/validation.md#api); pending implementation/acceptance.
+  Evidence: [boundary acceptance](features/unified-qt-workbench/validation.md#uiu-bound-01-public-api-boundary-accepted): 16 independent boundary cases, all 73 validation-tool cases, seven development-tool cases, actual locked metadata/source audit and shell checks pass. Three direct dependencies/45 source files remain explicit migration debt, not final Qt acceptance.
 
 <a id="task-uiu-api-01"></a>
 - [ ] **UIU-API-01** Expose compatible input/editor/preview admission through the facade.
