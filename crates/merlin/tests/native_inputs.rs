@@ -207,3 +207,57 @@ fn facade_idle_tx_timing_and_precancel_use_public_immutable_contracts() {
     );
     assert_eq!(control.snapshot().completed_symbols, 0);
 }
+
+#[test]
+fn facade_full_loop_preparation_and_precancel_preserve_native_inputs() {
+    use downstream::*;
+    let profile = inputs::CaptureLoader::profile(
+        &NamedCapture::new("profile", PROFILE.to_vec()).unwrap(),
+        ProfileId::new(0).unwrap(),
+    )
+    .unwrap();
+    let transmission = TransmissionConfiguration::new(TransmissionSettings::default()).unwrap();
+    let measurement = inputs::CaptureLoader::rxmer(
+        &NamedCapture::new(
+            "rxmer",
+            include_bytes!("../../../examples/measurements/single-channel/rxmer.json").to_vec(),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let measurements = MeasurementSequence::new(
+        &profile,
+        &transmission,
+        vec![measurement],
+        MeasurementSequenceOptions {
+            mode: MeasurementMode::Single,
+            interval_symbols: 1000,
+            tolerance: AssociationTolerance::new(90000).unwrap(),
+        },
+    )
+    .unwrap();
+    let request = Simulation::prepare_full_loop(
+        FullLoopInputs {
+            transmission,
+            profile,
+            source: SourceInput::prbs15(PrbsSeed::new(32767).unwrap()),
+            measurements,
+            channel: ChannelConfiguration::new(ChannelConfigurationInput::default()).unwrap(),
+            response: None,
+        },
+        FullLoopOptions {
+            duration_ms: 1,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    let control = FullLoopControl::new();
+    control.cancel();
+    let result = request.run(&control).unwrap();
+    assert_eq!(result.report().status, ChannelJobStatus::Cancelled);
+    assert_eq!(result.report().summary.comparison.bits_tested, 0);
+    assert_eq!(
+        result.inputs().profile.sources()[0].original_bytes(),
+        PROFILE
+    );
+}

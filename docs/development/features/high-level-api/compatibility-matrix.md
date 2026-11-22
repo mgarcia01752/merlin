@@ -4,12 +4,12 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-463 explicit public Rust operations and 448 installed native Python entries with
+481 explicit public Rust operations and 465 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current native operation acceptance](../unified-qt-workbench/transmitter-preview-evidence.json)
+is a readable subset of this one matrix. [Current native operation acceptance](../unified-qt-workbench/full-loop-request-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
-101 directional/common class exports and 59 preserved legacy root exports. Named
+105 directional/common class exports and 59 preserved legacy root exports. Named
 owner regressions establish behavioral scope; metadata alone is not scientific
 execution or exhaustive getter-branch coverage.
 
@@ -17,9 +17,15 @@ The additive [UIU-API-01 admission/preview acceptance](../unified-qt-workbench/v
 appends 99 Rust and 75 native rows, retaining every original row and historical
 run record, including [historical native acceptance](python-operation-evidence.json). Its [current exact execution cases](../unified-qt-workbench/api-01-operation-test-results.json)
 and [candidate/wheel evidence](../unified-qt-workbench/transmitter-preview-evidence.json)
-cover the new input/editor/preview owners. Fresh discovery checks the complete
-current matrix; named owner cases establish scope without claiming exhaustive
+cover the new input/editor/preview owners. That acceptance checked its complete
+matrix; named owner cases establish scope without claiming exhaustive
 getter/field/helper branch coverage.
+
+The [UIU-API-02 controlled-request unit](../unified-qt-workbench/validation.md#uiu-api-02-controlled-request-unit)
+adds 18 Rust/17 native rows with [current executed cases](../unified-qt-workbench/api-02-request-operation-test-results.json)
+and a fresh 82-case installed wheel. This accepts the scoped request/control/report
+operations; retained queries and complete catalog/sweep parity keep the parent task
+open. All earlier operation rows and historical evidence remain intact.
 
 The [operation run records](operation-test-results.json) add a targeted measured-plan
 roundtrip and retain exact named historical MERLIN component cases. The

@@ -420,3 +420,39 @@ rows/evidence remain intact. No Qt source changed and the frozen boundary debt
 remains for UIU-DS-01. This accepts public admission locally; UIU-API-02 retains
 controlled downstream jobs and observations, followed by the remaining official
 Qt tasks and final native/platform gates.
+
+## UIU-API-02 controlled request unit
+
+The independent immutable request/options/control/result models extend public
+Simulation admission without changing existing evaluation sessions.
+[Exact source/test/wheel evidence](full-loop-request-evidence.json),
+[owner/design](design.md#uiu-api-02-downstream-controlled-request-unit),
+[paired operation guide](../../../user/api/full-loop.md) and
+[exact executed cases](api-02-request-operation-test-results.json) trace to the
+[architecture](../../../architecture.md#unified-qt-public-api-boundary) and
+still-open [UIU-API-02](../../checklist.md#task-uiu-api-02).
+
+Four new core cases and all six existing job cases pass. The actual old-owner
+report/retained-word comparison, clean closed-loop zero BER/FEC failures, 23 complete
+source symbols, exact 112-bit finite file recovery and original ownership pass.
+Acknowledged safe-boundary pause, frozen progress, resume without reseeding,
+concurrent/reused Busy, cancellation while paused and retained completed FEC trials
+pass. Initial pause/pre-cancel produce zero completed trials. Invalid transport,
+limits, timing and H association reject without changing accepted inputs.
+Fifteen facade/native-input/namespace cases and warnings-denied all-target
+facade/native-input/binding Clippy, format/version/guide and 14 testing-tool cases
+pass. Existing kernel/scientific algorithms remain unchanged.
+
+The fresh Linux CPython 3.10 installed wheel passes all 82 native cases, including
+six new full-loop cases. A separate direct-Rust process supplies actual configured
+science/count/FEC/word reference results. GIL-releasing cross-thread pause/resume/
+cancel and an actual interpreter interrupt during acknowledged pause return real
+partial reports. Each equivalent synthetic input retains its own original JSON
+encoding/hash; source hashes are not normalized to force a cross-language match.
+The matrix adds 18 Rust/17 native rows (481/465 total), preserves every prior row
+and checks fresh compiler/native signatures/owners/exports plus successful cases.
+
+No Qt source or completed historical task changed. The passive probe is disabled
+in this unit; retained stage/message/spectrum/response/soft-decision queries and
+complete source-catalog/sweep compatibility keep UIU-API-02 unchecked. Those gates
+precede Qt migration; this scoped unit does not establish parent or platform acceptance.

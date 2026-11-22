@@ -1,0 +1,84 @@
+# Downstream full-loop requests
+
+`merlin::downstream::Simulation::prepare_full_loop` and installed Python
+`merlin.downstream.Simulation.prepare_full_loop` prepare independent immutable
+single-profile requests. Existing Simulation/Merlin evaluation sessions and their
+options remain unchanged. Preparation validates accepted inputs through existing
+Rust scientific owners and advances no source or simulation.
+
+| Rust operation | Python operation | Contract |
+| --- | --- | --- |
+| `Simulation::prepare_full_loop(FullLoopInputs, FullLoopOptions)` | `Simulation.prepare_full_loop(transmission, profile, source, measurements, channel, response=None, options=None)` | Own accepted typed inputs and freeze a validated request; Python collects the same fields into the Rust bundle. |
+| `FullLoopOptions::default()`; `validate()`; `from_json(bytes)` | `FullLoopOptions()`; `FullLoopOptions.from_json(data)` | Same bounded policy; unknown/oversized JSON rejects. Profile-specific selection checks occur during preparation. |
+| Options fields / serde | `.settings`; `.to_json()` | Typed Rust fields and owned native dictionaries/JSON, with identical field names and units. |
+| `request.settings()`; `request.options()` | `.settings`; `.options` | Frozen exact scientific settings and accepted options; native copies cannot mutate the request. |
+| `FullLoopControl::new()`; `pause()`; `resume()`; `cancel()`; `snapshot()` | `FullLoopControl()`; matching methods | Direction-specific one-shot controls and actual safe-boundary pause acknowledgement. |
+| `request.run(&control)` | `request.run(control=None)` | Explicit bounded existing channel job; None creates a fresh control. |
+| `result.report()` | `result.report()` | Actual typed Rust complete/partial report and owned native dictionary. |
+| `result.inputs()`; `inputs.summary()` | `result.input_summary()` | Rust retains typed original inputs; native returns bounded original identity/provenance metadata. |
+| `result.recovered_bytes()` | `result.recovered_bytes()` | Borrowed Rust decoded original-file bytes / owned native bytes, or None for PRBS. |
+
+`FullLoopInputs` contains the previously admitted transmission, Dpd, SourceInput,
+MeasurementSequence, ChannelConfiguration and optional original ChannelEstimate.
+None explicitly selects synthetic unity H; receiver correction remains a separate
+option. Measurement sequence timing must exactly match the request numerology;
+original frames, order, mode, tolerance and clock are revalidated for the selected
+profile. Original profile/H epoch association uses the sequence's explicit tolerance.
+Existing spatial/coverage, supported role/loading, H/filter and receiver restrictions
+remain authoritative. Inputs are immutable and original bytes/hashes stay retained.
+
+Default full-loop policy matches the supported downstream workbench: 3 ms source
+observation, 50 decoder iterations, 300000 ms active host budget, 64 retained word
+details, noise seed 41, supplied-channel correction and existing finite QAM/protected
+capture selections. The source keeps its own PRBS/file/fill policy. Options bound
+observation to 1..1000 ms, iterations to 1..100, runtime to 1..300000 ms and retained
+words to 0..10000. Native JSON options are limited to 64 KiB. Existing MCE/QAM policy
+types remain with their Rust owners. This is a separate public request contract;
+legacy evaluation defaults and duration domains are preserved.
+
+Controls are cloneable Send+Sync tokens independent of result storage and workers.
+A fresh token admits one run; repeated/concurrent use rejects Busy. Snapshot states
+are `idle`, `running`, `paused`, `completed`, `cancelled`, `runtime_exceeded` and
+`failed`. `pause_requested` is separate from acknowledged `paused`: the original
+worker enters that state only at a completed-step boundary. An initial pause waits
+before the first step. Resume continues the same source/RNG/receiver state.
+Cancel is one-way and also exits a paused wait. Active host runtime excludes actual
+paused time; progress reflects the last completed scientific step.
+
+After construction, cancellation/runtime/step failure returns the actual partial
+report. Completed comparisons and retained FEC trials remain available; unfinished
+words do not become fabricated comparisons. Pre-dispatch construction/admission
+errors return structured ApiError. The request remains reusable with fresh controls,
+and prior results remain valid after later runs and input/request disposal.
+
+Python runs on a private bounded native worker while releasing the interpreter
+lock. Another Python thread can poll/pause/resume/cancel without taking a scientific
+result lock. Interpreter interrupts request cooperative cancellation and return the
+partial report, consistent with existing session execution. No Python callback
+executes inside the Rust job. Queries return owned dictionaries/lists/bytes; edits
+cannot change the immutable Rust result. File output contains actual whole decoded
+original bytes, excluding appended fill and coding padding, without filesystem I/O.
+
+```python
+from merlin.downstream import Simulation, FullLoopOptions, FullLoopControl
+
+# All five required inputs are previously admitted immutable objects.
+options = FullLoopOptions.from_json(b'{"duration_ms":1,"max_iterations":10}')
+request = Simulation.prepare_full_loop(
+    transmission, profile, source, measurements, channel, options=options)
+control = FullLoopControl()
+result = request.run(control)  # dispatch outside a GUI event loop
+print(result.report()['status'], result.report()['summary']['comparison'])
+```
+
+This first controlled-request unit does not establish final Qt adoption. Retained
+stage/message/spectrum/response/soft-decision queries and complete source-catalog/
+sweep compatibility remain UIU-API-02 gates. Large retained report arrays remain
+bounded by existing scientific policies; later Qt consumers use scoped public
+observations. The direct-Rust `api_full_loop` example supplies independent native
+process references for selected settings, actual FEC/counts and retained words.
+
+Traceability: [architecture](../../architecture.md#unified-qt-public-api-boundary),
+[requirements](../../requirements.md#req-uiu-09),
+[design](../../development/features/unified-qt-workbench/design.md#uiu-api-02-downstream-controlled-request-unit)
+and [task](../../development/checklist.md#task-uiu-api-02).

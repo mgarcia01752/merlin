@@ -16,6 +16,8 @@ catalogs, compact schemes and bounded scientific views.
 filter admission and authoritative transfer observations.
 [Idle TX previews](transmitter-preview.md) provide explicit bounded generation,
 controls, owned actual samples/PSD and symbol/window timing.
+[Downstream full-loop requests](full-loop.md) describe independent controlled
+execution and owned complete/partial scientific reports.
 
 For searchable class/method documentation generated from the actual APIs, see
 the [generated Rust/Python reference](../../reference/api-reference.md).

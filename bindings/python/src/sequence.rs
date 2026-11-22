@@ -28,7 +28,7 @@ pub(crate) struct PySequenceOptions(api::MeasurementSequenceOptions);
     name = "MeasurementSequence"
 )]
 #[derive(Clone)]
-pub(crate) struct PySequence(api::MeasurementSequence);
+pub(crate) struct PySequence(pub(crate) api::MeasurementSequence);
 
 fn transport_error(cause: serde_json::Error) -> api::ApiError {
     api::ApiError::new(api::ErrorCode::InvalidInput, cause.to_string())

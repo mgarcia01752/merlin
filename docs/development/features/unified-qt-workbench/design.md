@@ -437,6 +437,68 @@ and focused test/evidence links to the existing authoritative operation matrix;
 retain every original row and historical evidence. Compiler discovery and actual
 native exports must both match before the parent task can be checked.
 
+### UIU-API-02: downstream controlled-request unit
+
+Dependencies: accepted UIU-API-01. This first unit preserves the existing
+Simulation/Merlin evaluation API and adds standalone typed full-loop admission;
+retained stage/query and complete source-catalog/sweep parity remain separate
+mandatory parts of UIU-API-02 before Qt adoption.
+
+Add `crates/ofdm/src/api/full_loop.rs` and focused `full_loop/` options, control,
+request and result modules. `FullLoopInputs` owns accepted TransmissionConfiguration,
+Dpd, SourceInput, MeasurementSequence, ChannelConfiguration and optional original
+ChannelEstimate. `FullLoopOptions` owns explicit bounded duration/iteration/runtime/
+retained-word limits, noise seed, receiver mode and existing MCE/QAM capture policies.
+Default values preserve the current supported downstream workbench settings;
+legacy Simulation options/defaults/behavior do not change. Add a bounded JSON
+options adapter, retaining a typed Rust input/constructor.
+
+`Simulation::prepare_full_loop(inputs, options)` returns immutable reusable
+`FullLoopRequest` only after existing captured-layout, MeasurementSelection,
+PlaybackConfiguration and final ChannelRunSettings validation. Add a private
+measurement-sequence export/revalidation operation in `api/sequence.rs` to retain
+original frames, order, mode, tolerance and clock for the selected profile and
+numerology. Do not silently accept a sequence planned for different timing.
+Neither loading nor preparation advances a source/RNG or starts a job. Configured
+H, loss/power/filter and receiver policy remain separate; originals and provenance
+are preserved. Recognized raw byte IDs do not broaden existing simulation IDs.
+
+`FullLoopRequest::run(&FullLoopControl)` synchronously reuses the existing bounded
+channel job. The cloneable one-shot direction-specific control supports pause,
+resume, cancel, scalar snapshot and Busy rejection. Scientific safe-boundary pause
+acknowledgement comes from the core wait loop, not an optimistic UI flag. Add a
+crate-private controlled job entry with pause-entry/exit notifications; preserve
+all existing public/old cancellation entries through a no-op notification delegate.
+Active runtime continues to exclude actual paused time. Polling/control calls take
+no scientific-result lock and no Python callbacks execute in the core.
+
+The owned `FullLoopResult` retains the actual existing typed complete/partial job
+report, selected input provenance and immutable accepted settings. Completed FEC
+comparisons and recovered-file outcomes survive cancel/runtime/failure. This unit
+uses a disabled passive probe; retained stage/message/spectrum/response/soft-decision
+query acceptance remains pending for the next unit. Re-export only named existing
+configuration/result models, keeping all kernels/engine calls in the core owner.
+
+Add matching immutable native request/options/control/result wrappers under
+`bindings/python/src/full_loop/`, registration and aliases/stubs. Python prepares
+from the same typed inputs and releases the GIL for admission/run; another thread
+can poll/pause/resume/cancel. Return owned report/provenance snapshots, preserve
+structured errors and source ownership. Add focused Rust/core/facade and installed
+native tests for actual old-owner settings/output equivalence, independent clean
+closed-loop FEC/PRBS outcomes, pause-at-boundary/resume/cancel/Busy/partial retention,
+invalid limits/sequence/identity and no mutation. Extend exact operation/test
+traceability before committing this implementation unit; parent stays unchecked.
+Add a fresh direct-Rust `crates/ofdm/examples/api_full_loop.rs` reference and its
+Cargo feature registration, plus the corresponding native-runner reference process
+in `tools/testing/native_api.py`. Core tests live in
+`crates/ofdm/tests/api_full_loop.rs`; native tests in
+`bindings/python/tests/test_full_loop.py`. Include actual interpreter-interrupt
+cancellation during an acknowledged pause on the locally validated Linux host.
+Native reference comparisons preserve each input's actual original encoding/hash;
+compare scientific configuration/counts/words, not hashes of differently encoded
+but equivalent synthetic JSON observations.
+
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

@@ -208,6 +208,30 @@ fn run_controlled_with_cancellation(
     observer: &mut impl ProbeObserver,
     progress: impl FnMut(ChannelProgress),
 ) -> Result<ChannelJobResult, SimulationError> {
+    run_notified_with_cancellation(
+        settings,
+        limits,
+        cancel,
+        paused,
+        probe,
+        observer,
+        progress,
+        |_| {},
+    )
+}
+
+/// Internal API bridge over the same safe-boundary pause loop; notifications observe only.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn run_notified_with_cancellation(
+    settings: &ChannelRunSettings,
+    limits: &ChannelJobLimits,
+    cancel: &impl Cancellation,
+    paused: &AtomicBool,
+    probe: &mut TestPointProbe,
+    observer: &mut impl ProbeObserver,
+    progress: impl FnMut(ChannelProgress),
+    mut pause_changed: impl FnMut(bool),
+) -> Result<ChannelJobResult, SimulationError> {
     let started = Instant::now();
     let pause_time = std::cell::Cell::new(std::time::Duration::ZERO);
     run_with_clock(
@@ -227,10 +251,12 @@ fn run_controlled_with_cancellation(
         || {
             if paused.load(Ordering::Relaxed) {
                 let since = Instant::now();
+                pause_changed(true);
                 while paused.load(Ordering::Relaxed) && !cancel.is_cancelled() {
                     std::thread::sleep(std::time::Duration::from_millis(10));
                 }
                 pause_time.set(pause_time.get() + since.elapsed());
+                pause_changed(false);
             }
         },
     )

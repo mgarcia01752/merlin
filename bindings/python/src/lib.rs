@@ -7,6 +7,7 @@ mod admission;
 mod channel;
 mod controller;
 mod designer;
+mod full_loop;
 mod inputs;
 mod measurement;
 mod options;
@@ -74,6 +75,7 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     designer::register(module)?;
     sequence::register(module)?;
     transmitter::register(module)?;
+    full_loop::register(module)?;
     inputs::register(module)?;
     receiver::register(module)?;
     options::register(module)?;

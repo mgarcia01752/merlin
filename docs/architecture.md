@@ -977,6 +977,13 @@ storage. [Idle TX contracts](user/api/transmitter-preview.md) preserve actual
 post-overlap/pre-channel samples/PSD and expose authoritative symbol timing/window
 coefficients for presentation. Full-loop controls and retained stages remain a
 separate API extension gate.
+UIU-API-02 adds immutable [typed full-loop requests](user/api/full-loop.md) under
+`crates/ofdm/src/api/full_loop` over the existing controlled job, with independent
+safe-boundary pause/cancel/progress and owned actual partial reports. Native
+conversions under `bindings/python/src/full_loop` release the interpreter lock and
+map interrupts to cooperative cancellation. Existing evaluation Simulation/Merlin
+operations remain compatible. Retained stage/query and complete source-catalog/
+sweep parity remain explicit acceptance gates before Qt adoption.
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

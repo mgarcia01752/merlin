@@ -5,9 +5,9 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "51eaa6d2cd25754843a10426ea897fc76f0cf4fb plus exact API-01 candidate source manifest",
-    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-tx-native-final/native-exports.json",
-    "native_sha256": "f5df3454d529fb49e1ac2d7753561a210e7420c4f71e38afc622b347e4bf05cc",
+    "revision": "dbe4ffe9a279941e4ebc1cd612ac70b6bda961cf plus exact controlled-request candidate manifest",
+    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-request-native/native-exports.json",
+    "native_sha256": "85613b5572d1f9a054b50e76b0803bac851db4c453659b5e1997962a3190c715",
     "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
     "legacy_compatibility": {
       "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
@@ -60,7 +60,9 @@
     "status.native": "Implemented installed native operation/projection; named local contract tests pass. Windows and other interpreters remain unverified; final complete-workspace acceptance is separate.",
     "errors.native": "Checked native argument conversion can raise TypeError/OverflowError/ValueError where applicable. Domain/admission/execution failures preserve Rust ApiError categories and structured details; property/constant inspection never fabricates a scientific outcome.",
     "evidence.uiu-api-01": "../unified-qt-workbench/transmitter-preview-evidence.json, ../unified-qt-workbench/api-01-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-01-public-admission-accepted: current exact compiler/native exports and named Rust/installed-native unit regressions; full 635-case workspace, examples and analysis run. Scientific owner evidence is scoped, not exhaustive getter-branch coverage.",
-    "status.uiu-api-01": "Implemented additive public admission/preview operations; current Linux CPython 3.10 wheel and Rust workspace acceptance. Qt adoption, controlled-run extensions and hosted/platform acceptance remain separate tasks."
+    "status.uiu-api-01": "Implemented additive public admission/preview operations; current Linux CPython 3.10 wheel and Rust workspace acceptance. Qt adoption, controlled-run extensions and hosted/platform acceptance remain separate tasks.",
+    "evidence.uiu-api-02-request": "../unified-qt-workbench/full-loop-request-evidence.json, api-02-request-operation-test-results.json and validation.md#uiu-api-02-controlled-request-unit: actual current source/wheel and named scientific/lifecycle owner runs, not exhaustive getter branches.",
+    "status.uiu-api-02-request": "Implemented controlled-request unit, locally validated in Rust and Linux CPython 3.10. Parent UIU-API-02 remains unchecked for retained queries and complete source-catalog/sweep compatibility; no Qt adoption."
   },
   "type_exports": {
     "downstream": [
@@ -582,6 +584,62 @@
       },
       {
         "export": "merlin::downstream::WindowPoint",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::ChannelJobResult",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::ChannelJobStatus",
+        "kind": "enum"
+      },
+      {
+        "export": "merlin::downstream::ChannelProgress",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::ConstellationSelection",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopControl",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopInputSummary",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopInputs",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopOptions",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopProgress",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopRequest",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopResult",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopState",
+        "kind": "enum"
+      },
+      {
+        "export": "merlin::downstream::MceSettings",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::ProtectedCaptureSelection",
         "kind": "struct"
       }
     ],
@@ -23537,6 +23595,1206 @@
       },
       "evidence": "evidence.uiu-api-01",
       "status": "status.uiu-api-01"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::ConstellationSelection::validate",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn validate(&self, layout: &CarrierLayout) -> Result<(), SimulationError>",
+        "source_file": "crates/ofdm/src/simulation/channel/constellation/selection.rs",
+        "rustdoc": "docsis_ofdm_fec/simulation/channel/constellation/struct.ConstellationSelection.html"
+      },
+      "python_namespace": "none",
+      "python_type_method": {
+        "availability": "Rust-only typed input/configuration/result owner",
+        "declaration": "Native full-loop options/input-summary and request preparation compose the named public Rust models; field/Default/Serde projections remain deliberate language differences."
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "Result<(), SimulationError>",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopControl::new",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn new() -> Self",
+        "source_file": "crates/ofdm/src/api/full_loop/control.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopControl.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopControl.__init__",
+        "declaration": "merlin.downstream.FullLoopControl.__init__"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.control",
+      "report_contract": {
+        "rust_return": "Self",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopControl::pause",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn pause(&self) -> ApiResult<()>",
+        "source_file": "crates/ofdm/src/api/full_loop/control.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopControl.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopControl.pause",
+        "declaration": "merlin.downstream.FullLoopControl.pause"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.control",
+      "report_contract": {
+        "rust_return": "ApiResult<()>",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopControl::resume",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn resume(&self)",
+        "source_file": "crates/ofdm/src/api/full_loop/control.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopControl.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopControl.resume",
+        "declaration": "merlin.downstream.FullLoopControl.resume"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.control",
+      "report_contract": {
+        "rust_return": "()",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopControl::cancel",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn cancel(&self)",
+        "source_file": "crates/ofdm/src/api/full_loop/control.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopControl.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopControl.cancel",
+        "declaration": "merlin.downstream.FullLoopControl.cancel"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.control",
+      "report_contract": {
+        "rust_return": "()",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopControl::snapshot",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn snapshot(&self) -> FullLoopProgress",
+        "source_file": "crates/ofdm/src/api/full_loop/control.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopControl.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopControl.snapshot",
+        "declaration": "merlin.downstream.FullLoopControl.snapshot"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.control",
+      "report_contract": {
+        "rust_return": "FullLoopProgress",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopInputs::summary",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn summary(&self) -> ApiResult<FullLoopInputSummary>",
+        "source_file": "crates/ofdm/src/api/full_loop/result.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopInputs.html"
+      },
+      "python_namespace": "none",
+      "python_type_method": {
+        "availability": "Rust-only typed input/configuration/result owner",
+        "declaration": "Native full-loop options/input-summary and request preparation compose the named public Rust models; field/Default/Serde projections remain deliberate language differences."
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopInputSummary>",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopOptions::validate",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn validate(&self) -> ApiResult<()>",
+        "source_file": "crates/ofdm/src/api/full_loop/options.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopOptions.html"
+      },
+      "python_namespace": "none",
+      "python_type_method": {
+        "availability": "Rust-only typed input/configuration/result owner",
+        "declaration": "Native full-loop options/input-summary and request preparation compose the named public Rust models; field/Default/Serde projections remain deliberate language differences."
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "ApiResult<()>",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopOptions::from_json",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn from_json(bytes: &[u8]) -> ApiResult<Self>",
+        "source_file": "crates/ofdm/src/api/full_loop/options.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopOptions.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopOptions.from_json",
+        "declaration": "merlin.downstream.FullLoopOptions.from_json"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopRequest::settings",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn settings(&self) -> &ChannelRunSettings",
+        "source_file": "crates/ofdm/src/api/full_loop/request.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopRequest.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopRequest.settings",
+        "declaration": "merlin.downstream.FullLoopRequest.settings"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "&ChannelRunSettings",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopRequest::options",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn options(&self) -> &FullLoopOptions",
+        "source_file": "crates/ofdm/src/api/full_loop/request.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopRequest.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopRequest.options",
+        "declaration": "merlin.downstream.FullLoopRequest.options"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "&FullLoopOptions",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopRequest::run",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn run(&self, control: &FullLoopControl) -> ApiResult<FullLoopResult>",
+        "source_file": "crates/ofdm/src/api/full_loop/request.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopRequest.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopRequest.run",
+        "declaration": "merlin.downstream.FullLoopRequest.run"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.run",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopResult>",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::report",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn report(&self) -> &FullLoopReport",
+        "source_file": "crates/ofdm/src/api/full_loop/result.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.report",
+        "declaration": "merlin.downstream.FullLoopResult.report"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "&FullLoopReport",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::inputs",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn inputs(&self) -> &FullLoopInputs",
+        "source_file": "crates/ofdm/src/api/full_loop/result.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "none",
+      "python_type_method": {
+        "availability": "Rust-only typed input/configuration/result owner",
+        "declaration": "Native full-loop options/input-summary and request preparation compose the named public Rust models; field/Default/Serde projections remain deliberate language differences."
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "&FullLoopInputs",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::recovered_bytes",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn recovered_bytes(&self) -> Option<&[u8]>",
+        "source_file": "crates/ofdm/src/api/full_loop/result.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.recovered_bytes",
+        "declaration": "merlin.downstream.FullLoopResult.recovered_bytes"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "Option<&[u8]>",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::MceSettings::validate",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn validate(&self) -> Result<(), SimulationError>",
+        "source_file": "crates/ofdm/src/signal_processing/receiver/channel_estimation/reliability.rs",
+        "rustdoc": "docsis_ofdm_fec/signal_processing/receiver/channel_estimation/struct.MceSettings.html"
+      },
+      "python_namespace": "none",
+      "python_type_method": {
+        "availability": "Rust-only typed input/configuration/result owner",
+        "declaration": "Native full-loop options/input-summary and request preparation compose the named public Rust models; field/Default/Serde projections remain deliberate language differences."
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "Result<(), SimulationError>",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::ProtectedCaptureSelection::validate",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn validate(&self) -> Result<(), SimulationError>",
+        "source_file": "crates/ofdm/src/simulation/channel/protected_constellation/mod.rs",
+        "rustdoc": "docsis_ofdm_fec/simulation/channel/protected_constellation/struct.ProtectedCaptureSelection.html"
+      },
+      "python_namespace": "none",
+      "python_type_method": {
+        "availability": "Rust-only typed input/configuration/result owner",
+        "declaration": "Native full-loop options/input-summary and request preparation compose the named public Rust models; field/Default/Serde projections remain deliberate language differences."
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "Result<(), SimulationError>",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::Simulation::prepare_full_loop",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn prepare_full_loop( inputs: FullLoopInputs, options: FullLoopOptions, ) -> ApiResult<FullLoopRequest>",
+        "source_file": "crates/ofdm/src/api/full_loop.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.Simulation.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.Simulation.prepare_full_loop",
+        "declaration": "merlin.downstream.Simulation.prepare_full_loop"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopRequest>",
+        "scope": "Typed independently validated full-loop request/control/result over the existing scientific owner. Bounded actual reports retain completed trials and originals; stage/query acceptance remains separate."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native scientific/control owner cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Exact metadata plus named real full-loop, safe-pause/cancel/Busy/file/interrupt/direct-process cases; no exhaustive field/helper-branch claim."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
     }
   ],
   "executed_records": [
@@ -23546,7 +24804,8 @@
     "docs/development/features/high-level-api/operation-test-results.json",
     "docs/development/features/high-level-api/python-test-results.json",
     "docs/development/features/high-level-api/python-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -50887,6 +52146,1258 @@
       },
       "evidence": "evidence.uiu-api-01",
       "status": "status.uiu-api-01"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopControl.__init__",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopControl",
+        "source_file": "bindings/python/src/full_loop/control.rs",
+        "symbol": "PyFullLoopControl",
+        "signature": "pub fn new() -> Self",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopControl::new",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native constructor",
+        "name": "__init__",
+        "kind": "constructor",
+        "signature": "()",
+        "declaration": "FullLoopControl.__init__"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.control",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopControl",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopControl.cancel",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopControl",
+        "source_file": "bindings/python/src/full_loop/control.rs",
+        "symbol": "PyFullLoopControl",
+        "signature": "pub fn cancel(&self)",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopControl::cancel",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "cancel",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopControl.cancel"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.control",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopControl",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopControl.pause",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopControl",
+        "source_file": "bindings/python/src/full_loop/control.rs",
+        "symbol": "PyFullLoopControl",
+        "signature": "pub fn pause(&self) -> ApiResult<()>",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopControl::pause",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "pause",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopControl.pause"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.control",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopControl",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopControl.resume",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopControl",
+        "source_file": "bindings/python/src/full_loop/control.rs",
+        "symbol": "PyFullLoopControl",
+        "signature": "pub fn resume(&self)",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopControl::resume",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "resume",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopControl.resume"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.control",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopControl",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopControl.snapshot",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopControl",
+        "source_file": "bindings/python/src/full_loop/control.rs",
+        "symbol": "PyFullLoopControl",
+        "signature": "pub fn snapshot(&self) -> FullLoopProgress",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopControl::snapshot",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "snapshot",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopControl.snapshot"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.control",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopControl",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopOptions.__init__",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopOptions",
+        "source_file": "bindings/python/src/full_loop/options.rs",
+        "symbol": "PyFullLoopOptions",
+        "signature": "Typed Rust field/Default/Serde or composed-input projection; no invented public Rust method",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": null,
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native constructor",
+        "name": "__init__",
+        "kind": "constructor",
+        "signature": "()",
+        "declaration": "FullLoopOptions.__init__"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopOptions",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopOptions.from_json",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopOptions",
+        "source_file": "bindings/python/src/full_loop/options.rs",
+        "symbol": "PyFullLoopOptions",
+        "signature": "pub fn from_json(bytes: &[u8]) -> ApiResult<Self>",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopOptions::from_json",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "from_json",
+        "kind": "method",
+        "signature": "(data)",
+        "declaration": "FullLoopOptions.from_json"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopOptions",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopOptions.settings",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopOptions",
+        "source_file": "bindings/python/src/full_loop/options.rs",
+        "symbol": "PyFullLoopOptions",
+        "signature": "Typed Rust field/Default/Serde or composed-input projection; no invented public Rust method",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": null,
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native property",
+        "name": "settings",
+        "kind": "property",
+        "signature": null,
+        "declaration": "FullLoopOptions.settings"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopOptions",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopOptions.to_json",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopOptions",
+        "source_file": "bindings/python/src/full_loop/options.rs",
+        "symbol": "PyFullLoopOptions",
+        "signature": "Typed Rust field/Default/Serde or composed-input projection; no invented public Rust method",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": null,
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "to_json",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopOptions.to_json"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopOptions",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopRequest.options",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopRequest",
+        "source_file": "bindings/python/src/full_loop/request.rs",
+        "symbol": "PyFullLoopRequest",
+        "signature": "pub fn options(&self) -> &FullLoopOptions",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopRequest::options",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native property",
+        "name": "options",
+        "kind": "property",
+        "signature": null,
+        "declaration": "FullLoopRequest.options"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopRequest",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopRequest.run",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopRequest",
+        "source_file": "bindings/python/src/full_loop/request.rs",
+        "symbol": "PyFullLoopRequest",
+        "signature": "pub fn run(&self, control: &FullLoopControl) -> ApiResult<FullLoopResult>",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopRequest::run",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "run",
+        "kind": "method",
+        "signature": "(self, /, control=None)",
+        "declaration": "FullLoopRequest.run"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.run",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopRequest",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopRequest.settings",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopRequest",
+        "source_file": "bindings/python/src/full_loop/request.rs",
+        "symbol": "PyFullLoopRequest",
+        "signature": "pub fn settings(&self) -> &ChannelRunSettings",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopRequest::settings",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native property",
+        "name": "settings",
+        "kind": "property",
+        "signature": null,
+        "declaration": "FullLoopRequest.settings"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopRequest",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.input_summary",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/result.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "Typed Rust field/Default/Serde or composed-input projection; no invented public Rust method",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": null,
+        "delegated_operations": [
+          {
+            "operation": "merlin::downstream::FullLoopResult::inputs",
+            "signature": "pub fn inputs(&self) -> &FullLoopInputs",
+            "source_file": "crates/ofdm/src/api/full_loop/result.rs"
+          },
+          {
+            "operation": "merlin::downstream::FullLoopInputs::summary",
+            "signature": "pub fn summary(&self) -> ApiResult<FullLoopInputSummary>",
+            "source_file": "crates/ofdm/src/api/full_loop/result.rs"
+          }
+        ]
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "input_summary",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopResult.input_summary"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.recovered_bytes",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/result.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn recovered_bytes(&self) -> Option<&[u8]>",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::recovered_bytes",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "recovered_bytes",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopResult.recovered_bytes"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.report",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/result.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn report(&self) -> &FullLoopReport",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::report",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "report",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopResult.report"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.Merlin.prepare_full_loop",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::Simulation",
+        "source_file": "bindings/python/src/full_loop/request.rs",
+        "symbol": "PyMerlin",
+        "signature": "pub fn prepare_full_loop( inputs: FullLoopInputs, options: FullLoopOptions, ) -> ApiResult<FullLoopRequest>",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::Simulation::prepare_full_loop",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "prepare_full_loop",
+        "kind": "method",
+        "signature": "(transmission, profile, source, measurements, channel, response=None, options=None)",
+        "declaration": "Merlin.prepare_full_loop"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::Simulation",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.Simulation.prepare_full_loop",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::Simulation",
+        "source_file": "bindings/python/src/full_loop/request.rs",
+        "symbol": "PyMerlin",
+        "signature": "pub fn prepare_full_loop( inputs: FullLoopInputs, options: FullLoopOptions, ) -> ApiResult<FullLoopRequest>",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::Simulation::prepare_full_loop",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "prepare_full_loop",
+        "kind": "method",
+        "signature": "(transmission, profile, source, measurements, channel, response=None, options=None)",
+        "declaration": "Simulation.prepare_full_loop"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::Simulation",
+        "scope": "Owned native report/provenance/bytes or directional one-shot control; public Rust retains all scientific validation and execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "crates/ofdm/tests/api_full_loop.rs::options_timing_and_identity_failures_leave_accepted_inputs_unchanged",
+          "crates/ofdm/tests/channel_job.rs::tx_message_and_frame_observation_preserve_channel_results",
+          "crates/ofdm/tests/channel_job.rs::whole_word_window_counts_exclude_crossing_and_completion_only_words",
+          "crates/ofdm/tests/channel_job.rs::cancellation_keeps_completed_comparisons_and_explicit_unrecovered_count",
+          "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
+          "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
+          "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused"
+        ],
+        "python": {
+          "status": "installed native signature plus real scientific/control cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+          ],
+          "scope": "Includes independent direct Rust-process selected science/count/FEC/word parity, cross-thread and Linux interrupt cancellation."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-request",
+      "status": "status.uiu-api-02-request"
     }
   ],
   "native_type_exports": {
@@ -51086,6 +53597,34 @@
         "module": "merlin",
         "signature": "(value)",
         "constructible": true
+      },
+      {
+        "name": "FullLoopControl",
+        "canonical_name": "FullLoopControl",
+        "module": "merlin",
+        "signature": "()",
+        "constructible": true
+      },
+      {
+        "name": "FullLoopOptions",
+        "canonical_name": "FullLoopOptions",
+        "module": "merlin",
+        "signature": "()",
+        "constructible": true
+      },
+      {
+        "name": "FullLoopRequest",
+        "canonical_name": "FullLoopRequest",
+        "module": "merlin",
+        "signature": "()",
+        "constructible": false
+      },
+      {
+        "name": "FullLoopResult",
+        "canonical_name": "FullLoopResult",
+        "module": "merlin",
+        "signature": "()",
+        "constructible": false
       },
       {
         "name": "InterleaverDepth",
@@ -51618,6 +54157,18 @@
       "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-backend/python-namespace-integration/native-exports.json",
       "native_sha256": "82351725d51bf0516d197753c6585b45dda21b7cdcf2ff05f09b4a430d07115c",
       "scope": "Actual installed Linux x86_64 CPython 3.10 native extension; original root classes retained, directional/common import identity tested.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "51eaa6d2cd25754843a10426ea897fc76f0cf4fb plus exact API-01 candidate source manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-tx-native-final/native-exports.json",
+      "native_sha256": "f5df3454d529fb49e1ac2d7753561a210e7420c4f71e38afc622b347e4bf05cc",
+      "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
       "legacy_compatibility": {
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
         "preserved_class_exports": 59,

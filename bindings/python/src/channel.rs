@@ -20,7 +20,7 @@ use pyo3::prelude::*;
     name = "ChannelConfiguration"
 )]
 #[derive(Clone)]
-pub(crate) struct PyChannelConfiguration(api::ChannelConfiguration);
+pub(crate) struct PyChannelConfiguration(pub(crate) api::ChannelConfiguration);
 
 fn transport_error(cause: serde_json::Error) -> api::ApiError {
     api::ApiError::new(api::ErrorCode::InvalidInput, cause.to_string())

@@ -97,6 +97,32 @@ pub struct MeasurementSequence {
 }
 
 impl MeasurementSequence {
+    pub(crate) fn full_loop_playback(
+        &self,
+        transmission: &TransmissionConfiguration,
+        profile: &Dpd,
+    ) -> ApiResult<crate::simulation::channel::measurement_playback::PlaybackConfiguration> {
+        if self.transmission.settings() != transmission.settings() {
+            return Err(ApiError::new(
+                ErrorCode::IncompatibleGrid,
+                "Measurement sequence timing differs from the full-loop request",
+            ));
+        }
+        let playback = crate::simulation::channel::measurement_playback::PlaybackConfiguration {
+            profile: profile.profile.clone(),
+            frames: self
+                .captures
+                .iter()
+                .map(|capture| capture.frame.clone())
+                .collect(),
+            mode: self.options.mode,
+            interval_symbols: self.options.interval_symbols,
+            tolerance_seconds: self.options.tolerance.value(),
+        };
+        playback.prepare(transmission.settings())?;
+        Ok(playback)
+    }
+
     /// Admits exact ordered originals through the existing physical measurement planner.
     ///
     /// # Arguments
