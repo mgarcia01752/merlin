@@ -1176,8 +1176,12 @@ The [DS-01 placement prerequisite](development/features/unified-qt-workbench/val
 now places existing downstream Rust owners in `apps/qt/src/downstream/` and views
 in `apps/qt/qml/downstream/`, including `DownstreamWorkbench.qml`. Current scientific
 calls remain unchanged behind the explicit relocated legacy guard until DS-01's
-public-API adoption units remove them. This is accepted source organization, not
-final API-boundary or session-isolation acceptance.
+public-API adoption units remove them. The first settings adapter now uses
+`merlin::downstream::TransmissionConfiguration` for admission and symbol timing;
+its sample-rate display uses the named SI conversion under
+`src/shared/presentation/constants.rs`. All other scientific consumers retain
+their guarded migration status. This is partial API adoption, not final
+API-boundary or session-isolation acceptance.
 
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).

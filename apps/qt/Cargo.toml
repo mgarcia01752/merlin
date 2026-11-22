@@ -8,6 +8,7 @@ license = "GPL-3.0-only"
 [workspace]
 
 [dependencies]
+merlin = { path = "../../crates/merlin", default-features = false, features = ["native-input"] }
 pnm-input = { path = "../../crates/pnm-input" }
 base64 = "=0.22.1"
 cxx = "=1.0.195"

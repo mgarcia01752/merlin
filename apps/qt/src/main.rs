@@ -8,6 +8,7 @@
 mod bridge;
 mod downstream;
 mod platform;
+mod shared;
 use cxx_qt_lib::{QGuiApplication, QQmlApplicationEngine, QString, QUrl};
 pub(crate) use downstream::instruments::{
     spectrum as spectrum_view, transmitter as transmitter_instruments,

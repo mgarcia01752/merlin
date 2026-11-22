@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "OFDM settings facade",
+  "status": "accepted focused adapter unit; parent incomplete",
+  "base_commit": "6c10ee6f32d32884424f6b1bc2b375960a0b84b7",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-08",
+    "REQ-UIU-09"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/Cargo.toml",
+      "sha256": "c636ebb8fbbd9d2c2ada8d51750482fc7d8937c66933169356edd606c24a465a"
+    },
+    {
+      "path": "apps/qt/Cargo.lock",
+      "sha256": "667e03fed21711895074bf860762d03890b1a6f7da6a40bc2a4ec946c67afca4"
+    },
+    {
+      "path": "apps/qt/src/main.rs",
+      "sha256": "c84be3f963adc32d568f75c8bfbec511089bd5362e66f7d6072742eefe2bc338"
+    },
+    {
+      "path": "apps/qt/src/bridge/ofdm_settings.rs",
+      "sha256": "0deaa1fa071cc46c1f52c502c615572195417fb309ee0a1789be9d269427ff54"
+    },
+    {
+      "path": "apps/qt/src/shared/mod.rs",
+      "sha256": "897200d997e274fb4cd7bb08b0b5f075a4cb4a76e2c0709b2f758c7cc4b77d8e"
+    },
+    {
+      "path": "apps/qt/src/shared/presentation/mod.rs",
+      "sha256": "e99b7555053ee8682247990f0848ac57397d54c90dc60f74e75626257323e213"
+    },
+    {
+      "path": "apps/qt/src/shared/presentation/constants.rs",
+      "sha256": "995dd373c913706f3b3f491f70ecf27fe39838fb41518cd1e37c8c14ffd56cb3"
+    }
+  ],
+  "public_operations": [
+    "merlin::downstream::TransmissionConfiguration::from_json",
+    "merlin::downstream::TransmissionConfiguration::symbol_timing",
+    "merlin::downstream::TransmissionSettings::one_second_timing"
+  ],
+  "compatibility": {
+    "unchanged": [
+      "QObject names and invokables",
+      "five-field accepted JSON",
+      "registry and defaults",
+      "atomic invalid-edit behavior",
+      "size-error wording",
+      "timing-summary wording for both FFTs"
+    ],
+    "tests": [
+      "bridge::ofdm_settings::tests::rejected_edits_preserve_accepted_settings",
+      "bridge::ofdm_settings::tests::registry_defaults_and_choices_match_core",
+      "bridge::ofdm_settings::tests::summaries_preserve_both_numerologies_without_accepting_drafts"
+    ]
+  },
+  "numeric_review": {
+    "backend_limit": "merlin::downstream::MAX_TRANSMISSION_DOCUMENT_BYTES",
+    "presentation_owner": "apps/qt/src/shared/presentation/constants.rs::SAMPLES_PER_MEGASAMPLE",
+    "independent_anchors": [
+      "4096-byte document and one-byte-over rejection",
+      "8192/4096 FFT samples at 25/50 kHz",
+      "42.5/22.5 us periods for 512-sample CP",
+      "192 MHz bandwidth, 128-sample roll-off and 16 branches in summary fixture"
+    ],
+    "final_integration_line_by_line_audit": "pending UIU-QA-01"
+  },
+  "boundary": {
+    "scientific_dependencies": 3,
+    "frozen_files": 44,
+    "scientific_sites": 144,
+    "retired_path": "apps/qt/src/bridge/ofdm_settings.rs",
+    "other_entries_exactly_preserved": true,
+    "initial_snapshot_exactly_preserved": true,
+    "parent_complete": false
+  },
+  "lock": {
+    "only_new_package": "local merlin 0.4.0",
+    "only_modified_package": "merlin-qt adds merlin dependency",
+    "all_existing_versions_and_other_package_records_unchanged": true
+  },
+  "validation": {
+    "qt_check": {
+      "command": "scripts/qt-desktop.sh check",
+      "receipt": "ds-01-settings-qt-check-final.log",
+      "status": "passed",
+      "rust_passed": 88,
+      "exit_code": 0,
+      "qml_passed": 89
+    },
+    "boundary_regressions": {
+      "command": "python3 -B -m unittest discover -s tools/validation -p test_qt_api_boundary.py -v",
+      "passed": 16,
+      "exit_code": 0,
+      "receipt": "ds-01-settings-boundary-tests.log"
+    },
+    "optimized_build": {
+      "command": "scripts/qt-desktop.sh build",
+      "exit_code": 0,
+      "receipt": "ds-01-settings-build.log"
+    },
+    "native_smokes": {
+      "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+      "sha256": "0b8e7feaf9409ad4f9c3f3d3167781612bac26a1da0aace6c7be5c0a037ebd9a",
+      "display": ":0",
+      "display_dimensions": [
+        "dimensions:    1280x800 pixels (338x211 millimeters)"
+      ],
+      "qt_sdk_version": "6.8.3",
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.3287916130066151,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.14522151900746394,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.7352855680073844,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.08652054300182499,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 3.428026173991384,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test",
+            "--workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 3.3379452640074305,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        }
+      ]
+    },
+    "metadata": [
+      {
+        "command": "python3 -B tools/validation/feature_documentation.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 -B tools/validation/integration_traceability.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 -B tools/release/versions.py",
+        "exit_code": 0
+      },
+      {
+        "command": "python3 -B tools/python/update_integration_doc.py --check",
+        "exit_code": 0
+      },
+      {
+        "command": "git diff --check",
+        "exit_code": 0
+      }
+    ]
+  },
+  "preparatory_failures": [
+    {
+      "operation": "offline full Cargo metadata",
+      "reason": "missing cached cxx-build 1.0.195 download; minimal lock update completed and independently verified",
+      "acceptance": false
+    },
+    {
+      "operation": "initial Qt guard invocation",
+      "reason": "correctly rejected changed whole-file entry before explicit retirement",
+      "receipt": "ds-01-settings-qt-check.log",
+      "acceptance": false
+    }
+  ],
+  "limitations": [
+    "Three legacy scientific dependencies and 44 guarded owners remain",
+    "No backend or Python code changed; their accepted evidence is retained",
+    "Session isolation, final numeric audit and installed/hosted behavior remain separate"
+  ]
+}

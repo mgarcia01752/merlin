@@ -1676,3 +1676,47 @@ changing their original targets or assertions. The aggregate QML failure remains
 recorded separately from the passing Rust phases and later QML/native commands.
 The next scientific adoption units consume the already accepted public APIs;
 placement does not remove or accept any frozen scientific migration debt.
+
+## UIU-DS-01 OFDM settings facade unit
+
+Migrate `apps/qt/src/bridge/ofdm_settings.rs` to existing accepted operations:
+`merlin::downstream::TransmissionConfiguration::from_json`, `symbol_timing` and
+the curated `TransmissionSettings::one_second_timing` metadata query. The public
+operation matrix already covers these methods. No new Rust/Python capability or
+scientific implementation is needed. Preserve the QObject, bundled registry,
+accepted five-field JSON, defaults, validation limits, atomic rejection and exact
+visible timing-summary wording. Configuration/time calculations stay in the backend;
+Qt scales the reported sample rate only for its existing Msamples/s display.
+
+Add the existing `merlin` facade to Qt with `native-input`, preserving all three
+legacy dependency records for not-yet-migrated owners. Update only the local lock
+entry and verify no existing dependency version changes. After this file contains
+no direct scientific imports, remove its single active legacy exception and retain
+that exact prior record as retired history. Other current whole-file guards remain
+unchanged. Parent DS-01 remains unchecked.
+
+Reuse the backend's `MAX_TRANSMISSION_DOCUMENT_BYTES` rather than copying 4096.
+Introduce the actual UI unit-scaling consumer under
+`apps/qt/src/shared/presentation/constants.rs`: `SAMPLES_PER_MEGASAMPLE` is a display
+unit conversion, independent of waveform clocks, PSD normalization and time-unit
+factors that happen to have the same number. `shared/mod.rs` and
+`shared/presentation/mod.rs` wire only this real consumer; no placeholder tools or
+scientific interfaces are added.
+
+Acceptance uses the existing settings/registry cases plus an independent literal
+summary compatibility case for both FFTs, structured invalid-draft ownership,
+unchanged QML editor interactions and the current boundary/Clippy/native build.
+Because backend/public API code is unchanged, Rust/Python operation and scientific
+acceptance remains its existing evidence rather than a redundant wheel rebuild.
+
+| Path and symbol | Existing contract / gap | Decision and owner |
+| --- | --- | --- |
+| `src/bridge/ofdm_settings.rs`, `parse` / `describe` | Five-field editor, atomic Apply and passive timing summary; direct legacy crate access | ADAPT to the already accepted facade operations; retain QObject and registry contracts. |
+| `src/shared/presentation/constants.rs`, `SAMPLES_PER_MEGASAMPLE` | SI display scaling needs an explicit semantic owner | ADD a real presentation conversion; wire `shared/mod.rs` and `shared/presentation/mod.rs` from `src/main.rs`. |
+| `apps/qt/Cargo.toml` / `Cargo.lock` | Existing legacy consumers remain | ADD only the facade and its local lock entry; preserve every existing package/version. |
+| `legacy-qt-boundary.json` | Whole-file exception for this adapter | RETIRE that exact entry with history; leave the other 44 entries and all three dependency exceptions frozen. |
+
+This unit delivers part of REQ-UIU-02/03/08/09 under UIU-DS-01, with the canonical
+[public API boundary](../../../architecture.md#unified-qt-public-api-boundary)
+and [task](../../checklist.md#task-uiu-ds-01) retaining ownership. No new public API,
+persisted setting, UI control, scientific mode or user-visible wording is introduced.

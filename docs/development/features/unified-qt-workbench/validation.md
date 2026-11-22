@@ -1347,3 +1347,30 @@ guard entries, and preserve actual downstream behavior. This placement does not
 accept the final API boundary, session isolation or shared scientific instruments.
 No non-Qt source/public API changed, so no non-Qt workspace rerun was needed.
 Hosted/Windows installed lifecycle and interoperability remain separate gates.
+
+## UIU-DS-01 OFDM settings facade accepted
+
+The [focused settings record](downstream-settings-evidence.json) covers the
+existing QObject's migration to accepted `merlin::downstream` configuration and
+timing operations. The five-field JSON, bundled registry, defaults, atomic Apply,
+4096-byte limit and visible summary remain compatible. Independent literal
+summaries cover both FFTs at a 512-sample prefix; invalid edits preserve state.
+The old two settings/registry tests remain and a third summary case is added.
+
+The display conversion `SAMPLES_PER_MEGASAMPLE` belongs to
+`src/shared/presentation/constants.rs`. Scientific clock and timing calculations
+come from the backend. The document bound reuses its existing public owner;
+4096-byte and 4096-sample test anchors retain their different meanings.
+No backend, Python, persisted setting, QML control or scientific algorithm changes.
+The Qt lock adds only the local facade package and direct dependency, retaining
+every existing dependency record/version. The settings adapter's exact legacy
+entry is retired with its history. Three dependency exceptions, 44 frozen files
+and 144 access sites remain; UIU-DS-01 stays unchecked.
+
+Acceptance includes formatting/Clippy, all 88 Qt Rust cases, all 89 QML cases,
+16 boundary regressions, the optimized build and six fresh native XCB/Fusion
+project/startup checks without stderr. This validates the changed consumer;
+existing backend/API/Python evidence remains applicable because its owners are
+unchanged. Original failed preparatory guard/cache checks remain distinguished
+from successful acceptance. Final boundary, numerical review, session isolation
+and hosted/installed lifecycle acceptance remain separate tasks.

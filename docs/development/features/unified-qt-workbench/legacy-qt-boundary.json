@@ -104,17 +104,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/bridge/ofdm_settings.rs",
-      "sha256": "1707490db07900bf2ee8f060f38059ff0ca6f97c41eab7c4f3d196a1b25f6b98",
-      "sites": [
-        {
-          "line": 8,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/bridge/receiver_instruments.rs",
       "sha256": "63b3ba1fef522fa1ec2dd01f17ef22104d8e0379766e0e22158710b74b4d52b3",
       "sites": [
@@ -2612,6 +2601,25 @@
           "canonical_source_equal_after_reversing_only_approved_paths": true
         }
       ]
+    }
+  ],
+  "retired_files": [
+    {
+      "entry": {
+        "path": "apps/qt/src/bridge/ofdm_settings.rs",
+        "sha256": "1707490db07900bf2ee8f060f38059ff0ca6f97c41eab7c4f3d196a1b25f6b98",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "OFDM settings facade",
+      "reason": "Public facade owns configuration admission and symbol timing; no direct scientific crate access remains.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-ofdm-settings-facade-accepted"
     }
   ]
 }
