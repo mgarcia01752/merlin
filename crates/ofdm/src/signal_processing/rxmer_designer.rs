@@ -3,6 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Explicit synthetic RxMER profile edits; never infers channel phase or RF noise.
+use crate::common::constants::{
+    MAX_DESIGNED_RXMER_DB, MAX_DESIGN_ABSOLUTE_TILT_DB, MAX_DESIGN_ECHO_DISTANCE_METRES,
+    MAX_DESIGN_NOTCH_DEPTH_DB, MAX_DESIGN_RANDOM_STANDARD_DEVIATION_DB,
+    MAX_DESIGN_RIPPLE_PEAK_TO_PEAK_DB, MIN_DESIGNED_RXMER_DB, MIN_DESIGN_ECHO_DISTANCE_METRES,
+    SPEED_OF_LIGHT_METRES_PER_SECOND,
+};
 use crate::{scenario::FrequencyGrid, types::FrequencyHz, SimulationError};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -81,14 +87,15 @@ impl RippleSpacing {
                 velocity_factor,
             } => {
                 if !distance_metres.is_finite()
-                    || !(0.001..=10000.0).contains(&distance_metres)
+                    || !(MIN_DESIGN_ECHO_DISTANCE_METRES..=MAX_DESIGN_ECHO_DISTANCE_METRES)
+                        .contains(&distance_metres)
                     || !velocity_factor.is_finite()
                     || velocity_factor <= 0.0
                     || velocity_factor > 1.0
                 {
                     return Err(fail("Distance must be 0.001–10000 m and velocity factor greater than 0 and at most 1."));
                 }
-                299_792_458.0 * velocity_factor / (2.0 * distance_metres)
+                SPEED_OF_LIGHT_METRES_PER_SECOND * velocity_factor / (2.0 * distance_metres)
             }
         };
         if !hz.is_finite() || hz.round() < 1.0 || hz.round() > f64::from(u32::MAX) {
@@ -173,7 +180,11 @@ impl RxmerRecipe {
         grid.validate()?;
         CaptureScope::All.validate(count)?;
         if let Some(rule) = &self.random_variation {
-            if !bounded(rule.standard_deviation_db, 0.0, 20.0) {
+            if !bounded(
+                rule.standard_deviation_db,
+                0.0,
+                MAX_DESIGN_RANDOM_STANDARD_DEVIATION_DB,
+            ) {
                 return Err(fail(
                     "Random variation standard deviation must be finite within 0–20 dB.",
                 ));
@@ -183,14 +194,22 @@ impl RxmerRecipe {
         let high = grid.frequency(grid.sample_count - 1)?;
         if let Some(tilt) = &self.tilt {
             tilt.scope.validate(count)?;
-            if !bounded(tilt.tilt_db, -60.0, 60.0) {
+            if !bounded(
+                tilt.tilt_db,
+                -MAX_DESIGN_ABSOLUTE_TILT_DB,
+                MAX_DESIGN_ABSOLUTE_TILT_DB,
+            ) {
                 return Err(fail("RxMER tilt must be finite within ±60 dB."));
             }
         }
         if let Some(ripple) = &self.ripple {
             ripple.scope.validate(count)?;
             ripple.spacing.frequency_hz()?;
-            if !bounded(ripple.peak_to_peak_db, 0.0, 60.0) {
+            if !bounded(
+                ripple.peak_to_peak_db,
+                0.0,
+                MAX_DESIGN_RIPPLE_PEAK_TO_PEAK_DB,
+            ) {
                 return Err(fail("Ripple peak-to-peak depth must be 0–60 dB."));
             }
         }
@@ -198,7 +217,7 @@ impl RxmerRecipe {
             notch.scope.validate(count)?;
             let half = f64::from(notch.bandwidth_hz) / 2.0;
             if notch.bandwidth_hz == 0
-                || !bounded(notch.depth_db, 0.0, 60.0)
+                || !bounded(notch.depth_db, 0.0, MAX_DESIGN_NOTCH_DEPTH_DB)
                 || f64::from(notch.edge_hz) > half
                 || f64::from(notch.center_hz) - half < f64::from(low)
                 || f64::from(notch.center_hz) + half > f64::from(high)
@@ -216,7 +235,7 @@ impl RxmerRecipe {
                 || edit.first_hz > edit.last_hz
                 || (edit.first_hz - low) % grid.spacing_hz != 0
                 || (edit.last_hz - low) % grid.spacing_hz != 0
-                || !bounded(edit.value_db, -30.0, 120.0)
+                || !bounded(edit.value_db, MIN_DESIGNED_RXMER_DB, MAX_DESIGNED_RXMER_DB)
             {
                 return Err(fail("Value edits need ordered exact carrier centers inside the grid and MER within −30 to 120 dB."));
             }
@@ -320,7 +339,7 @@ impl RxmerRecipe {
             }) {
                 value = edit.value_db;
             }
-            if !bounded(value, -30.0, 120.0) {
+            if !bounded(value, MIN_DESIGNED_RXMER_DB, MAX_DESIGNED_RXMER_DB) {
                 return Err(fail("Designed RxMER exceeds −30 to 120 dB; reduce the edits. Values are never clipped."));
             }
             result.push(Some(value));

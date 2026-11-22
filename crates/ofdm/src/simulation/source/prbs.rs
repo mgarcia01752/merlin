@@ -6,6 +6,7 @@
 use crate::{error::invalid, SimulationError};
 #[cfg(feature = "simulation")]
 use fec_codec::parameters::BCH_INPUT_BITS;
+use merlin_dsp::common::constants::{PRBS15_MAX_SEED, PRBS15_PERIOD_BITS, PRBS15_REGISTER_BITS};
 use serde::Serialize;
 
 /// Fifteen initial bits; bit zero is emitted first. Zero is forbidden.
@@ -15,9 +16,9 @@ pub type SourceBitIndex = u64;
 /// Experiment allocation/work bound per operation, not a DOCSIS limit.
 pub const MAX_PRBS_CHUNK_BITS: usize = 1_048_576;
 /// Degree of the explicitly defined sequence polynomial x^15 + x^14 + 1.
-pub const PRBS15_DEGREE: u32 = 15;
-/// Maximum nonzero 15-bit seed and maximal sequence period.
-pub const PRBS15_PERIOD: PrbsSeed = (1 << PRBS15_DEGREE) - 1;
+pub const PRBS15_DEGREE: u32 = PRBS15_REGISTER_BITS;
+/// Maximal sequence period in bits; independent of the chosen source default.
+pub const PRBS15_PERIOD: PrbsSeed = PRBS15_PERIOD_BITS;
 
 /// Owned continuous source with no host entropy or automatic reseeding.
 #[derive(Debug, Clone)]
@@ -36,7 +37,7 @@ impl Prbs15 {
     /// # Errors
     /// Rejects zero and seeds with bits outside the 15-bit register.
     pub fn new(seed: PrbsSeed) -> Result<Self, SimulationError> {
-        if seed == 0 || seed > PRBS15_PERIOD {
+        if seed == 0 || seed > PRBS15_MAX_SEED {
             return Err(invalid("PRBS15 requires a nonzero 15-bit seed."));
         }
         Ok(Self {

@@ -3314,7 +3314,11 @@ See the [design](development/features/qam-run-results/design.md) for resource ca
 ### RXMER-DESIGN-01: designed RxMER and profile PLC overlays
 
 `signal_processing::rxmer_designer` owns the bounded, deterministic dB editing
-recipe. It preserves exact frequency grids and absent values and does not model
+recipe. Its synthetic-value domain bounds are shared with native flat-baseline
+admission; independent edit-effect limits remain separately named. Existing
+[domain/default ownership](development/features/domain-limits/design.md) preserves
+all numerical values, errors and source behavior. It preserves exact frequency
+grids and absent values and does not model
 RF phase, infer VSWR-to-MER depth, consume RNG draws or replace playback rules.
 The Qt Rust measurement adapter retains immutable imported baselines, or an
 explicit flat template derived from the accepted profile. A version1 MERLIN

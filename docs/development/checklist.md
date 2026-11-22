@@ -592,7 +592,7 @@ and implementation/acceptance remain pending; earlier eligible tasks continue.
   Requirements: [REQ-UIU-01](../requirements.md#req-uiu-01), [REQ-UIU-02](../requirements.md#req-uiu-02), [REQ-UIU-03](../requirements.md#req-uiu-03), [REQ-UIU-04](../requirements.md#req-uiu-04), [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-07](../requirements.md#req-uiu-07), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-09](../requirements.md#req-uiu-09), [REQ-UIU-10](../requirements.md#req-uiu-10), [REQ-UIU-11](../requirements.md#req-uiu-11), [REQ-UIU-12](../requirements.md#req-uiu-12), [REQ-UIU-13](../requirements.md#req-uiu-13), [REQ-UIU-14](../requirements.md#req-uiu-14), [REQ-UIU-15](../requirements.md#req-uiu-15), [REQ-UIU-16](../requirements.md#req-uiu-16), [REQ-UIU-17](../requirements.md#req-uiu-17), [REQ-UIU-18](../requirements.md#req-uiu-18), [REQ-UIU-19](../requirements.md#req-uiu-19), [REQ-UIU-20](../requirements.md#req-uiu-20), [REQ-UIU-21](../requirements.md#req-uiu-21), [REQ-UIU-22](../requirements.md#req-uiu-22), [REQ-UIU-23](../requirements.md#req-uiu-23), [REQ-UIU-24](../requirements.md#req-uiu-24), [REQ-UIU-25](../requirements.md#req-uiu-25), [REQ-UIU-26](../requirements.md#req-uiu-26), [REQ-UIU-27](../requirements.md#req-uiu-27).
   Dependencies: [UIU-US-04](#task-uiu-us-04), [UIU-SHARED-02](#task-uiu-shared-02), [UIU-RECOVERY-01](#task-uiu-recovery-01).
   Architecture/files: [acceptance owner](../architecture.md#unified-qt-acceptance), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
-  Acceptance: Both actual direction runs, independent API/wheel/CLI regressions as affected, zero scientific boundary entries, complete inventory disposition/licensing, Qt/native build/launch, scientific presentation and persistence checks, final guides/skills/links/evidence and focused commit report. Record every remaining platform/mode limitation.
+  Acceptance: Both actual direction runs, independent API/wheel/CLI regressions as affected, zero scientific boundary entries, complete inventory disposition/licensing, Qt/native build/launch, scientific presentation and persistence checks, final guides/skills/links/evidence and focused commit report. Record every remaining platform/mode limitation. Complete a line-by-line numeric audit of the integration changes across production code, defaults, examples and tests; centralize genuinely shared definitions in common constants owners, name independent policies separately and document retained mathematical/specification/test anchors. Link the reviewed file inventory and acceptance evidence before checking this task.
   Evidence: [acceptance acceptance plan](features/unified-qt-workbench/validation.md#acceptance); pending implementation/acceptance.
 
 ## Architecture and module rules
@@ -3372,3 +3372,14 @@ validation are complete; the user guide includes the current dark capture.
   show VF/distance only for echo ([design](features/receiver-instruments/design.md#rx-resp-plc--plc-region-and-contextual-velocity-factor)).
 
   Requirements: [RX-RESP-PLC](../requirements.md#ds-rx-resp-plc).
+
+
+## Domain limit ownership
+
+<a id="task-style-domain-01"></a>
+- [x] **STYLE-DOMAIN-01** Name existing domain limits and opaque source defaults.
+  Requirements: [REQ-DS-INPUT-01](../requirements.md#req-ds-input-01), [REQ-DS-API-01](../requirements.md#req-ds-api-01).
+  Dependencies: none; focused user-requested style correction.
+  Architecture/files: [Designer owner](../architecture.md#rxmer-design-01-designed-rxmer-and-profile-plc-overlays), [exact owner and reuse map](features/domain-limits/design.md#architecture-and-reuse).
+  Acceptance: Preserve numerical values, inclusive/finite checks, errors and defaults; document independent equal-valued policies, share proven domains, pass focused existing numerical/admission tests and skill/document checks.
+  Evidence: [focused validation](features/domain-limits/design.md#validation): twenty existing numerical/admission cases, warnings-denied Clippy, formatting, analysis-only build and documentation checks pass. Generic foundation validation and 31 tooling tests pass; its unrelated files/index remain intact. Full line-by-line integration audit stays with UIU-QA-01.

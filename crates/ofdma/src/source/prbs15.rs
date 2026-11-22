@@ -30,7 +30,7 @@ impl Prbs15 {
     ///
     /// Returns independent idle state; rejects zero and values above 32767.
     pub fn new(seed: u16) -> PhyResult<Self> {
-        if seed == 0 || seed > 32767 {
+        if seed == 0 || seed > merlin_dsp::common::constants::PRBS15_MAX_SEED {
             return Err(invalid("source.seed"));
         }
         Ok(Self {

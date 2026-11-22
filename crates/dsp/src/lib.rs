@@ -5,6 +5,7 @@
 //! Bounded numerical leaves; PHY configuration, state, units and errors stay with callers.
 #![forbid(unsafe_code)]
 
+pub mod common;
 pub mod complex;
 mod error;
 pub mod prbs15;

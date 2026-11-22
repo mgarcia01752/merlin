@@ -68,7 +68,7 @@ quantity!(NoiseSeed, u64, |_| true, "Reproducible noise RNG seed.");
 quantity!(
     PrbsSeed,
     u16,
-    |v| v > 0 && v <= 0x7fff,
+    |v| v > 0 && v <= crate::common::constants::PRBS15_MAX_SEED,
     "Nonzero fifteen-bit PRBS15 source seed."
 );
 quantity!(

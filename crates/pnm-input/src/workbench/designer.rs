@@ -9,6 +9,7 @@ use crate::CaptureLoader;
 pub use admission::{RxMerDesign, RxMerDesignPosition, MAX_RXMER_RECIPE_BYTES};
 use docsis_ofdm_fec::{
     api::{ApiResult, NamedCapture, RxMer},
+    common::constants::{MAX_DESIGNED_RXMER_DB, MIN_DESIGNED_RXMER_DB},
     scenario::{RxMerFrame, ScenarioKey, SourceProvenance},
     signal_processing::rxmer_designer::RxmerRecipe,
 };
@@ -69,7 +70,7 @@ pub(super) fn load(input: &NamedCapture) -> ApiResult<RxMer> {
             key.grid.validate()?;
             if valid.len() != key.grid.sample_count
                 || !baseline_db.is_finite()
-                || !(-30.0..=120.0).contains(&baseline_db)
+                || !(MIN_DESIGNED_RXMER_DB..=MAX_DESIGNED_RXMER_DB).contains(&baseline_db)
             {
                 return Err(invalid("Invalid Designer flat baseline or grid mask"));
             }

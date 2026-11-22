@@ -4,11 +4,9 @@
  */
 //! Window timing and ideal homogeneous-cable delay budget; not receiver immunity.
 use super::{windowing::TransmitWindow, WaveformGeometry};
+use crate::common::constants::{METRES_PER_FOOT, SPEED_OF_LIGHT_METRES_PER_SECOND};
 use crate::{error::invalid, transmission::settings::SAMPLE_RATE_HZ, SimulationError};
 use serde::Serialize;
-
-const SPEED_OF_LIGHT_METRES_PER_SECOND: f64 = 299_792_458.0;
-const METRES_PER_FOOT: f64 = 0.3048;
 
 /// One bounded window-coefficient display point; neither voltage nor measured IQ.
 #[derive(Debug, Serialize)]

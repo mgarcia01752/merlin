@@ -276,6 +276,29 @@ defaults, examples and tests for unexplained literals; keep independent expected
 vectors independent of implementation constants and label their fixture meaning.
 Mathematical zeroes and tiny obvious loop origins need no artificial constants.
 
+Put genuinely shared Rust definitions in a common constants module, grouped by
+domain and purpose. Keep generic numerical/physical definitions in the shared
+leaf and direction-specific policies in their directional owner. Re-export an
+existing definition when needed; do not duplicate it or create cross-PHY/facade
+dependencies. Equal-valued independent policies retain separate names.
+
+Define domain limits at their authoritative owner before using them in range
+checks. Name each endpoint with meaning and units, document inclusive/exclusive
+semantics and finite-value handling, and distinguish physical/protocol constraints,
+application policy and defaults. Signed or floating-point validation ranges need
+explicit bounds just as byte/count limits do. Preserve existing endpoints and
+errors when replacing literals; adapters reuse the same domain owner rather than
+copying its bounds. Do not infer shared limits from equal numbers.
+
+Opaque literals in decimal, hexadecimal or binary need either a purpose-specific
+name or an adjacent explanation of their bits, units, origin and reason. For an
+all-ones seed, distinguish register width, valid seed range, selected default and
+sequence period. An isolated well-explained literal is acceptable; a repeated
+shared meaning needs one authoritative definition. File-fill and noise seeds do
+not inherit a continuous-source default solely because their numbers match.
+Keep independent test anchors literal and explained so tests can detect an
+incorrect production constant.
+
 Use focused snake_case Rust modules and UpperCamelCase types. Signal-processing code
 must not depend on Qt, a transport or application state. Simulation crates forbid
 unsafe code; keep codecs and DSP in Rust and preserve upstream notices.

@@ -4,6 +4,7 @@
  */
 //! Full-loop preparation and execution delegate every scientific stage to existing owners.
 use super::*;
+use crate::common::constants::DEFAULT_CONTINUOUS_PRBS15_SEED;
 use crate::{
     scenario::document::ScenarioDocument,
     simulation::{
@@ -42,10 +43,11 @@ impl FullLoopRequest {
             captured_layout(&inputs.profile.profile, settings)?,
         );
         run.source = inputs.source.configuration.clone();
+        // File mode never clocks this fallback; finite fill keeps its independently chosen seed.
         run.prbs_seed = inputs
             .source
             .prbs_seed()
-            .map_or(0x7fff, |seed| seed.value());
+            .map_or(DEFAULT_CONTINUOUS_PRBS15_SEED, |seed| seed.value());
         run.duration = std::time::Duration::from_millis(options.duration_ms);
         run.max_iterations = options.max_iterations;
         run.receiver_mode = options.receiver_mode;

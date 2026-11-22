@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "task": "STYLE-DOMAIN-01",
+  "base_commit": "bbaed98b2ddb0cb37da33191b0c931ece064ac68",
+  "purpose": "Name existing shared domain, physical and source default values without changing behavior; add local and generic foundation guidance.",
+  "implementation": [
+    {
+      "path": "crates/dsp/src/common/constants.rs",
+      "sha256": "8f887ea7e3c07bb50200efed8a09321212b645d0525d7b4c2f6bd605fbb1a666"
+    },
+    {
+      "path": "crates/dsp/src/common/mod.rs",
+      "sha256": "b4af417add48013cae67363a16fd4a4d63964b06203a7d2e9f5f76b0e591e3df"
+    },
+    {
+      "path": "crates/dsp/src/lib.rs",
+      "sha256": "758b53c089512aeff521cacff6379f2a7e8147ffbdd00b9fb4525772832354e3"
+    },
+    {
+      "path": "crates/dsp/src/prbs15.rs",
+      "sha256": "5bd6150ed1372e37390312a200dbd9ea54e1bf389e0ef8d2f66421c04f0605d3"
+    },
+    {
+      "path": "crates/ofdm/src/api/controller.rs",
+      "sha256": "0d8aebd93892255ae8ddc3879fdd7b2db4b4fef47080c8101cd26509e3ce2dcc"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/request.rs",
+      "sha256": "2364cb783cc074e392851315785ef39d15170d36a0d8621b50d48ba70dff4e2b"
+    },
+    {
+      "path": "crates/ofdm/src/api/transmitter.rs",
+      "sha256": "213d7b9e7efdba1b7d8d0518d1986721e04dd8e57a076875149065f907d05b2e"
+    },
+    {
+      "path": "crates/ofdm/src/api/units.rs",
+      "sha256": "6068b18b9c5c881f577678b69d6696fc250004eb0fc059f362604a848d4d86f6"
+    },
+    {
+      "path": "crates/ofdm/src/common/constants.rs",
+      "sha256": "361f7c914dedf6b8d171d55173c65e6c0a012022b5e16215e7682404eb03bd52"
+    },
+    {
+      "path": "crates/ofdm/src/common/mod.rs",
+      "sha256": "e026d828d0ec812e4ba73b7627e5a1bee8b4685fbb0d0b91616cd26012ec4f88"
+    },
+    {
+      "path": "crates/ofdm/src/lib.rs",
+      "sha256": "9e7b0264e829efe4543cc7c0c3965906479897b64a2a1a97f11efa39d2387688"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/receiver/diagnostics.rs",
+      "sha256": "29dedef626aad238f1ab0a956d847d70d5a0e7c17bdd8d52ae94a8a2caf21d6f"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/rxmer_designer.rs",
+      "sha256": "981a35e994990654aaa9efecb684f7a4cc3959c5946330e26f09e3b5d43d22e2"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/timing.rs",
+      "sha256": "a995a2c9da84cc58b35d630e1bb8affca9b34cc085e50d9ba9514aed2a630ba6"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/config.rs",
+      "sha256": "5fe0066da9c19bc8567f66eeffa6c2e4fe8d0f6ceb1e8b1b35d27c5814171f52"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/document.rs",
+      "sha256": "7c284af64a01cfa7150588674ebce8fe7e9b95d754c8e26f0c0bddf517460ac3"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/source/prbs.rs",
+      "sha256": "0c2b405e4ee59a30623bfe86ce35aebd940e534e87bb4a372fcba39c5d5355c8"
+    },
+    {
+      "path": "crates/ofdma/src/source/prbs15.rs",
+      "sha256": "8cdce852ff788a12f349a7a9adc2b18c4ee6dd7240ed36444278678ee96ee615"
+    },
+    {
+      "path": "crates/ofdma/src/source/verifier.rs",
+      "sha256": "3f16923358e337c5a73a1d37175527c11e6d9e5c924983b16b310bbbd2b232be"
+    },
+    {
+      "path": "crates/pnm-input/src/workbench/designer.rs",
+      "sha256": "01d8fac8ef07e298c4e61ba1dcff89e54b5d73fd815aa5f0525b475574acc619"
+    }
+  ],
+  "checks": [
+    {
+      "path": "docs/development/local/unified-qt-workbench/domain-limits-dsp.log",
+      "sha256": "f90d155fd1ae535202278e5476d7f5ee7505ad9bff53419f5b5f58d5ae83769e"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/domain-limits-downstream.log",
+      "sha256": "58cf606cc2b521984c7eb185b3e2d7e6100710f06717e3f0bc7af8cfa8f99156"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/domain-limits-upstream.log",
+      "sha256": "22e7fb5c1bff75d5529ccba616a4b649860f7754741e0c80444b798fd122d176"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/domain-limits-admission.log",
+      "sha256": "1d4ca035ad5772f5728e40d15b0033d9d5f7addd525531880ebdafcb254ec4e8"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/domain-limits-clippy.log",
+      "sha256": "117e4846f6da09b0bca9ad11b85679fea02efaf7ad0a6037cd8593bc562a1636"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/domain-limits-analysis-check.log",
+      "sha256": "1268e83528c07107ef2a2cfd066307cb91ad99019bbcf9bc1ea86d34c010ac09"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/domain-limits-docs.log",
+      "sha256": "fb38bfd0924edace0d50465e8239a4ee1eb51d773c22c3c6e32ef9b321fa1a4a"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/pde-domain-limits-validation.log",
+      "sha256": "970a22acc1b6bbb498fdc1170e4dbf8664766ae49d170b3495c48facc3270a5b"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/pde-domain-limits-tests.log",
+      "sha256": "b10abb342421963caa1fb29182ecbc1a6de59e9b9e4ef3ddb1a8acce16cf3174"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/domain-limits-physical-final.log",
+      "sha256": "fcd73206d7718cc6043beb7bfeb97c2609b34fa10023eb496c8d9b395221496a"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/domain-limits-clippy-final.log",
+      "sha256": "1e2367e7cf53025956c0daada6de15f45c07977de6ecc10465bcb39ca23b7d05"
+    }
+  ],
+  "executed_cases": {
+    "shared_dsp_prbs": 2,
+    "downstream_prbs": 5,
+    "downstream_rxmer_designer": 6,
+    "downstream_timing": 2,
+    "downstream_receiver_diagnostics": 2,
+    "upstream_prbs": 2,
+    "saved_designer_admission": 1,
+    "foundation_tooling": 31
+  },
+  "common_owners": {
+    "numerical_leaf": "crates/dsp/src/common/constants.rs",
+    "downstream_policy": "crates/ofdm/src/common/constants.rs"
+  },
+  "preservation": "Original physical/scientific literals, floating-point operation order, endpoint inclusion, error messages, source recurrence, public imports and JSON/default values are preserved. Independent expected test vectors remain literal. No new dependencies or Qt source changes.",
+  "foundation_preservation": {
+    "unrelated_existing_files_unchanged": 908,
+    "index_unchanged": true,
+    "index_sha256": "a36c07226cbaea8bad72161c9b3de9c604d34dde5cbd6d9472a89c0fd48ad888",
+    "allowed_existing_paths": [
+      "AGENTS.md",
+      "docs/development/features/coding-provider-contracts/architecture.md",
+      "docs/development/features/coding-provider-contracts/checklist.md",
+      "docs/development/features/coding-provider-contracts/requirements.md",
+      "docs/development/features/coding-provider-contracts/validation.md",
+      "skills/coding-style/SKILL.md",
+      "skills/coding-style/references/procedure.md",
+      "skills/generic-guidance/references/procedure.md",
+      "templates/project/coding-review.md"
+    ],
+    "new_file": "skills/coding-style/references/domain-limits.md"
+  },
+  "boundaries": "Focused local existing scientific/admission tests, Clippy, no-default build and documentation checks. No full workspace/native wheel/Qt/hosted/installer acceptance claimed by this naming change.",
+  "final_numeric_audit": "Pending UIU-QA-01. Must review integration changes line by line and record classifications, shared owners, independent equal policies and retained mathematical/specification/test anchors.",
+  "exact_unit_derivations": "Microsecond reciprocal and downstream sample-clock scale retain the exact IEEE754 values of1e-6 and204.8. Existing independent direct-tap/timing vectors pass with the derived constants."
+}

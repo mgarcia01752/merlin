@@ -4,6 +4,7 @@
  */
 //! Frozen per-run scientific geometry and bounded duration policy.
 use crate::{
+    common::constants::DEFAULT_CONTINUOUS_PRBS15_SEED,
     error::invalid,
     signal_processing::waveform::samples::MAX_BLOCK_SAMPLES,
     simulation::source::{Prbs15, PrbsSeed},
@@ -81,7 +82,7 @@ impl ChannelRunSettings {
             layout,
             duration: Duration::from_secs(1),
             ncp_modulation: NcpModulation::Qpsk,
-            prbs_seed: 0x7fff,
+            prbs_seed: DEFAULT_CONTINUOUS_PRBS15_SEED,
             llr_variance: 0.01,
             max_iterations: 50,
             receive_block_samples: 4096,

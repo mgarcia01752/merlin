@@ -4,6 +4,7 @@
  */
 //! Independent collections, complete static batch preparation and bounded execution.
 use super::*;
+use crate::common::constants::DEFAULT_CONTINUOUS_PRBS15_SEED;
 mod profiles;
 use crate::{
     signal_processing::channel::impairments::{ChannelImpairments, NoiseModel},
@@ -103,7 +104,7 @@ impl Default for EvaluationOptions {
             processing: ProcessingOptions::default(),
             observation: ObservationDuration(100),
             noise_seed: NoiseSeed(41),
-            prbs_seed: PrbsSeed(0x7fff),
+            prbs_seed: PrbsSeed(DEFAULT_CONTINUOUS_PRBS15_SEED),
             profile_tolerance: AssociationTolerance::ZERO,
             limits: RunLimits::default(),
         }

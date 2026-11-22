@@ -8,6 +8,7 @@ mod control;
 mod result;
 mod timing;
 use super::*;
+use crate::common::constants::DEFAULT_CONTINUOUS_PRBS15_SEED;
 use crate::simulation::transmitter_preview as engine;
 pub use control::*;
 pub use result::*;
@@ -82,7 +83,10 @@ impl TransmitterPreviewRequest {
             transmission.settings(),
             profile,
             source.configuration.clone(),
-            source.prbs_seed().map_or(0x7fff, |seed| seed.value()),
+            // Dormant for file input; its fill generator retains its independent explicit seed.
+            source
+                .prbs_seed()
+                .map_or(DEFAULT_CONTINUOUS_PRBS15_SEED, |seed| seed.value()),
         )?;
         Ok(Self {
             request,

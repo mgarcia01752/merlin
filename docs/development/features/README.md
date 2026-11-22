@@ -177,6 +177,8 @@ record the approved execution and its documentation-only acceptance.
 - **ubuntu-desktop**: [design.md](ubuntu-desktop/design.md) · [local-validation.md](ubuntu-desktop/local-validation.md).
 - **windows-desktop**: [design.md](windows-desktop/design.md) · [validation.md](windows-desktop/validation.md).
 
+- **domain-limits**: [design and acceptance](domain-limits/design.md).
+
 ## Historical source evidence archive
 
 All 12 records below remain byte-identical at their original locations. Functional
