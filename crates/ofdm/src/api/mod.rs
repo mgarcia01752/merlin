@@ -14,6 +14,7 @@ mod reports;
 mod sequence;
 mod simulation;
 mod units;
+pub use crate::scenario::{FrequencyGrid, ScenarioKey};
 pub use crate::signal_processing::receiver::channel_estimation::ReceiverMode;
 pub use crate::transmission::SubcarrierSpacing;
 pub use crate::transmission::{DurationTiming, TransmissionSettings};

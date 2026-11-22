@@ -110,6 +110,63 @@ loader's single/average policy; temporal saved-project integration remains track
 under UIU-API-05. Designer, channel composition and idle TX previews still await
 separate API acceptance.
 
+## Immutable RxMER Designer inputs
+
+Rust's optional `merlin::downstream::inputs` exposes `RxMerDesign`,
+`RxMerDesignPosition` and curated existing recipe configuration types such as
+`RxmerRecipe`, `Tilt` and `CaptureScope`. Python exposes the same design/position
+classes through `merlin.downstream` and preserves root/legacy class identity.
+
+| Rust operation | Python operation | Contract |
+| --- | --- | --- |
+| `RxMerDesignPosition::new(index, count)` | `RxMerDesignPosition(index=1, count=1)` | One-based position in 1..256 original captures; separate from playback symbols. |
+| `RxMerDesign::from_bytes(&NamedCapture)` | `RxMerDesign.from_bytes(name, data)` | Strict saved version-1 Designer envelope; preserves exact original bytes/whitespace. |
+| `RxMerDesign::flat(&Dpd, MerDb, CaptureTime, RxmerRecipe, RxMerDesignPosition)` | `RxMerDesign.flat(profile, baseline, epoch, recipe_json=None, position=None)` | Exact profile grid/identity and backend role mask; explicit synthetic anchor epoch. |
+| `RxMerDesign::imported(&Dpd, &NamedCapture, RxmerRecipe, RxMerDesignPosition)` | `RxMerDesign.imported(profile, name, data, recipe_json=None, position=None)` | Exact ordinary baseline bytes embedded with integrity metadata; spatial identity checked. |
+| `check_profile(&Dpd)` | `.check_profile(profile)` | Explicit exact device/channel/grid check for an independently loaded design. |
+| `with_recipe(RxmerRecipe)` | `.with_recipe(recipe_json)` | Re-evaluate the retained original baseline with new effects; previous output is never the new baseline. |
+| `materialize() -> RxMer` | `.materialize() -> RxMer` | Owned copy of the already evaluated observation; no PHY simulation starts. |
+| `original_bytes()`, `recipe()`, `position()`, `is_synthetic()` | Read-only `.original_bytes`, `.recipe`, `.position`, `.is_synthetic` | Original envelope, owned Python configuration copy, original position and baseline origin. |
+| `Dpd::key()` | `DPD.key` | Exact original identity/grid; Python returns an independent dictionary. |
+| `RxMer::source_kind()`, `ChannelEstimate::source_kind()` | `.source_kind` | Existing backend frame labels, preserving synthetic/designed/ordinary distinctions. |
+
+Python recipe arguments are UTF-8 JSON bytes with a 64 KiB application bound;
+None selects an empty recipe for creation. Rust retains a typed recipe route and
+`RxMerDesign::recipe_from_json` for the same transport. Recipe/count/grid
+validation and evaluation use the existing Rust owner. Typed positions default
+to 1 of 1 in Python. Frames-per-collection times source carriers remain bounded
+at 4,000,000 values; the final original envelope must fit 16 MiB. Embedded base64
+can make that envelope larger than its imported raw capture. Existing embedded
+name/integrity limits remain in force. No source file is written by these calls.
+
+Imported baselines reject nested Designer envelopes and flat-only random
+variation. Replacing an imported -6 dB tilt with -3 dB applies -3 dB to the
+original baseline; it preserves the previous design as a separate immutable
+value. Seeded Designer variation uses its own deterministic recipe stream and
+preserves simulation source/noise state. Python releases the GIL for Rust
+validation/evaluation; bounded original-byte copying uses the existing native
+admission helper before backend dispatch.
+
+Generated frames retain `merlin_synthetic_rxmer` or `merlin_designed_rxmer` source
+labels. Ordinary inputs retain their existing `decoded_json_*` frame labels,
+while `provenance.original_kind` records their original binary/JSON encoding.
+Qt consumers use validated design operations for evaluation; curated recipe
+configuration exports do not authorize direct recipe-kernel calls from Qt.
+
+```python
+from merlin.downstream import CaptureTime, MerDb, RxMerDesign
+
+# profile is a previously admitted DPD.
+draft = RxMerDesign.flat(profile, MerDb(48), CaptureTime(1700000000))
+edited = draft.with_recipe(b'{"tilt":{"scope":{"mode":"all"},"tilt_db":-3}}')
+observation = edited.materialize()
+assert observation.source_kind == "merlin_synthetic_rxmer"
+```
+
+Channel composition, profile scientific summaries and idle transmitter previews
+remain separate acceptance work. These design operations preserve the existing
+saved-recipe schema and its shared Rust/native-Python workbench behavior.
+
 Optional Rust facade feature `native-input` exposes existing
 `downstream::inputs::{CaptureLoader, Workbench, read_capture, save_json,
 rxmer_export}` and the explicitly exported `upstream::inputs` capture/association

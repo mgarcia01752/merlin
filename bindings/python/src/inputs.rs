@@ -391,6 +391,13 @@ macro_rules! measurement {
             fn provenance(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
                 object_from_json(py, &serde_json::to_string(self.0.provenance()).unwrap())
             }
+            /// Reads the exact backend scientific source-kind identifier.
+            /// # Returns
+            /// Original identifier, preserving synthetic/designed/ordinary distinctions.
+            #[getter]
+            fn source_kind(&self) -> &str {
+                self.0.source_kind()
+            }
             /// Read grid from the native Rust snapshot.
             /// # Returns
             /// An independent JSON snapshot of the exact original Hz/index grid.
@@ -463,7 +470,7 @@ pub(crate) fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
 /// The immutable native value named by this read-only property.
 /// # Errors
 /// Preserves structured Rust validation errors and Python conversion failures.
-fn named_input(name: &str, data: &[u8]) -> PyResult<api::NamedCapture> {
+pub(crate) fn named_input(name: &str, data: &[u8]) -> PyResult<api::NamedCapture> {
     if data.len() > api::MAX_CAPTURE_BYTES || name.len() > 4096 {
         return Err(error(api::ApiError::new(
             api::ErrorCode::ResourceLimit,

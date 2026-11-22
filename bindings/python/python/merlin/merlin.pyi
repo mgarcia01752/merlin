@@ -67,3 +67,5 @@ from . import SourceInput as SourceInput
 from . import TransmissionConfiguration as TransmissionConfiguration
 from . import MeasurementSequence as MeasurementSequence
 from . import MeasurementSequenceOptions as MeasurementSequenceOptions
+from . import RxMerDesign as RxMerDesign
+from . import RxMerDesignPosition as RxMerDesignPosition

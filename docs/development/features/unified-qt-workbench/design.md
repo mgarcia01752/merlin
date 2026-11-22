@@ -235,6 +235,50 @@ null/coverage/epoch/grid/duplicate/count/overflow and ownership cases. Run match
 installed-wheel cases and existing playback tests before Qt adoption. Designer,
 channel composition and idle TX gaps remain open.
 
+### UIU-API-01: immutable RxMER Designer admission unit
+
+Reuse the existing Apache native `workbench/designer.rs::load` and core
+`RxmerRecipe` evaluation unchanged. Add focused
+`crates/pnm-input/src/workbench/designer/admission.rs`; re-export `RxMerDesign`,
+`RxMerDesignPosition` and curated existing recipe configuration types through
+`pnm-input` and `merlin::downstream::inputs`. The facade still adds no science.
+Add `Dpd::key()` and matching Python DPD.key for exact original association;
+curated ScenarioKey/FrequencyGrid type re-exports preserve nominal ownership.
+Expose exact existing `RxMer::source_kind`/`ChannelEstimate::source_kind` metadata
+and matching Python properties so ordinary, designed and synthetic observations
+keep their backend origin labels; do not infer origin from filenames.
+
+`RxMerDesign::from_bytes(&NamedCapture)` validates a strict version-1 Designer
+envelope and preserves exact original bytes/whitespace. Typed
+`flat(&Dpd, MerDb, CaptureTime, RxmerRecipe, RxMerDesignPosition)` creates the
+existing flat-baseline schema from the profile's original roles/grid;
+`imported(&Dpd, &NamedCapture, RxmerRecipe, RxMerDesignPosition)` embeds exact
+ordinary capture bytes and checks spatial identity. `check_profile(&Dpd)`
+validates an independently loaded design before editor adoption. Position is
+one-based inside 1..256, with existing count-times-grid <=4,000,000 and final
+16 MiB envelope bounds. Imported baselines keep integrity checks, reject nested
+recipes and reject flat-only random variation; no input is overwritten.
+
+The immutable design exposes `materialize()` (owned RxMer), `original_bytes()`,
+`recipe()`, `position()`, `is_synthetic()` and `with_recipe(RxmerRecipe)`.
+Replacement always evaluates the retained original baseline, preventing compound
+edits; it never advances a simulation source/noise stream. Original loaded
+whitespace is retained until an explicit recipe replacement creates a new record.
+Configuration type re-exports do not authorize direct recipe-kernel calls from Qt;
+Qt consumers use these validated design operations.
+
+Add `bindings/python/src/designer.rs`, aliases and stubs. Python exposes the
+same immutable design/position classes; flat/imported/with_recipe accept bounded
+UTF-8 recipe JSON bytes as configuration transport, while Rust retains a typed
+recipe route. All evaluation/provenance/version checks remain in Rust with GIL
+release. Add `crates/pnm-input/tests/designer_admission.rs` and
+`bindings/python/tests/test_designer_admission.py`: exact saved fixture bytes,
+role masks/epochs, literal tilt endpoints, noncompounding replacement, frozen
+positions, malformed/version/nesting/random/work-limit rejection and owned
+results. Re-run existing Designer numerical and saved-WB actual FEC parity tests
+and fresh installed-wheel acceptance before Qt adoption. Channel composition,
+profile scientific summaries and idle TX preview remain open afterward.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |
@@ -243,7 +287,7 @@ channel composition and idle TX gaps remain open.
 | [Qt organization](../qt-source-organization/design.md), [build registration](../../../../apps/qt/build.rs) | Accepted UI-ORG-01/02; pinned CXX-Qt bridge directory constraint | No direction split | ADAPT group ownership; retain all registered bridges in `src/bridge/`, same QML URI, entry URL and executable. |
 | [Closed loop](../../../../apps/qt/src/simulation/closed_loop.rs), `latest`/`Observations` | Bounded downstream worker and retained observations; inline tests | Private high-level-API gap; thread-local single result | SEPARATE per direction; scientific operations move behind public API, adapter retains dispatch and ownership only. |
 | [Downstream inputs](../../../../apps/qt/src/inputs), [project file](../../../../apps/qt/src/workbench/project_file.rs) | Existing editors, capture admission, Designer and schema 1/2 persistence | Validation/preview still depends on lower scientific owners | ADAPT through public typed admission and backend project contracts before deleting legacy routes. |
-| [Native input crate](../../../../crates/pnm-input/src/lib.rs), [workbench](../../../../crates/pnm-input/src/workbench) | Bounded binary/JSON, provenance, saved-workbench execution; Apache-2.0 | Not exposed by facade; no direction-aware unified project envelope | REUSE owners; optional facade input feature/re-exports, extend adapter-owned project contract, preserve existing imports. |
+| [Native input crate](../../../../crates/pnm-input/src/lib.rs), [workbench](../../../../crates/pnm-input/src/workbench) | Bounded binary/JSON, provenance, saved-workbench execution; Apache-2.0 | Initial facade exposure is now implemented; direction-aware unified project envelope remains pending | REUSE owners; optional facade input feature/re-exports, extend adapter-owned project contract, preserve existing imports. |
 | [Upstream session](../../../../crates/ofdma/src/api/session.rs), `preview`/`run_with_control` | Validated configuration and bounded controlled runs already accepted | Grid coordinates and some instrument views not public API | REUSE session; small observation extensions in upstream API, scientific construction stays in owning modules. |
 | [ResourcePlan](../../../../crates/ofdma/src/resources/grid.rs) | Authoritative physical cell/pilot allocation | High-level `ExperimentPreview` gives counts, not cell coordinates | ADAPT via bounded idle grid operation; no QML resource reconstruction. |
 | [SpectrumPlot](../../../../apps/qt/qml/instruments/spectrum/SpectrumPlot.qml), [scatter](../../../../apps/qt/qml/instruments/qam/TransmitterScatter.qml), [response](../../../../apps/qt/qml/instruments/response/ReceiverResponseDialog.qml) | Existing downstream Canvas/viewport presentation and QtTests | No real upstream consumers; direction-specific labels/overlays mixed in | DEFER scientific shared acceptance; extract proven presentation only after two real API-backed consumers and tests. |

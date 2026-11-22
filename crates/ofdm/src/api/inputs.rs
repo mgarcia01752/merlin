@@ -309,6 +309,12 @@ impl Dpd {
     pub fn grid(&self) -> &FrequencyGrid {
         &self.profile.key.grid
     }
+    /// Borrows exact original device/channel/grid identity for explicit association.
+    /// # Returns
+    /// Immutable identity tied to this profile; no decoding or execution occurs.
+    pub fn key(&self) -> &crate::scenario::ScenarioKey {
+        &self.profile.key
+    }
     /// Borrows preserved sources for captured and edited profiles.
     /// # Returns
     /// Empty for a newly created hypothesis.
@@ -483,6 +489,12 @@ macro_rules! measurement {
             /// Immutable source identity.
             pub fn provenance(&self) -> &CaptureProvenance {
                 &self.provenance
+            }
+            /// Borrows the original scientific source-kind identifier without reclassification.
+            /// # Returns
+            /// Exact backend source kind, including synthetic/designed measurement identifiers.
+            pub fn source_kind(&self) -> &str {
+                &self.frame.source.file_kind
             }
             /// Borrows the original validated frequency grid.
             /// # Returns

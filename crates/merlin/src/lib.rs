@@ -13,7 +13,11 @@ pub mod downstream {
     /// Optional native admission and saved-project operations over existing owners.
     #[cfg(feature = "native-input")]
     pub mod inputs {
-        pub use pnm_input::{read_capture, rxmer_export, save_json, CaptureLoader, Workbench};
+        pub use pnm_input::{
+            read_capture, rxmer_export, save_json, CaptureLoader, CaptureScope, Notch,
+            RandomVariation, Ripple, RippleSpacing, RxMerDesign, RxMerDesignPosition, RxmerRecipe,
+            Tilt, ValueEdit, Workbench, MAX_RXMER_RECIPE_BYTES,
+        };
     }
 }
 

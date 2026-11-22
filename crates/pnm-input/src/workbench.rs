@@ -6,8 +6,9 @@
 mod designer;
 use crate::CaptureLoader;
 use base64::{engine::general_purpose::STANDARD, Engine};
+pub use designer::{RxMerDesign, RxMerDesignPosition, MAX_RXMER_RECIPE_BYTES};
 use docsis_ofdm_fec::{api::*, transmission::TransmissionSettings};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeSet, io::Read, path::Path, sync::Arc};
 
@@ -37,7 +38,7 @@ struct Sections {
     channel_model: Option<Loss>,
     channel_power: Option<Power>,
 }
-#[derive(Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Stored {
     name: String,

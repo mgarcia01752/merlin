@@ -99,3 +99,27 @@ fn facade_upstream_rxmer_retains_quarter_db_and_missing_readings() {
     assert_eq!(capture.readings_db()[7], None);
     assert!(upstream::inputs::RxmerCapture::from_pnm(&original[..20]).is_err());
 }
+
+#[test]
+fn facade_designer_uses_typed_owners_and_preserves_original_profile_identity() {
+    let input = downstream::NamedCapture::new("profile", PROFILE.to_vec()).unwrap();
+    let profile =
+        downstream::inputs::CaptureLoader::profile(&input, downstream::ProfileId::new(0).unwrap())
+            .unwrap();
+    let key: &downstream::ScenarioKey = profile.key();
+    let grid: &downstream::FrequencyGrid = profile.grid();
+    assert_eq!(&key.grid, grid);
+    let design = downstream::inputs::RxMerDesign::flat(
+        &profile,
+        downstream::MerDb::new(48.0).unwrap(),
+        downstream::CaptureTime::new(7).unwrap(),
+        downstream::inputs::RxmerRecipe::default(),
+        downstream::inputs::RxMerDesignPosition::new(1, 1).unwrap(),
+    )
+    .unwrap();
+    design.check_profile(&profile).unwrap();
+    let output = design.materialize();
+    assert_eq!(&output.frame().key, key);
+    assert_eq!(output.source_kind(), "merlin_synthetic_rxmer");
+    assert_eq!(output.values().len(), grid.sample_count);
+}

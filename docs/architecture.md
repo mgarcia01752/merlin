@@ -955,6 +955,10 @@ RxMER inputs through the existing residual-power planner. All actual contributor
 weights/epochs remain explicit for static averages and synthetic hold/interpolation.
 Equivalent views use the numerical residual-power owner; `check_response` admits
 explicit unity or captured H with the existing spatial/epoch/coverage contracts.
+Optional native `inputs::RxMerDesign` wraps the existing version-1 saved Designer
+evaluator with immutable typed flat/imported baselines and noncompounding recipe
+replacement. Exact envelopes, original roles/grid/epochs and backend source-kind
+labels remain explicit; Python is bounded transport/ownership only.
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

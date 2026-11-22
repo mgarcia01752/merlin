@@ -3,17 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Saved Designer input adapter; numerical evaluation stays in the Rust engine.
+mod admission;
 use super::{invalid, unsupported, Stored};
 use crate::CaptureLoader;
+pub use admission::{RxMerDesign, RxMerDesignPosition, MAX_RXMER_RECIPE_BYTES};
 use docsis_ofdm_fec::{
     api::{ApiResult, NamedCapture, RxMer},
     scenario::{RxMerFrame, ScenarioKey, SourceProvenance},
     signal_processing::rxmer_designer::RxmerRecipe,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
-#[derive(Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 #[serde(tag = "mode", rename_all = "snake_case", deny_unknown_fields)]
 enum Baseline {
     Flat {
@@ -26,7 +28,7 @@ enum Baseline {
         original: Stored,
     },
 }
-#[derive(Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct RecipeInput {
     merlin_rxmer_designer: u32,

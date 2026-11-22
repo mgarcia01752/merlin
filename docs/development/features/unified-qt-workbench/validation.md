@@ -290,3 +290,31 @@ No Qt scientific code, saved-project format, historical task state or existing
 Simulation behavior changed. Designer, channel composition and idle TX previews
 remain open before UIU-API-01 completion; legacy temporal project support stays
 under UIU-API-05.
+
+## UIU-API-01 Designer admission unit
+
+`inputs::RxMerDesign` wraps the existing native saved-recipe evaluator with typed
+immutable baseline/position/replacement operations. Exact `Dpd::key` and existing
+measurement source-kind metadata remain accessible through Rust/native Python.
+[Exact source/test/wheel evidence](designer-admission-evidence.json),
+[design and owners](design.md#uiu-api-01-immutable-rxmer-designer-admission-unit) and
+[Rust/Python method parity](../../../user/api/input-admission.md#immutable-rxmer-designer-inputs)
+link to the [architecture](../../../architecture.md#unified-qt-public-api-boundary)
+and still-open [parent task](../../checklist.md#task-uiu-api-01).
+
+Nine native adapter cases (three existing unit, four new admission, two saved-WB),
+11 facade cases and six existing independent numerical Designer cases pass.
+The new cases preserve original envelope bytes/masks/epochs, typed profile identity,
+source-kind labels, literal tilt endpoints and original-baseline replacement.
+Version/position/nesting/random/recipe-byte/edit/value limits and failed edits
+reject atomically. Existing real saved-WB FEC/reference parity remains passing.
+Warnings-denied all-target Clippy passes for facade, native input and bindings;
+format/version/Python-guide checks pass. The final rebuilt Linux CPython 3.10 wheel
+passes all 63 native cases, including four new Designer cases and bounded pre-copy
+original-input rejection. Only its recorded final source/wheel hashes establish
+this unit's acceptance; Qt source and scientific kernels are unchanged.
+
+No source document, capture or completed checklist history was replaced. New typed
+configuration aliases remain re-exports; scientific evaluation stays with its
+existing Rust owner. Profile scientific summaries, channel composition and idle
+TX previews still keep UIU-API-01 unchecked before Qt consumer migration.

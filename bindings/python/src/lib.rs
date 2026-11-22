@@ -5,6 +5,7 @@
 //! Optional PyO3 conversions only; the high-level Rust API owns all science.
 mod admission;
 mod controller;
+mod designer;
 mod inputs;
 mod measurement;
 mod options;
@@ -65,6 +66,7 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     }
     quantities::register(module)?;
     admission::register(module)?;
+    designer::register(module)?;
     sequence::register(module)?;
     inputs::register(module)?;
     receiver::register(module)?;

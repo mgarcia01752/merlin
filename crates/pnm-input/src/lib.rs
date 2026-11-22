@@ -20,7 +20,10 @@ use std::{
 pub mod rxmer_export;
 pub mod upstream;
 pub mod workbench;
-pub use workbench::Workbench;
+pub use docsis_ofdm_fec::signal_processing::rxmer_designer::{
+    CaptureScope, Notch, RandomVariation, Ripple, RippleSpacing, RxmerRecipe, Tilt, ValueEdit,
+};
+pub use workbench::{RxMerDesign, RxMerDesignPosition, Workbench, MAX_RXMER_RECIPE_BYTES};
 
 /// Stateless native decoder dispatch; classification is based only on contents.
 pub struct CaptureLoader;
