@@ -12,7 +12,7 @@ use crate::{
             measurement::{captured_layout, MeasurementSelection},
             ChannelJobLimits, ChannelRunSettings,
         },
-        test_points::{NoopObserver, TestPointProbe},
+        test_points::TestPointProbe,
     },
 };
 
@@ -22,6 +22,7 @@ pub struct FullLoopRequest {
     pub(super) settings: Arc<ChannelRunSettings>,
     pub(super) options: FullLoopOptions,
     pub(super) inputs: FullLoopInputs,
+    pub(super) observation_policy: Option<FullLoopObservationPolicy>,
 }
 impl FullLoopRequest {
     pub(super) fn prepare(inputs: FullLoopInputs, options: FullLoopOptions) -> ApiResult<Self> {
@@ -81,6 +82,7 @@ impl FullLoopRequest {
             settings: Arc::new(run),
             options,
             inputs,
+            observation_policy: None,
         })
     }
 
@@ -107,6 +109,15 @@ impl FullLoopRequest {
     /// Busy for a used control; existing construction/admission failures otherwise.
     /// Cancel/runtime/step failures after construction return real partial reports.
     pub fn run(&self, control: &FullLoopControl) -> ApiResult<FullLoopResult> {
+        let mut probe = self
+            .observation_policy
+            .as_ref()
+            .map_or_else(|| Ok(TestPointProbe::disabled()), |policy| policy.probe())?;
+        let mut stages = observations::RetainedStages::new(
+            self.observation_policy
+                .as_ref()
+                .map_or(0, |policy| policy.settings().max_retained_bytes),
+        );
         control.begin()?;
         let limits = ChannelJobLimits {
             max_runtime_ms: self.options.max_runtime_ms,
@@ -117,8 +128,8 @@ impl FullLoopRequest {
             &limits,
             &control.stop(),
             control.pause_gate(),
-            &mut TestPointProbe::disabled(),
-            &mut NoopObserver,
+            &mut probe,
+            &mut stages,
             |progress| control.progress(progress),
             |paused| control.acknowledge_pause(paused),
         );
@@ -126,6 +137,8 @@ impl FullLoopRequest {
         Ok(FullLoopResult {
             job: Arc::new(job?),
             inputs: self.inputs.clone(),
+            stages: Arc::new(stages),
+            observation_policy: self.observation_policy.clone(),
         })
     }
 }

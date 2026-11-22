@@ -456,3 +456,42 @@ No Qt source or completed historical task changed. The passive probe is disabled
 in this unit; retained stage/message/spectrum/response/soft-decision queries and
 complete source-catalog/sweep compatibility keep UIU-API-02 unchecked. Those gates
 precede Qt migration; this scoped unit does not establish parent or platform acceptance.
+
+## UIU-API-02 retained stage unit
+
+[Exact source/test/wheel/Qt evidence](stage-retention-evidence.json),
+[owner/design](design.md#uiu-api-02-retained-test-point-ownership-unit),
+[paired contract](../../../user/api/full-loop-observations.md) and
+[exact executed cases](api-02-retention-operation-test-results.json) trace to the
+[architecture](../../../architecture.md#unified-qt-public-api-boundary) and
+still-open [parent task](../../checklist.md#task-uiu-api-02).
+
+Twenty-one targeted integration cases and one independent owner case pass.
+Enabled/disabled capture preserves actual scientific comparisons and retained
+words. Literal anchors cover 14232 original source bits/PRBS prefix, 8192 physical
+FFT bins, 204.8 MHz sample clock, actual warmup-vs-observation tags, pilot power
+four times the reference and original offsets. Every sampled continuous pilot
+matches the same retained physical symbol's actual bin/IQ. The first test exposed
+that excluded bins are known zeros, distinct from unavailable history; the test
+was corrected to the existing frame contract and a separate owned-data vector
+proves None/zero/offset preservation. A real closed-loop pilot-emitter gap was
+fixed with a private borrowed notification over the already-computed frame vectors.
+No pilot regeneration, DSP/FEC change or public assembly signature change occurs.
+
+Byte/event/element exhaustion, duplicate/unsupported/invalid policies, absent
+stages/events, overflow/outside windows and independent query ownership pass.
+Fifteen facade cases, 139 analysis-only cases/doctest checks and warnings-denied
+facade/native-input/binding Clippy pass. Because the shared core now emits selected
+pilot events to legacy consumers, the complete existing Qt check was executed:
+87 Rust and 89 QML checks pass, and the latest executable is built. All Qt source
+files remain unchanged. This is compatibility evidence, not facade/tab adoption.
+
+The fresh Linux CPython 3.10 wheel passes all 86 native cases, including four new
+retention cases and separate direct-Rust source/pilot/physical/waveform references.
+The exact matrix appends 14 Rust/10 native rows (495/475 total), retains every prior
+row and checks fresh compiler/native signatures/types/owners plus successful cases.
+Frozen result policy/provenance and typed-kind actual windows remain usable after
+request disposal. Accounted-byte overflow drops copies explicitly; it never turns
+missing observations into ideal data or alters completed scientific trials.
+Numerical/message queries and complete source-catalog/sweep compatibility remain
+open before API-02 completion and Qt migration.

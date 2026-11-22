@@ -4,6 +4,7 @@
  */
 //! Native ownership/transport and bounded dispatch over public downstream full-loop contracts.
 mod control;
+mod observations;
 mod options;
 mod request;
 mod result;
@@ -27,5 +28,6 @@ pub(crate) fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<PyFullLoopOptions>()?;
     module.add_class::<PyFullLoopControl>()?;
     module.add_class::<PyFullLoopRequest>()?;
+    module.add_class::<observations::PyObservationPolicy>()?;
     module.add_class::<PyFullLoopResult>()
 }

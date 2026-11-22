@@ -499,6 +499,66 @@ compare scientific configuration/counts/words, not hashes of differently encoded
 but equivalent synthetic JSON observations.
 
 
+### UIU-API-02: retained test-point ownership unit
+
+This unit follows the committed controlled-request unit. Add focused retention
+policy, owned data/model, collector and bounded query modules under
+`crates/ofdm/src/api/full_loop/observations/`, assembled by
+`api/full_loop/observations.rs`. Reuse existing TestPointProbe selection/phase/
+per-stage/global budgets and borrowed ProbeEvent producers without altering
+source, RNG, DSP or FEC execution. Inspect every selected producer representation
+before defining the owned data variants. No GPL Qt collector implementation is
+copied into the Apache core.
+
+Add immutable `FullLoopObservationPolicy` over typed finite stage-retention inputs,
+with strict bounded JSON as an optional transport. The supported initial set is
+the existing TX source/coded/interleaved/label/mapped/physical/PLC/pilot/waveform
+stages plus channel output, receiver framed/useful/FFT/H and LDPC-input LLR taps.
+Reject duplicate/unsupported stage IDs and work/byte limits before retention.
+Workbench policy preserves the existing finite per-stage windows and actual
+observation-vs-acquisition phase distinctions; no capture is enabled by default.
+
+`FullLoopRequest::with_observations(policy)` returns a fresh validated request,
+leaving existing FullLoopOptions fields/defaults and original requests compatible.
+The private prepared request stores optional policy; run creates the existing
+passive probe and an owned bounded collector. `FullLoopResult` privately owns
+retention alongside the actual report/inputs. Exhausted byte retention drops
+further copies with explicit statistics rather than failing or altering science.
+Preserve actual metadata, original element offsets/counts, physical/sample/grid
+coordinates, roles, reference planes and phase; scheduled PLC data is not claimed
+physically emitted solely because it was observed at construction.
+
+Expose typed stage inventory/statistics and per-stage snapshot/window queries;
+copy at most 4096 actual contiguous elements per query, retaining original origins
+and explicit unavailable states. Numerical FFT/PSD/MER/decoding queries belong to
+subsequent scientific-owner extensions, not this ownership unit. Native Python
+policy/request/result conversions and exact stubs mirror these operations, release
+the GIL for work/copies and return owned values. Existing no-observation reports
+and all old imports remain compatible.
+
+Add targeted core/facade and native cases comparing actual scientific reports/
+retained words with capture enabled/disabled, original data/phase/grid literals,
+retention exhaustion, missing/outside/overflow windows, owned results and
+cancellation. Update operation/test tracing and exact native wheel acceptance
+before committing. Parent UIU-API-02 stays unchecked for numerical/message queries
+and complete source-catalog/sweep compatibility before any Qt consumer migration.
+
+The first actual run exposed a producer gap: the standalone pilot generator emits
+pilot records, but closed-loop frame assembly previously consumed its actual
+continuous/scattered vectors without emitting them. Add a crate-private borrowed
+pilot notification alternative in `transmission/frame/assembly.rs`; preserve the
+old public assemble signature through a no-op delegate and keep the same existing
+pilot generators/output bins. Add a private budget/phase-interest query in
+`simulation/test_points/observer.rs` so disabled/exhausted/unselected paths avoid
+extra copies. `simulation/channel/link.rs` invokes the alternative only when
+requested, using a crate-private values observer in
+`simulation/pilots/observation.rs` (registered from `simulation/pilots/mod.rs`).
+This emits the original already-computed vectors; it does not regenerate pilots,
+infer them from received data or alter scientific output. Validate their actual
+bin/IQ equality, fourfold power anchor, phase metadata and enabled/disabled
+closed-loop equivalence. Known excluded FFT bins stay explicit zeros; unavailable
+history stays None, as defined by the existing frame owner.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

@@ -69,6 +69,28 @@ pub struct TestPointProbe {
     stage_phases: BTreeMap<TestPointId, Option<super::RunPhase>>,
 }
 impl TestPointProbe {
+    /// Checks existing selection/phase/budget interest without changing dispatcher state.
+    pub(crate) fn may_request(&self, stage: TestPointId, phase: super::RunPhase) -> bool {
+        self.config.as_ref().is_some_and(|config| {
+            config
+                .selections
+                .iter()
+                .any(|selection| selection.stage == stage)
+                && self.stats.dispatched_events < config.max_events
+                && self.stats.dispatched_elements < config.max_total_elements
+                && self
+                    .stage_limits
+                    .get(&stage)
+                    .is_none_or(|(limit, used)| used < limit)
+                && self
+                    .stage_phases
+                    .get(&stage)
+                    .copied()
+                    .unwrap_or(self.phase)
+                    .is_none_or(|selected| selected == phase)
+        })
+    }
+
     /// Creates a zero-callback observation path without validating unused metadata.
     /// # Returns
     /// Disabled probe; emit returns Disabled and never invokes the observer.

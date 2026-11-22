@@ -8,3 +8,5 @@ mod observation;
 mod results;
 pub use generator::PilotGenerator;
 pub use results::PilotStageResult;
+
+pub(crate) use observation::observe_values;

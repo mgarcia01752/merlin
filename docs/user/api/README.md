@@ -18,6 +18,8 @@ filter admission and authoritative transfer observations.
 controls, owned actual samples/PSD and symbol/window timing.
 [Downstream full-loop requests](full-loop.md) describe independent controlled
 execution and owned complete/partial scientific reports.
+[Retained stage observations](full-loop-observations.md) add opt-in actual
+TX/RX data with explicit phase/reference/grid metadata and finite budgets.
 
 For searchable class/method documentation generated from the actual APIs, see
 the [generated Rust/Python reference](../../reference/api-reference.md).

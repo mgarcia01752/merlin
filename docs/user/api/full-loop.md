@@ -71,12 +71,13 @@ result = request.run(control)  # dispatch outside a GUI event loop
 print(result.report()['status'], result.report()['summary']['comparison'])
 ```
 
-This first controlled-request unit does not establish final Qt adoption. Retained
-stage/message/spectrum/response/soft-decision queries and complete source-catalog/
-sweep compatibility remain UIU-API-02 gates. Large retained report arrays remain
-bounded by existing scientific policies; later Qt consumers use scoped public
-observations. The direct-Rust `api_full_loop` example supplies independent native
-process references for selected settings, actual FEC/counts and retained words.
+[Opt-in retained stage observations](full-loop-observations.md) add typed bounded
+copies of actual test-point data. Numerical/message queries and complete source-
+catalog/sweep compatibility remain UIU-API-02 gates before final Qt adoption.
+Large retained report arrays remain bounded by existing scientific policies;
+Qt consumers use scoped public observations. The direct-Rust `api_full_loop`
+example supplies independent process references for selected settings, actual
+FEC/counts/words and retained source/pilot/physical/waveform windows.
 
 Traceability: [architecture](../../architecture.md#unified-qt-public-api-boundary),
 [requirements](../../requirements.md#req-uiu-09),

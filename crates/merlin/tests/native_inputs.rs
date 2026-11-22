@@ -251,6 +251,20 @@ fn facade_full_loop_preparation_and_precancel_preserve_native_inputs() {
         },
     )
     .unwrap();
+    let request = request
+        .with_observations(
+            FullLoopObservationPolicy::new(FullLoopObservationInput::default()).unwrap(),
+        )
+        .unwrap();
+    assert_eq!(
+        request
+            .observation_policy()
+            .unwrap()
+            .settings()
+            .stages
+            .len(),
+        22
+    );
     let control = FullLoopControl::new();
     control.cancel();
     let result = request.run(&control).unwrap();

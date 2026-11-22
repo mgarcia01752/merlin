@@ -79,3 +79,4 @@ from . import FullLoopOptions as FullLoopOptions
 from . import FullLoopControl as FullLoopControl
 from . import FullLoopRequest as FullLoopRequest
 from . import FullLoopResult as FullLoopResult
+from . import FullLoopObservationPolicy as FullLoopObservationPolicy

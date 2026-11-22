@@ -12,6 +12,8 @@ use serde::Serialize;
 pub struct FullLoopResult {
     pub(super) job: Arc<FullLoopReport>,
     pub(super) inputs: FullLoopInputs,
+    pub(super) stages: Arc<observations::RetainedStages>,
+    pub(super) observation_policy: Option<FullLoopObservationPolicy>,
 }
 impl FullLoopResult {
     /// Borrows the actual bounded scientific report, including all retained completed trials.

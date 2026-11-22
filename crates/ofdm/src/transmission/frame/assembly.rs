@@ -6,7 +6,7 @@
 use crate::{
     error::invalid,
     signal_processing::pilots::{
-        generate_continuous, generate_scattered, PilotPower, PilotSequence,
+        generate_continuous, generate_scattered, PilotPower, PilotSequence, PilotValue,
     },
     transmission::layout::{CarrierLayout, PhysicalCarrierRole},
     types::IqPair,
@@ -42,6 +42,27 @@ pub fn assemble(
     reduced: &[Option<IqPair>],
     plc: &[IqPair],
     reference_rms: f64,
+) -> Result<PhysicalFrequencySymbol, SimulationError> {
+    assemble_with_pilots(layout, symbol_index, reduced, plc, reference_rms, |_, _| {
+        Ok(())
+    })
+}
+
+/// Borrows the exact computed pilot vectors before their insertion, without exposing mutable state.
+/// # Arguments
+/// * `layout`, `symbol_index`, `reduced`, `plc`, `reference_rms` - Original assembly inputs.
+/// * `pilots` - Passive notification over the same original generated vectors used in output bins.
+/// # Returns
+/// The unchanged physical symbol; original public assembly uses a no-op notification.
+/// # Errors
+/// Preserves original generation/admission errors and optional observation failure.
+pub(crate) fn assemble_with_pilots(
+    layout: &CarrierLayout,
+    symbol_index: u64,
+    reduced: &[Option<IqPair>],
+    plc: &[IqPair],
+    reference_rms: f64,
+    pilots: impl FnOnce(&[PilotValue], &[PilotValue]) -> Result<(), SimulationError>,
 ) -> Result<PhysicalFrequencySymbol, SimulationError> {
     let roles = layout.symbol_roles(symbol_index);
     let reduced_count = roles
@@ -101,10 +122,10 @@ pub fn assemble(
         }
     }
     let sequence = PilotSequence::new(layout.subcarrier_spacing());
-    for pilot in generate_continuous(layout, &sequence, power)?
-        .into_iter()
-        .chain(generate_scattered(layout, &sequence, power, symbol_index)?)
-    {
+    let continuous = generate_continuous(layout, &sequence, power)?;
+    let scattered = generate_scattered(layout, &sequence, power, symbol_index)?;
+    pilots(&continuous, &scattered)?;
+    for pilot in continuous.into_iter().chain(scattered) {
         bins[usize::from(pilot.bin)] = Some(pilot.iq);
     }
     Ok(PhysicalFrequencySymbol {

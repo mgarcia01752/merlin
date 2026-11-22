@@ -49,10 +49,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
     let output = request.run(&FullLoopControl::new())?;
     let report = output.report();
+    let observed = request
+        .with_observations(FullLoopObservationPolicy::new(
+            FullLoopObservationInput::default(),
+        )?)?
+        .run(&FullLoopControl::new())?;
+    let stages = json!({"source":observed.stage(FullLoopStage::SourcePayload,0,FullLoopStageViewport{start:0,count:32})?,"physical":observed.stage(FullLoopStage::PhysicalBins,0,FullLoopStageViewport{start:0,count:16})?,"pilots":observed.stage(FullLoopStage::ContinuousPilots,0,FullLoopStageViewport{start:0,count:5})?,"waveform":observed.stage(FullLoopStage::TxOverlap,0,FullLoopStageViewport{start:7,count:4})?});
     println!(
         "{}",
         serde_json::to_string(
-            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?})
+            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages})
         )?
     );
     Ok(())

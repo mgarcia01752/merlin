@@ -984,6 +984,14 @@ conversions under `bindings/python/src/full_loop` release the interpreter lock a
 map interrupts to cooperative cancellation. Existing evaluation Simulation/Merlin
 operations remain compatible. Retained stage/query and complete source-catalog/
 sweep parity remain explicit acceptance gates before Qt adoption.
+`api/full_loop/observations` owns validated opt-in selection and finite typed copies
+of core test-point events, with bounded queries and frozen policy/provenance.
+The [stage contract](user/api/full-loop-observations.md) keeps actual phases,
+grids, references, unavailable history and explicit zeros distinct. A private
+frame-assembly notification exposes its original computed pilot vectors through
+the existing dispatcher; the original public assembly/no-op path and scientific
+outputs remain compatible. Numerical/message queries remain separate gates.
+
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)
