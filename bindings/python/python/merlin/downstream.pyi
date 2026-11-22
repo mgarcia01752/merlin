@@ -71,3 +71,4 @@ from . import RxMerDesign as RxMerDesign
 from . import RxMerDesignPosition as RxMerDesignPosition
 from . import ProfileCapture as ProfileCapture
 from . import ProfileViewRequest as ProfileViewRequest
+from . import ChannelConfiguration as ChannelConfiguration

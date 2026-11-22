@@ -12,6 +12,8 @@ Neither route needs Qt or Python. See [passive input admission](input-admission.
 for timing/source contracts and Rust/Python parity.
 [Original profile inspection](profile-inspection.md) covers complete source
 catalogs, compact schemes and bounded scientific views.
+[Configured channel preview](channel-preview.md) documents immutable loss/power/
+filter admission and authoritative transfer observations.
 
 For searchable class/method documentation generated from the actual APIs, see
 the [generated Rust/Python reference](../../reference/api-reference.md).

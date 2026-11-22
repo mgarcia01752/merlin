@@ -346,3 +346,30 @@ and UIU-DS-01 retain the explicit source-ID full-loop compatibility gate.
 No Qt source, normative assignment table, Shannon/rate kernel or completed
 historical checkbox changed. Channel composition and idle TX previews remain
 open before parent task acceptance and Qt consumer migration.
+
+## UIU-API-01 channel preview unit
+
+Immutable `ChannelConfiguration` validates existing loss/power/filter parameters
+and obtains authoritative configured transfer from existing scientific owners.
+[Exact candidate/test/wheel record](channel-preview-evidence.json),
+[design/owners](design.md#uiu-api-01-configured-channel-composition-preview-unit),
+[Rust/Python contract](../../../user/api/channel-preview.md) and
+[architecture](../../../architecture.md#unified-qt-public-api-boundary) link to
+[UIU-API-01](../../checklist.md#task-uiu-api-01).
+
+All 24 targeted core/API/channel cases and 13 facade cases pass. Independent
+anchors cover unity/excluded slots, -6 dB tilt, +6 dB amplifier and 2 dB CPA
+(+4/-2 dB endpoint transfer), electrical scale/noise and actual two-tap echoes.
+Original bytes/grids and raw source ID 200 survive planning; unknown settings,
+parameter/transport limits, epoch/identity and imported-H/echo ambiguity reject
+without mutation. All-target facade/native-input/binding Clippy with warnings
+denied, format/version/guide checks pass. The fresh Linux CPython 3.10 wheel
+passes all 71 installed native cases, including four new channel cases and actual
+Rust-reference/WB/Designer/compatibility regressions.
+
+The configured transfer is explicitly before receiver correction, separate from
+original measured H. No source/noise RNG, waveform/filter stream or PHY run is
+created. Existing legacy API admission delegates to shared private helpers with
+unchanged validation semantics. No Qt source, scientific kernel, historical
+checkbox or saved-project contract changed. Bounded idle TX preview remains open
+before the parent task can be accepted.

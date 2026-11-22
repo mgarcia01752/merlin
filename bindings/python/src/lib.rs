@@ -4,6 +4,7 @@
  */
 //! Optional PyO3 conversions only; the high-level Rust API owns all science.
 mod admission;
+mod channel;
 mod controller;
 mod designer;
 mod inputs;
@@ -67,6 +68,7 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     }
     quantities::register(module)?;
     admission::register(module)?;
+    channel::register(module)?;
     profile_capture::register(module)?;
     designer::register(module)?;
     sequence::register(module)?;

@@ -20,7 +20,7 @@ use std::path::PathBuf;
 pub(crate) struct PyProfileView(pub(crate) api::ProfileViewRequest);
 #[pyclass(from_py_object, frozen, module = "merlin", name = "ProfileCapture")]
 #[derive(Clone)]
-pub(crate) struct PyProfileCapture(api::ProfileCapture);
+pub(crate) struct PyProfileCapture(pub(crate) api::ProfileCapture);
 
 fn transport_error(cause: serde_json::Error) -> api::ApiError {
     api::ApiError::new(api::ErrorCode::InvalidInput, cause.to_string())

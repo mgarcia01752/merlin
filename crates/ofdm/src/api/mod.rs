@@ -5,6 +5,7 @@
 //! High-level, Qt-free simulation API with owned inputs and results.
 //! Loading/configuration never executes jobs; only explicit run methods start simulation.
 mod admission;
+mod channel;
 mod configuration;
 mod controller;
 mod error;
@@ -22,6 +23,7 @@ pub use crate::types::ProtocolScope;
 pub use admission::{
     FileFillPolicy, SourceInput, TransmissionConfiguration, MAX_TRANSMISSION_DOCUMENT_BYTES,
 };
+pub use channel::*;
 pub use configuration::*;
 pub use controller::*;
 pub use error::{ApiError, ApiResult, ErrorCode};

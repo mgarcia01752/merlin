@@ -155,3 +155,32 @@ fn facade_profile_capture_keeps_binary_json_science_and_original_sources() {
             <= 16
     );
 }
+
+#[test]
+fn facade_configured_channel_preview_uses_public_typed_configuration_and_inputs() {
+    let input = downstream::NamedCapture::new("profile", PROFILE.to_vec()).unwrap();
+    let profile =
+        downstream::inputs::CaptureLoader::profile(&input, downstream::ProfileId::new(0).unwrap())
+            .unwrap();
+    let transmission =
+        downstream::TransmissionConfiguration::new(downstream::TransmissionSettings::default())
+            .unwrap();
+    let channel =
+        downstream::ChannelConfiguration::new(downstream::ChannelConfigurationInput::default())
+            .unwrap();
+    let preview = channel
+        .preview(
+            &transmission,
+            &profile,
+            None,
+            downstream::AssociationTolerance::ZERO,
+        )
+        .unwrap();
+    assert_eq!(preview.key, *profile.key());
+    assert!(preview
+        .effective_response
+        .iter()
+        .flatten()
+        .all(|sample| *sample == [1.0, 0.0]));
+    assert_eq!(preview.sources[0].original_bytes(), PROFILE);
+}

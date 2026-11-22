@@ -198,9 +198,18 @@ impl TransmissionConfiguration {
         response: Option<&ChannelEstimate>,
         tolerance: AssociationTolerance,
     ) -> ApiResult<()> {
-        self.check_profile(profile)?;
+        self.check_response_profile(&profile.profile, response, tolerance)
+    }
+
+    pub(crate) fn check_response_profile(
+        &self,
+        profile: &crate::profile::candidate::CapturedProfile,
+        response: Option<&ChannelEstimate>,
+        tolerance: AssociationTolerance,
+    ) -> ApiResult<()> {
+        self.check_profile_grid(&profile.key.grid)?;
         if response.is_some_and(|v| {
-            v.frame.capture_time.abs_diff(profile.profile.capture_time) > tolerance.value()
+            v.frame.capture_time.abs_diff(profile.capture_time) > tolerance.value()
         }) {
             return Err(ApiError::new(
                 ErrorCode::AssociationFailed,
@@ -209,7 +218,7 @@ impl TransmissionConfiguration {
         }
         Ok(validate_response(
             self.settings(),
-            &profile.profile,
+            profile,
             response.map(|v| &v.frame),
         )?)
     }

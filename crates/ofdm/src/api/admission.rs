@@ -140,7 +140,10 @@ impl TransmissionConfiguration {
     /// # Errors
     /// Rejects mismatched spacing, overflow or a source grid outside the accepted channel.
     pub fn check_profile(&self, profile: &Dpd) -> ApiResult<()> {
-        let grid = profile.grid();
+        self.check_profile_grid(profile.grid())
+    }
+
+    pub(crate) fn check_profile_grid(&self, grid: &super::FrequencyGrid) -> ApiResult<()> {
         if grid.spacing_hz != self.settings.subcarrier_spacing.frequency_hz() {
             return Err(ApiError::new(
                 ErrorCode::IncompatibleGrid,

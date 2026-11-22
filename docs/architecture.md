@@ -965,6 +965,11 @@ compact schemes and original header/order without widening legacy simulation
 assignment, ideal Shannon and useful-symbol-rate owners. The shared parser omits
 inspection arrays for legacy scientific callers; see
 [profile contracts and parity](user/api/profile-inspection.md).
+`ChannelConfiguration` freezes the existing loss/power/filter parameters and uses
+the same spatial/epoch/coverage and channel-composition owners as execution.
+Its [configured transfer preview](user/api/channel-preview.md) retains full original
+grids and inputs, actual filter diagnostics and bounded before-receiver views;
+it creates no waveform/filter stream or simulation state.
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

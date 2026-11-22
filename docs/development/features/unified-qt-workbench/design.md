@@ -333,6 +333,49 @@ and unchanged legacy ProfileId behavior. Add the Rust cases under
 rerun affected parser tests, Clippy and installed-wheel regressions before Qt
 adoption. Existing scientific stage/FEC acceptance remains untouched.
 
+### UIU-API-01: configured channel composition preview unit
+
+Reuse `ChannelImpairments`, `prepare_channel`, original captured-layout admission,
+AdditionalLoss, PowerConditioning and ChannelFilterSettings unchanged. Add
+`crates/ofdm/src/api/channel.rs` and focused `channel/preview.rs`/`models.rs`.
+`ChannelConfigurationInput` owns explicit additional_loss/power/filter settings;
+`ChannelConfiguration::new` validates all existing parameter bounds and freezes
+an immutable snapshot. `from_json(&[u8])` adds a 64 KiB application transport bound
+and strict fields. Curated configuration type re-exports retain their original
+scientific owners; no filter/DSP engine moves into the facade.
+
+`preview(&TransmissionConfiguration, &Dpd, Option<&ChannelEstimate>,
+AssociationTolerance)` and `preview_capture(&TransmissionConfiguration,
+&ProfileCapture, raw_id, Option<&ChannelEstimate>, AssociationTolerance)` call the
+same layout/response/epoch/composition owners. Add a crate-private source lookup
+in `api/inputs/profile_capture.rs`; factor the existing profile-grid check inside
+`api/admission.rs` and shared response/epoch admission inside `api/sequence.rs`
+without changing their public contracts. Raw source IDs are retained; neither this
+preview nor its successful channel plan establishes full-loop acceptance.
+
+`ChannelPreview` owns the original key/profile ID/sources, full original-grid
+optional effective I/Q, active offsets/physical band, at most 1024 gain-view
+min/max groups, at most 128 additional/effective gain points, endpoint additional
+loss, configured power summary and optional actual filter coefficients/diagnostics.
+Gain views cover the accepted active band while the full response retains excluded
+gaps on the original grid. This total configured transfer includes conditioning,
+additional loss and optional continuous filter, before receiver correction;
+it remains separate from original measured H. Exact input H is never normalized
+or replaced. Filter/echo ambiguity and fit/null/coverage restrictions stay with
+existing owners. No stream, source/noise RNG or PHY simulation is created.
+
+Add native `bindings/python/src/channel.rs`, registration, aliases/stubs and
+`bindings/python/tests/test_channel_configuration.py`. Python constructs defaults
+or uses bounded JSON to the typed Rust input; settings/power snapshots are owned
+copies. It exposes preview/preview_capture as owned dictionaries with the same
+fields and shared errors, releasing the GIL for planning. Add
+`crates/ofdm/tests/api_channel_configuration.rs` for literal unity/manual-tilt/
+conditioning gain anchors, original/excluded grids, configured electrical scale,
+raw source identity, actual echo coefficients and invalid field/parameter/size/
+H/echo/epoch/fit rejection. Re-run affected channel composition/filter/power tests,
+Clippy and installed-wheel regressions before Qt consumers change. Idle TX preview
+remains open after this unit.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

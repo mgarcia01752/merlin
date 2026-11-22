@@ -20,6 +20,17 @@ pub struct ProfileCapture {
 }
 
 impl ProfileCapture {
+    pub(crate) fn profile_ref(&self, profile_id: u8) -> ApiResult<&CapturedProfile> {
+        self.profiles
+            .iter()
+            .find(|profile| profile.profile_id == profile_id)
+            .ok_or_else(|| {
+                ApiError::new(
+                    ErrorCode::InvalidIdentifier,
+                    "Source profile identity is unavailable",
+                )
+            })
+    }
     /// Admits decoded source JSON without a simulation or implicit profile selection.
     /// # Arguments
     /// * `input` - Exact bounded named JSON; binary uses the optional native CaptureLoader.

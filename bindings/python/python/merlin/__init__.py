@@ -63,6 +63,7 @@ from ._native import (
     SubcarrierIndex,
     Weight,
     FileFillPolicy,
+    ChannelConfiguration,
     ProfileCapture,
     ProfileViewRequest,
     RxMerDesign,
