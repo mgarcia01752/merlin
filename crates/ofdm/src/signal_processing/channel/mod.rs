@@ -14,5 +14,7 @@ pub mod filter;
 pub mod impairments;
 pub mod power;
 pub mod reference;
+#[cfg(all(feature = "simulation", feature = "pnm-input"))]
+pub(crate) mod spectrum;
 /// Application bound on normalized complex sample/bin noise power, not a DOCSIS limit.
 pub const MAX_NORMALIZED_NOISE_POWER: f64 = 1000.0;

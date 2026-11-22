@@ -28,6 +28,69 @@ fn inputs() -> (TransmissionConfiguration, Dpd, SourceInput) {
 }
 
 #[test]
+fn idle_calibrated_spectrum_keeps_full_band_power_zoom_independent_and_does_not_apply_channel_gain()
+{
+    const INPUT_LEVEL_DBMV: f64 = 0.0;
+    const UNUSED_AMPLIFIER_GAIN_DB: f64 = 20.0;
+    const VIEW_START_BIN: usize = 350;
+    const VIEW_BIN_COUNT: usize = 7;
+    let (transmission, profile, source) = inputs();
+    let output = TransmitterPreviewRequest::new(&transmission, &profile, &source)
+        .unwrap()
+        .generate(&TransmitterPreviewControl::new())
+        .unwrap();
+    let original = serde_json::to_value(output.spectrum(0, 0).unwrap()).unwrap();
+    let channel = ChannelConfiguration::new(ChannelConfigurationInput {
+        power: PowerConditioning {
+            input_data_level_dbmv_per_6mhz: Some(INPUT_LEVEL_DBMV),
+            amplifier_gain_db: UNUSED_AMPLIFIER_GAIN_DB,
+            ..Default::default()
+        },
+        ..Default::default()
+    })
+    .unwrap();
+    let without_gain = ChannelConfiguration::new(ChannelConfigurationInput {
+        power: PowerConditioning {
+            input_data_level_dbmv_per_6mhz: Some(INPUT_LEVEL_DBMV),
+            ..Default::default()
+        },
+        ..Default::default()
+    })
+    .unwrap();
+    let full = output.calibrated_spectrum(&channel, 0, 0).unwrap();
+    let zoom = output
+        .calibrated_spectrum(&channel, VIEW_START_BIN, VIEW_BIN_COUNT)
+        .unwrap();
+    assert_eq!(full.reference_plane, "tx_post_overlap_before_channel");
+    assert_eq!(
+        full.channel_power.normalized_power,
+        zoom.channel_power.normalized_power
+    );
+    assert_eq!(full.channel_power.dbmv, zoom.channel_power.dbmv);
+    assert_eq!(
+        serde_json::to_value(full).unwrap(),
+        serde_json::to_value(output.calibrated_spectrum(&without_gain, 0, 0).unwrap()).unwrap()
+    );
+    let relative = output
+        .calibrated_spectrum(
+            &ChannelConfiguration::new(ChannelConfigurationInput::default()).unwrap(),
+            0,
+            0,
+        )
+        .unwrap();
+    assert!(relative.channel_power.dbmv.is_none());
+    assert_eq!(
+        relative.buckets[0].maximum_db,
+        output.spectrum(0, 0).unwrap().buckets[0].maximum_db
+    );
+    assert!(output.calibrated_spectrum(&channel, usize::MAX, 0).is_err());
+    assert_eq!(
+        serde_json::to_value(output.spectrum(0, 0).unwrap()).unwrap(),
+        original
+    );
+}
+
+#[test]
 fn actual_tx_samples_psd_and_owned_originals_match_existing_owner() {
     let (transmission, profile, source) = inputs();
     let request = TransmitterPreviewRequest::new(&transmission, &profile, &source).unwrap();

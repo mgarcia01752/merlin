@@ -5,9 +5,9 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "c78c182c5ec18486580bbe224dc731714f89b16a plus exact ordered-frame spectrum and named-constant candidate manifest",
-    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-sequence-spectrum-style-native/native-exports.json",
-    "native_sha256": "07dfb59325f79670b601cbb5a9ee8022a5047a8b93a3488bf5380afa1f50141c",
+    "revision": "af0c628f4c785703d5a96bd3af1c4986587747d9 plus exact calibrated channel/amplifier candidate manifest",
+    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-channel-spectrum-native/native-exports.json",
+    "native_sha256": "0e0dcbbd711557bbfed799786db1950de4453b0bb7dd0d2c263fdb45b34368bc",
     "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
     "legacy_compatibility": {
       "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
@@ -77,7 +77,10 @@
     "evidence.uiu-api-02-physical": "../unified-qt-workbench/physical-view-evidence.json, ../unified-qt-workbench/api-02-physical-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-physical-bin-and-transmitted-role-unit: actual source/wheel and exact successful owner/scientific/native cases.",
     "status.uiu-api-02-physical": "Implemented original full-FFT role inspection, actual retained bin power and typed transmitted-cell packing provenance. Calibrated/ordered-frame spectrum and complete catalog/sweep parity keep API-02 open; no Qt adoption.",
     "evidence.uiu-api-02-sequence-spectrum": "../unified-qt-workbench/sequence-spectrum-evidence.json, ../unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-ordered-frame-stage-spectrum-unit: candidate/wheel hashes, exact passing cases, original segments and explicit diagnostic sampling basis.",
-    "status.uiu-api-02-sequence-spectrum": "Implemented explicit ordered frame-stage PSD over actual retained samples, original physical intervals, stop reasons and analyzed coverage; original contiguous spectrum is preserved. Calibrated channel spectra, scalar amplifier-boundary and catalog/sweep parity keep API-02 open; no Qt adoption."
+    "status.uiu-api-02-sequence-spectrum": "Implemented explicit ordered frame-stage PSD over actual retained samples, original physical intervals, stop reasons and analyzed coverage; original contiguous spectrum is preserved. Calibrated channel spectra, scalar amplifier-boundary and catalog/sweep parity keep API-02 open; no Qt adoption.",
+    "evidence.uiu-api-02-channel-spectrum": "../unified-qt-workbench/channel-spectrum-evidence.json, ../unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-calibrated-channel-and-amplifier-unit: exact source/wheel hashes, executed cases and independent electrical/gain vectors.",
+    "status.uiu-api-02-channel-spectrum": "Implemented actual calibrated time-stage and idle TX PSD, fixed channel taps and explicitly derived amplifier-only bins. Complete catalog/sweep parity and final acceptance keep API-02 open; no Qt adoption.",
+    "units.uiu-api-02-channel-spectrum": "Actual normalized complex-sample PSD or explicit millivolt-squared/Hz calibration with bucket dBmV/Hz, original physical FFT grid and sample origins. ChannelPower integrates the complete occupied envelope including internal holes independently of zoom. Amplifier views declare gain-only amplitude; CPA/H/noise are excluded from the derived boundary, while receiver input is actual modeled output. Missing history and zero logarithmic readings remain absent."
   },
   "type_exports": {
     "downstream": [
@@ -931,6 +934,30 @@
       },
       {
         "export": "merlin::downstream::FullLoopSpectrumStop",
+        "kind": "enum"
+      },
+      {
+        "export": "merlin::downstream::AmplifierBoundary",
+        "kind": "enum"
+      },
+      {
+        "export": "merlin::downstream::ChannelSpectrum",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::ChannelSpectrumBucket",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopAmplifierBins",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopChannelSpectrum",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopChannelTap",
         "kind": "enum"
       }
     ],
@@ -27383,6 +27410,322 @@
       },
       "evidence": "evidence.uiu-api-02-sequence-spectrum",
       "status": "status.uiu-api-02-sequence-spectrum"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::calibrated_spectrum",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn calibrated_spectrum( &self, query: FullLoopSpectrumQuery, ) -> ApiResult<FullLoopChannelSpectrum>",
+        "source_file": "crates/ofdm/src/api/full_loop/instruments/channel.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.calibrated_spectrum",
+        "declaration": "merlin.downstream.FullLoopResult.calibrated_spectrum"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-02-channel-spectrum",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopChannelSpectrum>",
+        "scope": "Owned explicit-unit PSD/full-band power or original TX physical bins with labelled direct/derived reference planes, exact accepted amplifier ratio, original context and finite work; no hidden run or receiver truth substitution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::calibrated_channel_taps_preserve_actual_sources_full_band_power_and_distinct_amplifier_planes",
+          "crates/ofdm/tests/api_full_loop_observations.rs::relative_channel_spectra_and_missing_taps_remain_explicit_without_hidden_execution",
+          "crates/ofdm/tests/api_full_loop_observations.rs::ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_distinct",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_calibrated_spectrum_keeps_full_band_power_zoom_independent_and_does_not_apply_channel_gain",
+          "crates/ofdm/tests/api_transmitter_preview.rs::actual_tx_samples_psd_and_owned_originals_match_existing_owner",
+          "crates/ofdm/tests/api_transmitter_preview.rs::finite_file_previews_exhaust_without_mutating_source_and_queries_reject_bounds",
+          "crates/ofdm/tests/api_transmitter_preview.rs::cross_thread_cancel_progress_busy_and_precancel_are_one_shot",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_timing_window_and_encoded_id_admission_keep_existing_support",
+          "crates/ofdm/tests/channel_power.rs::unitary_data_density_calibrates_to_explicit_six_mhz_reference",
+          "crates/ofdm/tests/channel_power.rs::gain_target_attenuation_and_independent_noise_have_distinct_references",
+          "crates/ofdm/tests/channel_power.rs::malformed_bounds_and_unreferenced_electrical_choices_reject",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::independent_flat_density_calibration_and_full_band_integration_ignore_zoom_and_internal_holes",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::relative_zero_and_invalid_spectra_never_invent_electrical_levels_or_finite_missing_power",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::amplifier_alone_has_literal_complex_gain_and_keeps_cpa_target_and_overflow_semantics_explicit"
+        ],
+        "python": {
+          "status": "installed native actual/limits/units/ownership/default metadata and separate direct-Rust-process cases",
+          "cases": [
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_actual_tap_units_zoom_gain_missing_bounds_and_owned_results",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_direct_rust_process_channel_planes_and_idle_electrical_units_match",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_idle_calibration_keeps_relative_mode_and_does_not_apply_configured_amplifier"
+          ],
+          "scope": "Independent flat-density six-MHz calibration and 20-dB gain anchors, both numerologies, inclusive envelope with internal exclusion, zoom invariance, relative/zero/overflow behavior, actual receiver output and explicit scalar TX source identity; existing normalized outputs preserved."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-channel-spectrum",
+      "status": "status.uiu-api-02-channel-spectrum"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::channel_spectrum",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn channel_spectrum( &self, tap: FullLoopChannelTap, query: FullLoopSpectrumQuery, ) -> ApiResult<FullLoopChannelSpectrum>",
+        "source_file": "crates/ofdm/src/api/full_loop/instruments/channel.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.channel_spectrum",
+        "declaration": "merlin.downstream.FullLoopResult.channel_spectrum"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-02-channel-spectrum",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopChannelSpectrum>",
+        "scope": "Owned explicit-unit PSD/full-band power or original TX physical bins with labelled direct/derived reference planes, exact accepted amplifier ratio, original context and finite work; no hidden run or receiver truth substitution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::calibrated_channel_taps_preserve_actual_sources_full_band_power_and_distinct_amplifier_planes",
+          "crates/ofdm/tests/api_full_loop_observations.rs::relative_channel_spectra_and_missing_taps_remain_explicit_without_hidden_execution",
+          "crates/ofdm/tests/api_full_loop_observations.rs::ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_distinct",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_calibrated_spectrum_keeps_full_band_power_zoom_independent_and_does_not_apply_channel_gain",
+          "crates/ofdm/tests/api_transmitter_preview.rs::actual_tx_samples_psd_and_owned_originals_match_existing_owner",
+          "crates/ofdm/tests/api_transmitter_preview.rs::finite_file_previews_exhaust_without_mutating_source_and_queries_reject_bounds",
+          "crates/ofdm/tests/api_transmitter_preview.rs::cross_thread_cancel_progress_busy_and_precancel_are_one_shot",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_timing_window_and_encoded_id_admission_keep_existing_support",
+          "crates/ofdm/tests/channel_power.rs::unitary_data_density_calibrates_to_explicit_six_mhz_reference",
+          "crates/ofdm/tests/channel_power.rs::gain_target_attenuation_and_independent_noise_have_distinct_references",
+          "crates/ofdm/tests/channel_power.rs::malformed_bounds_and_unreferenced_electrical_choices_reject",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::independent_flat_density_calibration_and_full_band_integration_ignore_zoom_and_internal_holes",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::relative_zero_and_invalid_spectra_never_invent_electrical_levels_or_finite_missing_power",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::amplifier_alone_has_literal_complex_gain_and_keeps_cpa_target_and_overflow_semantics_explicit"
+        ],
+        "python": {
+          "status": "installed native actual/limits/units/ownership/default metadata and separate direct-Rust-process cases",
+          "cases": [
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_actual_tap_units_zoom_gain_missing_bounds_and_owned_results",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_direct_rust_process_channel_planes_and_idle_electrical_units_match",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_idle_calibration_keeps_relative_mode_and_does_not_apply_configured_amplifier"
+          ],
+          "scope": "Independent flat-density six-MHz calibration and 20-dB gain anchors, both numerologies, inclusive envelope with internal exclusion, zoom invariance, relative/zero/overflow behavior, actual receiver output and explicit scalar TX source identity; existing normalized outputs preserved."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-channel-spectrum",
+      "status": "status.uiu-api-02-channel-spectrum"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::amplifier_bins",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn amplifier_bins( &self, boundary: AmplifierBoundary, snapshot: usize, start: usize, count: usize, ) -> ApiResult<FullLoopAmplifierBins>",
+        "source_file": "crates/ofdm/src/api/full_loop/instruments/channel.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.amplifier_bins",
+        "declaration": "merlin.downstream.FullLoopResult.amplifier_bins"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-02-channel-spectrum",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopAmplifierBins>",
+        "scope": "Owned explicit-unit PSD/full-band power or original TX physical bins with labelled direct/derived reference planes, exact accepted amplifier ratio, original context and finite work; no hidden run or receiver truth substitution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::calibrated_channel_taps_preserve_actual_sources_full_band_power_and_distinct_amplifier_planes",
+          "crates/ofdm/tests/api_full_loop_observations.rs::relative_channel_spectra_and_missing_taps_remain_explicit_without_hidden_execution",
+          "crates/ofdm/tests/api_full_loop_observations.rs::ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_distinct",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_calibrated_spectrum_keeps_full_band_power_zoom_independent_and_does_not_apply_channel_gain",
+          "crates/ofdm/tests/api_transmitter_preview.rs::actual_tx_samples_psd_and_owned_originals_match_existing_owner",
+          "crates/ofdm/tests/api_transmitter_preview.rs::finite_file_previews_exhaust_without_mutating_source_and_queries_reject_bounds",
+          "crates/ofdm/tests/api_transmitter_preview.rs::cross_thread_cancel_progress_busy_and_precancel_are_one_shot",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_timing_window_and_encoded_id_admission_keep_existing_support",
+          "crates/ofdm/tests/channel_power.rs::unitary_data_density_calibrates_to_explicit_six_mhz_reference",
+          "crates/ofdm/tests/channel_power.rs::gain_target_attenuation_and_independent_noise_have_distinct_references",
+          "crates/ofdm/tests/channel_power.rs::malformed_bounds_and_unreferenced_electrical_choices_reject",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::independent_flat_density_calibration_and_full_band_integration_ignore_zoom_and_internal_holes",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::relative_zero_and_invalid_spectra_never_invent_electrical_levels_or_finite_missing_power",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::amplifier_alone_has_literal_complex_gain_and_keeps_cpa_target_and_overflow_semantics_explicit"
+        ],
+        "python": {
+          "status": "installed native actual/limits/units/ownership/default metadata and separate direct-Rust-process cases",
+          "cases": [
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_actual_tap_units_zoom_gain_missing_bounds_and_owned_results",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_direct_rust_process_channel_planes_and_idle_electrical_units_match",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_idle_calibration_keeps_relative_mode_and_does_not_apply_configured_amplifier"
+          ],
+          "scope": "Independent flat-density six-MHz calibration and 20-dB gain anchors, both numerologies, inclusive envelope with internal exclusion, zoom invariance, relative/zero/overflow behavior, actual receiver output and explicit scalar TX source identity; existing normalized outputs preserved."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-channel-spectrum",
+      "status": "status.uiu-api-02-channel-spectrum"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::TransmitterPreview::calibrated_spectrum",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn calibrated_spectrum( &self, channel: &ChannelConfiguration, start: usize, count: usize, ) -> ApiResult<ChannelSpectrum>",
+        "source_file": "crates/ofdm/src/api/transmitter/calibrated.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.TransmitterPreview.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.TransmitterPreview.calibrated_spectrum",
+        "declaration": "merlin.downstream.TransmitterPreview.calibrated_spectrum"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.uiu-api-02-channel-spectrum",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<ChannelSpectrum>",
+        "scope": "Owned explicit-unit PSD/full-band power or original TX physical bins with labelled direct/derived reference planes, exact accepted amplifier ratio, original context and finite work; no hidden run or receiver truth substitution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::calibrated_channel_taps_preserve_actual_sources_full_band_power_and_distinct_amplifier_planes",
+          "crates/ofdm/tests/api_full_loop_observations.rs::relative_channel_spectra_and_missing_taps_remain_explicit_without_hidden_execution",
+          "crates/ofdm/tests/api_full_loop_observations.rs::ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_distinct",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_calibrated_spectrum_keeps_full_band_power_zoom_independent_and_does_not_apply_channel_gain",
+          "crates/ofdm/tests/api_transmitter_preview.rs::actual_tx_samples_psd_and_owned_originals_match_existing_owner",
+          "crates/ofdm/tests/api_transmitter_preview.rs::finite_file_previews_exhaust_without_mutating_source_and_queries_reject_bounds",
+          "crates/ofdm/tests/api_transmitter_preview.rs::cross_thread_cancel_progress_busy_and_precancel_are_one_shot",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_timing_window_and_encoded_id_admission_keep_existing_support",
+          "crates/ofdm/tests/channel_power.rs::unitary_data_density_calibrates_to_explicit_six_mhz_reference",
+          "crates/ofdm/tests/channel_power.rs::gain_target_attenuation_and_independent_noise_have_distinct_references",
+          "crates/ofdm/tests/channel_power.rs::malformed_bounds_and_unreferenced_electrical_choices_reject",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::independent_flat_density_calibration_and_full_band_integration_ignore_zoom_and_internal_holes",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::relative_zero_and_invalid_spectra_never_invent_electrical_levels_or_finite_missing_power",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::amplifier_alone_has_literal_complex_gain_and_keeps_cpa_target_and_overflow_semantics_explicit"
+        ],
+        "python": {
+          "status": "installed native actual/limits/units/ownership/default metadata and separate direct-Rust-process cases",
+          "cases": [
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_actual_tap_units_zoom_gain_missing_bounds_and_owned_results",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_direct_rust_process_channel_planes_and_idle_electrical_units_match",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_idle_calibration_keeps_relative_mode_and_does_not_apply_configured_amplifier"
+          ],
+          "scope": "Independent flat-density six-MHz calibration and 20-dB gain anchors, both numerologies, inclusive envelope with internal exclusion, zoom invariance, relative/zero/overflow behavior, actual receiver output and explicit scalar TX source identity; existing normalized outputs preserved."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-channel-spectrum",
+      "status": "status.uiu-api-02-channel-spectrum"
     }
   ],
   "executed_records": [
@@ -27400,7 +27743,8 @@
     "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -58393,6 +58737,346 @@
       },
       "evidence": "evidence.uiu-api-02-sequence-spectrum",
       "status": "status.uiu-api-02-sequence-spectrum"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.amplifier_bins",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/channel.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn amplifier_bins( &self, boundary: AmplifierBoundary, snapshot: usize, start: usize, count: usize, ) -> ApiResult<FullLoopAmplifierBins>",
+        "mapping": "Checked native arguments dispatch typed public Rust queries with the GIL released. Fixed tap strings select the corresponding Rust enum and authoritative source stage; no calibration, gain, FFT, bin power or channel algorithm is implemented in Python.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::amplifier_bins",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "amplifier_bins",
+        "kind": "method",
+        "signature": "(self, /, boundary='before', snapshot=0, start=0, count=0)",
+        "declaration": "FullLoopResult.amplifier_bins"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.uiu-api-02-channel-spectrum",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned scientific dictionaries, explicit electrical/reference units and original source metadata; calibration does not execute channel effects, and scalar amplifier projections remain distinguishable from actual receiver observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::calibrated_channel_taps_preserve_actual_sources_full_band_power_and_distinct_amplifier_planes",
+          "crates/ofdm/tests/api_full_loop_observations.rs::relative_channel_spectra_and_missing_taps_remain_explicit_without_hidden_execution",
+          "crates/ofdm/tests/api_full_loop_observations.rs::ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_distinct",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_calibrated_spectrum_keeps_full_band_power_zoom_independent_and_does_not_apply_channel_gain",
+          "crates/ofdm/tests/api_transmitter_preview.rs::actual_tx_samples_psd_and_owned_originals_match_existing_owner",
+          "crates/ofdm/tests/api_transmitter_preview.rs::finite_file_previews_exhaust_without_mutating_source_and_queries_reject_bounds",
+          "crates/ofdm/tests/api_transmitter_preview.rs::cross_thread_cancel_progress_busy_and_precancel_are_one_shot",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_timing_window_and_encoded_id_admission_keep_existing_support",
+          "crates/ofdm/tests/channel_power.rs::unitary_data_density_calibrates_to_explicit_six_mhz_reference",
+          "crates/ofdm/tests/channel_power.rs::gain_target_attenuation_and_independent_noise_have_distinct_references",
+          "crates/ofdm/tests/channel_power.rs::malformed_bounds_and_unreferenced_electrical_choices_reject",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::independent_flat_density_calibration_and_full_band_integration_ignore_zoom_and_internal_holes",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::relative_zero_and_invalid_spectra_never_invent_electrical_levels_or_finite_missing_power",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::amplifier_alone_has_literal_complex_gain_and_keeps_cpa_target_and_overflow_semantics_explicit"
+        ],
+        "python": {
+          "status": "installed native actual/limits/units/ownership/default metadata and separate direct-Rust-process cases",
+          "cases": [
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_actual_tap_units_zoom_gain_missing_bounds_and_owned_results",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_direct_rust_process_channel_planes_and_idle_electrical_units_match",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_idle_calibration_keeps_relative_mode_and_does_not_apply_configured_amplifier"
+          ],
+          "scope": "Independent flat-density six-MHz calibration and 20-dB gain anchors, both numerologies, inclusive envelope with internal exclusion, zoom invariance, relative/zero/overflow behavior, actual receiver output and explicit scalar TX source identity; existing normalized outputs preserved."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-channel-spectrum",
+      "status": "status.uiu-api-02-channel-spectrum"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.calibrated_spectrum",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/channel.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn calibrated_spectrum( &self, query: FullLoopSpectrumQuery, ) -> ApiResult<FullLoopChannelSpectrum>",
+        "mapping": "Checked native arguments dispatch typed public Rust queries with the GIL released. Fixed tap strings select the corresponding Rust enum and authoritative source stage; no calibration, gain, FFT, bin power or channel algorithm is implemented in Python.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::calibrated_spectrum",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "calibrated_spectrum",
+        "kind": "method",
+        "signature": "(self, /, stage='tx.overlap_add.samples', snapshot=0, max_averages=32, start=0, count=0)",
+        "declaration": "FullLoopResult.calibrated_spectrum"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.uiu-api-02-channel-spectrum",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned scientific dictionaries, explicit electrical/reference units and original source metadata; calibration does not execute channel effects, and scalar amplifier projections remain distinguishable from actual receiver observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::calibrated_channel_taps_preserve_actual_sources_full_band_power_and_distinct_amplifier_planes",
+          "crates/ofdm/tests/api_full_loop_observations.rs::relative_channel_spectra_and_missing_taps_remain_explicit_without_hidden_execution",
+          "crates/ofdm/tests/api_full_loop_observations.rs::ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_distinct",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_calibrated_spectrum_keeps_full_band_power_zoom_independent_and_does_not_apply_channel_gain",
+          "crates/ofdm/tests/api_transmitter_preview.rs::actual_tx_samples_psd_and_owned_originals_match_existing_owner",
+          "crates/ofdm/tests/api_transmitter_preview.rs::finite_file_previews_exhaust_without_mutating_source_and_queries_reject_bounds",
+          "crates/ofdm/tests/api_transmitter_preview.rs::cross_thread_cancel_progress_busy_and_precancel_are_one_shot",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_timing_window_and_encoded_id_admission_keep_existing_support",
+          "crates/ofdm/tests/channel_power.rs::unitary_data_density_calibrates_to_explicit_six_mhz_reference",
+          "crates/ofdm/tests/channel_power.rs::gain_target_attenuation_and_independent_noise_have_distinct_references",
+          "crates/ofdm/tests/channel_power.rs::malformed_bounds_and_unreferenced_electrical_choices_reject",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::independent_flat_density_calibration_and_full_band_integration_ignore_zoom_and_internal_holes",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::relative_zero_and_invalid_spectra_never_invent_electrical_levels_or_finite_missing_power",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::amplifier_alone_has_literal_complex_gain_and_keeps_cpa_target_and_overflow_semantics_explicit"
+        ],
+        "python": {
+          "status": "installed native actual/limits/units/ownership/default metadata and separate direct-Rust-process cases",
+          "cases": [
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_actual_tap_units_zoom_gain_missing_bounds_and_owned_results",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_direct_rust_process_channel_planes_and_idle_electrical_units_match",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_idle_calibration_keeps_relative_mode_and_does_not_apply_configured_amplifier"
+          ],
+          "scope": "Independent flat-density six-MHz calibration and 20-dB gain anchors, both numerologies, inclusive envelope with internal exclusion, zoom invariance, relative/zero/overflow behavior, actual receiver output and explicit scalar TX source identity; existing normalized outputs preserved."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-channel-spectrum",
+      "status": "status.uiu-api-02-channel-spectrum"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.channel_spectrum",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/channel.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn channel_spectrum( &self, tap: FullLoopChannelTap, query: FullLoopSpectrumQuery, ) -> ApiResult<FullLoopChannelSpectrum>",
+        "mapping": "Checked native arguments dispatch typed public Rust queries with the GIL released. Fixed tap strings select the corresponding Rust enum and authoritative source stage; no calibration, gain, FFT, bin power or channel algorithm is implemented in Python.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::channel_spectrum",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "channel_spectrum",
+        "kind": "method",
+        "signature": "(self, /, tap='before_amplifier', snapshot=0, max_averages=32, start=0, count=0)",
+        "declaration": "FullLoopResult.channel_spectrum"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.uiu-api-02-channel-spectrum",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned scientific dictionaries, explicit electrical/reference units and original source metadata; calibration does not execute channel effects, and scalar amplifier projections remain distinguishable from actual receiver observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::calibrated_channel_taps_preserve_actual_sources_full_band_power_and_distinct_amplifier_planes",
+          "crates/ofdm/tests/api_full_loop_observations.rs::relative_channel_spectra_and_missing_taps_remain_explicit_without_hidden_execution",
+          "crates/ofdm/tests/api_full_loop_observations.rs::ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_distinct",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_calibrated_spectrum_keeps_full_band_power_zoom_independent_and_does_not_apply_channel_gain",
+          "crates/ofdm/tests/api_transmitter_preview.rs::actual_tx_samples_psd_and_owned_originals_match_existing_owner",
+          "crates/ofdm/tests/api_transmitter_preview.rs::finite_file_previews_exhaust_without_mutating_source_and_queries_reject_bounds",
+          "crates/ofdm/tests/api_transmitter_preview.rs::cross_thread_cancel_progress_busy_and_precancel_are_one_shot",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_timing_window_and_encoded_id_admission_keep_existing_support",
+          "crates/ofdm/tests/channel_power.rs::unitary_data_density_calibrates_to_explicit_six_mhz_reference",
+          "crates/ofdm/tests/channel_power.rs::gain_target_attenuation_and_independent_noise_have_distinct_references",
+          "crates/ofdm/tests/channel_power.rs::malformed_bounds_and_unreferenced_electrical_choices_reject",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::independent_flat_density_calibration_and_full_band_integration_ignore_zoom_and_internal_holes",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::relative_zero_and_invalid_spectra_never_invent_electrical_levels_or_finite_missing_power",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::amplifier_alone_has_literal_complex_gain_and_keeps_cpa_target_and_overflow_semantics_explicit"
+        ],
+        "python": {
+          "status": "installed native actual/limits/units/ownership/default metadata and separate direct-Rust-process cases",
+          "cases": [
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_actual_tap_units_zoom_gain_missing_bounds_and_owned_results",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_direct_rust_process_channel_planes_and_idle_electrical_units_match",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_idle_calibration_keeps_relative_mode_and_does_not_apply_configured_amplifier"
+          ],
+          "scope": "Independent flat-density six-MHz calibration and 20-dB gain anchors, both numerologies, inclusive envelope with internal exclusion, zoom invariance, relative/zero/overflow behavior, actual receiver output and explicit scalar TX source identity; existing normalized outputs preserved."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-channel-spectrum",
+      "status": "status.uiu-api-02-channel-spectrum"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.TransmitterPreview.calibrated_spectrum",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::TransmitterPreview",
+        "source_file": "bindings/python/src/transmitter/result.rs",
+        "symbol": "PyTransmitterPreview",
+        "signature": "pub fn calibrated_spectrum( &self, channel: &ChannelConfiguration, start: usize, count: usize, ) -> ApiResult<ChannelSpectrum>",
+        "mapping": "Checked native arguments dispatch typed public Rust queries with the GIL released. Fixed tap strings select the corresponding Rust enum and authoritative source stage; no calibration, gain, FFT, bin power or channel algorithm is implemented in Python.",
+        "delegated_operation": "merlin::downstream::TransmitterPreview::calibrated_spectrum",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "calibrated_spectrum",
+        "kind": "method",
+        "signature": "(self, /, channel, start=0, count=0)",
+        "declaration": "TransmitterPreview.calibrated_spectrum"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.uiu-api-02-channel-spectrum",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::TransmitterPreview",
+        "scope": "Owned scientific dictionaries, explicit electrical/reference units and original source metadata; calibration does not execute channel effects, and scalar amplifier projections remain distinguishable from actual receiver observations."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_plc_message_query_uses_crc_validated_original_bytes_and_typed_descriptor_owners",
+          "crates/ofdm/tests/api_full_loop_observations.rs::receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership",
+          "crates/ofdm/tests/api_full_loop_observations.rs::static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs",
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::calibrated_channel_taps_preserve_actual_sources_full_band_power_and_distinct_amplifier_planes",
+          "crates/ofdm/tests/api_full_loop_observations.rs::relative_channel_spectra_and_missing_taps_remain_explicit_without_hidden_execution",
+          "crates/ofdm/tests/api_full_loop_observations.rs::ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_distinct",
+          "crates/ofdm/tests/api_full_loop_observations.rs::configured_physical_layout_preserves_source_catalog_identity_and_original_fft_grid",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_calibrated_spectrum_keeps_full_band_power_zoom_independent_and_does_not_apply_channel_gain",
+          "crates/ofdm/tests/api_transmitter_preview.rs::actual_tx_samples_psd_and_owned_originals_match_existing_owner",
+          "crates/ofdm/tests/api_transmitter_preview.rs::finite_file_previews_exhaust_without_mutating_source_and_queries_reject_bounds",
+          "crates/ofdm/tests/api_transmitter_preview.rs::cross_thread_cancel_progress_busy_and_precancel_are_one_shot",
+          "crates/ofdm/tests/api_transmitter_preview.rs::idle_timing_window_and_encoded_id_admission_keep_existing_support",
+          "crates/ofdm/tests/channel_power.rs::unitary_data_density_calibrates_to_explicit_six_mhz_reference",
+          "crates/ofdm/tests/channel_power.rs::gain_target_attenuation_and_independent_noise_have_distinct_references",
+          "crates/ofdm/tests/channel_power.rs::malformed_bounds_and_unreferenced_electrical_choices_reject",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::independent_flat_density_calibration_and_full_band_integration_ignore_zoom_and_internal_holes",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::relative_zero_and_invalid_spectra_never_invent_electrical_levels_or_finite_missing_power",
+          "crates/ofdm/src/signal_processing/channel/spectrum.rs::amplifier_alone_has_literal_complex_gain_and_keeps_cpa_target_and_overflow_semantics_explicit"
+        ],
+        "python": {
+          "status": "installed native actual/limits/units/ownership/default metadata and separate direct-Rust-process cases",
+          "cases": [
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_actual_tap_units_zoom_gain_missing_bounds_and_owned_results",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_direct_rust_process_channel_planes_and_idle_electrical_units_match",
+            "bindings/python/tests/test_channel_spectrum.py::ChannelSpectrumTests.test_idle_calibration_keeps_relative_mode_and_does_not_apply_configured_amplifier"
+          ],
+          "scope": "Independent flat-density six-MHz calibration and 20-dB gain anchors, both numerologies, inclusive envelope with internal exclusion, zoom invariance, relative/zero/overflow behavior, actual receiver output and explicit scalar TX source identity; existing normalized outputs preserved."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-channel-spectrum",
+      "status": "status.uiu-api-02-channel-spectrum"
     }
   ],
   "native_type_exports": {
@@ -59261,6 +59945,18 @@
       "revision": "86a2aa0560b2bd4f57d74fb3533a467c63b35dcf plus exact physical-bin/transmit-role candidate manifest",
       "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-physical-native/native-exports.json",
       "native_sha256": "ee8459bbef4715f93e3617ecfc0ecca533b064f22ce96047b5a238dfc4659e6f",
+      "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "c78c182c5ec18486580bbe224dc731714f89b16a plus exact ordered-frame spectrum and named-constant candidate manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-sequence-spectrum-style-native/native-exports.json",
+      "native_sha256": "07dfb59325f79670b601cbb5a9ee8022a5047a8b93a3488bf5380afa1f50141c",
       "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
       "legacy_compatibility": {
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",

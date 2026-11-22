@@ -790,6 +790,61 @@ Trace through REQ-UIU-02/07/09/16/17/24 and UIU-API-02. Calibrated channel-power
 spectrum, scalar amplifier-boundary and complete source-catalog/sweep compatibility
 remain subsequent gates; this unit does not adopt the API in Qt.
 
+### UIU-API-02 calibrated channel and amplifier unit
+
+Requirements REQ-UIU-02/07/09/16/17/24 and UIU-API-02 retain the existing
+scientific reference planes. Add passive `FullLoopResult::calibrated_spectrum`
+with the unchanged FullLoopSpectrumQuery for actual contiguous time boundaries.
+Add `FullLoopResult::channel_spectrum(tap, query)`, where FullLoopChannelTap is
+BeforeAmplifier, AfterAmplifier or ReceiverInput; the tap fixes TX-overlap or
+actual channel-output selection and a mismatched query stage rejects. Before/
+after amplifier views use the same retained TX samples; only the latter applies
+the accepted amplifier scalar. It excludes CPA, physical H, additional loss and
+receiver noise. ReceiverInput uses actual modeled output, including admitted
+channel effects. Metadata distinguishes direct observations from scalar-derived
+views and preserves the original context, sample origins and finite coverage.
+
+Add `FullLoopResult::amplifier_bins(boundary, snapshot, start, count)` with a
+separate Before/After AmplifierBoundary enum. Reuse actual TX physical bins,
+original roles and missing history; the after view applies the same scalar and
+recomputes instantaneous bin power through the existing numerical owner. Raw RX
+QAM continues through existing received-cell queries rather than substituting
+transmitter truth. No channel output is synthesized by this operation.
+
+Add `TransmitterPreview::calibrated_spectrum(channel, start, count)` for the actual
+idle TX PSD before the amplifier. A supplied validated ChannelConfiguration sets
+only electrical units; it does not execute a channel, apply gain or replace actual
+TX generation. Original normalized spectrum methods remain unchanged.
+
+The existing channel_power owner integrates the full inclusive first-to-last
+nonexcluded physical band, including internal holes, before display reduction.
+Zoom never changes that reading. A focused channel spectrum owner copies and
+calibrates density only when an explicit input reference exists; relative values
+otherwise remain relative. Zero density retains absent finite dB values. Return
+explicit normalized versus millivolt-squared density units, bucket dB reference,
+scale, full-band power and original FFT metadata. Keep the existing complex-envelope
+normalization and six-MHz reference; do not introduce a real-carrier factor of two.
+
+| Disposition | Owner/files | Contract and acceptance |
+| --- | --- | --- |
+| Reuse | `signal_processing/channel/power.rs`, `waveform/spectrum.rs`, `transmission/layout` | Existing electrical calibration, full-resolution integration, Welch/window/buckets and occupied physical band. |
+| Add | `signal_processing/channel/spectrum.rs` | Bounded calibrated spectrum projection and validated scalar I/Q operations; independent flat-density, zero/missing, gain, overflow and zoom-invariance vectors. |
+| Edit | `api/full_loop/instruments/spectrum.rs` | Extract unchanged contiguous sample preparation for both original and calibrated queries; no default or retention changes. |
+| Add | `api/full_loop/instruments/channel.rs`, `api/transmitter/calibrated.rs` | Typed public operations and explicit direct/derived planes over owned immutable results. |
+| Edit | API module registrations and channel model re-exports | Public result/enum ownership, without exposing the scientific implementation module. |
+| Add | `bindings/python/src/full_loop/channel.rs`, `bindings/python/tests/test_channel_spectrum.py` | GIL-released argument conversion, installed-wheel bounds/ownership/units and separate Rust-process parity. |
+| Edit | `bindings/python/src/transmitter/result.rs`, native stub, Rust examples and focused integration tests | Matching idle preview operation and actual reference processes; preserve existing outputs. |
+
+Paths in this table are relative to crates/ofdm/src unless prefixed with bindings.
+Limits reuse accepted numerology, Welch work and existing public query bounds.
+Keep conversion factors, calibration bandwidth, application budgets and independent
+fixture anchors named by purpose even when values coincide. Missing observations
+reject without a hidden run; every query leaves retained source/RNG/results intact.
+This is an API prerequisite unit, with Qt files unchanged. Complete catalog/sweep
+compatibility and final API-02 acceptance remain after this unit.
+The [focused acceptance](validation.md#uiu-api-02-calibrated-channel-and-amplifier-unit)
+records passing Rust/native evidence and the [user contract](../../../user/api/channel-spectrum.md).
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

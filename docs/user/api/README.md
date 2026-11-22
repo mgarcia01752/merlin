@@ -27,6 +27,8 @@ all-selected MER and bounded physical decisions across payload/control/pilot rol
 constellations, finite decision regions and actual bounded likelihood summaries.
 [Physical and transmitted-cell views](physical-views.md) preserve original FFT
 coordinates, actual bin power and proven optional packing roles.
+[Channel spectrum and electrical power](channel-spectrum.md) distinguish actual
+calibrated observations, scalar amplifier views and full-band integration.
 
 For searchable class/method documentation generated from the actual APIs, see
 the [generated Rust/Python reference](../../reference/api-reference.md).

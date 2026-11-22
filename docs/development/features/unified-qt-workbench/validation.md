@@ -748,3 +748,43 @@ files remain unchanged and the frozen legacy boundary passes. Calibrated channel
 spectra/power, scalar amplifier-boundary views, complete source-catalog/sweep
 compatibility and final API-02 acceptance remain open. This unit does not establish
 Qt, hosted, installer, external interoperability or wider PHY acceptance.
+
+## UIU-API-02 calibrated channel and amplifier unit
+
+The [candidate manifest](channel-spectrum-evidence.json) and
+[executed operation record](api-02-channel-spectrum-operation-test-results.json)
+retain exact source/wheel hashes, commands and named cases. The
+[channel spectrum contract](../../../user/api/channel-spectrum.md) describes
+actual versus scalar-derived planes, electrical units and fixed-band integration.
+
+The existing Welch/power/layout owners now back calibrated actual time-stage
+spectra, fixed channel taps, amplifier-only physical-bin observations and idle TX
+calibration. A focused Rust owner performs electrical projection and validated
+scalar observations; Python only converts arguments and owned results. Original
+normalized methods and actual retained sources remain unchanged. No Qt scientific
+implementation was copied into the Apache backend.
+
+All 25 integration/scientific cases and 34 library cases pass. Three independent
+owner cases pin flat density at both FFT sizes, the inclusive 190-MHz envelope
+with an internal exclusion, normalized power 0.927734375 and zero equivalent
+dBmV per 6 MHz at an explicit zero input reference. A separate twenty-dB amplifier
+maps 3-4j to 30-40j independently of six-dB CPA. Tests cover full-band zoom
+invariance, relative/zero/missing data, negative/nonfinite density, scalar/calibration
+overflow, original geometry, actual receiver output, idle gain exclusion and
+unchanged retained science. The final owner run includes the added negative/
+calibration-overflow vectors. Analysis-only validation passes 139 cases and
+doctest checks. Workspace/native Clippy, formatting and all 77 validation-tool
+cases pass; original Qt boundary debt stays frozen.
+
+A freshly built local Linux CPython 3.10 wheel passes all 107 installed native
+cases without skips, including three new actual/bounds/ownership/default-metadata
+and separate Rust-process parity cases. All reference examples were regenerated
+for this unit, including full-loop, idle TX, saved workbench and Designer inputs.
+Rust/native inventories trace 516/499 operations, adding four operations each.
+All prior 512/495 rows and historical alias corrections remain intact. All 178
+Qt files remain unchanged; no new Qt runtime acceptance is claimed.
+
+Complete source-catalog/sweep compatibility and final API-02 acceptance remain
+open before Qt adoption. This focused unit establishes local API acceptance,
+without hosted/installer/publication, measured RF compliance or external
+interoperability claims.

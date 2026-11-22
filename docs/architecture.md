@@ -1048,6 +1048,22 @@ The existing Welch owner and one unchanged PSD viewport projection supply bounde
 normalized values. The original contiguous `spectrum` operation and retention
 defaults remain compatible. See the [sampling-basis contract](user/api/full-loop-observations.md#ordered-frame-stage-spectrum).
 
+`signal_processing/channel/spectrum` projects the existing full-resolution PSD
+and full-band ChannelPower into explicit normalized or millivolt-squared units,
+using the existing power owner and original physical roles. Calibration does not
+apply gain or run a channel. `api/full_loop/instruments/channel` exposes actual
+calibrated time-stage spectra, fixed channel taps and amplifier-only physical-bin
+views. After-amplifier observations explicitly derive from the same retained TX
+samples/bins through the accepted gain, excluding CPA/H/noise; receiver input
+always uses actual modeled output. Original source contexts and derived reference
+planes remain separate. `api/transmitter/calibrated` supplies the same electrical
+projection for actual idle TX PSD without applying configured channel effects.
+The full occupied-band integral includes internal holes and is independent of
+viewport reduction. Original normalized methods and retention defaults remain
+compatible. Native Python delegates these operations and releases the GIL.
+See the [channel spectrum contract](user/api/channel-spectrum.md). Final API-02
+acceptance still requires complete catalog/sweep compatibility before Qt adoption.
+
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

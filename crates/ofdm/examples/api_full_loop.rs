@@ -135,10 +135,42 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         })
     })
     .collect::<Result<Vec<_>, _>>()?;
+    // Separate channel fixture: twenty-dB amplifier and six-dB CPA are distinct owners.
+    const AMPLIFIER_GAIN_DB: f64 = 20.0;
+    const CPA_ATTENUATION_DB: f64 = 6.0;
+    const INPUT_LEVEL_DBMV: f64 = 0.0;
+    let mut channel_inputs = observed.inputs().clone();
+    channel_inputs.channel = ChannelConfiguration::new(ChannelConfigurationInput {
+        power: PowerConditioning {
+            amplifier_gain_db: AMPLIFIER_GAIN_DB,
+            cpa_attenuation_db: CPA_ATTENUATION_DB,
+            input_data_level_dbmv_per_6mhz: Some(INPUT_LEVEL_DBMV),
+            ..Default::default()
+        },
+        ..Default::default()
+    })?;
+    let channel_result = Simulation::prepare_full_loop(channel_inputs, request.options().clone())?
+        .with_observations(FullLoopObservationPolicy::new(
+            FullLoopObservationInput::default(),
+        )?)?
+        .run(&FullLoopControl::new())?;
+    let channel_query = FullLoopSpectrumQuery {
+        start: PHYSICAL_VIEW_START,
+        count: SPECTRUM_VIEW_COUNT,
+        ..Default::default()
+    };
+    let channel_spectra = json!({
+        "before": channel_result.channel_spectrum(FullLoopChannelTap::BeforeAmplifier, channel_query.clone())?,
+        "after": channel_result.channel_spectrum(FullLoopChannelTap::AfterAmplifier, channel_query.clone())?,
+        "receiver": channel_result.channel_spectrum(FullLoopChannelTap::ReceiverInput, FullLoopSpectrumQuery { stage: FullLoopStage::ChannelOutput, ..channel_query.clone() })?,
+        "calibrated": channel_result.calibrated_spectrum(channel_query)?,
+        "bins_before": channel_result.amplifier_bins(AmplifierBoundary::Before, 0, PHYSICAL_VIEW_START, PHYSICAL_VIEW_COUNT)?,
+        "bins_after": channel_result.amplifier_bins(AmplifierBoundary::After, 0, PHYSICAL_VIEW_START, PHYSICAL_VIEW_COUNT)?,
+    });
     println!(
         "{}",
         serde_json::to_string(
-            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages,"instruments":instruments,"messages":observed.plc_messages()?,"cells":cells,"slicer":slicer,"physical":physical,"sequence_spectra":sequence_spectra})
+            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages,"instruments":instruments,"messages":observed.plc_messages()?,"cells":cells,"slicer":slicer,"physical":physical,"sequence_spectra":sequence_spectra,"channel_spectra":channel_spectra})
         )?
     );
     Ok(())

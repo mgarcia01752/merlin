@@ -10,6 +10,15 @@ fn request() -> FullLoopRequest {
     request_with_receiver(ReceiverMode::SuppliedChannel)
 }
 fn request_with_receiver(receiver_mode: ReceiverMode) -> FullLoopRequest {
+    request_with_channel(
+        receiver_mode,
+        ChannelConfiguration::new(ChannelConfigurationInput::default()).unwrap(),
+    )
+}
+fn request_with_channel(
+    receiver_mode: ReceiverMode,
+    channel: ChannelConfiguration,
+) -> FullLoopRequest {
     let profile = Dpd::from_bytes(
         &NamedCapture::new(
             "profile",
@@ -48,7 +57,7 @@ fn request_with_receiver(receiver_mode: ReceiverMode) -> FullLoopRequest {
             profile,
             measurements,
             source: SourceInput::prbs15(PrbsSeed::new(32767).unwrap()),
-            channel: ChannelConfiguration::new(ChannelConfigurationInput::default()).unwrap(),
+            channel,
             response: None,
         },
         FullLoopOptions {
@@ -678,6 +687,202 @@ fn numerical_query_limits_gaps_missing_and_truncated_observations_remain_explici
 }
 fn policy() -> FullLoopObservationPolicy {
     FullLoopObservationPolicy::new(FullLoopObservationInput::default()).unwrap()
+}
+
+#[test]
+fn calibrated_channel_taps_preserve_actual_sources_full_band_power_and_distinct_amplifier_planes() {
+    const AMPLIFIER_GAIN_DB: f64 = 20.0;
+    const CPA_ATTENUATION_DB: f64 = 6.0;
+    const INPUT_REFERENCE_DBMV: f64 = 0.0;
+    const EXPECTED_AMPLITUDE: f64 = 10.0;
+    const VIEW_START_BIN: usize = 350;
+    const VIEW_BIN_COUNT: usize = 7;
+    const POWER_RELATIVE_TOLERANCE: f64 = 1e-10;
+    const DB_ABSOLUTE_TOLERANCE: f64 = 1e-9;
+    let channel = ChannelConfiguration::new(ChannelConfigurationInput {
+        power: PowerConditioning {
+            amplifier_gain_db: AMPLIFIER_GAIN_DB,
+            cpa_attenuation_db: CPA_ATTENUATION_DB,
+            input_data_level_dbmv_per_6mhz: Some(INPUT_REFERENCE_DBMV),
+            ..Default::default()
+        },
+        ..Default::default()
+    })
+    .unwrap();
+    let result = request_with_channel(ReceiverMode::SuppliedChannel, channel)
+        .with_observations(policy())
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    let stats = serde_json::to_value(result.observation_stats()).unwrap();
+    let original =
+        serde_json::to_value(result.spectrum(FullLoopSpectrumQuery::default()).unwrap()).unwrap();
+    let query = FullLoopSpectrumQuery {
+        start: VIEW_START_BIN,
+        count: VIEW_BIN_COUNT,
+        ..Default::default()
+    };
+    let input = result
+        .channel_spectrum(FullLoopChannelTap::BeforeAmplifier, query.clone())
+        .unwrap();
+    let amplified = result
+        .channel_spectrum(FullLoopChannelTap::AfterAmplifier, query.clone())
+        .unwrap();
+    let actual = result.calibrated_spectrum(query.clone()).unwrap();
+    assert_eq!(input.derived_amplitude, 1.0);
+    assert_eq!(amplified.derived_amplitude, EXPECTED_AMPLITUDE);
+    assert_eq!(
+        amplified.source_reference_plane,
+        input.source_reference_plane
+    );
+    assert_eq!(amplified.first_sample, input.first_sample);
+    assert_eq!(amplified.available_samples, input.available_samples);
+    assert_eq!(input.power.bucket_units, "dbmv_per_hz");
+    assert_eq!(input.power.density_units, "millivolts_squared_per_hz");
+    assert_eq!(
+        input.power.channel_power.dbmv,
+        actual.power.channel_power.dbmv
+    );
+    assert!(
+        (amplified.power.channel_power.normalized_power
+            / input.power.channel_power.normalized_power
+            - EXPECTED_AMPLITUDE * EXPECTED_AMPLITUDE)
+            .abs()
+            < POWER_RELATIVE_TOLERANCE
+    );
+    assert!(
+        (amplified.power.channel_power.dbmv.unwrap()
+            - input.power.channel_power.dbmv.unwrap()
+            - AMPLIFIER_GAIN_DB)
+            .abs()
+            < DB_ABSOLUTE_TOLERANCE
+    );
+    let full = result
+        .calibrated_spectrum(FullLoopSpectrumQuery::default())
+        .unwrap();
+    assert_eq!(
+        full.power.channel_power.normalized_power,
+        actual.power.channel_power.normalized_power
+    );
+    assert_eq!(
+        full.power.channel_power.dbmv,
+        actual.power.channel_power.dbmv
+    );
+    for (after, before) in amplified.power.buckets.iter().zip(&input.power.buckets) {
+        assert!(
+            (after.maximum_db.unwrap() - before.maximum_db.unwrap() - AMPLIFIER_GAIN_DB).abs()
+                < DB_ABSOLUTE_TOLERANCE
+        );
+    }
+    let output_query = FullLoopSpectrumQuery {
+        stage: FullLoopStage::ChannelOutput,
+        ..query.clone()
+    };
+    let received = result
+        .channel_spectrum(FullLoopChannelTap::ReceiverInput, output_query.clone())
+        .unwrap();
+    let actual_received = result.calibrated_spectrum(output_query).unwrap();
+    assert_eq!(received.derived_amplitude, 1.0);
+    assert_eq!(
+        received.power.reference_plane,
+        "channel_output_receiver_input"
+    );
+    assert_eq!(
+        serde_json::to_value(&received).unwrap(),
+        serde_json::to_value(actual_received).unwrap()
+    );
+    let before = result
+        .amplifier_bins(AmplifierBoundary::Before, 0, VIEW_START_BIN, VIEW_BIN_COUNT)
+        .unwrap();
+    let after = result
+        .amplifier_bins(AmplifierBoundary::After, 0, VIEW_START_BIN, VIEW_BIN_COUNT)
+        .unwrap();
+    assert_eq!(after.amplitude, EXPECTED_AMPLITUDE);
+    assert_eq!(
+        serde_json::to_value(&before.observation.layout).unwrap(),
+        serde_json::to_value(&after.observation.layout).unwrap()
+    );
+    assert_eq!(before.observation.context, after.observation.context);
+    for (before, after) in before.observation.bins.iter().zip(&after.observation.bins) {
+        assert_eq!(
+            after.iq,
+            before
+                .iq
+                .map(|pair| [pair[0] * EXPECTED_AMPLITUDE, pair[1] * EXPECTED_AMPLITUDE])
+        );
+        match (before.linear_power, after.linear_power) {
+            (Some(before), Some(after)) => {
+                assert!(
+                    (after - before * EXPECTED_AMPLITUDE * EXPECTED_AMPLITUDE).abs()
+                        < POWER_RELATIVE_TOLERANCE * after.max(1.0)
+                );
+            }
+            (None, None) => {}
+            _ => panic!("Missing history changed"),
+        }
+    }
+    assert!(result
+        .channel_spectrum(FullLoopChannelTap::ReceiverInput, query)
+        .is_err());
+    assert!(result
+        .calibrated_spectrum(FullLoopSpectrumQuery {
+            stage: FullLoopStage::PhysicalBins,
+            ..Default::default()
+        })
+        .is_err());
+    assert!(result
+        .amplifier_bins(AmplifierBoundary::After, 0, 0, usize::MAX)
+        .is_err());
+    assert_eq!(
+        serde_json::to_value(result.spectrum(FullLoopSpectrumQuery::default()).unwrap()).unwrap(),
+        original
+    );
+    assert_eq!(
+        serde_json::to_value(result.observation_stats()).unwrap(),
+        stats
+    );
+    assert_eq!(result.report().summary.comparison.bit_errors, 0);
+}
+
+#[test]
+fn relative_channel_spectra_and_missing_taps_remain_explicit_without_hidden_execution() {
+    let original = request();
+    let disabled = original.run(&FullLoopControl::new()).unwrap();
+    assert_eq!(
+        disabled
+            .calibrated_spectrum(FullLoopSpectrumQuery::default())
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::MissingCoverage
+    );
+    assert_eq!(
+        disabled
+            .amplifier_bins(AmplifierBoundary::Before, 0, 0, 0)
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::MissingCoverage
+    );
+    let observed = original
+        .with_observations(policy())
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    let relative = observed
+        .calibrated_spectrum(FullLoopSpectrumQuery::default())
+        .unwrap();
+    assert_eq!(
+        relative.power.density_units,
+        "normalized_sample_units_squared_per_hz"
+    );
+    assert!(relative.power.channel_power.dbmv.is_none());
+    assert!(relative.power.millivolts_squared_per_unit.is_none());
+    let normalized = observed.spectrum(FullLoopSpectrumQuery::default()).unwrap();
+    assert_eq!(
+        relative.power.buckets[0].minimum_db,
+        normalized.power.buckets[0].minimum_db
+    );
 }
 
 #[test]

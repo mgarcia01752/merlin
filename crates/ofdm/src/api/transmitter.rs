@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Typed idle TX snapshots; scientific generation stays with the existing transmitter owner.
+mod calibrated;
 mod control;
 mod result;
 mod timing;

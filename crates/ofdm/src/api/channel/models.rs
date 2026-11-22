@@ -4,6 +4,7 @@
  */
 //! Explicit configured-channel inputs and bounded before-receiver observations.
 use super::*;
+pub use crate::signal_processing::channel::spectrum::{ChannelSpectrum, ChannelSpectrumBucket};
 use serde::{Deserialize, Serialize};
 
 pub use crate::signal_processing::channel::{

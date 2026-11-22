@@ -122,6 +122,9 @@ run's decoder performance. No query changes inputs, retention counts, source
 state or completed science. Rust returns owned typed results; Python returns
 independent dictionaries and releases the GIL during numerical preparation.
 
+See [channel spectrum and electrical power](channel-spectrum.md) for calibrated
+actual spectra, full-band integration and explicit amplifier-only derived views.
+
 ## Ordered frame-stage spectrum
 
 An IFFT/useful-frame display may inspect successive frames with their prefixes

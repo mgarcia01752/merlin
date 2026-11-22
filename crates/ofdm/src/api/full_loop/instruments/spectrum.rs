@@ -44,6 +44,17 @@ pub struct FullLoopSpectrum {
     pub power: TransmitterSpectrum,
 }
 
+/// Internal full-resolution observation shared by normalized and electrical-unit views.
+pub(super) struct PreparedSpectrum {
+    pub context: FullLoopStageContext,
+    pub first_sample: u64,
+    pub available_samples: usize,
+    pub used_samples: usize,
+    pub snapshots_used: usize,
+    pub reference_plane: &'static str,
+    pub power: owner::PowerSpectrum,
+}
+
 impl FullLoopResult {
     /// Estimates the existing Welch PSD from actual retained contiguous time samples.
     /// # Arguments
@@ -56,6 +67,31 @@ impl FullLoopResult {
     /// Rejects frequency-domain stages, invalid work/viewports, unavailable or fewer than N
     /// retained samples. Gaps stop accumulation; no zero padding, interpolation or hidden run.
     pub fn spectrum(&self, query: FullLoopSpectrumQuery) -> ApiResult<FullLoopSpectrum> {
+        let prepared = self.prepare_spectrum(&query, 1.0)?;
+        Ok(FullLoopSpectrum {
+            stage: query.stage,
+            context: prepared.context,
+            first_sample: prepared.first_sample,
+            available_samples: prepared.available_samples,
+            used_samples: prepared.used_samples,
+            snapshots_used: prepared.snapshots_used,
+            power: spectrum_view(&prepared.power, &query, prepared.reference_plane)?,
+        })
+    }
+
+    /// Prepares the existing actual contiguous sample selection and numerical PSD once.
+    /// # Arguments
+    /// * `query` - Unchanged original time-stage/work/viewport contract.
+    /// * `amplitude` - Explicit scalar observation ratio; unity preserves actual samples.
+    /// # Returns
+    /// Full-resolution private PSD and original accounting for compatible public projections.
+    /// # Errors
+    /// Preserves existing stage/context/work/numerical failures and rejects scalar overflow.
+    pub(super) fn prepare_spectrum(
+        &self,
+        query: &FullLoopSpectrumQuery,
+        amplitude: f64,
+    ) -> ApiResult<PreparedSpectrum> {
         let reference_plane = match query.stage {
             FullLoopStage::TxIfft => "tx_after_ifft_before_prefix",
             FullLoopStage::TxPrefix => "tx_after_prefix_before_window",
@@ -126,15 +162,21 @@ impl FullLoopResult {
                 break;
             }
         }
+        if amplitude != 1.0 {
+            for sample in &mut samples {
+                *sample =
+                    crate::signal_processing::channel::spectrum::scale_iq(*sample, amplitude)?;
+            }
+        }
         let spectrum = owner::estimate(grid.spacing, grid.zero_frequency_hz, &samples)?;
-        Ok(FullLoopSpectrum {
-            stage: query.stage,
+        Ok(PreparedSpectrum {
             context: first.context.clone(),
             first_sample,
             available_samples: samples.len(),
             used_samples: length + (spectrum.averages - 1) * (length / owner::WELCH_HOP_DIVISOR),
             snapshots_used,
-            power: spectrum_view(&spectrum, &query, reference_plane)?,
+            reference_plane,
+            power: spectrum,
         })
     }
 }

@@ -10,6 +10,31 @@ pub(crate) struct PyTransmitterPreview(pub(super) api::TransmitterPreview);
 
 #[pymethods]
 impl PyTransmitterPreview {
+    /// Reads actual idle TX PSD in explicit calibrated or relative electrical units.
+    /// # Arguments
+    /// * `channel` - Accepted electrical reference; gain, CPA and noise are not applied.
+    /// * `start`, `count` - Original FFT viewport; zero count selects the remaining span.
+    /// # Returns
+    /// Owned PSD and zoom-independent full-band power before the amplifier; GIL released.
+    /// # Errors
+    /// Shared original geometry, viewport and calibration failures raise ApiError.
+    #[pyo3(signature=(channel,start=0,count=0))]
+    fn calibrated_spectrum(
+        &self,
+        py: Python<'_>,
+        channel: &crate::channel::PyChannelConfiguration,
+        start: usize,
+        count: usize,
+    ) -> PyResult<Py<PyAny>> {
+        let text = py
+            .detach(|| {
+                let view = self.0.calibrated_spectrum(&channel.0, start, count)?;
+                serde_json::to_string(&view).map_err(transport_error)
+            })
+            .map_err(error)?;
+        object_from_json(py, &text)
+    }
+
     /// Reads scalar original geometry/provenance and actual sample/source accounting.
     /// # Returns
     /// Owned metadata dictionary; input deletion and later calls cannot invalidate it.
