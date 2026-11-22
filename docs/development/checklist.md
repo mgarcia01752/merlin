@@ -423,8 +423,9 @@ are prerequisites, not permission for Qt to use private science. Prior backend,
 FEC and UI-ORG acceptance/history are unchanged. The user accepted initial serial
 execution and per-active-direction Save. [Continuous execution](features/unified-qt-workbench/execution-authorization.md)
 now authorizes local task commits and continuation without routine approval pauses.
-The user's upstream diagram is an explicit prerequisite of UIU-US-01, not a
-blocker for earlier eligible API/downstream work after plan approval.
+The [user-approved upstream layout](features/unified-qt-workbench/upstream-startup-layout.md)
+satisfies UIU-US-01's visual-input prerequisite (2026-11-22). Its shell dependency
+and implementation/acceptance remain pending; earlier eligible tasks continue.
 
 <a id="task-uiu-plan-01"></a>
 - [x] **UIU-PLAN-01** Agree the UI planning baseline, full inventory, ownership/API gaps and migration design.
@@ -527,7 +528,7 @@ blocker for earlier eligible API/downstream work after plan approval.
   Requirements: [REQ-UIU-10](../requirements.md#req-uiu-10), [REQ-UIU-11](../requirements.md#req-uiu-11), [REQ-UIU-27](../requirements.md#req-uiu-27).
   Dependencies: [UIU-SHELL-01](#task-uiu-shell-01).
   Architecture/files: [upstream owner](../architecture.md#unified-qt-upstream-scientific-presentation), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
-  Acceptance: Requires user's upstream diagram/final visual agreement. Keep CM→channel→CMTS samples separate from controls, H/C/C×H/RxMER labels, typed Apply/Cancel and supported-mode admission; no inferred wider support.
+  Acceptance: Implement the [approved startup layout](features/unified-qt-workbench/upstream-startup-layout.md), then verify Qt rendering, block/drill-in interactions, connector roles, keyboard/focus and resize behavior. Visual-input approval is satisfied; keep CM→channel→CMTS samples separate from controls, H/C/C×H/RxMER labels, typed Apply/Cancel and supported-mode admission; no inferred wider support.
   Evidence: [upstream acceptance plan](features/unified-qt-workbench/validation.md#upstream); pending implementation/acceptance.
 
 <a id="task-uiu-us-02"></a>

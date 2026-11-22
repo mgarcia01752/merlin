@@ -159,8 +159,11 @@ state. Future actual concurrent scheduling needs its own aggregate-limit tests.
 
 ## Upstream
 
-UIU-US-01 requires the user's diagram/final layout input before visual
-implementation. Verify CM→channel→CMTS samples versus control arrows and all
+UIU-US-01's [user-approved layout](upstream-startup-layout.md) was supplied on
+2026-11-22; its visual-input gate is satisfied. After shell dependencies pass,
+verify actual rendering, clickable blocks/drill-ins, connector roles, keyboard/
+focus behavior and resizing against that layout. Approval alone does not pass
+these checks. Verify CM→channel→CMTS samples versus control arrows and all
 H/C/C×H/RxMER labels. UIU-US-02/03 exercise actual admitted synthetic and measured
 runs/input combinations, progress/cancel/partial outcomes and isolated DS state.
 Unsupported combinations are rejected by the public API with consistent UI errors.

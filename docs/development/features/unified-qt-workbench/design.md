@@ -22,6 +22,7 @@ INT-DEFER-01's wider PHY deferrals remain in force.
 - [Validation and acceptance plan](validation.md)
 - [Original master guide](master-guide.md)
 - [Additional high-level API contract](high-level-api-contract.md)
+- [Approved upstream startup layout](upstream-startup-layout.md)
 
 The feature files refine the three canonical documents. They are not alternative
 requirements or completion registers. Proposed destination files are written as
@@ -54,9 +55,10 @@ state; normal Save does not become a combined-workspace format.
 The upstream logical flow is fixed: CM transmitter → physical channel → CMTS
 receiver. UCD/IUC/MAP configuration is a control path. Pre-equalization C applies
 at the CM transmitter; physical H and effective C×H keep their reference planes.
-CMTS RxMER feeds only the backend's admitted residual model. The user's upstream
-diagram is still needed to finalize visual placement; it does not block API,
-inventory, boundary or downstream planning. Do not invent final visual approval.
+CMTS RxMER feeds only the backend's admitted residual model. On 2026-11-22 the
+user approved the [upstream startup layout](upstream-startup-layout.md), satisfying
+the REQ-UIU-10 visual-input gate. Implement UIU-US-01 when its shell prerequisites
+pass; no further layout approval is required. Runtime acceptance remains pending.
 
 No application source moves or API additions belong to the planning task.
 Following planning acceptance, take the next eligible official task, establish a fresh

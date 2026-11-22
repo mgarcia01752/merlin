@@ -17,6 +17,10 @@ master merge, release publication or system-wide installation is authorized.
 The direction-isolation, initial serial dispatch, active-project Save, public
 API boundary and scientific compatibility contracts remain binding.
 
-The user's upstream diagram has not been supplied. Keep this explicit final
-visual-layout input separate from eligible API, boundary and downstream work;
-do not invent evidence that a user diagram was reviewed.
+On 2026-11-22 the user supplied and approved the
+[upstream startup layout](upstream-startup-layout.md) for REQ-UIU-10 / UIU-US-01.
+This satisfies the visual-input gate and explicitly authorizes implementation
+when the existing dependencies pass, without another approval pause. The user
+will fine-tune spacing, styling and drill-ins after a functional implementation.
+Approval is not evidence of rendering, scientific behavior or task acceptance.
+All original dependency, validation and local-only commit restrictions remain.

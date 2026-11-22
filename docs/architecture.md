@@ -1095,8 +1095,27 @@ their actual reference planes. CMTS RxMER is a measured observation admitted to
 the supported residual model, not a physical response or arbitrary correction.
 Synthetic and measured modes expose the backend's real combination restrictions.
 The configuration/TX/channel/RX/PNM/verification drill-ins use direction-specific
-models and authoritative stage observations. The user's upstream diagram remains
-an input to final visual placement, not permission to reconstruct scientific flow.
+models and authoritative stage observations. The user approved the
+[startup layout](development/features/unified-qt-workbench/upstream-startup-layout.md)
+on 2026-11-22 for REQ-UIU-10 and UIU-US-01. Its three main rounded blocks run
+horizontally: **CM Transmitter → Channel Simulator → CMTS Receiver**. A visually
+separate CMTS Configuration group on the left contains clickable UCD / OFDMA
+Configuration, IUC / Burst Profiles and MAP / Grants blocks. Its control
+connections supply TX and receiver/session configuration without entering the
+sample-data path. Separate PRBS-TX, RxMER, CM Pre-Eq and PRBS-RX blocks attach to
+their actual source, impairment, transmit-correction and recovered-output planes.
+Use solid arrows for waveform/data, distinct control and measurement connectors,
+and a verification connector to PRBS-RX, with balanced, noncrossing routing.
+
+Reuse the downstream dark theme, dotted canvas, WorkbenchBlock, Connection,
+status/focus/hover behavior, WorkbenchDialog and shared run controls. Preserve
+File, Settings and About, persistent direction tabs and bottom Configure, Start,
+Stop, Pause and status controls. Remove the large internal MERLIN header.
+Keep plots, resource grids and FEC tables in separate drill-in windows, with new
+upstream windows under `apps/qt/qml/upstream/`. Direction-specific thin Rust
+adapters call `merlin::upstream`; Qt never uses Python or reconstructs science.
+The approval supplies visual placement authorization; UIU-US-01 remains subject
+to its shell dependencies and actual Qt rendering/interaction acceptance.
 
 The OFDMA resource-grid viewer has symbol index on X and physical subcarrier
 index on Y. A new bounded idle upstream API observation must expose authoritative
