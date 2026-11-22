@@ -982,8 +982,10 @@ UIU-API-02 adds immutable [typed full-loop requests](user/api/full-loop.md) unde
 safe-boundary pause/cancel/progress and owned actual partial reports. Native
 conversions under `bindings/python/src/full_loop` release the interpreter lock and
 map interrupts to cooperative cancellation. Existing evaluation Simulation/Merlin
-operations remain compatible. Remaining physical-spectrum/role queries
-and complete source-catalog/sweep parity remain explicit gates before Qt adoption.
+operations remain compatible. Physical-spectrum/role, channel-calibration and
+complete source-catalog/sweep extensions have focused backend acceptance below.
+The [final API-02 acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-02-public-full-loop-and-observations-accepted)
+precedes the separate UIU-DS-01 Qt consumer migration.
 `api/full_loop/observations` owns validated opt-in selection and finite typed copies
 of core test-point events, with bounded queries and frozen policy/provenance.
 The [stage contract](user/api/full-loop-observations.md) keeps actual phases,
@@ -996,8 +998,9 @@ composition/layout and receiver diagnostic owners. Exact contiguous sample origi
 bound PSD accumulation; missing history stops the span. Configured H and retained
 receiver H-hat use explicit separate sources/reference planes and original excluded
 gaps. Python converts owned results and releases the interpreter lock during work;
-neither adapter introduces scientific calculations. Remaining calibrated spectrum,
-scalar amplifier-boundary and complete catalog/sweep compatibility remain API-02 gates.
+neither adapter introduces scientific calculations. Calibrated spectrum, scalar
+amplifier-boundary and complete catalog/sweep operations below retain the same
+scientific owners and now have integrated Rust/native acceptance.
 `api/full_loop/messages` inspects actual retained TX PLC frames through the existing
 frame parser, CRC-validated MAC reassembler and descriptor owner. Typed TLV meanings
 reuse decoded receiver settings and accepted modulation metadata; adapters only
@@ -1034,9 +1037,9 @@ actual optional packing roles. A separate metadata-only interleaver projects
 roles only for the first proven aligned source symbol; later history stays
 unknown. All queries are bounded to 8192 bins/cells, retain original context and
 reuse backend role geometry. Qt retains screen coordinates, labels and colors.
-See the [physical view contract](user/api/physical-views.md). Channel-power
-calibration, scalar amplifier-boundary views and complete catalog/sweep
-compatibility remain separate API-02 gates.
+See the [physical view contract](user/api/physical-views.md). The calibrated channel
+and catalog/sweep operations below complete the accepted API-02 backend scope;
+Qt adoption remains a separate delivery task.
 
 `api/full_loop/instruments/sequence` adds an explicitly ordered frame-stage
 spectrum diagnostic over actual retained IFFT, prefix, window or RX useful frames.
@@ -1061,8 +1064,21 @@ projection for actual idle TX PSD without applying configured channel effects.
 The full occupied-band integral includes internal holes and is independent of
 viewport reduction. Original normalized methods and retention defaults remain
 compatible. Native Python delegates these operations and releases the GIL.
-See the [channel spectrum contract](user/api/channel-spectrum.md). Final API-02
-acceptance still requires complete catalog/sweep compatibility before Qt adoption.
+See the [channel spectrum contract](user/api/channel-spectrum.md) and the
+[accepted API-02 evidence](development/features/unified-qt-workbench/validation.md#uiu-api-02-public-full-loop-and-observations-accepted).
+
+`api/full_loop/sweep` owns complete-catalog sweep admission, reusing single-request
+preparation and independently controlled execution. It retains raw source IDs
+separately from checked run IDs, preflights every selected original profile,
+preserves current edited requests, and constructs one per-profile request at a
+time over shared original inputs. `ProfileCapture::simulation_profile` preserves
+original loading/provenance while exposing the existing checked run-ID subset;
+the complete source catalog remains unchanged. Native Python mirrors these
+operations and owns its plan/request handles. See the
+[exact contract and owner map](development/features/unified-qt-workbench/design.md#uiu-api-02-complete-catalog-and-bounded-sweep-unit)
+and [serial plan guide](user/api/full-loop-sweep.md). Backend API-02 acceptance is
+complete; Qt's serial dispatcher and aggregate retained-result budgets remain
+UIU-DS-01/UIU-SESSION-01 responsibilities.
 
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 

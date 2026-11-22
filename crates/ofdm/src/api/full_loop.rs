@@ -12,6 +12,7 @@ mod options;
 mod physical;
 mod request;
 mod result;
+mod sweep;
 mod transmit_cells;
 use super::*;
 pub use cells::*;
@@ -24,6 +25,7 @@ pub use physical::*;
 pub use request::*;
 pub use result::*;
 use std::sync::Arc;
+pub use sweep::*;
 pub use transmit_cells::*;
 
 /// Owned accepted directional inputs; cloning preserves immutable original/source ownership.

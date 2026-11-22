@@ -167,10 +167,57 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "bins_before": channel_result.amplifier_bins(AmplifierBoundary::Before, 0, PHYSICAL_VIEW_START, PHYSICAL_VIEW_COUNT)?,
         "bins_after": channel_result.amplifier_bins(AmplifierBoundary::After, 0, PHYSICAL_VIEW_START, PHYSICAL_VIEW_COUNT)?,
     });
+    // Explicit captured identities share loading here; identity is independent of array position.
+    const SWEEP_SECOND_PROFILE_ID: u8 = 7;
+    const SWEEP_OTHER_CATALOG_ID: u8 = 2;
+    let mut catalog_document: Value = serde_json::from_slice(include_bytes!(
+        "../../../examples/measurements/single-channel/modulation_profile.json"
+    ))?;
+    let template = catalog_document["profiles"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|profile| profile["profile_id"] == 0)
+        .unwrap()
+        .clone();
+    let source_ids = [SWEEP_SECOND_PROFILE_ID, SWEEP_OTHER_CATALOG_ID, 0];
+    catalog_document["profiles"] = Value::Array(
+        source_ids
+            .iter()
+            .map(|id| {
+                let mut profile = template.clone();
+                profile["profile_id"] = json!(id);
+                profile
+            })
+            .collect(),
+    );
+    catalog_document["num_profiles"] = json!(source_ids.len());
+    let catalog = ProfileCapture::from_bytes(&NamedCapture::new(
+        "sweep-catalog",
+        serde_json::to_vec(&catalog_document)?,
+    )?)?;
+    let sweep_request = request.with_observations(FullLoopObservationPolicy::new(
+        FullLoopObservationInput::default(),
+    )?)?;
+    let plan = FullLoopSweepPlan::new(
+        &sweep_request,
+        &catalog,
+        FullLoopProfileSelection::Selected(vec![
+            ProfileId::new(SWEEP_SECOND_PROFILE_ID)?,
+            ProfileId::new(0)?,
+        ]),
+    )?;
+    let mut sweep_results = Vec::new();
+    for index in 0..plan.info().selected_profile_ids.len() {
+        let output = plan.request(index)?.run(&FullLoopControl::new())?;
+        sweep_results.push(json!({"profile_id":output.inputs().profile.profile_id(),
+            "status":output.report().status,"summary":output.report().summary}));
+    }
+    let sweep = json!({"info":plan.info(),"results":sweep_results});
     println!(
         "{}",
         serde_json::to_string(
-            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages,"instruments":instruments,"messages":observed.plc_messages()?,"cells":cells,"slicer":slicer,"physical":physical,"sequence_spectra":sequence_spectra,"channel_spectra":channel_spectra})
+            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages,"instruments":instruments,"messages":observed.plc_messages()?,"cells":cells,"slicer":slicer,"physical":physical,"sequence_spectra":sequence_spectra,"channel_spectra":channel_spectra,"sweep":sweep})
         )?
     );
     Ok(())

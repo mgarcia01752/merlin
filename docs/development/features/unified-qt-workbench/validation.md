@@ -788,3 +788,70 @@ Complete source-catalog/sweep compatibility and final API-02 acceptance remain
 open before Qt adoption. This focused unit establishes local API acceptance,
 without hosted/installer/publication, measured RF compliance or external
 interoperability claims.
+
+## UIU-API-02 complete catalog and bounded sweep unit
+
+The [candidate manifest](sweep-evidence.json) and
+[executed operation record](api-02-sweep-operation-test-results.json) retain exact
+source/wheel hashes, commands and named cases. The
+[serial plan contract](../../../user/api/full-loop-sweep.md) separates complete
+raw inventory, checked run IDs, source-observation duration and active host budgets.
+
+ProfileCapture preserves every raw source ID and exact original provenance.
+Its additive simulation_profile operation admits original selected loading through
+the unchanged ProfileId domain; legacy loaders keep their original behavior.
+FullLoopSweepPlan validates the complete selection before admitting a plan,
+preserves edited current loading, sorts original captured selections, and shares
+base/catalog ownership instead of retaining all measurement copies per profile.
+It creates one independently controlled public request at a time, with unchanged
+options and observation policy. The plan owns no worker or result archive.
+
+Seven full-loop/control/admission cases and five original capture cases pass in
+the complete Rust regression. Independent anchors retain a mixed [200,7,0,2]
+source inventory while admitting original 7, exact original bytes, sorted [0,7],
+14960 selected assignments, two milliseconds of requested source observation,
+120000 milliseconds of summed active host budget and 128 retained-word details.
+Tests reject unsupported all-captured identities, unsupported selected coding,
+empty/duplicate/missing IDs, mismatched keys and resource limits atomically.
+Actual complete/cancelled requests preserve previous results and independent
+one-shot controls. Current preserves the exact edited request. An early negative
+fixture changed an encoded assignment without its matching text/bit fields; it
+was corrected to a consistent recognized QPSK assignment so the test reaches the
+intended unsupported full-loop admission boundary.
+
+The final local Linux CPython 3.10 wheel passes all 110 installed cases, including
+three new catalog/selection/control/ownership and separate Rust-process cases.
+All reference examples were regenerated for this unit. A final constructor-order
+review moved two unchanged inspection methods after existing constructors;
+byte-identical moved blocks are recorded, Clippy was rerun, and a fresh final
+wheel and isolated 110-case suite pass using the unchanged successful Rust
+references. No scientific expression changed in that ordering adjustment.
+
+Compiler/native inventories trace 520/503 operations, adding four each. Prior
+516/499 rows and historical alias corrections remain intact. Every new operation
+has requirement/task/owner/native parity and executed-case links. All 178 Qt
+files and the frozen legacy dependency boundary remain unchanged. No Qt
+scientific implementation was copied into the Apache backend.
+
+## UIU-API-02 public full-loop and observations accepted
+
+The complete current Rust regression passes 687 workspace cases, doctest checks,
+four fixture-generator cases, all 12 API example processes and 139 analysis-only
+cases. Three existing explicitly ignored performance-only benchmarks are not
+executed; their paths, names and reasons are recorded in the candidate manifest.
+The bounded four-process runner finishes in 628 seconds. Final workspace
+and native Clippy, formatting and all 77 validation-tool cases pass. The exact
+final installed wheel passes all 110 native cases without skips, covering old
+imports/operations, saved workbenches/Designer, upstream regressions and the new
+downstream request/observation/query/catalog contracts. Exact inventories and
+executed records preserve existing operation rows and historical alias evidence.
+
+The focused API-02 units above cover controlled requests, opt-in original stage
+retention, passive numerical queries, PLC messages, selected receiver cells,
+reference/soft views, physical/transmitted roles, ordered-frame diagnostics,
+calibrated channel/amplifier observations and complete catalog/sweep admission.
+All applicable backend acceptance gates are satisfied. UIU-API-02 is complete;
+UIU-DS-01 owns Qt adoption and UIU-SESSION-01 owns aggregate UI result budgets.
+Existing downstream implementation and completed history remain intact. This is
+local backend/API acceptance, not new Qt, hosted, installer, publication, measured
+RF compliance or external interoperability evidence.

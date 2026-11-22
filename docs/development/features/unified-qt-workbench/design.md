@@ -845,6 +845,72 @@ compatibility and final API-02 acceptance remain after this unit.
 The [focused acceptance](validation.md#uiu-api-02-calibrated-channel-and-amplifier-unit)
 records passing Rust/native evidence and the [user contract](../../../user/api/channel-spectrum.md).
 
+### UIU-API-02 complete catalog and bounded sweep unit
+
+REQ-UIU-02/07/09/16/17/18/19/20/24 and UIU-API-02 require the existing Qt
+single/current, all-captured and explicit-selection admission behavior before
+UIU-DS-01 adopts the public API. Preserve the complete byte-sized ProfileCapture
+catalog and the original ProfileId 0..15 domain. All-captured selection rejects
+unsupported run IDs rather than dropping them or inventing a coding capability.
+A valid selected ID can be admitted from a mixed catalog without rewriting its
+original bytes or rejecting unrelated read-only source entries.
+
+Add `ProfileCapture::simulation_profile(id: ProfileId) -> ApiResult<Dpd>`.
+The returned immutable Dpd retains the original selected assignment, captured
+origin and complete original-byte provenance. Its legacy `profile_ids()` lists
+only the catalog IDs that pass the existing ProfileId validator; the unchanged
+ProfileCapture retains every raw ID. Existing Dpd loaders and ProfileId behavior
+remain unchanged. Add a private Dpd factory in `api/inputs.rs` because that owner
+controls its catalog/origin fields; the capture operation delegates to it.
+
+Add `FullLoopSweepPlan::new(request: &FullLoopRequest, catalog: &ProfileCapture,
+selection: FullLoopProfileSelection) -> ApiResult<Self>`. The explicit selection
+is Current, AllCaptured or Selected(Vec<ProfileId>). Current preserves the exact
+accepted request, including edited-hypothesis loading. Captured selections use
+original source profiles, sorted by original ID, with no duplicates or empty
+selection. Preserve the legacy 32-profile/262144-assignment application limits
+as separately named policies; they are not the simulation ID domain. Require
+matching original ScenarioKey and validate every selected profile through the
+same FullLoopRequest preparation before returning a plan. Failure is atomic
+and identifies the failing original profile.
+
+`plan.info() -> FullLoopSweepInfo` reports full raw catalog IDs, selected checked
+IDs, assignment count and finite sequential duration/host/detail ceilings.
+`plan.request(index: usize) -> ApiResult<FullLoopRequest>` returns one immutable
+fully validated request, preserving original source, measurements, channel,
+options and observation policy. Preflight constructs and drops one request at a
+time; the plan shares catalog/base ownership instead of retaining a separate
+copy of all measurement frames per profile. Request creation starts no run.
+Scientific selection/admission and execution stay in Rust; clients dispatch the
+existing independently controlled `run` operation serially. Reusing a completed
+control still rejects, and cancellation/partial reports retain their existing
+per-profile contract. The later Qt session task owns aggregate retained-result
+budgets and UI dispatch, not scientific profile selection or validation.
+
+Native Python adds `capture.simulation_profile(profile_id)` and a genuine
+importable FullLoopSweepPlan class with constructor `(request, catalog,
+selection="current", profile_ids=None)`, owned `info` property and `request(index)`.
+Validate sequence length before extracting selected IDs, then use Rust ProfileId
+admission. `selected` requires a nonempty ID sequence; other modes reject an
+extraneous list. All work releases the GIL. Existing Rust/Python class/import
+identity and behavior remain compatible.
+
+| Disposition | Owner/files | Contract and acceptance |
+| --- | --- | --- |
+| Reuse | `api/full_loop/request.rs`, `api/sequence.rs`, `api/inputs/profile_capture.rs`, `simulation/channel/measurement` | Existing immutable admission, supported coding domain, exact source epochs/grids and measured playback. |
+| Edit | `api/inputs.rs`, `api/inputs/profile_capture.rs` | Private selected-profile factory and additive public capture admission; raw inventory/provenance remains complete. |
+| Add | `api/full_loop/sweep.rs` and parent registration | Typed finite plan, explicit selection, original-key validation, all-before-run preflight and lazy per-profile request construction. |
+| Edit/Add | `bindings/python/src/profile_capture.rs`, new `bindings/python/src/full_loop/sweep.rs`, registration/import modules/stub | Thin checked conversion, public class identity and installed-wheel operations. |
+| Add/Edit | Focused Rust/native tests, actual Rust example and user guide | Mixed raw IDs, original selected loading, sorted/deduplicated/current/empty/invalid/mismatched cases, finite budgets, rejected-call invariance, per-profile actual runs/cancellation and direct-process parity. |
+
+Paths are relative to crates/ofdm/src unless prefixed with bindings. Retain
+historical requirements, original normalized observations and completed tasks.
+This closes only the catalog/sweep API gap after focused acceptance; the full
+API-02 regression gate is now satisfied by the
+[complete acceptance](validation.md#uiu-api-02-public-full-loop-and-observations-accepted);
+Qt adoption remains a separate task. The [unit evidence](validation.md#uiu-api-02-complete-catalog-and-bounded-sweep-unit)
+records exact source/wheel hashes and independent selection/control cases.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

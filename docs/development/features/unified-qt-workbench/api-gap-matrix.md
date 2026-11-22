@@ -47,10 +47,10 @@ infrastructure workaround.
 | Original capture view, `scenario::measurement_view` | Existing bounded projection/grouping owner reused through the high-level API | UIU-API-01: implemented `RxMer::preview(MeasurementViewport)` and `ChannelEstimate::preview(MeasurementViewport, ChannelResponseMetric)`; owned `MeasurementPreview` carries view/grid/provenance/projection. | [Rust/Python parity](../../../user/api/input-admission.md#original-measurement-previews), [unit evidence](validation.md#uiu-api-01-original-measurement-preview-unit); original H/RxMER only. Sequence, Designer, channel and idle TX units have their own accepted evidence below. |
 | Ordered measured collection, `MeasurementPlayback` | Existing power-domain modes and physical response admission reused through the high-level API | UIU-API-01: implemented `MeasurementSequence::new`, `info`, `capture`, `capacity`, `at`, `preview` and `TransmissionConfiguration::check_response`; typed options retain exact order, epoch tolerance and resource limits. | [Rust/Python parity](../../../user/api/input-admission.md#measured-sequence-admission-and-preview), [unit evidence](validation.md#uiu-api-01-measured-sequence-unit); actual contributor weights/provenance, power/clock literals, rejection and owned concurrent queries. Legacy project timeline support remains UIU-API-05. |
 | Native saved Designer evaluator and `RxmerRecipe` | Typed immutable design operations reuse original baseline materialization; ordinary/derived source kind is publicly observable | UIU-API-01: `inputs::RxMerDesign` flat/imported/from-bytes/replacement/materialization with bounded positions, exact identity and curated recipe configurations; no scientific facade implementation. | [Rust/Python parity](../../../user/api/input-admission.md#immutable-rxmer-designer-inputs), [unit evidence](validation.md#uiu-api-01-designer-admission-unit); saved bytes/masks, independent tilt endpoints, noncompounding replacements, version/nesting/random/resource rejection and actual WB FEC regression. |
-| Original compact profile document and quantitative inspector | Read-only complete byte-ID catalog preserves encoded schemes; scientific summaries/grouping reuse original assignment/Shannon/useful-rate owners | UIU-API-01: implemented `ProfileCapture`, `ProfileViewRequest`, bounded schemes/inspect, native loader and Dpd summary/view; legacy ProfileId behavior remains unchanged. | [Rust/Python contract](../../../user/api/profile-inspection.md), [unit evidence](validation.md#uiu-api-01-profile-inspection-unit); code/role/coordinate/rate/Shannon literals, binary/JSON equivalence, bounds and immutable source provenance. Raw source-ID full-loop compatibility remains API-02/DS-01. |
+| Original compact profile document and quantitative inspector | Read-only complete byte-ID catalog preserves encoded schemes; scientific summaries/grouping reuse original assignment/Shannon/useful-rate owners | UIU-API-01: implemented `ProfileCapture`, `ProfileViewRequest`, bounded schemes/inspect, native loader and Dpd summary/view; legacy ProfileId behavior remains unchanged. | [Rust/Python contract](../../../user/api/profile-inspection.md), [unit evidence](validation.md#uiu-api-01-profile-inspection-unit); code/role/coordinate/rate/Shannon literals, binary/JSON equivalence, bounds and immutable source provenance. Complete raw/checked-ID admission and sweep compatibility now have API-02 acceptance below; Qt adoption remains DS-01. |
 | Configured transfer, existing channel composition/loss/power/filter owners | Immutable settings and original-grid effective response reuse existing physical/epoch/coverage and composition admission | UIU-API-01: implemented `ChannelConfiguration::new`, `from_json`, `power_reference`, `preview` and `preview_capture`; no stream/source state, original H stays separate. | [Rust/Python contract](../../../user/api/channel-preview.md), [unit evidence](validation.md#uiu-api-01-channel-preview-unit); literal gains/electrical scale/echo taps, excluded grids, raw IDs, bounds and invalid-composition/identity rejection. |
-| [Closed-loop worker](../../../../apps/qt/src/simulation/closed_loop.rs), `run_channel_controlled`, test-point observer and `Options` | DS public `Simulation::prepare_full_loop` admits immutable single-profile requests and acknowledged pause/cancel/progress with owned actual partial reports; opt-in typed stage, passive numerical and retained-message queries reuse existing owners. Calibrated channel spectra and scalar amplifier-boundary observations now have focused acceptance; complete catalog/sweep parity remains open | UIU-API-02 request/control unit implemented and [validated](validation.md#uiu-api-02-controlled-request-unit). Reuse existing job/measurement/pause owners; old RunControl/nominal types stay compatible. [Raw retained-stage ownership/query](validation.md#uiu-api-02-retained-stage-unit), passive numerical and retained-message queries have focused evidence. Calibrated channel spectra and scalar amplifier-boundary queries pass focused acceptance below; catalog/sweep parity remains mandatory before task acceptance. | Idle/running/paused/cancelled/failed/completed transitions, safe boundaries, bounded time/memory, completed FEC trials retained, exact old configured outputs, native Python pause/cancel/progress/result parity. |
-| [Receiver views](../../../../apps/qt/src/instruments/receiver/views.rs), [selection](../../../../apps/qt/src/instruments/receiver/selection.rs), [diagnostics](../../../../apps/qt/src/instruments/receiver/diagnostics.rs), [spectrum](../../../../apps/qt/src/instruments/spectrum/mod.rs) | Legacy Qt calls still calculate scientific views; public passive PSD/response/LLR, selected-cell QAM/MER/decisions and reference/soft queries reuse existing owners | UIU-API-02: typed immutable observations and bounded queries; [cell contract](../../../user/api/full-loop-cells.md) keeps all-selected measurements independent of display caps; [slicer views](../../../user/api/slicer-views.md) supply original references, finite regions and actual likelihood summaries. Calibrated channel-spectrum and scalar amplifier-boundary queries have focused acceptance below; final API-02 acceptance remains before Qt adoption. Qt owns screen coordinates/labels. | Independent numerical vectors plus API equivalence to supported observations, tap identity/paired lengths, PSD/MER normalization, reference geometry, likelihood boundaries, missing/invalid/partial states and finite output; native Python has matching data. |
+| [Closed-loop worker](../../../../apps/qt/src/simulation/closed_loop.rs), `run_channel_controlled`, test-point observer and `Options` | DS public `Simulation::prepare_full_loop` admits immutable single-profile requests and acknowledged pause/cancel/progress with owned actual partial reports; opt-in typed stage, passive numerical and retained-message queries reuse existing owners. Calibrated channel spectra and scalar amplifier-boundary observations now have focused acceptance; complete catalog/sweep parity now has backend acceptance below | UIU-API-02 request/control unit implemented and [validated](validation.md#uiu-api-02-controlled-request-unit). Reuse existing job/measurement/pause owners; old RunControl/nominal types stay compatible. [Raw retained-stage ownership/query](validation.md#uiu-api-02-retained-stage-unit), passive numerical and retained-message queries have focused evidence. Calibrated channel spectra and scalar amplifier-boundary queries pass focused acceptance below; catalog/sweep parity and final backend acceptance pass below. | Idle/running/paused/cancelled/failed/completed transitions, safe boundaries, bounded time/memory, completed FEC trials retained, exact old configured outputs, native Python pause/cancel/progress/result parity. |
+| [Receiver views](../../../../apps/qt/src/instruments/receiver/views.rs), [selection](../../../../apps/qt/src/instruments/receiver/selection.rs), [diagnostics](../../../../apps/qt/src/instruments/receiver/diagnostics.rs), [spectrum](../../../../apps/qt/src/instruments/spectrum/mod.rs) | Legacy Qt calls still calculate scientific views; public passive PSD/response/LLR, selected-cell QAM/MER/decisions and reference/soft queries reuse existing owners | UIU-API-02: typed immutable observations and bounded queries; [cell contract](../../../user/api/full-loop-cells.md) keeps all-selected measurements independent of display caps; [slicer views](../../../user/api/slicer-views.md) supply original references, finite regions and actual likelihood summaries. Calibrated channel-spectrum and scalar amplifier-boundary queries have focused acceptance below; API-02 backend acceptance passes below; Qt adoption remains DS-01. Qt owns screen coordinates/labels. | Independent numerical vectors plus API equivalence to supported observations, tap identity/paired lengths, PSD/MER normalization, reference geometry, likelihood boundaries, missing/invalid/partial states and finite output; native Python has matching data. |
 | [TX providers](../../../../apps/qt/src/instruments/transmitter), PLC/NCP messages, source/waveform timing, physical layout | Typed idle TX/stage contracts and passive `FullLoopResult::plc_messages` cover original message data and bounded decoded descriptors | UIU-API-01 accepted: typed idle `TransmitterPreviewRequest`, one-shot control, owned actual TX samples/PSD and transmission symbol timing/window. UIU-API-02 adds actual retained stages and CRC-validated TX message queries with original bytes, typed TLVs and actual sample coverage; no blanket engine re-export. | No hidden run or reseeding, explicit stage/source status, supported DS PLC/NCP/profile controls unchanged, sample/timing/grid metadata and native Python parity. |
 | [US session](../../../../crates/ofdma/src/api/session.rs), `configure`, `preview`, `run_with_control`, measured admission | Existing accepted typed configuration, controlled batch report, selected QAM/spectrum taps and progress can be reused | UIU-API-04: audit each planned instrument against actual reports. Add only missing TX/channel/RX/response/soft/FEC observations as small upstream typed result/query APIs, backed by existing owners. No duplicate Qt simulation interface. | Synthetic/measured support states, config generations, limits and partial completion; actual US reference planes, selected tap bounds, no fabricated metrics; Rust/native Python report/error parity. |
 
@@ -68,9 +68,23 @@ have matching native Python operations and 8192-element caps. See the
 [contract](../../../user/api/physical-views.md) and
 [focused acceptance](validation.md#uiu-api-02-physical-bin-and-transmitted-role-unit).
 
-Complete source-catalog/sweep parity and final API-02 acceptance remain required
-before Qt migration. The existing normalized
+API-02 backend acceptance passes below. Qt adoption remains UIU-DS-01. The existing normalized
 contiguous-sample spectrum operation and raw-stage copy limits are unchanged.
+
+### UIU-API-02 complete catalog and bounded sweep unit
+
+`ProfileCapture::simulation_profile` admits original selected loading through the
+unchanged checked run-ID domain while retaining complete original provenance.
+`FullLoopSweepPlan` preserves all raw source IDs, current edited requests or
+sorted explicit captured selections, validates every profile before admission
+and supplies one independently controlled public request at a time. It shares
+base/catalog ownership and keeps the existing 32-profile/262144-assignment policy.
+The [exact owner/signature design](design.md#uiu-api-02-complete-catalog-and-bounded-sweep-unit)
+and [user contract](../../../user/api/full-loop-sweep.md) preserve raw versus
+checked IDs, budgets, original loading and cancellation/result ownership.
+[Focused acceptance](validation.md#uiu-api-02-complete-catalog-and-bounded-sweep-unit)
+and [final API-02 backend acceptance](validation.md#uiu-api-02-public-full-loop-and-observations-accepted)
+pass full Rust and installed-native validation. Qt adoption remains UIU-DS-01.
 
 ### UIU-API-02 calibrated channel and amplifier unit
 
@@ -85,8 +99,8 @@ including actual numerical, ownership and separate Rust-process parity. See the
 [channel spectrum contract](../../../user/api/channel-spectrum.md) and
 [owner design](design.md#uiu-api-02-calibrated-channel-and-amplifier-unit) and
 [focused acceptance](validation.md#uiu-api-02-calibrated-channel-and-amplifier-unit).
-Complete source-catalog/sweep parity and final API-02 acceptance remain open;
-Qt adoption has not begun.
+Complete source-catalog/sweep parity and final API-02 backend acceptance pass
+below. Qt adoption has not begun.
 
 ### UIU-API-02 ordered frame-stage spectrum unit
 
@@ -103,8 +117,8 @@ and [focused acceptance](validation.md#uiu-api-02-ordered-frame-stage-spectrum-u
 The numeric audit names independent equal-valued settings separately and derives
 FFT/analysis dimensions from the existing owners. It preserves original physical
 view bounds while giving role-span/identifier/frame limits distinct purposes.
-Complete catalog/sweep compatibility and final API-02 acceptance remain required
-before Qt migration.
+Complete catalog/sweep and final API-02 backend acceptance pass below; Qt
+migration remains a separate task.
 
 ### UIU-API-02 numerical query unit
 
@@ -130,7 +144,7 @@ return owned dictionaries with matching validation, releasing the GIL during
 numerical preparation. These operations implement the existing UIU-API-02 and
 REQ-UIU-02/07/09/16/17/18/19/20/24 contracts. Selected-cell/message units have
 focused acceptance; complete
-source-catalog/sweep parity and final API-02 acceptance remain open.
+source-catalog/sweep parity and final API-02 backend acceptance also pass below.
 
 | Existing owner | Current contract | Planned extension | Acceptance |
 | --- | --- | --- | --- |
@@ -140,8 +154,9 @@ source-catalog/sweep parity and final API-02 acceptance remain open.
 Source inspection also has a compatibility boundary: existing Qt retains raw u8
 profile IDs, while the accepted simulation ProfileId stays 0..15. The profile
 capture inspector preserves the complete source catalog without changing that
-quantity. UIU-API-02/DS-01 must preserve or explicitly test the existing full-loop
-behavior for applicable raw source IDs before replacing Qt's legacy route.
+quantity. API-02 now explicitly tests the legacy rejection outside 0..15, mixed
+source-catalog admission and original selected loading. DS-01 must preserve this
+accepted behavior when replacing Qt's legacy route.
 
 The resource-grid signature is a design proposal. Before its implementation,
 define exact exported model fields, numeric budgets, ordering, missing values,

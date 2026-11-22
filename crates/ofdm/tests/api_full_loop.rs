@@ -299,3 +299,250 @@ fn options_timing_and_identity_failures_leave_accepted_inputs_unchanged() {
     );
     Simulation::prepare_full_loop(original, options()).unwrap();
 }
+
+fn sweep_catalog(ids: &[u8]) -> ProfileCapture {
+    let mut document: Value = serde_json::from_slice(PROFILE).unwrap();
+    let template = document["profiles"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|profile| profile["profile_id"] == 0)
+        .unwrap()
+        .clone();
+    document["profiles"] = Value::Array(
+        ids.iter()
+            .map(|id| {
+                let mut profile = template.clone();
+                profile["profile_id"] = json!(id);
+                profile
+            })
+            .collect(),
+    );
+    document["num_profiles"] = json!(ids.len());
+    ProfileCapture::from_bytes(
+        &NamedCapture::new("sweep-catalog", serde_json::to_vec(&document).unwrap()).unwrap(),
+    )
+    .unwrap()
+}
+
+#[test]
+fn mixed_source_catalog_admits_supported_loading_without_losing_raw_ids_or_provenance() {
+    const INSPECTION_ONLY_SOURCE_ID: u8 = 200;
+    const SELECTED_PROFILE_ID: u8 = 7;
+    const ABSENT_PROFILE_ID: u8 = 5;
+    let capture = sweep_catalog(&[INSPECTION_ONLY_SOURCE_ID, SELECTED_PROFILE_ID, 0, 2]);
+    let selected = capture
+        .simulation_profile(ProfileId::new(SELECTED_PROFILE_ID).unwrap())
+        .unwrap();
+    assert_eq!(
+        capture.profile_ids(),
+        &[0, 2, SELECTED_PROFILE_ID, INSPECTION_ONLY_SOURCE_ID]
+    );
+    assert_eq!(
+        selected
+            .profile_ids()
+            .iter()
+            .map(|id| id.value())
+            .collect::<Vec<_>>(),
+        vec![0, 2, SELECTED_PROFILE_ID]
+    );
+    assert_eq!(selected.profile_id().value(), SELECTED_PROFILE_ID);
+    assert_eq!(selected.origin(), ProfileOrigin::Captured);
+    assert_eq!(
+        selected.sources()[0].original_sha256(),
+        capture.provenance().original_sha256()
+    );
+    assert_eq!(
+        selected.sources()[0].original_bytes(),
+        capture.provenance().original_bytes()
+    );
+    assert_eq!(selected.carriers(), inputs().profile.carriers());
+    assert!(ProfileId::new(INSPECTION_ONLY_SOURCE_ID).is_err());
+    assert!(capture
+        .simulation_profile(ProfileId::new(ABSENT_PROFILE_ID).unwrap())
+        .is_err());
+    let old = NamedCapture::new("legacy", capture.provenance().original_bytes().to_vec()).unwrap();
+    assert!(Dpd::from_bytes(&old, ProfileId::new(0).unwrap()).is_err());
+}
+
+#[test]
+fn sweep_preflights_sorted_originals_and_preserves_independent_controls_partial_reports_and_retention(
+) {
+    const SECOND_PROFILE_ID: u8 = 7;
+    const EXPECTED_ASSIGNMENTS: usize = 14_960;
+    const EXPECTED_TOTAL_DURATION_MS: u64 = 2;
+    const EXPECTED_TOTAL_RUNTIME_MS: u64 = 120_000;
+    const EXPECTED_TOTAL_WORD_DETAILS: usize = 128;
+    let capture = sweep_catalog(&[SECOND_PROFILE_ID, 2, 0]);
+    let request = Simulation::prepare_full_loop(inputs(), options())
+        .unwrap()
+        .with_observations(
+            FullLoopObservationPolicy::new(FullLoopObservationInput::default()).unwrap(),
+        )
+        .unwrap();
+    let plan = FullLoopSweepPlan::new(
+        &request,
+        &capture,
+        FullLoopProfileSelection::Selected(vec![
+            ProfileId::new(SECOND_PROFILE_ID).unwrap(),
+            ProfileId::new(0).unwrap(),
+        ]),
+    )
+    .unwrap();
+    let info = plan.info();
+    assert_eq!(info.source_profile_ids, vec![0, 2, SECOND_PROFILE_ID]);
+    assert_eq!(
+        info.selected_profile_ids
+            .iter()
+            .map(|id| id.value())
+            .collect::<Vec<_>>(),
+        vec![0, SECOND_PROFILE_ID]
+    );
+    assert_eq!(info.total_profile_assignments, EXPECTED_ASSIGNMENTS);
+    assert_eq!(
+        info.requested_observation_duration_ms,
+        EXPECTED_TOTAL_DURATION_MS
+    );
+    assert_eq!(
+        info.maximum_sequential_runtime_ms,
+        EXPECTED_TOTAL_RUNTIME_MS
+    );
+    assert_eq!(
+        info.maximum_retained_word_details,
+        EXPECTED_TOTAL_WORD_DETAILS
+    );
+    let first = plan.request(0).unwrap();
+    let second = plan.request(1).unwrap();
+    assert_eq!(
+        serde_json::to_value(first.observation_policy()).unwrap(),
+        serde_json::to_value(second.observation_policy()).unwrap()
+    );
+    assert_eq!(
+        serde_json::to_value(first.options()).unwrap(),
+        serde_json::to_value(second.options()).unwrap()
+    );
+    let control = FullLoopControl::new();
+    let complete = first.run(&control).unwrap();
+    assert_eq!(complete.report().status, ChannelJobStatus::Complete);
+    assert_eq!(complete.report().summary.comparison.bit_errors, 0);
+    assert!(complete
+        .stage_inventory()
+        .iter()
+        .any(|stage| stage.snapshots > 0));
+    assert_eq!(second.run(&control).err().unwrap().code(), ErrorCode::Busy);
+    let cancelled = FullLoopControl::new();
+    cancelled.cancel();
+    let partial = second.run(&cancelled).unwrap();
+    assert_eq!(partial.report().status, ChannelJobStatus::Cancelled);
+    assert_eq!(
+        partial.inputs().profile.profile_id().value(),
+        SECOND_PROFILE_ID
+    );
+    assert_eq!(complete.report().status, ChannelJobStatus::Complete);
+    let completed_second = second.run(&FullLoopControl::new()).unwrap();
+    assert_eq!(completed_second.report().status, ChannelJobStatus::Complete);
+    assert_eq!(completed_second.report().summary.comparison.bit_errors, 0);
+    assert_eq!(
+        completed_second.inputs().profile.sources()[0].original_sha256(),
+        capture.provenance().original_sha256()
+    );
+    assert!(plan.request(2).is_err());
+    let all =
+        FullLoopSweepPlan::new(&request, &capture, FullLoopProfileSelection::AllCaptured).unwrap();
+    assert_eq!(
+        all.info()
+            .selected_profile_ids
+            .iter()
+            .map(|id| id.value())
+            .collect::<Vec<_>>(),
+        vec![0, 2, SECOND_PROFILE_ID]
+    );
+}
+
+#[test]
+fn sweep_rejects_complete_invalid_selection_atomically_and_keeps_current_edited_request_exact() {
+    const UNSUPPORTED_SOURCE_ID: u8 = 200;
+    const ABSENT_PROFILE_ID: u8 = 5;
+    const EXPECTED_PROFILE_BUDGET: usize = 32;
+    const EXPECTED_ASSIGNMENT_BUDGET: usize = 262_144;
+    const OVER_PROFILE_BUDGET_COUNT: usize = 33;
+    assert_eq!(MAX_FULL_LOOP_SWEEP_PROFILES, EXPECTED_PROFILE_BUDGET);
+    assert_eq!(MAX_FULL_LOOP_SWEEP_ASSIGNMENTS, EXPECTED_ASSIGNMENT_BUDGET);
+    let capture = sweep_catalog(&[0, 7]);
+    let mut accepted = inputs();
+    accepted.profile = accepted
+        .profile
+        .with_modulation(
+            CarrierRange::new(
+                SubcarrierIndex::new(400).unwrap(),
+                SubcarrierIndex::new(420).unwrap(),
+            )
+            .unwrap(),
+            DataModulation::Qam16,
+        )
+        .unwrap();
+    let request = Simulation::prepare_full_loop(accepted, options()).unwrap();
+    let original = serde_json::to_value(request.settings()).unwrap();
+    let current =
+        FullLoopSweepPlan::new(&request, &capture, FullLoopProfileSelection::Current).unwrap();
+    assert_eq!(
+        serde_json::to_value(current.request(0).unwrap().settings()).unwrap(),
+        original
+    );
+    for ids in [
+        vec![],
+        vec![ProfileId::new(0).unwrap(); 2],
+        vec![ProfileId::new(ABSENT_PROFILE_ID).unwrap()],
+        vec![ProfileId::new(0).unwrap(); OVER_PROFILE_BUDGET_COUNT],
+    ] {
+        assert!(FullLoopSweepPlan::new(
+            &request,
+            &capture,
+            FullLoopProfileSelection::Selected(ids)
+        )
+        .is_err());
+    }
+    let mixed = sweep_catalog(&[0, UNSUPPORTED_SOURCE_ID]);
+    let error = FullLoopSweepPlan::new(&request, &mixed, FullLoopProfileSelection::AllCaptured)
+        .err()
+        .unwrap();
+    assert_eq!(error.code(), ErrorCode::UnsupportedCapability);
+    assert!(error.message().contains("200"));
+    FullLoopSweepPlan::new(
+        &request,
+        &mixed,
+        FullLoopProfileSelection::Selected(vec![ProfileId::new(0).unwrap()]),
+    )
+    .unwrap();
+    let mut malformed: Value =
+        serde_json::from_slice(capture.provenance().original_bytes()).unwrap();
+    malformed["profiles"][1]["schemes"][0]["modulation_order_code"] = json!(2);
+    malformed["profiles"][1]["schemes"][0]["modulation_order"] = json!("qpsk");
+    malformed["profiles"][1]["schemes"][0]["bit_loading"] = json!(2);
+    let unsupported = ProfileCapture::from_bytes(
+        &NamedCapture::new(
+            "unsupported-loading",
+            serde_json::to_vec(&malformed).unwrap(),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let error = FullLoopSweepPlan::new(
+        &request,
+        &unsupported,
+        FullLoopProfileSelection::AllCaptured,
+    )
+    .err()
+    .unwrap();
+    assert!(error.message().contains("Captured profile 7"));
+    malformed = serde_json::from_slice(capture.provenance().original_bytes()).unwrap();
+    malformed["channel_id"] = json!(99);
+    let different = ProfileCapture::from_bytes(
+        &NamedCapture::new("different-channel", serde_json::to_vec(&malformed).unwrap()).unwrap(),
+    )
+    .unwrap();
+    assert!(
+        FullLoopSweepPlan::new(&request, &different, FullLoopProfileSelection::Current).is_err()
+    );
+    assert_eq!(serde_json::to_value(request.settings()).unwrap(), original);
+}

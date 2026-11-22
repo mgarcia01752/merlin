@@ -147,6 +147,24 @@ impl PyProfileCapture {
             .map_err(error)
     }
 
+    /// Admits original selected loading in the existing checked simulation-ID domain.
+    /// # Arguments
+    /// * `profile_id` - Existing ProfileId, 0..15 and present in the original capture.
+    /// # Returns
+    /// Immutable DPD with exact selected loading/provenance and supported run-ID inventory.
+    /// This capture retains every raw source ID; no simulation starts and work releases the GIL.
+    /// # Errors
+    /// Shared absent-identity failures raise ApiError; unrelated raw IDs remain preserved.
+    fn simulation_profile(
+        &self,
+        py: Python<'_>,
+        profile_id: &crate::quantities::PyProfileId,
+    ) -> PyResult<PyDpd> {
+        py.detach(|| self.0.simulation_profile(profile_id.0))
+            .map(PyDpd)
+            .map_err(error)
+    }
+
     /// Reads every original encoded source ID, independent of the legacy runtime quantity.
     /// # Returns
     /// Immutable sorted tuple of byte-sized source identities.

@@ -212,6 +212,31 @@ fn provenance(
     })
 }
 impl Dpd {
+    /// Admits one checked simulation identity while retaining the complete original source bytes.
+    /// # Arguments
+    /// * `capture` - Immutable complete byte-sized source catalog.
+    /// * `id` - Existing checked run identity; unrelated source IDs remain inspection-only.
+    /// # Returns
+    /// Original selected loading/provenance with the catalog's supported run-ID subset.
+    /// # Errors
+    /// Rejects an absent selected source identity; source and legacy loaders remain unchanged.
+    pub(super) fn from_profile_capture(capture: &ProfileCapture, id: ProfileId) -> ApiResult<Self> {
+        let profile = capture.profile_ref(id.value())?.clone();
+        let profile_ids = capture
+            .profile_ids()
+            .iter()
+            .copied()
+            .filter_map(|raw| ProfileId::new(raw).ok())
+            .collect();
+        Ok(Self {
+            profile,
+            profile_ids,
+            origin: ProfileOrigin::Captured,
+            sources: vec![capture.provenance().clone()],
+            bandwidth: None,
+        })
+    }
+
     /// Lists validated captured profile identities from bounded decoded JSON.
     ///
     /// # Arguments

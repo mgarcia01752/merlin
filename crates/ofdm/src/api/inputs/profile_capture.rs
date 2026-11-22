@@ -80,6 +80,18 @@ impl ProfileCapture {
         })
     }
 
+    /// Selects original loading for the existing simulation ProfileId domain.
+    /// # Arguments
+    /// * `id` - Checked 0..15 identity present in this complete source catalog.
+    /// # Returns
+    /// Immutable captured Dpd preserving selected assignments and exact original provenance.
+    /// Its profile_ids lists only supported run IDs; this capture retains all raw source IDs.
+    /// No source, transmitter, channel or receiver starts.
+    /// # Errors
+    /// InvalidIdentifier for an absent selected source; unrelated raw IDs are preserved.
+    pub fn simulation_profile(&self, id: ProfileId) -> ApiResult<Dpd> {
+        Dpd::from_profile_capture(self, id)
+    }
     /// Borrows every original encoded source identity, sorted independently of source order.
     /// # Returns
     /// Complete byte-sized catalog; this does not widen Simulation ProfileId.

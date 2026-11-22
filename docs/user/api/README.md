@@ -18,6 +18,8 @@ filter admission and authoritative transfer observations.
 controls, owned actual samples/PSD and symbol/window timing.
 [Downstream full-loop requests](full-loop.md) describe independent controlled
 execution and owned complete/partial scientific reports.
+[Original catalog run plans](full-loop-sweep.md) add explicit bounded serial
+selection while preserving checked run IDs and complete source provenance.
 [Retained stage observations](full-loop-observations.md) add opt-in actual
 TX/RX data with explicit phase/reference/grid metadata and finite budgets,
 plus passive PSD, response, actual LDPC-input statistics and retained TX PLC messages.
