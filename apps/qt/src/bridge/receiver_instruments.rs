@@ -6,7 +6,7 @@
 use crate::downstream::instruments::receiver::views;
 pub(crate) use crate::downstream::instruments::receiver::{diagnostics, selection};
 use cxx_qt_lib::QString;
-use docsis_ofdm_fec::simulation::test_points::TestPointId;
+use merlin::downstream::FullLoopStage;
 use serde_json::{json, Value};
 
 const NO_RESULTS: &str = "Run the closed loop to retain receiver observations.";
@@ -119,29 +119,29 @@ fn qam_state(signal: i32, view: i32, part: i32) -> Value {
         2 => "PLC data and preamble are separate observation groups. Their matched raw/equalized streams retain separate modulation and timing.",
         _ => "Unsupported receiver signal selection.",
     };
-    json!({"available":false,"reason":if valid {NO_RESULTS} else {"Invalid receiver instrument selection."},"detail":detail,"raw_tap":TestPointId::RxFft,"equalized_tap":TestPointId::RxEqualized,"points":[],"profiles":[]})
+    json!({"available":false,"reason":if valid {NO_RESULTS} else {"Invalid receiver instrument selection."},"detail":detail,"raw_tap":FullLoopStage::RxFft,"equalized_tap":FullLoopStage::RxEqualized,"points":[],"profiles":[]})
 }
 
 fn spectrum_state(tap: i32) -> Value {
     let selected = match tap {
         0 => Some((
             "RX Input / Channel Output",
-            TestPointId::ChannelOutput,
+            FullLoopStage::ChannelOutput,
             "Complex baseband time samples after channel impairments",
         )),
         1 => Some((
             "RX Framed Samples",
-            TestPointId::RxFramed,
+            FullLoopStage::RxFramed,
             "Framed time samples including cyclic prefix",
         )),
         2 => Some((
             "RX Useful Samples",
-            TestPointId::RxUseful,
+            FullLoopStage::RxUseful,
             "After prefix removal; symbol gaps must remain explicit",
         )),
         3 => Some((
             "RX FFT Bin Power",
-            TestPointId::RxFft,
+            FullLoopStage::RxFft,
             "Frequency-domain bin power; not a time-sample PSD or a second FFT",
         )),
         _ => None,

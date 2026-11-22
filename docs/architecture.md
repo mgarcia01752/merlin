@@ -1181,6 +1181,10 @@ public-API adoption units remove them. The first settings adapter now uses
 its sample-rate display uses the named SI conversion under
 `src/shared/presentation/constants.rs`. Receiver nearest-symbol display geometry
 also comes from `Simulation::decision_region`; Qt maps its owned display fields.
+Lifecycle adapter OCD admission uses `TransmissionConfiguration`, while receiver
+tap identities use the public `FullLoopStage` re-export. The receiver-options
+transport ceiling has its own owner under `src/downstream/common/constants.rs`,
+independent of the equally valued OCD limit.
 The existing confidence histogram still awaits result-backed adoption. Remaining
 scientific consumers retain their migration status. This is partial API adoption, not final
 API-boundary or session-isolation acceptance.

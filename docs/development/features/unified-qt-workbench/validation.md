@@ -1400,3 +1400,28 @@ entry does not accept that numerical presentation or the parent task. Final
 numeric, zero-exception, session and unified runtime gates remain pending. Existing
 backend/Rust-Python scientific acceptance remains unchanged; no non-Qt rerun was
 needed for this consumer-only replacement.
+
+## UIU-DS-01 adapter contracts facade accepted
+
+The [adapter-contract evidence](downstream-contracts-evidence.json) covers the
+lifecycle bridge's public OCD admission and the receiver bridge's public stage
+identities. Existing QObject names, selectors, displayed tap IDs, configure-time
+invalidation, worker/provider calls and atomic Apply remain compatible. Receiver
+source changes are otherwise byte-identical after reversing its public enum
+import/name. This does not accept the still-legacy worker or instrument providers.
+
+OCD size guards reuse `MAX_TRANSMISSION_DOCUMENT_BYTES`. Receiver-option Apply
+and Restore reuse the independently documented inclusive application byte ceiling
+`MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES` in `src/downstream/common/constants.rs`.
+Both retain 4096 bytes; their different contracts are not tied together. Original
+oversize diagnostics and rejected-state behavior remain unchanged. Public OCD
+errors forward their existing human-readable message without a new category prefix.
+
+Five closed-loop compatibility and three settings Rust cases pass, along with
+49 workbench QML cases, sixteen boundary regressions, formatting/Clippy, optimized
+build and six native project/startup smokes. Every other guard and dependency
+remains exact, with retired entries retained as history. Three dependency
+exceptions, 41 frozen files and 141 direct scientific sites remain; UIU-DS-01
+stays unchecked. No backend, Python, persisted schema or QML files changed, so
+existing paired scientific/API evidence remains applicable. Final numeric and
+unified runtime acceptance remain separate.

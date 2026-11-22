@@ -3,9 +3,11 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Qt lifecycle adapter for the existing Rust closed-loop engine.
+use crate::downstream::common::constants::MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES;
 use crate::downstream::simulation::closed_loop as model;
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
+use merlin::downstream::{TransmissionConfiguration, MAX_TRANSMISSION_DOCUMENT_BYTES};
 #[cxx_qt::bridge]
 pub mod bridge {
     unsafe extern "C++" {
@@ -87,7 +89,7 @@ impl bridge::ClosedLoop {
     /// # Returns
     /// Next-run status, never a fabricated scientific result.
     pub fn configure(mut self: core::pin::Pin<&mut Self>, settings: &QString) -> QString {
-        if settings.to_string().len() <= 4096 {
+        if settings.to_string().len() <= MAX_TRANSMISSION_DOCUMENT_BYTES {
             self.as_mut()
                 .rust_mut()
                 .model
@@ -102,17 +104,20 @@ impl bridge::ClosedLoop {
     /// Bounded gain viewport, or an original error with known-code contextual help.
     pub fn channel_preview(&self, settings: &QString) -> QString {
         let result = (|| {
-            if settings.to_string().len() > 4096 {
+            if settings.to_string().len() > MAX_TRANSMISSION_DOCUMENT_BYTES {
                 return Err(crate::downstream::help::AdmissionError::from(
                     "Settings too large".to_string(),
                 ));
             }
-            let transmission = serde_json::from_str(&settings.to_string()).map_err(|error| {
-                crate::downstream::help::AdmissionError::from(error.to_string())
+            let transmission = TransmissionConfiguration::from_json(
+                settings.to_string().as_bytes(),
+            )
+            .map_err(|error| {
+                crate::downstream::help::AdmissionError::from(error.message().to_owned())
             })?;
             let options = self.rust().model.options.clone().unwrap_or_default();
             crate::downstream::inputs::channel_model::combined_preview(
-                &transmission,
+                transmission.settings(),
                 &crate::downstream::workbench::session::snapshot(),
                 &options.channel_filter,
             )
@@ -136,14 +141,16 @@ impl bridge::ClosedLoop {
                     "Stop the simulation before changing receiver or channel settings.".into(),
                 );
             }
-            if options.to_string().len() > 4096 || settings.to_string().len() > 4096 {
+            if options.to_string().len() > MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES
+                || settings.to_string().len() > MAX_TRANSMISSION_DOCUMENT_BYTES
+            {
                 return Err("Options too large".into());
             }
             let options = serde_json::from_str::<model::Options>(&options.to_string())
                 .map_err(|e| e.to_string())?;
-            let transmission: docsis_ofdm_fec::transmission::TransmissionSettings =
-                serde_json::from_str(&settings.to_string()).map_err(|e| e.to_string())?;
-            transmission.validate().map_err(|error| error.to_string())?;
+            let transmission =
+                TransmissionConfiguration::from_json(settings.to_string().as_bytes())
+                    .map_err(|error| error.message().to_owned())?;
             options
                 .mce
                 .validate()
@@ -151,7 +158,7 @@ impl bridge::ClosedLoop {
             options.validate(&crate::downstream::workbench::session::snapshot())?;
             let inputs = crate::downstream::workbench::session::snapshot();
             if inputs.source.is_some() && inputs.profile.is_some() && inputs.playback.is_some() {
-                model::prepare(&transmission, &inputs, &options)?;
+                model::prepare(transmission.settings(), &inputs, &options)?;
             }
             Ok(options)
         };
@@ -196,7 +203,7 @@ impl bridge::ClosedLoop {
             self.as_mut().rust_mut().model = model;
             return;
         }
-        if options.to_string().len() > 4096 {
+        if options.to_string().len() > MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES {
             return;
         }
         if let Ok(options) = serde_json::from_str::<Option<model::Options>>(&options.to_string()) {

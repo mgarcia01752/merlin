@@ -1748,3 +1748,28 @@ the strict boundary and its negative cases, then build and smoke the optimized
 native executable. Backend, native Python and saved-project owners are unchanged.
 The parent remains unchecked; histogram/result migration and final numeric review
 retain their separate acceptance obligations.
+
+## UIU-DS-01 lifecycle and receiver contract facade unit
+
+Adopt existing public configuration/stage contracts in
+`apps/qt/src/bridge/{closed_loop,receiver_instruments}.rs` without changing their
+QObject identities or the still-legacy directional providers. This is partial
+REQ-UIU-02/03/08/09 delivery under UIU-DS-01; worker and instrument implementation
+adoption remains subsequent work. Preserve configure's invalidation timing,
+atomic Apply and original error messages, selector JSON, tap identities and
+existing provider calls. No new scientific operation or Rust/Python API is needed.
+
+| Path and symbol | Existing contract / gap | Decision and owner |
+| --- | --- | --- |
+| `bridge/closed_loop.rs`, `apply` / `channel_preview` | Direct transmission model admission | ADAPT to `TransmissionConfiguration::from_json` and its owned settings; preserve `.message()` wording and existing later request validation. |
+| `bridge/closed_loop.rs`, document guards | OCD and receiver-option documents share the number 4096 for different contracts | REUSE backend `MAX_TRANSMISSION_DOCUMENT_BYTES` for OCD; ADD the independent presentation policy `MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES` under `src/downstream/common/constants.rs`. |
+| `src/downstream/{mod.rs,common/mod.rs}` | Direction-owned common policies | WIRE only the actual receiver-options constant consumer; no empty placeholder owners. |
+| `bridge/receiver_instruments.rs`, `TestPointId` | Existing serialized stage identity, no direct engine operation | REUSE the curated nominal `merlin::downstream::FullLoopStage`; keep all enum values and displayed strings unchanged. |
+| `legacy-qt-boundary.json` | Two adapter exceptions | RETIRE only those exact entries with history; keep all other guards and dependencies unchanged. |
+
+Acceptance uses scoped Qt settings and closed-loop compatibility tests, existing
+workbench/soft-display QML interactions, formatting/Clippy, boundary regression
+cases, optimized build and native project/startup checks. Since no backend or
+persisted schema changes, retain current paired API/scientific evidence. This unit
+does not accept the legacy worker/result providers or session isolation, and keeps
+the parent unchecked. Final numeric review must still inspect all changed owners.
