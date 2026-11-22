@@ -947,6 +947,9 @@ admission under `downstream::inputs` and `upstream::inputs`. Passive downstream
 source choices without executing or mutating sessions; see the
 [typed contracts and parity](user/api/input-admission.md). Remaining editor,
 Designer and idle-preview gaps keep UIU-API-01 open; Qt adoption is separate.
+Original-capture `RxMer::preview` and `ChannelEstimate::preview` reuse the existing
+bounded measurement-view/projection owner, retaining exact full grids, provenance,
+nulls and explicit original H/RxMER units without source or session advancement.
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

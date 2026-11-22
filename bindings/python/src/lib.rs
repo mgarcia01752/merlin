@@ -6,6 +6,7 @@
 mod admission;
 mod controller;
 mod inputs;
+mod measurement;
 mod options;
 mod quantities;
 mod receiver;

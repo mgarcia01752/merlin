@@ -42,6 +42,28 @@ to a new public controlled full-loop job; that extension remains
 Measurement/channel/Designer and idle transmitter previews remain in
 [UIU-API-01](../../development/checklist.md#task-uiu-api-01).
 
+## Original measurement previews
+
+| Rust operation | Python operation | Contract |
+| --- | --- | --- |
+| `RxMer::preview(MeasurementViewport) -> ApiResult<MeasurementPreview>` | `RxMer.preview(start=0, count=0) -> dict` | Original measured RxMER in dB; no averaging, replay or simulation. |
+| `ChannelEstimate::preview(MeasurementViewport, ChannelResponseMetric)` | `ChannelEstimate.preview(metric="gain_db", start=0, count=0) -> dict` | Original complex H; `gain_db`, `phase_degrees`, `real` or `imaginary`. |
+
+`MeasurementViewport { start, count }` uses original sample offsets. Zero count
+selects the complete grid from zero, matching the existing measurement viewer;
+nonzero windows must fit and reject overflow. Rust's typed metric variants are
+`GainDb`, `PhaseDegrees`, `Real` and `Imaginary`. Python rejects unknown names with
+`ApiError(InvalidInput)` and releases the GIL during Rust view construction.
+
+The owned result contains `view`, exact full `grid`, original `provenance` and
+`projection`. Views contain at most 1024 min/max groups with explicit missing
+samples, original frequency labels and units. Zero-magnitude H is unavailable
+for dB gain; no unity substitution or equalizer inversion occurs. Rust previews
+retain original bytes through immutable shared ownership; serialized/Python
+metadata contains the original name, epoch and hashes. Caller edits to Python
+results do not change the capture. These views introduce no collection-selection,
+Designer, channel-composition or simulation execution behavior.
+
 Optional Rust facade feature `native-input` exposes existing
 `downstream::inputs::{CaptureLoader, Workbench, read_capture, save_json,
 rxmer_export}` and the explicitly exported `upstream::inputs` capture/association

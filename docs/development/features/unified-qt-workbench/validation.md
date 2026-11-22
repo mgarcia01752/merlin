@@ -232,3 +232,32 @@ candidate to [architecture](../../../architecture.md#unified-qt-public-api-bound
 This is local Linux acceptance, not a published-wheel, external interoperability,
 Qt migration, Windows or installed-desktop lifecycle claim. Historical backend
 acceptance and existing downstream behavior stay in their original records.
+
+## UIU-API-01 original measurement preview unit
+
+`RxMer::preview` and `ChannelEstimate::preview` now expose the existing bounded
+original-observation viewer through the high-level facade. The
+[exact candidate/evidence](measurement-preview-evidence.json),
+[typed design](design.md#uiu-api-01-original-measurement-preview-unit) and
+[Rust/Python parity](../../../user/api/input-admission.md#original-measurement-previews)
+retain the parent [task](../../checklist.md#task-uiu-api-01) and
+[architecture](../../../architecture.md#unified-qt-public-api-boundary) links.
+
+Three new Rust cases and the existing lower-owner case pass: literal frequency,
+signed H/phase/dB/gap anchors, immutable original ownership/provenance, complete
+1024-group limits and viewport overflow/rejection. Facade and native-binding
+Clippy with warnings denied and both format checks pass. A fresh Linux CPython
+3.10 wheel passes all 55 installed native cases, including three new preview
+cases; actual Rust reference processes and existing WB/Designer/FEC parity pass.
+
+The first packaging attempt used maturin's default manylinux tag and was rejected
+by the existing local-wheel verifier. The expected Linux tag resolves it. Native
+regression then exposed a test-only timing race: its 1 ms experiment could finish
+before its 50 ms cancellation request. The cancellation test now uses a 1000 ms
+observation with a 1000 ms safety deadline and preserves every outcome assertion.
+The targeted case and full 55-case native rerun pass; successful fresh Rust
+reference outputs remain the comparison evidence. Product behavior is unchanged.
+
+UIU-API-01 remains unchecked for collection combination/playback, Designer,
+channel composition and idle TX previews. No Qt source, scientific kernel,
+completed historical task or accepted downstream API behavior changed here.

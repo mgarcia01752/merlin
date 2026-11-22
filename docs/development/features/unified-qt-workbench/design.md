@@ -164,6 +164,38 @@ input/workbench/Designer/export tests. This native-input unit alone does not
 complete UIU-API-01: missing typed editor/idle-preview operations remain in the
 API gap matrix until separately implemented and validated.
 
+### UIU-API-01: original measurement preview unit
+
+Reuse `scenario::measurement_view::{measurement_view,response_value}` unchanged.
+Add `crates/ofdm/src/api/measurement.rs`; export `MeasurementViewport` (zero count
+means the complete original grid, matching the existing viewer),
+`MeasurementPreview` (bounded view, original grid/provenance and explicit
+projection), `ChannelResponseMetric` and existing bounded view output models.
+`RxMer::preview(MeasurementViewport)` and
+`ChannelEstimate::preview(MeasurementViewport, ChannelResponseMetric)` return
+`ApiResult<MeasurementPreview>` without changing captures, simulation state or RNG.
+Response projections are original H gain dB, wrapped phase degrees, real or
+imaginary, never inverse equalizer gain. Missing values and zero-magnitude gain
+remain gaps. Existing owner validates checked viewport arithmetic, grid/value
+limits and finite ranges; output stays at most 1024 min/max groups.
+
+Edit native Python `inputs.rs` and root stub to expose `RxMer.preview(start=0,
+count=0)` and `ChannelEstimate.preview(metric="gain_db", start=0, count=0)` as
+owned dictionaries with the exact same fields. Python releases the GIL for Rust
+projection/view construction and performs no numerical calculations. Unknown
+metric names raise InvalidInput; typed Rust metric variants require no parsing.
+Root/downstream/legacy capture class identity remains unchanged.
+
+Add `crates/ofdm/tests/api_measurement_preview.rs` and
+`bindings/python/tests/test_measurement_preview.py` with independent Rust and
+installed-wheel Python cases for literal original
+frequency centers, finite/gap buckets, zero/imaginary/negative H, phase and dB
+units, full-grid bound, overflow/window rejection, provenance and unchanged
+original bytes after success/failure. Reuse prior lower-owner tests; no GPL Qt
+code or new scientific algorithm moves into Apache owners. This unit closes only
+the original-capture preview gap; collection combination/playback, Designer,
+channel composition and idle TX remain open before full UIU-API-01 acceptance.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |
