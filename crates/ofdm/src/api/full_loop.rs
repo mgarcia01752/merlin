@@ -4,12 +4,14 @@
  */
 //! Independent full-loop public contracts over the existing downstream controlled job.
 mod control;
+mod instruments;
 mod observations;
 mod options;
 mod request;
 mod result;
 use super::*;
 pub use control::*;
+pub use instruments::*;
 pub use observations::*;
 pub use options::*;
 pub use request::*;

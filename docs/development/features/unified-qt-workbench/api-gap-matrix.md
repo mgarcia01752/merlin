@@ -53,6 +53,31 @@ infrastructure workaround.
 | [Receiver views](../../../../apps/qt/src/instruments/receiver/views.rs), [selection](../../../../apps/qt/src/instruments/receiver/selection.rs), [diagnostics](../../../../apps/qt/src/instruments/receiver/diagnostics.rs), [spectrum](../../../../apps/qt/src/instruments/spectrum/mod.rs) | Qt directly computes FFT/PSD, MER, response preparation and diagnostic selection | UIU-API-02: typed observations and bounded query/viewport inputs over an immutable run result; numerical preparation stays in DS science modules; API owns unit/reference-plane metadata. Qt maps normalized screen coordinates and labels. | Independent existing numerical vectors plus API equivalence to old supported observations, tap identity/paired lengths, PSD normalization, missing/invalid/partial states and finite output; Python exposes equivalent scientific data. |
 | [TX providers](../../../../apps/qt/src/instruments/transmitter), PLC/NCP messages, source/waveform timing, physical layout | High-level DS reports do not expose all TX previews, decoded messages or physical stage views used by existing UI | UIU-API-01 accepted: typed idle `TransmitterPreviewRequest`, one-shot control, owned actual TX samples/PSD and transmission symbol timing/window. UIU-API-02 still owns retained full-loop stage/message/physical observations; no blanket engine re-export. | No hidden run or reseeding, explicit stage/source status, supported DS PLC/NCP/profile controls unchanged, sample/timing/grid metadata and native Python parity. |
 | [US session](../../../../crates/ofdma/src/api/session.rs), `configure`, `preview`, `run_with_control`, measured admission | Existing accepted typed configuration, controlled batch report, selected QAM/spectrum taps and progress can be reused | UIU-API-04: audit each planned instrument against actual reports. Add only missing TX/channel/RX/response/soft/FEC observations as small upstream typed result/query APIs, backed by existing owners. No duplicate Qt simulation interface. | Synthetic/measured support states, config generations, limits and partial completion; actual US reference planes, selected tap bounds, no fabricated metrics; Rust/native Python report/error parity. |
+
+### UIU-API-02 numerical query unit
+
+`FullLoopResult::spectrum(FullLoopSpectrumQuery)` will use the existing waveform
+Welch owner on actual retained time samples. It will join only adjacent samples
+with matching original geometry, phase, reference and absolute origin, stop at
+gaps, bound work to 32 overlapping windows and return the existing 2048-bucket
+PSD contract with actual sample accounting. Frequency-domain stages will reject;
+they must never be transformed a second time or labelled as PSD.
+
+`FullLoopResult::response(FullLoopResponseQuery)` will distinguish configured
+channel transfer from an actual retained receiver estimate. The existing
+composition, layout and receiver diagnostic owners will supply all numerical
+values. Excluded carriers remain gaps; absent or incomplete receiver estimates
+reject instead of substituting supplied H. Full original 4K/8K response and
+impulse arrays are bounded backend results; Qt owns only screen projection.
+
+`FullLoopResult::llr_statistics(snapshot)` will summarize the actual retained
+payload LDPC-input values through the existing likelihood owner. It will retain
+coding order, phase, original offsets, sign convention and retained-versus-total
+counts, without changing or synthesizing decoder inputs. Python methods will
+return owned dictionaries with matching validation, releasing the GIL during
+numerical preparation. These operations implement the existing UIU-API-02 and
+REQ-UIU-02/07/09/16/17/18/19/20/24 contracts; source-catalog/sweep, selected-cell
+and message parity remain separate acceptance work within the same task.
 | [ResourcePlan](../../../../crates/ofdma/src/resources/grid.rs), [pilot patterns](../../../../crates/ofdma/src/resources/pilot_patterns.rs) | `Simulation::preview()` returns counts/plan summaries, not authoritative per-cell physical allocation | UIU-API-03: proposed `Simulation::resource_grid(&self, request: ResourceGridRequest) -> ApiResult<ResourceGridSnapshot>`. Request bounds symbol/physical-carrier windows and maximum returned cells/spans. Snapshot carries configuration generation, original coordinates, actual roles/pattern/grant/IUC identity and counts. Reuse scientific ResourcePlan, never reconstruct pilots in QML. | All accepted numerologies/patterns, independent literal pilot coordinates, guard/exclusion/assignment edges, invalid/oversized/out-of-window requests, no source/run/config mutation; native Python installed-wheel operation and same snapshot fields; Qt viewport geometry separately. |
 | [Native workbench loader](../../../../crates/pnm-input/src/workbench), [Qt project schema](../../../../apps/qt/src/workbench/project_file.rs), updater recovery | Existing schema 1/2 DS input API works; Qt alone owns some serialized validation and file lifecycle; no US project envelope | UIU-API-05: typed direction-tagged project envelope in native input adapter, DS legacy importer and US configuration/measured provenance project. Public byte admission/serialization/load/run through facade; Qt retains chooser, dirty guards, safe write/replacement and private recovery transport only. | Exact legacy DS semantics, UI→Rust/Python load and execute, Rust/Python→UI round trip, malformed/wrong-direction/oversized/hash mismatch/unsupported version, no mutation on failure, future fields/version policy; installed wheel tests. |
 

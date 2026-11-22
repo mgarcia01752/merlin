@@ -7,6 +7,9 @@
 use docsis_ofdm_fec::api::*;
 use serde_json::{json, Value};
 fn request() -> FullLoopRequest {
+    request_with_receiver(ReceiverMode::SuppliedChannel)
+}
+fn request_with_receiver(receiver_mode: ReceiverMode) -> FullLoopRequest {
     let profile = Dpd::from_bytes(
         &NamedCapture::new(
             "profile",
@@ -49,6 +52,7 @@ fn request() -> FullLoopRequest {
             response: None,
         },
         FullLoopOptions {
+            receiver_mode,
             duration_ms: 1,
             max_iterations: 10,
             max_runtime_ms: 60000,
@@ -56,6 +60,282 @@ fn request() -> FullLoopRequest {
         },
     )
     .unwrap()
+}
+
+#[test]
+fn passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner() {
+    use docsis_ofdm_fec::signal_processing::waveform::spectrum::estimate;
+    let result = request()
+        .with_observations(policy())
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    let query = FullLoopSpectrumQuery::default();
+    let view = result.spectrum(query).unwrap();
+    assert_eq!(view.stage, FullLoopStage::TxOverlap);
+    assert_eq!(view.power.reference_plane, "tx_post_overlap_before_channel");
+    assert_eq!(
+        view.power.density_units,
+        "normalized_sample_units_squared_per_hz"
+    );
+    assert_eq!(view.power.sample_rate_hz, 204800000);
+    assert_eq!(view.power.zero_frequency_hz, 631100000);
+    assert_eq!(view.power.spacing_hz, 25000);
+    assert_eq!(view.power.fft_samples, 8192);
+    assert_eq!(view.snapshots_used, 4);
+    assert_eq!(view.available_samples, 4 * 8704);
+    assert_eq!(view.used_samples, 8192 + (view.power.averages - 1) * 4096);
+    assert_eq!(view.power.averages, 7);
+    assert_eq!(view.power.buckets.len(), 2048);
+    let mut samples = Vec::new();
+    for snapshot in 0..view.snapshots_used {
+        for start in [0, 4096, 8192] {
+            let point = result
+                .stage(
+                    FullLoopStage::TxOverlap,
+                    snapshot,
+                    FullLoopStageViewport { start, count: 0 },
+                )
+                .unwrap();
+            if let FullLoopStageData::Iq(values) = point.data {
+                samples.extend(values);
+            } else {
+                panic!("Actual time samples must be retained I/Q");
+            }
+        }
+    }
+    let original = estimate(SubcarrierSpacing::Khz25, 631100000, &samples).unwrap();
+    assert!((view.power.equivalent_noise_bandwidth_hz - 37500.0).abs() < 1e-8);
+    for (actual, expected) in view
+        .power
+        .buckets
+        .iter()
+        .zip(original.buckets(0, 8192).unwrap())
+    {
+        assert_eq!(actual.first_bin, expected.first_bin);
+        assert_eq!(actual.last_bin, expected.last_bin);
+        assert_eq!(actual.minimum_db, expected.minimum_db);
+        assert_eq!(actual.maximum_db, expected.maximum_db);
+    }
+    let selected = result
+        .spectrum(FullLoopSpectrumQuery {
+            max_averages: 1,
+            start: 123,
+            count: 7,
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!(selected.snapshots_used, 1);
+    assert_eq!(selected.available_samples, 8192);
+    assert_eq!(selected.used_samples, 8192);
+    assert_eq!(selected.power.buckets[0].first_bin, 123);
+    assert_eq!(selected.power.buckets.last().unwrap().last_bin, 129);
+    let channel = result
+        .spectrum(FullLoopSpectrumQuery {
+            stage: FullLoopStage::ChannelOutput,
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!(
+        channel.power.reference_plane,
+        "channel_output_receiver_input"
+    );
+    assert!(channel.snapshots_used > 1);
+    assert_eq!(result.report().summary.comparison.bit_errors, 0);
+}
+
+#[test]
+fn response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values() {
+    use docsis_ofdm_fec::signal_processing::receiver::diagnostics::llr_statistics;
+    let result = request()
+        .with_observations(policy())
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    let response = result.response(FullLoopResponseQuery::default()).unwrap();
+    assert_eq!(
+        response.reference_plane,
+        "configured_channel_transfer_before_receiver"
+    );
+    assert_eq!(response.zero_frequency_hz, 631100000);
+    assert_eq!(response.spacing_hz, 25000);
+    assert_eq!(response.channel_symbol_index, None);
+    assert_eq!(response.diagnostics.real.len(), 8192);
+    assert_eq!(response.diagnostics.real[0], None);
+    assert!(response
+        .diagnostics
+        .real
+        .iter()
+        .flatten()
+        .all(|value| *value == 1.0));
+    assert!(response
+        .diagnostics
+        .gain_db
+        .iter()
+        .flatten()
+        .all(|value| *value == 0.0));
+    assert_eq!(response.diagnostics.peak_delay_microseconds, 0.0);
+    assert_eq!(response.diagnostics.delay_microseconds[4096], 0.0);
+    assert_eq!(response.diagnostics.available_bins, 7480);
+    let soft = result.llr_statistics(0).unwrap();
+    assert_eq!(soft.sign_convention, "log_p_zero_over_p_one");
+    assert_eq!(soft.element_start, 0);
+    assert_eq!(soft.total_elements, 16200);
+    let incomplete_estimate = request_with_receiver(ReceiverMode::PilotEstimated)
+        .with_observations(
+            FullLoopObservationPolicy::new(FullLoopObservationInput {
+                max_elements_per_event: 4096,
+                ..Default::default()
+            })
+            .unwrap(),
+        )
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    assert_eq!(
+        incomplete_estimate
+            .response(FullLoopResponseQuery {
+                source: FullLoopResponseSource::ReceiverEstimate { snapshot: 0 },
+                ..Default::default()
+            })
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::MissingCoverage
+    );
+    assert_eq!(soft.statistics.count, 16200);
+    let mut llrs = Vec::new();
+    for start in [0, 4096, 8192, 12288] {
+        let actual = result
+            .stage(
+                FullLoopStage::PayloadLdpcInput,
+                0,
+                FullLoopStageViewport { start, count: 0 },
+            )
+            .unwrap();
+        if let FullLoopStageData::Llrs(values) = actual.data {
+            llrs.extend(values);
+        } else {
+            panic!("Decoder input must retain actual soft values");
+        }
+    }
+    assert_eq!(
+        serde_json::to_value(&soft.statistics).unwrap(),
+        serde_json::to_value(llr_statistics(&llrs).unwrap()).unwrap()
+    );
+    assert_eq!(soft.statistics.histogram.iter().sum::<u64>(), 16200);
+    assert_eq!(
+        result
+            .response(FullLoopResponseQuery {
+                source: FullLoopResponseSource::ReceiverEstimate { snapshot: 0 },
+                ..Default::default()
+            })
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::MissingCoverage
+    );
+    let estimated = request_with_receiver(ReceiverMode::PilotEstimated)
+        .with_observations(policy())
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    let response = estimated
+        .response(FullLoopResponseQuery {
+            source: FullLoopResponseSource::ReceiverEstimate { snapshot: 0 },
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!(
+        response.reference_plane,
+        "receiver_estimated_channel_transfer"
+    );
+    assert!(response.channel_symbol_index.is_some());
+    assert_eq!(response.diagnostics.available_bins, 7480);
+    assert_eq!(response.diagnostics.real[0], None);
+}
+
+#[test]
+fn numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit() {
+    let request = request();
+    let disabled = request.run(&FullLoopControl::new()).unwrap();
+    assert_eq!(
+        disabled.spectrum(Default::default()).err().unwrap().code(),
+        ErrorCode::MissingCoverage
+    );
+    assert_eq!(
+        disabled.llr_statistics(0).err().unwrap().code(),
+        ErrorCode::MissingCoverage
+    );
+    let truncated = request
+        .with_observations(
+            FullLoopObservationPolicy::new(FullLoopObservationInput {
+                max_elements_per_event: 4096,
+                ..Default::default()
+            })
+            .unwrap(),
+        )
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    // Each TX event's second half is absent: adjacent retained events must not hide that gap.
+    assert!(truncated.spectrum(Default::default()).is_err());
+    let soft = truncated.llr_statistics(0).unwrap();
+    assert_eq!(soft.statistics.count, 4096);
+    assert_eq!(soft.total_elements, 16200);
+    let result = request
+        .with_observations(policy())
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    for query in [
+        FullLoopSpectrumQuery {
+            max_averages: 0,
+            ..Default::default()
+        },
+        FullLoopSpectrumQuery {
+            max_averages: 33,
+            ..Default::default()
+        },
+        FullLoopSpectrumQuery {
+            start: usize::MAX,
+            ..Default::default()
+        },
+        FullLoopSpectrumQuery {
+            count: usize::MAX,
+            ..Default::default()
+        },
+        FullLoopSpectrumQuery {
+            snapshot: usize::MAX,
+            ..Default::default()
+        },
+        FullLoopSpectrumQuery {
+            stage: FullLoopStage::RxFft,
+            ..Default::default()
+        },
+    ] {
+        assert!(result.spectrum(query).is_err());
+    }
+    for velocity_factor in [0.0, 1.01, f64::NAN, f64::INFINITY] {
+        assert!(result
+            .response(FullLoopResponseQuery {
+                velocity_factor,
+                ..Default::default()
+            })
+            .is_err());
+    }
+    assert!(result.llr_statistics(usize::MAX).is_err());
+    let before = serde_json::to_value(result.observation_stats()).unwrap();
+    let a = result.spectrum(Default::default()).unwrap();
+    let b = result.spectrum(Default::default()).unwrap();
+    assert_eq!(
+        serde_json::to_value(a).unwrap(),
+        serde_json::to_value(b).unwrap()
+    );
+    assert_eq!(
+        before,
+        serde_json::to_value(result.observation_stats()).unwrap()
+    );
 }
 fn policy() -> FullLoopObservationPolicy {
     FullLoopObservationPolicy::new(FullLoopObservationInput::default()).unwrap()

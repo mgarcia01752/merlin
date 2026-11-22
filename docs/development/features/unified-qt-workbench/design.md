@@ -559,6 +559,32 @@ bin/IQ equality, fourfold power anchor, phase metadata and enabled/disabled
 closed-loop equivalence. Known excluded FFT bins stay explicit zeros; unavailable
 history stays None, as defined by the existing frame owner.
 
+### UIU-API-02 passive numerical query unit
+
+Implement the [exact query plan](api-gap-matrix.md#uiu-api-02-numerical-query-unit)
+under `crates/ofdm/src/api/full_loop/instruments`, preserving retained ownership
+and all original scientific producers. `FullLoopResult::spectrum` accepts a typed
+time-stage/event/work/FFT-bin query. Reuse the existing normalized Welch owner;
+only matching adjacent absolute sample origins may join, with an explicit bound
+of 32 overlapping windows. Keep actual used/available samples and original
+reference/phase/grid metadata. Frequency-domain stages and missing windows reject.
+
+`response` selects configured composition H or an actual retained receiver H-hat
+event. Existing layout/composition and diagnostic owners supply masked original
+4K/8K response curves and signed band-limited impulse diagnostics. Missing or
+truncated H-hat cannot select supplied H as a fallback. `llr_statistics` delegates
+the actual retained coding-order LDPC-input window to the existing likelihood
+owner, with original total/offset/count and sign convention. Existing output
+models are re-exported only where appropriate; no whole engine modules are exposed.
+
+Native methods under `bindings/python/src/full_loop/instruments.rs` translate
+explicit parameters into typed queries, release the GIL and own returned data.
+Core tests compare actual sample/value queries with the existing numerical
+owners and independent tone/impulse/likelihood vectors. Validate missing/gapped/
+truncated data, work/viewport/nonfinite rejection, repeated immutable queries,
+real pilot-estimated H-hat and separate direct-process Rust/native results.
+Selected-cell/message and complete source-catalog/sweep parity keep API-02 open.
+
 ### Existing owner decisions
 
 | Inspected owner | Current contract/evidence | Gap | Decision and destination |

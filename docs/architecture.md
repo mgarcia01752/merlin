@@ -945,8 +945,8 @@ The implemented optional `native-input` feature exposes existing directional
 admission under `downstream::inputs` and `upstream::inputs`. Passive downstream
 `TransmissionConfiguration` and `SourceInput` validate timing/profile and exact-byte
 source choices without executing or mutating sessions; see the
-[typed contracts and parity](user/api/input-admission.md). Remaining editor,
-Designer and idle-preview gaps keep UIU-API-01 open; Qt adoption is separate.
+[typed contracts and parity](user/api/input-admission.md). Editor, Designer and
+idle-preview operations below pass UIU-API-01 acceptance; Qt adoption is separate.
 Original-capture `RxMer::preview` and `ChannelEstimate::preview` reuse the existing
 bounded measurement-view/projection owner, retaining exact full grids, provenance,
 nulls and explicit original H/RxMER units without source or session advancement.
@@ -990,7 +990,14 @@ The [stage contract](user/api/full-loop-observations.md) keeps actual phases,
 grids, references, unavailable history and explicit zeros distinct. A private
 frame-assembly notification exposes its original computed pilot vectors through
 the existing dispatcher; the original public assembly/no-op path and scientific
-outputs remain compatible. Numerical/message queries remain separate gates.
+outputs remain compatible. `api/full_loop/instruments` adds passive PSD, response
+and actual LDPC-input statistics through the existing waveform spectrum, channel
+composition/layout and receiver diagnostic owners. Exact contiguous sample origins
+bound PSD accumulation; missing history stops the span. Configured H and retained
+receiver H-hat use explicit separate sources/reference planes and original excluded
+gaps. Python converts owned results and releases the interpreter lock during work;
+neither adapter introduces scientific calculations. Selected-cell/message queries
+and complete catalog/sweep compatibility remain API-02 gates.
 
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 

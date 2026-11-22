@@ -495,3 +495,44 @@ request disposal. Accounted-byte overflow drops copies explicitly; it never turn
 missing observations into ideal data or alters completed scientific trials.
 Numerical/message queries and complete source-catalog/sweep compatibility remain
 open before API-02 completion and Qt migration.
+
+## UIU-API-02 passive numerical query unit
+
+[Exact source/test/wheel evidence](numerical-query-evidence.json),
+[query design](design.md#uiu-api-02-passive-numerical-query-unit),
+[paired contract](../../../user/api/full-loop-observations.md#passive-numerical-observations)
+and [executed cases](api-02-instrument-operation-test-results.json) trace through
+the [architecture](../../../architecture.md#unified-qt-public-api-boundary) to the
+still-open [parent task](../../checklist.md#task-uiu-api-02).
+
+Ten targeted Rust cases pass: six actual retention/numerical API cases and four
+independent PSD/impulse/likelihood owner cases. Actual retained post-overlap
+samples reproduce the existing normalized Welch result. Literal anchors include
+204.8 MHz sampling, 8192 FFT bins, 25 kHz spacing, seven averages over four
+contiguous 8704-sample events and 37.5 kHz Hann equivalent noise bandwidth (with
+floating-point tolerance). Original-bin viewports and output buckets preserve
+their exact extents. A deliberately truncated event leaves a real sample gap;
+the query rejects rather than joining across it. Frequency stages, excessive
+work, missing/outside/overflow selectors and invalid velocity reject.
+
+Configured unity H preserves 7480 observed bins, excluded gaps, zero dB gain and
+zero signed peak delay. A real pilot-estimated run supplies independent receiver
+H-hat; absent or incomplete estimates never fall back to configured H. Actual
+retained 16200-value payload LDPC-input statistics match the existing likelihood
+owner, retain coding order/sign and distinguish truncated retained count from
+original total. Repeated queries and edited native dictionaries do not mutate
+owned science or retention accounting. Facade/native-input and binding Clippy
+pass with warnings denied. Qt sources and original numerical producers are
+unchanged, so the prior built executable and retained-stage Qt acceptance remain
+applicable; this unit does not claim Qt adoption.
+
+The fresh installed Linux CPython 3.10 wheel passes all 89 native cases, including
+three new instrument cases and separate direct-Rust process references. The first
+full attempt passed the new cases but exposed an intermittent old upstream pause
+test: its 32-grant work could complete before Python requested its second pause.
+An isolated replay passed. Test-only work is now bounded to 128 grants with a
+fresh post-resume deadline; the fresh full run passes without engine changes.
+The exact matrix appends three Rust/three native rows (498/478 total), preserves
+all old rows/history and validates fresh compiled/installed signatures and actual
+successful cases. Selected-cell/message and complete source-catalog/sweep parity
+remain mandatory before API-02 completion and downstream Qt migration.

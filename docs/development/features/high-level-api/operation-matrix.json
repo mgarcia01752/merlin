@@ -5,9 +5,9 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "c097cb60410349ca8f1212d8d1f409152d678a9a plus exact stage-retention candidate manifest",
-    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-retention-native/native-exports.json",
-    "native_sha256": "c722941805d6a75ca307e079ac8f4bb51e1766a43261e855cfe5aad9898dce54",
+    "revision": "6449463d02cef9ace27eb431eee482aefd7aaf85 plus exact numerical-query candidate manifest",
+    "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-instrument-native-final/native-exports.json",
+    "native_sha256": "4ab03a20d63756ba1c3d79a573e7ac01cd300ecb0f46a8bb75744f61a3fb5730",
     "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
     "legacy_compatibility": {
       "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
@@ -65,7 +65,9 @@
     "status.uiu-api-02-request": "Implemented controlled-request unit, locally validated in Rust and Linux CPython 3.10. Parent UIU-API-02 remains unchecked for retained queries and complete source-catalog/sweep compatibility; no Qt adoption.",
     "evidence.uiu-api-02-retention": "../unified-qt-workbench/stage-retention-evidence.json, ../unified-qt-workbench/api-02-retention-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-retained-stage-unit: actual current source/wheel and exact named owner regressions; no exhaustive helper/getter claim.",
     "status.uiu-api-02-retention": "Implemented typed actual stage retention and bounded queries; local Rust/native/legacy Qt/analysis acceptance. Parent API-02 remains open for numerical/message and complete catalog/sweep parity; no Qt consumer migration.",
-    "errors.simulation": "Original typed SimulationError code/message from the named scientific/metadata owner. Native high-level operations preserve it through structured ApiError conversion; no string parsing or substitute calculation."
+    "errors.simulation": "Original typed SimulationError code/message from the named scientific/metadata owner. Native high-level operations preserve it through structured ApiError conversion; no string parsing or substitute calculation.",
+    "evidence.uiu-api-02-instruments": "../unified-qt-workbench/numerical-query-evidence.json, ../unified-qt-workbench/api-02-instrument-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-api-02-passive-numerical-query-unit: actual source/wheel and exact successful owner/scientific/native cases.",
+    "status.uiu-api-02-instruments": "Implemented passive actual time-sample PSD, configured H/retained receiver H-hat and coding-order LDPC LLR statistics. Selected-cell/message and complete source-catalog/sweep parity keep API-02 open; no Qt adoption."
   },
   "type_exports": {
     "downstream": [
@@ -731,6 +733,38 @@
       },
       {
         "export": "merlin::downstream::WaveformProbeGrid",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopLlrObservation",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopResponse",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopResponseQuery",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopResponseSource",
+        "kind": "enum"
+      },
+      {
+        "export": "merlin::downstream::FullLoopSpectrum",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopSpectrumQuery",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::LlrStatistics",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::ResponseDiagnostics",
         "kind": "struct"
       }
     ],
@@ -25959,6 +25993,198 @@
       },
       "evidence": "evidence.uiu-api-02-retention",
       "status": "status.uiu-api-02-retention"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::response",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn response( &self, query: FullLoopResponseQuery, ) -> ApiResult<FullLoopResponse>",
+        "source_file": "crates/ofdm/src/api/full_loop/instruments/response.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.response",
+        "declaration": "merlin.downstream.FullLoopResult.response"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopResponse>",
+        "scope": "Owned bounded passive numerical observations from original retained data and existing scientific owners; explicit reference planes, original coordinates, missing/gapped/truncated coverage and actual retained-vs-total counts."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit"
+        ],
+        "python": {
+          "status": "installed native numerical/bounds/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_absent_truncated_gapped_invalid_and_bounded_queries_preserve_science",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_direct_rust_process_spectrum_response_and_actual_llr_statistics_match",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_original_psd_response_and_likelihood_metadata_and_owned_results"
+          ],
+          "scope": "Original-grid/plane/normalization/sign/ownership anchors, actual PSD and soft values compared with existing independent numerical owners, real H-hat, rejected gaps/truncation/work/viewports and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-instruments",
+      "status": "status.uiu-api-02-instruments"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::spectrum",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn spectrum( &self, query: FullLoopSpectrumQuery, ) -> ApiResult<FullLoopSpectrum>",
+        "source_file": "crates/ofdm/src/api/full_loop/instruments/spectrum.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.spectrum",
+        "declaration": "merlin.downstream.FullLoopResult.spectrum"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopSpectrum>",
+        "scope": "Owned bounded passive numerical observations from original retained data and existing scientific owners; explicit reference planes, original coordinates, missing/gapped/truncated coverage and actual retained-vs-total counts."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit"
+        ],
+        "python": {
+          "status": "installed native numerical/bounds/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_absent_truncated_gapped_invalid_and_bounded_queries_preserve_science",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_direct_rust_process_spectrum_response_and_actual_llr_statistics_match",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_original_psd_response_and_likelihood_metadata_and_owned_results"
+          ],
+          "scope": "Original-grid/plane/normalization/sign/ownership anchors, actual PSD and soft values compared with existing independent numerical owners, real H-hat, rejected gaps/truncation/work/viewports and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-instruments",
+      "status": "status.uiu-api-02-instruments"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::llr_statistics",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn llr_statistics( &self, snapshot: usize, ) -> ApiResult<FullLoopLlrObservation>",
+        "source_file": "crates/ofdm/src/api/full_loop/instruments.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.llr_statistics",
+        "declaration": "merlin.downstream.FullLoopResult.llr_statistics"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopLlrObservation>",
+        "scope": "Owned bounded passive numerical observations from original retained data and existing scientific owners; explicit reference planes, original coordinates, missing/gapped/truncated coverage and actual retained-vs-total counts."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit"
+        ],
+        "python": {
+          "status": "installed native numerical/bounds/direct-process cases",
+          "cases": [
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_absent_truncated_gapped_invalid_and_bounded_queries_preserve_science",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_direct_rust_process_spectrum_response_and_actual_llr_statistics_match",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_original_psd_response_and_likelihood_metadata_and_owned_results"
+          ],
+          "scope": "Original-grid/plane/normalization/sign/ownership anchors, actual PSD and soft values compared with existing independent numerical owners, real H-hat, rejected gaps/truncation/work/viewports and separate direct Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-instruments",
+      "status": "status.uiu-api-02-instruments"
     }
   ],
   "executed_records": [
@@ -25970,7 +26196,8 @@
     "docs/development/features/high-level-api/python-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -55393,6 +55620,216 @@
       },
       "evidence": "evidence.uiu-api-02-retention",
       "status": "status.uiu-api-02-retention"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.llr_statistics",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/instruments.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn llr_statistics( &self, snapshot: usize, ) -> ApiResult<FullLoopLlrObservation>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::llr_statistics",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "llr_statistics",
+        "kind": "method",
+        "signature": "(self, /, snapshot=0)",
+        "declaration": "FullLoopResult.llr_statistics"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned passive actual PSD/response/LDPC LLR diagnostics with original reference/phase/grid/count metadata; no hidden execution, reconstructed history or fallback H-hat."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_absent_truncated_gapped_invalid_and_bounded_queries_preserve_science",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_direct_rust_process_spectrum_response_and_actual_llr_statistics_match",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_original_psd_response_and_likelihood_metadata_and_owned_results"
+          ],
+          "scope": "Fresh direct Rust-process observations plus independent anchors, explicit missing/gap/limit errors, immutable owned results and preserved native regressions."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-instruments",
+      "status": "status.uiu-api-02-instruments"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.response",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/instruments.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn response( &self, query: FullLoopResponseQuery, ) -> ApiResult<FullLoopResponse>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::response",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "response",
+        "kind": "method",
+        "signature": "(self, /, source='configured', snapshot=0, velocity_factor=0.87)",
+        "declaration": "FullLoopResult.response"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned passive actual PSD/response/LDPC LLR diagnostics with original reference/phase/grid/count metadata; no hidden execution, reconstructed history or fallback H-hat."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_absent_truncated_gapped_invalid_and_bounded_queries_preserve_science",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_direct_rust_process_spectrum_response_and_actual_llr_statistics_match",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_original_psd_response_and_likelihood_metadata_and_owned_results"
+          ],
+          "scope": "Fresh direct Rust-process observations plus independent anchors, explicit missing/gap/limit errors, immutable owned results and preserved native regressions."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-instruments",
+      "status": "status.uiu-api-02-instruments"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.spectrum",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/instruments.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn spectrum( &self, query: FullLoopSpectrumQuery, ) -> ApiResult<FullLoopSpectrum>",
+        "mapping": "Checked primitive parameters construct typed public Rust queries; all numerical work and validation remain in those owners, with the GIL released. Return dictionaries own values and preserve typed metadata.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::spectrum",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "spectrum",
+        "kind": "method",
+        "signature": "(self, /, stage='tx.overlap_add.samples', snapshot=0, max_averages=32, start=0, count=0)",
+        "declaration": "FullLoopResult.spectrum"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.report",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned passive actual PSD/response/LDPC LLR diagnostics with original reference/phase/grid/count metadata; no hidden execution, reconstructed history or fallback H-hat."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-API-02"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::passive_spectrum_matches_original_samples_and_existing_normalized_welch_owner",
+          "crates/ofdm/tests/api_full_loop_observations.rs::response_and_llr_queries_preserve_original_masks_planes_and_actual_coding_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::numerical_query_limits_gaps_missing_and_truncated_observations_remain_explicit",
+          "crates/ofdm/tests/api_full_loop_observations.rs::actual_typed_retention_preserves_science_and_literal_source_grid_pilot_and_phase_anchors",
+          "crates/ofdm/tests/api_full_loop_observations.rs::byte_exhaustion_and_event_caps_never_change_completed_science",
+          "crates/ofdm/tests/api_full_loop_observations.rs::policy_and_query_bounds_reject_without_mutating_retained_originals",
+          "crates/ofdm/tests/receiver_diagnostics.rs::impulse_delay_and_gain_use_independent_direct_tap_vector",
+          "crates/ofdm/tests/receiver_diagnostics.rs::llr_statistics_preserve_actual_values_and_empty_observations",
+          "crates/ofdm/tests/waveform_spectrum.rs::hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings",
+          "crates/ofdm/tests/waveform_spectrum.rs::silence_and_nonfinite_inputs_remain_explicit"
+        ],
+        "python": {
+          "status": "installed native signatures and executed numerical queries",
+          "cases": [
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_absent_truncated_gapped_invalid_and_bounded_queries_preserve_science",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_direct_rust_process_spectrum_response_and_actual_llr_statistics_match",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_original_psd_response_and_likelihood_metadata_and_owned_results"
+          ],
+          "scope": "Fresh direct Rust-process observations plus independent anchors, explicit missing/gap/limit errors, immutable owned results and preserved native regressions."
+        }
+      },
+      "evidence": "evidence.uiu-api-02-instruments",
+      "status": "status.uiu-api-02-instruments"
     }
   ],
   "native_type_exports": {
@@ -56182,6 +56619,18 @@
       "revision": "dbe4ffe9a279941e4ebc1cd612ac70b6bda961cf plus exact controlled-request candidate manifest",
       "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-request-native/native-exports.json",
       "native_sha256": "85613b5572d1f9a054b50e76b0803bac851db4c453659b5e1997962a3190c715",
+      "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
+      "legacy_compatibility": {
+        "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",
+        "preserved_class_exports": 59,
+        "scope": "Every old root constructor/alias/member kind/signature preserved; additive members allowed."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "c097cb60410349ca8f1212d8d1f409152d678a9a plus exact stage-retention candidate manifest",
+      "inventory_command": "Installed private venv python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/api-02-retention-native/native-exports.json",
+      "native_sha256": "c722941805d6a75ca307e079ac8f4bb51e1766a43261e855cfe5aad9898dce54",
       "scope": "Installed native MERLIN/direct Rust process parity; no external interoperability claim.",
       "legacy_compatibility": {
         "inventory_sha256": "6ab459ef2b3ccdd7b89b32025a79ecc4769d7f69d5bb60df185ad81aebedabff",

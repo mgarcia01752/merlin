@@ -55,10 +55,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )?)?
         .run(&FullLoopControl::new())?;
     let stages = json!({"source":observed.stage(FullLoopStage::SourcePayload,0,FullLoopStageViewport{start:0,count:32})?,"physical":observed.stage(FullLoopStage::PhysicalBins,0,FullLoopStageViewport{start:0,count:16})?,"pilots":observed.stage(FullLoopStage::ContinuousPilots,0,FullLoopStageViewport{start:0,count:5})?,"waveform":observed.stage(FullLoopStage::TxOverlap,0,FullLoopStageViewport{start:7,count:4})?});
+    let instruments = json!({
+        "spectrum": observed.spectrum(FullLoopSpectrumQuery {
+            start: 123, count: 7, ..Default::default()
+        })?,
+        "response": observed.response(FullLoopResponseQuery::default())?,
+        "llr": observed.llr_statistics(0)?,
+    });
     println!(
         "{}",
         serde_json::to_string(
-            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages})
+            &json!({"status":report.status,"summary":report.summary,"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages,"instruments":instruments})
         )?
     );
     Ok(())

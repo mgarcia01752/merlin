@@ -4,6 +4,7 @@
  */
 //! Native ownership/transport and bounded dispatch over public downstream full-loop contracts.
 mod control;
+mod instruments;
 mod observations;
 mod options;
 mod request;

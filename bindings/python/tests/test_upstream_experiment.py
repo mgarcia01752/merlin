@@ -102,7 +102,9 @@ class NativeTests(unittest.TestCase):
 
     def test_pause_resume_and_cancel_from_pause(self) -> None:
         """Acknowledged pause retains native work and cancellation wakes it."""
-        sim = upstream.Simulation(upstream.ExperimentOptions(grants=32, chunk_samples=127))
+        # Keep real work pending after the first completed grant so a fast native
+        # worker cannot finish the entire batch before Python requests pause.
+        sim = upstream.Simulation(upstream.ExperimentOptions(grants=128, chunk_samples=127))
         sim.configure(configuration())
         control = upstream.RunControl()
         control.pause()
@@ -117,6 +119,7 @@ class NativeTests(unittest.TestCase):
         time.sleep(0.05)
         self.assertEqual(control.progress_json(), frozen)
         control.resume()
+        deadline = time.monotonic() + 10
         while json.loads(control.progress_json())["compared_bits"] == 0:
             self.assertLess(time.monotonic(), deadline)
             time.sleep(0.001)

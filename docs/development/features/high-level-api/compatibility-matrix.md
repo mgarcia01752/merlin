@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-495 explicit public Rust operations and 475 installed native Python entries with
+498 explicit public Rust operations and 478 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current native operation acceptance](../unified-qt-workbench/stage-retention-evidence.json)
+is a readable subset of this one matrix. [Current native operation acceptance](../unified-qt-workbench/numerical-query-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 106 directional/common class exports and 59 preserved legacy root exports. Named
 owner regressions establish behavioral scope; metadata alone is not scientific
@@ -32,6 +32,12 @@ adds 14 Rust/10 native rows with [actual executed cases](../unified-qt-workbench
 and an 86-case installed wheel. Typed actual data, phase/grid/reference metadata,
 owner byte budgets and bounded windows pass; numerical/message and catalog/sweep
 gates remain open. Old rows and historical records are preserved.
+
+The [passive numerical query unit](../unified-qt-workbench/validation.md#uiu-api-02-passive-numerical-query-unit)
+adds three Rust/three native rows with [actual executed cases](../unified-qt-workbench/api-02-instrument-operation-test-results.json)
+and an 89-case installed wheel. Existing PSD/response/likelihood owners, original
+reference planes and explicit missing/gapped/truncated states pass local paired
+acceptance. Selected-cell/message and complete catalog/sweep gates remain open.
 
 The [operation run records](operation-test-results.json) add a targeted measured-plan
 roundtrip and retain exact named historical MERLIN component cases. The

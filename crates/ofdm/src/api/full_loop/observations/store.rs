@@ -54,6 +54,15 @@ pub(in crate::api::full_loop) struct RetainedStages {
     budget: usize,
 }
 impl RetainedStages {
+    pub(in crate::api::full_loop) fn events(
+        &self,
+        stage: FullLoopStage,
+    ) -> ApiResult<&[FullLoopStageSnapshot]> {
+        self.events.get(&stage).map(Vec::as_slice).ok_or_else(|| {
+            ApiError::new(ErrorCode::MissingCoverage, "No actual stage data retained")
+        })
+    }
+
     pub(in crate::api::full_loop) fn new(budget: usize) -> Self {
         Self {
             budget,

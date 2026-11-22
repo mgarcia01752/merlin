@@ -76,9 +76,48 @@ window = result.stage('tx.overlap_add.samples', start=7, count=256)
 print(window['element_start'], window['context']['sample_start_index'])
 ```
 
-This ownership/query unit supplies actual raw observations. Numerical spectrum/
-response/soft-decision preparation, decoded-message queries and full source-catalog/
-sweep compatibility remain separate UIU-API-02 acceptance gates before Qt adoption.
+The passive numerical operations below reuse those actual observations and existing
+scientific owners. Selected-cell/soft-decision views, decoded-message queries and
+full source-catalog/sweep compatibility remain UIU-API-02 acceptance gates before
+Qt adoption.
+
+## Passive numerical observations
+
+| Rust operation | Python operation | Result and limits |
+| --- | --- | --- |
+| `result.spectrum(FullLoopSpectrumQuery { ..Default::default() })` | `result.spectrum()` | Original time samples, periodic Hann Welch PSD, at most 32 overlapping windows and 2048 min/max buckets. |
+| `result.response(FullLoopResponseQuery::default())` | `result.response()` | Configured transfer, original 4K/8K grid with excluded gaps and band-limited impulse diagnostics. |
+| `result.response(FullLoopResponseQuery { source: FullLoopResponseSource::ReceiverEstimate { snapshot: 0 }, ..Default::default() })` | `result.response("receiver_estimate", snapshot=0)` | Actual retained receiver H-hat; absent or incomplete estimates reject. |
+| `result.llr_statistics(0)` | `result.llr_statistics(snapshot=0)` | Actual retained payload LDPC-input statistics and 41-bin histogram, original coding-order context, offset and total. |
+
+PSD `stage` selects a registered time boundary; the default is
+`tx.overlap_add.samples`. `snapshot` selects its first retained event. Only actual
+adjacent overlap-output, channel or framed events with matching phase, geometry,
+reference, identities and exact absolute sample origin may join. Missing samples
+stop accumulation. Fewer than one FFT window rejects. `max_averages` is 1..32;
+`start`/`count` address original centered FFT bins, with count zero selecting the
+remaining span. Frequency-domain stages reject; no FFT is applied to FFT bins.
+`available_samples` counts the bounded contiguous samples collected,
+`used_samples` excludes an incomplete trailing window, and `snapshots_used`
+counts actual contributing events. Powers remain normalized sample units squared
+per Hz; zero-power buckets retain unavailable dB extrema. The existing
+`TransmitterSpectrum` DTO also carries this waveform PSD metadata for receiver
+boundaries, whose `reference_plane` explicitly names the selected source.
+
+Configured transfer reuses the accepted channel composition plan before receiver
+correction. It remains separate from the original captured H and is not a measured
+continuous-filter output. Both response sources return dimensionless H curves;
+impulse power is relative to its peak. `velocity_factor` defaults to the existing
+0.87 convention and must be finite in (0,1]. Path distances assume uniform cable;
+the result does not establish reach or guaranteed echo protection. Python accepts
+exactly `configured` (snapshot zero) or `receiver_estimate`.
+
+LLR statistics preserve `log P(0)/P(1)`: positive favors zero. The retained count
+may be smaller than `total_elements` when the explicit retention policy truncated
+an event. These statistics describe that retained window, not all words or the
+run's decoder performance. No query changes inputs, retention counts, source
+state or completed science. Rust returns owned typed results; Python returns
+independent dictionaries and releases the GIL during numerical preparation.
 
 Traceability: [architecture](../../architecture.md#unified-qt-public-api-boundary),
 [requirements](../../requirements.md#req-uiu-16),
