@@ -554,3 +554,46 @@ fn upstream_facade_retains_actual_receiver_estimates_through_independent_owner()
         "received_pilot_effective_c_times_h"
     );
 }
+
+#[test]
+fn upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention() {
+    const RETAINED_CELL_BUDGET: usize = 3;
+    const RETAINED_WORD_BUDGET: usize = 1;
+    const FIRST_WORD_INPUT_LLRS: usize = 1120;
+    let soft = upstream::SoftObservationPolicy::new(
+        RETAINED_CELL_BUDGET,
+        RETAINED_WORD_BUDGET,
+        FIRST_WORD_INPUT_LLRS,
+    )
+    .unwrap();
+    let mut simulation = upstream::Simulation::new(Default::default()).unwrap();
+    simulation
+        .configure_json(include_bytes!(
+            "../../../examples/cli/upstream/us-50khz.json"
+        ))
+        .unwrap();
+    simulation
+        .set_receiver_observation_policy(
+            upstream::ReceiverObservationPolicy::default().with_soft_metrics(soft),
+        )
+        .unwrap();
+    let report = simulation.run().unwrap();
+    assert!(report.reference_recovered);
+    assert_eq!(report.receiver_observations().retained_frames, 0);
+    assert_eq!(
+        report.soft_observations().retained_cells,
+        RETAINED_CELL_BUDGET
+    );
+    assert_eq!(
+        report.soft_cells(Default::default()).unwrap().cells.len(),
+        RETAINED_CELL_BUDGET
+    );
+    assert_eq!(
+        report
+            .soft_word(Default::default())
+            .unwrap()
+            .input_llrs
+            .len(),
+        FIRST_WORD_INPUT_LLRS
+    );
+}

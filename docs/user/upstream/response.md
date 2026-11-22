@@ -91,6 +91,6 @@ validation and errors. Invalid windows, exhausted budgets, nonfinite arithmetic
 and unsupported static-H assumptions fail explicitly.
 
 See [channel reference planes](channel.md), [measured inputs](measurements.md)
-and [receiver separation](receiver.md). Actual pilot-estimated C×H and soft
-instrumentation require their own retained receiver observations; they are not
+and [receiver separation](receiver.md). [Actual pilot-estimated C×H](receiver-estimates.md)
+and [soft instrumentation](soft-observations.md) use their own retained receiver observations; they are not
 reconstructed through this configured diagnostic.

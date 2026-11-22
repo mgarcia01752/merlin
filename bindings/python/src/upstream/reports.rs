@@ -10,6 +10,7 @@
 mod receiver_observations;
 mod recovery;
 mod response;
+mod soft;
 use super::{api, configuration::tap, error};
 use api::ReportJson;
 use pyo3::prelude::*;

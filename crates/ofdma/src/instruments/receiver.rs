@@ -31,6 +31,8 @@ const SCALARS_PER_COMPLEX_ESTIMATE: usize = 2;
 pub struct ReceiverObservationPolicy {
     maximum_frames: usize,
     maximum_scalar_slots: usize,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    soft_metrics: Option<super::SoftObservationPolicy>,
 }
 
 /// Owned policy projection, separate from scientific receiver configuration.
@@ -41,6 +43,9 @@ pub struct ReceiverObservationPolicyInfo {
     pub maximum_frames: usize,
     /// Aggregate reserved Cartesian scalar slots, including unavailable bins.
     pub maximum_scalar_slots: usize,
+    /// Independent optional soft budgets; absent when soft retention is disabled.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub soft_metrics: Option<super::SoftObservationPolicyInfo>,
 }
 
 impl ReceiverObservationPolicy {
@@ -63,6 +68,7 @@ impl ReceiverObservationPolicy {
         Ok(Self {
             maximum_frames,
             maximum_scalar_slots,
+            soft_metrics: None,
         })
     }
 
@@ -73,7 +79,25 @@ impl ReceiverObservationPolicy {
         ReceiverObservationPolicyInfo {
             maximum_frames: self.maximum_frames,
             maximum_scalar_slots: self.maximum_scalar_slots,
+            soft_metrics: self.soft_metrics.map(|policy| policy.info()),
         }
+    }
+
+    /// Composes independent optional soft budgets without changing estimate retention.
+    /// # Arguments
+    /// * `policy` - Validated immutable computed-cell/completed-word policy.
+    /// # Returns
+    /// A new owned policy, enabling soft-only observation when estimate retention is disabled.
+    /// An all-zero soft policy removes soft retention; the original value remains unchanged.
+    pub fn with_soft_metrics(mut self, policy: super::SoftObservationPolicy) -> Self {
+        let info = policy.info();
+        self.soft_metrics = if info.maximum_cells == 0 && info.maximum_words == 0 {
+            // Preserve the existing omitted-disabled JSON contract.
+            None
+        } else {
+            Some(policy)
+        };
+        self
     }
 
     /// Checks that an enabled policy can retain one complete estimate in `mode`.
@@ -199,8 +223,10 @@ pub(crate) struct ReceiverEstimateStore {
     completed_frames: usize,
     used_scalar_slots: usize,
     // Serialize immutable shared contents without enabling serde's global Arc feature.
-    #[serde(serialize_with = "serialize_frames")]
+    #[serde(serialize_with = "serialize_records")]
     frames: Vec<Arc<EstimateFrame>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) soft: Option<super::soft::store::SoftStore>,
 }
 
 impl ReceiverEstimateStore {
@@ -208,7 +234,7 @@ impl ReceiverEstimateStore {
     /// # Returns
     /// None for disabled retention; no estimate buffers are allocated.
     pub(crate) fn new(policy: ReceiverObservationPolicy) -> Option<Self> {
-        if policy.maximum_frames == 0 {
+        if policy.maximum_frames == 0 && policy.soft_metrics.is_none() {
             return None;
         }
         Some(Self {
@@ -216,6 +242,7 @@ impl ReceiverEstimateStore {
             completed_frames: 0,
             used_scalar_slots: 0,
             frames: Vec::new(),
+            soft: policy.soft_metrics.map(super::soft::store::SoftStore::new),
         })
     }
 
@@ -234,6 +261,9 @@ impl ReceiverEstimateStore {
         estimator: &Estimator,
         estimates: Vec<Option<Iq>>,
     ) {
+        if self.policy.maximum_frames == 0 {
+            return;
+        }
         self.completed_frames += 1;
         let mode = config.waveform().numerology();
         let cost = scalar_cost(mode);
@@ -360,8 +390,16 @@ fn frame_identity(
     }
 }
 
-fn serialize_frames<S: Serializer>(
-    frames: &[Arc<EstimateFrame>],
+/// Serializes actual immutable shared observation records without exposing Arc ownership.
+/// # Arguments
+/// * `frames` - Bounded actual retained values; concrete estimate/cell/word consumers share this adapter.
+/// * `serializer` - Existing Rust serialization destination; no scientific processing occurs.
+/// # Returns
+/// Serialized sequence with unchanged record order and values.
+/// # Errors
+/// Propagates destination/record serialization failures without mutating observations.
+pub(super) fn serialize_records<Value: Serialize, S: Serializer>(
+    frames: &[Arc<Value>],
     serializer: S,
 ) -> Result<S::Ok, S::Error> {
     let mut sequence = serializer.serialize_seq(Some(frames.len()))?;

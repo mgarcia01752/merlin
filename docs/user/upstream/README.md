@@ -9,6 +9,7 @@ The independent upstream Rust engine has local synthetic backend acceptance:
 - [Configured response and periodic impulse](response.md).
 - [Received-only receiver](receiver.md).
 - [Actual received-pilot estimate retention](receiver-estimates.md).
+- [Actual receiver soft observations](soft-observations.md).
 - [Bounded sessions and reports](session.md).
 - [Recovery and decoder views](recovery.md).
 - [Measurement admission](measurements.md).

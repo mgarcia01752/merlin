@@ -16,9 +16,13 @@ pub use crate::instruments::{
     PeriodicImpulse, PeriodicImpulsePoint, QamSnapshot, ReceiverEstimateIdentity,
     ReceiverEstimatePoint, ReceiverEstimateRequest, ReceiverEstimateSnapshot,
     ReceiverObservationPolicy, ReceiverObservationPolicyInfo, ReceiverObservationSummary,
-    SpectrumSnapshot, Tap, VerificationSnapshot, MAX_CONFIGURED_IMPULSE_SAMPLES,
+    SoftCellPage, SoftCellRequest, SoftCellSnapshot, SoftObservationPolicy,
+    SoftObservationPolicyInfo, SoftObservationSummary, SoftWordIdentity, SoftWordRequest,
+    SoftWordSnapshot, SpectrumSnapshot, Tap, VerificationSnapshot, MAX_CONFIGURED_IMPULSE_SAMPLES,
     MAX_CONFIGURED_RESPONSE_POINTS, MAX_FEC_PAGE_DECISION_BITS, MAX_FEC_PAGE_WORDS,
     MAX_RECEIVER_ESTIMATE_FRAMES, MAX_RECEIVER_ESTIMATE_POINTS, MAX_RECEIVER_OBSERVATION_SCALARS,
+    MAX_RECEIVER_SOFT_CELLS, MAX_RECEIVER_SOFT_WORDS, MAX_RECEIVER_SOFT_WORD_LLRS,
+    MAX_SOFT_CELL_PAGE_CELLS, MAX_SOFT_CELL_PAGE_LLRS, MAX_SOFT_WORD_QUERY_LLRS,
 };
 pub use crate::measurements::{
     PowerSnapshot, PreEqEvent, PreEqOperation, PreEqPlayback, ProbeReference, RxmerPlayback,

@@ -81,4 +81,5 @@ the optional receiver history field.
 
 See the [separate Rust-process example](../../../crates/ofdma/examples/upstream_receiver_estimates.rs)
 and [implementation record](../../development/features/unified-qt-workbench/design.md#uiu-api-04-received-pilot-estimate-retention-unit).
-Soft-metric retention and Qt viewer integration remain separate work.
+[Actual soft-metric retention](soft-observations.md) has separate policies and
+scoped acceptance. Qt viewer integration remains a later task.

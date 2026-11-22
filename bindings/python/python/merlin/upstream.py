@@ -16,6 +16,7 @@ SyntheticGrant = _upstream.SyntheticGrant
 UsConfiguration = _upstream.UsConfiguration
 ReceiverConfig = _upstream.ReceiverConfig
 ReceiverObservationPolicy = _upstream.ReceiverObservationPolicy
+SoftObservationPolicy = _upstream.SoftObservationPolicy
 PreEqBank = _upstream.PreEqBank
 ChannelConfig = _upstream.ChannelConfig
 ExperimentConfig = _upstream.ExperimentConfig
@@ -36,4 +37,4 @@ ConfigurationDocument = _upstream.ConfigurationDocument
 ErrorCode = _upstream.ErrorCode
 __version__ = _upstream.__version__
 
-__all__ = ['ApiError', 'UcdCapture', 'Waveform', 'PreEqCapture', 'RxmerCapture', 'Minislot', 'Profile', 'SyntheticGrant', 'UsConfiguration', 'ReceiverConfig', 'ReceiverObservationPolicy', 'PreEqBank', 'ChannelConfig', 'ExperimentConfig', 'ExperimentOptions', 'ExperimentPreview', 'RunControl', 'QamSnapshot', 'SpectrumSnapshot', 'ResourceGridSnapshot', 'BatchReport', 'Simulation', 'SyntheticRxmer', 'RxmerPlayback', 'ProbeReference', 'PreEqEvent', 'PreEqPlayback', 'ConfigurationDocument', 'ErrorCode', '__version__']
+__all__ = ['ApiError', 'UcdCapture', 'Waveform', 'PreEqCapture', 'RxmerCapture', 'Minislot', 'Profile', 'SyntheticGrant', 'UsConfiguration', 'ReceiverConfig', 'ReceiverObservationPolicy', 'SoftObservationPolicy', 'PreEqBank', 'ChannelConfig', 'ExperimentConfig', 'ExperimentOptions', 'ExperimentPreview', 'RunControl', 'QamSnapshot', 'SpectrumSnapshot', 'ResourceGridSnapshot', 'BatchReport', 'Simulation', 'SyntheticRxmer', 'RxmerPlayback', 'ProbeReference', 'PreEqEvent', 'PreEqPlayback', 'ConfigurationDocument', 'ErrorCode', '__version__']

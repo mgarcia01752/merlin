@@ -1,0 +1,490 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "exit_code": 0,
+      "passed": 59,
+      "cases": [
+        {
+          "test_file": "crates/ofdma/tests/api_soft_observations.rs",
+          "qualified_test_case": "actual_cells_preserve_independent_bpsk_scale_mask_positions_and_exact_ldpc_input_both_modes"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_soft_observations.rs",
+          "qualified_test_case": "actual_soft_words_retain_long_medium_short_dimensions_shortening_and_failed_outcomes"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_soft_observations.rs",
+          "qualified_test_case": "independent_budgets_pages_and_owned_results_preserve_original_identities"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_soft_observations.rs",
+          "qualified_test_case": "optional_soft_policy_preserves_defaults_estimate_budgets_and_actual_noisy_science"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_soft_observations.rs",
+          "qualified_test_case": "invalid_retention_budgets_and_never_started_runs_preserve_unavailable_states"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_soft_observations.rs",
+          "qualified_test_case": "a_later_complete_word_can_fit_without_renumbering_original_coded_positions"
+        },
+        {
+          "test_file": "crates/ofdma/src/instruments/receiver_tests.rs",
+          "qualified_test_case": "invalid_transaction_and_mid_frame_cancel_preserve_previous_completed_estimate"
+        },
+        {
+          "test_file": "crates/ofdma/src/instruments/receiver_tests.rs",
+          "qualified_test_case": "finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_estimates"
+        },
+        {
+          "test_file": "crates/ofdma/src/instruments/receiver_tests.rs",
+          "qualified_test_case": "soft_cancellation_keeps_completed_words_and_computed_cells_without_exporting_partial_word"
+        },
+        {
+          "test_file": "crates/ofdma/src/instruments/receiver_tests.rs",
+          "qualified_test_case": "soft_missing_frame_finish_records_actual_erasure_metrics_and_failed_codec_outcomes"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_receiver_estimates.rs",
+          "qualified_test_case": "both_modes_retain_actual_complex_effective_response_and_original_physical_holes"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_receiver_estimates.rs",
+          "qualified_test_case": "observation_enabled_exhausted_and_disabled_preserve_actual_noisy_decisions_and_default_json"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_receiver_estimates.rs",
+          "qualified_test_case": "aggregate_frame_and_scalar_limits_span_grants_without_renumbering_history"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_receiver_estimates.rs",
+          "qualified_test_case": "invalid_policy_and_numerology_replacement_are_atomic_and_do_not_mint_generation"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_receiver_estimates.rs",
+          "qualified_test_case": "window_budgets_and_owned_results_preserve_full_original_optional_estimates"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_receiver_estimates.rs",
+          "qualified_test_case": "zero_observed_channel_is_some_zero_while_unused_bins_and_never_started_frames_are_absent"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_recovery_views.rs",
+          "qualified_test_case": "independent_short_medium_long_selection_offsets_and_original_decisions_are_owned_and_bounded"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_recovery_views.rs",
+          "qualified_test_case": "both_numerologies_preserve_scalars_across_pages_continuations_empty_end_and_invalid_queries"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_recovery_views.rs",
+          "qualified_test_case": "pre_cancel_and_no_transmission_preserve_empty_actual_outcomes_and_absent_metrics"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_recovery_views.rs",
+          "qualified_test_case": "actual_cancellation_retains_completed_decoder_words_and_unverified_source_denominators"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_recovery_views.rs",
+          "qualified_test_case": "projection_fixtures_keep_flags_independent_and_reject_inconsistent_dimensions_without_panics"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_recovery_views.rs",
+          "qualified_test_case": "actual_destructive_channel_preserves_real_failed_outcomes_and_source_errors"
+        },
+        {
+          "test_file": "crates/ofdma/tests/api_recovery_views.rs",
+          "qualified_test_case": "original_grant_ids_and_continuous_source_positions_survive_paging_across_grants"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "both_numerologies_high_level_exact_source_coverage_and_owned_results"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "failed_configuration_and_budget_changes_preserve_accepted_settings"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "pre_cancel_does_not_generate_or_claim_recovery"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "asynchronous_cancel_retains_actual_completed_prefix"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "passive_qam_sa_queries_and_retention_leave_all_science_unchanged"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "synthetic_gain_is_recovered_from_pilots_but_destructive_channel_is_not_success"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "pause_resume_preserves_noisy_pipeline_and_cancel_wakes_paused_worker"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "synthetic_measurement_modes_preflight_all_banks_and_preserve_chunk_invariance"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "zero_loading_requires_zero_pilot_pattern_and_has_no_payload_recovery"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "explicit_guards_preserve_useful_timing_and_residual_guard_rng_policy"
+        },
+        {
+          "test_file": "crates/ofdma/tests/experiment.rs",
+          "qualified_test_case": "acknowledged_paused_time_does_not_consume_active_runtime_budget"
+        },
+        {
+          "test_file": "crates/ofdma/tests/qam_mapping.rs",
+          "qualified_test_case": "independent_annex_labels_and_every_order_mean_energy"
+        },
+        {
+          "test_file": "crates/ofdma/tests/qam_mapping.rs",
+          "qualified_test_case": "maxlog_reference_variance_ties_erasures_and_finite_rejection"
+        },
+        {
+          "test_file": "crates/ofdma/tests/randomization.rs",
+          "qualified_test_case": "literal_mask_and_independent_grant_soft_inverse"
+        },
+        {
+          "test_file": "crates/ofdma/tests/rx_estimation.rs",
+          "qualified_test_case": "literal_flat_complex_ls_zero_forcing_and_unobserved_failure"
+        },
+        {
+          "test_file": "crates/ofdma/tests/rx_estimation.rs",
+          "qualified_test_case": "linear_brackets_gaps_and_within_frame_step_never_use_hidden_truth"
+        },
+        {
+          "test_file": "crates/ofdma/tests/rx_framing.rs",
+          "qualified_test_case": "cp_gap_is_discarded_but_useful_gap_is_missing_without_sliding"
+        },
+        {
+          "test_file": "crates/ofdma/tests/rx_framing.rs",
+          "qualified_test_case": "cancellation_mid_frame_returns_completed_words_and_actual_failed_decisions"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "upstream_namespace_executes_real_loop_and_preserves_structured_errors"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "shared_precancellation_reaches_both_directions_and_retains_source_context"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "common_cancellation_unblocks_an_acknowledged_upstream_pause"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "every_downstream_export_retains_legacy_type_identity"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "upstream_error_categories_keep_offsets_and_original_domain_causes"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "upstream_facade_retains_actual_receiver_estimates_through_independent_owner"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_renamed_stage_types_use_documented_public_imports_and_original_geometry"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_native_profiles_preserve_catalog_roles_grids_and_original_octets"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_workbench_load_is_idle_owned_and_keeps_legacy_validation"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_upstream_ucd_keeps_literal_header_and_source_identity"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_upstream_rxmer_retains_quarter_db_and_missing_readings"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_designer_uses_typed_owners_and_preserves_original_profile_identity"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_profile_capture_keeps_binary_json_science_and_original_sources"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_configured_channel_preview_uses_public_typed_configuration_and_inputs"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_idle_tx_timing_and_precancel_use_public_immutable_contracts"
+        },
+        {
+          "test_file": "crates/merlin/tests/native_inputs.rs",
+          "qualified_test_case": "facade_full_loop_preparation_and_precancel_preserve_native_inputs"
+        }
+      ],
+      "scope": "41 scoped upstream cases (eight new soft/boundary) and 18 facade cases (one new); complete non-Qt workspace and analysis-only regressions remain the final gate."
+    },
+    {
+      "exit_code": 0,
+      "passed": 20,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_upstream_soft_observations.py",
+          "qualified_test_case": "UpstreamSoftObservations.test_actual_cells_and_completed_word_inputs_keep_original_positions_flags_and_planes"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_soft_observations.py",
+          "qualified_test_case": "UpstreamSoftObservations.test_global_budgets_passive_noisy_outcomes_and_owned_queries"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_soft_observations.py",
+          "qualified_test_case": "UpstreamSoftObservations.test_policies_composition_installed_defaults_and_invalid_budgets"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_soft_observations.py",
+          "qualified_test_case": "UpstreamSoftObservations.test_query_limits_actual_erasure_metrics_and_never_started_words"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_soft_observations.py",
+          "qualified_test_case": "UpstreamSoftObservations.test_separate_rust_process_cells_full_word_vectors_flags_and_metadata_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+          "qualified_test_case": "UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+          "qualified_test_case": "UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+          "qualified_test_case": "UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+          "qualified_test_case": "UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+          "qualified_test_case": "UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+          "qualified_test_case": "UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_recovery_views.py",
+          "qualified_test_case": "UpstreamRecoveryViews.test_actual_cancellation_retains_completed_words_and_source_coverage"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_recovery_views.py",
+          "qualified_test_case": "UpstreamRecoveryViews.test_actual_original_shortening_source_offsets_owned_decisions_and_exact_defaults"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_recovery_views.py",
+          "qualified_test_case": "UpstreamRecoveryViews.test_bounds_continuations_end_positions_and_scalar_totals_are_independent_of_pages"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_recovery_views.py",
+          "qualified_test_case": "UpstreamRecoveryViews.test_precancel_and_actual_destructive_channel_preserve_unavailable_and_failed_outcomes"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_recovery_views.py",
+          "qualified_test_case": "UpstreamRecoveryViews.test_separate_rust_process_actual_views_match_both_numerologies"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ],
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "run",
+            "-p",
+            "docsis-ofdma",
+            "--example",
+            "upstream_soft_observations",
+            "--locked"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin",
+          "exit_code": 0,
+          "label": "soft_observations",
+          "elapsed_seconds": 1.4850421640003333
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "run",
+            "-p",
+            "docsis-ofdma",
+            "--example",
+            "upstream_receiver_estimates",
+            "--locked"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin",
+          "exit_code": 0,
+          "label": "receiver_estimates",
+          "elapsed_seconds": 5.429298200004268
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "run",
+            "-p",
+            "docsis-ofdma",
+            "--example",
+            "upstream_recovery_views",
+            "--locked"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin",
+          "exit_code": 0,
+          "label": "recovery",
+          "elapsed_seconds": 1.1468589139985852
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-soft-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "--no-deps",
+            "/home/dev01/Projects/merlin/local/python-wheels-unified-ui-soft/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-soft-native",
+          "exit_code": 0,
+          "label": "install",
+          "elapsed_seconds": 1.1506989490007982
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-soft-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_upstream_soft_observations.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-soft-native",
+          "exit_code": 0,
+          "label": "soft-tests",
+          "elapsed_seconds": 0.40691060000972357
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-soft-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_upstream_receiver_estimates.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-soft-native",
+          "exit_code": 0,
+          "label": "receiver-tests",
+          "elapsed_seconds": 0.4787893150059972
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-soft-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_upstream_recovery_views.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-soft-native",
+          "exit_code": 0,
+          "label": "recovery-tests",
+          "elapsed_seconds": 0.2237086279928917
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-soft-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_namespaces.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-soft-native",
+          "exit_code": 0,
+          "label": "namespace-tests",
+          "elapsed_seconds": 0.1665459549985826
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-soft-native/installed/bin/python",
+            "-I",
+            "-B",
+            "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+            "--output",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-soft-native/native-exports.json"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-soft-native",
+          "exit_code": 0,
+          "label": "native-inventory",
+          "elapsed_seconds": 0.1727356420014985
+        }
+      ],
+      "wheel_sha256": "d6417e7cab4ab4e750c54eeda0b0f3ac27d70a45a8aa8d48fc86c67df9005307",
+      "scope": "Targeted installed Linux CPython 3.10 soft/receiver/recovery and namespace acceptance. Full native/Rust/Qt regression remains the final integration gate."
+    }
+  ]
+}

@@ -25,6 +25,7 @@ REFERENCES = (
     ('RECOVERY', 'docsis-ofdma', 'upstream_recovery_views', ()),
     ('CONFIGURED_RESPONSE', 'docsis-ofdma', 'upstream_configured_response', ()),
     ('RECEIVER_ESTIMATES', 'docsis-ofdma', 'upstream_receiver_estimates', ()),
+    ('SOFT_OBSERVATIONS', 'docsis-ofdma', 'upstream_soft_observations', ()),
     ('MEASUREMENTS', 'docsis-ofdma', 'upstream_measurements', ()),
     ('DOCUMENT', 'docsis-ofdma', 'upstream_document', ()),
     ('SYNTHETIC', 'docsis-ofdma', 'upstream_document', ('synthetic',)),

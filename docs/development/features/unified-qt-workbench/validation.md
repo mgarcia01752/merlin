@@ -1042,3 +1042,54 @@ Actual soft metrics, remaining response-display/reference contracts and Qt
 adoption keep API-04 unchecked. The [user guide](../../../user/upstream/receiver-estimates.md)
 states these boundaries. Evidence is local Rust/native acceptance, with no new
 hosted, installer, hardware or external interoperability claim.
+
+## UIU-API-04 actual receiver soft-observation unit
+
+The [candidate evidence](soft-observation-evidence.json),
+[executed cases](api-04-soft-operation-test-results.json) and
+[exact owner/retention design](design.md#uiu-api-04-actual-receiver-soft-metric-retention-unit)
+trace REQ-UIU-02/12/19/24 to API-04. The existing receiver now optionally retains
+actual raw/derandomized cell metrics and the exact transmitted-position input
+of completed LDPC calls. Independent immutable soft policies compose onto the
+existing receiver observation policy, including soft-only observation. Existing
+constructors, estimate limits and omitted-disabled JSON fields remain compatible.
+
+Forty-one scoped upstream cases pass: six new soft API/scientific cases, two new
+deterministic soft boundary cases and existing estimate/recovery/receiver/experiment/
+QAM/randomizer regressions. Eighteen facade cases pass, including one new actual
+public soft-observation execution. Unit BPSK at complex variance 0.5 gives
+LLR=8×I before clipping. Literal impulse-seed mask positions independently verify
+raw-versus-derandomized signs. Both spacings reconstruct every retained LDPC input
+from actual cell metrics at its original coded offset. Long/medium/short family
+dimensions, shortening, actual erasure failures and independent decoder flags pass.
+
+The initial full-cell fixture incorrectly assumed the same allocation at both
+spacings, then exceeded the 1024-cell retention limit on its wider 25-kHz grid.
+Those failed logs remain recorded. The final explicit 64-carrier fixtures use
+eight 50-kHz versus four 25-kHz minislots, with independent 2820/2932-bit capacities.
+All limits remain unchanged. Missing-frame finish records actual erasure outcomes;
+mid-frame cancellation preserves completed words without publishing incomplete
+inputs. A 700-LLR budget omits the first larger word and retains original word
+ordinal one/coded offset1120 at retained index zero, preserving original identity.
+
+Enabled/exhausted observation preserves noisy decisions, BER and matched MER.
+Aggregate limits span grants; cell pages and word copies use separate positive
+budgets checked before allocation. Native dictionary ownership, empty-end,
+never-started and unavailable states pass. The installed Linux CPython 3.10 wheel
+passes 20 scoped cases without skips: five new soft cases plus existing receiver
+estimate, recovery and namespace/typing cases. Three fresh separate Rust processes
+provide actual cell/word/estimate/recovery references; full native/downstream
+reference pipelines were not repeated for this partial unit.
+
+Core/facade and native Clippy pass, with formatting and metadata/traceability checks
+recorded in the evidence. Exact inventories append six Rust and six native methods
+(539/522 total), preserving every prior operation and alias correction. All 178 Qt
+sources remain unchanged. Full Rust/native/Qt regressions remain the final
+integration gate; the preceding pause-timing failure remains recorded as unresolved.
+
+Computed cell observations can include grant pad or metrics whose bits did not
+reach a completed codec call after cancellation. Word observations contain actual
+transmitted input, excluding restored shortened priors; posterior LLRs are not
+claimed. The [user guide](../../../user/upstream/soft-observations.md) explains
+these boundaries. Remaining response-display/constellation references and Qt
+adoption keep API-04 unchecked. No hosted, installer or interoperability claim.

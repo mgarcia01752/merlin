@@ -12,6 +12,7 @@ use crate::{
     configuration::{ReceiverConfig, UsConfiguration},
     error::{invalid, limit},
     grant::{select, GrantPlan},
+    instruments::soft::store::{SoftCellMetrics, SoftFrameContext},
     resources::{Cell, CellRole, ResourcePlan},
     signal_processing::{equalize, estimate, max_log, Transform},
     types::{Identity, Iq, SampleBlock},
@@ -365,8 +366,29 @@ impl Receiver {
                 self.last_corrected.push(value);
             }
             self.last_cells.push((cell.clone(), corrected));
-            let soft = max_log(cell.loading, corrected, self.policy.variance())?;
-            let soft = self.mask.apply_llrs(&soft)?;
+            let demapper_llrs = max_log(cell.loading, corrected, self.policy.variance())?;
+            let soft = self.mask.apply_llrs(&demapper_llrs)?;
+            let soft_context = SoftFrameContext {
+                identity: self.identity,
+                frame: self.config.grant().first_frame + self.frames as u64,
+                reference_variance: self.policy.variance(),
+            };
+            if let Some(observer) = self
+                .receiver_estimates
+                .as_mut()
+                .and_then(|store| store.soft.as_mut())
+            {
+                observer.record_cell(
+                    soft_context,
+                    cell,
+                    self.coded_offset,
+                    corrected,
+                    SoftCellMetrics {
+                        demapper: &demapper_llrs,
+                        descrambled: &soft,
+                    },
+                );
+            }
             for llr in soft {
                 if let Some(word) = self.plan.codewords.get(self.next_word) {
                     self.word_llrs.push(llr);
@@ -388,13 +410,26 @@ impl Receiver {
                         let fill_valid = decoded.information_bits[payload_count..]
                             .iter()
                             .all(|bit| *bit == 1);
-                        output.push(DecodedWord {
+                        let decoded_word = DecodedWord {
                             ordinal: self.next_word,
                             payload_offset: word.information_offset,
                             payload: decoded.information_bits[..payload_count].to_vec(),
                             information_fill_valid: fill_valid,
                             decoded,
-                        });
+                        };
+                        if let Some(observer) = self
+                            .receiver_estimates
+                            .as_mut()
+                            .and_then(|store| store.soft.as_mut())
+                        {
+                            observer.record_word(
+                                soft_context,
+                                word,
+                                &decoded_word,
+                                &self.word_llrs,
+                            );
+                        }
+                        output.push(decoded_word);
                         self.next_word += 1;
                         self.word_llrs.clear();
                     }

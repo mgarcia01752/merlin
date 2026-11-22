@@ -8,6 +8,14 @@
  */
 //! Passive bounded owned QAM/SA snapshots; queries never rerun science.
 mod metrics;
+pub(crate) mod soft;
+pub use soft::{
+    SoftCellPage, SoftCellRequest, SoftCellSnapshot, SoftObservationPolicy,
+    SoftObservationPolicyInfo, SoftObservationSummary, SoftWordIdentity, SoftWordRequest,
+    SoftWordSnapshot, MAX_RECEIVER_SOFT_CELLS, MAX_RECEIVER_SOFT_WORDS,
+    MAX_RECEIVER_SOFT_WORD_LLRS, MAX_SOFT_CELL_PAGE_CELLS, MAX_SOFT_CELL_PAGE_LLRS,
+    MAX_SOFT_WORD_QUERY_LLRS,
+};
 pub(crate) mod receiver;
 mod recovery;
 pub use receiver::{

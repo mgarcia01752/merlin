@@ -167,6 +167,19 @@ pub struct FecWordPage {
     pub words: Vec<FecWordSnapshot>,
 }
 
+/// Names the actual upstream LDPC family consistently across recovery and soft observations.
+/// # Arguments
+/// * `code` - Existing validated codec-family identity, without dimension inference.
+/// # Returns
+/// Stable existing family name; no codec work or state change occurs.
+pub(super) fn code_family_name(code: DocsisLdpcCode) -> &'static str {
+    match code {
+        DocsisLdpcCode::UpstreamLong => "upstream_long",
+        DocsisLdpcCode::UpstreamMedium => "upstream_medium",
+        DocsisLdpcCode::UpstreamShort => "upstream_short",
+    }
+}
+
 impl BatchReport {
     /// Reads independent source verification and actual complete/partial coverage.
     /// # Returns
@@ -322,11 +335,7 @@ impl BatchReport {
         for (offset, word) in grant.words[request.first_word..end].iter().enumerate() {
             let plan = word_plan(self, grant, request.first_word + offset, word)?;
             let dimensions = plan.code.parameters();
-            let code_family = match plan.code {
-                DocsisLdpcCode::UpstreamLong => "upstream_long",
-                DocsisLdpcCode::UpstreamMedium => "upstream_medium",
-                DocsisLdpcCode::UpstreamShort => "upstream_short",
-            };
+            let code_family = code_family_name(plan.code);
             words.push(FecWordSnapshot {
                 identity: grant.identity,
                 code_family,

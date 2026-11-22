@@ -993,10 +993,10 @@ history. Existing GrantReport/DecodedWord preserve actual decoder decisions,
 iterations and independent source comparison. Reuse these owners and their
 existing tests; do not add a second simulation interface or algorithms in Qt.
 
-The audit identifies three separate gaps. First, the UI needs bounded typed FEC
+The initial audit identified three separate gaps. First, the UI needs bounded typed FEC
 paging and scalar verification summaries without copying/parsing an entire report
 or calculating scientific aggregates in the adapter. Second, receiver pilot
-estimates and per-cell/word soft observations are not retained by the existing
+estimates and per-cell/word soft observations were not retained by the original
 report; they cannot be recovered by reading the final decoded bits. Third,
 response/impulse and constellation reference queries need authoritative Rust
 operations with explicit C, H and estimated C×H planes. The configured-response
@@ -1060,12 +1060,89 @@ remain labelled projection tests. Original API rows, report schema, scientific
 algorithms and all Qt sources remain unchanged. UIU-API-04 stays unchecked for its
 received-estimate/response/soft and remaining instrument gaps.
 
+### UIU-API-04 actual receiver soft-metric retention unit
+
+REQ-UIU-02/12/19/24 next require actual normal-receiver demapper and LDPC-input
+metrics. This design preceded implementation; its
+[scoped acceptance](validation.md#uiu-api-04-actual-receiver-soft-observation-unit)
+now passes. The API-04 parent remains open for remaining instrument contracts.
+Decoded decisions cannot reconstruct these observations. Existing decoding,
+mapping, randomizer recurrence and source-verification behavior stay authoritative.
+
+Add immutable `SoftObservationPolicy::new(maximum_cells, maximum_words,
+maximum_word_llrs)` and `info()`. Independent application ceilings are 1024
+computed payload/complementary cells, 32 completed words and 262144 retained
+word-input LLRs across all grants. Cell count separately bounds the two actual
+per-bit vectors at admitted loading. These limits do not borrow equal-valued FEC
+page or estimate-budget constants. Zero word count requires zero word-LLR budget;
+positive word retention requires a positive budget. All-zero policy disables it.
+
+`ReceiverObservationPolicy::with_soft_metrics(policy)` returns a new immutable
+policy, preserving its existing estimate limits. Default estimate policy can
+enable soft-only observation. Private optional fields and omitted disabled JSON
+fields preserve existing constructors, policy info and default report shape.
+The existing session setter/getter admits the combined policy; no parallel run API.
+
+At the normal receiver's already computed max-log and soft derandomization
+boundary, retain original identity/frame/symbol/carrier/role/loading, corrected
+optional unit-reference I/Q, declared complex reference variance, original coded
+offset, actual MSB-first demapper LLRs and actual derandomized LLRs. Positive LLR
+favors zero and the values are natural-log P(0)/P(1). Report the existing Rust
+max-log clipping limit from its owner, rather than duplicating it in adapters.
+Pilot cells are excluded; missing cells retain actual zero-erasure metrics.
+Computed-cell observations do not claim every bit reached a completed codec call
+if cancellation occurs inside the cell.
+
+After an actual codec call completes, retain the exact transmitted-position
+input LLRs before the receiver clears its word buffer. Preserve original word
+ordinal/coded offset, completion frame, actual code family/shortening dimensions,
+iterations and independent parity/convergence/shortening/fill outcomes. Do not
+claim posterior LLRs, insert shortened known-zero priors into observed inputs or
+rerun a decoder. Reuse existing code-family naming for recovery and soft views.
+
+Extend the existing private aggregate observer, sharing immutable retained records
+for transactional clones. Transfer it across grants as today. Rejection rolls back
+observations with science; cancellation retains computed cells and completed
+words while leaving an incomplete word unavailable. Exhaustion never changes
+randomizer state, confidence, source/RNG consumption or decoding.
+
+Exact new report operations are `soft_observations() -> SoftObservationSummary`,
+`soft_cells(SoftCellRequest) -> PhyResult<SoftCellPage>` and
+`soft_word(SoftWordRequest) -> PhyResult<SoftWordSnapshot>`. Summary distinguishes
+observed/retained/omitted counts and inventories bounded original word identities.
+Cell pages default to first index zero, 32 cells and 4096 copied LLRs; application
+ceilings are 128 cells and 4096 copied LLRs. Count both original per-bit vectors
+before copying. End positions return an empty page; missing history is unavailable.
+Word queries default to retained index zero and 32768 copied input LLRs, with that
+independent finite ceiling; insufficient copy budgets reject before allocation.
+These query defaults do not share policies with retention or other instruments.
+
+Python mirrors policy construction/info, immutable policy composition and all
+three report queries, releasing the GIL for Rust query/serialization. Native
+adapters perform no demapping, mask inversion or scientific aggregation.
+
+| Inspected owner / files | Existing contract and gap | Decision / concrete destination |
+| --- | --- | --- |
+| `crates/ofdma/src/receiver/framing.rs::decode_frame` | Actual raw/derandomized cell and transmitted word-input LLRs are transient | EDIT passive opt-in recording at these exact boundaries; preserve processing order and cancellation. |
+| `crates/ofdma/src/signal_processing/demapping.rs::max_log`, `signal_processing/mod.rs` | Existing finite natural-log metrics clamp at a literal limit | REUSE unchanged numerical convention; name the existing limit once for kernel and report metadata. |
+| `crates/ofdma/src/instruments/receiver.rs`, `observer.rs` | Accepted opt-in aggregate estimate owner and transactional shared records | ADAPT private observer to optional soft-only or combined retention, preserving existing public fields/default serialization. |
+| `crates/ofdma/src/instruments/recovery.rs::fec_words` | Existing code-family/dimension projection | SHARE actual family naming with the soft-word owner; preserve recovery behavior. |
+| Proposed `crates/ofdma/src/instruments/soft/{mod,policy,store,views}.rs`; `instruments/mod.rs`, `api/mod.rs` | Missing typed soft retention/query models | ADD focused actual policy, storage and view owners; EDIT public re-exports. |
+| `bindings/python/src/upstream/receiver_observations.rs`, `upstream/mod.rs`, `bindings/python/python/merlin/upstream.py`, `upstream.pyi`; proposed `upstream/reports/soft.rs` | Existing immutable policies and native report conversion | EDIT policy composition/registration and ADD thin report dispatch with installed signatures/ownership parity. |
+| Proposed `crates/ofdma/tests/api_soft_observations.rs`, `crates/ofdma/examples/upstream_soft_observations.rs`, `bindings/python/tests/test_upstream_soft_observations.py`; existing receiver-boundary tests | Retention and query acceptance absent | ADD independent sign/scale/erasure anchors, reconstructed actual word-input continuity from observed cells, code families, cancellation, limits, passive noisy outcomes and separate Rust/native parity. |
+| Proposed `docs/user/upstream/soft-observations.md`; upstream/Python indexes | LLR support still described as pending | ADD actual scientific planes and limitations, then reconcile scoped acceptance. |
+
+Run changed soft and receiver/experiment owners, installed observation/namespace
+cases, formatting, scoped Clippy and exact API tracing. Keep full final integration
+regressions distinct from this unit. Remaining constellation/reference and
+response-display gaps keep API-04 open until their own acceptance passes.
+
 ### UIU-API-04 received-pilot estimate retention unit
 
 REQ-UIU-02/12/18/24 require actual normal receiver estimates, separately from
 configured-response diagnostics. The design preceded implementation; the
 [scoped acceptance](validation.md#uiu-api-04-actual-received-pilot-estimate-unit)
-now passes. API-04 remains open for soft observations and remaining references.
+now passes. API-04 remains open for remaining response-display and constellation references.
 
 Add `ReceiverObservationPolicy::new(maximum_frames, maximum_scalar_slots)`
 with private fields, `Default` disabled and an `info()` projection. Independent
@@ -1210,7 +1287,7 @@ passes, core/native Clippy and 77 tooling passes. The first complete native run
 had an existing second-pause timeout; the unchanged case passed alone and in 50
 diagnostic repetitions, followed by a passing full-suite retry of the exact wheel.
 Original failure/reference hashes remain recorded; no timeout or test was removed.
-Actual receiver-estimate/soft retention remains subsequent API-04 work, and the
+At this unit acceptance, receiver-estimate/soft retention was subsequent API-04 work; the
 parent task stays unchecked. The [user guide](../../../user/upstream/response.md)
 distinguishes configured deterministic and periodic data from actual received
 observations and unaliased causal echoes.

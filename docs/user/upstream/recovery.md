@@ -69,6 +69,7 @@ query/serialization and returns ordinary copied dictionaries. Editing a returned
 Python list changes no report or later query. Results survive later runs and
 session/report disposal. Neither language reconstructs missing observations.
 
-Actual QAM/PSD remain the existing [session operations](session.md). Received
-pilot-estimate, response/impulse and LLR instrumentation are separate work and
-are not supplied by these decoded-decision projections.
+Actual QAM/PSD remain the existing [session operations](session.md).
+[Received-pilot estimates](receiver-estimates.md), [configured response/impulse](response.md)
+and [actual soft metrics](soft-observations.md) use their own operations and
+retention contracts. Decoded decisions do not reconstruct those observations.

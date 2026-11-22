@@ -13,6 +13,7 @@ mod transform;
 mod transmit_window;
 pub use cyclic_extension::cyclic_extension;
 pub use demapping::max_log;
+pub(crate) use demapping::MAX_LOG_LLR_MAGNITUDE;
 pub use estimation::{equalize, estimate};
 pub use pre_eq::PreEqBank;
 pub use qam::{map_symbol, reference_energy};

@@ -1117,8 +1117,7 @@ verification/FEC summaries and bounded original completed-word paging. Its
 [focused acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-bounded-recovery-view-unit)
 preserves independent source versus decoder outcomes and avoids whole-report UI
 copies or adapter calculations. Subsequent response and actual receiver-estimate
-units are described below; soft retention and remaining instrument contracts
-keep API-04 open.
+units are described below; remaining instrument contracts keep API-04 open.
 
 The implemented [configured response unit](development/features/unified-qt-workbench/design.md#uiu-api-04-configured-response-and-periodic-impulse-unit)
 exposes admitted corrective C, deterministic physical H and their composite
@@ -1137,8 +1136,16 @@ retains completed normal receiver estimates with opt-in aggregate frame/scalar
 budgets, preserving default behavior and transactional/cancellation boundaries.
 Its typed report views keep missing bins and actual C×H estimates separate from
 configured-response diagnostics. Its [scoped Rust/native acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-actual-received-pilot-estimate-unit)
-preserves existing science/defaults. Soft and remaining instrument work keep
+preserves existing science/defaults. Remaining instrument work keeps
 UIU-API-04 open; full regressions remain the final integration gate.
+
+The implemented [soft-metric retention unit](development/features/unified-qt-workbench/design.md#uiu-api-04-actual-receiver-soft-metric-retention-unit)
+exposes actual normal-receiver demapper/derandomized cells and completed LDPC-input
+words through independent opt-in aggregate budgets. Its
+[scoped Rust/native acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-actual-receiver-soft-observation-unit)
+preserves default behavior, estimate limits and completed decoder outcomes.
+Decoded decisions do not substitute for missing soft observations. Remaining
+instrument contracts and final full regression keep API-04 open.
 
 ### Unified Qt source ownership
 

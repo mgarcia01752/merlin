@@ -87,3 +87,103 @@ fn finish_retains_complete_missing_frames_as_unavailable_without_inventing_zero_
     receiver.finish().unwrap();
     assert_eq!(receiver.frames(), EXPECTED_GENERIC_FRAMES);
 }
+
+#[test]
+fn soft_cancellation_keeps_completed_words_and_computed_cells_without_exporting_partial_word() {
+    const SOFT_CELL_BUDGET: usize = 1024;
+    const SOFT_WORD_BUDGET: usize = 16;
+    const WORD_INPUT_BUDGET: usize = 262_144;
+    // In this two-frame fixture, this stops in frame two after one more complete word.
+    const CANCEL_AFTER_RECEIVER_PROBES: usize = 250;
+    let (config, identity, mut receiver) = setup();
+    receiver.replace_estimate_store(ReceiverEstimateStore::new(
+        ReceiverObservationPolicy::default().with_soft_metrics(
+            crate::instruments::SoftObservationPolicy::new(
+                SOFT_CELL_BUDGET,
+                SOFT_WORD_BUDGET,
+                WORD_INPUT_BUDGET,
+            )
+            .unwrap(),
+        ),
+    ));
+    let mut source = Prbs15::new(config.source_seed).unwrap();
+    let mut transmitter = Transmitter::new(
+        Arc::new(config.us_configuration),
+        identity,
+        &mut source,
+        config.pre_eq,
+    )
+    .unwrap();
+    let total_words = transmitter.plan().codewords.len();
+    let first = transmitter.next_frame().unwrap().unwrap();
+    let first_words = receiver.push(&first.block).unwrap();
+    assert!(!first_words.is_empty());
+    let second = transmitter.next_frame().unwrap().unwrap();
+    let mut probes = 0;
+    let partial = receiver
+        .push_with_control(&second.block, &mut || {
+            probes += 1;
+            probes >= CANCEL_AFTER_RECEIVER_PROBES
+        })
+        .unwrap();
+    assert!(partial.interrupted);
+    assert!(!partial.words.is_empty());
+    let completed = first_words.len() + partial.words.len();
+    assert!(completed < total_words);
+    let observer = receiver.replace_estimate_store(None).unwrap();
+    let data = serde_json::to_value(observer.soft.unwrap()).unwrap();
+    assert_eq!(data["completed_words"], completed);
+    assert_eq!(data["words"].as_array().unwrap().len(), completed);
+    assert!(data["computed_cells"].as_u64().unwrap() > 0);
+    for word in &partial.words {
+        assert_eq!(
+            data["words"][word.ordinal]["word"]["word_ordinal"],
+            word.ordinal
+        );
+        assert_eq!(
+            data["words"][word.ordinal]["parity_valid"],
+            word.decoded.parity_valid
+        );
+    }
+}
+
+#[test]
+fn soft_missing_frame_finish_records_actual_erasure_metrics_and_failed_codec_outcomes() {
+    const SOFT_CELL_BUDGET: usize = 1024;
+    const SOFT_WORD_BUDGET: usize = 16;
+    const WORD_INPUT_BUDGET: usize = 262_144;
+    let (_, _, mut receiver) = setup();
+    receiver.replace_estimate_store(ReceiverEstimateStore::new(
+        ReceiverObservationPolicy::default().with_soft_metrics(
+            crate::instruments::SoftObservationPolicy::new(
+                SOFT_CELL_BUDGET,
+                SOFT_WORD_BUDGET,
+                WORD_INPUT_BUDGET,
+            )
+            .unwrap(),
+        ),
+    ));
+    let words = receiver.finish().unwrap();
+    assert!(!words.is_empty());
+    let observer = receiver.replace_estimate_store(None).unwrap();
+    let data = serde_json::to_value(observer.soft.unwrap()).unwrap();
+    assert_eq!(data["completed_words"], words.len());
+    for cell in data["cells"].as_array().unwrap() {
+        assert!(cell["corrected"].is_null());
+        assert!(cell["demapper_llrs"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|llr| llr == 0.0));
+    }
+    for word in words {
+        assert_eq!(
+            data["words"][word.ordinal]["converged"],
+            word.decoded.converged
+        );
+        assert_eq!(
+            data["words"][word.ordinal]["parity_valid"],
+            word.decoded.parity_valid
+        );
+    }
+}

@@ -69,6 +69,7 @@ pub(crate) fn register(parent: &Bound<'_, PyModule>) -> PyResult<()> {
     simulation::register(&module)?;
     reports::register(&module)?;
     module.add_class::<receiver_observations::PyReceiverObservationPolicy>()?;
+    module.add_class::<receiver_observations::PySoftObservationPolicy>()?;
     measurements::register(&module)?;
     parent.add("_upstream", module)?;
     Ok(())

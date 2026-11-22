@@ -72,6 +72,12 @@ Actual reports also expose [recovery and decoder views](../upstream/recovery.md)
 dictionaries from typed Rust projections. They preserve partial coverage and
 independent source/decoder outcomes without exporting a whole report.
 
+Soft diagnostics use [actual Rust receiver observations](../upstream/soft-observations.md).
+Compose `SoftObservationPolicy` onto `ReceiverObservationPolicy` before running;
+`soft_observations()`, bounded `soft_cells(...)` and `soft_word(...)` return
+owned original cell/word metrics and actual decoder outcomes. Python performs
+no demapping, mask inversion or posterior-metric reconstruction.
+
 The [configured response diagnostic](../upstream/response.md) is available on an
 idle Simulation and frozen BatchReport. It distinguishes admitted C, deterministic
 H and their composite, with optional complete periodic impulse data. It does not
