@@ -41,3 +41,10 @@ pub(crate) const HEX_BYTE_DIGITS: usize = 2;
 pub(crate) const HEX_BYTES_PER_ROW: usize = 16;
 /// Minimum address-column padding; larger byte offsets remain fully visible.
 pub(crate) const HEX_OFFSET_MIN_DIGITS: usize = 4;
+
+/// Existing maximum complex I/Q markers, distinct from PSD bucket/query budgets.
+pub(crate) const MAX_SCATTER_PLOT_POINTS: usize = 2048;
+/// Ten-percent drawing margin around the selected I/Q extent; samples are unchanged.
+pub(crate) const SCATTER_HEADROOM_RATIO: f64 = 1.1;
+/// Midpoint of each normalized scatter axis, independent of physical I/Q zero units.
+pub(crate) const SCATTER_AXIS_CENTER: f64 = 0.5;

@@ -70,3 +70,10 @@ pub(crate) const ASSIGNMENT_FIRST_BIN_START: usize = ASSIGNMENT_CODE_BYTES;
 /// Raw last-endpoint offset follows the complete first endpoint.
 pub(crate) const ASSIGNMENT_LAST_BIN_START: usize =
     ASSIGNMENT_FIRST_BIN_START + ASSIGNMENT_BIN_BYTES;
+
+/// Existing open physical-bin selector; explicit indices use public SubcarrierIndex.
+pub(crate) const OPEN_PHYSICAL_BIN_SELECTOR: i32 = -1;
+/// Minimum absolute extent of the pre-channel TX physical-bin drawing only.
+/// This preserves its unit-sized empty/small-signal axis and is not an RX scale,
+/// power calibration, sample modification or backend numerical acceptance limit.
+pub(crate) const TX_PHYSICAL_SCATTER_MIN_EXTENT: f64 = 1.0;

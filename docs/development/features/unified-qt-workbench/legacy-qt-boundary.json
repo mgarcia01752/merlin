@@ -565,17 +565,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/instruments/transmitter/channel_input.rs",
-      "sha256": "9ef3cd7b47fc6f066c710fc35e806b19d9f3b4976f3da50f96e860779173126a",
-      "sites": [
-        {
-          "line": 7,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/instruments/transmitter/graphs/mod.rs",
       "sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68",
       "sites": [
@@ -2694,6 +2683,23 @@
       "unit": "Transmitted PLC message viewer facade",
       "reason": "Public result supplies CRC-validated packets, scientific meanings, offsets and transmission coverage. Qt only formats exact bytes/labels; old last-sample and overflow oracles remain in the existing backend owner tests.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-transmitted-plc-message-viewer-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/channel_input.rs",
+        "sha256": "9ef3cd7b47fc6f066c710fc35e806b19d9f3b4976f3da50f96e860779173126a",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Pre-channel physical-bin scatter facade",
+      "reason": "Public actual physical-bin and carrier metadata replace private CarrierLayout construction/frequency queries. SubcarrierIndex owns explicit selector admission; plot scaling remains presentation-only.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-pre-channel-physical-bin-scatter-facade-accepted"
     }
   ],
   "reviewed_updates": [

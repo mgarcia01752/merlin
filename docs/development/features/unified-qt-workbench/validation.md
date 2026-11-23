@@ -1886,3 +1886,44 @@ remaining frozen entry is exact. Current debt is 31 files/103 direct source site
 three scientific dependencies. No API/binding/dependency/lock/schema or QML layout
 change occurs, and no full historical suite or new native Python wheel is claimed.
 The parent downstream task and final line-by-line numeric audit remain incomplete.
+
+
+## UIU-DS-01 pre-channel physical-bin scatter facade accepted
+
+[Design/owners](design.md#uiu-ds-01-pre-channel-physical-bin-scatter-facade),
+[exact evidence](physical-input-scatter-evidence.json),
+[architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[REQ-UIU-02](../../../requirements.md#req-uiu-02),
+[REQ-UIU-08](../../../requirements.md#req-uiu-08),
+[REQ-UIU-09](../../../requirements.md#req-uiu-09),
+[REQ-UIU-27](../../../requirements.md#req-uiu-27) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) own this focused consumer.
+
+The pre-channel physical-bin scatter viewer now consumes public actual retained
+I/Q, original symbol/frequency coordinates and carrier roles. It no longer
+constructs private CarrierLayout or calculates carrier frequency/roles. Public
+SubcarrierIndex owns the unchanged explicit coordinate domain; the UI's -1 open
+bounds, reversed-range rejection and error ordering remain. Excluded/missing
+bins stay absent. Physical Data never becomes guessed payload/NCP provenance.
+Qt retains only finite drawing selection and named display caps, axis center,
+TX minimum extent and ten-percent headroom; scientific values remain unchanged.
+
+Three focused Rust cases pass: the new independent selector-domain/ordering
+case, existing actual Qt worker/instrument assertions (including exact I/Q,
+selection and amplifier behavior), and the existing public physical-bin/
+transmit-cell test covering original values, power, roles, context, missing/zero
+history and invalid windows. No old assertion, scientific source or vector is
+changed. The transmitter message/QAM navigation QML case passes with setup/
+cleanup (three harness cases). Formatting, all-target Clippy, twenty boundary regressions, the actual
+source/dependency guard and canonical document checks pass. The latest optimized
+Qt build passes all six native VM checks with fresh display credentials and no
+stderr. Exact source/executable hashes and receipts are retained in the structured
+record. One whole legacy exception retires; every
+other frozen entry remains exact. Current debt is 30 files/102 source sites/
+three scientific dependencies.
+
+No API/binding/dependency/lock/schema or QML layout change occurs. The native
+Python operation history remains separate from this consumer's acceptance; no
+new installed wheel or full historical suite is claimed. Physical-power graphs,
+waveform-spectrum sample budgets, later session/upstream work, the parent DS
+milestone and the final line-by-line numeric audit remain incomplete.

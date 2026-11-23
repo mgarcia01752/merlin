@@ -2370,3 +2370,33 @@ and [evidence](plc-message-viewer-evidence.json) record eleven targeted Rust cas
 one QML behavior case, twenty boundary regressions, Clippy, formatting, canonical
 document checks, optimized build and six native checks. All remaining frozen
 entries are exact; the parent retains 31 files/103 sites/three scientific dependencies.
+
+## UIU-DS-01 pre-channel physical-bin scatter facade
+
+REQ-UIU-02/08/09/27 and the existing downstream migration task own this focused
+consumer. Migrate `instruments/transmitter/channel_input.rs` to the existing
+public `FullLoopResult::physical_bins(PhysicalBins, ...)`. Qt must not rebuild
+CarrierLayout or derive frequencies/roles. Preserve open range selectors, the
+global checked bin domain, excluded/missing-value filtering, original I/Q and
+symbol coordinates, unknown transported-role labels and existing plot scaling.
+
+| Path and symbol | Current contract and evidence | Requirement gap | Decision / destination |
+| --- | --- | --- | --- |
+| `instruments/transmitter/channel_input.rs::qam` | Private CarrierLayout rebuild and frequency/role queries; existing real-worker case checks selection, exact I/Q and amplifier behavior. | All scientific geometry must come through the accepted API. | ADAPT to public physical-bin observation/carrier metadata; public SubcarrierIndex validates explicit selector bounds. Qt retains only filtering, finite point selection and drawing coordinates. |
+| Existing `FullLoopResult::physical_bins` and `api_full_loop_observations` actual-bin test | Actual I/Q, power, original coordinates/phase, roles, missing history and invalid windows already implemented. | Consumer needs integrated acceptance, not another geometry implementation. | REUSE unchanged API; run existing actual FFT-bin/transmit-cell regression and the real Qt worker/instrument case. |
+| `downstream/common/constants.rs`, `shared/presentation/constants.rs` | Directional input policies and generic drawing conventions. | Existing -1 selector, 2048-point cap, unit minimum extent and 10% margin need explicit meanings. | SHARE genuine scatter drawing policies; keep the TX physical minimum extent distinct from receiver scales, and reuse the public bin-domain validator rather than creating a second domain maximum. |
+| `simulation/closed_loop/tests.rs`, new local channel-input tests | Existing real capture assertions remain independent. | Preserve availability, invalid-range ordering and exact readouts. | REUSE all old oracles and add focused pre-result selector-domain checks. No scientific expected value derives from a production constant. |
+
+No backend/API/binding/schema/dependency or UI layout change. Existing GPL Qt
+code consumes Apache public observations; no new scientific algorithm or copied
+material. Physical power graphs and waveform-spectrum views remain separate
+frozen migration work, including preservation of their legacy sample-selection
+budgets. Accept this consumer only after focused Rust/API/QML, boundary,
+formatting/Clippy, optimized build and native checks; retire only its whole file.
+
+Scoped scatter consumer accepted: [validation](validation.md#uiu-ds-01-pre-channel-physical-bin-scatter-facade-accepted)
+and [evidence](physical-input-scatter-evidence.json) record three targeted Rust
+cases, the QAM/navigation QML case, twenty boundary regressions, all-target
+Clippy, formatting, canonical documentation/traceability, optimized build and
+six native checks. The parent retains 30 frozen files/102 sites/three direct
+scientific dependencies; the final numeric audit remains open.

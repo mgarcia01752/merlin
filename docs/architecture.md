@@ -1237,7 +1237,7 @@ calibration or logarithmic power calculations. A shared presentation owner forma
 public spectrum buckets and physical PLC bounds. Existing legacy run/instrument
 providers remain separate migration debt until their own facade adoption.
 [Scoped consumer acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted)
-passes with the optimized Qt executable; subsequent scoped migration leaves 31
+passes with the optimized Qt executable; subsequent scoped migration leaves 30
 frozen legacy files.
 
 The [resource build-cache correction](development/features/unified-qt-workbench/validation.md#uiu-ds-01-resource-build-cache-accepted)
@@ -1296,8 +1296,18 @@ formatter; it no longer reassembles/decodes frames or duplicates completion timi
 Known labels, raw unsupported states and NCP-versus-data-profile identity remain
 separate from backend capability admission. The existing backend tests retain the
 old last-sample/overflow anchors; [consumer evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-transmitted-plc-message-viewer-facade-accepted)
-tracks both those checks and actual Qt instrument compatibility. The current
-boundary retains 31 frozen files/103 reference sites/three scientific dependencies.
+tracks both those checks and actual Qt instrument compatibility. That viewer unit retires two whole legacy source exceptions.
+
+The [pre-channel scatter consumer](development/features/unified-qt-workbench/design.md#uiu-ds-01-pre-channel-physical-bin-scatter-facade)
+uses public actual physical-bin I/Q and carrier metadata rather than rebuilding
+CarrierLayout in Qt. SubcarrierIndex owns explicit selector admission; the -1
+open-bound convention and original invalid-range ordering remain UI policy.
+Qt only filters visible points and draws unchanged values with named display
+caps/margins. Physical Data remains distinct from proven payload/NCP provenance.
+[Scoped evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-pre-channel-physical-bin-scatter-facade-accepted)
+tracks its acceptance. Power graphs and waveform-spectrum views remain separate
+frozen work; the current boundary retains 30 files/102 sites/three scientific
+dependencies, and the parent task/final numeric audit remain open.
 
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).

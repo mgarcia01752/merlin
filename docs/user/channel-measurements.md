@@ -228,7 +228,10 @@ The circles marked **TP** mean **TapPoint**. Click either to select **Spectrum**
 or **QAM** before or after the amplifier. Channel Input also opens the first tap;
 Channel Output opens instruments at receiver input, after attenuation. These
 routes use the same SA and channel QAM windows with their selected boundary in
-the title. Input QAM shows retained physical FFT bins; output QAM shows actual
+the title. Input QAM preserves retained physical FFT-bin indices, original frequency labels
+and I/Q values. Excluded or unavailable bins produce no points. A physical data
+location alone does not identify payload versus NCP, so its transported-role
+label remains unknown. Output QAM shows actual
 received FFT cells before equalization, with received role/bin/symbol selectors.
 After-amplifier points include the accepted gain; automatic axis scaling keeps
 them visible and the displayed axis extent reports their actual scale.
