@@ -1309,6 +1309,17 @@ tracks its acceptance. Power graphs and waveform-spectrum views remain separate
 frozen work; the current boundary retains 30 files/102 sites/three scientific
 dependencies, and the parent task/final numeric audit remain open.
 
+The [spectrum sample-budget prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-spectrum-sample-budget-prerequisite)
+adds a passive TransmissionConfiguration.spectrum_average_capacity operation.
+The existing waveform-spectrum owner computes complete overlapping windows for
+the accepted FFT and caps them at its existing work policy. Rust/native Python
+share the same validation and integer result; neither Qt nor Python reconstructs
+Welch cadence. This preserves a caller's retained-sample budget through existing
+spectrum query fields without changing their schema/defaults or scientific
+processing. Actual retained availability remains separate. The supported
+1024-sample-CP compatibility case and [paired evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-spectrum-sample-budget-api-accepted)
+precede Qt spectrum adoption; no remaining frozen entry is retired here.
+
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
 

@@ -172,6 +172,14 @@ linear-power averaging. `PowerSpectrum` retains full normalized density and
 frequency metadata; `buckets` supplies at most 2048 contiguous min/max spans.
 `density_db` keeps zero/unavailable density distinct from finite power.
 
+The high-level `TransmissionConfiguration::spectrum_average_capacity(max_samples)`
+plans complete analysis windows within a sample budget through that same owner.
+Its native Python method is `spectrum_average_capacity(max_samples)`. Both retain
+the existing work cap and reject budgets smaller than the accepted FFT without
+reading samples or starting a run. Use the count with existing spectrum query
+fields; retained availability remains separate. See the paired
+[sample-budget examples](../user/api/full-loop.md#spectrum-sample-budgets).
+
 `simulation::transmitter_preview::TransmitterPreviewRequest` freezes accepted
 transmission settings, captured Profile A and immutable source configuration.
 `generate` reuses production TX stages with cooperative cancellation and scalar

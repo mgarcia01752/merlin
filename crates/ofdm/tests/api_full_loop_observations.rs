@@ -19,6 +19,13 @@ fn request_with_channel(
     receiver_mode: ReceiverMode,
     channel: ChannelConfiguration,
 ) -> FullLoopRequest {
+    request_with_transmission(receiver_mode, channel, TransmissionSettings::default())
+}
+fn request_with_transmission(
+    receiver_mode: ReceiverMode,
+    channel: ChannelConfiguration,
+    settings: TransmissionSettings,
+) -> FullLoopRequest {
     let profile = Dpd::from_bytes(
         &NamedCapture::new(
             "profile",
@@ -29,7 +36,7 @@ fn request_with_channel(
         ProfileId::new(0).unwrap(),
     )
     .unwrap();
-    let transmission = TransmissionConfiguration::new(TransmissionSettings::default()).unwrap();
+    let transmission = TransmissionConfiguration::new(settings).unwrap();
     let mut capture: Value = serde_json::from_slice(include_bytes!(
         "../../../examples/measurements/single-channel/rxmer.json"
     ))
@@ -69,6 +76,53 @@ fn request_with_channel(
         },
     )
     .unwrap()
+}
+
+#[test]
+fn sample_budget_capacity_preserves_the_actual_long_cp_legacy_spectrum_prefix() {
+    let request = request_with_transmission(
+        ReceiverMode::SuppliedChannel,
+        ChannelConfiguration::new(ChannelConfigurationInput::default()).unwrap(),
+        TransmissionSettings {
+            cyclic_prefix_samples: 1024,
+            ..Default::default()
+        },
+    );
+    let request = request
+        .with_observations(
+            FullLoopObservationPolicy::new(FullLoopObservationInput::default()).unwrap(),
+        )
+        .unwrap();
+    let result = request.run(&FullLoopControl::new()).unwrap();
+    let before = serde_json::to_value(result.report()).unwrap();
+    let full = result
+        .calibrated_spectrum(FullLoopSpectrumQuery::default())
+        .unwrap();
+    // Independent original geometry: four (8192+1024)-sample blocks are 36864
+    // samples/eight Welch windows. The legacy 32768 prefix holds seven windows.
+    assert_eq!(full.available_samples, 36864);
+    assert_eq!(full.used_samples, 36864);
+    assert_eq!(full.power.averages, 8);
+    let averages = result
+        .inputs()
+        .transmission
+        .spectrum_average_capacity(32768)
+        .unwrap();
+    assert_eq!(averages, 7);
+    let limited = result
+        .calibrated_spectrum(FullLoopSpectrumQuery {
+            max_averages: averages,
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!(limited.available_samples, 32768);
+    assert_eq!(limited.used_samples, 32768);
+    assert_eq!(limited.power.averages, 7);
+    assert_eq!(limited.first_sample, full.first_sample);
+    assert_eq!(limited.context, full.context);
+    assert_eq!(limited.source_reference_plane, full.source_reference_plane);
+    assert_eq!(serde_json::to_value(result.report()).unwrap(), before);
+    assert_eq!(result.report().summary.comparison.bit_errors, 0);
 }
 
 #[test]

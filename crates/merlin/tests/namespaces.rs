@@ -66,6 +66,16 @@ fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
         |progress| progress.phase;
     // Compile the public field projection without constructing fake engine progress.
     let _ = phase;
+    let capacity: fn(
+        &downstream::TransmissionConfiguration,
+        usize,
+    ) -> downstream::ApiResult<usize> =
+        downstream::TransmissionConfiguration::spectrum_average_capacity;
+    let transmission =
+        downstream::TransmissionConfiguration::new(downstream::TransmissionSettings::default())
+            .unwrap();
+    // Independent old 32768-sample presentation prefix: seven complete 8K windows.
+    assert_eq!(capacity(&transmission, 32768).unwrap(), 7);
     assert_eq!(
         TypeId::of::<common::RunControl>(),
         TypeId::of::<downstream::RunControl>()

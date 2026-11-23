@@ -85,7 +85,7 @@ pub fn estimate(
     let scale = length as f64 / (f64::from(SAMPLE_RATE_HZ) * energy);
     let plan = ForwardTransform::new(spacing);
     let mut density = vec![0.0; length];
-    let averages = 1 + (samples.len() - length) / hop;
+    let averages = average_capacity(spacing, samples.len())?;
     for frame in 0..averages {
         let input: Vec<_> = samples[frame * hop..frame * hop + length]
             .iter()
@@ -108,6 +108,32 @@ pub fn estimate(
             / (window_sum * window_sum),
         density,
     })
+}
+
+/// Counts complete Welch windows fitting a sample budget without estimating a spectrum.
+///
+/// # Arguments
+/// * `spacing` - Accepted downstream spacing determining the original FFT length.
+/// * `max_samples` - Nonnegative sample budget; must fit at least one complete FFT.
+///
+/// # Returns
+/// Capacity capped by the existing analysis-work policy. A larger budget does not
+/// widen that policy or claim retained samples exist. No samples are read or copied.
+///
+/// # Errors
+/// Rejects a budget smaller than the FFT length; no padding or partial FFT is inferred.
+pub(crate) fn average_capacity(
+    spacing: SubcarrierSpacing,
+    max_samples: usize,
+) -> Result<usize, SimulationError> {
+    let length = spacing.fft_samples() as usize;
+    if max_samples < length {
+        return Err(invalid(
+            "Spectrum sample budget must include one complete FFT window.",
+        ));
+    }
+    let hop = length / WELCH_HOP_DIVISOR;
+    Ok(1 + ((max_samples - length) / hop).min(MAX_SPECTRUM_AVERAGES - 1))
 }
 
 impl PowerSpectrum {

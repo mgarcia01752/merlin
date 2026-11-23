@@ -1,0 +1,542 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Spectrum sample-budget API prerequisite",
+  "status": "Scoped paired spectrum sample-budget API accepted; Qt adoption and parent/final audit remain incomplete",
+  "base_commit": "e8b9583c62161d551b5af2b14eccc54ffe0c953d",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-09",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "bindings/python/python/merlin/__init__.pyi",
+      "sha256": "5dbf99cf753ac2effb5862ddef18c0d2672b0458a711988d8b612baad949c627"
+    },
+    {
+      "path": "bindings/python/src/admission.rs",
+      "sha256": "6bd13931b190c22b09121be9094e567bdc1ba42463ff354e0fd517d39b03e1bb"
+    },
+    {
+      "path": "bindings/python/tests/test_admission.py",
+      "sha256": "f8be75161c7e2ad75e7b07c7922c17af03cc534c5bdda79c51788ec341b899bb"
+    },
+    {
+      "path": "crates/merlin/tests/namespaces.rs",
+      "sha256": "3301d08264f25908d97824a5656452428b9591303fffb87740dbb2e17284db8d"
+    },
+    {
+      "path": "crates/ofdm/examples/api_spectrum_average_capacity.rs",
+      "sha256": "5a53df853fb68fb3f48849dbea8cc93aaad87699f032997e631b0be91fd329c2"
+    },
+    {
+      "path": "crates/ofdm/src/api/admission.rs",
+      "sha256": "417dc44f1aead1bafd4fff1c865ca346c66b8f9093ce7189e291ce20ec26b58a"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/spectrum.rs",
+      "sha256": "0aa0c6658a2d8a53950ede591e079d9df37d171fd1934f41128b78e8cd181d77"
+    },
+    {
+      "path": "crates/ofdm/tests/api_admission.rs",
+      "sha256": "8822c28a6ef7715a36339da016dc1238008b946af35c9758862ac37aa87ad19c"
+    },
+    {
+      "path": "crates/ofdm/tests/api_full_loop_observations.rs",
+      "sha256": "659ec99f6bd0ffcf7938ea069b98d25836f17fbfc42a6bdeac7d56ce2eebbd6c"
+    }
+  ],
+  "public_operation": {
+    "rust": "TransmissionConfiguration::spectrum_average_capacity(&self, max_samples: usize) -> ApiResult<usize>",
+    "python": "TransmissionConfiguration.spectrum_average_capacity(self, max_samples: int) -> int",
+    "owner": "Existing downstream waveform spectrum owner; FFT/hop/MAX_SPECTRUM_AVERAGES remain authoritative.",
+    "work": "Positive budgets fitting an FFT admit only the existing capped complete-window count; huge budgets never widen work or allocate/read samples. Actual retained availability is separate.",
+    "compatibility": "Existing spectrum/query structs, fields/defaults and serialization unchanged. Estimate retains its original length/sample/frequency checks and numerical loop; its complete-window count delegates to the same owner helper. No Qt, Python or facade calculation."
+  },
+  "compatibility_case": {
+    "accepted_configuration": "25 kHz spacing and allowed 1024-sample CP; four actual TX-overlap events",
+    "unbounded_samples": 36864,
+    "unbounded_averages": 8,
+    "legacy_prefix_samples": 32768,
+    "capacity": 7,
+    "proof": "Actual calibrated queries preserve context/first-sample/reference plane and the entire actual report with its FEC comparison; the capacity-constrained query consumes exactly the legacy retained prefix.",
+    "evidence_kind": "MERLIN-only deterministic run and original numerical-owner tone/power/bandwidth vectors; no external interoperability claim."
+  },
+  "preservation": {
+    "prior_rust_rows": 570,
+    "current_rust_rows": 571,
+    "prior_native_rows": 544,
+    "current_native_rows": 545,
+    "prior_rows_and_types_exact": true,
+    "old_class_exports": 80,
+    "prior_root_and_namespace_operation_instances": 951,
+    "prior_members_exact_after_removing_new_method": true,
+    "native_method": {
+      "name": "spectrum_average_capacity",
+      "kind": "method",
+      "signature": "(self, /, max_samples)"
+    },
+    "rust_method": {
+      "operation": "merlin::downstream::TransmissionConfiguration::spectrum_average_capacity",
+      "signature": "pub fn spectrum_average_capacity(&self, max_samples: usize) -> ApiResult<usize>",
+      "source_file": "crates/ofdm/src/api/admission.rs",
+      "rustdoc": "docsis_ofdm_fec/api/struct.TransmissionConfiguration.html"
+    }
+  },
+  "numeric_review": {
+    "helper": "Complete first FFT plus integral half-overlap windows, capped by existing MAX_SPECTRUM_AVERAGES. No Qt-specific 32768 budget is hardcoded in backend production.",
+    "limits": "Minimum budget derives from accepted spacing/FFT. WELCH_HOP_DIVISOR and MAX_SPECTRUM_AVERAGES retain existing named ownership; safe integer arithmetic saturates analysis work for usize::MAX.",
+    "old_behavior": "Estimate first rejects its original invalid lengths, then validates samples/frequency before computing the same count. Original estimator calculations/order remain unchanged.",
+    "independent_vectors": "Literal 8192/4096 transforms, 4096/2048 hops, exact/one-before boundaries, 32768 prefix, 32-window cap and actual 36864/eight-versus-seven case are independent fixtures. Existing tone/integral/ENBW/silence/nonfinite tests retained.",
+    "final_audit": "Still pending UIU-QA-01; no Qt source/frozen record is changed in this prerequisite."
+  },
+  "validation": {
+    "rust_and_build_checks": [
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.0433839879988227
+      },
+      {
+        "label": "binding-format",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "fmt",
+          "--manifest-path",
+          "bindings/python/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.19093743700068444
+      },
+      {
+        "label": "admission",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "docsis-ofdm-fec",
+          "--locked",
+          "--features",
+          "high-level-api",
+          "--test",
+          "api_admission"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.2457741679972969
+      },
+      {
+        "label": "owner",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "docsis-ofdm-fec",
+          "--locked",
+          "--features",
+          "high-level-api",
+          "--test",
+          "waveform_spectrum"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.8698998430045322
+      },
+      {
+        "label": "facade",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "merlin",
+          "--locked",
+          "--test",
+          "namespaces",
+          "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "--",
+          "--exact"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.261374931011233
+      },
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "-p",
+          "docsis-ofdm-fec",
+          "-p",
+          "merlin",
+          "--features",
+          "merlin/native-input",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 16.31224372900033
+      },
+      {
+        "label": "binding-clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "--manifest-path",
+          "bindings/python/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 13.116010559999268
+      },
+      {
+        "label": "analysis",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "check",
+          "-p",
+          "docsis-ofdm-fec",
+          "--no-default-features",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.883836351989885
+      },
+      {
+        "label": "wheel",
+        "command": [
+          "/home/dev01/Projects/merlin/local/api-python-build/bin/python",
+          "-m",
+          "maturin",
+          "build",
+          "--manifest-path",
+          "bindings/python/Cargo.toml",
+          "--release",
+          "--locked",
+          "--compatibility",
+          "linux",
+          "--interpreter",
+          "/usr/bin/python3",
+          "--out",
+          "/home/dev01/Projects/merlin/local/python-wheels-ds-spectrum-budget"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 55.1112172229914
+      },
+      {
+        "label": "rustdoc",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "doc",
+          "--workspace",
+          "--no-deps",
+          "--locked",
+          "--features",
+          "merlin/native-input"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 8.160575946996687
+      },
+      {
+        "label": "rust-inventory",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/rust_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-rust-exports.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.816986446006922
+      }
+    ],
+    "exact_archive_native": {
+      "status": "passed",
+      "wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-spectrum-budget/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+      "wheel_sha256": "e746f87e7ee0e5bcb6e9aad722a9436385098dcc3aee347f4f0c0f5ecaaca078",
+      "archive_native_sha256": "ea0f00ae165b345632ce381371c4962d3175b3ceea8708ebade5dd49a9384217",
+      "reference": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-reference.json",
+      "reference_sha256": "280a0982fe4a39e12a263a8e9bc63ea33d1f629dde4503f2bf591ad9e8ef93d9",
+      "commands": [
+        {
+          "label": "install",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "--no-deps",
+            "/home/dev01/Projects/merlin/local/python-wheels-ds-spectrum-budget/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.7213956350024091
+        },
+        {
+          "label": "artifact-preflight",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-c",
+            "import json,hashlib,sys\nfrom pathlib import Path\nimport merlin,merlin.downstream as downstream,merlin._native as native\npath=Path(native.__file__).resolve()\nassert path.is_relative_to(Path(sys.prefix).resolve())\nassert hashlib.sha256(path.read_bytes()).hexdigest()==sys.argv[1]\nassert merlin.TransmissionConfiguration is downstream.TransmissionConfiguration\nassert merlin.TransmissionConfiguration().spectrum_average_capacity(32768)==7\nprint(json.dumps({'native_artifact':str(path),'native_sha256':sys.argv[1],'exact_archive_match':True,'root_downstream_identity':True,'new_capacity_method':True}))\n",
+            "ea0f00ae165b345632ce381371c4962d3175b3ceea8708ebade5dd49a9384217"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.18294233399501536
+        },
+        {
+          "label": "admission",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_admission.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.11775094699987676
+        },
+        {
+          "label": "namespaces",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_namespaces.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.15815420899889432
+        },
+        {
+          "label": "native-inventory",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native/installed/bin/python",
+            "-I",
+            "-B",
+            "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+            "--output",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native/native-exports.json"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.1376758159894962
+        }
+      ]
+    },
+    "operation_record": "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
+    "rust_cases": 13,
+    "native_cases": 13,
+    "separate_rust_reference": {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-reference.json",
+      "sha256": "280a0982fe4a39e12a263a8e9bc63ea33d1f629dde4503f2bf591ad9e8ef93d9"
+    },
+    "metadata": [
+      {
+        "label": "strict-matrix",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/api_operation_matrix.py",
+          "--exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-rust-exports.json",
+          "--native-exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native/native-exports.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/namespace-test-results.json",
+          "--executed-record",
+          "docs/development/features/pnm-measurement-inputs/decoder-test-results.json",
+          "--executed-record",
+          "docs/development/features/pnm-measurement-inputs/association-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/python-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/python-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 7.239131956011988
+      },
+      {
+        "label": "metadata-tests",
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tools/validation",
+          "-p",
+          "test_*api*.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.16999369200493675
+      },
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 13.207538254995598
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 9.914231873000972
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03747044700139668
+      },
+      {
+        "label": "python-guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03745044200331904
+      },
+      {
+        "label": "qt-boundary",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/qt_api_boundary.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.20163523599330802
+      },
+      {
+        "label": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.08085970400134102
+      }
+    ]
+  },
+  "failure_history": [
+    "Initial binding fmt call omitted the pinned wrapper and reported missing Rust; corrected with the existing private Cargo wrapper without installing or modifying the environment. All final root/binding formatting and Clippy gates passed."
+  ],
+  "limits": [
+    "Qt adoption stays pending and current 30 frozen files/102 scientific reference sites/three dependencies remain unchanged.",
+    "No completed API/FEC/planning task reopened; the parent DS migration remains incomplete.",
+    "Fresh local Linux CPython 3.10 wheel only; no hosted, installed desktop, Windows or publication claim.",
+    "No full historical test suite rerun; thirteen focused Rust and thirteen fresh installed native cases establish this operation scope."
+  ]
+}

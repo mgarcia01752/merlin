@@ -19,6 +19,7 @@ Rust scientific owners and advances no source or simulation.
 | `result.report()` | `result.report()` | Actual typed Rust complete/partial report and owned native dictionary. |
 | `result.inputs()`; `inputs.summary()` | `result.input_summary()` | Rust retains typed original inputs; native returns bounded original identity/provenance metadata. |
 | `result.recovered_bytes()` | `result.recovered_bytes()` | Borrowed Rust decoded original-file bytes / owned native bytes, or None for PRBS. |
+| `transmission.spectrum_average_capacity(max_samples)` | Matching method | Idle complete-window capacity for a sample budget and accepted FFT, capped by the existing spectrum work policy. |
 
 `FullLoopInputs` contains the previously admitted transmission, Dpd, SourceInput,
 MeasurementSequence, ChannelConfiguration and optional original ChannelEstimate.
@@ -109,3 +110,38 @@ Traceability: [architecture](../../architecture.md#unified-qt-public-api-boundar
 [requirements](../../requirements.md#req-uiu-09),
 [design](../../development/features/unified-qt-workbench/design.md#uiu-api-02-downstream-controlled-request-unit)
 and [task](../../development/checklist.md#task-uiu-api-02).
+
+
+## Spectrum sample budgets
+
+Use the accepted transmission configuration to plan how many complete Welch
+windows fit a retained-sample budget. Rust owns the half-overlap cadence and
+caps capacity at the existing 32-window analysis policy. A budget smaller than
+one FFT raises the shared input error. Larger budgets preserve that work cap;
+actual retained sample availability is checked by the result's spectrum query.
+
+```rust
+use merlin::downstream::{TransmissionConfiguration, TransmissionSettings};
+
+// Existing 32768-sample retained-window policy, independent of FFT length.
+const SAMPLE_BUDGET: usize = 32_768;
+let transmission = TransmissionConfiguration::new(TransmissionSettings::default())?;
+let averages = transmission.spectrum_average_capacity(SAMPLE_BUDGET)?;
+assert_eq!(averages, 7); // Default 25 kHz spacing; 50 kHz admits 15 windows.
+```
+
+```python
+import merlin.downstream as m
+
+SAMPLE_BUDGET = 32_768  # Same retained-sample policy, expressed in sample units.
+transmission = m.TransmissionConfiguration()
+averages = transmission.spectrum_average_capacity(SAMPLE_BUDGET)
+assert averages == 7
+```
+
+Pass the returned count as `max_averages` in the existing spectrum query using
+that configuration. This capacity query leaves inputs idle and unchanged. At
+25 kHz with a 1024-sample CP, four actual TX blocks contain 36864 samples: the
+32768-sample prefix selects seven complete windows while the full span admits
+eight. Original contexts, reference planes and simulation outcomes remain owned
+by the retained result. See the [separate Rust reference](../../../crates/ofdm/examples/api_spectrum_average_capacity.rs).

@@ -109,3 +109,7 @@ required-features = ["high-level-api"]
 [[example]]
 name = "api_full_loop"
 required-features = ["high-level-api"]
+
+[[example]]
+name = "api_spectrum_average_capacity"
+required-features = ["high-level-api"]

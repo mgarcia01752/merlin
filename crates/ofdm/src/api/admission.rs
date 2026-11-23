@@ -151,6 +151,28 @@ impl TransmissionConfiguration {
         )
     }
 
+    /// Plans the bounded Welch-average capacity of an explicit sample budget.
+    ///
+    /// # Arguments
+    /// * `max_samples` - Sample-count ceiling, including at least one accepted FFT.
+    ///
+    /// # Returns
+    /// Maximum complete overlapping analysis windows fitting that budget, capped
+    /// by the existing spectrum owner's work policy. Actual retained availability
+    /// is separate. Inputs stay unchanged; no source, FFT, receiver or RNG advances.
+    /// Oversized positive budgets cannot widen analysis work or allocate samples.
+    ///
+    /// # Errors
+    /// Rejects fewer than one complete FFT through the shared numerical owner.
+    pub fn spectrum_average_capacity(&self, max_samples: usize) -> ApiResult<usize> {
+        Ok(
+            crate::signal_processing::waveform::spectrum::average_capacity(
+                self.settings.subcarrier_spacing,
+                max_samples,
+            )?,
+        )
+    }
+
     /// Checks the existing profile editor's spacing and occupied-envelope contract.
     ///
     /// # Arguments

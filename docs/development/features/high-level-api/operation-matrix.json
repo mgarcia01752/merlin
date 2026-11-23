@@ -5,14 +5,14 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "5fd139491f1f5ad9f9f5c5a9cccb10c3845fce5d plus exact engine diagnostic candidate",
-    "inventory_command": "Exact newly built archive-matched installed Python -I -B native_api_inventory.py; ds-01-engine-diagnostic-native/results.json",
-    "native_sha256": "cbab0b05a6be4e39eeacf3511850b9fd49c93908e1ad505a1e29b05e5ce7e0ba",
-    "scope": "Fresh installed diagnostic/shared-exception and namespace metadata with thirteen targeted native cases. All earlier members/constructors/signatures remain exact; only engine_code is additive.",
+    "revision": "e8b9583c62161d551b5af2b14eccc54ffe0c953d plus exact spectrum-budget candidate",
+    "inventory_command": "Exact archive-matched installed Python -I -B native_api_inventory.py; ds-01-spectrum-budget-native/results.json",
+    "native_sha256": "ea0f00ae165b345632ce381371c4962d3175b3ceea8708ebade5dd49a9384217",
+    "scope": "Fresh exact-archive installed admission/direct-Rust-process and namespace cases. Only spectrum_average_capacity is additive.",
     "preserved_prior_inventory": {
-      "sha256": "1d467b1d27e923425509dfbf137014576c7eca6d2cc0796e057529a041aeb11b",
-      "root_and_namespace_operation_instances": 948,
-      "scope": "Every old class/alias/constructor/member/operation is exact after removing only the new shared exception field."
+      "sha256": "78c22cb0c06e47bf628fb6004c18f2f061b3df988f48614f5eda717858bd2588",
+      "root_and_namespace_operation_instances": 951,
+      "scope": "Every old class/alias/constructor/member/kind/signature is exact after removing only the new method."
     }
   },
   "contracts": {
@@ -130,7 +130,10 @@
     "units.backend-diagnostic-code": "Optional case-sensitive original Rust diagnostic identifier, separate from the generic shared ErrorCode category; no physical units or inferred message parsing.",
     "errors.diagnostic-read": "Passive diagnostic/exception metadata read has no intentional domain Result failures. Original error category, human message, serialized source and existing metadata remain unchanged; ordinary Python allocation/access behavior remains.",
     "evidence.uiu-ds-01-engine-diagnostic": "../unified-qt-workbench/engine-diagnostic-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-structured-engine-diagnostic-accepted: actual Rust/backend and exact archive-matched native errors, missing-source codes, optional absence and prior-field compatibility.",
-    "status.uiu-ds-01-engine-diagnostic": "Scoped public diagnostic prerequisite accepted. Qt worker/help adoption and parent DS-01/final integration remain incomplete."
+    "status.uiu-ds-01-engine-diagnostic": "Scoped public diagnostic prerequisite accepted. Qt worker/help adoption and parent DS-01/final integration remain incomplete.",
+    "units.samples-to-averages": "Input is a physical sample-count budget for accepted downstream FFT geometry; output is complete overlapping Welch-window capacity capped by the existing analysis work policy. Actual retained availability is separate.",
+    "evidence.uiu-ds-01-spectrum-budget": "../unified-qt-workbench/spectrum-budget-evidence.json, ../unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-ds-01-spectrum-sample-budget-api-accepted: exact source/archive/module hashes, independent counts/PSD anchors and installed direct-process parity.",
+    "status.uiu-ds-01-spectrum-budget": "Accepted additive passive Rust/native operation. Existing query structs, defaults and numerical processing are preserved; Qt spectrum consumer adoption remains pending."
   },
   "type_exports": {
     "downstream": [
@@ -32369,6 +32372,56 @@
       },
       "evidence": "evidence.uiu-ds-01-engine-diagnostic",
       "status": "status.uiu-ds-01-engine-diagnostic"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::TransmissionConfiguration::spectrum_average_capacity",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn spectrum_average_capacity(&self, max_samples: usize) -> ApiResult<usize>",
+        "source_file": "crates/ofdm/src/api/admission.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.TransmissionConfiguration.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.TransmissionConfiguration.spectrum_average_capacity",
+        "declaration": "merlin.downstream.TransmissionConfiguration.spectrum_average_capacity"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.samples-to-averages",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<usize>",
+        "scope": "Passive complete-window capacity for the sample budget and accepted FFT, capped at the existing spectrum work policy. Rejects fewer than one FFT; no availability claim, sample access or run."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-09",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_admission.rs::spectrum_average_capacity_uses_independent_fft_boundaries_without_running",
+          "crates/ofdm/tests/api_full_loop_observations.rs::sample_budget_capacity_preserves_the_actual_long_cp_legacy_spectrum_prefix"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native owner acceptance",
+          "cases": [
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_spectrum_average_capacity_is_bounded_idle_and_immutable",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_spectrum_average_capacity_matches_the_direct_rust_process"
+          ],
+          "scope": "Independent two-spacing sample/window boundaries, usize-sized saturation and conversions, immutable idle settings, direct Rust process reference and a real long-CP retained-prefix PSD regression."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-spectrum-budget",
+      "status": "status.uiu-ds-01-spectrum-budget"
     }
   ],
   "executed_records": [
@@ -32404,7 +32457,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -67634,6 +67688,62 @@
       },
       "evidence": "evidence.uiu-ds-01-engine-diagnostic",
       "status": "status.uiu-ds-01-engine-diagnostic"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.TransmissionConfiguration.spectrum_average_capacity",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::TransmissionConfiguration",
+        "source_file": "bindings/python/src/admission.rs",
+        "symbol": "PyTransmission",
+        "signature": "pub fn spectrum_average_capacity(&self, max_samples: usize) -> ApiResult<usize>",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "merlin::downstream::TransmissionConfiguration::spectrum_average_capacity",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "spectrum_average_capacity",
+        "kind": "method",
+        "signature": "(self, /, max_samples)",
+        "declaration": "TransmissionConfiguration.spectrum_average_capacity"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.samples-to-averages",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::TransmissionConfiguration",
+        "scope": "Owned integer capacity from Rust; Python conversion rejects nonrepresentable counts. No Python arithmetic, mutation, source, FFT or job."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-09",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_admission.rs::spectrum_average_capacity_uses_independent_fft_boundaries_without_running",
+          "crates/ofdm/tests/api_full_loop_observations.rs::sample_budget_capacity_preserves_the_actual_long_cp_legacy_spectrum_prefix"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native owner acceptance",
+          "cases": [
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_spectrum_average_capacity_is_bounded_idle_and_immutable",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_spectrum_average_capacity_matches_the_direct_rust_process"
+          ],
+          "scope": "Independent two-spacing sample/window boundaries, usize-sized saturation and conversions, immutable idle settings, direct Rust process reference and a real long-CP retained-prefix PSD regression."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-spectrum-budget",
+      "status": "status.uiu-ds-01-spectrum-budget"
     }
   ],
   "native_type_exports": {
@@ -68770,6 +68880,18 @@
         "sha256": "f7a67f34344b2dbe36e80844d279c0da3bd49369df27f44c290a1a367194c631",
         "root_and_namespace_operation_instances": 944,
         "scope": "Every prior class/alias/constructor/operation kind and signature remains exact; two methods are additive."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "5fd139491f1f5ad9f9f5c5a9cccb10c3845fce5d plus exact engine diagnostic candidate",
+      "inventory_command": "Exact newly built archive-matched installed Python -I -B native_api_inventory.py; ds-01-engine-diagnostic-native/results.json",
+      "native_sha256": "cbab0b05a6be4e39eeacf3511850b9fd49c93908e1ad505a1e29b05e5ce7e0ba",
+      "scope": "Fresh installed diagnostic/shared-exception and namespace metadata with thirteen targeted native cases. All earlier members/constructors/signatures remain exact; only engine_code is additive.",
+      "preserved_prior_inventory": {
+        "sha256": "1d467b1d27e923425509dfbf137014576c7eca6d2cc0796e057529a041aeb11b",
+        "root_and_namespace_operation_instances": 948,
+        "scope": "Every old class/alias/constructor/member/operation is exact after removing only the new shared exception field."
       }
     }
   ],

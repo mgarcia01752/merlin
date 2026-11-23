@@ -10,6 +10,59 @@ use docsis_ofdm_fec::api::{
 };
 
 #[test]
+fn spectrum_average_capacity_uses_independent_fft_boundaries_without_running() {
+    // Independent half-overlap anchors: N=8192/hop=4096 or N=4096/hop=2048.
+    // The old 32768-sample UI window admits seven/fifteen complete windows.
+    for (spacing, cases) in [
+        (
+            SubcarrierSpacing::Khz25,
+            vec![
+                (8192, 1),
+                (12287, 1),
+                (12288, 2),
+                (32768, 7),
+                (135168, 32),
+                (usize::MAX, 32),
+            ],
+        ),
+        (
+            SubcarrierSpacing::Khz50,
+            vec![
+                (4096, 1),
+                (6143, 1),
+                (6144, 2),
+                (32768, 15),
+                (67584, 32),
+                (usize::MAX, 32),
+            ],
+        ),
+    ] {
+        let settings = TransmissionSettings {
+            subcarrier_spacing: spacing,
+            ..Default::default()
+        };
+        let accepted = TransmissionConfiguration::new(settings.clone()).unwrap();
+        for (samples, expected) in cases {
+            assert_eq!(
+                accepted.spectrum_average_capacity(samples).unwrap(),
+                expected
+            );
+            assert_eq!(accepted.settings(), &settings);
+        }
+        let below = match spacing {
+            SubcarrierSpacing::Khz25 => 8191,
+            SubcarrierSpacing::Khz50 => 4095,
+        };
+        for budget in [0, 1, below] {
+            let error = accepted.spectrum_average_capacity(budget).unwrap_err();
+            assert_eq!(error.code(), ErrorCode::InvalidInput);
+            assert_eq!(error.engine_code(), Some("InvalidLabInput"));
+            assert_eq!(accepted.settings(), &settings);
+        }
+    }
+}
+
+#[test]
 fn original_engine_code_is_optional_typed_and_preserves_error_ownership() {
     // Zero is the existing invalid active-runtime boundary, not a simulated duration.
     let failure = FullLoopOptions {

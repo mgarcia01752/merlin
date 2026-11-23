@@ -1927,3 +1927,49 @@ Python operation history remains separate from this consumer's acceptance; no
 new installed wheel or full historical suite is claimed. Physical-power graphs,
 waveform-spectrum sample budgets, later session/upstream work, the parent DS
 milestone and the final line-by-line numeric audit remain incomplete.
+
+
+## UIU-DS-01 spectrum sample-budget API accepted
+
+[Design/owners](design.md#uiu-ds-01-spectrum-sample-budget-prerequisite),
+[exact evidence](spectrum-budget-evidence.json),
+[executed operation cases](ds-01-spectrum-budget-operation-test-results.json),
+[architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[REQ-UIU-02](../../../requirements.md#req-uiu-02),
+[REQ-UIU-09](../../../requirements.md#req-uiu-09),
+[REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-27](../../../requirements.md#req-uiu-27) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) trace this API prerequisite.
+
+The additive TransmissionConfiguration.spectrum_average_capacity method delegates
+to the existing waveform spectrum owner in Rust. It counts complete half-overlap
+windows fitting an explicit sample budget and caps work at the existing policy.
+Budgets below the accepted FFT reject; oversized positive budgets cannot widen
+work or allocate/read samples. Configurations stay immutable and idle. Actual
+retained availability remains separate. The estimator keeps its original length,
+sample and frequency validation and the same numerical loop, reusing the owner's
+window-count helper. Existing queries, fields/defaults/serialization and legacy
+imports remain unchanged; Python performs no scientific calculation.
+
+Thirteen focused Rust cases pass, including independent two-spacing boundaries,
+saturation, original tone/integral/ENBW/silence/nonfinite vectors, facade identity
+and a real long-CP retained-prefix case. With 25 kHz spacing and the supported
+1024-sample CP, four actual blocks contain 36864 samples/eight windows; the
+legacy 32768 prefix uses seven. Context, first-sample/reference identity and the
+entire actual report and its FEC comparison remain unchanged. This is MERLIN-only numerical
+and compatibility evidence, not external interoperability.
+
+A fresh uniquely owned Linux CPython 3.10 wheel passes archive-to-installed-module
+hash preflight before thirteen native admission/direct-Rust-process/namespace
+cases, with no skips. All prior 570 Rust/544 native rows and type exports remain
+exact; all 951 prior root/namespace native operation instances are exact after
+removing only the new method. The candidate has 571 Rust/545 native rows and
+80 root class exports and 112 directional/common class exports (79 downstream,
+30 upstream and three common). Final strict inventory/operation, metadata and
+format/Clippy receipts are recorded with the exact source/wheel hashes.
+
+No dependency, saved schema, Qt source or frozen record changes. Completed API/
+FEC/planning tasks remain closed. Qt spectrum consumers, the 30-file/102-site/
+three-dependency migration debt, the parent DS task and final numeric audit remain
+incomplete. The latest Qt executable is still the preceding accepted consumer;
+this prerequisite adds no Qt adoption or native desktop/hosted/release claim.

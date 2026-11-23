@@ -5,6 +5,7 @@
 """Installed native parity for passive transmission/source admission."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import unittest
 
@@ -14,6 +15,48 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 class NativeAdmissionTests(unittest.TestCase):
+    def test_spectrum_average_capacity_is_bounded_idle_and_immutable(self):
+        # Independent N/hop and 32768-sample retained-prefix anchors for both spacings.
+        for spacing, cases, below in [
+            ('25000', [(8192, 1), (12287, 1), (12288, 2), (32768, 7), (135168, 32)], 8191),
+            ('50000', [(4096, 1), (6143, 1), (6144, 2), (32768, 15), (67584, 32)], 4095),
+        ]:
+            settings = m.TransmissionConfiguration().settings
+            settings['subcarrier_spacing'] = spacing
+            configuration = m.TransmissionConfiguration.from_json(json.dumps(settings).encode())
+            before = configuration.to_json()
+            for budget, expected in cases:
+                self.assertEqual(configuration.spectrum_average_capacity(budget), expected)
+            # Independent unsigned 64-bit host-size boundary; positive budgets never widen work.
+            self.assertEqual(configuration.spectrum_average_capacity((1 << 64) - 1), 32)
+            for budget in (0, 1, below):
+                with self.assertRaises(m.ApiError) as failure:
+                    configuration.spectrum_average_capacity(budget)
+                self.assertEqual(failure.exception.code, m.ErrorCode.InvalidInput)
+                self.assertEqual(failure.exception.engine_code, 'InvalidLabInput')
+            for budget in (-1, 1 << 64):
+                with self.assertRaises(OverflowError):
+                    configuration.spectrum_average_capacity(budget)
+            self.assertEqual(configuration.to_json(), before)
+
+    @unittest.skipUnless(os.environ.get('MERLIN_SPECTRUM_BUDGET_REFERENCE'), 'Direct Rust process reference required')
+    def test_spectrum_average_capacity_matches_the_direct_rust_process(self):
+        records = json.loads(Path(os.environ['MERLIN_SPECTRUM_BUDGET_REFERENCE']).read_text())
+        self.assertEqual([record['spacing'] for record in records], ['25000', '50000'])
+        for record in records:
+            settings = m.TransmissionConfiguration().settings
+            settings['subcarrier_spacing'] = record['spacing']
+            configuration = m.TransmissionConfiguration.from_json(json.dumps(settings).encode())
+            for case in record['cases']:
+                if 'capacity' in case:
+                    self.assertEqual(configuration.spectrum_average_capacity(case['max_samples']), case['capacity'])
+                else:
+                    with self.assertRaises(m.ApiError) as failure:
+                        configuration.spectrum_average_capacity(case['max_samples'])
+                    self.assertEqual(case['error_code'], 'InvalidInput')
+                    self.assertEqual(failure.exception.code, m.ErrorCode.InvalidInput)
+                    self.assertEqual(failure.exception.engine_code, case['engine_code'])
+
     def test_engine_code_is_structured_optional_and_preserves_existing_error_fields(self):
         # Zero is the existing rejected active-runtime boundary; its original code is stable.
         with self.assertRaises(m.ApiError) as failure:

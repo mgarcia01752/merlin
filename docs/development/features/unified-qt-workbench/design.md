@@ -2400,3 +2400,44 @@ cases, the QAM/navigation QML case, twenty boundary regressions, all-target
 Clippy, formatting, canonical documentation/traceability, optimized build and
 six native checks. The parent retains 30 frozen files/102 sites/three direct
 scientific dependencies; the final numeric audit remains open.
+
+## UIU-DS-01 spectrum sample-budget prerequisite
+
+The physical/scatter review found a real remaining spectrum compatibility gap.
+Legacy Qt retains at most 32768 contiguous time samples. The public spectrum
+query instead admits up to 32 Welch averages. At the supported 25 kHz spacing
+and 1024-sample CP, four TX-overlap events contain 36864 samples: the default
+query analyzes eight windows, while the legacy retained prefix admits seven.
+Qt must not reconstruct the Welch hop/average calculation to preserve its budget.
+
+Select one additive passive operation; do not add fields to the existing public
+FullLoopSpectrumQuery or change its defaults, serialized shape or other methods.
+REQ-UIU-02/09/24/27 and UIU-DS-01 own this prerequisite. Completed API/FEC/planning
+tasks remain closed, and the Qt spectrum consumers remain frozen until acceptance.
+
+| Rust / Python operation | Contract and ownership |
+| --- | --- |
+| `TransmissionConfiguration::spectrum_average_capacity(&self, max_samples: usize) -> ApiResult<usize>` | Accepted FFT geometry determines the largest complete Welch-window count fitting the sample budget, capped by the existing MAX_SPECTRUM_AVERAGES work policy. Fewer than one FFT rejects; oversized positive budgets never widen work. No source, observation, FFT, receiver, RNG or live session advances, and actual retained availability remains a separate query. |
+| `TransmissionConfiguration.spectrum_average_capacity(self, max_samples: int) -> int` | Native Rust delegation with matching domain errors. Nonrepresentable native integer conversion remains a Python error. One distribution, both root and downstream class aliases unchanged. |
+
+| Path / disposition | Exact reuse and validation |
+| --- | --- |
+| EDIT `crates/ofdm/src/signal_processing/waveform/spectrum.rs` | Own complete-window capacity beside the existing hop/work constants; reuse it in estimate after the unchanged length/sample/frequency validation. Preserve numerical processing and old error ordering/messages. |
+| EDIT `crates/ofdm/src/api/admission.rs`, `bindings/python/src/admission.rs`, root `.pyi` | Add only the passive method and direct native delegation; no scientific code in Python or facade. |
+| EDIT `crates/ofdm/tests/api_admission.rs`, existing observation fixture helper and `api_full_loop_observations.rs` | Independent two-spacing sample boundaries, work saturation, unchanged input snapshots and a real 1024-CP retained-prefix PSD comparison. Preserve existing default fixture behavior and assertions. |
+| EDIT `bindings/python/tests/test_admission.py`; ADD `crates/ofdm/examples/api_spectrum_average_capacity.rs` with its required-feature manifest entry | Installed-wheel integer/domain/ownership checks and a separate bounded Rust-process capacity reference; no simulation is needed for the passive geometry query. |
+| REUSE existing `waveform_spectrum.rs`, facade namespace cases and executed operation matrix | Independent tone, power integral, bandwidth, silence and nonfinite oracles, legacy imports and exact additive operation tracing. |
+
+Reuse/license: existing MERLIN Apache scientific/API/native owners and their
+fixed sample-clock/FFT geometry; no new normative capability, dependency,
+cross-direction consolidation, schema, UI source or FEC implementation. Scientific
+32-window work policy stays separate from Qt's 32768-sample presentation budget.
+Validate Rust first, then a unique source-built wheel installed outside the
+checkout with archive-to-module hash verification. Preserve every prior API row,
+class/member and executed record; accept the new operation before Qt adoption.
+
+This prerequisite is [accepted independently](validation.md#uiu-ds-01-spectrum-sample-budget-api-accepted):
+thirteen Rust and thirteen exact-archive installed native cases pass, alongside
+38 metadata cases, Clippy and strict 571/545 operation tracing. Every prior row,
+type and native member is preserved. Qt adoption, the parent migration and final
+numeric audit remain separate unfinished work.

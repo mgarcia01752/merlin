@@ -151,6 +151,21 @@ impl PyTransmission {
             .map_err(error)
     }
 
+    /// Plans complete Welch-average capacity through the public Rust numerical owner.
+    ///
+    /// # Arguments
+    /// * `max_samples` - Sample budget containing at least one accepted FFT.
+    ///
+    /// # Returns
+    /// Work-policy-capped integer capacity without reading samples or running a job.
+    /// Original configuration stays unchanged; actual retained availability is separate.
+    ///
+    /// # Errors
+    /// Shared domain failures raise ApiError; nonrepresentable integer conversion stays native.
+    fn spectrum_average_capacity(&self, max_samples: usize) -> PyResult<usize> {
+        self.0.spectrum_average_capacity(max_samples).map_err(error)
+    }
+
     /// Checks original-grid editor compatibility without claiming full TX readiness.
     ///
     /// # Arguments
