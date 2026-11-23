@@ -10,6 +10,7 @@ mod instruments;
 mod observations;
 mod options;
 mod physical;
+mod receiver_archive;
 mod request;
 mod result;
 mod sequence;
@@ -33,6 +34,8 @@ fn transport_error(cause: serde_json::Error) -> api::ApiError {
 /// # Returns
 /// Unit on registration; Python type/allocation failures remain visible.
 pub(crate) fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
+    module.add_class::<receiver_archive::PyReceiverArchivePolicy>()?;
+    module.add_class::<receiver_archive::PyReceiverArchive>()?;
     module.add_class::<PyFullLoopOptions>()?;
     module.add_class::<PyFullLoopControl>()?;
     module.add_class::<PyFullLoopRequest>()?;

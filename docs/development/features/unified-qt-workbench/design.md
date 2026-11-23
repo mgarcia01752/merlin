@@ -3085,3 +3085,66 @@ never activate guessed domains; Rust still validates typed values. Existing
 screen-only empty extent, padding and tick policies receive independent names in
 the common application constants owner without changing their values. The
 unchanged visual layout retains its existing dark-theme guide screenshot.
+
+## UIU-DS-01 bounded receiver archive prerequisite
+
+REQ-UIU-02/07/09/16/17/18/19/20/24/27 and UIU-DS-01 require preserving independent
+receiver QAM/soft history after removing private scientific dependencies. Existing
+FullLoopResult is an immutable live-result owner, but cloning it for each of 32
+archived runs retains the complete job, source/captures and stages. The current
+Qt archive intentionally retains only 8192 payload cells, 1024 NCP cells, 1024
+cells per protected role and 16200 original decoder LLRs. This demonstrated
+consumer gap needs one detached public owner before the Qt history migration.
+
+| Path/symbol | Existing contract | Decision and owner |
+| --- | --- | --- |
+| `apps/qt/src/downstream/instruments/receiver/qam_history.rs`, Snapshot/retain | Independent bounded histories, uniform original indices floor(k*N/min(N,cap)), original decoder-word context; no waveform/job retention | ADAPT through a detached FullLoopReceiverArchive; retain run identity/status and the 32-run application policy in Qt. |
+| `crates/ofdm/src/api/full_loop/cells/selection.rs`, Selected | Full-population filtering and original coordinate/role identity before output pagination | REUSE for live and detached reports; no Qt filtering or scientific reconstruction. |
+| `crates/ofdm/src/api/full_loop/cells/queries.rs`, qam/cell_decisions | Scientific MER over all selected retained cells; bounded physical decisions and original likelihoods | SHARE private implementations between the existing result and detached archive, preserving old exports/defaults/results. |
+| `crates/ofdm/src/api/full_loop/cells/soft.rs`, soft views | Independent cell and coding-order decoder planes; existing Rust likelihood statistics/histograms/envelopes | SHARE the existing owners. Archive the first actual nonempty retained decoder event with its exact offset, total, context and finite prefix; no synthetic LLRs. |
+| `crates/ofdm/src/simulation/channel/protected_constellation/`, new/streams | Existing validated empty shell plus actual immutable protected observations | REUSE the constructor and copy only selected public stream pairs; do not clone hidden pilot-sequence work state or whole report vectors. |
+
+ADD `crates/ofdm/src/api/full_loop/receiver_archive/` and paired native binding/test
+modules; EDIT focused cell query helpers/re-exports, common domain constants,
+namespace exports, operation traceability and the existing user/API guides.
+FullLoopResult::receiver_archive(policy) returns an immutable detached archive.
+Policy admits independently reducible payload/NCP/protected/decoder caps and a
+caller byte budget. Existing Qt caps are the defaults/maxima for this bounded
+history operation, distinct from live scientific capture and stage/query limits.
+An independent eight-MiB maximum archive byte policy bounds each copy; the future
+session aggregate budget and 32-run Qt cap remain separate. Count actual selected
+nested LLR/context payload bytes with checked arithmetic before allocating copies;
+allocator overhead and engine buffers are not claimed as counted bytes.
+
+Archive info reports actual retained counts/bytes, correction mode and decoder
+availability/original event index. qam, cell_decisions and cell_soft_view reuse the
+same typed queries and scientific helpers as live results. decoder_soft_view has
+one explicitly selected archived event, preserving its physical coding context.
+Archive clones share only detached immutable data; dropping all live requests,
+results and original capture handles must not invalidate queries or retain those
+owners. Missing streams/events remain unavailable; reduction never fabricates
+complete observations or changes original coordinates/status/provenance.
+
+Before Qt adoption: independently check 10003→8192 (last10001), empty/zero caps,
+all six roles and original metadata, first nonempty/truncated decoder context,
+byte/overflow/domain rejection before copies, all-selected MER beyond2048, square/
+cross-QAM decisions and strict soft histogram endpoints/extrema. Prove live-query
+behavior unchanged and detached lifetime using weak original-owner references.
+Pair native ownership, dictionary isolation, rejection and fresh Rust-process
+numeric parity from an exact freshly built/installed wheel. Run affected Rust API,
+facade/legacy imports, native Clippy and operation/export tracing; no Qt source or
+frozen entry changes in this prerequisite. Source-only tests do not establish Qt
+or parent acceptance. Then migrate the three receiver owners and matcher-invisible
+soft calculations as one consumer batch, remove dependencies and execute the
+existing DS Level2/downstream Level3 gate before integrating prepared agents.
+
+The implemented owner uses checked fixed/payload/context-byte preflight and shares
+only the detached data through Arc. Protected reports start from the existing
+validated empty constructor so hidden pilot-sequence state is not retained.
+Independent history caps and byte/transport policies live in the downstream
+common constants module. The unchanged 2048-cell QAM/soft and 128-decision limits
+also receive separate shared names used by both live and archived queries.
+Paired runtime evidence and exact 600/570 operation tracing are recorded under
+[archive acceptance](validation.md#uiu-ds-01-bounded-receiver-archive-api-accepted).
+All original completed API/FEC tasks and the twelve remaining frozen Qt sites stay
+unchanged; consumer adoption and DS milestone acceptance remain separate.

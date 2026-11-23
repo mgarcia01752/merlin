@@ -81,10 +81,66 @@ starting at the display offset, with explicit contributing-cell accounting.
 They remain separate from [coding-order LDPC input](full-loop-observations.md).
 
 [Reference/decision-region and detailed soft-value views](slicer-views.md) supply
-the remaining slicer data through public Rust operations. Physical-spectrum/role
-views and complete catalog/sweep parity remain API-02 gates before Qt adoption.
+the remaining slicer data through public Rust operations. API-02 backend acceptance
+is recorded separately; Qt consumer migration remains UIU-DS-01.
 Traceability:
 [architecture](../../architecture.md#unified-qt-public-api-boundary),
 [requirements](../../requirements.md#req-uiu-16),
 [design](../../development/features/unified-qt-workbench/design.md#uiu-api-02-selected-receiver-cell-unit)
 and [parent task](../../development/checklist.md#task-uiu-api-02).
+
+## Detached independent histories
+
+Use `result.receiver_archive(policy)` when retaining several independent runs.
+Cloning an entire result keeps its job, original inputs and unrelated stage data
+alive. A receiver archive copies only finite actual cells and one decoder-event
+prefix; its clones share those copies. It remains usable after all requests,
+results and capture handles are dropped.
+
+```rust
+use merlin::downstream::{FullLoopCellQuery, FullLoopReceiverArchiveInput,
+    FullLoopReceiverArchivePolicy};
+
+let policy = FullLoopReceiverArchivePolicy::new(FullLoopReceiverArchiveInput::default())?;
+let history = result.receiver_archive(policy)?;
+drop(result);
+let view = history.qam(FullLoopCellQuery::default())?;
+let accounting = history.info();
+```
+
+```python
+import merlin.downstream as m
+
+policy = m.FullLoopReceiverArchivePolicy()
+history = result.receiver_archive(policy)
+del result
+view = history.qam()
+accounting = history.info
+```
+
+The default policy retains at most8192 payload cells,1024 NCP cells,1024 cells
+per protected stream and16200 decoder LLRs, with an independent eight-MiB copy
+budget. Each count may be reduced to zero; Rust admits strict JSON through
+`FullLoopReceiverArchivePolicy::from_json` / `.from_json`. A smaller byte budget
+can reject the complete copy before any observation allocation. `retained_bytes`
+counts the archive's fixed storage and actual copied nested cell/likelihood/context
+payload, excluding allocator/control-block overhead and engine buffers. Applications
+still need independent aggregate and run-count budgets.
+
+Cell reduction uses original index floor(k×N/min(N,cap)). It keeps actual physical
+coordinates and may leave gaps. MER uses every filtered **archived** cell before
+pagination; it cannot describe omitted original cells. QAM, decisions and
+cell-soft queries use the same typed selectors and numerical owners as live
+results. Original raw/equalized, nearest-point/matched-TX and physical-cell/coding-
+order planes stay distinct. Missing streams remain empty.
+
+The decoder view retains the first actual nonempty retained payload LDPC-input
+event's finite prefix. `info` reports its original snapshot index, coding context,
+element offset and original total. `history.decoder_soft_view()` takes no event
+selector because an archive contains at most that one event. Missing or deliberately
+omitted decoder input raises MissingCoverage; it is never replaced by cell LLRs.
+These views are diagnostics and do not rerun or modify decoding.
+
+Traceability: [archive design](../../development/features/unified-qt-workbench/design.md#uiu-ds-01-bounded-receiver-archive-prerequisite),
+[public boundary](../../architecture.md#unified-qt-public-api-boundary) and
+[downstream migration](../../development/checklist.md#task-uiu-ds-01).

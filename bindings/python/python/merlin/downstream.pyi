@@ -81,3 +81,6 @@ from . import FullLoopRequest as FullLoopRequest
 from . import FullLoopResult as FullLoopResult
 from . import FullLoopObservationPolicy as FullLoopObservationPolicy
 from . import FullLoopCellQuery as FullLoopCellQuery
+
+from . import FullLoopReceiverArchivePolicy as FullLoopReceiverArchivePolicy
+from . import FullLoopReceiverArchive as FullLoopReceiverArchive

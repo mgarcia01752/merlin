@@ -1180,6 +1180,15 @@ recipe domains, saved envelopes and noncompounding behavior remain compatible.
 Bounded receiver archives and remaining soft/QAM numerical projections are the
 explicit downstream migration frontier.
 
+The [bounded receiver archive prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-bounded-receiver-archive-prerequisite)
+provides FullLoopReceiverArchive with finite actual cells and one original decoder
+observation, releasing full jobs, inputs and stage stores. Validated independent
+history count/byte policies preserve original physical/coding coordinates and
+reuse the live public selection/MER/decision/soft implementations. Native Python
+mirrors the same owner, including existing compatibility import paths. The
+[paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-bounded-receiver-archive-api-accepted)
+precedes the still-pending Qt consumer migration; no parent acceptance is implied.
+
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

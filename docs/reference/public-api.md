@@ -15,6 +15,7 @@ Return to the [documentation index](../README.md) for other guides.
 
 | Public module | Responsibility |
 | --- | --- |
+| `merlin::downstream::{FullLoopReceiverArchivePolicy,FullLoopReceiverArchive}` | [Detached finite receiver histories](../user/api/full-loop-cells.md#detached-independent-histories), original cell/decoder context and shared live scientific query owners; no full job/input retention |
 | `signal_processing::receiver::channel_estimation::{MceSettings,ReliabilityEstimator,ReceiverReliability}` | Received-only MCE reliability policy, bounded continuous-pilot differences and training/tracking summary; no supplied H or exact simulator noise inputs |
 | `signal_processing::channel::composition::{prepare_channel,PreparedChannel}` | Shared admission/execution/preview planning, total gain and separate pre-filter synthesis response |
 | `signal_processing::channel::filter::{ChannelFilterSettings,ChannelFilterPlan,StreamingChannelFilter}` | Bounded static echo/CM reconstruction plans, coefficient/response/fit getters and persistent sample filtering |

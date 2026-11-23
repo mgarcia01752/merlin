@@ -36,3 +36,23 @@ pub const MAX_DESIGN_NOTCH_DEPTH_DB: f64 = 60.0;
 pub const MIN_DESIGN_ECHO_DISTANCE_METRES: f64 = 0.001;
 /// Maximum admitted echo-distance helper input in metres; separate from any waveform range.
 pub const MAX_DESIGN_ECHO_DISTANCE_METRES: f64 = 10_000.0;
+
+// Detached receiver-history application policy; independent of live capture/stage budgets.
+/// Maximum/default payload cells in one detached history; original positions are sampled uniformly.
+pub const MAX_RECEIVER_ARCHIVE_PAYLOAD_CELLS: usize = 8192;
+/// Independent maximum/default NCP history cells, not a protected-role or event limit.
+pub const MAX_RECEIVER_ARCHIVE_NCP_CELLS: usize = 1024;
+/// Maximum/default per protected history role, shared deliberately by the four protected streams.
+pub const MAX_RECEIVER_ARCHIVE_PROTECTED_CELLS: usize = 1024;
+/// Maximum/default original coding-order LLR prefix retained for one historical payload word.
+pub const MAX_RECEIVER_ARCHIVE_DECODER_LLRS: usize = 16200;
+/// Per-history copy budget ceiling/default, eight MiB; 32 histories cannot exceed 256 MiB
+/// of owner-accounted bytes. Aggregate application retention still needs its own budget.
+pub const MAX_RECEIVER_ARCHIVE_BYTES: usize = 8 * 1024 * 1024;
+/// Independent strict archive-policy transport ceiling; unrelated to stage/query row counts.
+pub const MAX_RECEIVER_ARCHIVE_POLICY_BYTES: usize = 4096;
+
+/// Shared live/archive QAM page and selected-cell soft-population ceiling; not a history cap.
+pub const MAX_RECEIVER_CELL_VIEW_ROWS: usize = 2048;
+/// Independent live/archive physical decision row ceiling; not a likelihood count.
+pub const MAX_RECEIVER_DECISION_VIEW_ROWS: usize = 128;

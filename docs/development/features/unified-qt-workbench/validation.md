@@ -2814,3 +2814,49 @@ Bounded receiver archives, matcher-invisible QAM/soft calculations, dependency
 removal, UIU-DS-01 Level 2, downstream milestone Level 3 and final numeric/common-
 constant acceptance remain open. Prepared agent branches establish no integrated
 session/upstream acceptance.
+
+## UIU-DS-01 bounded receiver archive API accepted
+
+[Design](design.md#uiu-ds-01-bounded-receiver-archive-prerequisite),
+[machine evidence](receiver-archive-api-evidence.json),
+[exact executed cases](ds-01-receiver-archive-operation-test-results.json),
+[public boundary](../../../architecture.md#unified-qt-public-api-boundary) and
+[official parent](../../checklist.md#task-uiu-ds-01) trace REQ-UIU-02/07/09/16/17/18/19/20/24/27.
+The concrete existing history consumer needs detached data: FullLoopResult clones
+retain entire jobs, inputs and stages. The new immutable Rust/native archive owns
+only bounded actual role cells and the first nonempty decoder event's finite
+prefix, with original coordinates, coding context, offset and total. Existing live
+QAM/MER/decision/soft implementations are shared; no numerical algorithm changes
+or reconstructed receiver input. Query/history/decoder/byte policies remain
+separate and named in the downstream common constants owner.
+
+Nineteen distinct Rust cases pass:14 full-loop library cases, three affected
+public scientific observation cases and two facade/legacy type-identity cases.
+Sixteen cases pass against the exact final installed wheel: four archive, four
+existing cell, three slicer/soft, four namespace/typing/control and one legacy
+real-FEC result case. A freshly executed separate Rust process matches every
+archive info/QAM/decision/cell-soft/decoder-soft field and existing live views.
+Independent vectors preserve 10003→8192 with last index10001; all-selected MER
+23.010299956639813/20 dB beyond2048 display rows; six distinct role/amplitude
+contracts; strict soft histogram endpoints; decoder prefix/context; zero/missing
+states; byte arithmetic rejection; and weak-reference release of the actual job,
+stage store and original profile bytes while archive clones remain usable.
+
+The installed-wheel namespace check caught missing new aliases in the legacy
+merlin.merlin path. The compatibility-only repack verified an unchanged native
+payload; the subsequent final named-limit candidate reruns all16 native cases.
+Earlier compile/Clippy/fixture-path attempts and the premature local reference
+preflight remain explicit failed/nonacceptance history. Source-only/default-
+feature compilation is not used as high-level API acceptance.
+
+Core/native Clippy, formatting, CLI and analysis-only compilation, Rust/facade
+documentation and actual export inventories pass. Final strict operation and
+metadata checks are retained in machine evidence. Nine Rust and ten native rows
+append (600/570 total); all previous rows, classes/signatures, execution history,
+requirements and official checkbox states remain intact. No Qt/CXX/QML source,
+manifest/lock, saved schema, scientific vector or decoder changes. The Qt executable
+remains current for its unchanged UI sources; no Qt adoption, new Qt runtime test,
+complete workspace/native/CLI/package suite or hosted-platform pass is claimed.
+Three frozen Qt files/12 sites/three direct scientific dependencies remain.
+Receiver adoption, dependency removal, DS Level2/downstream Level3, prepared-agent
+integration and final numeric/common-constant acceptance remain pending.

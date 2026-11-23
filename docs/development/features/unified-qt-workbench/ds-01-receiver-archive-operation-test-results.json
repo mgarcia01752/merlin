@@ -1,0 +1,328 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "scope": "19 distinct Rust cases and16 distinct native cases on the final compiled candidate/exact installed wheel, including expanded first-nonempty/lifetime checks and full fresh Rust-process archive/live-query parity. Earlier attempts remain local history; no unexecuted complete suite is claimed.",
+  "runs": [
+    {
+      "command": [
+        "docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "--locked",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--lib",
+        "api::full_loop::",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 18.140049129000545,
+      "label": "core",
+      "language": "rust",
+      "passed": 14,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/cells/queries.rs",
+          "qualified_test_case": "all_selected_mer_includes_errors_after_display_cap_and_keeps_reference_planes_separate"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/cells/queries.rs",
+          "qualified_test_case": "missing_references_empty_filters_and_output_ownership_remain_explicit"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/cells/queries.rs",
+          "qualified_test_case": "strict_query_admission_and_per_operation_windows_reject_without_changing_originals"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/messages.rs",
+          "qualified_test_case": "fixed_packet_fields_offsets_and_exact_transmission_end_are_independent_anchors"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/messages.rs",
+          "qualified_test_case": "gaps_truncation_and_invalid_bytes_stop_without_erasing_prior_packets"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/messages.rs",
+          "qualified_test_case": "repeated_valid_frames_obey_packet_and_frame_work_budgets"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/observations/store.rs",
+          "qualified_test_case": "stage_retention_preserves_missing_explicit_zero_and_original_offset_as_owned_data"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs",
+          "qualified_test_case": "byte_preflight_rejects_addition_and_product_overflow"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs",
+          "qualified_test_case": "actual_archive_releases_job_stage_store_and_original_profile_bytes"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs",
+          "qualified_test_case": "all_selected_mer_uses_errors_beyond_the_display_page"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs",
+          "qualified_test_case": "decoder_prefix_preserves_original_context_offset_and_total"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs",
+          "qualified_test_case": "empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs",
+          "qualified_test_case": "protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs",
+          "qualified_test_case": "uniform_reduction_keeps_original_coordinates_and_exact_default_caps"
+        }
+      ]
+    },
+    {
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "--locked",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--test",
+        "api_full_loop_observations",
+        "--",
+        "receiver_cell_queries_preserve_actual_pairings",
+        "empty_and_invalid_cell_views",
+        "static_reference_and_actual_soft_views",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 50.62187590499889,
+      "label": "live-consumers",
+      "language": "rust",
+      "passed": 3,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_full_loop_observations.rs",
+          "qualified_test_case": "empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_full_loop_observations.rs",
+          "qualified_test_case": "receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_full_loop_observations.rs",
+          "qualified_test_case": "static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs"
+        }
+      ]
+    },
+    {
+      "label": "facade",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "merlin",
+        "--features",
+        "native-input",
+        "--locked",
+        "--test",
+        "namespaces",
+        "--",
+        "receiver_archive_policy_and_owner",
+        "downstream_exports_keep_exact_legacy_nominal_types",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 10.775444762002735,
+      "language": "rust",
+      "passed": 2,
+      "cases": [
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior"
+        },
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        }
+      ]
+    },
+    {
+      "label": "receiver_archive",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_receiver_archive.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+      "exit_code": 0,
+      "elapsed_seconds": 3.3558486250003625,
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_receiver_archive.py",
+          "qualified_test_case": "ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results"
+        },
+        {
+          "test_file": "bindings/python/tests/test_receiver_archive.py",
+          "qualified_test_case": "ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_receiver_archive.py",
+          "qualified_test_case": "ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit"
+        },
+        {
+          "test_file": "bindings/python/tests/test_receiver_archive.py",
+          "qualified_test_case": "ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation"
+        }
+      ]
+    },
+    {
+      "label": "full_loop_cells",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_full_loop_cells.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+      "exit_code": 0,
+      "elapsed_seconds": 4.983145232999959,
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_full_loop_cells.py",
+          "qualified_test_case": "FullLoopCellTests.test_absent_filtered_invalid_and_bounded_views_never_create_history"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop_cells.py",
+          "qualified_test_case": "FullLoopCellTests.test_actual_pairings_all_selected_metrics_and_owned_query_parameters"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop_cells.py",
+          "qualified_test_case": "FullLoopCellTests.test_all_actual_roles_decisions_and_cell_soft_values_keep_reference_coordinates"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop_cells.py",
+          "qualified_test_case": "FullLoopCellTests.test_direct_rust_process_selected_cells_metrics_and_decisions_match"
+        }
+      ]
+    },
+    {
+      "label": "slicer_views",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_slicer_views.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+      "exit_code": 0,
+      "elapsed_seconds": 2.7968210710023413,
+      "language": "python",
+      "passed": 3,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_slicer_views.py",
+          "qualified_test_case": "SlicerViewTests.test_actual_cell_and_decoder_soft_sequences_keep_distinct_original_extents"
+        },
+        {
+          "test_file": "bindings/python/tests/test_slicer_views.py",
+          "qualified_test_case": "SlicerViewTests.test_direct_rust_process_reference_region_and_actual_soft_views_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_slicer_views.py",
+          "qualified_test_case": "SlicerViewTests.test_static_reference_labels_scaling_region_and_finite_limits"
+        }
+      ]
+    },
+    {
+      "label": "namespaces",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_namespaces.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+      "exit_code": 0,
+      "elapsed_seconds": 0.13670355999784078,
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ]
+    },
+    {
+      "label": "legacy-result",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-c",
+        "import sys,unittest\nsys.path.insert(0,sys.argv[1])\nfrom test_full_loop import FullLoopTests\nresult=unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite([FullLoopTests('test_complete_real_fec_original_ownership_and_immutable_requests')]))\nassert result.testsRun==1 and not result.skipped\nraise SystemExit(not result.wasSuccessful())",
+        "/home/dev01/Projects/merlin/bindings/python/tests"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+      "exit_code": 0,
+      "elapsed_seconds": 2.2942423570020765,
+      "language": "python",
+      "passed": 1,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests"
+        }
+      ]
+    }
+  ]
+}

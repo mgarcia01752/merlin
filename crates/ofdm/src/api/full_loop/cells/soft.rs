@@ -41,22 +41,11 @@ impl FullLoopResult {
     /// # Errors
     /// Rejects invalid selections/work/offsets or invalid actual soft observations.
     pub fn cell_soft_view(&self, query: FullLoopCellQuery) -> ApiResult<FullLoopCellSoftView> {
-        let selected = Selected::new(
+        soft_from_reports(
             self.job.constellation.as_ref(),
             self.job.protected_constellation.as_ref(),
             query,
-            2048,
-        )?;
-        let values: Vec<_> = selected
-            .window()
-            .iter()
-            .flat_map(|cell| cell.llrs.iter().copied())
-            .collect();
-        Ok(FullLoopCellSoftView {
-            source_plane: "post_descrambling_cell_llrs",
-            view: soft_view::prepare(&values, 0)?,
-            selection: selected.info,
-        })
+        )
     }
 
     /// Projects an actual retained payload LDPC-input event through the same diagnostic owner.
@@ -78,17 +67,56 @@ impl FullLoopResult {
                     "Retained LDPC event is unavailable",
                 )
             })?;
-        let FullLoopStageData::Llrs(values) = &event.data else {
-            return Err(super::super::super::error::invalid(
-                "Retained LDPC input is not LLR data",
-            ));
-        };
-        Ok(FullLoopDecoderSoftView {
-            stage: FullLoopStage::PayloadLdpcInput,
-            context: event.context.clone(),
-            element_start: event.element_start,
-            total_elements: event.total_elements,
-            view: soft_view::prepare(values, event.element_start)?,
-        })
+        decoder_from_event(event)
     }
+}
+
+/// Shares original selected-cell soft projection for live and detached observations.
+/// # Arguments
+/// * `data`, `protected` - Immutable actual cell reports, with no invented likelihoods.
+/// * `query` - Existing validated bounded selection.
+/// # Returns
+/// Unchanged physical-cell soft plane and owner-prepared statistics/envelopes.
+/// # Errors
+/// Preserves original selector, work and numerical errors.
+pub(in crate::api::full_loop) fn soft_from_reports(
+    data: Option<&crate::simulation::channel::constellation::ConstellationResult>,
+    protected: Option<&crate::simulation::channel::protected_constellation::ProtectedConstellation>,
+    query: FullLoopCellQuery,
+) -> ApiResult<FullLoopCellSoftView> {
+    let selected = Selected::new(data, protected, query, MAX_RECEIVER_CELL_VIEW_ROWS)?;
+    let values: Vec<_> = selected
+        .window()
+        .iter()
+        .flat_map(|cell| cell.llrs.iter().copied())
+        .collect();
+    Ok(FullLoopCellSoftView {
+        source_plane: "post_descrambling_cell_llrs",
+        view: soft_view::prepare(&values, 0)?,
+        selection: selected.info,
+    })
+}
+
+/// Shares original coding-order soft preparation without changing event metadata.
+/// # Arguments
+/// * `event` - Actual retained payload decoder event or its admitted detached prefix.
+/// # Returns
+/// Original context/offset/total and unchanged owner-prepared likelihood diagnostics.
+/// # Errors
+/// Preserves representation, finite-value, work and original-index failures.
+pub(in crate::api::full_loop) fn decoder_from_event(
+    event: &FullLoopStageSnapshot,
+) -> ApiResult<FullLoopDecoderSoftView> {
+    let FullLoopStageData::Llrs(values) = &event.data else {
+        return Err(super::super::super::error::invalid(
+            "Retained LDPC input is not LLR data",
+        ));
+    };
+    Ok(FullLoopDecoderSoftView {
+        stage: FullLoopStage::PayloadLdpcInput,
+        context: event.context.clone(),
+        element_start: event.element_start,
+        total_elements: event.total_elements,
+        view: soft_view::prepare(values, event.element_start)?,
+    })
 }

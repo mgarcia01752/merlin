@@ -105,6 +105,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "response": observed.response(FullLoopResponseQuery::default())?,
         "llr": observed.llr_statistics(0)?,
     });
+    let archived = observed.receiver_archive(FullLoopReceiverArchivePolicy::new(
+        FullLoopReceiverArchiveInput::default(),
+    )?)?;
+    let archive = json!({"info":archived.info(),"qam":archived.qam(FullLoopCellQuery {count:QAM_VIEW_COUNT,..Default::default()})?,"decisions":archived.cell_decisions(FullLoopCellQuery {count:DECISION_ROW_COUNT,..Default::default()})?,"cell_soft":archived.cell_soft_view(FullLoopCellQuery {count:SOFT_CELL_VIEW_COUNT,..Default::default()})?,"decoder_soft":archived.decoder_soft_view()?});
     let cells = json!({"qam":observed.qam(FullLoopCellQuery {count:QAM_VIEW_COUNT,..Default::default()})?,
         "decisions":observed.cell_decisions(FullLoopCellQuery {count:DECISION_ROW_COUNT,..Default::default()})?});
     let slicer = json!({"reference":Simulation::constellation_reference(REFERENCE_CONSTELLATION_ORDER,REFERENCE_AMPLITUDE,REFERENCE_PAGE_START,REFERENCE_PAGE_COUNT)?,
@@ -217,7 +221,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!(
         "{}",
         serde_json::to_string(
-            &json!({"status":report.status,"summary":report.summary,"recovery":output.fec_recovery(),"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages,"instruments":instruments,"messages":observed.plc_messages()?,"cells":cells,"slicer":slicer,"physical":physical,"sequence_spectra":sequence_spectra,"channel_spectra":channel_spectra,"sweep":sweep})
+            &json!({"status":report.status,"summary":report.summary,"recovery":output.fec_recovery(),"words":report.retained_words,"settings":request.settings(),"inputs":output.inputs().summary()?,"stages":stages,"instruments":instruments,"messages":observed.plc_messages()?,"archive":archive,"cells":cells,"slicer":slicer,"physical":physical,"sequence_spectra":sequence_spectra,"channel_spectra":channel_spectra,"sweep":sweep})
         )?
     );
     Ok(())

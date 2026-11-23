@@ -21,13 +21,12 @@ impl FullLoopResult {
     /// Rejects invalid query bounds/work/orders or out-of-range display offsets; valid empty
     /// selections return explicit zero counts/unavailable metrics without fabricated samples.
     pub fn qam(&self, query: FullLoopCellQuery) -> ApiResult<FullLoopQamView> {
-        let selected = Selected::new(
+        qam_from_reports(
             self.job.constellation.as_ref(),
             self.job.protected_constellation.as_ref(),
             query,
-            2048,
-        )?;
-        qam_view(selected, self.job.settings.receiver_mode)
+            self.job.settings.receiver_mode,
+        )
     }
 
     /// Slices actual corrected physical cells without changing production decoder inputs.
@@ -41,37 +40,75 @@ impl FullLoopResult {
     /// Rejects invalid work/coordinates/reference order, unavailable display offsets and
     /// nonfinite diagnostic inputs through the existing slicer/statistics owners.
     pub fn cell_decisions(&self, query: FullLoopCellQuery) -> ApiResult<FullLoopCellDecisions> {
-        let selected = Selected::new(
+        decisions_from_reports(
             self.job.constellation.as_ref(),
             self.job.protected_constellation.as_ref(),
             query,
-            128,
-        )?;
-        let rows = selected
-            .window()
-            .iter()
-            .map(|cell| {
-                Ok(FullLoopCellDecisionRow {
-                    cell: cell.owned(),
-                    decision: decide(cell.order, cell.amplitude, *cell.after)?,
-                })
-            })
-            .collect::<ApiResult<Vec<_>>>()?;
-        let first = selected.info.display_start;
-        let soft_cells =
-            &selected.cells[first..selected.cells.len().min(first.saturating_add(2048))];
-        let values: Vec<_> = soft_cells
-            .iter()
-            .flat_map(|cell| cell.llrs.iter().copied())
-            .collect();
-        Ok(FullLoopCellDecisions {
-            rows,
-            llr_first_selected_cell: first,
-            llr_selected_cells: soft_cells.len(),
-            llr_statistics: llr_statistics(&values)?,
-            selection: selected.info,
-        })
+        )
     }
+}
+
+/// Shares existing full-population QAM calculation between live and detached reports.
+/// # Arguments
+/// * `data`, `protected` - Actual immutable payload/NCP and protected observations.
+/// * `query`, `receiver_mode` - Existing selection and actual recorded correction mode.
+/// # Returns
+/// Existing owned bounded view; no capture or scientific execution occurs.
+/// # Errors
+/// Preserves all original selector and numerical errors.
+pub(in crate::api::full_loop) fn qam_from_reports(
+    data: Option<&crate::simulation::channel::constellation::ConstellationResult>,
+    protected: Option<&crate::simulation::channel::protected_constellation::ProtectedConstellation>,
+    query: FullLoopCellQuery,
+    receiver_mode: ReceiverMode,
+) -> ApiResult<FullLoopQamView> {
+    qam_view(
+        Selected::new(data, protected, query, MAX_RECEIVER_CELL_VIEW_ROWS)?,
+        receiver_mode,
+    )
+}
+
+/// Shares existing physical decision/statistics calculation without changing decoder inputs.
+/// # Arguments
+/// * `data`, `protected` - Actual immutable receiver observations.
+/// * `query` - Existing role/profile/coordinate query and bounded output window.
+/// # Returns
+/// Unchanged original decision rows and selected-cell statistics.
+/// # Errors
+/// Preserves original selection, work and finite-input failures.
+pub(in crate::api::full_loop) fn decisions_from_reports(
+    data: Option<&crate::simulation::channel::constellation::ConstellationResult>,
+    protected: Option<&crate::simulation::channel::protected_constellation::ProtectedConstellation>,
+    query: FullLoopCellQuery,
+) -> ApiResult<FullLoopCellDecisions> {
+    let selected = Selected::new(data, protected, query, MAX_RECEIVER_DECISION_VIEW_ROWS)?;
+    let rows = selected
+        .window()
+        .iter()
+        .map(|cell| {
+            Ok(FullLoopCellDecisionRow {
+                cell: cell.owned(),
+                decision: decide(cell.order, cell.amplitude, *cell.after)?,
+            })
+        })
+        .collect::<ApiResult<Vec<_>>>()?;
+    let first = selected.info.display_start;
+    let soft_cells = &selected.cells[first
+        ..selected
+            .cells
+            .len()
+            .min(first.saturating_add(MAX_RECEIVER_CELL_VIEW_ROWS))];
+    let values: Vec<_> = soft_cells
+        .iter()
+        .flat_map(|cell| cell.llrs.iter().copied())
+        .collect();
+    Ok(FullLoopCellDecisions {
+        rows,
+        llr_first_selected_cell: first,
+        llr_selected_cells: soft_cells.len(),
+        llr_statistics: llr_statistics(&values)?,
+        selection: selected.info,
+    })
 }
 
 fn qam_view(selected: Selected<'_>, receiver_mode: ReceiverMode) -> ApiResult<FullLoopQamView> {

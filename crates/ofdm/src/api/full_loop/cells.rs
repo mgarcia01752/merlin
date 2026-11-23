@@ -4,10 +4,11 @@
  */
 //! Bounded immutable selections over actual paired receiver report owners.
 mod models;
-mod queries;
+pub(super) mod queries;
 mod selection;
-mod soft;
+pub(super) mod soft;
 use super::*;
+use crate::common::constants::{MAX_RECEIVER_CELL_VIEW_ROWS, MAX_RECEIVER_DECISION_VIEW_ROWS};
 pub use crate::signal_processing::{
     modulation::{
         mer::MerResult as FullLoopCellMer, slicing::HardDecision as FullLoopHardDecision,
@@ -40,7 +41,7 @@ impl FullLoopCellQuery {
     }
 
     fn validate(&self) -> ApiResult<()> {
-        if self.count > 2048 {
+        if self.count > MAX_RECEIVER_CELL_VIEW_ROWS {
             return Err(ApiError::new(
                 ErrorCode::ResourceLimit,
                 "Cell view exceeds 2048 rows",

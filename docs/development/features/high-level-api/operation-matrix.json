@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "102f4908f45292c6715308e9693fdf26b89939c2 plus exact measured-input API candidate",
-    "inventory_command": "Exact archive-matched native_api_inventory.py; ds-01-measured-input-api-native/results.json",
-    "native_sha256": "1f665a56753fc650c37d113f4c489c6e8ef7ee315d1520b6075480e072b8692a",
-    "scope": "23 selected installed cases; all old classes/signatures/members exact after removing only unity_response_preview and limits."
+    "revision": "4b26ec43f9a4af96f8b539010a01d8ba901fdfb5 plus exact bounded receiver-archive candidate",
+    "inventory_command": "Exact current wheel matched native_api_inventory.py; ds-01-receiver-archive-native-final/results.json",
+    "native_sha256": "8ce69dfb7e8a3232d7c77b3a013361ec953855326090efcc37ec0f46767137b0",
+    "scope": "16 selected cases executed against the exact current wheel; all prior classes/signatures/members preserved after removing only2 new classes and receiver_archive."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -146,7 +146,12 @@
     "status.uiu-ds-01-measured-input": "Level 1 paired prerequisite accepted; Qt adoption, parent Level 2 and milestone/final Level 3 remain pending.",
     "ownership.uiu-ds-01-measured-input": "Passive immutable input reads return owned scalar/plot reports. Rust keeps original inputs unchanged; native dictionaries are independent. No source, simulator or saved schema advances.",
     "units.uiu-ds-01-measured-input": "Unity H is dimensionless with existing gain dB/wrapped degree/real/imaginary projections on exact source frequencies. Designer reports existing dB/metre limits and separate capture/value/edit counts.",
-    "errors.uiu-ds-01-measured-input": "Unity preserves InvalidIdentifier/grid/viewport errors and native integer/string conversion distinctions. Rust limits is infallible; native JSON transport may raise ApiError."
+    "errors.uiu-ds-01-measured-input": "Unity preserves InvalidIdentifier/grid/viewport errors and native integer/string conversion distinctions. Rust limits is infallible; native JSON transport may raise ApiError.",
+    "evidence.uiu-ds-01-receiver-archive": "../unified-qt-workbench/receiver-archive-api-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-bounded-receiver-archive-api-accepted: independent reduction/MER/roles/soft/byte/lifetime vectors and separate-process native parity.",
+    "status.uiu-ds-01-receiver-archive": "Level1 paired archive prerequisite accepted; Qt adoption, parent Level2 and downstream/final Level3 remain pending.",
+    "ownership.uiu-ds-01-receiver-archive": "Immutable detached finite copies retain no job/input/stage-store ownership; clones share archive data. Native dictionaries are independent and work releases the GIL.",
+    "units.uiu-ds-01-receiver-archive": "Original physical bin/Hz/channel/source coordinates, raw/equalized I/Q and actual LLRs; byte/count limits are independent history policies. Decoder context/offset/total and reference planes stay distinct.",
+    "errors.uiu-ds-01-receiver-archive": "Strict malformed/unknown policy input raises InvalidInput; counts/byte/overflow raise ResourceLimit. Missing decoder raises MissingCoverage. Query errors match original live owners."
   },
   "type_exports": {
     "downstream": [
@@ -1080,6 +1085,22 @@
       },
       {
         "export": "merlin::downstream::ConfiguredResponsePreview",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopReceiverArchive",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopReceiverArchiveInfo",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopReceiverArchiveInput",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopReceiverArchivePolicy",
         "kind": "struct"
       }
     ],
@@ -33530,6 +33551,582 @@
       },
       "evidence": "evidence.uiu-ds-01-measured-input",
       "status": "status.uiu-ds-01-measured-input"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopReceiverArchive::info",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn info(&self) -> FullLoopReceiverArchiveInfo",
+        "source_file": "crates/ofdm/src/api/full_loop/receiver_archive/mod.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopReceiverArchive.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopReceiverArchive.info",
+        "declaration": "merlin.downstream.FullLoopReceiverArchive.info"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "FullLoopReceiverArchiveInfo",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopReceiverArchive::qam",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn qam(&self, query: FullLoopCellQuery) -> ApiResult<FullLoopQamView>",
+        "source_file": "crates/ofdm/src/api/full_loop/receiver_archive/mod.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopReceiverArchive.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopReceiverArchive.qam",
+        "declaration": "merlin.downstream.FullLoopReceiverArchive.qam"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopQamView>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopReceiverArchive::cell_decisions",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn cell_decisions( &self, query: FullLoopCellQuery, ) -> ApiResult<FullLoopCellDecisions>",
+        "source_file": "crates/ofdm/src/api/full_loop/receiver_archive/mod.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopReceiverArchive.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopReceiverArchive.cell_decisions",
+        "declaration": "merlin.downstream.FullLoopReceiverArchive.cell_decisions"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopCellDecisions>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopReceiverArchive::cell_soft_view",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn cell_soft_view( &self, query: FullLoopCellQuery, ) -> ApiResult<FullLoopCellSoftView>",
+        "source_file": "crates/ofdm/src/api/full_loop/receiver_archive/mod.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopReceiverArchive.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopReceiverArchive.cell_soft_view",
+        "declaration": "merlin.downstream.FullLoopReceiverArchive.cell_soft_view"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopCellSoftView>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopReceiverArchive::decoder_soft_view",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn decoder_soft_view(&self) -> ApiResult<FullLoopDecoderSoftView>",
+        "source_file": "crates/ofdm/src/api/full_loop/receiver_archive/mod.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopReceiverArchive.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopReceiverArchive.decoder_soft_view",
+        "declaration": "merlin.downstream.FullLoopReceiverArchive.decoder_soft_view"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopDecoderSoftView>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopReceiverArchivePolicy::new",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn new(input: FullLoopReceiverArchiveInput) -> ApiResult<Self>",
+        "source_file": "crates/ofdm/src/api/full_loop/receiver_archive/policy.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopReceiverArchivePolicy.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopReceiverArchivePolicy.__init__",
+        "declaration": "merlin.downstream.FullLoopReceiverArchivePolicy.__init__"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopReceiverArchivePolicy::from_json",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn from_json(bytes: &[u8]) -> ApiResult<Self>",
+        "source_file": "crates/ofdm/src/api/full_loop/receiver_archive/policy.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopReceiverArchivePolicy.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopReceiverArchivePolicy.from_json",
+        "declaration": "merlin.downstream.FullLoopReceiverArchivePolicy.from_json"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopReceiverArchivePolicy::settings",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn settings(&self) -> &FullLoopReceiverArchiveInput",
+        "source_file": "crates/ofdm/src/api/full_loop/receiver_archive/policy.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopReceiverArchivePolicy.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopReceiverArchivePolicy.settings",
+        "declaration": "merlin.downstream.FullLoopReceiverArchivePolicy.settings"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "&FullLoopReceiverArchiveInput",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::receiver_archive",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn receiver_archive( &self, policy: FullLoopReceiverArchivePolicy, ) -> ApiResult<FullLoopReceiverArchive>",
+        "source_file": "crates/ofdm/src/api/full_loop/receiver_archive/mod.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.receiver_archive",
+        "declaration": "merlin.downstream.FullLoopResult.receiver_archive"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopReceiverArchive>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
     }
   ],
   "executed_records": [
@@ -33573,7 +34170,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -69749,6 +70347,706 @@
       },
       "evidence": "evidence.uiu-ds-01-measured-input",
       "status": "status.uiu-ds-01-measured-input"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopReceiverArchive.cell_decisions",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopReceiverArchive",
+        "source_file": "bindings/python/src/full_loop/receiver_archive.rs",
+        "symbol": "PyReceiverArchive",
+        "signature": "pub fn cell_decisions( &self, query: FullLoopCellQuery, ) -> ApiResult<FullLoopCellDecisions>",
+        "mapping": "Thin frozen native wrapper over exact public Rust archive owner; JSON/constructors are language projections only.",
+        "delegated_operation": "merlin::downstream::FullLoopReceiverArchive::cell_decisions",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "cell_decisions",
+        "kind": "method",
+        "signature": "(self, /, query=None)",
+        "declaration": "FullLoopReceiverArchive.cell_decisions"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopCellDecisions>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopReceiverArchive.cell_soft_view",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopReceiverArchive",
+        "source_file": "bindings/python/src/full_loop/receiver_archive.rs",
+        "symbol": "PyReceiverArchive",
+        "signature": "pub fn cell_soft_view( &self, query: FullLoopCellQuery, ) -> ApiResult<FullLoopCellSoftView>",
+        "mapping": "Thin frozen native wrapper over exact public Rust archive owner; JSON/constructors are language projections only.",
+        "delegated_operation": "merlin::downstream::FullLoopReceiverArchive::cell_soft_view",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "cell_soft_view",
+        "kind": "method",
+        "signature": "(self, /, query=None)",
+        "declaration": "FullLoopReceiverArchive.cell_soft_view"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopCellSoftView>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopReceiverArchive.decoder_soft_view",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopReceiverArchive",
+        "source_file": "bindings/python/src/full_loop/receiver_archive.rs",
+        "symbol": "PyReceiverArchive",
+        "signature": "pub fn decoder_soft_view(&self) -> ApiResult<FullLoopDecoderSoftView>",
+        "mapping": "Thin frozen native wrapper over exact public Rust archive owner; JSON/constructors are language projections only.",
+        "delegated_operation": "merlin::downstream::FullLoopReceiverArchive::decoder_soft_view",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "decoder_soft_view",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopReceiverArchive.decoder_soft_view"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopDecoderSoftView>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopReceiverArchive.info",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopReceiverArchive",
+        "source_file": "bindings/python/src/full_loop/receiver_archive.rs",
+        "symbol": "PyReceiverArchive",
+        "signature": "pub fn info(&self) -> FullLoopReceiverArchiveInfo",
+        "mapping": "Thin frozen native wrapper over exact public Rust archive owner; JSON/constructors are language projections only.",
+        "delegated_operation": "merlin::downstream::FullLoopReceiverArchive::info",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native property",
+        "name": "info",
+        "kind": "property",
+        "signature": null,
+        "declaration": "FullLoopReceiverArchive.info"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "FullLoopReceiverArchiveInfo",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopReceiverArchive.qam",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopReceiverArchive",
+        "source_file": "bindings/python/src/full_loop/receiver_archive.rs",
+        "symbol": "PyReceiverArchive",
+        "signature": "pub fn qam(&self, query: FullLoopCellQuery) -> ApiResult<FullLoopQamView>",
+        "mapping": "Thin frozen native wrapper over exact public Rust archive owner; JSON/constructors are language projections only.",
+        "delegated_operation": "merlin::downstream::FullLoopReceiverArchive::qam",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "qam",
+        "kind": "method",
+        "signature": "(self, /, query=None)",
+        "declaration": "FullLoopReceiverArchive.qam"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopQamView>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopReceiverArchivePolicy.__init__",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopReceiverArchivePolicy",
+        "source_file": "bindings/python/src/full_loop/receiver_archive.rs",
+        "symbol": "PyReceiverArchivePolicy",
+        "signature": "pub fn new(input: FullLoopReceiverArchiveInput) -> ApiResult<Self>",
+        "mapping": "Thin frozen native wrapper over exact public Rust archive owner; JSON/constructors are language projections only.",
+        "delegated_operation": "merlin::downstream::FullLoopReceiverArchivePolicy::new",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native constructor",
+        "name": "__init__",
+        "kind": "constructor",
+        "signature": "()",
+        "declaration": "FullLoopReceiverArchivePolicy.__init__"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopReceiverArchivePolicy.from_json",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopReceiverArchivePolicy",
+        "source_file": "bindings/python/src/full_loop/receiver_archive.rs",
+        "symbol": "PyReceiverArchivePolicy",
+        "signature": "pub fn from_json(bytes: &[u8]) -> ApiResult<Self>",
+        "mapping": "Thin frozen native wrapper over exact public Rust archive owner; JSON/constructors are language projections only.",
+        "delegated_operation": "merlin::downstream::FullLoopReceiverArchivePolicy::from_json",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "from_json",
+        "kind": "method",
+        "signature": "(data)",
+        "declaration": "FullLoopReceiverArchivePolicy.from_json"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopReceiverArchivePolicy.settings",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopReceiverArchivePolicy",
+        "source_file": "bindings/python/src/full_loop/receiver_archive.rs",
+        "symbol": "PyReceiverArchivePolicy",
+        "signature": "pub fn settings(&self) -> &FullLoopReceiverArchiveInput",
+        "mapping": "Thin frozen native wrapper over exact public Rust archive owner; JSON/constructors are language projections only.",
+        "delegated_operation": "merlin::downstream::FullLoopReceiverArchivePolicy::settings",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native property",
+        "name": "settings",
+        "kind": "property",
+        "signature": null,
+        "declaration": "FullLoopReceiverArchivePolicy.settings"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "&FullLoopReceiverArchiveInput",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopReceiverArchivePolicy.to_json",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopReceiverArchivePolicy",
+        "source_file": "bindings/python/src/full_loop/receiver_archive.rs",
+        "symbol": "PyReceiverArchivePolicy",
+        "signature": "pub fn settings(&self) -> &FullLoopReceiverArchiveInput",
+        "mapping": "Thin frozen native wrapper over exact public Rust archive owner; JSON/constructors are language projections only.",
+        "delegated_operation": "merlin::downstream::FullLoopReceiverArchivePolicy::settings",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "to_json",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopReceiverArchivePolicy.to_json"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "&FullLoopReceiverArchiveInput",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.receiver_archive",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/receiver_archive.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn receiver_archive( &self, policy: FullLoopReceiverArchivePolicy, ) -> ApiResult<FullLoopReceiverArchive>",
+        "mapping": "Thin frozen native wrapper over exact public Rust archive owner; JSON/constructors are language projections only.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::receiver_archive",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "receiver_archive",
+        "kind": "method",
+        "signature": "(self, /, policy=None)",
+        "declaration": "FullLoopResult.receiver_archive"
+      },
+      "input_ownership": "ownership.uiu-ds-01-receiver-archive",
+      "units": "units.uiu-ds-01-receiver-archive",
+      "error_behavior": "errors.uiu-ds-01-receiver-archive",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopReceiverArchive>",
+        "scope": "Detached bounded actual receiver-history observation; same selection/diagnostics as live owners, no job/input/stage retention or scientific execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-09",
+        "REQ-UIU-16",
+        "REQ-UIU-17",
+        "REQ-UIU-18",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::uniform_reduction_keeps_original_coordinates_and_exact_default_caps",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::all_selected_mer_uses_errors_beyond_the_display_page",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::decoder_prefix_preserves_original_context_offset_and_total",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs::actual_archive_releases_job_stage_store_and_original_profile_bytes",
+          "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs::byte_preflight_rejects_addition_and_product_overflow",
+          "crates/merlin/tests/namespaces.rs::receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+        ],
+        "python": {
+          "status": "exact native archive payload and final compatibility alias acceptance",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit",
+            "bindings/python/tests/test_receiver_archive.py::ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+          ],
+          "scope": "Independent ownership/caps/byte failures, actual six-role data, strict planes and separate fresh Rust-process parity; no Qt adoption."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-receiver-archive",
+      "status": "status.uiu-ds-01-receiver-archive"
     }
   ],
   "native_type_exports": {
@@ -69973,6 +71271,20 @@
       {
         "name": "FullLoopOptions",
         "canonical_name": "FullLoopOptions",
+        "module": "merlin",
+        "signature": "()",
+        "constructible": true
+      },
+      {
+        "name": "FullLoopReceiverArchive",
+        "canonical_name": "FullLoopReceiverArchive",
+        "module": "merlin",
+        "signature": "()",
+        "constructible": false
+      },
+      {
+        "name": "FullLoopReceiverArchivePolicy",
+        "canonical_name": "FullLoopReceiverArchivePolicy",
         "module": "merlin",
         "signature": "()",
         "constructible": true
@@ -70956,6 +72268,13 @@
       "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-profile-performance-native/results.json",
       "native_sha256": "ab928e37f4d58fdd742c23df81e6d7bad784f5bcc625c48b60d94d4d24430faa",
       "scope": "Ten selected full-loop/classic/namespace cases; all prior classes/members/signatures exact after removing only FullLoopResult.profile_performance."
+    },
+    {
+      "version": "0.4.0",
+      "revision": "102f4908f45292c6715308e9693fdf26b89939c2 plus exact measured-input API candidate",
+      "inventory_command": "Exact archive-matched native_api_inventory.py; ds-01-measured-input-api-native/results.json",
+      "native_sha256": "1f665a56753fc650c37d113f4c489c6e8ef7ee315d1520b6075480e072b8692a",
+      "scope": "23 selected installed cases; all old classes/signatures/members exact after removing only unity_response_preview and limits."
     }
   ],
   "historical_rust_export_corrections": [

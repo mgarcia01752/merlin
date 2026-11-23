@@ -783,3 +783,22 @@ fn native_designer_limits_keep_exact_owner_type_through_facade() {
     assert_eq!(original().maximum_values, 4_000_000);
     assert_eq!(original().maximum_captures, 256);
 }
+
+#[test]
+#[cfg(feature = "downstream")]
+fn receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity() {
+    let policy = merlin::downstream::FullLoopReceiverArchivePolicy::new(
+        merlin::downstream::FullLoopReceiverArchiveInput::default(),
+    )
+    .unwrap();
+    let legacy: &docsis_ofdm_fec::api::FullLoopReceiverArchivePolicy = &policy;
+
+    // Independent existing historical payload budget, separate from live capture retention.
+    assert_eq!(legacy.settings().payload_cells, 8192);
+    let _operation: fn(
+        &docsis_ofdm_fec::api::FullLoopResult,
+        docsis_ofdm_fec::api::FullLoopReceiverArchivePolicy,
+    ) -> docsis_ofdm_fec::api::ApiResult<
+        merlin::downstream::FullLoopReceiverArchive,
+    > = merlin::downstream::FullLoopResult::receiver_archive;
+}
