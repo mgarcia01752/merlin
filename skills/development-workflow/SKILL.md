@@ -100,6 +100,12 @@ and input contracts, [public-api](../public-api/SKILL.md) for APIs/persistence a
 [ui-design](../ui-design/SKILL.md) for Qt work. Preserve AGENTS' scoped build/test
 commands, stable build profiles and caches. Documentation-only work needs relevant
 metadata, links/fragments and resource checks, not a simulation rebuild.
+For unified Qt integration, select Level 1 focused checks, Level 2 official-task
+acceptance or Level 3 milestone/final checks using the
+[risk-based strategy](../../docs/development/features/unified-qt-workbench/testing-strategy.md).
+Apply its mandatory consumer expansion and record actual execution, not-required
+checks/reasons and deferred gates. Focused subunit evidence cannot complete a
+parent task without its complete relevant acceptance checks.
 
 Check one complete requirement → task → owner/test chain, cross-cutting and deferred
 scope, duplicate IDs, missing dependencies and fragment targets. Preserve old

@@ -28,6 +28,8 @@ with the open API and backend acceptance gates.
 The [unified Qt Workbench](unified-qt-workbench/design.md) now owns the authorized
 UI phase, including its [public-API boundary](unified-qt-workbench/api-gap-matrix.md)
 and [official UIU tasks](../checklist.md#unified-qt-workbench-delivery).
+Its [testing strategy](unified-qt-workbench/testing-strategy.md) distinguishes
+focused commits, task acceptance and full integration gates.
 Existing downstream history is retained. The [source UI design](unified-backend/references/extension-designs-ui.md)
 is historical guidance; the unified phase still delivers one native application.
 

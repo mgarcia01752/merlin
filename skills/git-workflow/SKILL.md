@@ -26,6 +26,13 @@ Verify the task-linked design record follows coding-style's per-task design
 requirements and reflects the completed implementation/validation.
 Inspect the final diff again so the message includes any documentation updates.
 
+Unified Qt focused commits use [Level 1 risk-based validation](../../docs/development/features/unified-qt-workbench/testing-strategy.md),
+including all affected consumers for the listed high-risk contracts. Record
+executed checks and explain unexecuted/not-required or deferred checks. Official
+UIU completion still requires Level 2 and milestone/final acceptance Level 3.
+Do not invoke a full push/release gate for every local save; those existing
+gates remain unchanged when a push/release is actually authorized.
+
 Use tools/git/git-save.sh --commit-msg with one double-quoted multiline argument.
 Use Feature:, BugFix: or Documentation:, imperative summary and - detail lines,
 including - Tests:. Keep every message line at most60characters.

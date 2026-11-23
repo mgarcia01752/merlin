@@ -5,6 +5,14 @@ evidence and per-task runtime acceptance. The [official checklist](../../checkli
 owns current completion. Initial documentation checks below establish no runtime
 acceptance. Subsequent named task records report only their executed evidence.
 
+Current scheduling follows the [three-level risk-based testing strategy](testing-strategy.md):
+focused commit checks, complete relevant official-task acceptance and full
+applicable milestone/final regressions. Mandatory expansion covers all affected
+consumers of shared science, API compatibility, CXX-Qt registration, project
+serialization and cross-direction lifecycle changes. Existing acceptance sections
+and historical records below remain intact; record executed/not-required/deferred
+checks explicitly for each subsequent unit.
+
 ## UIU-PLAN-01: accepted planning baseline
 
 The user's [continuous execution instruction](execution-authorization.md) accepts
@@ -2016,3 +2024,25 @@ exact executable identity are recorded in the evidence. The UI appearance and
 existing screenshots are unchanged. No new wheel, complete historical suite,
 hosted/platform lifecycle or external interoperability is claimed. This parent,
 remaining spectrum/receiver/input migrations and the final numeric audit stay open.
+
+## UIU-QA-01 risk-based validation workflow refined
+
+[Design/file review](design.md#uiu-qa-01-validation-scheduling-refinement) and
+[testing strategy](testing-strategy.md) implement the user's three-level
+scheduling instruction under [REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-26](../../../requirements.md#req-uiu-26) and the existing
+[acceptance owner](../../../architecture.md#unified-qt-acceptance).
+The policy is routed from AGENTS and the canonical development-workflow,
+scientific-testing and git-workflow skills. Runners, CI/push/release gates,
+tests/vectors, dependencies and build/cache profiles are unchanged.
+
+| Validation scope | Actual result / reason |
+| --- | --- |
+| Level 1 executed | Current-mode feature_documentation.py and integration_traceability.py pass. quick_validate.py passes for all three modified skills. Python integration guide --check and git diff --check pass. |
+| Preservation audit executed | Every official checkbox line/state and task anchor is exact; all 21 UIU tasks remain, with nine completed. Requirement anchors are unchanged; only REQ-UIU-26 gains a scheduling reference. The pending calibrated-sequence source/test/design work is preserved separately and is not included in this workflow commit. |
+| Not required for this change | Rust/scientific/runtime tests, Clippy, Qt/QML/native launch, wheel rebuild/native parity, CLI/project and packaging regressions were not run: this unit changes only documentation and skill routing, with no executable contract, source, test, runner, dependency or build change. No runtime suite is reported passed. |
+| Deferred acceptance gates | Complete relevant UIU-DS-01 feature/crate/Qt/compatibility/traceability acceptance remains Level 2; full applicable integration/final suites and UIU-QA-01 remain Level 3. Existing task-specific criteria, zero scientific-boundary gate and numeric audit remain required. |
+
+This is workflow/documentation acceptance only. No official UIU status changes
+and no prior implementation/planning milestone is reopened. Continue the existing
+dependency order with the preserved calibrated ordered-frame API prerequisite.

@@ -1438,6 +1438,15 @@ resolved links/registration and an accurate owner/evidence report. Record actual
 platform and installed-lifecycle limits. Preserve build caches; this phase does
 not authorize pushes, releases, system installs or unsupported wider PHY work.
 
+The [risk-based testing strategy](development/features/unified-qt-workbench/testing-strategy.md)
+schedules targeted checks for focused commits, complete relevant tests before
+official UIU task acceptance and full applicable regressions at major milestones/
+final acceptance. Shared scientific/API, CXX-Qt registration, serialization and
+cross-direction lifecycle changes expand to every affected consumer at each
+level. Record executed, not-required and deferred checks with their reasons;
+cache reuse preserves stable build inputs and never implies an unexecuted pass.
+This changes validation scheduling, not architecture, task IDs or acceptance gates.
+
 Requirements: [REQ-UIU-26](requirements.md#req-uiu-26), [REQ-UIU-27](requirements.md#req-uiu-27).
 Delivery: [UIU-QA-01](development/checklist.md#task-uiu-qa-01).
 

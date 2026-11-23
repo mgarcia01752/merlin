@@ -18,6 +18,17 @@ source/decoder checks alongside all applicable downstream regressions below.
 Use [development-workflow](../development-workflow/SKILL.md) to connect new test
 work to requirement IDs, owning stages, prerequisite tasks and acceptance evidence.
 
+For unified Qt integration, apply the [three-level testing strategy](../../docs/development/features/unified-qt-workbench/testing-strategy.md).
+Focused commits run affected functionality, numerical/boundary vectors,
+formatting, relevant Clippy and applicable API/dependency checks. Official UIU
+completion requires complete relevant feature/crate, affected Qt/QML,
+compatibility and traceability gates; major milestones/final acceptance retain
+full applicable regressions. Expand across all affected consumers for shared
+science, API compatibility, CXX-Qt registration, serialization and cross-direction
+lifecycle changes. Record executed, not-required and deferred checks separately.
+Keep compiled artifacts/profiles and avoid unrelated wheel rebuilds or suites;
+new linked native code still requires an artifact containing that code.
+
 Local full validation uses `scripts/test-local.sh all` with checksum-pinned
 nextest and four process-isolated workers; `MERLIN_TEST_THREADS` overrides the
 1..32 budget. Split independent parameter matrices into separately named tests

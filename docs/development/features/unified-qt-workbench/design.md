@@ -2475,3 +2475,26 @@ Retain the original spectrum functions until a focused typed API extension is
 independently accepted. Do not silently replace three-window legacy results with
 one physical-frame window, or label an ordered-frame diagnostic as a continuous
 waveform. TX overlap remains a separate 32768-sample continuous-output budget.
+
+## UIU-QA-01 validation scheduling refinement
+
+The user authorizes a [three-level testing strategy](testing-strategy.md) to
+reduce repeated unrelated execution while preserving every existing test/vector,
+downstream contract and official acceptance criterion. REQ-UIU-24/26 and the
+existing UIU-QA-01 acceptance owner trace this workflow refinement; no task is
+added, reopened or marked complete, and the implementation DAG is unchanged.
+
+| Inspected owner | Decision / file disposition |
+| --- | --- |
+| `scripts/test-local.sh`, bounded nextest configuration, quick-test policy and Qt build/check helpers | REUSE unchanged. Existing focused filters, complete phases and stable caches already support the three levels. Do not introduce a second runner, skip-list change or test-result cache. |
+| Existing Python wheel/import/parity workflow and API matrix | REUSE unchanged when code/contracts require native coverage. Avoid new wheels for unrelated Qt/docs commits; a changed native owner still requires the matching tested artifact. |
+| Existing feature validation/task acceptance records | ADD testing-strategy.md as the scheduling reference; preserve historical evidence and all task criteria. Record executed/not-required/deferred scope for new units. |
+| `AGENTS.md`, canonical development-workflow/scientific-testing/git-workflow skills | EDIT only validation routing/scope; preserve skill discovery, ownership, scientific rules and authorized local save/push boundaries. |
+| Canonical architecture/requirements/checklist and development/feature indexes | EDIT focused references to the strategy with stable IDs/statuses and no restructuring. |
+
+Validate this documentation-only unit with link/traceability checks, modified
+skill validation, diff formatting and an exact task-state/source/gate-preservation
+audit. Scientific/runtime/Clippy/package suites are not applicable because no
+production, test, dependency, runner or build configuration is changed. Preserve
+the isolated unfinished calibrated-spectrum implementation and resume it after
+the separate focused workflow commit.

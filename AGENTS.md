@@ -131,6 +131,18 @@ No setup invocation or system package installation is implied by ordinary UI wor
 
 Validation scope:
 
+Unified Qt integration follows the [three-level risk-based testing strategy](docs/development/features/unified-qt-workbench/testing-strategy.md):
+Level 1 uses targeted functionality tests, formatting, relevant Clippy and API
+boundary checks for each focused commit. Level 2 runs complete relevant feature/
+crate, affected Qt/QML, compatibility and traceability checks before checking an
+official UIU task. Level 3 runs full applicable workspace/Qt/Python/CLI/project/
+packaging regressions at major integration milestones and final acceptance.
+Shared science, API compatibility, CXX-Qt registration, project serialization
+and cross-direction lifecycle changes expand testing to all affected consumers
+at every level. Record executed checks, not-required checks with reasons, and
+deferred acceptance gates separately. Do not label an unexecuted suite passed.
+Existing tests, vectors, acceptance, push/release and hosted gates remain intact.
+
 Apply skills/ui-design for Qt editor actions and layout.
 For UI-only work, use scripts/qt-desktop.sh build/check and targeted Qt tests.
 Do not rebuild or retest the non-Qt workspace on every UI iteration. Broaden
@@ -140,7 +152,8 @@ Preserve Cargo target artifacts and the stable build profile so unchanged code
 is ready for reuse/linking; do not routinely clean or delete build outputs.
 Keep the Qt executable built for the latest UI changes before handing off.
 
-Simulation/shared-code validation when applicable:
+Full simulation/shared-code validation when applicable at the task/milestone
+gate; focused commits select affected checks under the strategy above:
 
 ```bash
 scripts/cargo-local.sh fmt --all -- --check

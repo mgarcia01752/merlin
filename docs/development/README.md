@@ -9,6 +9,8 @@ The [UI master guide](features/unified-qt-workbench/master-guide.md) and
 [additional public API contract](features/unified-qt-workbench/high-level-api-contract.md)
 are retained instruction sources. [Continuous execution is authorized](features/unified-qt-workbench/execution-authorization.md);
 old scheduling statements below describe their own historical checkpoints.
+Current execution uses the [three-level testing strategy](features/unified-qt-workbench/testing-strategy.md)
+for focused commits, official task acceptance and integration milestones.
 
 The [selected namespace mapping](features/high-level-api/namespace-design.md) fixes the literal Rust root, common contract leaf and real Python package layout; namespace runtime acceptance remains separate.
 

@@ -427,6 +427,13 @@ The [user-approved upstream layout](features/unified-qt-workbench/upstream-start
 satisfies UIU-US-01's visual-input prerequisite (2026-11-22). Its shell dependency
 and implementation/acceptance remain pending; earlier eligible tasks continue.
 
+Apply the [three-level testing strategy](features/unified-qt-workbench/testing-strategy.md)
+to subsequent focused commits and acceptance gates. Before checking an official
+UIU task, run complete relevant feature/crate, affected Qt/QML, compatibility and
+traceability checks (Level 2); major milestones and final acceptance retain full
+applicable regressions (Level 3). Level 1 subunit passes do not complete a parent.
+The strategy's risk expansion applies to every level; preserve all criteria below.
+
 <a id="task-uiu-plan-01"></a>
 - [x] **UIU-PLAN-01** Agree the UI planning baseline, full inventory, ownership/API gaps and migration design.
   Requirements: [REQ-UIU-01](../requirements.md#req-uiu-01), [REQ-UIU-04](../requirements.md#req-uiu-04), [REQ-UIU-26](../requirements.md#req-uiu-26), [REQ-UIU-27](../requirements.md#req-uiu-27).
