@@ -319,17 +319,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/inputs/measurement_input/preview.rs",
-      "sha256": "8ccfd28aae358e93407f1164c4d4ca8f73942fe9376e2a6dc9121730c3f7ab64",
-      "sites": [
-        {
-          "line": 10,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/inputs/profile_input/document.rs",
       "sha256": "43e2795e53c04b92a530c18287471230a4e08b01f02165ad5bcba64c73d1b482",
       "sites": [
@@ -2724,6 +2713,23 @@
       "unit": "TX spectrum facade adoption",
       "reason": "Public calibrated sequence/continuous queries and configured PLC metadata replace the remaining private estimator/layout calls. Separate named frame/output prefixes preserve original analysis windows; Qt reuses the shared drawing-only viewport.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-tx-spectrum-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/preview.rs",
+        "sha256": "8ccfd28aae358e93407f1164c4d4ca8f73942fe9376e2a6dc9121730c3f7ab64",
+        "sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "RxMER animation preview facade",
+      "reason": "Selected original capture/name and immutable decoded frame use public NamedCapture, RxMer.from_frame and RxMer.preview. Sparse ordering, provenance and bounded output are preserved without Qt measurement algorithms.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-rxmer-animation-preview-facade-accepted"
     }
   ],
   "reviewed_updates": [

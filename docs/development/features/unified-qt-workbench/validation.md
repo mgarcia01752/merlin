@@ -2126,3 +2126,38 @@ and makes no such pass claim. Existing screenshots still describe the unchanged
 appearance. User guides clarify existing sampling meanings and accepted PSD
 units. Official parent Level 2, milestone/final Level 3 and numeric audit remain
 pending.
+
+
+## UIU-DS-01 RxMER animation preview facade accepted
+
+[Design/owners](design.md#uiu-ds-01-rxmer-animation-preview-facade),
+[exact evidence](rxmer-animation-preview-evidence.json),
+[architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[REQ-UIU-02](../../../requirements.md#req-uiu-02),
+[REQ-UIU-03](../../../requirements.md#req-uiu-03),
+[REQ-UIU-08](../../../requirements.md#req-uiu-08),
+[REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-27](../../../requirements.md#req-uiu-27) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) trace this consumer.
+
+The viewer now uses existing public NamedCapture, RxMer.from_frame and
+RxMer.preview owners. The original name/bytes remain separate from decoded
+or Designer data; only the selected frame is adapted, never the collection.
+No averaging, replay configuration or simulation is introduced. The complete
+preview.rs exception retires; all other frozen entries/history remain exact,
+leaving 25 files/93 reference sites/three scientific dependencies.
+
+Level 1 passes the existing targeted real-project Rust animation regression
+with added byte/frame/hash immutability checks, three QML behavior cases (five
+including harness initialization/cleanup), Qt formatting/all-target Clippy,
+the actual locked boundary audit, optimized build and documentation/traceability
+checks. Every prior sparse-order, original-index, 132-input, viewport and error
+assertion remains. The guide documents unchanged preview behavior; no visible
+layout or screenshot changes are needed.
+
+The backend, native bindings, public contract, registration, lifecycle and
+project serialization are unchanged. A fresh wheel, non-Qt scientific/full
+workspace, complete Qt/QML, native startup/Open, CLI and packaging suites did
+not run for this focused unit; the evidence records the scope reasons. These
+are not new passes or waived task requirements. Complete official UIU-DS-01
+Level 2, milestone/final Level 3 and the final numeric audit remain pending.

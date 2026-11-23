@@ -1347,6 +1347,15 @@ preserves actual prefix/average/power/zoom semantics and retires one whole sourc
 exception: 26 frozen files/94 sites/three dependencies remain. Parent task and
 final numeric acceptance stay open.
 
+The [RxMER animation preview unit](development/features/unified-qt-workbench/design.md#uiu-ds-01-rxmer-animation-preview-facade)
+uses public NamedCapture/RxMer.from_frame admission and RxMer.preview for each
+selected immutable original. Qt retains selection and display metadata, without
+constructing a scientific replay plan or measurement viewport. Sparse ordering,
+source/decoded hashes, original bytes and timestamps are preserved. Its
+[Level 1 evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-rxmer-animation-preview-facade-accepted)
+retires only preview.rs; 25 frozen files/93 sites/three dependencies remain.
+Measurement admission/editors and parent/final acceptance remain separate work.
+
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
 

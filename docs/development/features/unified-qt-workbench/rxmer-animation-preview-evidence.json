@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "RxMER animation preview facade",
+  "status": "Level 1 consumer accepted; official Level 2 parent and Level 3 milestone/final gates remain pending",
+  "base_commit": "cac9499f732ee2860778017a55087dce94751dbf",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-08",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/preview.rs",
+      "sha256": "04203c38b1ab8940bb22b8bdc3f1ca2446314c1241157f2b25716ca49ef50590"
+    }
+  ],
+  "ownership": [
+    "Existing public NamedCapture retains original source bytes/name separately from decoded or Designer data. RxMer.from_frame validates the selected immutable frame; RxMer.preview delegates all numerical viewport generation to the existing Rust owner.",
+    "Qt selects the original capture and appends its unchanged original index, timestamp, selected count, synthetic marker and hash. No replay plan, averaging, simulation or viewport algorithm is introduced."
+  ],
+  "preservation": {
+    "before": {
+      "files": 26,
+      "sites": 94
+    },
+    "after": {
+      "files": 25,
+      "sites": 93
+    },
+    "scientific_dependencies": 3,
+    "retired": {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/preview.rs",
+        "sha256": "8ccfd28aae358e93407f1164c4d4ca8f73942fe9376e2a6dc9121730c3f7ab64",
+        "sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "RxMER animation preview facade",
+      "reason": "Selected original capture/name and immutable decoded frame use public NamedCapture, RxMer.from_frame and RxMer.preview. Sparse ordering, provenance and bounded output are preserved without Qt measurement algorithms.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-rxmer-animation-preview-facade-accepted"
+    },
+    "all_other_frozen_entries_and_dependencies_exact": true,
+    "historical_reviews_and_initial_records_unchanged": true,
+    "official_checkboxes_and_states_unchanged": true,
+    "all_original_animation_assertions_preserved": true
+  },
+  "testing": {
+    "level": 1,
+    "risk": "Qt-only migration to an unchanged already accepted public measurement operation. No backend/API/native/schema/registration/lifecycle contract change.",
+    "executed": {
+      "rust": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "downstream::inputs::measurement_input::preview::tests::sparse_animation_uses_original_order_and_bounded_viewports",
+          "--",
+          "--exact",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.185397031993489,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "qml": {
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+          "Workbench::test_rxmer_capture_animation_step_pause_end_and_close",
+          "Workbench::test_rxmer_selection_draft_and_single_shot_controls",
+          "Workbench::test_shared_measurement_viewers_and_joint_channel_readiness"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 3.1055916069890372,
+        "behavior_cases": 3
+      },
+      "clippy": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 5.327462775996537,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "format": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.3825569290056592,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "release": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 20.636788726988016,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      }
+    },
+    "rust_case_count": 1,
+    "actual_rust_cases": [
+      "downstream::inputs::measurement_input::preview::tests::sparse_animation_uses_original_order_and_bounded_viewports"
+    ],
+    "qml_behavior_cases": 3,
+    "qml_harness_total": 5,
+    "not_required": [
+      {
+        "scope": "Fresh Python wheel, root scientific/full workspace and native parity suites",
+        "reason": "No backend/binding/public API implementation or contract changes; only this existing Qt consumer changes. Its real 132-capture project regression exercises the actual public owner."
+      },
+      {
+        "scope": "Complete Qt/QML and unchanged validator unit suites",
+        "reason": "The focused animation/selection/shared-viewer behaviors and actual boundary audit cover this adapter. Full relevant task coverage remains Level 2; validator code is unchanged."
+      },
+      {
+        "scope": "Unrelated native startup/Open, CLI, persistence and packaging suites",
+        "reason": "No QML/CXX/resource registration, public admission/serialization, dependency, lifecycle or packaging changes. Existing project decoding is exercised by the targeted Qt test. No new installed/native-startup claim."
+      }
+    ],
+    "deferred": [
+      {
+        "gate": "Level 2 UIU-DS-01",
+        "scope": "Complete relevant feature/crate, Qt/QML integration, downstream compatibility and traceability before checking the parent."
+      },
+      {
+        "gate": "Level 3 milestones/UIU-QA-01",
+        "scope": "Full applicable workspace, Qt/QML, native Python parity, CLI, persistence and packaging regressions, zero scientific exceptions and final line-by-line numeric audit."
+      }
+    ],
+    "boundary": {
+      "command": [
+        "env",
+        "PATH=/home/dev01/Projects/merlin/local/toolchains/rust-1.85.1-ylt882zx/bin:$PATH",
+        "CARGO_HOME=/home/dev01/Projects/merlin/local/merlin-cargo",
+        "python3",
+        "-B",
+        "tools/validation/qt_api_boundary.py"
+      ],
+      "exit_code": 0,
+      "result": {
+        "errors": [],
+        "scientific_dependencies": 3,
+        "frozen_legacy_files": 25,
+        "final": false
+      }
+    },
+    "documents": {
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/feature_documentation.py"
+      ],
+      "exit_code": 0,
+      "result": {
+        "errors": [],
+        "mode": "current",
+        "feature_files": 325,
+        "markdown_links": 9850,
+        "canonical_requirement_ids": 520,
+        "source_requirements": 59,
+        "downstream_routes": 127,
+        "downstream_task_mappings": 430,
+        "functional_records": 9,
+        "functional_requirement_mappings": 57,
+        "functional_unique_requirements": 50,
+        "functional_task_mappings": 22,
+        "dependency_nodes": 30,
+        "skills": 12,
+        "discovery_links": 24,
+        "protected_original_records": 163,
+        "historical_archives": 12
+      }
+    },
+    "traceability": {
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/integration_traceability.py"
+      ],
+      "exit_code": 0,
+      "output": "Integration traceability: task/requirement/architecture and recorded implementation chains pass"
+    }
+  },
+  "compatibility": "The original sparse-order test keeps all assertions: selected identities 5/1 display in original order 1/5, original hashes and indices, bounded 1024-bucket full view, 100-carrier zoom, invalid position/overflow errors, and all 132 accepted originals. Added snapshots prove original bytes, source/decoded hashes and complete decoded frames remain exact after previews/errors.",
+  "numeric_review": "No new numerical domain bounds or scientific calculations. Original independent fixture indices, capture count and viewport anchors remain literal test oracles. The final repository-wide numeric audit stays pending.",
+  "executable": {
+    "path": "apps/qt/target/release/merlin-qt",
+    "sha256": "a30e5c77b552e4bf515671c42f852fdda64d848337572fb159c8c0ce1b390b19",
+    "scope": "Current optimized Linux build; no fresh native startup or installed-platform execution claimed."
+  }
+}

@@ -2565,3 +2565,29 @@ The explicit three-frame/long-CP fixture preserves independent three-/seven-aver
 prefix anchors and public power/zoom/error behavior. One full exception retires;
 26 files/94 sites/three dependencies remain. Backend/native code is unchanged,
 and the evidence identifies not-required suites and pending Level 2/3 gates.
+
+## UIU-DS-01 RxMER animation preview facade
+
+Migrate the complete measurement_input/preview.rs exception through the already
+accepted RxMer.preview operation. REQ-UIU-02/03/08/24/27 and UIU-DS-01 own this
+Level 1 unit; other measurement admission/editor files remain frozen.
+
+| Inspected owner / disposition | Selected reuse and acceptance |
+| --- | --- |
+| EDIT `apps/qt/src/downstream/inputs/measurement_input/preview.rs` | ADAPT the selected original bytes/name and its already decoded immutable frame to public NamedCapture and RxMer.from_frame, then REUSE RxMer.preview(MeasurementViewport). Preserve sparse selection/order, original index/time/hash, synthetic marker and the exact bounded MeasurementView shape. No replay plan, averaging, RNG or simulation is introduced. |
+| REUSE document.rs Capture and model.rs selection | Existing original bytes and decoded frame are read only. Their decoder/Designer internals remain separate frozen work; do not widen this unit into an admission rewrite. Only the selected capture is copied into the existing public immutable owner, not the capture collection. |
+| EDIT the existing preview regression | Keep all sparse-animation original-order, 132-input, viewport and failure assertions. Add original-byte/frame/hash preservation across calls without deriving expected original indices from implementation constants. |
+| EDIT measurement user guide and canonical trace links | Describe unchanged offline preview behavior with authoritative public ownership; no visible layout, control or saved format changes. |
+
+Validate targeted Qt Rust and affected QML animation/viewer cases, Qt format/
+Clippy, actual boundary, documentation/traceability and current optimized build.
+No backend/binding/scientific kernel, CXX registration, project or lifecycle
+change requires another wheel or unrelated complete suites/native Open probes.
+Level 2/3 gates stay pending; retire only this whole file after acceptance.
+
+
+[Accepted focused evidence](validation.md#uiu-ds-01-rxmer-animation-preview-facade-accepted)
+preserves every existing animation assertion and adds immutable originals/frames/
+hashes. The public preview replaces the sole private call; 25 files/93 sites/
+three dependencies remain. Level 2/3 gates and all other measurement files remain
+separate work.

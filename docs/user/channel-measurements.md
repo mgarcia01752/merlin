@@ -126,6 +126,11 @@ Single Shot has only one selected frame. **Effective RxMER / playback** returns
 to the configured static/hold/interpolated model at **Preview symbol**. Changing
 selection/mode, inspecting a filename or closing the dialog pauses animation.
 
+Each animation frame retains its original capture values, timestamp and source
+identity. Previewing or zooming does not change the original bytes, the accepted
+collection or the simulation's selected inputs. The public Rust measurement
+preview supplies the same bounded chart data used by other MERLIN consumers.
+
 ![Animated capture preview](../images/workbench/rxmer-animation-dark.png)
 
 ## Readiness and current scope
