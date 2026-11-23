@@ -83,7 +83,11 @@ from captured TX PLC frames. Select OCD, Profile A DPD or NCP DPD, expand TLVs f
 their hex values, and use **Bytes / TLV Tree** to switch views. Headers include
 channel, profile, change count and source identity. TLV offsets count from the
 start of the complete MAC packet; HCS/FCS validation uses those same bytes.
-These are not the imported modulation-profile PNM bytes.
+These are not the imported modulation-profile PNM bytes. Packet interpretation and
+transmission status come from the retained simulation result. Scheduled messages
+stay marked incomplete until their carrying TX frame has actually finished. If
+later retained frames are unavailable or invalid, earlier complete packets remain
+visible with the reported issue; switching views never starts another run.
 
 The message inspector shows an aligned **Field / Value / Type / Length / Offset**
 tree. Use the disclosure arrow or double-click a row to fold its child fields;

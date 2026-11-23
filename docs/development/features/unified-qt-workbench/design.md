@@ -2340,3 +2340,33 @@ and [exact evidence](downstream-worker-evidence.json) record 28 targeted Rust,
 eight QML behavior cases, twenty boundary regressions, Clippy, formatting,
 latest optimized Qt build and six native VM checks. The parent remains open
 with 33 frozen files/105 reference sites/three scientific dependencies.
+
+## UIU-DS-01 transmitted PLC message viewer facade
+
+REQ-UIU-02/08/09/24/27 and the existing DS task own this consumer. Replace Qt
+frame/MAC/descriptor decoding with `FullLoopResult::plc_messages()`. Preserve
+actual bytes, wire offsets, source/profile identity, completed-versus-scheduled
+status, bounded trees and existing navigation. Retain the public report's first
+issue and pending-byte count; no received-message claim is introduced.
+
+| Path and symbol | Current contract and evidence | Requirement gap | Decision / destination |
+| --- | --- | --- | --- |
+| `instruments/transmitter/messages.rs` | Reassembles PLC frames and parses descriptors privately; duplicates the frame-end calculation. | Public result must own all scientific/message interpretation. | ADAPT to the existing public message report and format its actual packet/context/status fields. Keep 32-record presentation bounds and exact empty states. |
+| `instruments/transmitter/tlv_fields.rs` | Qt decodes numeric wire codes, CP/RP tables and modulation; three tests cover labels/raw fallback/offsets. | Render backend-provided meanings without a second decoder. | ADAPT to FullLoopDescriptorField/Meaning; preserve known labels, children and byte rows. Raw/unavailable future meanings stay unsupported. Backend zero loading retains the legacy raw-only tree state; QPSK retains its existing label. This does not imply a backend admission limit. |
+| `crates/ofdm/src/api/full_loop/messages.rs` existing tests | Already covers the exact former Qt 128-symbol/8704-sample last-sample, zero-stride and overflow anchors, plus both spacings, gaps, truncation and budgets. | Retiring the duplicate Qt calculation must preserve those oracles. | REUSE and execute the existing three backend tests; no production/test rewrite or completed API-task reopening. |
+| `crates/ofdm/src/transmission/plc/descriptors/inspection.rs` existing tests | Scientific owner supplies numerology, timing, carrier roles, loading and original offsets. | Qt fixture formatting alone cannot establish scientific decoding. | REUSE the existing two independent owner tests and actual public message integration case. Preserve Qt raw unsupported vectors as formatting coverage without claiming it validates wire semantics. |
+| `simulation/closed_loop/tests.rs` actual instrument case | Existing real-run packet/type/profile/byte-offset assertions remain. | Public completion status must preserve the original visible label. | EDIT one additional independent literal status assertion; keep every existing scientific/byte assertion. |
+| New `shared/presentation/bytes.rs`, existing presentation registration/constants | Two message/tree consumers duplicate hex formatting. | Shared byte layout and distinct equal-valued policies need one presentation owner. | SHARE byte/row formatting and named display bounds; reuse existing Hz/kHz conversion. Keep TLV byte-layout annotation and NCP/QPSK labels separate from validation/capability policy. |
+
+Reuse/license: existing MERLIN GPL presentation code consumes Apache public
+models and operations; no imported source or dependency/API/schema change.
+Accept only after focused owner/API and Qt message/tree/scientific regression
+cases, affected QML navigation, boundary/fmt/Clippy, optimized build and native
+checks. Retire only these two whole legacy files after acceptance. The final
+numeric audit and parent downstream migration remain incomplete.
+
+Scoped viewer accepted: [validation](validation.md#uiu-ds-01-transmitted-plc-message-viewer-facade-accepted)
+and [evidence](plc-message-viewer-evidence.json) record eleven targeted Rust cases,
+one QML behavior case, twenty boundary regressions, Clippy, formatting, canonical
+document checks, optimized build and six native checks. All remaining frozen
+entries are exact; the parent retains 31 files/103 sites/three scientific dependencies.

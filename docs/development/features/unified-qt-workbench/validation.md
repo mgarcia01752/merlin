@@ -1841,3 +1841,48 @@ credentials and no stderr. Final rustdoc-only banner additions are recorded
 with tested/final source hashes; Clippy, formatting and the optimized build
 were repeated after them. No executable token changed. The parent DS task and
 later global-session/upstream/final acceptance remain incomplete.
+
+
+## UIU-DS-01 transmitted PLC message viewer facade accepted
+
+[Design/owners](design.md#uiu-ds-01-transmitted-plc-message-viewer-facade),
+[structured evidence](plc-message-viewer-evidence.json),
+[architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[REQ-UIU-02](../../../requirements.md#req-uiu-02),
+[REQ-UIU-08](../../../requirements.md#req-uiu-08),
+[REQ-UIU-09](../../../requirements.md#req-uiu-09),
+[REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-27](../../../requirements.md#req-uiu-27) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) trace this focused consumer.
+
+The Qt viewer now calls public FullLoopResult.plc_messages() for actual
+CRC-validated TX packets, source/profile identity, typed descriptor meanings,
+exact offsets, pending/issue state and complete-versus-scheduled coverage. The
+adapter formats labels and bytes; private frame/MAC/descriptor decoding,
+modulation/CP/RP interpretation and the duplicated frame-end calculation are
+removed. A shared byte formatter preserves row/address conventions. Named
+presentation policies distinguish record limits, NCP wire identity, QPSK labels,
+TLV header width and assignment byte annotations. Backend admission remains
+separate; zero loading retains the legacy raw-only tree presentation.
+
+Eleven focused Rust cases pass: five Qt tree/real-instrument cases, five existing
+backend message/descriptor owner cases and one actual public message integration
+case. The three original tree test names and every original byte/label/offset/
+unsupported assertion remain. Their typed meanings are explicit format fixtures;
+the owner tests separately validate scientific decoding. The retired duplicate
+Qt scheduled-frame test's exact four last-sample/zero-stride/overflow assertions
+are already covered by the existing backend independent-anchor test, executed in
+this unit. No scientific source/test or vector changed. The actual public message
+case also exercises absent/truncated data, passive FEC outcomes and original-byte
+ownership. These are MERLIN-only checks, not external interoperability.
+
+The affected message/QAM/tree navigation QML case passes with setup/cleanup
+(three harness cases). All-target Qt Clippy passes. Twenty boundary regressions, the actual source/dependency guard, formatting,
+documentation and traceability pass. The latest optimized Qt build passes all
+six native VM checks (four curated admissions and two XCB/Fusion startup/Open
+runs), using fresh display credentials and producing no stderr. Exact receipts
+and executable/source hashes are retained in the structured record. Two whole source exceptions retire; every
+remaining frozen entry is exact. Current debt is 31 files/103 direct source sites/
+three scientific dependencies. No API/binding/dependency/lock/schema or QML layout
+change occurs, and no full historical suite or new native Python wheel is claimed.
+The parent downstream task and final line-by-line numeric audit remain incomplete.

@@ -34,3 +34,10 @@ pub(crate) const SPECTRUM_FREQUENCY_TICK_INTERVALS: usize = 4;
 pub(crate) const SPECTRUM_POWER_TICK_INTERVALS: u32 = 5;
 /// Minimum viewport width for an SA axis with distinct first/last drawing coordinates.
 pub(crate) const MIN_SPECTRUM_DISPLAY_BINS: usize = 2;
+
+/// Complete byte values occupy two hexadecimal digits, independent of row layout.
+pub(crate) const HEX_BYTE_DIGITS: usize = 2;
+/// Existing packet byte-view row width; not a bit-loading or scientific budget.
+pub(crate) const HEX_BYTES_PER_ROW: usize = 16;
+/// Minimum address-column padding; larger byte offsets remain fully visible.
+pub(crate) const HEX_OFFSET_MIN_DIGITS: usize = 4;

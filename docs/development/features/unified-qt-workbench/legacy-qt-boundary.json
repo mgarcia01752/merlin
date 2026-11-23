@@ -606,17 +606,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/instruments/transmitter/messages.rs",
-      "sha256": "8e5a1da5964070d45a9dd588ee31580c075a5e91a9bf8e066cfaa8cdbc9b851d",
-      "sites": [
-        {
-          "line": 7,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/instruments/transmitter/qam_points.rs",
       "sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf",
       "sites": [
@@ -626,17 +615,6 @@
         },
         {
           "line": 131,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/instruments/transmitter/tlv_fields.rs",
-      "sha256": "39e3291a4677c2faa9ebfc635fdfb1643dc5fbaf3507a7a29dc3ad50d68d363a",
-      "sites": [
-        {
-          "line": 6,
           "root": "docsis_ofdm_fec"
         }
       ],
@@ -2682,6 +2660,40 @@
       "unit": "Controlled downstream worker facade",
       "reason": "All direct scientific crate paths removed; typed public admission, control, timing and observations replace legacy engine calls.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-controlled-worker-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/messages.rs",
+        "sha256": "8e5a1da5964070d45a9dd588ee31580c075a5e91a9bf8e066cfaa8cdbc9b851d",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Transmitted PLC message viewer facade",
+      "reason": "Public result supplies CRC-validated packets, scientific meanings, offsets and transmission coverage. Qt only formats exact bytes/labels; old last-sample and overflow oracles remain in the existing backend owner tests.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-transmitted-plc-message-viewer-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/tlv_fields.rs",
+        "sha256": "39e3291a4677c2faa9ebfc635fdfb1643dc5fbaf3507a7a29dc3ad50d68d363a",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Transmitted PLC message viewer facade",
+      "reason": "Public result supplies CRC-validated packets, scientific meanings, offsets and transmission coverage. Qt only formats exact bytes/labels; old last-sample and overflow oracles remain in the existing backend owner tests.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-transmitted-plc-message-viewer-facade-accepted"
     }
   ],
   "reviewed_updates": [

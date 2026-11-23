@@ -1237,7 +1237,7 @@ calibration or logarithmic power calculations. A shared presentation owner forma
 public spectrum buckets and physical PLC bounds. Existing legacy run/instrument
 providers remain separate migration debt until their own facade adoption.
 [Scoped consumer acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted)
-passes with the optimized Qt executable; subsequent scoped migration leaves 33
+passes with the optimized Qt executable; subsequent scoped migration leaves 31
 frozen legacy files.
 
 The [resource build-cache correction](development/features/unified-qt-workbench/validation.md#uiu-ds-01-resource-build-cache-accepted)
@@ -1287,6 +1287,17 @@ The [scoped acceptance record](development/features/unified-qt-workbench/validat
 tracks this consumer; remaining legacy input/instrument providers and the final
 numeric audit keep UIU-DS-01 open. The Designer production code remains frozen;
 only its affected real-FEC regression now calls the public request.
+
+The [transmitted PLC viewer](development/features/unified-qt-workbench/design.md#uiu-ds-01-transmitted-plc-message-viewer-facade)
+now obtains packets, typed descriptor meanings, original offsets, pending/issue
+state and actual transmission coverage from FullLoopResult.plc_messages(). Qt
+formats the existing labels/tree and exact byte rows through a shared presentation
+formatter; it no longer reassembles/decodes frames or duplicates completion timing.
+Known labels, raw unsupported states and NCP-versus-data-profile identity remain
+separate from backend capability admission. The existing backend tests retain the
+old last-sample/overflow anchors; [consumer evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-transmitted-plc-message-viewer-facade-accepted)
+tracks both those checks and actual Qt instrument compatibility. The current
+boundary retains 31 frozen files/103 reference sites/three scientific dependencies.
 
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).

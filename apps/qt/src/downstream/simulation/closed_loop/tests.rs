@@ -318,6 +318,7 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
     for packet in packets {
         assert_eq!(packet["channel"], 34);
         assert_eq!(packet["completed_frame"], true);
+        assert_eq!(packet["status"], "Carried in completed TX PLC frame");
         let bytes: Vec<u8> = packet["hex_rows"]
             .as_array()
             .unwrap()

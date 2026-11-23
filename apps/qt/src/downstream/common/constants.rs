@@ -51,3 +51,22 @@ pub(crate) const MAX_HELP_DOCUMENT_BYTES: usize = 64 * 1024;
 pub(crate) const MAX_HELP_ENTRIES: usize = 128;
 /// Maximum lookup-code bytes; this is not a message or title length policy.
 pub(crate) const MAX_DIAGNOSTIC_CODE_BYTES: usize = 96;
+
+// PLC message/tree presentation policies; the public backend validates all meanings.
+/// Packet records displayed at once, independent of the backend's own work cap.
+pub(crate) const MAX_PLC_MESSAGE_RECORDS: usize = 32;
+/// Original wire descriptor tag displayed as NCP; not an admitted data-profile ID.
+pub(crate) const NCP_MESSAGE_PROFILE_ID: u8 = u8::MAX;
+/// Conventional label for a backend-reported four-point constellation, not admission.
+pub(crate) const QPSK_DISPLAY_ORDER: u16 = 4;
+/// Each TLV begins with one type octet and one length octet; value bytes follow.
+pub(crate) const DESCRIPTOR_TLV_HEADER_BYTES: usize = 2;
+/// Assignment value starts with one backend-interpreted role/loading octet.
+pub(crate) const ASSIGNMENT_CODE_BYTES: usize = 1;
+/// Each original assignment endpoint is a two-octet bin field in the byte viewer.
+pub(crate) const ASSIGNMENT_BIN_BYTES: usize = 2;
+/// Raw first-endpoint offset within an assignment value, separate from packet offsets.
+pub(crate) const ASSIGNMENT_FIRST_BIN_START: usize = ASSIGNMENT_CODE_BYTES;
+/// Raw last-endpoint offset follows the complete first endpoint.
+pub(crate) const ASSIGNMENT_LAST_BIN_START: usize =
+    ASSIGNMENT_FIRST_BIN_START + ASSIGNMENT_BIN_BYTES;
