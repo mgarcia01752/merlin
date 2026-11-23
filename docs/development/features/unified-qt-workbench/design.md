@@ -2841,3 +2841,34 @@ Level 1 expands through measurement/sequence/facade compatibility, scoped Clippy
 analysis-only build, fresh exact installed native wheel and additive inventories.
 No backend behavior, project/CXX/QML registration, lifecycle, upstream or package
 change; parent Level 2 and final Level 3 gates remain pending.
+
+## UIU-DS-01 ordinary measurement admission facade
+
+Consume prerequisite 1820cdff for REQ-UIU-02/03/08/09/20/22/24/27.
+EDIT measurement_input/document.rs to REUSE public CaptureLoader.rxmer/channel_estimate,
+ChannelEstimate.frame, RxMer.frame and CaptureProvenance. Remove direct PNM decoder
+and scientific importer/type dependencies for ordinary inputs. Keep existing editor
+Capture/Measurement shapes with nominal public frame DTO aliases, preserving all
+ordinary original bytes, names, formats, source-kind strings, original and decoded
+hashes, epochs/nulls/grids and persistence. Only independently owned legacy DTO
+copies receive the existing original-file metadata projection; public source
+frames/provenance are never modified. One temporary bounded original-byte copy
+bridges the unchanged legacy editor storage; retaining API input handles belongs
+to the remaining measured-model consolidation, without a global cache.
+
+REUSE the legacy Designer detection/dispatch branch byte-for-byte. Its remaining
+coarse input-format import stays frozen in this file and the actual Designer
+science owner remains separately frozen. This unit does not claim complete
+measurement/Designer or parent acceptance. Narrowly review this exact owner
+change; retire only decoder/import/type sites that have actually moved. The
+public provenance report supplies the detected-format display label; Qt performs
+no new format guessing or scientific calculation. Reuse authoritative capture
+limits; centralize the independent existing 64-MiB editor collection policy,
+which remains distinct from the sequence API's 96-MiB original-byte budget.
+
+Level 1 covers ordinary capture hashes/BOM/binary/nulls/source planes, existing
+measurement/animation/Designer/project cases, affected QML, format/Clippy/current
+optimized build, boundary and traceability. Persistence risk expands to targeted
+Rust/native saved-input cases against the exact accepted unchanged wheel. No
+backend/binding/API, CXX/QML registration, schema or lifecycle change; parent
+Level 2 and final Level 3 remain pending.

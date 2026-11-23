@@ -1,0 +1,385 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Ordinary measurement admission facade",
+  "status": "Level 1 ordinary measurement consumer accepted; Designer/model and parent Level 2/final Level 3 remain incomplete",
+  "base_commit": "1820cdff5a562e021385626155a40ff6ec1c4450",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-08",
+    "REQ-UIU-09",
+    "REQ-UIU-20",
+    "REQ-UIU-22",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "d64e3817ab0006e1e33bd8002b25e3be10e16a77b0aad9cb657263ce490fed87"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+      "sha256": "7f9f799c5731f80aaa80a7163c6c36139fbde9c5dd512bc5ea9b6abad9aa3678"
+    }
+  ],
+  "ownership": [
+    "Public CaptureLoader and read-only RxMer/ChannelEstimate frame operations own ordinary binary/JSON scientific admission. Qt adapts existing editor fields and obtains format labels from the existing public provenance report; no scientific decoder/import/calculation remains in the ordinary path.",
+    "Only independently owned compatibility DTO copies receive the same legacy original-file source hash/length/kind projection. Public decoded-source frame/provenance remains unchanged. Exact original bytes and legacy normalized decoder hashes are preserved, including the pre-existing BOM distinction.",
+    "The exact existing Designer detection/dispatch branch, Designer/model/scientific planning and CXX adapter remain separate frozen work. This is partial ordinary-decoder adoption, not whole measured-input or Designer acceptance. Existing editor types/export and independently owned session DTOs remain. One bounded temporary byte copy preserves old storage; public handle retention belongs to remaining consolidation."
+  ],
+  "preservation": {
+    "focused_boundary_review": {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+        "sha256": "318a1513704161370baa9abc0806c1c16f7773e82692702a1d408822cd64aa80",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 13,
+            "root": "pnm"
+          },
+          {
+            "line": 13,
+            "root": "pnm"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+        "sha256": "7f9f799c5731f80aaa80a7163c6c36139fbde9c5dd512bc5ea9b6abad9aa3678",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Ordinary RxMER/H decoding and scientific imports move to public CaptureLoader and nominal API frame DTOs. Exact old Designer detection/dispatch fragment remains; only its coarse input-format import stays frozen. No private decoder/import or scientific algorithm is added. Original metadata projection is applied only to independent legacy DTO copies. Full Designer and measurement-model acceptance remains pending.",
+      "evidence": "docs/development/features/unified-qt-workbench/measurement-owner-facade-evidence.json",
+      "preserved_legacy_designer_dispatch": {
+        "sha256": "b641952729952520bb333a63652630037f77d760a9186a571a97cd04a3f71b01",
+        "byte_length": 204,
+        "exact_at_base_commit": "1820cdff5a562e021385626155a40ff6ec1c4450"
+      }
+    },
+    "before": {
+      "files": 19,
+      "sites": 79
+    },
+    "after": {
+      "files": 19,
+      "sites": 77
+    },
+    "scientific_dependencies": 3,
+    "all_other_entries_and_retirement_history_exact": true,
+    "model_designer_preview_cxx_bytes_exact": true,
+    "official_checkbox_lines_exact": true,
+    "project_schema_and_existing_original_export_fields_unchanged": true
+  },
+  "testing": {
+    "level": 1,
+    "risk": "Ordinary Qt capture admission and exact original/decoded source metadata feed model/Designer/project consumers. Expand through complete measured-input module, affected QML/project and current Rust/native saved-input checks. Backend/binding/API/CXX/schema/lifecycle stay unchanged.",
+    "executed": {
+      "rust": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "downstream::inputs::measurement_input::"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 19.668711321000046,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "projects": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "--",
+          "--exact",
+          "downstream::workbench::project_file::tests::self_contained_project_roundtrip_preserves_originals_and_rejects_corruption",
+          "downstream::workbench::project_file::tests::version_two_profile_selection_roundtrips_and_legacy_remains_explicit"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.0556749209999907,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "qml": {
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+          "Workbench::test_shared_measurement_viewers_and_joint_channel_readiness",
+          "Workbench::test_rxmer_capture_animation_step_pause_end_and_close",
+          "Workbench::test_rxmer_selection_draft_and_single_shot_controls"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 3.0477456469998288,
+        "behavior_cases": 3
+      },
+      "format-check": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.33468223700037925,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "clippy": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.581393663000199,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "release": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 52.578751259000455,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "metadata": [
+        {
+          "label": "boundary",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/qt_api_boundary.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.2802409850010008
+        },
+        {
+          "label": "documents",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/feature_documentation.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 11.383781388998614
+        },
+        {
+          "label": "traceability",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/integration_traceability.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 9.119881120999707
+        },
+        {
+          "label": "python-guide",
+          "command": [
+            "python3",
+            "-B",
+            "tools/python/update_integration_doc.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03945868799928576
+        },
+        {
+          "label": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.061925424000946805
+        }
+      ]
+    },
+    "actual_qt_cases": [
+      "downstream::inputs::measurement_input::model::tests::binary_json_shared_viewer_and_atomic_drafts_preserve_original_inputs",
+      "downstream::inputs::measurement_input::document::tests::public_ordinary_admission_preserves_binary_bom_hashes_and_legacy_source_metadata",
+      "downstream::inputs::measurement_input::model::tests::replay_capacity_uses_strict_observation_boundary_and_mode",
+      "downstream::inputs::measurement_input::model::tests::combined_modes_and_render_requests_reject_invalid_controls",
+      "downstream::inputs::measurement_input::plc::tests::plc_region_spans_first_to_last_and_clips_when_zoomed",
+      "downstream::inputs::measurement_input::model::tests::selection_keeps_originals_and_round_trips_a_single_shot",
+      "downstream::inputs::measurement_input::designer::tests::pnm_export_range_uses_full_grid_and_guards_recipe_results",
+      "downstream::inputs::measurement_input::designer::tests::flat_scope_preview_plc_and_cancellation_preserve_inputs",
+      "downstream::inputs::measurement_input::designer::tests::preview_zoom_uses_original_offsets_shared_axes_and_bounded_plc_window",
+      "downstream::inputs::measurement_input::designer::tests::random_variation_requires_flat_and_survives_envelope_roundtrip",
+      "downstream::inputs::measurement_input::designer::tests::envelope_roundtrip_reopens_originals_without_compounding",
+      "downstream::inputs::measurement_input::preview::tests::sparse_animation_uses_original_order_and_bounded_viewports",
+      "downstream::inputs::measurement_input::designer::tests::designed_flat_mer_drives_residual_power_and_real_fec",
+      "downstream::workbench::project_file::tests::self_contained_project_roundtrip_preserves_originals_and_rejects_corruption",
+      "downstream::workbench::project_file::tests::version_two_profile_selection_roundtrips_and_legacy_remains_explicit"
+    ],
+    "qt_rust_case_count": 15,
+    "qml_behavior_cases": 3,
+    "qml_harness_total": 5,
+    "expanded_persistence": {
+      "reused_native_artifact": {
+        "receipt": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measurement-frames-native/results.json",
+        "archive_native_sha256": "f145fc3803c90e02049ccb532699948cb3c516dbb390bcedf6cfdd64bd85e5cd",
+        "reason": "No backend/binding/package source changed since accepted API prerequisite 1820cdff. Only ordinary Qt measurement admission and legacy DTO metadata adaptation changes; tests execute now against the identical installed artifact."
+      },
+      "checks": [
+        {
+          "label": "rust-persistence",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "test",
+            "-p",
+            "pnm-input",
+            "--locked",
+            "--test",
+            "workbench_full_loop",
+            "--",
+            "--exact",
+            "unnamed_saved_file_preserves_original_label_bytes_fill_and_capture_name_validation",
+            "file_and_fill_keep_exact_bytes_and_dormant_fields_do_not_replace_selection"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin",
+          "exit_code": 0,
+          "elapsed_seconds": 8.071764860000258
+        },
+        {
+          "label": "native-preflight",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measurement-frames-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-c",
+            "import hashlib,sys\nfrom pathlib import Path\nimport merlin._native as native\npath=Path(native.__file__).resolve();assert path.is_relative_to(Path(sys.prefix).resolve());assert hashlib.sha256(path.read_bytes()).hexdigest()==sys.argv[1]\nprint('Exact previously accepted installed native artifact confirmed')\n",
+            "f145fc3803c90e02049ccb532699948cb3c516dbb390bcedf6cfdd64bd85e5cd"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measurement-frames-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.06715524100036419
+        },
+        {
+          "label": "native-persistence",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measurement-frames-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-c",
+            "import sys,unittest\nsys.path.insert(0,sys.argv[1])\nimport test_workbench_full_loop as tests\nsuite=unittest.defaultTestLoader.loadTestsFromNames(['WorkbenchFullLoopTests.'+name for name in sys.argv[2:]],tests)\nresult=unittest.TextTestRunner(verbosity=2).run(suite);assert result.testsRun==2 and not result.skipped\nraise SystemExit(not result.wasSuccessful())\n",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "test_unnamed_saved_file_keeps_original_label_recovery_and_capture_names",
+            "test_saved_file_fill_and_timeline_settings_and_legacy_behavior"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measurement-frames-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.8338356829999611
+        }
+      ]
+    },
+    "rust_persistence_case_count": 2,
+    "native_persistence_case_count": 2,
+    "metadata": [],
+    "not_required": [
+      {
+        "checks": "New Python wheel, backend/API inventory refresh, unrelated complete workspace/upstream/scientific/CLI/packaging suites",
+        "reason": "No backend/binding/export/algorithm/package change since accepted 1820cdff. Exact installed archive/module preflight then current targeted Rust/native saved-input compatibility; all affected Qt measurement/Designer/animation/PLC cases execute."
+      },
+      {
+        "checks": "New native desktop startup/installed-platform checks or validator unit suites",
+        "reason": "CXX/QML declarations/registration/resources, lifecycle, packages and validators are unchanged. Three current QML behaviors, actual boundary/document audits and current optimized build apply."
+      }
+    ],
+    "deferred": [
+      "UIU-DS-01 remaining Designer/measured-model adoption and complete Level 2 acceptance",
+      "UIU-FILE-01 direction-aware Save/Open",
+      "Level 3 milestone/final workspace/Qt/native/CLI/project/packaging gates",
+      "REQ-UIU-27 final numeric/shared-constant audit"
+    ],
+    "boundary": {
+      "errors": [],
+      "scientific_dependencies": 3,
+      "frozen_legacy_files": 19,
+      "final": false
+    }
+  },
+  "numeric_review": "Public MAX_CAPTURE_BYTES owns per-input admission. The existing independent 64-MiB editor collection limit is centralized for import/Designer batches, without conflating it with the sequence API 96-MiB policy. PNM decoder sample/kind constants and inline scientific parser construction leave the ordinary Qt path. Test anchors explicitly identify original channel/epoch/complex/null/BOM/hash semantics.",
+  "executable": {
+    "path": "apps/qt/target/release/merlin-qt",
+    "sha256": "784a4a75e8176fa1802bc05a99be040c1f0387e87db11a7803416045e86e4ef7",
+    "scope": "Current optimized Linux Qt build; no new native desktop/installed-platform run claimed."
+  }
+}

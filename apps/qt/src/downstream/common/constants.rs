@@ -145,3 +145,8 @@ pub(crate) const PROFILE_TREE_DETAIL_DEPTH: u8 = 2;
 /// Initial UTF-8 byte-order marker (U+FEFF), only for a validated JSON display view.
 /// These three encoding octets are transport metadata, unrelated to PHY/source bytes.
 pub(crate) const UTF8_JSON_BYTE_ORDER_MARK: &[u8] = b"\xef\xbb\xbf";
+
+/// Existing aggregate original-byte ceiling for measured-input editor collections.
+/// This UI retention policy is shared by import and Designer batches; it remains
+/// independent of the public measurement sequence's 96-MiB original-byte budget.
+pub(crate) const MAX_MEASUREMENT_COLLECTION_ORIGINAL_BYTES: usize = 64 * 1024 * 1024;

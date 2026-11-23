@@ -237,19 +237,11 @@
     },
     {
       "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
-      "sha256": "318a1513704161370baa9abc0806c1c16f7773e82692702a1d408822cd64aa80",
+      "sha256": "7f9f799c5731f80aaa80a7163c6c36139fbde9c5dd512bc5ea9b6abad9aa3678",
       "sites": [
         {
-          "line": 6,
+          "line": 7,
           "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 13,
-          "root": "pnm"
-        },
-        {
-          "line": 13,
-          "root": "pnm"
         }
       ],
       "sunset_task": "UIU-DS-01"
@@ -3077,6 +3069,46 @@
       "all_bytes_except_source_type_import_exact": true,
       "exact_at_base_commit": "80c9fc47dd99447bd1a32106f4ab4f751673b704",
       "evidence": "docs/development/features/unified-qt-workbench/source-editor-facade-evidence.json"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+        "sha256": "318a1513704161370baa9abc0806c1c16f7773e82692702a1d408822cd64aa80",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 13,
+            "root": "pnm"
+          },
+          {
+            "line": 13,
+            "root": "pnm"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+        "sha256": "7f9f799c5731f80aaa80a7163c6c36139fbde9c5dd512bc5ea9b6abad9aa3678",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Ordinary RxMER/H decoding and scientific imports move to public CaptureLoader and nominal API frame DTOs. Exact old Designer detection/dispatch fragment remains; only its coarse input-format import stays frozen. No private decoder/import or scientific algorithm is added. Original metadata projection is applied only to independent legacy DTO copies. Full Designer and measurement-model acceptance remains pending.",
+      "evidence": "docs/development/features/unified-qt-workbench/measurement-owner-facade-evidence.json",
+      "preserved_legacy_designer_dispatch": {
+        "sha256": "b641952729952520bb333a63652630037f77d760a9186a571a97cd04a3f71b01",
+        "byte_length": 204,
+        "exact_at_base_commit": "1820cdff5a562e021385626155a40ff6ec1c4450"
+      }
     }
   ]
 }

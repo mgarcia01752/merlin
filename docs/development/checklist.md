@@ -521,6 +521,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [original measurement-frame prerequisite](features/unified-qt-workbench/validation.md#uiu-ds-01-original-measurement-frame-api-accepted) records the additive channel observation/data aliases and paired native ownership/provenance acceptance before measured-input adoption. Parent Level 2 and final Level 3 remain pending.
 
+  The [ordinary measurement admission facade](features/unified-qt-workbench/validation.md#uiu-ds-01-ordinary-measurement-admission-facade-accepted) records public loader/frame adoption with the exact legacy Designer route retained. Focused Qt/QML/project and Rust/native persistence evidence passes; 19 files/77 sites/three dependencies remain frozen, including the remaining coarse Designer detection site in this owner.
+
 - [ ] **UIU-SESSION-01** Make direction sessions explicit and serialize initial dispatch.
   Requirements: [REQ-UIU-03](../requirements.md#req-uiu-03), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-07](../requirements.md#req-uiu-07).
   Dependencies: [UIU-DS-01](#task-uiu-ds-01).

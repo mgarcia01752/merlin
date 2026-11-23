@@ -3,27 +3,23 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Immutable original measurement files decoded through the pinned PNM library.
-use docsis_ofdm_fec::{
-    input_format::{detect, json_bytes, InputFormat},
-    scenario::{
-        pnm_json::{import_channel, import_rxmer, JsonCapture},
-        ChannelFrame, RxMerFrame, ScenarioKey,
-    },
+use crate::downstream::common::constants::MAX_MEASUREMENT_COLLECTION_ORIGINAL_BYTES;
+use docsis_ofdm_fec::input_format::{detect, json_bytes, InputFormat};
+use merlin::downstream::{
+    inputs::CaptureLoader, CaptureKind, CaptureProvenance, ChannelEstimateFrame, NamedCapture,
+    RxMerFrame, ScenarioKey, MAX_CAPTURE_BYTES,
 };
-use pnm::pnm::parser::{
-    cm_ds_ofdm_chan_estimate_coef::CmDsOfdmChanEstimateCoef, cm_ds_ofdm_rx_mer::CmDsOfdmRxMer,
-    parse_limits::ParseLimits,
-};
-use sha2::{Digest, Sha256};
 use std::sync::Arc;
 
-pub(crate) const MAX_INPUT_BYTES: usize = 16 * 1024 * 1024;
-pub(crate) const MAX_TOTAL_BYTES: usize = 64 * 1024 * 1024;
+/// Authoritative public input-byte ceiling; the picker and admission share this bound.
+pub(crate) const MAX_INPUT_BYTES: usize = MAX_CAPTURE_BYTES;
+/// Independent legacy editor retention policy, shared with its batch/Designer adapters.
+pub(crate) const MAX_TOTAL_BYTES: usize = MAX_MEASUREMENT_COLLECTION_ORIGINAL_BYTES;
 
 #[derive(Clone)]
 pub(crate) enum Measurement {
     Rxmer(Arc<RxMerFrame>),
-    Response(Arc<ChannelFrame>),
+    Response(Arc<ChannelEstimateFrame>),
 }
 #[derive(Clone)]
 pub(crate) struct Capture {
@@ -54,53 +50,60 @@ impl Capture {
                 return Ok(capture);
             }
         }
-        let (format,decoded)=match detect(&bytes) {
-            InputFormat::BinaryPnm=>{
-                let limits = ParseLimits { max_samples: 65_536 };
-                let document=if rxmer {
-                    CmDsOfdmRxMer::parse(&bytes,limits).map_err(|error|error.to_string())?.to_json(MAX_INPUT_BYTES)
-                } else {
-                    CmDsOfdmChanEstimateCoef::parse(&bytes,limits).map_err(|error|error.to_string())?.to_json(MAX_INPUT_BYTES)
-                }.map_err(|error|error.to_string())?;
-                ("Binary PNM",document.into_bytes())
-            },
-            InputFormat::JsonText=>("Decoded JSON",json_bytes(&bytes).to_vec()),
-            _=>return Err("Choose binary PNM or supported decoded measurement JSON; this file has neither format.".into()),
-        };
-        let source = JsonCapture {
-            name: &name,
-            bytes: &decoded,
-        };
-        let hash = format!("{:x}", Sha256::digest(&bytes));
-        let measurement = if rxmer {
-            let mut frame = import_rxmer(source).map_err(|error| error.to_string())?;
+        let original =
+            NamedCapture::new(&name, bytes).map_err(|cause| cause.message().to_owned())?;
+        let (format, hash, decoded_hash, measurement) = if rxmer {
+            let capture =
+                CaptureLoader::rxmer(&original).map_err(|cause| cause.message().to_owned())?;
+            let format = display_format(capture.provenance())?;
+            let hash = capture.provenance().original_sha256().to_owned();
+            let mut frame = capture.frame().clone();
+            let decoded_hash = frame.source.sha256.clone();
+
+            // Preserve the existing editor DTO's original-file metadata projection.
+            // The public observation and its decoded/original provenance stay unchanged.
             frame.source.sha256 = hash.clone();
-            frame.source.byte_length = bytes.len();
+            frame.source.byte_length = original.bytes().len();
             frame.source.file_kind = if format == "Binary PNM" {
                 "binary_pnm_rxmer"
             } else {
                 "decoded_json_rxmer"
             }
             .into();
-            Measurement::Rxmer(Arc::new(frame))
+            (
+                format,
+                hash,
+                decoded_hash,
+                Measurement::Rxmer(Arc::new(frame)),
+            )
         } else {
-            let mut frame = import_channel(source).map_err(|error| error.to_string())?;
+            let capture = CaptureLoader::channel_estimate(&original)
+                .map_err(|cause| cause.message().to_owned())?;
+            let format = display_format(capture.provenance())?;
+            let hash = capture.provenance().original_sha256().to_owned();
+            let mut frame = capture.frame().clone();
+            let decoded_hash = frame.source.sha256.clone();
             frame.source.sha256 = hash.clone();
-            frame.source.byte_length = bytes.len();
+            frame.source.byte_length = original.bytes().len();
             frame.source.file_kind = if format == "Binary PNM" {
                 "binary_pnm_channel_response"
             } else {
                 "decoded_json_channel_response"
             }
             .into();
-            Measurement::Response(Arc::new(frame))
+            (
+                format,
+                hash,
+                decoded_hash,
+                Measurement::Response(Arc::new(frame)),
+            )
         };
         Ok(Self {
             name,
-            original: Arc::new(bytes),
+            original: Arc::new(original.bytes().to_vec()),
             format,
             hash,
-            decoded_hash: format!("{:x}", Sha256::digest(&decoded)),
+            decoded_hash,
             measurement,
             designer: None,
         })
@@ -122,5 +125,79 @@ impl Capture {
             Measurement::Rxmer(frame) => frame.capture_time,
             Measurement::Response(frame) => frame.capture_time,
         }
+    }
+}
+
+// Detected representation is public provenance-report metadata, only used for labels.
+fn display_format(provenance: &CaptureProvenance) -> Result<&'static str, String> {
+    let report = serde_json::to_value(provenance).map_err(|cause| cause.to_string())?;
+    let binary = serde_json::to_value(CaptureKind::BinaryPnm).map_err(|cause| cause.to_string())?;
+    let json = serde_json::to_value(CaptureKind::DecodedJson).map_err(|cause| cause.to_string())?;
+    if report["original_kind"] == binary {
+        Ok("Binary PNM")
+    } else if report["original_kind"] == json {
+        Ok("Decoded JSON")
+    } else {
+        Err("Unsupported measurement representation.".into())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::{json, Value};
+    use sha2::{Digest, Sha256};
+
+    #[test]
+    fn public_ordinary_admission_preserves_binary_bom_hashes_and_legacy_source_metadata() {
+        let binary =
+            include_bytes!("../../../../../../examples/workbench/single/ds-channel-estimate.bin");
+        let capture = Capture::decode("wrong.json".into(), binary.to_vec(), false).unwrap();
+        let Measurement::Response(frame) = &capture.measurement else {
+            panic!("Expected channel response");
+        };
+        assert_eq!(capture.format, "Binary PNM");
+        assert_eq!(capture.original.as_slice(), binary);
+        assert_eq!(capture.hash, format!("{:x}", Sha256::digest(binary)));
+        assert_eq!(frame.source.sha256, capture.hash);
+        assert_eq!(frame.source.byte_length, binary.len());
+        assert_eq!(frame.source.file_kind, "binary_pnm_channel_response");
+        assert_ne!(capture.hash, capture.decoded_hash);
+        assert_eq!(frame.key.channel_id, 34);
+        assert_eq!(frame.capture_time, 1391100);
+        let public = CaptureLoader::channel_estimate(
+            &NamedCapture::new("wrong.json", binary.to_vec()).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(frame.iq, public.frame().iq);
+        assert_eq!(capture.decoded_hash, public.frame().source.sha256);
+        assert_ne!(frame.source.sha256, public.frame().source.sha256);
+        let mut source: Value = serde_json::from_slice(include_bytes!(
+            "../../../../../../examples/measurements/single-channel/rxmer.json"
+        ))
+        .unwrap();
+
+        // Independent null/level and UTF-8 BOM anchors preserve the legacy decoded hash.
+        source["values"][0] = Value::Null;
+        source["values"][1] = json!(42.75);
+        let decoded = serde_json::to_vec(&source).unwrap();
+        let mut original = b"\xef\xbb\xbf".to_vec();
+        original.extend(&decoded);
+        let capture = Capture::decode("wrong.bin".into(), original.clone(), true).unwrap();
+        let Measurement::Rxmer(frame) = &capture.measurement else {
+            panic!("Expected RxMER");
+        };
+        assert_eq!(capture.format, "Decoded JSON");
+        assert_eq!(capture.original.as_ref(), &original);
+        assert_eq!(capture.hash, format!("{:x}", Sha256::digest(&original)));
+        assert_eq!(
+            capture.decoded_hash,
+            format!("{:x}", Sha256::digest(&decoded))
+        );
+        assert_eq!(frame.source.sha256, capture.hash);
+        assert_eq!(frame.source.byte_length, original.len());
+        assert_eq!(frame.source.file_kind, "decoded_json_rxmer");
+        assert_eq!(frame.mer_db[0], None);
+        assert_eq!(frame.mer_db[1], Some(42.75));
     }
 }

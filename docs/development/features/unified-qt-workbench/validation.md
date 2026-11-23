@@ -2515,3 +2515,51 @@ and two affected existing Qt consumers execute. Complete parent Level 2 and
 milestone/final Level 3 gates, measured-input Qt adoption and final numeric audit
 remain open. The boundary is unchanged at 19 frozen files/79 sites/three scientific
 dependencies; no official checkbox is advanced.
+
+## UIU-DS-01 ordinary measurement admission facade accepted
+
+[Exact contract](design.md#uiu-ds-01-ordinary-measurement-admission-facade) and
+[machine evidence](measurement-owner-facade-evidence.json) establish focused Level 1
+ordinary-input acceptance for REQ-UIU-02/03/08/09/20/22/24/27, consuming 1820cdff.
+Ordinary binary/JSON RxMER and H admission now uses public CaptureLoader and
+immutable RxMer/ChannelEstimate frame observations. Decoder dispatch, scientific
+JSON import, original hashing and private scientific DTO imports leave this path.
+Only independent compatibility copies receive the same legacy original-file
+source-kind/hash/length projection; public input objects and decoded provenance
+remain unchanged. The old Designer detection/dispatch fragment stays byte-exact
+and its coarse format import remains frozen; actual Designer science and measured
+planning remain separate migration owners.
+
+Executed: all 13 Qt measured-input module tests, including all original model,
+animation, PLC and six Designer cases with actual FEC; two existing Qt project
+regressions; three affected QML behaviors (five harness cases); Qt formatting,
+all-target Clippy and optimized build. Persistence risk expansion executes two
+Rust and two native saved-input cases against the exact unchanged 1820cdff wheel,
+with installed module/archive hash preflight. Actual documentation, traceability,
+boundary and generated-guide checks apply.
+
+The new independent capture regression pins binary original/decoded hashes,
+source kind/byte length, original channel/epoch and exact I/Q equality with the
+public observation. BOM-prefixed JSON pins the legacy decoded hash after BOM
+removal, separate original hash, unchanged original bytes, explicit null and
+42.75-dB anchor. Existing file fields, accepted/draft selection, source clocks,
+Designer recipes, exported originals, grids and lifecycle remain. No project
+schema, CXX declaration, backend/binding or public API operation changes.
+The existing 64-MiB editor aggregate cap is named centrally and remains distinct
+from the public sequence's 96-MiB budget. One bounded temporary byte copy bridges
+the unchanged legacy editor storage; retaining public handles belongs to remaining
+measured-model consolidation, without adding global caches.
+
+A focused whole-file boundary review replaces only the ordinary import/decoder
+sites and proves the preserved Designer fragment. The entry remains frozen with
+one coarse site: 19 files/79 sites become 19/77, with all other entries/history and
+three dependencies exact. No complete-file retirement or parent checkbox advance
+is claimed for this partial owner.
+
+Not required: a new wheel, API inventory refresh or unrelated complete scientific/
+upstream/workspace/CLI/package suites, because backend/bindings/exports and package
+owners are unchanged. No new native startup/installed-platform execution is claimed:
+CXX/QML registration/resources and lifecycle are unchanged; affected QML and the
+current optimized build pass. Parent Level 2, milestone/final Level 3, complete
+Designer/model adoption, direction-aware persistence and final numeric audit stay
+open. Existing tests/vectors and earlier evidence remain intact.

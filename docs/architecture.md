@@ -1125,6 +1125,14 @@ source metadata, exact device/channel/grid, epoch, I/Q and nulls remain unchange
 No scientific algorithm, existing observation or admission behavior changes.
 Qt measured-input adoption remains a separate UIU-DS-01 consumer unit.
 
+The [ordinary measured-input owner](development/features/unified-qt-workbench/design.md#uiu-ds-01-ordinary-measurement-admission-facade)
+uses public native loaders and read-only frame observations for ordinary RxMER/H
+admission. A compatibility DTO copy preserves legacy editor original-file source
+metadata without mutating public decoded-source frames/provenance. Existing editor
+storage and its independent 64-MiB collection policy remain; Designer detection,
+recipe evaluation and measured-model planning retain explicit frozen migration
+debt. This partial owner migration does not establish parent/final acceptance.
+
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)
