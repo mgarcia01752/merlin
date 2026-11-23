@@ -228,3 +228,13 @@ owner, using shared SI conversion constants. [Scoped paired acceptance](validati
 covers exact/fractional rounding, both clocks and maximum indices. The theoretical
 threshold can exceed admission limits and excludes acquisition/drain/window tails.
 Qt timing-help presentation remains unchanged until DS-01 adoption.
+
+## UIU-DS-01 relative channel power follow-up
+
+The [relative-power prerequisite](design.md#uiu-ds-01-relative-channel-power-api-prerequisite)
+adds `ChannelSpectrum.normalized_power_db` and the matching serialized native key
+through the existing scientific owner. [Scoped paired acceptance](validation.md#uiu-ds-01-relative-channel-power-api-accepted)
+covers literal flat-density/zero anchors, full-band zoom/calibration independence
+and fresh Rust/native process parity. Existing methods, constructors, original
+fields and operation rows remain intact. Qt's relative-power formatter still
+awaits adoption, with no local logarithmic calculation permitted in its replacement.

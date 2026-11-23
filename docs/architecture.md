@@ -1211,6 +1211,15 @@ now covers both sample clocks, exact rounding and maximum source indices.
 Generic integer SI scales share the DSP common constants owner. Qt help adoption
 remains pending after this focused API prerequisite.
 
+The [relative channel-power prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-relative-channel-power-api-prerequisite)
+adds a backend-owned logarithmic normalized-power observation to the existing
+non-exhaustive `ChannelSpectrum` result. This preserves the idle SA's relative
+power readout without a logarithmic calculation in Qt. Linear integration,
+electrical calibration and waveform processing retain their existing owners;
+[paired API acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-relative-channel-power-api-accepted)
+now passes before preview adoption. A common power-ratio factor serves integrated
+power and existing power-density conversion, independently of amplitude scaling.
+
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
 

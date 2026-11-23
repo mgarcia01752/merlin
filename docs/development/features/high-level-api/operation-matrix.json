@@ -5,14 +5,14 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "61d69090c2effede83943148cc5c2e40477de83d plus exact DS-01 minimum-window candidate",
-    "inventory_command": "Installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/ds-01-minimum-window-native/native-exports.json",
-    "native_sha256": "29bc1f606a031bb74bca84c197aaf3a61b624fbcb057d5cfa05903777817dce8",
-    "scope": "Fresh installed CPython 3.10 metadata and 14 scoped sequence/admission/namespace cases. Historical complete acceptance retained separately; every previous row/export stays exact.",
+    "revision": "653bbe05cb4237500ddc34908d29125769b0e179 plus exact DS-01 relative power candidate",
+    "inventory_command": "Installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/ds-01-relative-power-native/native-exports.json",
+    "native_sha256": "bc51c54ea64a9e8742018b27c6a662a291e55b230b11292c5335a6b4017aa57e",
+    "scope": "Fresh installed metadata and 12 scoped channel-spectrum/TX/namespace cases, including two freshly executed separate Rust process references. All operation/class metadata is unchanged; additive non-exhaustive spectrum field only.",
     "preserved_prior_inventory": {
-      "sha256": "66b0ad1734c32690e3940cab9fe577f7a861402542af01e72b0a7ff06fb96923",
-      "root_and_namespace_operation_instances": 940,
-      "scope": "Exact prior class/alias/constructor metadata and operation kind/signature; additive minimum-window query only."
+      "sha256": "0b95e8740c9a91fa4fd16b460f9e0d254588d8880dbe7395fc89cac6b3311c8d",
+      "root_and_namespace_operation_instances": 942,
+      "scope": "All prior root and real namespace classes, aliases, constructors, methods, properties, constants and signatures are deeply equal."
     }
   },
   "contracts": {
@@ -32175,7 +32175,8 @@
     "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -68203,6 +68204,18 @@
         "sha256": "db3e24732ae387e1b2eb0bffec8629bc28284cc3fbae4219595961c0cb26c44c",
         "root_and_namespace_operation_instances": 938,
         "scope": "Exact prior class/alias/constructor metadata and operation kind/signature; additive options capacity method only."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "61d69090c2effede83943148cc5c2e40477de83d plus exact DS-01 minimum-window candidate",
+      "inventory_command": "Installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/ds-01-minimum-window-native/native-exports.json",
+      "native_sha256": "29bc1f606a031bb74bca84c197aaf3a61b624fbcb057d5cfa05903777817dce8",
+      "scope": "Fresh installed CPython 3.10 metadata and 14 scoped sequence/admission/namespace cases. Historical complete acceptance retained separately; every previous row/export stays exact.",
+      "preserved_prior_inventory": {
+        "sha256": "66b0ad1734c32690e3940cab9fe577f7a861402542af01e72b0a7ff06fb96923",
+        "root_and_namespace_operation_instances": 940,
+        "scope": "Exact prior class/alias/constructor metadata and operation kind/signature; additive minimum-window query only."
       }
     }
   ],

@@ -5,6 +5,7 @@
 //! Electrical spectrum projection and scalar amplifier observations over existing numerical data.
 use super::power::{channel_power, ChannelPower, PowerConditioning};
 use crate::{
+    common::constants::POWER_RATIO_DECIBEL_FACTOR,
     error::invalid,
     signal_processing::waveform::spectrum::PowerSpectrum,
     transmission::{
@@ -47,6 +48,10 @@ pub struct ChannelSpectrum {
     pub averages: usize,
     pub equivalent_noise_bandwidth_hz: f64,
     pub channel_power: ChannelPower,
+    /// Full-band integrated power in dB re one normalized sample unit squared.
+    /// None means zero power; this is neither per-Hz density nor electrical dBmV.
+    /// Calibration and viewport selection do not change this relative observation.
+    pub normalized_power_db: Option<f64>,
     pub buckets: Vec<ChannelSpectrumBucket>,
 }
 
@@ -139,6 +144,8 @@ pub(crate) fn view(
         fft_samples: spectrum.fft_samples,
         averages: spectrum.averages,
         equivalent_noise_bandwidth_hz: spectrum.equivalent_noise_bandwidth_hz,
+        normalized_power_db: (reading.normalized_power > 0.0)
+            .then(|| POWER_RATIO_DECIBEL_FACTOR * reading.normalized_power.log10()),
         channel_power: reading,
         buckets,
     })
@@ -184,6 +191,8 @@ mod tests {
 
     const FLAT_NORMALIZED_DENSITY: f64 = 1.0 / 204_800_000.0;
     const EXPECTED_BAND_POWER: f64 = 0.927734375;
+    // Independent 10*log10(0.927734375), using the fixed flat-density fixture.
+    const EXPECTED_RELATIVE_BAND_POWER_DB: f64 = -0.32576351350964183;
     const EXPECTED_BANDWIDTH_HZ: f64 = 190_000_000.0;
     const EXPECTED_CALIBRATED_DBMV_HZ: f64 = -67.78151250383644;
     const ELECTRICAL_TOLERANCE: f64 = 1e-10;
@@ -249,6 +258,11 @@ mod tests {
             );
             assert_eq!(full.channel_power.bandwidth_hz, EXPECTED_BANDWIDTH_HZ);
             assert!(
+                (full.normalized_power_db.unwrap() - EXPECTED_RELATIVE_BAND_POWER_DB).abs()
+                    < ELECTRICAL_TOLERANCE
+            );
+            assert_eq!(full.normalized_power_db, zoom.normalized_power_db);
+            assert!(
                 full.channel_power.equivalent_dbmv_per_6mhz.unwrap().abs() < ELECTRICAL_TOLERANCE
             );
             assert_eq!(
@@ -279,6 +293,8 @@ mod tests {
         assert!(zero.millivolts_squared_per_unit.is_none());
         assert!(zero.channel_power.dbmv.is_none());
         assert_eq!(zero.channel_power.normalized_power, 0.0);
+        assert!(zero.normalized_power_db.is_none());
+        assert!(serde_json::to_value(&zero).unwrap()["normalized_power_db"].is_null());
         assert!(zero
             .buckets
             .iter()

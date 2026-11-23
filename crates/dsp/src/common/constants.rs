@@ -18,6 +18,10 @@ pub const MILLISECONDS_PER_SECOND: u128 = 1_000;
 /// Exact integer nanoseconds in one second for Duration-to-sample conversion.
 pub const NANOSECONDS_PER_SECOND: u128 = 1_000_000_000;
 
+/// Multiplier for base-ten logarithms of power ratios, including power densities.
+/// This defines decibels of power, independently of the amplitude-ratio factor.
+pub const POWER_RATIO_DECIBEL_FACTOR: f64 = 10.0;
+
 /// Register width for the fixed PRBS15 recurrence x^15 + x^14 + 1.
 pub const PRBS15_REGISTER_BITS: u32 = 15;
 /// Highest register-bit position used by the existing LSB-first recurrence.

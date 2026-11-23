@@ -1538,3 +1538,33 @@ All Qt sources, dependency records and forty frozen boundary entries stay exact.
 The three scientific dependencies and 140 direct sites remain migration work.
 Qt help adoption and final numeric/unified runtime acceptance stay open under
 UIU-DS-01/UIU-QA-01. No new operating mode, schema or dependency is introduced.
+
+## UIU-DS-01 relative channel power API accepted
+
+The [relative-power evidence](relative-channel-power-evidence.json) accepts the
+additional optional `ChannelSpectrum.normalized_power_db` observation in Rust
+and the matching native Python dictionary key. The existing scientific owner
+derives this full-band relative reading after unchanged linear integration.
+Zero stays None/null, with linear zero preserved; no electrical calibration,
+per-Hz reference, gain application or finite floor is inferred. Its named power
+decibel factor is shared with the existing density conversion through common
+constants; amplitude scaling and the logarithm base retain separate meanings.
+
+Ten scoped Rust cases pass: three scientific-owner cases, five idle TX cases and
+two actual channel-observation cases. Independent fixed flat density gives
+0.927734375 normalized band power and -0.32576351350964183 dB, with both sample
+clocks, internal exclusions, zero/null and zoom/calibration independence covered.
+Twelve installed native channel-spectrum/TX/namespace cases pass without skips,
+including fresh separate Rust full-loop and idle TX process references. Original
+timing, waveform, cancellation and scientific test assertions remain in place.
+
+Root/native Clippy, formatting, analysis-only compilation, 34 API metadata cases
+and strict operation tracing pass. All 566 Rust/539 native operation rows and all
+installed class/constructor/member signatures remain exact. The public result was
+already non-exhaustive; no new operation or construction requirement is added.
+Historical full backend/native gates remain separate from this scoped addition.
+
+All Qt sources, locks and forty frozen legacy entries remain unchanged. Commit
+this API prerequisite before idle preview adoption. Parent DS-01 and final
+numeric/unified runtime acceptance remain open; no hosted/installed GUI or
+external interoperability acceptance is claimed.

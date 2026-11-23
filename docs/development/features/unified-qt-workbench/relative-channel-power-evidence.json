@@ -1,0 +1,421 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Relative channel power API prerequisite",
+  "status": "scoped backend prerequisite accepted; Qt adoption and parent incomplete",
+  "base_commit": "653bbe05cb4237500ddc34908d29125769b0e179",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-08",
+    "REQ-UIU-09",
+    "REQ-UIU-17",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "crates/dsp/src/common/constants.rs",
+      "sha256": "c32638f49cac6ed168004af78b5a50aacd125561b35e2656d9292fbe7a57ec01"
+    },
+    {
+      "path": "crates/ofdm/src/common/constants.rs",
+      "sha256": "8f9983894278261ae02b611b1d3090acac090505b7005d7617f9afba3e7d6118"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/channel/spectrum.rs",
+      "sha256": "acb030b70bfce828e0c395522556a0a31b8b1b4249b9645fd8ecaa452f97a1e2"
+    },
+    {
+      "path": "crates/ofdm/src/signal_processing/waveform/spectrum.rs",
+      "sha256": "79e212f70196c994b29fe00e6290382fcae19474f7bc5a0e1c0564ebd9e55ebb"
+    },
+    {
+      "path": "crates/ofdm/tests/api_transmitter_preview.rs",
+      "sha256": "de98ca52abde27e1156dd68884334dfda4b49b64b1365afa2cb801849e7dc5bb"
+    },
+    {
+      "path": "crates/ofdm/tests/api_full_loop_observations.rs",
+      "sha256": "efd39669fe89fd4726bc18997620970872732a500cf94cafc8770543b35142f5"
+    },
+    {
+      "path": "bindings/python/tests/test_channel_spectrum.py",
+      "sha256": "132045367c7cb3b791b7909343cef74a69a4ae67bccac823330995b60d63d668"
+    }
+  ],
+  "contract": {
+    "owner": "Existing channel spectrum numerical owner after unchanged full-band integration",
+    "rust": "ChannelSpectrum.normalized_power_db: Option<f64> on the existing non-exhaustive result",
+    "python": "normalized_power_db dictionary field through unchanged native Rust serialization",
+    "units": "dB re one normalized sample unit squared; neither per-Hz density nor electrical dBmV",
+    "zero": "None/null; the original linear power remains zero",
+    "invariance": "Independent of viewport and electrical calibration; no new run, source/RNG state, gain or input mutation"
+  },
+  "validation": [
+    {
+      "label": "fmt",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.109981706002145
+    },
+    {
+      "label": "owner",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--locked",
+        "--lib",
+        "signal_processing::channel::spectrum::tests"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.58086187999288
+    },
+    {
+      "label": "preview",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--locked",
+        "--test",
+        "api_transmitter_preview"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 18.94531105500937
+    },
+    {
+      "label": "channel",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--locked",
+        "--test",
+        "api_full_loop_observations",
+        "channel_"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 21.50262261100579
+    },
+    {
+      "label": "transmitter-reference",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "run",
+        "-p",
+        "docsis-ofdm-fec",
+        "--example",
+        "api_transmitter_preview",
+        "--features",
+        "high-level-api",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.250083555991296
+    },
+    {
+      "label": "full-loop-reference",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "run",
+        "-p",
+        "docsis-ofdm-fec",
+        "--example",
+        "api_full_loop",
+        "--features",
+        "high-level-api",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 49.48681724999915
+    },
+    {
+      "label": "clippy",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "clippy",
+        "-p",
+        "merlin-dsp",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "docsis-ofdm-fec/high-level-api",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 15.091869855008554
+    },
+    {
+      "label": "python-clippy",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "clippy",
+        "--manifest-path",
+        "bindings/python/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 10.040597549988888
+    },
+    {
+      "label": "analysis",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "check",
+        "-p",
+        "docsis-ofdm-fec",
+        "--no-default-features",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.9178107530024135
+    },
+    {
+      "label": "wheel",
+      "command": [
+        "/home/dev01/Projects/merlin/local/api-python-build/bin/python",
+        "-m",
+        "maturin",
+        "build",
+        "--manifest-path",
+        "bindings/python/Cargo.toml",
+        "--release",
+        "--locked",
+        "--compatibility",
+        "linux",
+        "--interpreter",
+        "/usr/bin/python3",
+        "--out",
+        "local/python-wheels-ds-relative-power"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 49.58354498099652
+    },
+    {
+      "label": "rustdoc",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "doc",
+        "--workspace",
+        "--no-deps",
+        "--locked",
+        "--features",
+        "merlin/native-input"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.67259709899372
+    },
+    {
+      "label": "rust-inventory",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/rust_api_inventory.py",
+        "--output",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-rust-exports.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.231068179011345
+    },
+    {
+      "command": "tools/validation/api_operation_matrix.py with fresh inventories and every executed record",
+      "exit_code": 0,
+      "receipt": "ds-01-relative-power-strict-matrix.log"
+    },
+    {
+      "command": "tools/validation/feature_documentation.py",
+      "exit_code": 0,
+      "receipt": "ds-01-relative-power-docs.log"
+    },
+    {
+      "command": "tools/validation/integration_traceability.py",
+      "exit_code": 0,
+      "receipt": "ds-01-relative-power-traceability.log"
+    },
+    {
+      "command": "tools/release/versions.py",
+      "exit_code": 0,
+      "receipt": "ds-01-relative-power-versions.log"
+    },
+    {
+      "command": "tools/python/update_integration_doc.py --check",
+      "exit_code": 0,
+      "receipt": "ds-01-relative-power-guide.log"
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "receipt": "ds-01-relative-power-diff.log"
+    },
+    {
+      "command": "python3 -B -m unittest discover -s tools/validation -p test_*api*.py -v",
+      "passed": 34,
+      "exit_code": 0,
+      "receipt": "ds-01-relative-power-metadata-tests.log"
+    }
+  ],
+  "rust_passed": 10,
+  "native_passed": 12,
+  "installed_native": {
+    "status": "passed",
+    "wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-relative-power/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "wheel_sha256": "932528d87cda3c108bbb6f03506484f7de15d9453a97a1ffb81fff9fb88e08ce",
+    "commands": [
+      {
+        "label": "install",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "pip",
+          "install",
+          "--no-index",
+          "--no-deps",
+          "/home/dev01/Projects/merlin/local/python-wheels-ds-relative-power/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.6811010209930828
+      },
+      {
+        "label": "channel-spectrum",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_channel_spectrum.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-native",
+        "exit_code": 0,
+        "elapsed_seconds": 3.223486408998724
+      },
+      {
+        "label": "transmitter-preview",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_transmitter_preview.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.4725024059880525
+      },
+      {
+        "label": "namespaces",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_namespaces.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.11193564100540243
+      },
+      {
+        "label": "native-inventory",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-native/installed/bin/python",
+          "-I",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-native/native-exports.json"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.1267759659967851
+      }
+    ],
+    "rust_references": [
+      {
+        "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-full-loop-reference.stdout",
+        "sha256": "9635eb71a761244faea67852c547f92ca91b9605c9f4fc0ee117a0924a501714"
+      },
+      {
+        "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-transmitter-reference.stdout",
+        "sha256": "08ca0f3aaa3863a9f034262f92ab432d13fda67e2a879fa1e531b9b971ab8dd1"
+      }
+    ]
+  },
+  "executed_cases": "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+  "owner_validation": {
+    "passed": 3,
+    "receipt": "ds-01-relative-power-owner.stdout",
+    "independent_anchor": "190000000/204800000 = 0.927734375 integrated power; independently calculated 10*log10 gives -0.32576351350964183 dB. Both FFT clocks and internal holes preserve the fixed full-band integration. Zero is None/null.",
+    "existing_cases_and_assertions_preserved": true
+  },
+  "inventory_preservation": {
+    "rust_operations": 566,
+    "native_operations": 539,
+    "all_previous_rows_and_exports_exact": true,
+    "compiler_inventory_deep_equal": true,
+    "all_installed_class_and_operation_metadata_deep_equal": true
+  },
+  "numeric_review": {
+    "shared_owner": "POWER_RATIO_DECIBEL_FACTOR in DSP common/constants, downstream re-export; actual consumers integrated relative power and existing PSD density conversion.",
+    "independent_meanings": "Power-ratio factor10 is separate from logarithm base10 and amplitude-ratio factor20. Existing named amplitude/base definitions retain distinct meaning.",
+    "production_literals": "Mathematical zero for the positive-power domain; no new arbitrary budget/default/endpoint.",
+    "independent_expected_vector": "Literal expected relative dB is independent of production constants, under the existing numerical tolerance.",
+    "final_line_by_line_integration_audit": "pending UIU-QA-01"
+  },
+  "qt_boundary": {
+    "scientific_dependencies": 3,
+    "frozen_files": 40,
+    "direct_sites": 140,
+    "consumer_implemented": false
+  },
+  "limitations": [
+    "No full backend/native rerun claimed",
+    "No Qt source/dependency/guard changes in this prerequisite",
+    "No constructor, operation, dependency, schema or operating-mode change",
+    "Final numeric audit and unified runtime/hosted/installed acceptance remain pending"
+  ]
+}

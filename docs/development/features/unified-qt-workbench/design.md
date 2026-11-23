@@ -1957,3 +1957,40 @@ The inverse minimum-window result is derived from the existing library clock,
 not presented as an additional normative DOCSIS requirement.
 
 Scoped backend prerequisite accepted: [minimum-window validation](validation.md#uiu-ds-01-minimum-observation-timing-api-accepted) and [exact evidence](minimum-observation-timing-evidence.json) record ten Rust/fourteen installed native cases, original timing compatibility and unchanged earlier API exports. The Qt consumer and parent DS-01 remain pending.
+
+## UIU-DS-01 relative channel power API prerequisite
+
+Idle TX preview can reuse `TransmitterPreviewRequest`, its one-shot control,
+`TransmitterPreview::calibrated_spectrum`, and public timing/window snapshots.
+The old Qt channel formatter still computes `10 log10(normalized_power)` for
+its relative Channel Power label. The existing public spectrum carries linear
+integrated power and optional electrical dBmV, but lacks that relative dB value.
+Add an optional `normalized_power_db` field to the existing non-exhaustive
+`ChannelSpectrum`, exposed unchanged by native Python's Rust serialization.
+It means dB re one normalized sample unit squared, not PSD per Hz or dBmV.
+Zero integrated power yields None/null rather than an invented finite floor.
+The value remains independent of viewport, calibration, gain application and run
+state. No new method, constructor, type, dependency, operating mode or admission.
+
+| Path and symbol | Existing contract / gap | Decision and owner |
+| --- | --- | --- |
+| `signal_processing/channel/spectrum.rs::view` | Existing full-band power owner supplies validated nonnegative finite integration | ADD the optional logarithmic observation after integration; retain every existing value and field. |
+| DSP/downstream common constants; `waveform/spectrum.rs::density_db` | Total power and power-density ratios use the same decibel factor | SHARE one named power-ratio factor; keep amplitude factor and logarithm base semantically separate. |
+| `api/channel/models.rs`, native spectrum bindings | Curated non-exhaustive result and owned serialized dictionaries | REUSE unchanged delegation; the additional field appears in Rust/native results together. |
+| Channel-spectrum owner tests, `api_transmitter_preview.rs`, native `test_channel_spectrum.py` | Independent flat PSD, zero, original-owner and separate-process parity cases | EXTEND assertions for literal relative power, zero/null, zoom/calibration independence and immutable original results. |
+| Qt preview/spectrum consumers | Existing legacy formatter retains behavior and remains frozen | DEFER edits until this API prerequisite has a focused accepted commit. |
+
+Behavioral reference: GPL-3.0-only MERLIN
+`apps/qt/src/downstream/instruments/channel/mod.rs::channel_viewport` at commit
+`653bbe05cb4237500ddc34908d29125769b0e179`, copyright 2026 MERLIN contributors.
+Implement the standard power-ratio equation independently in the existing Apache
+scientific owner; copy no GPL implementation. The existing waveform density
+conversion proves the common factor's in-tree meaning. Preserve headers/NOTICE;
+no third-party material, new normative claim or external interoperability claim.
+
+Trace REQ-UIU-02/08/09/17/27 and UIU-DS-01. Run scoped owner/API tests and a fresh
+installed wheel against separately executed Rust full-loop/TX references. Preserve
+every old operation row and native signature; validate metadata, docs and links.
+Parent DS-01 and final numeric/integration gates remain unchecked.
+
+Scoped prerequisite accepted: [relative-power validation](validation.md#uiu-ds-01-relative-channel-power-api-accepted) and [exact evidence](relative-channel-power-evidence.json) record ten Rust/twelve installed native cases, independent zero/flat-density anchors and fresh separate-process parity. Qt preview adoption and the parent remain pending.

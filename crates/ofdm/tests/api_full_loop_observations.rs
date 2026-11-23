@@ -729,6 +729,10 @@ fn calibrated_channel_taps_preserve_actual_sources_full_band_power_and_distinct_
         .channel_spectrum(FullLoopChannelTap::AfterAmplifier, query.clone())
         .unwrap();
     let actual = result.calibrated_spectrum(query.clone()).unwrap();
+    assert_eq!(
+        actual.power.normalized_power_db,
+        input.power.normalized_power_db
+    );
     assert_eq!(input.derived_amplitude, 1.0);
     assert_eq!(amplified.derived_amplitude, EXPECTED_AMPLITUDE);
     assert_eq!(
@@ -763,6 +767,10 @@ fn calibrated_channel_taps_preserve_actual_sources_full_band_power_and_distinct_
     assert_eq!(
         full.power.channel_power.normalized_power,
         actual.power.channel_power.normalized_power
+    );
+    assert_eq!(
+        full.power.normalized_power_db,
+        actual.power.normalized_power_db
     );
     assert_eq!(
         full.power.channel_power.dbmv,

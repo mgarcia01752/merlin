@@ -59,6 +59,13 @@ buckets. The existing owner reports normalized integrated power, optional dBmV,
 the equivalent band-average dBmV per 6 MHz, physical band edges and bandwidth.
 These are modeled observations, not a claim about measured RF port compliance.
 
+`ChannelSpectrum.normalized_power_db` in Rust, and the same dictionary key in
+Python, reports `10 log10(P_band)` in dB re one normalized sample unit squared.
+It is integrated relative power, independent of electrical calibration and
+viewport selection. Zero power returns `None`/`null`, with the original linear
+zero retained in `channel_power.normalized_power`. Clients can format this
+backend value directly without recreating the logarithmic conversion.
+
 The existing complex-envelope normalization is preserved:
 
 \[

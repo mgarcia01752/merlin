@@ -7,7 +7,7 @@ matrix required by master §7. The [full row data](operation-matrix.json) now re
 566 explicit public Rust operations and 539 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/minimum-observation-timing-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/relative-channel-power-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 112 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -38,6 +38,14 @@ clocks, exact rounding, an alternate prefix, maximum indices and thresholds
 above run-policy limits. [Exact execution records](../unified-qt-workbench/ds-01-minimum-window-operation-test-results.json)
 retain the existing timing/admission assertions. Qt help adoption remains DS-01;
 the theoretical threshold does not admit a run or include acquisition/drain time.
+
+The [relative channel-power prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-relative-channel-power-api-accepted)
+adds an optional field to the existing non-exhaustive spectrum result and matching
+native dictionaries. Ten Rust and twelve installed native cases pass literal
+flat-density/zero and fresh separate-process parity checks. Every earlier row,
+class export and signature stays exact; [execution records](../unified-qt-workbench/ds-01-relative-power-operation-test-results.json)
+retain scoped evidence without claiming a new full backend gate. Qt adoption
+remains DS-01.
 
 The additive [UIU-API-01 admission/preview acceptance](../unified-qt-workbench/validation.md#uiu-api-01-public-admission-accepted)
 appends 99 Rust and 75 native rows, retaining every original row and historical

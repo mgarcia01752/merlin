@@ -67,6 +67,8 @@ fn idle_calibrated_spectrum_keeps_full_band_power_zoom_independent_and_does_not_
         zoom.channel_power.normalized_power
     );
     assert_eq!(full.channel_power.dbmv, zoom.channel_power.dbmv);
+    assert_eq!(full.normalized_power_db, zoom.normalized_power_db);
+    let relative_power_db = full.normalized_power_db;
     assert_eq!(
         serde_json::to_value(full).unwrap(),
         serde_json::to_value(output.calibrated_spectrum(&without_gain, 0, 0).unwrap()).unwrap()
@@ -79,6 +81,8 @@ fn idle_calibrated_spectrum_keeps_full_band_power_zoom_independent_and_does_not_
         )
         .unwrap();
     assert!(relative.channel_power.dbmv.is_none());
+    assert_eq!(relative.normalized_power_db, relative_power_db);
+    assert!(relative.normalized_power_db.unwrap().is_finite());
     assert_eq!(
         relative.buckets[0].maximum_db,
         output.spectrum(0, 0).unwrap().buckets[0].maximum_db

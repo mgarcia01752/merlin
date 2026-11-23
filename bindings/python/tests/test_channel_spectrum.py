@@ -126,6 +126,12 @@ class ChannelSpectrumTests(unittest.TestCase):
         self.assertEqual(full['channel_power'], zoom['channel_power'])
         self.assertEqual(full, result.calibrated_spectrum(channel(gain=0.0, cpa=0.0)))
         relative = result.calibrated_spectrum(m.ChannelConfiguration())
+        self.assertEqual(full['normalized_power_db'], zoom['normalized_power_db'])
+        self.assertEqual(relative['normalized_power_db'], full['normalized_power_db'])
+        # Independent power-ratio equation; the implementation's common factor is not used.
+        self.assertAlmostEqual(relative['normalized_power_db'],
+                               10.0 * math.log10(relative['channel_power']['normalized_power']),
+                               delta=DB_ABSOLUTE_TOLERANCE)
         self.assertIsNone(relative['channel_power']['dbmv'])
         self.assertIsNone(relative['millivolts_squared_per_unit'])
         self.assertEqual(relative['buckets'], before['buckets'])

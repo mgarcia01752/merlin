@@ -46,7 +46,7 @@ pub struct SpectrumBucket {
 /// dB re one normalized sample unit squared/Hz, or None for zero/unavailable input.
 pub fn density_db(density: f64) -> Option<f64> {
     if density > 0.0 && density.is_finite() {
-        return Some(10.0 * density.log10());
+        return Some(crate::common::constants::POWER_RATIO_DECIBEL_FACTOR * density.log10());
     }
     None
 }

@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "exit_code": 0,
+      "passed": 5,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_transmitter_preview.rs",
+          "qualified_test_case": "cross_thread_cancel_progress_busy_and_precancel_are_one_shot"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_transmitter_preview.rs",
+          "qualified_test_case": "idle_timing_window_and_encoded_id_admission_keep_existing_support"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_transmitter_preview.rs",
+          "qualified_test_case": "finite_file_previews_exhaust_without_mutating_source_and_queries_reject_bounds"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_transmitter_preview.rs",
+          "qualified_test_case": "idle_calibrated_spectrum_keeps_full_band_power_zoom_independent_and_does_not_apply_channel_gain"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_transmitter_preview.rs",
+          "qualified_test_case": "actual_tx_samples_psd_and_owned_originals_match_existing_owner"
+        }
+      ],
+      "receipt": "ds-01-relative-power-preview.stdout"
+    },
+    {
+      "exit_code": 0,
+      "passed": 2,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_full_loop_observations.rs",
+          "qualified_test_case": "calibrated_channel_taps_preserve_actual_sources_full_band_power_and_distinct_amplifier_planes"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_full_loop_observations.rs",
+          "qualified_test_case": "relative_channel_spectra_and_missing_taps_remain_explicit_without_hidden_execution"
+        }
+      ],
+      "receipt": "ds-01-relative-power-channel.stdout"
+    },
+    {
+      "exit_code": 0,
+      "passed": 3,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_channel_spectrum.py",
+          "qualified_test_case": "ChannelSpectrumTests.test_actual_tap_units_zoom_gain_missing_bounds_and_owned_results"
+        },
+        {
+          "test_file": "bindings/python/tests/test_channel_spectrum.py",
+          "qualified_test_case": "ChannelSpectrumTests.test_direct_rust_process_channel_planes_and_idle_electrical_units_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_channel_spectrum.py",
+          "qualified_test_case": "ChannelSpectrumTests.test_idle_calibration_keeps_relative_mode_and_does_not_apply_configured_amplifier"
+        }
+      ],
+      "receipt": "ds-01-relative-power-native/channel-spectrum.stderr"
+    },
+    {
+      "exit_code": 0,
+      "passed": 5,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_transmitter_preview.py",
+          "qualified_test_case": "TransmitterPreviewTests.test_actual_generation_progress_count_normalization_and_owned_queries"
+        },
+        {
+          "test_file": "bindings/python/tests/test_transmitter_preview.py",
+          "qualified_test_case": "TransmitterPreviewTests.test_direct_rust_process_samples_psd_timing_and_progress_parity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_transmitter_preview.py",
+          "qualified_test_case": "TransmitterPreviewTests.test_finite_source_eof_hash_queries_and_input_retention"
+        },
+        {
+          "test_file": "bindings/python/tests/test_transmitter_preview.py",
+          "qualified_test_case": "TransmitterPreviewTests.test_idle_timing_weights_and_raw_identity_preserve_existing_support"
+        },
+        {
+          "test_file": "bindings/python/tests/test_transmitter_preview.py",
+          "qualified_test_case": "TransmitterPreviewTests.test_native_worker_releases_gil_for_busy_progress_and_cancellation"
+        }
+      ],
+      "receipt": "ds-01-relative-power-native/transmitter-preview.stderr"
+    },
+    {
+      "exit_code": 0,
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ],
+      "receipt": "ds-01-relative-power-native/namespaces.stderr"
+    }
+  ]
+}
