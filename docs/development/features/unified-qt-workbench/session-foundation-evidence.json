@@ -1,0 +1,210 @@
+{
+  "task": "UIU-SESSION-01",
+  "status": "Level1 foundation accepted; actual store/worker/runtime acceptance pending",
+  "integration_base": "5959b33f49c316729ac2950407216fd5c66355c7",
+  "prepared_commit": "65c91e73f9c09fce56b880b7c303ca72483cf2ee",
+  "prepared_sources_exact_except_test_module_placement": true,
+  "requirements": [
+    "REQ-UIU-03",
+    "REQ-UIU-06",
+    "REQ-UIU-07"
+  ],
+  "implementation": [
+    {
+      "path": "apps/qt/src/shell/dispatch.rs",
+      "sha256": "f60049f7147935753f15cbd85267e415333da27600579a1cc30ec26f15615b59"
+    },
+    {
+      "path": "apps/qt/src/shell/identity.rs",
+      "sha256": "91964a4137e90d38207e23f78933c4d6e98de3b1839b7300d369135a295f9612"
+    },
+    {
+      "path": "apps/qt/src/shell/mod.rs",
+      "sha256": "a223c9a031c2b572167c8825e609d88cf24d9fb3df4feb4fc24cf0247eec200c"
+    },
+    {
+      "path": "apps/qt/src/shell/retention.rs",
+      "sha256": "3236bed2448b847eb31f3af3af3ff67926596e93f256dff52a7d07fd88c166f4"
+    },
+    {
+      "path": "apps/qt/src/shell/tests.rs",
+      "sha256": "65be2be49e48789f81ea9a23515569258f12228b23d33db2cb2dd027363cadad"
+    },
+    {
+      "path": "docs/development/features/unified-qt-workbench/agent-handoffs/session-shell.md",
+      "sha256": "5efecbff0a4028a10109d4d938501d7c3a6ec176c46342ce8223696e270c9730"
+    }
+  ],
+  "testing": {
+    "level": 1,
+    "executed": [
+      {
+        "label": "compile-owner",
+        "command": [
+          "/home/dev01/Projects/merlin/local/toolchains/rust-1.85.1-ylt882zx/bin/rustc",
+          "--edition=2021",
+          "--test",
+          "-D",
+          "warnings",
+          "apps/qt/src/shell/mod.rs",
+          "-o",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-foundation-final/session-tests"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4912471919997188
+      },
+      {
+        "label": "owner-tests",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-foundation-final/session-tests",
+          "--test-threads=4"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.039183656001114286
+      },
+      {
+        "label": "clippy-owner",
+        "command": [
+          "/home/dev01/Projects/merlin/local/toolchains/rust-1.85.1-ylt882zx/bin/clippy-driver",
+          "--edition=2021",
+          "--test",
+          "-D",
+          "warnings",
+          "-D",
+          "clippy::all",
+          "apps/qt/src/shell/mod.rs",
+          "-o",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-foundation-final/session-clippy"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.5406043190014316
+      },
+      {
+        "label": "format-owner",
+        "command": [
+          "/home/dev01/Projects/merlin/local/toolchains/rust-1.85.1-ylt882zx/bin/rustfmt",
+          "--edition",
+          "2021",
+          "--check",
+          "apps/qt/src/shell/mod.rs",
+          "apps/qt/src/shell/dispatch.rs",
+          "apps/qt/src/shell/identity.rs",
+          "apps/qt/src/shell/retention.rs",
+          "apps/qt/src/shell/tests.rs"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03533014099957654
+      },
+      {
+        "label": "final-boundary",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.2541060710027523
+      }
+    ],
+    "owner_cases_passed": 16,
+    "failed": 0,
+    "ignored": 0,
+    "corrections": [
+      "Initial boundary rejected the prepared external Rust test-module path. Move the byte-exact test body beside its owner as tests.rs and use conventional mod tests; final16-case, Clippy, format and unchanged boundary checks pass.",
+      "Initial document check found the agent handoff lacked an incoming navigation link. Canonical design now links it; the corrected document check passes. Other metadata checks passed on unchanged inputs and are reused."
+    ],
+    "not_required": [
+      {
+        "checks": "Full root/Qt/native/CLI/package suites or new executable/wheel",
+        "reason": "Unregistered std-only application ownership source has no compiled consumers or scientific/API/project/registration changes; standalone owner tests/Clippy and current boundary validate the actual change."
+      }
+    ],
+    "deferred": [
+      "Explicit downstream accepted input/result store migration",
+      "Actual worker callback/generation/terminal envelope integration, including panic and spawn failure",
+      "Both real direction consumers and conservative aggregate reachable-byte admission",
+      "UIU-SESSION-01 Level2, later shell/FILE/RECOVERY and major/final Level3 gates"
+    ],
+    "executed_metadata": [
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 8.361358081998333
+      },
+      {
+        "label": "uiu-history",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/audit_foundation_uiu_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.12301879900041968
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.036389007000252604
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.07003157399958582
+      },
+      {
+        "label": "staged-diff",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.004841177000344032
+      },
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 9.607861301999947
+      },
+      {
+        "label": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.0362431369976548
+      }
+    ]
+  },
+  "preservation": {
+    "all_existing_source_files_and_manifest_lock_registration_exact": true,
+    "all_official_task_states_exact": true,
+    "current_ds_executable_sha256": "7bd1ff7067b1305d9f1d2e346d2a33aff5dcb8b8634c419a67e132e789834ad2"
+  },
+  "no_push_merge_release_or_install": true
+}

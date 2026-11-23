@@ -2911,3 +2911,39 @@ are not required by this consumer change; package contract regressions pass.
 Prepared session/shell/upstream work is not yet integrated or accepted. Continue
 in dependency order with UIU-SESSION-01; unified runtime/final numeric acceptance
 and Windows/hosted/installed lifecycle evidence remain separate.
+
+## UIU-SESSION-01 explicit ownership foundation
+
+[Design](design.md#uiu-session-01-explicit-ownership-foundation),
+[architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle),
+[exact evidence](session-foundation-evidence.json) and
+[UIU-SESSION-01](../../checklist.md#task-uiu-session-01) trace REQ-UIU-03/06/07.
+The prepared agent's six-file unit is reviewed and adopted after the completed
+downstream gate, with one test-placement correction described below. No other worktree writes or
+commits in the integration checkout.
+
+All **16 pure application tests** pass in this checkout with the pinned compiler.
+Standalone Clippy with all normal lints and warnings denied, formatting and the
+final zero-scientific-dependency boundary pass. Tests cover checked identity
+exhaustion, direction/generation/run rejection, paused/cancelling Busy ownership,
+partial/failed/foreign terminal cleanup, destroyed owners, queued/old payload
+reservations and dirty Open/Save guards. Fixed-size fixture counters/bytes are
+independent application anchors; no scientific vectors or runtime limits change.
+
+This is Level 1 primitive acceptance. No Cargo manifest, compiled Qt consumer,
+CXX-Qt/QML registration, scientific/API/binding/project/schema source changes.
+The current optimized downstream executable remains unchanged. Another full Qt,
+workspace, native wheel/CLI/package run is not required for this unregistered
+std-only unit; those milestone results remain their recorded candidate evidence.
+No UI screenshot or user-control guide change is applicable.
+
+The actual downstream input/latest-result stores and worker callbacks still need
+migration. Real direction controls/results, reachable-allocation accounting,
+terminal delivery including panic/spawn failure, native Qt integration and Level 2
+session acceptance remain pending. UIU-SESSION-01, shell and later tasks stay
+unchecked; source-only agent/component evidence cannot accept them.
+
+The first final-boundary run rejected the prepared external Rust test-module
+path. Move its exact body to `src/shell/tests.rs` and use ordinary `mod tests;`;
+no guard exception or numerical/behavior assertion changes. Final owner checks
+rerun on that adapted placement, preserving the rejected invocation as evidence.

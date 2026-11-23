@@ -1531,6 +1531,16 @@ another active direction is indicated and a second Start is rejected visibly.
 Future concurrent dispatch requires aggregate resource admission and isolation
 tests, not shared scientific configuration or a different API architecture.
 
+The [explicit ownership foundation](development/features/unified-qt-workbench/design.md#uiu-session-01-explicit-ownership-foundation)
+under `apps/qt/src/shell/` provides separate typed configuration/result owners,
+checked callback identities, a shared terminal-acknowledged run lease and retained
+byte reservations. Its [focused acceptance](development/features/unified-qt-workbench/validation.md#uiu-session-01-explicit-ownership-foundation)
+tests the pure application contracts. This source is not yet registered or wired
+to the existing downstream stores/workers. Actual direction adapters must reserve
+all reachable ownership, retain the lease outside panic unwinding and consume a
+real terminal envelope before reopening admission. Source-only primitive tests
+do not establish direction-session or aggregate-memory runtime acceptance.
+
 Normal project files remain direction-specific. Open validates/detects direction
 and guards that target tab's dirty state before mutation. Schema 1/2 retain DS
 interpretation; the [selected schema 3 contract](development/features/unified-qt-workbench/design.md#uiu-api-05-direction-aware-public-project-admission) explicitly tags direction. Its public backend is [accepted under API-05](development/features/unified-qt-workbench/validation.md#uiu-api-05-project-backend-accepted). Backend/native

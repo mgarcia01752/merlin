@@ -3195,3 +3195,56 @@ relevant Qt/feature compatibility and the existing downstream Level2/Level3 gate
 must pass before checking the parent or integrating prepared session/shell work.
 No schema, scientific algorithm, Qt registration or Python payload change is
 planned by this consumer batch; reuse the exact accepted native artifact.
+
+## UIU-SESSION-01 explicit ownership foundation
+
+After [DS-01 milestone acceptance](validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit),
+review and adopt the isolated `65c91e73f9c09fce56b880b7c303ca72483cf2ee`
+preparation ([agent handoff](agent-handoffs/session-shell.md)) into the existing
+integration branch. This is the first bounded unit
+of UIU-SESSION-01, tracing REQ-UIU-03/06/07 and the
+[session architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle).
+It adds no scientific API, backend algorithm, project schema or QML registration.
+The existing public backend controls remain the only execution controls.
+
+| Disposition | Exact owner | Contract / integration decision |
+| --- | --- | --- |
+| Add, reviewed agent preparation | `apps/qt/src/shell/mod.rs` | Separate typed accepted direction configurations/results and atomic identity/revision transitions. REUSE as application ownership; actual downstream store migration follows. |
+| Add, reviewed agent preparation | `apps/qt/src/shell/identity.rs` | Checked process/session/generation/run/revision identities; no wrap/reuse or backend ID substitution. |
+| Add, reviewed agent preparation | `apps/qt/src/shell/dispatch.rs` | One shared Busy lease including pause/cancelling; cancellation does not establish termination. |
+| Add, reviewed agent preparation | `apps/qt/src/shell/retention.rs` | Shared checked application byte reservations preceding retained allocation/clone and following queued/old payload ownership. No guessed scientific memory limits. |
+| Add, reviewed agent preparation | `apps/qt/src/shell/tests.rs` | Fixed-size application fixtures for isolation, callback identity, Busy/pause/cancel/destruction, byte accounting and actual-target Save/Open guards. No simulation placeholders establish engine acceptance. |
+| Reuse, subsequent host unit | Existing downstream inputs/results, receiver worker and bridge owners | Move implicit stores to explicit downstream ownership; preserve actual engine/result/UI behavior. The host must supply conservative reachable-allocation accounting. |
+| Reuse, subsequent host unit | Existing upstream public configuration/control/report owners | Separate actual upstream session and real public-control adapter; no Qt scientific configuration or execution clone. |
+| Defer to their tasks | Shell tabs, native file actions, recovery and global registration | Prepared components and source-only tests do not accept UIU-SHELL-01, FILE/RECOVERY or either direction adapter. |
+
+The sole worker lease must remain outside panic unwinding and reach a terminal
+envelope on normal completion, partial cancellation, error or spawn failure.
+Only known worker termination may acknowledge it. Abandonment cancels and keeps
+Busy admission; a new coordinator/gate must not bypass an unfinished worker.
+Callbacks carry the exact token and are rechecked at actual state adoption.
+Tab selection is presentation only. Neither callback routing nor scientific
+input/result lookup may use the selected direction as an implicit fallback.
+
+Accepted/queued/candidate/old payloads retain their reservations until actual
+release, including replacement failure and destroyed presentation owners. Host
+admission must bound every reachable allocation; reservation wrappers alone do
+not prove aggregate memory acceptance. Configurations remain immutable snapshots;
+executing mutable backend sessions stay worker-owned. Configuration changes are
+atomic and rejected while that same owner is Busy in this primitive; the actual
+adapter must preserve the accepted edit/cancellation contract when adopting it.
+
+Level 1 validates all16 owner cases in the integration checkout with pinned
+Rust/Clippy/format tools, exact source/notice/number review, boundary and document
+traceability checks. No Cargo graph or compiled Qt consumer changes in this
+foundation unit, so wheel/core/Qt executable rebuilds are not required. The latest
+DS executable remains current. UIU-SESSION-01 stays unchecked until actual store/
+worker migration, two real direction consumers, aggregate bounds and all Level 2
+lifecycle/compatibility/Qt checks pass. The prepared source and its own test pass
+never substitute for these remaining gates.
+
+Integration review caught the prepared external test-module path at the existing
+Qt boundary. Move that exact test body beside its source owner as `tests.rs` and
+use ordinary `mod tests;`. Keep the guard unchanged; record the rejected first
+boundary invocation and rerun the16 owner cases/Clippy/format/boundary after this
+placement-only adaptation. No scientific or test expectations change.

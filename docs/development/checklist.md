@@ -537,7 +537,7 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Dependencies: [UIU-DS-01](#task-uiu-ds-01).
   Architecture/files: [shell owner](../architecture.md#unified-qt-session-and-file-lifecycle), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Remove implicit input/latest-result routing, identify session/generation/run callbacks, keep isolated stores and aggregate retention budgets; test Busy/paused ownership, stale callbacks, cancel/destruction and no cross-tab overwrite.
-  Evidence: [shell acceptance plan](features/unified-qt-workbench/validation.md#shell); pending implementation/acceptance.
+  Evidence: [explicit ownership foundation](features/unified-qt-workbench/validation.md#uiu-session-01-explicit-ownership-foundation) accepts the reviewed pure application coordinator with 16 focused tests, Clippy/format and boundary checks. It is not registered in the executable. Actual downstream store/worker migration, two real direction consumers, aggregate accounting and [complete session acceptance](features/unified-qt-workbench/validation.md#shell) remain pending; keep this parent unchecked.
 
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
