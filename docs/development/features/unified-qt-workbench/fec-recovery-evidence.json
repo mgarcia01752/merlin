@@ -1,0 +1,570 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Source-verified whole-run FEC recovery API prerequisite",
+  "status": "Level 1 paired source-verified FEC recovery API accepted; Qt adoption, Level 2 parent and Level 3 final gates remain incomplete",
+  "base_commit": "7428b33a16eef703deffec74f5aed264e45852eb",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-08",
+    "REQ-UIU-09",
+    "REQ-UIU-19",
+    "REQ-UIU-20",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "crates/ofdm/src/simulation/channel/results.rs",
+      "sha256": "98ee5b3c5fc6cb0d6ae98548408073cc0580c5108a7f55b1a65d2484b59fdbf6"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/result.rs",
+      "sha256": "8cb1893a2bed964e60d47efff21707163661b7aa2b20ec08ccfc933f451cff8e"
+    },
+    {
+      "path": "crates/ofdm/tests/api_full_loop.rs",
+      "sha256": "1afe4d9c9417a559805f74eed6dfd9b9f887b7f589399f01596faad4745acd9a"
+    },
+    {
+      "path": "crates/ofdm/examples/api_full_loop.rs",
+      "sha256": "7f79efce1655439b8eff99df92961f3bfd97d9bf2a000b3296e2dfc9f8d487b3"
+    },
+    {
+      "path": "crates/merlin/tests/namespaces.rs",
+      "sha256": "4c3f0fc446e3179b0a5986abaede21e23c4ce16df9d1c09e81e83b78a30dc7a5"
+    },
+    {
+      "path": "bindings/python/src/full_loop/result.rs",
+      "sha256": "4235a82a85bd42d2e080770738a51b379c78f2e12990c11fb7e9ac93687c178f"
+    },
+    {
+      "path": "bindings/python/python/merlin/__init__.pyi",
+      "sha256": "0aa545e19bef3c75fe2883f4c23deb34c1adf56556ee2294fc13e85e7df6637b"
+    },
+    {
+      "path": "bindings/python/tests/test_full_loop.py",
+      "sha256": "7b0ac7816e1589b2dc70d0ec4f465c70ddd5b01dde917d735653d59b03e7dca1"
+    }
+  ],
+  "scientific_owner": "crates/ofdm/src/simulation/channel/results.rs::PayloadRecovery::from_counters over existing Apache-2.0 FecCounters. The typed public alias and constant-size query retain separate decoder/source/unfinished scopes. No receiver, FEC, window or original report serialization change.",
+  "testing": {
+    "level": 1,
+    "risk": "Additive public Rust/native API projection, expanded through affected downstream API/facade/native consumers. Scientific decoder behavior and shared codec/upstream paths are unchanged.",
+    "executed": {
+      "rust": [
+        {
+          "label": "format",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "fmt",
+            "--all"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.1682560039999998
+        },
+        {
+          "label": "owner",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "test",
+            "-p",
+            "docsis-ofdm-fec",
+            "--locked",
+            "--lib",
+            "recovery_tests::"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 10.508787132000066
+        },
+        {
+          "label": "api",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "test",
+            "-p",
+            "docsis-ofdm-fec",
+            "--locked",
+            "--features",
+            "high-level-api",
+            "--test",
+            "api_full_loop",
+            "--",
+            "--exact",
+            "complete_request_matches_existing_job_and_preserves_originals_and_fec",
+            "acknowledged_pause_resume_cancel_retains_completed_comparisons",
+            "initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 34.95493672099997
+        },
+        {
+          "label": "facade",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "test",
+            "-p",
+            "merlin",
+            "--locked",
+            "--test",
+            "namespaces",
+            "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+            "--",
+            "--exact"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 12.090863076000005
+        }
+      ],
+      "contracts": [
+        {
+          "label": "format",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.076969229000042
+        },
+        {
+          "label": "binding-format",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "fmt",
+            "--manifest-path",
+            "bindings/python/Cargo.toml",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.10449536800001624
+        },
+        {
+          "label": "clippy",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "clippy",
+            "-p",
+            "docsis-ofdm-fec",
+            "-p",
+            "merlin",
+            "--features",
+            "merlin/native-input",
+            "--all-targets",
+            "--locked",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 15.567892340000071
+        },
+        {
+          "label": "binding-clippy",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "clippy",
+            "--manifest-path",
+            "bindings/python/Cargo.toml",
+            "--all-targets",
+            "--locked",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 10.660957961999998
+        },
+        {
+          "label": "analysis",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "check",
+            "-p",
+            "docsis-ofdm-fec",
+            "--no-default-features",
+            "--locked"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.12598062999995818
+        },
+        {
+          "label": "reference",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "run",
+            "-p",
+            "docsis-ofdm-fec",
+            "--locked",
+            "--features",
+            "high-level-api",
+            "--example",
+            "api_full_loop"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 62.14077139400001
+        },
+        {
+          "label": "wheel",
+          "command": [
+            "/home/dev01/Projects/merlin/local/api-python-build/bin/python",
+            "-m",
+            "maturin",
+            "build",
+            "--manifest-path",
+            "bindings/python/Cargo.toml",
+            "--release",
+            "--locked",
+            "--compatibility",
+            "linux",
+            "--interpreter",
+            "/usr/bin/python3",
+            "--out",
+            "/home/dev01/Projects/merlin/local/python-wheels-ds-fec-recovery"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 55.09465476799994
+        },
+        {
+          "label": "rustdoc",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "doc",
+            "--workspace",
+            "--no-deps",
+            "--locked",
+            "--features",
+            "merlin/native-input"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 9.669844599000044
+        },
+        {
+          "label": "rust-inventory",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/rust_api_inventory.py",
+            "--output",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-rust-exports.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 3.1830934090000937
+        }
+      ],
+      "native": {
+        "status": "passed",
+        "wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-fec-recovery/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+        "wheel_sha256": "0ea06e4e223bd01741bf0268048a38fb333940369a1c3fda91073bd50e60be82",
+        "archive_native_sha256": "278777e78d61818c1d2dbdb01f6f46d1d17eba88df3881ed1f581451490e8956",
+        "reference": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-contract-reference.stdout",
+        "reference_sha256": "88418965034c60614d0303fbfbd0602eeeb88ef0cf9ca5b13970bb1e88df44a3",
+        "commands": [
+          {
+            "label": "install",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-m",
+              "pip",
+              "install",
+              "--no-index",
+              "--no-deps",
+              "/home/dev01/Projects/merlin/local/python-wheels-ds-fec-recovery/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native",
+            "exit_code": 0,
+            "elapsed_seconds": 0.5277226230000451,
+            "stdout_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/install.stdout",
+            "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/install.stderr"
+          },
+          {
+            "label": "artifact-preflight",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-c",
+              "import hashlib,sys,json\nfrom pathlib import Path\nimport merlin,merlin.downstream as downstream,merlin._native as native\npath=Path(native.__file__).resolve();assert path.is_relative_to(Path(sys.prefix).resolve())\nassert hashlib.sha256(path.read_bytes()).hexdigest()==sys.argv[1]\nassert merlin.FullLoopResult is downstream.FullLoopResult\nassert callable(downstream.FullLoopResult.fec_recovery)\nprint(json.dumps({'module':str(path),'native_sha256':sys.argv[1],'exact_archive_match':True,'root_downstream_identity':True,'fec_recovery_present':True}))\n",
+              "278777e78d61818c1d2dbdb01f6f46d1d17eba88df3881ed1f581451490e8956"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native",
+            "exit_code": 0,
+            "elapsed_seconds": 0.06959452900002816,
+            "stdout_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/artifact-preflight.stdout",
+            "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/artifact-preflight.stderr"
+          },
+          {
+            "label": "full-loop",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-c",
+              "import importlib.util,sys,unittest\nspec=importlib.util.spec_from_file_location('test_full_loop',sys.argv[1]);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)\nsuite=unittest.defaultTestLoader.loadTestsFromNames(['FullLoopTests.'+name for name in sys.argv[2:]],module)\nresult=unittest.TextTestRunner(verbosity=2).run(suite);assert result.testsRun==4 and not result.skipped\nraise SystemExit(not result.wasSuccessful())\n",
+              "/home/dev01/Projects/merlin/bindings/python/tests/test_full_loop.py",
+              "test_complete_real_fec_original_ownership_and_immutable_requests",
+              "test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+              "test_initial_pause_precancel_and_exact_finite_file_recovery",
+              "test_actual_direct_rust_process_counts_fec_settings_and_words_match"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native",
+            "exit_code": 0,
+            "elapsed_seconds": 5.4587065329999405,
+            "stdout_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/full-loop.stdout",
+            "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/full-loop.stderr"
+          },
+          {
+            "label": "namespaces",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "/home/dev01/Projects/merlin/bindings/python/tests",
+              "-p",
+              "test_namespaces.py",
+              "-v"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native",
+            "exit_code": 0,
+            "elapsed_seconds": 0.22882948400001624,
+            "stdout_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/namespaces.stdout",
+            "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/namespaces.stderr"
+          },
+          {
+            "label": "inventory",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/installed/bin/python",
+              "-I",
+              "-B",
+              "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+              "--output",
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/native-exports.json"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native",
+            "exit_code": 0,
+            "elapsed_seconds": 0.2235115919999089,
+            "stdout_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/inventory.stdout",
+            "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/inventory.stderr"
+          }
+        ]
+      },
+      "metadata": [
+        {
+          "label": "strict-matrix",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/api_operation_matrix.py",
+            "--exports",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-rust-exports.json",
+            "--native-exports",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-fec-recovery-native/native-exports.json",
+            "--executed-record",
+            "docs/development/features/high-level-api/namespace-test-results.json",
+            "--executed-record",
+            "docs/development/features/pnm-measurement-inputs/decoder-test-results.json",
+            "--executed-record",
+            "docs/development/features/pnm-measurement-inputs/association-test-results.json",
+            "--executed-record",
+            "docs/development/features/high-level-api/operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/high-level-api/python-test-results.json",
+            "--executed-record",
+            "docs/development/features/high-level-api/python-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 8.33510518800017
+        },
+        {
+          "label": "documents",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/feature_documentation.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 11.132399234999866
+        },
+        {
+          "label": "traceability",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/integration_traceability.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 8.248825357999976
+        },
+        {
+          "label": "versions",
+          "command": [
+            "python3",
+            "-B",
+            "tools/release/versions.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.07588722199989206
+        },
+        {
+          "label": "python-guide",
+          "command": [
+            "python3",
+            "-B",
+            "tools/python/update_integration_doc.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.04196404499998607
+        },
+        {
+          "label": "qt-boundary",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/qt_api_boundary.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.2886419940000451
+        },
+        {
+          "label": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.07121131500002775
+        }
+      ]
+    },
+    "rust_case_count": 6,
+    "native_case_count": 8,
+    "independent_oracle": "The original five-word classification remains one recovered, one rejected, one independent mismatch, two unfinished; empty totals and both accepted decoder categories with source mismatch are checked separately.",
+    "actual_reference_recovery": {
+      "generated": 86,
+      "mismatched": 0,
+      "recovered": 86,
+      "rejected": 0,
+      "unrecovered": 0
+    },
+    "not_required": [
+      {
+        "scope": "Qt/QML build/runtime, upstream, CLI/project and packaging suites",
+        "reason": "No Qt consumer, registration, upstream/shared-codec algorithm, CLI handler, schema, lifecycle or packaging changes. Existing Qt consumer remains frozen until this prerequisite is committed."
+      },
+      {
+        "scope": "Full workspace/scientific/native suites and unchanged validator unit suites",
+        "reason": "Focused owner/API/facade/native cases and actual strict inventories validate the additive projection; no validator or historical test/vector changes. Complete task/final coverage remains pending."
+      }
+    ],
+    "deferred": [
+      {
+        "gate": "Level 2 UIU-DS-01",
+        "scope": "Complete relevant crate/feature, affected Qt/QML, compatibility and traceability before parent completion."
+      },
+      {
+        "gate": "Level 3 milestone/UIU-QA-01",
+        "scope": "Full applicable root/Qt/native/CLI/persistence/packaging regressions, zero boundary exceptions and final numeric audit."
+      }
+    ],
+    "tooling_failure_history": "Initial contract runner stopped before any checks because its exclusive formatting log already existed from the successful Rust step. Retried under distinct contract-prefixed logs after verifying its wheel directory was empty. No source/assertion change or false test pass."
+  },
+  "preservation": {
+    "prior_rust_rows": 572,
+    "current_rust_rows": 573,
+    "prior_native_rows": 546,
+    "current_native_rows": 547,
+    "prior_rows_types_and_historical_records_preserved": true,
+    "new_type": {
+      "export": "merlin::downstream::FullLoopFecRecovery",
+      "kind": "struct"
+    },
+    "prior_native_members_exact_after_removing_only_new_method": true,
+    "root_class_exports": 80,
+    "namespace_class_exports": {
+      "downstream": 79,
+      "upstream": 30,
+      "common": 3
+    }
+  },
+  "boundary": {
+    "whole_record_unchanged": true,
+    "files": 25,
+    "sites": 93,
+    "scientific_dependencies": 3
+  },
+  "numeric_review": "No new domain limits or scientific literals. Exact independent five-word/empty/source-mismatch fixtures are explained beside their values. All production counts derive from the existing counter owner; final repository-wide numeric audit stays pending."
+}

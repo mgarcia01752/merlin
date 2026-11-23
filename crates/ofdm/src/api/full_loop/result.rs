@@ -4,6 +4,7 @@
  */
 //! Owned actual job reports; retaining a result never reruns science or reads global state.
 use super::*;
+pub use crate::simulation::channel::results::PayloadRecovery as FullLoopFecRecovery;
 pub use crate::simulation::channel::ChannelJobResult as FullLoopReport;
 use serde::Serialize;
 
@@ -21,6 +22,20 @@ impl FullLoopResult {
     /// Read-only report valid for this owned result's lifetime, independent of later runs.
     pub fn report(&self) -> &FullLoopReport {
         &self.job
+    }
+
+    /// Reads whole-run source-verified recovery separately from decoder outcome categories.
+    /// # Returns
+    /// Owned constant-size counts for this actual complete, cancelled or failed result.
+    /// Rejected words and decoder-accepted source mismatches never count as recovered;
+    /// unfinished generated words remain unrecovered. Observation windows and word-detail
+    /// retention do not change this scope. No source, receiver or simulation state advances.
+    pub fn fec_recovery(&self) -> FullLoopFecRecovery {
+        FullLoopFecRecovery::from_counters(
+            self.job.summary.generated_payloads,
+            &self.job.summary.fec,
+            self.job.unrecovered_generated_payloads,
+        )
     }
     /// Borrows accepted original source/profile/measurements/channel snapshots.
     /// # Returns

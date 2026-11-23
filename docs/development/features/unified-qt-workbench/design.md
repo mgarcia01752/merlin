@@ -2591,3 +2591,37 @@ preserves every existing animation assertion and adds immutable originals/frames
 hashes. The public preview replaces the sole private call; 25 files/93 sites/
 three dependencies remain. Level 2/3 gates and all other measurement files remain
 separate work.
+
+## UIU-DS-01 source-verified FEC recovery prerequisite
+
+REQ-UIU-02/03/08/09/19/20/24/27 and UIU-DS-01 own this additive prerequisite.
+The existing Qt recovery chart subtracts rejected and independently mismatched
+words from completed decoder attempts. Move that exact finite accounting to the
+downstream simulation result owner before migrating its Qt consumer. Decoder
+success, source agreement and unfinished words remain distinct; this changes no
+decoder, receiver input, observation window or historical FEC acceptance.
+
+| Path / disposition | Reuse and exact contract |
+| --- | --- |
+| EDIT `crates/ofdm/src/simulation/channel/results.rs` | ADAPT the existing Qt recovery subtraction into a constant-size PayloadRecovery result constructed from existing FecCounters, generated and unrecovered totals. Preserve saturating subtraction and the independent five-word oracle: one recovered, one rejected, one mismatch, two unrecovered. |
+| EDIT `crates/ofdm/src/api/full_loop/result.rs` | REUSE that owner through `FullLoopResult::fec_recovery(&self) -> FullLoopFecRecovery`, re-exporting the result type. Fields are generated, recovered, rejected, mismatched and unrecovered u64 counts for the whole actual complete/partial run, independent of retained detail limits. No mutable state, allocation or scientific execution. |
+| EDIT `bindings/python/src/full_loop/result.rs` and root typing declaration | Matching `FullLoopResult.fec_recovery() -> dict` delegates only to Rust and returns an owned five-field dictionary; root/downstream/legacy identities remain exact. |
+| EDIT existing full-loop Rust/native tests, facade compile contract and Rust reference example | Keep every original assertion; exercise complete, cancelled and pre-cancelled results, empty outcomes, independent decoder/source classification, source/result immutability, owned native dictionaries and separate Rust-process parity. |
+| DEFER `apps/qt/src/downstream/instruments/receiver/fec.rs` | Remains frozen until this paired prerequisite passes and is committed. Qt adoption is a separate focused unit. |
+
+Level 1 expands to affected downstream Rust, installed native Python and facade
+contracts, scoped Clippy/format, analysis-only compilation and strict additive
+operation inventories. No upstream owner, CLI handler, Qt source/registration,
+project schema, cache/profile or packaging contract changes. Existing non-Qt
+full suites and Level 2/3 parent/final gates remain pending. No new specification
+claim, numerical vector replacement or completed-task reopening is introduced.
+
+
+[Paired Level 1 acceptance](validation.md#uiu-ds-01-source-verified-fec-recovery-api-accepted)
+passes six Rust/eight exact-archive native cases, scoped contract checks and
+strict additive inventories. Qt adoption remains separate. Origin review uses
+existing Apache-2.0 FecCounters and their public getters; the five-word expected
+classification is factual validation data retained from the project-owned
+GPL-3.0-only Qt recovery test at checkpoint 7428b33. The new typed projection is
+backend code; no Qt chart implementation, geometry, dependency or notice is
+imported into the Apache backend. Existing license files/headers remain intact.

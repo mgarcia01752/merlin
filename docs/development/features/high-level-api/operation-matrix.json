@@ -5,14 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "ca20cdc9a950b7951c4e4ca4ff9cca8f2c211579 plus exact calibrated-sequence candidate",
-    "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-calibrated-sequence-native/accepted-results.json",
-    "native_sha256": "21c9ad1b61b50d849597d2c018840a9bca1c9e42ee7dc3735c73023d12484324",
-    "scope": "Eleven scoped sequence/channel/namespace cases; all prior class/member/kind/signatures exact after removing only the new method.",
-    "preserved_prior_inventory": {
-      "root_and_namespace_operation_instances": 953,
-      "scope": "Original 80 root class exports and every directional/common export unchanged; new Rust report is an owned dictionary in Python."
-    }
+    "revision": "7428b33a16eef703deffec74f5aed264e45852eb plus exact recovery candidate",
+    "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-fec-recovery-native/results.json",
+    "native_sha256": "278777e78d61818c1d2dbdb01f6f46d1d17eba88df3881ed1f581451490e8956",
+    "scope": "Eight focused full-loop/namespace cases; all prior native classes/members/kinds/signatures remain exact after removing only the new fec_recovery method."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -135,7 +131,9 @@
     "status.uiu-ds-01-spectrum-budget": "Accepted additive passive Rust/native operation. Existing query structs, defaults and numerical processing are preserved; Qt spectrum consumer adoption remains pending.",
     "units.calibrated-ordered-frames": "Original ordered-frame diagnostic metadata and normalized PSD plus calibrated mV-squared/Hz or explicit relative units and full occupied-band power. Electrical calibration never asserts physical continuity.",
     "evidence.uiu-ds-01-calibrated-sequence": "../unified-qt-workbench/calibrated-sequence-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-calibrated-ordered-frame-api-accepted: actual relative/electrical sequence, original segment/stop/error compatibility, exact archive/native/direct-Rust-process parity and complete additive inventories.",
-    "status.uiu-ds-01-calibrated-sequence": "Scoped additive paired prerequisite accepted at Level 1; Qt adoption, parent task Level 2 and milestone/final Level 3 remain incomplete."
+    "status.uiu-ds-01-calibrated-sequence": "Scoped additive paired prerequisite accepted at Level 1; Qt adoption, parent task Level 2 and milestone/final Level 3 remain incomplete.",
+    "evidence.uiu-ds-01-fec-recovery": "../unified-qt-workbench/fec-recovery-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-source-verified-fec-recovery-api-accepted: independent five-word oracle, actual complete/cancelled/empty results, exact archive/direct-Rust-process parity and additive export tracing.",
+    "status.uiu-ds-01-fec-recovery": "Level 1 paired prerequisite accepted; Qt adoption, official parent Level 2 and milestone/final Level 3 remain pending."
   },
   "type_exports": {
     "downstream": [
@@ -1033,6 +1031,10 @@
       },
       {
         "export": "merlin::downstream::FullLoopCalibratedSequenceSpectrum",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopFecRecovery",
         "kind": "struct"
       }
     ],
@@ -32478,6 +32480,64 @@
       },
       "evidence": "evidence.uiu-ds-01-calibrated-sequence",
       "status": "status.uiu-ds-01-calibrated-sequence"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::fec_recovery",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn fec_recovery(&self) -> FullLoopFecRecovery",
+        "source_file": "crates/ofdm/src/api/full_loop/result.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.fec_recovery",
+        "declaration": "merlin.downstream.FullLoopResult.fec_recovery"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.count",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "FullLoopFecRecovery",
+        "scope": "Owned constant-size generated/recovered/rejected/mismatched/unrecovered whole-run counts; backend source verification remains distinct from decoder outcomes and observation-window totals."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/simulation/channel/results.rs::recovery_never_counts_rejected_or_source_mismatched_words_as_success",
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery"
+          ],
+          "scope": "Whole-run completed/source-verified/unfinished counts, owned dictionary/report immutability, partial/empty/finite-file results and current independent Rust process."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-fec-recovery",
+      "status": "status.uiu-ds-01-fec-recovery"
     }
   ],
   "executed_records": [
@@ -32515,7 +32575,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -67857,6 +67918,70 @@
       },
       "evidence": "evidence.uiu-ds-01-calibrated-sequence",
       "status": "status.uiu-ds-01-calibrated-sequence"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.fec_recovery",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/result.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn fec_recovery(&self) -> FullLoopFecRecovery",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::fec_recovery",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "fec_recovery",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopResult.fec_recovery"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.count",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned five-field integer dictionary delegated only to the public Rust projection; no Python calculation or state advancement."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/simulation/channel/results.rs::recovery_never_counts_rejected_or_source_mismatched_words_as_success",
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery"
+          ],
+          "scope": "Whole-run completed/source-verified/unfinished counts, owned dictionary/report immutability, partial/empty/finite-file results and current independent Rust process."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-fec-recovery",
+      "status": "status.uiu-ds-01-fec-recovery"
     }
   ],
   "native_type_exports": {
@@ -69017,6 +69142,17 @@
         "sha256": "78c22cb0c06e47bf628fb6004c18f2f061b3df988f48614f5eda717858bd2588",
         "root_and_namespace_operation_instances": 951,
         "scope": "Every old class/alias/constructor/member/kind/signature is exact after removing only the new method."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "ca20cdc9a950b7951c4e4ca4ff9cca8f2c211579 plus exact calibrated-sequence candidate",
+      "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-calibrated-sequence-native/accepted-results.json",
+      "native_sha256": "21c9ad1b61b50d849597d2c018840a9bca1c9e42ee7dc3735c73023d12484324",
+      "scope": "Eleven scoped sequence/channel/namespace cases; all prior class/member/kind/signatures exact after removing only the new method.",
+      "preserved_prior_inventory": {
+        "root_and_namespace_operation_instances": 953,
+        "scope": "Original 80 root class exports and every directional/common export unchanged; new Rust report is an owned dictionary in Python."
       }
     }
   ],

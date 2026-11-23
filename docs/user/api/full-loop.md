@@ -167,3 +167,31 @@ The operation starts no simulation and preserves inputs, retained samples and
 decoder outcomes. Existing sequence/grid/work/window failures remain structured.
 See the bounded [separate Rust reference](../../../crates/ofdm/examples/api_calibrated_sequence.rs)
 and [paired validation](../../development/features/unified-qt-workbench/validation.md#uiu-ds-01-calibrated-ordered-frame-api-accepted).
+
+
+## Source-verified whole-run recovery
+
+`FullLoopResult::fec_recovery()` returns an owned FullLoopFecRecovery with five
+word counts: generated, recovered, rejected, mismatched and unrecovered. Native
+Python exposes `result.fec_recovery()` as an owned dictionary with the same keys.
+The operation reads the actual complete, cancelled or failed result without
+running the simulation again or depending on retained detailed word records.
+
+Recovered means a completed decoder-accepted word agrees with the independent
+source comparison. Rejected means LDPC or BCH rejected the word; it counts once
+even if both stages failed. Mismatched means the decoder accepted a word but the
+source comparison disagreed. Unfinished generated words remain unrecovered.
+These whole-run recovery counts do not replace observation-window FEC outcomes,
+BER denominators or the separate clean/corrected decoder classifications.
+
+```rust
+// `result` is an existing complete or partial FullLoopResult.
+let recovery = result.fec_recovery();
+println!("Recovered {} of {} generated words", recovery.recovered, recovery.generated);
+```
+
+```python
+# `result` is an existing complete or partial merlin.downstream.FullLoopResult.
+recovery = result.fec_recovery()
+print("Recovered", recovery['recovered'], "of", recovery['generated'], "generated words")
+```

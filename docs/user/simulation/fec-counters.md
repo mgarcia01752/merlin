@@ -47,9 +47,12 @@ Scalar counters continue beyond bounded retained word-detail records and remain
 available in partial/cancelled jobs.
 
 The type and outcome enum live in `fec-codec`, with re-exports in the OFDM
-channel API. They use no Qt, Python or filesystem interfaces. Python bindings
-remain deferred; future bindings can expose these same getters/snapshots without
-implementing a second accounting algorithm.
+channel API. They use no Qt, Python or filesystem interfaces. Direct bindings of this counter type remain deferred. The high-level Rust
+`FullLoopResult::fec_recovery()` and native Python `result.fec_recovery()` already
+provide the whole-run generated/recovered/rejected/mismatched/unrecovered counts
+through the same Rust accounting owner. These counts stay distinct from
+observation-window decoder categories. See the
+[recovery API semantics](../api/full-loop.md#source-verified-whole-run-recovery).
 
 See the [Rust API guide](../../reference/public-api.md) for operations and the
 [Receiver Profile Performance guide](../receiver-profile-performance.md) for UI

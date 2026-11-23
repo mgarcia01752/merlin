@@ -74,6 +74,14 @@ class FullLoopTests(unittest.TestCase):
         self.assertEqual(report['summary']['payload_ldpc_failures'], 0)
         self.assertEqual(report['summary']['payload_bch_failures'], 0)
         self.assertGreater(report['summary']['recovered_payloads'], 0)
+        recovery = output.fec_recovery()
+        self.assertEqual(recovery, {'generated': report['summary']['generated_payloads'],
+                                    'recovered': report['summary']['fec']['total_cw'],
+                                    'rejected': 0, 'mismatched': 0,
+                                    'unrecovered': report['unrecovered_generated_payloads']})
+        expected_recovery = recovery.copy()
+        recovery['recovered'] = -1
+        self.assertEqual(output.fec_recovery(), expected_recovery)
         self.assertIsNone(output.recovered_bytes())
         retained = output.input_summary()
         self.assertEqual(retained['source_kind'], 'prbs15')
@@ -85,6 +93,7 @@ class FullLoopTests(unittest.TestCase):
         del prepared, accepted, control
         self.assertEqual(output.report()['summary']['comparison']['bit_errors'], 0)
         self.assertEqual(output.input_summary()['profile_sources'], retained['profile_sources'])
+        self.assertEqual(output.fec_recovery(), expected_recovery)
 
     def test_pause_acknowledgement_resume_cancel_busy_and_partial_fec(self):
         prepared = request(duration_ms=1000, max_retained_words=2)
@@ -127,6 +136,11 @@ class FullLoopTests(unittest.TestCase):
         self.assertGreater(len(report['retained_words']), 0)
         self.assertLessEqual(len(report['retained_words']), 2)
         self.assertFalse(control.snapshot()['pause_requested'])
+        recovery = results[0].fec_recovery()
+        self.assertEqual(recovery['generated'], report['summary']['generated_payloads'])
+        self.assertEqual(recovery['unrecovered'], report['unrecovered_generated_payloads'])
+        self.assertEqual(recovery['recovered'], report['summary']['fec']['total_cw'])
+        self.assertEqual((recovery['rejected'], recovery['mismatched']), (0, 0))
 
     def test_initial_pause_precancel_and_exact_finite_file_recovery(self):
         prepared = request()
@@ -142,6 +156,9 @@ class FullLoopTests(unittest.TestCase):
         worker.join(timeout=20)
         self.assertFalse(worker.is_alive())
         self.assertEqual(outputs[0].report()['summary']['comparison']['bits_tested'], 0)
+        self.assertEqual(outputs[0].fec_recovery(),
+                         {'generated': 0, 'recovered': 0, 'rejected': 0,
+                          'mismatched': 0, 'unrecovered': 0})
         args = list(inputs())
         args[2] = m.SourceInput.from_bytes('file', b'exact source\r\n')
         finite = m.Simulation.prepare_full_loop(*args, options=options())
@@ -149,6 +166,9 @@ class FullLoopTests(unittest.TestCase):
         self.assertEqual(output.recovered_bytes(), b'exact source\r\n')
         self.assertEqual(output.report()['summary']['comparison']['bits_tested'], 112)
         self.assertTrue(output.report()['recovered_file']['complete'])
+        recovery = output.fec_recovery()
+        self.assertGreater(recovery['recovered'], 0)
+        self.assertEqual((recovery['rejected'], recovery['mismatched']), (0, 0))
         stopped = m.FullLoopControl()
         stopped.cancel()
         self.assertEqual(finite.run(stopped).report()['status'], 'cancelled')
@@ -225,6 +245,7 @@ class FullLoopTests(unittest.TestCase):
         for name in ['mode', 'interval_symbols', 'tolerance_seconds']:
             self.assertEqual(prepared.settings['playback'][name], reference['settings']['playback'][name])
         self.assertEqual(output.input_summary()['key'], reference['inputs']['key'])
+        self.assertEqual(output.fec_recovery(), reference['recovery'])
 
     @unittest.skipUnless(sys.platform == 'linux', 'Local Linux signal lifecycle acceptance')
     def test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report(self):

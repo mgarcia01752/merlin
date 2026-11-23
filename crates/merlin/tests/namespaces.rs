@@ -83,6 +83,12 @@ fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
         downstream::FullLoopCalibratedSequenceSpectrum,
     > = downstream::FullLoopResult::calibrated_spectrum_sequence;
     let _ = calibrated_sequence;
+    let recovery: fn(&downstream::FullLoopResult) -> downstream::FullLoopFecRecovery =
+        downstream::FullLoopResult::fec_recovery;
+    let legacy_recovery: fn(
+        &docsis_ofdm_fec::api::FullLoopResult,
+    ) -> docsis_ofdm_fec::api::FullLoopFecRecovery = recovery;
+    let _ = legacy_recovery;
     assert_eq!(
         TypeId::of::<common::RunControl>(),
         TypeId::of::<downstream::RunControl>()

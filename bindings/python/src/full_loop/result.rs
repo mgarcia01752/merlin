@@ -39,6 +39,21 @@ impl PyFullLoopResult {
             .map_err(error)?;
         object_from_json(py, &text)
     }
+
+    /// Copies the actual whole-run source-verified payload recovery counts.
+    /// # Returns
+    /// Owned generated/recovered/rejected/mismatched/unrecovered word counts for this
+    /// complete or partial result, independent of retained details. Rust owns the
+    /// projection; no source, decoder or simulation state advances.
+    /// # Errors
+    /// Preserves structured transport and Python allocation failures.
+    fn fec_recovery(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
+        let text = py
+            .detach(|| serde_json::to_string(&self.0.fec_recovery()))
+            .map_err(transport_error)
+            .map_err(error)?;
+        object_from_json(py, &text)
+    }
     /// Copies bounded original input identities, separate from simulated outcomes.
     /// # Returns
     /// Owned profile/measurement/H/source provenance; original file/capture bytes stay retained.

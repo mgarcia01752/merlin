@@ -2161,3 +2161,44 @@ workspace, complete Qt/QML, native startup/Open, CLI and packaging suites did
 not run for this focused unit; the evidence records the scope reasons. These
 are not new passes or waived task requirements. Complete official UIU-DS-01
 Level 2, milestone/final Level 3 and the final numeric audit remain pending.
+
+
+## UIU-DS-01 source-verified FEC recovery API accepted
+
+[Design/owners](design.md#uiu-ds-01-source-verified-fec-recovery-prerequisite),
+[exact evidence](fec-recovery-evidence.json),
+[executed cases](ds-01-fec-recovery-operation-test-results.json),
+[architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[REQ-UIU-02](../../../requirements.md#req-uiu-02),
+[REQ-UIU-03](../../../requirements.md#req-uiu-03),
+[REQ-UIU-08](../../../requirements.md#req-uiu-08),
+[REQ-UIU-09](../../../requirements.md#req-uiu-09),
+[REQ-UIU-19](../../../requirements.md#req-uiu-19),
+[REQ-UIU-20](../../../requirements.md#req-uiu-20),
+[REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-27](../../../requirements.md#req-uiu-27) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) trace this prerequisite.
+
+The public `FullLoopResult::fec_recovery` returns the constant-size typed
+FullLoopFecRecovery; native Python returns the matching owned dictionary.
+The existing downstream simulation counter owner derives recovered words without
+counting decoder rejection or independently mismatched source data as success.
+Generated and unfinished counts remain actual whole-run totals, independent of
+observation windows or retained detailed word limits. Existing reports, source,
+decoding and execution are unchanged.
+
+Level 1 passes six Rust cases: two independent accounting cases, the existing
+complete/cancel/empty/file public cases and the legacy/facade type contract.
+Eight exact-archive installed native cases cover those actual outcomes, owned
+results and separate current Rust-process parity plus all namespace contracts.
+Scoped root/native Clippy, formatting, analysis-only compilation, strict actual
+573/547 operation inventories and documentation/traceability checks pass. Every
+previous 572/546 row, native class/member and execution record remains intact.
+A private runner initially stopped before checks on an already-owned log name;
+separate retry logs preserve that tooling failure without changing source/tests.
+
+No Qt source, CXX registration, CLI/schema/lifecycle, upstream algorithm, shared
+codec or package contract changed. Their runtime suites and unrelated full
+workspace/Qt/package regressions were not required for this focused prerequisite;
+all final gates remain pending. The FEC Qt file is still frozen, with 25 files/
+93 sites/three dependencies unchanged, until separate consumer acceptance.

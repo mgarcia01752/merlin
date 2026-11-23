@@ -1080,6 +1080,15 @@ and [serial plan guide](user/api/full-loop-sweep.md). Backend API-02 acceptance 
 complete; Qt's serial dispatcher and aggregate retained-result budgets remain
 UIU-DS-01/UIU-SESSION-01 responsibilities.
 
+
+The [source-verified recovery prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-source-verified-fec-recovery-prerequisite)
+keeps whole-run payload accounting in simulation/channel/results. The public
+FullLoopResult.fec_recovery operation and FullLoopFecRecovery type project the
+actual generated, recovered, rejected, source-mismatched and unrecovered totals.
+Native Python delegates that same constant-size query. It changes no decoder,
+receiver input, original report serialization, observation window or retained
+word policy. Qt adoption remains a separate UIU-DS-01 unit after paired acceptance.
+
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

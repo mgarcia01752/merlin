@@ -75,6 +75,21 @@ fn until(control: &FullLoopControl, predicate: impl Fn(&FullLoopProgress) -> boo
         std::thread::sleep(Duration::from_millis(2));
     }
 }
+
+fn assert_clean_recovery_is_passive(result: &FullLoopResult) {
+    let before = serde_json::to_value(result.report()).unwrap();
+    let recovery = result.fec_recovery();
+    let report = result.report();
+    assert_eq!(recovery.generated, report.summary.generated_payloads);
+    assert_eq!(recovery.unrecovered, report.unrecovered_generated_payloads);
+
+    // This independent clean-source fixture has no rejected or mismatched words.
+    assert_eq!(recovery.rejected, 0);
+    assert_eq!(recovery.mismatched, 0);
+    assert_eq!(recovery.recovered, report.summary.fec.total_codewords());
+    assert_eq!(result.fec_recovery(), recovery);
+    assert_eq!(serde_json::to_value(result.report()).unwrap(), before);
+}
 #[test]
 fn complete_request_matches_existing_job_and_preserves_originals_and_fec() {
     let original = inputs();
@@ -149,6 +164,7 @@ fn complete_request_matches_existing_job_and_preserves_originals_and_fec() {
     drop(original);
     assert_eq!(result.inputs().source.prbs_seed().unwrap().value(), 32767);
     assert!(result.recovered_bytes().is_none());
+    assert_clean_recovery_is_passive(&result);
 }
 #[test]
 fn acknowledged_pause_resume_cancel_retains_completed_comparisons() {
@@ -204,6 +220,7 @@ fn acknowledged_pause_resume_cancel_retains_completed_comparisons() {
     assert!(!result.report().retained_words.is_empty());
     assert!(result.report().summary.recovered_payloads >= before.recovered_payloads);
     assert!(control.pause().is_err());
+    assert_clean_recovery_is_passive(&result);
 }
 #[test]
 fn initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact() {
@@ -219,6 +236,7 @@ fn initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is
     let stopped = worker.join().unwrap().unwrap();
     assert_eq!(stopped.report().summary.comparison.bits_tested, 0);
     assert!(stopped.report().retained_words.is_empty());
+    assert_clean_recovery_is_passive(&stopped);
     let mut finite = inputs();
     finite.source = SourceInput::file(
         NamedCapture::new("file", b"exact source\r\n".to_vec()).unwrap(),
@@ -230,11 +248,13 @@ fn initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is
     assert_eq!(result.recovered_bytes().unwrap(), b"exact source\r\n");
     assert_eq!(result.report().summary.comparison.bits_tested, 112);
     assert!(result.report().recovered_file.as_ref().unwrap().complete);
+    assert_clean_recovery_is_passive(&result);
     let stop = FullLoopControl::new();
     stop.cancel();
     let result = request.run(&stop).unwrap();
     assert_eq!(result.report().status, ChannelJobStatus::Cancelled);
     assert_eq!(result.report().summary.comparison.bits_tested, 0);
+    assert_clean_recovery_is_passive(&result);
 }
 #[test]
 fn options_timing_and_identity_failures_leave_accepted_inputs_unchanged() {

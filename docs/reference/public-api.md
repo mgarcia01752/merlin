@@ -367,6 +367,13 @@ whole-contained observation words, including their completion during drain.
 Both use the same type and getters. UFEC is a union of failed decoder stages;
 undetected source mismatches remain separate.
 
+`FullLoopResult::fec_recovery() -> FullLoopFecRecovery` exposes the existing
+whole-run source-verified recovery projection through the accepted API. Native
+Python `FullLoopResult.fec_recovery()` returns the matching owned dictionary.
+The five generated/recovered/rejected/mismatched/unrecovered counts preserve
+actual complete/partial scope and remain independent of retained word details.
+See the [recovery semantics](../user/api/full-loop.md#source-verified-whole-run-recovery).
+
 ```rust
 // `result` is a completed or partial ChannelJobResult.
 if let Some(window) = &result.summary.window {
