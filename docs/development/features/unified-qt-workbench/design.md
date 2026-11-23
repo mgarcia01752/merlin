@@ -2170,11 +2170,14 @@ native installed control regressions, current metadata/inventory checks and
 formatting/Clippy. Preserve source-only versus current installed evidence.
 
 Prerequisite accepted: [progress-phase validation](validation.md#uiu-ds-01-public-progress-phase-accepted)
-and [exact evidence](progress-phase-evidence.json) record four Rust and ten fresh
-installed native cases, 38 metadata cases, Clippy and strict compiler/installed
+and [exact evidence](progress-phase-evidence.json) record four Rust and ten
+installed native compatibility cases on the prior runtime wheel, 38 metadata cases, Clippy and strict compiler/installed
 inventory reconciliation. The exact enum export is additive; every callable row
 and native class/signature is unchanged. The historical direct Rust full-loop
 reference is explicitly reused with its hash; no new reference run is claimed.
+The native runner used the prior unnamed-file archive; its earlier fresh-source
+wheel claim is corrected in the evidence. Current worker-prerequisite acceptance
+revalidates these cases against its exact new archive/installed-module checksum.
 No Qt source, dependency, frozen record or scientific implementation is changed.
 Commit this prerequisite before the wall-time consumer. Parent DS-01 stays open.
 
@@ -2208,3 +2211,41 @@ optimized executable and six native checks. All original timing assertions stay
 exact. Only the original timing boundary entry retires; 37 frozen files and the
 three scientific dependencies remain. No worker/API/backend/QML behavior change
 or full parent/final numeric acceptance is claimed.
+
+## UIU-DS-01 worker budget and progress-age prerequisite
+
+The legacy serial worker gives each profile the remaining active-runtime budget,
+and RunTiming ages the actual last completed-step notification. Public requests
+currently freeze their host limit, while public controls expose the last progress
+but no notification age. Reconstructing every scientific request or estimating
+notification time from UI poll cadence would weaken those contracts. Add two
+small operations before migrating the coherent worker. REQ-UIU-02/07/08/09/24/27
+and UIU-DS-01 own this prerequisite; completed API/planning tasks stay closed.
+
+| Owner / disposition | Exact operation and contract | Native Python mapping |
+| --- | --- | --- |
+| EDIT `crates/ofdm/src/api/full_loop/request.rs`, REUSE FullLoopOptions validation | `FullLoopRequest::with_runtime_limit(&self, max_runtime_ms: u64) -> ApiResult<Self>` returns an idle independent clone with a positive admitted limit no larger than its original limit. Preserve settings, source, RNG, observation policy, tolerance and original request. Shared runtime validation rejects zero/above-owner bounds; widening an otherwise valid parent budget rejects ResourceLimit. | `FullLoopRequest.with_runtime_limit(self, max_runtime_ms: int) -> FullLoopRequest`; checked native integer conversion then identical Rust errors. |
+| EDIT `crates/ofdm/src/api/full_loop/control.rs` | `FullLoopControl::last_progress_age_ms(&self) -> Option<u64>` reads actual monotonic time since the last backend notification, saturated only at the native u64 representation. None before a notification; age continues through pauses and terminal states. Store the timestamp privately under the same scalar-progress mutex; do not change FullLoopProgress fields/serialization or scientific timing. | `FullLoopControl.last_progress_age_ms(self) -> int | None`; direct Rust query, no Python clock or callback. |
+| EDIT `bindings/python/src/full_loop/{request,control}.rs` and existing `.pyi` | Thin native conversion only; retain method signatures/defaults and one distribution. | Fresh installed-wheel operations and original namespaces. |
+| EDIT existing Rust/native full-loop tests | Preserve existing control/FEC assertions. Add immutable budget narrowing/boundaries, actual runtime-limited partial outcomes, idle/terminal age, paused age and no implicit source advancement. Keep numerical/time fixtures independent and named or explained. | Exercise actual native workers/GIL/control behavior, not mocked clocks. |
+| API row matrix / canonical docs / user full-loop guide | Add two exact operations per language with named cases and executed evidence; preserve every existing row and class export. | Strict fresh compiler/installed inventory and targeted controls/namespace acceptance. |
+
+Reuse/license: the MERLIN Apache-2.0 request/control, existing ChannelJobLimits
+validator and native adapter at `85955b0439ca934cbe4d9328a6db9a5fab6f7da8`.
+No scientific implementation, domain endpoint, dependency, saved schema, Qt
+consumer or frozen boundary entry changes. Internal timestamp ownership is a
+bounded lifecycle observation, distinct from active host time and simulation time.
+Run focused Rust controls/new boundaries, native installed counterparts, relevant
+formatting/Clippy, metadata and strict operation tracing. Retain existing full
+historical gates and explicitly scope any reused direct-process reference.
+
+Prerequisite accepted: [runtime/age validation](validation.md#uiu-ds-01-worker-budget-and-progress-age-accepted)
+and [exact evidence](worker-budget-progress-evidence.json). Six Rust/twelve
+exact-archive installed native cases, root/native Clippy, formatting, 38 metadata
+cases and strict 569/542 operation tracing pass. All earlier callable rows and
+class exports remain exact. Notification timestamps remain private; default
+snapshot shape and scientific settings are unchanged. The native artifact
+preflight corrects a stale-wheel local runner and the earlier phase record's
+fresh-source claim without discarding either historical receipts or valid cases.
+No Qt or scientific algorithm changes; commit this gate before worker adoption.
+Parent DS-01 and final numeric/runtime acceptance remain incomplete.

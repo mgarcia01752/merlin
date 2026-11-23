@@ -1257,6 +1257,15 @@ uses standard Duration conversion plus shared, unit-named clock constants for
 elapsed-time formatting. Its wall clock remains independent of simulation time;
 see [scoped timing acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-wall-time-adapter-facade-accepted).
 
+The [worker budget/progress-age prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-worker-budget-and-progress-age-prerequisite)
+adds immutable narrowing of a prepared request's active runtime budget and a
+control query for actual backend notification age. The existing runtime validator
+owns admission; a private timestamp shares the scalar progress mutex. Preserve
+the public snapshot shape and distinguish notification wall age, paused time,
+active host budget and simulated duration. Rust owns both operations; native
+Python only converts them. [Scoped paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-worker-budget-and-progress-age-accepted)
+passes; Qt worker consumption remains incomplete.
+
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
 

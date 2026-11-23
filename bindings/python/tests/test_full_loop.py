@@ -4,6 +4,7 @@
 #
 """Installed native downstream full-loop contracts retain actual science and controls."""
 import json
+from datetime import timedelta
 import os
 import signal
 import sys
@@ -16,6 +17,9 @@ import merlin
 import merlin.downstream as m
 
 FIXTURES = Path(__file__).resolve().parents[3] / 'examples/measurements/single-channel'
+# Independent host-clock observation fixtures; neither value is a simulation budget.
+PROGRESS_AGE_OBSERVATION_MILLISECONDS = 5
+PAUSE_OBSERVATION_MILLISECONDS = 30
 
 
 def inputs():
@@ -54,11 +58,17 @@ class FullLoopTests(unittest.TestCase):
         before['duration_ms'] = 999
         self.assertEqual(prepared.options.settings['duration_ms'], 1)
         control = m.FullLoopControl()
+        self.assertIsNone(control.last_progress_age_ms())
+        self.assertEqual(control.snapshot(), {'state': 'idle', 'pause_requested': False,
+                                             'cancellation_requested': False, 'progress': None})
         output = prepared.run(control)
         report = output.report()
         self.assertEqual(report['status'], 'complete')
         self.assertEqual(control.snapshot()['state'], 'completed')
         self.assertEqual(control.snapshot()['progress']['phase'], 'finished')
+        age_before = control.last_progress_age_ms()
+        time.sleep(timedelta(milliseconds=PROGRESS_AGE_OBSERVATION_MILLISECONDS).total_seconds())
+        self.assertGreaterEqual(control.last_progress_age_ms(), age_before + PROGRESS_AGE_OBSERVATION_MILLISECONDS)
         self.assertGreater(report['summary']['comparison']['bits_tested'], 0)
         self.assertEqual(report['summary']['comparison']['bit_errors'], 0)
         self.assertEqual(report['summary']['payload_ldpc_failures'], 0)
@@ -93,7 +103,9 @@ class FullLoopTests(unittest.TestCase):
         control.pause()
         self.until(control, lambda value: value['state'] == 'paused')
         before = control.snapshot()['progress']
-        time.sleep(0.03)
+        age_before = control.last_progress_age_ms()
+        time.sleep(timedelta(milliseconds=PAUSE_OBSERVATION_MILLISECONDS).total_seconds())
+        self.assertGreaterEqual(control.last_progress_age_ms(), age_before + PAUSE_OBSERVATION_MILLISECONDS)
         self.assertEqual(before, control.snapshot()['progress'])
         with self.assertRaises(m.ApiError) as raised:
             prepared.run(control)
@@ -125,6 +137,7 @@ class FullLoopTests(unittest.TestCase):
         worker.start()
         self.until(control, lambda value: value['state'] == 'paused')
         self.assertIsNone(control.snapshot()['progress'])
+        self.assertIsNone(control.last_progress_age_ms())
         control.cancel()
         worker.join(timeout=20)
         self.assertFalse(worker.is_alive())
@@ -139,6 +152,44 @@ class FullLoopTests(unittest.TestCase):
         stopped = m.FullLoopControl()
         stopped.cancel()
         self.assertEqual(finite.run(stopped).report()['status'], 'cancelled')
+
+    def test_runtime_limit_narrows_immutably_and_preserves_admission_and_retention(self):
+        prepared = request().with_observations(m.FullLoopObservationPolicy())
+        settings = prepared.settings
+        policy = prepared.observation_policy.settings
+        # Independent 30-second limit narrows this fixture's 60-second parent.
+        limited = prepared.with_runtime_limit(30_000)
+        self.assertEqual(limited.options.settings['max_runtime_ms'], 30_000)
+        self.assertEqual(prepared.options.settings['max_runtime_ms'], 60_000)
+        self.assertEqual(limited.settings, settings)
+        self.assertEqual(limited.observation_policy.settings, policy)
+        self.assertEqual(limited.response_tolerance.value, prepared.response_tolerance.value)
+        self.assertEqual(prepared.with_runtime_limit(60_000).settings, settings)
+        # Zero, one above parent, one above the 300-second owner ceiling, and u64 maximum.
+        for rejected in [0, 60_001, 300_001, 2**64 - 1]:
+            with self.assertRaises(m.ApiError):
+                prepared.with_runtime_limit(rejected)
+        with self.assertRaises(m.ApiError) as widened:
+            prepared.with_runtime_limit(60_001)
+        self.assertEqual(widened.exception.code, m.ErrorCode.ResourceLimit)
+        for invalid_native_integer in [-1, 2**64]:
+            with self.assertRaises(OverflowError):
+                prepared.with_runtime_limit(invalid_native_integer)
+        self.assertEqual(prepared.settings, settings)
+        self.assertEqual(prepared.options.settings['max_runtime_ms'], 60_000)
+
+    def test_runtime_limit_returns_actual_partial_outcome_without_mutating_parent(self):
+        # One second of simulated observation, with an independent one-ms active host limit.
+        prepared = request(duration_ms=1_000)
+        settings = prepared.settings
+        limited = prepared.with_runtime_limit(1)
+        control = m.FullLoopControl()
+        output = limited.run(control)
+        self.assertEqual(output.report()['status'], 'runtime_exceeded')
+        self.assertEqual(control.snapshot()['state'], 'runtime_exceeded')
+        self.assertEqual(output.report()['settings'], settings)
+        self.assertEqual(prepared.settings, settings)
+        self.assertEqual(prepared.options.settings['max_runtime_ms'], 60_000)
 
     def test_rejections_leave_original_inputs_and_prepared_options_unchanged(self):
         for data in [b'{', b'{"unknown":1}', b'{"duration_ms":1001}', b'{"max_runtime_ms":0}', b' ' * 65537]:

@@ -1678,18 +1678,23 @@ unchanged. The facade compatibility test proves nominal legacy identity and a
 typed ChannelProgress field projection; three actual Rust control cases retain
 completion, initial pause, resume, cancellation and completed FEC comparisons.
 
-A fresh wheel installed outside the checkout passes six native full-loop and
-four namespace cases without skips, including actual completed progress whose
+A fresh environment outside the checkout installed the prior unnamed-file wheel
+and passed six native full-loop and four namespace cases without skips, including
+actual completed progress whose
 phase remains `"finished"`. The direct-process comparison explicitly reuses the
 recorded historical Rust full-loop reference; its settings and science are
-unchanged by this re-export. All 38 API metadata tests, formatting, scoped
+unchanged by this re-export. The earlier fresh-source-wheel claim was incorrect:
+the local runner selected the older archive. Original receipts are retained and
+the evidence records this as compatibility reuse. The worker-budget prerequisite
+now revalidates the phase/snapshot cases against its exact newly built and
+checksum-matched installed artifact. All 38 API metadata tests, formatting, scoped
 all-target Clippy and strict fresh Rust/installed-native inventory checks pass.
 Only one Rust enum type export is added; all 567 Rust/540 native callable rows,
 112 native class exports and prior execution records remain exact.
 
-Qt consumption, its constants, parent DS-01 and final numerical review remain
-pending. No Qt, engine, Python runtime implementation, dependency or saved schema
-is changed. Historical full-suite/platform acceptance is kept separate.
+Qt wall-time consumption has separate scoped acceptance below. Parent DS-01
+and final numerical review remain pending. This phase-export unit changed no Qt,
+engine, Python runtime implementation, dependency or saved schema. Historical full-suite/platform acceptance is kept separate.
 
 ## UIU-DS-01 wall-time adapter facade accepted
 
@@ -1714,3 +1719,42 @@ This is scoped presentation acceptance. The full-loop worker and other science
 consumers, session isolation, complete DS-01 and final line-by-line numeric audit
 remain pending. Backend/native API suites retain the separately committed
 prerequisite evidence; no full historical workspace gate is repeated here.
+
+## UIU-DS-01 worker budget and progress age accepted
+
+The [worker execution evidence](worker-budget-progress-evidence.json) accepts two
+paired public operations before Qt consumption. Runtime narrowing uses existing
+policy validation, rejects widening and preserves the original request/settings,
+inputs, tolerance and observation policy. Actual limited execution returns the
+existing runtime-exceeded report. Notification age comes from a private monotonic
+timestamp under the scalar-progress mutex; reads do not refresh it or change
+snapshot fields. None before progress, paused age and terminal age are tested.
+
+Six scoped Rust and twelve exact-archive installed native cases pass, including
+original completion/FEC, pause/resume/cancel, initial pause, original-file recovery,
+interrupt and namespace checks. Independent runtime/timer fixtures are named or
+explained, separate from production policy endpoints. Native integer conversion
+and shared runtime boundaries are covered. Formatting, root/native all-target
+Clippy, 38 metadata cases and strict fresh compiler/installed/executed inventory
+checks pass. Two operations per language bring the matrix to 569 Rust/542 native
+rows; every earlier row, constructor/signature and all 112 native class exports
+stay exact. The normal-run direct Rust-process reference is explicitly reused;
+new budget/age cases execute the current backend independently.
+
+The first compile failed on an incorrect Instant import and was corrected. The
+first native runner selected an older wheel, causing missing-method errors and
+paused test workers; that process was terminated. The corrected run installs the
+exact just-built archive in a new environment, verifies the installed native
+module's checksum against the archive and checks operation presence before
+bounded scientific tests. Failed receipts remain. The build initially reused a
+prior generated-wheel output path; its new archive was moved to a unique owner.
+The prior installed artifact and test receipts remain, while no restoration of
+the overwritten generated archive is claimed.
+
+That audit also corrects the earlier public-phase record: its ten native cases
+used the prior unchanged runtime wheel, rather than the newly built phase archive.
+Original records remain, with an explicit [provenance correction](progress-phase-evidence.json).
+This current exact-archive run revalidates its phase and snapshot assertions;
+there is no retrospective fresh-build claim. Qt/engine algorithms, dependencies,
+saved schemas and frozen boundary records are unchanged. Parent DS-01, coherent
+worker migration and final line-by-line numeric audit remain open.

@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "scope": "Scoped runtime-budget and real notification-age API acceptance; six Rust and twelve exact-archive installed native cases. Prior gates and the corrected phase-wheel provenance remain historical.",
+  "runs": [
+    {
+      "label": "facade",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "merlin",
+        "--test",
+        "namespaces",
+        "--locked",
+        "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+        "--",
+        "--exact"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.437353054003324,
+      "language": "rust",
+      "passed": 1,
+      "cases": [
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior"
+        }
+      ],
+      "stdout_sha256": "dcde698080bddb284ae2924c60a229a28f3b79b13504a659284c32dc40ec7a24"
+    },
+    {
+      "label": "control",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--locked",
+        "--test",
+        "api_full_loop",
+        "--",
+        "--exact",
+        "complete_request_matches_existing_job_and_preserves_originals_and_fec",
+        "acknowledged_pause_resume_cancel_retains_completed_comparisons",
+        "initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+        "runtime_limit_narrows_immutably_and_preserves_admission_and_retention",
+        "runtime_limit_returns_actual_partial_outcome_without_mutating_parent"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 21.02457969399984,
+      "language": "rust",
+      "passed": 5,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_full_loop.rs",
+          "qualified_test_case": "runtime_limit_narrows_immutably_and_preserves_admission_and_retention"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_full_loop.rs",
+          "qualified_test_case": "runtime_limit_returns_actual_partial_outcome_without_mutating_parent"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_full_loop.rs",
+          "qualified_test_case": "initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_full_loop.rs",
+          "qualified_test_case": "acknowledged_pause_resume_cancel_retains_completed_comparisons"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_full_loop.rs",
+          "qualified_test_case": "complete_request_matches_existing_job_and_preserves_originals_and_fec"
+        }
+      ],
+      "stdout_sha256": "ca437ba52fb4f6af0fc82841b33228908e7a269104b679b105b6cfec4162ccd9"
+    },
+    {
+      "label": "full-loop",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_full_loop.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final",
+      "exit_code": 0,
+      "elapsed_seconds": 5.40521435100527,
+      "language": "python",
+      "passed": 8,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_runtime_limit_narrows_immutably_and_preserves_admission_and_retention"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_runtime_limit_returns_actual_partial_outcome_without_mutating_parent"
+        }
+      ],
+      "stderr_sha256": "efd612ff452bbea92f841edfbaea92555f62bd38ddbce6b40d4750664e754843"
+    },
+    {
+      "label": "namespaces",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_namespaces.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final",
+      "exit_code": 0,
+      "elapsed_seconds": 0.18353663600282744,
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ],
+      "stderr_sha256": "5fd7dbbeb7bc0f37cdeeb331e543de000134e877a7d5f8ec7760bcd071eac757"
+    }
+  ]
+}

@@ -5,14 +5,14 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "4c208860fa9baec12779562a77e501182af2bafa plus exact DS-01 unnamed file candidate",
-    "inventory_command": "Installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/ds-01-unnamed-file-native/native-exports.json",
-    "native_sha256": "806f23f7ede0affd833c75b71af630c4ea2fc585997242fec9e8508266978cc4",
-    "scope": "Fresh installed metadata and 16 scoped admission/saved-full-loop/namespace cases including a fresh separate Rust process reference. Original methods/exports remain exact; one explicit unnamed-file operation per language.",
+    "revision": "85955b0439ca934cbe4d9328a6db9a5fab6f7da8 plus exact worker-budget/progress-age candidate",
+    "inventory_command": "Exact archive-matched installed Python -I -B native_api_inventory.py; see docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/results.json",
+    "native_sha256": "8d23b654be16ea417d5b29d26af0577a3670fb4cc01c56b18d47a73d28afd305",
+    "scope": "Fresh installed exact newly built wheel: eight full-loop and four namespace cases, archive-to-installed binary checksum preflight. Prior phase record explicitly corrected to historical wheel compatibility reuse.",
     "preserved_prior_inventory": {
-      "sha256": "0a74e3f3e24b5e90e436e13c5adf235bcba6a89abbda19b48d5549d6f531c208",
-      "root_and_namespace_operation_instances": 942,
-      "scope": "Every earlier class/alias/constructor and operation kind/signature is deeply equal after removing only the added unnamed-file method."
+      "sha256": "f7a67f34344b2dbe36e80844d279c0da3bd49369df27f44c290a1a367194c631",
+      "root_and_namespace_operation_instances": 944,
+      "scope": "Every prior class/alias/constructor/operation kind and signature remains exact; two methods are additive."
     }
   },
   "contracts": {
@@ -120,7 +120,13 @@
     "evidence.uiu-ds-01-minimum-window": "../unified-qt-workbench/minimum-observation-timing-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-minimum-observation-timing-api-accepted: independent both-clock exact rounding and installed native acceptance; original exports preserved.",
     "status.uiu-ds-01-minimum-window": "Scoped paired API prerequisite accepted. Backend timing owner uses checked inverse sample-clock arithmetic; Qt help adoption and final UI gates remain UIU-DS-01/UIU-QA-01.",
     "evidence.uiu-ds-01-unnamed-file": "../unified-qt-workbench/unnamed-file-source-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-unnamed-file-source-api-accepted: reproduced legacy distinction, actual exact recovered source and fresh installed native/Rust process acceptance.",
-    "status.uiu-ds-01-unnamed-file": "Scoped paired compatibility prerequisite accepted. Existing named constructors and scientific capture identities remain unchanged; Qt WIP adoption and final DS-01/QA-01 gates remain open."
+    "status.uiu-ds-01-unnamed-file": "Scoped paired compatibility prerequisite accepted. Existing named constructors and scientific capture identities remain unchanged; Qt WIP adoption and final DS-01/QA-01 gates remain open.",
+    "units.notification-age": "Whole milliseconds of monotonic wall age since an actual backend progress notification; None until a notification exists. This is neither simulated duration nor active host runtime.",
+    "units.active-runtime": "Whole positive milliseconds of active host execution, excluding acknowledged pauses, limited to the existing backend domain and no greater than the prepared parent budget.",
+    "evidence.uiu-ds-01-worker-budget": "../unified-qt-workbench/worker-budget-progress-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-worker-budget-and-progress-age-accepted: immutable narrowing, actual limited reports, idle/paused/terminal notification age and exact archive-matched native acceptance.",
+    "status.uiu-ds-01-worker-budget": "Scoped paired API prerequisite accepted; coherent Qt worker consumption and complete DS-01/QA-01 remain pending.",
+    "errors.notification-age": "Read-only optional scalar query: no intentional Result/domain errors; poison recovery preserves the existing scalar state. Native conversion yields int or None with ordinary Python allocation failures only.",
+    "errors.runtime-narrowing": "Existing FullLoopOptions/ChannelJobLimits validation owns invalid runtime domains; an otherwise valid budget exceeding the prepared parent returns ResourceLimit. Native negative/overflowing unsigned values fail integer conversion before Rust admission."
   },
   "type_exports": {
     "downstream": [
@@ -32202,6 +32208,112 @@
       },
       "evidence": "evidence.uiu-ds-01-unnamed-file",
       "status": "status.uiu-ds-01-unnamed-file"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopControl::last_progress_age_ms",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn last_progress_age_ms(&self) -> Option<u64>",
+        "source_file": "crates/ofdm/src/api/full_loop/control.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopControl.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopControl.last_progress_age_ms",
+        "declaration": "merlin.downstream.FullLoopControl.last_progress_age_ms"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.notification-age",
+      "error_behavior": "errors.notification-age",
+      "lifecycle_behavior": "lifecycle.control",
+      "report_contract": {
+        "rust_return": "Option<u64>",
+        "scope": "Actual monotonic backend notification age; None before progress, including initial pause. Continues through acknowledged pauses and terminal states; no polling-generated notifications or simulation/active-runtime substitution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact"
+        ],
+        "python": {
+          "status": "Exact archive-matched installed native owner acceptance",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery"
+          ],
+          "scope": "Actual monotonic backend notification age; None before progress, including initial pause. Continues through acknowledged pauses and terminal states; no polling-generated notifications or simulation/active-runtime substitution."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-worker-budget",
+      "status": "status.uiu-ds-01-worker-budget"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopRequest::with_runtime_limit",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn with_runtime_limit(&self, max_runtime_ms: u64) -> ApiResult<Self>",
+        "source_file": "crates/ofdm/src/api/full_loop/request.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopRequest.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopRequest.with_runtime_limit",
+        "declaration": "merlin.downstream.FullLoopRequest.with_runtime_limit"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.active-runtime",
+      "error_behavior": "errors.runtime-narrowing",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Independent idle request with a validated positive active host-runtime limit no greater than its parent. Preserve original settings, source/RNG, tolerance, observation policy and all non-runtime options; actual limited outcomes remain backend reports."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::runtime_limit_narrows_immutably_and_preserves_admission_and_retention",
+          "crates/ofdm/tests/api_full_loop.rs::runtime_limit_returns_actual_partial_outcome_without_mutating_parent"
+        ],
+        "python": {
+          "status": "Exact archive-matched installed native owner acceptance",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_runtime_limit_narrows_immutably_and_preserves_admission_and_retention",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_runtime_limit_returns_actual_partial_outcome_without_mutating_parent"
+          ],
+          "scope": "Independent idle request with a validated positive active host-runtime limit no greater than its parent. Preserve original settings, source/RNG, tolerance, observation policy and all non-runtime options; actual limited outcomes remain backend reports."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-worker-budget",
+      "status": "status.uiu-ds-01-worker-budget"
     }
   ],
   "executed_records": [
@@ -32235,7 +32347,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -67232,6 +67345,124 @@
       },
       "evidence": "evidence.uiu-ds-01-unnamed-file",
       "status": "status.uiu-ds-01-unnamed-file"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopControl.last_progress_age_ms",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopControl",
+        "source_file": "bindings/python/src/full_loop/control.rs",
+        "symbol": "PyFullLoopControl",
+        "signature": "pub fn last_progress_age_ms(&self) -> Option<u64>",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopControl::last_progress_age_ms",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "last_progress_age_ms",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopControl.last_progress_age_ms"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.notification-age",
+      "error_behavior": "errors.notification-age",
+      "lifecycle_behavior": "lifecycle.control",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopControl",
+        "scope": "Actual monotonic backend notification age; None before progress, including initial pause. Continues through acknowledged pauses and terminal states; no polling-generated notifications or simulation/active-runtime substitution. Python owns only checked conversion; native integer range errors remain separate from Rust admission."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "crates/ofdm/tests/api_full_loop.rs::acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "crates/ofdm/tests/api_full_loop.rs::initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact"
+        ],
+        "python": {
+          "status": "Exact archive-matched installed native owner acceptance",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery"
+          ],
+          "scope": "Actual monotonic backend notification age; None before progress, including initial pause. Continues through acknowledged pauses and terminal states; no polling-generated notifications or simulation/active-runtime substitution."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-worker-budget",
+      "status": "status.uiu-ds-01-worker-budget"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopRequest.with_runtime_limit",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopRequest",
+        "source_file": "bindings/python/src/full_loop/request.rs",
+        "symbol": "PyFullLoopRequest",
+        "signature": "pub fn with_runtime_limit(&self, max_runtime_ms: u64) -> ApiResult<Self>",
+        "mapping": "Native checked conversion over named public policy/request/result types. Actual values and validation stay in Rust; owned dictionaries/lists are deliberate language projections.",
+        "delegated_operation": "merlin::downstream::FullLoopRequest::with_runtime_limit",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "with_runtime_limit",
+        "kind": "method",
+        "signature": "(self, /, max_runtime_ms)",
+        "declaration": "FullLoopRequest.with_runtime_limit"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.active-runtime",
+      "error_behavior": "errors.runtime-narrowing",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopRequest",
+        "scope": "Independent idle request with a validated positive active host-runtime limit no greater than its parent. Preserve original settings, source/RNG, tolerance, observation policy and all non-runtime options; actual limited outcomes remain backend reports. Python owns only checked conversion; native integer range errors remain separate from Rust admission."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop.rs::runtime_limit_narrows_immutably_and_preserves_admission_and_retention",
+          "crates/ofdm/tests/api_full_loop.rs::runtime_limit_returns_actual_partial_outcome_without_mutating_parent"
+        ],
+        "python": {
+          "status": "Exact archive-matched installed native owner acceptance",
+          "cases": [
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_runtime_limit_narrows_immutably_and_preserves_admission_and_retention",
+            "bindings/python/tests/test_full_loop.py::FullLoopTests.test_runtime_limit_returns_actual_partial_outcome_without_mutating_parent"
+          ],
+          "scope": "Independent idle request with a validated positive active host-runtime limit no greater than its parent. Preserve original settings, source/RNG, tolerance, observation policy and all non-runtime options; actual limited outcomes remain backend reports."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-worker-budget",
+      "status": "status.uiu-ds-01-worker-budget"
     }
   ],
   "native_type_exports": {
@@ -68344,6 +68575,18 @@
         "sha256": "0b95e8740c9a91fa4fd16b460f9e0d254588d8880dbe7395fc89cac6b3311c8d",
         "root_and_namespace_operation_instances": 942,
         "scope": "All prior root and real namespace classes, aliases, constructors, methods, properties, constants and signatures are deeply equal."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "4c208860fa9baec12779562a77e501182af2bafa plus exact DS-01 unnamed file candidate",
+      "inventory_command": "Installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/ds-01-unnamed-file-native/native-exports.json",
+      "native_sha256": "806f23f7ede0affd833c75b71af630c4ea2fc585997242fec9e8508266978cc4",
+      "scope": "Fresh installed metadata and 16 scoped admission/saved-full-loop/namespace cases including a fresh separate Rust process reference. Original methods/exports remain exact; one explicit unnamed-file operation per language.",
+      "preserved_prior_inventory": {
+        "sha256": "0a74e3f3e24b5e90e436e13c5adf235bcba6a89abbda19b48d5549d6f531c208",
+        "root_and_namespace_operation_instances": 942,
+        "scope": "Every earlier class/alias/constructor and operation kind/signature is deeply equal after removing only the added unnamed-file method."
       }
     }
   ],

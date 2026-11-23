@@ -123,6 +123,24 @@ impl PyFullLoopRequest {
     fn response_tolerance(&self) -> crate::quantities::PyAssociationTolerance {
         crate::quantities::PyAssociationTolerance(self.0.response_tolerance())
     }
+
+    /// Narrows the request's active host-runtime limit without starting scientific work.
+    ///
+    /// # Arguments
+    /// * `max_runtime_ms` - Positive active host milliseconds within the original request budget.
+    ///
+    /// # Returns
+    /// Independent native request preserving original inputs, settings and observations.
+    /// The original remains reusable and unchanged; pause time stays excluded from runtime.
+    ///
+    /// # Errors
+    /// Native integer conversion and shared Rust runtime/widening validation failures.
+    fn with_runtime_limit(&self, max_runtime_ms: u64) -> PyResult<Self> {
+        self.0
+            .with_runtime_limit(max_runtime_ms)
+            .map(Self)
+            .map_err(error)
+    }
     /// Executes the existing full loop with independent safe-boundary controls and GIL release.
     /// # Arguments
     /// * `control` - Optional fresh one-shot token; None creates a fresh directional control.

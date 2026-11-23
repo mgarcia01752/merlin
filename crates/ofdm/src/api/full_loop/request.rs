@@ -141,6 +141,32 @@ impl FullLoopRequest {
         self.response_tolerance
     }
 
+    /// Narrows the active host-runtime budget without reconstructing scientific inputs.
+    ///
+    /// # Arguments
+    /// * `max_runtime_ms` - Positive active host milliseconds, no greater than this request's limit.
+    ///
+    /// # Returns
+    /// Independent idle request sharing immutable settings/inputs/observation policy.
+    /// The original request, source, RNG, duration, tolerance and retained-data budgets
+    /// remain unchanged. No job starts; paused time remains excluded by the existing runner.
+    ///
+    /// # Errors
+    /// Preserves shared execution-policy validation errors for invalid runtime bounds.
+    /// Returns ResourceLimit when an otherwise valid limit would widen this request's budget.
+    pub fn with_runtime_limit(&self, max_runtime_ms: u64) -> ApiResult<Self> {
+        let mut request = self.clone();
+        request.options.max_runtime_ms = max_runtime_ms;
+        request.options.validate()?;
+        if max_runtime_ms > self.options.max_runtime_ms {
+            return Err(ApiError::new(
+                ErrorCode::ResourceLimit,
+                "Runtime limit cannot exceed the prepared request budget",
+            ));
+        }
+        Ok(request)
+    }
+
     /// Executes the existing bounded full loop synchronously with safe-boundary controls.
     /// # Arguments
     /// * `control` - Fresh direction-specific token; callers dispatch outside their UI loop.

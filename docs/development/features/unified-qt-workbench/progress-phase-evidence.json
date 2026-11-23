@@ -291,5 +291,15 @@
       "path": "docs/development/local/unified-qt-workbench/ds-01-progress-phase-metadata.log",
       "sha256": "0aa5fa4a9583535355a20590e993dd9607a9c4978ddbe9b0ea2ddbef0ee8aff5"
     }
-  ]
+  ],
+  "validation_correction": {
+    "scope": "The earlier narrative incorrectly described the phase native acceptance as a freshly built source wheel. The fresh environment actually installed the prior unnamed-file wheel; all ten recorded tests passed against that artifact. Its runtime was unchanged by the Rust-only nominal phase re-export, but this is compatibility reuse, not fresh-build evidence.",
+    "actual_prior_wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-unnamed-file/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "actual_prior_wheel_sha256": "cd00b061bdeb88a078bbb6c76459d6719c997da4abda2d9165cff7bd7af483ac",
+    "prior_native_sha256": "806f23f7ede0affd833c75b71af630c4ea2fc585997242fec9e8508266978cc4",
+    "original_receipts_preserved": true,
+    "current_fresh_revalidation": "docs/development/features/unified-qt-workbench/worker-budget-progress-evidence.json",
+    "current_fresh_native_sha256": "8d23b654be16ea417d5b29d26af0577a3670fb4cc01c56b18d47a73d28afd305",
+    "scope_of_current_revalidation": "The exact newly built archive matches the installed module; all eight full-loop and four namespace cases pass, including original finished-phase and unchanged snapshot-shape checks. No retrospective source-wheel run is claimed."
+  }
 }

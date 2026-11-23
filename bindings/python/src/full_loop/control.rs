@@ -47,4 +47,14 @@ impl PyFullLoopControl {
             .map_err(error)?;
         object_from_json(py, &text)
     }
+
+    /// Reads age of the actual backend notification independently of UI/Python polling.
+    ///
+    /// # Returns
+    /// None before progress, otherwise monotonic elapsed whole milliseconds.
+    /// Age continues through paused/terminal states; the native u64 representation
+    /// saturates at its maximum. No Python clock, callback or scientific result is used.
+    fn last_progress_age_ms(&self) -> Option<u64> {
+        self.0.last_progress_age_ms()
+    }
 }

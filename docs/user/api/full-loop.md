@@ -12,7 +12,9 @@ Rust scientific owners and advances no source or simulation.
 | `FullLoopOptions::default()`; `validate()`; `from_json(bytes)` | `FullLoopOptions()`; `FullLoopOptions.from_json(data)` | Same bounded policy; unknown/oversized JSON rejects. Profile-specific selection checks occur during preparation. |
 | Options fields / serde | `.settings`; `.to_json()` | Typed Rust fields and owned native dictionaries/JSON, with identical field names and units. |
 | `request.settings()`; `request.options()` | `.settings`; `.options` | Frozen exact scientific settings and accepted options; native copies cannot mutate the request. |
+| `request.with_runtime_limit(max_runtime_ms)` | Matching method | Independent idle request with an admitted active host limit no greater than its prepared parent. |
 | `FullLoopControl::new()`; `pause()`; `resume()`; `cancel()`; `snapshot()` | `FullLoopControl()`; matching methods | Direction-specific one-shot controls and actual safe-boundary pause acknowledgement. |
+| `control.last_progress_age_ms()` | Matching method | Optional actual backend-notification wall age; continues through paused/terminal states, independently of simulated or active host time. |
 | `request.run(&control)` | `request.run(control=None)` | Explicit bounded existing channel job; None creates a fresh control. |
 | `result.report()` | `result.report()` | Actual typed Rust complete/partial report and owned native dictionary. |
 | `result.inputs()`; `inputs.summary()` | `result.input_summary()` | Rust retains typed original inputs; native returns bounded original identity/provenance metadata. |
@@ -51,6 +53,19 @@ Rust names the existing progress enum as `merlin::downstream::ChannelPhase`:
 `snapshot["progress"]["phase"]` is a snake-case string when progress is present:
 `acquisition`, `observation`, `completion`, `interleaver_drain`, `finished` or
 `failed`. These processing phases are separate from the control lifecycle states.
+
+`request.with_runtime_limit(max_runtime_ms)` returns an idle independent request
+whose positive active host-runtime limit is no larger than the prepared budget.
+The original request and all scientific settings, originals, observation policy
+and simulated duration stay unchanged. Rust and Python use the same validation;
+the operation supports dispatching each profile with a sweep's remaining budget.
+It does not start a run or advance source/RNG state.
+
+`control.last_progress_age_ms()` returns `None` before a backend notification and
+otherwise its monotonic wall age in whole milliseconds. The backend records the
+timestamp at the actual progress update; UI/Python polling never creates a new
+notification. Age continues through pauses and after completion. This describes
+notification age, separately from a frozen UI elapsed label or active host time.
 
 After construction, cancellation/runtime/step failure returns the actual partial
 report. Completed comparisons and retained FEC trials remain available; unfinished

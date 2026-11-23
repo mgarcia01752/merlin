@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-567 explicit public Rust operations and 540 installed native Python entries with
+569 explicit public Rust operations and 542 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/unnamed-file-source-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/worker-budget-progress-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 112 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -44,8 +44,8 @@ adds an optional field to the existing non-exhaustive spectrum result and matchi
 native dictionaries. Ten Rust and twelve installed native cases pass literal
 flat-density/zero and fresh separate-process parity checks. Every earlier row,
 class export and signature stays exact; [execution records](../unified-qt-workbench/ds-01-relative-power-operation-test-results.json)
-retain scoped evidence without claiming a new full backend gate. Qt adoption
-remains DS-01.
+retain scoped evidence without claiming a new full backend gate. Idle TX
+[consumption is accepted](../unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted); remaining instrument migration belongs to DS-01.
 
 The [unnamed file-source compatibility prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-unnamed-file-source-api-accepted)
 adds one explicit passive operation in each language while retaining every earlier
@@ -53,14 +53,23 @@ row/class/signature. Twenty Rust and sixteen installed native cases preserve
 originals, empty file labels and existing named-capture validation, including
 fresh saved-workbench Rust process parity and actual exact-file recovery.
 [Execution records](../unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json)
-retain scoped acceptance; the preserved Qt consumer and parent remain pending.
+retain scoped acceptance. The [idle TX consumer is accepted](../unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted); parent DS-01 remains incomplete.
 
 The [public progress-phase prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-public-progress-phase-accepted)
 adds the existing nominal ChannelPhase enum to the Rust exports, without changing
 any of the 567 Rust/540 native operation rows or 112 native class exports.
-Four Rust and ten fresh installed native cases preserve actual controls and the
-existing snake-case phase dictionary, with [exact cases](../unified-qt-workbench/ds-01-progress-phase-operation-test-results.json).
-Qt wall-time consumption remains a separate DS-01 unit.
+Four Rust and ten installed compatibility cases on the prior runtime wheel
+preserve actual controls and the existing snake-case phase dictionary, with [exact cases](../unified-qt-workbench/ds-01-progress-phase-operation-test-results.json).
+Qt wall-time consumption has [separate scoped acceptance](../unified-qt-workbench/validation.md#uiu-ds-01-wall-time-adapter-facade-accepted); parent DS-01 remains incomplete.
+
+The [worker budget/notification-age prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-worker-budget-and-progress-age-accepted)
+adds two operations per language while preserving every earlier row, signature
+and class export. Six Rust and twelve installed native cases pass immutable
+budget narrowing, actual runtime-limited reports, initial/paused/terminal
+notification age and unchanged controls/phase/snapshot shape. The installed module
+matches the exact newly built archive; [execution records](../unified-qt-workbench/ds-01-worker-budget-operation-test-results.json)
+retain this scope separately from the explicitly corrected earlier phase-wheel
+reuse and historical full gates. Qt worker consumption remains DS-01.
 
 The additive [UIU-API-01 admission/preview acceptance](../unified-qt-workbench/validation.md#uiu-api-01-public-admission-accepted)
 appends 99 Rust and 75 native rows, retaining every original row and historical

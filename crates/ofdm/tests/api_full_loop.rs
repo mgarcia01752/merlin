@@ -19,6 +19,10 @@ use std::{
 const PROFILE: &[u8] =
     include_bytes!("../../../examples/measurements/single-channel/modulation_profile.json");
 const RXMER: &[u8] = include_bytes!("../../../examples/measurements/single-channel/rxmer.json");
+/// Independent wall-clock observation delay, unrelated to scientific/runtime budgets.
+const PROGRESS_AGE_OBSERVATION_MS: u64 = 5;
+/// Existing pause-stability fixture delay, now also checking notification age.
+const PAUSE_OBSERVATION_MS: u64 = 30;
 fn inputs() -> FullLoopInputs {
     let profile = Dpd::from_bytes(
         &NamedCapture::new("profile", PROFILE.to_vec()).unwrap(),
@@ -100,9 +104,17 @@ fn complete_request_matches_existing_job_and_preserves_originals_and_fec() {
         65536
     );
     let control = FullLoopControl::new();
+    assert!(control.last_progress_age_ms().is_none());
+    assert_eq!(
+        serde_json::to_value(control.snapshot()).unwrap(),
+        json!({"state":"idle","pause_requested":false,"cancellation_requested":false,"progress":null})
+    );
     let result = request.run(&control).unwrap();
     let report = result.report();
     assert_eq!(control.snapshot().state, FullLoopState::Completed);
+    let age_before = control.last_progress_age_ms().unwrap();
+    std::thread::sleep(Duration::from_millis(PROGRESS_AGE_OBSERVATION_MS));
+    assert!(control.last_progress_age_ms().unwrap() >= age_before + PROGRESS_AGE_OBSERVATION_MS);
     assert_eq!(report.status, ChannelJobStatus::Complete);
     assert!(report.summary.comparison.bits_tested > 0);
     assert_eq!(report.summary.comparison.bit_errors, 0);
@@ -162,7 +174,9 @@ fn acknowledged_pause_resume_cancel_retains_completed_comparisons() {
     control.pause().unwrap();
     until(&control, |status| status.state == FullLoopState::Paused);
     let before = control.snapshot().progress.unwrap();
-    std::thread::sleep(Duration::from_millis(30));
+    let age_before = control.last_progress_age_ms().unwrap();
+    std::thread::sleep(Duration::from_millis(PAUSE_OBSERVATION_MS));
+    assert!(control.last_progress_age_ms().unwrap() >= age_before + PAUSE_OBSERVATION_MS);
     let held = control.snapshot().progress.unwrap();
     assert_eq!(
         held.completed_source_symbols,
@@ -200,6 +214,7 @@ fn initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is
     let worker = std::thread::spawn(move || request.run(&token));
     until(&control, |status| status.state == FullLoopState::Paused);
     assert!(control.snapshot().progress.is_none());
+    assert!(control.last_progress_age_ms().is_none());
     control.cancel();
     let stopped = worker.join().unwrap().unwrap();
     assert_eq!(stopped.report().summary.comparison.bits_tested, 0);
@@ -298,6 +313,74 @@ fn options_timing_and_identity_failures_leave_accepted_inputs_unchanged() {
         ErrorCode::AssociationFailed
     );
     Simulation::prepare_full_loop(original, options()).unwrap();
+}
+
+#[test]
+fn runtime_limit_narrows_immutably_and_preserves_admission_and_retention() {
+    let request = Simulation::prepare_full_loop(inputs(), options())
+        .unwrap()
+        .with_observations(
+            FullLoopObservationPolicy::new(FullLoopObservationInput::default()).unwrap(),
+        )
+        .unwrap();
+    let original_settings = serde_json::to_value(request.settings()).unwrap();
+    let original_policy = serde_json::to_value(request.observation_policy()).unwrap();
+    // Independent 30-second fixture narrows the existing 60-second test request.
+    let limited = request.with_runtime_limit(30_000).unwrap();
+    assert_eq!(limited.options().max_runtime_ms, 30_000);
+    assert_eq!(request.options().max_runtime_ms, 60_000);
+    assert_eq!(
+        serde_json::to_value(limited.settings()).unwrap(),
+        original_settings
+    );
+    assert_eq!(
+        serde_json::to_value(limited.observation_policy()).unwrap(),
+        original_policy
+    );
+    assert_eq!(limited.response_tolerance(), request.response_tolerance());
+    assert!(request.with_runtime_limit(60_000).is_ok());
+    // Zero, widening by one, above the existing 300-second owner ceiling and integer maximum.
+    for rejected in [0, 60_001, 300_001, u64::MAX] {
+        assert!(request.with_runtime_limit(rejected).is_err());
+    }
+    assert_eq!(
+        request.with_runtime_limit(60_001).err().unwrap().code(),
+        ErrorCode::ResourceLimit
+    );
+    assert_eq!(
+        serde_json::to_value(request.settings()).unwrap(),
+        original_settings
+    );
+    assert_eq!(request.options().max_runtime_ms, 60_000);
+}
+
+#[test]
+fn runtime_limit_returns_actual_partial_outcome_without_mutating_parent() {
+    // A one-second simulated observation cannot finish in this independent one-ms host fixture.
+    let request = Simulation::prepare_full_loop(
+        inputs(),
+        FullLoopOptions {
+            duration_ms: 1_000,
+            ..options()
+        },
+    )
+    .unwrap();
+    let settings = serde_json::to_value(request.settings()).unwrap();
+    let limited = request.with_runtime_limit(1).unwrap();
+    let control = FullLoopControl::new();
+    let result = limited.run(&control).unwrap();
+    assert_eq!(result.report().status, ChannelJobStatus::RuntimeExceeded);
+    assert_eq!(control.snapshot().state, FullLoopState::RuntimeExceeded);
+    assert_eq!(
+        serde_json::to_value(&result.report().settings).unwrap(),
+        settings
+    );
+    assert_eq!(request.options().max_runtime_ms, 60_000);
+    assert_eq!(serde_json::to_value(request.settings()).unwrap(), settings);
+    assert_eq!(
+        result.inputs().profile.sources()[0].original_bytes(),
+        PROFILE
+    );
 }
 
 #[test]
