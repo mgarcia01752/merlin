@@ -2992,3 +2992,32 @@ acceptance remain pending. Existing global original-path no-clobber protection
 remains infrastructure; owner-scoped path removal is still required when the two
 real project owners are wired. Shell, upstream UI, persistence and final gates
 retain their existing dependency order and status.
+
+## UIU-SESSION-01 terminal worker transport
+
+[Design](design.md#uiu-session-01-terminal-worker-transport),
+[architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle),
+[exact evidence](session-terminal-evidence.json) and
+[UIU-SESSION-01](../../checklist.md#task-uiu-session-01) trace REQ-UIU-03/06/07.
+The shared std-only transport carries genuine run tokens and holds the sole
+lease outside scientific-operation unwinding. Known terminal envelopes release
+admission after disposal by a destroyed GUI owner; dropping active work still
+keeps Busy. Failed OS thread admission returns the exact unstarted lease to the
+host. Existing direction-specific channel policies supply backpressure.
+
+All **22 application owner tests**, including six new real-thread/transport
+cases, pass without failures or skips. Warnings-denied Clippy, formatting and the
+unchanged final zero-scientific-dependency boundary pass. Tests exercise success
+in either direction, typed errors/panic, GUI destruction before operation return,
+queued charged payload disposal, deterministic OS-spawn failure and invalid
+thread names. The first Clippy pass rejected two test err().expect() expressions;
+expect_err preserves their assertions, and all final checks pass.
+
+This source-only Level 1 component is not yet registered or used by either
+scientific worker. The existing Qt executable remains current; another Qt/QML,
+wheel, core, CLI or package rebuild is not required for an unregistered std-only
+transport. These passes do not establish real direction integration, aggregate
+memory bounds or UIU-SESSION-01 Level 2. Actual adapters must preserve immutable
+accepted owners, validate every token before adoption and supply independently
+audited reservations for all reachable retained allocations. Logical public
+population counts alone are not a byte bound. The parent remains unchecked.

@@ -1551,6 +1551,14 @@ semantics and project bytes remain unchanged. Its
 [consumer evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-explicit-downstream-context-migration)
 does not accept the still-pending shared dispatch/identity/resource wiring.
 
+The shared [terminal transport](development/features/unified-qt-workbench/design.md#uiu-session-01-terminal-worker-transport)
+under `shell/worker.rs` keeps genuine run leases outside worker unwinding and
+tags queued callbacks explicitly. Known completion can release admission after
+GUI disposal; cancellation alone cannot. OS spawn failure returns its unstarted
+lease. [Transport evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-terminal-worker-transport)
+validates this source-only component; real direction consumers and aggregate
+reachable-byte admission are still required for session acceptance.
+
 Normal project files remain direction-specific. Open validates/detects direction
 and guards that target tab's dirty state before mutation. Schema 1/2 retain DS
 interpretation; the [selected schema 3 contract](development/features/unified-qt-workbench/design.md#uiu-api-05-direction-aware-public-project-admission) explicitly tags direction. Its public backend is [accepted under API-05](development/features/unified-qt-workbench/validation.md#uiu-api-05-project-backend-accepted). Backend/native

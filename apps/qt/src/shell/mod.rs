@@ -7,6 +7,7 @@
 mod dispatch;
 mod identity;
 mod retention;
+mod worker;
 
 pub use dispatch::{
     ActiveRun, DispatchError, DispatchGate, DispatchPhase, RunCancellation, RunLease,
@@ -16,6 +17,9 @@ pub use identity::{
 };
 pub use retention::{
     Retained, RetainedBytes, RetentionBudget, RetentionError, RetentionReservation,
+};
+pub use worker::{
+    spawn_worker, WorkerEvent, WorkerSender, WorkerSpawnError, WorkerStatus, WorkerTerminal,
 };
 
 use std::sync::Arc;

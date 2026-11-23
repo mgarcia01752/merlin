@@ -3284,3 +3284,32 @@ so do not rebuild their wheel or repeat their completed milestone suites. The
 current authoritative scalar/provenance values must remain exact. UIU-SESSION-01
 stays unchecked until the later real callback/dispatch/resource and complete
 session gates pass. This is a finite storage migration, not a new parent plan.
+
+## UIU-SESSION-01 terminal worker transport
+
+Continue REQ-UIU-03/06/07 and the existing session task with one shared application
+transport for both direction adapters. The scientific operation/control remains
+direction-specific. Its completion must be known before dispatch admission can
+reopen; a cancel request, GUI destruction or panic is not completion evidence.
+
+| Disposition | Exact owner / consumer | Decision |
+| --- | --- | --- |
+| Add | `apps/qt/src/shell/worker.rs` | Bounded typed callbacks carrying the genuine lease token; keep the sole lease outside caught scientific-operation unwinding. Terminal envelopes own known-completion acknowledgement, including dropped/disconnected GUI owners. |
+| Edit | `apps/qt/src/shell/mod.rs` | Export the shared application transport beside existing dispatch ownership. No backend API, numerical policy or Qt registration. |
+| Add | `apps/qt/src/shell/worker/tests.rs` | Real threads and dispatch leases cover success/error/panic, backpressure, dropped owners and deterministic failed OS-spawn injection. This validates the transport, not either engine's integration. |
+| Adapt, subsequent consumer | Downstream `simulation/closed_loop/worker.rs` and new upstream controller | Reuse their existing public controls/results with this single transport; retain independent semantics. Host validates callbacks against actual accepted identities before adoption. |
+
+The producer supplies the existing direction-specific channel capacity. The
+transport adds no timeout, byte limit, scientific defaults or background polling.
+It never joins from Qt. OS spawn failure returns the original lease to the host;
+normal/error/panic completion delivers exactly one terminal envelope. Dropping a
+known-terminal envelope may safely acknowledge termination, while dropping an
+ordinary active lease retains Busy as before. Detached worker completion after
+GUI destruction acknowledges only after the scientific closure has returned or
+unwound. No duplicate worker/thread abstraction belongs in either adapter.
+
+Acceptance uses all standalone session/transport tests, warnings-denied Clippy,
+formatting, final boundary and traceability. Actual two-direction coordinator,
+conservative aggregate retention and complete Level 2 session acceptance remain
+required before checking UIU-SESSION-01. No scientific/public API change justifies
+a wheel rebuild or repeated full workspace regression in this source-only unit.
