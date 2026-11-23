@@ -3,9 +3,11 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Bounded offline help; numerical context comes from validated core timing.
-use docsis_ofdm_fec::{
-    simulation::channel::ChannelRunSettings, transmission::DurationTiming, SimulationError,
+use crate::downstream::common::constants::{
+    HELP_CATALOG_SCHEMA_VERSION, MAX_DIAGNOSTIC_CODE_BYTES, MAX_HELP_DOCUMENT_BYTES,
+    MAX_HELP_ENTRIES,
 };
+use merlin::downstream::{ApiError, ObservationDuration, TransmissionConfiguration};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::sync::OnceLock;
@@ -58,49 +60,39 @@ impl AdmissionError {
     /// * `error` - Original scientific validation failure.
     /// # Returns
     /// Same message and known catalog guidance, or no help for an unknown code.
-    pub(crate) fn classified(error: SimulationError) -> Self {
+    pub(crate) fn classified(error: impl Into<ApiError>) -> Self {
+        let error = error.into();
         Self {
-            message: error.to_string(),
-            diagnostic: catalog_diagnostic(error.code).map(Box::new),
+            message: error.message().to_owned(),
+            diagnostic: error
+                .engine_code()
+                .and_then(catalog_diagnostic)
+                .map(Box::new),
         }
     }
     /// Attaches help only to a recognized core diagnostic, without revalidating captures.
     /// # Arguments
     /// * `error` - Original core failure; its stable code selects the help entry.
-    /// * `settings` - Frozen run settings used by the failed admission.
+    /// * `transmission` - Public accepted timing configuration.
+    /// * `duration_ms` - Failed observation duration, in milliseconds.
     /// * `span` - Last transition symbol/milliseconds returned by the core playback plan.
     /// # Returns
     /// Original message with optional computed help; unavailable help never alters admission.
     pub(crate) fn from_run(
-        error: SimulationError,
-        settings: &ChannelRunSettings,
+        error: ApiError,
+        transmission: &TransmissionConfiguration,
+        duration_ms: u64,
         span: (u64, f64),
     ) -> Self {
-        let diagnostic = if error.code == PLAYBACK_CODE {
-            settings
-                .transmission
-                .duration_timing(settings.duration)
-                .ok()
-                .and_then(|timing| {
-                    let current_ms = u64::try_from(settings.duration.as_millis()).ok()?;
-                    playback_help(timing, span, current_ms)
-                })
+        let diagnostic = if error.engine_code() == Some(PLAYBACK_CODE) {
+            playback_help(transmission, span, duration_ms)
         } else {
-            catalog_diagnostic(error.code)
+            error.engine_code().and_then(catalog_diagnostic)
         };
         Self {
-            message: error.to_string(),
+            message: error.message().to_owned(),
             diagnostic: diagnostic.map(Box::new),
         }
-    }
-    /// Adds profile identity without discarding a known diagnostic or its timing context.
-    /// # Arguments
-    /// * `profile` - Captured profile ID that failed sweep admission.
-    /// # Returns
-    /// Same failure with a profile-prefixed original message.
-    pub(crate) fn with_profile(mut self, profile: u8) -> Self {
-        self.message = format!("Profile {profile}: {}", self.message);
-        self
     }
 }
 impl From<String> for AdmissionError {
@@ -140,29 +132,38 @@ fn catalog() -> Option<&'static Catalog> {
     static PARSED: OnceLock<Option<Catalog>> = OnceLock::new();
     PARSED
         .get_or_init(|| {
-            if CATALOG.len() > 65536 {
+            if CATALOG.len() > MAX_HELP_DOCUMENT_BYTES {
                 return None;
             }
             let parsed: Catalog = serde_json::from_str(CATALOG).ok()?;
-            (parsed.schema_version == 1 && parsed.entries.len() <= 128).then_some(parsed)
+            (parsed.schema_version == HELP_CATALOG_SCHEMA_VERSION
+                && parsed.entries.len() <= MAX_HELP_ENTRIES)
+                .then_some(parsed)
         })
         .as_ref()
 }
 fn entry(code: &str) -> Option<&'static Entry> {
-    if code.len() > 96 {
+    if code.len() > MAX_DIAGNOSTIC_CODE_BYTES {
         return None;
     }
     catalog()?.entries.iter().find(|entry| entry.code == code)
 }
-fn playback_help(timing: DurationTiming, span: (u64, f64), current_ms: u64) -> Option<Diagnostic> {
+fn playback_help(
+    transmission: &TransmissionConfiguration,
+    span: (u64, f64),
+    current_ms: u64,
+) -> Option<Diagnostic> {
+    let timing = transmission
+        .timing(ObservationDuration::from_milliseconds(current_ms).ok()?)
+        .ok()?;
     let entry = entry(PLAYBACK_CODE)?;
     if span.0 == 0 || !span.1.is_finite() || span.0 < timing.complete_symbols {
         return None;
     }
-    // The engine requires complete_symbols > last_transition, not merely equal elapsed time.
-    let ticks = (u128::from(span.0) + 1) * u128::from(timing.symbol_period_samples);
-    let minimum_ms =
-        u64::try_from((ticks * 1000).div_ceil(u128::from(timing.sample_rate_hz))).ok()?;
+    // The public timing owner retains the strict complete_symbols > last_transition rule.
+    let minimum_ms = transmission
+        .minimum_observation_milliseconds_after(span.0)
+        .ok()?;
     let maximum_ms = crate::downstream::simulation::closed_loop::MAX_DURATION_MS;
     let values = [
         ("{final_transition_ms}", format!("{:.3}", span.1)),
@@ -247,7 +248,7 @@ pub(crate) fn faq_document(code: &str) -> Value {
 // Bound the embedded source before allocating and normalize checkout line endings.
 // Match sections identically on Windows and Unix without changing catalog keys.
 fn faq_document_from_source(code: &str, source: &str) -> Value {
-    if source.len() <= 65536 {
+    if source.len() <= MAX_HELP_DOCUMENT_BYTES {
         let faq = source.replace("\r\n", "\n");
         if code.is_empty() {
             return json!({"title":"MERLIN FAQ", "text":faq});
@@ -266,7 +267,7 @@ fn faq_document_from_source(code: &str, source: &str) -> Value {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use docsis_ofdm_fec::transmission::{SubcarrierSpacing, TransmissionSettings};
+    use merlin::downstream::{SubcarrierSpacing, TransmissionSettings};
     use std::time::Duration;
 
     fn help(last: u64, spacing: SubcarrierSpacing, prefix: u16) -> Diagnostic {
@@ -280,7 +281,12 @@ mod tests {
             .unwrap();
         let milliseconds = last as f64 * f64::from(timing.symbol_period_samples) * 1000.0
             / f64::from(timing.sample_rate_hz);
-        playback_help(timing, (last, milliseconds), 3).unwrap()
+        playback_help(
+            &TransmissionConfiguration::new(transmission).unwrap(),
+            (last, milliseconds),
+            3,
+        )
+        .unwrap()
     }
     #[test]
     fn unavailable_qam_help_is_registered_and_unknown_states_stay_unclassified() {
@@ -384,21 +390,14 @@ mod tests {
     #[test]
     fn unknown_errors_keep_original_text_and_no_guessed_help() {
         let transmission = TransmissionSettings::default();
-        let layout = docsis_ofdm_fec::transmission::layout::CarrierLayoutSettings {
-            zero_frequency_hz: 0,
-            first_active_bin: 296,
-            active_end_exclusive: 7896,
-            plc_first_bin: 1000,
-            excluded_bins: vec![],
-            additional_continuous_pilots: vec![],
-        };
-        let settings = ChannelRunSettings::new(transmission, layout);
+        let transmission = TransmissionConfiguration::new(transmission).unwrap();
         let error = AdmissionError::from_run(
-            SimulationError::new(
-                "Unknown",
+            ApiError::new(
+                merlin::downstream::ErrorCode::InvalidInput,
                 "Playback final transition exceeds the observation window.",
             ),
-            &settings,
+            &transmission,
+            3,
             (1000, 42.5),
         );
         assert_eq!(

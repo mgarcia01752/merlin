@@ -6,7 +6,7 @@
 use crate::shared::presentation::constants::{
     MINUTES_PER_HOUR, SECONDS_PER_HOUR, SECONDS_PER_MINUTE,
 };
-use merlin::downstream::ChannelPhase;
+use merlin::downstream::{ChannelPhase, FullLoopControl};
 use serde_json::{json, Value};
 use std::{
     sync::Mutex,
@@ -29,6 +29,17 @@ struct State {
 
 pub(crate) struct RunTiming {
     state: Mutex<State>,
+}
+
+fn phase_label(phase: ChannelPhase) -> &'static str {
+    match phase {
+        ChannelPhase::Acquisition => "Acquiring",
+        ChannelPhase::Completion => "Completing",
+        ChannelPhase::Failed => "Failed",
+        ChannelPhase::Observation => "Observing",
+        ChannelPhase::InterleaverDrain => "Draining",
+        ChannelPhase::Finished => "Finishing",
+    }
 }
 
 fn millis(start: Instant, end: Instant) -> u64 {
@@ -86,25 +97,37 @@ impl RunTiming {
     /// # Arguments
     /// * `phase` - Public downstream processing phase after a completed step.
     /// * `recovered` - Current profile's completed payload-word count.
+    #[cfg(test)]
     pub(crate) fn progress(&self, phase: ChannelPhase, recovered: u64) {
         let mut state = self.state.lock().unwrap_or_else(|error| error.into_inner());
         state.last_progress = Instant::now();
-        state.phase = match phase {
-            ChannelPhase::Acquisition => "Acquiring",
-            ChannelPhase::Completion => "Completing",
-            ChannelPhase::Failed => "Failed",
-            ChannelPhase::Observation => "Observing",
-            ChannelPhase::InterleaverDrain => "Draining",
-            ChannelPhase::Finished => "Finishing",
-        };
+        state.phase = phase_label(phase);
         state.recovered = recovered;
     }
-    /// Records received-only MCE readiness; a full history is not an accuracy claim.
-    pub(crate) fn mce(&self, tracking: Option<bool>) {
-        self.state
-            .lock()
-            .unwrap_or_else(|error| error.into_inner())
-            .mce = tracking;
+    /// Projects actual public notifications without treating UI polling as progress.
+    /// # Arguments
+    /// * `control` - Current profile's public one-shot execution control.
+    /// # Returns
+    /// Completed source symbols, or zero before the first backend notification.
+    pub(crate) fn observe(&self, control: &FullLoopControl) -> u64 {
+        let snapshot = control.snapshot();
+        let Some(progress) = snapshot.progress else {
+            return 0;
+        };
+        let mut state = self.state.lock().unwrap_or_else(|error| error.into_inner());
+        state.phase = phase_label(progress.phase);
+        state.recovered = progress.recovered_payloads;
+        state.mce = progress
+            .receiver_reliability
+            .as_ref()
+            .map(|status| status.tracking);
+        if let Some(notified) = control
+            .last_progress_age_ms()
+            .and_then(|age| Instant::now().checked_sub(Duration::from_millis(age)))
+        {
+            state.last_progress = notified;
+        }
+        progress.completed_source_symbols
     }
 
     /// Retains a completed profile's wall duration, bounded by sweep admission.

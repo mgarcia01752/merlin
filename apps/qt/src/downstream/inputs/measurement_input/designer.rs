@@ -673,10 +673,6 @@ mod tests {
     }
     #[test]
     fn designed_flat_mer_drives_residual_power_and_real_fec() {
-        use docsis_ofdm_fec::simulation::{
-            channel::{run_channel, ChannelJobLimits},
-            test_points::{NoopObserver, TestPointProbe},
-        };
         let project: crate::downstream::workbench::project_file::Project =
             serde_json::from_slice(include_bytes!(
                 "../../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json"
@@ -712,27 +708,23 @@ mod tests {
             ..Default::default()
         };
         inputs.playback = model.published(Some(&profile)).unwrap().playback;
+        let mut sections = project.sections.clone();
+        sections.insert("measurements".into(), model.export());
         let settings = crate::downstream::simulation::closed_loop::prepare(
             &project.transmission,
             &inputs,
             &crate::downstream::simulation::closed_loop::Options {
                 duration_ms: 1,
+                max_runtime_ms: 60_000,
                 ..Default::default()
             },
+            &sections,
         )
         .unwrap();
-        let result = run_channel(
-            &settings,
-            &ChannelJobLimits {
-                max_runtime_ms: 60_000,
-                max_retained_words: 1,
-            },
-            &AtomicBool::new(false),
-            &mut TestPointProbe::disabled(),
-            &mut NoopObserver,
-            |_| {},
-        )
-        .unwrap();
+        let actual = settings
+            .run(&merlin::downstream::FullLoopControl::new())
+            .unwrap();
+        let result = actual.report();
         assert!(
             result.summary.comparison.bits_tested > 0,
             "{:?}",

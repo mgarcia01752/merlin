@@ -1237,7 +1237,7 @@ calibration or logarithmic power calculations. A shared presentation owner forma
 public spectrum buckets and physical PLC bounds. Existing legacy run/instrument
 providers remain separate migration debt until their own facade adoption.
 [Scoped consumer acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted)
-passes with the optimized Qt executable; subsequent scoped migration leaves 37
+passes with the optimized Qt executable; subsequent scoped migration leaves 33
 frozen legacy files.
 
 The [resource build-cache correction](development/features/unified-qt-workbench/validation.md#uiu-ds-01-resource-build-cache-accepted)
@@ -1264,7 +1264,7 @@ owns admission; a private timestamp shares the scalar progress mutex. Preserve
 the public snapshot shape and distinguish notification wall age, paused time,
 active host budget and simulated duration. Rust owns both operations; native
 Python only converts them. [Scoped paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-worker-budget-and-progress-age-accepted)
-passes; Qt worker consumption remains incomplete.
+passes; worker consumption is traced in the controlled consumer below.
 
 The [typed engine diagnostic prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-structured-engine-diagnostic-prerequisite)
 exposes the retained original code through downstream ApiError.engine_code()
@@ -1272,7 +1272,21 @@ and optional native exception metadata. The native upstream converter uses its
 existing public source-code getter. Generic categories and original messages
 retain their meaning; Qt help selects only registered codes. This is passive
 diagnostic observation: [scoped paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-structured-engine-diagnostic-accepted)
-passes, while Qt adoption remains incomplete.
+passes; the worker/help consumer below now adopts it.
+
+The [controlled worker consumer](development/features/unified-qt-workbench/design.md#uiu-ds-01-controlled-worker-facade-migration)
+uses public FullLoopRequest/SweepPlan/Control for serial downstream execution.
+Accepted source/profile originals, actual RxMER frames and original H are paired
+explicitly during GUI edits and independent background Open. Scientific admission,
+per-profile controls, active runtime and actual stage retention remain backend
+owned. The Qt adapter projects bounded public stage pages into existing instrument
+containers and retains the immutable public result as their authoritative owner.
+Public notification age drives the separate UI wall clock without treating polls
+as progress. H/profile tolerance remains independent of RxMER/profile tolerance.
+The [scoped acceptance record](development/features/unified-qt-workbench/validation.md#uiu-ds-01-controlled-worker-facade-accepted)
+tracks this consumer; remaining legacy input/instrument providers and the final
+numeric audit keep UIU-DS-01 open. The Designer production code remains frozen;
+only its affected real-FEC regression now calls the public request.
 
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).

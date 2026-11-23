@@ -30,3 +30,24 @@ pub(crate) const TIMING_OVERVIEW_QUANTUM_MICROSECONDS: f64 = 10.0;
 
 /// One completion envelope for the single idle transmitter-preview worker.
 pub(crate) const IDLE_PREVIEW_COMPLETION_CAPACITY: usize = 1;
+
+/// Backpressure permits one completed profile envelope before GUI collection.
+/// Independent of the idle-preview channel, although both capacities are one.
+pub(crate) const PROFILE_COMPLETION_CAPACITY: usize = 1;
+
+/// Existing contiguous time-window display cap shared by TX and RX instruments.
+/// This is presentation retention, separate from per-event backend query budgets.
+pub(crate) const MAX_INSTRUMENT_TIME_SAMPLES: usize = 32768;
+
+/// Whole transmitted PLC frames retained for the existing message viewer.
+/// Independent of decoder-word and chart-bar limits that also happen to be 64.
+pub(crate) const MAX_TRANSMITTER_MESSAGE_FRAMES: usize = 64;
+
+/// Version of the bundled diagnostic registry, independent of saved projects.
+pub(crate) const HELP_CATALOG_SCHEMA_VERSION: u32 = 1;
+/// Maximum bundled help source bytes before parsing or line-ending normalization.
+pub(crate) const MAX_HELP_DOCUMENT_BYTES: usize = 64 * 1024;
+/// Maximum catalog entries parsed by the offline help adapter.
+pub(crate) const MAX_HELP_ENTRIES: usize = 128;
+/// Maximum lookup-code bytes; this is not a message or title length policy.
+pub(crate) const MAX_DIAGNOSTIC_CODE_BYTES: usize = 96;

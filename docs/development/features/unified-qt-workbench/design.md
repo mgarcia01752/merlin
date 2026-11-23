@@ -2282,3 +2282,61 @@ analysis-only compilation, 38 metadata cases and strict 570/544 operation tracin
 All prior callable rows, types and native members are exact after removing only
 the new optional field. Generic category/message and existing metadata remain
 unchanged. Qt worker/help adoption and final numeric/integration gates stay open.
+
+## UIU-DS-01 controlled worker facade migration
+
+This scoped consumer implements REQ-UIU-02/07/08/09/17/24/27 under
+the existing downstream migration task. Preserve the UI's accepted options,
+profile ordering, partial results, stage windows and diagnostic wording.
+Architecture ownership remains the public downstream full-loop API and the thin
+Qt adapter; this work does not implement the later global session arbiter.
+
+| Path and symbol | Current contract and evidence | Requirement gap | Decision / destination |
+| --- | --- | --- | --- |
+| `apps/qt/src/downstream/simulation/closed_loop.rs` | Serial profile worker calls the private controlled job and probe dispatcher; five existing regression cases cover measurement runs, MCE, MER and sweeps. | Execution must use accepted public requests and controls. | ADAPT admission, dispatch and read-only result ownership into focused `closed_loop/` modules; preserve the existing module entry points. |
+| `apps/qt/src/downstream/inputs/public_inputs.rs`, `workbench/project_file.rs` | Existing integrity-checked original source/profile transport and accepted measurement snapshots. | Pair observations with their unchanged originals without Qt recipe calculations. | REUSE public source/profile admission; admit actual accepted RxMER frames with `RxMer::from_frame`, matching the original SHA-256; load H from original bytes. Pass project sections explicitly during background Open. |
+| Public `FullLoopRequest`, `FullLoopSweepPlan`, `FullLoopControl` | Validated immutable requests, complete-catalog preflight, one-shot cancellation/pause and actual notification age. | Replace private callbacks while preserving one active serial worker and aggregate active-runtime budget. | REUSE public contracts, one control per profile; keep application cancellation/pause state across profile boundaries and narrow each runtime to the remaining budget. |
+| `simulation/run_timing.rs`, `downstream/help.rs` | Monotonic UI wall clock and stable-code contextual help. | Public progress polling must not reset notification age; duration advice must use backend timing. | ADAPT actual public snapshots/age and public minimum-observation operation. Generic diagnostic conversion preserves old editor callers without private imports. |
+| `instruments/transmitter/capture.rs`, new `closed_loop/observations.rs` | Finite original TX/RX presentation copies and exact metadata. | Existing instruments still expect their current data containers. | ADAPT bounded public stage pages into those containers, without numerical reconstruction. Keep the public result as the authoritative immutable owner; absent observations remain absent. |
+| `downstream/common/constants.rs` | Purpose-specific presentation policies. | Retention and dispatch values must identify meaning and reuse backend bounds. | SHARE genuine display policies; derive stage-array dimensions, reuse backend event/query limits and default observation policy. Keep independent numeric test vectors literal and explained. |
+
+Reuse/licensing: these are MERLIN GPL Qt presentation adapters consuming the
+existing Apache public API; no copied third-party material, new dependency,
+scientific algorithm, Python change or persisted schema change. Preserve old
+source/profile/MCE assertions; replace test mutation of immutable completed
+reports with separate actual runs. Test-only changed captures retain their own
+correct hashes and do not alter repository originals. Acceptance requires the
+five existing worker cases plus focused lifecycle/window/help checks, relevant
+QML checks, dependency-boundary tests, Clippy/formatting, latest optimized Qt
+build and native startup/Open checks. Retire only fully migrated frozen files.
+The parent DS task and final numeric audit remain unchecked until their full
+acceptance criteria pass.
+
+The first compile identified two additional callers. Migrate
+`workbench/project_file.rs` admission checks and public settings aliases as part
+of this consumer, preserving its existing persistence tests and bytes. In
+`inputs/measurement_input/designer.rs`, change only the existing
+`designed_flat_mer_drives_residual_power_and_real_fec` test to pass its newly
+built recipe originals and execute the public request. All Designer production
+code and other tests must remain byte-identical. Record this narrowly reviewed
+frozen-file update with before/after hashes and exact outside-test preservation;
+remove its one old private test import and add no private invocation. The
+remaining Designer production debt stays frozen and unaccepted. Its scientific
+oracles, one-millisecond source window and 60-second host ceiling remain;
+retained word details now use the accepted Qt public default instead of the
+old test-only one-word detail budget, and passive stage capture follows the
+same accepted workbench policy. Neither affects its residual-power or FEC
+assertions; do not describe this as unchanged retention policy.
+
+The worker now passes the separately accepted H/profile tolerance to the public
+backend instead of reusing RxMER's tolerance. This corrects the old worker's
+inconsistent rejection of a response admitted by its own editor policy. A
+focused fixture admits H at its independent 100000-second boundary while
+retaining RxMER's 90000-second policy, then rejects H one second beyond its
+own tolerance. No waveform combination or scientific algorithm is added.
+
+Scoped consumer accepted: [validation](validation.md#uiu-ds-01-controlled-worker-facade-accepted)
+and [exact evidence](downstream-worker-evidence.json) record 28 targeted Rust,
+eight QML behavior cases, twenty boundary regressions, Clippy, formatting,
+latest optimized Qt build and six native VM checks. The parent remains open
+with 33 frozen files/105 reference sites/three scientific dependencies.

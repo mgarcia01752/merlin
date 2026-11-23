@@ -111,7 +111,12 @@ The [Receiver Workbench](receiver-workbench.md) adds NCP/PLC/data-profile
 QAM selection and an independent SA test-point selector.
 DPD and measurement blocks support capture input. Configure Receiver and enable
 PRBS-RX independent comparison to complete next-run readiness. The lower-right
-Start, Stop and Pause/Resume controls now drive a bounded Rust closed-loop worker.
+Start, Stop and Pause/Resume controls drive the accepted public downstream Rust
+API through a bounded serial worker. Each run retains its accepted original
+inputs and actual backend observations. Pause and cancellation preserve that
+session; changing accepted inputs invalidates old views and prevents a late
+worker result from replacing them. Independent response and RxMER epoch
+association tolerances remain separate.
 Receiver instruments read real retained observations, including matched NCP
 constellations and bounded profile/bin/symbol selection.
 

@@ -158,7 +158,12 @@ impl bridge::ClosedLoop {
             options.validate(&crate::downstream::workbench::session::snapshot())?;
             let inputs = crate::downstream::workbench::session::snapshot();
             if inputs.source.is_some() && inputs.profile.is_some() && inputs.playback.is_some() {
-                model::prepare(transmission.settings(), &inputs, &options)?;
+                model::prepare(
+                    transmission.settings(),
+                    &inputs,
+                    &options,
+                    &crate::downstream::workbench::session::saved_sections(),
+                )?;
             }
             Ok(options)
         };

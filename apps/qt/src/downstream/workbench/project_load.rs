@@ -74,7 +74,7 @@ impl PreparedProject {
         let mut receiver = Model::default();
         receiver.options = project.receiver.clone();
         receiver.verify = project.comparison_enabled;
-        receiver.prepare_inputs(&settings, &inputs);
+        receiver.prepare_inputs(&settings, &inputs, &project.sections);
         let mut transmitter = Analyzer::default();
         transmitter.configure(
             &settings,

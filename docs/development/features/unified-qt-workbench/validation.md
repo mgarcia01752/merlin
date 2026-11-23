@@ -1785,3 +1785,59 @@ No scientific implementation, error category, dependency, saved schema, Qt or
 frozen boundary changes. This does not claim full historical workspace or Qt
 acceptance. Commit this prerequisite before help/worker consumption; parent
 DS-01, coherent run migration and the final line-by-line numeric audit remain open.
+
+
+## UIU-DS-01 controlled worker facade accepted
+
+[Design and exact owners](design.md#uiu-ds-01-controlled-worker-facade-migration),
+[structured evidence](downstream-worker-evidence.json),
+[architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[REQ-UIU-02](../../../requirements.md#req-uiu-02),
+[REQ-UIU-07](../../../requirements.md#req-uiu-07),
+[REQ-UIU-08](../../../requirements.md#req-uiu-08),
+[REQ-UIU-09](../../../requirements.md#req-uiu-09),
+[REQ-UIU-17](../../../requirements.md#req-uiu-17),
+[REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-27](../../../requirements.md#req-uiu-27) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) trace this focused consumer.
+
+The serial downstream worker now uses public requests, sweep preflight, controls
+and actual bounded stage queries. Original source/profile bytes, accepted RxMER
+frames and original H remain paired during edits and background Open. A read-only
+public report projection supports existing instruments; no private engine call,
+mutable report, reconstructed stage values or Qt numerical algorithm is added.
+UI wall time remains separate from simulation time and uses actual notification
+age. Cancellation, pause, active-runtime narrowing and stale-result rejection
+remain explicit. Independent H tolerance fixes the old worker's reuse of RxMER's
+policy, with equality/one-second rejection tested separately.
+
+Passing scoped checks include 28 Rust cases: all five original worker scientific/
+instrument cases, actual file recovery with a dormant zero continuous seed and
+an empty display name, paired-original failures, pause/cancel partial-report
+ownership, invalidated late results, H tolerance, timing/help and saved-file/
+background Open regressions. Eight affected QML behavior cases pass, plus harness
+setup/cleanup (ten total); two Qt focus-property warnings are recorded.
+The impaired fixture still yields 20.010 dB TX-reference MER versus 33.233 dB
+nearest-point MER, within the original independent tolerances. This is MERLIN-only
+closed-loop evidence, not external interoperability.
+
+Clippy for all Qt targets and twenty architectural-boundary regressions pass.
+The exact reviewed boundary drops from 37/133 to 33/105 frozen files/reference
+sites, with the same three direct scientific dependencies. Four fully migrated
+file entries retire. The Designer's one affected real-FEC test changes to public
+execution; its production and all other test bytes are exact. Its remaining
+scientific references stay frozen. That test now uses the accepted public Qt
+retention defaults rather than its former one-word/no-probe policy; its source,
+runtime and scientific assertions remain intact.
+
+Named directional constants cover independent dispatch, time-window, message
+and help policies. API validators/defaults own scientific domains and retention;
+stage lists own array dimensions. The final line-by-line cross-module numeric
+audit remains pending. No backend/API/binding/dependency/lock or persisted schema
+change occurs; prior Rust/native API evidence is preserved rather than relabeled
+as a fresh installed-wheel run. The latest optimized Qt build passes all six native VM checks (four curated
+workbench admissions and two XCB/Fusion startup/Open runs), with fresh display
+credentials and no stderr. Final rustdoc-only banner additions are recorded
+with tested/final source hashes; Clippy, formatting and the optimized build
+were repeated after them. No executable token changed. The parent DS task and
+later global-session/upstream/final acceptance remain incomplete.

@@ -145,25 +145,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/help.rs",
-      "sha256": "7ce0afe841d8c02efa9a230770ff106b847f85d30185a3442681c684bb3e9ad6",
-      "sites": [
-        {
-          "line": 6,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 269,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 387,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/inputs/channel_model.rs",
       "sha256": "c6492bc7acdd955855aff8c1587b2c125505f6e7d4fbf25f48004a703847497f",
       "sites": [
@@ -204,7 +185,7 @@
     },
     {
       "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
-      "sha256": "ed5e4e559916656e660dfb0d47824285d73c555d616e7edd3176b9da0c2a6339",
+      "sha256": "0c0e955114891f8bf77f97a5d2080fc606f8d61ce039583e03dc099a52458093",
       "sites": [
         {
           "line": 8,
@@ -239,31 +220,27 @@
           "root": "docsis_ofdm_fec"
         },
         {
-          "line": 676,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 801,
+          "line": 793,
           "root": "pnm_input"
         },
         {
-          "line": 803,
+          "line": 795,
+          "root": "pnm_input"
+        },
+        {
+          "line": 804,
+          "root": "pnm_input"
+        },
+        {
+          "line": 806,
+          "root": "pnm_input"
+        },
+        {
+          "line": 810,
           "root": "pnm_input"
         },
         {
           "line": 812,
-          "root": "pnm_input"
-        },
-        {
-          "line": 814,
-          "root": "pnm_input"
-        },
-        {
-          "line": 818,
-          "root": "pnm_input"
-        },
-        {
-          "line": 820,
           "root": "pnm_input"
         }
       ],
@@ -588,17 +565,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/instruments/transmitter/capture.rs",
-      "sha256": "7449f43b85007f65d1adfbec906f76329b8f2ddd1f67a295084e55c3891dd940",
-      "sites": [
-        {
-          "line": 6,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/instruments/transmitter/channel_input.rs",
       "sha256": "9ef3cd7b47fc6f066c710fc35e806b19d9f3b4976f3da50f96e860779173126a",
       "sites": [
@@ -686,112 +652,6 @@
         },
         {
           "line": 189,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/simulation/closed_loop.rs",
-      "sha256": "2e0b32b4150fb405f4abd9b2bd48f67522c8223d1730e2893234c5e3ade616b6",
-      "sites": [
-        {
-          "line": 9,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 44,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 45,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 131,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 200,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 209,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 452,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 459,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 580,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 580,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 720,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 721,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 724,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 757,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 794,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 1033,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 1037,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 1155,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 1156,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/workbench/project_file.rs",
-      "sha256": "b09096855d35825e23fe574b5d04ff9f69b638e859c5f0b1fb869c8cdae6d193",
-      "sites": [
-        {
-          "line": 17,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 336,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 342,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 471,
           "root": "docsis_ofdm_fec"
         }
       ],
@@ -2662,6 +2522,303 @@
       "unit": "Wall-time adapter facade",
       "reason": "Actual progress matches the same public ChannelPhase enum; elapsed-time display uses standard Duration and named shared clock units. No private scientific import remains.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-wall-time-adapter-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/help.rs",
+        "sha256": "7ce0afe841d8c02efa9a230770ff106b847f85d30185a3442681c684bb3e9ad6",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 269,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 387,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Controlled downstream worker facade",
+      "reason": "All direct scientific crate paths removed; typed public admission, control, timing and observations replace legacy engine calls.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-controlled-worker-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/capture.rs",
+        "sha256": "7449f43b85007f65d1adfbec906f76329b8f2ddd1f67a295084e55c3891dd940",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Controlled downstream worker facade",
+      "reason": "All direct scientific crate paths removed; typed public admission, control, timing and observations replace legacy engine calls.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-controlled-worker-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/simulation/closed_loop.rs",
+        "sha256": "2e0b32b4150fb405f4abd9b2bd48f67522c8223d1730e2893234c5e3ade616b6",
+        "sites": [
+          {
+            "line": 9,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 44,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 45,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 131,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 200,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 209,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 452,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 459,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 580,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 580,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 720,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 721,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 724,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 757,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 794,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1033,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1037,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1155,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1156,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Controlled downstream worker facade",
+      "reason": "All direct scientific crate paths removed; typed public admission, control, timing and observations replace legacy engine calls.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-controlled-worker-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/workbench/project_file.rs",
+        "sha256": "b09096855d35825e23fe574b5d04ff9f69b638e859c5f0b1fb869c8cdae6d193",
+        "sites": [
+          {
+            "line": 17,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 336,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 342,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 471,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Controlled downstream worker facade",
+      "reason": "All direct scientific crate paths removed; typed public admission, control, timing and observations replace legacy engine calls.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-controlled-worker-facade-accepted"
+    }
+  ],
+  "reviewed_updates": [
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+        "sha256": "ed5e4e559916656e660dfb0d47824285d73c555d616e7edd3176b9da0c2a6339",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 563,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 586,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 619,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 638,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 639,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 676,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 801,
+            "root": "pnm_input"
+          },
+          {
+            "line": 803,
+            "root": "pnm_input"
+          },
+          {
+            "line": 812,
+            "root": "pnm_input"
+          },
+          {
+            "line": 814,
+            "root": "pnm_input"
+          },
+          {
+            "line": 818,
+            "root": "pnm_input"
+          },
+          {
+            "line": 820,
+            "root": "pnm_input"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+        "sha256": "0c0e955114891f8bf77f97a5d2080fc606f8d61ce039583e03dc099a52458093",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 563,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 586,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 619,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 638,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 639,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 793,
+            "root": "pnm_input"
+          },
+          {
+            "line": 795,
+            "root": "pnm_input"
+          },
+          {
+            "line": 804,
+            "root": "pnm_input"
+          },
+          {
+            "line": 806,
+            "root": "pnm_input"
+          },
+          {
+            "line": 810,
+            "root": "pnm_input"
+          },
+          {
+            "line": 812,
+            "root": "pnm_input"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Only designed_flat_mer_drives_residual_power_and_real_fec moves its engine invocation to the public request; every production byte and other test remains exact. The remaining scientific debt stays frozen.",
+      "evidence": "docs/development/features/unified-qt-workbench/downstream-worker-evidence.json"
     }
   ]
 }

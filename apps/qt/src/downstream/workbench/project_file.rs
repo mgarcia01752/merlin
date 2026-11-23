@@ -14,7 +14,7 @@ pub(crate) const MAX_PROJECT_BYTES: usize = 144 * 1024 * 1024;
 pub(crate) struct Project {
     pub schema_version: u32,
     pub application: String,
-    pub transmission: docsis_ofdm_fec::transmission::TransmissionSettings,
+    pub transmission: merlin::downstream::TransmissionSettings,
     pub sections: BTreeMap<String, Value>,
     pub receiver: Option<crate::downstream::simulation::closed_loop::Options>,
     pub comparison_enabled: bool,
@@ -229,9 +229,10 @@ pub(crate) fn check_file(path: &Path) -> Result<(), String> {
         &project.transmission,
         &inputs,
         options,
+        &project.sections,
     )
     .map_err(|error| error.to_string())?;
-    request.validate().map_err(|error| error.to_string())?;
+    let _ = request; // Public preparation already performs complete scientific admission.
     Ok(())
 }
 
@@ -275,6 +276,7 @@ mod tests {
             &restored.transmission,
             &restored.validate().unwrap(),
             restored.receiver.as_ref().unwrap(),
+            &restored.sections,
         )
         .unwrap();
         let _ = plan;
@@ -328,18 +330,19 @@ mod tests {
                 &project.transmission,
                 &inputs,
                 project.receiver.as_ref().unwrap(),
+                &project.sections,
             )
             .unwrap();
-            prepared.validate().unwrap();
+            prepared.options().validate().unwrap();
             let mut with_loss: Project =
                 serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
-            let loss=docsis_ofdm_fec::signal_processing::channel::additional_loss::AdditionalLoss::Manual {tilt_db:-6.0};
+            let loss = merlin::downstream::AdditionalLoss::Manual { tilt_db: -6.0 };
             with_loss.sections.insert(
                 "channel_model".into(),
                 crate::downstream::inputs::channel_model::saved(&loss),
             );
             assert_eq!(inputs.power, Default::default());
-            let power = docsis_ofdm_fec::signal_processing::channel::power::PowerConditioning {
+            let power = merlin::downstream::PowerConditioning {
                 amplifier_gain_db: 30.0,
                 cpa_attenuation_db: 6.0,
                 input_data_level_dbmv_per_6mhz: Some(0.0),
@@ -359,10 +362,11 @@ mod tests {
                 &roundtrip.transmission,
                 &restored,
                 roundtrip.receiver.as_ref().unwrap(),
+                &roundtrip.sections,
             )
             .unwrap();
-            assert_eq!(changed.impairments.additional_loss, loss);
-            assert_eq!(changed.impairments.power, power);
+            assert_eq!(changed.settings().impairments.additional_loss, loss);
+            assert_eq!(changed.settings().impairments.power, power);
             let mut invalid = serde_json::to_value(&roundtrip).unwrap();
             invalid["sections"]["channel_power"]["schema_version"] = serde_json::json!(99);
             assert!(serde_json::from_value::<Project>(invalid)
@@ -468,12 +472,18 @@ mod tests {
         let bytes = serde_json::to_vec(&project).unwrap();
         let restored: Project = serde_json::from_slice(&bytes).unwrap();
         let inputs = restored.validate().unwrap();
-        let docsis_ofdm_fec::simulation::source::PayloadSourceConfig::File { payload } =
-            inputs.source.unwrap().config
-        else {
-            panic!("Expected file source")
-        };
-        assert_eq!(payload.bytes(), b"exact\0payload\n");
+        assert!(inputs.source.is_some());
+        let admitted = crate::downstream::inputs::public_inputs::transmitter_inputs(
+            &restored.sections["source"],
+            &restored.sections["profile"],
+        )
+        .unwrap()
+        .unwrap();
+        assert_eq!(admitted.source.kind(), "file");
+        assert_eq!(
+            admitted.source.original_bytes(),
+            Some(b"exact\0payload\n".as_slice())
+        );
         assert!(inputs.profile.is_some());
         assert_eq!(inputs.playback.unwrap().frames.len(), 1);
         let mut corrupt: Project = serde_json::from_slice(&bytes).unwrap();
