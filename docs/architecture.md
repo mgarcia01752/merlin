@@ -1239,6 +1239,12 @@ providers remain separate migration debt until their own facade adoption.
 [Scoped consumer acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted)
 passes with the latest optimized Qt executable; 38 frozen legacy files remain.
 
+The [resource build-cache correction](development/features/unified-qt-workbench/validation.md#uiu-ds-01-resource-build-cache-accepted)
+keeps branding resource generation in the Qt build adapter. Existing pinned
+`qt-build-utils`/`cc` build dependencies generate/link the same RCC initializer
+with explicit nonempty resource-file watches. Do not vendor/modify the SDK or
+dependencies, watch build outputs, suppress real source changes or clean targets
+to recover freshness. Runtime/API/scientific ownership remains unchanged.
 
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).

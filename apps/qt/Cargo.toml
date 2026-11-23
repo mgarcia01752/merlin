@@ -26,5 +26,7 @@ ureq = { version = "=2.12.1", default-features = false, features = ["tls"] }
 pnm = { git = "https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git", rev = "5fbd5561f3e06b73486546b5ffa520279080a5eb", version = "=0.3.6" }
 
 [build-dependencies]
+cc = "=1.11.1"
 cxx-gen = "=0.7.195"
 cxx-qt-build = "=0.7.3"
+qt-build-utils = "=0.7.3"

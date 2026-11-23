@@ -65,6 +65,27 @@ class QtApiBoundaryTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Unreviewed Qt dependency identity'):
             self.result()
 
+    def test_resource_build_tools_are_narrow_infrastructure_exceptions(self):
+        """Only the reviewed build-only resource tool identities are admitted."""
+        self.metadata['packages'][0]['dependencies'] = [
+            {'name': 'cc', 'kind': 'build'},
+            {'name': 'qt-build-utils', 'kind': 'build'},
+        ]
+        self.assertEqual(self.result(final=True)['errors'], [])
+        self.assertEqual(self.result(final=True)['scientific_dependencies'], 0)
+
+    def test_resource_build_tools_cannot_become_runtime_or_dev_dependencies(self):
+        """Aliases and platform guards cannot widen the build-only exceptions."""
+        for name in ('cc', 'qt-build-utils'):
+            for kind in (None, 'normal', 'dev'):
+                with self.subTest(name=name, kind=kind):
+                    self.metadata['packages'][0]['dependencies'] = [{
+                        'name': name, 'kind': kind, 'rename': 'resource_helper',
+                        'target': 'cfg(windows)',
+                    }]
+                    with self.assertRaisesRegex(ValueError, 'must be build-only'):
+                        self.result()
+
     def test_path_identity_detects_alias_without_scientific_declared_name(self):
         """A local package name is inspected even when the requested name differs."""
         crate = self.root / 'library'
@@ -169,6 +190,24 @@ fn view<'input>(input: &'input str) { let pnm_status = input; }
             with self.subTest(source=source):
                 self.write(source)
                 self.assertTrue(any('external Rust' in e for e in self.result()['errors']))
+
+    def test_owned_build_modules_remain_scientifically_audited(self):
+        """Build helpers are owned sources, with the same scientific-call guard."""
+        build = self.root / 'apps/qt/build.rs'
+        build.write_text('#[path = "build_support/branding.rs"] mod branding;')
+        helper = self.root / 'apps/qt/build_support/branding.rs'
+        helper.parent.mkdir()
+        helper.write_text('fn resources() {}')
+        self.assertEqual(self.result(final=True)['errors'], [])
+        helper.write_text('fn resources() { docsis_ofdma::simulation::run(); }')
+        self.assertTrue(any('new direct scientific' in e for e in self.result()['errors']))
+        helper.write_text('include!("../../../crates/ofdma/src/lib.rs");')
+        self.assertTrue(any('external Rust' in e for e in self.result()['errors']))
+
+    def test_runtime_sources_cannot_include_build_helpers(self):
+        """The build-support source exception does not widen runtime includes."""
+        self.write('#[path = "../build_support/branding.rs"] mod branding;')
+        self.assertTrue(any('external Rust' in e for e in self.result()['errors']))
 
     def test_wrong_metadata_identity_and_record_schema_fail_closed(self):
         """Absent metadata or an unknown exception schema is never a pass."""

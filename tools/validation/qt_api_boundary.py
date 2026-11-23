@@ -36,6 +36,10 @@ INFRASTRUCTURE_PACKAGES = {
     'env_logger': 'application log configuration',
     'ureq': 'application update HTTP only',
 }
+BUILD_INFRASTRUCTURE_PACKAGES = {
+    'cc': 'compile the Qt branding initializer as a retained build object',
+    'qt-build-utils': 'generate Qt branding resources with explicit file watches',
+}
 
 
 def digest(data):
@@ -98,6 +102,10 @@ def dependency_records(root, metadata):
             actual = name[1]
             resolved = Path(path).resolve()
             relative = str(resolved.relative_to(root.resolve())) if resolved.is_relative_to(root.resolve()) else str(resolved)
+        if actual in BUILD_INFRASTRUCTURE_PACKAGES:
+            if dependency.get('kind') != 'build':
+                raise ValueError(f'Qt resource infrastructure must be build-only: {actual}')
+            continue
         if actual not in SCIENTIFIC_PACKAGES and actual not in INFRASTRUCTURE_PACKAGES:
             raise ValueError(f'Unreviewed Qt dependency identity: {actual}')
         if actual not in SCIENTIFIC_PACKAGES:
@@ -156,6 +164,9 @@ def escaped_modules(root, path, text):
     """
     errors = []
     masked = rust_code(text)
+    qt_root = (root / 'apps/qt').resolve()
+    build_root = qt_root / 'build_support'
+    build_source = path.resolve() == qt_root / 'build.rs' or path.resolve().is_relative_to(build_root)
     # Capture literal module paths and include!("file.rs"); resource include_str!
     # is presentation data rather than Rust module inclusion.
     pattern = r'#\s*\[\s*path\s*=\s*"([^"]+)"\s*\]|\binclude!\s*\(\s*"([^"]+\.rs)"'
@@ -163,7 +174,10 @@ def escaped_modules(root, path, text):
         if masked[match.start()] != text[match.start()]:
             continue
         relative = match[1] or match[2]
-        if not (path.parent / relative).resolve().is_relative_to((root / 'apps/qt/src').resolve()):
+        included = (path.parent / relative).resolve()
+        owned_source = included.is_relative_to(qt_root / 'src')
+        owned_build_source = build_source and included.is_relative_to(build_root)
+        if not owned_source and not owned_build_source:
             errors.append(f'{path.relative_to(root)}: external Rust module inclusion {relative}')
     return errors
 

@@ -1637,3 +1637,34 @@ receipts remain. Backend/native prerequisites retain their own accepted evidence
 without repeating full workspace tests. WIP restore hashes and doc reconciliation
 are recorded. A confirmed empty RCC resource-watch path causes repeated adapter
 builds; address that in a separate focused unit, preserving targets and the SDK.
+
+## UIU-DS-01 resource build cache accepted
+
+The [resource-cache evidence](resource-build-cache-evidence.json) accepts a
+build-only correction to the pinned resource-list parser's trailing empty path.
+The unchanged branding QRC is generated with the existing public Qt tools and
+its initializer object is linked directly. Only empty list paths are filtered;
+the 114 current watches all resolve to existing input files, including all five
+unchanged branding assets. All 210 lock package records retain their exact
+versions, checksums and dependencies except the Qt root's two reviewed build edges
+to already-present exact pins. The initial immutable science boundary is unchanged.
+
+Actual optimized Cargo builds prove two no-op cache hits, a cache hit after an
+ignored target-artifact write, real QRC invalidation and a final cache hit.
+The four cache hits take 0.13–0.21 seconds and preserve output/object/executable
+hashes and modification times. Touching the QRC, without changing its bytes,
+causes a 98.23 second rebuild. No target cache or SDK is cleaned or patched.
+The final executable retains branding resource initializer symbols and passes
+four curated native project checks and two XCB/Fusion/software startup checks,
+all without stderr. Formatting, Qt all-target Clippy and 20 boundary regressions
+pass. New boundary fixtures prove that the resource dependencies remain build-only,
+owned build helpers receive scientific-call checks, and helpers cannot escape
+the owned source trees. The earlier external-module guard failure is retained
+in local receipts.
+
+This unit changes no scientific implementation, public API, Python adapter or
+QML presentation, so their prior acceptance is reused rather than rerun.
+The new build helper is unignored and explicitly included in the commit; a fresh
+extracted source-package build and Windows/installed lifecycle were not executed.
+DS-01, its 38 remaining frozen files, three science dependencies and final numeric
+audit remain open. The latest optimized executable includes this correction.

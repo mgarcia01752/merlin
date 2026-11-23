@@ -4,9 +4,12 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 use cxx_qt_build::{CxxQtBuilder, QmlModule};
+#[path = "build_support/branding.rs"]
+mod branding;
 
 /// Embeds the workbench QML and links native Qt Quick presentation modules.
 fn main() {
+    branding::embed();
     let target_os = std::env::var("CARGO_CFG_TARGET_OS").unwrap();
     let gtk_flags = if target_os == "linux" {
         linux_gtk_flags()
@@ -22,7 +25,6 @@ fn main() {
     CxxQtBuilder::new()
         .file("src/platform/native_file_picker.rs")
         .file("src/platform/application_style.rs")
-        .qrc("branding.qrc")
         .cc_builder(|builder| {
             builder.include("src");
             for flag in gtk_flags

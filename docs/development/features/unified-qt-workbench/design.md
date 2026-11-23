@@ -2091,3 +2091,56 @@ snapshot. Backend/binding/lock/QML files stay unchanged. A pinned RCC list parse
 emits an empty resource watch, causing redundant Cargo rebuilds; fix that separately
 through supported build-time Qt APIs after this focused consumer commit. Keep
 DS-01, session/isolation, remaining scientific consumers and final numeric audit open.
+
+## UIU-DS-01 resource build cache follow-up
+
+The preview consumer exposed a reproducible build-only defect in the pinned
+qt-build-utils0.7.3/CXX-Qt0.7.3 resource-list path. RCC's trailing newline becomes
+an empty PathBuf; CXX-Qt emits `cargo::rerun-if-changed=`. The current Cargo
+fingerprint records that empty path, recursively watching the Qt package and its
+target artifacts. Consecutive scoped tests therefore rebuild the Qt adapter.
+Preserve artifact caches and fix the watch owner rather than deleting outputs.
+Trace REQ-UIU-25/27 and UIU-DS-01; runtime/scientific/session/API tasks stay unchanged.
+
+| Path and symbol | Current contract / gap | Decision / destination |
+| --- | --- | --- |
+| `apps/qt/build.rs`, `branding.qrc` | Builder's explicit branding QRC path emits an empty watch; QML module resource generation is separate | ADAPT branding embedding through a focused build-support owner. Retain exact QRC, aliases, source assets, QML URI and all remaining builder registrations. |
+| `apps/qt/build_support/branding.rs` (new) | Build-time resource generation and initializer need finite actual file watches | REUSE pinned QtBuild::qrc_list/qrc and cc::Build::compile_intermediates. Exclude only empty paths; retain all real watches and link the initializer object directly so static registration survives. No SDK/cache patch or vendoring. |
+| Qt manifest/lock | cc1.11.1 and qt-build-utils0.7.3 already exist transitively | ADD exact direct build-only pins for their supported APIs. Preserve every other locked package record/version/checksum; no new registry package or scientific dependency. |
+| `tools/validation/qt_api_boundary.py` and its fixtures | New resource build tools and a focused build-support module must remain audited | ADMIT only build-kind tool dependencies and build-script-owned includes under `apps/qt/build_support`; reject runtime/dev widening and scientific access/escaping includes inside helpers. Retain exact legacy science records. |
+| Current build fingerprints, native smokes and source-resource catalog | Existing observed empty watch and actual branded startup | RETAIN baseline receipt; prove no empty/package/target watches afterward, all five real assets remain watched/unchanged, target-artifact mutation does not rebuild, actual QRC mutation does invalidate, and optimized executable/native checks still pass. |
+
+Reuse/licensing audit: inspected the pinned registry source at MERLIN commit
+`bd279075c305facc4dd18a2793c2bc2f5e3ba3ff`: qt-build-utils0.7.3 qrc_list/qrc,
+CXX-Qt0.7.3 resource/object setup and cc1.11.1 intermediate compilation. The two
+direct build tools are already pinned MIT OR Apache-2.0 dependencies. Use public
+interfaces in new GPL Qt build-support code; copy no dependency source, change no
+copyright/NOTICE or asset, and add no scientific/native DSP implementation. The
+C++17 setting is a named Qt resource-compiler contract, not a PHY parameter.
+Direct initializer-object linking preserves the existing non-archive linkage.
+Core Qt includes and the existing compiler's supported platform flags remain
+build-only. Linux runtime proof does not establish Windows/installed lifecycle
+acceptance; retain those existing platform gates.
+
+Acceptance: exact lock/asset preservation, filtered actual RCC list, final
+fmt/Clippy and boundary checks; consecutive stable-profile Cargo builds with
+unchanged build-script output/object fingerprints after an ignored target probe;
+explicit real-QRC invalidation; optimized build and six native checks. Do not
+repeat unchanged backend/native simulation suites for this build-only change.
+Source package allowlists must retain the new build-support source. Record
+actual time/build-output comparisons and keep parent DS-01/QA-01 unchecked.
+
+Traceability reconciliation also adds DS-01 delivery/reverse links for the existing cross-cutting requirements07/17/24/25/27 already used by accepted DS-01 unit evidence. IDs and historical completion states remain unchanged; the planning inventory remains a historical snapshot.
+
+Scoped follow-up accepted: [resource-cache validation](validation.md#uiu-ds-01-resource-build-cache-accepted)
+and [exact evidence](resource-build-cache-evidence.json). All 210 locked package
+records and five branding assets remain unchanged. The current fingerprint has 114
+existing-file watches and no empty/output paths. Two no-op builds, an ignored
+target write and a final no-op build take 0.13–0.21 seconds with exact output hashes
+and timestamps preserved; touching the real unchanged QRC triggers the expected
+98.23 second rebuild. Twenty boundary regressions, current guard, formatting,
+Clippy, optimized build and six native checks pass. Resource initializer symbols
+remain linked. No SDK, cache, backend, Python, QML or original boundary snapshot
+is modified. Parent DS-01, final numeric audit and platform lifecycle gates remain
+open. No independent extracted source-package build was executed in this unit;
+the new source is explicitly tracked and not ignored.

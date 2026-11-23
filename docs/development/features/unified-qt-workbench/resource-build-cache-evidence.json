@@ -1,0 +1,443 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Qt branding resource cache correction",
+  "status": "scoped build-only follow-up accepted; parent and final audit incomplete",
+  "base_commit": "bd279075c305facc4dd18a2793c2bc2f5e3ba3ff",
+  "requirements": [
+    "REQ-UIU-04",
+    "REQ-UIU-08",
+    "REQ-UIU-25",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-source-ownership",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/Cargo.toml",
+      "sha256": "5f955be60a995d2e945b942c6eaa63ace234e80a216613be6e82f2895e026c3b"
+    },
+    {
+      "path": "apps/qt/Cargo.lock",
+      "sha256": "071da91c1a199db29dc953e676682f5abcc4859f56d47d6f97a21fb8d46512bb"
+    },
+    {
+      "path": "apps/qt/build.rs",
+      "sha256": "55f19b0d32e98aae2581f28fa2c51afcfc8ca8b4bfcd720da6498fd51de158e8"
+    },
+    {
+      "path": "apps/qt/build_support/branding.rs",
+      "sha256": "a18579ddd977cd5753a3712416dd09a2f23b13257d6a4b9d5ee92edc455c49fc"
+    },
+    {
+      "path": "tools/validation/qt_api_boundary.py",
+      "sha256": "f09da56e5d4978249d44f5d3ff348e31024bba7a483720f5e8cbfff53c5bf53a"
+    },
+    {
+      "path": "tools/validation/test_qt_api_boundary.py",
+      "sha256": "e282abd55120ac1d0f2f80697fb455c2b811766ed83812ecf706f351ab274ead"
+    }
+  ],
+  "ownership": "Qt build-only branding resource generation using exact existing pinned public tools. No scientific implementation, SDK or cache modification. Build helpers remain source-audited; reviewed tool exceptions are build-kind only.",
+  "lock_preservation": {
+    "all_locked_packages_versions_checksums_unchanged": true,
+    "package_records": 210,
+    "only_root_dependencies_added": [
+      "cc",
+      "qt-build-utils"
+    ]
+  },
+  "resource_freshness": {
+    "initial": {
+      "fingerprint": "apps/qt/target/release/.fingerprint/merlin-qt-82b3afbb7e031210/run-build-script-build-script-build.json",
+      "watch_count": 114,
+      "empty_watch_count": 0,
+      "only_existing_input_files_watched": true,
+      "branding_assets": {
+        "docs/images/logo/merlin-logo-dark-transparent.png": "17b93f84849e57891b0e1ecce5b08311d00768ed85e77c88dd589c9daea9e4cf",
+        "docs/images/logo/merlin-logo-dark.png": "24e8f49bb89cf2bb89330cc8068decf61418f39db9f7a393be13fb8cf78304b4",
+        "docs/images/logo/merlin-icon-dark.png": "c951e457d396d2bbbaab63e54da7b5c0381597d70d58f0c2cd26348e112d8234",
+        "docs/images/logo/merlin-icon-light.png": "1cf6d176efa57dbee3c4bbc6882ea77b0147060ef8432164496c4a56746bd3db",
+        "docs/images/logo/merlin-logo-light.png": "fcf220c6d6781ad4f6990caec4340a4a40fc185d56f1b265da97799d2a98ffa8"
+      },
+      "qrc_sha256": "fdfc44bdc1f243108b08f52d8e9e4bbf5abb9191c2782fc153857fb7e81b20fd",
+      "files": {
+        "apps/qt/target/release/.fingerprint/merlin-qt-82b3afbb7e031210/run-build-script-build-script-build.json": {
+          "sha256": "de09d96751e551d047aad6894057dad6f3b8e330710588189d1875a82a5c1727",
+          "mtime_ns": 1795397628346643499
+        },
+        "apps/qt/target/release/build/merlin-qt-82b3afbb7e031210/output": {
+          "sha256": "04c666ecab33f5dd18e67e8f041390ee1d5ad7916b9b32ca42e4e1f5fe3bf18b",
+          "mtime_ns": 1795397554647508846
+        },
+        "apps/qt/target/release/merlin-qt": {
+          "sha256": "b3b0b933c3332663596186305a1ca01daa772baefd263dd18072a3ae4b49a41c",
+          "mtime_ns": 1795397647227674826
+        },
+        "apps/qt/target/release/build/merlin-qt-82b3afbb7e031210/out/e4d80e95b3f4261a-branding.qrc.o": {
+          "sha256": "db546e0ff701a732c00ce4a07ab27dbbc2b6f3ce86ce1b581876b50285d7ec36",
+          "mtime_ns": 1795397566297531500
+        },
+        "apps/qt/target/release/build/merlin-qt-82b3afbb7e031210/out/0b2a87f5d45d1b0d-Merlin_Workbench_plugin_init.o": {
+          "sha256": "0e0607329c0da516b0e8acfa84996c6109f6d7a4afe00ac89892a3ae5a7a7ec0",
+          "mtime_ns": 1795397576724551324
+        },
+        "apps/qt/target/release/build/merlin-qt-82b3afbb7e031210/out/a2a94c60a619b9e4-merlin-qt.o": {
+          "sha256": "01a1934e8a33ee7596ef3e2070ea854cbb1793120a3c925a2e406692e8d046bb",
+          "mtime_ns": 1795397599839593797
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.18880476799677126,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.16059623200271744,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.13181253700167872,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 98.22717079600261,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.20671057999425102,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      }
+    ],
+    "noop_and_ignored_output_preserved_exact_files": true,
+    "after_real_input": {
+      "fingerprint": "apps/qt/target/release/.fingerprint/merlin-qt-82b3afbb7e031210/run-build-script-build-script-build.json",
+      "watch_count": 114,
+      "empty_watch_count": 0,
+      "only_existing_input_files_watched": true,
+      "branding_assets": {
+        "docs/images/logo/merlin-logo-dark-transparent.png": "17b93f84849e57891b0e1ecce5b08311d00768ed85e77c88dd589c9daea9e4cf",
+        "docs/images/logo/merlin-logo-dark.png": "24e8f49bb89cf2bb89330cc8068decf61418f39db9f7a393be13fb8cf78304b4",
+        "docs/images/logo/merlin-icon-dark.png": "c951e457d396d2bbbaab63e54da7b5c0381597d70d58f0c2cd26348e112d8234",
+        "docs/images/logo/merlin-icon-light.png": "1cf6d176efa57dbee3c4bbc6882ea77b0147060ef8432164496c4a56746bd3db",
+        "docs/images/logo/merlin-logo-light.png": "fcf220c6d6781ad4f6990caec4340a4a40fc185d56f1b265da97799d2a98ffa8"
+      },
+      "qrc_sha256": "fdfc44bdc1f243108b08f52d8e9e4bbf5abb9191c2782fc153857fb7e81b20fd",
+      "files": {
+        "apps/qt/target/release/.fingerprint/merlin-qt-82b3afbb7e031210/run-build-script-build-script-build.json": {
+          "sha256": "de09d96751e551d047aad6894057dad6f3b8e330710588189d1875a82a5c1727",
+          "mtime_ns": 1795397736073807088
+        },
+        "apps/qt/target/release/build/merlin-qt-82b3afbb7e031210/output": {
+          "sha256": "cc2286e29a8e17c257886578c025c3de201e8a1bd20d01370272cfea5a0f1b06",
+          "mtime_ns": 1795397659057693877
+        },
+        "apps/qt/target/release/merlin-qt": {
+          "sha256": "7bb1e6a1d9e36c892dea53c915d4047b9d564cf6b0efee73d04e6b828c4fa3c6",
+          "mtime_ns": 1795397756824834627
+        },
+        "apps/qt/target/release/build/merlin-qt-82b3afbb7e031210/out/e4d80e95b3f4261a-branding.qrc.o": {
+          "sha256": "db546e0ff701a732c00ce4a07ab27dbbc2b6f3ce86ce1b581876b50285d7ec36",
+          "mtime_ns": 1795397669557710395
+        },
+        "apps/qt/target/release/build/merlin-qt-82b3afbb7e031210/out/0b2a87f5d45d1b0d-Merlin_Workbench_plugin_init.o": {
+          "sha256": "0e0607329c0da516b0e8acfa84996c6109f6d7a4afe00ac89892a3ae5a7a7ec0",
+          "mtime_ns": 1795397681867729303
+        },
+        "apps/qt/target/release/build/merlin-qt-82b3afbb7e031210/out/a2a94c60a619b9e4-merlin-qt.o": {
+          "sha256": "8b756ae529073c81760a462679548a4016f21a24f41477eb56203eb00dd942c9",
+          "mtime_ns": 1795397703341761160
+        }
+      }
+    },
+    "real_input_change_triggered_build": true
+  },
+  "native": {
+    "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+    "sha256": "7bb1e6a1d9e36c892dea53c915d4047b9d564cf6b0efee73d04e6b828c4fa3c6",
+    "display": ":0",
+    "display_dimensions": [
+      "dimensions:    1280x800 pixels (338x211 millimeters)"
+    ],
+    "qt_sdk_version": "6.8.3",
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03729321299761068,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/multi-rxmer/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.04727700298826676,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.6380877810006496,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03544298899942078,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--smoke-test"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.904686011999729,
+        "stdout": "MERLIN_QT_STYLE=Fusion\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--smoke-test",
+          "--workbench",
+          "examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.0953590459976112,
+        "stdout": "MERLIN_QT_STYLE=Fusion\n",
+        "stderr": ""
+      }
+    ]
+  },
+  "cargo_checks": {
+    "ds-01-resource-cache-release": {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "build",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--release",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 93.80054609700164,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      }
+    },
+    "ds-01-resource-cache-clippy": {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 69.18727739500173,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      }
+    },
+    "ds-01-resource-cache-format-final": {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "fmt",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.44364081700041424,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      }
+    }
+  },
+  "boundary": {
+    "passed": 20,
+    "guard": {
+      "errors": [],
+      "scientific_dependencies": 3,
+      "frozen_legacy_files": 38,
+      "final": false
+    },
+    "initial_snapshot_unchanged": true,
+    "current_record_unchanged": true
+  },
+  "linkage": {
+    "command": "nm -C apps/qt/target/release/merlin-qt",
+    "retained_symbols": [
+      "qInitResources_branding_qrc()",
+      "qCleanupResources_branding_qrc()"
+    ]
+  },
+  "limitations": [
+    "No backend, installed Python or QML suite repeated for a build-only change; previous focused acceptance retained.",
+    "No fresh extracted source-package build, Windows runtime or installed lifecycle executed. New build helper is unignored and included as owned source.",
+    "DS-01 still has 38 frozen scientific files and three direct scientific dependencies; final numeric audit and unified runtime acceptance remain pending."
+  ],
+  "local_evidence": [
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-resource-cache-before.json",
+      "sha256": "c4288cf6caf40cba2802f7a6841784466decc57c71c6e946eb91157c7c0834ab"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-resource-cache-freshness.json",
+      "sha256": "109b7a5508977a177d101f8d7266b59b5183201c57a4318d0f86c79aa9cc8f2e"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-resource-cache-native-results.json",
+      "sha256": "e38756033cf3ce6e89acfd415a7c36851c18c8e5c2f8a106fe55c37fb3e3688e"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-resource-cache-boundary-tests-final.log",
+      "sha256": "fffd92931208eb2441466b09655e41a251844599b5145d13df7bd5b8f98110ad"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-resource-cache-boundary-final.log",
+      "sha256": "c569effbbc57676d557e3f0244cc71c51b5a176069edd4d7ec368c4adf5147ad"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-resource-cache-clippy.log",
+      "sha256": "5780d733f87829f17221c336c4576e9560a3943994de6f2e245ffe5b27f1c1e5"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-resource-cache-release.log",
+      "sha256": "599382a384b94fbd75d10ea899165e1f7b20e9c24835e50541c85dfe94dad998"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-resource-cache-format-final.json",
+      "sha256": "a7c357f58f19583bea4f87cb19278335d7e64a1a3a3032fd9380ce2802a14259"
+    }
+  ]
+}
