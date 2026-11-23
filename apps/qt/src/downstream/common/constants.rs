@@ -240,3 +240,43 @@ pub(crate) const DESIGNER_AXIS_PADDING_FRACTION: f64 = 0.1;
 pub(crate) const DESIGNER_MIN_AXIS_PADDING_DB: f64 = 1.0;
 /// Vertical drawing tick intervals; independent of capture count and recipe scope.
 pub(crate) const DESIGNER_METRIC_TICK_INTERVALS: u32 = 4;
+
+/// Existing receiver selector message ceiling; independent of response/editor documents.
+pub(crate) const MAX_RECEIVER_SELECTION_DOCUMENT_BYTES: usize = 4096;
+/// Existing UI run selector sentinel; not an open physical-bin or source-profile filter.
+pub(crate) const LATEST_RECEIVER_RUN_SELECTOR: i32 = -1;
+/// Highest source-catalog byte identity exposed by the history selector, not run admission.
+pub(crate) const MAX_RECEIVER_SOURCE_PROFILE_SELECTOR: i32 = u8::MAX as i32;
+/// Independent wire-profile-filter sentinel; it does not select the latest captured run.
+pub(crate) const ANY_RECEIVER_WIRE_PROFILE_SELECTOR: i32 = -1;
+/// Existing wire-byte filter envelope; recognized filters need not be implemented transports.
+pub(crate) const MAX_RECEIVER_WIRE_PROFILE_SELECTOR: i32 = u8::MAX as i32;
+/// Existing open temporal bound; independent of the equal-valued physical-bin sentinel.
+pub(crate) const OPEN_RECEIVER_SYMBOL_SELECTOR: i64 = -1;
+/// Existing inclusive UI channel-symbol selector ceiling, not an API/runtime domain limit.
+pub(crate) const MAX_RECEIVER_SELECTION_SYMBOL_INDEX: i64 = 1_000_000;
+/// Payload signal selector in the existing receiver widget protocol.
+pub(crate) const RECEIVER_PAYLOAD_SIGNAL: usize = 0;
+/// NCP selector; unrelated to payload profile IDs or sample values.
+pub(crate) const RECEIVER_NCP_SIGNAL: usize = 1;
+/// PLC selector; its part field distinguishes data from preamble.
+pub(crate) const RECEIVER_PLC_SIGNAL: usize = 2;
+/// Continuous-pilot selector in the receiver widget protocol.
+pub(crate) const RECEIVER_CONTINUOUS_PILOT_SIGNAL: usize = 3;
+/// Scattered-pilot selector and final admitted signal index.
+pub(crate) const RECEIVER_SCATTERED_PILOT_SIGNAL: usize = 4;
+/// Existing equalized-view widget default; not a scientific correction mode.
+pub(crate) const RECEIVER_EQUALIZED_VIEW: usize = 1;
+/// Final existing paired-view selector; both raw/corrected data always come from Rust.
+pub(crate) const RECEIVER_PAIRED_VIEW: usize = 2;
+/// PLC data subview, unrelated to the equal-valued payload signal selector.
+pub(crate) const RECEIVER_PLC_DATA_PART: usize = 0;
+/// PLC preamble subview and final admitted part index.
+pub(crate) const RECEIVER_PLC_PREAMBLE_PART: usize = 1;
+/// Existing unit-sized receiver scatter drawing floor, independent of channel/TX floors.
+pub(crate) const RECEIVER_SCATTER_MIN_EXTENT: f64 = 1.0;
+/// Legacy likelihood histogram label midpoint within an existing backend-reported interval.
+pub(crate) const RECEIVER_LLR_BIN_CENTRE_FRACTION: f64 = 0.5;
+
+/// Legacy modulation-order sentinel selecting the first backend-reported available order.
+pub(crate) const AUTO_RECEIVER_ORDER_SELECTOR: u16 = 0;

@@ -9,13 +9,11 @@ license = "GPL-3.0-only"
 
 [dependencies]
 merlin = { path = "../../crates/merlin", default-features = false, features = ["native-input"] }
-pnm-input = { path = "../../crates/pnm-input" }
 base64 = "=0.22.1"
 cxx = "=1.0.195"
 cxx-qt = "=0.7.3"
 cxx-qt-lib = { version = "=0.7.3", features = ["qt_gui", "qt_qml"] }
 
-docsis-ofdm-fec = { path = "../../crates/ofdm", default-features = false, features = ["pnm-input", "source-input", "simulation"] }
 serde_json = "=1.0.145"
 serde = { version = "=1.0.228", features = ["derive"] }
 sha2 = "=0.10.9"
@@ -23,7 +21,6 @@ url = "=2.5.8"
 log = "=0.4.35"
 env_logger = { version = "=0.11.11", default-features = false }
 ureq = { version = "=2.12.1", default-features = false, features = ["tls"] }
-pnm = { git = "https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git", rev = "5fbd5561f3e06b73486546b5ffa520279080a5eb", version = "=0.3.6" }
 
 [build-dependencies]
 cc = "=1.11.1"

@@ -84,7 +84,8 @@ fn mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance() {
     assert_eq!(result.job.summary.comparison.bit_errors, 0);
     let profile = inputs.profile.clone().unwrap();
     crate::downstream::instruments::receiver::qam_history::begin(std::slice::from_ref(&profile));
-    crate::downstream::instruments::receiver::qam_history::retain(profile.profile_id, &result);
+    crate::downstream::instruments::receiver::qam_history::retain(profile.profile_id, &result)
+        .unwrap();
     let snapshot =
         crate::downstream::instruments::receiver::qam_history::get(i32::from(profile.profile_id))
             .unwrap();
@@ -195,12 +196,26 @@ fn channel193_rxmer_controls_tx_reference_mer_while_nearest_points_are_optimisti
             crate::downstream::instruments::receiver::selection::reference_mer(&selected, true);
         let playback = settings.settings().playback.as_ref().unwrap();
         let residual = result.backend().inputs().measurements.at(0);
-        let expected_error = selected
-            .cells
+        // Preserve the independent complete-population noise oracle: the UI page is
+        // bounded, while public report metadata still supplies every original cell.
+        let expected_error = result
+            .backend()
+            .report()
+            .constellation
+            .as_ref()
+            .unwrap()
+            .pairs
             .iter()
+            .filter(|cell| {
+                Some(cell.modulation_order)
+                    == selected.metadata["selected_order"]
+                        .as_u64()
+                        .map(|order| order as u16)
+            })
             .map(|cell| {
-                residual.normalized_power
-                    [usize::from(cell.bin - playback.profile.key.grid.first_subcarrier_index)]
+                residual.normalized_power[usize::from(
+                    cell.physical_bin - playback.profile.key.grid.first_subcarrier_index,
+                )]
                 .unwrap()
             })
             .sum::<f64>();
@@ -811,9 +826,10 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
     for id in 0..4 {
         let snapshot = crate::downstream::instruments::receiver::qam_history::get(id).unwrap();
         assert_eq!(i32::from(snapshot.id), id);
-        let data = snapshot.data.as_ref().unwrap();
-        assert!(data.pairs.len() <= 8192 && data.ncp_pairs.len() <= 1024);
-        assert!(data.pairs.iter().all(|pair| pair.reference_iq.is_some()));
+        let info = snapshot.backend.info();
+        assert!(info.payload_cells <= 8192 && info.ncp_cells <= 1024);
+        let cells = snapshot.backend.qam(Default::default()).unwrap();
+        assert!(cells.cells.iter().all(|cell| cell.reference_iq.is_some()));
     }
     assert_eq!(inputs.profile.as_ref().unwrap().profile_id, 0);
     assert_eq!(

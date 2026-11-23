@@ -3,18 +3,16 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Presentation queries over shared immutable response, likelihood and decoder results.
-use super::selection::{archive, select_run, Query};
+use super::selection::{archive, Query};
 use crate::downstream::common::constants::{
     INITIAL_RESPONSE_VELOCITY_PERCENT, MAX_RESPONSE_SELECTOR_BYTES, MAX_RESPONSE_VELOCITY_PERCENT,
-    MIN_RESPONSE_VELOCITY_PERCENT, RESPONSE_COMPARISON_SOURCE, RESPONSE_CONFIGURED_SOURCE,
-    RESPONSE_ESTIMATED_SOURCE, RESPONSE_GAIN_VIEW, RESPONSE_IMPULSE_VIEW,
-    RESPONSE_MAX_SNAPSHOT_INDEX, RESPONSE_PHASE_VIEW, RESPONSE_REAL_VIEW,
+    MIN_RESPONSE_VELOCITY_PERCENT, RECEIVER_LLR_BIN_CENTRE_FRACTION, RESPONSE_COMPARISON_SOURCE,
+    RESPONSE_CONFIGURED_SOURCE, RESPONSE_ESTIMATED_SOURCE, RESPONSE_GAIN_VIEW,
+    RESPONSE_IMPULSE_VIEW, RESPONSE_MAX_SNAPSHOT_INDEX, RESPONSE_PHASE_VIEW, RESPONSE_REAL_VIEW,
 };
 use crate::downstream::simulation::closed_loop::latest;
 use crate::shared::presentation::constants::{HERTZ_PER_MEGAHERTZ, PERCENT_PER_UNIT};
-use docsis_ofdm_fec::signal_processing::{
-    modulation::slice_symbol, receiver::diagnostics::llr_statistics,
-};
+use merlin::downstream::{ApiError, ApiResult, FullLoopDecoderSoftView, FullLoopSoftValueView};
 use merlin::downstream::{ErrorCode, FullLoopResponseQuery, FullLoopResponseSource, FullLoopStage};
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -261,7 +259,7 @@ pub(crate) fn slicer(document: &str, decoder_input: bool) -> Result<Value, Strin
     let query = Query::parse(document)?;
     let result = latest().ok_or("Run the closed loop to inspect decisions and LLRs.")?;
     let archived = match archive(&query, &result) {
-        Ok(snapshot) => snapshot,
+        Ok(value) => value,
         Err(reason) => {
             return Ok(
                 json!({"available":false,"rows":[],"reason":reason,"diagnostic":crate::downstream::help::static_diagnostic("QamRunUnavailable")}),
@@ -269,58 +267,85 @@ pub(crate) fn slicer(document: &str, decoder_input: bool) -> Result<Value, Strin
         }
     };
     if decoder_input {
-        let values = archived
-            .as_ref()
-            .map_or(&result.observations.decoder_llrs, |snapshot| {
-                &snapshot.decoder_llrs
-            });
-        let statistics = llr_statistics(values).map_err(|e| e.to_string())?;
-        let x: Vec<_> = (0..statistics.histogram.len())
-            .map(|i| {
-                -statistics.histogram_limit
-                    + 2.0 * statistics.histogram_limit * (i as f64 + 0.5)
-                        / statistics.histogram.len() as f64
-            })
-            .collect();
-        let y: Vec<_> = statistics
-            .histogram
-            .iter()
-            .map(|v| Some(*v as f64))
-            .collect();
+        let observed = match decoder_view(&result, archived.as_deref()) {
+            Ok(observed) => observed,
+            Err(cause) if cause.code() == ErrorCode::MissingCoverage => {
+                return Ok(
+                    json!({"available":false,"rows":[],"confidence":{},"llr":{},"reason":"No payload LDPC-input LLRs retained for this run."}),
+                )
+            }
+            Err(cause) => return Err(cause.to_string()),
+        };
+        let count = observed.view.statistics.count;
+        let confidence = super::soft_display::confidence(&observed.view)?;
+        let histogram = soft_histogram(&observed.view);
         return Ok(
-            json!({"available":!values.is_empty(),"rows":[],"confidence":super::soft_display::confidence(values),"llr":statistics,"histogram":curve(&x,&y,"Retained LLR count","LLR · log P(0)/P(1)"),"reason":"No payload LDPC-input LLRs retained for this run.","detail":format!("Actual rx.bits.inverse · first retained word {:?} · {} coding-order LLRs. Cell/window selectors apply to the cell view, not this separately retained codeword.",archived.as_ref().map_or(result.observations.decoder_word,|snapshot|snapshot.decoder_word),values.len())}),
+            json!({"available":count>0,"rows":[],"confidence":confidence,"llr":observed.view.statistics,"histogram":histogram,"reason":"No payload LDPC-input LLRs retained for this run.","detail":format!("Actual rx.bits.inverse · first retained word {:?} · {count} coding-order LLRs. Cell/window selectors apply to the cell view, not this separately retained codeword.",observed.context.codeword_index)}),
         );
     }
-    let selection = select_run(&result, archived.as_deref(), &query)?;
-    let mut rows = Vec::new();
-    for cell in selection.cells.iter().take(128) {
-        let point = [cell.eq[0] / cell.amplitude, cell.eq[1] / cell.amplitude];
-        let decision = slice_symbol(cell.order, point).map_err(|e| e.to_string())?;
-        rows.push(json!({"bin":cell.bin,"symbol":cell.symbol,"source_symbol":cell.source,"order":cell.order,"iq":cell.eq,"normalized_iq":point,"neighborhood":super::soft_display::neighborhood(usize::from(cell.order),usize::from(decision.label)),"label":decision.label,"reference":[decision.reference_iq[0]*cell.amplitude,decision.reference_iq[1]*cell.amplitude],"distance_squared":decision.distance_squared*cell.amplitude*cell.amplitude,"llrs":cell.llrs}));
+    let request = query.backend(0)?;
+    let decisions = match archived.as_deref() {
+        Some(snapshot) => snapshot.backend.cell_decisions(request.clone()),
+        None => result.backend().cell_decisions(request.clone()),
     }
-    let soft: Vec<_> = selection
-        .cells
-        .iter()
-        .take(2048)
-        .flat_map(|p| p.llrs.iter().copied())
-        .take(32768)
-        .collect();
-    let statistics = llr_statistics(&soft).map_err(|e| e.to_string())?;
+    .map_err(|cause| cause.to_string())?;
+    let soft = match archived.as_deref() {
+        Some(snapshot) => snapshot.backend.cell_soft_view(request),
+        None => result.backend().cell_soft_view(request),
+    }
+    .map_err(|cause| cause.to_string())?;
+    let rows:Vec<_>=decisions.rows.iter().map(|row| {
+        let cell=&row.cell;let decision=&row.decision;
+        json!({"bin":cell.physical_bin,"symbol":cell.channel_symbol_index,"source_symbol":cell.source_symbol_index,"order":cell.modulation_order,"iq":cell.after_equalization,"normalized_iq":decision.normalized_iq,"neighborhood":super::soft_display::neighborhood(usize::from(cell.modulation_order),usize::from(decision.normalized.label)),"label":decision.normalized.label,"reference":decision.reference_iq,"distance_squared":decision.distance_squared,"llrs":cell.llrs})
+    }).collect();
+    let confidence = super::soft_display::confidence(&soft.view)?;
+    let histogram = soft_histogram(&soft.view);
+    Ok(
+        json!({"available":!rows.is_empty(),"rows":rows,"confidence":confidence,"llr":soft.view.statistics,"histogram":histogram,"reason":"No retained received cells match the selection.","detail":format!("{} selected cells · first128 physical nearest-symbol decisions. Cell LLRs are actual post-descrambling receiver values (first2048 cells); labels are pre-descrambling physical decisions and do not feed FEC. {}",decisions.selection.selected_cells,if soft.view.statistics.count==0 {"This protected stream has no retained soft boundary; no LLRs are synthesized."} else {"Positive LLR favors zero; negative favors one."})}),
+    )
+}
+fn decoder_view(
+    result: &crate::downstream::simulation::closed_loop::ResultData,
+    snapshot: Option<&super::qam_history::Snapshot>,
+) -> ApiResult<FullLoopDecoderSoftView> {
+    if let Some(snapshot) = snapshot {
+        return snapshot.backend.decoder_soft_view();
+    }
+    if let Some(info) = result
+        .backend()
+        .stage_inventory()
+        .into_iter()
+        .find(|info| info.stage == FullLoopStage::PayloadLdpcInput)
+    {
+        for index in 0..info.snapshots {
+            let view = result.backend().decoder_soft_view(index)?;
+            if view.view.statistics.count > 0 {
+                return Ok(view);
+            }
+        }
+    }
+    Err(ApiError::new(
+        ErrorCode::MissingCoverage,
+        "No nonempty payload decoder observation retained",
+    ))
+}
+fn soft_histogram(view: &FullLoopSoftValueView) -> Value {
+    let statistics = &view.statistics;
+    // Preserve the legacy drawing label midpoint; counts/interval extent come from Rust.
     let x: Vec<_> = (0..statistics.histogram.len())
-        .map(|i| {
+        .map(|index| {
             -statistics.histogram_limit
-                + 2.0 * statistics.histogram_limit * (i as f64 + 0.5)
+                + (statistics.histogram_limit + statistics.histogram_limit)
+                    * (index as f64 + RECEIVER_LLR_BIN_CENTRE_FRACTION)
                     / statistics.histogram.len() as f64
         })
         .collect();
     let y: Vec<_> = statistics
         .histogram
         .iter()
-        .map(|v| Some(*v as f64))
+        .map(|count| Some(*count as f64))
         .collect();
-    Ok(
-        json!({"available":!rows.is_empty(),"rows":rows,"confidence":super::soft_display::confidence(&soft),"llr":statistics,"histogram":curve(&x,&y,"Retained LLR count","LLR · log P(0)/P(1)"),"reason":"No retained received cells match the selection.","detail":format!("{} selected cells · first128 physical nearest-symbol decisions. Cell LLRs are actual post-descrambling receiver values (first2048 cells); labels are pre-descrambling physical decisions and do not feed FEC. {}",selection.cells.len(),if soft.is_empty(){"This protected stream has no retained soft boundary; no LLRs are synthesized."}else{"Positive LLR favors zero; negative favors one."})}),
-    )
+    curve(&x, &y, "Retained LLR count", "LLR · log P(0)/P(1)")
 }
 /// Returns genuine bounded decoder counters and completed word outcomes from the shared job.
 /// # Returns

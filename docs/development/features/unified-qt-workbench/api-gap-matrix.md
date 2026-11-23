@@ -36,9 +36,11 @@ is an implemented facade re-export of the adapter-owned type, never an implement
 depends on both PHYs; enabling it is not a claim of direction-only decoding.
 Base facade direction features and independent PHY usability remain test gates.
 
-Qt's direct `docsis-ofdm-fec`, `pnm` and `pnm-input` scientific admissions are
-migration debt, not final architecture exceptions. Final scientific data access
-uses the facade. CXX-Qt/CXX, Qt native style/pickers, serde transport, logging,
+The [completed downstream migration](validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit)
+removes Qt's direct `docsis-ofdm-fec`, `pnm` and `pnm-input` dependencies and all
+frozen scientific sites. Scientific data access uses the facade. Earlier table
+entries below retain their historical adoption stage; later upstream Qt adoption
+remains separately pending. CXX-Qt/CXX, Qt native style/pickers, serde transport, logging,
 update HTTP, package handoff and presentation utilities remain narrowly scoped
 infrastructure dependencies. Their code cannot decode or simulate a PHY as an
 infrastructure workaround.

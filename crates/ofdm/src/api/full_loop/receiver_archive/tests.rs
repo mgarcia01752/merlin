@@ -104,6 +104,13 @@ fn all_selected_mer_uses_errors_beyond_the_display_page() {
     let view = history.qam(Default::default()).unwrap();
     assert_eq!(view.cells.len(), 2048);
     assert_eq!(view.selection.selected_cells, 4096);
+    // Preserve the former Qt nearest-point and perfect-reference scientific oracles.
+    assert_eq!(view.raw_nearest_mer.sample_count, 4096);
+    assert!((view.raw_nearest_mer.mer_db.unwrap() - 23.010299956639813).abs() < 1e-9);
+    assert_eq!(
+        json(view.equalized_nearest_mer)["calculation_status"],
+        "perfect_reference"
+    );
     // Independent 1/(0.1^2/2) and 1/(0.1^2) power-ratio anchors in dB.
     assert!(
         (view.raw_tx_reference_mer.unwrap().mer_db.unwrap() - 23.010299956639813).abs() < 1e-10
@@ -115,6 +122,18 @@ fn all_selected_mer_uses_errors_beyond_the_display_page() {
         })
         .unwrap();
     assert!((tail.raw_tx_reference_mer.unwrap().mer_db.unwrap() - 20.0).abs() < 1e-10);
+    assert!((tail.raw_nearest_mer.mer_db.unwrap() - 20.0).abs() < 1e-9);
+    let empty = history
+        .qam(FullLoopCellQuery {
+            profile_id: Some(255),
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!(empty.raw_nearest_mer.sample_count, 0);
+    assert_eq!(
+        json(empty.raw_nearest_mer)["calculation_status"],
+        "no_samples"
+    );
     let expected = cells::queries::qam_from_reports(
         Some(&source),
         None,

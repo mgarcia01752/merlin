@@ -2860,3 +2860,54 @@ complete workspace/native/CLI/package suite or hosted-platform pass is claimed.
 Three frozen Qt files/12 sites/three direct scientific dependencies remain.
 Receiver adoption, dependency removal, DS Level2/downstream Level3, prepared-agent
 integration and final numeric/common-constant acceptance remain pending.
+
+## UIU-DS-01 receiver public API and dependency exit
+
+[Design](design.md#uiu-ds-01-receiver-consumer-and-dependency-exit),
+[machine evidence](receiver-consumer-evidence.json),
+[architecture](../../../architecture.md#unified-qt-source-ownership) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) own the final downstream consumer
+batch. REQ-UIU-02/03/07/08/09/16/17/18/19/20/24/27 retain their existing contracts.
+
+Qt now queries live/detached public QAM, physical decisions and cell/decoder soft
+views. It preserves all-selected metrics independently of bounded display pages,
+exact requested-run isolation, received reference planes and missing decoder
+coverage. Detached history preserves finite counts and releases full job/input/
+stage owners. Archive failure preserves completed FEC/performance. Original
+scientific oracles remain in their backend owners; Qt retains independent actual
+worker/noise assertions and verifies selector/formatting/ownership compatibility.
+
+The final boundary guard passes with **zero direct scientific dependencies and
+zero frozen legacy files/sites**. Original frozen inventory, relocation/review and
+retirement history remain preserved. The manifest/lock remove only direct Qt
+scientific dependency entries; existing transitive source pins remain unchanged.
+
+Complete Qt Rust acceptance passes **105 cases**, and all integrated QML checks
+pass **91 cases**, with no failures or skips. Existing focus-state QML warnings
+are recorded separately from test outcomes. The first locked invocation stopped
+before test discovery because the manifest-only removal had not updated the Qt
+package's lock dependency list; the corrected locked full run passes.
+
+Complete Rust milestone execution passes 784 workspace cases, four fixture
+generator cases, 14 API example processes, 139 analysis-only cases and doctest
+phases. Three existing opt-in performance benchmarks are ignored, not passed.
+Workspace and Qt warnings-denied Clippy, formatting, 20 boundary cases, 25 package
+regression cases, optimized Qt build and six native XCB launch/Open probes pass.
+Analysis/example-only builds retain unused-helper warnings for
+`minimum_observation_milliseconds_after` and `PayloadRecovery::from_counters`;
+no warning suppression or production-source change is made by this consumer unit.
+
+Complete installed-native acceptance passes **179 cases**, without failures or
+skips, against fresh separate Rust reference processes. The exact accepted
+receiver-archive wheel is reused: production Rust/API/binding/package bytes are
+unchanged; only backend test assertions change. Native imports and exported
+operations remain compatible. No wheel rebuild is necessary for Qt adoption.
+
+This accepts UIU-DS-01 Level 2 and the downstream Level 3 milestone after final
+metadata reconciliation. The rebuilt optimized executable and six native probes
+use the same recorded SHA. No schema, scientific algorithm, resource registration
+or user-facing layout changes. New screenshots and native installer execution
+are not required by this consumer change; package contract regressions pass.
+Prepared session/shell/upstream work is not yet integrated or accepted. Continue
+in dependency order with UIU-SESSION-01; unified runtime/final numeric acceptance
+and Windows/hosted/installed lifecycle evidence remain separate.

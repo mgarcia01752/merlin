@@ -2,29 +2,31 @@
  * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: GPL-3.0-only
  */
-//! Bounded immutable selection of actual matched receiver cells.
+//! Legacy selector transport and chart labels over authoritative live/archive public queries.
+use crate::downstream::common::constants::*;
 use crate::downstream::simulation::closed_loop::{latest, ResultData};
-use docsis_ofdm_fec::{signal_processing::modulation::mer::MerCalculator, types::IqPair};
+use crate::shared::presentation::constants::{
+    MAX_SCATTER_PLOT_POINTS, SCATTER_AXIS_CENTER, SCATTER_HEADROOM_RATIO,
+};
+use merlin::downstream::{
+    FullLoopCell, FullLoopCellQuery, FullLoopCellStream, FullLoopQamView, ReceiverMode,
+    SubcarrierIndex,
+};
 use serde::Deserialize;
 use serde_json::{json, Value};
-use std::collections::BTreeSet;
 
-/// Names actual correction modes in instrument summaries without exposing Rust identifiers.
+/// Names the actual backend correction mode without deriving receiver behavior.
 /// # Arguments
-/// * `mode` - Actual frozen correction mode for the selected run.
+/// * `mode` - Recorded public correction mode for this independent run.
 /// # Returns
-/// A short display label; no simulation state changes.
-pub(crate) fn correction_name(
-    mode: docsis_ofdm_fec::signal_processing::receiver::channel_estimation::ReceiverMode,
-) -> &'static str {
-    use docsis_ofdm_fec::signal_processing::receiver::channel_estimation::ReceiverMode;
+/// Existing short user-facing label; no source or simulation state changes.
+pub(crate) fn correction_name(mode: ReceiverMode) -> &'static str {
     match mode {
         ReceiverMode::SuppliedChannel => "Supplied CM channel estimation (CMCE)",
         ReceiverMode::PilotEstimated => "Pilot estimation (PE)",
         ReceiverMode::MerlinChannelEstimated => "MERLIN Channel Estimation (MCE)",
     }
 }
-
 #[derive(Clone, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub(crate) struct Query {
@@ -40,48 +42,64 @@ pub(crate) struct Query {
     pub last_symbol: i64,
 }
 impl Default for Query {
+    /// Preserves existing latest-run, payload, equalized and open-coordinate widget selections.
+    /// # Returns
+    /// Passive application transport defaults; no scientific query is executed.
     fn default() -> Self {
         Self {
-            run_profile: -1,
-            signal: 0,
-            view: 1,
-            part: 0,
-            profile: -1,
-            order: 0,
-            first_bin: -1,
-            last_bin: -1,
-            first_symbol: -1,
-            last_symbol: -1,
+            run_profile: LATEST_RECEIVER_RUN_SELECTOR,
+            signal: RECEIVER_PAYLOAD_SIGNAL,
+            view: RECEIVER_EQUALIZED_VIEW,
+            part: RECEIVER_PLC_DATA_PART,
+            profile: ANY_RECEIVER_WIRE_PROFILE_SELECTOR,
+            order: AUTO_RECEIVER_ORDER_SELECTOR,
+            first_bin: OPEN_PHYSICAL_BIN_SELECTOR,
+            last_bin: OPEN_PHYSICAL_BIN_SELECTOR,
+            first_symbol: OPEN_RECEIVER_SYMBOL_SELECTOR,
+            last_symbol: OPEN_RECEIVER_SYMBOL_SELECTOR,
         }
     }
 }
+fn valid_bin(value: i32) -> bool {
+    value == OPEN_PHYSICAL_BIN_SELECTOR
+        || value
+            .try_into()
+            .ok()
+            .and_then(|index| SubcarrierIndex::new(index).ok())
+            .is_some()
+}
 impl Query {
-    /// Parses one small viewport selection without accepting source arrays or paths.
+    /// Parses bounded legacy widget selectors while preserving their independent UI policies.
     /// # Arguments
-    /// * `document` - At most 4096 bytes of selector JSON.
+    /// * `document` - At most4096 bytes, with known fields and original physical/channel-symbol coordinates.
     /// # Returns
-    /// Validated selector values; -1 bounds mean all retained coordinates.
+    /// Passive selectors; physical-bin admission reuses the public typed domain owner.
     /// # Errors
-    /// Rejects unknown fields, reversed ranges or unsupported indices.
+    /// Rejects unknown fields, transport limits, unsupported UI indices or reversed ranges.
     pub(crate) fn parse(document: &str) -> Result<Self, String> {
-        if document.len() > 4096 {
+        if document.len() > MAX_RECEIVER_SELECTION_DOCUMENT_BYTES {
             return Err("Receiver selection exceeds bounds.".into());
         }
-        let query: Self = serde_json::from_str(document).map_err(|e| e.to_string())?;
-        if !(-1..=255).contains(&query.run_profile)
-            || query.signal > 4
-            || query.view > 2
-            || query.part > 1
-            || query.profile < -1
-            || query.profile > 255
-            || query.first_bin < -1
-            || query.last_bin < -1
-            || query.first_bin > 8191
-            || query.last_bin > 8191
-            || query.first_symbol < -1
-            || query.last_symbol < -1
-            || query.first_symbol > 1_000_000
-            || query.last_symbol > 1_000_000
+        let query: Self = serde_json::from_str(document).map_err(|cause| cause.to_string())?;
+        query.validate()?;
+        Ok(query)
+    }
+
+    fn validate(&self) -> Result<(), String> {
+        let query = self;
+        if !(LATEST_RECEIVER_RUN_SELECTOR..=MAX_RECEIVER_SOURCE_PROFILE_SELECTOR)
+            .contains(&query.run_profile)
+            || query.signal > RECEIVER_SCATTERED_PILOT_SIGNAL
+            || query.view > RECEIVER_PAIRED_VIEW
+            || query.part > RECEIVER_PLC_PREAMBLE_PART
+            || !(ANY_RECEIVER_WIRE_PROFILE_SELECTOR..=MAX_RECEIVER_WIRE_PROFILE_SELECTOR)
+                .contains(&query.profile)
+            || !valid_bin(query.first_bin)
+            || !valid_bin(query.last_bin)
+            || !(OPEN_RECEIVER_SYMBOL_SELECTOR..=MAX_RECEIVER_SELECTION_SYMBOL_INDEX)
+                .contains(&query.first_symbol)
+            || !(OPEN_RECEIVER_SYMBOL_SELECTOR..=MAX_RECEIVER_SELECTION_SYMBOL_INDEX)
+                .contains(&query.last_symbol)
             || (query.first_bin >= 0 && query.last_bin >= 0 && query.first_bin > query.last_bin)
             || (query.first_symbol >= 0
                 && query.last_symbol >= 0
@@ -89,134 +107,61 @@ impl Query {
         {
             return Err("Invalid receiver selector or reversed coordinate range.".into());
         }
-        Ok(query)
+        Ok(())
     }
-}
-pub(crate) struct Cell<'a> {
-    pub raw: &'a IqPair,
-    pub eq: &'a IqPair,
-    pub reference: Option<IqPair>,
-    pub llrs: &'a [f64],
-    pub bin: u16,
-    pub frequency: u32,
-    pub source: Option<u64>,
-    pub symbol: u64,
-    pub profile: Option<u8>,
-    pub order: u16,
-    pub amplitude: f64,
-}
-pub(crate) struct Selected<'a> {
-    pub cells: Vec<Cell<'a>>,
-    pub metadata: Value,
-}
-/// Selects only retained received roles, preserving matched bin/time identities.
-/// # Arguments
-/// * `result` - Shared immutable job result.
-/// * `query` - Validated signal and inclusive coordinate windows.
-/// # Returns
-/// Borrowed selected cells plus bounded available-selector metadata.
-/// # Errors
-/// Reports unsupported modulation/profile or no retained selected cells without stale samples.
-pub(crate) fn select<'a>(result: &'a ResultData, query: &Query) -> Result<Selected<'a>, String> {
-    select_streams(
-        result.job.constellation.as_ref(),
-        result.job.protected_constellation.as_ref(),
-        query,
-    )
-}
-fn select_streams<'a>(
-    data: Option<&'a docsis_ofdm_fec::simulation::channel::constellation::ConstellationResult>,
-    protected: Option<
-        &'a docsis_ofdm_fec::simulation::channel::protected_constellation::ProtectedConstellation,
-    >,
-    query: &Query,
-) -> Result<Selected<'a>, String> {
-    let mut cells = Vec::new();
-    if query.signal == 0 {
-        if let Some(data) = data {
-            cells.extend(data.pairs.iter().map(|p| Cell {
-                raw: &p.before_equalization,
-                eq: &p.after_equalization,
-                reference: p.reference_iq,
-                llrs: &p.llrs,
-                bin: p.physical_bin,
-                frequency: p.frequency_hz,
-                source: Some(p.source_symbol_index),
-                symbol: p.channel_symbol_index,
-                profile: Some(p.profile_id),
-                order: p.modulation_order,
-                amplitude: 1.0,
-            }));
-        }
-    } else if query.signal == 1 {
-        if let Some(data) = data {
-            cells.extend(data.ncp_pairs.iter().map(|p| Cell {
-                raw: &p.before_equalization,
-                eq: &p.after_equalization,
-                reference: p.reference_iq,
-                llrs: &p.llrs,
-                bin: p.physical_bin,
-                frequency: p.frequency_hz,
-                source: Some(p.source_symbol_index),
-                symbol: p.channel_symbol_index,
-                profile: None,
-                order: p.modulation_order,
-                amplitude: 1.0,
-            }));
-        }
-    } else if let Some(data) = protected {
-        let (stream, order, amplitude) = match query.signal {
-            2 if query.part == 0 => (&data.plc_data, 16, 1.0),
-            2 => (&data.plc_preamble, 2, 1.0),
-            3 => (&data.continuous_pilots, 2, 2.0),
-            _ => (&data.scattered_pilots, 2, 2.0),
+
+    /// Translates widget fields into the existing strict public cell query.
+    /// # Arguments
+    /// * `count` - Public operation row request; zero uses that operation's existing bound.
+    /// # Returns
+    /// Owned backend-admitted actual-role/coordinate selection, with no local filtering.
+    /// # Errors
+    /// Preserves public order, coordinate, work and transport admission failures.
+    pub(crate) fn backend(&self, count: usize) -> Result<FullLoopCellQuery, String> {
+        self.validate()?;
+        let stream = match self.signal {
+            RECEIVER_PAYLOAD_SIGNAL => FullLoopCellStream::Payload,
+            RECEIVER_NCP_SIGNAL => FullLoopCellStream::Ncp,
+            RECEIVER_PLC_SIGNAL if self.part == RECEIVER_PLC_DATA_PART => {
+                FullLoopCellStream::PlcData
+            }
+            RECEIVER_PLC_SIGNAL => FullLoopCellStream::PlcPreamble,
+            RECEIVER_CONTINUOUS_PILOT_SIGNAL => FullLoopCellStream::ContinuousPilots,
+            RECEIVER_SCATTERED_PILOT_SIGNAL => FullLoopCellStream::ScatteredPilots,
+            _ => return Err("Invalid received signal selection.".into()),
         };
-        cells.extend(stream.pairs.iter().map(|p| Cell {
-            raw: &p.before_equalization,
-            eq: &p.after_equalization,
-            reference: p.reference_iq,
-            llrs: &[],
-            bin: p.physical_bin,
-            frequency: p.frequency_hz,
-            source: None,
-            symbol: p.channel_symbol_index,
-            profile: None,
-            order,
-            amplitude,
-        }));
+        let query = FullLoopCellQuery {
+            stream,
+            profile_id: u8::try_from(self.profile).ok(),
+            modulation_order: (self.order != AUTO_RECEIVER_ORDER_SELECTOR).then_some(self.order),
+            first_bin: u16::try_from(self.first_bin).ok(),
+            last_bin: u16::try_from(self.last_bin).ok(),
+            first_symbol: u64::try_from(self.first_symbol).ok(),
+            last_symbol: u64::try_from(self.last_symbol).ok(),
+            start: 0,
+            count,
+        };
+        let bytes = serde_json::to_vec(&query).map_err(|cause| cause.to_string())?;
+        FullLoopCellQuery::from_json(&bytes).map_err(|cause| cause.to_string())
     }
-    let profiles: Vec<_> = cells
-        .iter()
-        .filter_map(|p| p.profile)
-        .collect::<BTreeSet<_>>()
-        .into_iter()
-        .collect();
-    let orders: Vec<_> = cells
-        .iter()
-        .filter(|p| query.profile < 0 || p.profile == Some(query.profile as u8))
-        .map(|p| p.order)
-        .collect::<BTreeSet<_>>()
-        .into_iter()
-        .collect();
-    let order = if query.order == 0 {
-        orders.first().copied().unwrap_or(0)
-    } else {
-        query.order
-    };
-    let metadata = json!({"profiles":profiles,"orders":orders,"selected_order":order,
-        "first_bin":cells.iter().map(|p|p.bin).min(),"last_bin":cells.iter().map(|p|p.bin).max(),
-        "first_symbol":cells.iter().map(|p|p.symbol).min(),"last_symbol":cells.iter().map(|p|p.symbol).max(),"retained":cells.len()});
-    cells.retain(|p| {
-        (query.profile < 0 || p.profile == Some(query.profile as u8))
-            && p.order == order
-            && (query.first_bin < 0 || i32::from(p.bin) >= query.first_bin)
-            && (query.last_bin < 0 || i32::from(p.bin) <= query.last_bin)
-            && (query.first_symbol < 0 || p.symbol >= query.first_symbol as u64)
-            && (query.last_symbol < 0 || p.symbol <= query.last_symbol as u64)
-    });
-    Ok(Selected { cells, metadata })
 }
-/// Borrows a requested archived run; latest keeps its full capture resolution.
+/// Bounded public observation plus existing rendering metadata; metrics are already computed.
+pub(crate) struct Selected {
+    pub cells: Vec<FullLoopCell>,
+    pub metadata: Value,
+    pub selected_count: usize,
+    raw_mer: Value,
+    equalized_mer: Value,
+    raw_reference_mer: Value,
+    equalized_reference_mer: Value,
+}
+/// Resolves explicit run routing; the current run retains its full public capture resolution.
+/// # Arguments
+/// * `query`, `result` - Application run selector and current immutable result.
+/// # Returns
+/// None for latest/current; otherwise exactly the requested detached history.
+/// # Errors
+/// Missing/unstarted runs reject without silently substituting the latest observations.
 pub(crate) fn archive(
     query: &Query,
     result: &ResultData,
@@ -232,115 +177,150 @@ pub(crate) fn archive(
     }
     super::qam_history::get(query.run_profile).map(Some)
 }
-/// Selects original coordinates from one identified run, never pooling independent runs.
-pub(crate) fn select_run<'a>(
-    result: &'a ResultData,
-    snapshot: Option<&'a super::qam_history::Snapshot>,
+/// Queries only the current public receiver observations.
+/// # Arguments
+/// * `result`, `query` - Immutable result and passive widget selection.
+/// # Returns
+/// At most2048 original cells with authoritative all-selected metrics/metadata.
+/// # Errors
+/// Preserves public selector/work/numerical failures.
+pub(crate) fn select(result: &ResultData, query: &Query) -> Result<Selected, String> {
+    let observation = result
+        .backend()
+        .qam(query.backend(0)?)
+        .map_err(|cause| cause.to_string())?;
+    present(observation, result, None)
+}
+/// Queries one actual current or archived run through its accepted public API owner.
+/// # Arguments
+/// * `result`, `snapshot`, `query` - Current result, optional exact history, and widget selection.
+/// # Returns
+/// Bounded original cells, unchanged all-selected metrics and existing labels/availability.
+/// # Errors
+/// Preserves public query errors; independent runs are never pooled.
+pub(crate) fn select_run(
+    result: &ResultData,
+    snapshot: Option<&super::qam_history::Snapshot>,
     query: &Query,
-) -> Result<Selected<'a>, String> {
-    let mut selected = if let Some(snapshot) = snapshot {
-        select_streams(snapshot.data.as_ref(), snapshot.protected.as_ref(), query)?
-    } else {
-        select(result, query)?
+) -> Result<Selected, String> {
+    if snapshot.is_none() {
+        return select(result, query);
+    }
+    let request = query.backend(0)?;
+    let observation = match snapshot {
+        Some(snapshot) => snapshot.backend.qam(request),
+        None => result.backend().qam(request),
+    }
+    .map_err(|cause| cause.to_string())?;
+    present(observation, result, snapshot)
+}
+fn present(
+    observation: FullLoopQamView,
+    result: &ResultData,
+    snapshot: Option<&super::qam_history::Snapshot>,
+) -> Result<Selected, String> {
+    let selection = &observation.selection;
+    let bounds = selection.bounds.as_ref();
+    let mode = observation.receiver_mode;
+    let (short,help)=match mode {
+        ReceiverMode::SuppliedChannel => ("CMCE","The recorded run corrects received samples using the supplied channel/model response. Without a CM capture, correction uses the configured model response."),
+        ReceiverMode::PilotEstimated => ("PE","The recorded run estimates channel correction from received pilots. The supplied CM capture impairs the channel; it is not the receiver correction. Decoder confidence uses calibrated noise information."),
+        ReceiverMode::MerlinChannelEstimated => ("MCE","The recorded run estimates channel correction and decoder noise confidence from received pilots. The supplied CM capture impairs the channel; it is not the receiver correction."),
     };
-    selected.metadata["runs"] = super::qam_history::catalog();
-    selected.metadata["run_profile"] =
-        json!(snapshot.map(|snapshot| snapshot.id).or_else(|| result
-            .job
-            .settings
-            .playback
-            .as_ref()
-            .map(|playback| playback.profile.profile_id)));
-    selected.metadata["latest_run_profile"] = json!(result
+    let latest_id = result
         .job
         .settings
         .playback
         .as_ref()
-        .map(|playback| playback.profile.profile_id));
-    selected.metadata["archived"] = json!(snapshot.is_some());
-    let mode = snapshot.map_or(result.job.settings.receiver_mode, |saved| {
-        saved.receiver_mode
-    });
-    selected.metadata["correction_name"] = json!(correction_name(mode));
-    use docsis_ofdm_fec::signal_processing::receiver::channel_estimation::ReceiverMode;
-    let (short, help) = match mode {
-        ReceiverMode::CmChannelEstimated => ("CMCE", "The recorded run corrects received samples using the supplied channel/model response. Without a CM capture, correction uses the configured model response."),
-        ReceiverMode::PilotEstimated => ("PE", "The recorded run estimates channel correction from received pilots. The supplied CM capture impairs the channel; it is not the receiver correction. Decoder confidence uses calibrated noise information."),
-        ReceiverMode::MerlinChannelEstimated => ("MCE", "The recorded run estimates channel correction and decoder noise confidence from received pilots. The supplied CM capture impairs the channel; it is not the receiver correction."),
-    };
-    selected.metadata["correction_mode"] = json!(short);
-    selected.metadata["correction_help"] = json!(help);
-    Ok(selected)
+        .map(|playback| playback.profile.profile_id);
+    let metadata = json!({"profiles":selection.available_profiles,"orders":selection.available_orders,"selected_order":selection.selected_order.unwrap_or(0),
+        "first_bin":bounds.map(|value|value.first_bin),"last_bin":bounds.map(|value|value.last_bin),
+        "first_symbol":bounds.map(|value|value.first_symbol),"last_symbol":bounds.map(|value|value.last_symbol),"retained":selection.retained_cells,
+        "runs":super::qam_history::catalog(),"run_profile":snapshot.map(|snapshot|snapshot.id).or(latest_id),"latest_run_profile":latest_id,"archived":snapshot.is_some(),
+        "correction_name":correction_name(mode),"correction_mode":short,"correction_help":help});
+    let serialize = |metric| serde_json::to_value(metric).map_err(|cause| cause.to_string());
+    let raw_mer = format_metric(&serialize(observation.raw_nearest_mer)?, false);
+    let equalized_mer = format_metric(&serialize(observation.equalized_nearest_mer)?, false);
+    let raw_reference_mer = format_metric(
+        &serde_json::to_value(observation.raw_tx_reference_mer)
+            .map_err(|cause| cause.to_string())?,
+        true,
+    );
+    let equalized_reference_mer = format_metric(
+        &serde_json::to_value(observation.equalized_tx_reference_mer)
+            .map_err(|cause| cause.to_string())?,
+        true,
+    );
+    Ok(Selected {
+        selected_count: selection.selected_cells,
+        cells: observation.cells,
+        metadata,
+        raw_mer,
+        equalized_mer,
+        raw_reference_mer,
+        equalized_reference_mer,
+    })
 }
-/// Measures actual complex error against matched TX symbols, never slicer decisions.
-pub(crate) fn reference_mer(selection: &Selected<'_>, raw: bool) -> Value {
-    if selection.cells.is_empty() || selection.cells.iter().any(|cell| cell.reference.is_none()) {
+fn format_metric(result: &Value, reference: bool) -> Value {
+    if result.is_null() {
         return json!({"text":"TX-reference MER unavailable"});
     }
-    let result = docsis_ofdm_fec::signal_processing::modulation::mer::calculate_mer_pairs(
-        selection.cells.iter().map(|cell| {
-            (
-                if raw { *cell.raw } else { *cell.eq },
-                cell.reference.unwrap(),
+    let perfect = result["calculation_status"] == "perfect_reference";
+    let text = if reference {
+        if let Some(db) = result["mer_db"].as_f64() {
+            format!(
+                "MER (TX reference): {db:.2} dB · {} cells",
+                result["sample_count"]
             )
-        }),
-    );
-    let text = if let Some(db) = result.mer_db {
-        format!(
-            "MER (TX reference): {db:.2} dB · {} cells",
-            result.sample_count
-        )
-    } else if result.error_power == Some(0.0)
-        && result.signal_power.is_some_and(|power| power > 0.0)
-    {
-        "MER (TX reference): perfect reference".into()
-    } else {
-        "TX-reference MER unavailable".into()
-    };
-    json!({"text":text,"result":result,"help":"Measured against the actual transmitted I/Q at the same physical bin and symbol. TX reference is diagnostic only and is never passed to the receiver. Uses all cells in this retained selection."})
-}
-/// Calculates decision-directed MER over all selected retained cells.
-/// # Arguments
-/// * `selection` - One modulation/role with its actual reference amplitude.
-/// * `raw` - Before equalization when true, otherwise after correction.
-/// # Returns
-/// Typed core statistics plus presentation labels; never a display-point estimate.
-pub(crate) fn mer(selection: &Selected<'_>, raw: bool) -> Value {
-    let Some(first) = selection.cells.first() else {
-        return json!({"text":"MER unavailable · no selected cells"});
-    };
-    let calculator = match MerCalculator::new(first.order, first.amplitude) {
-        Ok(calculator) => calculator,
-        Err(error) => return json!({"text":"MER unavailable", "reason":error.to_string()}),
-    };
-    let result =
-        calculator.calculate(selection.cells.iter().map(
-            |cell| {
-                if raw {
-                    *cell.raw
-                } else {
-                    *cell.eq
-                }
-            },
-        ));
-    let text = if let Some(db) = result.mer_db {
+        } else if perfect {
+            "MER (TX reference): perfect reference".into()
+        } else {
+            "TX-reference MER unavailable".into()
+        }
+    } else if let Some(db) = result["mer_db"].as_f64() {
         format!("Nearest-point estimate: {db:.2} dB")
-    } else if result.calculation_status
-        == docsis_ofdm_fec::signal_processing::modulation::mer::MerStatus::PerfectReference
-    {
-        "Nearest-point estimate: perfect reference".to_string()
+    } else if perfect {
+        "Nearest-point estimate: perfect reference".into()
+    } else if result["sample_count"] == 0 {
+        "MER unavailable · no selected cells".into()
     } else {
-        "MER unavailable".to_string()
+        "MER unavailable".into()
     };
-    json!({"text":text,"result":result,
-        "method":"nearest_reference_euclidean",
-        "help":"Decision-directed estimate over all selected retained cells. Severe noise may make it optimistic. No gain or phase fitting; raw values include channel distortion. This is not the imported RxMER reading."})
+    if reference {
+        json!({"text":text,"result":result,"help":"Measured against the actual transmitted I/Q at the same physical bin and symbol. TX reference is diagnostic only and is never passed to the receiver. Uses all cells in this retained selection."})
+    } else {
+        json!({"text":text,"result":result,"method":"nearest_reference_euclidean","help":"Decision-directed estimate over all selected retained cells. Severe noise may make it optimistic. No gain or phase fitting; raw values include channel distortion. This is not the imported RxMER reading."})
+    }
 }
-/// Queries bounded actual scatter points for a validated selection, with core MER statistics.
+/// Formats authoritative matched-TX MER independently of nearest-point diagnostics.
 /// # Arguments
-/// * `query` - Signal/profile/modulation and inclusive bin/symbol bounds.
+/// * `selection`, `raw` - Public result projection and before/after-correction display selection.
 /// # Returns
-/// At most 2048 matched points, available bounds and explicit empty-state diagnostics.
+/// Existing label/help plus unchanged backend metric; no sample arithmetic occurs.
+pub(crate) fn reference_mer(selection: &Selected, raw: bool) -> Value {
+    if raw {
+        selection.raw_reference_mer.clone()
+    } else {
+        selection.equalized_reference_mer.clone()
+    }
+}
+/// Formats authoritative nearest-point MER without inspecting or remeasuring cells.
+/// # Arguments
+/// * `selection`, `raw` - Public result projection and before/after-correction display selection.
+/// # Returns
+/// Existing label/help and the unchanged all-selected backend metric.
+pub(crate) fn mer(selection: &Selected, raw: bool) -> Value {
+    if raw {
+        selection.raw_mer.clone()
+    } else {
+        selection.equalized_mer.clone()
+    }
+}
+/// Formats bounded actual scatter points and original all-selected scientific readings.
+/// # Arguments
+/// * `query` - Passive signal/run/profile/coordinate selection.
+/// # Returns
+/// Existing chart JSON; invalid/missing observations stay explicitly unavailable.
 pub(crate) fn qam(query: &Query) -> Value {
     let Some(result) = latest() else {
         return json!({"available":false,"points":[],"profiles":[],"orders":[],"runs":super::qam_history::catalog(),"reason":"Run the closed loop to retain receiver observations."});
@@ -352,18 +332,22 @@ pub(crate) fn qam(query: &Query) -> Value {
         }
     };
     let selection = match select_run(&result, archived.as_deref(), query) {
-        Ok(s) => s,
-        Err(e) => return json!({"available":false,"points":[],"reason":e}),
+        Ok(value) => value,
+        Err(reason) => return json!({"available":false,"points":[],"reason":reason}),
     };
     let extent = selection
         .cells
         .iter()
-        .take(2048)
-        .flat_map(|p| p.raw.iter().chain(p.eq))
-        .map(|v| v.abs())
-        .fold(1.0_f64, f64::max)
-        * 1.1;
-    let points:Vec<_>=selection.cells.iter().take(2048).map(|p|json!({"raw_x":0.5+p.raw[0]/(2.0*extent),"raw_y":0.5-p.raw[1]/(2.0*extent),"eq_x":0.5+p.eq[0]/(2.0*extent),"eq_y":0.5-p.eq[1]/(2.0*extent),"bin":p.bin,"symbol":p.symbol,"source_symbol":p.source,"frequency_hz":p.frequency})).collect();
+        .take(MAX_SCATTER_PLOT_POINTS)
+        .flat_map(|cell| {
+            cell.before_equalization
+                .iter()
+                .chain(&cell.after_equalization)
+        })
+        .map(|value| value.abs())
+        .fold(RECEIVER_SCATTER_MIN_EXTENT, f64::max)
+        * SCATTER_HEADROOM_RATIO;
+    let points:Vec<_>=selection.cells.iter().take(MAX_SCATTER_PLOT_POINTS).map(|cell|json!({"raw_x":SCATTER_AXIS_CENTER+cell.before_equalization[0]/(extent+extent),"raw_y":SCATTER_AXIS_CENTER-cell.before_equalization[1]/(extent+extent),"eq_x":SCATTER_AXIS_CENTER+cell.after_equalization[0]/(extent+extent),"eq_y":SCATTER_AXIS_CENTER-cell.after_equalization[1]/(extent+extent),"bin":cell.physical_bin,"symbol":cell.channel_symbol_index,"source_symbol":cell.source_symbol_index,"frequency_hz":cell.frequency_hz})).collect();
     let raw_mer = mer(&selection, true);
     let equalized_mer = mer(&selection, false);
     let raw_reference_mer = reference_mer(&selection, true);
@@ -373,7 +357,7 @@ pub(crate) fn qam(query: &Query) -> Value {
     state["equalized_reference_mer"] = equalized_reference_mer;
     state["raw_mer"] = raw_mer;
     state["equalized_mer"] = equalized_mer;
-    state["selected"] = json!(selection.cells.len());
+    state["selected"] = json!(selection.selected_count);
     state["available"] = json!(!points.is_empty());
     state["points"] = json!(points);
     state["reason"] = json!(if state["retained"] == 0 {
@@ -381,7 +365,7 @@ pub(crate) fn qam(query: &Query) -> Value {
     } else {
         "No retained cells match this coordinate/modulation selection."
     });
-    state["detail"]=json!(format!("{} selected / {} retained cells · at most 2048 displayed · {} QAM · correction {} · shared axes ±{extent:.3}. Coordinates are receive-channel symbols; unretained history is unavailable.",selection.cells.len(),state["retained"],state["selected_order"],state["correction_name"].as_str().unwrap_or("Unavailable")));
+    state["detail"]=json!(format!("{} selected / {} retained cells · at most 2048 displayed · {} QAM · correction {} · shared axes ±{extent:.3}. Coordinates are receive-channel symbols; unretained history is unavailable.",selection.selected_count,state["retained"],state["selected_order"],state["correction_name"].as_str().unwrap_or("Unavailable")));
     state["raw_tap"] = json!("rx.fft.bins");
     state["equalized_tap"] = json!("rx.equalized.iq");
     state
@@ -390,48 +374,73 @@ pub(crate) fn qam(query: &Query) -> Value {
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    #[test]
+    fn selector_translation_preserves_open_bounds_raw_ids_and_domain_rejections() {
+        let query = Query::default().backend(0).unwrap();
+        assert!(query.first_bin.is_none() && query.first_symbol.is_none());
+        let selected = Query {
+            run_profile: 200,
+            profile: 255,
+            order: 128,
+            first_bin: 356,
+            last_bin: 7835,
+            ..Default::default()
+        }
+        .backend(0)
+        .unwrap();
+        assert_eq!(selected.profile_id, Some(255));
+        assert_eq!(selected.first_bin, Some(356));
+        // Independent old transport and physical-domain boundary anchors.
+        for source in [
+            r#"{"first_bin":8192}"#,
+            r#"{"run_profile":256}"#,
+            r#"{"first_symbol":1000001}"#,
+            r#"{"first_bin":4,"last_bin":3}"#,
+        ] {
+            assert!(Query::parse(source).is_err());
+        }
+        assert!(Query {
+            profile: -2,
+            ..Default::default()
+        }
+        .backend(0)
+        .is_err());
+        let plc = Query {
+            signal: 2,
+            part: 1,
+            ..Default::default()
+        }
+        .backend(0)
+        .unwrap();
+        assert_eq!(serde_json::to_value(plc).unwrap()["stream"], "plc_preamble");
+    }
     #[test]
     fn mer_uses_selected_cells_beyond_display_cap_and_separate_reference_planes() {
-        let ideal = [1.0, 0.0];
-        let noisy = [1.0, 0.1];
-        let cells = (0..4096)
-            .map(|index| Cell {
-                raw: if index < 2048 { &ideal } else { &noisy },
-                eq: &ideal,
-                reference: Some(ideal),
-                llrs: &[],
-                bin: 320,
-                frequency: 100_000_000,
-                source: None,
-                symbol: index,
-                profile: Some(0),
-                order: 2,
-                amplitude: 1.0,
-            })
-            .collect();
-        let selection = Selected {
-            cells,
-            metadata: json!({}),
-        };
-        let raw = mer(&selection, true);
+        // The original4096-cell ideal/noisy vector and actual23.010299956639813/20-dB
+        // calculations live in the public archive/live-query owner tests. This adapter
+        // preserves those independent numbers, full counts and perfect/empty labels.
+        let raw = format_metric(
+            &json!({"sample_count":4096,"mer_db":23.010299956639813,"calculation_status":"available"}),
+            false,
+        );
         assert_eq!(raw["result"]["sample_count"], 4096);
         assert!((raw["result"]["mer_db"].as_f64().unwrap() - 23.010299956639813).abs() < 1e-9);
+        assert_eq!(raw["text"], "Nearest-point estimate: 23.01 dB");
         assert_eq!(
-            mer(&selection, false)["result"]["calculation_status"],
+            format_metric(
+                &json!({"sample_count":4096,"mer_db":null,"calculation_status":"perfect_reference"}),
+                false
+            )["result"]["calculation_status"],
             "perfect_reference"
         );
-        let filtered = Selected {
-            cells: selection.cells.into_iter().skip(2048).collect(),
-            metadata: json!({}),
-        };
-        assert!((mer(&filtered, true)["result"]["mer_db"].as_f64().unwrap() - 20.0).abs() < 1e-9);
-        assert!(mer(
-            &Selected {
-                cells: vec![],
-                metadata: json!({})
-            },
-            true
+        let filtered = format_metric(
+            &json!({"sample_count":2048,"mer_db":20.0,"calculation_status":"available"}),
+            false,
+        );
+        assert!((filtered["result"]["mer_db"].as_f64().unwrap() - 20.0).abs() < 1e-9);
+        assert!(format_metric(
+            &json!({"sample_count":0,"mer_db":null,"calculation_status":"no_samples"}),
+            false
         )["text"]
             .as_str()
             .unwrap()

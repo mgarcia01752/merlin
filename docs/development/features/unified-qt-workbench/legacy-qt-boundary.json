@@ -3,122 +3,8 @@
   "baseline_commit": "c87006fae0a2b78bf8859403f9f3d0e6ffde79d8",
   "owner_task": "UIU-BOUND-01",
   "policy": "Exact initial scientific dependency records and unchanged whole-file hashes only. No automatic refresh. Every legacy entry sunsets in UIU-DS-01; final acceptance requires zero.",
-  "dependencies": [
-    {
-      "package": "docsis-ofdm-fec",
-      "declared_package": "docsis-ofdm-fec",
-      "rename": null,
-      "kind": null,
-      "target": null,
-      "path": "crates/ofdm",
-      "source": null,
-      "requirement": "*",
-      "features": [
-        "pnm-input",
-        "simulation",
-        "source-input"
-      ],
-      "default_features": false,
-      "optional": false
-    },
-    {
-      "package": "pnm",
-      "declared_package": "pnm",
-      "rename": null,
-      "kind": null,
-      "target": null,
-      "path": null,
-      "source": "git+https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git?rev=5fbd5561f3e06b73486546b5ffa520279080a5eb",
-      "requirement": "=0.3.6",
-      "features": [],
-      "default_features": true,
-      "optional": false
-    },
-    {
-      "package": "pnm-input",
-      "declared_package": "pnm-input",
-      "rename": null,
-      "kind": null,
-      "target": null,
-      "path": "crates/pnm-input",
-      "source": null,
-      "requirement": "*",
-      "features": [],
-      "default_features": true,
-      "optional": false
-    }
-  ],
-  "files": [
-    {
-      "path": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
-      "sha256": "4e314389c700c4b7b2edb4a448f9c950d83bd88fe96889113dc9cb1f49990c20",
-      "sites": [
-        {
-          "line": 15,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/instruments/receiver/qam_history.rs",
-      "sha256": "0d9912772744fd131614ae43b42dbd150183aab4d6839ea0e34c84dc17c93483",
-      "sites": [
-        {
-          "line": 7,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 21,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 151,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/instruments/receiver/selection.rs",
-      "sha256": "14182c1a7192f45c3de50b2e3d2c0fd46476696aee2e585fc9961b589acef563",
-      "sites": [
-        {
-          "line": 7,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 18,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 20,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 128,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 130,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 265,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 280,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 329,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    }
-  ],
+  "dependencies": [],
+  "files": [],
   "initial_record": {
     "path": "docs/development/features/unified-qt-workbench/legacy-qt-boundary-initial.json",
     "sha256": "1be86c5bd5fedd6e5542646477da14d6368489a08f103bd6d958fe07f9b20eae",
@@ -2846,6 +2732,93 @@
       "unit": "Designer and export facade",
       "reason": "Immutable public RxMerDesign admits/evaluates source-catalog flat/imported recipes and original envelopes. Public materialized/preview values and native-input export replace private kernels; QML consumes the public limits report. Transport/control restoration and screen projection stay application-owned.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-designer-and-export-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+        "sha256": "4e314389c700c4b7b2edb4a448f9c950d83bd88fe96889113dc9cb1f49990c20",
+        "sites": [
+          {
+            "line": 15,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver public API and dependency exit",
+      "reason": "Public detached archives and live QAM/decision/soft queries own selection, matched/nearest MER, slicer scaling, actual likelihood histograms/extrema and decoder context. Qt retains only run routing and screen/label formatting; no private imports or scientific algorithms.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/qam_history.rs",
+        "sha256": "0d9912772744fd131614ae43b42dbd150183aab4d6839ea0e34c84dc17c93483",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 21,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 151,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver public API and dependency exit",
+      "reason": "Public detached archives and live QAM/decision/soft queries own selection, matched/nearest MER, slicer scaling, actual likelihood histograms/extrema and decoder context. Qt retains only run routing and screen/label formatting; no private imports or scientific algorithms.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/selection.rs",
+        "sha256": "14182c1a7192f45c3de50b2e3d2c0fd46476696aee2e585fc9961b589acef563",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 18,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 20,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 128,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 130,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 265,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 280,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 329,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver public API and dependency exit",
+      "reason": "Public detached archives and live QAM/decision/soft queries own selection, matched/nearest MER, slicer scaling, actual likelihood histograms/extrema and decoder context. Qt retains only run routing and screen/label formatting; no private imports or scientific algorithms.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit"
     }
   ],
   "reviewed_updates": [
@@ -3393,6 +3366,69 @@
       "reason": "Add only immutable original-byte/public-frame adapters Capture.rxmer and Capture.response used by the migrated model. Removing precisely those added methods reproduces the exact previous file; decoding/metadata and the remaining Designer transport helper import stay unchanged and frozen.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-measured-input-and-channel-facade-accepted",
       "preserved_legacy_file_sha256": "7f9f799c5731f80aaa80a7163c6c36139fbde9c5dd512bc5ea9b6abad9aa3678"
+    }
+  ],
+  "retired_dependencies": [
+    {
+      "entry": {
+        "package": "docsis-ofdm-fec",
+        "declared_package": "docsis-ofdm-fec",
+        "rename": null,
+        "kind": null,
+        "target": null,
+        "path": "crates/ofdm",
+        "source": null,
+        "requirement": "*",
+        "features": [
+          "pnm-input",
+          "simulation",
+          "source-input"
+        ],
+        "default_features": false,
+        "optional": false
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver public API and dependency exit",
+      "reason": "The existing merlin facade/native-input feature supplies every public simulation/input contract; the Qt adapter no longer directly depends on a scientific engine or decoder.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit"
+    },
+    {
+      "entry": {
+        "package": "pnm",
+        "declared_package": "pnm",
+        "rename": null,
+        "kind": null,
+        "target": null,
+        "path": null,
+        "source": "git+https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git?rev=5fbd5561f3e06b73486546b5ffa520279080a5eb",
+        "requirement": "=0.3.6",
+        "features": [],
+        "default_features": true,
+        "optional": false
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver public API and dependency exit",
+      "reason": "The existing merlin facade/native-input feature supplies every public simulation/input contract; the Qt adapter no longer directly depends on a scientific engine or decoder.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit"
+    },
+    {
+      "entry": {
+        "package": "pnm-input",
+        "declared_package": "pnm-input",
+        "rename": null,
+        "kind": null,
+        "target": null,
+        "path": "crates/pnm-input",
+        "source": null,
+        "requirement": "*",
+        "features": [],
+        "default_features": true,
+        "optional": false
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver public API and dependency exit",
+      "reason": "The existing merlin facade/native-input feature supplies every public simulation/input contract; the Qt adapter no longer directly depends on a scientific engine or decoder.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit"
     }
   ]
 }

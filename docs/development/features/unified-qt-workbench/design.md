@@ -3148,3 +3148,50 @@ Paired runtime evidence and exact 600/570 operation tracing are recorded under
 [archive acceptance](validation.md#uiu-ds-01-bounded-receiver-archive-api-accepted).
 All original completed API/FEC tasks and the twelve remaining frozen Qt sites stay
 unchanged; consumer adoption and DS milestone acceptance remain separate.
+
+## UIU-DS-01 receiver consumer and dependency exit
+
+REQ-UIU-02/03/07/08/09/16/17/18/19/20/24/27 and UIU-DS-01 now adopt the independently
+accepted archive prerequisite. EDIT receiver/qam_history.rs, selection.rs,
+diagnostics.rs and soft_display.rs; ADAPT the channel plot, performance publication
+and affected worker tests. REUSE the existing merlin facade/native-input feature;
+remove the three direct scientific Cargo dependencies only after all calls migrate.
+The boundary record retires exact complete owners/dependency records with linked
+acceptance and retains its original inventory/history; never refresh a surviving
+private site merely to pass the check.
+
+History stores FullLoopReceiverArchive with its application profile/status, not
+FullLoopResult clones. Archive failure makes that instrument unavailable without
+dropping completed FEC/performance results. Public live/archive qam supplies all-
+selected metrics and a bounded original-cell page; public decisions supply physical/
+normalized slicing, labels and distances. Public cell/decoder soft views supply
+histograms, endpoint counts, contiguous extrema and coding context. Missing decoder
+data stays unavailable and never borrows physical-cell soft values. Latest-result
+queries keep full scientific retention; independent histories keep their old caps.
+
+Qt retains only legacy selector transport, run routing, labels, chart geometry and
+read-only presentation bundles. Backend selection/metrics remain authoritative:
+never replace an all-selected sample count with a display-page length. Reuse common
+scatter/percentage geometry constants and name remaining direction-specific selector/
+axis policies without tying equal-valued independent domains together. Cell filters
+and scientific physical-bin/order validation pass through the public query owner;
+the unchanged one-million-symbol legacy UI selector policy stays application-owned.
+
+Preserve all existing test names and independent vectors. The accepted backend
+archive/live-query tests own the original 10003→8192/last10001 and beyond-display
+23.010299956639813/20-dB numerical oracles; keep the exact nearest-point/perfect/
+empty checks there as needed. Existing soft-owner tests preserve strict endpoints,
+zero/empty and32768→1024 extrema. Qt tests continue to exercise public runtime
+ownership, missing-run isolation, unchanged metric/soft formatting and actual
+worker/channel/slicer behavior. Independent worker noise/reference checks must use
+the complete original selected population from public report/query data, rather
+than silently limiting their oracle to the new display page. Retain their equations,
+tolerances and truth-plane separation.
+
+Level1 checks cover changed Qt Rust/QML consumers and relevant backend oracles,
+formatting/Clippy, optimized UI and native probes, zero-exception boundary and
+traceability. Because this closes the downstream dependency frontier, complete
+relevant Qt/feature compatibility and the existing downstream Level2/Level3 gate
+must pass before checking the parent or integrating prepared session/shell work.
+No schema, scientific algorithm, Qt registration or Python payload change is
+planned by this consumer batch; reuse the exact accepted native artifact.

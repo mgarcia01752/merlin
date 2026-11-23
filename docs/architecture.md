@@ -1177,8 +1177,8 @@ retains only envelope transport/control restoration, immutable original identiti
 PLC overlays and common-axis screen projection. QML button/count/edit guards read
 the public limits report; unavailable limits disable scientific actions. Existing
 recipe domains, saved envelopes and noncompounding behavior remain compatible.
-Bounded receiver archives and remaining soft/QAM numerical projections are the
-explicit downstream migration frontier.
+The final receiver consumer below adopts bounded archives and authoritative
+soft/QAM projections; complete downstream milestone acceptance passes below.
 
 The [bounded receiver archive prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-bounded-receiver-archive-prerequisite)
 provides FullLoopReceiverArchive with finite actual cells and one original decoder
@@ -1187,7 +1187,17 @@ history count/byte policies preserve original physical/coding coordinates and
 reuse the live public selection/MER/decision/soft implementations. Native Python
 mirrors the same owner, including existing compatibility import paths. The
 [paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-bounded-receiver-archive-api-accepted)
-precedes the still-pending Qt consumer migration; no parent acceptance is implied.
+precedes the [receiver consumer and dependency exit](development/features/unified-qt-workbench/design.md#uiu-ds-01-receiver-consumer-and-dependency-exit).
+Qt history stores only detached public archives with application run identity.
+Live/archive QAM queries supply all-selected metrics and bounded original cells;
+decision/soft queries supply slicing, endpoint counts, histograms and contiguous
+coding-order extrema. Qt only translates selectors and formats labels/geometry.
+Missing decoder observations stay unavailable, independent of physical-cell soft
+data. Archive failures do not discard completed FEC/performance outcomes.
+The Qt manifest now reaches all scientific/native-input owners through `merlin`;
+the three direct scientific dependencies and final frozen sites are removed.
+[Consumer/milestone evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit)
+owns acceptance; session isolation remains a separate task.
 
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
@@ -1266,6 +1276,12 @@ Qt adoption and rendering remain separate delivery tasks.
 
 ### Unified Qt source ownership
 
+Current downstream migration status is recorded by the
+[receiver/dependency exit](development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit).
+The incremental checkpoints below preserve their original scope and evidence;
+their earlier pending-consumer/frontier counts are historical. The official
+checklist owns completion of the complete downstream gate and later sessions.
+
 One native executable, `Merlin.Workbench` URI and current Main resource entry URL
 are retained. QML has shared shell/theme/components and separate downstream and
 upstream subtrees. Registered QObject entry files all remain in `src/bridge/`
@@ -1297,9 +1313,9 @@ independent of the equally valued OCD limit.
 Recovered-data charts consume the public `FullLoopReport` and supplied comparison
 counts. Their shared word-bar cap belongs to the same downstream constants owner
 and remains independent of backend codeword retention.
-The existing confidence histogram still awaits result-backed adoption. Remaining
-scientific consumers retain their migration status. This is partial API adoption, not final
-API-boundary or session-isolation acceptance.
+At this earlier checkpoint confidence histograms and further scientific consumers
+still awaited adoption. The receiver/dependency exit above supersedes that
+frontier; session-isolation acceptance remains separate.
 
 Before source-profile editor adoption, the
 [DS-01 compatibility prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-source-catalog-ocd-compatibility-api-prerequisite)

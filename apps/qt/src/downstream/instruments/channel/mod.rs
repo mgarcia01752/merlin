@@ -131,18 +131,18 @@ pub(crate) fn qam(tap: i32, document: &str) -> Value {
             .collect::<Vec<_>>();
         let extent = points
             .iter()
-            .flat_map(|p| p.raw)
+            .flat_map(|p| p.before_equalization)
             .map(|v| v.abs())
             .fold(CHANNEL_SCATTER_MIN_EXTENT, f64::max)
             * SCATTER_HEADROOM_RATIO;
-        let samples:Vec<_>=points.iter().map(|p|json!({"i":p.raw[0],"q":p.raw[1],"x":SCATTER_AXIS_CENTER+p.raw[0]/(extent+extent),"y":SCATTER_AXIS_CENTER-p.raw[1]/(extent+extent),"index":p.bin,"symbol":p.symbol,"role":match query.signal {0=>"data",1=>"ncp",2=>"plc",_=>"pilot"}})).collect();
+        let samples:Vec<_>=points.iter().map(|p|json!({"i":p.before_equalization[0],"q":p.before_equalization[1],"x":SCATTER_AXIS_CENTER+p.before_equalization[0]/(extent+extent),"y":SCATTER_AXIS_CENTER-p.before_equalization[1]/(extent+extent),"index":p.physical_bin,"symbol":p.channel_symbol_index,"role":match query.signal {0=>"data",1=>"ncp",2=>"plc",_=>"pilot"}})).collect();
         let mer = crate::downstream::instruments::receiver::selection::mer(&selected, true);
         let reference_mer =
             crate::downstream::instruments::receiver::selection::reference_mer(&selected, true);
         let mut view = selected.metadata;
         view["reference_mer"] = reference_mer;
         view["mer"] = mer;
-        view["selected"] = json!(selected.cells.len());
+        view["selected"] = json!(selected.selected_count);
         view["points"] = json!(samples);
         view["available"] = json!(!points.is_empty());
         view["extent"] = json!(extent);

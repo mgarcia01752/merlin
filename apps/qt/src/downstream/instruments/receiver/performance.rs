@@ -77,7 +77,12 @@ fn insert(entry: Entry) {
 /// * `profile` - Exact applied profile for this independent run.
 /// * `result` - Actual completed or partial job, including observation power sums.
 pub(crate) fn retain(profile: &SourceProfileFrame, result: &ResultData) {
-    super::qam_history::retain(profile.profile_id, result);
+    if let Err(reason) = super::qam_history::retain(profile.profile_id, result) {
+        log::warn!(
+            "Receiver history unavailable for profile {}: {reason}",
+            profile.profile_id
+        );
+    }
     let performance = match result.backend().profile_performance() {
         Ok(performance) => performance,
         Err(error) => {
