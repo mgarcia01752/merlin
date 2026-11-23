@@ -5,9 +5,40 @@
 //! Independent timing anchors and immutable byte/source admission through public APIs.
 #![cfg(all(feature = "simulation", feature = "pnm-input"))]
 use docsis_ofdm_fec::api::{
-    Dpd, ErrorCode, FileFillPolicy, NamedCapture, ObservationDuration, PrbsSeed, SourceInput,
-    SubcarrierSpacing, TransmissionConfiguration, TransmissionSettings,
+    ApiError, Dpd, ErrorCode, FileFillPolicy, FullLoopOptions, NamedCapture, ObservationDuration,
+    PrbsSeed, SourceInput, SubcarrierSpacing, TransmissionConfiguration, TransmissionSettings,
 };
+
+#[test]
+fn original_engine_code_is_optional_typed_and_preserves_error_ownership() {
+    // Zero is the existing invalid active-runtime boundary, not a simulated duration.
+    let failure = FullLoopOptions {
+        max_runtime_ms: 0,
+        ..Default::default()
+    }
+    .validate()
+    .unwrap_err();
+    let message = failure.message().to_owned();
+    let serialized = serde_json::to_value(&failure).unwrap();
+    let cloned = failure.clone();
+    assert_eq!(failure.engine_code(), Some("InvalidLabInput"));
+    assert_eq!(failure.code(), ErrorCode::InvalidInput);
+    assert_eq!(
+        failure.message(),
+        "Invalid channel runtime or retained-word budget."
+    );
+    assert_eq!(failure.message(), message);
+    assert_eq!(serde_json::to_value(&failure).unwrap(), serialized);
+    drop(failure);
+    assert_eq!(cloned.engine_code(), Some("InvalidLabInput"));
+    assert_eq!(serde_json::to_value(&cloned).unwrap(), serialized);
+    let adapter = ApiError::new(
+        ErrorCode::InvalidInput,
+        "InvalidLabInput is only display text here.",
+    );
+    assert!(adapter.engine_code().is_none());
+    assert_eq!(adapter.code(), ErrorCode::InvalidInput);
+}
 
 #[test]
 fn transmission_admission_uses_literal_sample_clock_accounting_without_running() {

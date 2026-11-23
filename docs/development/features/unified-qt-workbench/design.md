@@ -2249,3 +2249,36 @@ preflight corrects a stale-wheel local runner and the earlier phase record's
 fresh-source claim without discarding either historical receipts or valid cases.
 No Qt or scientific algorithm changes; commit this gate before worker adoption.
 Parent DS-01 and final numeric/runtime acceptance remain incomplete.
+
+## UIU-DS-01 structured engine diagnostic prerequisite
+
+The legacy help owner chooses its bundled guidance from SimulationError.code.
+Public ApiError already retains that original structured cause, but Rust callers
+cannot read its code without serializing the error. Add a typed optional getter
+before removing the worker/help engine imports. Preserve categories, messages,
+source error codes and serialized errors. REQ-UIU-02/07/08/09/24/27 and UIU-DS-01
+own this additive observation; no new scientific capability or error category.
+
+| Path / disposition | Exact contract and acceptance |
+| --- | --- |
+| EDIT `crates/ofdm/src/api/error.rs` | `ApiError::engine_code(&self) -> Option<&str>` borrows the retained original backend code, or None for API-only diagnostics. Never infer it from message text or the generic category. |
+| EDIT `bindings/python/src/lib.rs`, `upstream/mod.rs`, root `.pyi` | Add optional `ApiError.engine_code` metadata to the existing shared native exception. Downstream calls the new Rust getter; upstream reuses its existing public ApiError.code() source-code operation. Existing code/message/field/offset/legacy_code stay unchanged. Defaults are None for manually constructed/unclassified exceptions. |
+| EDIT existing admission tests and namespace test | Actual zero-runtime backend validation exposes InvalidLabInput without changing its message/category; API-only errors with misleading display text retain None. Verify borrowed/clone/serde ownership, both native directions and existing exception/import behavior. |
+| API operation matrix, canonical docs and full-loop user guide | One Rust getter and two native namespace field projections with exact provenance, tests and additive rows. Preserve every previous operation/class/member except the explicitly new field. |
+| Qt worker/help | Consume only after a focused prerequisite commit; no private field or serialized/debug-text workaround. |
+
+Reuse/license: MERLIN Apache-2.0 ApiError, its existing retained SimulationError,
+the native exception converters and public upstream code() at
+`5fd139491f1f5ad9f9f5c5a9cccb10c3845fce5d`. No new dependency/type/algorithm,
+domain bound, saved schema, Qt source or frozen entry. Validate focused Rust and
+exact-archive installed native error cases, namespace imports, relevant Clippy/
+formatting, metadata and complete strict operation tracing. Keep runtime/kernel
+and historical full acceptance separate from this passive diagnostic change.
+
+Prerequisite accepted: [diagnostic validation](validation.md#uiu-ds-01-structured-engine-diagnostic-accepted)
+and [exact evidence](engine-diagnostic-evidence.json) record ten Rust/thirteen
+archive-matched installed native cases, root/native Clippy, formatting,
+analysis-only compilation, 38 metadata cases and strict 570/544 operation tracing.
+All prior callable rows, types and native members are exact after removing only
+the new optional field. Generic category/message and existing metadata remain
+unchanged. Qt worker/help adoption and final numeric/integration gates stay open.

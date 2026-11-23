@@ -5,14 +5,14 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "85955b0439ca934cbe4d9328a6db9a5fab6f7da8 plus exact worker-budget/progress-age candidate",
-    "inventory_command": "Exact archive-matched installed Python -I -B native_api_inventory.py; see docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/results.json",
-    "native_sha256": "8d23b654be16ea417d5b29d26af0577a3670fb4cc01c56b18d47a73d28afd305",
-    "scope": "Fresh installed exact newly built wheel: eight full-loop and four namespace cases, archive-to-installed binary checksum preflight. Prior phase record explicitly corrected to historical wheel compatibility reuse.",
+    "revision": "5fd139491f1f5ad9f9f5c5a9cccb10c3845fce5d plus exact engine diagnostic candidate",
+    "inventory_command": "Exact newly built archive-matched installed Python -I -B native_api_inventory.py; ds-01-engine-diagnostic-native/results.json",
+    "native_sha256": "cbab0b05a6be4e39eeacf3511850b9fd49c93908e1ad505a1e29b05e5ce7e0ba",
+    "scope": "Fresh installed diagnostic/shared-exception and namespace metadata with thirteen targeted native cases. All earlier members/constructors/signatures remain exact; only engine_code is additive.",
     "preserved_prior_inventory": {
-      "sha256": "f7a67f34344b2dbe36e80844d279c0da3bd49369df27f44c290a1a367194c631",
-      "root_and_namespace_operation_instances": 944,
-      "scope": "Every prior class/alias/constructor/operation kind and signature remains exact; two methods are additive."
+      "sha256": "1d467b1d27e923425509dfbf137014576c7eca6d2cc0796e057529a041aeb11b",
+      "root_and_namespace_operation_instances": 948,
+      "scope": "Every old class/alias/constructor/member/operation is exact after removing only the new shared exception field."
     }
   },
   "contracts": {
@@ -126,7 +126,11 @@
     "evidence.uiu-ds-01-worker-budget": "../unified-qt-workbench/worker-budget-progress-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-worker-budget-and-progress-age-accepted: immutable narrowing, actual limited reports, idle/paused/terminal notification age and exact archive-matched native acceptance.",
     "status.uiu-ds-01-worker-budget": "Scoped paired API prerequisite accepted; coherent Qt worker consumption and complete DS-01/QA-01 remain pending.",
     "errors.notification-age": "Read-only optional scalar query: no intentional Result/domain errors; poison recovery preserves the existing scalar state. Native conversion yields int or None with ordinary Python allocation failures only.",
-    "errors.runtime-narrowing": "Existing FullLoopOptions/ChannelJobLimits validation owns invalid runtime domains; an otherwise valid budget exceeding the prepared parent returns ResourceLimit. Native negative/overflowing unsigned values fail integer conversion before Rust admission."
+    "errors.runtime-narrowing": "Existing FullLoopOptions/ChannelJobLimits validation owns invalid runtime domains; an otherwise valid budget exceeding the prepared parent returns ResourceLimit. Native negative/overflowing unsigned values fail integer conversion before Rust admission.",
+    "units.backend-diagnostic-code": "Optional case-sensitive original Rust diagnostic identifier, separate from the generic shared ErrorCode category; no physical units or inferred message parsing.",
+    "errors.diagnostic-read": "Passive diagnostic/exception metadata read has no intentional domain Result failures. Original error category, human message, serialized source and existing metadata remain unchanged; ordinary Python allocation/access behavior remains.",
+    "evidence.uiu-ds-01-engine-diagnostic": "../unified-qt-workbench/engine-diagnostic-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-structured-engine-diagnostic-accepted: actual Rust/backend and exact archive-matched native errors, missing-source codes, optional absence and prior-field compatibility.",
+    "status.uiu-ds-01-engine-diagnostic": "Scoped public diagnostic prerequisite accepted. Qt worker/help adoption and parent DS-01/final integration remain incomplete."
   },
   "type_exports": {
     "downstream": [
@@ -32314,6 +32318,57 @@
       },
       "evidence": "evidence.uiu-ds-01-worker-budget",
       "status": "status.uiu-ds-01-worker-budget"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::ApiError::engine_code",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn engine_code(&self) -> Option<&str>",
+        "source_file": "crates/ofdm/src/api/error.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.ApiError.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed structured exception attribute",
+        "declaration": "ApiError.engine_code (instance attribute)",
+        "native_operation": "merlin.downstream.ApiError.engine_code"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.backend-diagnostic-code",
+      "error_behavior": "errors.diagnostic-read",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "Option<&str>",
+        "scope": "Borrow retained original backend code, None for API-only diagnostics; generic category/message/cause/serde remain unchanged. Native metadata owns its string."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_admission.rs::original_engine_code_is_optional_typed_and_preserves_error_ownership",
+          "crates/merlin/tests/namespaces.rs::source_error_codes_remain_distinct_from_shared_categories_through_facade"
+        ],
+        "python": {
+          "status": "Exact newly built archive matched to installed native module",
+          "cases": [
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_engine_code_is_structured_optional_and_preserves_existing_error_fields"
+          ],
+          "scope": "Actual original Rust code and API-only absence, stable category/message/legacy fields and owned Python metadata; no display-string inference."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-engine-diagnostic",
+      "status": "status.uiu-ds-01-engine-diagnostic"
     }
   ],
   "executed_records": [
@@ -32348,7 +32403,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -67463,6 +67519,121 @@
       },
       "evidence": "evidence.uiu-ds-01-worker-budget",
       "status": "status.uiu-ds-01-worker-budget"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.ApiError.engine_code",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::ApiError",
+        "source_file": "bindings/python/src/lib.rs",
+        "symbol": "error",
+        "signature": "pub fn engine_code(&self) -> Option<&str>",
+        "mapping": "Native exception metadata copies an original code through the named public Rust getter; primary category/message and all existing fields remain unchanged.",
+        "delegated_operation": "merlin::downstream::ApiError::engine_code",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native constant",
+        "name": "engine_code",
+        "kind": "constant",
+        "signature": null,
+        "declaration": "ApiError.engine_code",
+        "result_annotation": "str | None"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.backend-diagnostic-code",
+      "error_behavior": "errors.diagnostic-read",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::ApiError",
+        "scope": "Owned original backend/source code from the public Rust diagnostic, or None without a retained source. Manually constructed exceptions default to None. Existing legacy_code semantics are preserved."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_admission.rs::original_engine_code_is_optional_typed_and_preserves_error_ownership",
+          "crates/merlin/tests/namespaces.rs::source_error_codes_remain_distinct_from_shared_categories_through_facade"
+        ],
+        "python": {
+          "status": "Exact newly built archive matched to installed native module",
+          "cases": [
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_engine_code_is_structured_optional_and_preserves_existing_error_fields"
+          ],
+          "scope": "Actual original Rust code and API-only absence, stable category/message/legacy fields and owned Python metadata; no display-string inference."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-engine-diagnostic",
+      "status": "status.uiu-ds-01-engine-diagnostic"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.ApiError.engine_code",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::ApiError",
+        "source_file": "bindings/python/src/upstream/mod.rs",
+        "symbol": "error",
+        "signature": "pub fn code(&self) -> &'static str",
+        "mapping": "Native exception metadata copies an original code through the named public Rust getter; primary category/message and all existing fields remain unchanged.",
+        "delegated_operation": "merlin::upstream::ApiError::code",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native constant",
+        "name": "engine_code",
+        "kind": "constant",
+        "signature": null,
+        "declaration": "ApiError.engine_code",
+        "result_annotation": "str | None"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.backend-diagnostic-code",
+      "error_behavior": "errors.diagnostic-read",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::ApiError",
+        "scope": "Owned original backend/source code from the public Rust diagnostic, or None without a retained source. Manually constructed exceptions default to None. Existing legacy_code semantics are preserved."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-07",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/merlin/tests/namespaces.rs::source_error_codes_remain_distinct_from_shared_categories_through_facade"
+        ],
+        "python": {
+          "status": "Exact newly built archive matched to installed native module",
+          "cases": [
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity"
+          ],
+          "scope": "Actual original Rust code and API-only absence, stable category/message/legacy fields and owned Python metadata; no display-string inference."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-engine-diagnostic",
+      "status": "status.uiu-ds-01-engine-diagnostic"
     }
   ],
   "native_type_exports": {
@@ -68587,6 +68758,18 @@
         "sha256": "0a74e3f3e24b5e90e436e13c5adf235bcba6a89abbda19b48d5549d6f531c208",
         "root_and_namespace_operation_instances": 942,
         "scope": "Every earlier class/alias/constructor and operation kind/signature is deeply equal after removing only the added unnamed-file method."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "85955b0439ca934cbe4d9328a6db9a5fab6f7da8 plus exact worker-budget/progress-age candidate",
+      "inventory_command": "Exact archive-matched installed Python -I -B native_api_inventory.py; see docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/results.json",
+      "native_sha256": "8d23b654be16ea417d5b29d26af0577a3670fb4cc01c56b18d47a73d28afd305",
+      "scope": "Fresh installed exact newly built wheel: eight full-loop and four namespace cases, archive-to-installed binary checksum preflight. Prior phase record explicitly corrected to historical wheel compatibility reuse.",
+      "preserved_prior_inventory": {
+        "sha256": "f7a67f34344b2dbe36e80844d279c0da3bd49369df27f44c290a1a367194c631",
+        "root_and_namespace_operation_instances": 944,
+        "scope": "Every prior class/alias/constructor/operation kind and signature remains exact; two methods are additive."
       }
     }
   ],

@@ -32,9 +32,14 @@ pyo3::create_exception!(
     PyException,
     "Structured native API failure. Read code (ErrorCode) and message (str); do not parse text for categories. Run outcomes and partial science remain in report status."
 );
-/// Read error from the native Rust snapshot.
+/// Maps a downstream public failure into the existing structured native exception.
+///
+/// # Arguments
+/// * `error` - Owned public failure with its category, message and optional original cause.
+///
 /// # Returns
-/// The immutable native value named by this read-only property.
+/// Exception preserving category/message and copying the optional original engine code.
+/// Source codes come from the typed Rust getter, without parsing display text.
 pub(crate) fn error(error: api::ApiError) -> PyErr {
     Python::attach(|py| {
         let exception = ApiError::new_err(error.message().to_owned());
@@ -42,6 +47,9 @@ pub(crate) fn error(error: api::ApiError) -> PyErr {
             .value(py)
             .setattr("code", PyErrorCode::from(error.code()));
         let _ = exception.value(py).setattr("message", error.message());
+        let _ = exception
+            .value(py)
+            .setattr("engine_code", error.engine_code());
         exception
     })
 }
@@ -65,7 +73,7 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add("__version__", env!("CARGO_PKG_VERSION"))?;
     module.add_class::<PyErrorCode>()?;
     module.add("ApiError", module.py().get_type::<ApiError>())?;
-    for name in ["field", "offset", "legacy_code"] {
+    for name in ["field", "offset", "legacy_code", "engine_code"] {
         module
             .py()
             .get_type::<ApiError>()

@@ -72,6 +72,9 @@ report. Completed comparisons and retained FEC trials remain available; unfinish
 words do not become fabricated comparisons. Pre-dispatch construction/admission
 errors return structured ApiError. The request remains reusable with fresh controls,
 and prior results remain valid after later runs and input/request disposal.
+Rust `ApiError::engine_code()` and native `.engine_code` expose an optional
+retained original diagnostic for registered help, with category/message unchanged.
+An absent code stays absent even when display text resembles a known failure.
 
 Python runs on a private bounded native worker while releasing the interpreter
 lock. Another Python thread can poll/pause/resume/cancel without taking a scientific
@@ -95,7 +98,8 @@ print(result.report()['status'], result.report()['summary']['comparison'])
 
 [Opt-in retained stage observations](full-loop-observations.md) add typed bounded
 copies of actual test-point data. Numerical/message queries and complete source-
-catalog/sweep compatibility remain UIU-API-02 gates before final Qt adoption.
+catalog/sweep compatibility have scoped API acceptance; final Qt adoption remains
+tracked under UIU-DS-01 and the unified UI checklist.
 Large retained report arrays remain bounded by existing scientific policies;
 Qt consumers use scoped public observations. The direct-Rust `api_full_loop`
 example supplies independent process references for selected settings, actual

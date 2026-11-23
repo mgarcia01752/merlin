@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-569 explicit public Rust operations and 542 installed native Python entries with
+570 explicit public Rust operations and 544 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/worker-budget-progress-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/engine-diagnostic-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 112 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -70,6 +70,14 @@ notification age and unchanged controls/phase/snapshot shape. The installed modu
 matches the exact newly built archive; [execution records](../unified-qt-workbench/ds-01-worker-budget-operation-test-results.json)
 retain this scope separately from the explicitly corrected earlier phase-wheel
 reuse and historical full gates. Qt worker consumption remains DS-01.
+
+The [structured diagnostic prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-structured-engine-diagnostic-accepted)
+adds one Rust getter and two native namespace projections of original backend
+codes. Ten Rust/thirteen exact-archive installed native cases preserve categories,
+messages, serialized errors and all existing exception fields while distinguishing
+actual source codes from API-only absence. [Exact execution records](../unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json)
+and complete compiler/installed tracing retain every earlier row/class/member;
+only the new field/getter is additive. Qt help/worker adoption remains DS-01.
 
 The additive [UIU-API-01 admission/preview acceptance](../unified-qt-workbench/validation.md#uiu-api-01-public-admission-accepted)
 appends 99 Rust and 75 native rows, retaining every original row and historical

@@ -10,6 +10,7 @@ __version__: str
 class ApiError(Exception):
     code: ErrorCode
     message: str
+    engine_code: str | None
     field: str | None
     offset: int | None
     legacy_code: str | None

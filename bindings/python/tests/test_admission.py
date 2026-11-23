@@ -14,6 +14,24 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 class NativeAdmissionTests(unittest.TestCase):
+    def test_engine_code_is_structured_optional_and_preserves_existing_error_fields(self):
+        # Zero is the existing rejected active-runtime boundary; its original code is stable.
+        with self.assertRaises(m.ApiError) as failure:
+            m.FullLoopOptions.from_json(b'{"max_runtime_ms":0}')
+        error = failure.exception
+        self.assertEqual(error.engine_code, 'InvalidLabInput')
+        self.assertEqual(error.code, m.ErrorCode.InvalidInput)
+        self.assertEqual(error.message, 'Invalid channel runtime or retained-word budget.')
+        self.assertIsNone(error.legacy_code)
+        self.assertIsNone(error.field)
+        self.assertIsNone(error.offset)
+        # API-only rejection has no retained engine cause, despite an identical generic category.
+        with self.assertRaises(m.ApiError) as adapter:
+            m.FullLoopOptions.from_json(b'{')
+        self.assertEqual(adapter.exception.code, m.ErrorCode.InvalidInput)
+        self.assertIsNone(adapter.exception.engine_code)
+        self.assertIsNone(m.ApiError('InvalidLabInput is only display text here.').engine_code)
+
     def test_unnamed_file_preserves_original_bytes_fill_and_named_rejection(self):
         # Independent eight-byte/64-bit original and finite80-bit fill target.
         original = b'\0exact\r\n'

@@ -1,0 +1,476 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Typed original engine diagnostic code",
+  "status": "Scoped paired API prerequisite accepted; Qt help/worker and parent incomplete",
+  "base_commit": "5fd139491f1f5ad9f9f5c5a9cccb10c3845fce5d",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-07",
+    "REQ-UIU-08",
+    "REQ-UIU-09",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-source-ownership",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "crates/ofdm/src/api/error.rs",
+      "sha256": "a6f4ad32e80918accbb785a560a3dfccb4067f94f3474f3da0be520e9feb5b72"
+    },
+    {
+      "path": "crates/ofdm/tests/api_admission.rs",
+      "sha256": "5dffdb3e6988bbbc1bfc287cdfd551b37b190787b7b2611c3b34b16cf540a024"
+    },
+    {
+      "path": "crates/merlin/tests/namespaces.rs",
+      "sha256": "7e9d78e330f28a1ef8bcea10601b45be3a9f2e06ec483bb32d2ceff9aecd1a7a"
+    },
+    {
+      "path": "bindings/python/src/lib.rs",
+      "sha256": "bf4bcc94d25c9037f8059b40c4cad52b1b659e1d32381352b133136d76e1ed9d",
+      "tested_sha256": "aefc5fd3d9939d9b71f69b9c3a180d15e6be0d65d0599246f911feeffc8f8f81",
+      "final_change": "Documentation banners only after tested source; function bodies, attributes, constants and bindings unchanged."
+    },
+    {
+      "path": "bindings/python/src/upstream/mod.rs",
+      "sha256": "c7dc6612e3cd4be724ab2a46c270f2f25accde2eb602c845bcf80c713f6c9a98",
+      "tested_sha256": "2900c66fae780b1774461cf5eb1f6d90ba2a2b29c085d88a33ad7b11bdc2d0a9",
+      "final_change": "Documentation banners only after tested source; function bodies, attributes, constants and bindings unchanged."
+    },
+    {
+      "path": "bindings/python/python/merlin/__init__.pyi",
+      "sha256": "299095ab73f4b0203b72db2fbc9df4b5a0f8de81a206cf8075ed13bf350eb813"
+    },
+    {
+      "path": "bindings/python/tests/test_admission.py",
+      "sha256": "f2b95695768a7efbaccd54d20869376df54624c5efd31b8bb6b685246c200592"
+    },
+    {
+      "path": "bindings/python/tests/test_namespaces.py",
+      "sha256": "66b25accf547dced9278ea6b859efa7d903b4819c1b729bc542dbc73f87721b8"
+    }
+  ],
+  "contract": {
+    "rust_downstream": "ApiError::engine_code(&self) -> Option<&str>, retaining original source code/absence and borrowing lifetime. No display/category inference.",
+    "rust_upstream": "Existing ApiError::code() is reused unchanged by the native converter.",
+    "native": "Optional ApiError.engine_code in the existing shared exception, through original public Rust getters. Existing categories/messages/field/offset/legacy_code and manual constructor behavior are preserved.",
+    "serialization": "No fields added to Rust ApiError or its serialized form. The new native exception attribute is additive."
+  },
+  "validation": {
+    "rust_passed": 10,
+    "native_passed": 13,
+    "metadata_passed": 38,
+    "exact_cases": "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+    "cargo_checks": [
+      {
+        "label": "fmt",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.1977694499946665
+      },
+      {
+        "label": "python-fmt",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "fmt",
+          "--manifest-path",
+          "bindings/python/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.12123920700105373
+      },
+      {
+        "label": "admission",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "docsis-ofdm-fec",
+          "--features",
+          "high-level-api",
+          "--locked",
+          "--test",
+          "api_admission"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.934275002990034
+      },
+      {
+        "label": "facade",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "merlin",
+          "--locked",
+          "--test",
+          "namespaces",
+          "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "--",
+          "--exact"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.289241436999873
+      },
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "-p",
+          "docsis-ofdm-fec",
+          "-p",
+          "merlin",
+          "--features",
+          "merlin/native-input",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 13.354092058012611
+      },
+      {
+        "label": "python-clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "--manifest-path",
+          "bindings/python/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.260062715999084
+      },
+      {
+        "label": "analysis",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "check",
+          "-p",
+          "docsis-ofdm-fec",
+          "--no-default-features",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.0943740629882086
+      },
+      {
+        "label": "wheel",
+        "command": [
+          "/home/dev01/Projects/merlin/local/api-python-build/bin/python",
+          "-m",
+          "maturin",
+          "build",
+          "--manifest-path",
+          "bindings/python/Cargo.toml",
+          "--release",
+          "--locked",
+          "--compatibility",
+          "linux",
+          "--interpreter",
+          "/usr/bin/python3",
+          "--out",
+          "/home/dev01/Projects/merlin/local/python-wheels-ds-engine-diagnostic"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 46.17296752399125
+      },
+      {
+        "label": "rustdoc",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "doc",
+          "--workspace",
+          "--no-deps",
+          "--locked",
+          "--features",
+          "merlin/native-input"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 8.735894906989415
+      },
+      {
+        "label": "rust-inventory",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/rust_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-rust-exports.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.6419268869940424
+      }
+    ],
+    "final_facade_and_clippy": [
+      {
+        "label": "facade-final",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "merlin",
+          "--locked",
+          "--test",
+          "namespaces",
+          "--",
+          "--exact",
+          "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "source_error_codes_remain_distinct_from_shared_categories_through_facade"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.148698167002294
+      },
+      {
+        "label": "facade-clippy-final",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "-p",
+          "merlin",
+          "--features",
+          "native-input",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.3643869149964303
+      },
+      {
+        "label": "fmt-final",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.0426107630046317
+      }
+    ],
+    "installed": {
+      "status": "passed",
+      "wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-engine-diagnostic/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+      "wheel_sha256": "9e9b5ece4c10bebb4054163eeb9a809b5934f900f85afeec46fd0ec95943421d",
+      "archive_native_sha256": "cbab0b05a6be4e39eeacf3511850b9fd49c93908e1ad505a1e29b05e5ce7e0ba",
+      "commands": [
+        {
+          "label": "install",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "--no-deps",
+            "/home/dev01/Projects/merlin/local/python-wheels-ds-engine-diagnostic/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.5542078200087417
+        },
+        {
+          "label": "artifact-preflight",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-c",
+            "import hashlib,json,sys\nfrom pathlib import Path\nimport merlin\nimport merlin._native as native\npath=Path(native.__file__).resolve()\nassert path.is_relative_to(Path(sys.prefix).resolve())\nassert hashlib.sha256(path.read_bytes()).hexdigest()==sys.argv[1]\nassert hasattr(merlin.ApiError,'engine_code') and merlin.ApiError.engine_code is None\nprint(json.dumps({'native_artifact':str(path),'native_sha256':sys.argv[1],'exact_archive_match':True,'engine_code_field_present':True}))\n",
+            "cbab0b05a6be4e39eeacf3511850b9fd49c93908e1ad505a1e29b05e5ce7e0ba"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.07038753600500058
+        },
+        {
+          "label": "admission",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_admission.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.17204151599435136
+        },
+        {
+          "label": "namespaces",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_namespaces.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.11784599800012074
+        },
+        {
+          "label": "full-loop-rejections",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_full_loop.py",
+            "-k",
+            "test_rejections_leave_original_inputs_and_prepared_options_unchanged",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.08259424100106116
+        },
+        {
+          "label": "runtime-budget-errors",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_full_loop.py",
+            "-k",
+            "test_runtime_limit_narrows_immutably_and_preserves_admission_and_retention",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.16945326699351426
+        },
+        {
+          "label": "native-inventory",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native/installed/bin/python",
+            "-I",
+            "-B",
+            "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+            "--output",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native/native-exports.json"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.16699045000132173
+        }
+      ]
+    },
+    "artifact_preflight": {
+      "native_artifact": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native/installed/lib/python3.10/site-packages/merlin/_native.cpython-310-x86_64-linux-gnu.so",
+      "native_sha256": "cbab0b05a6be4e39eeacf3511850b9fd49c93908e1ad505a1e29b05e5ce7e0ba",
+      "exact_archive_match": true,
+      "engine_code_field_present": true
+    },
+    "matrix": {
+      "rust_rows": 570,
+      "native_rows": 544,
+      "previous_rows_exact": true,
+      "types_exact": true,
+      "prior_native_root_namespace_operation_instances_preserved": 948,
+      "native_class_exports": 112
+    },
+    "independent_anchors": [
+      "Actual zero active-runtime rejection: InvalidLabInput source, InvalidInput category and original human message.",
+      "API-only error with misleading display text retains no engine code.",
+      "Clone/drop/borrow and unchanged serialized error snapshots.",
+      "Upstream missing configuration: original MissingSetting code, shared category and unchanged legacy/field/offset.",
+      "Original transmission/source/native integer/budget and namespace/control cases retained."
+    ],
+    "final_nonsemantic_changes": "Corrected native error-converter documentation banners after successful tests. Tested and final source hashes are both retained; no executable statement or Python declaration changed."
+  },
+  "preserved_files": [
+    "crates/ofdm/src/error.rs",
+    "crates/ofdma/src/api/error.rs",
+    "Cargo.lock",
+    "apps/qt/Cargo.lock",
+    "docs/development/features/unified-qt-workbench/legacy-qt-boundary.json",
+    "docs/development/features/unified-qt-workbench/legacy-qt-boundary-initial.json"
+  ],
+  "numeric_review": "No production numerical literal/domain bound introduced. Zero runtime is the explicitly rejected boundary fixture; existing independent timing/source vectors remain unchanged. Final line-by-line integration audit remains UIU-QA-01.",
+  "scope_limits": [
+    "No scientific implementation, category, dependency, saved schema or Qt/frozen-boundary changes.",
+    "No full historical workspace or Qt/QML suites rerun; this passive error observation has scoped Rust/native acceptance.",
+    "No publication, installed desktop or Windows acceptance claimed; Qt worker/help adoption and parent/final integration remain pending."
+  ],
+  "local_evidence": [
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-checks.json",
+      "sha256": "fe1f755305f86a4365e697eda4ab3e2946c3acfbbe3c93ac92b43c4d2b0c1d54"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-final-checks.json",
+      "sha256": "5f397a1cc6d0bc71e89df62af46487e3c0387157ee0f5544d066a4ead9dbfab7"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native/results.json",
+      "sha256": "2a45782d649a54a0eaec5c1cb3d524bea04fb7a35feaef56e095492430af234d"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native/artifact-preflight.stdout",
+      "sha256": "d2ba479b4a750ede3946040881832f31fa0b63eb375564e62a656e4d433fd580"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-native/native-exports.json",
+      "sha256": "78c22cb0c06e47bf628fb6004c18f2f061b3df988f48614f5eda717858bd2588"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-rust-exports.json",
+      "sha256": "d311a645e86761c1a285409815fcafc4424a5beeac0d0e24baa13c00b9d8d5e1"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-strict-matrix.log",
+      "sha256": "3d43cf58d2d9df3c76329632be9b22512e0b69937738acc17396a701ac9244cd"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-engine-diagnostic-metadata.log",
+      "sha256": "6f3daa3bf5ed01c3c138db337d3958be479e84b399769b15f16c4456a064f238"
+    }
+  ]
+}

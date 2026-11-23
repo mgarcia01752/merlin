@@ -55,6 +55,16 @@ wheels expose genuine `merlin.downstream`, `merlin.upstream` and `merlin.common`
 modules through one native extension/distribution; compatibility imports retain
 their nominal type identity.
 
+Downstream Rust `ApiError::code()` returns the shared category, while
+`engine_code()` optionally borrows the retained original backend diagnostic code.
+API-only errors return `None`; display text never supplies a missing code.
+Upstream Rust retains its existing `category()` and original-code `code()` methods.
+Python exceptions expose the shared category as `.code`, the original message as
+`.message` and optional original Rust code as `.engine_code` in both namespaces.
+Existing `.legacy_code`, `.field` and `.offset` values keep their behavior.
+Use categories for general routing and only explicitly supported original codes
+for specialized help; unknown or absent codes remain unclassified.
+
 ## Rust workflow
 
 This simple example loads one modulation-profile capture and one RxMER

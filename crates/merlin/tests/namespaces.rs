@@ -92,6 +92,20 @@ fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
 }
 
 #[test]
+fn source_error_codes_remain_distinct_from_shared_categories_through_facade() {
+    let upstream = upstream::Simulation::new(upstream::ExperimentOptions::default()).unwrap();
+    let original = upstream.preview().err().unwrap();
+    assert_eq!(original.category(), common::ErrorCode::MissingSetting);
+    assert_eq!(original.code(), "MissingSetting");
+    let adapter = downstream::ApiError::new(
+        common::ErrorCode::MissingSetting,
+        "MissingSetting is only display text in this API-only diagnostic.",
+    );
+    assert_eq!(adapter.code(), original.category());
+    assert!(adapter.engine_code().is_none());
+}
+
+#[test]
 fn upstream_namespace_executes_real_loop_and_preserves_structured_errors() {
     let mut simulation = upstream::Simulation::new(upstream::ExperimentOptions::default()).unwrap();
     assert_eq!(

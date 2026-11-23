@@ -1758,3 +1758,30 @@ This current exact-archive run revalidates its phase and snapshot assertions;
 there is no retrospective fresh-build claim. Qt/engine algorithms, dependencies,
 saved schemas and frozen boundary records are unchanged. Parent DS-01, coherent
 worker migration and final line-by-line numeric audit remain open.
+
+## UIU-DS-01 structured engine diagnostic accepted
+
+The [diagnostic evidence](engine-diagnostic-evidence.json) accepts a typed
+downstream getter for the already-retained original backend error code. None
+continues to mean no retained cause; neither the generic category nor display
+text invents one. Native `.engine_code` copies the original code through the
+appropriate public Rust getter for each direction, with None as the manual
+exception default. Existing category/message/legacy-code/field/offset semantics
+and Rust error serialization remain unchanged.
+
+Ten scoped Rust cases and thirteen exact-archive installed native cases pass.
+They include actual rejected zero-runtime validation, clone/borrow/serde
+ownership, misleading text without a source, facade/category separation,
+upstream MissingSetting metadata, source/admission regressions, original
+namespace/control behavior and targeted full-loop/budget errors. The installed
+module matches the newly built archive before tests start. Root/native Clippy,
+formatting, analysis-only compilation, 38 metadata cases and strict fresh
+compiler/installed/executed tracing pass. One Rust operation and two native
+namespace field projections bring the matrix to 570/544; all prior rows/types,
+948 prior native root/namespace operation instances and 112 class exports remain
+exact after removing only the new field from comparison.
+
+No scientific implementation, error category, dependency, saved schema, Qt or
+frozen boundary changes. This does not claim full historical workspace or Qt
+acceptance. Commit this prerequisite before help/worker consumption; parent
+DS-01, coherent run migration and the final line-by-line numeric audit remain open.

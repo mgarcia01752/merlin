@@ -25,7 +25,7 @@ mod api {
 /// # Arguments
 /// * `value` - Owned error convertible to the existing public upstream failure.
 /// # Returns
-/// Exception retaining category, legacy code and any available field/offset.
+/// Exception retaining category, original engine code, legacy code and available field/offset.
 pub(crate) fn error(value: impl Into<api::ApiError>) -> PyErr {
     let value = value.into();
     Python::attach(|py| {
@@ -34,6 +34,7 @@ pub(crate) fn error(value: impl Into<api::ApiError>) -> PyErr {
         let _ = instance.setattr("code", crate::PyErrorCode::from(value.category()));
         let _ = instance.setattr("message", value.to_string());
         let _ = instance.setattr("legacy_code", value.code());
+        let _ = instance.setattr("engine_code", value.code());
         let field = match &value {
             api::ApiError::Domain(
                 api::PhyError::InvalidInput { field }
