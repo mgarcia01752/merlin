@@ -2644,3 +2644,36 @@ Unrelated workspace/native/CLI suites, startup, project and packaging checks are
 not required for this presentation-only consumer change. No unexecuted suite is
 claimed passed. Remaining downstream consumers, parent Level 2, final Level 3
 and the final numeric audit stay open; no official checkbox changes.
+
+## UIU-DS-01 channel and receiver observations facade accepted
+
+[Design](design.md#uiu-ds-01-channel-and-receiver-spectrum-adoption) and
+[machine evidence](channel-observations-facade-evidence.json) record Level 1
+acceptance for REQ-UIU-02/03/08/09/16/17/18/24/27. Existing public channel/calibrated
+spectrum, amplifier_bins, physical_bins, response and physical-layout operations
+replace private Qt numerical calls. Qt no longer calculates these PSD, electrical
+integration, amplifier gain, logarithmic bin power, H or impulse observations.
+The shared renderers format authoritative values, source coordinates and PLC
+bounds. Raw FFT power remains separate from PSD; amplifier-only gain remains
+separate from CPA/H/noise; configured H never substitutes for unavailable H-hat.
+
+Executed: five Qt Rust cases (actual full-loop/tap/amp-QAM compatibility, actual
+MCE/configured/estimated response, existing independent TX sampling-budget test,
+original two-spacing/two-position PLC clipping vectors through public admission,
+and physical-bin selector boundaries), five affected QML behaviors (seven with
+harness), Qt formatting, all-target Clippy and optimized release build, plus
+boundary/document/traceability/guide/diff audits. Actual raw FFT single-bin values,
+coordinates/readouts and unavailable gaps match public observations; time-stage
+full-band power remains unchanged on zoom. All original worker assertions remain;
+PLC fixture preparation changes admission owner while preserving its independent
+source geometry, pilots, PLC endpoints and every clipping assertion.
+
+Four complete frozen files retire and the private response call leaves diagnostics:
+18 files/75 sites becomes 14 files/66 sites. The exact remaining slicer/FEC tail is
+preserved. The 54 measurement/Designer/channel-configuration/session and 12 receiver
+QAM/soft-history sites, followed by three dependency removals, bound the remaining
+UIU-DS-01 work. No new checklist task, API, binding, schema or lifecycle contract.
+Existing paired API evidence remains applicable; no fresh wheel or unrelated
+workspace/native/CLI/project/packaging suite is required. No installed-platform
+or unexecuted-suite pass is claimed. Parent Level 2, downstream milestone Level 3,
+later tasks and final numeric/shared-constant acceptance remain pending.

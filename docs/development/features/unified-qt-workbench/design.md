@@ -2937,3 +2937,33 @@ optimized build, source-boundary and traceability checks. No backend/binding,
 serialization, registration or lifecycle change; reuse the accepted API evidence
 without rebuilding a wheel. Retire only this complete frozen file after review.
 Parent Level 2 and final Level 3 remain unchecked.
+
+## UIU-DS-01 channel and receiver spectrum adoption
+
+REQ-UIU-02/03/08/09/16/17/18/24/27 and UIU-DS-01 own this existing-API consumer unit.
+REUSE FullLoopResult.channel_spectrum, calibrated_spectrum, physical_bins,
+amplifier_bins and response, plus the accepted shared spectrum renderer and
+TransmissionConfiguration.physical_layout. EDIT channel/mod.rs, receiver/views.rs,
+receiver/diagnostics.rs, transmitter/channel_input.rs and spectrum/plc.rs; remove
+the unused private PSD formatter from spectrum/mod.rs. No public API extension.
+Keep the existing retained-sample budget/continuity, raw FFT power separate from
+PSD, amplifier-only reference separate from CPA/H/noise, and configured H separate
+from received H-hat. Missing estimates never fall back to configured H.
+
+Qt may group supplied finite power values and normalize drawing coordinates, but
+may not calculate PSD, gain, power integration, log power, response or impulse data.
+The raw FFT renderer adapts only the presentation portion of this repository's
+Apache-2.0 scenario/measurement_view.rs at a0ddab1334e73b190e76ee51cc89f316707e19d4;
+the original owner/header/license remain, no external source or new dependency is
+imported, and all scientific values come from physical_bins. Preserve original
+JSON, min/max gaps, ticks, source-frequency readouts and unavailable counts. Name
+independent renderer/selector policies centrally. Keep the remaining receiver
+QAM/soft-history route frozen and preserve its exact code when reviewing partial
+diagnostics changes.
+
+Level 1 covers actual worker/tap power and amplifier-QAM parity, independent FFT
+power/response comparisons, existing PLC clipping vectors, affected SA/response
+QML interactions, Qt formatting/Clippy/optimized build and boundary/traceability.
+The already accepted paired APIs need no new wheel or repeated unrelated suites.
+Retire complete files only after no direct scientific owner remains; record the
+remaining diagnostics roots explicitly. Parent Level 2 and final Level 3 remain.

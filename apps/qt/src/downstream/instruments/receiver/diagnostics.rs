@@ -4,14 +4,18 @@
  */
 //! Presentation queries over shared immutable response, likelihood and decoder results.
 use super::selection::{archive, select_run, Query};
-use crate::downstream::simulation::closed_loop::latest;
-use docsis_ofdm_fec::{
-    signal_processing::{
-        modulation::slice_symbol,
-        receiver::diagnostics::{llr_statistics, response_diagnostics},
-    },
-    transmission::layout::{CarrierLayout, PhysicalCarrierRole},
+use crate::downstream::common::constants::{
+    INITIAL_RESPONSE_VELOCITY_PERCENT, MAX_RESPONSE_SELECTOR_BYTES, MAX_RESPONSE_VELOCITY_PERCENT,
+    MIN_RESPONSE_VELOCITY_PERCENT, RESPONSE_COMPARISON_SOURCE, RESPONSE_CONFIGURED_SOURCE,
+    RESPONSE_ESTIMATED_SOURCE, RESPONSE_GAIN_VIEW, RESPONSE_IMPULSE_VIEW,
+    RESPONSE_MAX_SNAPSHOT_INDEX, RESPONSE_PHASE_VIEW, RESPONSE_REAL_VIEW,
 };
+use crate::downstream::simulation::closed_loop::latest;
+use crate::shared::presentation::constants::{HERTZ_PER_MEGAHERTZ, PERCENT_PER_UNIT};
+use docsis_ofdm_fec::signal_processing::{
+    modulation::slice_symbol, receiver::diagnostics::llr_statistics,
+};
+use merlin::downstream::{ErrorCode, FullLoopResponseQuery, FullLoopResponseSource, FullLoopStage};
 use serde::Deserialize;
 use serde_json::{json, Value};
 
@@ -94,12 +98,15 @@ struct ResponseQuery {
     velocity_percent: u32,
 }
 impl Default for ResponseQuery {
+    /// Selects the existing configured-gain view and explicit uniform-cable ruler.
+    /// # Returns
+    /// Passive UI selectors; no response, estimate or receiver is generated.
     fn default() -> Self {
         Self {
-            source: 0,
+            source: RESPONSE_CONFIGURED_SOURCE,
             snapshot: 0,
-            view: 0,
-            velocity_percent: 87,
+            view: RESPONSE_GAIN_VIEW,
+            velocity_percent: INITIAL_RESPONSE_VELOCITY_PERCENT,
         }
     }
 }
@@ -111,77 +118,86 @@ impl Default for ResponseQuery {
 /// # Errors
 /// Rejects invalid selection or unavailable estimates, never substitutes supplied coefficients.
 pub(crate) fn response(document: &str) -> Result<Value, String> {
-    if document.len() > 4096 {
+    if document.len() > MAX_RESPONSE_SELECTOR_BYTES {
         return Err("Response selector exceeds bounds.".into());
     }
     let query: ResponseQuery = serde_json::from_str(document).map_err(|e| e.to_string())?;
-    if query.source > 2
-        || query.view > 4
-        || query.snapshot > 3
-        || !(1..=100).contains(&query.velocity_percent)
+    if query.source > RESPONSE_COMPARISON_SOURCE
+        || query.view > RESPONSE_IMPULSE_VIEW
+        || query.snapshot > RESPONSE_MAX_SNAPSHOT_INDEX
+        || !(MIN_RESPONSE_VELOCITY_PERCENT..=MAX_RESPONSE_VELOCITY_PERCENT)
+            .contains(&query.velocity_percent)
     {
         return Err("Invalid response selector.".into());
     }
-    if query.source == 2 {
+    if query.source == RESPONSE_COMPARISON_SOURCE {
         let mut document: Value =
             serde_json::from_str(document).map_err(|error| error.to_string())?;
-        document["source"] = json!(0);
+        document["source"] = json!(RESPONSE_CONFIGURED_SOURCE);
         let mut applied = response(&document.to_string())?;
-        document["source"] = json!(1);
+        document["source"] = json!(RESPONSE_ESTIMATED_SOURCE);
         applied["comparison"] = response(&document.to_string())?;
         return Ok(applied);
     }
     let result = latest().ok_or("Run the closed loop to retain response observations.")?;
     let settings = &result.job.settings;
-    let layout =
-        CarrierLayout::new(&settings.transmission, &settings.layout).map_err(|e| e.to_string())?;
-    let snapshots: Vec<_> = result
-        .observations
-        .responses
-        .iter()
-        .map(|(symbol, _)| *symbol)
-        .collect();
-    let coefficients = if query.source == 0 {
-        docsis_ofdm_fec::signal_processing::channel::composition::prepare_channel(
-            &settings.transmission,
-            &layout,
-            &settings.impairments,
-            settings.llr_variance,
-            &settings.channel_filter,
-        )
+    let backend = result.backend();
+    let layout = backend
+        .inputs()
+        .transmission
+        .physical_layout(&backend.inputs().profile, 0, 0, 0)
         .map_err(|error| error.to_string())?
-        .plan
-        .response
+        .layout;
+    let snapshots = backend
+        .stage_inventory()
+        .iter()
+        .find(|info| info.stage == FullLoopStage::RxChannelEstimate)
+        .map_or(0, |info| info.snapshots);
+    let snapshots = (0..snapshots)
+        .map(|index| {
+            backend
+                .stage(FullLoopStage::RxChannelEstimate, index, Default::default())
+                .map(|event| event.context.channel_symbol_index.unwrap_or(0))
+                .map_err(|error| error.to_string())
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    let source = if query.source == RESPONSE_CONFIGURED_SOURCE {
+        FullLoopResponseSource::Configured
     } else {
-        match result.observations.responses.get(query.snapshot) {
-            Some((_, response)) => response.clone(),
-            None => {
-                let mut state=empty("No receiver H-hat snapshot. Enable MCE or pilot-estimated correction and run again; supplied H is not an estimate.");
-                state["snapshots"] = json!(snapshots);
-                return Ok(state);
-            }
+        FullLoopResponseSource::ReceiverEstimate {
+            snapshot: query.snapshot,
         }
     };
-    let masked: Vec<_> = coefficients
-        .into_iter()
-        .zip(layout.static_roles())
-        .map(|(p, r)| (*r != PhysicalCarrierRole::Excluded).then_some(p))
-        .collect();
-    let response = response_diagnostics(
-        settings.transmission.subcarrier_spacing,
-        &masked,
-        f64::from(query.velocity_percent) / 100.0,
-    )
-    .map_err(|e| e.to_string())?;
-    let (values, x, axis, coordinate) = if query.view < 4 {
+    let observed = match backend.response(FullLoopResponseQuery {
+        source,
+        velocity_factor: f64::from(query.velocity_percent) / PERCENT_PER_UNIT,
+    }) {
+        Ok(observed) => observed,
+        Err(error)
+            if query.source != RESPONSE_CONFIGURED_SOURCE
+                && matches!(
+                    error.code(),
+                    ErrorCode::MissingCoverage | ErrorCode::InvalidIdentifier
+                ) =>
+        {
+            let mut state=empty("No receiver H-hat snapshot. Enable MCE or pilot-estimated correction and run again; supplied H is not an estimate.");
+            state["snapshots"] = json!(snapshots);
+            return Ok(state);
+        }
+        Err(error) => return Err(error.to_string()),
+    };
+    let response = observed.diagnostics;
+    let (values, x, axis, coordinate) = if query.view < RESPONSE_IMPULSE_VIEW {
         let values = match query.view {
-            0 => response.gain_db.clone(),
-            1 => response.phase_degrees.clone(),
-            2 => response.real.clone(),
+            RESPONSE_GAIN_VIEW => response.gain_db.clone(),
+            RESPONSE_PHASE_VIEW => response.phase_degrees.clone(),
+            RESPONSE_REAL_VIEW => response.real.clone(),
             _ => response.imaginary.clone(),
         };
-        let x: Vec<_> = (0..masked.len())
-            .map(|bin| layout.frequency_hz(bin as u16).unwrap_or(0) as f64 / 1e6)
+        let x: Vec<_> = layout
+            .carriers
+            .iter()
+            .map(|carrier| f64::from(carrier.frequency_hz) / HERTZ_PER_MEGAHERTZ)
             .collect();
         (
             values,
@@ -208,15 +224,15 @@ pub(crate) fn response(document: &str) -> Result<Value, String> {
         )
     };
     let mut state = curve(&x, &values, axis, coordinate);
-    if query.view < 4 {
+    if query.view < RESPONSE_IMPULSE_VIEW {
         state["start"] = json!(0);
-        state["count"] = json!(masked.len());
+        state["count"] = json!(layout.fft_bins);
         crate::spectrum_view::plc::annotate(&mut state, &layout);
     }
     state["snapshots"] = json!(snapshots);
     state["summary"] = json!(format!(
         "{} · {} observed bins · correction {}",
-        if query.source == 0 {
+        if query.source == RESPONSE_CONFIGURED_SOURCE {
             "Applied reference H (channel input)"
         } else {
             "Receiver pilot-estimated H-hat"
@@ -224,8 +240,8 @@ pub(crate) fn response(document: &str) -> Result<Value, String> {
         response.available_bins,
         super::selection::correction_name(settings.receiver_mode)
     ));
-    if query.view == 4 {
-        state["detail"]=json!(format!("Peak delay: {:.4} µs · extra path {:.2} ft · two-way spacing {:.2} ft · VF {:.2}. Band-limited estimate; not guaranteed echo protection.",response.peak_delay_microseconds,response.peak_extra_path_feet,response.peak_two_way_spacing_feet,f64::from(query.velocity_percent)/100.0));
+    if query.view == RESPONSE_IMPULSE_VIEW {
+        state["detail"]=json!(format!("Peak delay: {:.4} µs · extra path {:.2} ft · two-way spacing {:.2} ft · VF {:.2}. Band-limited estimate; not guaranteed echo protection.",response.peak_delay_microseconds,response.peak_extra_path_feet,response.peak_two_way_spacing_feet,f64::from(query.velocity_percent)/PERCENT_PER_UNIT));
     }
     if let Some(reliability) = &result.job.receiver_reliability {
         state["mce"] = json!({"tracking":reliability.tracking,"raw_noise_power":reliability.raw_noise_power,"noise_text":format!("{:.3e}",reliability.raw_noise_power),"compared_pilots":reliability.compared_pilots});

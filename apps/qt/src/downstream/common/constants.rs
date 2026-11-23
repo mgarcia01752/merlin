@@ -168,3 +168,35 @@ pub(crate) const PERFORMANCE_METRIC_TICK_INTERVALS: u32 = 4;
 pub(crate) const PERFORMANCE_IDEAL_SERIES_ID: u8 = 0;
 /// Existing observed-MER curve identifier; unrelated to source profile identities.
 pub(crate) const PERFORMANCE_OBSERVED_SERIES_ID: u8 = 1;
+
+/// Tiny drawing floor for channel/post-amplifier scatter, independent of TX's unit floor.
+pub(crate) const CHANNEL_SCATTER_MIN_EXTENT: f64 = 1e-9;
+/// Existing receiver-input level warning target, not a channel admission constraint.
+pub(crate) const CHANNEL_LEVEL_TARGET_MIN_DBMV_PER_6MHZ: f64 = -12.0;
+/// Upper edge of that same displayed band-average operating target.
+pub(crate) const CHANNEL_LEVEL_TARGET_MAX_DBMV_PER_6MHZ: f64 = 12.0;
+
+/// Existing response-selection transport ceiling, independent of capture/model admission.
+pub(crate) const MAX_RESPONSE_SELECTOR_BYTES: usize = 4096;
+/// Configured-transfer source selector in the response-view protocol.
+pub(crate) const RESPONSE_CONFIGURED_SOURCE: usize = 0;
+/// Actual receiver-estimate source selector; absence never selects configured H.
+pub(crate) const RESPONSE_ESTIMATED_SOURCE: usize = 1;
+/// Presentation comparison combines the two independent public response queries.
+pub(crate) const RESPONSE_COMPARISON_SOURCE: usize = 2;
+/// Existing last response snapshot offered by the bounded UI selector (four entries).
+pub(crate) const RESPONSE_MAX_SNAPSHOT_INDEX: usize = 3;
+/// Last response view selects the backend's band-limited impulse observation.
+pub(crate) const RESPONSE_IMPULSE_VIEW: usize = 4;
+/// Gain view selector, independent of the equal-valued configured-source selector.
+pub(crate) const RESPONSE_GAIN_VIEW: usize = 0;
+/// Wrapped phase view selector in the response-view protocol.
+pub(crate) const RESPONSE_PHASE_VIEW: usize = 1;
+/// Real coefficient view selector, unrelated to source-comparison selection.
+pub(crate) const RESPONSE_REAL_VIEW: usize = 2;
+/// Initial uniform-cable diagnostic ruler percentage; not an inferred measurement.
+pub(crate) const INITIAL_RESPONSE_VELOCITY_PERCENT: u32 = 87;
+/// Minimum integer percentage offered by the response ruler editor.
+pub(crate) const MIN_RESPONSE_VELOCITY_PERCENT: u32 = 1;
+/// Maximum integer percentage; the public backend independently validates (0, 1].
+pub(crate) const MAX_RESPONSE_VELOCITY_PERCENT: u32 = 100;

@@ -10,7 +10,7 @@ use crate::downstream::{
 use crate::shared::presentation::constants::{
     MAX_SCATTER_PLOT_POINTS, SCATTER_AXIS_CENTER, SCATTER_HEADROOM_RATIO,
 };
-use merlin::downstream::{ErrorCode, FullLoopStage, PhysicalCarrierRole, SubcarrierIndex};
+use merlin::downstream::{AmplifierBoundary, ErrorCode, PhysicalCarrierRole, SubcarrierIndex};
 use serde_json::{json, Value};
 
 fn selected_bound(value: i32) -> Result<Option<u16>, String> {
@@ -32,6 +32,16 @@ fn selected_bound(value: i32) -> Result<Option<u16>, String> {
 /// coordinates. Excluded/missing bins remain absent. Physical Data does not prove
 /// transported payload/NCP identity, so the existing unknown role label is retained.
 pub(crate) fn qam(first: i32, last: i32) -> Value {
+    qam_at_boundary(first, last, AmplifierBoundary::Before)
+}
+
+/// Formats exact public physical bins at the requested amplifier-only boundary.
+/// # Arguments
+/// * `first`, `last` - Existing inclusive bin selection, with open ends at -1.
+/// * `boundary` - Actual pre-amplifier or backend-derived post-amplifier I/Q.
+/// # Returns
+/// Existing bounded scatter and original coordinates; no gain calculation occurs here.
+pub(crate) fn qam_at_boundary(first: i32, last: i32, boundary: AmplifierBoundary) -> Value {
     let get = || -> Result<Value, String> {
         let first = selected_bound(first)?;
         let last = selected_bound(last)?;
@@ -41,13 +51,14 @@ pub(crate) fn qam(first: i32, last: i32) -> Value {
         let result = latest().ok_or("Run the simulation to capture channel input.")?;
         let observation = result
             .backend()
-            .physical_bins(FullLoopStage::PhysicalBins, 0, 0, 0)
+            .amplifier_bins(boundary, 0, 0, 0)
             .map_err(|cause| match cause.code() {
                 ErrorCode::MissingCoverage | ErrorCode::InvalidIdentifier => {
                     "No physical TX bins retained.".to_owned()
                 }
                 _ => cause.message().to_owned(),
-            })?;
+            })?
+            .observation;
         let selected = observation
             .bins
             .iter()
@@ -63,14 +74,26 @@ pub(crate) fn qam(first: i32, last: i32) -> Value {
             })
             .collect::<Vec<_>>();
         // Only drawing coordinates use this extent; backend samples/roles are unchanged.
+        let stride = selected.len().div_ceil(MAX_SCATTER_PLOT_POINTS).max(1);
         let extent = selected
             .iter()
+            .step_by(if boundary == AmplifierBoundary::After {
+                stride
+            } else {
+                1
+            })
             .flat_map(|(_, iq, _)| iq)
             .map(|value| value.abs())
-            .fold(TX_PHYSICAL_SCATTER_MIN_EXTENT, f64::max)
+            .fold(
+                if boundary == AmplifierBoundary::After {
+                    crate::downstream::common::constants::CHANNEL_SCATTER_MIN_EXTENT
+                } else {
+                    TX_PHYSICAL_SCATTER_MIN_EXTENT
+                },
+                f64::max,
+            )
             * SCATTER_HEADROOM_RATIO;
         let span = extent + extent;
-        let stride = selected.len().div_ceil(MAX_SCATTER_PLOT_POINTS).max(1);
         let symbol = observation.context.channel_symbol_index;
         let points = selected.iter().step_by(stride).map(|(bin,iq,frequency)| json!({
             "index":bin,"frequency_hz":frequency,"symbol":symbol,"i":iq[0],"q":iq[1],
@@ -80,10 +103,12 @@ pub(crate) fn qam(first: i32, last: i32) -> Value {
             true => "No retained active bins match this range.",
             false => "",
         };
-        Ok(
-            json!({"available":!points.is_empty(),"points":points,"symbol":symbol,
-            "selected":selected.len(),"reason":reason}),
-        )
+        let mut view = json!({"available":!points.is_empty(),"points":points,"symbol":symbol,
+            "selected":selected.len(),"reason":reason});
+        if boundary == AmplifierBoundary::After {
+            view["extent"] = json!(extent);
+        }
+        Ok(view)
     };
     get().unwrap_or_else(|reason| json!({"available":false,"points":[],"reason":reason}))
 }

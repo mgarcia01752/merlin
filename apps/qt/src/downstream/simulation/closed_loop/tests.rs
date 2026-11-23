@@ -118,6 +118,25 @@ fn mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance() {
     assert_eq!(response["available"], true);
     assert_eq!(response["comparison"]["available"], true);
     assert_eq!(response["mce"]["tracking"], true);
+    let result = latest().unwrap();
+    let estimated = result
+        .backend()
+        .response(merlin::downstream::FullLoopResponseQuery {
+            source: merlin::downstream::FullLoopResponseSource::ReceiverEstimate { snapshot: 0 },
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!(
+        response["comparison"]["snapshots"][0],
+        estimated.channel_symbol_index.unwrap()
+    );
+    let impulse =
+        crate::downstream::instruments::receiver::diagnostics::response(r#"{"source":1,"view":4}"#)
+            .unwrap();
+    assert!(impulse["detail"].as_str().unwrap().contains(&format!(
+        "Peak delay: {:.4} µs",
+        estimated.diagnostics.peak_delay_microseconds
+    )));
     publish(None);
 }
 #[test]
@@ -496,6 +515,69 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         assert!(view.get("error").is_none(), "{view}");
         assert!(view["points"].as_array().unwrap().len() <= 2048);
     }
+    for (tap, stage) in [
+        (0, merlin::downstream::FullLoopStage::ChannelOutput),
+        (1, merlin::downstream::FullLoopStage::RxFramed),
+        (2, merlin::downstream::FullLoopStage::RxUseful),
+    ] {
+        let observed = result
+            .backend()
+            .calibrated_spectrum(merlin::downstream::FullLoopSpectrumQuery {
+                stage,
+                max_averages: result
+                    .backend()
+                    .inputs()
+                    .transmission
+                    .spectrum_average_capacity(32768)
+                    .unwrap(),
+                ..Default::default()
+            })
+            .unwrap();
+        let view =
+            crate::downstream::instruments::receiver::views::spectrum(tap, 0, 0, false).unwrap();
+        assert_eq!(
+            view["channel_power"],
+            serde_json::to_value(&observed.power.channel_power).unwrap()
+        );
+        let zoom =
+            crate::downstream::instruments::receiver::views::spectrum(tap, 100, 32, true).unwrap();
+        assert_eq!(zoom["channel_power"], view["channel_power"]);
+        assert_eq!(zoom["count"], 32);
+    }
+
+    // Known original physical bins, not frequency-domain values reinterpreted as PSD.
+    let fft = result
+        .backend()
+        .physical_bins(merlin::downstream::FullLoopStage::RxFft, 0, 0, 0)
+        .unwrap();
+    for index in [0, 356, 8191] {
+        let point = &fft.bins[index];
+        let view =
+            crate::downstream::instruments::receiver::views::spectrum(3, index as i32, 1, true)
+                .unwrap();
+        assert_eq!(view["start"], index);
+        assert_eq!(view["count"], 1);
+        assert_eq!(view["points"][0]["x"], 0.5);
+        assert_eq!(view["axis_label"], "FFT Bin Power · dB re normalized unit²");
+        let reading = if let Some(value) = point.power_db {
+            format!("{value:.3} … {value:.3} FFT Bin Power · dB re normalized unit²")
+        } else {
+            "Unavailable · includes missing samples".into()
+        };
+        let frequency = f64::from(fft.layout.carriers[index].frequency_hz) / 1_000_000.0;
+        assert_eq!(
+            view["points"][0]["readout"],
+            format!("{frequency:.3}–{frequency:.3} MHz · {reading}")
+        );
+    }
+    assert_eq!(
+        crate::downstream::instruments::receiver::views::spectrum(3, 100, 0, true).unwrap()
+            ["start"],
+        0
+    );
+    assert!(crate::downstream::instruments::receiver::views::spectrum(4, 0, 0, true).is_err());
+    assert!(crate::downstream::instruments::receiver::views::spectrum(3, -1, 32, true).is_err());
+    assert!(crate::downstream::instruments::receiver::views::spectrum(3, 8191, 2, true).is_err());
     assert!(!result.observations.taps[0].values.is_empty());
     assert!(result.job.constellation.as_ref().unwrap().collected_pairs > 0);
     let query = crate::downstream::instruments::receiver::selection::Query::default();

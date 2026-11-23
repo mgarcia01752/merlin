@@ -300,34 +300,11 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/instruments/channel/mod.rs",
-      "sha256": "1d9fc006c24c42b2f52e7fece5179e59b3672f0e374e759ed7e6c8cbb08fcd1f",
-      "sites": [
-        {
-          "line": 7,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 185,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 191,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
-      "sha256": "0a30767c77340c499dc259baf9b530a7b8186c33f9a8e5af7009361931ac6482",
+      "sha256": "4e314389c700c4b7b2edb4a448f9c950d83bd88fe96889113dc9cb1f49990c20",
       "sites": [
         {
-          "line": 8,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 145,
+          "line": 15,
           "root": "docsis_ofdm_fec"
         }
       ],
@@ -386,47 +363,6 @@
         },
         {
           "line": 329,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/instruments/receiver/views.rs",
-      "sha256": "b1038df7e26d87c1c9b9fedaec376dc0654b7a259b36312ed1f9e77cd751a604",
-      "sites": [
-        {
-          "line": 7,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 35,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/instruments/spectrum/mod.rs",
-      "sha256": "47cea86ad53db7b81f6499e5d52394fc1aa5504aeabdcd9856183ca08510d5aa",
-      "sites": [
-        {
-          "line": 8,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/instruments/spectrum/plc.rs",
-      "sha256": "b76c2e17ef8f87486ebdfcd3a59a5b04b1a716861d05bebe0c670b3fcfbe610a",
-      "sites": [
-        {
-          "line": 6,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 44,
           "root": "docsis_ofdm_fec"
         }
       ],
@@ -2760,6 +2696,90 @@
       "unit": "Profile performance viewer facade",
       "reason": "Public FullLoopResult.profile_performance supplies every exact source coordinate/role and scientific observation. Qt retains scalar projections and presentation-only grouping/labels; shared FEC report getters preserve existing JSON. QAM history is unchanged and remains frozen.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-profile-performance-viewer-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/channel/mod.rs",
+        "sha256": "1d9fc006c24c42b2f52e7fece5179e59b3672f0e374e759ed7e6c8cbb08fcd1f",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 185,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 191,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Channel and receiver observations facade",
+      "reason": "Existing accepted public PSD/calibration/amplifier/physical-layout observations replace private numerical owners. Qt only groups/formats authoritative values and physical PLC bounds. Original PLC vectors use public admission with the same independent source geometry/pilots. No backend API extension or scientific implementation.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-channel-and-receiver-observations-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/views.rs",
+        "sha256": "b1038df7e26d87c1c9b9fedaec376dc0654b7a259b36312ed1f9e77cd751a604",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 35,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Channel and receiver observations facade",
+      "reason": "Existing accepted public PSD/calibration/amplifier/physical-layout observations replace private numerical owners. Qt only groups/formats authoritative values and physical PLC bounds. Original PLC vectors use public admission with the same independent source geometry/pilots. No backend API extension or scientific implementation.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-channel-and-receiver-observations-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/spectrum/mod.rs",
+        "sha256": "47cea86ad53db7b81f6499e5d52394fc1aa5504aeabdcd9856183ca08510d5aa",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Channel and receiver observations facade",
+      "reason": "Existing accepted public PSD/calibration/amplifier/physical-layout observations replace private numerical owners. Qt only groups/formats authoritative values and physical PLC bounds. Original PLC vectors use public admission with the same independent source geometry/pilots. No backend API extension or scientific implementation.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-channel-and-receiver-observations-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/spectrum/plc.rs",
+        "sha256": "b76c2e17ef8f87486ebdfcd3a59a5b04b1a716861d05bebe0c670b3fcfbe610a",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 44,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Channel and receiver observations facade",
+      "reason": "Existing accepted public PSD/calibration/amplifier/physical-layout observations replace private numerical owners. Qt only groups/formats authoritative values and physical PLC bounds. Original PLC vectors use public admission with the same independent source geometry/pilots. No backend API extension or scientific implementation.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-channel-and-receiver-observations-facade-accepted"
     }
   ],
   "reviewed_updates": [
@@ -3115,6 +3135,38 @@
         "byte_length": 204,
         "exact_at_base_commit": "1820cdff5a562e021385626155a40ff6ec1c4450"
       }
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+        "sha256": "0a30767c77340c499dc259baf9b530a7b8186c33f9a8e5af7009361931ac6482",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 145,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+        "sha256": "4e314389c700c4b7b2edb4a448f9c950d83bd88fe96889113dc9cb1f49990c20",
+        "sites": [
+          {
+            "line": 15,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Configured/estimated response and impulse calculations move to the existing public FullLoopResult.response operation, original layout observations and retained stage metadata. Exact slicer/FEC tail and its remaining private slice/LLR imports stay frozen for bounded receiver-history migration.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-channel-and-receiver-observations-facade-accepted",
+      "preserved_legacy_tail_sha256": "e3e75b165c330fe21e38acfd183ce5da24cbf0ef49356df95325390e80eea3f9"
     }
   ]
 }

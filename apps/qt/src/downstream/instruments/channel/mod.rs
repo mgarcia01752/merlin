@@ -3,10 +3,16 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! One channel instrument provider with frozen, explicitly identified reference planes.
+use crate::downstream::common::constants::{
+    CHANNEL_LEVEL_TARGET_MAX_DBMV_PER_6MHZ, CHANNEL_LEVEL_TARGET_MIN_DBMV_PER_6MHZ,
+    CHANNEL_SCATTER_MIN_EXTENT, MAX_INSTRUMENT_TIME_SAMPLES,
+};
 use crate::downstream::simulation::closed_loop::latest;
-use docsis_ofdm_fec::{
-    signal_processing::{channel::power::channel_power, waveform::spectrum::estimate},
-    transmission::layout::{CarrierLayout, PhysicalCarrierRole},
+use crate::shared::presentation::constants::{
+    MAX_SCATTER_PLOT_POINTS, MIN_SPECTRUM_DISPLAY_BINS, SCATTER_AXIS_CENTER, SCATTER_HEADROOM_RATIO,
+};
+use merlin::downstream::{
+    AmplifierBoundary, FullLoopChannelTap, FullLoopResult, FullLoopSpectrumQuery, FullLoopStage,
 };
 use serde_json::{json, Value};
 const NAMES: [&str; 3] = [
@@ -49,38 +55,32 @@ pub(crate) fn spectrum(tap: i32, start: i32, count: i32, capture_axis: bool) -> 
             return Err("Invalid TapPoint.".into());
         }
         let result = latest().ok_or("Run the simulation to retain this TapPoint.")?;
-        let settings = &result.job.settings;
-        let input = if tap == 2 {
-            &result.observations.taps[0].values
-        } else {
-            &result.observations.tx.waves[3]
+        let (boundary, stage) = match tap {
+            0 => (
+                FullLoopChannelTap::BeforeAmplifier,
+                FullLoopStage::TxOverlap,
+            ),
+            1 => (FullLoopChannelTap::AfterAmplifier, FullLoopStage::TxOverlap),
+            _ => (
+                FullLoopChannelTap::ReceiverInput,
+                FullLoopStage::ChannelOutput,
+            ),
         };
-        let gain = if tap == 1 {
-            10.0_f64.powf(settings.impairments.power.gain_db() / 20.0)
-        } else {
-            1.0
-        };
-        let samples: Vec<_> = input.iter().map(|p| [p[0] * gain, p[1] * gain]).collect();
-        let spectrum = estimate(
-            settings.transmission.subcarrier_spacing,
-            settings.layout.zero_frequency_hz,
-            &samples,
-        )
-        .map_err(|e| e.to_string())?;
-        let layout = CarrierLayout::new(&settings.transmission, &settings.layout)
-            .map_err(|e| e.to_string())?;
-        let mut view = channel_viewport(
-            spectrum,
+        let mut view = observed_spectrum(
+            result.backend(),
+            stage,
+            Some(boundary),
             start,
             count,
             capture_axis,
             NAMES[tap as usize],
-            &layout,
-            &settings.impairments.power,
         )?;
         if tap == 2 {
             if let Some(level) = view["channel_power"]["equivalent_dbmv_per_6mhz"].as_f64() {
-                view["level_warning"] = json!(if !(-12.0..=12.0).contains(&level) {
+                view["level_warning"] = json!(if !(CHANNEL_LEVEL_TARGET_MIN_DBMV_PER_6MHZ
+                    ..=CHANNEL_LEVEL_TARGET_MAX_DBMV_PER_6MHZ)
+                    .contains(&level)
+                {
                     "Outside −12…+12 dBmV / 6 MHz operating target (band average)."
                 } else {
                     ""
@@ -105,38 +105,17 @@ pub(crate) fn qam(tap: i32, document: &str) -> Value {
         }
         let result = latest().ok_or("Run the simulation to retain this TapPoint.")?;
         if tap < 2 {
-            let mut view = crate::downstream::instruments::transmitter::channel_input::qam(
-                query.first_bin,
-                query.last_bin,
+            return Ok(
+                crate::downstream::instruments::transmitter::channel_input::qam_at_boundary(
+                    query.first_bin,
+                    query.last_bin,
+                    if tap == 1 {
+                        AmplifierBoundary::After
+                    } else {
+                        AmplifierBoundary::Before
+                    },
+                ),
             );
-            let gain = if tap == 1 {
-                10.0_f64.powf(result.job.settings.impairments.power.gain_db() / 20.0)
-            } else {
-                1.0
-            };
-            if let Some(points) = view["points"].as_array_mut() {
-                let extent = points
-                    .iter()
-                    .flat_map(|p| {
-                        [
-                            p["i"].as_f64().unwrap_or(0.0) * gain,
-                            p["q"].as_f64().unwrap_or(0.0) * gain,
-                        ]
-                    })
-                    .map(f64::abs)
-                    .fold(1e-9_f64, f64::max)
-                    * 1.1;
-                for p in points {
-                    let i = p["i"].as_f64().unwrap_or(0.0) * gain;
-                    let q = p["q"].as_f64().unwrap_or(0.0) * gain;
-                    p["i"] = json!(i);
-                    p["q"] = json!(q);
-                    p["x"] = json!(0.5 + i / (2.0 * extent));
-                    p["y"] = json!(0.5 - q / (2.0 * extent));
-                }
-                view["extent"] = json!(extent);
-            }
-            return Ok(view);
         }
         let archived =
             crate::downstream::instruments::receiver::selection::archive(&query, &result)?;
@@ -145,14 +124,18 @@ pub(crate) fn qam(tap: i32, document: &str) -> Value {
             archived.as_deref(),
             &query,
         )?;
-        let points = selected.cells.iter().take(2048).collect::<Vec<_>>();
+        let points = selected
+            .cells
+            .iter()
+            .take(MAX_SCATTER_PLOT_POINTS)
+            .collect::<Vec<_>>();
         let extent = points
             .iter()
             .flat_map(|p| p.raw)
             .map(|v| v.abs())
-            .fold(1e-9_f64, f64::max)
-            * 1.1;
-        let samples:Vec<_>=points.iter().map(|p|json!({"i":p.raw[0],"q":p.raw[1],"x":0.5+p.raw[0]/(2.0*extent),"y":0.5-p.raw[1]/(2.0*extent),"index":p.bin,"symbol":p.symbol,"role":match query.signal {0=>"data",1=>"ncp",2=>"plc",_=>"pilot"}})).collect();
+            .fold(CHANNEL_SCATTER_MIN_EXTENT, f64::max)
+            * SCATTER_HEADROOM_RATIO;
+        let samples:Vec<_>=points.iter().map(|p|json!({"i":p.raw[0],"q":p.raw[1],"x":SCATTER_AXIS_CENTER+p.raw[0]/(extent+extent),"y":SCATTER_AXIS_CENTER-p.raw[1]/(extent+extent),"index":p.bin,"symbol":p.symbol,"role":match query.signal {0=>"data",1=>"ncp",2=>"plc",_=>"pilot"}})).collect();
         let mer = crate::downstream::instruments::receiver::selection::mer(&selected, true);
         let reference_mer =
             crate::downstream::instruments::receiver::selection::reference_mer(&selected, true);
@@ -168,72 +151,74 @@ pub(crate) fn qam(tap: i32, document: &str) -> Value {
     get().unwrap_or_else(|reason| json!({"available":false,"points":[],"runs":crate::downstream::instruments::receiver::qam_history::catalog(),"reason":reason,"diagnostic":if tap==2 && crate::downstream::instruments::receiver::selection::Query::parse(document).is_ok_and(|query|query.run_profile>=0) {crate::downstream::help::static_diagnostic("QamRunUnavailable")} else {Value::Null}}))
 }
 
-/// Formats any time-domain SA route with one fixed channel band and electrical reference.
+/// Formats an authoritative public time-domain PSD using the existing retention policy.
 /// # Arguments
-/// * `spectrum` - Owned full-resolution PSD, safe to calibrate without changing captures.
-/// * `start` - First display bin.
-/// * `count` - Display bin count, zero for full span.
-/// * `capture_axis` - Select physical frequency labels.
-/// * `detail` - Signal reference-plane name.
-/// * `layout` - Frozen occupied/excluded carrier geometry.
-/// * `power` - Frozen calibration, independently of plot zoom.
+/// * `result` - Immutable actual completed or partial result.
+/// * `stage` - Original time-domain observation, never raw FFT bin power.
+/// * `tap` - Optional fixed amplifier/channel reference; None preserves the stage reference.
+/// * `start`, `count` - Original FFT-bin viewport; zero count keeps the old full-width rule.
+/// * `capture_axis` - Physical frequency labels instead of baseband offsets.
+/// * `detail` - Existing presentation text for the selected reference plane.
 /// # Returns
-/// Shared viewport and integrated channel reading.
+/// Bounded shared spectrum drawing with full-band power independent of zoom.
 /// # Errors
-/// Rejects malformed geometry, calibration or display selection.
-pub(crate) fn channel_viewport(
-    mut spectrum: docsis_ofdm_fec::signal_processing::waveform::spectrum::PowerSpectrum,
+/// Preserves unavailable samples, public numerical errors and invalid viewport selection.
+pub(crate) fn observed_spectrum(
+    result: &FullLoopResult,
+    stage: FullLoopStage,
+    tap: Option<FullLoopChannelTap>,
     start: i32,
     count: i32,
     capture_axis: bool,
     detail: &str,
-    layout: &CarrierLayout,
-    power: &docsis_ofdm_fec::signal_processing::channel::power::PowerConditioning,
 ) -> Result<Value, String> {
-    let mut active = layout
-        .static_roles()
-        .iter()
-        .enumerate()
-        .filter(|(_, r)| **r != PhysicalCarrierRole::Excluded)
-        .map(|(i, _)| i);
-    let first = active.next().ok_or("No occupied channel band.")?;
-    let last = active.last().unwrap_or(first);
-    let reading = channel_power(&spectrum, first, last, power).map_err(|e| e.to_string())?;
-    let power_text = reading
-        .dbmv
-        .map(|v| format!("Channel Power: {v:.2} dBmV"))
-        .unwrap_or_else(|| {
-            format!(
-                "Channel Power: {:.2} dB re unit²",
-                10.0 * reading.normalized_power.log10()
-            )
-        });
-    let equivalent = reading
-        .equivalent_dbmv_per_6mhz
-        .map(|v| format!(" · {v:.2} dBmV / 6 MHz avg"))
-        .unwrap_or_else(|| " · Relative units; set TX reference for dBmV".into());
-    if let Some(scale) = power.millivolts_squared_per_unit() {
-        for p in &mut spectrum.density {
-            *p *= scale;
-        }
+    let transmission = &result.inputs().transmission;
+    let query = FullLoopSpectrumQuery {
+        stage,
+        max_averages: transmission
+            .spectrum_average_capacity(MAX_INSTRUMENT_TIME_SAMPLES)
+            .map_err(|error| error.to_string())?,
+        ..Default::default()
+    };
+    let observe = |query| match tap {
+        Some(tap) => result.channel_spectrum(tap, query),
+        None => result.calibrated_spectrum(query),
+    };
+    let full = observe(query.clone())
+        .map_err(|error| error.to_string())?
+        .power;
+    let start = usize::try_from(start).map_err(|_| "Invalid spectrum start.")?;
+    let count = if count == 0 {
+        full.fft_samples
+    } else {
+        usize::try_from(count).map_err(|_| "Invalid spectrum count.")?
+    };
+    if count < MIN_SPECTRUM_DISPLAY_BINS {
+        return Err("Display at least two spectrum bins.".into());
     }
-    let mut view = crate::spectrum_view::viewport(&spectrum, start, count, capture_axis, detail)?;
-    crate::spectrum_view::plc::annotate(&mut view, layout);
-    if reading.dbmv.is_some() {
-        view["axis_label"] = json!("PSD · dBmV/Hz");
-        if let Some(points) = view["points"].as_array_mut() {
-            for point in points {
-                if let Some(text) = point["readout"].as_str() {
-                    point["readout"] = json!(text.replace("dB/Hz", "dBmV/Hz"));
-                }
-            }
-        }
-    }
-    view["channel_power"] = json!(reading);
-    view["channel_power_text"] = json!(format!(
-        "{power_text}{equivalent} · {:.3} MHz band",
-        reading.bandwidth_hz / 1e6
-    ));
-
-    Ok(view)
+    let selected = if start == 0 && count == full.fft_samples {
+        None
+    } else {
+        Some(
+            observe(FullLoopSpectrumQuery {
+                start,
+                count,
+                ..query
+            })
+            .map_err(|error| error.to_string())?
+            .power,
+        )
+    };
+    let layout = transmission
+        .physical_layout(&result.inputs().profile, 0, 0, 0)
+        .map_err(|error| error.to_string())?;
+    Ok(crate::shared::presentation::spectrum::viewport(
+        selected.as_ref().unwrap_or(&full),
+        &full,
+        &layout.layout,
+        start,
+        count,
+        capture_axis,
+        detail,
+    ))
 }

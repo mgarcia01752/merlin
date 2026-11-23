@@ -1146,6 +1146,14 @@ existing curve/counter JSON, source-frequency selection and partial states.
 Only presentation grouping/axis policies remain in Qt; its independent QAM-history
 migration and parent acceptance remain open.
 
+Channel/amplifier and RX time-stage spectra consume the existing public calibrated
+spectrum operations; raw RX FFT plots consume physical_bins power observations.
+Qt performs no gain, PSD, logarithmic power or electrical integration. Configured
+H and received H-hat/impulse views use FullLoopResult.response, with missing
+estimates remaining unavailable. Physical PLC bounds come from public layout
+observations. Existing shared renderers retain presentation only; receiver
+QAM/soft-history and measurement/session migration remain explicit downstream debt.
+
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

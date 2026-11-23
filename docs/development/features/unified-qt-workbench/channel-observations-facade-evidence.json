@@ -1,0 +1,388 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Channel and receiver observations facade",
+  "status": "Level 1 channel/RX observations accepted; remaining downstream consumers and parent Level 2/milestone/final Level 3 remain incomplete",
+  "base_commit": "a0ddab1334e73b190e76ee51cc89f316707e19d4",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-08",
+    "REQ-UIU-09",
+    "REQ-UIU-16",
+    "REQ-UIU-17",
+    "REQ-UIU-18",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "design": "docs/development/features/unified-qt-workbench/design.md#uiu-ds-01-channel-and-receiver-spectrum-adoption",
+  "implementation": [
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "4fa079ce61548f1b92cb1746e138260c791e92c123e8675a775be187a3f049b6"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/channel/mod.rs",
+      "sha256": "c1c073fb3fba5d322db81ed80815d79bce23bbb83ac5f5485928436d7dd46acb"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+      "sha256": "4e314389c700c4b7b2edb4a448f9c950d83bd88fe96889113dc9cb1f49990c20"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/views.rs",
+      "sha256": "7147c702ebc704db31fa46922d4f82793f7194b973f61473acec07e660d01074"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/spectrum/mod.rs",
+      "sha256": "7bda0239260422e318185ee3cd2eda94607c0d3f669d129d47d0a93bd4f7da8d"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/spectrum/plc.rs",
+      "sha256": "7cfa28fdee32f4ba4ec97e2b69de85fabd8ffc581e57001e909a2ed235efd439"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/channel_input.rs",
+      "sha256": "38e43b1d9099ac3e172edd863d8f8fa0e4b57c0630cbeed5c6849550deb4d840"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/tests.rs",
+      "sha256": "4ccf3bd4861aa2771c9dcb340042eb7230f778c2ce2f5802febc3e6ce8a39778"
+    },
+    {
+      "path": "apps/qt/src/shared/presentation/constants.rs",
+      "sha256": "3aff06c68ed0da0b3f1b996af9e66dd49101c69a1f6a834cc54632aca767112a"
+    },
+    {
+      "path": "apps/qt/src/shared/presentation/frequency_power.rs",
+      "sha256": "0197d27a2e2c0881359e89c479b2d05c65d3c4bbcaa4f972eb49d6eba932b306"
+    },
+    {
+      "path": "apps/qt/src/shared/presentation/mod.rs",
+      "sha256": "280aab72a372772141d897baa0cac7cfd7f5b579fc6400e345b1399e088ebd43"
+    }
+  ],
+  "ownership": [
+    "Existing public channel_spectrum/calibrated_spectrum own true retained-sample PSD, electrical calibration/integration and amplifier-only gain. The current sample budget maps through accepted spectrum_average_capacity; actual stage continuity stays backend-owned.",
+    "Existing public amplifier_bins supplies post-gain I/Q; Qt preserves the prior before-amplifier and sampled after-amplifier scatter scaling policies without computing gain.",
+    "Existing public physical_bins supplies actual raw FFT I/Q/power and original coordinates. The presentation renderer groups finite/absent backend values without computing logarithmic power or PSD.",
+    "Existing public response supplies configured H or actual retained H-hat and all response/impulse diagnostics; public layout supplies original frequencies/PLC endpoints. Missing estimates remain unavailable; the exact remaining slicer/FEC tail is frozen."
+  ],
+  "testing": {
+    "level": 1,
+    "executed": {
+      "final-rust": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "--",
+          "--exact",
+          "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+          "downstream::simulation::closed_loop::tests::mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance",
+          "downstream::simulation::closed_loop::tests::tx_spectra_keep_independent_frame_output_budgets_and_authoritative_calibrated_power",
+          "downstream::instruments::spectrum::plc::tests::plc_bounds_follow_spacing_layout_and_clipped_viewports",
+          "downstream::instruments::transmitter::channel_input::tests::selector_domains_and_order_reject_before_requesting_an_observation"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 31.354583917000127,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "qml": {
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+          "Workbench::test_receiver_signal_views_and_independent_spectrum_taps",
+          "Workbench::test_response_display_labels_follow_retained_mode",
+          "Workbench::test_receiver_retained_filters_response_soft_and_fec_navigation",
+          "Workbench::test_channel_stages_tap_routing_and_loss_draft_cancel",
+          "Workbench::test_channel_power_controls_cancel_apply_and_tap_symmetry"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.6765122649994737,
+        "behavior_cases": [
+          "test_receiver_signal_views_and_independent_spectrum_taps",
+          "test_response_display_labels_follow_retained_mode",
+          "test_receiver_retained_filters_response_soft_and_fec_navigation",
+          "test_channel_stages_tap_routing_and_loss_draft_cancel",
+          "test_channel_power_controls_cancel_apply_and_tap_symmetry"
+        ]
+      },
+      "final-format-check": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4614790270006779,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "clippy": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 5.025224965000234,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "final-release": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 25.445130202000655,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "metadata": [
+        {
+          "label": "boundary",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/qt_api_boundary.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.21872361500027182
+        },
+        {
+          "label": "documents",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/feature_documentation.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 14.165834371000528
+        },
+        {
+          "label": "traceability",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/integration_traceability.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 11.86787652699968
+        },
+        {
+          "label": "python-guide",
+          "command": [
+            "python3",
+            "-B",
+            "tools/python/update_integration_doc.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03664734199992381
+        },
+        {
+          "label": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.027937769998970907
+        }
+      ],
+      "final_constant_review": {
+        "format-check": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "fmt",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.3357180100010737,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        },
+        "clippy": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "clippy",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--all-targets",
+            "--locked",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 4.8552060929996514,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        },
+        "release": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "build",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--release",
+            "--locked"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 23.150106343000516,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        }
+      }
+    },
+    "qt_rust_cases": 5,
+    "actual_cases": [
+      "downstream::instruments::transmitter::channel_input::tests::selector_domains_and_order_reject_before_requesting_an_observation",
+      "downstream::instruments::spectrum::plc::tests::plc_bounds_follow_spacing_layout_and_clipped_viewports",
+      "downstream::simulation::closed_loop::tests::tx_spectra_keep_independent_frame_output_budgets_and_authoritative_calibrated_power",
+      "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+      "downstream::simulation::closed_loop::tests::mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance"
+    ],
+    "qml_behavior_cases": 5,
+    "qml_harness_total": 7,
+    "metadata": [],
+    "not_required": [
+      {
+        "checks": "Fresh wheel, backend/API inventory, full workspace/native/CLI/project/packaging suites",
+        "reason": "No backend, binding, public API, numerical owner, schema, dependency or lifecycle changes. Existing paired API acceptances apply; actual affected Qt worker/MCE/FFT/TX-budget/PLC/selector and QML consumers execute."
+      },
+      {
+        "checks": "New native startup/installed lifecycle or unchanged validator unit suites",
+        "reason": "CXX/QML registration/resources, packaging and validators remain exact. Actual Qt/QML/audits/current optimized build execute; no platform-install evidence is claimed."
+      },
+      {
+        "checks": "Repeat behavioral cases after final trait-documentation comment",
+        "reason": "Only a private Default documentation banner changed after the actual cases; final formatting and optimized build repeat, no code/values/predicates change."
+      },
+      {
+        "checks": "Repeat behavioral tests after final named percentage conversion",
+        "reason": "The remaining response-detail label divisor 100.0 becomes the exact-valued PERCENT_PER_UNIT constant. No formula, value, predicate or output changes; formatting, all-target Clippy and optimized build repeat."
+      }
+    ],
+    "deferred": [
+      "Remaining measured-input/Designer/channel-configuration/session owners (54 sites)",
+      "Remaining bounded receiver QAM/soft-history owners (12 sites)",
+      "Remove three scientific dependencies after consumers migrate",
+      "UIU-DS-01 Level 2 and downstream milestone Level 3 before sessions/shell",
+      "Final Level 3 and REQ-UIU-27 numeric audit"
+    ],
+    "boundary": {
+      "errors": [],
+      "scientific_dependencies": 3,
+      "frozen_legacy_files": 14,
+      "final": false
+    }
+  },
+  "preservation": {
+    "all_original_worker_assertions_exact": true,
+    "all_original_plc_clipping_assertions_exact": true,
+    "same_independent_plc_pilot_grid_fixture": true,
+    "legacy_slicer_fec_tail_byte_exact": true,
+    "all_dependency_manifests_and_locks_exact": true,
+    "official_checkbox_lines_exact": true,
+    "boundary_before": {
+      "files": 18,
+      "sites": 75
+    },
+    "boundary_after": {
+      "files": 14,
+      "sites": 66
+    },
+    "scientific_dependencies": 3,
+    "all_other_frozen_entries_and_history_exact": true
+  },
+  "numeric_review": "Shared frequency/SI/percentage and scatter policies reuse authoritative presentation constants. Independent raw FFT grouping/padding/ticks, channel scatter floor, warning target and response selector/default/percent bounds are named by purpose; public operations retain scientific admission. No domain limit changes.",
+  "reuse_provenance": {
+    "source": "crates/ofdm/src/scenario/measurement_view.rs",
+    "revision": "a0ddab1334e73b190e76ee51cc89f316707e19d4",
+    "license": "Apache-2.0",
+    "target": "apps/qt/src/shared/presentation/frequency_power.rs",
+    "scope": "Presentation min/max/gap/tick/readout behavior only. Original owner/license remains; target explicitly records derivation and GPL application scope. No scientific conversion or third-party source is copied."
+  },
+  "executable": {
+    "path": "apps/qt/target/release/merlin-qt",
+    "sha256": "7bac69b06d6a86563965196e2f94365a257d7b32f9794fc2898421a9de12df72",
+    "scope": "Current optimized Linux Qt build, no installed-platform claim."
+  }
+}

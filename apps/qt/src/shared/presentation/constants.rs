@@ -50,3 +50,19 @@ pub(crate) const MAX_SCATTER_PLOT_POINTS: usize = 2048;
 pub(crate) const SCATTER_HEADROOM_RATIO: f64 = 1.1;
 /// Midpoint of each normalized scatter axis, independent of physical I/Q zero units.
 pub(crate) const SCATTER_AXIS_CENTER: f64 = 0.5;
+
+/// Existing raw FFT power viewport grouping, independent of PSD bucket work limits.
+pub(crate) const FFT_POWER_VIEW_GROUPS: usize = 1024;
+/// Ten-percent vertical padding around supplied raw-bin power observations.
+pub(crate) const FFT_POWER_VIEW_PADDING_RATIO: f64 = 0.1;
+/// Minimum raw-power drawing padding in dB; not a physical/noise threshold.
+pub(crate) const FFT_POWER_VIEW_MIN_PADDING_DB: f64 = 1.0;
+/// Symmetric drawing extent when every raw-bin power is absent/zero.
+pub(crate) const FFT_POWER_VIEW_EMPTY_EXTENT_DB: f64 = 1.0;
+/// Raw FFT power horizontal tick density; separate from spectrum tick policy.
+pub(crate) const FFT_POWER_VIEW_FREQUENCY_INTERVALS: usize = 4;
+/// Raw FFT power vertical tick density; independent of horizontal density.
+pub(crate) const FFT_POWER_VIEW_POWER_INTERVALS: u32 = 4;
+
+/// Percent units per dimensionless ratio, independent of any admitted editor range.
+pub(crate) const PERCENT_PER_UNIT: f64 = 100.0;
