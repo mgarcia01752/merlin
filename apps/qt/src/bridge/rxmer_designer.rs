@@ -52,7 +52,7 @@ impl bridge::MeasurementInputs {
             if self.rust().designer_work.is_some() {
                 return Err("Wait for the previous Designer operation to stop.".into());
             }
-            let inputs = crate::downstream::workbench::session::snapshot();
+            let inputs = crate::downstream::workbench::session::snapshot(&self.rust().context);
             let profile = inputs
                 .profile
                 .ok_or("Apply a modulation profile before opening RxMER Designer.")?;
@@ -167,7 +167,7 @@ impl bridge::MeasurementInputs {
             Err(_) => Err("Designer worker ended unexpectedly.".into()),
         };
         let work = self.as_mut().rust_mut().designer_work.take().unwrap();
-        let profile = crate::downstream::workbench::session::snapshot().profile;
+        let profile = crate::downstream::workbench::session::snapshot(&self.rust().context).profile;
         let result = adopt(
             work,
             result,

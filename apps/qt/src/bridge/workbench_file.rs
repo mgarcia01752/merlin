@@ -83,6 +83,7 @@ pub mod bridge {
 /// Current explicit workbench destination; project contents stay in Rust-owned sessions.
 #[derive(Default)]
 pub struct WorkbenchFileRust {
+    pub(super) context: crate::downstream::workbench::session::Context,
     path: Option<PathBuf>,
     loader: crate::downstream::workbench::project_load::Loader,
 }
@@ -141,7 +142,7 @@ impl bridge::WorkbenchFile {
         if self.rust().loader.is_loading() {
             return QString::from("{\"error\":\"Wait for workbench loading to finish.\"}");
         }
-        workbench_session::restore(Default::default(), Default::default());
+        workbench_session::restore(&self.rust().context, Default::default(), Default::default());
         crate::platform::input_file::clear_original_paths();
         self.as_mut().rust_mut().path = None;
         QString::from(json!({"created":true,"transmission":merlin::downstream::TransmissionSettings::default(),
@@ -173,7 +174,7 @@ impl bridge::WorkbenchFile {
                 application: "MERLIN".into(),
                 transmission: serde_json::from_str(&settings.to_string())
                     .map_err(|error| error.to_string())?,
-                sections: workbench_session::saved_sections(),
+                sections: workbench_session::saved_sections(&self.rust().context),
                 receiver: serde_json::from_str(&receiver.to_string())
                     .map_err(|error| error.to_string())?,
                 comparison_enabled: verified,
@@ -226,7 +227,7 @@ impl bridge::WorkbenchFile {
         let (status, prepared) = self.as_mut().rust_mut().loader.poll();
         let result = if let Some(prepared) = prepared {
             self.as_mut().rust_mut().path = prepared.path.clone();
-            prepared.adopt()
+            prepared.adopt(&self.rust().context)
         } else {
             status
         };
@@ -285,7 +286,7 @@ impl bridge::WorkbenchFile {
                 application: "MERLIN".into(),
                 transmission: serde_json::from_str(&settings.to_string())
                     .map_err(|e| e.to_string())?,
-                sections: workbench_session::saved_sections(),
+                sections: workbench_session::saved_sections(&self.rust().context),
                 receiver: serde_json::from_str(&receiver.to_string()).map_err(|e| e.to_string())?,
                 comparison_enabled: verified,
                 dark,

@@ -1541,6 +1541,16 @@ all reachable ownership, retain the lease outside panic unwinding and consume a
 real terminal envelope before reopening admission. Source-only primitive tests
 do not establish direction-session or aggregate-memory runtime acceptance.
 
+The [explicit downstream context migration](development/features/unified-qt-workbench/design.md#uiu-session-01-explicit-downstream-context-migration)
+replaces the six input/section/result/history/prepared-model data singletons with
+owner-scoped handles. Every scientific data operation receives its context;
+QObject construction alone shares a fixed downstream bootstrap handle. Prepared
+models use an isolated candidate and rebind after removal from the target's
+transfer store, avoiding retained-owner cycles. Existing public queries, worker
+semantics and project bytes remain unchanged. Its
+[consumer evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-explicit-downstream-context-migration)
+does not accept the still-pending shared dispatch/identity/resource wiring.
+
 Normal project files remain direction-specific. Open validates/detects direction
 and guards that target tab's dirty state before mutation. Schema 1/2 retain DS
 interpretation; the [selected schema 3 contract](development/features/unified-qt-workbench/design.md#uiu-api-05-direction-aware-public-project-admission) explicitly tags direction. Its public backend is [accepted under API-05](development/features/unified-qt-workbench/validation.md#uiu-api-05-project-backend-accepted). Backend/native

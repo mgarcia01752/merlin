@@ -8,7 +8,7 @@ mod request;
 mod worker;
 use super::run_timing::RunTiming;
 use crate::downstream::help::{AdmissionError, Diagnostic};
-use crate::downstream::workbench::session::Inputs;
+use crate::downstream::workbench::session::{Context, Inputs};
 use merlin::downstream::{
     FullLoopReport, FullLoopRequest, FullLoopResult, FullLoopSweepPlan, TransmissionSettings,
 };
@@ -16,7 +16,6 @@ use request::Sections;
 pub(crate) use request::{prepare, prepare_sweep, Options, MAX_DURATION_MS};
 use serde_json::{json, Value};
 use std::{
-    cell::RefCell,
     ops::Deref,
     sync::{mpsc, Arc},
 };
@@ -60,19 +59,21 @@ impl ResultData {
         &self.job.0
     }
 }
-thread_local! { static RESULT: RefCell<Option<Arc<ResultData>>> = const { RefCell::new(None) }; }
 /// Borrows the current result through a GUI-thread shared owner.
+/// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// # Returns
 /// None before completion or after accepted input changes.
-pub(crate) fn latest() -> Option<Arc<ResultData>> {
-    RESULT.with(|result| result.borrow().clone())
+pub(crate) fn latest(context: &Context) -> Option<Arc<ResultData>> {
+    context.result.with(|result| result.borrow().clone())
 }
-fn publish(result: Option<Arc<ResultData>>) {
-    RESULT.with(|stored| *stored.borrow_mut() = result);
+fn publish(context: &Context, result: Option<Arc<ResultData>>) {
+    context.result.with(|stored| *stored.borrow_mut() = result);
 }
 
 #[derive(Default)]
 pub(crate) struct Model {
+    pub(crate) context: Context,
     pub options: Option<Options>,
     pub verify: bool,
     request: Option<FullLoopRequest>,
@@ -95,8 +96,8 @@ impl Model {
         self.timing = None;
         self.error.clear();
         self.diagnostic = None;
-        publish(None);
-        crate::downstream::instruments::receiver::performance::clear();
+        publish(&self.context, None);
+        crate::downstream::instruments::receiver::performance::clear(&self.context);
         self.token = self.token.wrapping_add(1);
     }
     /// Validates current accepted inputs against the saved receiver configuration.
@@ -106,8 +107,8 @@ impl Model {
         self.invalidate();
         self.prepare_inputs(
             settings,
-            &crate::downstream::workbench::session::snapshot(),
-            &crate::downstream::workbench::session::saved_sections(),
+            &crate::downstream::workbench::session::snapshot(&self.context),
+            &crate::downstream::workbench::session::saved_sections(&self.context),
         );
     }
     /// Prepares requests from independent inputs without publishing GUI results.
@@ -149,9 +150,9 @@ impl Model {
         self.error.clear();
         self.diagnostic = None;
         self.timing = None;
-        publish(None);
+        publish(&self.context, None);
         self.token = self.token.wrapping_add(1);
-        crate::downstream::instruments::receiver::performance::clear();
+        crate::downstream::instruments::receiver::performance::clear(&self.context);
         let plan = self.plan.clone();
         let catalog = if let Some(plan) = &plan {
             let profiles = (0..plan.info().selected_profile_ids.len())
@@ -184,7 +185,7 @@ impl Model {
                 .map(|playback| vec![playback.profile.clone()])
                 .unwrap_or_default()
         };
-        crate::downstream::instruments::receiver::performance::begin(&catalog);
+        crate::downstream::instruments::receiver::performance::begin(&self.context, &catalog);
         let timing = Arc::new(RunTiming::new());
         match Worker::spawn(settings, plan, timing.clone()) {
             Ok(worker) => {
@@ -220,6 +221,7 @@ impl Model {
                     if !self.worker.as_ref().is_some_and(|w| w.stale) {
                         if let Some(playback) = &result.job.settings.playback {
                             crate::downstream::instruments::receiver::performance::retain(
+                                &self.context,
                                 &playback.profile,
                                 &result,
                             );
@@ -239,13 +241,14 @@ impl Model {
                                 crate::downstream::help::catalog_diagnostic(error.code)
                             })
                             .map(Box::new);
-                        publish(Some(Arc::new(*result)));
+                        publish(&self.context, Some(Arc::new(*result)));
                         self.token = self.token.wrapping_add(1);
                     }
                 }
                 Ok(WorkerMessage::Rejected(id, channel, error)) => {
                     if !self.worker.as_ref().is_some_and(|w| w.stale) {
                         crate::downstream::instruments::receiver::performance::reject(
+                            &self.context,
                             id,
                             channel,
                             error.clone(),
@@ -278,14 +281,14 @@ impl Model {
     /// Receiver/comparison configuration, busy state and bounded scientific summary.
     pub(crate) fn state(&self) -> Value {
         let (profile_ids, applied_profile_id) =
-            crate::downstream::workbench::session::profile_catalog();
+            crate::downstream::workbench::session::profile_catalog(&self.context);
         let progress = self
             .worker
             .as_ref()
             .zip(self.timing.as_ref())
             .map(|(worker, timing)| worker.progress(timing));
         let ready = self.request.is_some();
-        let result = latest();
+        let result = latest(&self.context);
         let summary=result.as_ref().map(|r|json!({"profile_id":r.job.settings.playback.as_ref().map(|p|p.profile.profile_id),"fec":r.job.summary.window.as_ref().map(|w|w.fec.snapshot()),"status":r.job.status,"elapsed_ms":r.job.elapsed_ms,
             "bits_tested":r.job.summary.comparison.bits_tested,"bit_errors":r.job.summary.comparison.bit_errors,
             "ber":r.job.summary.payload_ber,"recovered_payloads":r.job.summary.recovered_payloads,

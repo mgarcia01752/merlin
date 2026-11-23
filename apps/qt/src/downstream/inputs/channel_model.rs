@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Typed channel editor admission and bounded response previews over shared core APIs.
+use crate::downstream::workbench::session::Context;
 use crate::{
     downstream::{
         common::constants::{
@@ -58,6 +59,7 @@ pub(crate) fn saved(loss: &AdditionalLoss) -> Value {
 }
 /// Builds a bounded additional/effective response chart using the shared impairment planner.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `loss` - Draft additional response.
 /// * `settings` - Accepted OCD and physical numerology.
 /// # Returns
@@ -65,13 +67,14 @@ pub(crate) fn saved(loss: &AdditionalLoss) -> Value {
 /// # Errors
 /// Rejects missing DPD, invalid active coverage or unsupported response/model values.
 pub(crate) fn preview(
+    context: &Context,
     loss: &AdditionalLoss,
     settings: &TransmissionSettings,
 ) -> Result<Value, String> {
     preview_inputs(
         loss,
         settings,
-        &crate::downstream::workbench::session::snapshot(),
+        &crate::downstream::workbench::session::snapshot(context),
     )
 }
 

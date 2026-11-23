@@ -117,13 +117,18 @@ impl bridge::TransmitterAnalyzer {
     /// # Returns
     /// Small JSON page with original metadata and finite scatter points.
     pub fn stage(&self, stage: i32, offset: i32) -> QString {
-        QString::from(crate::transmitter_instruments::stage(stage, offset).to_string())
+        QString::from(
+            crate::transmitter_instruments::stage(&self.rust().model.context, stage, offset)
+                .to_string(),
+        )
     }
     /// Returns actual retained graphical previews without scientific recomputation.
     /// # Returns
     /// Six bounded graphs with indices/provenance and no exact-value tables.
     pub fn stage_previews(&self) -> QString {
-        QString::from(crate::transmitter_instruments::stage_previews().to_string())
+        QString::from(
+            crate::transmitter_instruments::stage_previews(&self.rust().model.context).to_string(),
+        )
     }
     /// Selects an immutable physical-bin window without running a simulation.
     /// # Arguments
@@ -132,13 +137,22 @@ impl bridge::TransmitterAnalyzer {
     /// # Returns
     /// At most2048 real TX points, without inferred data/control labels.
     pub fn channel_qam(&self, first: i32, last: i32) -> QString {
-        QString::from(crate::transmitter_instruments::channel_input::qam(first, last).to_string())
+        QString::from(
+            crate::transmitter_instruments::channel_input::qam(
+                &self.rust().model.context,
+                first,
+                last,
+            )
+            .to_string(),
+        )
     }
     /// Reads actual retained TX management packets through the existing decoders.
     /// # Returns
     /// Bounded header/TLV/byte records with transmission status.
     pub fn messages(&self) -> QString {
-        QString::from(crate::transmitter_instruments::messages().to_string())
+        QString::from(
+            crate::transmitter_instruments::messages(&self.rust().model.context).to_string(),
+        )
     }
     /// Reports the availability of one genuine TX waveform plane.
     /// # Arguments
@@ -146,7 +160,10 @@ impl bridge::TransmitterAnalyzer {
     /// # Returns
     /// Scalar shared SA state; no sample arrays cross this method.
     pub fn spectrum_tap(&self, tap: i32) -> QString {
-        QString::from(crate::transmitter_instruments::spectrum_state(tap).to_string())
+        QString::from(
+            crate::transmitter_instruments::spectrum_state(&self.rust().model.context, tap)
+                .to_string(),
+        )
     }
     /// Adapts a retained TX time-sample spectrum to a bounded viewport.
     /// # Arguments
@@ -158,7 +175,14 @@ impl bridge::TransmitterAnalyzer {
     /// Normalized viewport points or an explicit diagnostic.
     pub fn view_tap(&self, tap: i32, start: i32, count: i32, capture_axis: bool) -> QString {
         QString::from(
-            crate::transmitter_instruments::spectrum(tap, start, count, capture_axis).to_string(),
+            crate::transmitter_instruments::spectrum(
+                &self.rust().model.context,
+                tap,
+                start,
+                count,
+                capture_axis,
+            )
+            .to_string(),
         )
     }
     /// Resolves accepted Rust snapshots and validates supported transmitter readiness.
@@ -167,15 +191,19 @@ impl bridge::TransmitterAnalyzer {
     /// # Returns
     /// Status JSON; input changes cancel old jobs and invalidate stale samples.
     pub fn configure(mut self: core::pin::Pin<&mut Self>, settings: &QString) -> QString {
-        if let Some(model) =
-            crate::downstream::workbench::project_load::take(|prepared| prepared.transmitter.take())
-        {
+        if let Some(mut model) = crate::downstream::workbench::project_load::take(
+            &self.rust().model.context,
+            |prepared| prepared.transmitter.take(),
+        ) {
             self.as_mut().rust_mut().model.cancel();
+            model.context = self.rust().model.context.clone();
             self.as_mut().rust_mut().model = model;
             return QString::from(self.rust().model.status().to_string());
         }
-        let source = crate::downstream::workbench::session::saved("source");
-        let profile = crate::downstream::workbench::session::saved("profile");
+        let source =
+            crate::downstream::workbench::session::saved(&self.rust().model.context, "source");
+        let profile =
+            crate::downstream::workbench::session::saved(&self.rust().model.context, "profile");
         let model = &mut self.as_mut().rust_mut().model;
         model.configure(&settings.to_string(), &source, &profile);
         QString::from(model.status().to_string())

@@ -4,11 +4,13 @@
  */
 //! Bounded views of real retained receiver observations.
 use crate::downstream::simulation::closed_loop::latest;
+use crate::downstream::workbench::session::Context;
 use merlin::downstream::FullLoopStage;
 use serde_json::Value;
 
 /// Formats actual retained RX time-stage PSD or independent raw FFT-bin power.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `tap` - Channel output, framed, useful time samples or raw FFT bins.
 /// * `start`, `count` - Original viewport, zero count selects the existing full span.
 /// * `capture_axis` - Physical/baseband labels for time-stage PSD only.
@@ -17,12 +19,13 @@ use serde_json::Value;
 /// # Errors
 /// Rejects invalid/unavailable taps and preserves numerical/viewport errors.
 pub(crate) fn spectrum(
+    context: &Context,
     tap: i32,
     start: i32,
     count: i32,
     capture_axis: bool,
 ) -> Result<Value, String> {
-    let result = latest().ok_or("Run the closed loop to retain RX samples.")?;
+    let result = latest(context).ok_or("Run the closed loop to retain RX samples.")?;
     let stage = match tap {
         0 => FullLoopStage::ChannelOutput,
         1 => FullLoopStage::RxFramed,

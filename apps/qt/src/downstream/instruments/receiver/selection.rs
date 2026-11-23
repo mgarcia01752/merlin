@@ -5,6 +5,7 @@
 //! Legacy selector transport and chart labels over authoritative live/archive public queries.
 use crate::downstream::common::constants::*;
 use crate::downstream::simulation::closed_loop::{latest, ResultData};
+use crate::downstream::workbench::session::Context;
 use crate::shared::presentation::constants::{
     MAX_SCATTER_PLOT_POINTS, SCATTER_AXIS_CENTER, SCATTER_HEADROOM_RATIO,
 };
@@ -157,12 +158,14 @@ pub(crate) struct Selected {
 }
 /// Resolves explicit run routing; the current run retains its full public capture resolution.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `query`, `result` - Application run selector and current immutable result.
 /// # Returns
 /// None for latest/current; otherwise exactly the requested detached history.
 /// # Errors
 /// Missing/unstarted runs reject without silently substituting the latest observations.
 pub(crate) fn archive(
+    context: &Context,
     query: &Query,
     result: &ResultData,
 ) -> Result<Option<std::sync::Arc<super::qam_history::Snapshot>>, String> {
@@ -175,36 +178,43 @@ pub(crate) fn archive(
     if query.run_profile < 0 || latest_id == Some(query.run_profile) {
         return Ok(None);
     }
-    super::qam_history::get(query.run_profile).map(Some)
+    super::qam_history::get(context, query.run_profile).map(Some)
 }
 /// Queries only the current public receiver observations.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `result`, `query` - Immutable result and passive widget selection.
 /// # Returns
 /// At most2048 original cells with authoritative all-selected metrics/metadata.
 /// # Errors
 /// Preserves public selector/work/numerical failures.
-pub(crate) fn select(result: &ResultData, query: &Query) -> Result<Selected, String> {
+pub(crate) fn select(
+    context: &Context,
+    result: &ResultData,
+    query: &Query,
+) -> Result<Selected, String> {
     let observation = result
         .backend()
         .qam(query.backend(0)?)
         .map_err(|cause| cause.to_string())?;
-    present(observation, result, None)
+    present(context, observation, result, None)
 }
 /// Queries one actual current or archived run through its accepted public API owner.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `result`, `snapshot`, `query` - Current result, optional exact history, and widget selection.
 /// # Returns
 /// Bounded original cells, unchanged all-selected metrics and existing labels/availability.
 /// # Errors
 /// Preserves public query errors; independent runs are never pooled.
 pub(crate) fn select_run(
+    context: &Context,
     result: &ResultData,
     snapshot: Option<&super::qam_history::Snapshot>,
     query: &Query,
 ) -> Result<Selected, String> {
     if snapshot.is_none() {
-        return select(result, query);
+        return select(context, result, query);
     }
     let request = query.backend(0)?;
     let observation = match snapshot {
@@ -212,9 +222,10 @@ pub(crate) fn select_run(
         None => result.backend().qam(request),
     }
     .map_err(|cause| cause.to_string())?;
-    present(observation, result, snapshot)
+    present(context, observation, result, snapshot)
 }
 fn present(
+    context: &Context,
     observation: FullLoopQamView,
     result: &ResultData,
     snapshot: Option<&super::qam_history::Snapshot>,
@@ -236,7 +247,7 @@ fn present(
     let metadata = json!({"profiles":selection.available_profiles,"orders":selection.available_orders,"selected_order":selection.selected_order.unwrap_or(0),
         "first_bin":bounds.map(|value|value.first_bin),"last_bin":bounds.map(|value|value.last_bin),
         "first_symbol":bounds.map(|value|value.first_symbol),"last_symbol":bounds.map(|value|value.last_symbol),"retained":selection.retained_cells,
-        "runs":super::qam_history::catalog(),"run_profile":snapshot.map(|snapshot|snapshot.id).or(latest_id),"latest_run_profile":latest_id,"archived":snapshot.is_some(),
+        "runs":super::qam_history::catalog(context),"run_profile":snapshot.map(|snapshot|snapshot.id).or(latest_id),"latest_run_profile":latest_id,"archived":snapshot.is_some(),
         "correction_name":correction_name(mode),"correction_mode":short,"correction_help":help});
     let serialize = |metric| serde_json::to_value(metric).map_err(|cause| cause.to_string());
     let raw_mer = format_metric(&serialize(observation.raw_nearest_mer)?, false);
@@ -318,20 +329,21 @@ pub(crate) fn mer(selection: &Selected, raw: bool) -> Value {
 }
 /// Formats bounded actual scatter points and original all-selected scientific readings.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `query` - Passive signal/run/profile/coordinate selection.
 /// # Returns
 /// Existing chart JSON; invalid/missing observations stay explicitly unavailable.
-pub(crate) fn qam(query: &Query) -> Value {
-    let Some(result) = latest() else {
-        return json!({"available":false,"points":[],"profiles":[],"orders":[],"runs":super::qam_history::catalog(),"reason":"Run the closed loop to retain receiver observations."});
+pub(crate) fn qam(context: &Context, query: &Query) -> Value {
+    let Some(result) = latest(context) else {
+        return json!({"available":false,"points":[],"profiles":[],"orders":[],"runs":super::qam_history::catalog(context),"reason":"Run the closed loop to retain receiver observations."});
     };
-    let archived = match archive(query, &result) {
+    let archived = match archive(context, query, &result) {
         Ok(value) => value,
         Err(reason) => {
-            return json!({"available":false,"points":[],"runs":super::qam_history::catalog(),"reason":reason,"diagnostic":crate::downstream::help::static_diagnostic("QamRunUnavailable")})
+            return json!({"available":false,"points":[],"runs":super::qam_history::catalog(context),"reason":reason,"diagnostic":crate::downstream::help::static_diagnostic("QamRunUnavailable")})
         }
     };
-    let selection = match select_run(&result, archived.as_deref(), query) {
+    let selection = match select_run(context, &result, archived.as_deref(), query) {
         Ok(value) => value,
         Err(reason) => return json!({"available":false,"points":[],"reason":reason}),
     };

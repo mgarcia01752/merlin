@@ -9,6 +9,7 @@ use crate::downstream::common::constants::{
     TX_INSPECTOR_BITS_PER_ROW, TX_INSPECTOR_ROWS,
 };
 use crate::downstream::simulation::closed_loop::latest;
+use crate::downstream::workbench::session::Context;
 use crate::shared::presentation::constants::MIN_SPECTRUM_DISPLAY_BINS;
 use merlin::downstream::{
     ApiResult, ChannelSpectrum, ErrorCode, FullLoopResult, FullLoopSpectrumQuery,
@@ -43,15 +44,17 @@ const WAVE_NAMES: [&str; WAVE_STAGES.len()] =
 
 /// Returns a fixed-size page and scatter view of one genuine TX boundary.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `index` - Source/coding/bits/labels/mapped/interleaved/bins/PLC selector.
 /// * `offset` - First retained element, nonnegative and inside available data.
 /// # Returns
 /// At most64 rows and2048 plotted cells, preserving nulls and original coordinates.
-pub(crate) fn stage(index: i32, offset: i32) -> Value {
+pub(crate) fn stage(context: &Context, index: i32, offset: i32) -> Value {
     let get = || -> Result<Value, String> {
         let index = usize::try_from(index).map_err(|_| "Invalid TX stage.")?;
         let id = *STAGE_IDS.get(index).ok_or("Invalid TX stage.")?;
-        let result = latest().ok_or("Use Start on the main workbench to capture TX stages.")?;
+        let result =
+            latest(context).ok_or("Use Start on the main workbench to capture TX stages.")?;
         let snapshot = result
             .observations
             .tx
@@ -116,16 +119,18 @@ pub(crate) fn stage(index: i32, offset: i32) -> Value {
 }
 
 /// Collects six graphical cards from retained boundaries without starting a run.
+/// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// # Returns
 /// Six finite graph documents; exact row tables remain behind the full inspector.
 /// Bit/label alternatives retain their actual boundary index; absence is explicit.
-pub(crate) fn stage_previews() -> Value {
+pub(crate) fn stage_previews(context: &Context) -> Value {
     let mut cards = Vec::new();
     for index in [0, 1, 2, 4, 5, 6] {
         let mut selected = index;
-        let mut observation = stage(index, 0);
+        let mut observation = stage(context, index, 0);
         if index == 2 && observation["available"] != true {
-            let labels = stage(3, 0);
+            let labels = stage(context, 3, 0);
             if labels["available"] == true {
                 observation = labels;
                 selected = 3;
@@ -148,14 +153,15 @@ pub(crate) fn stage_previews() -> Value {
 
 /// Describes one retained TX waveform tap without calculating a spectrum.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `tap` - Existing IFFT/prefix/window/overlap selector, in the shared registration order.
 /// # Returns
 /// Original SA readiness/labels with local run dispatch disabled; absent history stays absent.
-pub(crate) fn spectrum_state(tap: i32) -> Value {
+pub(crate) fn spectrum_state(context: &Context, tap: i32) -> Value {
     let index = usize::try_from(tap)
         .ok()
         .filter(|index| *index < WAVE_STAGES.len());
-    let result = latest();
+    let result = latest(context);
     let available = index.zip(result.as_ref()).is_some_and(|(index, result)| {
         result
             .backend()
@@ -186,6 +192,7 @@ fn observed_power(
 
 /// Formats authoritative calibrated TX spectra within the unchanged retained-sample policies.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `tap` - Shared IFFT/prefix/window/overlap selector.
 /// * `start` - Nonnegative first FFT display bin.
 /// * `count` - At least two bins, or zero for the existing full-FFT-width convention.
@@ -194,9 +201,15 @@ fn observed_power(
 /// Existing bounded SA viewport with unchanged labels, PLC shading and full-band power.
 /// Frame taps preserve their ordered-frame prefix; output uses physically continuous samples.
 /// All PSD/calibration/window planning comes from public Rust operations; no run is started.
-pub(crate) fn spectrum(tap: i32, start: i32, count: i32, capture_axis: bool) -> Value {
+pub(crate) fn spectrum(
+    context: &Context,
+    tap: i32,
+    start: i32,
+    count: i32,
+    capture_axis: bool,
+) -> Value {
     let get = || -> Result<Value, String> {
-        let result = latest().ok_or("Run the simulation to capture TX samples.")?;
+        let result = latest(context).ok_or("Run the simulation to capture TX samples.")?;
         let stage = *WAVE_STAGES
             .get(usize::try_from(tap).map_err(|_| "Invalid TX tap.")?)
             .ok_or("Invalid TX tap.")?;

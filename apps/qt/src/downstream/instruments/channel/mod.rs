@@ -8,6 +8,7 @@ use crate::downstream::common::constants::{
     CHANNEL_SCATTER_MIN_EXTENT, MAX_INSTRUMENT_TIME_SAMPLES,
 };
 use crate::downstream::simulation::closed_loop::latest;
+use crate::downstream::workbench::session::Context;
 use crate::shared::presentation::constants::{
     MAX_SCATTER_PLOT_POINTS, MIN_SPECTRUM_DISPLAY_BINS, SCATTER_AXIS_CENTER, SCATTER_HEADROOM_RATIO,
 };
@@ -23,12 +24,13 @@ const NAMES: [&str; 3] = [
 
 /// Identifies availability without substituting another boundary or starting a run.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `tap` - Before amplifier0, after amplifier1 or receiver input2.
 /// # Returns
 /// Instrument state bound to the immutable completed run.
-pub(crate) fn state(tap: i32) -> Value {
+pub(crate) fn state(context: &Context, tap: i32) -> Value {
     let index = usize::try_from(tap).ok().filter(|i| *i < 3);
-    let result = latest();
+    let result = latest(context);
     let available = index.zip(result.as_ref()).is_some_and(|(tap, r)| {
         if tap == 2 {
             !r.observations.taps[0].values.is_empty()
@@ -43,18 +45,25 @@ pub(crate) fn state(tap: i32) -> Value {
 }
 /// Calculates the exact scalar boundary from retained time samples and frozen core settings.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `tap` - Channel boundary0..2.
 /// * `start` - Display first bin, independent of power integration.
 /// * `count` - Display width; zero means full span.
 /// * `capture_axis` - Select physical frequency mapping.
 /// # Returns
 /// Shared SA viewport with integrated Channel Power and explicit band/units.
-pub(crate) fn spectrum(tap: i32, start: i32, count: i32, capture_axis: bool) -> Value {
+pub(crate) fn spectrum(
+    context: &Context,
+    tap: i32,
+    start: i32,
+    count: i32,
+    capture_axis: bool,
+) -> Value {
     let get = || -> Result<Value, String> {
         if !(0..=2).contains(&tap) {
             return Err("Invalid TapPoint.".into());
         }
-        let result = latest().ok_or("Run the simulation to retain this TapPoint.")?;
+        let result = latest(context).ok_or("Run the simulation to retain this TapPoint.")?;
         let (boundary, stage) = match tap {
             0 => (
                 FullLoopChannelTap::BeforeAmplifier,
@@ -93,20 +102,22 @@ pub(crate) fn spectrum(tap: i32, start: i32, count: i32, capture_axis: bool) -> 
 }
 /// Supplies raw input/output cells to one shared channel QAM window.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `tap` - Channel boundary0..2.
 /// * `document` - Bounded role/bin selection; all coordinates remain Rust-owned.
 /// # Returns
 /// At most2048 actual or exact scalar-conditioned I/Q points and axis extent.
-pub(crate) fn qam(tap: i32, document: &str) -> Value {
+pub(crate) fn qam(context: &Context, tap: i32, document: &str) -> Value {
     let get = || -> Result<Value, String> {
         let query = crate::downstream::instruments::receiver::selection::Query::parse(document)?;
         if !(0..=2).contains(&tap) {
             return Err("Invalid TapPoint.".into());
         }
-        let result = latest().ok_or("Run the simulation to retain this TapPoint.")?;
+        let result = latest(context).ok_or("Run the simulation to retain this TapPoint.")?;
         if tap < 2 {
             return Ok(
                 crate::downstream::instruments::transmitter::channel_input::qam_at_boundary(
+                    context,
                     query.first_bin,
                     query.last_bin,
                     if tap == 1 {
@@ -118,8 +129,9 @@ pub(crate) fn qam(tap: i32, document: &str) -> Value {
             );
         }
         let archived =
-            crate::downstream::instruments::receiver::selection::archive(&query, &result)?;
+            crate::downstream::instruments::receiver::selection::archive(context, &query, &result)?;
         let selected = crate::downstream::instruments::receiver::selection::select_run(
+            context,
             &result,
             archived.as_deref(),
             &query,
@@ -148,7 +160,7 @@ pub(crate) fn qam(tap: i32, document: &str) -> Value {
         view["extent"] = json!(extent);
         Ok(view)
     };
-    get().unwrap_or_else(|reason| json!({"available":false,"points":[],"runs":crate::downstream::instruments::receiver::qam_history::catalog(),"reason":reason,"diagnostic":if tap==2 && crate::downstream::instruments::receiver::selection::Query::parse(document).is_ok_and(|query|query.run_profile>=0) {crate::downstream::help::static_diagnostic("QamRunUnavailable")} else {Value::Null}}))
+    get().unwrap_or_else(|reason| json!({"available":false,"points":[],"runs":crate::downstream::instruments::receiver::qam_history::catalog(context),"reason":reason,"diagnostic":if tap==2 && crate::downstream::instruments::receiver::selection::Query::parse(document).is_ok_and(|query|query.run_profile>=0) {crate::downstream::help::static_diagnostic("QamRunUnavailable")} else {Value::Null}}))
 }
 
 /// Formats an authoritative public time-domain PSD using the existing retention policy.

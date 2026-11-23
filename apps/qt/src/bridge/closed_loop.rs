@@ -118,7 +118,7 @@ impl bridge::ClosedLoop {
             let options = self.rust().model.options.clone().unwrap_or_default();
             crate::downstream::inputs::channel_model::combined_preview(
                 transmission.settings(),
-                &crate::downstream::workbench::session::snapshot(),
+                &crate::downstream::workbench::session::snapshot(&self.rust().model.context),
                 &options.channel_filter,
             )
         })();
@@ -155,14 +155,19 @@ impl bridge::ClosedLoop {
                 .mce
                 .validate()
                 .map_err(crate::downstream::help::AdmissionError::classified)?;
-            options.validate(&crate::downstream::workbench::session::snapshot())?;
-            let inputs = crate::downstream::workbench::session::snapshot();
+            options.validate(&crate::downstream::workbench::session::snapshot(
+                &self.rust().model.context,
+            ))?;
+            let inputs =
+                crate::downstream::workbench::session::snapshot(&self.rust().model.context);
             if inputs.source.is_some() && inputs.profile.is_some() && inputs.playback.is_some() {
                 model::prepare(
                     transmission.settings(),
                     &inputs,
                     &options,
-                    &crate::downstream::workbench::session::saved_sections(),
+                    &crate::downstream::workbench::session::saved_sections(
+                        &self.rust().model.context,
+                    ),
                 )?;
             }
             Ok(options)
@@ -201,10 +206,12 @@ impl bridge::ClosedLoop {
         verified: bool,
         settings: &QString,
     ) {
-        if let Some(model) =
-            crate::downstream::workbench::project_load::take(|prepared| prepared.receiver.take())
-        {
+        if let Some(mut model) = crate::downstream::workbench::project_load::take(
+            &self.rust().model.context,
+            |prepared| prepared.receiver.take(),
+        ) {
             self.as_mut().rust_mut().model.invalidate();
+            model.context = self.rust().model.context.clone();
             self.as_mut().rust_mut().model = model;
             return;
         }

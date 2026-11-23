@@ -60,6 +60,7 @@ pub mod bridge {
 /// GUI-thread adapter retaining immutable files and a separate accepted snapshot.
 #[derive(Default)]
 pub struct SourceInputRust {
+    pub(super) context: crate::downstream::workbench::session::Context,
     model: SourceModel,
 }
 
@@ -67,12 +68,14 @@ impl bridge::SourceInput {
     /// Adopts already validated project source state on the GUI thread.
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
         if let Some(model) =
-            crate::downstream::workbench::project_load::take(|prepared| prepared.source.take())
+            crate::downstream::workbench::project_load::take(&self.rust().context, |prepared| {
+                prepared.source.take()
+            })
         {
             self.as_mut().rust_mut().model = model;
-        } else if let Ok(model) =
-            model::SourceModel::from_saved(&crate::downstream::workbench::session::saved("source"))
-        {
+        } else if let Ok(model) = model::SourceModel::from_saved(
+            &crate::downstream::workbench::session::saved(&self.rust().context, "source"),
+        ) {
             self.as_mut().rust_mut().model = model;
         }
     }
@@ -129,8 +132,15 @@ impl bridge::SourceInput {
     pub fn apply(mut self: core::pin::Pin<&mut Self>, document: &QString) -> QString {
         let result = self.as_mut().rust_mut().model.accept(&document.to_string());
         if result.is_ok() {
-            crate::downstream::workbench::session::set_source(self.rust().model.snapshot());
-            crate::downstream::workbench::session::put_saved("source", self.rust().model.export());
+            crate::downstream::workbench::session::set_source(
+                &self.rust().context,
+                self.rust().model.snapshot(),
+            );
+            crate::downstream::workbench::session::put_saved(
+                &self.rust().context,
+                "source",
+                self.rust().model.export(),
+            );
         }
         QString::from(result.err().unwrap_or_default())
     }

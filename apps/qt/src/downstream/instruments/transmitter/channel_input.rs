@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Actual pre-channel physical-bin presentation from the authoritative public observation.
+use crate::downstream::workbench::session::Context;
 use crate::downstream::{
     common::constants::{OPEN_PHYSICAL_BIN_SELECTOR, TX_PHYSICAL_SCATTER_MIN_EXTENT},
     simulation::closed_loop::latest,
@@ -26,29 +27,36 @@ fn selected_bound(value: i32) -> Result<Option<u16>, String> {
 
 /// Selects a finite bin window from the actual public TX physical observation.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `first`, `last` - Inclusive public bin coordinates; -1 keeps that end open.
 /// # Returns
 /// Existing at-most-2048 point view with unchanged I/Q and original frequency/symbol
 /// coordinates. Excluded/missing bins remain absent. Physical Data does not prove
 /// transported payload/NCP identity, so the existing unknown role label is retained.
-pub(crate) fn qam(first: i32, last: i32) -> Value {
-    qam_at_boundary(first, last, AmplifierBoundary::Before)
+pub(crate) fn qam(context: &Context, first: i32, last: i32) -> Value {
+    qam_at_boundary(context, first, last, AmplifierBoundary::Before)
 }
 
 /// Formats exact public physical bins at the requested amplifier-only boundary.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `first`, `last` - Existing inclusive bin selection, with open ends at -1.
 /// * `boundary` - Actual pre-amplifier or backend-derived post-amplifier I/Q.
 /// # Returns
 /// Existing bounded scatter and original coordinates; no gain calculation occurs here.
-pub(crate) fn qam_at_boundary(first: i32, last: i32, boundary: AmplifierBoundary) -> Value {
+pub(crate) fn qam_at_boundary(
+    context: &Context,
+    first: i32,
+    last: i32,
+    boundary: AmplifierBoundary,
+) -> Value {
     let get = || -> Result<Value, String> {
         let first = selected_bound(first)?;
         let last = selected_bound(last)?;
         if first.zip(last).is_some_and(|(first, last)| first > last) {
             return Err("Invalid physical-bin range.".into());
         }
-        let result = latest().ok_or("Run the simulation to capture channel input.")?;
+        let result = latest(context).ok_or("Run the simulation to capture channel input.")?;
         let observation = result
             .backend()
             .amplifier_bins(boundary, 0, 0, 0)
@@ -119,6 +127,7 @@ mod tests {
 
     #[test]
     fn selector_domains_and_order_reject_before_requesting_an_observation() {
+        let context = &crate::downstream::workbench::session::Context::default();
         // Independent old UI boundaries; they do not derive expected limits from production.
         for (first, last) in [
             (-2, -1),
@@ -129,12 +138,12 @@ mod tests {
             (i32::MIN, 0),
             (0, i32::MAX),
         ] {
-            let view = qam(first, last);
+            let view = qam(context, first, last);
             assert_eq!(view["available"], false);
             assert_eq!(view["reason"], "Invalid physical-bin range.");
         }
         for (first, last) in [(-1, -1), (0, 0), (8191, 8191)] {
-            let view = qam(first, last);
+            let view = qam(context, first, last);
             assert_eq!(view["available"], false);
             assert_eq!(
                 view["reason"],

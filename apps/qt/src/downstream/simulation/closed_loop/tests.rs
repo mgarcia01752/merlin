@@ -64,6 +64,7 @@ pub(super) fn accepted_inputs() -> (Inputs, TransmissionSettings, Sections) {
 }
 #[test]
 fn mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance() {
+    let context = &crate::downstream::workbench::session::Context::default();
     let legacy: Options = serde_json::from_str("{}").unwrap();
     assert_eq!(legacy.receiver_mode, ReceiverMode::SuppliedChannel);
     let options = Options {
@@ -83,12 +84,21 @@ fn mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance() {
     assert!(result.job.receiver_reliability.as_ref().unwrap().tracking);
     assert_eq!(result.job.summary.comparison.bit_errors, 0);
     let profile = inputs.profile.clone().unwrap();
-    crate::downstream::instruments::receiver::qam_history::begin(std::slice::from_ref(&profile));
-    crate::downstream::instruments::receiver::qam_history::retain(profile.profile_id, &result)
-        .unwrap();
-    let snapshot =
-        crate::downstream::instruments::receiver::qam_history::get(i32::from(profile.profile_id))
-            .unwrap();
+    crate::downstream::instruments::receiver::qam_history::begin(
+        context,
+        std::slice::from_ref(&profile),
+    );
+    crate::downstream::instruments::receiver::qam_history::retain(
+        context,
+        profile.profile_id,
+        &result,
+    )
+    .unwrap();
+    let snapshot = crate::downstream::instruments::receiver::qam_history::get(
+        context,
+        i32::from(profile.profile_id),
+    )
+    .unwrap();
     // Completed public reports are immutable: use a separate real current-mode run.
     let supplied = prepare(
         &transmission,
@@ -102,6 +112,7 @@ fn mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance() {
     .unwrap();
     let supplied = run_one(&supplied, 60000, &FullLoopControl::new()).unwrap();
     let selected = crate::downstream::instruments::receiver::selection::select_run(
+        context,
         &supplied,
         Some(&snapshot),
         &Default::default(),
@@ -112,14 +123,15 @@ fn mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance() {
         selected.metadata["correction_name"],
         "MERLIN Channel Estimation (MCE)"
     );
-    crate::downstream::instruments::receiver::qam_history::clear();
-    publish(Some(Arc::new(result)));
+    crate::downstream::instruments::receiver::qam_history::clear(context);
+    publish(context, Some(Arc::new(result)));
     let response =
-        crate::downstream::instruments::receiver::diagnostics::response(r#"{"source":2}"#).unwrap();
+        crate::downstream::instruments::receiver::diagnostics::response(context, r#"{"source":2}"#)
+            .unwrap();
     assert_eq!(response["available"], true);
     assert_eq!(response["comparison"]["available"], true);
     assert_eq!(response["mce"]["tracking"], true);
-    let result = latest().unwrap();
+    let result = latest(context).unwrap();
     let estimated = result
         .backend()
         .response(merlin::downstream::FullLoopResponseQuery {
@@ -131,17 +143,20 @@ fn mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance() {
         response["comparison"]["snapshots"][0],
         estimated.channel_symbol_index.unwrap()
     );
-    let impulse =
-        crate::downstream::instruments::receiver::diagnostics::response(r#"{"source":1,"view":4}"#)
-            .unwrap();
+    let impulse = crate::downstream::instruments::receiver::diagnostics::response(
+        context,
+        r#"{"source":1,"view":4}"#,
+    )
+    .unwrap();
     assert!(impulse["detail"].as_str().unwrap().contains(&format!(
         "Peak delay: {:.4} µs",
         estimated.diagnostics.peak_delay_microseconds
     )));
-    publish(None);
+    publish(context, None);
 }
 #[test]
 fn channel193_rxmer_controls_tx_reference_mer_while_nearest_points_are_optimistic() {
+    let context = &crate::downstream::workbench::session::Context::default();
     let bytes = std::fs::read(
         std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../../examples/workbench/multi-rxmer-2/workbench.merlin.json"),
@@ -191,7 +206,8 @@ fn channel193_rxmer_controls_tx_reference_mer_while_nearest_points_are_optimisti
         let result = run_one(&settings, 60000, &FullLoopControl::new()).unwrap();
         let query = crate::downstream::instruments::receiver::selection::Query::default();
         let selected =
-            crate::downstream::instruments::receiver::selection::select(&result, &query).unwrap();
+            crate::downstream::instruments::receiver::selection::select(context, &result, &query)
+                .unwrap();
         let raw =
             crate::downstream::instruments::receiver::selection::reference_mer(&selected, true);
         let playback = settings.settings().playback.as_ref().unwrap();
@@ -240,6 +256,7 @@ fn channel193_rxmer_controls_tx_reference_mer_while_nearest_points_are_optimisti
 
 #[test]
 fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
+    let context = &crate::downstream::workbench::session::Context::default();
     let (inputs, transmission, sections) = accepted_inputs();
     let options = Options {
         duration_ms: 1,
@@ -247,6 +264,7 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
     };
     let settings = prepare(&transmission, &inputs, &options, &sections).unwrap();
     let mut model = Model {
+        context: (*context).clone(),
         options: Some(options),
         verify: true,
         request: Some(settings),
@@ -271,7 +289,7 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         "Completed elapsed time must be frozen"
     );
     assert_eq!(timing["profiles"].as_array().unwrap().len(), 1);
-    let result = latest().expect("Actual result must be retained");
+    let result = latest(context).expect("Actual result must be retained");
     assert!(
         result.job.summary.comparison.bits_tested > 0,
         "{}",
@@ -279,7 +297,7 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
     );
     assert_eq!(result.job.summary.comparison.bit_errors, 0);
     let performance = result.backend().profile_performance().unwrap();
-    let rendered = crate::downstream::instruments::receiver::performance::view(-1, 0, 0);
+    let rendered = crate::downstream::instruments::receiver::performance::view(context, -1, 0, 0);
     assert_eq!(rendered["profile_id"], performance.profile_id.value());
     assert_eq!(rendered["channel"], performance.key.channel_id);
     assert_eq!(rendered["total"], performance.points.len());
@@ -327,7 +345,12 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         performance.points.len() - 1,
     ] {
         let point = &performance.points[index];
-        let zoom = crate::downstream::instruments::receiver::performance::view(-1, index as i32, 1);
+        let zoom = crate::downstream::instruments::receiver::performance::view(
+            context,
+            -1,
+            index as i32,
+            1,
+        );
         assert_eq!(zoom["start"], index);
         assert_eq!(zoom["count"], 1);
         assert_eq!(zoom["series"][0]["id"], 1);
@@ -358,7 +381,7 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
             }
         }
     }
-    let source = crate::transmitter_instruments::stage(0, 0);
+    let source = crate::transmitter_instruments::stage(context, 0, 0);
 
     // Graph geometry formats the accepted public recovery; it never classifies words.
     let report_before = serde_json::to_value(result.backend().report()).unwrap();
@@ -385,23 +408,23 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
     );
     assert_eq!(source["available"], true, "{source}");
     assert_eq!(source["rows"][0]["value"].as_str().unwrap().len(), 32);
-    let coded = crate::transmitter_instruments::stage(1, 0);
+    let coded = crate::transmitter_instruments::stage(context, 1, 0);
     assert_eq!(coded["total"], 16200);
-    let page = crate::transmitter_instruments::stage(1, 2048);
+    let page = crate::transmitter_instruments::stage(context, 1, 2048);
     assert_eq!(page["rows"][0]["index"], 2048);
     assert_eq!(
-        crate::transmitter_instruments::stage(1, -1)["available"],
+        crate::transmitter_instruments::stage(context, 1, -1)["available"],
         false
     );
     assert_eq!(
-        crate::transmitter_instruments::stage(20, 0)["available"],
+        crate::transmitter_instruments::stage(context, 20, 0)["available"],
         false
     );
-    let mapped = crate::transmitter_instruments::stage(4, 0);
+    let mapped = crate::transmitter_instruments::stage(context, 4, 0);
     assert_eq!(mapped["available"], true);
     assert!(!mapped["points"].as_array().unwrap().is_empty());
     assert!(mapped["points"].as_array().unwrap().len() <= 2048);
-    let bins = crate::transmitter_instruments::stage(6, 0);
+    let bins = crate::transmitter_instruments::stage(context, 6, 0);
     assert_eq!(bins["total"], 8192);
     assert_eq!(source["graph"]["kind"], "bits");
     assert_eq!(coded["graph"]["kind"], "raster");
@@ -449,22 +472,24 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         };
         assert_eq!(point["role"], role);
     }
-    let previews = crate::transmitter_instruments::stage_previews();
+    let previews = crate::transmitter_instruments::stage_previews(context);
     assert_eq!(previews.as_array().unwrap().len(), 6);
     assert_eq!(previews[0]["observation"]["graph"]["kind"], "bits");
     assert!(previews.to_string().len() < 1_500_000);
     assert!(previews[0]["observation"]["rows"].is_null());
-    let input = crate::transmitter_instruments::channel_input::qam(-1, -1);
+    let input = crate::transmitter_instruments::channel_input::qam(context, -1, -1);
     assert_eq!(input["available"], true, "{input}");
     let point = &input["points"][0];
     let bin = point["index"].as_i64().unwrap() as i32;
-    let selected = crate::transmitter_instruments::channel_input::qam(bin, bin);
+    let selected = crate::transmitter_instruments::channel_input::qam(context, bin, bin);
     assert_eq!(selected["points"].as_array().unwrap().len(), 1);
     assert_eq!(selected["points"][0]["i"], point["i"]);
-    assert!(crate::transmitter_instruments::channel_input::qam(4, 3)["available"] == false);
-    let before = crate::downstream::instruments::channel::spectrum(0, 0, 0, false);
-    let after = crate::downstream::instruments::channel::spectrum(1, 0, 0, false);
-    let zoom = crate::downstream::instruments::channel::spectrum(1, 100, 32, true);
+    assert!(
+        crate::transmitter_instruments::channel_input::qam(context, 4, 3)["available"] == false
+    );
+    let before = crate::downstream::instruments::channel::spectrum(context, 0, 0, 0, false);
+    let after = crate::downstream::instruments::channel::spectrum(context, 1, 0, 0, false);
+    let zoom = crate::downstream::instruments::channel::spectrum(context, 1, 100, 32, true);
     assert!(before["channel_power"]["dbmv"].is_number(), "{before}");
     assert!(
         (after["channel_power"]["dbmv"].as_f64().unwrap()
@@ -474,8 +499,8 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
             < 1e-8
     );
     assert_eq!(after["channel_power"], zoom["channel_power"]);
-    let pre = crate::downstream::instruments::channel::qam(0, "{}");
-    let post = crate::downstream::instruments::channel::qam(1, "{}");
+    let pre = crate::downstream::instruments::channel::qam(context, 0, "{}");
+    let post = crate::downstream::instruments::channel::qam(context, 1, "{}");
     assert_eq!(
         pre["points"].as_array().unwrap().len(),
         post["points"].as_array().unwrap().len()
@@ -487,7 +512,7 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
             < 1e-10
     );
 
-    let messages = crate::transmitter_instruments::messages();
+    let messages = crate::transmitter_instruments::messages(context);
     let packets = messages["messages"].as_array().unwrap();
     assert!(packets.iter().any(|p| p["type"] == 49), "{messages}");
     assert!(packets.iter().any(|p| p["profile"] == 0), "{messages}");
@@ -523,10 +548,10 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
     }
     for tap in 0..4 {
         assert_eq!(
-            crate::transmitter_instruments::spectrum_state(tap)["has_result"],
+            crate::transmitter_instruments::spectrum_state(context, tap)["has_result"],
             true
         );
-        let view = crate::transmitter_instruments::spectrum(tap, 0, 0, false);
+        let view = crate::transmitter_instruments::spectrum(context, tap, 0, 0, false);
         assert!(view.get("error").is_none(), "{view}");
         assert!(view["points"].as_array().unwrap().len() <= 2048);
     }
@@ -549,13 +574,15 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
             })
             .unwrap();
         let view =
-            crate::downstream::instruments::receiver::views::spectrum(tap, 0, 0, false).unwrap();
+            crate::downstream::instruments::receiver::views::spectrum(context, tap, 0, 0, false)
+                .unwrap();
         assert_eq!(
             view["channel_power"],
             serde_json::to_value(&observed.power.channel_power).unwrap()
         );
         let zoom =
-            crate::downstream::instruments::receiver::views::spectrum(tap, 100, 32, true).unwrap();
+            crate::downstream::instruments::receiver::views::spectrum(context, tap, 100, 32, true)
+                .unwrap();
         assert_eq!(zoom["channel_power"], view["channel_power"]);
         assert_eq!(zoom["count"], 32);
     }
@@ -567,9 +594,14 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         .unwrap();
     for index in [0, 356, 8191] {
         let point = &fft.bins[index];
-        let view =
-            crate::downstream::instruments::receiver::views::spectrum(3, index as i32, 1, true)
-                .unwrap();
+        let view = crate::downstream::instruments::receiver::views::spectrum(
+            context,
+            3,
+            index as i32,
+            1,
+            true,
+        )
+        .unwrap();
         assert_eq!(view["start"], index);
         assert_eq!(view["count"], 1);
         assert_eq!(view["points"][0]["x"], 0.5);
@@ -586,17 +618,25 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         );
     }
     assert_eq!(
-        crate::downstream::instruments::receiver::views::spectrum(3, 100, 0, true).unwrap()
-            ["start"],
+        crate::downstream::instruments::receiver::views::spectrum(context, 3, 100, 0, true)
+            .unwrap()["start"],
         0
     );
-    assert!(crate::downstream::instruments::receiver::views::spectrum(4, 0, 0, true).is_err());
-    assert!(crate::downstream::instruments::receiver::views::spectrum(3, -1, 32, true).is_err());
-    assert!(crate::downstream::instruments::receiver::views::spectrum(3, 8191, 2, true).is_err());
+    assert!(
+        crate::downstream::instruments::receiver::views::spectrum(context, 4, 0, 0, true).is_err()
+    );
+    assert!(
+        crate::downstream::instruments::receiver::views::spectrum(context, 3, -1, 32, true)
+            .is_err()
+    );
+    assert!(
+        crate::downstream::instruments::receiver::views::spectrum(context, 3, 8191, 2, true)
+            .is_err()
+    );
     assert!(!result.observations.taps[0].values.is_empty());
     assert!(result.job.constellation.as_ref().unwrap().collected_pairs > 0);
     let query = crate::downstream::instruments::receiver::selection::Query::default();
-    let scatter = crate::downstream::instruments::receiver::selection::qam(&query);
+    let scatter = crate::downstream::instruments::receiver::selection::qam(context, &query);
     assert_eq!(scatter["available"], true);
     assert_eq!(
         scatter["raw_mer"]["result"]["sample_count"],
@@ -606,7 +646,7 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         scatter["equalized_mer"]["result"]["sample_count"],
         scatter["selected"]
     );
-    let channel_qam = crate::downstream::instruments::channel::qam(2, "{}");
+    let channel_qam = crate::downstream::instruments::channel::qam(context, 2, "{}");
     assert_eq!(channel_qam["mer"], scatter["raw_mer"]);
     let control = result
         .job
@@ -624,7 +664,7 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         last_symbol: control.channel_symbol_index as i64,
         ..Default::default()
     };
-    let scatter = crate::downstream::instruments::receiver::selection::qam(&ncp_query);
+    let scatter = crate::downstream::instruments::receiver::selection::qam(context, &ncp_query);
     assert_eq!(scatter["available"], true);
     assert_eq!(scatter["points"][0]["bin"], control.physical_bin);
     let empty_query = crate::downstream::instruments::receiver::selection::Query {
@@ -633,30 +673,34 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         ..Default::default()
     };
     assert_eq!(
-        crate::downstream::instruments::receiver::selection::qam(&empty_query)["points"],
+        crate::downstream::instruments::receiver::selection::qam(context, &empty_query)["points"],
         serde_json::json!([])
     );
     let decisions =
-        crate::downstream::instruments::receiver::diagnostics::slicer("{}", false).unwrap();
+        crate::downstream::instruments::receiver::diagnostics::slicer(context, "{}", false)
+            .unwrap();
     assert!(!decisions["rows"].as_array().unwrap().is_empty());
     assert!(decisions["llr"]["count"].as_u64().unwrap() > 0);
-    let coding = crate::downstream::instruments::receiver::diagnostics::slicer("{}", true).unwrap();
+    let coding =
+        crate::downstream::instruments::receiver::diagnostics::slicer(context, "{}", true).unwrap();
     assert_eq!(coding["llr"]["count"], 16200);
     assert_eq!(
-        crate::downstream::instruments::receiver::diagnostics::response("{}").unwrap()["available"],
+        crate::downstream::instruments::receiver::diagnostics::response(context, "{}").unwrap()
+            ["available"],
         true
     );
     assert_eq!(
-        crate::downstream::instruments::receiver::diagnostics::response(r#"{"source":1}"#).unwrap()
-            ["available"],
+        crate::downstream::instruments::receiver::diagnostics::response(context, r#"{"source":1}"#)
+            .unwrap()["available"],
         false
     );
     assert_eq!(
-        crate::downstream::instruments::receiver::diagnostics::fec()["compared_bits"],
+        crate::downstream::instruments::receiver::diagnostics::fec(context)["compared_bits"],
         result.job.summary.comparison.bits_tested
     );
-    let charts =
-        crate::downstream::instruments::receiver::diagnostics::fec()["verification_charts"].clone();
+    let charts = crate::downstream::instruments::receiver::diagnostics::fec(context)
+        ["verification_charts"]
+        .clone();
     assert_eq!(
         charts["recovery"]["points"][0]["count"],
         result.job.summary.recovered_payloads.to_string()
@@ -669,27 +713,30 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         .all(|point| point["count"] == "0"));
     model.invalidate();
     assert!(model.state()["timing"].is_null());
-    assert!(latest().is_none());
-    assert!(crate::downstream::instruments::receiver::qam_history::get(0).is_err());
+    assert!(latest(context).is_none());
+    assert!(crate::downstream::instruments::receiver::qam_history::get(context, 0).is_err());
     assert_eq!(
-        crate::transmitter_instruments::stage(0, 0)["available"],
+        crate::transmitter_instruments::stage(context, 0, 0)["available"],
         false
     );
-    assert!(crate::transmitter_instruments::messages()["messages"]
-        .as_array()
-        .unwrap()
-        .is_empty());
+    assert!(
+        crate::transmitter_instruments::messages(context)["messages"]
+            .as_array()
+            .unwrap()
+            .is_empty()
+    );
     assert_eq!(
-        crate::transmitter_instruments::spectrum_state(3)["has_result"],
+        crate::transmitter_instruments::spectrum_state(context, 3)["has_result"],
         false
     );
     assert_eq!(
-        crate::downstream::instruments::receiver::selection::qam(&query)["available"],
+        crate::downstream::instruments::receiver::selection::qam(context, &query)["available"],
         false
     );
 }
 #[test]
 fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
+    let context = &crate::downstream::workbench::session::Context::default();
     let mut profile = original_profile();
     let mut rxmer = original_rxmer();
     // Preserve the old independent 1920-carrier fixture, clipping original RLE runs.
@@ -732,6 +779,7 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
         vec![0, 1, 2, 3]
     );
     let mut model = Model {
+        context: (*context).clone(),
         options: Some(options.clone()),
         verify: true,
         request: Some(prepare(&transmission, &inputs, &options, &sections).unwrap()),
@@ -748,7 +796,7 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
         assert!(std::time::Instant::now() < deadline, "{}", model.state());
         std::thread::sleep(Duration::from_millis(10));
     }
-    let view = crate::downstream::instruments::receiver::performance::view(-1, 0, 0);
+    let view = crate::downstream::instruments::receiver::performance::view(context, -1, 0, 0);
     assert_eq!(view["profiles"].as_array().unwrap().len(), 4, "{view}");
     assert_eq!(view["profile_id"], 3);
     let timing = model.state()["timing"].clone();
@@ -756,7 +804,7 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
     assert_eq!(timing["profiles"][3]["profile_id"], 3);
     assert_eq!(model.state()["timing"], timing);
     for id in 0..4 {
-        let view = crate::downstream::instruments::receiver::performance::view(id, 0, 0);
+        let view = crate::downstream::instruments::receiver::performance::view(context, id, 0, 0);
         assert_eq!(view["status"], "complete", "{view}");
         assert!(view["fec"]["total_cw"].as_u64().unwrap() > 0);
         assert_eq!(
@@ -766,6 +814,7 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
                 + view["fec"]["ufec"].as_u64().unwrap()
         );
         let qam = crate::downstream::instruments::receiver::selection::qam(
+            context,
             &crate::downstream::instruments::receiver::selection::Query {
                 run_profile: id,
                 ..Default::default()
@@ -781,7 +830,7 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
         );
         assert_eq!(qam["runs"].as_array().unwrap().len(), 4);
         assert!(qam["retained"].as_u64().unwrap() <= 65536);
-        let fec = crate::downstream::instruments::receiver::performance::fec_view(id);
+        let fec = crate::downstream::instruments::receiver::performance::fec_view(context, id);
         assert_eq!(fec["profile_id"], id);
         assert_eq!(fec["fec"], view["fec"]);
         assert!(fec["words"].as_array().unwrap().len() <= 64);
@@ -807,15 +856,16 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
             .unwrap()
             .iter()
             .all(|s| s["points"].as_array().unwrap().len() <= 1024));
-        let zoom = crate::downstream::instruments::receiver::performance::view(id, 10, 4);
+        let zoom = crate::downstream::instruments::receiver::performance::view(context, id, 10, 4);
         assert_eq!(zoom["start"], 10);
         assert_eq!(zoom["count"], 4);
     }
     assert_eq!(
-        crate::downstream::instruments::receiver::performance::fec_view(15)["available"],
+        crate::downstream::instruments::receiver::performance::fec_view(context, 15)["available"],
         false
     );
     let missing = crate::downstream::instruments::receiver::selection::qam(
+        context,
         &crate::downstream::instruments::receiver::selection::Query {
             run_profile: 15,
             ..Default::default()
@@ -824,7 +874,8 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
     assert_eq!(missing["available"], false);
     assert!(missing["points"].as_array().unwrap().is_empty());
     for id in 0..4 {
-        let snapshot = crate::downstream::instruments::receiver::qam_history::get(id).unwrap();
+        let snapshot =
+            crate::downstream::instruments::receiver::qam_history::get(context, id).unwrap();
         assert_eq!(i32::from(snapshot.id), id);
         let info = snapshot.backend.info();
         assert!(info.payload_cells <= 8192 && info.ncp_cells <= 1024);
@@ -833,7 +884,7 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
     }
     assert_eq!(inputs.profile.as_ref().unwrap().profile_id, 0);
     assert_eq!(
-        latest()
+        latest(context)
             .unwrap()
             .job
             .settings
@@ -881,7 +932,7 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
     assert!(prepare_sweep(&transmission, &inputs, &legacy, &sections).is_err());
     model.invalidate();
     assert_eq!(
-        crate::downstream::instruments::receiver::performance::view(-1, 0, 0)["available"],
+        crate::downstream::instruments::receiver::performance::view(context, -1, 0, 0)["available"],
         false
     );
 }
@@ -1037,6 +1088,7 @@ fn unnamed_file_source_retains_bytes_and_ignores_its_dormant_continuous_seed() {
 
 #[test]
 fn invalidated_paused_worker_never_publishes_a_late_result() {
+    let context = &crate::downstream::workbench::session::Context::default();
     let (inputs, transmission, sections) = accepted_inputs();
     let options = Options {
         // A long source window prevents ordinary completion racing this control test.
@@ -1046,6 +1098,7 @@ fn invalidated_paused_worker_never_publishes_a_late_result() {
     };
     let request = prepare(&transmission, &inputs, &options, &sections).unwrap();
     let mut model = Model {
+        context: (*context).clone(),
         options: Some(options),
         verify: true,
         request: Some(request),
@@ -1067,7 +1120,7 @@ fn invalidated_paused_worker_never_publishes_a_late_result() {
         assert!(std::time::Instant::now() < deadline);
         std::thread::yield_now();
     }
-    assert!(latest().is_none());
+    assert!(latest(context).is_none());
     assert_eq!(model.state()["has_result"], false);
     assert!(model.state()["timing"].is_null());
     assert!(model.error.is_empty());
@@ -1131,6 +1184,7 @@ fn response_admission_honors_its_independent_accepted_epoch_tolerance() {
 
 #[test]
 fn tx_spectra_keep_independent_frame_output_budgets_and_authoritative_calibrated_power() {
+    let context = &crate::downstream::workbench::session::Context::default();
     use merlin::downstream::{FullLoopObservationPolicy, FullLoopSpectrumQuery, FullLoopStage};
     // Independent compatibility fixture: three retained frames, 1024-sample CP,
     // 16K frame prefix (three averages) and 32K continuous prefix (seven averages).
@@ -1160,7 +1214,7 @@ fn tx_spectra_keep_independent_frame_output_budgets_and_authoritative_calibrated
     let result = Arc::new(run_one(&request, 60000, &FullLoopControl::new()).unwrap());
     let before = serde_json::to_value(result.backend().report()).unwrap();
     let statistics = serde_json::to_value(result.backend().observation_stats()).unwrap();
-    publish(Some(result.clone()));
+    publish(context, Some(result.clone()));
     for (index, stage) in stages.into_iter().enumerate() {
         let expected_averages = match stage {
             FullLoopStage::TxOverlap => 7,
@@ -1181,7 +1235,7 @@ fn tx_spectra_keep_independent_frame_output_budgets_and_authoritative_calibrated
                     .power
             }
         };
-        let full = crate::transmitter_instruments::spectrum(index as i32, 0, 0, false);
+        let full = crate::transmitter_instruments::spectrum(context, index as i32, 0, 0, false);
         assert!(full.get("error").is_none(), "{full}");
         assert_eq!(full["total"], 8192);
         assert!(full["summary"]
@@ -1193,10 +1247,10 @@ fn tx_spectra_keep_independent_frame_output_budgets_and_authoritative_calibrated
             serde_json::to_value(expected.channel_power).unwrap()
         );
         assert_eq!(
-            crate::transmitter_instruments::spectrum_state(index as i32)["has_result"],
+            crate::transmitter_instruments::spectrum_state(context, index as i32)["has_result"],
             true
         );
-        let zoom = crate::transmitter_instruments::spectrum(index as i32, 100, 32, true);
+        let zoom = crate::transmitter_instruments::spectrum(context, index as i32, 100, 32, true);
         assert!(zoom.get("error").is_none(), "{zoom}");
         assert_eq!(zoom["channel_power"], full["channel_power"]);
         assert_eq!(zoom["summary"], full["summary"]);
@@ -1209,30 +1263,30 @@ fn tx_spectra_keep_independent_frame_output_budgets_and_authoritative_calibrated
             .contains("Capture frequency"));
         assert!(full["points"].as_array().unwrap().len() <= 2048);
         assert_eq!(
-            crate::transmitter_instruments::spectrum(index as i32, 0, 1, false)["error"],
+            crate::transmitter_instruments::spectrum(context, index as i32, 0, 1, false)["error"],
             "Display at least two spectrum bins."
         );
         assert_eq!(
-            crate::transmitter_instruments::spectrum(index as i32, -1, 32, false)["error"],
+            crate::transmitter_instruments::spectrum(context, index as i32, -1, 32, false)["error"],
             "Invalid spectrum start."
         );
         assert_eq!(
-            crate::transmitter_instruments::spectrum(index as i32, 0, -1, false)["error"],
+            crate::transmitter_instruments::spectrum(context, index as i32, 0, -1, false)["error"],
             "Invalid spectrum count."
         );
         // Zero count means full FFT width, preserving the old out-of-range suffix rejection.
         assert!(
-            crate::transmitter_instruments::spectrum(index as i32, 100, 0, false)["error"]
+            crate::transmitter_instruments::spectrum(context, index as i32, 100, 0, false)["error"]
                 .is_string()
         );
     }
     for tap in [-1, 4, i32::MAX] {
         assert_eq!(
-            crate::transmitter_instruments::spectrum(tap, 0, 0, false)["error"],
+            crate::transmitter_instruments::spectrum(context, tap, 0, 0, false)["error"],
             "Invalid TX tap."
         );
         assert_eq!(
-            crate::transmitter_instruments::spectrum_state(tap)["has_result"],
+            crate::transmitter_instruments::spectrum_state(context, tap)["has_result"],
             false
         );
     }
@@ -1244,5 +1298,5 @@ fn tx_spectra_keep_independent_frame_output_budgets_and_authoritative_calibrated
         serde_json::to_value(result.backend().observation_stats()).unwrap(),
         statistics
     );
-    publish(None);
+    publish(context, None);
 }

@@ -3248,3 +3248,39 @@ Qt boundary. Move that exact test body beside its source owner as `tests.rs` and
 use ordinary `mod tests;`. Keep the guard unchanged; record the rejected first
 boundary invocation and rerun the16 owner cases/Clippy/format/boundary after this
 placement-only adaptation. No scientific or test expectations change.
+
+## UIU-SESSION-01 explicit downstream context migration
+
+Continue the accepted foundation by removing unbound downstream scientific data
+lookup. REQ-UIU-03/06/07, UIU-SESSION-01 and the
+[session architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle)
+own this focused consumer unit. Preserve all existing scientific/public APIs,
+editor acceptance, actual results, independent vectors and file schema behavior.
+
+| Disposition | Exact owner / inspected contract | Decision |
+| --- | --- | --- |
+| Add / Edit | `apps/qt/src/downstream/workbench/store.rs` and `session.rs`: GUI-thread INPUTS/SAVED singletons | ADD an explicit clonable downstream context with accepted inputs/sections, latest result, bounded instrument histories and prepared editor transfer. REUSE existing DTOs unchanged. All reads/writes require that context. |
+| Edit | `src/downstream/simulation/closed_loop.rs`, `instruments/transmitter/preview.rs` | Bind each lifecycle/preview model to an explicit context; queries and invalidation use their own owner. Preserve background frozen requests and cancellation behavior. |
+| Edit | `src/downstream/instruments/receiver/{qam_history,performance,selection,diagnostics,views}.rs` | Replace global result/history routing with context parameters. Keep authoritative public queries and original all-selected/scientific planes. |
+| Edit | `src/downstream/instruments/{channel/mod,transmitter/views,transmitter/messages,transmitter/channel_input}.rs` and channel input preview | Propagate the requesting adapter's context; no selected-tab or latest-other-context fallback. |
+| Edit | `src/downstream/workbench/project_load.rs`, `project_file.rs`, corresponding tests | Prepared inputs/models remain independent until guarded GUI adoption. Transfer editors only through the target context; preserve Send background loading and avoid retained-owner cycles. |
+| Edit | `apps/qt/src/bridge/{source_input,profile_input,measurement_input,rxmer_designer,closed_loop,transmitter_analyzer,receiver_instruments,workbench_file}.rs` | Capture a fixed downstream bootstrap context at QObject construction, then pass it explicitly to all data/model operations. No QML/public invokable signature or CXX-Qt registration changes. Channel instrument methods belong to measurement_input.rs; no separate channel bridge exists. |
+| Reuse | Existing original-source path registry in `src/platform/input_file.rs` | Genuine application-wide no-clobber infrastructure, not scientific data routing. Future two-direction adoption must clear only its owner's paths while checking the union; leave its existing bounds/behavior intact until that identity wiring. |
+| Subsequent unit | Shared dispatch/identity/retention foundation and actual upstream configuration/report/control owners | Bind coordinator identities, worker terminal envelopes and conservative aggregate accounting after explicit storage. The context-only unit does not accept these remaining contracts. |
+
+Keep the bootstrap registry limited to constructing fixed downstream context
+handles, never resolving selected-direction data. Isolated contexts permit two
+independent populations in the same process. Every scientific input/result/query
+call receives its actual handle. The context preserves existing finite histories
+and thread-safe background transfers; it must not own a prepared model that
+strongly retains the same context. Prepared models rebind on actual GUI adoption.
+No default scientific operation, numerical constant or accepted input is changed.
+
+Acceptance: preserve all existing assertions and add actual context-isolation,
+missing-result/history and prepared-adoption tests. Exercise affected Qt Rust/
+QML consumers, Clippy/format, final boundary, optimized build/native Open probes
+and traceability. Core/native Python/CLI/package algorithms/contracts are unchanged,
+so do not rebuild their wheel or repeat their completed milestone suites. The
+current authoritative scalar/provenance values must remain exact. UIU-SESSION-01
+stays unchecked until the later real callback/dispatch/resource and complete
+session gates pass. This is a finite storage migration, not a new parent plan.

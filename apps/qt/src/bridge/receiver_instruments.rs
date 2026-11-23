@@ -5,6 +5,7 @@
 //! Bounded receiver instruments over one shared immutable closed-loop result.
 use crate::downstream::instruments::receiver::views;
 pub(crate) use crate::downstream::instruments::receiver::{diagnostics, selection};
+use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 use merlin::downstream::FullLoopStage;
 use serde_json::{json, Value};
@@ -109,7 +110,9 @@ pub mod bridge {
 
 /// Stateless presentation admission; owns no simulation, RNG or fabricated samples.
 #[derive(Default)]
-pub struct ReceiverInstrumentsRust;
+pub struct ReceiverInstrumentsRust {
+    context: crate::downstream::workbench::session::Context,
+}
 
 fn qam_state(signal: i32, view: i32, part: i32) -> Value {
     let valid = (0..3).contains(&signal) && (0..3).contains(&view) && (0..2).contains(&part);
@@ -165,8 +168,13 @@ impl bridge::ReceiverInstruments {
     /// Bounded JSON, preserving accepted inputs and other instrument selections.
     pub fn performance(&self, profile_id: i32, start: i32, count: i32) -> QString {
         QString::from(
-            crate::downstream::instruments::receiver::performance::view(profile_id, start, count)
-                .to_string(),
+            crate::downstream::instruments::receiver::performance::view(
+                &self.rust().context,
+                profile_id,
+                start,
+                count,
+            )
+            .to_string(),
         )
     }
 
@@ -180,12 +188,15 @@ impl bridge::ReceiverInstruments {
     pub fn qam(&self, signal: i32, view: i32, part: i32) -> QString {
         let state = if (0..5).contains(&signal) && (0..3).contains(&view) && (0..2).contains(&part)
         {
-            selection::qam(&selection::Query {
-                signal: signal as usize,
-                view: view as usize,
-                part: part as usize,
-                ..Default::default()
-            })
+            selection::qam(
+                &self.rust().context,
+                &selection::Query {
+                    signal: signal as usize,
+                    view: view as usize,
+                    part: part as usize,
+                    ..Default::default()
+                },
+            )
         } else {
             qam_state(signal, view, part)
         };
@@ -199,7 +210,7 @@ impl bridge::ReceiverInstruments {
     pub fn qam_selected(&self, document: &QString) -> QString {
         QString::from(
             selection::Query::parse(&document.to_string())
-                .map(|q| selection::qam(&q))
+                .map(|q| selection::qam(&self.rust().context, &q))
                 .unwrap_or_else(
                     |e| json!({"available":false,"points":[],"profiles":[],"orders":[],"reason":e}),
                 )
@@ -212,7 +223,7 @@ impl bridge::ReceiverInstruments {
     /// # Returns
     /// Curve/metadata or an empty diagnostic, never stale observations.
     pub fn response(&self, document: &QString) -> QString {
-        QString::from(diagnostics::response(&document.to_string()).unwrap_or_else(|e|json!({"available":false,"points":[],"x_ticks":[],"y_ticks":[],"error":e,"reason":e})).to_string())
+        QString::from(diagnostics::response(&self.rust().context,&document.to_string()).unwrap_or_else(|e|json!({"available":false,"points":[],"x_ticks":[],"y_ticks":[],"error":e,"reason":e})).to_string())
     }
     /// Queries received-cell slicing and actual retained soft values.
     /// # Arguments
@@ -221,13 +232,13 @@ impl bridge::ReceiverInstruments {
     /// # Returns
     /// Bounded diagnostic rows/histogram or an explicit empty state.
     pub fn slicer(&self, document: &QString, decoder_input: bool) -> QString {
-        QString::from(diagnostics::slicer(&document.to_string(),decoder_input).unwrap_or_else(|e|json!({"available":false,"rows":[],"reason":e,"detail":e,"histogram":{"points":[],"x_ticks":[],"y_ticks":[]}})).to_string())
+        QString::from(diagnostics::slicer(&self.rust().context,&document.to_string(),decoder_input).unwrap_or_else(|e|json!({"available":false,"rows":[],"reason":e,"detail":e,"histogram":{"points":[],"x_ticks":[],"y_ticks":[]}})).to_string())
     }
     /// Reads the shared job's genuine decoder and comparison counters.
     /// # Returns
     /// Bounded counters and completed-word rows; no engine state changes.
     pub fn fec(&self) -> QString {
-        QString::from(diagnostics::fec().to_string())
+        QString::from(diagnostics::fec(&self.rust().context).to_string())
     }
 
     /// Reads one retained profile's decoder summary without running the simulation.
@@ -237,7 +248,11 @@ impl bridge::ReceiverInstruments {
     /// Bounded FEC counters, graph values, records and profile catalog JSON.
     pub fn fec_profile(&self, profile_id: i32) -> QString {
         QString::from(
-            crate::downstream::instruments::receiver::performance::fec_view(profile_id).to_string(),
+            crate::downstream::instruments::receiver::performance::fec_view(
+                &self.rust().context,
+                profile_id,
+            )
+            .to_string(),
         )
     }
 
@@ -248,7 +263,9 @@ impl bridge::ReceiverInstruments {
     /// Shared SA state with retained tap availability and explicit reference planes.
     pub fn spectrum(&self, tap: i32) -> QString {
         let mut state = spectrum_state(tap);
-        if let Some(result) = crate::downstream::simulation::closed_loop::latest() {
+        if let Some(result) =
+            crate::downstream::simulation::closed_loop::latest(&self.rust().context)
+        {
             let available = usize::try_from(tap)
                 .ok()
                 .and_then(|i| result.observations.taps.get(i))
@@ -274,7 +291,7 @@ impl bridge::ReceiverInstruments {
     /// Rust-derived display coordinates or a diagnostic with no stale samples.
     pub fn view_tap(&self, tap: i32, start: i32, count: i32, capture_axis: bool) -> QString {
         QString::from(
-            views::spectrum(tap, start, count, capture_axis)
+            views::spectrum(&self.rust().context, tap, start, count, capture_axis)
                 .unwrap_or_else(|e| json!({"error":e,"points":[],"x_ticks":[],"y_ticks":[]}))
                 .to_string(),
         )

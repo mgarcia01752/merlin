@@ -6,3 +6,4 @@
 pub(crate) mod project_file;
 pub(crate) mod project_load;
 pub(crate) mod session;
+mod store;

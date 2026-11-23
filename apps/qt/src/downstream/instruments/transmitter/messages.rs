@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Presentation of authoritative public TX message inspection; never a received-MAC claim.
+use crate::downstream::workbench::session::Context;
 use crate::downstream::{
     common::constants::{
         MAX_PLC_MESSAGE_RECORDS, MAX_TRANSMITTER_MESSAGE_FRAMES, NCP_MESSAGE_PROFILE_ID,
@@ -67,12 +68,14 @@ fn render(report: &FullLoopPlcMessages) -> Value {
 }
 
 /// Presents actual CRC-validated transmitted packets through the public result owner.
+/// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// # Returns
 /// At most the existing 32 packet records, bounded TLV trees and exact original bytes.
 /// The backend supplies interpretation, original coordinates, pending/issue state
 /// and complete-versus-scheduled status; Qt never parses frames or wire codes.
-pub(crate) fn messages() -> Value {
-    let Some(result) = latest() else {
+pub(crate) fn messages(context: &Context) -> Value {
+    let Some(result) = latest(context) else {
         return json!({"messages":[],"reason":"Use Start on the main workbench to capture OCD / DPD messages."});
     };
     match result.backend().plc_messages() {

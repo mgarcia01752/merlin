@@ -5,6 +5,7 @@
 //! GUI-thread lifecycle and viewport formatting over immutable Rust worker results.
 use crate::downstream::common::constants::IDLE_PREVIEW_COMPLETION_CAPACITY;
 use crate::downstream::inputs::public_inputs::transmitter_inputs;
+use crate::downstream::workbench::session::Context;
 use crate::shared::presentation::constants::MIN_SPECTRUM_DISPLAY_BINS;
 use merlin::downstream::{
     ChannelConfiguration, ChannelConfigurationInput, ConfiguredPhysicalLayout,
@@ -27,6 +28,7 @@ struct Job {
 
 #[derive(Default)]
 pub(crate) struct Analyzer {
+    pub(crate) context: Context,
     revision: u64,
     timing_settings: Option<TransmissionConfiguration>,
     result_token: u64,
@@ -235,7 +237,7 @@ impl Analyzer {
     /// Bounded Rust-derived labels/coordinates, or an error with no stale geometry.
     pub(crate) fn timing(&self, velocity: f64) -> Value {
         let prepare = || -> Result<Value, String> {
-            let completed = crate::downstream::simulation::closed_loop::latest();
+            let completed = crate::downstream::simulation::closed_loop::latest(&self.context);
             let (configuration, origin) = if let Some(result) = completed.as_ref() {
                 (
                     TransmissionConfiguration::new(result.job.settings.transmission.clone())

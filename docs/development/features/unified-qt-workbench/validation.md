@@ -2947,3 +2947,48 @@ The first final-boundary run rejected the prepared external Rust test-module
 path. Move its exact body to `src/shell/tests.rs` and use ordinary `mod tests;`;
 no guard exception or numerical/behavior assertion changes. Final owner checks
 rerun on that adapted placement, preserving the rejected invocation as evidence.
+
+## UIU-SESSION-01 explicit downstream context migration
+
+[Design](design.md#uiu-session-01-explicit-downstream-context-migration),
+[architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle),
+[exact evidence](session-context-evidence.json) and
+[UIU-SESSION-01](../../checklist.md#task-uiu-session-01) trace REQ-UIU-03/06/07.
+All six former input/section/latest-result/QAM/performance/prepared-model data
+singletons now belong to an explicit downstream context. Only construction uses
+a fixed downstream bootstrap handle; data operations never consult selected tabs.
+Prepared models use an independent candidate owner and rebind after target
+transfer, with a destruction test guarding against retained-owner cycles.
+
+Four new owner tests pass: distinct accepted sources/sections, real public-run
+result/archive isolation, targeted prepared adoption/destruction and thread-safe
+owned transfers. All **91 affected downstream/bridge Rust cases** pass, including
+those four; 18 unchanged platform cases are filtered, not reported passed.
+All **91 integrated QML checks** pass without failures or skips. Existing
+scientific/worker assertions remain exact after removing only explicit context
+bindings/arguments, formatting and optional commas. No numerical oracle or
+independent reference input is weakened. Warnings-denied Qt Clippy, all-target
+compile, formatting and the final zero-dependency boundary pass.
+
+A read-only QA review finds no introduced ownership, recursive-lock, cross-owner
+reload or result/history fallback defects. This is source review, not additional
+runtime evidence. Early mechanical migration compile failures are preserved in
+the private receipts and corrected before the passing runs; no rejected build is
+reported as test execution. The final optimized build and six native XCB launch/Open probes pass on the
+recorded executable SHA; exact source hashes are recorded in the machine evidence.
+
+This focused Level 1 change expands to every affected downstream adapter and
+QML consumer. Scientific/public API/binding/CLI/package sources, Cargo manifests,
+CXX-Qt registration, schemas and numerical fixtures are unchanged. Their completed
+downstream milestone evidence remains historical; another full workspace,
+wheel/installed-Python, CLI or packaging run is not required for this context-only
+unit. QML source/layout is unchanged, so new visual screenshots are not required.
+The Qt executable is rebuilt for the migrated consumers before handoff.
+
+UIU-SESSION-01 stays unchecked. Actual coordinator identity/generation/run
+callbacks, terminal acknowledgement on every worker path, both real direction
+controls, aggregate reachable-allocation accounting and complete Level 2 session
+acceptance remain pending. Existing global original-path no-clobber protection
+remains infrastructure; owner-scoped path removal is still required when the two
+real project owners are wired. Shell, upstream UI, persistence and final gates
+retain their existing dependency order and status.

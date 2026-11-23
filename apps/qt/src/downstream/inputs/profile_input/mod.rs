@@ -14,6 +14,7 @@ use serde_json::Value;
 /// Profile editor state retains original bytes independently of Qt.
 #[derive(Default)]
 pub struct ProfileModel {
+    pub(crate) context: crate::downstream::workbench::session::Context,
     pub(crate) draft: Option<Capture>,
     pub(crate) accepted: Option<(Capture, u8)>,
 }
@@ -84,6 +85,7 @@ impl ProfileModel {
         let capture = Capture::decode(name, bytes)?;
         capture.profile(saved.profile_id)?;
         Ok(Self {
+            context: Default::default(),
             draft: Some(capture.clone()),
             accepted: Some((capture, saved.profile_id)),
         })

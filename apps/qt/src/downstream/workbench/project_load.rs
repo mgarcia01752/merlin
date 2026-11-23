@@ -5,14 +5,13 @@
 //! Single-flight background Open; only completed owned state crosses threads.
 use super::{
     project_file::{Editors, Project, MAX_PROJECT_BYTES},
-    session::Inputs,
+    session::{Context, Inputs},
 };
 use crate::downstream::{
     instruments::transmitter::preview::Analyzer, simulation::closed_loop::Model,
 };
 use serde_json::{json, Value};
 use std::{
-    cell::RefCell,
     path::PathBuf,
     sync::{
         atomic::{AtomicBool, AtomicU8, Ordering},
@@ -31,17 +30,20 @@ pub(crate) struct PreparedModels {
     pub receiver: Option<Model>,
     pub transmitter: Option<Analyzer>,
 }
-thread_local! {
-    static PREPARED: RefCell<PreparedModels> = RefCell::default();
-}
 
 /// Moves one prepared model into its GUI adapter without decoding captures again.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `take` - Takes the owning adapter's field from the completed transfer.
 /// # Returns
 /// That field, or None for normal edits and blank workbenches.
-pub(crate) fn take<T>(take: impl FnOnce(&mut PreparedModels) -> Option<T>) -> Option<T> {
-    PREPARED.with(|prepared| take(&mut prepared.borrow_mut()))
+pub(crate) fn take<T>(
+    context: &Context,
+    take: impl FnOnce(&mut PreparedModels) -> Option<T>,
+) -> Option<T> {
+    context
+        .prepared
+        .with(|prepared| take(&mut prepared.borrow_mut()))
 }
 
 pub(crate) struct PreparedProject {
@@ -65,17 +67,21 @@ impl PreparedProject {
             inputs,
             Editors {
                 source,
-                profile,
+                mut profile,
                 measurements,
             },
         ) = project.prepare()?;
         let settings =
             serde_json::to_string(&project.transmission).map_err(|error| error.to_string())?;
+        let candidate_context = Context::isolated();
         let mut receiver = Model::default();
+        receiver.context = candidate_context.clone();
+        profile.context = candidate_context.clone();
         receiver.options = project.receiver.clone();
         receiver.verify = project.comparison_enabled;
         receiver.prepare_inputs(&settings, &inputs, &project.sections);
         let mut transmitter = Analyzer::default();
+        transmitter.context = candidate_context;
         transmitter.configure(
             &settings,
             project.sections.get("source").unwrap_or(&Value::Null),
@@ -102,12 +108,16 @@ impl PreparedProject {
     }
 
     /// Publishes a completed project on the calling GUI thread only.
+    /// # Arguments
+    /// * `context` - Validated target owner; other contexts and transfers stay untouched.
     /// # Returns
     /// Small adoption metadata; original bytes and requests remain in Rust.
-    pub(crate) fn adopt(self) -> Value {
-        super::session::restore(self.inputs, self.project.sections);
+    pub(crate) fn adopt(self, context: &Context) -> Value {
+        super::session::restore(context, self.inputs, self.project.sections);
         crate::platform::input_file::clear_original_paths();
-        PREPARED.with(|prepared| *prepared.borrow_mut() = self.models);
+        context
+            .prepared
+            .with(|prepared| *prepared.borrow_mut() = self.models);
         self.metadata
     }
 }
@@ -439,7 +449,8 @@ mod tests {
 
     #[test]
     fn errors_and_cancelled_success_do_not_publish_partial_inputs() {
-        let previous = super::super::session::saved_sections();
+        let context = &crate::downstream::workbench::session::Context::default();
+        let previous = super::super::session::saved_sections(context);
         let mut loader = Loader::default();
         loader.start_with(|_, _| Err("Invalid capture hash".into()));
         assert_eq!(drain(&mut loader).0["error"], "Invalid capture hash");
@@ -462,7 +473,7 @@ mod tests {
         let (status, result) = drain(&mut loader);
         assert_eq!(status["cancelled"], true);
         assert!(result.is_none());
-        assert_eq!(super::super::session::saved_sections(), previous);
+        assert_eq!(super::super::session::saved_sections(context), previous);
     }
 
     #[test]

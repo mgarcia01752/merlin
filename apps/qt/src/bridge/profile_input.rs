@@ -143,13 +143,16 @@ impl bridge::ProfileInput {
     /// Adopts already validated project captures without a file-picker round trip.
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
         let model =
-            crate::downstream::workbench::project_load::take(|prepared| prepared.profile.take())
-                .map(Ok)
-                .unwrap_or_else(|| {
-                    ProfileInputRust::from_saved(&crate::downstream::workbench::session::saved(
-                        "profile",
-                    ))
-                });
+            crate::downstream::workbench::project_load::take(&self.rust().context, |prepared| {
+                prepared.profile.take()
+            })
+            .map(Ok)
+            .unwrap_or_else(|| {
+                ProfileInputRust::from_saved(&crate::downstream::workbench::session::saved(
+                    &self.rust().context,
+                    "profile",
+                ))
+            });
         if let Ok(model) = model {
             self.as_mut().rust_mut().draft = model.draft;
             self.as_mut().rust_mut().accepted = model.accepted;
@@ -242,10 +245,10 @@ impl bridge::ProfileInput {
                 .and_then(|(capture, id)| capture.profile(*id).ok())
                 .cloned();
             let catalog = self.rust().accepted.as_ref().map(|(capture, _)| capture.catalog.clone());
-            crate::downstream::workbench::session::set_profile(selected, catalog);
-            crate::downstream::workbench::session::set_profiles(profiles);
+            crate::downstream::workbench::session::set_profile(&self.rust().context,selected, catalog);
+            crate::downstream::workbench::session::set_profiles(&self.rust().context,profiles);
             let section=self.rust().accepted.as_ref().map(|(c,id)|json!({"file":crate::downstream::workbench::project_file::encode(&c.name,c.original.bytes()),"profile_id":id})).unwrap_or(Value::Null);
-            crate::downstream::workbench::session::put_saved("profile", section);
+            crate::downstream::workbench::session::put_saved(&self.rust().context,"profile", section);
             Ok(())
         });
         QString::from(result.err().unwrap_or_default())

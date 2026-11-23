@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Bounded profile performance retention, separate from the latest detailed instrument snapshot.
+use crate::downstream::workbench::session::Context;
 use crate::downstream::{
     common::constants::{
         MIN_PROFILE_FREQUENCY_AXIS_SPAN_HZ, PERFORMANCE_AXIS_QUANTUM_DB, PERFORMANCE_CURVE_BUCKETS,
@@ -15,7 +16,6 @@ use crate::downstream::{
 use crate::shared::presentation::constants::HERTZ_PER_MEGAHERTZ;
 use merlin::downstream::{FecReport, ProfileCarrierRole, SourceProfileFrame};
 use serde_json::{json, Value};
-use std::cell::RefCell;
 
 pub(crate) use crate::downstream::common::constants::MAX_RETAINED_RECEIVER_PROFILES as MAX_PROFILES;
 struct Point {
@@ -25,7 +25,7 @@ struct Point {
     samples: u64,
     plc: bool,
 }
-struct Entry {
+pub(crate) struct Entry {
     id: u8,
     channel: u8,
     status: String,
@@ -36,34 +36,39 @@ struct Entry {
     error: Option<String>,
     fec_details: Option<Value>,
 }
-thread_local! { static ENTRIES: RefCell<Vec<Entry>> = const {RefCell::new(Vec::new())}; }
 /// Clears all transient profile results after new accepted input or Start.
-pub(crate) fn clear() {
-    super::qam_history::clear();
-    ENTRIES.with(|entries| entries.borrow_mut().clear());
+pub(crate) fn clear(context: &Context) {
+    super::qam_history::clear(context);
+    context
+        .performance
+        .with(|entries| entries.borrow_mut().clear());
 }
 /// Registers the finite profile catalog so unstarted jobs remain visible after Stop.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `profiles` - Prevalidated captured identities, bounded by MAX_PROFILES.
-pub(crate) fn begin(profiles: &[SourceProfileFrame]) {
-    clear();
-    super::qam_history::begin(profiles);
+pub(crate) fn begin(context: &Context, profiles: &[SourceProfileFrame]) {
+    clear(context);
+    super::qam_history::begin(context, profiles);
     for profile in profiles.iter().take(MAX_PROFILES) {
-        insert(Entry {
-            fec_details: None,
-            id: profile.profile_id,
-            channel: profile.key.channel_id,
-            status: "not_started".into(),
-            fec: None,
-            ber: None,
-            pending: 0,
-            points: vec![],
-            error: None,
-        });
+        insert(
+            context,
+            Entry {
+                fec_details: None,
+                id: profile.profile_id,
+                channel: profile.key.channel_id,
+                status: "not_started".into(),
+                fec: None,
+                ber: None,
+                pending: 0,
+                points: vec![],
+                error: None,
+            },
+        );
     }
 }
-fn insert(entry: Entry) {
-    ENTRIES.with(|entries| {
+fn insert(context: &Context, entry: Entry) {
+    context.performance.with(|entries| {
         let mut entries = entries.borrow_mut();
         if let Some(index) = entries.iter().position(|old| old.id == entry.id) {
             entries[index] = entry;
@@ -74,10 +79,11 @@ fn insert(entry: Entry) {
 }
 /// Retains one bounded scalar/curve result while leaving the large latest snapshot elsewhere.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `profile` - Exact applied profile for this independent run.
 /// * `result` - Actual completed or partial job, including observation power sums.
-pub(crate) fn retain(profile: &SourceProfileFrame, result: &ResultData) {
-    if let Err(reason) = super::qam_history::retain(profile.profile_id, result) {
+pub(crate) fn retain(context: &Context, profile: &SourceProfileFrame, result: &ResultData) {
+    if let Err(reason) = super::qam_history::retain(context, profile.profile_id, result) {
         log::warn!(
             "Receiver history unavailable for profile {}: {reason}",
             profile.profile_id
@@ -87,6 +93,7 @@ pub(crate) fn retain(profile: &SourceProfileFrame, result: &ResultData) {
         Ok(performance) => performance,
         Err(error) => {
             reject(
+                context,
                 profile.profile_id,
                 profile.key.channel_id,
                 error.to_string(),
@@ -120,33 +127,38 @@ pub(crate) fn retain(profile: &SourceProfileFrame, result: &ResultData) {
         points,
         error: performance.error,
     };
-    insert(entry);
+    insert(context, entry);
 }
 /// Records an explicit per-profile setup failure without fabricated decoder counters.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `id`, `channel` - Captured identities.
 /// * `error` - Bounded setup diagnostic.
-pub(crate) fn reject(id: u8, channel: u8, error: String) {
-    insert(Entry {
-        fec_details: None,
-        id,
-        channel,
-        status: "failed".into(),
-        fec: None,
-        ber: None,
-        pending: 0,
-        points: vec![],
-        error: Some(error),
-    });
+pub(crate) fn reject(context: &Context, id: u8, channel: u8, error: String) {
+    insert(
+        context,
+        Entry {
+            fec_details: None,
+            id,
+            channel,
+            status: "failed".into(),
+            fec: None,
+            ber: None,
+            pending: 0,
+            points: vec![],
+            error: Some(error),
+        },
+    );
 }
 /// Queries one profile on its original frequency grid, independently of other instruments.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `id` - Captured ID; -1 selects the most recently completed profile.
 /// * `start`, `count` - Source offsets; zero count restores Full Span.
 /// # Returns
 /// Bounded extrema, exact frequency axes, counters and complete/partial status.
-pub(crate) fn view(id: i32, start: i32, count: i32) -> Value {
-    ENTRIES.with(|entries| {
+pub(crate) fn view(context: &Context, id: i32, start: i32, count: i32) -> Value {
+    context.performance.with(|entries| {
         let entries = entries.borrow();
         let profiles = entries
             .iter()
@@ -263,11 +275,12 @@ fn plc_bands(points: &[Point], start: usize, end: usize) -> Value {
 
 /// Reads one bounded retained FEC summary without selecting other instruments.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `id` - Captured profile identity; -1 follows the most recently finished run.
 /// # Returns
 /// Actual per-profile graphs and records, or explicit unstarted/failed state.
-pub(crate) fn fec_view(id: i32) -> Value {
-    ENTRIES.with(|entries| {
+pub(crate) fn fec_view(context: &Context, id: i32) -> Value {
+    context.performance.with(|entries| {
         let entries = entries.borrow();
         let profiles = entries
             .iter()
@@ -290,7 +303,7 @@ pub(crate) fn fec_view(id: i32) -> Value {
         let mut result = selected.map_or_else(
             || {
                 if id < 0 && entries.is_empty() {
-                    super::diagnostics::fec()
+                    super::diagnostics::fec(context)
                 } else {
                     json!({"available":false,"reason":"This profile has no retained FEC result."})
                 }

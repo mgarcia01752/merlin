@@ -11,6 +11,7 @@ use crate::downstream::common::constants::{
     RESPONSE_IMPULSE_VIEW, RESPONSE_MAX_SNAPSHOT_INDEX, RESPONSE_PHASE_VIEW, RESPONSE_REAL_VIEW,
 };
 use crate::downstream::simulation::closed_loop::latest;
+use crate::downstream::workbench::session::Context;
 use crate::shared::presentation::constants::{HERTZ_PER_MEGAHERTZ, PERCENT_PER_UNIT};
 use merlin::downstream::{ApiError, ApiResult, FullLoopDecoderSoftView, FullLoopSoftValueView};
 use merlin::downstream::{ErrorCode, FullLoopResponseQuery, FullLoopResponseSource, FullLoopStage};
@@ -110,12 +111,13 @@ impl Default for ResponseQuery {
 }
 /// Formats response H or actual estimated H-hat, keeping their reference planes distinct.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `document` - Small response/source/snapshot/view/VF selection JSON.
 /// # Returns
 /// At most1024 min/max groups plus original snapshot metadata; no run is started.
 /// # Errors
 /// Rejects invalid selection or unavailable estimates, never substitutes supplied coefficients.
-pub(crate) fn response(document: &str) -> Result<Value, String> {
+pub(crate) fn response(context: &Context, document: &str) -> Result<Value, String> {
     if document.len() > MAX_RESPONSE_SELECTOR_BYTES {
         return Err("Response selector exceeds bounds.".into());
     }
@@ -132,12 +134,12 @@ pub(crate) fn response(document: &str) -> Result<Value, String> {
         let mut document: Value =
             serde_json::from_str(document).map_err(|error| error.to_string())?;
         document["source"] = json!(RESPONSE_CONFIGURED_SOURCE);
-        let mut applied = response(&document.to_string())?;
+        let mut applied = response(context, &document.to_string())?;
         document["source"] = json!(RESPONSE_ESTIMATED_SOURCE);
-        applied["comparison"] = response(&document.to_string())?;
+        applied["comparison"] = response(context, &document.to_string())?;
         return Ok(applied);
     }
-    let result = latest().ok_or("Run the closed loop to retain response observations.")?;
+    let result = latest(context).ok_or("Run the closed loop to retain response observations.")?;
     let settings = &result.job.settings;
     let backend = result.backend();
     let layout = backend
@@ -249,16 +251,21 @@ pub(crate) fn response(document: &str) -> Result<Value, String> {
 }
 /// Returns exact received-cell slicing and actual post-descrambling soft values.
 /// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `document` - Same bounded selection used by the QAM analyzer.
 /// * `decoder_input` - Select the separately retained coding-order payload LDPC input.
 /// # Returns
 /// At most128 physical decisions and a bounded likelihood histogram; no FEC inputs change.
 /// # Errors
 /// Rejects invalid queries or unsupported/nonnumeric retained observations.
-pub(crate) fn slicer(document: &str, decoder_input: bool) -> Result<Value, String> {
+pub(crate) fn slicer(
+    context: &Context,
+    document: &str,
+    decoder_input: bool,
+) -> Result<Value, String> {
     let query = Query::parse(document)?;
-    let result = latest().ok_or("Run the closed loop to inspect decisions and LLRs.")?;
-    let archived = match archive(&query, &result) {
+    let result = latest(context).ok_or("Run the closed loop to inspect decisions and LLRs.")?;
+    let archived = match archive(context, &query, &result) {
         Ok(value) => value,
         Err(reason) => {
             return Ok(
@@ -348,10 +355,12 @@ fn soft_histogram(view: &FullLoopSoftValueView) -> Value {
     curve(&x, &y, "Retained LLR count", "LLR · log P(0)/P(1)")
 }
 /// Returns genuine bounded decoder counters and completed word outcomes from the shared job.
+/// # Arguments
+/// * `context` - Exact downstream owner; never inferred from tab selection.
 /// # Returns
 /// Actual scalar totals, fixed iteration histogram and at most64 retained word records.
-pub(crate) fn fec() -> Value {
-    let Some(result) = latest() else {
+pub(crate) fn fec(context: &Context) -> Value {
+    let Some(result) = latest(context) else {
         return empty("Run the closed loop, then open FEC Monitor.");
     };
     super::fec::snapshot(&result)
