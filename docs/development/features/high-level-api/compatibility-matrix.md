@@ -55,6 +55,13 @@ fresh saved-workbench Rust process parity and actual exact-file recovery.
 [Execution records](../unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json)
 retain scoped acceptance; the preserved Qt consumer and parent remain pending.
 
+The [public progress-phase prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-public-progress-phase-accepted)
+adds the existing nominal ChannelPhase enum to the Rust exports, without changing
+any of the 567 Rust/540 native operation rows or 112 native class exports.
+Four Rust and ten fresh installed native cases preserve actual controls and the
+existing snake-case phase dictionary, with [exact cases](../unified-qt-workbench/ds-01-progress-phase-operation-test-results.json).
+Qt wall-time consumption remains a separate DS-01 unit.
+
 The additive [UIU-API-01 admission/preview acceptance](../unified-qt-workbench/validation.md#uiu-api-01-public-admission-accepted)
 appends 99 Rust and 75 native rows, retaining every original row and historical
 run record, including [historical native acceptance](python-operation-evidence.json). Its [current exact execution cases](../unified-qt-workbench/api-01-operation-test-results.json)

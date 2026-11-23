@@ -221,6 +221,10 @@
         "kind": "enum"
       },
       {
+        "export": "merlin::downstream::ChannelPhase",
+        "kind": "enum"
+      },
+      {
         "export": "merlin::downstream::ChannelPowerReference",
         "kind": "struct"
       },
@@ -32230,7 +32234,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json"
   ],
   "python_operations": [
     {

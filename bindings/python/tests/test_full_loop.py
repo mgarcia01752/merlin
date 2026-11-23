@@ -58,6 +58,7 @@ class FullLoopTests(unittest.TestCase):
         report = output.report()
         self.assertEqual(report['status'], 'complete')
         self.assertEqual(control.snapshot()['state'], 'completed')
+        self.assertEqual(control.snapshot()['progress']['phase'], 'finished')
         self.assertGreater(report['summary']['comparison']['bits_tested'], 0)
         self.assertEqual(report['summary']['comparison']['bit_errors'], 0)
         self.assertEqual(report['summary']['payload_ldpc_failures'], 0)

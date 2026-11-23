@@ -59,6 +59,14 @@ fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
         TypeId::of::<docsis_ofdm_fec::api::Merlin>()
     );
     assert_eq!(
+        TypeId::of::<downstream::ChannelPhase>(),
+        TypeId::of::<docsis_ofdm_fec::simulation::channel::ChannelPhase>()
+    );
+    let phase: fn(&downstream::ChannelProgress) -> downstream::ChannelPhase =
+        |progress| progress.phase;
+    // Compile the public field projection without constructing fake engine progress.
+    let _ = phase;
+    assert_eq!(
         TypeId::of::<common::RunControl>(),
         TypeId::of::<downstream::RunControl>()
     );

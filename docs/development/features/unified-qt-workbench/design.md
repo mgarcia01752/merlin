@@ -2144,3 +2144,36 @@ remain linked. No SDK, cache, backend, Python, QML or original boundary snapshot
 is modified. Parent DS-01, final numeric audit and platform lifecycle gates remain
 open. No independent extracted source-package build was executed in this unit;
 the new source is explicitly tracked and not ignored.
+
+## UIU-DS-01 public progress phase prerequisite
+
+The existing public `ChannelProgress::phase` field has the engine's ChannelPhase
+type, but that enum cannot be named from `merlin::downstream`. The wall-time
+adapter must match its actual typed phases without importing an engine module or
+parsing serialized/debug text. Re-export the same existing nominal enum through
+`api::full_loop` alongside ChannelProgress/ChannelJobStatus. This adds type
+reachability only: no method, algorithm, enum variant, serialization, default or
+lifecycle change. REQ-UIU-02/07/09/24/27 and UIU-DS-01 own the prerequisite.
+
+| Path and symbol | Decision and acceptance |
+| --- | --- |
+| `crates/ofdm/src/api/full_loop/control.rs` | EDIT the existing curated re-export to include ChannelPhase. REUSE the scientific owner's exact enum and serde implementation, preserving old imports. |
+| `crates/merlin/tests/namespaces.rs` | EXTEND existing nominal-type compatibility assertions and compile a typed public ChannelProgress field projection through the facade. |
+| `crates/ofdm/tests/api_full_loop.rs`, native `test_full_loop.py` | REUSE actual completion, acknowledged pause/resume/cancel and retained-comparison regressions. Native `FullLoopControl.snapshot()` already serializes this same phase as a snake-case string; no new Python class or signature is needed. |
+| Full-loop user/API docs and canonical traceability | DOCUMENT Rust typed phase access and the existing native snapshot representation; retain all operation matrix rows because no callable operation changes. |
+| Qt timing adapter and constants | DEFER consumption to a separate focused unit after this prerequisite commit. Existing frozen source and boundary records remain untouched here. |
+
+Reuse/license: existing MERLIN Apache-2.0 public control and scientific enum,
+inspected at `ea6e2c7b66d73e019ad33ebe846a30b7e70eaa5c`; copy no implementation
+and change no scientific owner/dependency. Run focused Rust facade/control cases,
+native installed control regressions, current metadata/inventory checks and
+formatting/Clippy. Preserve source-only versus current installed evidence.
+
+Prerequisite accepted: [progress-phase validation](validation.md#uiu-ds-01-public-progress-phase-accepted)
+and [exact evidence](progress-phase-evidence.json) record four Rust and ten fresh
+installed native cases, 38 metadata cases, Clippy and strict compiler/installed
+inventory reconciliation. The exact enum export is additive; every callable row
+and native class/signature is unchanged. The historical direct Rust full-loop
+reference is explicitly reused with its hash; no new reference run is claimed.
+No Qt source, dependency, frozen record or scientific implementation is changed.
+Commit this prerequisite before the wall-time consumer. Parent DS-01 stays open.

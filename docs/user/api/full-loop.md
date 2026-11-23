@@ -45,6 +45,13 @@ before the first step. Resume continues the same source/RNG/receiver state.
 Cancel is one-way and also exits a paused wait. Active host runtime excludes actual
 paused time; progress reflects the last completed scientific step.
 
+Rust names the existing progress enum as `merlin::downstream::ChannelPhase`:
+`control.snapshot().progress` contains an optional `ChannelProgress`, whose
+`phase` field can be matched directly. Python keeps the same snapshot dictionary;
+`snapshot["progress"]["phase"]` is a snake-case string when progress is present:
+`acquisition`, `observation`, `completion`, `interleaver_drain`, `finished` or
+`failed`. These processing phases are separate from the control lifecycle states.
+
 After construction, cancellation/runtime/step failure returns the actual partial
 report. Completed comparisons and retained FEC trials remain available; unfinished
 words do not become fabricated comparisons. Pre-dispatch construction/admission

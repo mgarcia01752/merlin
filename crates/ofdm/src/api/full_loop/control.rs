@@ -4,7 +4,7 @@
  */
 //! Direction-specific one-shot control; acknowledged pause is separate from requested pause.
 use super::*;
-pub use crate::simulation::channel::{ChannelJobStatus, ChannelProgress};
+pub use crate::simulation::channel::{ChannelJobStatus, ChannelPhase, ChannelProgress};
 use serde::Serialize;
 use std::sync::{
     atomic::{AtomicBool, Ordering},

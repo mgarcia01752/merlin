@@ -1668,3 +1668,25 @@ The new build helper is unignored and explicitly included in the commit; a fresh
 extracted source-package build and Windows/installed lifecycle were not executed.
 DS-01, its 38 remaining frozen files, three science dependencies and final numeric
 audit remain open. The latest optimized executable includes this correction.
+
+## UIU-DS-01 public progress phase accepted
+
+The [progress-phase evidence](progress-phase-evidence.json) accepts public Rust
+reachability of the exact existing ChannelPhase enum through
+`merlin::downstream`. Its scientific owner, six variants and serialization are
+unchanged. The facade compatibility test proves nominal legacy identity and a
+typed ChannelProgress field projection; three actual Rust control cases retain
+completion, initial pause, resume, cancellation and completed FEC comparisons.
+
+A fresh wheel installed outside the checkout passes six native full-loop and
+four namespace cases without skips, including actual completed progress whose
+phase remains `"finished"`. The direct-process comparison explicitly reuses the
+recorded historical Rust full-loop reference; its settings and science are
+unchanged by this re-export. All 38 API metadata tests, formatting, scoped
+all-target Clippy and strict fresh Rust/installed-native inventory checks pass.
+Only one Rust enum type export is added; all 567 Rust/540 native callable rows,
+112 native class exports and prior execution records remain exact.
+
+Qt consumption, its constants, parent DS-01 and final numerical review remain
+pending. No Qt, engine, Python runtime implementation, dependency or saved schema
+is changed. Historical full-suite/platform acceptance is kept separate.
