@@ -519,6 +519,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [profile input owner facade](features/unified-qt-workbench/validation.md#uiu-ds-01-profile-input-owner-facade-accepted) records shared-catalog/public decoder/geometry/tree adoption and targeted Qt/QML/persistence acceptance. Two whole exceptions retire, leaving 19 files/79 sites/three dependencies; the parent remains unchecked.
 
+  The [original measurement-frame prerequisite](features/unified-qt-workbench/validation.md#uiu-ds-01-original-measurement-frame-api-accepted) records the additive channel observation/data aliases and paired native ownership/provenance acceptance before measured-input adoption. Parent Level 2 and final Level 3 remain pending.
+
 - [ ] **UIU-SESSION-01** Make direction sessions explicit and serialize initial dispatch.
   Requirements: [REQ-UIU-03](../requirements.md#req-uiu-03), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-07](../requirements.md#req-uiu-07).
   Dependencies: [UIU-DS-01](#task-uiu-ds-01).

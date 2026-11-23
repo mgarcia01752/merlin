@@ -258,3 +258,21 @@ Raw source-catalog operations preserve every byte-sized encoded ID. They do not
 widen `ProfileId` (0..15), establish coding support or start a simulation.
 Missing source IDs return `InvalidIdentifier`; existing operation signatures,
 errors, bounds and checked-profile behavior remain available unchanged.
+
+
+### Original measurement frames
+
+`ChannelEstimate::frame() -> &ChannelEstimateFrame` borrows the exact admitted
+key, epoch, decoded-source metadata and I/Q/nulls without copying. Native Python
+`channel.frame() -> dict` returns an owned bounded copy. Editing that dictionary
+cannot change the native input or later previews. No inverse response or
+simulation observation is inferred. The existing Rust `RxMer::frame` and
+`RxMer::from_frame` use the nominal public `RxMerFrame` data re-export; their
+signatures and behavior remain unchanged. These DTOs add no native classes.
+
+Frame source metadata describes the scientific decoder intermediate. For binary
+inputs its hash differs from the original file hash. Read exact original bytes,
+original hash/epoch and decoder lineage through `provenance()` (Python
+`.provenance`). Do not relabel decoded data as an original capture or silently
+rewrite either provenance record. DTO copies and borrowed returns retain their
+Rust ownership rules; native dictionaries own their values.

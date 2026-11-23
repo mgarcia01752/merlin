@@ -571,6 +571,24 @@ impl PyComplexResponse {
 }
 #[pymethods]
 impl PyChannelEstimate {
+    /// Copies the admitted original-grid channel frame through the public Rust operation.
+    /// # Returns
+    /// Owned bounded key/epoch/decoded-source/I/Q dictionary. Native edits cannot
+    /// mutate the input; exact original capture provenance remains available separately.
+    /// # Errors
+    /// Preserves structured transport and Python allocation failures.
+    fn frame(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
+        let text = py
+            .detach(|| serde_json::to_string(self.0.frame()))
+            .map_err(|cause| {
+                error(api::ApiError::new(
+                    api::ErrorCode::InvalidInput,
+                    cause.to_string(),
+                ))
+            })?;
+        object_from_json(py, &text)
+    }
+
     /// Read response from the native Rust snapshot.
     /// # Returns
     /// An immutable tuple of original complex H values or None for missing samples.

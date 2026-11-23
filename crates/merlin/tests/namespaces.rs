@@ -99,6 +99,18 @@ fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
     ) -> downstream::ApiResult<&'a downstream::SourceProfileFrame> =
         downstream::ProfileCapture::frame;
     let _ = source_frame;
+    assert_eq!(
+        TypeId::of::<downstream::ChannelEstimateFrame>(),
+        TypeId::of::<docsis_ofdm_fec::scenario::ChannelFrame>()
+    );
+    assert_eq!(
+        TypeId::of::<downstream::RxMerFrame>(),
+        TypeId::of::<docsis_ofdm_fec::scenario::RxMerFrame>()
+    );
+    let channel_frame: for<'a> fn(
+        &'a downstream::ChannelEstimate,
+    ) -> &'a downstream::ChannelEstimateFrame = downstream::ChannelEstimate::frame;
+    let _ = channel_frame;
     let source_limits: fn() -> downstream::SourceFileLimits = downstream::SourceInput::file_limits;
     let source_info: fn(&downstream::SourceInput) -> Option<downstream::SourceFileInfo> =
         downstream::SourceInput::file_info;

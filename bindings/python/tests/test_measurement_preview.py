@@ -73,6 +73,38 @@ class MeasurementPreviewTests(unittest.TestCase):
         self.assertEqual(raised.exception.code, m.ErrorCode.InvalidInput)
         self.assertEqual(capture.provenance, before)
 
+    def test_original_channel_frame_preserves_values_lineage_and_owned_copies(self):
+        document = json.loads((FIXTURES / 'channel_estimation.json').read_bytes())
+        document['iq'][0] = [3.0, 4.0]  # Independent complex/missing-value anchors.
+        document['iq'][1] = None
+        original = json.dumps(document).encode()
+        capture = m.ChannelEstimate.from_bytes('original H', original)
+        before = capture.provenance
+        frame = capture.frame()
+        self.assertEqual(frame['iq'][0], [3.0, 4.0])
+        self.assertIsNone(frame['iq'][1])
+        self.assertEqual(frame['key']['grid'], capture.grid)
+        self.assertEqual(frame['capture_time'], before['original_epoch'])
+        self.assertEqual(frame['source']['sha256'], before['decoded_sha256'])
+        frame['iq'][0][0] = 99
+        frame['key']['channel_id'] = 99
+        self.assertEqual(capture.frame()['iq'][0], [3.0, 4.0])
+        self.assertEqual(capture.frame()['key']['channel_id'], 34)
+        self.assertEqual(capture.provenance, before)
+        retained = capture.frame()
+        del capture
+        self.assertEqual(retained['iq'][0], [3.0, 4.0])
+        binary = (ROOT / 'examples/workbench/single/ds-channel-estimate.bin').read_bytes()
+        capture = m.ChannelEstimate.from_bytes('wrong.json', binary)
+        frame = capture.frame()
+        self.assertEqual(frame['capture_time'], 1391100)
+        self.assertEqual(frame['key']['mac_address'], [0, 202, 0, 0, 0, 1])
+        self.assertEqual(len(frame['iq']), 7480)
+        self.assertEqual(frame['source']['sha256'], capture.provenance['decoded_sha256'])
+        self.assertNotEqual(frame['source']['sha256'], capture.provenance['original_sha256'])
+        self.assertEqual(capture.provenance['original_sha256'], hashlib.sha256(binary).hexdigest())
+        self.assertEqual(capture.source_kind, 'decoded_json_channel_response')
+
 
 if __name__ == '__main__':
     unittest.main()

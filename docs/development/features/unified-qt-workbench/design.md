@@ -2814,3 +2814,30 @@ Qt/QML cases, format/Clippy/boundary, current optimized build and traceability.
 Persistence risk expands to relevant Rust/native saved-project checks using the
 exact accepted wheel without rebuilding unchanged backend/binding code. Parent
 Level 2 and final Level 3 remain pending; no historical checkbox is changed.
+
+## UIU-DS-01 original measurement-frame prerequisite
+
+REQ-UIU-02/03/08/09/20/24/27 and UIU-DS-01 own this additive observation.
+REUSE existing immutable ChannelEstimate, RxMer and source DTO validation.
+EDIT api/inputs.rs to expose `ChannelEstimate::frame() -> &ChannelEstimateFrame`
+and nominal data-only aliases ChannelEstimateFrame/RxMerFrame. The existing
+RxMer.frame/from_frame signatures and every original observation remain exact.
+The existing RxMerFrame validation method retains its scientific owner; channel
+admission remains with the existing loader/importer. Adapters admit captures
+through high-level operations. No engine/kernel module is exported.
+
+EDIT native ChannelEstimate conversion and root typing with `.frame() -> dict`,
+an owned bounded copy of the same key, epoch, source and I/Q values. The existing
+RxMer native values/grid/provenance operations retain their accepted language
+mapping; no extra native class/borrowed lifetime is introduced for the DTO aliases.
+EDIT existing measurement preview tests and facade nominal contracts. Cover exact
+raw I/Q/nulls, borrowed storage, owned copies, preserved key/epochs, original versus
+decoded provenance, invalid DTO validation and original constructor signatures.
+Rust acceptance precedes the matching binding. Existing decoder and observation
+algorithms are unchanged. Defer Qt measured-input adoption to the next focused
+consumer after paired acceptance is committed.
+
+Level 1 expands through measurement/sequence/facade compatibility, scoped Clippy,
+analysis-only build, fresh exact installed native wheel and additive inventories.
+No backend behavior, project/CXX/QML registration, lifecycle, upstream or package
+change; parent Level 2 and final Level 3 gates remain pending.

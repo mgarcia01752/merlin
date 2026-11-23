@@ -2468,3 +2468,50 @@ bindings, exports, CXX/QML registration, lifecycle and package owners are unchan
 Current Rust/native project cases execute against the unchanged accepted artifact;
 no historical run is reported as a new pass. Parent Level 2, milestone/final Level 3,
 direction-aware Save/Open and final numeric audit remain pending.
+
+## UIU-DS-01 original measurement-frame API accepted
+
+[Exact contract](design.md#uiu-ds-01-original-measurement-frame-prerequisite),
+[machine evidence](measurement-frame-api-evidence.json) and
+[executed API cases](ds-01-measurement-frame-operation-test-results.json) establish
+Level 1 paired prerequisite acceptance for REQ-UIU-02/03/08/09/20/24/27.
+ChannelEstimate.frame borrows the existing admitted key/epoch/decoded-source/I/Q
+frame. Native Python returns an independent bounded dictionary. The channel and
+RxMER frame aliases preserve exact nominal data types and the existing RxMerFrame
+structural validator. No scientific engine, calculation, original observation,
+constructor signature, resource limit or saved format changes.
+
+Executed: 13 Rust cases (complete original-measurement and measured-sequence
+modules, one binary lineage case and facade identity), eight exact-archive
+installed native cases (complete original-measurement and namespace modules),
+two targeted Qt measurement consumers, root/native formatting and scoped Clippy,
+analysis-only build, CLI compile and fresh exact Rust/native inventories.
+Independent [3,4] I/Q and null anchors, borrowed-pointer identity, independent
+copied buffers/dictionaries and retained-result lifetimes establish the declared
+scope. Retained binary provenance independently pins device/channel, 7,480 samples
+and original epoch; decoded-frame hashes remain distinct from original-byte hashes.
+Existing RxMER views, sequence behavior and every original assertion remain.
+
+The matrix grows 585/556 to 587 Rust/557 native rows, preserving every earlier
+row/type/execution record and all old native members after removing only the
+one new channel method. Two Rust DTO exports are added; existing 80 root and
+112 directional/common native classes remain exact. A fresh installed native
+module is archive-hash matched before outside-checkout testing. Initial test
+setup corrections (a nonexistent channel DTO validate helper and an outdated
+binary fixture path) are retained separately; no original assertion or scientific
+implementation was removed or weakened. Native conversion was added after all
+Rust frame acceptance cases passed.
+
+An initial compiler-inventory attempt found missing source links in a cached
+facade Project re-export. Regenerating only facade rustdoc restored canonical
+source links and exact export discovery; no cache clean, tool relaxation or
+historical-row rewrite was used. The earlier failed invocation using an unsupported
+cargo-rustdoc flag remains separate from the successful final command.
+
+Not required: unrelated complete workspace/upstream/FEC suites, QML/native startup,
+project/CLI runtime or packaging: no scientific behavior, UI/CXX/QML registration,
+project format, lifecycle, CLI handler or package owner changes. The CLI compiles
+and two affected existing Qt consumers execute. Complete parent Level 2 and
+milestone/final Level 3 gates, measured-input Qt adoption and final numeric audit
+remain open. The boundary is unchanged at 19 frozen files/79 sites/three scientific
+dependencies; no official checkbox is advanced.

@@ -269,3 +269,9 @@ cover ProfileCapture.frame and source-catalog variants of measured sequence,
 response and Designer operations. Existing Rust/native APIs, source-ID/run-ID
 separation, original provenance and calculation owners are retained. Qt input
 adoption remains UIU-DS-01; no completed API or FEC task is reopened.
+
+The [original measurement-frame follow-up](design.md#uiu-ds-01-original-measurement-frame-prerequisite)
+exposes only immutable original channel data and nominal source DTOs, with
+[paired acceptance](validation.md#uiu-ds-01-original-measurement-frame-api-accepted).
+It preserves separate original/intermediate provenance before measured-input
+adapter adoption; no scientific engine/kernel export or completed-task restart.

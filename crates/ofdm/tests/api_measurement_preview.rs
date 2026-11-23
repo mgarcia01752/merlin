@@ -124,3 +124,45 @@ fn original_h_projections_have_literal_phase_sign_db_and_zero_gap_semantics() {
         .is_err());
     assert_eq!(capture.provenance().original_bytes(), original.bytes());
 }
+
+#[test]
+fn original_measurement_frame_aliases_retain_exact_data_and_ownership() {
+    use docsis_ofdm_fec::api::{ChannelEstimateFrame, RxMerFrame};
+    let mut document: serde_json::Value = serde_json::from_slice(CHANNEL).unwrap();
+
+    // Independent complex and missing-value anchors; all other original carriers remain.
+    document["iq"][0] = json!([3.0, 4.0]);
+    document["iq"][1] = serde_json::Value::Null;
+    let input =
+        NamedCapture::new("original channel", serde_json::to_vec(&document).unwrap()).unwrap();
+    let capture = ChannelEstimate::from_bytes(&input).unwrap();
+    let frame: &ChannelEstimateFrame = capture.frame();
+    assert!(std::ptr::eq(frame, capture.frame()));
+    assert_eq!(frame.iq[0], Some([3.0, 4.0]));
+    assert_eq!(frame.iq[1], None);
+    assert_eq!(frame.key.grid, *capture.grid());
+    assert_eq!(
+        frame.capture_time,
+        capture.provenance().original_epoch().value()
+    );
+    assert_eq!(frame.source.sha256, capture.provenance().decoded_sha256());
+    let response = capture.response();
+    assert_eq!(response[0].unwrap().real().value(), 3.0);
+    assert_eq!(response[0].unwrap().imaginary().value(), 4.0);
+    assert!(response[1].is_none());
+    let mut copied = frame.clone();
+    copied.iq.pop();
+    assert_ne!(copied.iq.len(), capture.frame().iq.len());
+    assert_eq!(capture.frame().iq.len(), capture.grid().sample_count);
+    let retained = capture.frame().clone();
+    drop(capture);
+    drop(input);
+    assert_eq!(retained.iq[0], Some([3.0, 4.0]));
+    let rxmer = RxMer::from_bytes(&NamedCapture::new("RxMER", RXMER.to_vec()).unwrap()).unwrap();
+    let frame: &RxMerFrame = rxmer.frame();
+    frame.validate().unwrap();
+    let mut copied = frame.clone();
+    copied.mer_db.pop();
+    assert!(copied.validate().is_err());
+    assert_eq!(rxmer.frame().mer_db.len(), rxmer.grid().sample_count);
+}

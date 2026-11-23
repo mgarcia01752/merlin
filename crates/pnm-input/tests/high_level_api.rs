@@ -997,3 +997,26 @@ fn cpa_serialization_preserves_saved_workbenches() {
         assert!(json.get("cpa_attenuation_db").is_none());
     }
 }
+
+#[test]
+fn borrowed_channel_frame_keeps_binary_original_and_decoded_provenance_distinct() {
+    const ORIGINAL: &[u8] =
+        include_bytes!("../../../examples/workbench/single/ds-channel-estimate.bin");
+    let original = input("wrong.json", ORIGINAL);
+    let capture = CaptureLoader::channel_estimate(&original).unwrap();
+    let frame = capture.frame();
+
+    // Independent source identity/size/epoch anchors from this retained capture.
+    assert_eq!(frame.key.channel_id, 34);
+    assert_eq!(frame.key.mac_address, [0, 202, 0, 0, 0, 1]);
+    assert_eq!(frame.iq.len(), 7480);
+    assert_eq!(frame.capture_time, 1391100);
+    assert_eq!(frame.source.sha256, capture.provenance().decoded_sha256());
+    assert_ne!(frame.source.sha256, capture.provenance().original_sha256());
+    assert_eq!(capture.provenance().original_bytes(), ORIGINAL);
+    assert_eq!(capture.source_kind(), "decoded_json_channel_response");
+    let owned = frame.clone();
+    drop(capture);
+    drop(original);
+    assert_eq!(owned.iq.len(), 7480);
+}

@@ -1117,6 +1117,14 @@ source order and original/decoded provenance stay separate. Public admission own
 geometry and supported input/name bounds, with existing saved-project contracts
 preserved. This replaces the earlier per-view catalog admission in this owner.
 
+The [original measurement-frame prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-original-measurement-frame-prerequisite)
+adds a borrowed ChannelEstimate.frame operation and nominal channel/RxMER source
+DTO re-exports. Native Python returns an owned channel-frame dictionary. Original
+capture bytes/hash and decoder lineage stay in CaptureProvenance; decoded-frame
+source metadata, exact device/channel/grid, epoch, I/Q and nulls remain unchanged.
+No scientific algorithm, existing observation or admission behavior changes.
+Qt measured-input adoption remains a separate UIU-DS-01 consumer unit.
+
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

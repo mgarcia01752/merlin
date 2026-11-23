@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "scope": "Level 1: borrowed channel frame/source DTO aliases, exact original-versus-decoded identity, immutable lifetime and installed native ownership. Thirteen Rust and eight exact-archive native cases; no algorithm/admission change.",
+  "runs": [
+    {
+      "label": "measurement",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--locked",
+        "--test",
+        "api_measurement_preview"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.2019746129999476,
+      "language": "rust",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_preview.rs",
+          "qualified_test_case": "original_h_projections_have_literal_phase_sign_db_and_zero_gap_semantics"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_preview.rs",
+          "qualified_test_case": "original_rxmer_preview_retains_frequency_units_time_hash_and_input_ownership"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_preview.rs",
+          "qualified_test_case": "preview_preserves_gaps_and_rejects_bad_windows_without_changing_originals"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_preview.rs",
+          "qualified_test_case": "original_measurement_frame_aliases_retain_exact_data_and_ownership"
+        }
+      ]
+    },
+    {
+      "label": "sequence",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--locked",
+        "--test",
+        "api_measurement_sequence"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.489338086999851,
+      "language": "rust",
+      "passed": 7,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_sequence.rs",
+          "qualified_test_case": "idle_capacity_has_literal_strict_boundaries_without_profile_or_captures"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_sequence.rs",
+          "qualified_test_case": "residual_power_conversion_has_independent_db_and_unavailable_anchors"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_sequence.rs",
+          "qualified_test_case": "average_names_every_original_with_equal_linear_power_weight"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_sequence.rs",
+          "qualified_test_case": "explicit_unity_and_captured_h_keep_original_epoch_tolerance_and_inputs"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_sequence.rs",
+          "qualified_test_case": "temporal_queries_use_physical_symbol_clock_power_interpolation_and_last_hold"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_sequence.rs",
+          "qualified_test_case": "admission_rejects_duplicate_mode_epoch_coverage_counts_and_overflow_atomically"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_sequence.rs",
+          "qualified_test_case": "source_catalog_measurement_and_response_admission_preserve_raw_ids_and_validation"
+        }
+      ]
+    },
+    {
+      "label": "binary",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "pnm-input",
+        "--locked",
+        "--test",
+        "high_level_api",
+        "borrowed_channel_frame_keeps_binary_original_and_decoded_provenance_distinct",
+        "--",
+        "--exact"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.2650132749995464,
+      "language": "rust",
+      "passed": 1,
+      "cases": [
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "borrowed_channel_frame_keeps_binary_original_and_decoded_provenance_distinct"
+        }
+      ]
+    },
+    {
+      "label": "facade",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "merlin",
+        "--locked",
+        "--test",
+        "namespaces",
+        "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+        "--",
+        "--exact"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 10.112441399999625,
+      "language": "rust",
+      "passed": 1,
+      "cases": [
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior"
+        }
+      ]
+    },
+    {
+      "label": "measurement_preview",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measurement-frames-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_measurement_preview.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measurement-frames-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.7254008969994175,
+      "stdout_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measurement-frames-native/measurement_preview.stdout",
+      "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measurement-frames-native/measurement_preview.stderr",
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_measurement_preview.py",
+          "qualified_test_case": "MeasurementPreviewTests.test_missing_values_viewport_bounds_and_atomic_rejection"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_preview.py",
+          "qualified_test_case": "MeasurementPreviewTests.test_original_channel_frame_preserves_values_lineage_and_owned_copies"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_preview.py",
+          "qualified_test_case": "MeasurementPreviewTests.test_original_h_literal_projections_zero_gaps_and_invalid_metric"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_preview.py",
+          "qualified_test_case": "MeasurementPreviewTests.test_original_rxmer_literal_frequency_units_and_owned_view"
+        }
+      ]
+    },
+    {
+      "label": "namespaces",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measurement-frames-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_namespaces.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measurement-frames-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.6054252730000371,
+      "stdout_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measurement-frames-native/namespaces.stdout",
+      "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measurement-frames-native/namespaces.stderr",
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ]
+    }
+  ]
+}

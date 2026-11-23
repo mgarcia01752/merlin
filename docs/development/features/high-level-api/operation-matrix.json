@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "c4898fe87187bec5476f36eb376226af321f68b7 plus exact raw source-catalog candidate",
-    "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-source-catalog-native/results.json",
-    "native_sha256": "ab4eb1e75a6775629fea5c801d5d92312b561d919966b67a7ac8439deae45b9b",
-    "scope": "21 affected source/sequence/Designer/namespace native cases; every prior native class/member/signature exact after removing only six added methods."
+    "revision": "9956d228327fd34f302d474578700363415d3b17 plus exact measurement-frame candidate",
+    "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-measurement-frames-native/results.json",
+    "native_sha256": "f145fc3803c90e02049ccb532699948cb3c516dbb390bcedf6cfdd64bd85e5cd",
+    "scope": "Eight selected original-measurement/namespace cases; all prior classes/members/signatures exact after removing only ChannelEstimate.frame."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -137,7 +137,9 @@
     "evidence.uiu-ds-01-source-file": "../unified-qt-workbench/source-file-api-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-source-file-admission-api-accepted: independent byte/bit limits, named/unnamed/empty/partial-byte/zero-fill, buffer sharing, ownership/errors and exact archive/direct-Rust-process parity.",
     "status.uiu-ds-01-source-file": "Level 1 paired prerequisite accepted; Qt consumer, official parent Level 2 and milestone/final Level 3 remain pending.",
     "evidence.uiu-ds-01-source-catalog": "../unified-qt-workbench/source-catalog-api-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-raw-source-catalog-api-accepted: raw byte identities, exact roles/grid/epoch/provenance, borrowed/owned frames, unchanged passive admission and existing planner/Designer validation.",
-    "status.uiu-ds-01-source-catalog": "Level 1 paired prerequisite accepted; Qt adoption, parent Level 2 and final Level 3 remain pending."
+    "status.uiu-ds-01-source-catalog": "Level 1 paired prerequisite accepted; Qt adoption, parent Level 2 and final Level 3 remain pending.",
+    "evidence.uiu-ds-01-measurement-frame": "../unified-qt-workbench/measurement-frame-api-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-original-measurement-frame-api-accepted: unchanged key/epoch/IQ/nulls, immutable frame ownership and separate original/intermediate provenance.",
+    "status.uiu-ds-01-measurement-frame": "Level 1 paired frame prerequisite accepted; measured-input Qt adoption, parent Level 2 and final Level 3 remain pending."
   },
   "type_exports": {
     "downstream": [
@@ -1051,6 +1053,14 @@
       },
       {
         "export": "merlin::downstream::SourceProfileFrame",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::ChannelEstimateFrame",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::RxMerFrame",
         "kind": "struct"
       }
     ],
@@ -33178,6 +33188,106 @@
       },
       "evidence": "evidence.uiu-ds-01-source-catalog",
       "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::ChannelEstimate::frame",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn frame(&self) -> &ChannelEstimateFrame",
+        "source_file": "crates/ofdm/src/api/inputs.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.ChannelEstimate.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.ChannelEstimate.frame",
+        "declaration": "merlin.downstream.ChannelEstimate.frame"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "&ChannelEstimateFrame",
+        "scope": "Borrowed exact key/epoch/decoded-source/IQ/nulls, with original capture provenance separate; native returns an owned bounded dictionary."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_measurement_preview.rs::original_measurement_frame_aliases_retain_exact_data_and_ownership",
+          "crates/pnm-input/tests/high_level_api.rs::borrowed_channel_frame_keeps_binary_original_and_decoded_provenance_distinct"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_measurement_preview.py::MeasurementPreviewTests.test_original_channel_frame_preserves_values_lineage_and_owned_copies"
+          ],
+          "scope": "Same source data/key/epoch and separate binary/decoded hashes; owned dictionary mutation/lifetime and existing projections."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-measurement-frame",
+      "status": "status.uiu-ds-01-measurement-frame"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::RxMerFrame::validate",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn validate(&self) -> Result<(), SimulationError>",
+        "source_file": "crates/ofdm/src/scenario/observation.rs",
+        "rustdoc": "docsis_ofdm_fec/scenario/observation/struct.RxMerFrame.html"
+      },
+      "python_namespace": "none",
+      "python_type_method": {
+        "availability": "Rust-only DTO helper",
+        "declaration": "No direct Python operation",
+        "note": "Nominal Rust DTO with existing structural validation. Native users admit immutable RxMer through existing Rust-backed constructors; no native DTO class or separate raw validate operation is introduced."
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.configuration",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "Result<(), SimulationError>",
+        "scope": "Existing immutable scientific DTO structure validation, unchanged implementation/error type; capture admission remains with high-level owners."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_measurement_preview.rs::original_measurement_frame_aliases_retain_exact_data_and_ownership"
+        ],
+        "python": {
+          "status": "not applicable",
+          "reason": "Nominal Rust DTO with existing structural validation. Native users admit immutable RxMer through existing Rust-backed constructors; no native DTO class or separate raw validate operation is introduced."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-measurement-frame",
+      "status": "status.uiu-ds-01-measurement-frame"
     }
   ],
   "executed_records": [
@@ -33218,7 +33328,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -69149,6 +69260,71 @@
       },
       "evidence": "evidence.uiu-ds-01-source-catalog",
       "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.ChannelEstimate.frame",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::ChannelEstimate",
+        "source_file": "bindings/python/src/inputs.rs",
+        "symbol": "PyChannelEstimate",
+        "signature": "pub fn frame(&self) -> &ChannelEstimateFrame",
+        "mapping": "Native checked argument/result conversion or composition over the named Rust type and listed public operations. Public field/variant/Serde projections have no invented core method; source_file names their actual Rust adapter.",
+        "delegated_operation": "merlin::downstream::ChannelEstimate::frame",
+        "delegated_operations": [
+          {
+            "operation": "merlin::downstream::ChannelEstimate::response",
+            "signature": "pub fn response(&self) -> Vec<Option<ComplexResponse>>",
+            "source_file": "crates/ofdm/src/api/inputs.rs"
+          }
+        ]
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native property",
+        "name": "frame",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "ChannelEstimate.frame",
+        "result_annotation": "Any"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.response",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::ChannelEstimate",
+        "scope": "Owned frame dictionary from Rust; original capture lineage remains separate and returned mutations never change the input."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_measurement_preview.rs::original_measurement_frame_aliases_retain_exact_data_and_ownership",
+          "crates/pnm-input/tests/high_level_api.rs::borrowed_channel_frame_keeps_binary_original_and_decoded_provenance_distinct"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_measurement_preview.py::MeasurementPreviewTests.test_original_channel_frame_preserves_values_lineage_and_owned_copies"
+          ],
+          "scope": "Same source data/key/epoch and separate binary/decoded hashes; owned dictionary mutation/lifetime and existing projections."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-measurement-frame",
+      "status": "status.uiu-ds-01-measurement-frame"
     }
   ],
   "native_type_exports": {
@@ -70335,6 +70511,13 @@
       "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-source-file-native/results.json",
       "native_sha256": "10cad90727628baa6b2cbd3d768736ef8546405afa709554044fb0e8d81414a5",
       "scope": "Ten selected source/namespace cases; all prior native classes/members/kinds/signatures are exact after removing only file_limits/file_info/with_fill."
+    },
+    {
+      "version": "0.4.0",
+      "revision": "c4898fe87187bec5476f36eb376226af321f68b7 plus exact raw source-catalog candidate",
+      "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-source-catalog-native/results.json",
+      "native_sha256": "ab4eb1e75a6775629fea5c801d5d92312b561d919966b67a7ac8439deae45b9b",
+      "scope": "21 affected source/sequence/Designer/namespace native cases; every prior native class/member/signature exact after removing only six added methods."
     }
   ],
   "historical_rust_export_corrections": [

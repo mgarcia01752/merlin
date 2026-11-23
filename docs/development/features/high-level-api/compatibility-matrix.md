@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-585 explicit public Rust operations and 556 installed native Python entries with
+587 explicit public Rust operations and 557 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/source-catalog-api-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/measurement-frame-api-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 112 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -344,3 +344,15 @@ Twenty-five Rust and 21 exact-wheel native cases retain independent power/role/
 ID anchors and unchanged legacy-method outputs/errors; three targeted Qt consumer
 cases and the CLI compile also pass. [Executed API cases](../unified-qt-workbench/ds-01-source-catalog-operation-test-results.json)
 cover this focused scope. Qt adoption, parent Level 2 and final Level 3 remain pending.
+
+
+The [original measurement-frame prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-original-measurement-frame-api-accepted)
+adds ChannelEstimate.frame and nominal channel/RxMER source DTO aliases. The
+existing RxMerFrame.validate method now has an explicit export row, retaining its
+original implementation and error type. All preceding 585/556 rows, types,
+executed records and native classes/signatures remain exact. Thirteen Rust and
+eight exact-wheel native cases cover frame data/lifetimes, gaps, identity, original
+versus decoded provenance and existing views/sequence/namespace compatibility;
+two Qt consumers and CLI compile also pass. [Executed API cases](../unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json)
+record the focused scope. No native DTO class or algorithm is added. Qt adoption,
+parent Level 2 and final Level 3 remain separate gates.

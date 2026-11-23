@@ -5,11 +5,18 @@
 //! Immutable capture ownership and explicit JSON/typed conversion boundaries.
 mod profile_capture;
 use super::*;
+/// Original channel observation DTO, distinct from an inverse/equalizer response.
+/// Its scientific source metadata remains decoded-frame provenance; original bytes
+/// and decoder lineage are retained separately by ChannelEstimate.provenance.
+pub use crate::scenario::ChannelFrame as ChannelEstimateFrame;
+/// Original measured RxMER DTO used by existing frame/from_frame operations.
+/// This nominal re-export adds no observation, algorithm or mutation to an input.
+pub use crate::scenario::RxMerFrame;
 use crate::{
     profile::candidate::{CandidateProfile, CapturedProfile},
     scenario::{
         pnm_json::{self, DecoderContract, JsonCapture},
-        ChannelFrame, FrequencyGrid, RxMerFrame,
+        ChannelFrame, FrequencyGrid,
     },
 };
 pub use profile_capture::*;
@@ -634,6 +641,15 @@ impl ComplexResponse {
     }
 }
 impl ChannelEstimate {
+    /// Borrows the exact admitted channel frame without deriving an inverse response.
+    /// # Returns
+    /// Read-only original key, epoch, decoded-source provenance and I/Q/nulls tied
+    /// to this input's lifetime. No clone, parsing, simulation or source mutation.
+    /// Original capture bytes/hash and decoder lineage remain in provenance().
+    pub fn frame(&self) -> &ChannelEstimateFrame {
+        &self.frame
+    }
+
     /// Reads original full-resolution complex H with explicit missing samples.
     /// # Returns
     /// Owned immutable-value snapshot; original storage remains unchanged.
