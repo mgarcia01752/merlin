@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-571 explicit public Rust operations and 545 installed native Python entries with
+572 explicit public Rust operations and 546 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/engine-diagnostic-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/calibrated-sequence-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 112 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -261,7 +261,7 @@ Named contract references resolve in the data's `contracts` object.
 
 | Row group | Rust scope | Python scope |
 | --- | --- | --- |
-| Downstream: 402 Rust / 400 native operations | Accepted API, quantities, original inputs, full-loop requests, retained observations and saved full-loop preparation. | Installed native classes preserve legacy root aliases; current scoped and preceding full-gate receipts define behavioral coverage. |
+| Downstream: 403 Rust / 401 native operations | Accepted API, quantities, original inputs, full-loop requests, retained observations and saved full-loop preparation. | Installed native classes preserve legacy root aliases; current scoped and preceding full-gate receipts define behavioral coverage. |
 | Upstream: 147 Rust / 119 native operations | Independent sessions, measured admission, resource plans and actual bounded instrument observations. | Installed native upstream namespace and API-04 backend acceptance; Qt adoption remains separate. |
 | Common: 22 Rust / 26 native operations | One-way cancellation plus optional original-preserving Project admission; returned scientific owners remain separate. | Installed common namespace, enum accessors and Project; the Rust Cancellation trait and typed ProjectError remain explicit language differences. |
 
@@ -309,3 +309,10 @@ complete windows within an explicit sample budget and the existing analysis
 work cap. [Exact execution records](../unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json)
 cover independent counts, actual retained-prefix compatibility and exact-wheel
 native/direct-Rust-process parity. Qt adoption remains separate.
+
+The [calibrated ordered-frame prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-calibrated-ordered-frame-api-accepted)
+adds one paired operation and one Rust report type, with native owned-dictionary
+projection. Original normalized metadata and calibrated power share a single
+estimate; physical continuity stays explicit. [Exact cases](../unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json)
+retain prior rows/types/members and independently test existing channel/sequence
+contracts. Qt adoption and official task/final acceptance remain separate.

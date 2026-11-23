@@ -20,6 +20,7 @@ Rust scientific owners and advances no source or simulation.
 | `result.inputs()`; `inputs.summary()` | `result.input_summary()` | Rust retains typed original inputs; native returns bounded original identity/provenance metadata. |
 | `result.recovered_bytes()` | `result.recovered_bytes()` | Borrowed Rust decoded original-file bytes / owned native bytes, or None for PRBS. |
 | `transmission.spectrum_average_capacity(max_samples)` | Matching method | Idle complete-window capacity for a sample budget and accepted FFT, capped by the existing spectrum work policy. |
+| `result.calibrated_spectrum_sequence(query)` | `result.calibrated_spectrum_sequence(stage, snapshot, max_averages, start, count)` | Normalized ordered-frame sequence metadata and calibrated/relative power from one estimate. |
 
 `FullLoopInputs` contains the previously admitted transmission, Dpd, SourceInput,
 MeasurementSequence, ChannelConfiguration and optional original ChannelEstimate.
@@ -145,3 +146,24 @@ that configuration. This capacity query leaves inputs idle and unchanged. At
 32768-sample prefix selects seven complete windows while the full span admits
 eight. Original contexts, reference planes and simulation outcomes remain owned
 by the retained result. See the [separate Rust reference](../../../crates/ofdm/examples/api_spectrum_average_capacity.rs).
+
+## Calibrated ordered-frame diagnostics
+
+`FullLoopResult::calibrated_spectrum_sequence` accepts the existing
+FullLoopSpectrumQuery for IFFT, prefix, window or RX-useful frame stages. Its
+typed FullLoopCalibratedSequenceSpectrum contains `sequence`, the unchanged
+normalized FullLoopSequenceSpectrum, and `power`, the calibrated ChannelSpectrum
+from the same estimate. Native Python returns the matching owned dictionary
+with `sequence` and `power` keys and the existing sequence-query defaults.
+
+The sequence retains original segment/sample origins, stop reason, physical
+stride and explicit contiguity. Concatenated frame-stage samples may have
+physical gaps or overlaps; electrical calibration preserves that diagnostic
+sampling basis. Use the continuous waveform spectrum operation for actual
+continuous-output observations. Absent electrical calibration keeps relative
+units. The channel-power reading covers the same full occupied band during zoom.
+
+The operation starts no simulation and preserves inputs, retained samples and
+decoder outcomes. Existing sequence/grid/work/window failures remain structured.
+See the bounded [separate Rust reference](../../../crates/ofdm/examples/api_calibrated_sequence.rs)
+and [paired validation](../../development/features/unified-qt-workbench/validation.md#uiu-ds-01-calibrated-ordered-frame-api-accepted).

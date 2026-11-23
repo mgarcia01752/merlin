@@ -154,26 +154,9 @@ impl FullLoopResult {
         reference_plane: Option<&'static str>,
     ) -> ApiResult<FullLoopChannelSpectrum> {
         let prepared = self.prepare_spectrum(query, amplitude)?;
-        let settings = &self.job.settings;
-        let layout = CarrierLayout::new(&settings.transmission, &settings.layout)?;
-        let grid = prepared.context.physical_grid.ok_or_else(|| {
-            ApiError::new(
-                ErrorCode::MissingCoverage,
-                "Channel spectrum has no original grid",
-            )
-        })?;
-        if grid.spacing != settings.transmission.subcarrier_spacing
-            || grid.zero_frequency_hz != settings.layout.zero_frequency_hz
-        {
-            return Err(ApiError::new(
-                ErrorCode::IncompatibleGrid,
-                "Channel spectrum original grid differs",
-            ));
-        }
-        let power = electrical::view(
+        let power = self.calibrated_power(
             &prepared.power,
-            &layout,
-            &settings.impairments.power,
+            &prepared.context,
             reference_plane.unwrap_or(prepared.reference_plane),
             query.start,
             query.count,
@@ -189,5 +172,48 @@ impl FullLoopResult {
             snapshots_used: prepared.snapshots_used,
             power,
         })
+    }
+
+    /// Reuses accepted grid/layout/electrical admission for either existing sampling basis.
+    /// # Arguments
+    /// * `estimate`, `context` - Original full-resolution PSD and its retained physical grid.
+    /// * `reference_plane` - Existing source/derived boundary, independent of sampling basis.
+    /// * `start`, `count` - Original physical-bin viewport; zero count selects the remaining span.
+    /// # Returns
+    /// Bounded calibrated/relative spectrum and full occupied-band power from the existing owner.
+    /// # Errors
+    /// Preserves layout, original-grid, calibration, viewport and numerical failures.
+    pub(super) fn calibrated_power(
+        &self,
+        estimate: &crate::signal_processing::waveform::spectrum::PowerSpectrum,
+        context: &FullLoopStageContext,
+        reference_plane: &'static str,
+        start: usize,
+        count: usize,
+    ) -> ApiResult<ChannelSpectrum> {
+        let settings = &self.job.settings;
+        let layout = CarrierLayout::new(&settings.transmission, &settings.layout)?;
+        let grid = context.physical_grid.ok_or_else(|| {
+            ApiError::new(
+                ErrorCode::MissingCoverage,
+                "Channel spectrum has no original grid",
+            )
+        })?;
+        if grid.spacing != settings.transmission.subcarrier_spacing
+            || grid.zero_frequency_hz != settings.layout.zero_frequency_hz
+        {
+            return Err(ApiError::new(
+                ErrorCode::IncompatibleGrid,
+                "Channel spectrum original grid differs",
+            ));
+        }
+        Ok(electrical::view(
+            estimate,
+            &layout,
+            &settings.impairments.power,
+            reference_plane,
+            start,
+            count,
+        )?)
     }
 }

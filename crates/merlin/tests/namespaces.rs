@@ -76,6 +76,13 @@ fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
             .unwrap();
     // Independent old 32768-sample presentation prefix: seven complete 8K windows.
     assert_eq!(capacity(&transmission, 32768).unwrap(), 7);
+    let calibrated_sequence: fn(
+        &downstream::FullLoopResult,
+        downstream::FullLoopSpectrumQuery,
+    ) -> downstream::ApiResult<
+        downstream::FullLoopCalibratedSequenceSpectrum,
+    > = downstream::FullLoopResult::calibrated_spectrum_sequence;
+    let _ = calibrated_sequence;
     assert_eq!(
         TypeId::of::<common::RunControl>(),
         TypeId::of::<downstream::RunControl>()

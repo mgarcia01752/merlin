@@ -1329,6 +1329,14 @@ whole-file exceptions retire after scoped acceptance, leaving 27 frozen files/
 remain frozen: ordered-frame electrical calibration requires a separate public
 API prerequisite before their migration. Parent/final numeric acceptance stays open.
 
+The [calibrated ordered-frame prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-calibrated-ordered-frame-api-prerequisite)
+adds FullLoopResult.calibrated_spectrum_sequence through the existing sequence
+and electrical owners. Its typed report pairs unchanged normalized sequence
+metadata with calibrated/relative power from one estimate; original physical
+gaps/overlaps remain explicit. Rust and native Python share the operation and
+bounded result. [Focused paired evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-calibrated-ordered-frame-api-accepted)
+precedes Qt adoption. No query/default/schema or frozen Qt record changes here.
+
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
 

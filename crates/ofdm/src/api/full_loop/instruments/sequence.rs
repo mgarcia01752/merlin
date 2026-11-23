@@ -28,6 +28,16 @@ pub struct FullLoopSequenceSpectrum {
     pub power: TransmitterSpectrum,
 }
 
+/// Two unit projections of one ordered-frame estimate; calibration never changes sampling basis.
+#[derive(Serialize)]
+#[non_exhaustive]
+pub struct FullLoopCalibratedSequenceSpectrum {
+    /// Original normalized view with unchanged segment origins, contiguity and stop metadata.
+    pub sequence: FullLoopSequenceSpectrum,
+    /// Same estimate in accepted electrical or explicit relative units, with full-band power.
+    pub power: ChannelSpectrum,
+}
+
 impl FullLoopResult {
     /// Analyzes the explicit diagnostic sequence of consecutive retained frame-stage samples.
     /// # Arguments
@@ -43,6 +53,39 @@ impl FullLoopResult {
         &self,
         query: FullLoopSpectrumQuery,
     ) -> ApiResult<FullLoopSequenceSpectrum> {
+        self.prepare_spectrum_sequence(&query).map(|(view, _)| view)
+    }
+
+    /// Calibrates an explicit ordered-frame diagnostic without implying physical continuity.
+    /// # Arguments
+    /// * `query` - Existing IFFT/prefix/window/RX-useful sequence, retained event, work and viewport.
+    /// # Returns
+    /// Owned normalized sequence metadata and calibrated power from the same single estimate.
+    /// Original gaps/overlaps and stop state remain explicit. Electrical calibration uses the
+    /// accepted reference only; absent calibration preserves relative units. Inputs, retention,
+    /// source/RNG and completed decoder outcomes stay unchanged; no simulation is executed.
+    /// # Errors
+    /// Preserves existing sequence stage/context/work/grid/window/numerical failures and the
+    /// existing electrical owner's calibration, occupied-band and overflow failures.
+    pub fn calibrated_spectrum_sequence(
+        &self,
+        query: FullLoopSpectrumQuery,
+    ) -> ApiResult<FullLoopCalibratedSequenceSpectrum> {
+        let (sequence, estimate) = self.prepare_spectrum_sequence(&query)?;
+        let power = self.calibrated_power(
+            &estimate,
+            &sequence.context,
+            sequence.power.reference_plane,
+            query.start,
+            query.count,
+        )?;
+        Ok(FullLoopCalibratedSequenceSpectrum { sequence, power })
+    }
+
+    fn prepare_spectrum_sequence(
+        &self,
+        query: &FullLoopSpectrumQuery,
+    ) -> ApiResult<(FullLoopSequenceSpectrum, owner::PowerSpectrum)> {
         let reference_plane = match query.stage {
             FullLoopStage::TxIfft => "tx_after_ifft_before_prefix",
             FullLoopStage::TxPrefix => "tx_after_prefix_before_window",
@@ -143,7 +186,7 @@ impl FullLoopResult {
                 .saturating_sub(segment.sequence_start)
                 .min(segment.sample_count);
         }
-        Ok(FullLoopSequenceSpectrum {
+        let view = FullLoopSequenceSpectrum {
             stage: query.stage,
             sampling_basis: "ordered_frame_stage_samples",
             context: first.context.clone(),
@@ -153,7 +196,8 @@ impl FullLoopResult {
             used_samples,
             segments: sequence.segments,
             stop: sequence.stop,
-            power: super::spectrum::spectrum_view(&power, &query, reference_plane)?,
-        })
+            power: super::spectrum::spectrum_view(&power, query, reference_plane)?,
+        };
+        Ok((view, power))
     }
 }

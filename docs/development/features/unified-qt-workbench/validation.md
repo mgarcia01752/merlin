@@ -2046,3 +2046,46 @@ tests/vectors, dependencies and build/cache profiles are unchanged.
 This is workflow/documentation acceptance only. No official UIU status changes
 and no prior implementation/planning milestone is reopened. Continue the existing
 dependency order with the preserved calibrated ordered-frame API prerequisite.
+
+## UIU-DS-01 calibrated ordered-frame API accepted
+
+[Design/owners](design.md#uiu-ds-01-calibrated-ordered-frame-api-prerequisite),
+[exact evidence](calibrated-sequence-evidence.json),
+[executed cases](ds-01-calibrated-sequence-operation-test-results.json),
+[architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[REQ-UIU-02](../../../requirements.md#req-uiu-02),
+[REQ-UIU-09](../../../requirements.md#req-uiu-09),
+[REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-27](../../../requirements.md#req-uiu-27) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) trace this prerequisite.
+
+FullLoopResult.calibrated_spectrum_sequence returns unchanged normalized
+sequence metadata and ChannelSpectrum from one full-resolution estimate. Rust
+owns retained-frame ordering, physical gaps/overlaps, stop/error semantics and
+electrical calibration. Python only converts arguments/owned output and detaches
+Rust work from the interpreter. Existing normalized/continuous/channel methods,
+queries, defaults, numerical algorithms and imports remain compatible.
+
+Level 1 passes ten focused Rust and eleven installed native cases. Coverage
+includes original independent PSD and sequence vectors, exact normalized output,
+relative/electrical units and zoom-independent power, missing/incomplete frames,
+invalid work/stage/viewport, immutable reports/retention, owned native dictionaries,
+legacy/facade imports and separate current Rust-process parity. Existing tests
+and assertions are retained. Formatting, scoped root/native Clippy, analysis-only
+build and complete additive compiler/native API tracing pass.
+
+One exact wheel is built, installed outside the checkout and verified against
+its archive/module hash. Initial native channel parity encountered a historical
+reference lacking the previously accepted normalized_power_db field. Current
+separate Rust full-loop/transmitter references resolve that comparison; earlier
+logs/reference files remain intact. The same installed wheel is reused without
+changing assertions/tolerances or rebuilding. All 571/545 old operation rows and
+prior native members remain exact; the candidate has 572 Rust/546 native rows,
+one additional Rust report type and unchanged 80 root/112 namespace class exports.
+
+The evidence explicitly records not-required and deferred checks. No Qt source,
+registration, lifecycle, project schema, dependency or scientific algorithm is
+changed; no full workspace/Qt/native/CLI/project/packaging suite is claimed.
+Qt adoption remains the next focused consumer. This API unit retires no frozen
+entry: 27 files/96 sites/three dependencies remain. Official UIU-DS-01 Level 2,
+major/final Level 3 and the final numeric audit remain pending.

@@ -180,6 +180,14 @@ reading samples or starting a run. Use the count with existing spectrum query
 fields; retained availability remains separate. See the paired
 [sample-budget examples](../user/api/full-loop.md#spectrum-sample-budgets).
 
+`FullLoopResult::calibrated_spectrum_sequence(query)` provides paired normalized
+ordered-frame metadata and calibrated ChannelSpectrum through the existing
+sequence/calibration owners. Native Python exposes the matching method with
+stage/snapshot/average/viewport arguments. Original gaps, overlaps and explicit
+contiguity remain in the returned `sequence`; `power` carries electrical or
+relative units and zoom-independent occupied-band power. See
+[ordered-frame diagnostics](../user/api/full-loop.md#calibrated-ordered-frame-diagnostics).
+
 `simulation::transmitter_preview::TransmitterPreviewRequest` freezes accepted
 transmission settings, captured Profile A and immutable source configuration.
 `generate` reuses production TX stages with cooperative cancellation and scalar

@@ -5,14 +5,13 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "e8b9583c62161d551b5af2b14eccc54ffe0c953d plus exact spectrum-budget candidate",
-    "inventory_command": "Exact archive-matched installed Python -I -B native_api_inventory.py; ds-01-spectrum-budget-native/results.json",
-    "native_sha256": "ea0f00ae165b345632ce381371c4962d3175b3ceea8708ebade5dd49a9384217",
-    "scope": "Fresh exact-archive installed admission/direct-Rust-process and namespace cases. Only spectrum_average_capacity is additive.",
+    "revision": "ca20cdc9a950b7951c4e4ca4ff9cca8f2c211579 plus exact calibrated-sequence candidate",
+    "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-calibrated-sequence-native/accepted-results.json",
+    "native_sha256": "21c9ad1b61b50d849597d2c018840a9bca1c9e42ee7dc3735c73023d12484324",
+    "scope": "Eleven scoped sequence/channel/namespace cases; all prior class/member/kind/signatures exact after removing only the new method.",
     "preserved_prior_inventory": {
-      "sha256": "78c22cb0c06e47bf628fb6004c18f2f061b3df988f48614f5eda717858bd2588",
-      "root_and_namespace_operation_instances": 951,
-      "scope": "Every old class/alias/constructor/member/kind/signature is exact after removing only the new method."
+      "root_and_namespace_operation_instances": 953,
+      "scope": "Original 80 root class exports and every directional/common export unchanged; new Rust report is an owned dictionary in Python."
     }
   },
   "contracts": {
@@ -133,7 +132,10 @@
     "status.uiu-ds-01-engine-diagnostic": "Scoped public diagnostic prerequisite accepted. Qt worker/help adoption and parent DS-01/final integration remain incomplete.",
     "units.samples-to-averages": "Input is a physical sample-count budget for accepted downstream FFT geometry; output is complete overlapping Welch-window capacity capped by the existing analysis work policy. Actual retained availability is separate.",
     "evidence.uiu-ds-01-spectrum-budget": "../unified-qt-workbench/spectrum-budget-evidence.json, ../unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json and ../unified-qt-workbench/validation.md#uiu-ds-01-spectrum-sample-budget-api-accepted: exact source/archive/module hashes, independent counts/PSD anchors and installed direct-process parity.",
-    "status.uiu-ds-01-spectrum-budget": "Accepted additive passive Rust/native operation. Existing query structs, defaults and numerical processing are preserved; Qt spectrum consumer adoption remains pending."
+    "status.uiu-ds-01-spectrum-budget": "Accepted additive passive Rust/native operation. Existing query structs, defaults and numerical processing are preserved; Qt spectrum consumer adoption remains pending.",
+    "units.calibrated-ordered-frames": "Original ordered-frame diagnostic metadata and normalized PSD plus calibrated mV-squared/Hz or explicit relative units and full occupied-band power. Electrical calibration never asserts physical continuity.",
+    "evidence.uiu-ds-01-calibrated-sequence": "../unified-qt-workbench/calibrated-sequence-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-calibrated-ordered-frame-api-accepted: actual relative/electrical sequence, original segment/stop/error compatibility, exact archive/native/direct-Rust-process parity and complete additive inventories.",
+    "status.uiu-ds-01-calibrated-sequence": "Scoped additive paired prerequisite accepted at Level 1; Qt adoption, parent task Level 2 and milestone/final Level 3 remain incomplete."
   },
   "type_exports": {
     "downstream": [
@@ -1027,6 +1029,10 @@
       },
       {
         "export": "merlin::downstream::WindowPoint",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopCalibratedSequenceSpectrum",
         "kind": "struct"
       }
     ],
@@ -32422,6 +32428,56 @@
       },
       "evidence": "evidence.uiu-ds-01-spectrum-budget",
       "status": "status.uiu-ds-01-spectrum-budget"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::calibrated_spectrum_sequence",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn calibrated_spectrum_sequence( &self, query: FullLoopSpectrumQuery, ) -> ApiResult<FullLoopCalibratedSequenceSpectrum>",
+        "source_file": "crates/ofdm/src/api/full_loop/instruments/sequence.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.calibrated_spectrum_sequence",
+        "declaration": "merlin.downstream.FullLoopResult.calibrated_spectrum_sequence"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.calibrated-ordered-frames",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopCalibratedSequenceSpectrum>",
+        "scope": "Owned unchanged normalized sequence metadata plus ChannelSpectrum from the same single full-resolution estimate; accepted calibration changes units, never sampling basis, source or decoder state."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-09",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::calibrated_ordered_frames_preserve_legacy_sequence_units_power_and_error_contracts",
+          "crates/ofdm/tests/api_full_loop_observations.rs::ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_distinct"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_spectrum_sequence.py::CalibratedSpectrumSequenceTests.test_calibrated_sequence_keeps_sampling_units_errors_and_owned_results",
+            "bindings/python/tests/test_spectrum_sequence.py::CalibratedSpectrumSequenceTests.test_calibrated_sequences_match_the_direct_rust_process"
+          ],
+          "scope": "Actual unchanged normalized metadata, calibrated/relative units, work/viewport/stage/incomplete/missing errors, immutable report/retention, owned views and separate current Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-calibrated-sequence",
+      "status": "status.uiu-ds-01-calibrated-sequence"
     }
   ],
   "executed_records": [
@@ -32458,7 +32514,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -67744,6 +67801,62 @@
       },
       "evidence": "evidence.uiu-ds-01-spectrum-budget",
       "status": "status.uiu-ds-01-spectrum-budget"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.calibrated_spectrum_sequence",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/sequence.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn calibrated_spectrum_sequence( &self, query: FullLoopSpectrumQuery, ) -> ApiResult<FullLoopCalibratedSequenceSpectrum>",
+        "mapping": "Checked primitive arguments construct the typed public Rust query and release the GIL; native defaults reuse the public Rust default policy, with explicit Python signature metadata tested independently. No sample assembly or numerical algorithm in Python.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::calibrated_spectrum_sequence",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "calibrated_spectrum_sequence",
+        "kind": "method",
+        "signature": "(self, /, stage='tx.ifft.samples', snapshot=0, max_averages=32, start=0, count=0)",
+        "declaration": "FullLoopResult.calibrated_spectrum_sequence"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.calibrated-ordered-frames",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned dictionary with sequence and power; no Python numerical work, original context/contiguity/stop and explicit calibrated/relative units. Native checked conversion and detached Rust computation."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-09",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_full_loop_observations.rs::calibrated_ordered_frames_preserve_legacy_sequence_units_power_and_error_contracts",
+          "crates/ofdm/tests/api_full_loop_observations.rs::ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_distinct"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_spectrum_sequence.py::CalibratedSpectrumSequenceTests.test_calibrated_sequence_keeps_sampling_units_errors_and_owned_results",
+            "bindings/python/tests/test_spectrum_sequence.py::CalibratedSpectrumSequenceTests.test_calibrated_sequences_match_the_direct_rust_process"
+          ],
+          "scope": "Actual unchanged normalized metadata, calibrated/relative units, work/viewport/stage/incomplete/missing errors, immutable report/retention, owned views and separate current Rust process parity."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-calibrated-sequence",
+      "status": "status.uiu-ds-01-calibrated-sequence"
     }
   ],
   "native_type_exports": {
@@ -68892,6 +69005,18 @@
         "sha256": "1d467b1d27e923425509dfbf137014576c7eca6d2cc0796e057529a041aeb11b",
         "root_and_namespace_operation_instances": 948,
         "scope": "Every old class/alias/constructor/member/operation is exact after removing only the new shared exception field."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "e8b9583c62161d551b5af2b14eccc54ffe0c953d plus exact spectrum-budget candidate",
+      "inventory_command": "Exact archive-matched installed Python -I -B native_api_inventory.py; ds-01-spectrum-budget-native/results.json",
+      "native_sha256": "ea0f00ae165b345632ce381371c4962d3175b3ceea8708ebade5dd49a9384217",
+      "scope": "Fresh exact-archive installed admission/direct-Rust-process and namespace cases. Only spectrum_average_capacity is additive.",
+      "preserved_prior_inventory": {
+        "sha256": "78c22cb0c06e47bf628fb6004c18f2f061b3df988f48614f5eda717858bd2588",
+        "root_and_namespace_operation_instances": 951,
+        "scope": "Every old class/alias/constructor/member/kind/signature is exact after removing only the new method."
       }
     }
   ],

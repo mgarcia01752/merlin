@@ -2498,3 +2498,41 @@ audit. Scientific/runtime/Clippy/package suites are not applicable because no
 production, test, dependency, runner or build configuration is changed. Preserve
 the isolated unfinished calibrated-spectrum implementation and resume it after
 the separate focused workflow commit.
+
+## UIU-DS-01 calibrated ordered-frame API prerequisite
+
+Select one additive operation to close the retained-frame calibration gap before
+Qt adoption. REQ-UIU-02/09/24/27 and UIU-DS-01 own this prerequisite. Completed
+planning/FEC/API milestones stay closed. Existing normalized sequence and
+physically continuous spectrum operations, queries and defaults stay unchanged.
+
+| Public contract | Ownership and behavior |
+| --- | --- |
+| Rust `FullLoopResult::calibrated_spectrum_sequence(&self, query: FullLoopSpectrumQuery) -> ApiResult<FullLoopCalibratedSequenceSpectrum>` | New typed result contains `sequence: FullLoopSequenceSpectrum` and `power: ChannelSpectrum`: normalized and calibrated projections of the same single estimate. All original segment/context/gap/stop/contiguity metadata remains explicit in sequence. Calibration does not make the diagnostic physically continuous. |
+| Python `FullLoopResult.calibrated_spectrum_sequence(self, stage='tx.ifft.samples', snapshot=0, max_averages=32, start=0, count=0) -> dict` | One thin native call, releasing the interpreter lock for Rust work and returning owned data. Same stage/work/viewport errors and electrical/relative semantics. Existing class/root aliases remain. |
+
+| Owner / disposition | Exact reuse and acceptance |
+| --- | --- |
+| EDIT `crates/ofdm/src/api/full_loop/instruments/sequence.rs` | Extract the existing sequence preparation into a private helper returning its existing normalized view plus full-resolution estimate. Old spectrum_sequence returns the same view; the new operation adds calibration without repeating sequence stitching or FFTs. |
+| EDIT `crates/ofdm/src/api/full_loop/instruments/channel.rs` | Share its existing accepted-layout/grid/electrical projection as a private composition helper. Existing continuous/channel/amplifier scientific behavior and error order remain. No new gain application to TX observations. |
+| EDIT existing native sequence module/root `.pyi` | Direct public delegation only. New Rust report is represented as an owned dictionary, not an artificial Python simulation class. |
+| EDIT existing observation and native sequence tests; ADD bounded `api_calibrated_sequence` reference example with feature registration | Compare normalized legacy output exactly, calibrated output against the existing full-resolution electrical owner, literal sample/average anchors, zoom-independent channel power, incomplete-frame/missing/invalid-work/stage rejection, immutable results and exact installed native/direct-Rust-process parity. Preserve all earlier tests. |
+| REUSE owner/namespace tests and operation matrix | Original sequence context/gap/partial-frame oracles and tone/power/ENBW numerical vectors remain independent. Add only the new operation and Rust typed report export, preserving every previous operation/member. |
+
+This is scientific composition in the existing Apache Rust owner, with no new
+algorithm, dependency, Qt source, saved schema, protocol capability or work limit.
+The nested normalized view intentionally preserves its original metadata and
+units; ChannelSpectrum supplies the alternate calibrated rendering and fixed
+occupied-band power. Both remain bounded by the unchanged 32-average/2048-bucket
+policies. The supported UI frame prefix remains a separate caller policy.
+Accept Rust first, then an exclusively built wheel installed outside the checkout
+with archive/module hash verification, direct-process parity and strict complete
+inventory tracing. Only a subsequent focused Qt commit may consume the operation.
+
+This [Level 1 prerequisite is accepted](validation.md#uiu-ds-01-calibrated-ordered-frame-api-accepted):
+ten Rust/eleven exact-wheel native cases, scoped Clippy, analysis-only build and
+strict 572/546 operation tracing pass. Existing normalized/channel consumers and
+all previous operation rows/types/native members are preserved. The evidence
+records the stale-reference failure, current Rust reference refresh, unchanged
+wheel reuse and explicit executed/not-required/deferred scopes. No Qt entry is
+retired; parent Level 2 and milestone/final Level 3 remain pending.

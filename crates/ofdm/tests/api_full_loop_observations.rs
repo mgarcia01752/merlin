@@ -926,6 +926,17 @@ fn relative_channel_spectra_and_missing_taps_remain_explicit_without_hidden_exec
             .code(),
         ErrorCode::MissingCoverage
     );
+    assert_eq!(
+        disabled
+            .calibrated_spectrum_sequence(FullLoopSpectrumQuery {
+                stage: FullLoopStage::TxIfft,
+                ..Default::default()
+            })
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::MissingCoverage
+    );
     let observed = original
         .with_observations(policy())
         .unwrap()
@@ -1117,6 +1128,156 @@ fn ordered_frame_spectra_preserve_original_segments_and_keep_contiguous_queries_
     assert_eq!(view.available_samples, EXPECTED_FFT_SAMPLES);
     assert_eq!(view.power.averages, 1);
     assert!(view.segments[0].retained_elements < view.segments[0].total_elements);
+    let calibrated = partial
+        .calibrated_spectrum_sequence(FullLoopSpectrumQuery {
+            stage: FullLoopStage::TxPrefix,
+            max_averages: WELCH_AVERAGES_PER_QUERY,
+            ..Default::default()
+        })
+        .unwrap();
+    assert_eq!(
+        serde_json::to_value(&calibrated.sequence).unwrap(),
+        serde_json::to_value(&view).unwrap()
+    );
+    assert_eq!(calibrated.power.averages, 1);
+}
+
+#[test]
+fn calibrated_ordered_frames_preserve_legacy_sequence_units_power_and_error_contracts() {
+    // Independent legacy 16K prefix and three-average policy, separate from event retention.
+    const SAMPLE_BUDGET: usize = 16384;
+    const RETAINED_FRAMES: usize = 3;
+    // Zero dBmV/6 MHz reference at the existing 204.8 MS/s clock: 34.133... mV²/unit.
+    const EXPECTED_CALIBRATION: f64 = 204_800_000.0 / 6_000_000.0;
+    const DB_TOLERANCE: f64 = 1e-10;
+    let stages = [
+        FullLoopStage::TxIfft,
+        FullLoopStage::TxPrefix,
+        FullLoopStage::TxWindow,
+        FullLoopStage::RxUseful,
+    ];
+    for electrical in [false, true] {
+        let channel = ChannelConfiguration::new(ChannelConfigurationInput {
+            power: PowerConditioning {
+                input_data_level_dbmv_per_6mhz: electrical.then_some(0.0),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .unwrap();
+        let mut input = FullLoopObservationInput::default();
+        for entry in &mut input.stages {
+            if stages.contains(&entry.stage) {
+                entry.max_events = RETAINED_FRAMES;
+            }
+        }
+        let result = request_with_channel(ReceiverMode::SuppliedChannel, channel)
+            .with_observations(FullLoopObservationPolicy::new(input).unwrap())
+            .unwrap()
+            .run(&FullLoopControl::new())
+            .unwrap();
+        let before = serde_json::to_value(result.report()).unwrap();
+        let statistics = serde_json::to_value(result.observation_stats()).unwrap();
+        for stage in stages {
+            let query = FullLoopSpectrumQuery {
+                stage,
+                max_averages: result
+                    .inputs()
+                    .transmission
+                    .spectrum_average_capacity(SAMPLE_BUDGET)
+                    .unwrap(),
+                start: 123,
+                count: 7,
+                ..Default::default()
+            };
+            let normalized = result.spectrum_sequence(query.clone()).unwrap();
+            let view = result.calibrated_spectrum_sequence(query.clone()).unwrap();
+            assert_eq!(
+                serde_json::to_value(&view.sequence).unwrap(),
+                serde_json::to_value(&normalized).unwrap()
+            );
+            assert_eq!(view.sequence.sampling_basis, "ordered_frame_stage_samples");
+            assert_eq!(view.sequence.available_samples, 16384);
+            assert_eq!(view.sequence.used_samples, 16384);
+            assert_eq!(view.power.averages, 3);
+            assert_eq!(
+                view.sequence.physically_contiguous,
+                stage == FullLoopStage::TxPrefix
+            );
+            assert_eq!(view.power.reference_plane, normalized.power.reference_plane);
+            assert_eq!(
+                view.power.millivolts_squared_per_unit,
+                electrical.then_some(EXPECTED_CALIBRATION)
+            );
+            assert_eq!(view.power.channel_power.dbmv.is_some(), electrical);
+            let full = result
+                .calibrated_spectrum_sequence(FullLoopSpectrumQuery {
+                    start: 0,
+                    count: 0,
+                    ..query
+                })
+                .unwrap();
+            assert_eq!(
+                serde_json::to_value(&view.power.channel_power).unwrap(),
+                serde_json::to_value(&full.power.channel_power).unwrap()
+            );
+            for (actual, original) in view.power.buckets.iter().zip(&normalized.power.buckets) {
+                assert_eq!(actual.first_bin, original.first_bin);
+                assert_eq!(actual.last_bin, original.last_bin);
+                let shift = match electrical {
+                    true => 10.0 * EXPECTED_CALIBRATION.log10(),
+                    false => 0.0,
+                };
+                for (actual, original) in [
+                    (actual.minimum_db, original.minimum_db),
+                    (actual.maximum_db, original.maximum_db),
+                ] {
+                    match (actual, original) {
+                        (Some(actual), Some(original)) => {
+                            assert!((actual - original - shift).abs() < DB_TOLERANCE)
+                        }
+                        (None, None) => {}
+                        _ => panic!("Missing spectrum density changed during calibration"),
+                    }
+                }
+            }
+        }
+        for query in [
+            FullLoopSpectrumQuery::default(),
+            FullLoopSpectrumQuery {
+                stage: FullLoopStage::TxIfft,
+                max_averages: 0,
+                ..Default::default()
+            },
+            FullLoopSpectrumQuery {
+                stage: FullLoopStage::TxIfft,
+                max_averages: 33,
+                ..Default::default()
+            },
+            FullLoopSpectrumQuery {
+                stage: FullLoopStage::TxIfft,
+                start: 8192,
+                ..Default::default()
+            },
+            FullLoopSpectrumQuery {
+                stage: FullLoopStage::TxIfft,
+                snapshot: usize::MAX,
+                ..Default::default()
+            },
+        ] {
+            let old = result.spectrum_sequence(query.clone()).err().unwrap();
+            let new = result.calibrated_spectrum_sequence(query).err().unwrap();
+            assert_eq!(new.code(), old.code());
+            assert_eq!(new.message(), old.message());
+            assert_eq!(new.engine_code(), old.engine_code());
+        }
+        assert_eq!(serde_json::to_value(result.report()).unwrap(), before);
+        assert_eq!(
+            serde_json::to_value(result.observation_stats()).unwrap(),
+            statistics
+        );
+        assert_eq!(result.report().summary.comparison.bit_errors, 0);
+    }
 }
 
 #[test]
