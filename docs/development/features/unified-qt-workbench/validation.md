@@ -1509,3 +1509,32 @@ scientific dependency exceptions and 140 direct sites still require migration.
 Commit the API prerequisite before adapting selection status. No resource policy,
 operating mode, schema or dependency is added. UIU-DS-01 and final numeric/unified
 runtime acceptance remain open.
+
+## UIU-DS-01 minimum observation timing API accepted
+
+The [minimum-window evidence](minimum-observation-timing-evidence.json) accepts
+`TransmissionConfiguration::minimum_observation_milliseconds_after` and its
+installed native Python method before Qt adoption. The existing timing owner
+computes the inverse complete-symbol clock with checked integer arithmetic.
+The shared DSP common constants own exact millisecond/nanosecond SI scales;
+source-observation limits, host runtime and UI budgets remain separate policies.
+
+Ten Rust timing/admission cases and fourteen installed native sequence/admission/
+namespace cases pass. Independent rational anchors cover both sample clocks,
+exact versus fractional millisecond rounding, an alternate prefix, zero/maximum
+source indices and minimality. The largest index reports a theoretical threshold
+above observation admission; no run, acquisition/drain/window-tail substitution,
+source/RNG advance or input mutation occurs. Original test assertions remain.
+
+Root/native Clippy, formatting, analysis-only compilation and 34 API metadata
+regressions pass. Fresh complete-feature compiler and installed native inventories
+validate 566 Rust/539 native operation rows against recorded executions. Every
+previous row, class export, constructor and signature stays exact. The installed
+wheel admission subset was rerun after adding exact-boundary test anchors; wheel
+code is unchanged and both receipts remain. Historical full backend/native
+acceptance is separate from this scoped API query.
+
+All Qt sources, dependency records and forty frozen boundary entries stay exact.
+The three scientific dependencies and 140 direct sites remain migration work.
+Qt help adoption and final numeric/unified runtime acceptance stay open under
+UIU-DS-01/UIU-QA-01. No new operating mode, schema or dependency is introduced.

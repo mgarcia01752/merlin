@@ -36,6 +36,64 @@ fn transmission_admission_uses_literal_sample_clock_accounting_without_running()
 }
 
 #[test]
+fn minimum_observation_rounds_complete_periods_and_reports_over_policy_thresholds() {
+    // Independent rational-clock anchors: a 512-sample CP gives 17/400 ms
+    // periods at 25 kHz and 9/400 ms at 50 kHz; a 1024-sample CP gives 45 us.
+    // Index 399 completes 400 periods at exactly 17/9 ms, testing exact rounding.
+    for (last, spacing, prefix, expected) in [
+        (0, SubcarrierSpacing::Khz25, 512, 1),
+        (399, SubcarrierSpacing::Khz25, 512, 17),
+        (399, SubcarrierSpacing::Khz50, 512, 9),
+        (1000, SubcarrierSpacing::Khz25, 512, 43),
+        (400, SubcarrierSpacing::Khz25, 512, 18),
+        (2000, SubcarrierSpacing::Khz25, 512, 86),
+        (1000, SubcarrierSpacing::Khz50, 512, 23),
+        (1000, SubcarrierSpacing::Khz25, 1024, 46),
+        (100000, SubcarrierSpacing::Khz25, 512, 4251),
+    ] {
+        let settings = TransmissionSettings {
+            subcarrier_spacing: spacing,
+            cyclic_prefix_samples: prefix,
+            ..Default::default()
+        };
+        let configuration = TransmissionConfiguration::new(settings.clone()).unwrap();
+        assert_eq!(
+            configuration
+                .minimum_observation_milliseconds_after(last)
+                .unwrap(),
+            expected
+        );
+        assert!(
+            configuration
+                .timing(ObservationDuration::new(expected).unwrap())
+                .unwrap()
+                .complete_symbols
+                > last
+        );
+        if expected > 1 {
+            assert!(
+                configuration
+                    .timing(ObservationDuration::new(expected - 1).unwrap())
+                    .unwrap()
+                    .complete_symbols
+                    <= last
+            );
+        }
+        assert_eq!(configuration.settings(), &settings);
+    }
+    let configuration = TransmissionConfiguration::new(TransmissionSettings::default()).unwrap();
+    // Independent wide arithmetic: ceil(2^64 * 17/400) milliseconds. This reports
+    // a threshold, not admission to the existing one-hour observation domain.
+    assert_eq!(
+        configuration
+            .minimum_observation_milliseconds_after(u64::MAX)
+            .unwrap(),
+        783_986_623_132_655_944
+    );
+    assert!(ObservationDuration::new(783_986_623_132_655_944).is_err());
+}
+
+#[test]
 fn transmission_json_admission_rejects_corruption_unknown_fields_and_limits() {
     let accepted = TransmissionConfiguration::new(TransmissionSettings::default()).unwrap();
     let text = serde_json::to_vec(&accepted).unwrap();

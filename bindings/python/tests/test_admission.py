@@ -14,6 +14,42 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 class NativeAdmissionTests(unittest.TestCase):
+    def test_minimum_observation_has_exact_period_rounding_and_wide_thresholds(self):
+        # Independent periods: CP=512 gives 17/400 ms at 25 kHz and 9/400 ms
+        # at 50 kHz. The 1024-sample CP gives 45 us at 25 kHz. Index 399
+        # completes exactly 400 periods at 17/9 ms, without an extra millisecond.
+        for last, spacing, prefix, expected in [
+            (0, '25000', 512, 1),
+            (399, '25000', 512, 17),
+            (399, '50000', 512, 9),
+            (1000, '25000', 512, 43),
+            (400, '25000', 512, 18),
+            (2000, '25000', 512, 86),
+            (1000, '50000', 512, 23),
+            (1000, '25000', 1024, 46),
+            (100000, '25000', 512, 4251),
+        ]:
+            settings = m.TransmissionConfiguration().settings
+            settings['subcarrier_spacing'] = spacing
+            settings['cyclic_prefix_samples'] = prefix
+            configuration = m.TransmissionConfiguration.from_json(json.dumps(settings).encode())
+            before = configuration.to_json()
+            self.assertEqual(configuration.minimum_observation_milliseconds_after(last), expected)
+            self.assertGreater(configuration.timing(m.ObservationDuration(expected))['complete_symbols'], last)
+            if expected > 1:
+                self.assertLessEqual(configuration.timing(m.ObservationDuration(expected - 1))['complete_symbols'], last)
+            self.assertEqual(configuration.to_json(), before)
+        configuration = m.TransmissionConfiguration()
+        maximum_index = (1 << 64) - 1  # Independent unsigned source-index boundary.
+        # ceil(2^64 * 17/400) ms is a reportable threshold, not an admitted run.
+        threshold = configuration.minimum_observation_milliseconds_after(maximum_index)
+        self.assertEqual(threshold, 783986623132655944)
+        with self.assertRaises(m.ApiError):
+            m.ObservationDuration(threshold)
+        for invalid in (-1, 1 << 64):
+            with self.assertRaises(OverflowError):
+                configuration.minimum_observation_milliseconds_after(invalid)
+
     def test_transmission_literal_timing_and_owned_settings(self):
         accepted = m.TransmissionConfiguration()
         before = accepted.to_json()

@@ -1203,6 +1203,13 @@ now exposes the existing clock query on immutable sequence options before profil
 capture admission, with [paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-replay-capacity-api-accepted).
 Admitted sequences share that backend query without narrowing their duration
 domain. Qt's selection-status consumer remains pending.
+The [minimum-window prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-minimum-observation-timing-api-prerequisite)
+adds an inverse complete-symbol clock query for existing timing help. Its minimum
+whole-millisecond threshold is backend-owned, independent of UI run budgets;
+[paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-minimum-observation-timing-api-accepted)
+now covers both sample clocks, exact rounding and maximum source indices.
+Generic integer SI scales share the DSP common constants owner. Qt help adoption
+remains pending after this focused API prerequisite.
 
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).

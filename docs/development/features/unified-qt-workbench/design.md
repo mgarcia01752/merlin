@@ -1899,3 +1899,61 @@ The [idle-capacity API prerequisite is accepted](validation.md#uiu-ds-01-idle-re
 with six Rust and thirteen installed native cases, exact operation tracing and
 preserved prior exports. The calculation now has one backend implementation.
 Qt's consumer remains unchanged until the independent API commit succeeds.
+
+## UIU-DS-01 minimum observation timing API prerequisite
+
+`apps/qt/src/downstream/help.rs::playback_help` still derives the minimum whole
+milliseconds needed to include the final zero-based source symbol. Its registered
+diagnostic and presentation templates belong in Qt, while the quantitative clock
+threshold must come from the backend. The accepted public timing queries expose
+complete-symbol counts but no inverse minimum-window query. Add that specific
+observation before replacing the local calculation; do not reconstruct it in QML.
+
+Proposed operation on the existing immutable transmission configuration:
+
+```rust
+pub fn minimum_observation_milliseconds_after(
+    &self,
+    last_symbol_index: u64,
+) -> ApiResult<u64>;
+```
+
+Python mirrors the same name and returns an owned integer. The zero-based index
+belongs to the source observation, excluding acquisition, interleaver drain and
+window tails. Require enough sample ticks for `last_symbol_index + 1` complete
+periods, then round up to whole milliseconds using checked integer arithmetic.
+The returned threshold may exceed the checked observation-duration domain or
+Qt's narrower CWB budget; it reports required source time and admits no run.
+No source, waveform, receiver or RNG is created or advanced.
+
+| Path and symbol | Existing contract / gap | Decision and owner |
+| --- | --- | --- |
+| `crates/ofdm/src/transmission/timing.rs` | Existing Apache-2.0 integer-clock geometry/cadence owner | ADD a private checked minimum-window calculation using its existing validated timing. Preserve duration/sample/one-second operations and their outputs. |
+| `crates/dsp/src/common/constants.rs`, downstream re-exports | Generic exact integer SI time scales need one owner | SHARE milliseconds/second and nanoseconds/second here; replace the timing owner's identical local nanosecond conversion. Keep unit scales separate from app/runtime budgets with equal numbers. |
+| `crates/ofdm/src/api/admission.rs` | Immutable validated timing configuration | ADD the small typed query delegating to the timing owner. |
+| `bindings/python/src/admission.rs`, root stub | Existing thin native transmission wrapper | ADD exact delegation and signature; retain constructors/defaults and argument conversion semantics. |
+| `api_admission.rs`, native admission cases | Existing independent transmission/source cases | RETAIN and extend with both clocks, alternate CP, strict rounding, zero/upper symbol indices and required thresholds above run-policy limits. |
+| Qt help/templates and guard record | Existing GPL presentation and compatibility behavior | RETAIN unchanged in this prerequisite; consume the validated API only after its independent commit. |
+
+The compatibility reference is `apps/qt/src/downstream/help.rs` at MERLIN commit
+`61d69090c2effede83943148cc5c2e40477de83d`, copyright 2026 MERLIN contributors,
+GPL-3.0-only. Its numerical expectations are behavioral facts, not an imported
+implementation. Implement independently from the existing Apache timing primitive
+and sample-clock equation; copy no GPL function into Apache owners and change no
+license/NOTICE. Existing PHY I20 sample-clock/CP references stay unchanged; this is
+a project timing query, not a new specification requirement or interoperability
+claim. No third-party material or dependency is introduced.
+
+Trace this focused prerequisite through REQ-UIU-02/07/09 and UIU-DS-01. Validate
+Rust first, then a fresh installed native wheel, existing timing/admission cases,
+Clippy, formatting, analysis-only compatibility and exact operation tracing.
+Commit the API independently before changing the Qt help consumer. Completed
+planning/FEC/API milestones and the parent task's pending status remain unchanged.
+
+Pinned clock context was checked in the local text extraction of
+CM-SP-PHYv3.1-I20-230419, section 7.3.1/Table 6 (PDF page 47) and
+section 7.5.7/Table 38 (PDF page 134). No rendered-PDF inspection is claimed.
+The inverse minimum-window result is derived from the existing library clock,
+not presented as an additional normative DOCSIS requirement.
+
+Scoped backend prerequisite accepted: [minimum-window validation](validation.md#uiu-ds-01-minimum-observation-timing-api-accepted) and [exact evidence](minimum-observation-timing-evidence.json) record ten Rust/fourteen installed native cases, original timing compatibility and unchanged earlier API exports. The Qt consumer and parent DS-01 remain pending.

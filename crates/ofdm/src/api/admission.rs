@@ -129,6 +129,28 @@ impl TransmissionConfiguration {
             .duration_timing(Duration::from_millis(duration.value()))?)
     }
 
+    /// Queries the minimum whole-millisecond source window completing a selected symbol.
+    ///
+    /// # Arguments
+    /// * `last_symbol_index` - Zero-based source-observation OFDM index, not wall time.
+    ///
+    /// # Returns
+    /// The smallest whole milliseconds containing more complete periods than this index.
+    /// Acquisition, interleaver drain and window tails are separate. The threshold may
+    /// exceed checked observation/UI/runtime budgets; this neither admits nor runs a job.
+    /// Inputs remain unchanged and no source, waveform, receiver or RNG is advanced.
+    ///
+    /// # Errors
+    /// Preserves existing timing validation and checked-arithmetic/output errors.
+    pub fn minimum_observation_milliseconds_after(&self, last_symbol_index: u64) -> ApiResult<u64> {
+        Ok(
+            crate::transmission::timing::minimum_observation_milliseconds_after(
+                self.settings(),
+                last_symbol_index,
+            )?,
+        )
+    }
+
     /// Checks the existing profile editor's spacing and occupied-envelope contract.
     ///
     /// # Arguments

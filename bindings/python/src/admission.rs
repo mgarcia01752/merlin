@@ -133,6 +133,24 @@ impl PyTransmission {
         object_from_json(py, &text)
     }
 
+    /// Queries the least whole-millisecond source window completing a selected symbol.
+    ///
+    /// # Arguments
+    /// * `last_symbol_index` - Zero-based source-observation OFDM symbol index.
+    ///
+    /// # Returns
+    /// Owned integer threshold, including values above observation/UI/run budgets.
+    /// Acquisition, interleaver drain and window tails remain separate; no run is admitted,
+    /// no input changes and no source, waveform, receiver or RNG is advanced.
+    ///
+    /// # Errors
+    /// Shared timing/arithmetic failures raise ApiError; integer-width errors stay native.
+    fn minimum_observation_milliseconds_after(&self, last_symbol_index: u64) -> PyResult<u64> {
+        self.0
+            .minimum_observation_milliseconds_after(last_symbol_index)
+            .map_err(error)
+    }
+
     /// Checks original-grid editor compatibility without claiming full TX readiness.
     ///
     /// # Arguments

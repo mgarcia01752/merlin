@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-565 explicit public Rust operations and 538 installed native Python entries with
+566 explicit public Rust operations and 539 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/idle-replay-capacity-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/minimum-observation-timing-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 112 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -30,6 +30,14 @@ installed native cases pass strict clock/interval boundaries and original sequen
 behavior, with [exact execution records](../unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json).
 The query needs no scientific inputs and does not change existing observation
 duration admission. Qt selection-status adoption remains UIU-DS-01.
+
+The [minimum observation timing prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-minimum-observation-timing-api-accepted)
+adds one immutable transmission query in each language, preserving all earlier
+rows and class exports. Ten Rust and fourteen installed native cases cover both
+clocks, exact rounding, an alternate prefix, maximum indices and thresholds
+above run-policy limits. [Exact execution records](../unified-qt-workbench/ds-01-minimum-window-operation-test-results.json)
+retain the existing timing/admission assertions. Qt help adoption remains DS-01;
+the theoretical threshold does not admit a run or include acquisition/drain time.
 
 The additive [UIU-API-01 admission/preview acceptance](../unified-qt-workbench/validation.md#uiu-api-01-public-admission-accepted)
 appends 99 Rust and 75 native rows, retaining every original row and historical

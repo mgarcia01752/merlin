@@ -11,6 +11,7 @@ and legacy `merlin.merlin` path. Existing Simulation behavior is unchanged.
 | `TransmissionConfiguration::from_json(&[u8])` | `TransmissionConfiguration.from_json(data)` | UTF-8 settings, at most 4096 bytes; malformed/unknown fields reject. |
 | `settings() -> &TransmissionSettings`; serde serialization | `.settings: dict`; `.to_json() -> str` | Rust borrows accepted settings; Python returns an independent copy. |
 | `timing(ObservationDuration) -> ApiResult<DurationTiming>` | `.timing(ObservationDuration) -> dict` | Exact existing integer sample/symbol/tail accounting; no source advancement. |
+| `minimum_observation_milliseconds_after(u64) -> ApiResult<u64>` | `.minimum_observation_milliseconds_after(last_symbol_index: int) -> int` | Least whole-millisecond source window completing the zero-based symbol; immutable query. |
 | `check_profile(&Dpd) -> ApiResult<()>` | `.check_profile(DPD) -> None` | Original-grid spacing and occupied-envelope compatibility. Full transmitter readiness remains separate. |
 | `FileFillPolicy::new(u64, PrbsSeed)` | `FileFillPolicy(target_bits, PrbsSeed)` | Finite file-plus-fill target; independent nonzero 15-bit fill seed. |
 | `SourceInput::prbs15(PrbsSeed) -> SourceInput` | `SourceInput.prbs15(PrbsSeed)` | Passive continuous PRBS15 choice; no generator/verifier is retained. |
@@ -36,11 +37,16 @@ assert source.original_bytes == b"\x00\r\n"
 assert source.target_bits == 32
 ```
 
-These source objects currently describe admission only. They are not yet inputs
-to a new public controlled full-loop job; that extension remains
-[UIU-API-02](../../development/checklist.md#task-uiu-api-02).
-Measurement/channel/Designer and idle transmitter previews remain in
-[UIU-API-01](../../development/checklist.md#task-uiu-api-01).
+The minimum-window query reports a theoretical source-observation threshold,
+including values above the admitted observation duration or UI run budget. It
+excludes acquisition, interleaver drain and window tails, and admits no run.
+Both languages use the same checked integer clock calculation. For the default
+25-kHz spacing and 512-sample prefix, index 399 completes exactly at 17 ms.
+
+These source objects are also accepted by the implemented
+[controlled full-loop API](full-loop.md). Measurement/channel/Designer admission
+and idle transmitter previews have separate [API guides](README.md).
+Saved workbenches use the [saved full-loop entry point](saved-full-loop.md).
 
 ## Original measurement previews
 

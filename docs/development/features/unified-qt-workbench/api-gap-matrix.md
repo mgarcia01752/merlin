@@ -218,3 +218,13 @@ calculation; no dummy inputs or duplicated Qt clock logic are required.
 [Scoped paired acceptance](validation.md#uiu-ds-01-idle-replay-capacity-api-accepted)
 preserves the original API duration domain and all prior operation rows.
 Qt selection status and its narrower CWB admission remain UIU-DS-01 consumer work.
+
+## UIU-DS-01 minimum observation timing follow-up
+
+The [minimum-window prerequisite](design.md#uiu-ds-01-minimum-observation-timing-api-prerequisite)
+adds `TransmissionConfiguration::minimum_observation_milliseconds_after` and
+the matching installed native method. Both delegate to the backend integer-clock
+owner, using shared SI conversion constants. [Scoped paired acceptance](validation.md#uiu-ds-01-minimum-observation-timing-api-accepted)
+covers exact/fractional rounding, both clocks and maximum indices. The theoretical
+threshold can exceed admission limits and excludes acquisition/drain/window tails.
+Qt timing-help presentation remains unchanged until DS-01 adoption.

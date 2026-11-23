@@ -4,7 +4,8 @@
  */
 //! Common downstream policy definitions grouped by meaning; no mutable configuration.
 pub use merlin_dsp::common::constants::{
-    METRES_PER_FOOT, PRBS15_MAX_SEED, SECONDS_PER_MICROSECOND, SPEED_OF_LIGHT_METRES_PER_SECOND,
+    METRES_PER_FOOT, MILLISECONDS_PER_SECOND, NANOSECONDS_PER_SECOND, PRBS15_MAX_SEED,
+    SECONDS_PER_MICROSECOND, SPEED_OF_LIGHT_METRES_PER_SECOND,
 };
 
 /// Existing continuous-source default: every PRBS15 register bit set (0x7fff/32767).

@@ -4,12 +4,10 @@
  */
 //! Integer sample-clock schedule; roll-off overlaps instead of extending cadence.
 use super::{settings::SAMPLE_RATE_HZ, TransmissionSettings};
+use crate::common::constants::{MILLISECONDS_PER_SECOND, NANOSECONDS_PER_SECOND};
 use crate::{error::invalid, SimulationError};
 use serde::Serialize;
 use std::time::Duration;
-
-/// Nanoseconds per second, for integer duration-to-sample conversion.
-const NANOS_PER_SECOND: u128 = 1_000_000_000;
 
 /// Complete source-symbol schedule within a caller-selected observation interval.
 /// Acquisition, queue completion, cell drain and window tails are separate.
@@ -39,6 +37,35 @@ pub struct TransmissionTiming {
     pub complete_symbols: u32,
     pub unused_samples: u32,
 }
+
+/// Computes the least whole-millisecond source window completing a selected symbol.
+///
+/// # Arguments
+/// * `settings` - Existing validated downstream numerology; checked by the timing owner.
+/// * `last_symbol_index` - Zero-based source-observation index, excluding acquisition/drain.
+///
+/// # Returns
+/// Required whole milliseconds, which may exceed caller observation/runtime policies.
+/// No source, waveform or receiver is constructed and no scientific state changes.
+///
+/// # Errors
+/// Preserves timing validation errors and rejects arithmetic/output overflow.
+pub(crate) fn minimum_observation_milliseconds_after(
+    settings: &TransmissionSettings,
+    last_symbol_index: u64,
+) -> Result<u64, SimulationError> {
+    let timing = settings.one_second_timing()?;
+    // Promote before including the selected period, so the u64::MAX index is representable.
+    let required_periods = u128::from(last_symbol_index) + 1;
+    let sample_milliseconds = required_periods
+        .checked_mul(u128::from(timing.symbol_period_samples))
+        .and_then(|samples| samples.checked_mul(MILLISECONDS_PER_SECOND))
+        .ok_or_else(|| invalid("Minimum observation sample-clock arithmetic overflow."))?;
+    let whole_milliseconds = sample_milliseconds.div_ceil(u128::from(timing.sample_rate_hz));
+    u64::try_from(whole_milliseconds)
+        .map_err(|_| invalid("Minimum observation exceeds 64-bit millisecond accounting."))
+}
+
 impl TransmissionSettings {
     /// Plans a duration using integer sample ticks and complete OFDM periods.
     ///
@@ -53,7 +80,7 @@ impl TransmissionSettings {
             .as_nanos()
             .checked_mul(u128::from(SAMPLE_RATE_HZ))
             .ok_or_else(|| invalid("Observation duration multiplication overflow."))?
-            / NANOS_PER_SECOND;
+            / NANOSECONDS_PER_SECOND;
         let ticks = u64::try_from(ticks)
             .map_err(|_| invalid("Observation duration exceeds64-bit sample accounting."))?;
         self.sample_timing(ticks)

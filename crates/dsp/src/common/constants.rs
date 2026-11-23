@@ -12,6 +12,11 @@ pub const METRES_PER_FOOT: f64 = 0.3048;
 pub const SECONDS_PER_MICROSECOND: f64 = 1.0 / MICROSECONDS_PER_SECOND;
 /// Exact count of microseconds in one second; reciprocal time scales share this unit definition.
 pub const MICROSECONDS_PER_SECOND: f64 = 1_000_000.0;
+/// Exact integer milliseconds in one second for checked sample-clock conversions.
+/// This unit scale does not choose a source-observation or host-runtime budget.
+pub const MILLISECONDS_PER_SECOND: u128 = 1_000;
+/// Exact integer nanoseconds in one second for Duration-to-sample conversion.
+pub const NANOSECONDS_PER_SECOND: u128 = 1_000_000_000;
 
 /// Register width for the fixed PRBS15 recurrence x^15 + x^14 + 1.
 pub const PRBS15_REGISTER_BITS: u32 = 15;
