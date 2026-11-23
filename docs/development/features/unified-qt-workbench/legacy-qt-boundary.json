@@ -308,44 +308,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/inputs/profile_input/document.rs",
-      "sha256": "43e2795e53c04b92a530c18287471230a4e08b01f02165ad5bcba64c73d1b482",
-      "sites": [
-        {
-          "line": 6,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 12,
-          "root": "pnm"
-        },
-        {
-          "line": 12,
-          "root": "pnm"
-        },
-        {
-          "line": 242,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
-      "sha256": "98db6aa27d8cc68a5a15d2b719cefd34d12882afd3e710e452786872a7156a89",
-      "sites": [
-        {
-          "line": 8,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 240,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/instruments/channel/mod.rs",
       "sha256": "1d9fc006c24c42b2f52e7fece5179e59b3672f0e374e759ed7e6c8cbb08fcd1f",
       "sites": [
@@ -2750,6 +2712,56 @@
       "unit": "Source editor admission facade",
       "reason": "Public SourceInput/PrbsSeed/FileFillPolicy own passive source admission, meaningful-bit metadata and shared-buffer fill replacement. The chooser uses authoritative public source limits; original source/export behavior remains compatible.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-source-editor-admission-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/profile_input/document.rs",
+        "sha256": "43e2795e53c04b92a530c18287471230a4e08b01f02165ad5bcba64c73d1b482",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 12,
+            "root": "pnm"
+          },
+          {
+            "line": 12,
+            "root": "pnm"
+          },
+          {
+            "line": 242,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Profile input owner facade",
+      "reason": "Public CaptureLoader/ProfileCapture and TransmissionConfiguration own decoding, raw source catalog/assignment interpretation and geometry checks. Original source bytes/catalog are shared; Qt only adapts metadata/tree/plot/session DTO ownership.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-profile-input-owner-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
+        "sha256": "98db6aa27d8cc68a5a15d2b719cefd34d12882afd3e710e452786872a7156a89",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 240,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Profile input owner facade",
+      "reason": "Public CaptureLoader/ProfileCapture and TransmissionConfiguration own decoding, raw source catalog/assignment interpretation and geometry checks. Original source bytes/catalog are shared; Qt only adapts metadata/tree/plot/session DTO ownership.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-profile-input-owner-facade-accepted"
     }
   ],
   "reviewed_updates": [

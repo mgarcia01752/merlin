@@ -2777,3 +2777,40 @@ science tests, facade compatibility, analysis-only build, scoped Clippy and exac
 additive operation inventories. No scientific algorithm, project format, lifecycle,
 CXX/QML registration, upstream or packaging changes. Parent Level 2 and final
 Level 3 acceptance remain pending. Completed planning/FEC tasks are not reopened.
+
+## UIU-DS-01 profile input owner facade
+
+Consume accepted prerequisite 05d30422 for REQ-UIU-02/03/08/09/20/22/24/27.
+EDIT complete profile_input/document.rs and mod.rs to REUSE public CaptureLoader,
+ProfileCapture.frame/schemes/metadata and TransmissionConfiguration admission.
+Keep one immutable catalog and NamedCapture original, sharing their original
+byte storage; snapshots share catalog frames. Preserve sorted UI IDs versus
+original source order, compact tree labels, exact binary/JSON originals and all
+valid saved profile sections. Public scheme records supply assignment labels;
+Qt only formats rows, units and bounded display depth. A read-only serde view of
+the already validated decoder JSON preserves original display text (including
+MAC letter case); a named UTF-8 BOM transport marker is skipped only for that
+view, never removed from original/intermediate provenance. Remove decoder dispatch,
+assignment interpretation, geometry arithmetic and Qt original hashing.
+
+EDIT already-public plot.rs to borrow the retained catalog rather than admitting
+another original on each request. EDIT only profile collection/original-byte
+access in bridge/profile_input.rs and workbench/project_file.rs; CXX declarations,
+project schemas, registration and all other owners remain unchanged. Frame copies
+are made only when publishing the existing independently owned session input.
+Existing assertion intent is preserved with public accessors. Name shared profile
+tree depths; reuse authoritative input/OCD/scheme bounds and existing SI display
+units. No new scientific implementation or API operation is introduced.
+
+The accepted public capture/workbench contract requires nonempty capture names,
+while payload-file labels may be empty. Retain that distinction and existing
+Rust/native name-rejection tests; do not invent a provenance label. The old Qt
+passive decoder could stage an empty capture label that the public run/project
+contract rejects. Record enforcement of this accepted contract at input admission;
+no new unnamed capture capability or change to existing public behavior.
+
+Level 1 runs complete small profile/plot tests, affected publication/project and
+Qt/QML cases, format/Clippy/boundary, current optimized build and traceability.
+Persistence risk expands to relevant Rust/native saved-project checks using the
+exact accepted wheel without rebuilding unchanged backend/binding code. Parent
+Level 2 and final Level 3 remain pending; no historical checkbox is changed.

@@ -9,9 +9,8 @@ use crate::{
     shared::presentation::constants::{BITS_PER_MEGABIT, HERTZ_PER_MEGAHERTZ},
 };
 use merlin::downstream::{
-    inputs::CaptureLoader, MeasurementViewport, NamedCapture, ProfileCapture, ProfileCarrierRole,
-    ProfileInspection, ProfileMetric, ProfileViewRequest, MAX_PROFILE_SOURCE_IDS,
-    MAX_PROFILE_VIEW_BUCKETS,
+    MeasurementViewport, ProfileCapture, ProfileCarrierRole, ProfileInspection, ProfileMetric,
+    ProfileViewRequest, MAX_PROFILE_SOURCE_IDS, MAX_PROFILE_VIEW_BUCKETS,
 };
 use serde_json::{json, Value};
 
@@ -23,12 +22,6 @@ struct ViewRequest {
     metric: u8,
     start: usize,
     count: usize,
-}
-
-fn admitted(capture: &Capture) -> Result<ProfileCapture, String> {
-    let original = NamedCapture::new(&capture.name, capture.original.as_ref().clone())
-        .map_err(|error| error.message().to_owned())?;
-    CaptureLoader::profile_capture(&original).map_err(|error| error.message().to_owned())
 }
 
 /// Projects a draft profile using public raw extrema and original coordinates.
@@ -46,7 +39,7 @@ pub(crate) fn viewport(
     start: usize,
     count: usize,
 ) -> Result<Value, String> {
-    viewport_document(&admitted(capture)?, profile_id, start, count)
+    viewport_document(&capture.catalog, profile_id, start, count)
 }
 
 fn viewport_document(
@@ -171,7 +164,7 @@ pub(crate) fn inspect(capture: &Capture, request: &str) -> Result<Value, String>
     }
     request.profiles.sort_unstable();
     request.profiles.dedup();
-    let public = admitted(capture)?;
+    let public = &capture.catalog;
     for id in &request.profiles {
         if !public.profile_ids().contains(id) {
             return Err("Choose an available profile.".into());
@@ -181,7 +174,7 @@ pub(crate) fn inspect(capture: &Capture, request: &str) -> Result<Value, String>
         .profile_ids()
         .first()
         .ok_or("No captured profiles.")?;
-    let mut output = viewport_document(&public, reference, request.start, request.count)?;
+    let mut output = viewport_document(public, reference, request.start, request.count)?;
     let view = public
         .inspect(&ProfileViewRequest {
             profiles: Some(request.profiles),
@@ -330,7 +323,7 @@ mod tests {
         // Metric selector two is outside the existing dB/bit pair.
         invalid["metric"] = json!(2);
         assert!(inspect(&capture, &invalid.to_string()).is_err());
-        assert_eq!(capture.original.as_ref(), original.as_ref());
+        assert_eq!(capture.original.bytes(), original.bytes());
         assert_eq!(capture.sha256, hash);
         assert_eq!(capture.document.as_ref(), decoded.as_ref());
         assert_eq!(capture.profile(255).unwrap().assignments, assignments);

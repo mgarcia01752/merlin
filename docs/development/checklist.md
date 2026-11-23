@@ -517,6 +517,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 <a id="task-uiu-session-01"></a>
   The [raw source-catalog prerequisite](features/unified-qt-workbench/validation.md#uiu-ds-01-raw-source-catalog-api-accepted) records paired passive frame/measurement/response/Designer acceptance before Qt adoption. Existing run-ID limits and original input/provenance semantics remain unchanged; parent acceptance remains incomplete.
 
+  The [profile input owner facade](features/unified-qt-workbench/validation.md#uiu-ds-01-profile-input-owner-facade-accepted) records shared-catalog/public decoder/geometry/tree adoption and targeted Qt/QML/persistence acceptance. Two whole exceptions retire, leaving 19 files/79 sites/three dependencies; the parent remains unchecked.
+
 - [ ] **UIU-SESSION-01** Make direction sessions explicit and serialize initial dispatch.
   Requirements: [REQ-UIU-03](../requirements.md#req-uiu-03), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-07](../requirements.md#req-uiu-07).
   Dependencies: [UIU-DS-01](#task-uiu-ds-01).

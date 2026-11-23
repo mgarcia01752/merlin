@@ -126,7 +126,8 @@ impl Project {
                 .profile
                 .accepted
                 .as_ref()
-                .map(|(capture, _)| capture.profiles.as_ref().clone())
+                .map(|(capture, _)| capture.owned_profiles())
+                .transpose()?
                 .unwrap_or_default(),
             profile,
             playback: measurements.playback,

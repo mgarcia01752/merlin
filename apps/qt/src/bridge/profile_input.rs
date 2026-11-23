@@ -227,7 +227,14 @@ impl bridge::ProfileInput {
             .as_mut()
             .rust_mut()
             .accept(profile_id, &settings.to_string());
-        if result.is_ok() {
+        let result = result.and_then(|()| {
+            let profiles = self
+                .rust()
+                .accepted
+                .as_ref()
+                .map(|(capture, _)| capture.owned_profiles())
+                .transpose()?
+                .unwrap_or_default();
             let selected = self
                 .rust()
                 .accepted
@@ -235,16 +242,11 @@ impl bridge::ProfileInput {
                 .and_then(|(capture, id)| capture.profile(*id).ok())
                 .cloned();
             crate::downstream::workbench::session::set_profile(selected);
-            crate::downstream::workbench::session::set_profiles(
-                self.rust()
-                    .accepted
-                    .as_ref()
-                    .map(|(capture, _)| capture.profiles.as_ref().clone())
-                    .unwrap_or_default(),
-            );
-            let section=self.rust().accepted.as_ref().map(|(c,id)|json!({"file":crate::downstream::workbench::project_file::encode(&c.name,&c.original),"profile_id":id})).unwrap_or(Value::Null);
+            crate::downstream::workbench::session::set_profiles(profiles);
+            let section=self.rust().accepted.as_ref().map(|(c,id)|json!({"file":crate::downstream::workbench::project_file::encode(&c.name,c.original.bytes()),"profile_id":id})).unwrap_or(Value::Null);
             crate::downstream::workbench::session::put_saved("profile", section);
-        }
+            Ok(())
+        });
         QString::from(result.err().unwrap_or_default())
     }
     /// Discards draft input and restores the accepted snapshot without I/O.

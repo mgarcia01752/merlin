@@ -2422,3 +2422,49 @@ the CLI compile confirms its existing public contracts. No new scientific code
 is added to Qt. Parent Level 2, milestone/final Level 3, full numeric audit and
 Qt input adoption remain incomplete. The boundary remains 21 frozen files,
 85 sites and three scientific dependencies. No official checkbox is advanced.
+
+## UIU-DS-01 profile input owner facade accepted
+
+[Exact contract](design.md#uiu-ds-01-profile-input-owner-facade) and
+[machine evidence](profile-owner-facade-evidence.json) establish focused Level 1
+consumer acceptance for REQ-UIU-02/03/08/09/20/22/24/27, consuming prerequisite
+05d30422. Profile admission, decoder dispatch, assignment interpretation and OCD
+geometry checks now use the public facade. Immutable catalog and original-byte
+storage are shared by draft/accepted snapshots; plotting borrows that retained
+catalog. Existing independently owned session DTOs are copied only on publication.
+Generic read-only JSON presentation retains original MAC case and UTF-8 transport
+handling, without another scientific import or modification of original bytes.
+
+Executed: eight targeted Qt Rust cases (all original profile/plot cases, a new
+shared-storage/raw-ID/text/tree/saved-profile case and two existing project
+regressions); three QML behaviors (five harness cases); Qt formatting, all-target
+Clippy and optimized build. Persistence risk expansion passes two Rust and two
+native saved-file/fill/profile-name compatibility cases, with the exact accepted
+05d30422 wheel's installed module hash verified before reuse. Documentation,
+traceability, source/dependency boundary and generated-guide checks apply.
+
+Sorted UI source IDs and original capture order remain distinct. The new test
+pins uppercase original MAC text, initial BOM/whitespace, exact hashes/bytes,
+4096-QAM source rows, tree depths, catalog/original buffer pointer sharing,
+independent published DTOs and saved raw-ID restoration. Existing supported input,
+profile/readiness/plot/project assertions are preserved through public accessors.
+The accepted public contract still requires named profile captures and permits
+unnamed payload files. The former passive Qt decoder could stage an empty capture
+name that public run/project admission rejects; the profile owner now enforces
+that established capture-name contract and leaves the previous draft intact.
+The obsolete spacing-error suffix claiming channel editing was pending is replaced
+by the current public diagnostic; OCD editing is already implemented.
+
+The initial adapter compile caught a typed MAC array being used as a display
+string. The final adapter retains original validated JSON presentation text,
+which also preserves case, rather than inventing a normalized display identity.
+No assertion was removed to resolve this failure; the new preservation case passes.
+Two complete legacy entries retire: 21 files/85 sites become 19/79; three direct
+scientific dependencies remain. CXX declarations and project schema are unchanged.
+
+Not required: a fresh wheel, backend/API inventory refresh, unrelated full
+workspace/upstream/FEC suites, native desktop startup or packaging: backend and
+bindings, exports, CXX/QML registration, lifecycle and package owners are unchanged.
+Current Rust/native project cases execute against the unchanged accepted artifact;
+no historical run is reported as a new pass. Parent Level 2, milestone/final Level 3,
+direction-aware Save/Open and final numeric audit remain pending.

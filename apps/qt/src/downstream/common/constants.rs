@@ -134,3 +134,14 @@ pub(crate) const INITIAL_CONTINUOUS_SOURCE_SEED: u16 = 32_767;
 pub(crate) const INITIAL_FILE_FILL_SEED: u16 = 32_767;
 /// Maximum source-options message bytes, independent of file content and OCD limits.
 pub(crate) const MAX_SOURCE_OPTIONS_DOCUMENT_BYTES: usize = 2048;
+
+/// Root group indentation in the profile metadata tree; unrelated to carrier indices.
+pub(crate) const PROFILE_TREE_ROOT_DEPTH: u8 = 0;
+/// Immediate field/profile indentation beneath a root metadata group.
+pub(crate) const PROFILE_TREE_CHILD_DEPTH: u8 = 1;
+/// Compact range/detail indentation beneath an individual profile.
+pub(crate) const PROFILE_TREE_DETAIL_DEPTH: u8 = 2;
+
+/// Initial UTF-8 byte-order marker (U+FEFF), only for a validated JSON display view.
+/// These three encoding octets are transport metadata, unrelated to PHY/source bytes.
+pub(crate) const UTF8_JSON_BYTE_ORDER_MARK: &[u8] = b"\xef\xbb\xbf";

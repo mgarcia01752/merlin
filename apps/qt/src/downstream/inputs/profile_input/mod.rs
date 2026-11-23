@@ -5,8 +5,10 @@
 //! Profile draft/accepted state and independent project restoration.
 pub(crate) mod document;
 pub(crate) mod plot;
-use docsis_ofdm_fec::transmission::TransmissionSettings;
 use document::Capture;
+use merlin::downstream::{
+    TransmissionConfiguration, TransmissionSettings, MAX_TRANSMISSION_DOCUMENT_BYTES,
+};
 use serde_json::json;
 use serde_json::Value;
 /// Profile editor state retains original bytes independently of Qt.
@@ -24,13 +26,14 @@ pub struct ProfileModel {
 /// # Errors
 /// Rejects oversized, malformed or unsupported settings.
 pub(crate) fn settings(document: &str) -> Result<TransmissionSettings, String> {
-    if document.len() > 4096 {
-        return Err("OCD request exceeds 4096 bytes.".into());
+    if document.len() > MAX_TRANSMISSION_DOCUMENT_BYTES {
+        return Err(format!(
+            "OCD request exceeds {MAX_TRANSMISSION_DOCUMENT_BYTES} bytes."
+        ));
     }
-    let settings: TransmissionSettings =
-        serde_json::from_str(document).map_err(|error| error.to_string())?;
-    settings.validate().map_err(|error| error.to_string())?;
-    Ok(settings)
+    TransmissionConfiguration::from_json(document.as_bytes())
+        .map(|configuration| configuration.settings().clone())
+        .map_err(|cause| cause.message().to_owned())
 }
 
 impl ProfileModel {
@@ -96,11 +99,12 @@ impl ProfileModel {
     /// Preserves the draft when decoding or preview admission fails.
     pub(crate) fn stage_bytes(&mut self, name: String, bytes: Vec<u8>) -> Result<Value, String> {
         let capture = Capture::decode(name, bytes)?;
-        let id = capture
-            .profiles
-            .iter()
-            .find(|profile| profile.profile_id == 0)
-            .map_or(capture.profiles[0].profile_id, |profile| profile.profile_id);
+        let ids = capture.catalog.profile_ids();
+        let id = if ids.contains(&0) {
+            0
+        } else {
+            *ids.first().ok_or("No captured profiles.")?
+        };
         let preview = capture.preview(id)?;
         self.draft = Some(capture);
         Ok(preview)
@@ -141,13 +145,15 @@ mod tests {
         let json = Capture::decode("wrong.bin".into(), JSON.to_vec()).unwrap();
         assert_eq!(binary.format, "Binary PNM");
         assert_eq!(json.format, "JSON text");
-        for (left, right) in binary.profiles.iter().zip(json.profiles.iter()) {
+        for &id in binary.catalog.profile_ids() {
+            let left = binary.profile(id).unwrap();
+            let right = json.profile(id).unwrap();
             assert_eq!(left.profile_id, right.profile_id);
             assert_eq!(left.key, right.key);
             assert_eq!(left.assignments, right.assignments);
         }
-        assert_eq!(binary.profiles.len(), 4);
-        assert_eq!(binary.profiles[0].assignments.len(), 7480);
+        assert_eq!(binary.catalog.profile_ids().len(), 4);
+        assert_eq!(binary.profile(0).unwrap().assignments.len(), 7480);
     }
     #[test]
     fn profile_plot_preserves_source_grid_roles_and_bounds() {
@@ -237,7 +243,7 @@ mod tests {
         let expected: u64 = profile
             .assignments
             .iter()
-            .filter(|a| a.carrier_type == docsis_ofdm_fec::types::modulation::CarrierType::Data)
+            .filter(|a| a.carrier_type == merlin::downstream::ProfileCarrierRole::Data)
             .filter_map(|a| a.bit_loading)
             .map(u64::from)
             .sum::<u64>()
@@ -302,5 +308,84 @@ mod tests {
         assert!(model.accepted.is_some());
         model.accept(-1, &config).unwrap();
         assert!(model.accepted.is_none());
+    }
+
+    #[test]
+    fn retained_catalog_shares_originals_preserves_text_rows_and_saved_profiles() {
+        use sha2::{Digest, Sha256};
+        let mut document: Value = serde_json::from_slice(JSON).unwrap();
+        document["mac_address"] = json!("00:CA:00:00:00:01");
+
+        // Independent byte-ID/source-order anchors; source row zero remains 4096-QAM.
+        for (profile, id) in document["profiles"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .zip([255, 17, 0, 1])
+        {
+            profile["profile_id"] = json!(id);
+        }
+        let mut bytes = b"\xef\xbb\xbf  ".to_vec(); // Literal UTF-8 BOM plus original whitespace.
+        bytes.extend(serde_json::to_vec_pretty(&document).unwrap());
+        let capture = Capture::decode("wrong.bin".into(), bytes.clone()).unwrap();
+        assert_eq!(capture.format, "JSON text");
+        assert_eq!(capture.catalog.profile_ids(), [0, 1, 17, 255]);
+        assert_eq!(
+            capture.catalog.metadata().source_profile_order,
+            [255, 17, 0, 1]
+        );
+        assert_eq!(capture.sha256, format!("{:x}", Sha256::digest(&bytes)));
+        assert_eq!(capture.original.bytes(), bytes);
+        assert!(std::ptr::eq(
+            capture.original.bytes().as_ptr(),
+            capture.catalog.provenance().original_bytes().as_ptr()
+        ));
+        let shared = capture.clone();
+        assert!(std::ptr::eq(
+            capture.profile(255).unwrap(),
+            shared.profile(255).unwrap()
+        ));
+        let preview = capture.preview(255).unwrap();
+        let row = |key: &str| {
+            preview["rows"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|row| row["key"] == key)
+                .unwrap()
+        };
+        assert_eq!(row("mac")["value"], "00:CA:00:00:00:01");
+        assert_eq!(row("mac")["depth"], 1);
+        assert_eq!(row("file")["depth"], 0);
+        assert_eq!(row("range_0")["depth"], 2);
+        assert_eq!(row("range_0")["value"], "4096-QAM · 110 subcarriers");
+        assert!(row("range_0")["description"]
+            .as_str()
+            .unwrap()
+            .contains("qam_4096, code 12, bit loading 12, role \"data\""));
+        assert!(merlin::downstream::ProfileId::new(255).is_err());
+        let mut owned = capture.owned_profiles().unwrap();
+        assert_eq!(
+            owned
+                .iter()
+                .map(|profile| profile.profile_id)
+                .collect::<Vec<_>>(),
+            [0, 1, 17, 255]
+        );
+        owned[0].profile_id = 99;
+        assert_eq!(capture.profile(0).unwrap().profile_id, 0);
+        let saved = json!({"file":crate::downstream::workbench::project_file::encode(&capture.name,capture.original.bytes()),"profile_id":255});
+        let restored = ProfileModel::from_saved(&saved).unwrap();
+        let (restored, id) = restored.accepted.unwrap();
+        assert_eq!(id, 255);
+        assert_eq!(restored.preview(id).unwrap(), preview);
+        assert_eq!(restored.original.bytes(), bytes);
+        let mut model = ProfileModel::default();
+        model
+            .stage_bytes("original.json".into(), JSON.to_vec())
+            .unwrap();
+        let previous = model.draft.as_ref().unwrap().sha256.clone();
+        assert!(model.stage_bytes(String::new(), JSON.to_vec()).is_err());
+        assert_eq!(model.draft.as_ref().unwrap().sha256, previous);
     }
 }

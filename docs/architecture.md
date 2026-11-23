@@ -1108,6 +1108,15 @@ all validation and calculations. Native Python returns an owned frame dictionary
 and delegates the same admission/design operations. Qt adoption remains a separate
 UIU-DS-01 consumer unit; no simulation-ID domain or scientific behavior changes.
 
+The [profile input owner](development/features/unified-qt-workbench/design.md#uiu-ds-01-profile-input-owner-facade)
+retains one immutable public source catalog and its shared exact original bytes.
+Tree rows use authoritative scheme/metadata results; original display text remains
+in a read-only view of already validated decoder JSON. Profile plots borrow the
+same catalog. Existing session publication explicitly copies sorted source DTOs;
+source order and original/decoded provenance stay separate. Public admission owns
+geometry and supported input/name bounds, with existing saved-project contracts
+preserved. This replaces the earlier per-view catalog admission in this owner.
+
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)
